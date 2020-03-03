@@ -1,3 +1,4 @@
+import { DeviceService } from './../../device/services/device.service';
 import { Subject } from 'rxjs';
 import { Device } from 'src/app/device/classes/device.class';
 import { LockBoxService } from './lock-box.service';
@@ -34,6 +35,7 @@ export class UserService {
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockBoxService:LockBoxService,
+    //private deviceService:DeviceService,
     private appConfigService: AppConfigService
   ) {
     this.window = window;
@@ -84,8 +86,10 @@ export class UserService {
       ? await this.getUserAccount(this.getCurrentUser())
       : await this.getUserAccount(username)
     const appConfig = await this.appConfigService.getAppConfig()
+    //const deviceInfo = await this.deviceService.getAppInfo()
     if (appConfig.syncProtocol === '2') {
       const device = await this.getDevice()
+      //return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId)
       return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true)
     } else {
       return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false)
@@ -148,6 +152,7 @@ export class UserService {
         }
       }
     } catch(err) {
+      alert('An error occurred updating the database.')
       throw(err)
     }
   }

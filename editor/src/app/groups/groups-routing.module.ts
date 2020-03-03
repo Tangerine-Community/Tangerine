@@ -62,6 +62,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },

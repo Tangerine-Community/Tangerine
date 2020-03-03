@@ -67,6 +67,7 @@ fieldset {
 }
 
 paper-fab.action {
+  z-index: 987654321;
   position: fixed;
   bottom: 25px;
   right: 25px;

@@ -2,27 +2,23 @@
 
 <paper-fab mat-raised-button icon="add" color="accent" [routerLink]="['/groups/',groupId,'addUser']"></paper-fab>
 
-<mat-list>
-  <mat-list-item class="tangy-location-list">
-    <span class="tangy-foreground-primary">{{'Username'|translate}}</span>
-    <span class="tangy-spacer"></span>
-    <span class="tangy-foreground-primary">{{'Email'|translate}}</span>
-    <span class="tangy-spacer"></span>
-    <span class="tangy-foreground-primary">{{'Actions'|translate}}</span>
-  </mat-list-item>
-</mat-list>
-
-<mat-list role="list">
-  <mat-list-item role="listitem" *ngFor="let user of users">
-    <a class="tangy-foreground-primary" [routerLink]="['/manage-users/users', user._id]">
+<mat-table [dataSource]="users" class="mat-elevation-z8">
+  <ng-container matColumnDef="username">
+    <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary" [routerLink]="['/groups',groupId, 'configure', 'security','role', user.username]">
       <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-    </a>
-    <span class="tangy-foreground-secondary">{{user.username}}</span>
-    <span class="tangy-spacer"></span>
-    <span class="tangy-foreground-primary">{{user.email}}</span>
-    <span class="tangy-spacer"></span>
-    <a class="tangy-foreground-primary" (click)="removeUserFromGroup(user.username)">
+    </a><span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="email">
+    <mat-header-cell *matHeaderCellDef> {{'Email'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let user"> {{user.email}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary" (click)="removeUserFromGroup(user.username)">
       <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
-    </a>
-  </mat-list-item>
-</mat-list>
+    </a></mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="usersDisplayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: usersDisplayedColumns;"></mat-row>
+</mat-table>

@@ -5,6 +5,7 @@ import { ManageUsersComponent } from './_components/manage-users/manage-users.co
 import { UserResgistrationComponent } from './_components/user-resgistration/user-resgistration.component';
 import { LoginGuard } from './_guards/login-guard.service';
 import { AdminUserGuard } from './_guards/admin-user-guard.service';
+import {AddUserComponent} from '../../groups/add-users/add-user.component';
 const routes: Routes = [{
   path: 'register-user',
   component: UserResgistrationComponent
@@ -19,6 +20,11 @@ const routes: Routes = [{
 },
 {
   path: 'manage-users/new-user',
+  component: UserResgistrationComponent,
+  canActivate: [LoginGuard]
+},
+{
+  path: 'manage-users/users/:id',
   component: UserResgistrationComponent,
   canActivate: [LoginGuard]
 }];
