@@ -45,6 +45,16 @@ export class GroupsService {
     }
   }
 
+  async getUserGroupRoles(username) {
+    try {
+      return await this.httpClient.get(`/groups/${username}`).toPromise();
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
   async createGroup(groupName: string) {
     try {
       const result = await this.httpClient.post('/nest/group/create', { label: groupName }).toPromise();
@@ -57,6 +67,9 @@ export class GroupsService {
     }
   }
 
+  /*
+  Adds or updates user in the groups array of the users database
+   */
   async addUserToGroup(groupName: string, username: string, role: string) {
     try {
       const result = await this.httpClient

@@ -19,6 +19,7 @@ export class GroupsComponent implements OnInit {
   groups;
   breakpoint;
   isAdminUser = false
+  canManageSitewideUsers = false
   moment;
 
   constructor(
@@ -37,6 +38,7 @@ export class GroupsComponent implements OnInit {
     this.menuService.setContext(_TRANSLATE('Groups'), '', 'groups')
     this.onResize(window);
     this.isAdminUser = await this.userService.isCurrentUserAdmin()
+    this.canManageSitewideUsers = await this.userService.canManageSitewideUsers()
   }
 
   onResize(target) {
