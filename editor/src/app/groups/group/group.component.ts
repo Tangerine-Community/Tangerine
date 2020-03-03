@@ -12,7 +12,7 @@ import { UserService } from 'src/app/core/auth/_services/user.service';
 })
 export class GroupComponent implements OnInit {
 
-  title:string
+  title:string = ''
   breadcrumbs:Array<Breadcrumb>
   isAdminUser = false
 

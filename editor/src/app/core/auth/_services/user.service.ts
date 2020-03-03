@@ -6,7 +6,7 @@ import { _TRANSLATE } from '../../../shared/_services/translation-marker';
 @Injectable()
 export class UserService {
 
-  constructor(private httpClient: HttpClient, private errorHandler: TangyErrorHandler) { }
+  constructor(private httpClient: HttpClient, private errorHandler: TangyErrorHandler, private http: HttpClient) { }
 
   async createUser(payload) {
     try {
@@ -103,4 +103,9 @@ export class UserService {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
+
+  async canManageSitewideUsers() {
+    return <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
+  }
+
 }

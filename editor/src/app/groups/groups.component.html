@@ -1,6 +1,6 @@
 
 <h1>Groups</h1>
-<paper-fab *ngIf="isAdminUser" mat-raised-button icon="add" color="accent" class="add-group-button" routerLink="/groups/new-group">
+<paper-fab *ngIf="canManageSitewideUsers" mat-raised-button icon="add" color="accent" class="add-group-button" routerLink="/groups/new-group">
 </paper-fab>
 <div id="content">
 <mat-grid-list [cols]="breakpoint" rowHeight="120" (window:resize)="onResize($event.target)">

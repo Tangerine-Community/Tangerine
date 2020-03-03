@@ -1,13 +1,13 @@
 <h1>
     {{'New Group'|translate}}
 </h1>
-<form novalidate #newGroupForm="ngForm">
+<form novalidate (ngSubmit)="createGroup()" #newGroupForm="ngForm">
     <mat-form-field>
-        <input 
-            name="groupNameInput" 
-            [(ngModel)]="groupName" 
-            #groupNameInput="ngModel" 
-            matInput 
+        <input
+            name="groupNameInput"
+            [(ngModel)]="groupName"
+            #groupNameInput="ngModel"
+            matInput
             placeholder="{{'Group Name'|translate}}"
             required
         >
@@ -20,10 +20,9 @@
     <br>
     <br>
     <button
-        [disabled]="newGroupForm.invalid" 
-        mat-raised-button color="warn" 
-        (click)="createGroup();newGroupForm.reset()"
-    >
+        [disabled]="newGroupForm.invalid"
+        mat-raised-button color="warn"
+        type="submit">
         {{'Submit'|translate}}
     </button>
 </form>
