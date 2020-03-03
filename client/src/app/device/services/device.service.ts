@@ -46,12 +46,22 @@ export class DeviceService {
     return device
   }
 
-  async register(id, token):Promise<Device> {
+  async register(id, token, isTest = false):Promise<Device> {
     const appConfig = await this.appConfigService.getAppConfig()
-    const device = <Device>await this
-      .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
-    
+    let device:Device
+    if (isTest) {
+      device = <Device>{
+        _id: id,
+        token,
+        key: 'test',
+        assignedLocation: {},
+        syncLocations: []
+      }
+    } else {
+      device = <Device>await this
+        .httpClient
+        .get(`${appConfig.serverUrl}group-device-public/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
+    }
     await this.variableService.set('tangerine-device-is-registered', true)
     await this.userService.installSharedUserDatabase(device)
     return device
