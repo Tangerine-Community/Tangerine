@@ -2,27 +2,15 @@
 <paper-fab  mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user">
 </paper-fab>
 
-<mat-list>
-  <mat-list-item class="tangy-location-list">
-    <span class="tangy-foreground-primary">{{'Username'|translate}}</span>
-    <span class="tangy-spacer"></span>
-    <span class="tangy-foreground-primary">{{'Email'|translate}}</span>
-    <span class="tangy-spacer"></span>
-    <span class="tangy-spacer"></span>
-  </mat-list-item>
-</mat-list>
-
-<mat-list role="list">
-  <mat-list-item role="listitem" *ngFor="let user of users">
-    <!-- TODO a class="tangy-foreground-primary" [routerLink]="['/manage-users/users', user._id]">
-      <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-    </a-->
-    <span class="tangy-foreground-secondary">{{user.username}}</span>
-    <span class="tangy-spacer"></span>
-    <span class="tangy-foreground-primary">{{user.email}}</span>
-    <span class="tangy-spacer"></span>
-    <!-- TODO a class="tangy-foreground-primary" [routerLink]="['/manage-users/users/edit', user._id]">
-      <i class="material-icons mat-18 tangy-location-list-icon">edit</i>
-    </a-->
-  </mat-list-item>
-</mat-list>
+<mat-table [dataSource]="users" class="mat-elevation-z8">
+  <ng-container matColumnDef="username">
+    <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let user"> {{user.username}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="email">
+    <mat-header-cell *matHeaderCellDef> {{'Email'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let user"> {{user.email}} </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="usersDisplayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: usersDisplayedColumns;"></mat-row>
+</mat-table>

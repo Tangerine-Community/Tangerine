@@ -11,23 +11,23 @@
                             .cls-1 {
                               fill: #fcb814;
                             }
-                      
+
                             .cls-2 {
                               fill: #f8f185;
                             }
-                      
+
                             .cls-3 {
                               fill: #f2682c;
                             }
-                      
+
                             .cls-4 {
                               fill: #f47820;
                             }
-                      
+
                             .cls-5 {
                               fill: #f2672b;
                             }
-                      
+
                             .cls-6 {
                               fill: #fff;
                             }
@@ -59,12 +59,12 @@
             <mat-nav-list class="tangy-full-width">
                 <mat-list-item
                     [class.active-menu-item]="menuService.section === 'author'"
-                    routerLink="/groups/{{menuService.groupId}}/author"              
-                    *ngIf="menuService.groupId" 
+                    routerLink="/groups/{{menuService.groupId}}/author"
+                    *ngIf="menuService.groupId"
                 >
                     <span class=""><i class="material-icons menu-icon">create</i></span>
-                    <a 
-                        matLine 
+                    <a
+                        matLine
                    >{{'Author'|translate}}</a>
                 </mat-list-item>
                 <mat-divider></mat-divider>
@@ -73,36 +73,36 @@
                 <mat-list-item
                     [class.active-menu-item]="menuService.section === 'data'"
                     routerLink="/groups/{{menuService.groupId}}/data"
-                    *ngIf="menuService.groupId" 
+                    *ngIf="menuService.groupId"
                 >
                     <span class=""><i class="material-icons menu-icon list_alt-icon">list_alt</i></span>
                     <a
-                        matLine 
+                        matLine
                     >{{'Data'|translate}}</a>
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width" *ngIf="isGroupAdmin">
+            <mat-nav-list class="tangy-full-width" *ngIf="isAdminUser">
                 <mat-list-item
                     [class.active-menu-item]="menuService.section === 'configure'"
-                    routerLink="/groups/{{menuService.groupId}}/configure"              
-                    *ngIf="menuService.groupId" 
+                    routerLink="/groups/{{menuService.groupId}}/configure"
+                    *ngIf="menuService.groupId"
                 >
                     <span class=""><i class="material-icons menu-icon">settings_applications</i></span>
                     <a
-                        matLine 
+                        matLine
                     >{{'Configure'|translate}}</a>
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
             <mat-list-item
                 [class.active-menu-item]="menuService.section === 'deploy'"
-                routerLink="/groups/{{menuService.groupId}}/deploy"              
-                *ngIf="menuService.groupId && isGroupAdmin"
+                routerLink="/groups/{{menuService.groupId}}/deploy"
+                *ngIf="menuService.groupId && isAdminUser"
             >
                 <span class=""><i class="material-icons menu-icon">phonelink_ring</i></span>
-                <a 
-                    matLine 
+                <a
+                    matLine
                 >{{'Deploy'|translate}}</a>
             </mat-list-item>
             <mat-divider></mat-divider>
@@ -119,7 +119,7 @@
             </mat-nav-list>
             <mat-nav-list class="tangy-full-width" *ngIf="canManageSitewideUsers">
                 <mat-list-item
-                    *ngIf="loggedIn && canManageSitewideUsers && menuService.groupId === ''"
+                    *ngIf="loggedIn && isAdminUser && canManageSitewideUsers && menuService.groupId === ''"
                     class="manage-users-list-item"
                     [class.active-menu-item]="menuService.section === 'manage-users'"
                     routerLink="/manage-users"

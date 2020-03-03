@@ -22,14 +22,13 @@ export class AppComponent implements OnInit, OnDestroy {
     user_id: string = localStorage.getItem('user_id');
     private childValue: string;
     canManageSitewideUsers = false
-    isGroupAdmin = false
-
+    isAdminUser = false
     history: string[] = [];
     titleToUse: string;
     mobileQuery: MediaQueryList;
     window:any
 
-    @ViewChild('snav') snav:MatSidenav
+    @ViewChild('snav') snav: MatSidenav
 
     private _mobileQueryListener: () => void;
     constructor(
@@ -62,8 +61,8 @@ export class AppComponent implements OnInit, OnDestroy {
         // Ensure user is logged in every 60 seconds.
         await this.ensureLoggedIn();
         setInterval(() => this.ensureLoggedIn(), 60 * 1000);
-        this.isGroupAdmin = await this.userService.isCurrentUserAdmin()
         this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
+            this.isAdminUser = await this.userService.isCurrentUserAdmin()
             this.loggedIn = isLoggedIn;
             this.user_id = localStorage.getItem('user_id');
             this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
@@ -84,7 +83,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loggedIn = await this.authenticationService.isLoggedIn();
         if (this.loggedIn && await this.authenticationService.validateSession() === false) {
             console.log('found invalid session');
-            this.isGroupAdmin = false
+            this.isAdminUser = false
             this.canManageSitewideUsers = false
             this.logout();
         }

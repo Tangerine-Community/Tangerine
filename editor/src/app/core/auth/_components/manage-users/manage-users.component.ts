@@ -10,6 +10,8 @@ import { UserService } from '../../_services/user.service';
 })
 export class ManageUsersComponent implements OnInit {
   users;
+  usersDisplayedColumns = ['username', 'email']
+
   constructor(
     private userService: UserService,
     private menuService:MenuService
