@@ -2,7 +2,7 @@
 <mat-card>
   <mat-card-content>
     <form class="tangy-full-width" novalidate #addUserToGroupForm="ngForm">
-      <div *ngIf="!selectedUser; else showSelected">
+      <div *ngIf="newUser; else showSelected">
         <p>Begin typing the username to choose the user:</p>
         <mat-form-field class="tangy-full-width">
           <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">

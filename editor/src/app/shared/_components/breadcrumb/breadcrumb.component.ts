@@ -15,7 +15,9 @@ export interface Breadcrumb {
 export class BreadcrumbComponent {
 
   @Input() set breadcrumbs(crumbs:Array<Breadcrumb>) {
-    this.bakeCrumbs(crumbs)
+    if (typeof crumbs !== 'undefined') {
+      this.bakeCrumbs(crumbs)
+    }
   }
   bakedCrumbs:Array<Breadcrumb> = []
 
@@ -36,7 +38,7 @@ export class BreadcrumbComponent {
       contextUrl = `#/groups/${params[2]}`
       bakedCrumbs.push(<Breadcrumb>{
         label: group.label,
-        url: contextUrl 
+        url: contextUrl
       })
     }
     // Group Section.

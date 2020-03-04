@@ -73,7 +73,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy/releases/release-apk-test', component: GroupReleaseApkTestComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-apk-live', component: GroupReleaseApkLiveComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
     path: 'groups/:groupId/configure/location-list/import-location-list',
