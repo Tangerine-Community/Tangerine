@@ -54,6 +54,7 @@ export class UpdateComponent implements AfterContentInit {
       await this.updateService.sp1_updateRequired()
     ) {
       await this.updateService.sp1_processUpdates()
+      await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
       this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
 
@@ -61,6 +62,7 @@ export class UpdateComponent implements AfterContentInit {
       !await this.appConfigService.syncProtocol2Enabled() &&
       !await this.updateService.sp1_updateRequired()
     ) {
+      await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
       this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
 
