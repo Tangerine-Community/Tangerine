@@ -22,7 +22,7 @@
     <p>{{'Start Time'|translate}}: {{result.startTime|date:'medium'}}</p>
     <p>{{'Progress'|translate}}: {{result.skip}}</p>
     <div *ngIf="isDownloadComplete">
-      <a target="_blank" href="{{downloadUrl}}">{{'Click to Download'|translate}}</a>
+      <a target="_blank" href="{{downloadUrl}}"><paper-button class="button download" >{{'download'|translate}}</paper-button></a>
     </div>
   </div>
   <div *ngIf="selectedMonth === '*' && processing && result && nothingToDownload === true" class="tangy-full-width">
