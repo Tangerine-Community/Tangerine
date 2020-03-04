@@ -78,6 +78,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
     startUnixtime: formResponse.startUnixtime||'',
     endUnixtime: formResponse.endUnixtime||'',
     lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
+    buildId: formResponse.buildId||'',
+    buildChannel: formResponse.buildChannel||'',
+    deviceId: formResponse.deviceId||'',
+    groupId: formResponse.groupId||'',
     complete: formResponse.complete
   };
   function set(input, key, value) {

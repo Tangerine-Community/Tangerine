@@ -1,6 +1,5 @@
 import { VariableService } from './../../shared/_services/variable.service';
 import { LockBoxService } from './../../shared/_services/lock-box.service';
-import { UserService } from 'src/app/shared/_services/user.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import { Device } from './../classes/device.class';
 import { AppConfigService } from './../../shared/_services/app-config.service';
@@ -28,7 +27,6 @@ export class DeviceService {
   constructor(
     private httpClient:HttpClient,
     private variableService:VariableService,
-    private userService:UserService,
     private lockBoxService:LockBoxService,
     private appConfigService:AppConfigService
   ) { 
@@ -63,7 +61,6 @@ export class DeviceService {
         .get(`${appConfig.serverUrl}group-device-public/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
     }
     await this.variableService.set('tangerine-device-is-registered', true)
-    await this.userService.installSharedUserDatabase(device)
     return device
   }
 
@@ -73,7 +70,7 @@ export class DeviceService {
 
   async getDevice():Promise<Device> {
     try {
-      const locker = this.lockBoxService.getOpenLockBox(this.userService.getCurrentUser())
+      const locker = this.lockBoxService.getOpenLockBox()
       return locker.contents.device
     } catch (e) {
       return new Device()
