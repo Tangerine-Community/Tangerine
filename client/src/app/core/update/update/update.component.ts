@@ -36,34 +36,62 @@ export class UpdateComponent implements AfterContentInit {
   ) { }
 
   async ngAfterContentInit() {
+
+    // Set a debugger statement for debugging updates on troubled devices.
     debugger
+
+    // Subscribe UI to update messages.
     this.updateService.status$.subscribe({next: message => {
       this.message = message
     }})
-    if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
-      if (!this.userService.isLoggedIn()) {
-        this.message = _TRANSLATE('The update has been downloaded. Please log in to complete the update.')
-      } else {
-        if (
-          !await this.appConfigService.syncProtocol2Enabled() &&
-          await this.updateService.sp1_updateRequired()
-        ) {
-          await this.updateService.sp1_processUpdates()
-        }
-        if (
-          await this.appConfigService.syncProtocol2Enabled() && 
-          await this.updateService.sp2_updateRequired()
-        ) {
-          await this.updateService.sp2_processUpdates()
-        }
-        if (await this.appConfigService.syncProtocol2Enabled()) {
-          await this.deviceService.didUpdate()
-        }
-        await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
-        this.message = _TRANSLATE('✓ Yay! You are up to date.')
-      }
+
+    /*
+     * SP1
+     */
+
+    if (
+      !await this.appConfigService.syncProtocol2Enabled() &&
+      await this.updateService.sp1_updateRequired()
+    ) {
+      await this.updateService.sp1_processUpdates()
+      this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
+
+    if (
+      !await this.appConfigService.syncProtocol2Enabled() &&
+      !await this.updateService.sp1_updateRequired()
+    ) {
+      this.message = _TRANSLATE('✓ Yay! You are up to date.')
+    }
+
+    /*
+     * SP2
+     */
+
+    if (
+      await this.appConfigService.syncProtocol2Enabled() &&
+      !this.userService.isLoggedIn()
+    ) {
+      // Set VAR__UPDATE_IS_RUNNING so LoginComponent knows to redirect back to here after authenticating.
+      await this.variableService.set(VAR_UPDATE_IS_RUNNING, true)
+      this.message = _TRANSLATE('Please log in to complete the update.')
+    }   
+    
+    if (
+      await this.appConfigService.syncProtocol2Enabled() &&
+      this.userService.isLoggedIn()
+    ) {
+      await this.updateService.sp2_processUpdates()
+      await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
+      await this.deviceService.didUpdate()
+    } 
+
+    /*
+     * Show the button to proceed.
+     */
+    
     this.complete = true
+
   }
 
 }

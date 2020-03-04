@@ -93,7 +93,6 @@ export class AppComponent implements OnInit {
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
-      await this.variableService.set(VAR_UPDATE_IS_RUNNING, true)
       this.router.navigate(['/update'])
     }
     
