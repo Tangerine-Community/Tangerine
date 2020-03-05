@@ -58,6 +58,8 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
+T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
+
 if [ "$1" != "" ]; then
   T_TAG="$1"
 fi
@@ -88,8 +90,6 @@ RUN_OPTIONS="
   --env \"NODE_ENV=production\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
-  --env \"T_ADMIN=$T_ADMIN\" \
-  --env \"T_PASS=$T_PASS\" \
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \

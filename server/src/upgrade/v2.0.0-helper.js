@@ -167,7 +167,7 @@ var upgrade = function() {
       // Recursive function to iterate over the user names in the ACL doc.
       var addManagerRoleToOneUser = function addManagerRoleToOneUser(callback) {
         var userName = userNames[i]
-        if (userName == process.env.T_ADMIN) {
+        if (userName == process.env.T_COUCHDB_USER_ADMIN_NAME) {
           i++
           userName = userNames[i]
         }
