@@ -1,3 +1,4 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
@@ -12,9 +13,12 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
   styleUrls: ['./list-users.component.css']
 })
 export class ListUsersComponent implements OnInit {
-  groupName;
+  groupId;
   users;
+  usersDisplayedColumns = ['username', 'email', 'actions']
   @ViewChild('search') search: ElementRef;
+  title = _TRANSLATE("Security")
+  breadcrumbs:Array<Breadcrumb> = []
   constructor(
     private groupsService: GroupsService,
     private route: ActivatedRoute,
@@ -22,24 +26,25 @@ export class ListUsersComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Security'),
+        url: `security`
+      }
+    ]
     this.route.params.subscribe(params => {
-      this.groupName = params.groupName;
+      this.groupId = params.groupId;
     });
     await this.getUsersByGroup();
-    fromEvent(this.search.nativeElement, 'keyup')
-      .pipe(debounceTime(500))
-      .pipe(distinctUntilChanged())
-      .pipe(map(val => val['target'].value.trim()))
-      .subscribe(async val => val ? await this.getUsersByGroupAndUsername(val.trim()) : of([]));
   }
 
   async getUsersByGroupAndUsername(username: string) {
-    this.users = await this.groupsService.getUsersByGroupAndUsername(this.groupName, username);
+    this.users = await this.groupsService.getUsersByGroupAndUsername(this.groupId, username);
   }
 
   async getUsersByGroup() {
     try {
-      this.users = await this.groupsService.getUsersByGroup(this.groupName);
+      this.users = await this.groupsService.getUsersByGroup(this.groupId);
     } catch (error) {
       console.error(error);
     }
@@ -47,9 +52,9 @@ export class ListUsersComponent implements OnInit {
 
   async removeUserFromGroup(username: string) {
     try {
-      const removeUser = confirm(`Remove user: ${username} from Group: ${this.groupName}`);
+      const removeUser = confirm(`Remove user: ${username} from Group: ${this.groupId}`);
       if (removeUser) {
-        const result = await this.groupsService.removeUserFromGroup(this.groupName, username);
+        const result = await this.groupsService.removeUserFromGroup(this.groupId, username);
         this.errorHandler.handleError(_TRANSLATE('User Removed from Group Successfully'));
       }
     } catch (error) {

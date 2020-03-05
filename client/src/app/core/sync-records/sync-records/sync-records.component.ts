@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../../shared/_services/user.service';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
-import {PeersService} from '../peers/peers.service';
 
 @Component({
   selector: 'app-sync-records',
@@ -25,15 +24,14 @@ export class SyncRecordsComponent implements OnInit {
   constructor(
     private syncingService: SyncingService,
     private userService: UserService,
-    private appConfigService: AppConfigService,
-    public peersService: PeersService
+    private appConfigService: AppConfigService
   ) {
     this.window = window;
   }
 
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
-    this.syncProtocol = appConfig.syncProtocol;
+    this.syncProtocol = appConfig.syncProtocol ? appConfig.syncProtocol : '1'
     if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
     } else {
       this.getUploadProgress();

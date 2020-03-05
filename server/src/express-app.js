@@ -65,7 +65,8 @@ var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
     var path = require('url').parse(req.url).path;
     clog("path:" + path);
     return path;
-  }
+  },
+  limit: '1gb'
 });
 var mountpoint = '/db';
 app.use(mountpoint, couchProxy);
@@ -206,7 +207,7 @@ app.use('/client', express.static('/tangerine/client/dev'));
 app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/media-list', require('./routes/group-media-list.js'));
-// @TODO Need isGroupAdmin middleware.
+// @TODO Need isAdminUser middleware.
 app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
 app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
@@ -416,6 +417,16 @@ app.get('/groups', isAuthenticated, async function (req, res) {
   }
 })
 
+app.get('/groups/:username', isAuthenticated, async function (req, res) {
+  const username = req.params.username;
+  try {
+    const groups = await getGroupsByUser(username);
+    res.send(groups);
+  } catch (error) {
+    res.sendStatus(500)
+  }
+})
+  
 async function getGroupsByUser(username) {
   if (await isSuperAdmin(username)) {
     const readdirPromisified = util.promisify(fs.readdir)

@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import PouchDB from 'pouchdb';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { AppConfig } from 'src/app/shared/_classes/app-config.class';
-import { TwoWaySyncService } from 'src/app/two-way-sync/services/two-way-sync.service';
 
 const STATE_SYNCING = 'STATE_SYNCING'
 const STATE_INPUT = 'STATE_INPUT'
@@ -16,18 +15,17 @@ const STATE_INPUT = 'STATE_INPUT'
   styleUrls: ['./import-user-profile.component.css']
 })
 export class ImportUserProfileComponent implements AfterContentInit {
+
   appConfig:AppConfig
   state = STATE_INPUT
   docs;
-
   @ViewChild('userShortCode') userShortCodeInput: ElementRef;
 
   constructor(
     private router: Router,
     private http: HttpClient,
     private userService: UserService,
-    private appConfigService: AppConfigService,
-    private twoWaySyncService: TwoWaySyncService
+    private appConfigService: AppConfigService
   ) {  }
 
   ngAfterContentInit() {
@@ -35,7 +33,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
 
   async onSubmit() {
     const username = this.userService.getCurrentUser()
-    const db = new PouchDB(username)
+    const db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     const usersDb = new PouchDB('users')
     const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
     try {
@@ -47,17 +45,12 @@ export class ImportUserProfileComponent implements AfterContentInit {
     this.state = STATE_SYNCING
     this.appConfig = await this.appConfigService.getAppConfig()
     const shortCode = this.userShortCodeInput.nativeElement.value
-    if (this.appConfig.syncProtocol === 'two-way') {
-      userAccount.userUUID = shortCode
-      await usersDb.put(userAccount)
-      await this.twoWaySyncService.sync(username, shortCode)
-    } else {
-      this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupName}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
-      const newUserProfile = this.docs.find(doc => doc.form && doc.form.id === 'user-profile')
-      const usersDb = new PouchDB('users')
-      await usersDb.put({...userAccount, userUUID: newUserProfile._id})
-      this.docs.forEach(doc => delete doc._rev)
-      await db.bulkDocs(this.docs);
+    this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
+    const newUserProfile = this.docs.find(doc => doc.form && doc.form.id === 'user-profile')
+    await usersDb.put({...userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
+    for (let doc of this.docs) {
+      delete doc._rev
+      await db.put(doc)
     }
     this.router.navigate([`/${this.appConfig.homeUrl}`] );
   }

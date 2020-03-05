@@ -1,3 +1,7 @@
+mat-card {
+  width: 300px;
+  margin: 30px auto;
+}
 .mat-title {
   color: var(--primary-color);
   font-size: 1.5em;
@@ -24,7 +28,6 @@ input.mat-input-element {
   position: relative;
   bottom: 1em !important;
 }
-
 .mat-form-field {
-  width: 76%;
+  width: 100%;
 }

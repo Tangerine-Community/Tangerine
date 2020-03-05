@@ -1,5 +1,8 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
+import { GroupsService } from './../services/groups.service';
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { UserService } from 'src/app/core/auth/_services/user.service';
 
 
 @Component({
@@ -9,32 +12,21 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class GroupComponent implements OnInit {
 
+  title:string = ''
+  breadcrumbs:Array<Breadcrumb>
+  isAdminUser = false
+
   constructor(
-    private route: ActivatedRoute,
-    private elementRef: ElementRef
+    private groupsService: GroupsService,
+    private userService:UserService
   ) {}
 
-  id: string;
-  private sub: any;
-
-  ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-       this.id = params['id'];
-
-       // In a real app: dispatch action to load the details here.
-    });
+  async ngOnInit() {
+    this.isAdminUser = await this.userService.isCurrentUserAdmin()
+    const group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
+    this.title = group.label
+    this.breadcrumbs = []
   }
 
-  ngAfterContentInit() {
-    const container = document.createElement('div');
-    this.elementRef.nativeElement.appendChild(container);
-    container.innerHTML = `<iframe src="/editor/${this.id}/tangy-forms/editor.html"></iframe>`;
-    const iframe = container.querySelector('iframe')
-    iframe.style.setProperty('height', '100vh')
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
-  }
 
 }

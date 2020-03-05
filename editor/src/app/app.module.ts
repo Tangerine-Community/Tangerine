@@ -1,3 +1,4 @@
+import { UnsanitizeHtmlPipe } from './pipes/unsanitize.pipe';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

@@ -1,7 +1,7 @@
-<div *ngIf="syncProtocol === 'two-way'">
-  <app-two-way-sync></app-two-way-sync>
+<div *ngIf="syncProtocol === '2'">
+  <app-sync></app-sync>
 </div>
-<div *ngIf="!syncProtocol">
+<div *ngIf="syncProtocol === '1' ">
   <mat-card>
     <mat-card-content>
       <p class="mat-headline">{{'Syncing Status Summary'|translate}}</p>

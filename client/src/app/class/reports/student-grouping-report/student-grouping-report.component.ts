@@ -1,6 +1,6 @@
+import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {DashboardService} from "../../_services/dashboard.service";
-import {AuthenticationService} from "../../../shared/_services/authentication.service";
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {MatTableDataSource} from "@angular/material";
 import {ClassFormService} from "../../_services/class-form.service";
@@ -52,7 +52,7 @@ export class StudentGroupingReportComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private dashboardService: DashboardService,
-    private authenticationService: AuthenticationService,
+    private userService: UserService,
     private router: Router,
     private renderer: Renderer2
   )  {
@@ -67,7 +67,7 @@ export class StudentGroupingReportComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const currentUser = await this.authenticationService.getCurrentUser();
+    const currentUser = await this.userService.getCurrentUser();
     if (currentUser) {
       const classFormService = new ClassFormService({databaseName: currentUser});
       this.classFormService = classFormService

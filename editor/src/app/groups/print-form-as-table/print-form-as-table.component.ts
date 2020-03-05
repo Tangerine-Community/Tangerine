@@ -1,3 +1,4 @@
+import { TangerineFormsService } from './../services/tangerine-forms.service';
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
@@ -15,6 +16,7 @@ export class PrintFormAsTableComponent implements OnInit {
   meta;
   constructor(private route: ActivatedRoute,
     private http: HttpClient,
+    private tangerineFormsService:TangerineFormsService,
     private appConfigService: AppConfigService,
     private groupsService: GroupsService) { }
 
@@ -22,7 +24,7 @@ export class PrintFormAsTableComponent implements OnInit {
     const groupId = this.route.snapshot.paramMap.get('groupId');
     const formId = this.route.snapshot.paramMap.get('formId');
     this.groupDetails = await this.groupsService.getGroupInfo(groupId);
-    const forms = await this.groupsService.getFormsList(groupId);
+    const forms = await this.tangerineFormsService.getFormsInfo(groupId);
     const myForm = forms.find(e => e['id'] === formId);
     const formHtml = await this.http.get(`/editor/${groupId}/content/${myForm.id}/form.html`, { responseType: 'text' }).toPromise();
     const container = this.container.nativeElement;

@@ -1,3 +1,6 @@
+import { VariableService } from './../../../shared/_services/variable.service';
+import { UpdateService, VAR_UPDATE_IS_RUNNING } from './../../../shared/_services/update.service';
+import { DeviceService } from './../../../device/services/device.service';
 
 import {from as observableFrom,  Observable } from 'rxjs';
 
@@ -7,8 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { UserService } from '../../../shared/_services/user.service';
-import { AuthenticationService } from '../../../shared/_services/authentication.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
+import { VARIABLE_FINISH_UPDATE_ON_LOGIN } from '../../update/update/update.component';
 
 @Component({
   selector: 'app-login',
@@ -17,19 +20,26 @@ import { _TRANSLATE } from '../../../shared/translation-marker';
 })
 export class LoginComponent implements OnInit {
   errorMessage = '';
+  adminPassword = ''
+  requiresDevicePasswordToRecover
   returnUrl: string; // stores the value of the url to redirect to after login
-  user = { username: '', password: '' };
+  user = { username: '', password: '', newPassword: '' };
   users = [];
   installed = false
   showRecoveryInput = false;
   securityQuestionText;
   allUsernames;
   listUsernamesOnLoginScreen;
+  requiresAdminPassword = false
+  passwordPolicy: string
+  passwordRecipe: string
   constructor(
-    private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
+    private userService:UserService,
     private usersService: UserService,
+    private deviceService:DeviceService,
+    private variableService:VariableService,
     private appConfigService: AppConfigService
   ) {
     this.installed = localStorage.getItem('installed') ? true : false
@@ -38,18 +48,17 @@ export class LoginComponent implements OnInit {
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
+    this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
+    this.requiresDevicePasswordToRecover = this.deviceService.passwordIsSet()
     this.securityQuestionText = appConfig.securityQuestionText;
     this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
+    this.passwordPolicy = appConfig.passwordPolicy;
+    this.passwordRecipe = appConfig.passwordRecipe;
     if (this.listUsernamesOnLoginScreen) {
       this.allUsernames = await this.usersService.getUsernames();
     }
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-    const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
-    // TODO List users on login page
-    // Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
-    //   this.users = data;
-    // });
-    if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
+    if (this.userService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
     }
 
@@ -59,8 +68,19 @@ export class LoginComponent implements OnInit {
     this.showRecoveryInput = !this.showRecoveryInput;
   }
 
-  resetPassword() {
-    observableFrom(this.authenticationService.resetPassword(this.user)).subscribe(data => {
+  async resetPassword() {
+    this.errorMessage = ''
+    if (await this.appConfigService.syncProtocol2Enabled() && !await this.userService.confirmPassword('admin', this.adminPassword)) {
+      this.errorMessage = _TRANSLATE('Admin password incorrect.')
+      return
+    }
+    const policy = new RegExp(this.passwordPolicy)
+    if (!policy.test(this.user.newPassword)) {
+      this.errorMessage = _TRANSLATE('Password is not strong enough.') + ' ' + this.passwordRecipe
+      return
+    }
+    this.user.password = this.user.newPassword
+    observableFrom(this.userService.resetPassword(this.user, this.adminPassword)).subscribe(data => {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
@@ -71,10 +91,16 @@ export class LoginComponent implements OnInit {
 
     });
   }
+
+  // we need to have error msg for admin pass failure
   loginUser() {
-    observableFrom(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
+    observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(async data => {
       if (data) {
-        this.router.navigate(['' + this.returnUrl]);
+        if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
+          this.router.navigate(['/update']);
+        } else {
+          this.router.navigate(['' + this.returnUrl]);
+        }
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccesful');
       }

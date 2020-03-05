@@ -1,0 +1,25 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
+<mat-card *ngIf="isGroupAdminUser" class="is-link mat-elevation-z3" routerLink="uploads">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Uploads'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'View uploaded form responses from devices.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-card class="is-link mat-elevation-z3" routerLink="download-csv">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">cloud_download</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Download CSV'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Download CVSs of data.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>

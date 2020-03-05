@@ -16,4 +16,10 @@ export class AppConfigService {
     const result:any = await this.getAppConfig();
     return result.homeUrl;
   }
+  public async syncProtocol2Enabled() {
+    const config = await this.getAppConfig()
+    return config.syncProtocol === '2' ? true : false
+  }
+
+
 }

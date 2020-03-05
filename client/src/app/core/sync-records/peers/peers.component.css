@@ -1,4 +1,8 @@
-.p2p-sync-header {
+:host {
+  display: block;
+  padding: 15px;
+}
+.p2p-sync {
   margin-bottom: 1em;
 }
 .peersList {
@@ -8,4 +12,23 @@
   margin-top: 1em;
   overflow:auto;
   height:200px;
+}
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
+mat-chip {
+  max-width: 400px;
+  height: 50px;
+}
+.bigText {
+  font-size: large;
+}
+#transferProgress {
+  padding-bottom: 1em;
 }

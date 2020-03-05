@@ -1,3 +1,4 @@
+import { FormSearchSettings, CustomSyncSettings, CouchdbSyncSettings } from './../../shared/_classes/tangerine-form.class';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
@@ -18,35 +19,6 @@ export class TangerineFormsService {
     private filesService: FilesService
   ) { }
 
-  async getFormsList(groupId: string) {
-    try {
-      return <Array<any>>[
-        ...await this.getFormsInfo(groupId),
-        <TangerineFormInfo>{
-          id: 'user-profile',
-          title: 'User Profile',
-          type: 'form',
-          src: './assets/user-profile/form.html'
-        },
-        <TangerineFormInfo>{
-          id: 'reports',
-          title: 'Reports',
-          type: 'form',
-          src: './assets/reports/form.html'
-        }
-      ]
-        .map(formInfo => ({
-          ...formInfo,
-          printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${groupId}/${formInfo.id}/print`
-        }));
-    } catch (error) {
-      console.error(error);
-      if (typeof error.status === 'undefined') {
-        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
-      }
-    }
-  }
-
   async getFormsInfo(groupId: string) {
     try {
       return <Array<TangerineFormInfo>>await this.filesService.get(groupId, './forms.json')
@@ -57,6 +29,10 @@ export class TangerineFormsService {
       }
     }
   }
+  
+  async saveFormsInfo(groupId: string, formsInfo:Array<TangerineFormInfo>) {
+    await this.filesService.save(groupId, `./forms.json`, formsInfo)
+  }
 
   async createForm(groupId, formTitle = 'New Form', formContents = '') {
     const formId = `form-${uuidv4()}`
@@ -64,7 +40,23 @@ export class TangerineFormsService {
       id: formId,
       type: 'form',
       title: formTitle,
-      src: `./assets/${formId}/form.html`
+      src: `./assets/${formId}/form.html`,
+      searchSettings:  <FormSearchSettings>{
+        shouldIndex: false,
+        variablesToIndex: [],
+        primaryTemplate: '',
+        secondaryTemplate: ''
+      },
+      customSyncSettings: <CustomSyncSettings>{
+        enabled: true,
+        push: true,
+        pull: false,
+        excludeIncomplete:false
+      },
+      couchdbSyncSettings: <CouchdbSyncSettings>{
+        enabled: false,
+        filterByLocation: false
+      }
     }
     let safeFormContents = ''
     if (formContents === '') {

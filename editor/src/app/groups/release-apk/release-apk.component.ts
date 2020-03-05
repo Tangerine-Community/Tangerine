@@ -18,7 +18,7 @@ const STATUS_WAIT = 'STATUS_WAIT'
 })
 export class ReleaseApkComponent implements OnInit {
 
-  groupName = '';
+  groupId = '';
   releaseType = '';
   code = {
     STATUS_BUILDING: 'STATUS_BUILDING',
@@ -29,25 +29,19 @@ export class ReleaseApkComponent implements OnInit {
   status: any 
 
   constructor(
-    private route: ActivatedRoute,
-    private groupsService: GroupsService,
-    private errorHandler: TangyErrorHandler) { }
+    private groupsService: GroupsService
+  ) { }
 
   async ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.groupName = params['id'];
-      this.releaseType = params['releaseType'];
-    });
-    await this.releaseAPK();
   }
 
   async releaseAPK() {
     this.status = this.code.STATUS_WAIT
     try {
-      const result: any = await this.groupsService.releaseAPK(this.groupName, this.releaseType);
+      const result: any = await this.groupsService.releaseAPK(this.groupId, this.releaseType);
       // Wait 5 seconds so the process can start. This can result in false positives. Would be better to have build IDs returns from the release command.
       await sleep(5000)
-      while (await this.groupsService.apkIsBuilding(this.groupName, this.releaseType)) {
+      while (await this.groupsService.apkIsBuilding(this.groupId, this.releaseType)) {
         this.status = this.code.STATUS_BUILDING
         await sleep(10000)
       }

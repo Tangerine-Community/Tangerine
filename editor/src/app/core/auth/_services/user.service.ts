@@ -6,7 +6,7 @@ import { _TRANSLATE } from '../../../shared/_services/translation-marker';
 @Injectable()
 export class UserService {
 
-  constructor(private httpClient: HttpClient, private errorHandler: TangyErrorHandler) { }
+  constructor(private httpClient: HttpClient, private errorHandler: TangyErrorHandler, private http: HttpClient) { }
 
   async createUser(payload) {
     try {
@@ -60,10 +60,13 @@ export class UserService {
       return false;
     }
   }
+  // Note that user1 is always assumed to be an admin.
+  // returns false or the list of groups a user is an admin to
+  // If user1, returns an empty list
   async isAdmin(username: string) {
     try {
       const data: any = await this.httpClient.get(`/users/isAdminUser/${username}`).toPromise();
-      return data.data; // returns false or the list of groups a user is an admin to
+      return (username === 'user1' && data.data === false) ? [] : data.data;
     } catch (error) {
       this.showError(error);
       return false;
@@ -83,7 +86,7 @@ export class UserService {
     try {
       const username = await this.getCurrentUser();
       const admin = await this.isAdmin(username);
-      const isAdmin = admin.filter(a => a.attributes.name === groupName && a.attributes.role === 'admin');
+      const isAdmin = admin && admin.filter(a => a.attributes.name === groupName && a.attributes.role === 'admin');
       return isAdmin && isAdmin.length > 0;
     } catch (error) {
       this.showError(error);
@@ -100,4 +103,9 @@ export class UserService {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
+
+  async canManageSitewideUsers() {
+    return <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
+  }
+
 }

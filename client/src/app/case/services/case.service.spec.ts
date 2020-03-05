@@ -14,16 +14,16 @@ import PouchDB from 'pouchdb';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { CaseParticipant } from '../classes/case-participant.class';
-
+import moment from 'moment/src/moment';
 class MockCaseDefinitionsService {
   async load() {
     return <Array<CaseDefinition>>[
       {
-        "id": "caseDefinition1",
-        "formId": "caseDefinition1Form",
-        "name": "Case Type 1",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        "caseRoles": [
+        'id': 'caseDefinition1',
+        'formId': 'caseDefinition1Form',
+        'name': 'Case Type 1',
+        'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        'caseRoles': [
           <CaseRole>{
             id: 'role1',
             label: 'Role 1'
@@ -33,104 +33,104 @@ class MockCaseDefinitionsService {
             label: 'Role 2'
           }
         ],
-        "eventDefinitions": <Array<CaseEventDefinition>>[
+        'eventDefinitions': <Array<CaseEventDefinition>>[
           {
-            "id": "event-definition-screening",
-            "name": "Screening",
-            "description": "A screening.",
-            "repeatable": false,
-            "required": true,
-            "estimatedTimeFromCaseOpening": 0,
-            "estimatedTimeWindow": 0,
-            "eventFormDefinitions": [
+            'id': 'event-definition-screening',
+            'name': 'Screening',
+            'description': 'A screening.',
+            'repeatable': false,
+            'required': true,
+            'estimatedTimeFromCaseOpening': 0,
+            'estimatedTimeWindow': 0,
+            'eventFormDefinitions': [
               <EventFormDefinition>{
-                "id": "event-form-1",
-                "formId": "form1",
-                "forCaseRole": "role1",
-                "name": "Form 1",
-                "required": true,
-                "repeatable": false
+                'id': 'event-form-1',
+                'formId': 'form1',
+                'forCaseRole': 'role1',
+                'name': 'Form 1',
+                'required': true,
+                'repeatable': false
               },
               <EventFormDefinition>{
-                "id": "event-form-2",
-                "formId": "form2",
-                "forCaseRole": "role2",
-                "name": "Form 2",
-                "required": true,
-                "repeatable": false
+                'id': 'event-form-2',
+                'formId': 'form2',
+                'forCaseRole': 'role2',
+                'name': 'Form 2',
+                'required': true,
+                'repeatable': false
               }
             ]
           },
           {
-            "id": "event-definition-first-visit",
-            "name": "First visit",
-            "description": "The first visit",
-            "repeatable": false,
-            "required": true,
-            "estimatedTimeFromCaseOpening": 15552000000,
-            "estimatedTimeWindow": 2592000000,
-            "eventFormDefinitions": [
+            'id': 'event-definition-first-visit',
+            'name': 'First visit',
+            'description': 'The first visit',
+            'repeatable': false,
+            'required': true,
+            'estimatedTimeFromCaseOpening': 15552000000,
+            'estimatedTimeWindow': 2592000000,
+            'eventFormDefinitions': [
               <EventFormDefinition>{
-                "id": "event-form-1",
-                "formId": "form1",
-                "forCaseRole": "role1",
-                "name": "Form 1",
-                "required": true,
-                "repeatable": false
+                'id': 'event-form-1',
+                'formId': 'form1',
+                'forCaseRole': 'role1',
+                'name': 'Form 1',
+                'required': true,
+                'repeatable': false
               },
               <EventFormDefinition>{
-                "id": "event-form-2",
-                "formId": "form2",
-                "forCaseRole": "role1",
-                "name": "Form 2 (repeatable)",
-                "required": true,
-                "repeatable": true 
+                'id': 'event-form-2',
+                'formId': 'form2',
+                'forCaseRole': 'role1',
+                'name': 'Form 2 (repeatable)',
+                'required': true,
+                'repeatable': true 
               },
               <EventFormDefinition>{
-                "id": "event-form-3",
-                "formId": "form3",
-                "forCaseRole": "role1",
-                "name": "Form 3",
-                "required": false,
-                "repeatable": false 
+                'id': 'event-form-3',
+                'formId': 'form3',
+                'forCaseRole': 'role1',
+                'name': 'Form 3',
+                'required': false,
+                'repeatable': false 
               }
             ]
           },
           {
-            "id": "event-definition-repeatable-event",
-            "name": "A Repeatable Event",
-            "description": "A repeatable event.",
-            "repeatable": true,
-            "required": true,
-            "estimatedTimeFromCaseOpening": 0,
-            "estimatedTimeWindow": 0,
-            "eventFormDefinitions": [
+            'id': 'event-definition-repeatable-event',
+            'name': 'A Repeatable Event',
+            'description': 'A repeatable event.',
+            'repeatable': true,
+            'required': true,
+            'estimatedTimeFromCaseOpening': 0,
+            'estimatedTimeWindow': 0,
+            'eventFormDefinitions': [
               <EventFormDefinition>{
-                "id": "event-form-1",
-                "formId": "form1",
-                "forCaseRole": "role1",
-                "name": "Form 1",
-                "required": true,
-                "repeatable": false
+                'id': 'event-form-1',
+                'formId': 'form1',
+                'forCaseRole': 'role1',
+                'name': 'Form 1',
+                'required': true,
+                'repeatable': false
               }
             ]
           },
           {
-            "id": "event-definition-not-required-event",
-            "name": "A Event that is not require",
-            "description": "An event that is not required.",
-            "repeatable": true,
-            "required": false,
-            "estimatedTimeFromCaseOpening": 0,
-            "estimatedTimeWindow": 0,
-            "eventFormDefinitions": [
+            'id': 'event-definition-not-required-event',
+            'name': 'A Event that is not require',
+            'description': 'An event that is not required.',
+            'repeatable': true,
+            'required': false,
+            'estimatedTimeFromCaseOpening': 0,
+            'estimatedTimeWindow': 0,
+            'eventFormDefinitions': [
               <EventFormDefinition>{
-                "id": "event-form-1",
-                "formId": "form1",
-                "forCaseRole": "role1",
-                "name": "Form 1",
-                "required": true,
-                "repeatable": false
+                'id': 'event-form-1',
+                'formId': 'form1',
+                'forCaseRole': 'role1',
+                'name': 'Form 1',
+                'required': true,
+                'repeatable': false
               }
             ]
           }
@@ -143,9 +143,9 @@ class MockCaseDefinitionsService {
 class MockTangyFormService {
   async getFormMarkup(formId) {
     return `
-      <tangy-form id="caseDefinition1Form">
-        <tangy-form-item id="item1">
-          <tangy-input name="input1"></tangy-input>
+      <tangy-form id='caseDefinition1Form'>
+        <tangy-form-item id='item1'>
+          <tangy-input name='input1'></tangy-input>
         </tangy-form>
       </tangy-form>
     `
@@ -173,8 +173,8 @@ describe('CaseService', () => {
       ],
       providers: [
         { 
-          provide: CaseDefinitionsService, 
-          useClass: MockCaseDefinitionsService      
+          provide: CaseDefinitionsService,
+          useClass: MockCaseDefinitionsService
         },
         {
           provide: TangyFormService,
@@ -201,18 +201,48 @@ describe('CaseService', () => {
     expect(service.case._id).toBeTruthy()
   })
 
-  it('should schedule an event', async () => {
-    const service: CaseService = TestBed.get(CaseService);
+  it('should set an event ocurred on date', async () => {
+    const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
-    await service.scheduleEvent(service.case.events[0].id, 12345678)
-    expect(service.case.events[0].dateStart).toEqual(12345678)
-    expect(service.case.events[0].dateEnd).toEqual(12345678)
-    expect(service.case.events[0].estimate).toEqual(false)
+    const timeInMs = new Date().getTime()
+    const date = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    service.setEventOccurredOn(service.case.events[0].id, timeInMs)
+    expect(service.case.events[0].occurredOnDay).toEqual(date)
+  })
+  it('should set an event EstimatedDay date', async () => {
+    const service: CaseService = TestBed.get(CaseService)
+    await service.create('caseDefinition1')
+    await service.createEvent('event-definition-first-visit')
+    const timeInMs = new Date().getTime()
+    const date = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    service.setEventEstimatedDay(service.case.events[0].id, timeInMs)
+    expect(service.case.events[0].estimatedDay).toEqual(date)
+  })
+  it('should set an event ScheduledDay date', async () => {
+    const service: CaseService = TestBed.get(CaseService)
+    await service.create('caseDefinition1')
+    await service.createEvent('event-definition-first-visit')
+    const timeInMs = new Date().getTime()
+    const date = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    service.setEventScheduledDay(service.case.events[0].id, timeInMs)
+    expect(service.case.events[0].scheduledDay).toEqual(date)
+  })
+  it('should set an event Window period', async () => {
+    const service: CaseService = TestBed.get(CaseService)
+    await service.create('caseDefinition1')
+    await service.createEvent('event-definition-first-visit')
+    const windowStartDayTimeInMs = new Date().getTime()
+    const windowEndDayTimeInMs = new Date().getTime()
+    const windowStartDay = moment((new Date(windowStartDayTimeInMs))).format('YYYY-MM-DD')
+    const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    service.setEventWindow(service.case.events[0].id, windowStartDayTimeInMs, windowEndDayTimeInMs)
+    expect(service.case.events[0].windowStartDay).toEqual(windowStartDay)
+    expect(service.case.events[0].windowEndDay).toEqual(windowEndDay)
   })
 
   it('should create participant and create forms for existing events', async () => {
-    const service: CaseService = TestBed.get(CaseService);
+    const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-screening', true)
     expect(service.case.events[0].eventForms.length).toEqual(0)
@@ -237,7 +267,7 @@ describe('CaseService', () => {
     const caseParticipant2 = await service.createParticipant('role2')
     const caseEvent = await service.createEvent('event-definition-screening', true)
     expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_IN_PROGRESS)
-    for (let eventForm of service.case.events[0].eventForms) {
+    for (const eventForm of service.case.events[0].eventForms) {
       service.markEventFormComplete(caseEvent.id, eventForm.id)
     }
     expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_COMPLETED)

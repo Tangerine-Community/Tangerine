@@ -22,6 +22,7 @@ import { FormsModule } from '@angular/forms';
 import { CaseEventListItemComponent } from './components/case-event-list-item/case-event-list-item.component';
 import { EventFormListItemComponent } from './components/event-form-list-item/event-form-list-item.component';
 import { QueryComponent } from './components/query/query.component';
+import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -51,7 +52,8 @@ import { QueryComponent } from './components/query/query.component';
     CaseHomeComponent,
     CaseEventListItemComponent,
     EventFormListItemComponent,
-    QueryComponent
+    QueryComponent,
+    EventFormAddComponent
   ]
 })
 export class CaseModule { }
