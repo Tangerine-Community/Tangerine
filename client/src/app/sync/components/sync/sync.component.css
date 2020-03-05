@@ -1,0 +1,29 @@
+/*.container {*/
+/*  margin: 1em auto;*/
+/*}*/
+
+.status {
+  margin: 15px 0px 0px;
+}
+
+mat-card {
+  margin-top: 1em;
+}
+
+.mat-card-header-text {
+  margin: 1em 0;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+/*button {*/
+/*  margin-left: 1em;*/
+/*}*/
+.mat-progress-bar {
+  margin-top: 1em;
+  width: 50%
+}
+
+div {
+  margin: 1em;
+}

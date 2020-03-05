@@ -36,6 +36,12 @@
         </mat-placeholder>
       </mat-form-field>
       <div *ngIf="showRecoveryInput">
+        <mat-form-field *ngIf="requiresAdminPassword === true">
+          <input name="admin-password" type="password" matInput [(ngModel)]="adminPassword" required>
+          <mat-placeholder>
+            <i class="material-icons app-input-icon">lock_open</i>{{'Admin Password'|translate}}
+          </mat-placeholder>
+        </mat-form-field>
         <mat-form-field>
           <input matInput type="text" required [(ngModel)]="user.securityQuestionResponse" id="securityQuestionResponse" name="securityQuestionResponse">
           <mat-placeholder>
@@ -62,7 +68,6 @@
       </span>
 
       <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
-
       <button *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button color="accent">{{'RESET PASSWORD'|translate}}</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
         color="accent" name="action">{{'SUBMIT'|translate}}</button>

@@ -1,3 +1,5 @@
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -20,6 +22,10 @@ interface CaseNode {
   styleUrls: ['./case-management-editor.component.css']
 })
 export class CaseManagementEditorComponent implements OnInit, OnDestroy {
+
+  title = _TRANSLATE('Case Definitions')
+  breadcrumbs:Array<Breadcrumb> = []
+ 
   treeControl = new NestedTreeControl<CaseNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<CaseNode>();
   groupId;
@@ -36,6 +42,12 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
     private caseService: CaseManagementEditorService
   ) { }
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Case Definitions'),
+        url: 'case-definitions'
+      }
+    ]
     this.groupId = this.route.snapshot.paramMap.get('groupName');
     this.paramsSubscription = this.route.queryParams.subscribe(async queryParams => {
       this.currentNodeType = queryParams['currentNodeType'];

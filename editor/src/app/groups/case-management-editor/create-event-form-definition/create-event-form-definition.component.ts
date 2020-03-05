@@ -1,3 +1,4 @@
+import { TangerineFormsService } from './../../services/tangerine-forms.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
@@ -29,12 +30,13 @@ export class CreateEventFormDefinitionComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
+    private tangerineFormsService:TangerineFormsService,
     private caseService: CaseManagementEditorService,
     private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
-    this.formsList = (await this.groupsService.getFormsList(this.groupId)).filter(x => x['type'] === 'form');
+    this.formsList = (await this.tangerineFormsService.getFormsInfo(this.groupId)).filter(x => x['type'] === 'form');
     this.subscription = this.route.queryParams.subscribe(async queryParams => {
       this.caseDetailId = queryParams['caseDetailId'];
       this.eventDefinitionId = queryParams['parentId'];

@@ -1,3 +1,4 @@
+import { UserAccount } from './../shared/_classes/user-account.class';
 import { AfterContentInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -39,6 +40,9 @@ export class UserProfileComponent implements AfterContentInit {
       event.preventDefault()
       const profileDoc = formEl.store.getState()
       await userDb.put(profileDoc)
+      if (!userAccount.initialProfileComplete) {
+        await this.userService.saveUserAccount(<UserAccount>{ ...userAccount, initialProfileComplete:true })
+      }
       this.router.navigate([this.returnUrl]);
     })
     try {

@@ -1,19 +1,14 @@
-<div class="tangy-content-top-margin">
-<mat-tab-group class="tangy-full-width" (selectedTabChange)="tabChanged($event)" [selectedIndex]="selectedIndex">
-    
-    <mat-tab label="{{'< Back to Group'|translate}}">
-    </mat-tab>
+<mat-tab-group class="tangy-full-width" [selectedIndex]="selectedIndex">
     <mat-tab>
       <ng-template mat-tab-label>
         {{'Form Editor'|translate}}
       </ng-template>
-        <div #container></div>
+      <div #container></div>
     </mat-tab>
-    <mat-tab *ngIf="hasClassModule" >
+    <mat-tab *ngIf="hasClassModule">
       <ng-template mat-tab-label>
         {{'Feedback Editor'|translate}}
       </ng-template>
-      <feedback-editor [groupName]="groupName" [formId]="formId"></feedback-editor>
+      <feedback-editor [groupName]="groupId" [formId]="formId"></feedback-editor>
     </mat-tab>
 </mat-tab-group>
-</div>

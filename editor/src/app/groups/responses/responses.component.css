@@ -5,3 +5,12 @@
   input {
     width: 80%;
   }
+
+  #filter {
+    height: 150px;
+    margin-top: -30px;
+  }
+
+  #filter tangy-select {
+    margin-top:0px;
+  }

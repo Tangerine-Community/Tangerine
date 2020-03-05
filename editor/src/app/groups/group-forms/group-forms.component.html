@@ -1,0 +1,169 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<paper-dialog #copyFormOverlay>
+  <h2>{{'Copy form to'|translate}}:</h2>
+  <p>
+    <app-copy-form [formId]="copyFormId" [sourceGroupId]="groupId" (done)="closeCopyFormDialog()"></app-copy-form>
+  </p>
+  <div class="buttons">
+    <paper-button dialog-confirm autofocus>cancel</paper-button>
+  </div>
+</paper-dialog>
+
+<paper-fab *ngIf="isGroupAdminUser" mat-raised-button icon="add" color="accent" class="action" (click)="addForm()">
+</paper-fab>
+
+<h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
+<mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropActive($event)">
+  <mat-list-item class="drag-item" *ngFor="let form of activeForms; let index=index" cdkDrag
+    [cdkDragDisabled]="!isGroupAdminUser">
+    <mat-list class="tangy-full-width" *cdkDragPreview>
+      <mat-list-item>
+        <span>{{index+1}}</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span [innerHTML]="form.title|unsanitizeHtml"></span>
+        <span class="tangy-spacer-drag"></span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
+          </a>
+        </span>
+        <span><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+          </a>
+        </span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+          </a>
+        </span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
+          </a>
+        </span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
+          </a>
+        </span>
+      </mat-list-item>
+    </mat-list>
+    <span>{{index+1}}</span>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+
+    <span *ngIf="isGroupAdminUser">
+      <a mat-icon-button routerLink="edit/{{form.id}}">
+        <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
+      </a>
+    </span>
+    <span>
+      <mat-select #test>
+        <mat-option style="width:160px;">
+          <a mat-icon-button target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
+        </mat-option>
+        <mat-option style="width:160px; ">
+          <a mat-icon-button target="_new"
+            [href]="groupUrl+'#/groups/'+groupId+'/printFormAsTable/'+form.id">{{'Print Metadata'|translate}}</a>
+        </mat-option>
+      </mat-select>
+    </span>
+    <span>
+      <a mat-icon-button (click)="test.open()">
+        <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+      </a>
+    </span>
+
+    <span *ngIf="isGroupAdminUser">
+      <a mat-icon-button (click)="onCopyFormClick(form.id)">
+        <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+      </a>
+    </span>
+
+    <span *ngIf="isGroupAdminUser"><button mat-icon-button
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        (click)="deleteForm(groupId, form.id)">
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+          class="material-icons mat-32 tangy-location-list-icon">delete</i>
+      </button>
+    </span>
+
+    <span *ngIf="isGroupAdminUser">
+      <button mat-icon-button
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        (click)="onArchiveFormClick(groupId, form.id)">
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+          class="material-icons mat-32 tangy-location-list-icon">archive</i>
+      </button>
+    </span>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-list>
+<h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
+<mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropArchived($event)">
+  <mat-list-item class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag
+    [cdkDragDisabled]="!isGroupAdminUser">
+    <mat-list class="tangy-full-width" *cdkDragPreview>
+      <mat-list-item>
+        <span>{{index+1}}</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span [innerHTML]="form.title|unsanitizeHtml"></span>
+        <span class="tangy-spacer-drag"></span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
+          </a>
+        </span>
+        <span><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+          </a>
+        </span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+          </a>
+        </span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
+          </a>
+        </span>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
+          </a>
+        </span>
+      </mat-list-item>
+    </mat-list>
+    <span>{{index+1}}</span>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+
+    <span *ngIf="isGroupAdminUser"><a mat-icon-button
+        [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupId+'/'+form.id:'/groups/'+groupId">
+        <i [class.disabled-button]="!isGroupAdminUser"
+          class="material-icons mat-32 tangy-location-list-icon">edit</i>
+      </a>
+    </span>
+
+    <span *ngIf="isGroupAdminUser"><a mat-icon-button target="_new" href="{{form.printUrl}}">
+        <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+      </a>
+    </span>
+
+    <span *ngIf="isGroupAdminUser">
+      <a mat-icon-button (click)="onCopyFormClick(form.id)">
+        <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+      </a>
+    </span>
+
+    <span *ngIf="isGroupAdminUser"><button mat-icon-button
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        (click)="deleteForm(groupId, form.id)">
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+          class="material-icons mat-32 tangy-location-list-icon">delete</i>
+      </button>
+    </span>
+
+    <span *ngIf="isGroupAdminUser">
+      <button mat-icon-button
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        (click)="onUnArchiveFormClick(groupId, form.id)">
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+          class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
+      </button>
+    </span>
+  </mat-list-item>
+</mat-list>

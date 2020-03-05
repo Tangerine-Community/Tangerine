@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatCardModule, MatInputModule, MatListModule, MatSelectModule } from '@angular/material';
+import {MatButtonModule, MatCardModule, MatInputModule, MatListModule, MatSelectModule, MatTableModule} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from '../../shared/shared.module';
 import { AuthRoutingModule } from './auth-routing.module';
@@ -14,20 +14,22 @@ import { UserService } from './_services/user.service';
 import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
 @NgModule({
-  imports: [
-    CommonModule,
-    MatListModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    AuthRoutingModule,
-    SharedModule
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [
+        CommonModule,
+        MatListModule,
+        MatInputModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        AuthRoutingModule,
+        SharedModule,
+        MatTableModule
 
-  ],
+    ],
   declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent],
   providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
 })

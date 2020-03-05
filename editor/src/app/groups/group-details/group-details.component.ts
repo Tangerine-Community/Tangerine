@@ -1,3 +1,4 @@
+import { CouchdbSyncSettings, TangerineForm, TangerineFormInfo } from './../../shared/_classes/tangerine-form.class';
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
@@ -11,6 +12,7 @@ import { TangerineFormsService } from '../services/tangerine-forms.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 
 
 @Component({
@@ -20,7 +22,6 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class GroupDetailsComponent implements OnInit, AfterViewInit {
   forms;
-  groupName;
   groupId;
   group;
   groupLabel;
@@ -42,21 +43,21 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private tangerineForms: TangerineFormsService,
     private errorHandler: TangyErrorHandler,
+    private serverConfig: ServerConfigService,
     private router: Router,
     private http: HttpClient
   ) { }
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
-      this.groupName = params.groupName;
-      this.groupId = params.groupName;
+      this.groupId = params.groupId;
       this.group = await this.groupsService.getGroupInfo(this.groupId);
       this.groupLabel = this.group.label;
       this.formsJsonURL = `./forms.json`;
     });
     try {
       this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
-      this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupName);
+      this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupId);
       await this.getForms();
       this.groupUrl = `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;
     } catch (error) {
@@ -69,7 +70,8 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex');
     }, 500);
-    this.enabledModules = await this.http.get(`/api/modules`).toPromise();
+    const config = await this.serverConfig.getServerConfig()
+    this.enabledModules = config.enabledModules;
   }
 
   tabChanged(event: MatTabChangeEvent) {
@@ -78,14 +80,19 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
       queryParams: { selectedTabIndex: this.selectedTabIndex }
     });
   }
+
   async getForms() {
-    this.forms = await this.groupsService.getFormsList(this.groupName);
+    this.forms = (await this.tangerineForms.getFormsInfo(this.groupId)).map(formInfo => ({
+      ...formInfo,
+      printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${this.groupId}/${formInfo.id}/print`
+    }));;
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }
+
   async addForm() {
-    const formId = await this.tangerineForms.createForm(this.groupName, "New Form")
-    this.router.navigate(['tangy-form-editor', this.groupName, formId])
+    const formId = await this.tangerineForms.createForm(this.groupId, "New Form")
+    this.router.navigate(['tangy-form-editor', this.groupId, formId])
   }
 
   async deleteForm(groupId, formId) {
@@ -93,15 +100,48 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     if (!confirmation) { return; }
     try {
       await this.tangerineForms.deleteForm(groupId, formId);
-      this.forms = await this.groupsService.getFormsList(this.groupName);
+      this.forms = await this.tangerineForms.getFormsInfo(this.groupId);
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could not Delete Form.'));
     }
   }
+  async toggleTwoWaySyncOnForm(groupId, formId) {
+    const forms = await this.tangerineForms.getFormsInfo(groupId);
+    const updatedForms = <Array<TangerineFormInfo>>forms.map(form => {
+      return form.id === formId 
+        ? form.couchdbSyncSettings.enabled 
+          ? {
+            ...form,
+            couchdbSyncSettings: {
+              enabled: false,
+              filterByLocation: false
+            },
+            customSyncSettings: {
+              enabled: true,
+              push: true,
+              pull: false
+            }
+          }
+          : {
+            ...form,
+            couchdbSyncSettings: {
+              enabled: true,
+              filterByLocation: true 
+            },
+            customSyncSettings: {
+              enabled: false,
+              push: false,
+              pull: false
+            }
+          }
+        : form
+    })
+    await this.tangerineForms.saveFormsInfo(this.groupId, updatedForms)
+  }
 
   async closeCopyFormDialog() {
     this.copyFormOverlay.nativeElement.close();
-    this.forms = await this.groupsService.getFormsList(this.groupName);
+    this.forms = await this.tangerineForms.getFormsInfo(this.groupId);
   }
 
   onCopyFormClick(formId: string) {

@@ -1,15 +1,9 @@
-<div class="tangy-content-top-margin">
-<div *ngIf="datOutputsModuleEnabled">
-  Dat URL:
-  <input value="{{datUrl}}">
-  <br><br>
+<div id="filter" *ngIf="!hideFilterBy">
+  <tangy-select name="form" label="Filter by form" (change)="filterByForm($event)">
+    <option value="*">*</option>
+    <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
+  </tangy-select>
 </div>
-Filter:
-<select name="form" (change)="filterByForm($event)">
-  <option value="*">*</option>
-  <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
-</select>
-
 <table>
   <tr>
     <th>ID</th>
@@ -25,7 +19,7 @@ Filter:
     <td>{{response.form?.id}}</td>
     <td>{{(response.userProfileId) ? response.userProfileId : 'anonymous'}}</td>
     <td>
-      <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: response.form?.id, groupName: groupName, responseId: response._id}">
+      <a routerLink="{{response._id}}">
         <paper-button raised>
           view
         </paper-button>
@@ -40,4 +34,3 @@ Filter:
 </table>
 <paper-button *ngIf="this.skip !== 0" (click)="previousPage()">< back</paper-button>
 <paper-button (click)="nextPage()">next ></paper-button>
-</div>

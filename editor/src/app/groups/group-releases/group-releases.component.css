@@ -1,0 +1,12 @@
+.release-table {
+  margin: 15px;
+}
+
+a:hover, a:active, a:visited {
+  text-decoration: none;
+  color: var(--primary-text-color);
+}
+
+.link {
+  cursor: pointer;
+}

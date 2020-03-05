@@ -29,7 +29,7 @@ T_PAID_ALLOWANCE="unlimited"
 T_REPORTING_DELAY="300000"
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50
-# Determines wether only user1 can add and see sitewide users or all users can.
+# Determines whether only user1 can add and see sitewide users or all admin users can. If false, all admin users can add and see sitewide users.
 T_USER1_MANAGED_SERVER_USERS="false"
 # On client, prevent users from editing their own profile.
 T_HIDE_PROFILE="false"
@@ -42,7 +42,7 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 T_REPLICATE="[]"
 # Available modules: csv, logstash, class, case
 # To enable modules, list them like so: 
-# T_MODULES="['csv','class', 'logstash']"
+# T_MODULES="['csv','class','logstash','sync-protocol-2']"
 T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
@@ -56,6 +56,9 @@ T_COUCHDB_LOCAL="true"
 # options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
 T_ORIENTATION="any"
 # In CSV output, set cell value to this when something is disabled or hidden. Set to "ORIGINAL_VALUE" if you want the actual value stored.
-T_CSV_MARK_DISABLED_OR_HIDDEN_WITH="999"
-
+T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH="999"
+# Set to false if you would like to use the skip-if functionality in editor. You would want to use skip-if as opposed to show-if if your form developers are stashing values in hidden fields.
+T_HIDE_SKIP_IF="true"
+# In CSV output, set cell value to this when something is skipped. Set to "ORIGINAL_VALUE" if you want the actual value stored.
+T_REPORTING_MARK_SKIPPED_WITH="SKIPPED"
 

@@ -1,4 +1,5 @@
-import {AfterContentInit, ElementRef, Component, ViewChild, Inject} from '@angular/core';
+import { ServerConfigService } from './../../shared/_services/server-config.service';
+import { AfterContentInit, OnInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {MatTabChangeEvent} from "@angular/material";
@@ -11,12 +12,12 @@ import {Feedback} from "../feedback-editor/feedback";
   templateUrl: './ng-tangy-form-editor.component.html',
   styleUrls: ['./ng-tangy-form-editor.component.css']
 })
-export class NgTangyFormEditorComponent implements AfterContentInit {
+export class NgTangyFormEditorComponent implements OnInit {
 
   @ViewChild('container') container: ElementRef;
   @ViewChild('header') header: ElementRef;
   containerEl: any;
-  selectedIndex = 1;
+  selectedIndex = 0;
   print = false;
   groupId;
   formId;
@@ -31,25 +32,27 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     private router: Router,
     private http: HttpClient,
     private appConfigService: AppConfigService,
+    private serverConfigService:ServerConfigService
   ) { }
 
-  async ngAfterContentInit() {
+  async ngOnInit() {
 
     this.containerEl = this.container.nativeElement
 
     this.formId = this.route.snapshot.paramMap.get('formId');
-    let groupName = this.route.snapshot.paramMap.get('groupName');
     this.print = !!this.route.snapshot.paramMap.get('print');
-    this.groupName = groupName;
 
-    let formHtml = await this.http.get(`/editor/${groupName}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
     let pathArray = window.location.hash.split( '/' );
     this.groupId = pathArray[2];
+    let groupName = this.groupId;
+    this.groupName = groupName;
+    let formHtml = await this.http.get(`/editor/${this.groupId}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
 
+    const serverConfig = await this.serverConfigService.getServerConfig()
     const appConfig = await this.appConfigService.getAppConfig(groupName);
     const appConfigCategories = appConfig.categories;
-    const appConfigModules = appConfig.modules;
-    if (appConfigModules && appConfigModules.includes('class')) {
+    const enabledModules = serverConfig.enabledModules;
+    if (enabledModules && !!(enabledModules.find(module=>module==='class'))) {
       this.hasClassModule = true;
     }
     const categories = JSON.stringify(appConfigCategories);
@@ -58,14 +61,14 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {
       this.containerEl.innerHTML = `
-        <tangy-form-editor style="margin:15px" categories='${categories}' files-endpoint="./media-list">
+        <tangy-form-editor style="margin:15px" categories='${categories}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
           <template>
             ${formHtml}
           </template>
         </tangy-form-editor>
       `;
       const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor');
-      tangyFormEditorEl.addEventListener('tangy-form-editor-save', event => this.saveForm(event.detail));
+      tangyFormEditorEl.store.subscribe(_ => this.saveForm(tangyFormEditorEl.formHtml));
     } else {
       this.containerEl.innerHTML = `
         <style>
@@ -86,19 +89,11 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     }
   }
 
-  tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
-     if (tabChangeEvent.index === 0) {
-        this.router.navigate(['groups', this.groupName])
-      } else if  (tabChangeEvent.index === 1) {
-       this.ngAfterContentInit()
-     }
-  }
-
   async saveForm(formHtml) {
     let files = []
     let state = this.containerEl.querySelector('tangy-form-editor').store.getState()
     // Update forms.json.
-    let formsJson = await this.http.get<Array<any>>(`/editor/${this.route.snapshot.paramMap.get('groupName')}/content/forms.json`).toPromise()
+    let formsJson = await this.http.get<Array<any>>(`/editor/${this.groupId}/content/forms.json`).toPromise()
     const updatedFormsJson = formsJson.map(formInfo => {
       if (formInfo.id !== state.form.id) return Object.assign({}, formInfo)
       return Object.assign({}, formInfo, {
@@ -106,13 +101,13 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
       })
     })
     files.push({
-      groupId: this.route.snapshot.paramMap.get('groupName'),
+      groupId: this.groupId,
       filePath:`./forms.json`,
       fileContents: JSON.stringify(updatedFormsJson)
     })
     // Update form.html.
     files.push({
-      groupId: this.route.snapshot.paramMap.get('groupName'),
+      groupId: this.groupId,
       filePath:`./${state.form.id}/form.html`,
       fileContents: formHtml
     })
@@ -124,13 +119,13 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
       } catch (e) {
         console.log(e)
         errorDetected = true
-        alert("Your form was not successfully saved. Please try again.")
+        //alert("Your form was not successfully saved. Please try again.")
       }
     }
     if (!errorDetected) {
-      alert("Your form was successfully saved.")
+      //alert("Your form was successfully saved.")
     } else {
-      alert("Your form was not successfully saved. Please try again.")
+      //alert("Your form was not successfully saved. Please try again.")
     }
   }
 

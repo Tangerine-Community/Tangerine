@@ -1,0 +1,6 @@
+<h1 [innerHTML]="title|unsanitizeHtml"></h1>
+<span id="crumbs">
+  <span class="crumb" *ngFor="let crumb of bakedCrumbs">
+    / <a class="crumb" style="text-decoration:none;" href="{{crumb.url}}" [innerHTML]="crumb.label|unsanitizeHtml"></a>
+  </span>
+</span>

@@ -1,3 +1,5 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -10,6 +12,10 @@ import * as snakeCase from 'just-snake-case';
   styleUrls: ['./manage-location-list-metadata.component.css']
 })
 export class ManageLocationListMetadataComponent implements OnInit {
+
+  title = _TRANSLATE('Location List Metadata')
+  breadcrumbs:Array<Breadcrumb> = []
+ 
   groupName;
   locationLevel;
   locationListFileName = 'location-list.json';
@@ -26,10 +32,21 @@ export class ManageLocationListMetadataComponent implements OnInit {
     private errorHandler: TangyErrorHandler,
     private groupsService: GroupsService) { }
   async ngOnInit() {
+
     this.form = this.defaultFormState;
     this.route.params.subscribe(params => {
-      this.groupName = params.groupName;
+      this.groupName = params.groupId;
       this.locationLevel = params.locationLevel;
+      this.breadcrumbs = [
+        <Breadcrumb>{
+          label: _TRANSLATE('Location List'),
+          url: 'location-list'
+        },
+        <Breadcrumb>{
+          label: _TRANSLATE('Location List Metadata'),
+          url: `location-list/manage-location-list-metadata/${params.locationLevel}`
+        }
+      ]
     });
     try {
       this.locationListData = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();

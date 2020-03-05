@@ -23,6 +23,15 @@ h2 {
     margin-left: 10px;
 }
 
+.new-form-container {
+    position:relative;
+}
+
+.new-form-button {
+    position: absolute;
+    top: -27px;
+    right: 0px;
+}
 
 .wrapper {
     margin: 0px;

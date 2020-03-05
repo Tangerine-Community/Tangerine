@@ -1,0 +1,16 @@
+.year {
+  height: 130px;
+}
+.month {
+  height: 100px
+}
+.button {
+  float: right;
+  background: var(--mdc-theme-secondary);
+  color: var(--accent-text-color);
+}
+
+.form {
+  padding-bottom: 60px;
+  padding-top: 0px;
+}

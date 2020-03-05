@@ -45,7 +45,8 @@ class MockUserService {
   }
 }
 
-const REFERENCE_TIME = 1558715176000
+const REFERENCE_TIME = '2019-08-13'
+const REFERENCE_TIME_2 = '2019-12-31'
 
 class MockCasesService {
 
@@ -58,8 +59,11 @@ class MockCasesService {
         status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
-        dateStart: REFERENCE_TIME,
-        dateEnd: REFERENCE_TIME + (1000*60*60)
+        scheduledDay: REFERENCE_TIME,
+        occurredOnDay: REFERENCE_TIME,
+        estimatedDay: REFERENCE_TIME,
+        windowStartDay: REFERENCE_TIME ,
+        windowEndDay: REFERENCE_TIME_2
       },
       <CaseEvent>{
         id: 'e2',
@@ -68,8 +72,11 @@ class MockCasesService {
         status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
-        dateStart: REFERENCE_TIME,
-        dateEnd: REFERENCE_TIME + (1000*60*60)
+        scheduledDay: REFERENCE_TIME,
+        occurredOnDay: REFERENCE_TIME,
+        estimatedDay: REFERENCE_TIME,
+        windowStartDay: REFERENCE_TIME ,
+        windowEndDay: REFERENCE_TIME_2
       },
       <CaseEvent>{
         id: 'e3',
@@ -78,8 +85,11 @@ class MockCasesService {
         status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
-        dateStart: REFERENCE_TIME + (1000*60*60*24),
-        dateEnd: REFERENCE_TIME + (1000*60*60*24) + (1000*60*60)
+        scheduledDay: REFERENCE_TIME,
+        occurredOnDay: REFERENCE_TIME,
+        estimatedDay: REFERENCE_TIME,
+        windowStartDay: REFERENCE_TIME ,
+        windowEndDay: REFERENCE_TIME_2
       }
     ]
   }

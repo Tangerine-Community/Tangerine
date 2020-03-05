@@ -48,6 +48,9 @@ export class CaseEventScheduleListComponent implements OnInit {
   private _mode = CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
   @Input()
   set mode(mode:string) {
+    if (this._mode === mode) {
+      return;
+    }
     this._mode = mode
     this.calculateEvents()
   }
@@ -67,15 +70,20 @@ export class CaseEventScheduleListComponent implements OnInit {
     let startDate = Date.now()
     let endDate = Date.now()
     let excludeEstimates = false
+    const d = new Date(this._date)
+    /**
+     * The date widget gets the unix representation of the time at the date and time of selecting the date.
+     * Thus we change the date we get to YYYY-MM-DD so as to get the unix milliseconds representation of the date.
+     * We do not want the time part of the date as it will lead to subtle errors(off by one)
+     * We are only interested in the YYYY-MM-DD of the date.
+     */
+    const _date = [ d.getFullYear(), ('0' + (d.getMonth() + 1)).slice(-2), ('0' + d.getDate()).slice(-2)].join('-')
     if (this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_DAILY) {
-      const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
-      const beginningOfDayInMS = today.getTime() 
-      const endOfDayInMS = beginningOfDayInMS + (1000*60*60*24)
-      startDate = beginningOfDayInMS
-      endDate = endOfDayInMS
-      excludeEstimates = true
+      startDate = new Date(_date).getTime()
+      endDate = startDate + (1000*60*60*24)
+      excludeEstimates = false
     } else if (this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY) {
-      const beginningOfWeek = moment(moment(new Date(this._date)).format('YYYY w'), 'YYYY w').unix()*1000
+      const beginningOfWeek = moment(moment(new Date(_date)).format('YYYY w'), 'YYYY w').unix()*1000
       const endOfWeek = beginningOfWeek + (1000*60*60*24*7)
       startDate = beginningOfWeek
       endDate = endOfWeek
@@ -101,8 +109,9 @@ export class CaseEventScheduleListComponent implements OnInit {
     let daysOfWeekSeen = []
     this.eventsInfo = events.map( event => {
       const eventInfo = <EventInfo>{}
-      const date = new Date(event.dateStart)
-      if (daysOfWeekSeen.indexOf(date.getDate()) == -1) {
+      const searchDate = event.occurredOnDay || event.scheduledDay || event.estimatedDay || event.windowStartDay
+      const date = new Date(searchDate)
+      if (daysOfWeekSeen.indexOf(date.getDate()) === -1) {
         daysOfWeekSeen.push(date.getDate())
         eventInfo.newDateLabel = moment(date).format('ddd')
         eventInfo.newDateNumber = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 

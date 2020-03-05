@@ -5,11 +5,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
-export interface Forms {
-  id: string;
-  title: string;
-  src: string;
-}
+
 @Injectable()
 export class GroupsService {
   constructor(
@@ -19,7 +15,7 @@ export class GroupsService {
   ) { }
 
   async getGroupInfo(groupId) {
-    return await this
+    return <any>await this
       .httpClient
       .get(`/nest/group/read/${groupId}`)
       .toPromise();
@@ -49,6 +45,16 @@ export class GroupsService {
     }
   }
 
+  async getUserGroupRoles(username) {
+    try {
+      return await this.httpClient.get(`/groups/${username}`).toPromise();
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
   async createGroup(groupName: string) {
     try {
       const result = await this.httpClient.post('/nest/group/create', { label: groupName }).toPromise();
@@ -61,6 +67,9 @@ export class GroupsService {
     }
   }
 
+  /*
+  Adds or updates user in the groups array of the users database
+   */
   async addUserToGroup(groupName: string, username: string, role: string) {
     try {
       const result = await this.httpClient
@@ -83,34 +92,6 @@ export class GroupsService {
         })
         .toPromise();
       return result;
-    } catch (error) {
-      console.error(error);
-      if (typeof error.status === 'undefined') {
-        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
-      }
-    }
-  }
-  async getFormsList(groupName: string) {
-    try {
-      const result = (await this.httpClient
-        .get('/editor/groups/' + groupName + '/forms.json')
-        .toPromise()) as Forms[];
-
-      result.unshift(
-        {
-          id: 'user-profile',
-          title: 'User Profile',
-          src: '../content/user-profile/form.html'
-        },
-        {
-          id: 'reports',
-          title: 'Reports',
-          src: '../content/reports/form.html'
-        }
-      );
-
-      return result.map(result => ({ ...result, printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${groupName}/${result.id}/print` }));
-
     } catch (error) {
       console.error(error);
       if (typeof error.status === 'undefined') {

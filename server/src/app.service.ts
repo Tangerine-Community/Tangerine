@@ -66,12 +66,17 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        await exec('reporting-worker-batch')
-        workerState = await reportingWorker.getWorkerState()
-        if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-          await sleep(this.configService.config().reportingDelay)
+        const result = await exec('reporting-worker-batch')
+        if (result.stderr) {
+          log.error(result.stderr)
+          await sleep(3*1000)
         } else {
-          log.info(`Processed ${workerState.processed} changes.`)
+          workerState = await reportingWorker.getWorkerState()
+          if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+            await sleep(this.configService.config().reportingDelay)
+          } else {
+            log.info(`Processed ${workerState.processed} changes.`)
+          }
         }
       } catch (error) {
         log.error('Reporting process had an error.')

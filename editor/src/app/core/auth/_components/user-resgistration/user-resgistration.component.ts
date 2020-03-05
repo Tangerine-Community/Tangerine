@@ -3,6 +3,8 @@ import { TangyErrorHandler } from '../../../../shared/_services/tangy-error-hand
 import { _TRANSLATE } from '../../../../shared/_services/translation-marker';
 import { UserService } from '../../_services/user.service';
 import { User } from './user.model.interface';
+import {AfterContentInit} from '@angular/core/src/metadata/lifecycle_hooks';
+import {ActivatedRoute} from '@angular/router';
 
 
 @Component({
@@ -10,7 +12,7 @@ import { User } from './user.model.interface';
   templateUrl: './user-resgistration.component.html',
   styleUrls: ['./user-resgistration.component.css']
 })
-export class UserResgistrationComponent implements OnInit {
+export class UserResgistrationComponent implements OnInit, AfterContentInit {
 
   user: User = {
     username: '',
@@ -23,9 +25,18 @@ export class UserResgistrationComponent implements OnInit {
   userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('Username Unavailable') };
   userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
   couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('Could Not Create User') };
-  constructor(private userService: UserService, private errorHandler: TangyErrorHandler) { }
+  id: string;
+
+  constructor(private userService: UserService, private errorHandler: TangyErrorHandler, private route: ActivatedRoute) { }
 
   ngOnInit() {
+  }
+
+  async ngAfterContentInit() {
+    this.route.params.subscribe(async params => {
+      this.id = params.id;
+      // await this.userService.doesUserExist(this.id);
+    })
   }
 
   async createUser() {

@@ -1,6 +1,6 @@
 :host {
   position: relative;
-  top: -64px;
+  top: -20px;
 }
 
 #header {
@@ -27,4 +27,8 @@
 button {
   margin-right: 15px;
   float: right;
+}
+
+#err {
+  color: red;
 }

@@ -117,7 +117,6 @@ describe('NewFormResponseComponent', () => {
     expect(component).toBeTruthy();
     component.ready.addListener('ready', () => {
       fixture.detectChanges()
-
       expect(fixture.elementRef.nativeElement.querySelectorAll('.form-item').length).toEqual(2)
       component.navigating.addListener('navigating', (args) => {
         expect(args.url).toBe('/case-new/example')

@@ -13,6 +13,19 @@
 <mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''"
   [(selectedIndex)]="selectedTabIndex">
 
+  <mat-tab *ngIf="isGroupAdminUser && enabledModules.includes('sync-protocol-2')" label="Devices">
+    <mat-card>
+      <mat-card-title class="tangy-foreground-secondary">
+        Deploy
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <app-group-deploy [groupId]="groupId"></app-group-deploy>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+
   <mat-tab label="{{'Forms'|translate}}">
     <mat-card>
       <mat-card-title>
@@ -76,12 +89,12 @@
               <span class="tangy-spacer">{{form.title}}</span>
 
               <span><a mat-icon-button [routerLink]="['/tangy-form-player']"
-                  [queryParams]="{formId: form.id, groupName: groupName}">
+                  [queryParams]="{formId: form.id, groupName: groupId}">
                   <i class="material-icons mat-32 tangy-location-list-icon">add</i>
                 </a>
               </span>
               <span><a mat-icon-button
-                  [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+                  [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupId+'/'+form.id:'/groups/'+groupId">
                   <i [class.disabled-button]="!isGroupAdminUser"
                     class="material-icons mat-32 tangy-location-list-icon">edit</i>
                 </a>
@@ -111,7 +124,7 @@
 
               <span><button mat-icon-button
                   [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-                  (click)="deleteForm(groupName, form.id)">
+                  (click)="deleteForm(groupId, form.id)">
                   <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
                     class="material-icons mat-32 tangy-location-list-icon">delete</i>
                 </button>
@@ -120,14 +133,17 @@
               <span>
                 <button mat-icon-button
                   [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-                  (click)="onArchiveFormClick(groupName, form.id)">
+                  (click)="onArchiveFormClick(groupId, form.id)">
                   <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
                     class="material-icons mat-32 tangy-location-list-icon">archive</i>
                 </button>
               </span>
-              <span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
+              <span><a mat-icon-button [routerLink]=" '../'+groupId+ '/download-csv/'+form.id ">
                   <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
                 </a>
+              </span>
+              <span *ngIf="enabledModules.includes('sync-protocol-2')">
+                <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
               </span>
               <mat-divider></mat-divider>
             </mat-list-item>
@@ -170,6 +186,9 @@
                       <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
                     </a>
                   </span>
+                  <span *ngIf="enabledModules.includes('sync-protocol-2')">
+                    <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
+                  </span>
                 </mat-list-item>
               </mat-list>
               <span>{{index+1}}</span>
@@ -177,12 +196,12 @@
               <span class="tangy-spacer">{{form.title}}</span>
 
               <span><a mat-icon-button [routerLink]="['/tangy-form-player']"
-                  [queryParams]="{formId: form.id, groupName: groupName}">
+                  [queryParams]="{formId: form.id, groupName: groupId}">
                   <i class="material-icons mat-32 tangy-location-list-icon">add</i>
                 </a>
               </span>
               <span><a mat-icon-button
-                  [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+                  [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupId+'/'+form.id:'/groups/'+groupId">
                   <i [class.disabled-button]="!isGroupAdminUser"
                     class="material-icons mat-32 tangy-location-list-icon">edit</i>
                 </a>
@@ -201,7 +220,7 @@
 
               <span><button mat-icon-button
                   [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-                  (click)="deleteForm(groupName, form.id)">
+                  (click)="deleteForm(groupId, form.id)">
                   <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
                     class="material-icons mat-32 tangy-location-list-icon">delete</i>
                 </button>
@@ -210,14 +229,17 @@
               <span>
                 <button mat-icon-button
                   [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-                  (click)="onUnArchiveFormClick(groupName, form.id)">
+                  (click)="onUnArchiveFormClick(groupId, form.id)">
                   <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
                     class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
                 </button>
               </span>
-              <span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
+              <span><a mat-icon-button [routerLink]=" '../'+groupId+ '/download-csv/'+form.id ">
                   <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
                 </a>
+              </span>
+              <span *ngIf="enabledModules.includes('sync-protocol-2')">
+                <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
               </span>
               <mat-divider></mat-divider>
             </mat-list-item>
@@ -234,7 +256,20 @@
       </mat-card-title>
       <mat-card-content>
         <div class="tangy-full-width">
-          <app-responses [groupName]="groupName"></app-responses>
+          <app-responses [groupName]="groupId"></app-responses>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+
+  <mat-tab *ngIf="isGroupAdminUser && enabledModules.includes('sync-protocol-2')" label="Devices">
+    <mat-card>
+      <mat-card-title class="tangy-foreground-secondary">
+        Devices
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <app-group-devices [groupId]="groupId"></app-group-devices>
         </div>
       </mat-card-content>
     </mat-card>
@@ -255,14 +290,14 @@
               <mat-list>
                 <mat-list-item class="tangy-location-list">
                   <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-apk',groupName,'qa']">
+                    <a [routerLink]="['/group/release-apk',groupId,'qa']">
                       <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
                     </a>
                   </span>
                 </mat-list-item>
                 <mat-list-item class="tangy-location-list">
                   <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-apk',groupName,'prod']">
+                    <a [routerLink]="['/group/release-apk',groupId,'prod']">
                       <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
                     </a>
                   </span>
@@ -282,14 +317,14 @@
               <mat-list>
                 <mat-list-item class="tangy-location-list">
                   <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-pwa',groupName,'qa']">
+                    <a [routerLink]="['/group/release-pwa',groupId,'qa']">
                       <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
                     </a>
                   </span>
                 </mat-list-item>
                 <mat-list-item class="tangy-location-list">
                   <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-pwa',groupName,'prod']">
+                    <a [routerLink]="['/group/release-pwa',groupId,'prod']">
                       <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
                     </a>
                   </span>

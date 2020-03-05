@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -15,30 +15,23 @@ export class ReleasePwaComponent implements OnInit {
   @ViewChild('urlContainer') urlContainer: ElementRef;
   buildPwaIsComplete = false;
   copySuccess = false;
-  groupName = '';
-  releaseType = '';
+  @Input() groupId = ''
+  @Input() releaseType = '';
   errorGeneratingPWA;
   pwaUrl
   constructor(
-    private route: ActivatedRoute,
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
     private windowRef: WindowRef 
   ) { }
 
   async ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.groupName = params['id'];
-      this.releaseType = params['releaseType'];
-    });
-    await this.releasePWA();
   }
 
   async releasePWA() {
     try {
-      const result: any = await this.groupsService.releasePWA(this.groupName, this.releaseType);
-      this.pwaUrl = `${this.windowRef.nativeWindow.location.origin}/releases/${this.releaseType}/pwas/${this.groupName}`
-
+      const result: any = await this.groupsService.releasePWA(this.groupId, this.releaseType);
+      this.pwaUrl = `${this.windowRef.nativeWindow.location.origin}/releases/${this.releaseType}/pwas/${this.groupId}`
       this.buildPwaIsComplete = result.statusCode === 200;
     } catch (error) {
       this.errorGeneratingPWA = true;

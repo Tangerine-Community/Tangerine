@@ -1,10 +1,11 @@
+import { VariableService } from './shared/_services/variable.service';
+import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
+import { DeviceService } from './device/services/device.service';
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
-import { AuthenticationService } from './shared/_services/authentication.service';
 import { UserService } from './shared/_services/user.service';
-import { updates } from './core/update/update/updates';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
@@ -21,89 +22,146 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 export class AppComponent implements OnInit {
 
   appConfig:AppConfig
-  showNav;
   showUpdateAppLink;
   window:any;
   installed = false
+  isLoggedIn = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
   languageDirection:string
   languagePath:string
   translate: TranslateService
+  ready = false
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
 
   constructor(
     private userService: UserService,
-    private authenticationService: AuthenticationService,
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
+    private updateService:UpdateService,
     private searchService:SearchService,
+    private deviceService: DeviceService,
+    private variableService:VariableService,
     translate: TranslateService
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
-    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
+    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
       ? true
       : false
-    if (!this.installed) return
-    this.freespaceCorrectionOccuring = false;
-    // Detect if this is the first time the app has loaded.
-    this.languageCode = this.window.localStorage.getItem('languageCode')
-    this.languageDirection = this.window.localStorage.getItem('languageDirection')
-    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
-    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
-    // Set up ngx-translate.
-    translate.setDefaultLang(this.languagePath);
-    translate.use(this.languagePath);
-    // Set required config for use of <t-lang> Web Component.
-    this.window.document.documentElement.lang = this.languageCode; 
-    this.window.document.documentElement.dir = this.languageDirection; 
-    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
-    // Make database services available to eval'd code.
-    this.window.userService = this.userService
+    if (this.installed) {
+      this.freespaceCorrectionOccuring = false;
+      // Detect if this is the first time the app has loaded.
+      this.languageCode = this.window.localStorage.getItem('languageCode')
+      this.languageDirection = this.window.localStorage.getItem('languageDirection')
+      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+      // Set up ngx-translate.
+      translate.setDefaultLang(this.languagePath);
+      translate.use(this.languagePath);
+      // Set required config for use of <t-lang> Web Component.
+      this.window.document.documentElement.lang = this.languageCode;
+      this.window.document.documentElement.dir = this.languageDirection;
+      this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+      // Make database services available to eval'd code.
+      this.window.userService = this.userService
+    }
   }
 
 
   async ngOnInit() {
-    // Bail if the app is not yet installed.
+ 
+    // Installation check.
     if (!this.installed) {
       await this.install()
+      return
+    } else {
+      this.checkPermissions();
     }
-    this.checkIfUpdateScriptRequired();
+  
+    // Initialize services.
     await this.userService.initialize()
-    // Load up the app config.
+    await this.searchService.start()
+   
+    // Get globally exposed config.
     this.appConfig = await this.appConfigService.getAppConfig()
-    this.searchService.start()
     this.window.appConfig = this.appConfig
-    // Set translation for t function used in Web Components.
-    const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
-    this.window.translation = translation
-    this.showNav = this.authenticationService.isLoggedIn();
-    this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
-      this.showNav = isLoggedIn;
+    this.window.device = await this.deviceService.getDevice()
+    this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise()
+
+    // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
+    if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
+      this.router.navigate(['/update'])
+    }
+    
+    // Set up log in status.
+    this.isLoggedIn = this.userService.isLoggedIn()
+    this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = true
     });
+    this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = false
+    });
+
     // Keep GPS chip warm.
-    // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
     setInterval(this.getGeolocationPosition, 5000);
-    this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
-    setInterval(this.checkStorageUsage.bind(this), 60*1000); 
+    setInterval(this.checkStorageUsage.bind(this), 60*1000);
+    this.ready = true
+
+    // Lastly, navigate to update page if an update is running.
+    if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
+      this.router.navigate(['/update'])
+    }
+
   }
 
   async install() {
     try {
       const config =<any> await this.http.get('./assets/app-config.json').toPromise()
+      await this.updateService.install()
       window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
       window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-      await this.userService.install()
       window.localStorage.setItem('installed', 'true')
     } catch (e) {
       console.log('Error detected in install:')
       console.log(e)
     }
-    window.location.href = window.location.href.replace(window.location.hash, 'index.html') 
+    window.location.href = window.location.href.replace(window.location.hash, 'index.html')
+  }
+
+  async checkPermissions() {
+    if (this.window.isCordovaApp) {
+      const permissions = window['cordova']['plugins']['permissions'];
+      if (typeof permissions !== 'undefined') {
+        const list = [
+          permissions.ACCESS_COARSE_LOCATION,
+          permissions.ACCESS_FINE_LOCATION,
+          permissions.CAMERA,
+          permissions.READ_EXTERNAL_STORAGE,
+          permissions.WRITE_EXTERNAL_STORAGE
+        ];
+
+        window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
+        function error() {
+          console.warn('Camera or Storage permission is not turned on');
+        }
+        function success( status ) {
+          if ( !status.hasPermission ) {
+            permissions.requestPermissions(
+              list,
+              function(statusRequest) {
+                if ( !statusRequest.hasPermission ) {
+                  error();
+                }
+              },
+              error);
+          }
+        }
+      }
+    }
   }
 
   async checkStorageUsage() {
@@ -113,8 +171,8 @@ export class AppComponent implements OnInit {
       ? this.appConfig.minimumFreeSpace
       : 50*1000*1000
     if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
-      const batchSize = this.appConfig.usageCleanupBatchSize 
-        ? this.appConfig.usageCleanupBatchSize 
+      const batchSize = this.appConfig.usageCleanupBatchSize
+        ? this.appConfig.usageCleanupBatchSize
         : 10
       this.freespaceCorrectionOccuring = true
       await this.correctFreeSpace(minimumFreeSpace, batchSize)
@@ -131,7 +189,7 @@ export class AppComponent implements OnInit {
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
-        include_docs: true 
+        include_docs: true
       });
       for(let row of results.rows) {
         await DB.remove(row.doc)
@@ -147,35 +205,8 @@ export class AppComponent implements OnInit {
     console.log('Finished making freespace...')
   }
 
-  async checkIfUpdateScriptRequired() {
-    const response = await this.userService.usersDb.allDocs({ include_docs: true });
-    // Note the use of mapping by doc.username but falling back to doc._id. That's because
-    // an app may be updating from a time when _id was the username.
-    const usernames = response
-      .rows
-      .map(row => row.doc)
-      .filter(doc => doc._id.substr(0,7) !== '_design' )
-      .map(doc => doc.username ? doc.username : doc._id);
-    for (const username of usernames) {
-      const userDb = await this.userService.getUserDatabase(username);
-      // Use try in case this is an old account where info doc was not created.
-      let infoDoc = { _id: '', atUpdateIndex: 0 };
-      try {
-        infoDoc = await userDb.get('info');
-      } catch (e) {
-        await userDb.put({ _id: 'info', atUpdateIndex: 0 });
-        infoDoc = await userDb.get('info');
-      }
-      const atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
-      const lastUpdateIndex = updates.length - 1;
-      if (lastUpdateIndex !== atUpdateIndex) {
-        this.router.navigate(['/update']);
-      }
-    }
-  }
-
   logout() {
-    this.authenticationService.logout();
+    this.userService.logout();
     this.router.navigate(['login']);
   }
 
@@ -189,44 +220,48 @@ export class AppComponent implements OnInit {
     }
   }
 
-  updateApp() {
+  async updateApp() {
+    if (!confirm(_TRANSLATE('Would you like to update? We recommend syncing data before you do.'))) {
+      return
+    }
+    await this.variableService.set(VAR_UPDATE_IS_RUNNING, true)
     if (this.window.isCordovaApp) {
+      this.updateIsRunning = true;
       console.log('Running from APK');
-      const installationCallback = (error) => {
+      const installationCallback = async (error) => {
         if (error) {
           console.log('Failed to install the update with error code:' + error.code);
           console.log(error.description);
+          await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
           this.updateIsRunning = false;
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
         } else {
-          console.log('Update Instaled');
-          this.updateIsRunning = false;
+          console.log('APK update downloaded. Reloading for new code...');
+          // No need to set in memory semaphore to false, app will reload.
+          // this.updateIsRunning = false;
+          // CHCP seems to handle the reload.
         }
       };
-      const updateCallback = (error, data) => {
+      const updateCallback = async (error, data) => {
         console.log('data: ' + JSON.stringify(data));
         if (error) {
           console.log('error: ' + JSON.stringify(error));
+          await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
+          this.updateIsRunning = false;
           alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
         } else {
-          console.log('Update is Loaded');
-          if (this.window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `CANCEL`. If you are ready to install the update, click `OK`'))) {
-            this.updateIsRunning = true;
-            console.log('Installing Update');
-            this.window.chcp.installUpdate(installationCallback);
-          } else {
-            console.log('Cancelled install; did not install update.');
-            this.updateIsRunning = false;
-          }
+          console.log('Update has downloaded');
+          console.log('Installing update');
+          this.window.chcp.installUpdate(installationCallback);
         }
       };
-      alert(_TRANSLATE('The app will now check for an application update and attempt to download. Please stay connected to the Internet during this process. Tap OK to proceed.'))
       this.window.chcp.fetchUpdate(updateCallback);
     } else {
+      // Forward to PWA Updater App.
       const currentPath = this.window.location.pathname;
       const storedReleaseUuid = localStorage.getItem('release-uuid');
       this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/app\/`, ''));
     }
-
   }
 
   getGeolocationPosition() {

@@ -10,8 +10,9 @@ const readdir = util.promisify(require('fs').readdir)
 const readFile = util.promisify(require('fs').readFile)
 const pako = require('pako')
 const axios = require('axios')
-const url = `http://127.0.0.1/api/${process.argv[2]}/upload`
+const url = `http://localhost/api/${process.argv[2]}/upload`
 const ARCHIVES_PATH = '/archives'
+
 
 async function go() {
   const archivesList = await readdir(ARCHIVES_PATH)

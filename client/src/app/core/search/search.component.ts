@@ -13,14 +13,14 @@ export const FORM_TYPES_INFO = [
   {
     id: 'form',
     newFormResponseLinkTemplate: '/tangy-forms-player/${formId}',
-    resumeFormResponseLinkTemplate: '/tangy-forms-player?formId=${formId}&responseId=${response._id}',
-    iconTemplate: '${response && response.complete ? `assignment-turned-in` : `assignment`}'
+    resumeFormResponseLinkTemplate: '/tangy-forms-player?formId=${formId}&responseId=${searchDoc._id}',
+    iconTemplate: '${searchDoc && searchDoc.variables.complete ? `assignment-turned-in` : `assignment`}'
   },
   {
     id: 'case',
     newFormResponseLinkTemplate: '/case-new/${formId}',
-    resumeFormResponseLinkTemplate: '/case/${response._id}',
-    iconTemplate: '${response && response.complete ? `folder-special` : `folder`}'
+    resumeFormResponseLinkTemplate: '/case/${searchDoc._id}',
+    iconTemplate: '${searchDoc && searchDoc.variables.complete ? `folder-special` : `folder`}'
   }
 ]
 
@@ -49,19 +49,30 @@ export class SearchComponent implements OnInit {
     private userService: UserService,
     private formsInfoService: TangyFormsInfoService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   async ngOnInit() {
     this.formsInfo = await this.formsInfoService.getFormsInfo()
     this.username = this.userService.getCurrentUser()
-    this.formTypesInfo = FORM_TYPES_INFO 
+    this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
       .pipe(debounceTime(300))
-      .subscribe((searchString:string) => this.onSearch(searchString))
+      .subscribe((searchString:string) => {
+        this.searchResults.nativeElement.innerHTML = 'Searching...'
+        this.onSearch(searchString)
+      })
     this
       .searchBar
       .nativeElement
-      .addEventListener('keyup', event => this.onSearch$.next(event.target.value))
+      .addEventListener('keyup', event => {
+        const searchString = event.target.value
+        if (searchString.length > 2) {
+          this.onSearch$.next(event.target.value)
+        } else {
+          this.searchResults.nativeElement.innerHTML = 'Enter more than two characters...'
+        }
+      })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
     this.onSearch('')
@@ -73,23 +84,19 @@ export class SearchComponent implements OnInit {
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     for (const searchDoc of this.searchDocs) {
-      const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-      const response = await userDb.get(searchDoc._id)
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
       const formId = formInfo.id
       searchResultsMarkup += `
-        <paper-icon-item class="search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
-          <iron-icon icon="${eval(`\`${formTypeInfo.iconTemplate}\``)}" slot="item-icon"></iron-icon> 
-          <paper-item-body two-line>
-            <div>
-              ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : response._id}\``)}
-            </div>
-            <div secondary>
-              ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
-            </div>
-          </paper-item-body>
-        </paper-icon-item>
+      <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
+        <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
+        <div>
+          <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : searchDoc._id}\``)}</div>
+          <div secondary>
+          ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
+          </div>
+        </div>
+      </div>
       `
     }
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup
@@ -127,9 +134,9 @@ export class SearchComponent implements OnInit {
   }
 
   onScanChange(scanSearchString) {
-    this.showScan = false
-    this.onSearch(scanSearchString)
-    this.searchBar.nativeElement.value = scanSearchString
+      this.showScan = false
+      this.onSearch(scanSearchString)
+      this.searchBar.nativeElement.value = scanSearchString
   }
 
   onScanError() {

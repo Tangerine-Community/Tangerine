@@ -156,7 +156,7 @@ cp config.defaults.sh config.sh
 Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
 ### Develop for Client 
-Prereqs include node 11 and `npm install -g @angular/cli`. Note that there is currently [an issue where node 12 will not work](https://github.com/Tangerine-Community/Tangerine/issues/1751).
+Prereqs include node and `npm install -g @angular/cli`. 
 ```
 git clone git@github.com:tangerine-community/tangerine
 cd tangerine/client/
@@ -174,6 +174,13 @@ rm -r node_modules/tangy-form
 ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/node_modules/tangy-form
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
+
+If you are developing PWA's and want to test locally, or if you are testing APK's and want to update the content easily while doing local development (because the APK's basically act as a container for the PWA's), use [ngrok](https://ngrok.com/) to create an https tunnel to your local code. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh.
+
+```
+T_HOST_NAME='123random.ngrok.io'
+T_PROTOCOL="https"
+```
 
 ## Trademark and License
 Tangerine Logo is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).

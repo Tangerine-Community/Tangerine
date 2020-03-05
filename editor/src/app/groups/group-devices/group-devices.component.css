@@ -1,0 +1,13 @@
+tr.header {
+  font-weight: bold;
+}
+table, tr, td {
+  border: 1px solid black;
+}
+.add-device-button {
+  margin: 0px 0px 15px 0px;
+}
+
+mat-table {
+  margin-bottom: 100px;
+}

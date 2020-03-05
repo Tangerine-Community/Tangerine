@@ -18,3 +18,10 @@ a.faux-anchor {
 .text-indent-3 {
   text-indent: 3rem;
 }
+.header {
+  margin: 15px;
+}
+.submit {
+  margin-left: 15px;
+  margin-bottom: 15px;
+}

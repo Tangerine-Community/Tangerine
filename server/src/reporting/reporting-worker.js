@@ -130,43 +130,47 @@ async function addGroup(group) {
  */
 
 async function batch() {
-  // Something may have paused the process like clearing cache.
-  while (await isPaused()) {
-    await sleep(REPORTING_WORKER_PAUSE_LENGTH)
-  }
-  await setWorkingFlag()
-  // Now it's safe to get the state.
-  workerState = await getWorkerState()
-  workerState = Object.assign({} , defaultState, workerState)
-  const DB = PouchDB.defaults(workerState.pouchDbDefaults)
-  const startTime = new Date().toISOString()
-  let processed = 0
-  // Process batch.
-  for (let database of workerState.databases) { 
-    const db = new DB(database.name)
-    const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
-    if (changes.results.length > 0) {
-      for (let change of changes.results) {
-        try {
-          await changeProcessor(change, db)
-          processed++
-        } catch (error) {
-          log.error(`Error on change sequence ${change.seq} with id ${changes.id} - ${error} ::::: `)
-        }
-      }
-      // Even if an error was thrown, continue on with the next sequences.
-      database.sequence = changes.results[changes.results.length-1].seq
+  try {
+    // Something may have paused the process like clearing cache.
+    while (await isPaused()) {
+      await sleep(REPORTING_WORKER_PAUSE_LENGTH)
     }
+    await setWorkingFlag()
+    // Now it's safe to get the state.
+    workerState = await getWorkerState()
+    workerState = Object.assign({} , defaultState, workerState)
+    const DB = PouchDB.defaults(workerState.pouchDbDefaults)
+    const startTime = new Date().toISOString()
+    let processed = 0
+    // Process batch.
+    for (let database of workerState.databases) { 
+      const db = new DB(database.name)
+      const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
+      if (changes.results.length > 0) {
+        for (let change of changes.results) {
+          try {
+            await changeProcessor(change, db)
+            processed++
+          } catch (error) {
+            log.error(`Error on change sequence ${change.seq} with id ${change.id} - ${error} ::::: `)
+          }
+        }
+        // Even if an error was thrown, continue on with the next sequences.
+        database.sequence = changes.results[changes.results.length-1].seq
+      }
+    }
+    // Persist state to disk.
+    await setWorkerState(Object.assign({}, workerState, {
+      tally: workerState.tally + processed,
+      endTime: new Date().toISOString(),
+      processed,
+      startTime
+    }))
+    await unsetWorkingFlag()
+    return 
+  } catch(e) {
+    console.error(e)
   }
-  // Persist state to disk.
-  await setWorkerState(Object.assign({}, workerState, {
-    tally: workerState.tally + processed,
-    endTime: new Date().toISOString(),
-    processed,
-    startTime
-  }))
-  await unsetWorkingFlag()
-  return 
 }
 
 module.exports.getWorkerState = getWorkerState

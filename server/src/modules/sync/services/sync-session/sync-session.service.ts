@@ -23,9 +23,8 @@ export class SyncSessionService {
     private readonly clientUserService:ClientUserService
   ) { }
   
-  async start(groupId:string, profileId:string):Promise<SyncSession> {
+  async start(groupId:string, deviceId:string):Promise<string> {
     try {
-
       // Create sync user
       const syncUsername = `syncUser-${UUID()}`
       const syncPassword = UUID()
@@ -38,36 +37,8 @@ export class SyncSessionService {
         "password": syncPassword 
       }
       await this.http.post(`${config.couchdbEndpoint}/_users`, syncUserDoc).toPromise()
-      // Get the formIds that we'll use to build the sync selector.
-      const formIds = (await this.groupConfig.read(groupId)).config.sync.formIds
-      log.info(`Created sync session for user ${profileId} in group ${groupId}`)
-      // Build the location based part of the sync selector.
-      const groupDb = this.dbService.instantiate(groupId)
-      const userProfile = await groupDb.get(profileId) 
-      const userProfileDefinedSyncLocation = {}
-      for (const locationLevel in userProfile.location) {
-        userProfileDefinedSyncLocation[`location.${locationLevel}`] = userProfile.location[locationLevel]
-      }
-      // Template and return the full sync session.
-      return <SyncSession>{
-        pouchDbSyncUrl: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
-        pouchDbSyncOptions: {
-          selector: {
-            "$or": [
-              ...formIds.map(formId => {
-                return { 
-                  "form.id": formId,
-                  ...userProfileDefinedSyncLocation
-                }
-              }),
-              {
-                "_id": profileId
-              }
-            ]
-          }
-        },
-        formIdsToNotPush: formIds
-      }
+      log.info(`Created sync session for user ${deviceId} in group ${groupId}`)
+      return `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`
     } catch(e) {
       throw e
     }

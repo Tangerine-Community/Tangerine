@@ -1,0 +1,17 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<mat-tab-group>
+
+  <mat-tab label="{{'Levels'|translate}}">
+    <app-manage-location-list-levels></app-manage-location-list-levels>
+  </mat-tab>
+
+  <mat-tab label="{{'Content'|translate}}">
+    <app-location-list-editor></app-location-list-editor>
+  </mat-tab>
+
+  <mat-tab label="{{'Import'|translate}}">
+    <app-import-location-list></app-import-location-list>
+  </mat-tab>
+
+
+</mat-tab-group>

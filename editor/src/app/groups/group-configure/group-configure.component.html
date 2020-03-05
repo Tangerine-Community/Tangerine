@@ -1,0 +1,37 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
+<mat-card class="is-link mat-elevation-z3" routerLink="location-list">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">place</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Location List'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Manage locations levels and content related to choosing locations on forms, sync, and more.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-card *ngIf="syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="sync">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">sync</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Sync'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Manage which forms to enable two-way sync on.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-card class="is-link mat-elevation-z3" routerLink="security">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">security</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Security'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>Manage who has server level access to this group.</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
