@@ -57,7 +57,7 @@ RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 # Build client.
 ADD client /tangerine/client
 RUN cd /tangerine/client && \
-    ./node_modules/.bin/ng build --base-href "./"
+    ./node_modules/.bin/ng build --prod --base-href "./"
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
