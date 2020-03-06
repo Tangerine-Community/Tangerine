@@ -17,7 +17,7 @@ class CaseEventInfo {
 })
 export class CaseComponent implements AfterContentInit {
 
-  private ready = false
+  ready = false
   private templateTitle = ''
   private templateDescription = ''
   private caseEventsInfo:Array<CaseEventInfo>
