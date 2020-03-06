@@ -10,6 +10,7 @@ import { _TRANSLATE } from '../shared/translation-marker';
 import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 
 
+/* @TODO This is breaking angular prod mode.
 @Injectable()
 class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
   constructor() {}
@@ -28,18 +29,17 @@ class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
     }
   }
 }
+*/
 
 const routes: Routes = [{
   path: 'tangy-forms-player',
   component: TangyFormsPlayerComponent,
   canActivate: [LoginGuard, CreateProfileGuardService],
-  canDeactivate: [ CanDeactivateForm ]
 }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-  providers: [CanDeactivateForm]
+  exports: [RouterModule]
 })
 export class TangyFormsRoutingModule { }

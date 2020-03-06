@@ -23,7 +23,7 @@ export class RegistrationComponent implements OnInit {
     requiresAdminPassword = false
     isUsernameTaken: boolean;
     returnUrl: string;
-    statusMessage: object;
+    statusMessage:any;
     disableSubmit = false;
     passwordsDoNotMatchMessage = { type: 'error', message: _TRANSLATE('Passwords do not match') };
     passwordIsNotStrong = { type: 'error', message: _TRANSLATE('Password is not strong enough.') };
