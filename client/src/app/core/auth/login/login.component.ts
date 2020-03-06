@@ -93,8 +93,9 @@ export class LoginComponent implements OnInit {
   }
 
   // we need to have error msg for admin pass failure
-  loginUser() {
-    observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(async data => {
+  async loginUser() {
+    try {
+      const data = await this.userService.login(this.user.username, this.user.password)
       if (data) {
         if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
           this.router.navigate(['/update']);
@@ -104,10 +105,10 @@ export class LoginComponent implements OnInit {
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccesful');
       }
-    }, error => {
+    } catch (e) {
       this.errorMessage = _TRANSLATE('Login Unsuccesful');
+    }
 
-    });
   }
 
   register(): void {
