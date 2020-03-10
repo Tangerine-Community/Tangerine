@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 if (process.argv[2] === '--help') {
-  console.log('Start by populating a case on your tablet. Then export it in dev tools using the copy(caseService.export()).
+  console.log('Start by populating a case on your tablet. Then export it in dev tools using the copy(caseService.export()).')
   console.log('Place copied output in a case-export.json file in your group\'s content folder, then run this command.')
   console.log('Usage:')
   console.log('       generate-cases <numberOfCases> <groupId>')
