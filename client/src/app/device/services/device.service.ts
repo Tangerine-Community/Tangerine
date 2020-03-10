@@ -6,7 +6,7 @@ import { Device } from './../classes/device.class';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-const bcrypt = window['dcodeIO'].bcrypt 
+const bcrypt = window['dcodeIO'].bcrypt
 
 export interface AppInfo {
   serverUrl:string
@@ -31,7 +31,7 @@ export class DeviceService {
     private userService:UserService,
     private lockBoxService:LockBoxService,
     private appConfigService:AppConfigService
-  ) { 
+  ) {
   }
 
   async install() {
@@ -42,7 +42,7 @@ export class DeviceService {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = <Device>await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device-public/read/${appConfig.groupId}/${id}/${token}`).toPromise()
     return device
   }
 
@@ -60,7 +60,7 @@ export class DeviceService {
     } else {
       device = <Device>await this
         .httpClient
-        .get(`${appConfig.serverUrl}group-device-public/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
+        .get(`${appConfig.serverUrl}group-device-public/register/${appConfig.groupId}/${id}/${token}`).toPromise()
     }
     await this.variableService.set('tangerine-device-is-registered', true)
     await this.userService.installSharedUserDatabase(device)
@@ -90,7 +90,7 @@ export class DeviceService {
     }
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise()
   }
 
   async didSync():Promise<any> {
@@ -99,7 +99,7 @@ export class DeviceService {
     const version = await this.getBuildId()
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise()
   }
 
   async getAppInfo() {
@@ -107,7 +107,7 @@ export class DeviceService {
     const buildId = await this.getBuildId()
     const buildChannel = await this.getBuildChannel()
     const device = await this.getDevice()
-    const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
+    const locationList = await this.appConfigService.getLocationList();
     const flatLocationList = Loc.flatten(locationList)
     const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
       ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
@@ -150,7 +150,7 @@ export class DeviceService {
   }
 
   verifyPassword(password:string) {
-    return bcrypt.compareSync(password, localStorage.getItem('tangerine-device-password')) 
+    return bcrypt.compareSync(password, localStorage.getItem('tangerine-device-password'))
   }
 
   passwordIsSet():boolean {

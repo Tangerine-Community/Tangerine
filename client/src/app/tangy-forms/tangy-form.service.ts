@@ -9,7 +9,8 @@ import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
   providedIn: 'root'
 })
 export class TangyFormService {
-
+  formsInfo: Array<FormInfo>
+  formsMarkup: Array<any> = []
   constructor(
     private userService:UserService,
     private http:HttpClient
@@ -17,7 +18,11 @@ export class TangyFormService {
 
   async getFormMarkup(formId) {
     const formInfo = await this.getFormInfo(formId)
-    const formMarkup:any = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
+    let formMarkup:any = this.formsMarkup[formInfo.src]
+    if (!this.formsMarkup[formInfo.src]) {
+      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
+      this.formsMarkup[formInfo.src] = formMarkup;
+    }
     return formMarkup
   }
 
@@ -27,8 +32,8 @@ export class TangyFormService {
   }
 
   async getFormsInfo() {
-    const formsInfo = <Array<FormInfo>>await this.http.get('./assets/forms.json').toPromise()
-    return formsInfo
+    this.formsInfo = this.formsInfo ? this.formsInfo : <Array<FormInfo>>await this.http.get('./assets/forms.json').toPromise()
+    return this.formsInfo
   }
 
   async saveForm(formDoc) {
