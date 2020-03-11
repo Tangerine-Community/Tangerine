@@ -1,7 +1,13 @@
 #
 # Required to change!
 #
-# You must change the following passwords or else bots will find and hack your site! These settings are only set on the very first start of Tangerine. Changing settings will likely result in breaking your installation or exposing security holes.
+# You must change the following passwords or else bots will find and hack your site! 
+# These settings are only set when you run start.sh of Tangerine. Restarting your docker container will not refresh
+# these settings.
+#
+# Also, changing settings after first start.sh may result in your tablets losing ability to upload, reports unable to generate,
+# and many other potential issues depending on the setting. To change settings, you will need to start a new server and install
+# tangerine on that new server with the desired settings, then migrate uploaded data to a your new server installation.
 #
 
 # Domain name of the Tangerine installation.
