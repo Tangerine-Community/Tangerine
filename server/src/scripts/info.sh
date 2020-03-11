@@ -9,6 +9,7 @@ echo "reporting-worker-unpause (Unpause the reporting worker to continue buildin
 echo "find-missing-records     (Find any missing records in reporting cache [experimental])"
 echo "generate-csv             (Generate a CSV)"
 echo "generate-uploads         (Generate fake uploads for a group)"
+echo "generate-cases           (Generate cases with group's case-export.json as a template)"
 echo "push-all-group-views     (Push all database views into all groups)"
 echo "import-archives          (Import client archives from the ./data/archives folder)"
 echo "release-apk              (Release a Group App as an APK)"
