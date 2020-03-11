@@ -61,6 +61,8 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
+T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
+
 docker build -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
@@ -117,8 +119,6 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"NODE_ENV=development\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
-  --env \"T_ADMIN=$T_ADMIN\" \
-  --env \"T_PASS=$T_PASS\" \
   --env \"T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN\" \
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
