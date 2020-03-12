@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.8.1
+- __Fixes__
+-- We focused on issues with slow performance on tablets when viewing forms. We are caching important configuration files and the Roboto font and have reduced redundant rendering calls. 
+-- We are recommending the use of 2-way sync for all forms due to mixed protocol risks.
+
+- __Deprecations__
+-- TangyFormService getFormsInfo() is deprecated in favor of TangyFormsInfoService getFormsInfo().
+
+
 ## v3.8.0
 v3.8.0 is a big and exciting release! To accomodate the long list of changes, we split up this round of release notes into sections: General, Sync Protocol 2 Module, and Case Module, and Developer notes.
 
