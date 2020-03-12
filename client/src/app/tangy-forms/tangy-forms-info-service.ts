@@ -1,8 +1,6 @@
-import PouchDB from 'pouchdb';
-import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
-import axios from 'axios'
 import { FormInfo } from './classes/form-info.class';
 import { Inject, Injectable } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -13,10 +11,13 @@ const emit = (key, value) => {
   providedIn: 'root'
 })
 export class TangyFormsInfoService {
-
+  formsInfo: Array<FormInfo>
+  constructor(
+    private http: HttpClient
+  ) { }
   async getFormsInfo() {
-    const formsInfo:Array<FormInfo> = (await axios.get('./assets/forms.json')).data
-    return formsInfo
+    this.formsInfo = this.formsInfo ? this.formsInfo : <Array<FormInfo>>await this.http.get('./assets/forms.json').toPromise()
+    return this.formsInfo
   }
 
 }
