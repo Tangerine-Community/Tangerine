@@ -27,6 +27,7 @@
     "@angular/router": "^7.2.2",
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
+    "@polymer/font-roboto-local": "^3.0.2",
     "@polymer/paper-item": "^3.0.1",
     "@polymer/paper-progress": "^3.0.1",
     "@webcomponents/webcomponentsjs": "^2.0.2",

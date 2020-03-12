@@ -81,8 +81,6 @@ export class AppComponent implements OnInit {
       this.checkPermissions();
     }
 
-    this.window.polymerSkipLoadingFontRoboto = true
-
     // Initialize services.
     await this.userService.initialize()
     await this.searchService.start()
