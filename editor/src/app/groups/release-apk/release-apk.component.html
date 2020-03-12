@@ -10,6 +10,10 @@
   {{'Could Not Generate APK'|translate}}
 </p>
 
+<p *ngIf="step">
+  {{step}}
+</p>
+
 <p *ngIf="status==code.STATUS_DONE">
   {{'Download your APK'|translate}}
   <a target='_new' href="/releases/{{releaseType}}/apks/{{groupId}}/{{groupId}}.apk">{{'here'|translate}}</a>.
