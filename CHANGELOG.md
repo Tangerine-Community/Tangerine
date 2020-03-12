@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.8.1
+- __Fixes__
+    - We focused on issues with slow performance on tablets when viewing forms. We are caching important configuration files (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. 
+    Implementation: Use the following code to take advantage of this caching:
+      - `await this.appConfigService.getLocationList();`
+      - `await this.tangyFormsInfoService.getFormsInfo();`
+      - `await this.appConfigService.getAppConfig;`
+      - `await this.tangyFormService.getFormMarkup(this.eventFormDefinition.formId);`
+    
+       CaseDefinitionsService now has caching of caseDefinitions, but that is not exposed publicly. More info in this PR: https://github.com/Tangerine-Community/Tangerine/pull/1991
+
+-- We are recommending the use of 2-way sync for all forms due to mixed protocol risks. We have mode some modifications to the sync code based on load tests.
+
+- __New Features__
+A new spinner appears when loading forms to show that it is in-progress.
+
+- __Deprecations__
+-- TangyFormService getFormsInfo() is deprecated in favor of TangyFormsInfoService getFormsInfo().
+
 ## v3.8.0
 v3.8.0 is a big and exciting release! To accomodate the long list of changes, we split up this round of release notes into sections: General, Sync Protocol 2 Module, and Case Module, and Developer notes.
 
