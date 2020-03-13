@@ -54,6 +54,12 @@ Then add the fields or functions you need. In this case, I'm adding a getValue:
 ```js
 `<t-lang en>Status</t-lang><t-lang fr>Statut</t-lang>: ${!eventForm.complete ? '<t-lang en>Incomplete</t-lang><t-lang fr>Incomplète</t-lang>' : '<t-lang en>Complete</t-lang><t-lang fr>Achevée</t-lang>'} ${response ? `Version: ${getValue("content_release_version")}`: ''}`
 ```
+
+Output:
+```js
+"<t-lang en>Status</t-lang><t-lang fr>Statut</t-lang>: <t-lang en>Complete</t-lang><t-lang fr>Achevée</t-lang> Start date: 3/13/2020, 11:25:19 AM"
+```
+
 Note that I was testing for existence of response, and also nesting templates to show the "Version" text if there was a value for content_release_version.
 
 Another example:
