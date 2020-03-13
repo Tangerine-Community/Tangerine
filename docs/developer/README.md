@@ -4,8 +4,8 @@
 - [modules.md](modules.md)
 
 ## Form Display
-- [viewing-forms-and-data.md](Viewing Forms and Form Data)
-- [supporting-custom-elements.md](Supporting custom elements)
+- [Viewing Forms and Form Data](viewing-forms-and-data.md)
+- [Supporting custom elements](supporting-custom-elements.md)
 
 ## Debugging
 - [debugging-reporting.md](debugging-reporting.md)
