@@ -40,8 +40,8 @@ class MockUserService {
 class MockAppConfigService {
   getAppConfig() {
     return {
-      sharedUserDatabase: false 
-    } 
+      sharedUserDatabase: false
+    }
   }
 }
 
@@ -57,6 +57,7 @@ class MockFormsInfoService {
         description: 'test test',
         type: 'form',
         listed: true,
+        archived: false,
         title: 'Example',
         searchSettings: <FormSearchSettings>{
           shouldIndex: true,
