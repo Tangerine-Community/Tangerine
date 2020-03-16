@@ -1,6 +1,6 @@
-<app-case-breadcrumb *ngIf="ready" [caseId]="caseService.case._id"></app-case-breadcrumb>
+<app-case-breadcrumb [caseId]="caseService.case._id"></app-case-breadcrumb>
 
-<div *ngIf="ready" class="subject-header">
+<div  class="subject-header">
   <h1>
     <span [innerHTML]="templateTitle|unsanitizeHtml"></span>
   </h1>
@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<div *ngIf="ready" class="wrapper">
+<div class="wrapper">
   <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
   <div *ngFor="let eventInfo of caseEventsInfo">
     <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
