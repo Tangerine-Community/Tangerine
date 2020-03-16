@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#
+# Set up data folders.
+#
+
 if [ ! -d data ]; then
   mkdir data
 fi
@@ -49,8 +53,10 @@ if [ ! -d data/dat-output ]; then
   mkdir data/dat-output
 fi
 
-
+#
 # Load config.
+#
+
 source ./config.defaults.sh
 if [ -f "./config.sh" ]; then
   source ./config.sh
@@ -58,11 +64,9 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
-T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
-
-if [ "$1" != "" ]; then
-  T_TAG="$1"
-fi
+#
+# Get software and shut down existing containers if they exist.
+#
 
 # Allow to specify Tangerine Version as parameter in ./start.sh, other wise use the most recent tag.
 if [ "$1" = "" ]; then
@@ -75,7 +79,6 @@ else
   T_TAG="$1"
 fi
 
-# Pull tag.
 echo "Pulling $T_TAG"
 docker pull tangerine/tangerine:$T_TAG
 
@@ -84,7 +87,57 @@ docker stop $T_CONTAINER_NAME > /dev/null
 echo "Removing $T_CONTAINER_NAME"
 docker rm $T_CONTAINER_NAME > /dev/null 
 
+#
+# Set up couchdb
+#
+
+T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
+
+if [ ! -d data/couchdb ]; then
+  mkdir data/couchdb
+fi
+if [ ! -d data/couchdb/data ]; then
+  mkdir data/couchdb/data
+fi
+if [ ! -d data/couchdb/local.d ]; then
+  mkdir data/couchdb/local.d
+fi
+if [ ! -f data/couchdb/local.d/local.ini ]; then
+  echo "
+[chttpd]
+bind_address = any
+
+[httpd]
+bind_address = any
+
+[couch_httpd_auth]
+require_valid_user = true
+
+[chttpd]
+require_valid_user = true
+  " > data/couchdb/local.d/local.ini
+fi
+
+[ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
+[ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
+
+docker run -d \
+   -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
+   -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
+   -p 5984:5984 \
+   -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
+   -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
+   --name $T_COUCHDB_CONTAINER_NAME \
+   couchdb:2
+
+sleep 10
+
+#
+# Start Tangerine.
+#
+
 RUN_OPTIONS="
+  --link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --name $T_CONTAINER_NAME \
   --restart unless-stopped \
   --env \"NODE_ENV=production\" \
@@ -94,6 +147,7 @@ RUN_OPTIONS="
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN\" \
+  --env \"T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT\" \
   --env \"T_USER1_MANAGED_SERVER_USERS=$T_USER1_MANAGED_SERVER_USERS\" \
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
@@ -119,55 +173,6 @@ RUN_OPTIONS="
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
-
-if [ "$T_COUCHDB_LOCAL" = "true" ]; then
-  if [ ! -d data/couchdb ]; then
-    mkdir data/couchdb
-  fi
-  if [ ! -d data/couchdb/data ]; then
-    mkdir data/couchdb/data
-  fi
-  if [ ! -d data/couchdb/local.d ]; then
-    mkdir data/couchdb/local.d
-  fi
-  if [ ! -f data/couchdb/local.d/local.ini ]; then
-    echo "
-[chttpd]
-bind_address = any
-
-[httpd]
-bind_address = any
-
-[couch_httpd_auth]
-require_valid_user = true
-
-[chttpd]
-require_valid_user = true
-    " > data/couchdb/local.d/local.ini
-  fi
-  [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
-  [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
-  docker run -d \
-     --restart unless-stopped \
-     -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
-     -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
-     -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
-     -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
-     --name $T_COUCHDB_CONTAINER_NAME \
-     $T_COUCHDB_PORT_MAPPING \
-     couchdb:2
-  RUN_OPTIONS="
-    --link $T_COUCHDB_CONTAINER_NAME:couchdb \
-    -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
-    -e T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT \
-    -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
-    -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
-    $RUN_OPTIONS
-  "
-  sleep 10
-fi
-
-
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
