@@ -61,6 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         // Ensure user is logged in every 60 seconds.
         await this.ensureLoggedIn();
+        this.isAdminUser = await this.userService.isCurrentUserAdmin()
         setInterval(() => this.ensureLoggedIn(), 60 * 1000);
         this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
             this.isAdminUser = await this.userService.isCurrentUserAdmin()
@@ -72,7 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
         fetch('assets/translation.json')
           .then(response => response.json())
           .then(json => {
-            console.log("populating window.translation.")
             this.window.translation = json
           })
     }

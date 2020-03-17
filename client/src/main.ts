@@ -12,9 +12,7 @@ if (environment.production) {
 }
 
 if (window['isCordovaApp']) {
-  console.log('isCordovaApp')
   document.addEventListener('deviceready', () => {
-    console.log('deviceready')
     platformBrowserDynamic().bootstrapModule(AppModule)
       .catch(err => console.log(err));
   }, false);

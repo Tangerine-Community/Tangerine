@@ -1,4 +1,4 @@
-import { Component, AfterContentInit } from '@angular/core';
+import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -28,21 +28,22 @@ export class CaseComponent implements AfterContentInit {
 
   constructor(
     private route: ActivatedRoute,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private ref: ChangeDetectorRef
   ) { 
+    ref.detach()
     this.window = window
   }
 
   async ngAfterContentInit() {
-    this.route.params.subscribe(async params => {
-      if (!this.caseService.case || params.id !== this.caseService.case._id) {
-        await this.caseService.load(params.id)
-        this.caseService.openCaseConfirmed = false
-      }
-      this.window.caseService = this.caseService
-      this.calculateTemplateData()
-      this.ready = true
-    })
+    const caseId = window.location.hash.split('/')[2]
+    if (!this.caseService.case || caseId !== this.caseService.case._id) {
+      await this.caseService.load(caseId)
+      this.caseService.openCaseConfirmed = false
+    }
+    this.window.caseService = this.caseService
+    this.calculateTemplateData()
+    this.ready = true
   }
 
   calculateTemplateData() {
@@ -75,10 +76,12 @@ export class CaseComponent implements AfterContentInit {
       })
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
+    this.ref.detectChanges()
   }
 
   onOpenCaseConfirmButtonClick() {
     this.caseService.openCaseConfirmed = true
+    this.ref.detectChanges()
   }
 
   async onSubmit() {

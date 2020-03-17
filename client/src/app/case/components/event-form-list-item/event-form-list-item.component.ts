@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -37,7 +37,12 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemPrimary = ''
   renderedTemplateListItemSecondary = ''
 
-  constructor(private formService:TangyFormService) { }
+  constructor(
+    private formService:TangyFormService,
+    private ref: ChangeDetectorRef
+  ) {
+    ref.detach()
+  }
 
   async ngOnInit() {
     const response = await this.formService.getResponse(this.eventForm.formResponseId)
@@ -70,6 +75,7 @@ export class EventFormListItemComponent implements OnInit {
     eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateEventFormListItemIcon ? \`${this.caseDefinition.templateEventFormListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
     eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateEventFormListItemPrimary ? \`${this.caseDefinition.templateEventFormListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
+    this.ref.detectChanges()
   }
 
 }

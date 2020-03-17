@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
 
 
   async ngOnInit() {
- 
+
     // Installation check.
     if (!this.installed) {
       await this.install()
@@ -80,11 +80,11 @@ export class AppComponent implements OnInit {
     } else {
       this.checkPermissions();
     }
-  
+
     // Initialize services.
     await this.userService.initialize()
     await this.searchService.start()
-   
+
     // Get globally exposed config.
     this.appConfig = await this.appConfigService.getAppConfig()
     this.window.appConfig = this.appConfig
@@ -95,7 +95,7 @@ export class AppComponent implements OnInit {
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
       this.router.navigate(['/update'])
     }
-    
+
     // Set up log in status.
     this.isLoggedIn = this.userService.isLoggedIn()
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
