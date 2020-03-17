@@ -34,7 +34,7 @@ if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$R
 fi
 
 # Mark build status early.
-echo '{"processing":true}' > $STATUS_FILE
+echo '{"processing":true,"step":"Generating APK configuration files"}' > $STATUS_FILE
 
 if [ -d "$RELEASE_DIRECTORY" ]; then
   # Clear out the Cordova project in $RELEASE_DIRECTORY
@@ -64,6 +64,7 @@ sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
 
 # Create the chcp manifest.
 /tangerine/server/node_modules/cordova-hot-code-push-cli/bin/cordova-hcp build
+echo '{"processing":true,"step":"Compiling APK"}' > $STATUS_FILE
 
 echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android
@@ -71,6 +72,6 @@ cordova build --no-telemetry android
 # Copy the apk to the $RELEASE_DIRECTORY
 cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$GROUP.apk
 
-echo '{"processing":false}' > $STATUS_FILE
+echo '{"processing":false,"step":"APK ready"}' > $STATUS_FILE
 echo 
 echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE with Build ID of $BUILD_ID and release type of $RELEASE_TYPE"

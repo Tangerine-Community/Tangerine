@@ -16,8 +16,14 @@ app.use(express.static(TANGERINE_CLIENT_DIR))
 // Listen
 
 async function go() {
-  await fs.remove(ASSETS_DIR)
-  syncFolders(process.cwd(), ASSETS_DIR, {watch: true})
-  app.listen(port, () => console.log(`Tangerine app is running. Open http://localhost:${port}`))
+  try {
+    const raw = fs.readFileSync(`${process.cwd()}/app-config.json`)
+    const appConfig = JSON.parse(raw)
+    await fs.remove(ASSETS_DIR)
+    syncFolders(process.cwd(), ASSETS_DIR, {watch: true})
+    app.listen(port, () => console.log(`Tangerine app is running. Open http://localhost:${port}`))
+  } catch (e) {
+    console.log('Is this directory Tangerine content? If it is, there may be something wrong with the app-config.json.')
+  }
 }
 go()

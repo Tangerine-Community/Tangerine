@@ -12,7 +12,7 @@ git checkout $VERSION
 cd client
 npm install
 npm run build
-rm -r ../../app
+rm -fr ../../app
 mv dist/tangerine-client ../../app
 cd ../../
 rm -rf tmp

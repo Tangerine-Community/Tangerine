@@ -51,7 +51,7 @@ import '@polymer/iron-icons/notification-icons.js';
 import '@polymer/paper-progress/paper-progress.js';
 
 import * as moment from 'moment'
-(window as any).moment = moment 
+(window as any).moment = moment
 
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.

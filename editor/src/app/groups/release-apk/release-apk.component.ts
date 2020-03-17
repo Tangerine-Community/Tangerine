@@ -20,13 +20,14 @@ export class ReleaseApkComponent implements OnInit {
 
   groupId = '';
   releaseType = '';
+  step = '';
   code = {
     STATUS_BUILDING: 'STATUS_BUILDING',
     STATUS_ERROR: 'STATUS_ERROR',
     STATUS_DONE: 'STATUS_DONE',
     STATUS_WAIT: 'STATUS_WAIT'
   }
-  status: any 
+  status: any
 
   constructor(
     private groupsService: GroupsService
@@ -41,11 +42,19 @@ export class ReleaseApkComponent implements OnInit {
       const result: any = await this.groupsService.releaseAPK(this.groupId, this.releaseType);
       // Wait 5 seconds so the process can start. This can result in false positives. Would be better to have build IDs returns from the release command.
       await sleep(5000)
-      while (await this.groupsService.apkIsBuilding(this.groupId, this.releaseType)) {
+      let statusMessage = {}
+      let processing = true;
+      while (processing === true) {
+        statusMessage = await this.groupsService.apkIsBuilding(this.groupId, this.releaseType)
+        if (typeof statusMessage !== 'undefined') {
+          processing = statusMessage['processing']
+          this.step = statusMessage['step']
+        }
         this.status = this.code.STATUS_BUILDING
         await sleep(10000)
       }
       this.status = this.code.STATUS_DONE;
+      this.step = null;
     } catch (error) {
       this.status = this.code.STATUS_ERROR;
       console.error(error);

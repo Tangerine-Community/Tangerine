@@ -1,3 +1,4 @@
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { DeviceService } from './../../device/services/device.service';
 import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
@@ -383,6 +384,20 @@ class CaseService {
       }
     }
     return false;
+  }
+
+  async export():Promise<Array<TangyFormResponseModel>> {
+    const docs = [this.case]
+    const formResponseDocIds = this.case.events.reduce((formResponseDocIds, caseEvent) => {
+      return [
+        ...formResponseDocIds,
+        ...caseEvent.eventForms.map(eventForm => eventForm.formResponseId)
+      ]
+    }, [])
+    for (let formResponseDocId of formResponseDocIds) {
+      docs.push(await this.tangyFormService.getResponse(formResponseDocId))
+    }
+    return docs
   }
 
 }
