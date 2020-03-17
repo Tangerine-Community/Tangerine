@@ -12,6 +12,7 @@
 - Server Admin notes
   - We cleaned up config variables in `config.sh`, deprecated `T_ADMIN` and `T_PASS` [#1986](https://github.com/Tangerine-Community/Tangerine/pull/1986)
   - New `generate-cases` command for load testing a large number of Cases based on your custom content in a group. [#1993](https://github.com/Tangerine-Community/Tangerine/pull/1993) 
+  - New `reset-all-devices` command for reseting the server token and database keys for all devices. Note that after running this command you will need to reinstall on all devices and reregister with new QR codes. This command is useful if you are migrating a large amount of devices to a new group or a new server and you want to maintain Device ID consistency with the Device Serial numbers you are tracking.
 
 __Upgrade instructions:__
 ```
