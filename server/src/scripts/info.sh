@@ -10,6 +10,7 @@ echo "find-missing-records     (Find any missing records in reporting cache [exp
 echo "generate-csv             (Generate a CSV)"
 echo "generate-uploads         (Generate fake uploads for a group)"
 echo "generate-cases           (Generate cases with group's case-export.json as a template)"
+echo "reset-all-devices        (Reset server tokens and device keys for all devices, requires reinstall and set up on all devices after)"
 echo "push-all-group-views     (Push all database views into all groups)"
 echo "import-archives          (Import client archives from the ./data/archives folder)"
 echo "release-apk              (Release a Group App as an APK)"
