@@ -15,7 +15,6 @@ export class CaseDefinitionsService {
 
   async load():Promise<any> {
     this.caseDefinitionReferences = this.caseDefinitionReferences ? this.caseDefinitionReferences : <Array<FormInfo>>await this.http.get('./assets/case-definitions.json').toPromise()
-
     if (!this.caseDefinitions) {
       this.caseDefinitions = []
       for (const reference of this.caseDefinitionReferences) {
