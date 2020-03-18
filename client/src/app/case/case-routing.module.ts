@@ -1,7 +1,6 @@
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { NgModule, Injectable } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CreateProfileGuardService } from '../shared/_guards/create-profile-guard.service';
 import { LoginGuard } from '../shared/_guards/login-guard.service';
 import { _TRANSLATE } from '../shared/translation-marker';
 import { CasesComponent } from './components/cases/cases.component';
@@ -15,37 +14,37 @@ const routes: Routes = [
   {
     path: 'cases',
     component: CasesComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
+    canActivate: [LoginGuard]
   },
   {
     path: 'case/:id',
     component: CaseComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
+    canActivate: [LoginGuard]
   },
   {
     path: 'case/event/:caseId/:eventId',
     component: EventComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
+    canActivate: [LoginGuard]
   },
   {
     path: 'case/event/form-add/:caseId/:eventId/:participantId',
     component: EventFormAddComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
+    canActivate: [LoginGuard]
   },
   {
     path: 'case/event/form/:caseId/:eventId/:eventFormId',
     component: EventFormComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
+    canActivate: [LoginGuard]
   },
   {
     path: 'new-case',
     component: NewCaseComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
+    canActivate: [LoginGuard]
   },
   {
     path: 'case-event-schedule',
     component: CaseEventScheduleComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
+    canActivate: [LoginGuard]
   }
 ];
 
