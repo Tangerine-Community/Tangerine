@@ -1,7 +1,6 @@
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../../../shared/_services/user.service';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -31,8 +30,7 @@ export class EventFormAddComponent implements AfterContentInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private caseService: CaseService,
-    private userService: UserService
+    private caseService: CaseService
   ) { 
     this.window = window
   }
