@@ -1,7 +1,5 @@
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { Injectable } from '@angular/core';
-import { UserService } from 'src/app/shared/_services/user.service';
-import { Case } from '../classes/case.class';
 import { CaseEventInfo } from './case-event-info.class';
 import { CaseService } from './case.service';
 import moment from 'moment/src/moment';
