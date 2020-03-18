@@ -1,5 +1,5 @@
+import { TangyFormService } from './../../../tangy-forms/tangy-form.service';
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../../shared/_services/user.service';
 import { Case } from '../../classes/case.class'
 
 @Component({
@@ -13,14 +13,11 @@ export class CasesComponent implements OnInit {
   numberOfOpenCases:number 
 
   constructor(
-    private userService: UserService
+    private tangyFormService:TangyFormService 
   ) { }
 
   async ngOnInit() {
-    const db = await this.userService.getUserDatabase();
-    this.cases = (await db.allDocs({include_docs: true}))
-      .rows
-      .map(row => row.doc)
+    this.cases = (await this.tangyFormService.getAllResponses())
       .filter(doc => doc.collection === 'TangyFormResponse' && doc.type === 'Case')
     this.numberOfOpenCases = this.cases.filter(caseInstance => caseInstance.complete === false).length
   }
