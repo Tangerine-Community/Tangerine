@@ -1,3 +1,4 @@
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Case } from '../classes/case.class';
@@ -11,16 +12,13 @@ import moment from 'moment/src/moment';
 export class CasesService {
 
   constructor(
-    private userService: UserService,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private tangyFormService:TangyFormService
   ) { }
 
   async getEventsByDate(dateStart, dateEnd, excludeEstimates = false): Promise<Array<CaseEventInfo>> {
-    const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    const allDocs = await userDb.allDocs({ include_docs: true })
-    const docs = <Array<CaseEventInfo>>(allDocs)
-      .rows
-      .map(row => row.doc)
+    const allResponses = await this.tangyFormService.getAllResponses()
+    const docs = <Array<CaseEventInfo>>(allResponses)
       .filter(doc => doc.collection === 'TangyFormResponse' && doc.type === 'case')
       .reduce((acc, caseDoc) => [...acc, ...caseDoc.events
         .map(event => {

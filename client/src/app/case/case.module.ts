@@ -15,7 +15,6 @@ import { TangyFormsModule } from '../tangy-forms/tangy-forms.module';
 import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
 import { CasesService } from './services/cases.service';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
-import { CaseHomeComponent } from './components/case-home/case-home.component';
 import { MatTab, MatTabsModule } from '@angular/material';
 import { SearchModule } from '../core/search/search.module';
 import { FormsModule } from '@angular/forms';
@@ -26,13 +25,15 @@ import { EventFormAddComponent } from './components/event-form-add/event-form-ad
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+  exports: [
+    CaseEventScheduleComponent,
+    QueryComponent
+  ],
   imports: [
     FormsModule,
     CaseRoutingModule,
     SharedModule,
     TangyFormsModule,
-    MatTabsModule,
-    SearchModule,
     CommonModule
   ],
   providers: [
@@ -49,7 +50,6 @@ import { EventFormAddComponent } from './components/event-form-add/event-form-ad
     CaseBreadcrumbComponent,
     CaseEventScheduleListComponent,
     CaseEventScheduleComponent,
-    CaseHomeComponent,
     CaseEventListItemComponent,
     EventFormListItemComponent,
     QueryComponent,
