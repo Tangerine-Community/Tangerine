@@ -1,17 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { CasesService } from '../../services/cases.service';
+import { CasesService } from 'src/app/case/services/cases.service';
 import * as moment from 'moment'
 import { FORM_TYPES_INFO } from 'src/app/core/search/search.component';
-import {  CASE_EVENT_STATUS_COMPLETED } from '../../classes/case-event.class';
+import {  CASE_EVENT_STATUS_COMPLETED } from 'src/app/case/classes/case-event.class';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { SearchDoc, SearchService } from 'src/app/shared/_services/search.service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Subject } from 'rxjs';
-import { CaseService } from '../../services/case.service';
-import { CaseEventInfo } from '../../services/case-event-info.class';
-import { CaseDefinition } from '../../classes/case-definition.class';
+import { CaseService } from 'src/app/case/services/case.service';
+import { CaseEventInfo } from 'src/app/case/services/case-event-info.class';
+import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
 
 export const CASE_EVENT_SCHEDULE_LIST_MODE_DAILY = 'CASE_EVENT_SCHEDULE_LIST_MODE_DAILY'
 export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'
