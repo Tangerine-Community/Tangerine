@@ -8,7 +8,6 @@ import { NewCaseComponent } from './components/new-case/new-case.component';
 import { CaseComponent } from './components/case/case.component';
 import { EventComponent } from './components/event/event.component'
 import { EventFormComponent } from './components/event-form/event-form.component'
-import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
 
 const routes: Routes = [
   {
@@ -39,11 +38,6 @@ const routes: Routes = [
   {
     path: 'new-case',
     component: NewCaseComponent,
-    canActivate: [LoginGuard]
-  },
-  {
-    path: 'case-event-schedule',
-    component: CaseEventScheduleComponent,
     canActivate: [LoginGuard]
   }
 ];

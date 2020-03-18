@@ -12,11 +12,7 @@ import { SharedModule } from '../shared/shared.module'
 import { CaseDefinitionsService } from './services/case-definitions.service';
 import { CaseService } from './services/case.service';
 import { TangyFormsModule } from '../tangy-forms/tangy-forms.module';
-import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
 import { CasesService } from './services/cases.service';
-import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
-import { MatTab, MatTabsModule } from '@angular/material';
-import { SearchModule } from '../core/search/search.module';
 import { FormsModule } from '@angular/forms';
 import { CaseEventListItemComponent } from './components/case-event-list-item/case-event-list-item.component';
 import { EventFormListItemComponent } from './components/event-form-list-item/event-form-list-item.component';
@@ -26,7 +22,6 @@ import { EventFormAddComponent } from './components/event-form-add/event-form-ad
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   exports: [
-    CaseEventScheduleComponent,
     QueryComponent
   ],
   imports: [
@@ -48,8 +43,6 @@ import { EventFormAddComponent } from './components/event-form-add/event-form-ad
     NewCaseComponent,
     EventFormComponent,
     CaseBreadcrumbComponent,
-    CaseEventScheduleListComponent,
-    CaseEventScheduleComponent,
     CaseEventListItemComponent,
     EventFormListItemComponent,
     QueryComponent,
