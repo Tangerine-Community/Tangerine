@@ -60,8 +60,8 @@ export class GroupDevicesComponent implements OnInit {
   devicesDisplayedColumns = ['id', 'location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
 
   @Input('groupId') groupId:string
-  @ViewChild('dialog') dialog: ElementRef;
-  @ViewChild('locationEl') locationEl: ElementRef;
+  @ViewChild('dialog', {static: true}) dialog: ElementRef;
+  @ViewChild('locationEl', {static: true}) locationEl: ElementRef;
 
   constructor(
     private menuService:MenuService,

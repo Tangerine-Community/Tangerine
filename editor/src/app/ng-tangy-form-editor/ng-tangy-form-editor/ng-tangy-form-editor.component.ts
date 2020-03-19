@@ -14,8 +14,8 @@ import {Feedback} from "../feedback-editor/feedback";
 })
 export class NgTangyFormEditorComponent implements OnInit {
 
-  @ViewChild('container') container: ElementRef;
-  @ViewChild('header') header: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
+  @ViewChild('header', {static: true}) header: ElementRef;
   containerEl: any;
   selectedIndex = 0;
   print = false;

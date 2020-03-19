@@ -32,7 +32,7 @@ export class LocationListEditorComponent implements OnInit {
   isItemMarkedForUpdate = false;
   isLoading = false;
   form: any = { label: '', id: '' };
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,

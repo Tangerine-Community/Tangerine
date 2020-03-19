@@ -34,7 +34,7 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
   activeForms;
   groupUrl;
   formsJsonURL;
-  @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
+  @ViewChild('copyFormOverlay', {static: true}) copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private windowRef: WindowRef,

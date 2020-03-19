@@ -25,7 +25,7 @@ export class EventFormComponent implements AfterContentInit {
   loaded = false
   lastResponseSeen:any
   window:any
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
