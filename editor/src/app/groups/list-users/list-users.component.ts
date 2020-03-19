@@ -16,7 +16,7 @@ export class ListUsersComponent implements OnInit {
   groupId;
   users;
   usersDisplayedColumns = ['username', 'email', 'actions']
-  @ViewChild('search') search: ElementRef;
+  @ViewChild('search', {static: true}) search: ElementRef;
   title = _TRANSLATE("Security")
   breadcrumbs:Array<Breadcrumb> = []
   constructor(

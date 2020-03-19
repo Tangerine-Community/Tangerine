@@ -1,11 +1,10 @@
-import {Component, OnInit, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { fromEvent, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
-import {AfterContentInit} from '@angular/core/src/metadata/lifecycle_hooks';
 import {Breadcrumb} from '../../shared/_components/breadcrumb/breadcrumb.component';
 @Component({
   selector: 'app-add-user',
@@ -21,7 +20,7 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
   title = _TRANSLATE('Assign User Role')
   breadcrumbs: Array<Breadcrumb> = []
   newUser = true;
-  @ViewChild('search') search: ElementRef;
+  @ViewChild('search', {static: true}) search: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,

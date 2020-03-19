@@ -12,7 +12,7 @@ import { WindowRef } from 'src/app/core/window-ref.service';
 })
 export class ReleasePwaComponent implements OnInit {
 
-  @ViewChild('urlContainer') urlContainer: ElementRef;
+  @ViewChild('urlContainer', {static: true}) urlContainer: ElementRef;
   buildPwaIsComplete = false;
   copySuccess = false;
   @Input() groupId = ''

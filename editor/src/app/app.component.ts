@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
     mobileQuery: MediaQueryList;
     window:any
 
-    @ViewChild('snav') snav: MatSidenav
+    @ViewChild('snav', {static: true}) snav: MatSidenav
 
     private _mobileQueryListener: () => void;
     constructor(
