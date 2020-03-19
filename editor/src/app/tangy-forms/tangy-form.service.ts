@@ -13,11 +13,16 @@ export class TangyFormService {
 
   db:any;
   databaseName: String;
+  groupId:string
 
   constructor(
     private httpClient:HttpClient
   ) {
     this.databaseName = 'tangy-forms'
+  }
+
+  initialize(groupId) {
+    this.groupId = groupId
   }
 
   // Would be nice if this was queue based so if two saves get called at the same time, the differentials are sequentials updated
@@ -36,19 +41,27 @@ export class TangyFormService {
 
   async getResponse(responseId) {
     try {
-      let doc = await this.db.get(responseId)
+      const doc = <any>await this.httpClient.get(`/api/${this.groupId}/${responseId}`).toPromise()
       return doc
     } catch (e) {
       return false
     }
   }
 
-  async getResponseByFormId(groupId:string, formId:string, limit:number = 99999999, skip:number = 0) {
-    return <Array<any>>await this.httpClient.get(`/api/${groupId}/responsesByFormId/${formId}/${limit}/${skip}`).toPromise()
+  async getAllResponses() {
+    return []
+  }
+
+  async getResponsesByFormId(formId:string, limit:number = 99999999, skip:number = 0) {
+    return <Array<any>>await this.httpClient.get(`/api/${this.groupId}/responsesByFormId/${formId}/${limit}/${skip}`).toPromise()
     /*
     return Array<TangyFormResponseModel>(<Array<any>>await this.httpClient.get(`/api/${groupId}/responsesByFormId/${formId}/${limit}/${skip}`).toPromise())
       .map((doc) => new TangyFormResponseModel(doc))
     */
+  }
+
+  async getFormMarkup(formId) {
+    return await this.httpClient.get(`./assets/${formId}/form.html`, {responseType: 'text'}).toPromise()
   }
 
 
