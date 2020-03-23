@@ -7,6 +7,7 @@ import { UserDatabase } from './../shared/_classes/user-database.class';
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb'
 import {Subject} from 'rxjs';
+import {VariableService} from '../shared/_services/variable.service';
 
 export interface LocationQuery {
   level:string
@@ -31,7 +32,8 @@ export class SyncCouchdbService {
   public readonly syncMessage$: Subject<any> = new Subject();
 
   constructor(
-    private http:HttpClient
+    private http: HttpClient,
+    private variableService: VariableService
   ) { }
 
   async uploadQueue(userDb:UserDatabase, syncDetails:SyncCouchdbDetails) {
@@ -51,53 +53,43 @@ export class SyncCouchdbService {
   async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails): Promise<ReplicationStatus> {
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
-    const pouchDbSyncOptions ={
-      selector: {
-        "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
-          if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled) {
-            $or = [
-              ...$or,
-              ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                    // Get last value, that's the focused sync point.
-                    let location = locationConfig.value.slice(-1).pop()
-                    return {
-                      "form.id": formInfo.id,
-                      [`location.${location.level}`]: location.value
-                    }
-                  })
-                : [
-                    {
-                      "form.id": formInfo.id
-                    }
-                  ]
-            ]
-          }
-          return $or
-        }, [])
-      }
+    let last_seq = await this.variableService.get('sync-checkpoint')
+    if (typeof last_seq === 'undefined') {
+      last_seq = 0;
     }
+    const pouchDbSyncOptions = {
+      "since": last_seq
+    }
+
+    if (syncDetails.deviceSyncLocations.length > 0) {
+      const locationConfig = syncDetails.deviceSyncLocations[0]
+      const location = locationConfig.value.slice(-1).pop()
+      const selector = {
+          [`location.${location.level}`]: {
+            '$eq' : location.value
+          }
+        }
+      pouchDbSyncOptions['selector'] = selector
+    }
+
     const replicationStatus = <ReplicationStatus>await new Promise((resolve, reject) => {
       userDb.sync(remoteDb, pouchDbSyncOptions).on('complete', async  (info) => {
+        await this.variableService.set('sync-checkpoint', info.pull.last_seq)
         const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
           pulled: info.pull.docs_written,
           pushed: info.push.docs_written,
           conflicts: conflictsQuery.rows.map(row => row.id)
         })
-      }).on('change', (info) => {
-        const docs_read = info.docs_read
-        const docs_written = info.docs_written
-        const doc_write_failures = info.doc_write_failures
-        // const errors = JSON.stringify(info.errors)
+      }).on('change', async (info) => {
+        await this.variableService.set('sync-checkpoint', info.change.last_seq)
         const progress = {
           'docs_read': info.change.docs_read,
           'docs_written': info.change.docs_written,
-          'doc_write_failures': info.change.doc_write_failures
+          'doc_write_failures': info.change.doc_write_failures,
+          'pending': info.change.pending
         };
         this.syncMessage$.next(progress)
-      }).on('paused', function (err) {
-        console.log('Sync paused; error: ' + JSON.stringify(err))
       }).on('error', function (errorMessage) {
         console.log('boo, something went wrong! error: ' + errorMessage)
         reject(errorMessage)
