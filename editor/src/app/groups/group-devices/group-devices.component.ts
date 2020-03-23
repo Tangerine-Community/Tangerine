@@ -213,6 +213,7 @@ export class GroupDevicesComponent implements OnInit {
           <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
           <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
           <tangy-radio-buttons
+            required
             ${device.assignedLocation && device.assignedLocation.showLevels ? `
               value='${
                 JSON.stringify(
@@ -232,6 +233,7 @@ export class GroupDevicesComponent implements OnInit {
             `).join('')}
           </tangy-radio-buttons>
           <tangy-location
+            required
             name="assigned_location"
             label="Assign device to location at which location?"
             ${device.assignedLocation && device.assignedLocation.value ? `
@@ -241,6 +243,7 @@ export class GroupDevicesComponent implements OnInit {
           >
           </tangy-location>
           <tangy-radio-buttons
+            required
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
               value='${
                 JSON.stringify(
@@ -260,6 +263,7 @@ export class GroupDevicesComponent implements OnInit {
             `).join('')}
           </tangy-radio-buttons>
           <tangy-location
+            required
             name="sync_location"
             label="Sync device to which location?"
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
