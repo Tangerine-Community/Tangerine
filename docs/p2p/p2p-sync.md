@@ -2,20 +2,24 @@
 
 Use the P2P sync feature to transfer data between two or more tablets without an Internet connection.
 
+Note: The tablets must be running Android 8 (Oreo) to use this function. 
+
 In the following example, your tablet will be syncing data from your tablet to two other peers' tablets running Tangerine. The goal is to have the same data on all tablets. At the end of the process, data will be transferred from your tablet to the Internet.
 
 ## Accessing the P2P feature:
-Each peers should select Sync:P2P from the menu.
+Each peer should select Sync from the menu.
 
-English Menu | French Menu
---- | --- 
-![sync-p2p-menu](./images/sync-p2p-menu.jpg) |  ![sync-p2p-menu](./images/sync-p2p-menu-fr.jpg)
+![sync-p2p-menu](./images/sync-p2p-tangy-menu-sync.jpg) 
+
+Click the P2P Sync tab.
+
+![sync-p2p-menu](./images/sync-p2p-p2p-sync-page.jpg) 
 
 ## Discovery
 
 Gather in a circle with your peers. You and your peers should click the Discovery button. It does not matter who clicks first. 
 
-![sync-p2p-page-discovery](./images/sync-p2p-page-discovery.jpg)
+![sync-p2p-page-discovery](./images/sync-p2p-discovery-button.jpg)
 
 ## Endpoints
 
