@@ -49,7 +49,7 @@ export class SyncCouchdbService {
       .map(row => row.id)
   }
 
-  // Note that if you run this with no forms configured to CouchDB sync, that will result in no filter query and everything will be synced. Use carefully.
+  // Note that this ignores the sync config settings.
   async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails): Promise<ReplicationStatus> {
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -57,7 +57,7 @@ export class SyncCouchdbService {
     if (typeof last_seq === 'undefined') {
       last_seq = 0;
     }
-    const pouchDbSyncOptions = {
+    const remotePouchOptions = {
       "since": last_seq
     }
 
@@ -69,11 +69,20 @@ export class SyncCouchdbService {
             '$eq' : location.value
           }
         }
-      pouchDbSyncOptions['selector'] = selector
+      remotePouchOptions['selector'] = selector
+    }
+
+    const localPouchOptions = {
+      "since": 0
+    }
+
+    const pouchOptions = {
+      "push": localPouchOptions,
+      "pull": remotePouchOptions
     }
 
     const replicationStatus = <ReplicationStatus>await new Promise((resolve, reject) => {
-      userDb.sync(remoteDb, pouchDbSyncOptions).on('complete', async  (info) => {
+      userDb.sync(remoteDb, pouchOptions).on('complete', async  (info) => {
         await this.variableService.set('sync-checkpoint', info.pull.last_seq)
         const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
