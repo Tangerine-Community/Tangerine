@@ -28,7 +28,39 @@ async function go() {
     const caseDoc = templateDocs.find(doc => doc.type === 'case')
     // Change the case's ID.
     const caseId = uuidv1()
-    caseDoc._id = caseId 
+    caseDoc._id = caseId
+    const participant_id = Math.round(Math.random() * 1000000)
+    let firstname = random_name({ first: true, gender: "female" })
+    let surname = random_name({ last: true })
+    let barcode_data =  { "participant_id": participant_id, "treatment_assignment": "Experiment", "bin-mother": "A", "bin-infant": "B", "sub-studies": { "S1": true, "S2": false, "S3": false, "S4": true } }
+    let tangerineModifiedOn = new Date();
+    // tangerineModifiedOn is set to numberOfCasesCompleted days before today, and its time is set based upon numberOfCasesCompleted.
+    tangerineModifiedOn.setDate( tangerineModifiedOn.getDate() - numberOfCasesCompleted );
+    tangerineModifiedOn.setTime( tangerineModifiedOn.getTime() - ( numberOfCases - numberOfCasesCompleted ) )
+    const day = String(tangerineModifiedOn.getDate()).padStart(2, '0');
+    const month = String(tangerineModifiedOn.getMonth() + 1).padStart(2, '0');
+    const year = tangerineModifiedOn.getFullYear();
+    const screening_date = year + '-' + month + '-' + day;
+    const enrollment_date = screening_date;
+    let caseMother = {
+      _id: caseId,
+      tangerineModifiedOn: tangerineModifiedOn,
+      "participants": [{
+        "id": participant_id,
+        "caseRoleId": "mother-role",
+        "data": {
+          "firstname": firstname,
+          "surname": surname,
+          "participant_id": participant_id
+        }
+      }],
+    }
+    console.log("motherId: " + caseId + " participantId: " + participant_id);
+    doc = Object.assign({}, caseDoc, caseMother);
+    caseDoc.items[0].inputs[1].value = participant_id;
+    caseDoc.items[0].inputs[2].value = enrollment_date;
+    caseDoc.items[0].inputs[8].value = firstname;
+    caseDoc.items[0].inputs[10].value = surname;
     for (let caseEvent of caseDoc.events) {
       const caseEventId = uuidv1()
       caseEvent.id = caseEventId
@@ -50,6 +82,17 @@ async function go() {
         }
       }
     }
+    // modify the demographics form - s01a-participant-information-f254b9
+    const demoDoc = templateDocs.find(doc => doc.form.id === 's01a-participant-information-f254b9')
+    demoDoc.items[0].inputs[4].value = screening_date;
+    // "id": "randomization",
+    demoDoc.items[10].inputs[1].value = barcode_data;
+    demoDoc.items[10].inputs[2].value = participant_id;
+    demoDoc.items[10].inputs[7].value = enrollment_date;
+    // "id": "participant_information",
+    demoDoc.items[12].inputs[2].value = surname;
+    demoDoc.items[12].inputs[3].value = firstname;
+
     // Upload the profiles first
     // now upload the others
     for (let doc of templateDocs) {
