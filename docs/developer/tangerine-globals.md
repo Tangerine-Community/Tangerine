@@ -30,6 +30,8 @@ await this.variableService.get('tangerine-device-is-registered')
 
 ## Widely-used Configuration Variables
 
+### Server
+
 They are not globals, but they are mighty useful. The TangerineConfigService provides variables set in config.sh. Expose it in your constructor:
 
 ```js
@@ -41,3 +43,6 @@ And then you may use it:
 const userOneUsername = this.configService.config().userOneUsername
 ```
 
+### Client
+
+Use `await this.appConfigService.getAppConfig;` to fetch app-config.json settings in client.
