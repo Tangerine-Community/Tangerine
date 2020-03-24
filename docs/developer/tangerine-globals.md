@@ -28,9 +28,9 @@ await this.variableService.set('tangerine-device-is-registered', true)
 await this.variableService.get('tangerine-device-is-registered')
 ```
 
-## Globals in Configuration
+## Widely-used Configuration Variables
 
-The TangerineConfigService provides variables set in config.sh. Expose it in your constructor:
+They are not globals, but they are mighty useful. The TangerineConfigService provides variables set in config.sh. Expose it in your constructor:
 
 ```js
 private readonly configService: TangerineConfigService,
