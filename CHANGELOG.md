@@ -1,5 +1,7 @@
 # Changelog
 
+## v3.8.2
+
 ## v3.8.1
 - Client app performance improvements
   - Improved caching of files. We are caching important configuration files for faster page loads (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. [1991](https://github.com/Tangerine-Community/Tangerine/pull/1991)
