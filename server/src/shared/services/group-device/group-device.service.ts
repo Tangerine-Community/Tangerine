@@ -81,7 +81,7 @@ export class GroupDeviceService {
         ...originalDevice,
         lastUpdated: undefined,
         version: undefined,
-        token: uuid(),
+        token: uuid.v4(),
         claimed: false
       })
       const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
