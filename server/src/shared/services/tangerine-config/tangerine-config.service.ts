@@ -21,7 +21,8 @@ export class TangerineConfigService {
       syncUsername: process.env.T_SYNC_USERNAME,
       syncPassword: process.env.T_SYNC_PASSWORD,
       hideSkipIf: process.env.T_HIDE_SKIP_IF === 'true' ? true : false,
-      reportingDelay: parseInt(process.env.T_REPORTING_DELAY)
+      reportingDelay: parseInt(process.env.T_REPORTING_DELAY),
+      couchdbSync4All: process.env.T_COUCHDB_SYNC_4_ALL === 'true' ? true : false
     }
   }
 }
