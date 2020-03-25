@@ -13,9 +13,9 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class DownloadCsvComponent implements OnInit {
 
-  title = _TRANSLATE('Donwload CSV')
+  title = _TRANSLATE('Download CSV')
   breadcrumbs:Array<Breadcrumb> = []
- 
+
   months = [];
   years = [];
   selectedMonth = '*';

@@ -14,3 +14,14 @@
   padding-bottom: 60px;
   padding-top: 0px;
 }
+
+#container {
+  margin: 15px;
+}
+
+.download {
+  float: left !important;
+  position: relative;
+  left: -5px;
+
+}

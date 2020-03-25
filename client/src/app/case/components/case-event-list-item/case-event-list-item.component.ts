@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterContentInit } from '@angular/core';
+import { Component, OnInit, Input, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -30,7 +30,9 @@ export class CaseEventListItemComponent implements AfterContentInit {
   renderedTemplateListItemPrimary = ''
   renderedTemplateListItemSecondary = ''
 
-  constructor() { }
+  constructor(private ref: ChangeDetectorRef) {
+    ref.detach()
+  }
 
   ngAfterContentInit() {
     const getVariable = (variableName) => {
@@ -50,6 +52,7 @@ export class CaseEventListItemComponent implements AfterContentInit {
     eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateCaseEventListItemIcon ? \`${this.caseDefinition.templateCaseEventListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
     eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateCaseEventListItemPrimary ? \`${this.caseDefinition.templateCaseEventListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateCaseEventListItemSecondary ? \`${this.caseDefinition.templateCaseEventListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
+    this.ref.detectChanges()
   }
 
 }
