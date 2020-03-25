@@ -60,15 +60,18 @@ export class SyncService {
       deviceSyncLocations: device.syncLocations,
       formInfos
     })
-    // console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
-    // await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
-    //   appConfig: appConfig,
-    //   serverUrl: appConfig.serverUrl,
-    //   groupId: appConfig.groupId,
-    //   deviceId: device._id,
-    //   deviceToken: device.token,
-    //   formInfos
-    // })
+    console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
+
+    if (!appConfig.couchdbSync4All) {
+      await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
+        appConfig: appConfig,
+        serverUrl: appConfig.serverUrl,
+        groupId: appConfig.groupId,
+        deviceId: device._id,
+        deviceToken: device.token,
+        formInfos
+      })
+    }
     await this.deviceService.didSync()
   }
 
