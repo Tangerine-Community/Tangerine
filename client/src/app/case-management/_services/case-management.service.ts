@@ -22,7 +22,7 @@ export class CaseManagementService {
   ) {
   }
   async getMyLocationVisits(month: number, year: number) {
-    const res = await this.http.get('./assets/location-list.json').toPromise();
+    const res = await this.appConfigService.getLocationList();
     const allLocations:any = Object.assign({}, res);
     // Calculate our locations by generating the path in the locationList object.
     const locationList = allLocations.locations;

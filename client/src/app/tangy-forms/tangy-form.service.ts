@@ -3,21 +3,28 @@ import { UserService } from '../shared/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { FormInfo } from './classes/form-info.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
+import {TangyFormsInfoService} from './tangy-forms-info-service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class TangyFormService {
-
+  formsInfo: Array<FormInfo>
+  formsMarkup: Array<any> = []
   constructor(
-    private userService:UserService,
-    private http:HttpClient
+    private userService: UserService,
+    private http: HttpClient,
+    private tangyFormsInfoService: TangyFormsInfoService
   ) { }
 
   async getFormMarkup(formId) {
     const formInfo = await this.getFormInfo(formId)
-    const formMarkup:any = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
+    let formMarkup:any = this.formsMarkup[formInfo.src]
+    if (!this.formsMarkup[formInfo.src]) {
+      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
+      this.formsMarkup[formInfo.src] = formMarkup;
+    }
     return formMarkup
   }
 
@@ -26,9 +33,12 @@ export class TangyFormService {
     return formsInfo.find(formInfo => formInfo.id === formId)
   }
 
+  /**
+   * @deprecated since version 3.8.1
+   */
   async getFormsInfo() {
-    const formsInfo = <Array<FormInfo>>await this.http.get('./assets/forms.json').toPromise()
-    return formsInfo
+    this.formsInfo = await this.tangyFormsInfoService.getFormsInfo()
+    return this.formsInfo
   }
 
   async saveForm(formDoc) {

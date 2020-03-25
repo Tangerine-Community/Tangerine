@@ -95,7 +95,7 @@ async function go() {
     for (let groupId of groupList) {
       const groupDb = new DB(groupId)
       try {
-        await axios.post(`http://${process.env.T_ADMIN}:${process.env.T_PASS}@couchdb:5984/groups`, { _id: groupId, label: groupId })
+        await axios.post(`http://${process.env.T_COUCHDB_USER_ADMIN_NAME}:${process.env.T_COUCHDB_USER_ADMIN_PASSWORD}@couchdb:5984/groups`, { _id: groupId, label: groupId })
         console.log(`Setup ${groupId}`)
       } catch (e) {
         console.log(`Failed to setup ${groupId}`)

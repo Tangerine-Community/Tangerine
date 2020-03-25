@@ -1,32 +1,34 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<div *ngIf="!processing" class="tangy-full-width">
-  <form class="form">
-    <tangy-select [(ngModel)]="selectedMonth" name="month" class="month" label="{{'Month'|translate}}">
-      <option value="*" selected="selected">*</option>
-      <option *ngFor="let month of months" value="{{month}}">{{month}}</option>
-    </tangy-select>
-    <tangy-select [(ngModel)]="selectedYear" name="year" class="year" label="{{'Year'|translate}}">
-      <option value="*" selected="selected">*</option>
-      <option *ngFor="let year of years" value="{{year}}">{{year}}</option>
-    </tangy-select>
-    <paper-button class="button" (click)="process()">submit</paper-button>
-  </form>
-</div>
-<p class="tangy-full-width" *ngIf="processing && !result">{{'Loading...'|translate}}</p>
-<div *ngIf="processing && result && nothingToDownload === false" class="tangy-full-width">
-  <h4 *ngIf="!isDownloadComplete&&!errorDownloadingFile">{{'Generating CSV'|translate}}</h4>
-  <h4 *ngIf="errorDownloadingFile">{{'Error Downloading File'|translate}}</h4>
-  <p>{{'Group Name'|translate}}: {{groupName}}</p>
-  <p>{{'Form Id'|translate}}: {{formId}}</p>
-  <p>{{'Start Time'|translate}}: {{result.startTime|date:'medium'}}</p>
-  <p>{{'Progress'|translate}}: {{result.skip}}</p>
-  <div *ngIf="isDownloadComplete">
-    <a target="_blank" href="{{downloadUrl}}">{{'Click to Download'|translate}}</a>
+<div id="container">
+  <div *ngIf="!processing" class="tangy-full-width">
+    <form class="form">
+      <tangy-select [(ngModel)]="selectedMonth" name="month" class="month" label="{{'Month'|translate}}">
+        <option value="*" selected="selected">*</option>
+        <option *ngFor="let month of months" value="{{month}}">{{month}}</option>
+      </tangy-select>
+      <tangy-select [(ngModel)]="selectedYear" name="year" class="year" label="{{'Year'|translate}}">
+        <option value="*" selected="selected">*</option>
+        <option *ngFor="let year of years" value="{{year}}">{{year}}</option>
+      </tangy-select>
+      <paper-button class="button" (click)="process()">submit</paper-button>
+    </form>
   </div>
-</div>
-<div *ngIf="selectedMonth === '*' && processing && result && nothingToDownload === true" class="tangy-full-width">
-  There are no form responses for this form.
-</div>
-<div *ngIf="selectedMonth !== '*' && processing && result && nothingToDownload === true" class="tangy-full-width">
-  There are no form responses for this form in the month and year that you selected.
+  <p class="tangy-full-width" *ngIf="processing && !result">{{'Loading...'|translate}}</p>
+  <div *ngIf="processing && result && nothingToDownload === false" class="tangy-full-width">
+    <h4 *ngIf="!isDownloadComplete&&!errorDownloadingFile">{{'Generating CSV'|translate}}</h4>
+    <h4 *ngIf="errorDownloadingFile">{{'Error Downloading File'|translate}}</h4>
+    <p>{{'Group Name'|translate}}: {{groupName}}</p>
+    <p>{{'Form Id'|translate}}: {{formId}}</p>
+    <p>{{'Start Time'|translate}}: {{result.startTime|date:'medium'}}</p>
+    <p>{{'Progress'|translate}}: {{result.skip}}</p>
+    <div *ngIf="isDownloadComplete">
+      <a target="_blank" href="{{downloadUrl}}"><paper-button class="button download" >{{'download'|translate}}</paper-button></a>
+    </div>
+  </div>
+  <div *ngIf="selectedMonth === '*' && processing && result && nothingToDownload === true" class="tangy-full-width">
+    There are no form responses for this form.
+  </div>
+  <div *ngIf="selectedMonth !== '*' && processing && result && nothingToDownload === true" class="tangy-full-width">
+    There are no form responses for this form in the month and year that you selected.
+  </div>
 </div>

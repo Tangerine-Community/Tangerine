@@ -19,13 +19,10 @@ export class CreateProfileGuardService implements CanActivate {
       return true
     } else {
       const appConfig = await this.appConfigService.getAppConfig() 
-      if (appConfig.syncProtocol === '2' && window.location.hostname !== 'localhost') {
-        console.warn('WARNING: Associating user with profile will be bypassed because we are on localhost. Use ngrok if you want to test.')
-      }
       let navigateUrl = ''
       if (appConfig.centrallyManagedUserProfile === true && (appConfig.syncProtocol === '1' || !appConfig.syncProtocol)) {
         navigateUrl = '/import-user-profile'
-      } else if (appConfig.syncProtocol === '2' && window.location.hostname !== 'localhost') {
+      } else if (appConfig.syncProtocol === '2') {
         navigateUrl = '/associate-user-profile'
       } else {
         navigateUrl = '/manage-user-profile'

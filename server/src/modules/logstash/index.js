@@ -93,6 +93,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
     formId: formResponse.form.id,
     formTitle: formResponse.form.title,
     startUnixtime: formResponse.startUnixtime,
+    buildId: formResponse.buildId||'',
+    buildChannel: formResponse.buildChannel||'',
+    deviceId: formResponse.deviceId||'',
+    groupId: formResponse.groupId||'',
     complete: formResponse.complete
   };
   function set(input, key, value) {

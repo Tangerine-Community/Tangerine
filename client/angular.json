@@ -22,6 +22,7 @@
               "src/libs/bcrypt.min.js",
               "src/favicon.ico",
               "src/logo.png",
+              "src/loading.gif",
               "src/shell/index.html",
               "src/assets"
             ],
@@ -88,6 +89,7 @@
             "assets": [
               "src/libs/bcrypt.min.js",
               "src/logo.png",
+              "src/loading.gif",
               "src/favicon.ico",
               "src/shell/index.html",
               "src/assets"

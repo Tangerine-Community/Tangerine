@@ -88,7 +88,7 @@ export class PeersComponent implements OnInit, AfterContentInit {
       }
     );
     startAdvertisingBtnEl.addEventListener('progress', e => {
-        console.log('payload: ' + JSON.stringify(e.detail));
+        // console.log('payload: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
         if (typeof message.originName !== 'undefined') {
           this.endpoints = this.endpoints.map((endpoint) => {
@@ -103,8 +103,7 @@ export class PeersComponent implements OnInit, AfterContentInit {
           const progressMessage = bytesTransferred + '/' + totalBytes + ' transferred from ' + originName;
           document.querySelector('#progress').innerHTML =  '<p>' + progressMessage + '</p>\n';
         }
-        document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-        // document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
+        // document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
       }
     );
     startAdvertisingBtnEl.addEventListener('done', e => {

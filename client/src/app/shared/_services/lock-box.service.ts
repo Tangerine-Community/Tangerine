@@ -39,9 +39,13 @@ export class LockBoxService {
       : false
   }
 
-  getOpenLockBox(username):LockBox {
-    return this.getOpenLockBoxes()
-      .find(lockBox => lockBox._id === username)
+  getOpenLockBox(username = ''):LockBox {
+    // If no username specified, assume there is only one open lockbox and that's what we want.
+    // The idea of multiple open lockboxes may go away... But may come in handy when updating lockboxes, we'll see.
+    return username
+      ? this.getOpenLockBoxes().find(lockBox => lockBox._id === username)
+      : this.getOpenLockBoxes()[0]
+
   }
 
   closeLockBox(username) {

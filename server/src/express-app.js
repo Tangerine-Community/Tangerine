@@ -63,7 +63,7 @@ var proxy = require('express-http-proxy');
 var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
   proxyReqPathResolver: function (req, res) {
     var path = require('url').parse(req.url).path;
-    clog("path:" + path);
+    // clog("path:" + path);
     return path;
   },
   limit: '1gb'
