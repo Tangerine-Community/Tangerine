@@ -4,7 +4,6 @@ import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info.serv
 import { FormInfo } from './../../tangy-forms/classes/form-info.class';
 import { GroupResponsesService } from './../services/group-responses.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { query } from '@angular/animations';
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -68,6 +67,16 @@ export class GroupCasesComponent implements OnInit {
       'type': 'case',
       [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
     }
+    this.query()
+  }
+
+  onNextClick() {
+    this.skip = this.skip + this.limit
+    this.query()
+  }
+
+  onPreviousClick() {
+    this.skip = this.skip - this.limit
     this.query()
   }
 

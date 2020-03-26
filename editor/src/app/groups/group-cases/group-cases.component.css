@@ -1,0 +1,11 @@
+#paginator {
+  padding: 5px;
+  margin: 15px;
+  float: right;
+}
+
+#paginator .previous, #paginator .next {
+}
+
+#paginator .next {
+}
