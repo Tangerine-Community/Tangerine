@@ -29,6 +29,7 @@ export class EventFormComponent implements AfterContentInit {
   @ViewChild('container') container: ElementRef;
   constructor(
     private route: ActivatedRoute,
+    private hostElementRef: ElementRef,
     private router: Router,
     private caseService: CaseService,
     private tangyFormService: TangyFormService,
@@ -38,6 +39,7 @@ export class EventFormComponent implements AfterContentInit {
   }
 
   async ngAfterContentInit() {
+    setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.window.caseService = this.caseService

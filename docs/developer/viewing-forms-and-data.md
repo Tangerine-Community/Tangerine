@@ -1,8 +1,6 @@
 # Viewing Forms and Form Data
 
-## TangyFormService
-
-On a broad level, you could use TangyFormService to retrieve form definitions and response data:
+Use TangyFormService to retrieve form definitions and response data:
 
 ```js
     this.formResponse = await this.tangyFormService.getResponse(this.eventForm.formResponseId)
@@ -80,4 +78,4 @@ When that template loads, the Chrome devtools will pause and you can inspect loc
 
 ![alt text](assets/inspect-helper-functions.png "Inspect Helper Functions")
 
- 
+
