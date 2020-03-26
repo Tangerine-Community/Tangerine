@@ -11,6 +11,8 @@
 - Editor fixes
   - Fixed an issue causing editor content region to be untouchable when window was narrow. [#1940](https://github.com/Tangerine-Community/Tangerine/issues/1940)
   - Improved CSV output so it now contains Release ID, Device ID, and Build Channel on every row [#349](https://github.com/Tangerine-Community/Tangerine/issues/349)
+- Developer notes
+  - We focused on issues with slow performance on tablets when viewing forms. We are caching important configuration files (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. More information in the [Globals doc](./docs/developer/tangerine-globals.md).  
 - Server Admin notes
   - We cleaned up config variables in `config.sh`, deprecated `T_ADMIN` and `T_PASS` [#1986](https://github.com/Tangerine-Community/Tangerine/pull/1986)
   - New `generate-cases` command for load testing a large number of Cases based on your custom content in a group. [#1993](https://github.com/Tangerine-Community/Tangerine/pull/1993) 
@@ -30,7 +32,6 @@ vim -O config.sh config.sh_backup
 # Now you are ready to start the server.
 ./start.sh v3.8.1
 ```
-
 ## v3.8.0
 v3.8.0 is a big and exciting release! To accomodate the long list of changes, we split up this round of release notes into sections: General, Sync Protocol 2 Module, and Case Module, and Developer notes.
 
