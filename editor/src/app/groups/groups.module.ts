@@ -63,6 +63,7 @@ import { GroupReleasePwaTestComponent } from './group-release-pwa-test/group-rel
 import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-release-pwa-live.component';
 import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
+import { GroupCasesComponent } from './group-cases/group-cases.component';
 
 
 
@@ -137,7 +138,8 @@ import { GroupDeviceUserComponent } from './group-device-user/group-device-user.
     GroupReleasePwaTestComponent,
     GroupReleasePwaLiveComponent,
     GroupUploadsViewComponent,
-    GroupDeviceUserComponent
+    GroupDeviceUserComponent,
+    GroupCasesComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]
