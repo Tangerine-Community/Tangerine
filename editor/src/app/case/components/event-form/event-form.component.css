@@ -1,4 +1,4 @@
-:host {
+:host(:not(.hide-spinner)) {
   display: block;
   min-height: 500px;
   background: url('../../../../loading.gif');
