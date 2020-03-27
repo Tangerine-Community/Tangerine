@@ -16,6 +16,7 @@
     "push-all-groups-views": "./src/scripts/push-all-groups-views.js",
     "find-missing-records": "./src/scripts/find-missing-records.js",
     "import-archives": "./src/scripts/import-archives/bin.js",
+    "reset-all-devices": "./src/scripts/reset-all-devices/bin.js",
     "translations-update": "./src/scripts/translations-update.js",
     "release-dat": "./src/scripts/release-dat.sh",
     "release-apk": "./src/scripts/release-apk.sh",

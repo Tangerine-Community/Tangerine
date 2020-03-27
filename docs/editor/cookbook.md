@@ -81,3 +81,11 @@ In the following example we set the value of a `<tangy-radio-buttons>`.
 
 ![set-value-of-tangy-radio-buttons](./set-value-of-tangy-radio-buttons.png)
 
+
+## Dynamically prevent proceeding to next section
+In the following example hide the next button given the value of some user input.
+
+[Run example](https://dynamically-prevent-next.glitch.me/) - [Open Editor](https://dynamically-prevent-next.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/dynamically-prevent-next)
+
+![dynamically-prevent-next](./dynamically-prevent-next.gif)
+
