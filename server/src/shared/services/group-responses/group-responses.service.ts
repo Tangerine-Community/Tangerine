@@ -84,6 +84,11 @@ export class GroupResponsesService {
     await groupDb.remove(response)
   }
 
+  async index(groupId, index:any):Promise<void> {
+    const groupDb = this.getGroupsDb(groupId)
+    await groupDb.createIndex({ index })
+  }
+
   private getGroupsDb(groupId) {
     return this.dbService.instantiate(groupId)
   }

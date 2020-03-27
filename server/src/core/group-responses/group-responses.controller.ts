@@ -20,6 +20,12 @@ export class GroupResponsesController {
     return await this.groupResponsesService.find(groupId, query)
   }
 
+  @All('index/:groupId')
+  async index(@Param('groupId') groupId, @Body('index') index) {
+    await this.groupResponsesService.index(groupId, index)
+    return {status: 'ok'}
+  }
+
   @All('create/:groupId')
   async create(@Param('groupId') groupId, @Body('response') response:any) {
     const freshDevice = await this.groupResponsesService.create(groupId, response)
