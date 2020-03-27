@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, Input } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
@@ -20,6 +21,7 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   constructor(
     private caseService: CaseService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -62,6 +64,10 @@ export class CaseBreadcrumbComponent implements OnInit {
         ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\`
         : \`Case: ${caseInstance._id.substr(0,6)} \`
     `)
+  }
+
+  goHome() {
+    this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases'])
   }
 
 }
