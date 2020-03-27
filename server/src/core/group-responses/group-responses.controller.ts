@@ -33,8 +33,8 @@ export class GroupResponsesController {
 
   @All('update/:groupId')
   async update(@Param('groupId') groupId, @Body('response') response:any) {
-    const freshDevice = await this.groupResponsesService.update(groupId, response)
-    return freshDevice
+    const freshResponse = await this.groupResponsesService.update(groupId, response)
+    return freshResponse
   }
 
   @All('delete/:groupId/:responseId')
