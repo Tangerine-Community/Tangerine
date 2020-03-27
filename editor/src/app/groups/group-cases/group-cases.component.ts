@@ -88,7 +88,7 @@ export class GroupCasesComponent implements OnInit {
   }
 
   onResetClick() {
-    const location = this
+    this
       .tangyLocationEl
       .nativeElement
       .value = []
