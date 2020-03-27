@@ -18,7 +18,7 @@ async function go() {
   const locationList = await fs.readJSON(`${groupPath}/location-list.json`)
   console.log(`Generating index for: ${locationList.locationsLevels.join(', ')}`)
   for (const level of locationList.locationsLevels) {
-    db.createIndex({
+    await db.createIndex({
       index: {
         fields: [
           'type',
@@ -26,6 +26,24 @@ async function go() {
         ]
       }
     })
+    let indexDidIndex = true
+    try {
+      // Trigger the index to be indexed.
+      await db.find({
+        selector: {
+          type: '',
+          [`location.${level}`]: ''
+        },
+        limit: 1
+      })
+    } catch (e) {
+      // This will likely timeout, no problem.
+      indexDidIndex = false
+    }
+    console.log(indexDidIndex
+      ? `Index for group ${groupId} with level ${level} created.`
+      : `Index for group ${groupId} with level ${level} will continue to process in the background. Check the Active Tasks in CouchDB for when the index has finished building.`
+    )
   }
 }
 
