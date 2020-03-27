@@ -24,6 +24,8 @@ tangy-location {
 
 #header {
   background: var(--primary-color-lighter);
+  /* necessary for tangy-location's negative bottom margin not overlapping with content below hiding click targets */
+  overflow: hidden;
 }
 
 #header-buttons {
