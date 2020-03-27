@@ -1,12 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
-// A dummy function so TS does not complain about our use of emit in our pouchdb queries.
-const emit = (key, value) => {
-  return true;
-}
-
-// @TODO Merge into tangerine-form.service.ts?
 
 @Injectable()
 export class TangyFormService {
@@ -27,21 +21,18 @@ export class TangyFormService {
 
   // Would be nice if this was queue based so if two saves get called at the same time, the differentials are sequentials updated
   // into the database. Using a getter and setter for property fields, this would be one way to queue.
-  async saveResponse(responseDoc) {
-    let r
-    if (!responseDoc._id) {
-      r = await this.db.post(responseDoc)
+  async saveResponse(response) {
+    try {
+      const doc = <any>await this.httpClient.post(`/group-responses/update/${this.groupId}`, { response }).toPromise()
+      return doc
+    } catch (e) {
+      return false
     }
-    else {
-      r = await this.db.put(responseDoc)
-    }
-    return await this.db.get(r.id)
-
   }
 
   async getResponse(responseId) {
     try {
-      const doc = <any>await this.httpClient.get(`/api/${this.groupId}/${responseId}`).toPromise()
+      const doc = <any>await this.httpClient.get(`/group-responses/read/${this.groupId}/${responseId}`).toPromise()
       return doc
     } catch (e) {
       return false
@@ -63,6 +54,5 @@ export class TangyFormService {
   async getFormMarkup(formId) {
     return await this.httpClient.get(`./assets/${formId}/form.html`, {responseType: 'text'}).toPromise()
   }
-
 
 }
