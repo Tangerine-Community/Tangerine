@@ -38,6 +38,10 @@ tangy-location {
   color: var(--accent-text-color);
   margin-bottom: 15px;
 }
+#header-buttons paper-button[disabled] {
+  opacity:.7;
+
+}
 
 #reset-button {
   margin-right: 10px;
