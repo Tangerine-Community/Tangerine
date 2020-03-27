@@ -59,15 +59,22 @@ export class GroupResponsesService {
   async update(groupId, response) {
     try {
       const groupDb = this.getGroupsDb(groupId)
-      const originalDevice = await groupDb.get(response._id)
+      const originalResponse = await groupDb.get(response._id)
       await groupDb.put({
         ...response,
-        _rev: originalDevice._rev
+        _rev: originalResponse._rev
       })
-      const freshDevice = <Group>await groupDb.get(response._id)
-      return freshDevice
+      const freshResponse = <Group>await groupDb.get(response._id)
+      return freshResponse
     } catch (e) {
-      console.log(e)
+      try {
+        const groupDb = this.getGroupsDb(groupId)
+        await groupDb.put(response)
+        const freshResponse = <Group>await groupDb.get(response._id)
+        return freshResponse
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 
