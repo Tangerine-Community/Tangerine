@@ -1,3 +1,5 @@
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Router } from '@angular/router';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info.service';
@@ -28,10 +30,13 @@ export const FORM_TYPES_INFO = [
 })
 export class GroupCasesComponent implements OnInit {
 
+  title = 'Cases'
+  breadcrumbs:Array<Breadcrumb> = []
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
   groupId:string
   cases:Array<any>
+  loading = false
   @ViewChild('tangyLocation', {static: true}) tangyLocationEl:ElementRef
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
 
@@ -47,27 +52,40 @@ export class GroupCasesComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Cases'),
+        url: 'cases'
+      }
+    ]
     this.groupId = window.location.hash.split('/')[2]
     this.formsInfo = await this.formsInfoService.getFormsInfo()
     this.formTypesInfo = FORM_TYPES_INFO
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
-    this
-      .tangyLocationEl
-      .nativeElement
-      .addEventListener('change', (event) => this.onLocationSelection(event.target.value))
     this.selector = {
       "type": "case"
     }
     this.query()
   }
 
-  onLocationSelection(location) {
+  onSearchClick() {
+    const location = this
+      .tangyLocationEl
+      .nativeElement
+      .value
     const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
     this.selector = {
       'type': 'case',
       [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
     }
     this.query()
+  }
+
+  onResetClick() {
+    const location = this
+      .tangyLocationEl
+      .nativeElement
+      .value = []
   }
 
   onNextClick() {
@@ -81,12 +99,14 @@ export class GroupCasesComponent implements OnInit {
   }
 
   async query() {
+    this.loading = true
     this.cases = await this.groupResponsesService.query(this.groupId, {
       selector: this.selector,
       limit: this.limit,
       skip: this.skip
     })
     this.renderSearchResults()
+    this.loading = false
   }
 
   formResponseToSearchDoc(doc, formInfo:FormInfo) {
