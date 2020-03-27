@@ -3,9 +3,10 @@
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
 
-## Form Display
-- [viewing-forms-and-data.md](Viewing Forms and Form Data)
-- [supporting-custom-elements.md](Supporting custom elements)
+## Application design
+- [Viewing Forms and Form Data](viewing-forms-and-data.md)
+- [Supporting custom elements](supporting-custom-elements.md)
+- [Tangerine Globals](tangerine-globals.md)
 
 ## Debugging
 - [debugging-reporting.md](debugging-reporting.md)
