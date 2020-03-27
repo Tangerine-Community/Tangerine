@@ -73,10 +73,16 @@ export class GroupCasesComponent implements OnInit {
       .tangyLocationEl
       .nativeElement
       .value
-    const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
-    this.selector = {
-      'type': 'case',
-      [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
+    if (!location || location.length === 0) {
+      this.selector = {
+        'type': 'case'
+      }
+    } else {
+      const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
+      this.selector = {
+        'type': 'case',
+        [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
+      }
     }
     this.query()
   }
