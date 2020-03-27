@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { MenuService } from './../shared/_services/menu.service';
 import { Component, OnInit } from '@angular/core';
 import { GroupsService } from './services/groups.service';
@@ -26,13 +27,18 @@ export class GroupsComponent implements OnInit {
     private menuService:MenuService,
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
-    private userService:UserService
+    private userService:UserService,
+    private router:Router
     ) {
     this.moment = moment
   }
 
 
   async ngOnInit() {
+    if (window.location.pathname.split('/')[1] === 'app' && window.location.pathname.split('/')[2]) {
+      // Redirect to group home page...
+      return this.router.navigate(['groups', window.location.pathname.split('/')[2]])
+    }
     this.breakpoint = (window.innerWidth <= 832) ? 1 : 3;
     await this.getData();
     this.menuService.setContext(_TRANSLATE('Groups'), '', 'groups')
