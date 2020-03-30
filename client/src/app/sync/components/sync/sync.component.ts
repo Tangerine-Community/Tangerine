@@ -29,7 +29,10 @@ export class SyncComponent implements OnInit {
     this.status = STATUS_IN_PROGRESS
     this.syncService.syncMessage$.subscribe({
       next: (progress) => {
-        this.syncMessage =  progress.docs_written + ' docs saved; ' + progress.pending + ' pending'
+        this.syncMessage =  progress.docs_written + ' docs saved; ' + progress.pending + ' pending;'
+        if (progress.direction !== '') {
+          this.syncMessage = this.syncMessage + '; Direction: ' + progress.direction
+        }
         console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
