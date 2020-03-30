@@ -51,7 +51,7 @@ export class SyncCouchdbService {
       .map(row => row.id)
   }
 
-  // Note that this ignores the sync config settings.
+  // Note that if you run this with no forms configured to CouchDB sync, that will result in no filter query and everything will be synced. Use carefully.
   async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails): Promise<ReplicationStatus> {
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -81,19 +81,8 @@ export class SyncCouchdbService {
 
     let pouchOptions;
     const appConfig = await this.appConfigService.getAppConfig();
-    // TODO: replace with test for sync-protocol-2 instead ?
-    // actually, don't even need it - we are already sp2!
     if (appConfig.couchdbSync4All) {
-      // Passing false prevents the changes feed from keeping all the documents in memory
-      // pouchOptions = {
-      //   "return_docs": false,
-      //   "push": {
-      //     "since": push_last_seq
-      //   },
-      //   "pull": remotePouchOptions
-      // }
       pouchOptions = {
-
         "push": {
           "return_docs": false,
           "since": push_last_seq
