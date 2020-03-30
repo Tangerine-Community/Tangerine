@@ -62,7 +62,6 @@ export class SyncService {
     })
     console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
 
-    if (!appConfig.couchdbSync4All) {
       await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
         appConfig: appConfig,
         serverUrl: appConfig.serverUrl,
@@ -71,7 +70,6 @@ export class SyncService {
         deviceToken: device.token,
         formInfos
       })
-    }
     await this.deviceService.didSync()
   }
 

@@ -79,52 +79,41 @@ export class SyncCouchdbService {
       remotePouchOptions['selector'] = selector
     }
 
-    let pouchOptions;
-    const appConfig = await this.appConfigService.getAppConfig();
-    // couchdbSync4All = true:  creates separate push and pull options for sync.
-    // couchdbSync4All = false: it uses only the pull settings, and does custom sync for push.
-    if (appConfig.couchdbSync4All) {
-      pouchOptions = {
-        "push": {
-          "return_docs": false,
-          "since": push_last_seq
-        },
-        "pull": {
-          "return_docs": false,
-          "since": pull_last_seq,
-          selector: {
-            "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
-              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-                $or = [
-                  ...$or,
-                  ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                    ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                      // Get last value, that's the focused sync point.
-                      let location = locationConfig.value.slice(-1).pop()
-                      return {
-                        "form.id": formInfo.id,
-                        [`location.${location.level}`]: location.value
-                      }
-                    })
-                    : [
-                      {
-                        "form.id": formInfo.id
-                      }
-                    ]
-                ]
-              }
-              return $or
-            }, [])
-          }
-        }
-      }
-    } else {
-      pouchOptions = {
-        "since": pull_last_seq,
+    let pouchOptions = {
+      "push": {
         "return_docs": false,
+        "since": push_last_seq,
         selector: {
           "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
-            if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled) {
+            if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
+              $or = [
+                ...$or,
+                ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                  ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                    // Get last value, that's the focused sync point.
+                    let location = locationConfig.value.slice(-1).pop()
+                    return {
+                      "form.id": formInfo.id,
+                      [`location.${location.level}`]: location.value
+                    }
+                  })
+                  : [
+                    {
+                      "form.id": formInfo.id
+                    }
+                  ]
+              ]
+            }
+            return $or
+          }, [])
+        }
+      },
+      "pull": {
+        "return_docs": false,
+        "since": pull_last_seq,
+        selector: {
+          "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
+            if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
               $or = [
                 ...$or,
                 ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
