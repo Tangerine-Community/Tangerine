@@ -10,7 +10,6 @@ import { EventForm } from '../../classes/event-form.class';
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseService } from '../../services/case.service';
-import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 
 
@@ -41,7 +40,8 @@ export class EventFormListItemComponent implements OnInit {
 
   constructor(
     private formService:TangyFormService,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private caseService: CaseService
   ) {
     ref.detach()
   }
@@ -79,5 +79,14 @@ export class EventFormListItemComponent implements OnInit {
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
     this.ref.detectChanges()
   }
-
+  async deleteItem() {
+    const confirmDelete = confirm(
+      _TRANSLATE('Are you sure you want to delete this form instance? You will not be able to undo the operation')
+      );
+    if (confirmDelete) {
+      this.caseService.deleteEventFormInstance(this.eventForm.caseEventId, this.eventForm.id)
+      await this.caseService.save()
+      this.ref.detectChanges()
+    }
+  }
 }
