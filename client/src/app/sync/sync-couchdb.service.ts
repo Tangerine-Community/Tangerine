@@ -67,10 +67,6 @@ export class SyncCouchdbService {
       "since": pull_last_seq
     }
 
-    const localPouchOptions = {
-      "since": push_last_seq
-    }
-
     if (syncDetails.deviceSyncLocations.length > 0) {
       const locationConfig = syncDetails.deviceSyncLocations[0]
       // Get last value, that's the focused sync point.
@@ -84,18 +80,57 @@ export class SyncCouchdbService {
     }
 
     let pouchOptions;
-
     const appConfig = await this.appConfigService.getAppConfig();
-
+    // TODO: replace with test for sync-protocol-2 instead ?
+    // actually, don't even need it - we are already sp2!
     if (appConfig.couchdbSync4All) {
       // Passing false prevents the changes feed from keeping all the documents in memory
+      // pouchOptions = {
+      //   "return_docs": false,
+      //   "push": {
+      //     "since": push_last_seq
+      //   },
+      //   "pull": remotePouchOptions
+      // }
       pouchOptions = {
-        "return_docs": false,
-        "push": localPouchOptions,
-        "pull": remotePouchOptions
+
+        "push": {
+          "return_docs": false,
+          "since": push_last_seq
+        },
+        "pull": {
+          "return_docs": false,
+          "since": pull_last_seq,
+          selector: {
+            "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
+              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+                $or = [
+                  ...$or,
+                  ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                    ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                      // Get last value, that's the focused sync point.
+                      let location = locationConfig.value.slice(-1).pop()
+                      return {
+                        "form.id": formInfo.id,
+                        [`location.${location.level}`]: location.value
+                      }
+                    })
+                    : [
+                      {
+                        "form.id": formInfo.id
+                      }
+                    ]
+                ]
+              }
+              return $or
+            }, [])
+          }
+        }
       }
     } else {
       pouchOptions = {
+        "since": pull_last_seq,
+        "return_docs": false,
         selector: {
           "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
             if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled) {
@@ -142,14 +177,19 @@ export class SyncCouchdbService {
           }
         }
         let pending = info.change.pending
+        let direction = info.direction
         if (typeof info.change.pending === 'undefined') {
           pending = 0;
+        }
+        if (typeof info.direction === 'undefined') {
+          direction = ''
         }
         const progress = {
           'docs_read': info.change.docs_read,
           'docs_written': info.change.docs_written,
           'doc_write_failures': info.change.doc_write_failures,
-          'pending': pending
+          'pending': pending,
+          'direction': direction
         };
         this.syncMessage$.next(progress)
       }).on('error', function (errorMessage) {

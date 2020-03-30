@@ -28,7 +28,7 @@ class CaseService {
   db:UserDatabase
   case:Case
   caseDefinition:CaseDefinition
-  
+
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
@@ -41,8 +41,8 @@ class CaseService {
     private deviceService:DeviceService,
     private userService:UserService,
     private http:HttpClient
-  ) { 
-    
+  ) {
+
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
     this.queryFormId = 'query-form';
@@ -56,7 +56,7 @@ class CaseService {
     delete this.case._rev
     const tangyFormContainerEl:any = document.createElement('div')
     tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
-    const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') 
+    const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form')
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
     try {
@@ -86,7 +86,7 @@ class CaseService {
     this.case = caseInstance
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === this.case.caseDefinitionId)
- 
+
   }
 
   async load(id:string) {
@@ -109,7 +109,7 @@ class CaseService {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
-    const caseEvent = <CaseEvent>{ 
+    const caseEvent = <CaseEvent>{
       id: UUID(),
       caseId: this.case._id,
       status: CASE_EVENT_STATUS_IN_PROGRESS,
@@ -224,7 +224,7 @@ class CaseService {
     let numberOfUniqueCompleteCaseEvents = this.case
       .events
       .reduce((acc, instance) => instance.status === CASE_EVENT_STATUS_COMPLETED
-          ? Array.from(new Set([...acc, instance.caseEventDefinitionId])) 
+          ? Array.from(new Set([...acc, instance.caseEventDefinitionId]))
           : acc
         , [])
         .length
@@ -288,7 +288,7 @@ class CaseService {
 
   async getQueries (): Promise<Array<Query>> {
     const userDbName = this.userService.getCurrentUser();
-    const queryForms = await this.tangyFormService.getResponsesByFormId(this.queryFormId);  
+    const queryForms = await this.tangyFormService.getResponsesByFormId(this.queryFormId);
     const queries = Array<Query>();
     for (const queryForm of queryForms) {
       const query = Object.create(Query);
@@ -395,9 +395,126 @@ class CaseService {
       ]
     }, [])
     for (let formResponseDocId of formResponseDocIds) {
-      docs.push(await this.tangyFormService.getResponse(formResponseDocId))
+      if (formResponseDocId) {
+        const doc = await this.tangyFormService.getResponse(formResponseDocId)
+        if (doc) {
+          docs.push(await this.tangyFormService.getResponse(formResponseDocId))
+        } else {
+          console.log('No response for ' + formResponseDocId);
+        }
+      }
     }
     return docs
+  }
+
+  getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  async getDocCount() {
+    this.db.db.info().then(info => console.log(info.doc_count))
+  }
+
+  async generateCases(numberOfCases) {
+    let numberOfCasesCompleted = 0
+    let firstnames = ['Mary', 'Jennifer', 'Lisa', 'Sandra	','Michelle',
+    'Patricia', 'Maria','Nancy','Donna','Laura', 'Linda','Susan','Karen',
+      'Carol','Sarah','Barbara','Margaret','Betty','Ruth','Kimberly','Elizabeth',
+      'Dorothy','Helen','Sharon','Deborah']
+    let surnames = ['Smith','Johnson','Williams','Jones','Brown','Davis','Miller',
+      'Wilson','Moore','Taylor','Anderson','Thomas','Jackson','White','Harris',
+      'Martin','Thompson','Garcia','Martinez','Robinson','Clark','Rodriguez','Lewis','Lee','Walker']
+
+    while (numberOfCasesCompleted < numberOfCases) {
+      const templateDocs = await this.export()
+      const caseDoc = templateDocs.find(doc => doc['type'] === 'case')
+      // Change the case's ID.
+      const caseId = UUID()
+      caseDoc._id = caseId
+      const participant_id = Math.round(Math.random() * 1000000)
+      // let firstname = "Helen" + Math.round(Math.random() * 100)
+      // let surname = "Smith" + Math.round(Math.random() * 100)
+      const firstname = firstnames[this.getRandomInt(0, firstnames.length + 1)]
+      const surname = surnames[this.getRandomInt(0, surnames.length + 1)]
+      let barcode_data =  { "participant_id": participant_id, "treatment_assignment": "Experiment", "bin-mother": "A", "bin-infant": "B", "sub-studies": { "S1": true, "S2": false, "S3": false, "S4": true } }
+      let tangerineModifiedOn = new Date();
+      // tangerineModifiedOn is set to numberOfCasesCompleted days before today, and its time is set based upon numberOfCasesCompleted.
+      tangerineModifiedOn.setDate( tangerineModifiedOn.getDate() - numberOfCasesCompleted );
+      tangerineModifiedOn.setTime( tangerineModifiedOn.getTime() - ( numberOfCases - numberOfCasesCompleted ) )
+      const day = String(tangerineModifiedOn.getDate()).padStart(2, '0');
+      const month = String(tangerineModifiedOn.getMonth() + 1).padStart(2, '0');
+      const year = tangerineModifiedOn.getFullYear();
+      const screening_date = year + '-' + month + '-' + day;
+      const enrollment_date = screening_date;
+      let caseMother = {
+        _id: caseId,
+        tangerineModifiedOn: tangerineModifiedOn,
+        "participants": [{
+          "id": participant_id,
+          "caseRoleId": "mother-role",
+          "data": {
+            "firstname": firstname,
+            "surname": surname,
+            "participant_id": participant_id
+          }
+        }],
+      }
+      console.log("motherId: " + caseId + " participantId: " + participant_id);
+      const doc = Object.assign({}, caseDoc, caseMother);
+      caseDoc.items[0].inputs[1].value = participant_id;
+      caseDoc.items[0].inputs[2].value = enrollment_date;
+      caseDoc.items[0].inputs[8].value = firstname;
+      caseDoc.items[0].inputs[10].value = surname;
+      for (let caseEvent of caseDoc['events']) {
+        const caseEventId = UUID()
+        caseEvent.id = caseEventId
+        for (let eventForm of caseEvent.eventForms) {
+          eventForm.id = UUID()
+          eventForm.caseId = caseId
+          eventForm.caseEventId = caseEventId
+          // Some eventForms might not have a corresponding form response.
+          if (eventForm.formResponseId) {
+            const originalId = `${eventForm.formResponseId}`
+            const newId = UUID()
+            // Replace originalId with newId in both the reference to the FormResponse doc and the FormResponse doc itself.
+            eventForm.formResponseId = newId
+            const formResponse = templateDocs.find(doc => doc._id === originalId)
+            if (!formResponse) {
+              debugger
+            }
+            formResponse._id = newId
+          }
+        }
+      }
+      // modify the demographics form - s01a-participant-information-f254b9
+      const demoDoc = templateDocs.find(doc => doc.form.id === 's01a-participant-information-f254b9')
+      demoDoc.items[0].inputs[4].value = screening_date;
+      // "id": "randomization",
+      demoDoc.items[10].inputs[1].value = barcode_data;
+      demoDoc.items[10].inputs[2].value = participant_id;
+      demoDoc.items[10].inputs[7].value = enrollment_date;
+      // "id": "participant_information",
+      demoDoc.items[12].inputs[2].value = surname;
+      demoDoc.items[12].inputs[3].value = firstname;
+
+      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
+
+      // Upload the profiles first
+      // now upload the others
+      for (let doc of templateDocs) {
+        // @ts-ignore
+        // sometimes doc is false...
+        if (doc !== false) {
+          try {
+            delete doc._rev
+            await this.db.put(doc)
+          } catch (e) {
+            console.log('Error: ' + e)
+          }
+        }
+      }
+      numberOfCasesCompleted++
+    }
   }
 
 }

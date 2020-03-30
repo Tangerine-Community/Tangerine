@@ -26,6 +26,7 @@ export class FormInfo {
 
 export interface CouchdbSyncSettings {
   enabled: boolean
+  pull: boolean
   filterByLocation:boolean
 }
 
