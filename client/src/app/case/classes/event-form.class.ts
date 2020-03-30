@@ -6,6 +6,7 @@ class EventForm {
   caseEventId:string;
   eventFormDefinitionId:string;
   formResponseId:string;
+  data?:any;
   constructor() {
 
   }
