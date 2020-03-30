@@ -499,8 +499,6 @@ class CaseService {
 
       this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
 
-      // Upload the profiles first
-      // now upload the others
       for (let doc of templateDocs) {
         // @ts-ignore
         // sometimes doc is false...

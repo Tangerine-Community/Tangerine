@@ -63,25 +63,9 @@ export class SyncCouchdbService {
     if (typeof push_last_seq === 'undefined') {
       push_last_seq = 0;
     }
-    const remotePouchOptions = {
-      "since": pull_last_seq
-    }
-
-    if (syncDetails.deviceSyncLocations.length > 0) {
-      const locationConfig = syncDetails.deviceSyncLocations[0]
-      // Get last value, that's the focused sync point.
-      const location = locationConfig.value.slice(-1).pop()
-      const selector = {
-          [`location.${location.level}`]: {
-            '$eq' : location.value
-          }
-        }
-      remotePouchOptions['selector'] = selector
-    }
 
     let pouchOptions = {
       "push": {
-        "return_docs": false,
         "since": push_last_seq,
         selector: {
           "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
@@ -109,7 +93,6 @@ export class SyncCouchdbService {
         }
       },
       "pull": {
-        "return_docs": false,
         "since": pull_last_seq,
         selector: {
           "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
@@ -158,9 +141,6 @@ export class SyncCouchdbService {
         }
         let pending = info.change.pending
         let direction = info.direction
-        if (typeof info.change.pending === 'undefined') {
-          pending = 0;
-        }
         if (typeof info.direction === 'undefined') {
           direction = ''
         }
@@ -168,7 +148,7 @@ export class SyncCouchdbService {
           'docs_read': info.change.docs_read,
           'docs_written': info.change.docs_written,
           'doc_write_failures': info.change.doc_write_failures,
-          'pending': pending,
+          'pending': info.change.pending,
           'direction': direction
         };
         this.syncMessage$.next(progress)
