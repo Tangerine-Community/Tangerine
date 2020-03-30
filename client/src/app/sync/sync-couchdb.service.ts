@@ -81,6 +81,8 @@ export class SyncCouchdbService {
 
     let pouchOptions;
     const appConfig = await this.appConfigService.getAppConfig();
+    // couchdbSync4All = true:  creates separate push and pull options for sync.
+    // couchdbSync4All = false: it uses only the pull settings, and does custom sync for push.
     if (appConfig.couchdbSync4All) {
       pouchOptions = {
         "push": {
