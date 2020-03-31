@@ -67,33 +67,35 @@ export class SyncCouchdbService {
     let pouchOptions = {
       "push": {
         "since": push_last_seq,
-        selector: {
-          "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
-            if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
-              $or = [
-                ...$or,
-                ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                  ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                    // Get last value, that's the focused sync point.
-                    let location = locationConfig.value.slice(-1).pop()
-                    return {
-                      "form.id": formInfo.id,
-                      [`location.${location.level}`]: location.value
-                    }
-                  })
-                  : [
-                    {
-                      "form.id": formInfo.id
-                    }
-                  ]
-              ]
-            }
-            return $or
-          }, [])
-        }
+        "return_docs": false
+        // selector: {
+        //   "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
+        //     if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
+        //       $or = [
+        //         ...$or,
+        //         ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+        //           ? syncDetails.deviceSyncLocations.map(locationConfig => {
+        //             // Get last value, that's the focused sync point.
+        //             let location = locationConfig.value.slice(-1).pop()
+        //             return {
+        //               "form.id": formInfo.id,
+        //               [`location.${location.level}`]: location.value
+        //             }
+        //           })
+        //           : [
+        //             {
+        //               "form.id": formInfo.id
+        //             }
+        //           ]
+        //       ]
+        //     }
+        //     return $or
+        //   }, [])
+        // }
       },
       "pull": {
         "since": pull_last_seq,
+        "return_docs": false,
         selector: {
           "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
             if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {

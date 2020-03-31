@@ -459,7 +459,6 @@ class CaseService {
           }
         }],
       }
-      console.log("motherId: " + caseId + " participantId: " + participant_id);
       const doc = Object.assign({}, caseDoc, caseMother);
       caseDoc.items[0].inputs[1].value = participant_id;
       caseDoc.items[0].inputs[2].value = enrollment_date;
@@ -512,6 +511,7 @@ class CaseService {
         }
       }
       numberOfCasesCompleted++
+      console.log("motherId: " + caseId + " participantId: " + participant_id + " Completed " + numberOfCasesCompleted + " of " + numberOfCases);
     }
   }
 
