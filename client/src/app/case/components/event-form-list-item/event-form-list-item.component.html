@@ -5,7 +5,7 @@
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
 	<span class="tangy-spacer"></span>
-	<span>
+	<span *ngIf="canUserDeleteForms">
 		<paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
 	</span>
 </div>

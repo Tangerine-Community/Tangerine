@@ -30,7 +30,7 @@
         >
         </paper-fab>
       </div>
-      <app-event-form-list-item
+      <app-event-form-list-item (formDeleted)="updateFormList($event)"
         *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
         [case]="caseService.case"
         [caseDefinition]="caseService.caseDefinition"
