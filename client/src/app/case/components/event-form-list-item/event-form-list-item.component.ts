@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -27,6 +27,7 @@ export class EventFormListItemComponent implements OnInit {
   @Input() caseEvent:CaseEvent
   @Input() eventFormDefinition:EventFormDefinition
   @Input() eventForm:EventForm
+  @Output() formDeleted = new EventEmitter()
 
   defaultTemplateListItemIcon = `\${eventForm.complete ? 'assignment_turned_in' : 'assignment'}`
   defaultTemplateListItemPrimary = `
@@ -92,6 +93,7 @@ export class EventFormListItemComponent implements OnInit {
     if (confirmDelete) {
       this.caseService.deleteEventFormInstance(this.eventForm.caseEventId, this.eventForm.id)
       await this.caseService.save()
+      this.formDeleted.emit('formDeleted')
       this.ref.detectChanges()
     }
   }
