@@ -66,13 +66,10 @@ export class SyncCouchdbService {
 
     const pouchOptions = {
       "push": {
-        "since": push_last_seq
-      },
-      "pull": {
-        "since": pull_last_seq,
+        "since": push_last_seq,
         ...(await this.appConfigService.getAppConfig()).couchdbSync4All ? {} : { "selector": {
             "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
-              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
                 $or = [
                   ...$or,
                   ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
@@ -94,6 +91,33 @@ export class SyncCouchdbService {
               return $or
             }, [])
           }
+        }
+      },
+      "pull": {
+        "since": pull_last_seq,
+        "selector": {
+          "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
+            if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+              $or = [
+                ...$or,
+                ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                  ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                    // Get last value, that's the focused sync point.
+                    let location = locationConfig.value.slice(-1).pop()
+                    return {
+                      "form.id": formInfo.id,
+                      [`location.${location.level}`]: location.value
+                    }
+                  })
+                  : [
+                    {
+                      "form.id": formInfo.id
+                    }
+                  ]
+              ]
+            }
+            return $or
+          }, [])
         }
       }
     }
