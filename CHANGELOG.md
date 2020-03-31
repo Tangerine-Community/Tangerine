@@ -1,6 +1,8 @@
 # Changelog
 
 ## v3.8.2
+- Fix additional memory leaks in Case module causing tablets to slow down. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2025)
+- Make `getValue()` function in Event Form List Item related templates less likely to crash. [change](https://github.com/Tangerine-Community/Tangerine/pull/2018/files#diff-c26fa38f2c0963295bb906bd95baf8b0L50)
 
 ## v3.8.1
 - Client app performance improvements
