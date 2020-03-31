@@ -9,6 +9,7 @@ import { EventFormDefinition } from '../../classes/event-form-definition.class';
 import { EventForm } from '../../classes/event-form.class';
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
+import { CaseService } from '../../services/case.service';
 
 
 
@@ -39,7 +40,8 @@ export class EventFormListItemComponent implements OnInit {
 
   constructor(
     private formService:TangyFormService,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private caseService: CaseService
   ) {
     ref.detach()
   }
@@ -47,13 +49,15 @@ export class EventFormListItemComponent implements OnInit {
   async ngOnInit() {
     const response = await this.formService.getResponse(this.eventForm.formResponseId)
     const getValue = (variableName) => {
-      const variablesByName = response.items.reduce((variablesByName,item) => {
-        for (let input of item.inputs) {
-          variablesByName[input.name] = input.value
-        }
-        return variablesByName
-      }, {})
-      return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '')
+      if (response) {
+        const variablesByName = response.items.reduce((variablesByName,item) => {
+          for (let input of item.inputs) {
+            variablesByName[input.name] = input.value
+          }
+          return variablesByName
+        }, {})
+        return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '')
+      }
     }
     const getCaseVariable = (variableName) => {
       const variablesByName = this.case.items.reduce((variablesByName,item) => {
@@ -77,5 +81,14 @@ export class EventFormListItemComponent implements OnInit {
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
     this.ref.detectChanges()
   }
-
+  async deleteItem() {
+    const confirmDelete = confirm(
+      _TRANSLATE('Are you sure you want to delete this form instance? You will not be able to undo the operation')
+      );
+    if (confirmDelete) {
+      this.caseService.deleteEventFormInstance(this.eventForm.caseEventId, this.eventForm.id)
+      await this.caseService.save()
+      this.ref.detectChanges()
+    }
+  }
 }

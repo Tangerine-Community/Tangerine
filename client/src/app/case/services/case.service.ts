@@ -164,6 +164,10 @@ class CaseService {
         : event
     })
   }
+
+  getCurrentCaseEventId() {
+    return window.location.hash.split('/')[5];
+  }
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     const eventForm = <EventForm>{
       id: UUID(),
@@ -181,7 +185,42 @@ class CaseService {
       .push(eventForm)
     return eventForm
   }
+  deleteEventFormInstance(caseEventId: string, eventFormId: string) {
+    this
+    .case
+    .events
+    .find(caseEvent => caseEvent.id === caseEventId).eventForms = this
+      .case
+      .events
+      .find(caseEvent => caseEvent.id === caseEventId).eventForms.filter(eventForm => eventForm.id !== eventFormId);
+  }
+  setCaseEventFormsData(caseEventId:string,eventFormId:string, key:string, value:string) {
+    const index = this
+    .case
+    .events
+    .find(caseEvent => caseEvent.id === caseEventId)
+    .eventForms.findIndex(eventForm => eventForm.id === eventFormId);
+    this
+    .case
+    .events
+    .find(caseEvent => caseEvent.id === caseEventId).eventForms[index].data = {
+      ...this
+      .case
+      .events
+      .find(caseEvent => caseEvent.id === caseEventId).eventForms[index].data, [key]:value};
+  }
 
+  getCaseEventFormsData(caseEventId:string,eventFormId:string, key:string,) {
+    const index = this
+    .case
+    .events
+    .find(caseEvent => caseEvent.id === caseEventId)
+    .eventForms.findIndex(eventForm => eventForm.id === eventFormId);
+   return this
+    .case
+    .events
+    .find(caseEvent => caseEvent.id === caseEventId).eventForms[index].data[key] || ''
+  }
   markEventFormComplete(caseEventId:string, eventFormId:string) {
     let caseEvent = this
       .case
