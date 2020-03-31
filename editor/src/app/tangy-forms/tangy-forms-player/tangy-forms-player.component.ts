@@ -22,7 +22,7 @@ export class TangyFormsPlayerComponent implements OnInit {
   groupId;
   @Input() preventSave = false
 
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private route: ActivatedRoute,

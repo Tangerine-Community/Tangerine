@@ -1,0 +1,27 @@
+.primary {
+    position: fixed;
+    top: 0px;
+    z-index: 99999;
+    color: var(--primary-text-color-overlay);
+    height: 34px;
+    padding-top: 21px;
+    margin-right: 80px;
+    padding-left: 22px;
+    background: var(--primary-color-dark);
+    font-size: 1.5em;
+}
+
+.primary iron-icon {
+    color: var(--primary-text-color-overlay) !important;
+}
+
+.secondary {
+    background: var(--primary-color);
+    color: var(--primary-text-color-overlay);
+    font-size: 1.5em;
+    padding: 15px 15px 15px 22px;
+}
+
+.secondary iron-icon {
+    color: var(--primary-text-color-overlay) !important;
+}

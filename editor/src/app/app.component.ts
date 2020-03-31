@@ -1,3 +1,4 @@
+import { TangyFormService } from './tangy-forms/tangy-form.service';
 import { MenuService } from './shared/_services/menu.service';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
     mobileQuery: MediaQueryList;
     window:any
 
-    @ViewChild('snav') snav: MatSidenav
+    @ViewChild('snav', {static: true}) snav: MatSidenav
 
     private _mobileQueryListener: () => void;
     constructor(
@@ -38,6 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private userService:UserService,
         private menuService:MenuService,
         private authenticationService: AuthenticationService,
+        private tangyFormService:TangyFormService,
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,
         media: MediaMatcher,
@@ -50,6 +52,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this._mobileQueryListener = () => changeDetectorRef.detectChanges();
         this.mobileQuery.addListener(this._mobileQueryListener);
         this.window = this.windowRef.nativeWindow;
+        // Tell tangyFormService which groupId to use.
+        tangyFormService.initialize(window.location.pathname.split('/')[2])
+ 
     }
 
     async logout() {

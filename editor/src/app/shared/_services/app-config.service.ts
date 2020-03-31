@@ -6,10 +6,16 @@ export class AppConfigService {
   constructor(
     private http: HttpClient
   ) { }
-  async getAppConfig(groupName) {
-    const res = await this.http.get(`/editor/${groupName}/content/app-config.json`).toPromise();
-    const appConfig:any = res;
-    return appConfig;
+  async getAppConfig(groupId = '') {
+    if (groupId) {
+      const res = await this.http.get(`/editor/${groupId}/content/app-config.json`).toPromise();
+      const appConfig:any = res;
+      return appConfig;
+    } else {
+      const res = await this.http.get(`./assets/app-config.json`).toPromise();
+      const appConfig:any = res;
+      return appConfig;
+    }
   }
   public async getDefaultURL(groupName) {
     const result:any = await this.getAppConfig(groupName);

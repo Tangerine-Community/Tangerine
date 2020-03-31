@@ -32,7 +32,7 @@ export class FeedbackEditorComponent implements OnInit {
   showFeedbackListing = true
   percentileOptions:any = []
 
-  @ViewChild(MatTable) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   constructor(
     public feedbackService:FeedbackService,

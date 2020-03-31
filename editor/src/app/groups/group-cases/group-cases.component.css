@@ -1,0 +1,52 @@
+#paginator {
+  padding: 5px;
+  margin: 15px;
+  float: right;
+}
+
+#paginator .previous, #paginator .next {
+}
+
+#paginator .next {
+}
+
+tangy-location {
+  margin-bottom: -120px;
+  margin-top: -30px;
+  margin-right: -20px;
+  --primary-text-color: #fff;
+}
+
+.loading, .no-cases-found {
+  margin-top: 15px;
+  margin-left: 15px;
+}
+
+#header {
+  background: var(--primary-color-lighter);
+  margin-bottom: 15px;
+  /* necessary for tangy-location's negative bottom margin not overlapping with content below hiding click targets */
+  overflow: hidden;
+}
+
+#header-buttons {
+  text-align: right;
+}
+
+#header-buttons paper-button {
+  background: var(--mdc-theme-secondary);
+  color: var(--accent-text-color);
+  margin-bottom: 15px;
+}
+#header-buttons paper-button[disabled] {
+  opacity:.7;
+
+}
+
+#reset-button {
+  margin-right: 10px;
+}
+
+#search-button {
+  margin-right: 16px;
+}

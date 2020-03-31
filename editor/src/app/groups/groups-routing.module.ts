@@ -1,3 +1,4 @@
+import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
 import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
 import { GroupReleaseApkTestComponent } from './group-release-apk-test/group-release-apk-test.component';
@@ -58,6 +59,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/uploads', component: GroupUploadsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/uploads/:responseId', component: GroupUploadsViewComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },

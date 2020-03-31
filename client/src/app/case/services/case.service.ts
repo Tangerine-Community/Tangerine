@@ -1,22 +1,21 @@
+// Services.
+import { DeviceService } from 'src/app/device/services/device.service';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
+import { CaseDefinitionsService } from './case-definitions.service';
+import { HttpClient } from '@angular/common/http';
+// Classes.
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
-import { DeviceService } from './../../device/services/device.service';
 import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
-import { EventFormDefinition } from './../classes/event-form-definition.class';
-import { UserDatabase } from './../../shared/_classes/user-database.class';
-import { CaseEventDefinition } from '../classes/case-event-definition.class'
 import { Case } from '../classes/case.class'
 import { CaseEvent } from '../classes/case-event.class'
 import { EventForm } from '../classes/event-form.class'
 import { CaseDefinition } from '../classes/case-definition.class';
-import { CaseDefinitionsService } from './case-definitions.service';
-import * as UUID from 'uuid/v4'
-import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
-import { Injectable } from '@angular/core';
-import { UserService } from 'src/app/shared/_services/user.service';
-import { Query } from '../classes/query.class'
-import moment from 'moment/src/moment';
-import { HttpClient } from '@angular/common/http';
 import { CaseParticipant } from '../classes/case-participant.class';
+import { Query } from '../classes/query.class'
+// Other.
+import * as UUID from 'uuid/v4'
+import { Injectable } from '@angular/core';
+import moment from 'moment/src/moment';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +24,6 @@ class CaseService {
 
   _id:string
   _rev:string
-  db:UserDatabase
   case:Case
   caseDefinition:CaseDefinition
   
@@ -39,14 +37,11 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
-    private userService:UserService,
     private http:HttpClient
   ) { 
-    
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
     this.queryFormId = 'query-form';
-
   }
 
   async create(caseDefinitionId) {
@@ -90,8 +85,7 @@ class CaseService {
   }
 
   async load(id:string) {
-    this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    await this.setCase(new Case(await this.db.get(id)))
+    await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
   }
 
   async getCaseDefinitionByID(id:string) {
@@ -100,9 +94,8 @@ class CaseService {
   }
 
   async save() {
-    this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    await this.db.put(this.case)
-    await this.setCase(await this.db.get(this.case._id))
+    await this.tangyFormService.saveResponse(this.case)
+    await this.setCase(await this.tangyFormService.getResponse(this.case._id))
   }
 
   createEvent(eventDefinitionId:string, createRequiredEventForms = false): CaseEvent {
@@ -326,7 +319,6 @@ class CaseService {
   }
 
   async getQueries (): Promise<Array<Query>> {
-    const userDbName = this.userService.getCurrentUser();
     const queryForms = await this.tangyFormService.getResponsesByFormId(this.queryFormId);  
     const queries = Array<Query>();
     for (const queryForm of queryForms) {
@@ -400,8 +392,7 @@ class CaseService {
 
       //tangyFormEl.store.dispatch({ type: 'FORM_RESPONSE_COMPLETE' });
 
-      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser());
-      await this.db.put(tangyFormEl.response);
+      await this.tangyFormService.saveResponse(tangyFormEl.response);
 
       const queryResponseId = tangyFormEl.response._id;
       eventForm.formResponseId = queryResponseId;
