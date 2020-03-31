@@ -2,7 +2,7 @@ import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
 import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
-import { MatIconModule, MatMenuModule } from '@angular/material';
+import { MatIconModule, MatMenuModule, MatCheckboxModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { TangyFormService } from './../tangy-forms/tangy-form.service';
 import { GroupDevicesService } from './services/group-devices.service';
@@ -64,6 +64,7 @@ import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-rel
 import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { GroupCasesComponent } from './group-cases/group-cases.component';
+import { CaseSettingsComponent } from './case-settings/case-settings.component';
 
 
 
@@ -91,7 +92,8 @@ import { GroupCasesComponent } from './group-cases/group-cases.component';
     MatGridListModule,
     TangyFormsModule,
     SharedModule,
-    NgTangyFormEditorModule
+    NgTangyFormEditorModule,
+    MatCheckboxModule
   ],
   declarations: [
     LocationListEditorComponent,
@@ -139,7 +141,8 @@ import { GroupCasesComponent } from './group-cases/group-cases.component';
     GroupReleasePwaLiveComponent,
     GroupUploadsViewComponent,
     GroupDeviceUserComponent,
-    GroupCasesComponent
+    GroupCasesComponent,
+    CaseSettingsComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]

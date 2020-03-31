@@ -13,6 +13,7 @@ export class GroupConfigureComponent implements OnInit {
   title = _TRANSLATE('Configure')
   breadcrumbs:Array<Breadcrumb> = []
   syncProtocol2Enabled:boolean
+  caseModuleEnabled:boolean
 
   constructor(private serverConfig: ServerConfigService) { }
 
@@ -20,6 +21,7 @@ export class GroupConfigureComponent implements OnInit {
     this.breadcrumbs = []
     const config = await this.serverConfig.getServerConfig()
     this.syncProtocol2Enabled = !!(config.enabledModules.find(module=>module==='sync-protocol-2'))
+    this.caseModuleEnabled = !!(config.enabledModules.find(module=>module==='case'))
   }
 
 }
