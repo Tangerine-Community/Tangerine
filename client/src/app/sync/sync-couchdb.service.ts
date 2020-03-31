@@ -67,6 +67,8 @@ export class SyncCouchdbService {
     const pouchOptions = {
       "push": {
         "since": push_last_seq,
+        "batch_size": 50,
+        "batches_limit": 5,
         ...(await this.appConfigService.getAppConfig()).couchdbSync4All ? {} : { "selector": {
             "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
               if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
@@ -95,6 +97,8 @@ export class SyncCouchdbService {
       },
       "pull": {
         "since": pull_last_seq,
+        "batch_size": 50,
+        "batches_limit": 5,
         "selector": {
           "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
             if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
