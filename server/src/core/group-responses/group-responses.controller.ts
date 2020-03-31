@@ -10,7 +10,7 @@ export class GroupResponsesController {
     private readonly groupResponsesService: GroupResponsesService
   ) { }
 
-  @All('list/:groupId')
+  @All('list/:groupId/:skip/:limit')
   async list(@Param('groupId') groupId, @Param('skip') skip, @Param('limit') limit) {
     return await this.groupResponsesService.list(groupId, skip, limit)
   }
