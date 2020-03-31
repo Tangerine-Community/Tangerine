@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { CasesService } from '../../services/cases.service';
 import * as moment from 'moment'
@@ -60,8 +60,11 @@ export class CaseEventScheduleListComponent implements OnInit {
     private userService:UserService,
     private searchService:SearchService,
     private formsInfoService:TangyFormsInfoService,
-    private caseService:CaseService
-  ) { }
+    private caseService:CaseService,
+    private ref: ChangeDetectorRef
+  ) {
+    ref.detach()
+  }
 
   async ngOnInit() {
   }
@@ -130,6 +133,7 @@ export class CaseEventScheduleListComponent implements OnInit {
       eventInfo.caseDefinition = this.getCaseDefinition(event)
       return eventInfo 
     })
+    this.ref.detectChanges()
     this.didSearch$.next(true)
   }
 
