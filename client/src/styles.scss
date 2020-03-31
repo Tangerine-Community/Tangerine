@@ -336,6 +336,24 @@ div.more {
     --paper-input-container-shared-input-style_-_line-height: 1.2rem;
   }
 
+  /*
+   * Custom Icon List Item component
+   *
+   * Example:
+
+      <div class="icon-list-item">
+        <mwc-icon slot="item-icon">arrow_forward</mwc-icon>
+        <div>
+          <div>
+            foo
+          </div>
+          <div secondary>
+            bar
+          </div>
+        </div>
+      </div>
+
+   */
   .icon-list-item {
     display: flex;
     flex-direction: row;

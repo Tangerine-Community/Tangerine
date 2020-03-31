@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { TangyErrorHandler } from '../../../../shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from '../../../../shared/_services/translation-marker';
 import { UserService } from '../../_services/user.service';
 import { User } from './user.model.interface';
-import {AfterContentInit} from '@angular/core/src/metadata/lifecycle_hooks';
 import {ActivatedRoute} from '@angular/router';
 
 

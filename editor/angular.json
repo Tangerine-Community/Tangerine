@@ -21,6 +21,7 @@
             "assets": [
               "src/favicon.ico",
               "src/logo.png",
+              "src/loading.gif",
               "src/assets",
               { "glob": "**/*", "input": "./node_modules/tangy-form-editor/ckeditor/", "output": "./ckeditor/" },
               { "glob": "**/*", "input": "./node_modules/ace-builds/src-noconflict/", "output": "./" }
@@ -93,6 +94,7 @@
             "assets": [
               "src/favicon.ico",
               "src/logo.png",
+              "src/loading.gif",
               "src/assets"
             ]
           }

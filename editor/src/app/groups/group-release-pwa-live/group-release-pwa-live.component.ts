@@ -14,7 +14,7 @@ export class GroupReleasePwaLiveComponent implements OnInit {
   title = _TRANSLATE('Release Live Web App')
   breadcrumbs:Array<Breadcrumb> = []
  
-  @ViewChild('releasePwaComponent')releasePwaComponent:ReleasePwaComponent
+  @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
   groupId:string
 
   constructor(

@@ -1,4 +1,5 @@
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
+
 import { Component, OnInit, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../shared/_services/user.service';

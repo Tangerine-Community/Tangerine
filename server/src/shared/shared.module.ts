@@ -1,3 +1,4 @@
+import { GroupResponsesService } from './services/group-responses/group-responses.service';
 import { GroupDeviceService } from './services/group-device/group-device.service';
 import { Module, HttpService } from '@nestjs/common';
 import { GroupService } from './services/group/group.service';
@@ -14,6 +15,7 @@ import { DbService } from './services/db/db.service';
     TangerineConfigService,
     GroupService,
     GroupDeviceService,
+    GroupResponsesService,
     UserService
   ],
   providers: [
@@ -21,6 +23,7 @@ import { DbService } from './services/db/db.service';
     TangerineConfigService,
     GroupService,
     GroupDeviceService,
+    GroupResponsesService,
     ClientUserService,
     UserService
   ]
