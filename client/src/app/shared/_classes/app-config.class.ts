@@ -23,7 +23,5 @@ export class AppConfig {
   p2pSync = 'false'
   passwordPolicy:string
   passwordRecipe:string
-  allowDeleteIfFormNotCompleted:boolean
-  allowDeleteIfFormNotStarted:boolean
 }
 
