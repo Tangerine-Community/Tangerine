@@ -10,6 +10,7 @@ import { EventForm } from '../../classes/event-form.class';
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseService } from '../../services/case.service';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 
 
@@ -37,16 +38,21 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemIcon = ''
   renderedTemplateListItemPrimary = ''
   renderedTemplateListItemSecondary = ''
+  canUserDeleteForms:boolean
 
   constructor(
     private formService:TangyFormService,
     private ref: ChangeDetectorRef,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private appConfigService: AppConfigService
   ) {
     ref.detach()
   }
 
   async ngOnInit() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.canUserDeleteForms = ((appConfig.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
+    || (appConfig.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId))
     const response = await this.formService.getResponse(this.eventForm.formResponseId)
     const getValue = (variableName) => {
       const variablesByName = response.items.reduce((variablesByName,item) => {
