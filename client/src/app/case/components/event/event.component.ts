@@ -1,6 +1,8 @@
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
-import { Component, OnInit, AfterContentInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+
+import { Component, OnInit, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../../shared/_services/user.service';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -37,8 +39,12 @@ export class EventComponent implements OnInit, AfterContentInit {
 
   constructor(
     private route: ActivatedRoute,
-    private caseService: CaseService
+    private router: Router,
+    private caseService: CaseService,
+    private userService: UserService,
+    private ref: ChangeDetectorRef
   ) { 
+    ref.detach()
     this.window = window
   }
 
@@ -103,6 +109,7 @@ export class EventComponent implements OnInit, AfterContentInit {
       // ^ Remove this filter??
       //this.calculateAvailableEventFormDefinitions()
       this.loaded = true
+      this.ref.detectChanges()
     })
   }
 
