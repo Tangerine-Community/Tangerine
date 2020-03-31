@@ -41,6 +41,7 @@ import { ImportLocationListComponent } from './import-location-list/import-locat
 import { CreateCaseDefinitionComponent } from './case-management-editor/create-case-definition/create-case-definition.component';
 import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
+import { CaseSettingsComponent } from './case-settings/case-settings.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -61,6 +62,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard] },
