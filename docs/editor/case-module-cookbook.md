@@ -9,7 +9,8 @@ const participantId = caseService
   .case
   .events
   .find(event => event.id === currentEventId)
-  .eventForms.find(eventForm => eventForm.id === currentFormId)
+  .eventForms
+  .find(eventForm => eventForm.id === currentFormId)
   .participantId
 const participant_id = caseService.getParticipantData(participantId, 'participant_id')
 ```
