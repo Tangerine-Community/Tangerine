@@ -16,7 +16,7 @@ export class UserProfileComponent implements AfterContentInit {
   tangyFormSrc: any;
   tangyFormResponse: {};
   returnUrl: string; // stores the value of the url to redirect to after login
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private route: ActivatedRoute,

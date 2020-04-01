@@ -23,7 +23,7 @@ export class SearchBarcodeComponent implements OnInit {
   public value = ''
   public state =  STATE_INITIAL
 
-  @ViewChild('scanner')
+  @ViewChild('scanner', {static: true})
   private scanner: ElementRef
   private barcodeSearchMapFunction = 'return data'
 

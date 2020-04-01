@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
   languagePath:string
   translate: TranslateService
   ready = false
-  @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
+  @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
 
   constructor(
     private userService: UserService,

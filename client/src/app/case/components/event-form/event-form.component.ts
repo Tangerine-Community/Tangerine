@@ -16,7 +16,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 export class EventFormComponent implements AfterContentInit {
   caseEvent: CaseEvent
   caseEventDefinition: CaseEventDefinition
-  eventForm: EventForm 
+  eventForm: EventForm
   eventFormDefinition: EventFormDefinition
   tangyFormEl:any
   throttledSaveLoaded:boolean;
@@ -25,14 +25,14 @@ export class EventFormComponent implements AfterContentInit {
   loaded = false
   lastResponseSeen:any
   window:any
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private hostElementRef: ElementRef,
     private router: Router,
     private caseService: CaseService,
     private tangyFormService: TangyFormService
-  ) { 
+  ) {
     this.window = window
   }
 
@@ -61,7 +61,7 @@ export class EventFormComponent implements AfterContentInit {
       }
       const tangyFormMarkup = await this.tangyFormService.getFormMarkup(this.eventFormDefinition.formId)
       this.container.nativeElement.innerHTML = tangyFormMarkup
-      this.tangyFormEl = this.container.nativeElement.querySelector('tangy-form') 
+      this.tangyFormEl = this.container.nativeElement.querySelector('tangy-form')
       if (this.formResponse) {
         this.tangyFormEl.response = this.formResponse
       } else {

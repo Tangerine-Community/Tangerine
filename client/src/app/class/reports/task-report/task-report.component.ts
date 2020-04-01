@@ -32,7 +32,7 @@ export class TaskReportComponent implements OnInit {
   curriculumName: null;
 
 
-  @ViewChild('curriculumSelectDiv') curriculumSelectDiv: ElementRef;
+  @ViewChild('curriculumSelectDiv', {static: true}) curriculumSelectDiv: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
