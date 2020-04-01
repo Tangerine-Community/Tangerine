@@ -12,7 +12,7 @@ import { CaseManagementService } from '../_services/case-management.service';
 })
 export class FormListComponent implements OnInit {
   formList;
-  @ViewChild('search') search: ElementRef;
+  @ViewChild('search', {static: true}) search: ElementRef;
   constructor(private caseManagementService: CaseManagementService) {
   }
   ngOnInit() {

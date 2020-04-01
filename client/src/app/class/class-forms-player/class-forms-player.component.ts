@@ -27,7 +27,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
   classId
   classUtils: ClassUtils
   viewRecord:boolean = false
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private route: ActivatedRoute,

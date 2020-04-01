@@ -66,7 +66,7 @@ export class DashboardComponent implements OnInit {
   displayClassGroupReport:boolean = false;
   feedbackViewInited:boolean = false;
 
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private http: HttpClient,

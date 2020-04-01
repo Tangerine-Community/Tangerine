@@ -74,7 +74,7 @@ export class SyncCouchdbService {
             ]
           }
           return $or
-        }, [])
+        }, [])tsconfig.json
       }
     }
     const replicationStatus = <ReplicationStatus>await new Promise((resolve, reject) => {

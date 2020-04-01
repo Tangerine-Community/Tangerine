@@ -14,7 +14,7 @@ export class CaseDetailsComponent implements OnInit, AfterContentInit {
     private userService: UserService,
     private http: HttpClient,
     private route: ActivatedRoute) { }
-  @ViewChild('reports_container') reportsContainer: ElementRef;
+  @ViewChild('reports_container', {static: true}) reportsContainer: ElementRef;
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {

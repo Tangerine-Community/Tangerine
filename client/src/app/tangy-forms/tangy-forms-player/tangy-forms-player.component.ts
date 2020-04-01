@@ -23,21 +23,21 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   formId;
   formEl;
   window:any;
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private caseManagementService: CaseManagementService,
     private service: TangyFormService,
     private route: ActivatedRoute,
     private http: HttpClient,
     private userService: UserService,
-  ) { 
+  ) {
     this.window = window
   }
 
   isDirty() {
     const state = this.formEl.store.getState()
     const isDirty = state.items.reduce((acc, item) => item.isDirty || acc ? true : false, false)
-    return isDirty 
+    return isDirty
   }
 
   isComplete() {
