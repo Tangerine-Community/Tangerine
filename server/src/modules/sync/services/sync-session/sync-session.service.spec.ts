@@ -3,7 +3,7 @@ import { SyncSessionService } from './sync-session.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { GroupService } from '../../../../shared/services/group/group.service';
 import { ClientUserService } from '../../../../shared/services/client-user/client-user.service';
-import { HttpModule, HttpService } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
 import { TangerineConfigService } from '../../../../shared/services/tangerine-config/tangerine-config.service';
 import { of } from 'rxjs';
 import { DbService } from '../../../../shared/services/db/db.service';
