@@ -6,7 +6,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {DashboardService} from "../../_services/dashboard.service";
 import {StudentResult} from "../student-grouping-report/student-result";
 import {ClassGroupingReport} from "../student-grouping-report/class-grouping-report";
-import {MatTableDataSource} from "@angular/material";
+import { MatTableDataSource } from "@angular/material/table";
 import {_TRANSLATE} from "../../../shared/translation-marker";
 
 @Component({

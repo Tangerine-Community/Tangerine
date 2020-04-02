@@ -3,7 +3,7 @@ import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.
 import { DeviceService } from './device/services/device.service';
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UserService } from './shared/_services/user.service';
 import PouchDB from 'pouchdb';

@@ -13,7 +13,7 @@ import { CaseEventScheduleListComponent } from '../case-event-schedule-list/case
 import { MockSearchService } from 'src/app/mocks/services/mock-search.service';
 import { MockTangyFormsInfoService } from 'src/app/mocks/services/mock-tangy-forms-info.service';
 import { CaseEvent } from '../../classes/case-event.class';
-import { MatFormFieldModule } from '@angular/material';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 class MockPouchDB {
   get(id) {

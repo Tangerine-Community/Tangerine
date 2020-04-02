@@ -2,8 +2,8 @@
 // Fix for global undefined https://github.com/angular/angular-cli/issues/9920#issuecomment-393424161
 (window as any).global = window;
 
-import Plotly from 'plotly.js-dist';
-(window as any).Plotly = Plotly;
+// import Plotly from 'plotly.js-dist';
+// (window as any).Plotly = Plotly;
 
 import * as Redux from 'redux';
 (window as any).Redux = Redux;
