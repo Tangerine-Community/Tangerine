@@ -5,12 +5,13 @@
 - Features
   - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
   - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
-
 - Fixes
   - Fix additional memory leaks in Case module causing tablets to slow down. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2025)
   - Make `getValue()` function in Event Form List Item related templates less likely to crash. [change](https://github.com/Tangerine-Community/Tangerine/pull/2018/files#diff-c26fa38f2c0963295bb906bd95baf8b0L50)
   - Fixed incompatibilities with 2-way sync and P2P Sync. 
   - Fixed issue causing tablets to crash when syncing with a database with tens of thousands of records.
+- Developer notes
+  - Editor and Clients upgraded to Angular 8.
 
 __Upgrade instructions:__
 ```
