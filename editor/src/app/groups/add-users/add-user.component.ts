@@ -20,7 +20,7 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
   title = _TRANSLATE('Assign User Role')
   breadcrumbs: Array<Breadcrumb> = []
   newUser = true;
-  @ViewChild('search', {static: true}) search: ElementRef;
+  @ViewChild('search', {static: false}) search: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
