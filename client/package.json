@@ -13,6 +13,9 @@
     "tangerine": "preview-app.sh"
   },
   "private": false,
+  "browserslist": [
+    "last 2 Chrome versions"
+  ],
   "dependencies": {
     "@angular/animations": "~8.2.14",
     "@angular/cdk": "~8.2.3",
