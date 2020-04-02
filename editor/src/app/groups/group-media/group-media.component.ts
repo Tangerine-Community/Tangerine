@@ -15,8 +15,8 @@ export class GroupMediaComponent implements AfterContentInit {
  
   thereIsSelection = false
   selection = []
-  @ViewChild('list') listEl: ElementRef;
-  @ViewChild('upload') uploadEl: ElementRef;
+  @ViewChild('list', {static: true}) listEl: ElementRef;
+  @ViewChild('upload', {static: true}) uploadEl: ElementRef;
 
   constructor(
     private http: HttpClient

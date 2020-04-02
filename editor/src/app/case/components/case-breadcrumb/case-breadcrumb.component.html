@@ -1,0 +1,8 @@
+<div class="primary">
+  <iron-icon icon="clear" (click)="goHome()"></iron-icon>
+  <span [innerHTML]="primaryText|unsanitizeHtml"></span>
+</div>
+<div class="secondary" *ngIf="secondaryText">
+    <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>
+    <span [innerHTML]="secondaryText|unsanitizeHtml"></span>
+</div>

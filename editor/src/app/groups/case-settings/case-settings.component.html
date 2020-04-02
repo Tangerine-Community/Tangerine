@@ -1,0 +1,12 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<br />  <br />  <br />
+<div style="margin-left: 3%;">
+  <mat-checkbox name="allowDeleteIfFormNotStarted" [(ngModel)]="allowDeleteIfFormNotStarted">{{'Allow Deletion of case Form
+    Instance if Form Not Started'|translate}}</mat-checkbox>
+  <br /><br />
+  <mat-checkbox name="allowDeleteIfFormNotStarted" [(ngModel)]="allowDeleteIfFormNotCompleted">{{'Allow Deletion of case
+    Form Instance if Form Not Completed'| translate}}</mat-checkbox>
+
+    <br />  <br />  <br />
+  <button mat-raised-button color="primary" (click)="save()">Save Settings</button>
+</div>

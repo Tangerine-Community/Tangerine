@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
 import { CaseDefinition } from '../../classes/case-definition.class';
@@ -20,7 +20,10 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   constructor(
     private caseService: CaseService,
-  ) { }
+    private ref: ChangeDetectorRef
+  ) {
+    ref.detach()
+  }
 
   ngOnInit() {
     const caseInstance = this.caseService.case
@@ -62,6 +65,7 @@ export class CaseBreadcrumbComponent implements OnInit {
         ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\`
         : \`Case: ${caseInstance._id.substr(0,6)} \`
     `)
+    this.ref.detectChanges()
   }
 
 }

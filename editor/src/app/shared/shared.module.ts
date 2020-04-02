@@ -1,3 +1,4 @@
+import { LoginGuard } from './_guards/login-guard.service';
 import { ServerConfigService } from './_services/server-config.service';
 import { UnsanitizeHtmlPipe } from './../pipes/unsanitize.pipe';
 import { CommonModule } from '@angular/common';
@@ -12,7 +13,7 @@ import { BreadcrumbComponent } from './_components/breadcrumb/breadcrumb.compone
   imports: [
     CommonModule
   ],
-  providers: [AppConfigService, ServerConfigService],
+  providers: [AppConfigService, ServerConfigService, LoginGuard],
   exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent, BreadcrumbComponent, UnsanitizeHtmlPipe],
   declarations: [TangyLoadingComponent, UnsanitizeHtmlPipe, BreadcrumbComponent]
 })

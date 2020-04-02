@@ -1,5 +1,36 @@
 # Changelog
 
+## v3.9.0
+
+- Features
+  - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
+  - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
+- Fixes
+  - Fix additional memory leaks in Case module causing tablets to slow down. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2025)
+  - Make `getValue()` function in Event Form List Item related templates less likely to crash. [change](https://github.com/Tangerine-Community/Tangerine/pull/2018/files#diff-c26fa38f2c0963295bb906bd95baf8b0L50)
+  - Fixed incompatibilities with 2-way sync and P2P Sync. 
+  - Fixed issue causing tablets to crash when syncing with a database with tens of thousands of records.
+- Developer notes
+  - Editor and Clients upgraded to Angular 8.
+
+__Upgrade instructions:__
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.9.0
+# If you did not upgrade your config.sh in v3.8.1, migrate it now.
+# Move custom variables from config.sh_backup to config.sh. Note that T_ADMIN and T_PASS are no longer needed. 
+mv config.sh config.sh_backup
+cp config.defaults.sh config.sh
+# To edit both files in vim you would run...
+vim -O config.sh config.sh_backup
+# Now you are ready to start the server.
+./start.sh v3.9.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.9.0.js
+```
+
 ## v3.8.1
 - Client app performance improvements
   - Improved caching of files. We are caching important configuration files for faster page loads (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. [1991](https://github.com/Tangerine-Community/Tangerine/pull/1991)
@@ -9,6 +40,8 @@
 - Editor fixes
   - Fixed an issue causing editor content region to be untouchable when window was narrow. [#1940](https://github.com/Tangerine-Community/Tangerine/issues/1940)
   - Improved CSV output so it now contains Release ID, Device ID, and Build Channel on every row [#349](https://github.com/Tangerine-Community/Tangerine/issues/349)
+- Developer notes
+  - We focused on issues with slow performance on tablets when viewing forms. We are caching important configuration files (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. More information in the [Globals doc](./docs/developer/tangerine-globals.md).  
 - Server Admin notes
   - We cleaned up config variables in `config.sh`, deprecated `T_ADMIN` and `T_PASS` [#1986](https://github.com/Tangerine-Community/Tangerine/pull/1986)
   - New `generate-cases` command for load testing a large number of Cases based on your custom content in a group. [#1993](https://github.com/Tangerine-Community/Tangerine/pull/1993) 
@@ -28,7 +61,6 @@ vim -O config.sh config.sh_backup
 # Now you are ready to start the server.
 ./start.sh v3.8.1
 ```
-
 ## v3.8.0
 v3.8.0 is a big and exciting release! To accomodate the long list of changes, we split up this round of release notes into sections: General, Sync Protocol 2 Module, and Case Module, and Developer notes.
 

@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../../../shared/_services/user.service';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
 import { CaseEvent } from '../../classes/case-event.class';
@@ -32,8 +31,7 @@ export class EventFormComponent implements AfterContentInit {
     private hostElementRef: ElementRef,
     private router: Router,
     private caseService: CaseService,
-    private tangyFormService: TangyFormService,
-    private userService: UserService
+    private tangyFormService: TangyFormService
   ) { 
     this.window = window
   }

@@ -1,3 +1,4 @@
+import { CaseModule } from './case/case.module';
 import { UnsanitizeHtmlPipe } from './pipes/unsanitize.pipe';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -45,6 +46,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     AuthModule,
     ProfileModule,
     GroupsModule,
+    CaseModule,
     BrowserModule,
     TangyFormsModule,
     NgTangyFormEditorModule,

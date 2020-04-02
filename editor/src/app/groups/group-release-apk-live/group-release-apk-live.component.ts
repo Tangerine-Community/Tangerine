@@ -14,7 +14,7 @@ export class GroupReleaseApkLiveComponent implements OnInit {
   title = _TRANSLATE('Release Live Android App')
   breadcrumbs:Array<Breadcrumb> = []
  
-  @ViewChild('releaseApkComponent') releaseApkComponent:ReleaseApkComponent
+  @ViewChild('releaseApkComponent', {static: true}) releaseApkComponent:ReleaseApkComponent
   groupId:string
 
   constructor(
