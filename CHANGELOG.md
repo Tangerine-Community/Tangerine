@@ -27,6 +27,8 @@ cp config.defaults.sh config.sh
 vim -O config.sh config.sh_backup
 # Now you are ready to start the server.
 ./start.sh v3.9.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.9.0.js
 ```
 
 ## v3.8.1
