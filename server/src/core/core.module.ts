@@ -4,18 +4,18 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { SharedModule } from '../shared/shared.module';
 import { GroupController } from './group/group.controller';
 import { UserController } from './user/user.controller';
-import { GroupDeviceController } from './group-device/group-device.controller';
 import { ConfigController } from './config/config.controller';
+import { GroupResponsesController } from './group-responses/group-responses.controller';
 import isAuthenticated = require('../middleware/is-authenticated')
 
 @Module({
   controllers: [
     GroupController,
     UserController,
-    GroupDeviceController,
     GroupDevicePublicController,
     GroupDeviceManageController,
-    ConfigController
+    ConfigController,
+    GroupResponsesController
   ],
   imports: [SharedModule]
 })
@@ -29,9 +29,12 @@ export class CoreModule implements NestModule {
       .forRoutes(GroupController)
     consumer
       .apply(isAuthenticated)
+      .forRoutes(GroupResponsesController)
+    consumer
+      .apply(isAuthenticated)
       .forRoutes(UserController)
     consumer
       .apply(isAuthenticated)
-      .forRoutes(GroupDeviceManageController);
+      .forRoutes(GroupDeviceManageController)
   }
 }

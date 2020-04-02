@@ -1,7 +1,11 @@
 <div class="icon-list-item">
-	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
-	<div>
+	<mwc-icon routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}" [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
+	<div routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
+	<span class="tangy-spacer"></span>
+	<span *ngIf="canUserDeleteForms">
+		<paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
+	</span>
 </div>

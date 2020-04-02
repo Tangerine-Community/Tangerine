@@ -1,5 +1,6 @@
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+
+import { Component, OnInit, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../shared/_services/user.service';
 import { CaseService } from '../../services/case.service'
@@ -40,8 +41,10 @@ export class EventComponent implements OnInit, AfterContentInit {
     private route: ActivatedRoute,
     private router: Router,
     private caseService: CaseService,
-    private userService: UserService
+    private userService: UserService,
+    private ref: ChangeDetectorRef
   ) { 
+    ref.detach()
     this.window = window
   }
 
@@ -78,34 +81,11 @@ export class EventComponent implements OnInit, AfterContentInit {
               .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
           }
         })
-      this.participantInfos = this.caseService.case.participants.map(participant => {
-        const id = participant.id
-        const data = participant.data
-        const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
-        let renderedListItem:string
-        eval(`renderedListItem = \`${role.templateListItem}\``) 
-        return <ParticipantInfo>{
-          id,
-          renderedListItem,
-          newFormLink: `/case/event/form-add/${this.caseService.case._id}/${this.caseEvent.id}/${participant.id}`,
-          availableEventFormDefinitionsForParticipant: this.calculateAvailableEventFormDefinitionsForParticipant(participant.id),
-          eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
-            return eventForm.participantId === participant.id
-              ? [...eventFormInfos, <EventFormInfo>{
-                eventForm,
-                eventFormDefinition: this
-                  .caseEventDefinition
-                  .eventFormDefinitions
-                  .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
-              }]
-              : eventFormInfos
-          }, [])
-        }
-      })
-      .filter(participantInfo => participantInfo.eventFormInfos.length !== 0)
+      this.getParticipantInfo()
       // ^ Remove this filter??
       //this.calculateAvailableEventFormDefinitions()
       this.loaded = true
+      this.ref.detectChanges()
     })
   }
 
@@ -119,10 +99,44 @@ export class EventComponent implements OnInit, AfterContentInit {
           .reduce((eventFormDefinitionHasForm, form) => {
             return eventFormDefinitionHasForm || form.eventFormDefinitionId === eventFormDefinition.id
           }, false)
-        return eventFormDefinition.repeatable || !eventFormDefinitionHasForm             
+        return eventFormDefinition.repeatable || !eventFormDefinitionHasForm
           ? [...availableEventFormDefinitions, eventFormDefinition]
           : availableEventFormDefinitions
       }, [])
   }
+
+  updateFormList(event) {
+    if (event === 'formDeleted') {
+      this.getParticipantInfo()
+    }
+  }
+
+  getParticipantInfo() {
+    this.participantInfos = this.caseService.case.participants.map(participant => {
+      const id = participant.id
+      const data = participant.data
+      const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
+      let renderedListItem:string
+      eval(`renderedListItem = \`${role.templateListItem}\``) 
+      return <ParticipantInfo>{
+        id,
+        renderedListItem,
+        newFormLink: `/case/event/form-add/${this.caseService.case._id}/${this.caseEvent.id}/${participant.id}`,
+        availableEventFormDefinitionsForParticipant: this.calculateAvailableEventFormDefinitionsForParticipant(participant.id),
+        eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
+          return eventForm.participantId === participant.id
+            ? [...eventFormInfos, <EventFormInfo>{
+              eventForm,
+              eventFormDefinition: this
+                .caseEventDefinition
+                .eventFormDefinitions
+                .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+            }]
+            : eventFormInfos
+        }, [])
+      }
+    })
+    .filter(participantInfo => participantInfo.eventFormInfos.length !== 0)
+}
 
 }

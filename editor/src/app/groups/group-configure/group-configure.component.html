@@ -24,6 +24,18 @@
   </mat-card-header>
 </mat-card>
 
+<mat-card *ngIf="caseModuleEnabled" class="is-link mat-elevation-z3" routerLink="case">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">folder</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Case'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Manage which forms can be deleted.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
 <mat-card class="is-link mat-elevation-z3" routerLink="security">
   <mat-card-header>
       <div mat-card-avatar>

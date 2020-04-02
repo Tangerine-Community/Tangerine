@@ -11,7 +11,7 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
   styleUrls: ['./print-form-as-table.component.css']
 })
 export class PrintFormAsTableComponent implements OnInit {
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
   groupDetails;
   meta;
   constructor(private route: ActivatedRoute,
