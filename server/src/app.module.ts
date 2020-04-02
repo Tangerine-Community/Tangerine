@@ -1,5 +1,5 @@
 import { SyncCustomModule } from './modules/sync-custom/sync-custom.module';
-import { Module } from '@nestjs/common';
+import {HttpModule, Module} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './core/core.module';
@@ -11,7 +11,8 @@ import { SyncModule } from './modules/sync/sync.module';
     CoreModule,
     SharedModule,
     SyncModule,
-    SyncCustomModule
+    SyncCustomModule,
+    HttpModule
   ],
   controllers: [AppController],
   providers: [AppService],

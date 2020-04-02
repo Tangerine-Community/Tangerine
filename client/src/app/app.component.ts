@@ -73,49 +73,58 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
 
+    if (window['isCordovaApp']) {
+      document.addEventListener('deviceready', async () => {
+        await this.initAppComponent();
+      })
+    } else {
+      await this.initAppComponent();
+    }
+  }
+
+  private async initAppComponent() {
     // Installation check.
     if (!this.installed) {
-      await this.install()
-      return
+      await this.install();
+      return;
     } else {
       this.checkPermissions();
     }
 
     // Initialize services.
-    await this.userService.initialize()
-    await this.searchService.start()
+    await this.userService.initialize();
+    await this.searchService.start();
 
     // Get globally exposed config.
-    this.appConfig = await this.appConfigService.getAppConfig()
-    this.window.appConfig = this.appConfig
-    this.window.device = await this.deviceService.getDevice()
-    this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise()
+    this.appConfig = await this.appConfigService.getAppConfig();
+    this.window.appConfig = this.appConfig;
+    this.window.device = await this.deviceService.getDevice();
+    this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
-      this.router.navigate(['/update'])
+      this.router.navigate(['/update']);
     }
 
     // Set up log in status.
-    this.isLoggedIn = this.userService.isLoggedIn()
+    this.isLoggedIn = this.userService.isLoggedIn();
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
-      this.isLoggedIn = true
+      this.isLoggedIn = true;
     });
     this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
-      this.isLoggedIn = false
+      this.isLoggedIn = false;
     });
 
     // Keep GPS chip warm.
     setInterval(this.getGeolocationPosition, 5000);
-    this.checkStorageUsage()
-    setInterval(this.checkStorageUsage.bind(this), 60*1000);
-    this.ready = true
+    this.checkStorageUsage();
+    setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    this.ready = true;
 
     // Lastly, navigate to update page if an update is running.
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
-      this.router.navigate(['/update'])
+      this.router.navigate(['/update']);
     }
-
   }
 
   async install() {

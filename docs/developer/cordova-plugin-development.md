@@ -45,8 +45,7 @@ cordova build android
 
 ## Updating Angular client code used in the APK
 
-IF you're developing Cordova plugins for Tangerine and make changes to the Angular client code that is displayed in the apk, 
-you will need to refresh the apk build. First generate a pwa. Then run the following code:
+IF you're developing Cordova plugins for Tangerine and make changes to the Angular client code that is displayed in the apk, you will need to refresh the apk build. Run the following code:
 
 ```javascript
 cd /tangerine/client && \
