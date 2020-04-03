@@ -24,7 +24,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="cases">
+<mat-card class="is-link mat-elevation-z3" routerLink="cases" *ngIf="config.modules.includes('case')">
   <mat-card-header>
       <div mat-card-avatar>
         <mwc-icon class="tangy-foreground-secondary">cloud_download</mwc-icon>
@@ -32,6 +32,6 @@
       <mat-card-title>
           <a>{{'Cases'|translate}}</a>
       </mat-card-title>
-      <mat-card-subtitle>{{'...'|translate}}</mat-card-subtitle>
+      <mat-card-subtitle>{{'Review uploaded cases.'|translate}}</mat-card-subtitle>
   </mat-card-header>
 </mat-card>
