@@ -93,24 +93,18 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
           ? {
             ...form,
             couchdbSyncSettings: {
-              enabled: false,
-              filterByLocation: false
-            },
-            customSyncSettings: {
               enabled: true,
+              filterByLocation: false,
               push: true,
-              pull: false
+              pull: true
             }
           }
           : {
             ...form,
             couchdbSyncSettings: {
               enabled: true,
-              filterByLocation: true 
-            },
-            customSyncSettings: {
-              enabled: false,
-              push: false,
+              filterByLocation: true ,
+              push: true,
               pull: false
             }
           }
