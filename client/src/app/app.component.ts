@@ -73,24 +73,12 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
 
-    if (window['isCordovaApp']) {
-      document.addEventListener('deviceready', async () => {
-        await this.initAppComponent();
-      })
-    } else {
-      await this.initAppComponent();
-    }
-  }
-
-  private async initAppComponent() {
     // Installation check.
     if (!this.installed) {
       await this.install();
-      return;
-    } else {
-      this.checkPermissions();
     }
 
+    this.checkPermissions();
     // Initialize services.
     await this.userService.initialize();
     await this.searchService.start();
@@ -138,7 +126,7 @@ export class AppComponent implements OnInit {
       console.log('Error detected in install:')
       console.log(e)
     }
-    window.location.href = window.location.href.replace(window.location.hash, 'index.html')
+    window.location.href = 'file:///android_asset/www/shell/index.html'
   }
 
   async checkPermissions() {

@@ -1,6 +1,25 @@
 # Load testing
 
-## Populate database
+## Client-side testing
+
+Go to any case record and enter the following in the js console:
+
+```js
+this.caseService.generateCases(1)
+```
+
+You may change the number of cases generated. It uses the current case as a template for the generated cases. 
+TODO: Use the case-export.json in the group.
+
+You can check how many docs are in the db with:
+
+```js
+this.userService.getSharedDBDocCount()
+```
+
+## Server-side generation
+
+### Populate database
 
 One may populate a Tangerine instance with records using the cli:
 
@@ -10,7 +29,7 @@ docker exec tangerine generate-uploads 500 group-uuid 2000 100 case-mother
 
 That command generates 500 'case-mother' cases (each of which has 2 records) in batches of 100, posted every 2000 ms. The 'case-mother' switch uses templates stored in the 'response-templates' directory of that group in the data dir. (Read server/src/scripts/generate-uploads/bin.js for more details.)
 
-## Push changed code
+### Push changed code
 
 If you make modifications to your Angular code, run the following command while exec'd into the container:
 
@@ -18,15 +37,17 @@ If you make modifications to your Angular code, run the following command while 
 cd /tangerine/client && rm -rf builds/apk/www/shell && rm -rf builds/pwa/release-uuid/app && cp -r dev builds/apk/www/shell && cp -r pwa-tools/updater-app/build/default builds/pwa && cp -r dev builds/pwa/release-uuid/app
 ```
 
-## Build an APK
+### Build an APK
 
 In editor, build an APK.
 
-## Update and test
+### Update and test
 
 On the tablet, in the menu select "Check for Update" to update the code and then select "Sync Online" to download the records.
 
-## Clean things up
+### Clean things up
 
 To delete all generated records (but keep the views), use [bulkdelete](https://github.com/chrisekelley/scripts).
+
+
 
