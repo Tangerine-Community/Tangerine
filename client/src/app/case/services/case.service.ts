@@ -441,10 +441,6 @@ class CaseService {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  async getDocCount() {
-    this.db.db.info().then(info => console.log(info.doc_count))
-  }
-
   async generateCases(numberOfCases) {
     let numberOfCasesCompleted = 0
     let firstnames = ['Mary', 'Jennifer', 'Lisa', 'Sandra	','Michelle',
@@ -526,15 +522,13 @@ class CaseService {
       demoDoc.items[12].inputs[2].value = surname;
       demoDoc.items[12].inputs[3].value = firstname;
 
-      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-
       for (let doc of templateDocs) {
         // @ts-ignore
         // sometimes doc is false...
         if (doc !== false) {
           try {
             delete doc._rev
-            await this.db.put(doc)
+            await this.tangyFormService.saveResponse(doc)
           } catch (e) {
             console.log('Error: ' + e)
           }
