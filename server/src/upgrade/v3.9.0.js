@@ -14,6 +14,28 @@ async function go() {
     for (let groupId of groupList) {
       console.log(`generate-location-level-indexes ${groupId}`)
       await exec(`generate-location-level-indexes ${groupId}`)
+      if (process.env['T_MODULES'].contains('sync-protocol-2')) {
+        let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+        // Disable custom push in favor of couchdb push.
+        forms = forms.map(form => {
+          return {
+            ...form,
+            customSyncSettings: {
+              enabled: false,
+              push: false,
+              pull: false,
+              excludeIncomplete:false
+            },
+            couchdbSyncSettings: {
+              enabled: true,
+              push: true,
+              pull: form.couchdbSyncSettings && form.couchddbSyncSettings.pull ? true : false,
+              filterByLocation: true 
+            }
+          }
+        })
+        await fs.writeJson(`/tangerine/client/content/groups/${groupId}/forms.json`, forms)
+      }
     }
   } catch (error) {
     console.log(error)
