@@ -11,4 +11,5 @@ export interface TangerineConfig {
   uploadToken: string
   reportingDelay: number
   hideSkipIf: boolean
+  couchdbSync4All: boolean
 }
