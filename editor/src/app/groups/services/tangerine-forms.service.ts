@@ -1,3 +1,4 @@
+import { ServerConfigService } from './../../shared/_services/server-config.service';
 import { FormSearchSettings, CustomSyncSettings, CouchdbSyncSettings } from './../../shared/_classes/tangerine-form.class';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -16,6 +17,7 @@ export class TangerineFormsService {
     private windowRef: WindowRef,
     private httpClient: HttpClient,
     private errorHandler: TangyErrorHandler,
+    private serverConfig: ServerConfigService,
     private filesService: FilesService
   ) { }
 
@@ -35,6 +37,7 @@ export class TangerineFormsService {
   }
 
   async createForm(groupId, formTitle = 'New Form', formContents = '') {
+    const config = await this.serverConfig.getServerConfig()
     const formId = `form-${uuidv4()}`
     const formInfo = <TangerineFormInfo>{
       id: formId,
@@ -42,19 +45,21 @@ export class TangerineFormsService {
       title: formTitle,
       src: `./assets/${formId}/form.html`,
       searchSettings:  <FormSearchSettings>{
-        shouldIndex: false,
+        shouldIndex: config.modules.includes('case') ? true : false,
         variablesToIndex: [],
         primaryTemplate: '',
         secondaryTemplate: ''
       },
       customSyncSettings: <CustomSyncSettings>{
-        enabled: true,
-        push: true,
+        enabled: false,
+        push: false,
         pull: false,
         excludeIncomplete:false
       },
       couchdbSyncSettings: <CouchdbSyncSettings>{
-        enabled: false,
+        enabled: config.modules.includes('sync-protocol-2') ? true : false,
+        push: true,
+        pull: false,
         filterByLocation: false
       }
     }
