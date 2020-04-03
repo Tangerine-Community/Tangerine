@@ -1,3 +1,4 @@
+const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 import { DeviceService } from './../../device/services/device.service';
 import { Subject } from 'rxjs';
 import { Device } from 'src/app/device/classes/device.class';
@@ -24,6 +25,7 @@ export class UserService {
   config: AppConfig
   _currentUser = ''
   _initialized = false
+  sharedUserDatabase;
   public userLoggedIn$:Subject<UserAccount> = new Subject()
   public userLoggedOut$:Subject<UserAccount> = new Subject()
   public userShouldResetPassword$: any;
@@ -46,9 +48,9 @@ export class UserService {
   }
 
   async installSharedUserDatabase(device) {
-    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
-    await this.installDefaultUserDocs(sharedUserDatabase)
-    await sharedUserDatabase.put({
+    this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
+    await this.installDefaultUserDocs(this.sharedUserDatabase)
+    await this.sharedUserDatabase.put({
       _id: 'info',
       atUpdateIndex: updates.length - 1
     })
@@ -438,6 +440,12 @@ export class UserService {
     }
     window['currentUser'] = username
     return username
+  }
+
+  async getSharedDBDocCount() {
+    const device = await this.getDevice()
+    const db = DB(SHARED_USER_DATABASE_NAME, device.key)
+    db.info().then(info => console.log(info.doc_count))
   }
 
 }

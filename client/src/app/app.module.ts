@@ -3,7 +3,7 @@ import { SyncModule } from './sync/sync.module';
 import { DeviceModule } from './device/device.module';
 import { SharedModule } from './shared/shared.module';
 import 'hammerjs';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import {NgModule, CUSTOM_ELEMENTS_SCHEMA, APP_INITIALIZER} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,8 +31,14 @@ import { ClassModule } from "./class/class.module";
 import { AboutModule } from './core/about/about.module';
 import { SearchModule } from './core/search/search.module';
 import { NewFormResponseModule } from './core/new-form-response/new-form-response.module';
+import {AppInit} from './app-init';
 export { AppComponent }
 
+export function initializeApp1(appInit: AppInit) {
+  return (): Promise<any> => {
+    return appInit.Init();
+  }
+}
 
 @NgModule({
   declarations: [
@@ -64,7 +70,9 @@ export { AppComponent }
     AppRoutingModule,
     SharedModule
   ],
-  providers: [],
+  providers: [AppInit,
+    { provide: APP_INITIALIZER, useFactory: initializeApp1, deps: [AppInit], multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
