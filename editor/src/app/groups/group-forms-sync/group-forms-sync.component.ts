@@ -96,7 +96,7 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
               enabled: true,
               filterByLocation: false,
               push: true,
-              pull: true
+              pull: form.couchdbSyncSettings.pull ? false : true
             }
           }
           : {

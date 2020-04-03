@@ -45,7 +45,7 @@ export class TangerineFormsService {
       title: formTitle,
       src: `./assets/${formId}/form.html`,
       searchSettings:  <FormSearchSettings>{
-        shouldIndex: config.modules.includes('case') ? true : false,
+        shouldIndex: config.enabledModules.includes('case') ? true : false,
         variablesToIndex: [],
         primaryTemplate: '',
         secondaryTemplate: ''
@@ -57,7 +57,7 @@ export class TangerineFormsService {
         excludeIncomplete:false
       },
       couchdbSyncSettings: <CouchdbSyncSettings>{
-        enabled: config.modules.includes('sync-protocol-2') ? true : false,
+        enabled: config.enabledModules.includes('sync-protocol-2') ? true : false,
         push: true,
         pull: false,
         filterByLocation: false
