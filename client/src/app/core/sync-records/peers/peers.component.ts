@@ -16,7 +16,7 @@ export class PeersComponent implements OnInit, AfterContentInit {
   window: any;
   ipAddress: String;
   port: String;
-  @ViewChild('p2p') p2p: ElementRef;
+  @ViewChild('p2p', {static: true}) p2p: ElementRef;
 
   constructor(
     private endpointsService: EndpointsService,

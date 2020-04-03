@@ -4,7 +4,10 @@ import { CommonModule } from '@angular/common';
 import { SettingsRoutingModule } from './settings-routing.module';
 import { SettingsComponent } from './settings/settings.component';
 import { SharedModule } from '../../shared/shared.module';
-import {MatFormFieldModule, MatSelectModule, MatTabsModule, MatButtonModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],

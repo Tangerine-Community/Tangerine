@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatListModule } from '@angular/material';
+import { MatListModule } from '@angular/material/list';
 
 import { SharedModule } from '../shared/shared.module';
 import { UserProfileRoutingModule } from './user-profile-routing.module';

@@ -7,6 +7,7 @@
 - [Viewing Forms and Form Data](viewing-forms-and-data.md)
 - [Supporting custom elements](supporting-custom-elements.md)
 - [Tangerine Globals](tangerine-globals.md)
+- [How Tangerine is Built](how-tangerine-is-built.md)
 
 ## Debugging
 - [debugging-reporting.md](debugging-reporting.md)

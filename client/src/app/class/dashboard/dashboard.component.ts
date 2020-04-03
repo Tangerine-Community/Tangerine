@@ -2,7 +2,8 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {DashboardService} from "../_services/dashboard.service";
-import {MatTableDataSource, PageEvent} from "@angular/material";
+import { PageEvent } from "@angular/material/paginator";
+import { MatTableDataSource } from "@angular/material/table";
 import {ClassFormService} from "../_services/class-form.service";
 import {Router} from "@angular/router";
 import {_TRANSLATE} from "../../shared/translation-marker";
@@ -66,7 +67,7 @@ export class DashboardComponent implements OnInit {
   displayClassGroupReport:boolean = false;
   feedbackViewInited:boolean = false;
 
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private http: HttpClient,

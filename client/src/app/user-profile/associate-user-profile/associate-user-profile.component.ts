@@ -14,7 +14,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 })
 export class AssociateUserProfileComponent implements OnInit {
 
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private router: Router,
@@ -57,7 +57,7 @@ export class AssociateUserProfileComponent implements OnInit {
 
   async onSubmit() {
     const appConfig = await this.appConfigService.getAppConfig()
-    const db = await this.userService.getUserDatabase() 
+    const db = await this.userService.getUserDatabase()
     const usersDb = this.userService.getUsersDatabase()
     const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
     try {

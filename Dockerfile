@@ -59,6 +59,9 @@ ADD client /tangerine/client
 RUN cd /tangerine/client && \
     ./node_modules/.bin/ng build --base-href "./"
 
+# Modify links to javascript modules (Angular 8 work-around)
+RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/dist/tangerine-client/index.html
+
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm run build && \

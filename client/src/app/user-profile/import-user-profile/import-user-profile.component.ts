@@ -19,7 +19,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
   appConfig:AppConfig
   state = STATE_INPUT
   docs;
-  @ViewChild('userShortCode') userShortCodeInput: ElementRef;
+  @ViewChild('userShortCode', {static: true}) userShortCodeInput: ElementRef;
 
   constructor(
     private router: Router,
