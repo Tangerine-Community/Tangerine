@@ -9,7 +9,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 })
 export class DevicePasswordComponent implements OnInit {
 
-  @ViewChild('container') container: ElementRef
+  @ViewChild('container', {static: true}) container: ElementRef
   done$:Subject<string> = new Subject<string>()
 
   constructor(

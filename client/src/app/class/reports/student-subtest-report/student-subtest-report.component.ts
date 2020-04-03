@@ -38,8 +38,8 @@ export class StudentSubtestReportComponent implements OnInit {
   subtestReports:any
   revealReport:boolean = false;
 
-  @ViewChild('subTestReport') subTestReport: ElementRef;
-  @ViewChild('curriculumSelectPara') curriculumSelect: ElementRef;
+  @ViewChild('subTestReport', {static: true}) subTestReport: ElementRef;
+  @ViewChild('curriculumSelectPara', {static: true}) curriculumSelect: ElementRef;
 
   constructor(
     private route: ActivatedRoute,

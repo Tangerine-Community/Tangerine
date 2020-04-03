@@ -2,7 +2,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {DashboardService} from "../../_services/dashboard.service";
 import {_TRANSLATE} from "../../../shared/translation-marker";
-import {MatTableDataSource} from "@angular/material";
+import { MatTableDataSource } from "@angular/material/table";
 import {ClassFormService} from "../../_services/class-form.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {ClassUtils} from "../../class-utils";
@@ -45,9 +45,9 @@ export class StudentGroupingReportComponent implements OnInit {
   checkFeedbackMessagePosition:boolean = false;
   clickPosition;
 
-  @ViewChild('container') container: ElementRef;
-  @ViewChild('feedback') feedbackElement: ElementRef;
-  @ViewChild('feedbackMessage') feedbackMessage: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
+  @ViewChild('feedback', {static: false}) feedbackElement: ElementRef;
+  @ViewChild('feedbackMessage', {static: false}) feedbackMessage: ElementRef;
 
   constructor(
     private route: ActivatedRoute,

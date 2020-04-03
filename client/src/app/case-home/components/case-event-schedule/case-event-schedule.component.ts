@@ -12,7 +12,7 @@ export class CaseEventScheduleComponent implements OnInit {
 
   didSearch$ = new Subject()
 
-  @ViewChild(CaseEventScheduleListComponent) list:CaseEventScheduleListComponent
+  @ViewChild(CaseEventScheduleListComponent, {static: true}) list:CaseEventScheduleListComponent
 
   @Input()
   dayModeDate:number
@@ -51,7 +51,7 @@ export class CaseEventScheduleComponent implements OnInit {
   }
 
   onDayPick(event) {
-    this.dayModeDate = event.target.datePicked 
+    this.dayModeDate = event.target.datePicked
     this.updateList()
   }
 

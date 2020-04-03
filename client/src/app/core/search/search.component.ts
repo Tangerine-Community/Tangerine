@@ -31,9 +31,9 @@ export const FORM_TYPES_INFO = [
 })
 export class SearchComponent implements OnInit {
 
-  @ViewChild('searchBar') searchBar: ElementRef
-  @ViewChild('searchResults') searchResults: ElementRef
-  @ViewChild('scanner') scanner: SearchBarcodeComponent
+  @ViewChild('searchBar', {static: true}) searchBar: ElementRef
+  @ViewChild('searchResults', {static: true}) searchResults: ElementRef
+  @ViewChild('scanner', {static: true}) scanner: SearchBarcodeComponent
   onSearch$ = new Subject()
   didSearch$ = new Subject()
   searchReady$ = new Subject()

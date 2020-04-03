@@ -11,7 +11,7 @@ import { Device } from '../../classes/device.class';
 })
 export class DeviceRegistrationComponent implements OnInit {
 
-  @ViewChild('container') container: ElementRef
+  @ViewChild('container', {static: true}) container: ElementRef
   done$:Subject<any> = new Subject()
 
   constructor(

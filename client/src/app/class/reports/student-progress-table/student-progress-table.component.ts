@@ -44,7 +44,7 @@ export class StudentProgressTableComponent implements OnInit {
     duration: null
   }
 
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private route: ActivatedRoute,

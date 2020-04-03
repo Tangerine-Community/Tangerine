@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SettingsComponent implements OnInit {
 
-  @ViewChild('form') form: ElementRef;
+  @ViewChild('form', {static: true}) form: ElementRef;
   translations:any
   window:any
   languageCode = 'en'
