@@ -204,6 +204,8 @@ export class GroupService {
             },
             couchdbSyncSettings: {
               enabled: true,
+              push: true,
+              pull: false,
               filterByLocation: true 
             }
           }
@@ -235,7 +237,9 @@ export class GroupService {
                   excludeIncomplete:false
                 },
                 couchdbSyncSettings: {
-                  enabled: true,
+                  enabled: false,
+                  push: false,
+                  pull: false,
                   filterByLocation: true 
                 }
               }
