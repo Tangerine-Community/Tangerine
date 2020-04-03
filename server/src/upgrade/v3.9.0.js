@@ -13,8 +13,8 @@ async function go() {
     console.log('Creating database indexes in all groups. This command will complete quickly but check Active Tasks in CouchDB Fauxton for when it actually finishes.')
     for (let groupId of groupList) {
       console.log(`generate-location-level-indexes ${groupId}`)
-      await exec(`generate-location-level-indexes ${groupId}`)
-      if (process.env['T_MODULES'].contains('sync-protocol-2')) {
+      //await exec(`generate-location-level-indexes ${groupId}`)
+      if (process.env['T_MODULES'].includes('sync-protocol-2')) {
         let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
         // Disable custom push in favor of couchdb push.
         forms = forms.map(form => {
@@ -29,7 +29,7 @@ async function go() {
             couchdbSyncSettings: {
               enabled: true,
               push: true,
-              pull: form.couchdbSyncSettings && form.couchddbSyncSettings.pull ? true : false,
+              pull: form.couchdbSyncSettings && form.couchdbSyncSettings.pull ? true : false,
               filterByLocation: true 
             }
           }
