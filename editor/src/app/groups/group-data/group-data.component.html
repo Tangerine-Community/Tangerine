@@ -24,7 +24,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="cases" *ngIf="config.modules.includes('case')">
+<mat-card class="is-link mat-elevation-z3" routerLink="cases" *ngIf="config.enabledModules.includes('case')">
   <mat-card-header>
       <div mat-card-avatar>
         <mwc-icon class="tangy-foreground-secondary">cloud_download</mwc-icon>
