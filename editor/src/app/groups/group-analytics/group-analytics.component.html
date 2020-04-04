@@ -1,1 +1,22 @@
-<p>group-analytics works!</p>
+<script src="../node_modules/chart.js/dist/Chart.js"></script>
+
+<p>Group Analytics</p>
+
+<div>
+    <div style="display: block; width: 1000px; padding: 50px 50px 50px 50px;">
+      <canvas baseChart
+              [datasets]="barChartData"
+              [labels]="barChartLabels"
+              [options]="barChartOptions"
+              [legend]="barChartLegend"
+              [chartType]="barChartType">
+      </canvas>
+
+      <chart [type]="type3" [data]="data3" [options]="options3"></chart>
+
+      <chart [type]="type" [data]="data" [options]="options"></chart>
+
+      <chart type="boxplot" [data]="data2" [options]="options2"></chart>
+
+    </div>
+  </div>
