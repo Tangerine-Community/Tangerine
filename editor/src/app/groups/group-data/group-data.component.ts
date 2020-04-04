@@ -13,7 +13,7 @@ import { UserService } from 'src/app/core/auth/_services/user.service';
 })
 export class GroupDataComponent implements OnInit {
 
-  title = 'Download Data'
+  title = 'Data Management'
   breadcrumbs:Array<Breadcrumb> = []
   config:any
   isGroupAdminUser

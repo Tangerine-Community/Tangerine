@@ -43,6 +43,7 @@ import { CreateCaseDefinitionComponent } from './case-management-editor/create-c
 import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
+import { GroupAnalyticsComponent } from './group-analytics/group-analytics.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -60,6 +61,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/uploads/:responseId', component: GroupUploadsViewComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/analytics', component: GroupAnalyticsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
