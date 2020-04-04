@@ -66,8 +66,9 @@ import { GroupDeviceUserComponent } from './group-device-user/group-device-user.
 import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { GroupAnalyticsComponent } from './group-analytics/group-analytics.component';
-
-
+import { ChartsModule } from './node_modules/ng2-charts';
+import { ChartModule } from 'angular2-chartjs';
+import "chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js"; // Needed?
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -94,7 +95,9 @@ import { GroupAnalyticsComponent } from './group-analytics/group-analytics.compo
     TangyFormsModule,
     SharedModule,
     NgTangyFormEditorModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    ChartsModule,
+    ChartModule
   ],
   declarations: [
     LocationListEditorComponent,
