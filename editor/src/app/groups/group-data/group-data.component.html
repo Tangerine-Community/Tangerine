@@ -1,14 +1,26 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
-<mat-card *ngIf="isGroupAdminUser" class="is-link mat-elevation-z3" routerLink="uploads">
+<mat-card class="is-link mat-elevation-z3" routerLink="analytics">
   <mat-card-header>
       <div mat-card-avatar>
-        <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
+        <mwc-icon class="tangy-foreground-secondary">insert_chart</mwc-icon>
       </div>
       <mat-card-title>
-          <a>{{'Uploads'|translate}}</a>
+          <a>{{'Analytics'|translate}}</a>
       </mat-card-title>
-      <mat-card-subtitle>{{'View uploaded form responses from devices.'|translate}}</mat-card-subtitle>
+      <mat-card-subtitle>{{'Review basic statistics, data quality and completeness.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-card class="is-link mat-elevation-z3" routerLink="cases" *ngIf="config.enabledModules.includes('case')">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">cloud_download</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Cases'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Review uploaded cases.'|translate}}</mat-card-subtitle>
   </mat-card-header>
 </mat-card>
 
@@ -24,14 +36,14 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="cases" *ngIf="config.enabledModules.includes('case')">
+<mat-card *ngIf="isGroupAdminUser" class="is-link mat-elevation-z3" routerLink="uploads">
   <mat-card-header>
       <div mat-card-avatar>
-        <mwc-icon class="tangy-foreground-secondary">cloud_download</mwc-icon>
+        <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
       </div>
       <mat-card-title>
-          <a>{{'Cases'|translate}}</a>
+          <a>{{'Uploads'|translate}}</a>
       </mat-card-title>
-      <mat-card-subtitle>{{'Review uploaded cases.'|translate}}</mat-card-subtitle>
+      <mat-card-subtitle>{{'View uploaded form responses from devices.'|translate}}</mat-card-subtitle>
   </mat-card-header>
 </mat-card>
