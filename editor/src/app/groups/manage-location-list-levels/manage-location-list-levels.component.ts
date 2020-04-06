@@ -51,6 +51,7 @@ export class ManageLocationListLevelsComponent implements OnInit {
           index: {
             fields: [
               'type',
+              'form.id',
               `location.${this.locationLabel.trim()}`
             ]
           }

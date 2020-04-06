@@ -22,7 +22,8 @@ async function go() {
       index: {
         fields: [
           'type',
-          `location.${level}`
+          `location.${level}`,
+          'form.id'
         ]
       }
     })
@@ -32,7 +33,8 @@ async function go() {
       await db.find({
         selector: {
           type: '',
-          [`location.${level}`]: ''
+          [`location.${level}`]: '',
+          'form.id': ''
         },
         limit: 1
       })
