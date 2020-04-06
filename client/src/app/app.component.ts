@@ -101,11 +101,6 @@ export class AppComponent implements OnInit {
     this.window.device = await this.deviceService.getDevice();
     this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
 
-    // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
-    if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
-      this.router.navigate(['/update']);
-    }
-
     // Set up log in status.
     this.isLoggedIn = this.userService.isLoggedIn();
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
@@ -119,12 +114,23 @@ export class AppComponent implements OnInit {
     setInterval(this.getGeolocationPosition, 5000);
     this.checkStorageUsage();
     setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
-    this.ready = true;
 
+    // Make sure device is registered.
+    if (await this.appConfigService.syncProtocol2Enabled() && !await this.deviceService.isRegistered()) {
+      this.router.navigate(['/device-setup']);
+    }
+
+    // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
+    if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
+      this.router.navigate(['/update'])
+    }
+    
     // Lastly, navigate to update page if an update is running.
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
-      this.router.navigate(['/update']);
+      this.router.navigate(['/update'])
     }
+
+    this.ready = true;
   }
 
   async install() {
