@@ -1,6 +1,6 @@
 # Editor Guide
 
-Mic test.
+Mic test. Mic test 2.
 
 - [Tangerine Form Editor's Cookbook](cookbook.md)
 - [Local Content Development with Tangerine Preview](local-content-development.md)
