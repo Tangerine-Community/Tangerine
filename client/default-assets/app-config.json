@@ -12,5 +12,7 @@
   "homeUrl": "case-management",
   "centrallyManagedUserProfile": false,
   "languageDirection": "ltr",
-  "languageCode": "en"
+  "languageCode": "en",
+  "couchdbPush4All": true,
+  "couchdbPullUsingDocIds": false
 }
