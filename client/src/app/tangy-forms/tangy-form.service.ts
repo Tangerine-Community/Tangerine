@@ -35,12 +35,13 @@ export class TangyFormService {
       // first populate the array
       const variablesByName = formInput.items.reduce((variablesByName, item) => {
         for (const input of item.inputs) {
-          variablesByName[input.name] = input.value;
+          variablesByName[input.name] = input;
         }
         return variablesByName;
       }, {});
-      input = variablesByName[variableName]
+      const input = variablesByName[inputVariable]
       this.formInputs[variableName] = input;
+      return input
     }
   }
 
