@@ -4,7 +4,7 @@
     <p>{{'Choose a task report from one of the following selections:'|translate}}</p>
 <div #curriculumSelectDiv id="curriculumSelectDiv" >
   <mat-button-toggle-group name="curriculumSelect" aria-label="Select Curr" (change)="onCurriculumSelect($event)">
-    <mat-button-toggle *ngFor="let curriculum of curriculi" value="{{curriculum.name}}">Button: {{curriculum.label}}</mat-button-toggle>
+    <mat-button-toggle *ngFor="let curriculum of curriculi" value="{{curriculum.name}}">{{curriculum.label}}</mat-button-toggle>
   </mat-button-toggle-group>
 </div>
   </div>

@@ -10,6 +10,7 @@ import {_TRANSLATE} from '../../shared/translation-marker';
 import {CookieService} from 'ngx-cookie-service';
 import {ClassUtils} from '../class-utils';
 import {ClassGroupingReport} from '../reports/student-grouping-report/class-grouping-report';
+import {TangyFormService} from '../../tangy-forms/tangy-form.service';
 
 export interface StudentResult {
   id: string;
@@ -74,7 +75,8 @@ export class DashboardComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private cookieService: CookieService,
-    private classFormService: ClassFormService
+    private classFormService: ClassFormService,
+    private tangyFormService: TangyFormService
   ) { }
 
   async ngOnInit() {
@@ -127,7 +129,7 @@ export class DashboardComponent implements OnInit {
         this.currentItemId = null;
       }
 
-      this.currArray = this.populateCurrentCurriculums(currentClass);
+      this.currArray = await this.populateCurrentCurriculums(currentClass);
       if (curriculumId === null || curriculumId === '') {
         const curriculum = this.currArray[0];
         curriculumId = curriculum.name;
@@ -171,14 +173,20 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  private populateCurrentCurriculums(currentClass) {
+  private async populateCurrentCurriculums(currentClass) {
     let inputs = [];
     currentClass.doc.items.forEach(item => inputs = [...inputs, ...item.inputs]);
     // find the curriculum element
     const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
     // find the options that are set to 'on'
     const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
-    return currArray;
+    const fullCurrArray =  Promise.all(currArray.map(async curr => {
+      const formId = curr.name;
+      const formInfo = await this.tangyFormService.getFormInfo(formId)
+      curr.label = formInfo.title
+      return curr
+    }));
+    return fullCurrArray;
   }
 
 // Populates this.curriculumFormsList and this.formList for a curriculum.
