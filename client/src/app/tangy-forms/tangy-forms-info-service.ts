@@ -15,6 +15,10 @@ export class TangyFormsInfoService {
   constructor(
     private http: HttpClient
   ) { }
+
+  /**
+   * Provides metadata for all forms, which is cached from './assets/forms.json'
+   */
   async getFormsInfo() {
     this.formsInfo = this.formsInfo ? this.formsInfo : <Array<FormInfo>>await this.http.get('./assets/forms.json').toPromise()
     return this.formsInfo

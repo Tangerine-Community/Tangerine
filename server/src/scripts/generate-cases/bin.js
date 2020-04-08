@@ -4,7 +4,7 @@ if (process.argv[2] === '--help') {
   console.log('Start by populating a case on your tablet. Then export it in dev tools using the copy(caseService.export()).')
   console.log('Place copied output in a case-export.json file in your group\'s content folder, then run this command.')
   console.log('Usage:')
-  console.log('       generate-cases <numberOfCases> <groupId>')
+  console.log('       generate-cases <numberOfCases> <groupId> <fillData>')
   process.exit()
 }
 
@@ -14,6 +14,7 @@ const uuidv1 = require('uuid/v1');
 const random_name = require('node-random-name');
 const numberOfCases = parseInt(process.argv[2])
 const groupId = process.argv[3];
+const fillData = process.argv[4];
 const db = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}`)
 
 const templateDocfilename = './template--doc.js'
@@ -57,10 +58,14 @@ async function go() {
     }
     console.log("motherId: " + caseId + " participantId: " + participant_id);
     doc = Object.assign({}, caseDoc, caseMother);
-    caseDoc.items[0].inputs[1].value = participant_id;
-    caseDoc.items[0].inputs[2].value = enrollment_date;
-    caseDoc.items[0].inputs[8].value = firstname;
-    caseDoc.items[0].inputs[10].value = surname;
+
+    if (fillData === 'true') {
+      caseDoc.items[0].inputs[1].value = participant_id;
+      caseDoc.items[0].inputs[2].value = enrollment_date;
+      caseDoc.items[0].inputs[8].value = firstname;
+      caseDoc.items[0].inputs[10].value = surname;
+    }
+
     for (let caseEvent of caseDoc.events) {
       const caseEventId = uuidv1()
       caseEvent.id = caseEventId
@@ -84,14 +89,16 @@ async function go() {
     }
     // modify the demographics form - s01a-participant-information-f254b9
     const demoDoc = templateDocs.find(doc => doc.form.id === 's01a-participant-information-f254b9')
-    demoDoc.items[0].inputs[4].value = screening_date;
-    // "id": "randomization",
-    demoDoc.items[10].inputs[1].value = barcode_data;
-    demoDoc.items[10].inputs[2].value = participant_id;
-    demoDoc.items[10].inputs[7].value = enrollment_date;
-    // "id": "participant_information",
-    demoDoc.items[12].inputs[2].value = surname;
-    demoDoc.items[12].inputs[3].value = firstname;
+    if (typeof demoDoc !== 'undefined') {
+      demoDoc.items[0].inputs[4].value = screening_date;
+      // "id": "randomization",
+      demoDoc.items[10].inputs[1].value = barcode_data;
+      demoDoc.items[10].inputs[2].value = participant_id;
+      demoDoc.items[10].inputs[7].value = enrollment_date;
+      // "id": "participant_information",
+      demoDoc.items[12].inputs[2].value = surname;
+      demoDoc.items[12].inputs[3].value = firstname;
+    }
 
     // Upload the profiles first
     // now upload the others
