@@ -126,9 +126,9 @@ export class DeviceService {
   async getBuildId() {
     try {
       this.buildId = this.buildId ? this.buildId : await this.httpClient.get('./assets/tangerine-build-id', {responseType: 'text'}).toPromise();
-      return this.buildId
+      return this.buildId.replace(/\n$/, '');
     } catch (e) {
-      return 'N/A'
+      return 'N/A';
     }
   }
 

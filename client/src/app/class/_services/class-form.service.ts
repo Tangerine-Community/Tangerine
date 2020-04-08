@@ -1,63 +1,64 @@
-
-import PouchDB from 'pouchdb';
-PouchDB.defaults({auto_compaction: true, revs_limit: 1})
+import {UserService} from '../../shared/_services/user.service';
+import {Injectable} from '@angular/core';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
   return true;
-}
+};
 
+@Injectable({
+  providedIn: 'root'
+})
 export class ClassFormService {
 
-  db:any;
-  databaseName: String;
-  userDB:any;
+  db: any;
+  databaseName: string;
+  userDB: any;
 
-  constructor(props) {
-    this.databaseName = 'tangy-class'
-    Object.assign(this, props)
-    this.userDB = new PouchDB(this.databaseName)
-  }
+  constructor(
+    private userService: UserService
+  ) {}
 
   async initialize() {
     try {
-      let designDoc = await this.userDB.get('_design/tangy-class')
+      // this.userDB  = await this.userService.getUserDatabase('tangy-class');
+      this.userDB  = await this.userService.getUserDatabase();
+      const designDoc = await this.userDB.get('_design/tangy-class');
       if (designDoc.version !== tangyClassDesignDoc.version) {
-        console.log('Time to update _design/tangy-class')
-        console.log('Removing _design/tangy-class')
-        await this.userDB.remove(designDoc)
-        console.log('Creating _design/tangy-class')
-        await this.userDB.put(tangyClassDesignDoc)
+        console.log('Time to update _design/tangy-class');
+        console.log('Removing _design/tangy-class');
+        await this.userDB.remove(designDoc);
+        console.log('Creating _design/tangy-class');
+        await this.userDB.put(tangyClassDesignDoc);
       }
     } catch (e) {
-      this.loadDesignDoc()
+      this.loadDesignDoc();
     }
   }
 
   async loadDesignDoc() {
-    await this.userDB.put(tangyClassDesignDoc)
+    await this.userDB.put(tangyClassDesignDoc);
   }
 
   // Would be nice if this was queue based so if two saves get called at the same time, the differentials are sequentials updated
   // into the database. Using a getter and setter for property fields, this would be one way to queue.
   async saveResponse(responseDoc) {
-    let r
+    let r;
     if (!responseDoc._id) {
-      r = await this.userDB.post(responseDoc)
+      r = await this.userDB.post(responseDoc);
+    } else {
+      r = await this.userDB.put(responseDoc);
     }
-    else {
-      r = await this.userDB.put(responseDoc)
-    }
-    return await this.userDB.get(r.id)
+    return await this.userDB.get(r.id);
 
   }
 
   async getResponse(responseId) {
     try {
-      let doc = await this.userDB.get(responseId)
-      return doc
+      const doc = await this.userDB.get(responseId);
+      return doc;
     } catch (e) {
-      return false
+      return false;
     }
   }
   async getResponsesByStudentId(studentId) {
@@ -68,16 +69,16 @@ export class ClassFormService {
     return result.rows;
   }
   async getResponsesByFormId(formId) {
-    let r = await this.db.query('tangy-class/responsesByFormId', { key: formId, include_docs: true })
-    return r.rows.map((row) => row.doc)
+    const r = await this.db.query('tangy-class/responsesByFormId', { key: formId, include_docs: true });
+    return r.rows.map((row) => row.doc);
   }
 
   getInputValues(doc) {
-    let inputs = doc.items.reduce((acc, item) => [...acc, ...item.inputs], [])
-    let obj = {}
+    const inputs = doc.items.reduce((acc, item) => [...acc, ...item.inputs], []);
+    const obj = {};
     for (const el of inputs) {
-      var attrs = inputs.attributes;
-      for(let i = inputs.length - 1; i >= 0; i--) {
+      const attrs = inputs.attributes;
+      for (let i = inputs.length - 1; i >= 0; i--) {
         obj[inputs[i].name] = inputs[i].value;
       }
     }
@@ -86,19 +87,19 @@ export class ClassFormService {
 
 }
 
-var tangyClassDesignDoc = {
+const tangyClassDesignDoc = {
   _id: '_design/tangy-class',
   version: '28',
   views: {
     responsesForStudentRegByClassId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
-          if (doc.form.id !== 'student-registration') return
+          if (doc.form.id !== 'student-registration') { return; }
           let inputs = [];
-          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          let classIdInput = inputs.find(input => (input.name === 'classId') ? true : false)
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs]);
+          const classIdInput = inputs.find(input => (input.name === 'classId') ? true : false);
           if (classIdInput) {
-            let studentNameInput = inputs.find(input => (input.name === 'student_name') ? true : false)
+            const studentNameInput = inputs.find(input => (input.name === 'student_name') ? true : false);
             emit([classIdInput.value, studentNameInput.value], true);
           }
         }
@@ -134,13 +135,13 @@ var tangyClassDesignDoc = {
     },
     responsesByFormId: {
       map: function (doc) {
-        if (doc.collection !== 'TangyFormResponse') return
+        if (doc.collection !== 'TangyFormResponse') { return; }
         if (!doc.archive) {
-          emit(`${doc.form.id}`, true)
+          emit(`${doc.form.id}`, true);
         }
       }.toString()
     }
   }
-}
-export { tangyClassDesignDoc }
+};
+export { tangyClassDesignDoc };
 

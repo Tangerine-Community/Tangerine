@@ -21,7 +21,7 @@ export class UserService {
 
   userData = {};
   usersDb = DB('users');
-  userDatabases:Array<UserDatabase> = []
+  userDatabases: Array<UserDatabase> = []
   config: AppConfig
   _currentUser = ''
   _initialized = false

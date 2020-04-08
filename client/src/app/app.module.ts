@@ -27,7 +27,7 @@ import { SettingsModule } from './core/settings/settings.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
-import { ClassModule } from "./class/class.module";
+import { ClassModule } from './class/class.module';
 import { AboutModule } from './core/about/about.module';
 import { SearchModule } from './core/search/search.module';
 import { NewFormResponseModule } from './core/new-form-response/new-form-response.module';
