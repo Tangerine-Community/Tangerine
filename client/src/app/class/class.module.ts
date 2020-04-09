@@ -29,6 +29,8 @@ import { StudentProgressTableComponent } from './reports/student-progress-table/
 import { CookieService } from "ngx-cookie-service";
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { TaskReportComponent } from './reports/task-report/task-report.component';
+import {ClassFormService} from './_services/class-form.service';
+import {UserService} from '../shared/_services/user.service';
 
 @NgModule({
   imports: [
@@ -43,7 +45,6 @@ import { TaskReportComponent } from './reports/task-report/task-report.component
     CdkTableModule,
     MatTableModule,
     MatSelectModule,
-    SharedModule,
     MatCheckboxModule,
     MatPaginatorModule,
     MatButtonModule,
@@ -52,7 +53,7 @@ import { TaskReportComponent } from './reports/task-report/task-report.component
     MatButtonToggleModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent],
-  providers: [DashboardService, CookieService, {
+  providers: [UserService, ClassFormService, DashboardService, CookieService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
       const service = new MatPaginationIntlService();

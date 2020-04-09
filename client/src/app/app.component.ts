@@ -126,7 +126,8 @@ export class AppComponent implements OnInit {
       console.log('Error detected in install:')
       console.log(e)
     }
-    window.location.href = 'file:///android_asset/www/shell/index.html'
+    // PWA's will have a hash; APK's won't.
+    window.location.href = window.location.hash ? window.location.href.replace(window.location.hash, 'index.html') : 'file:///android_asset/www/shell/index.html'
   }
 
   async checkPermissions() {

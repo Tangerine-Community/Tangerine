@@ -4,6 +4,7 @@
 - [modules.md](modules.md)
 
 ## Application design
+- [Bootstrapping Tangerine](bootstrapping-tangerine.md)
 - [Viewing Forms and Form Data](viewing-forms-and-data.md)
 - [Supporting custom elements](supporting-custom-elements.md)
 - [Tangerine Globals](tangerine-globals.md)
