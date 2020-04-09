@@ -5,3 +5,4 @@
 - [Configuring Case functionality](case-management-group.md)
 - [Case Module Cookbook](case-module-cookbook.md)
 - [Configuration Guide](configuration.md)
+- [Case Management Data Model](case-data-model.md)
