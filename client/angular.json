@@ -21,6 +21,7 @@
             "es5BrowserSupport": false,
             "assets": [
               "src/libs/bcrypt.min.js",
+              "src/libs/plotly-latest.min.js",
               "src/app/core/sync-records/peers/memorystream-standalone.js",
               "src/app/core/sync-records/peers/pouchdb.replication-stream.min.js",
               "src/favicon.ico",
@@ -88,6 +89,7 @@
             ],
             "assets": [
               "src/libs/bcrypt.min.js",
+              "src/libs/plotly-latest.min.js",
               "src/logo.png",
               "src/loading.gif",
               "src/favicon.ico",
