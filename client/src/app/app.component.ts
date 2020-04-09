@@ -51,23 +51,25 @@ export class AppComponent implements OnInit {
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
       ? true
       : false
-    if (this.installed) {
-      this.freespaceCorrectionOccuring = false;
-      // Detect if this is the first time the app has loaded.
-      this.languageCode = this.window.localStorage.getItem('languageCode')
-      this.languageDirection = this.window.localStorage.getItem('languageDirection')
-      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
-      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
-      // Set up ngx-translate.
-      translate.setDefaultLang(this.languagePath);
-      translate.use(this.languagePath);
-      // Set required config for use of <t-lang> Web Component.
-      this.window.document.documentElement.lang = this.languageCode;
-      this.window.document.documentElement.dir = this.languageDirection;
-      this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
-      // Make database services available to eval'd code.
-      this.window.userService = this.userService
-    }
+    this.freespaceCorrectionOccuring = false;
+    // Detect if this is the first time the app has loaded.
+    this.languageCode = this.window.localStorage.getItem('languageCode')
+      ? this.window.localStorage.getItem('languageCode')
+      : 'en' 
+    this.languageDirection = this.window.localStorage.getItem('languageDirection')
+      ? this.window.localStorage.getItem('languageDirection')
+      : 'ltr'
+    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+    // Set up ngx-translate.
+    translate.setDefaultLang(this.languagePath);
+    translate.use(this.languagePath);
+    // Set required config for use of <t-lang> Web Component.
+    this.window.document.documentElement.lang = this.languageCode;
+    this.window.document.documentElement.dir = this.languageDirection;
+    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+    // Make database services available to eval'd code.
+    this.window.userService = this.userService
   }
 
 
