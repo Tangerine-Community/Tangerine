@@ -1,8 +1,8 @@
 # Case Management Data Model
 
-A [Case](../../client/src/app/classes/case.class.ts) is a collection of CaseEvents. A [CaseEvent](../../client/src/app/case/classes/case-event.class.ts) is configured by a CaseDefinition file, which can be used for different purposes such as following a participant in a drug trial over the course of many events.
+A [Case](../../client/src/app/case/classes/case.class.ts) is a collection of CaseEvents. A [CaseEvent](../../client/src/app/case/classes/case-event.class.ts) is configured by a CaseDefinition file, which can be used for different purposes such as following a participant in a drug trial over the course of many events.
 
-A CaseEvent has a collection of [EventForms](../../client/src/app/case/classes/event-form.class.ts), which manage the relationship between  [Particiaptn](../../client/src/app/case/classes/case-participant.class.ts) and  [TangyFormResponse](../../client/src/app/tangy-forms/tangy-form-response.class.ts) via participantId and formResponseId:
+A CaseEvent has a collection of [EventForms](../../client/src/app/case/classes/event-form.class.ts), which manage the relationship between  [Participant](../../client/src/app/case/classes/case-participant.class.ts) and  [TangyFormResponse](../../client/src/app/tangy-forms/tangy-form-response.class.ts) via participantId and formResponseId:
 
 ```json
 class EventForm {
