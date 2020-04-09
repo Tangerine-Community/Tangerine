@@ -416,6 +416,9 @@ class CaseService {
     return false;
   }
 
+  /**
+   * Exports current case to json. Used in generate-cases as template.
+   */
   async export():Promise<Array<TangyFormResponseModel>> {
     const docs = [this.case]
     const formResponseDocIds = this.case.events.reduce((formResponseDocIds, caseEvent) => {
