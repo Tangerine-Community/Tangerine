@@ -18,6 +18,10 @@ Entities: ParticipantDefinition, CaseDefinition, CaseEventDefinition, EventFormD
 
 ## How the Case Entities and Relationships are expressed in Tangerine 
 
+A typical Tangerine Case will feature:
+- one document (type = case) that has all of the Case-related meta-data mentioned below, and 
+- multiple documents with forms data. These forms are linked by formResponseId in the case's eventForms array. 
+
 There is not a 1-to-1 mapping between Tangerine entities and data persisted to the server. Records are saved in Tangerine as a [TangyFormResponse](../../client/src/app/tangy-forms/tangy-form-response.class.ts) doc, identified by `"collection": "TangyFormResponse"` in the Couchdb document. 
 
 A TangyFormResponse is a very generic container for data; it does not by default manage any of its relationships. Most of the Case-related entities are saved in a single TangyFormResponse as  `"type": "case"` and explicitly manages these relationships inside the eventForms array:
