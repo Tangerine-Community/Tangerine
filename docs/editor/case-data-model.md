@@ -4,7 +4,7 @@ A [Case](../../client/src/app/case/classes/case.class.ts) is a collection of Cas
 
 A CaseEvent has a collection of [EventForms](../../client/src/app/case/classes/event-form.class.ts), which manage the relationship between  [Participant](../../client/src/app/case/classes/case-participant.class.ts) and  [TangyFormResponse](../../client/src/app/tangy-forms/tangy-form-response.class.ts) via participantId and formResponseId:
 
-```json
+```js
 class EventForm {
   id:string;
   participantId:string
@@ -23,6 +23,7 @@ class EventForm {
 The formResponseId links to a TangyFormResponse, which contains the data filled out in a form. A TangyFormResponse is a very generic container for data; it does not manage any of its relationships; instead, these relationships are managed in a TangyFormResponse whose `"type": "case"` inside the eventForms array. 
 
 ```json
+{
 "eventForms": [
         {
           "id": "c7b6ee21-793a-11ea-9144-710703689c79",
