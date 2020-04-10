@@ -10,6 +10,9 @@
               <mat-option *ngFor="let languageInfo of translations" value="{{languageInfo.languageCode}}">{{languageInfo.label|translate}}</mat-option>
             </mat-select>
           </mat-form-field>
+          <p>
+            {{'After submitting updated settings, you will be required to log in again.'|translate}}
+          </p>
           <button mat-raised-button color="primary" type="submit">{{'submit'|translate}}</button>
         </form>
       </div>
