@@ -23,6 +23,7 @@ export class SettingsComponent implements OnInit {
     this.selected = this.languageCode;
     this.translations = await this.http.get('./assets/translations.json').toPromise();
     this.form.nativeElement.querySelector('[type="submit"]').addEventListener('click', (event) => {
+      event.preventDefault()
       const selectedLanguage = this.translations.find(languageInfo => languageInfo.languageCode === this.selected)
       localStorage.setItem('languageCode', selectedLanguage.languageCode)
       localStorage.setItem('languageDirection', selectedLanguage.languageDirection)
