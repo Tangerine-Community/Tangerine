@@ -1,3 +1,4 @@
+import { SyncSessionService } from './modules/sync/services/sync-session/sync-session.service';
 import { Injectable, HttpService } from '@nestjs/common';
 const DB = require('./db')
 import { TangerineConfigService } from './shared/services/tangerine-config/tangerine-config.service';
@@ -15,6 +16,7 @@ export class AppService {
   constructor(
     private readonly groupService:GroupService,
     private readonly configService: TangerineConfigService,
+    private readonly syncSessionService:SyncSessionService,
     private readonly httpClient:HttpService
   ) { }
 
@@ -33,6 +35,7 @@ export class AppService {
       this.installed = true
     }
     this.keepAliveReportingWorker()
+    this.keepAliveSyncSessionSweeper()
   }
 
   async install() {
@@ -83,6 +86,20 @@ export class AppService {
         console.log(error)
         await sleep(3*1000)
       }
+    }
+  }
+
+  async keepAliveSyncSessionSweeper() {
+    const config = await this.configService.config()
+    if (config.enabledModules.includes('sync-protocol-2')) {
+      setInterval(() => {
+        try {
+          this.syncSessionService.expireSyncSessions()
+        } catch (e) {
+          log.error(e)
+          console.log(e)
+        }
+      }, 60*60*1000)
     }
   }
   
