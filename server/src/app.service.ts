@@ -99,7 +99,7 @@ export class AppService {
           log.error(e)
           console.log(e)
         }
-      }, 1*60*60*1000)
+      }, 60*60*1000)
     }
   }
   
