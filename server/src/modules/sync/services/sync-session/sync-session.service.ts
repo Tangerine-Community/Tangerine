@@ -45,9 +45,9 @@ export class SyncSessionService {
   }
 
   async expireSyncSessions() {
-    // Expire all sync sessions after 1 week. This means if a sync session takes longer than
-    // one week then it will be interrupted.
-    const expireLimit = 7*24*60*60*1000
+    // Expire all sync sessions after 24 hours. This means if a sync session takes longer than
+    // 24 hours then it will be interrupted.
+    const expireLimit = 24*60*60*1000
     const _usersDb = this.dbService.instantiate(`_users`)
     const expiredSyncSessions = (await _usersDb.allDocs({ include_docs: true }))
       .rows
