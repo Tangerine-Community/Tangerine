@@ -1,3 +1,4 @@
+import { PouchDB } from 'pouchdb';
 import { Injectable, HttpService } from '@nestjs/common';
 import { SyncSession } from '../../classes/sync-session.class';
 import { TangerineConfigService } from '../../../../shared/services/tangerine-config/tangerine-config.service';
@@ -26,7 +27,7 @@ export class SyncSessionService {
   async start(groupId:string, deviceId:string):Promise<string> {
     try {
       // Create sync user
-      const syncUsername = `syncUser-${UUID()}`
+      const syncUsername = `syncUser-${UUID()}-${Date.now()}`
       const syncPassword = UUID()
       const config = await this.configService.config()
       const syncUserDoc = {
@@ -41,6 +42,17 @@ export class SyncSessionService {
       return `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`
     } catch(e) {
       throw e
+    }
+  }
+
+  async expireSyncSessions() {
+    const config = await this.configService.config()
+    const _usersDb = new PouchDB(`${config.couchdbEndpoint}_users`)
+    const expiredSyncSessions = (await _usersDb.allDocs({ include_docs: true }))
+      .filter(userDoc => userDoc._id.includes('org.couchdb.user:syncUser'))
+      .filter(userDoc => (Date.now() - parseInt(userDoc.name.split('-')[6])) > 24*60*60*1000)
+    for (const expiredSyncSession of expiredSyncSessions) {
+      await _usersDb.delete(expiredSyncSession)
     }
   }
 
