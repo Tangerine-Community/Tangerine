@@ -5,6 +5,7 @@ import { SyncSessionController } from './controllers/sync-session/sync-session.c
 
 @Module({
   imports: [ SharedModule, HttpModule ],
+  exports: [ SyncSessionService ],
   providers: [ SyncSessionService ],
   controllers: [ SyncSessionController ]
 })
