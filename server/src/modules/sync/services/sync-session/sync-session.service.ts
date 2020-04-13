@@ -1,4 +1,3 @@
-import { PouchDB } from 'pouchdb';
 import { Injectable, HttpService } from '@nestjs/common';
 import { SyncSession } from '../../classes/sync-session.class';
 import { TangerineConfigService } from '../../../../shared/services/tangerine-config/tangerine-config.service';
@@ -46,13 +45,17 @@ export class SyncSessionService {
   }
 
   async expireSyncSessions() {
-    const config = await this.configService.config()
-    const _usersDb = new PouchDB(`${config.couchdbEndpoint}_users`)
+    // Expire all sync sessions after 1 week. This means if a sync session takes longer than
+    // one week then it will be interrupted.
+    const expireLimit = 7*24*60*60*1000
+    const _usersDb = this.dbService.instantiate(`_users`)
     const expiredSyncSessions = (await _usersDb.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
       .filter(userDoc => userDoc._id.includes('org.couchdb.user:syncUser'))
-      .filter(userDoc => (Date.now() - parseInt(userDoc.name.split('-')[6])) > 24*60*60*1000)
+      .filter(userDoc => (Date.now() - parseInt(userDoc.name.split('-')[6])) > expireLimit)
     for (const expiredSyncSession of expiredSyncSessions) {
-      await _usersDb.delete(expiredSyncSession)
+      await _usersDb.remove(expiredSyncSession)
     }
   }
 
