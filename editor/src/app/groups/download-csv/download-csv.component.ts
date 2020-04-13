@@ -1,8 +1,7 @@
 import { TangerineFormsService } from './../services/tangerine-forms.service';
-import { TangyFormService } from './../../tangy-forms/tangy-form-service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -30,10 +29,11 @@ export class DownloadCsvComponent implements OnInit {
   result;
   checkDownloadStatusInterval;
   nothingToDownload = false;
+
   constructor(
     private groupsService: GroupsService,
     private route: ActivatedRoute,
-    private formsService:TangerineFormsService
+    private formsService: TangerineFormsService
   ) { }
 
   async ngOnInit() {
