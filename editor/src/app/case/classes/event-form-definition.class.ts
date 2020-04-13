@@ -10,6 +10,8 @@ export class EventFormDefinition {
   templateListItemIcon:string
   templateListItemPrimary:string
   templateListItemSecondary:string
+  allowDeleteIfFormNotCompleted:string
+  allowDeleteIfFormNotStarted:string
 
   constructor() {
   }

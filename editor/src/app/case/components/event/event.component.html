@@ -30,7 +30,7 @@
         >
         </paper-fab>
       </div>
-      <app-event-form-list-item
+      <app-event-form-list-item (formDeleted)="updateFormList($event)"
         *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
         [case]="caseService.case"
         [caseDefinition]="caseService.caseDefinition"
@@ -39,7 +39,6 @@
         [eventForm]="eventFormInfo.eventForm"
         [eventFormDefinition]="eventFormInfo.eventFormDefinition"
         class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
-        routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
       >
       </app-event-form-list-item>
     </div>
