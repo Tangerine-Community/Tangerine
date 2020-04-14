@@ -1,18 +1,18 @@
 import { SharedModule } from './../../../shared/shared.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { CASE_EVENT_STATUS_IN_PROGRESS } from './../../classes/case-event.class';
+import { CASE_EVENT_STATUS_IN_PROGRESS } from './../../../case/classes/case-event.class';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CaseEventScheduleComponent } from './case-event-schedule.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { CasesService } from '../../services/cases.service';
+import { CasesService } from '../../../case/services/cases.service';
 import { SearchService } from 'src/app/shared/_services/search.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { CaseEventScheduleListComponent } from '../case-event-schedule-list/case-event-schedule-list.component';
 import { MockSearchService } from 'src/app/mocks/services/mock-search.service';
 import { MockTangyFormsInfoService } from 'src/app/mocks/services/mock-tangy-forms-info.service';
-import { CaseEvent } from '../../classes/case-event.class';
+import { CaseEvent } from '../../../case/classes/case-event.class';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 class MockPouchDB {

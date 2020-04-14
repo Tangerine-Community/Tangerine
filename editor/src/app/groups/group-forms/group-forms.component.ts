@@ -181,15 +181,10 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
     }
   }
   async dropActive(event: CdkDragDrop<string[]>) {
-    if (event.previousIndex <= 1 || event.currentIndex <= 1) { return; }
     const confirmation = confirm(_TRANSLATE('Change order of forms?'));
     if (confirmation) {
       try {
         moveItemInArray(this.activeForms, event.previousIndex, event.currentIndex);
-        this.activeForms = (this.activeForms.filter(form => form.id !== 'user-profile' && form.id !== 'reports')).map(item => {
-          delete item.printUrl;
-          return item;
-        });
         await this.groupsService.saveFileToGroupDirectory(this.groupId, [...this.activeForms, ...this.archivedForms], this.formsJsonURL);
         await this.getForms();
       } catch (error) {
@@ -198,15 +193,10 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
     }
   }
   async dropArchived(event: CdkDragDrop<string[]>) {
-    if (event.previousIndex <= 1 || event.currentIndex <= 1) { return; }
     const confirmation = confirm(_TRANSLATE('Change order of forms?'));
     if (confirmation) {
       try {
         moveItemInArray(this.archivedForms, event.previousIndex, event.currentIndex);
-        this.activeForms = (this.activeForms.filter(form => form.id !== 'user-profile' && form.id !== 'reports')).map(item => {
-          delete item.printUrl;
-          return item;
-        });
         this.groupsService.saveFileToGroupDirectory(this.groupId, [...this.activeForms, ...this.archivedForms], this.formsJsonURL);
         await this.getForms();
       } catch (error) {

@@ -1,3 +1,4 @@
+import { SyncModule } from './modules/sync/sync.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,7 +10,7 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      imports: [SharedModule, HttpModule],
+      imports: [SharedModule, HttpModule, SyncModule],
       controllers: [AppController],
       providers: [AppService]
     }).compile();

@@ -15,7 +15,7 @@ export class GroupDataComponent implements OnInit {
 
   title = 'Download Data'
   breadcrumbs:Array<Breadcrumb> = []
-  config:any
+  config:any = { enabledModules: [] }
   isGroupAdminUser
   groupId;
 

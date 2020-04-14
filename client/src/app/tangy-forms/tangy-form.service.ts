@@ -12,11 +12,38 @@ import {TangyFormsInfoService} from './tangy-forms-info-service';
 export class TangyFormService {
   formsInfo: Array<FormInfo>
   formsMarkup: Array<any> = []
+  formInputs: Array<any> = []
   constructor(
     private userService: UserService,
     private http: HttpClient,
     private tangyFormsInfoService: TangyFormsInfoService
   ) { }
+
+  async getFormInput(formId, inputVariable) {
+    const formInfo = await this.getFormInfo(formId)
+    let formMarkup: any = this.formsMarkup[formInfo.src]
+    if (!this.formsMarkup[formInfo.src]) {
+      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
+      this.formsMarkup[formInfo.src] = formMarkup;
+    }
+    // return formMarkup
+
+    const tangyFormMarkup = await this.getFormMarkup(formId)
+    const variableName = formInfo.src + inputVariable;
+    const formInput: any = this.formInputs[variableName]
+    if (!this.formInputs[variableName]) {
+      // first populate the array
+      const variablesByName = formInput.items.reduce((variablesByName, item) => {
+        for (const input of item.inputs) {
+          variablesByName[input.name] = input;
+        }
+        return variablesByName;
+      }, {});
+      const input = variablesByName[inputVariable]
+      this.formInputs[variableName] = input;
+      return input
+    }
+  }
 
   async getFormMarkup(formId) {
     const formInfo = await this.getFormInfo(formId)
@@ -28,13 +55,18 @@ export class TangyFormService {
     return formMarkup
   }
 
+  /**
+   * Provides metadata for a single form, which is cached from './assets/forms.json'
+   * @param formId
+   */
   async getFormInfo(formId) {
-    const formsInfo:any = await this.getFormsInfo()
+    const formsInfo: any = await this.tangyFormsInfoService.getFormsInfo()
     return formsInfo.find(formInfo => formInfo.id === formId)
   }
 
   /**
-   * @deprecated since version 3.8.1
+   * @deprecated since version 3.8.1.
+   * Use TangyFormsInfoService.getFormsInfo() instead.
    */
   async getFormsInfo() {
     this.formsInfo = await this.tangyFormsInfoService.getFormsInfo()
