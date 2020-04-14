@@ -51,46 +51,36 @@ export class AppComponent implements OnInit {
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
       ? true
       : false
-    if (this.installed) {
-      this.freespaceCorrectionOccuring = false;
-      // Detect if this is the first time the app has loaded.
-      this.languageCode = this.window.localStorage.getItem('languageCode')
-      this.languageDirection = this.window.localStorage.getItem('languageDirection')
-      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
-      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
-      // Set up ngx-translate.
-      translate.setDefaultLang(this.languagePath);
-      translate.use(this.languagePath);
-      // Set required config for use of <t-lang> Web Component.
-      this.window.document.documentElement.lang = this.languageCode;
-      this.window.document.documentElement.dir = this.languageDirection;
-      this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
-      // Make database services available to eval'd code.
-      this.window.userService = this.userService
-    }
+    this.freespaceCorrectionOccuring = false;
+    // Detect if this is the first time the app has loaded.
+    this.languageCode = this.window.localStorage.getItem('languageCode')
+      ? this.window.localStorage.getItem('languageCode')
+      : 'en' 
+    this.languageDirection = this.window.localStorage.getItem('languageDirection')
+      ? this.window.localStorage.getItem('languageDirection')
+      : 'ltr'
+    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+    // Set up ngx-translate.
+    translate.setDefaultLang(this.languagePath);
+    translate.use(this.languagePath);
+    // Set required config for use of <t-lang> Web Component.
+    this.window.document.documentElement.lang = this.languageCode;
+    this.window.document.documentElement.dir = this.languageDirection;
+    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+    // Make database services available to eval'd code.
+    this.window.userService = this.userService
   }
 
 
   async ngOnInit() {
 
-    if (window['isCordovaApp']) {
-      document.addEventListener('deviceready', async () => {
-        await this.initAppComponent();
-      })
-    } else {
-      await this.initAppComponent();
-    }
-  }
-
-  private async initAppComponent() {
     // Installation check.
     if (!this.installed) {
       await this.install();
-      return;
-    } else {
-      this.checkPermissions();
     }
 
+    this.checkPermissions();
     // Initialize services.
     await this.userService.initialize();
     await this.searchService.start();
@@ -138,7 +128,8 @@ export class AppComponent implements OnInit {
       console.log('Error detected in install:')
       console.log(e)
     }
-    window.location.href = window.location.href.replace(window.location.hash, 'index.html')
+    // PWA's will have a hash; APK's won't.
+    window.location.href = window.location.hash ? window.location.href.replace(window.location.hash, 'index.html') : 'file:///android_asset/www/shell/index.html'
   }
 
   async checkPermissions() {

@@ -2,7 +2,6 @@ import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
 import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
-import { MatIconModule, MatMenuModule, MatCheckboxModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { TangyFormService } from './../tangy-forms/tangy-form.service';
 import { GroupDevicesService } from './services/group-devices.service';
@@ -10,7 +9,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
   MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule,
-  MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule
+  MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule,
+  MatIconModule, MatMenuModule, MatCheckboxModule, MatFormFieldModule
 } from '@angular/material';
 import { MatTreeModule } from '@angular/material/tree';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -90,6 +90,8 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     MatMenuModule,
     MatTreeModule,
     MatGridListModule,
+    MatSelectModule,
+    MatFormFieldModule,
     TangyFormsModule,
     SharedModule,
     NgTangyFormEditorModule,

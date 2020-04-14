@@ -1,3 +1,4 @@
+import { AppConfigService } from './../../shared/_services/app-config.service';
 import { CaseRole } from './../classes/case-role.class';
 import { CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { TestBed } from '@angular/core/testing';
@@ -141,6 +142,9 @@ class MockCaseDefinitionsService {
 }
 
 class MockTangyFormService {
+
+  response:any
+
   async getFormMarkup(formId) {
     return `
       <tangy-form id='caseDefinition1Form'>
@@ -149,6 +153,14 @@ class MockTangyFormService {
         </tangy-form>
       </tangy-form>
     `
+  }
+  async saveResponse(response) {
+    this.response = response
+    ///
+  }
+  async getResponse(id) {
+    return this.response
+    ///
   }
 }
 
@@ -183,6 +195,10 @@ describe('CaseService', () => {
         {
           provide: UserService,
           useClass: MockUserService
+        },
+        {
+          provide: AppConfigService,
+          useClass: AppConfigService 
         }
       ]
     })

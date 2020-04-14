@@ -8,6 +8,8 @@
 	line-height: var(--paper-font-subhead_-_line-height);
 	min-height: var(--paper-item-min-height, 48px);
 	padding: 0 16px;
+	width: 100%;
+	cursor: default;
 }
 .icon-list-item > mwc-icon {
 	width: 56px;
@@ -31,4 +33,16 @@
 	font-weight: var(--paper-font-body1_-_font-weight);
 	line-height: var(--paper-font-body1_-_line-height);
 	color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
+}
+paper-button {
+    color: #a72605;
+	background: var(--accent-text-color);
+	/* float: right; */
+	width: min-content;
+}
+.tangy-spacer{
+    flex: 1 1 auto;
+}
+paper-button>mwc-icon{
+	font-size: xx-large;
 }

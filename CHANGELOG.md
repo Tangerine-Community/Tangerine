@@ -14,6 +14,8 @@
   - Editor and Clients upgraded to Angular 8.
 
 __Upgrade instructions:__
+
+When you run the upgrade script, if you are using sync protocol 2 and have enabled, forms configured for 2 way sync will now be configured to use CouchDB sync to push documents up as opposed to "custom sync". 
 ```
 # Fetch the updates.
 cd tangerine

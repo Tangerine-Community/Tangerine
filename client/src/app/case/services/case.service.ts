@@ -38,7 +38,7 @@ class CaseService {
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
     private http:HttpClient
-  ) { 
+  ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
     this.queryFormId = 'query-form';
@@ -319,7 +319,7 @@ class CaseService {
   }
 
   async getQueries (): Promise<Array<Query>> {
-    const queryForms = await this.tangyFormService.getResponsesByFormId(this.queryFormId);  
+    const queryForms = await this.tangyFormService.getResponsesByFormId(this.queryFormId);
     const queries = Array<Query>();
     for (const queryForm of queryForms) {
       const query = Object.create(Query);
@@ -416,6 +416,9 @@ class CaseService {
     return false;
   }
 
+  /**
+   * Exports current case to json. Used in generate-cases as template.
+   */
   async export():Promise<Array<TangyFormResponseModel>> {
     const docs = [this.case]
     const formResponseDocIds = this.case.events.reduce((formResponseDocIds, caseEvent) => {
@@ -504,10 +507,9 @@ class CaseService {
             // Replace originalId with newId in both the reference to the FormResponse doc and the FormResponse doc itself.
             eventForm.formResponseId = newId
             const formResponse = templateDocs.find(doc => doc._id === originalId)
-            if (!formResponse) {
-              debugger
+            if (typeof formResponse !== 'undefined') {
+              formResponse._id = newId
             }
-            formResponse._id = newId
           }
         }
       }
