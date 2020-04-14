@@ -1,3 +1,4 @@
+import { TangyFormsPlayerRouteComponent } from './tangy-forms-player-route/tangy-forms-player-route.component';
 import { NgModule, Injectable } from '@angular/core';
 import { Observable } from 'rxjs'
 import { RouterModule, Routes } from '@angular/router';
@@ -29,12 +30,19 @@ class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
   }
 }
 
-const routes: Routes = [{
-  path: 'tangy-forms-player',
-  component: TangyFormsPlayerComponent,
-  canActivate: [LoginGuard, CreateProfileGuardService],
-  canDeactivate: [ CanDeactivateForm ]
-}
+const routes: Routes = [
+  {
+    path: 'tangy-forms/resume/:formResponseId',
+    component: TangyFormsPlayerRouteComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService],
+    canDeactivate: [ CanDeactivateForm ]
+  },
+  {
+    path: 'tangy-forms/new/:formId',
+    component: TangyFormsPlayerRouteComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService],
+    canDeactivate: [ CanDeactivateForm ]
+  }
 ];
 
 @NgModule({
