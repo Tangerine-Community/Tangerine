@@ -9,6 +9,7 @@ import { TangyFormsQueries } from './tangy-forms.queries';
 import { DEFAULT_USER_DOCS } from '../shared/_tokens/default-user-docs.token';
 import { TangyFormService } from './tangy-form.service';
 import { TangyFormsInfoService } from './tangy-forms-info-service';
+import { TangyFormsPlayerRouteComponent } from './tangy-forms-player-route/tangy-forms-player-route.component';
 
 @NgModule({
   imports: [
@@ -30,6 +31,6 @@ import { TangyFormsInfoService } from './tangy-forms-info-service';
     TangyFormsInfoService,
     TangyFormService
   ],
-  declarations: [TangyFormsPlayerComponent]
+  declarations: [TangyFormsPlayerComponent, TangyFormsPlayerRouteComponent]
 })
 export class TangyFormsModule { }
