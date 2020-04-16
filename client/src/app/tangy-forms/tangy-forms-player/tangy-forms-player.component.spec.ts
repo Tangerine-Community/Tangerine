@@ -1,3 +1,5 @@
+import { MockUserService } from './../../shared/_services/user.service.mock';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { MockTangyFormsInfoService } from './../tangy-forms-info.service.mock';
 import { TangyFormService } from './../tangy-form.service';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
@@ -16,6 +18,10 @@ describe('TangyFormsPlayerComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       providers: [ 
+        {
+          provide: UserService,
+          useClass: MockUserService
+        },
         {
           provide: TangyFormsInfoService,
           useClass: MockTangyFormsInfoService
