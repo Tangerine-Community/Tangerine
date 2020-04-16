@@ -42,6 +42,12 @@ const routes: Routes = [
     component: TangyFormsPlayerRouteComponent,
     canActivate: [LoginGuard, CreateProfileGuardService],
     canDeactivate: [ CanDeactivateForm ]
+  },
+  {
+    path: 'tangy-forms/template/:templateId/:formResponseId',
+    component: TangyFormsPlayerRouteComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService],
+    canDeactivate: [ CanDeactivateForm ]
   }
 ];
 

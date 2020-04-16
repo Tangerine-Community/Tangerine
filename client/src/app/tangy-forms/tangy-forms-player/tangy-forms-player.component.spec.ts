@@ -46,6 +46,7 @@ describe('TangyFormsPlayerComponent', () => {
   });
 
   it('should load response and show specified template', (done) => {
+    // See MockTangyFormsInfoService for the data and template being used.
     component.formResponseId = '123'
     component.templateId = 'foo'
     component.$rendered.subscribe(() => {

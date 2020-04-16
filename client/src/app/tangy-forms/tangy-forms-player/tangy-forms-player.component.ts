@@ -1,3 +1,4 @@
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } from '@angular/core';
@@ -39,13 +40,21 @@ export class TangyFormsPlayerComponent {
   }
 
   isDirty() {
-    const state = this.formEl.store.getState()
-    const isDirty = state.items.some((acc, item) => item.isDirty)
-    return isDirty
+    if (this.formEl) {
+      const state = this.formEl.store.getState()
+      const isDirty = state.items.some((acc, item) => item.isDirty)
+      return isDirty
+    } else {
+      return true
+    }
   }
 
   isComplete() {
-    return this.formEl.store.getState().form.complete
+    if (this.formEl) {
+      return this.formEl.store.getState().form.complete
+    } else {
+      return true
+    }
   }
 
   async render() {
@@ -53,11 +62,11 @@ export class TangyFormsPlayerComponent {
     this.window.tangyLocationFilterBy = (await this.userService.getUserLocations()).join(',')
     // Get form ingredients.
     const formResponse = this.formResponseId
-      ? await this.service.getResponse(this.formResponseId)
+      ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
       : ''
     this.formId = this.formId
       ? this.formId
-      : formResponse.form.id
+      : formResponse['form']['id']
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
       const response = formResponse
