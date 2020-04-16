@@ -12,6 +12,7 @@ const emit = (key, value) => {
 })
 export class TangyFormsInfoService {
   formsInfo: Array<FormInfo>
+  formsMarkup: Array<any> = []
   constructor(
     private http: HttpClient
   ) { }
@@ -23,6 +24,23 @@ export class TangyFormsInfoService {
 
   async getFormInfo(id:string):Promise<FormInfo> {
     return (await this.getFormsInfo()).find(formInfo => formInfo.id === id)
+  }
+
+  async getFormMarkup(formId) {
+    const formInfo = await this.getFormInfo(formId)
+    let formMarkup:any = this.formsMarkup[formInfo.src]
+    if (!this.formsMarkup[formInfo.src]) {
+      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
+      this.formsMarkup[formInfo.src] = formMarkup;
+    }
+    return formMarkup
+  }
+
+  async getFormTemplateMarkup(formId:string, formTemplateId:string):Promise<string> {
+    const formInfo = await this.getFormInfo(formId)
+    const formTemplate = formInfo.templates.find(formTemplate => formTemplate.id === formTemplateId)
+    const formTemplateMarkup = await this.http.get(formTemplate.src, { responseType: 'text' }).toPromise()
+    return formTemplateMarkup
   }
 
 }

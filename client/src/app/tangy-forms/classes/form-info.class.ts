@@ -6,6 +6,7 @@ export class FormInfo {
   description:string = ''
   listed = true
   archived = false
+  templates: Array<FormTemplate> = []
   searchSettings:FormSearchSettings =  <FormSearchSettings>{
     shouldIndex: true,
     variablesToIndex: [],
@@ -22,6 +23,12 @@ export class FormInfo {
     enabled: false,
     filterByLocation: false
   }
+}
+
+export interface FormTemplate {
+  id:string
+  src:string
+  label:string
 }
 
 export interface CouchdbSyncSettings {
