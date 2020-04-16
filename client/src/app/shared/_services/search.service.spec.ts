@@ -60,6 +60,7 @@ class MockFormsInfoService {
         listed: true,
         archived: false,
         title: 'Example',
+        templates: [],
         searchSettings: <FormSearchSettings>{
           shouldIndex: true,
           variablesToIndex: ['foo', 'bar']

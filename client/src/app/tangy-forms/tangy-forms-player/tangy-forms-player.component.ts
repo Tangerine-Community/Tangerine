@@ -1,5 +1,6 @@
+import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { Component, ViewChild, ElementRef, AfterContentInit, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -15,11 +16,12 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   templateUrl: './tangy-forms-player.component.html',
   styleUrls: ['./tangy-forms-player.component.css']
 })
-export class TangyFormsPlayerComponent implements AfterContentInit {
+export class TangyFormsPlayerComponent {
 
   @Input('formId') formId:string
-  @Input('viewId') viewId:string
+  @Input('templateId') templateId:string
   @Input('formResponseId') formResponseId:string
+  $rendered = new Subject()
 
   throttledSaveLoaded;
   throttledSaveFiring;
@@ -30,7 +32,6 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
     private service: TangyFormService,
-    private route: ActivatedRoute,
     private http: HttpClient,
     private userService: UserService,
   ) {
@@ -47,7 +48,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
     return this.formEl.store.getState().form.complete
   }
 
-  async ngAfterContentInit() {
+  async render() {
     //
     this.window.tangyLocationFilterBy = (await this.userService.getUserLocations()).join(',')
     // Get form ingredients.
@@ -57,24 +58,31 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
     this.formId = this.formId
       ? this.formId
       : formResponse.form.id
-    const formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId);
-    let  formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
-    // Put the form on the screen.
-    const container = this.container.nativeElement
-    container.innerHTML = formHtml
-    let formEl = container.querySelector('tangy-form')
-    this.formEl = formEl;
-    // Put a response in the store by issuing the FORM_OPEN action.
-    if (formResponse) {
-      formEl.response = formResponse
+    if (this.templateId) {
+      let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
+      const response = formResponse
+      eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
-      formEl.newResponse()
+      const formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId);
+      let  formHtml =  await this.tangyFormsInfoService.getFormMarkup(this.formId)
+      // Put the form on the screen.
+      const container = this.container.nativeElement
+      container.innerHTML = formHtml
+      let formEl = container.querySelector('tangy-form')
+      this.formEl = formEl;
+      // Put a response in the store by issuing the FORM_OPEN action.
+      if (formResponse) {
+        formEl.response = formResponse
+      } else {
+        formEl.newResponse()
+      }
+      // Listen up, save in the db.
+      formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+        let response = _.target.store.getState()
+        this.throttledSaveResponse(response)
+      })
     }
-    // Listen up, save in the db.
-    formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-      let response = _.target.store.getState()
-      this.throttledSaveResponse(response)
-    })
+    this.$rendered.next(true)
   }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
