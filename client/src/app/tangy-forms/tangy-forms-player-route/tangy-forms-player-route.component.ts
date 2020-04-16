@@ -14,6 +14,7 @@ export class TangyFormsPlayerRouteComponent implements OnInit {
   private sub:any
   formResponseId:string
   formId:string
+  templateId:string
 
   constructor(
     private route:ActivatedRoute
@@ -21,8 +22,15 @@ export class TangyFormsPlayerRouteComponent implements OnInit {
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {
-       this.formResponseId = params['formResponseId'] 
-       this.formId = params['formId']
+      if (params['templateId']) {
+        this.formResponseId = params['formResponseId'] 
+        this.templateId = params['templateId']
+        this.formPlayer.render()
+      } else {
+        this.formResponseId = params['formResponseId'] 
+        this.formId = params['formId']
+        this.formPlayer.render()
+      }
     });
   }
 
