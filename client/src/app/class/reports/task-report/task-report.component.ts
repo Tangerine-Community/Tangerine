@@ -9,6 +9,7 @@ import {ClassGroupingReport} from '../student-grouping-report/class-grouping-rep
 import { MatTableDataSource } from '@angular/material/table';
 import {_TRANSLATE} from '../../../shared/translation-marker';
 import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 @Component({
   selector: 'app-task-report',
@@ -39,7 +40,8 @@ export class TaskReportComponent implements OnInit {
     private dashboardService: DashboardService,
     private userService: UserService,
     private classFormService: ClassFormService,
-    private tangyFormService: TangyFormService
+    private tangyFormService: TangyFormService,
+    private tangyFormsInfoService: TangyFormsInfoService
   ) { }
 
   async ngOnInit() {
@@ -57,7 +59,7 @@ export class TaskReportComponent implements OnInit {
     for (const curriculum of allCurriculums as any[] ) {
       if (curriculum['value'] === 'on') {
         const formId = curriculum.name;
-        const formInfo = await this.tangyFormService.getFormInfo(formId)
+        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
         curriculum.label = formInfo.title;
         this.curriculi.push(curriculum);
       }
