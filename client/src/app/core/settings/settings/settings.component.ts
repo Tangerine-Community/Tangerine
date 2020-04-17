@@ -1,6 +1,6 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements AfterContentInit {
 
   @ViewChild('container', {static: false}) container: ElementRef;
   translations:any
@@ -21,13 +21,13 @@ export class SettingsComponent implements OnInit {
     this.languageCode = localStorage.getItem('languageCode')
   }
 
-  async ngOnInit() {
+  async ngAfterContentInit() {
     this.selected = this.languageCode;
     const translations = <Array<any>>await this.http.get('./assets/translations.json').toPromise();
     this.container.nativeElement.innerHTML = `
       <tangy-form>
         <tangy-form-item>
-          <h1>Settings</h1>
+          <h1>${_TRANSLATE('Settings')}</h1>
           <tangy-select style="height: 130px" label="${_TRANSLATE('Please choose your language: ')}" name="language" value="${this.languageCode}" required>
             ${translations.map(language => `
               <option value="${language.languageCode}">${language.label}</option>
