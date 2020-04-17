@@ -71,7 +71,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
     if (index < 0) {
       this.form.id = this.groupsService.generateLocationIDs(this.locationListData);
       this.form.variableName = createVariableName(this.form.variableName);
-      levelMetadata = [...levelMetadata, ...this.form];
+      levelMetadata = [...levelMetadata, this.form];
       this.form = this.defaultFormState;
       this.locationListData.metadata[this.locationLevel] = levelMetadata;
       this.currentMetadata = this.locationListData.metadata[this.locationLevel];
