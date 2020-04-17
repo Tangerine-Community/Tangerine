@@ -28,11 +28,11 @@ export class SettingsComponent implements OnInit {
       <tangy-form>
         <tangy-form-item>
           <h1>Settings</h1>
-          <tangy-radio-buttons label="${_TRANSLATE('Please choose your language: ')}" name="language" required>
+          <tangy-select style="height: 130px" label="${_TRANSLATE('Please choose your language: ')}" name="language" value="${this.languageCode}" required>
             ${translations.map(language => `
               <option value="${language.languageCode}">${language.label}</option>
             `).join('')}
-          </tangy-radio-buttons>
+          </tangy-select>
           <p>
             ${_TRANSLATE('After submitting updated settings, you will be required to log in again.')}
           </p>
@@ -42,7 +42,7 @@ export class SettingsComponent implements OnInit {
     this.container.nativeElement.querySelector('tangy-form').addEventListener('submit', (event) => {
       event.preventDefault()
       const response = new TangyFormResponseModel(event.target.response) 
-      const selectedLanguageCode = response.inputsByName.language.value.find(option => option.value === 'on').name
+      const selectedLanguageCode = response.inputsByName.language.value
       const selectedLanguage = translations.find(language => language.languageCode === selectedLanguageCode)
       localStorage.setItem('languageCode', selectedLanguage.languageCode)
       localStorage.setItem('languageDirection', selectedLanguage.languageDirection)
