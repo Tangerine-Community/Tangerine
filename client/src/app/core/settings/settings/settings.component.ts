@@ -1,7 +1,7 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
-import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { t } from 'tangy-form/util/t.js'
 
 @Component({
   selector: 'app-settings',
@@ -27,14 +27,14 @@ export class SettingsComponent implements AfterContentInit {
     this.container.nativeElement.innerHTML = `
       <tangy-form>
         <tangy-form-item>
-          <h1>${_TRANSLATE('Settings')}</h1>
-          <tangy-select style="height: 130px" label="${_TRANSLATE('Please choose your language: ')}" name="language" value="${this.languageCode}" required>
+          <h1>${t('Settings')}</h1>
+          <tangy-select style="height: 130px" label="${t('Please choose your language: ')}" name="language" value="${this.languageCode}" required>
             ${translations.map(language => `
-              <option value="${language.languageCode}">${language.label}</option>
+              <option value="${language.languageCode}">${t(language.label)}</option>
             `).join('')}
           </tangy-select>
           <p>
-            ${_TRANSLATE('After submitting updated settings, you will be required to log in again.')}
+            ${t('After submitting updated settings, you will be required to log in again.')}
           </p>
         </tangy-form-item>
       </tangy-form>
@@ -46,7 +46,7 @@ export class SettingsComponent implements AfterContentInit {
       const selectedLanguage = translations.find(language => language.languageCode === selectedLanguageCode)
       localStorage.setItem('languageCode', selectedLanguage.languageCode)
       localStorage.setItem('languageDirection', selectedLanguage.languageDirection)
-      alert(_TRANSLATE('Settings have been updated. You will now be redirected to log in.'))
+      alert(t('Settings have been updated. You will now be redirected to log in.'))
       window.location.href = window.location.href.replace(window.location.hash, 'index.html')
     })
   }
