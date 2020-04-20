@@ -170,11 +170,6 @@ export class GroupService {
       let categoriesEntries = JSON.parse(categoriesString)
       appConfig.categories = categoriesEntries;
     }
-    const data = await tangyModules.hook('groupNew', {groupName: groupId, groupId, appConfig})
-    appConfig = data.appConfig
-    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, JSON.stringify(appConfig))
-      .then(status => log.info("Wrote app-config.json"))
-      .catch(err => log.error("An error copying app-config: " + err))
     //
     // forms.json
     //
@@ -248,7 +243,8 @@ export class GroupService {
         ]
         : []
     ]
-    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, JSON.stringify(forms)) 
+    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, JSON.stringify(forms))
+
     //
     // location-list.json
     //
@@ -257,6 +253,13 @@ export class GroupService {
       "locations": {},
       "metadata": {}
     }))
+
+    const data = await tangyModules.hook('groupNew', {groupName: groupId, groupId, appConfig})
+    appConfig = data.appConfig
+    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, JSON.stringify(appConfig))
+        .then(status => log.info('Wrote app-config.json'))
+        .catch(err => log.error('An error copying app-config: ' + err))
+
     //
     // Stash and emit observable.
     //
