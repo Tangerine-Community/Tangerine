@@ -94,7 +94,7 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
             ...form,
             couchdbSyncSettings: {
               enabled: true,
-              filterByLocation: false,
+              filterByLocation: true,
               push: true,
               pull: form.couchdbSyncSettings.pull ? false : true
             }
@@ -103,7 +103,7 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
             ...form,
             couchdbSyncSettings: {
               enabled: true,
-              filterByLocation: true ,
+              filterByLocation: true,
               push: true,
               pull: false
             }
