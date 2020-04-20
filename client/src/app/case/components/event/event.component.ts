@@ -106,6 +106,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   updateFormList(event) {
     if (event === 'formDeleted') {
       this.getParticipantInfo()
+      this.ref.detectChanges()
     }
   }
 
