@@ -8,7 +8,7 @@ export const TangyFormsDocs = [
     views: {
       'responsesUnLockedAndNotUploaded': {
         map: function (doc) {
-          if (doc.collection === 'TangyFormResponse' && doc.complete === false && !doc.uploadDatetime) {
+          if (doc.collection === 'TangyFormResponse' && doc.complete === false && (!doc.uploadDatetime || doc.lastModified > doc.uploadDatetime)) {
             emit(doc.form.id, true)
           }
         }.toString()
