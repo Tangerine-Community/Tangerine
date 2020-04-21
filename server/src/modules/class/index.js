@@ -1,6 +1,5 @@
 const clog = require('tangy-log').clog
 const fs = require('fs-extra')
-const axios = require('axios')
 
 module.exports = {
   hooks: {
