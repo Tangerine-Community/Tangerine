@@ -1,5 +1,6 @@
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
+import {TangyFormsDocs} from '../../../tangy-forms/tangy-forms.docs';
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 const bcrypt = window['dcodeIO'].bcrypt
 
@@ -257,18 +258,17 @@ export const updates = [
       for (let userDoc of userDocs) {
         await usersDb.put(userDoc)
       }
-      // We have new database views from SyncModule, removed TwoWaySyncModule.
-      await userService.updateAllDefaultUserDocs()
-      await userService.indexAllUserViews()
       localStorage.setItem('ran-update-v3.8.0', 'true')
     }
   },
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService) => {
+      // syncProtocol uses a single shared db for all users. Update only once.
+      if (appConfig.syncProtocol === '2' && localStorage.getItem('ran-update-v3.9.0')) return
       console.log('Updating to v3.9.0...')
-      await userService.updateAllDefaultUserDocs()
-      await userService.indexAllUserViews()
+      await userDb.put(TangyFormsDocs[0])
+      await userDb.query('responsesUnLockedAndNotUploaded')
       localStorage.setItem('ran-update-v3.9.0', 'true')
     }
   }
