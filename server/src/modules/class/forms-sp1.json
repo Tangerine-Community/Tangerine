@@ -1,10 +1,5 @@
 [
   {
-    "title": "Example Form",
-    "src": "./assets/example/form.html",
-    "id": "example"
-  },
-  {
     "title": "Class Registration",
     "src": "./assets/class-registration/form.html",
     "id": "class-registration"
