@@ -1,3 +1,4 @@
+import { TangyFormsDocs } from './tangy-forms.docs';
 import { SharedModule } from '../shared/shared.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -23,7 +24,8 @@ import { TangyFormsInfoService } from './tangy-forms-info-service';
         {
           _id: '_design/tangy-form',
           views: TangyFormsQueries
-        }
+        },
+        ...TangyFormsDocs
       ],
       multi: true
     },

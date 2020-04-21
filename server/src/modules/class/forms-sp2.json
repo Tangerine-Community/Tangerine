@@ -1,0 +1,36 @@
+[
+  {
+    "title": "Class Registration",
+    "src": "./assets/class-registration/form.html",
+    "id": "class-registration",
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "push": true,
+      "pull": false,
+      "filterByLocation": true
+    }
+  },
+  {
+    "title": "Student Registration",
+    "src": "./assets/student-registration/form.html",
+    "id": "student-registration",
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "push": true,
+      "pull": false,
+      "filterByLocation": true
+    }
+  }
+]
