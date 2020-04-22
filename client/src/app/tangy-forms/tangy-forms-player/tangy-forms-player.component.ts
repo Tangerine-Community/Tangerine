@@ -1,3 +1,4 @@
+import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
@@ -22,7 +23,14 @@ export class TangyFormsPlayerComponent {
   @Input('formId') formId:string
   @Input('templateId') templateId:string
   @Input('formResponseId') formResponseId:string
+  @Input('location') location:any
+
   $rendered = new Subject()
+  $submit = new Subject()
+  rendered = false
+
+  formInfo:FormInfo
+  response:any
 
   throttledSaveLoaded;
   throttledSaveFiring;
@@ -59,7 +67,7 @@ export class TangyFormsPlayerComponent {
 
   async render() {
     //
-    this.window.tangyLocationFilterBy = (await this.userService.getUserLocations()).join(',')
+    this.window.tangyLocationFilterBy = this.location || (await this.userService.getUserLocations()).join(',')
     // Get form ingredients.
     const formResponse = this.formResponseId
       ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
@@ -67,12 +75,12 @@ export class TangyFormsPlayerComponent {
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']
+    this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
       const response = formResponse
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
-      const formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId);
       let  formHtml =  await this.tangyFormsInfoService.getFormMarkup(this.formId)
       // Put the form on the screen.
       const container = this.container.nativeElement
@@ -84,14 +92,25 @@ export class TangyFormsPlayerComponent {
         formEl.response = formResponse
       } else {
         formEl.newResponse()
+        this.formResponseId = formEl.response._id
       }
+      this.response = formEl.response
       // Listen up, save in the db.
       formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
         let response = _.target.store.getState()
         this.throttledSaveResponse(response)
       })
+      formEl.addEventListener('submit', () => {
+        this.$submit.next(true)
+      })
     }
     this.$rendered.next(true)
+    this.rendered = true
+  }
+
+  setTemplate(templateId) {
+    this.templateId = templateId
+    this.render()
   }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
@@ -119,8 +138,12 @@ export class TangyFormsPlayerComponent {
       let r = await this.service.saveResponse(state)
       stateDoc = await this.service.getResponse(state._id)
     }
-    let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
-    await this.service.saveResponse(newStateDoc)
+    await this.service.saveResponse({
+      state,
+      _rev: stateDoc['_rev'],
+      location: this.location
+    })
+    this.response = state
   }
 
 }
