@@ -58,9 +58,9 @@ exports.changeProcessor = (change, sourceDb) => {
  * @returns {object} - saved document
  */
 
-const processFormResponse = async (doc, sourceDb) => {
+const processFormResponse = async (doc, sourceDb, formService) => {
   try {
-    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb})
+    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, formService})
   } catch (error) {
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
   }

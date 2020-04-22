@@ -11,24 +11,21 @@ module.exports = {
     clearReportingCache: async function(data) {
       const { groupNames } = data
       for (let groupName of groupNames) {
-        console.log(`removing db ${groupName}-logstash`)
-        const db = new DB(`${groupName}-logstash`)
+        console.log(`removing db ${groupName}-synapse`)
+        const db = new DB(`${groupName}-synapse`)
         await db.destroy()
       }
       return data
     },
     reportingOutputs: function(data) {
-      return new Promise(async (resolve, reject) => {
-        const {doc, sourceDb} = data
-        const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-        let flatResponse = await generateFlatResponse(doc, locationList);
-
+      async function processData(doc, locationList, eventForm, sourceDb, resolve) {
+        let flatResponse = await generateFlatResponse(doc, eventForm, locationList);
         // Process the flatResponse
-        const logstashDb = new DB(`${sourceDb.name}-logstash`);
+        const synapseDb = new DB(`${sourceDb.name}-synapse`);
         let processedResult = flatResponse
         // Don't add user-profile to the user-profile
         if (flatResponse.formId !== 'user-profile') {
-          processedResult = await attachUserProfile(flatResponse, logstashDb)
+          processedResult = await attachUserProfile(flatResponse, synapseDb)
         }
         try {
           createDateFields(processedResult);
@@ -56,6 +53,7 @@ module.exports = {
           console.error(e);
         }
         await pushResponse({
+          type: "event-form",
           _id: processedResult._id,
           formId: processedResult.formId,
           startDatetime: startDatetimeISO,
@@ -65,8 +63,48 @@ module.exports = {
             'lat': processedResult['geoip.lat'] ? processedResult['geoip.lat'] : '',
             'lon': processedResult['geoip.lon'] ? processedResult['geoip.lon'] : ''
           }
-        }, logstashDb);
+        }, synapseDb);
         resolve(data)
+      }
+
+      return new Promise(async (resolve, reject) => {
+        const {doc, sourceDb} = data
+        if (!doc.type || doc.type !== 'case') {
+          resolve(data)
+        } else {
+          const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+          const synapseDb = new DB(`${sourceDb.name}-synapse`);
+
+          // output case
+          try {
+          await pushResponse(doc, synapseDb);
+          } catch (e) {
+            console.log("Error: " + e)
+            // reject(`synapse pushResponse could not save ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`)
+            reject(e)
+          }
+
+          // output participants
+          doc.participants.map(async (participant, index) => {
+            await pushResponse({...participant, _id: participant.id, type: "participant"}, synapseDb);
+          })
+
+          // output events
+          doc.events.map(async (event, index) => {
+            await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
+
+            // output event-forms
+            event['eventForms'].map(async (eventForm, index) => {
+              // fetch the FormResponse for this eventForm
+              try {
+                let formResponse = await sourceDb.get(eventForm.formResponseId)
+                await processData(formResponse, locationList, eventForm, sourceDb, resolve);
+              } catch (e) {
+                console.log("Error: " + e)
+              }
+            });
+          });
+        }
       })
     }
   }
@@ -84,11 +122,11 @@ function isValidDate(d) {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList) {
+const generateFlatResponse = async function (formResponse, eventForm, locationList) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
-  let flatFormResponse = {
+  let flatFormResponse = {...eventForm,
     _id: formResponse._id,
     formId: formResponse.form.id,
     formTitle: formResponse.form.title,
@@ -236,12 +274,12 @@ function addDatefields(val, doc) {
   return true
 }
 
-async function attachUserProfile(doc, logstashDb) {
+async function attachUserProfile(doc, synapseDb) {
   try {
     // Find the key that points to user profile ID.
     const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
     // Get the user profile.
-    const userProfileDoc = await logstashDb.get(doc[userProfileIdKey])
+    const userProfileDoc = await synapseDb.get(doc[userProfileIdKey])
 
     // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
     return Object.assign({}, doc, Object.keys(userProfileDoc.processedResult).reduce((acc, key) => {
@@ -261,12 +299,12 @@ function pushResponse(doc, db) {
         const updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
         db.put(updatedDoc)
           .then(_ => resolve(true))
-          .catch(error => reject(`Logstash pushResponse could not save ${doc._id} because Error of ${JSON.stringify(error)}`))
+          .catch(error => reject(`synapse pushResponse could not overwrite ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
       })
       .catch(error => {
         db.put(doc)
           .then(_ => resolve(true))
-          .catch(error => reject(`Logstash pushResponse could not save ${doc._id} because Error of ${JSON.stringify(error)}`))
+          .catch(error => reject(`synapse pushResponse could not save ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
     });
   })
 }
