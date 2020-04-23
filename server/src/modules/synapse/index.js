@@ -18,92 +18,46 @@ module.exports = {
       return data
     },
     reportingOutputs: function(data) {
-      async function processData(doc, locationList, eventForm, sourceDb, resolve) {
-        let flatResponse = await generateFlatResponse(doc, eventForm, locationList);
-        // Process the flatResponse
-        const synapseDb = new DB(`${sourceDb.name}-synapse`);
-        let processedResult = flatResponse
-        // Don't add user-profile to the user-profile
-        if (flatResponse.formId !== 'user-profile') {
-          processedResult = await attachUserProfile(flatResponse, synapseDb)
-        }
-        try {
-          createDateFields(processedResult);
-        } catch (e) {
-          // Do nothing...
-        }
-        // debugger;
-        const startUnixtime = processedResult.startUnixtime;
-        let startDatetimeISO = null;
-        try {
-          const startDatetime = new Date(startUnixtime);
-          console.log("converting startUnixtime " + startUnixtime + " to startDatetime: " + startDatetime)
-          if (isValidDate()) {
-            startDatetimeISO = startDatetime.toISOString()
-            console.log("converted startDatetime: " + startDatetime + " to startDatetimeISO: " + startDatetimeISO)
-          } else {
-            console.log("Error converting startDatetime: " + startDatetime + " to startDatetimeISO.")
-          }
-          // mic check
-        } catch (e) {
-          console.log("error converting " + processedResult.startUnixtime + " to startDatetime. Error: " + e)
-          // console.trace()
-          // let err = new Error();
-          // err.stack
-          console.error(e);
-        }
-        await pushResponse({
-          type: "event-form",
-          _id: processedResult._id,
-          formId: processedResult.formId,
-          startDatetime: startDatetimeISO,
-          startUnixtime: processedResult.startUnixtime,
-          processedResult,
-          'geoip': {
-            'lat': processedResult['geoip.lat'] ? processedResult['geoip.lat'] : '',
-            'lon': processedResult['geoip.lon'] ? processedResult['geoip.lon'] : ''
-          }
-        }, synapseDb);
-        resolve(data)
-      }
-
       return new Promise(async (resolve, reject) => {
         const {doc, sourceDb} = data
         if (!doc.type || doc.type !== 'case') {
           resolve(data)
         } else {
           const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-          const synapseDb = new DB(`${sourceDb.name}-synapse`);
-
-          // output case
+          let synapseDb
           try {
-          await pushResponse(doc, synapseDb);
+            synapseDb = await new DB(`${sourceDb.name}-synapse`);
           } catch (e) {
-            console.log("Error: " + e)
-            // reject(`synapse pushResponse could not save ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`)
-            reject(e)
+            console.log("Error creating db: " + JSON.stringify(e))
           }
+          // output case
+          await pushResponse(doc, synapseDb);
 
           // output participants
-          doc.participants.map(async (participant, index) => {
+          for (const participant of doc.participants) {
             await pushResponse({...participant, _id: participant.id, type: "participant"}, synapseDb);
-          })
+          }
 
-          // output events
-          doc.events.map(async (event, index) => {
+          // output case-events
+          for (const event of doc.events) {
             await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
 
             // output event-forms
-            event['eventForms'].map(async (eventForm, index) => {
-              // fetch the FormResponse for this eventForm
-              try {
-                let formResponse = await sourceDb.get(eventForm.formResponseId)
-                await processData(formResponse, locationList, eventForm, sourceDb, resolve);
-              } catch (e) {
-                console.log("Error: " + e)
+            for (const eventForm of event['eventForms']) {
+              // fetch and add the FormResponse to this eventForm
+              if (eventForm.formResponseId) {
+                let formResponse;
+                try {
+                  formResponse = await sourceDb.get(eventForm.formResponseId)
+                  await processData(formResponse, locationList, eventForm, sourceDb, resolve);
+                } catch (e) {
+                  if (e.status !== 404) {
+                    console.log("Error processing formResponse: " + JSON.stringify(e) + " e: " + e)
+                  }
+                }
               }
-            });
-          });
+            }
+          }
         }
       })
     }
@@ -302,11 +256,62 @@ function pushResponse(doc, db) {
           .catch(error => reject(`synapse pushResponse could not overwrite ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
       })
       .catch(error => {
+        // delete the _rev property from the doc
+        delete doc._rev
         db.put(doc)
           .then(_ => resolve(true))
           .catch(error => reject(`synapse pushResponse could not save ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
     });
   })
+}
+
+async function processData(doc, locationList, eventForm, sourceDb, resolve) {
+  let flatResponse = await generateFlatResponse(doc, eventForm, locationList);
+  // Process the flatResponse
+  const synapseDb = new DB(`${sourceDb.name}-synapse`);
+  let processedResult = flatResponse
+  // Don't add user-profile to the user-profile
+  if (flatResponse.formId !== 'user-profile') {
+    processedResult = await attachUserProfile(flatResponse, synapseDb)
+  }
+  try {
+    createDateFields(processedResult);
+  } catch (e) {
+    // Do nothing...
+  }
+
+  const startUnixtime = processedResult.startUnixtime;
+  let startDatetimeISO = null;
+  try {
+    const startDatetime = new Date(startUnixtime);
+    // console.log("converting startUnixtime " + startUnixtime + " to startDatetime: " + startDatetime)
+    if (isValidDate(startDatetime)) {
+      startDatetimeISO = startDatetime.toISOString()
+      // console.log("converted startDatetime: " + startDatetime + " to startDatetimeISO: " + startDatetimeISO)
+    } else {
+      console.log("Error converting startDatetime: " + startDatetime + " to startDatetimeISO.")
+    }
+    // mic check
+  } catch (e) {
+    console.log("error converting " + processedResult.startUnixtime + " to startDatetime. Error: " + e)
+    // console.trace()
+    // let err = new Error();
+    // err.stack
+    console.error(e);
+  }
+  await pushResponse({
+    type: "event-form",
+    _id: processedResult._id,
+    formId: processedResult.formId,
+    startDatetime: startDatetimeISO,
+    startUnixtime: processedResult.startUnixtime,
+    processedResult,
+    'geoip': {
+      'lat': processedResult['geoip.lat'] ? processedResult['geoip.lat'] : '',
+      'lon': processedResult['geoip.lon'] ? processedResult['geoip.lon'] : ''
+    }
+  }, synapseDb);
+  resolve('done!')
 }
 
 function getLocationByKeys(keys, locationList) {
