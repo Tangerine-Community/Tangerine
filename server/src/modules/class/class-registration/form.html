@@ -25,16 +25,14 @@
         required>
       </tangy-input>
 
-      <tangy-checkboxes name="curriculum" label="Curriculum">
-      </tangy-checkboxes>
-        <tangy-checkboxes-dynamic
-                name="curriculum"
-                label="Curriculum"
-                options-list-source="./assets/forms.json"
-                options-list-excludes="class-registration,student-registration"
-                options-list-properties="id,title"
-                options-list-exclude-by="id">
-        </tangy-checkboxes-dynamic>
+      <tangy-checkboxes-dynamic
+              name="curriculum"
+              label="Curriculum"
+              options-list-source="./assets/forms.json"
+              options-list-excludes="class-registration,student-registration,user-profile"
+              options-list-properties="id,title"
+              options-list-exclude-by="id">
+      </tangy-checkboxes-dynamic>
     </template>
   </tangy-form-item>
 </tangy-form>
