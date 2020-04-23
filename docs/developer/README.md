@@ -14,6 +14,9 @@
 - [debugging-reporting.md](debugging-reporting.md)
 - [debugging_node_apps.md](debugging_node_apps.md)
 
+## Managing Deployments
+- [Upgrades](upgrades.md)
+
 ## Load Testing
 - [Load Testing](load-testing.md)
 

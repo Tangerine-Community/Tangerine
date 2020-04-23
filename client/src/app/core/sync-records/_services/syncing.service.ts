@@ -87,7 +87,7 @@ export class SyncingService {
     const appConfig = await this.appConfigService.getAppConfig()
     let localNotUploadedDocIds = []
     if (appConfig.uploadUnlockedFormReponses) {
-      const results = await DB.query('tangy-form/responsesUnLockedAndNotUploaded', {keys: includeByFormId});
+      const results = await DB.query('responsesUnLockedAndNotUploaded/responsesUnLockedAndNotUploaded', {keys: includeByFormId});
       localNotUploadedDocIds = [
         ...localNotUploadedDocIds,
         ...results.rows.map(row => row.id)
@@ -100,7 +100,7 @@ export class SyncingService {
     ]
     // Also mark the user profile for upload if it has been modifid since last upload.
     const userProfile = await this.userService.getUserProfile(username || await this.getLoggedInUser())
-    return userProfile.lastModified > userProfile.uploadDatetime 
+    return userProfile.lastModified > userProfile.uploadDatetime
       ? [ ...localNotUploadedDocIds, userProfile._id ]
       : localNotUploadedDocIds
   }
