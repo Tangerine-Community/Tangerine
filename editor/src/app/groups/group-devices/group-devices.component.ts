@@ -204,45 +204,25 @@ export class GroupDevicesComponent implements OnInit {
     <paper-dialog-scrollable>
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="
-          const selectedALshowLevels = inputs.assigned_location__show_levels.value.slice(0, inputs.assigned_location__show_levels.value.findIndex(option => option.value === 'on')+1).map(option => option.name).join(',')
-          inputs.assigned_location.setAttribute('show-levels',selectedALshowLevels)
           const selectedSLshowLevels = inputs.sync_location__show_levels.value.slice(0, inputs.sync_location__show_levels.value.findIndex(option => option.value === 'on')+1).map(option => option.name).join(',')
           inputs.sync_location.setAttribute('show-levels',selectedSLshowLevels)
         ">
           <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
           <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
           <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
-          <tangy-radio-buttons
-            required
-            ${device.assignedLocation && device.assignedLocation.showLevels ? `
-              value='${
-                JSON.stringify(
-                  locationList.locationsLevels.map(level => {
-                    return {
-                      name:level,value:level === device.assignedLocation.showLevels.slice(-1)[0] ? 'on' : ''
-                    }
-                  })
-                )
-              }'
-            ` : ''}
-            label="Assign device to location at which level?"
-            name="assigned_location__show_levels"
-          >
-            ${locationList.locationsLevels.map(level => `
-              <option value="${level}">${level}</option>
-            `).join('')}
-          </tangy-radio-buttons>
           <tangy-location
+            ${device.claimed ? `disabled` : ''}
             required
             name="assigned_location"
             label="Assign device to location at which location?"
+            show-levels='${locationList.locationsLevels.join(',')}'
             ${device.assignedLocation && device.assignedLocation.value ? `
-              show-levels='${device.assignedLocation.showLevels.join(',')}'
               value='${JSON.stringify(device.assignedLocation.value)}'
             ` : ''}
           >
           </tangy-location>
           <tangy-radio-buttons
+            ${device.claimed ? `disabled` : ''}
             required
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
               value='${
@@ -263,6 +243,7 @@ export class GroupDevicesComponent implements OnInit {
             `).join('')}
           </tangy-radio-buttons>
           <tangy-location
+            ${device.claimed ? `disabled` : ''}
             required
             name="sync_location"
             label="Sync device to which location?"
