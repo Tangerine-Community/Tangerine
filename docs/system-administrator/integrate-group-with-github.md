@@ -1,5 +1,4 @@
-# How to set up a Group's content source to point to a Github Repository
-
+# Integrate a group's content with a repository on Github 
 
 ## Step 1
 Create a group in the Editor. Note the ID in the URL starting with `group-`.
@@ -8,7 +7,7 @@ Create a group in the Editor. Note the ID in the URL starting with `group-`.
 Create a repository on Github for your group's content.
 
 ## Step 3
-SSH into the server and create a "deploy key" the server will use to authenticate to Github with.
+SSH into the server and create a "deploy key" the server will use to authenticate to Github with. When running `ssh-keygen`, do not password protect the key file. When it prompts you for a password, just hit enter.
 
 ```
 ssh <your server>
@@ -38,14 +37,12 @@ We'll now configure your server to periodically pull content changes from Github
 ```
 ssh <your server>
 sudo su
-screen -R git-pull-worker
+screen -R git-integration
 cd tangerine/data/client/content/groups/<group id>
-watch -n10 git pull
+watch -n10 "GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master
 ```
 
-At this point you have created "virtual screen session" called "git-pull-worker" that is using the `watch` command to run the `git pull` command every 10 seconds. You'll want to leave this screen session open after your terminal disconnects. To "detach" from a screen session but leave it running in the background, press `ctrl-a` `ctrl-d`. Now you can safely log out from your SSH session while the screen session continutes. 
-
-__It's very important that you do not open any forms in the Editor's group now or else the git pull may fail.__ If you suspect the `git pull` in the screen session has failed, you can rejoin the screen session with...
+At this point you have created "virtual screen session" called "git-integration" that is using the `watch` command to run the `git pull` command every 10 seconds. You'll want to leave this screen session open after your terminal disconnects. To "detach" from a screen session but leave it running in the background, press `ctrl-a` `ctrl-d`. Now you can safely log out from your SSH session while the screen session continutes. 
 
 ```
 ssh <server>
@@ -53,5 +50,5 @@ sudo su
 # List the screen sessions to get the git-pull-worker screen session ID to join.
 screen -ls
 # Join the screen session.
-screen -R <screen session ID, something like 29134.git-pull-worker>
+screen -R <screen session ID, something like 29134.git-integration>
 ```
