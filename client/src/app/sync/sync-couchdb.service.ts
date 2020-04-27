@@ -68,7 +68,7 @@ export class SyncCouchdbService {
       "push": {
         "since": push_last_seq,
         "batch_size": 50,
-        "batches_limit": 5,
+        "batches_limit": 1,
         ...(await this.appConfigService.getAppConfig()).couchdbSync4All ? {} : { "selector": {
             "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
               if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
