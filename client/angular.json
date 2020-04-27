@@ -28,7 +28,8 @@
               "src/logo.png",
               "src/loading.gif",
               "src/shell/index.html",
-              "src/assets"
+              "src/assets",
+              "src/libs/SQLitePlugin.js"
             ],
             "styles": [
               "./node_modules/material-design-icons/iconfont/material-icons.css",
