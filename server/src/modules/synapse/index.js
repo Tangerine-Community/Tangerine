@@ -20,27 +20,35 @@ module.exports = {
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
         const {doc, sourceDb} = data
-        if (!doc.type || doc.type !== 'case') {
+        const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+        let synapseDb
+        try {
+          synapseDb = await new DB(`${sourceDb.name}-synapse`);
+        } catch (e) {
+          console.log("Error creating db: " + JSON.stringify(e))
+        }
+        if (doc.form.id === 'user-profile') {
+          // await pushResponse(doc, synapseDb);
+          await processData({...doc, type : "user-profile"}, locationList, {}, sourceDb, resolve);
+        } else if (!doc.type || doc.type !== 'case') {
           resolve(data)
         } else {
-          const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-          let synapseDb
-          try {
-            synapseDb = await new DB(`${sourceDb.name}-synapse`);
-          } catch (e) {
-            console.log("Error creating db: " + JSON.stringify(e))
-          }
+
           // output case
-          await pushResponse(doc, synapseDb);
+          // await pushResponse(doc, synapseDb);
+          await processData(doc, locationList, {}, sourceDb, resolve);
+
+          let numInf = getItemValue(doc, 'numinf')
+          let participant_id = getItemValue(doc, 'participant_id')
 
           // output participants
           for (const participant of doc.participants) {
-            await pushResponse({...participant, _id: participant.id, type: "participant"}, synapseDb);
+              await pushResponse({...participant, _id: participant.id, caseId: doc._id, numInf: participant.participant_id === participant_id ? numInf : '', type: "participant"}, synapseDb);
           }
 
           // output case-events
           for (const event of doc.events) {
-            await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
+            // await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
 
             // output event-forms
             for (const eventForm of event['eventForms']) {
@@ -49,7 +57,7 @@ module.exports = {
                 let formResponse;
                 try {
                   formResponse = await sourceDb.get(eventForm.formResponseId)
-                  await processData(formResponse, locationList, eventForm, sourceDb, resolve);
+                  await processData({...formResponse, type : "event-form" }, locationList, eventForm, sourceDb, resolve);
                 } catch (e) {
                   if (e.status !== 404) {
                     console.log("Error processing formResponse: " + JSON.stringify(e) + " e: " + e)
@@ -63,6 +71,16 @@ module.exports = {
     }
   }
 }
+
+const getItemValue = (doc, variableName) => {
+  const variablesByName = doc.items.reduce((variablesByName, item) => {
+    for (const input of item.inputs) {
+      variablesByName[input.name] = input.value;
+    }
+    return variablesByName;
+  }, {});
+  return variablesByName[variableName];
+};
 
 function isValidDate(d) {
   return d instanceof Date && !isNaN(d);
@@ -228,13 +246,14 @@ function addDatefields(val, doc) {
   return true
 }
 
-async function attachUserProfile(doc, synapseDb) {
+async function attachUserProfile(doc, sourceDb, synapseDb) {
   try {
-    // Find the key that points to user profile ID.
+    let userProfileDoc;
     const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
-    // Get the user profile.
-    const userProfileDoc = await synapseDb.get(doc[userProfileIdKey])
+    let profileId = process.env['T_MODULES'].includes('sync-protocol-2') ? doc.tangerineModifiedByUserId : userProfileIdKey
 
+    // Get the user profile.
+    userProfileDoc = await synapseDb.get(doc[profileId])
     // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
     return Object.assign({}, doc, Object.keys(userProfileDoc.processedResult).reduce((acc, key) => {
       return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc.processedResult[key] })
@@ -272,7 +291,7 @@ async function processData(doc, locationList, eventForm, sourceDb, resolve) {
   let processedResult = flatResponse
   // Don't add user-profile to the user-profile
   if (flatResponse.formId !== 'user-profile') {
-    processedResult = await attachUserProfile(flatResponse, synapseDb)
+    processedResult = await attachUserProfile(flatResponse, sourceDb, synapseDb)
   }
   try {
     createDateFields(processedResult);
@@ -300,7 +319,7 @@ async function processData(doc, locationList, eventForm, sourceDb, resolve) {
     console.error(e);
   }
   await pushResponse({
-    type: "event-form",
+    type: doc.type,
     _id: processedResult._id,
     formId: processedResult.formId,
     startDatetime: startDatetimeISO,
