@@ -5,7 +5,7 @@
     <button mat-menu-item (click)="setTemplate('')">
       Form
     </button>
-    <button mat-menu-item *ngFor="let template of formInfo.templates" (click)="setTemplate(template.id)">
+    <button mat-menu-item *ngFor="let template of formTemplatesInContext" (click)="setTemplate(template.id)">
       {{template.label}}
     </button>
   </mat-menu> 
