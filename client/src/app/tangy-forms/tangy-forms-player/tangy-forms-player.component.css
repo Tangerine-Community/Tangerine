@@ -5,3 +5,13 @@
     margin: 15px 15px 0px;
     color: #666;
 }	
+
+.print {
+    margin-right: 10px;
+}
+
+@media print {
+    #menu-container {
+        display: none;
+    }
+}

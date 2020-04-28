@@ -149,4 +149,8 @@ export class TangyFormsPlayerComponent {
     this.response = state
   }
 
+  print() {
+    window.print(); 
+  }
+
 }
