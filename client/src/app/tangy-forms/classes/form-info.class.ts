@@ -1,3 +1,4 @@
+import { AppContext } from './../../app-context.enum';
 export class FormInfo {
   id:string
   src:string
@@ -29,7 +30,9 @@ export interface FormTemplate {
   id:string
   src:string
   label:string
+  appContext: AppContext
 }
+
 
 export interface CouchdbSyncSettings {
   enabled: boolean

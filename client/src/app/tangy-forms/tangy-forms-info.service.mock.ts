@@ -2,6 +2,7 @@ import { FormSearchSettings } from 'src/app/tangy-forms/classes/form-info.class'
 import { FormInfo, FormTemplate } from './classes/form-info.class';
 import { Inject, Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import { AppContext } from '../app-context.enum';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -29,7 +30,8 @@ export class MockTangyFormsInfoService {
           <FormTemplate>{
             id: 'foo',
             src: './form1/foo.html',
-            label: "Foo"
+            label: "Foo",
+            appContext: AppContext.Client
           }
         ],
         searchSettings: <FormSearchSettings>{
@@ -47,7 +49,8 @@ export class MockTangyFormsInfoService {
           <FormTemplate>{
             id: 'foo',
             src: './case1/foo.html',
-            label: "Foo"
+            label: "Foo",
+            appContext: AppContext.Client
           }
         ],
         searchSettings: <FormSearchSettings>{

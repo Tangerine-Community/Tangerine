@@ -1,4 +1,5 @@
-import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
+import { environment } from './../../../environments/environment';
+import { FormInfo, FormTemplate } from 'src/app/tangy-forms/classes/form-info.class';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
@@ -30,6 +31,7 @@ export class TangyFormsPlayerComponent {
   rendered = false
 
   formInfo:FormInfo
+  formTemplatesInContext:Array<FormTemplate>
   response:any
 
   throttledSaveLoaded;
@@ -76,6 +78,7 @@ export class TangyFormsPlayerComponent {
       ? this.formId
       : formResponse['form']['id']
     this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
+    this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
       const response = formResponse
