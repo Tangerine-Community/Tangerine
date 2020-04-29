@@ -111,48 +111,15 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
     if (!confirmation) { return; }
     try {
       await this.tangerineForms.deleteForm(groupId, formId);
-      this.forms = await this.tangerineForms.getFormsInfo(this.groupId);
+      await this.getForms()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could not Delete Form.'));
     }
   }
-  async toggleTwoWaySyncOnForm(groupId, formId) {
-    const forms = await this.tangerineForms.getFormsInfo(groupId);
-    const updatedForms = <Array<TangerineFormInfo>>forms.map(form => {
-      return form.id === formId 
-        ? form.couchdbSyncSettings.enabled 
-          ? {
-            ...form,
-            couchdbSyncSettings: {
-              enabled: false,
-              filterByLocation: false
-            },
-            customSyncSettings: {
-              enabled: true,
-              push: true,
-              pull: false
-            }
-          }
-          : {
-            ...form,
-            couchdbSyncSettings: {
-              enabled: true,
-              filterByLocation: true 
-            },
-            customSyncSettings: {
-              enabled: false,
-              push: false,
-              pull: false
-            }
-          }
-        : form
-    })
-    await this.tangerineForms.saveFormsInfo(this.groupId, updatedForms)
-  }
 
   async closeCopyFormDialog() {
     this.copyFormOverlay.nativeElement.close();
-    this.forms = await this.tangerineForms.getFormsInfo(this.groupId);
+    await this.getForms()
   }
 
   onCopyFormClick(formId: string) {

@@ -2,6 +2,7 @@
 
 ## v3.9.0
 
+
 - Features
   - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
   - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
@@ -12,6 +13,8 @@
   - Fixed issue causing tablets to crash when syncing with a database with tens of thousands of records.
 - Developer notes
   - Editor and Clients upgraded to Angular 8.
+- Changes
+  - Due to current limitations of two way sync, two changes have been made to the Device form in Tangerine Editor. First, changing a Device's assigned location and sync settings after the Device record has been claimed will no longer be allowed. Second, devices will now always be required to be assigned to the last level in your location hierarchy.
 
 __Upgrade instructions:__
 

@@ -1,4 +1,6 @@
 {
+  "Continue": "Continuer",
+  "continue": "continuer",
   "Unable to check for update. Make sure you are connected to the Internet and try again.": "Impossible de vérifier la mise à jour. Assurez-vous d'être connecté à Internet et réessayez.",
   "Failed to download application configuration file": "Échec du téléchargement du fichier de configuration de l'application",
   "accept": "acceptez",
