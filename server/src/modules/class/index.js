@@ -31,6 +31,11 @@ module.exports = {
         } catch (err) {
           console.error(err)
         }
+        let formsName = appConfig.syncProtocol === '1' ? 'forms-sp1.json' : 'forms-sp2.json'
+        const classJSON = JSON.parse(await fs.readFile(`/tangerine/server/src/modules/class/${formsName}`))
+        const groupJSON = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/forms.json`))
+        const newGroupJSON = groupJSON.concat(classJSON);
+        await fs.writeFile(`/tangerine/client/content/groups/${groupName}/forms.json`, JSON.stringify(newGroupJSON), 'utf8')
         resolve(data)
       })
     },

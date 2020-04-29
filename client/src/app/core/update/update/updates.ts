@@ -1,7 +1,8 @@
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
+import {TangyFormsDocs} from '../../../tangy-forms/tangy-forms.docs';
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
-const bcrypt = window['dcodeIO'].bcrypt 
+const bcrypt = window['dcodeIO'].bcrypt
 
 export const updates = [
   {
@@ -19,7 +20,7 @@ export const updates = [
     script: (userDb) => {
       return new Promise(async resolve => {
         let res = await userDb.allDocs({include_docs: true})
-        let responseDocs = res.rows 
+        let responseDocs = res.rows
           .map(row => row.doc )
           .filter(doc => {
             if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
@@ -85,7 +86,7 @@ export const updates = [
     script: (userDb) => {
       return new Promise(async resolve => {
         let res = await userDb.allDocs({include_docs: true})
-        let responseDocs = res.rows 
+        let responseDocs = res.rows
           .map(row => row.doc )
           .filter(doc => {
             if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
@@ -181,7 +182,7 @@ export const updates = [
           .map(row => row.doc)
           .filter(doc => doc.collection === 'TangyFormResponse')
         for (let doc of allDocs) {
-          // This is confusing because it takes into account a couple of different inconsistent scenarios. 
+          // This is confusing because it takes into account a couple of different inconsistent scenarios.
           // The most important thing to know is that if it did not have an uploadDatetime, it will now
           // be queued for upload and all docs will end up having a lastModified.
           if (doc.uploadDatetime && doc.lastModified) {
@@ -190,7 +191,7 @@ export const updates = [
           else if (!doc.uploadDatetime && !doc.lastModified) {
             // Queue for upload.
             doc = {
-              ...doc, 
+              ...doc,
               uploadDatetime: Date.now(),
               lastModified: Date.now() + 1
             }
@@ -198,10 +199,10 @@ export const updates = [
           else if (!doc.uploadDatetime && doc.lastModified) {
             // Queue for upload.
             doc = {
-              ...doc, 
-              uploadDatetime: doc.lastModified - 1 
+              ...doc,
+              uploadDatetime: doc.lastModified - 1
             }
-          } 
+          }
           else if (doc.uploadDatetime && !doc.lastModified) {
             // This may result in user profiles being queued for upload again but it's ok.
             doc.lastModified = Date.now()
@@ -241,7 +242,7 @@ export const updates = [
       if (localStorage.getItem('ran-update-v3.8.0')) return
       console.log('Updating to v3.8.0...')
       const usersDb = new PouchDB('users')
-      // Update user account docs so they have the new initialProfileComplete flag set to true. 
+      // Update user account docs so they have the new initialProfileComplete flag set to true.
       // We used to infer wether or not the user profile in various situations, now we set it explicitly.
       const salt = bcrypt.genSaltSync(10);
       const userDocs = (await usersDb.allDocs({include_docs: true}))
@@ -257,10 +258,18 @@ export const updates = [
       for (let userDoc of userDocs) {
         await usersDb.put(userDoc)
       }
-      // We have new database views from SyncModule, removed TwoWaySyncModule. 
-      await userService.updateAllDefaultUserDocs()
-      await userService.indexAllUserViews()
       localStorage.setItem('ran-update-v3.8.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService) => {
+      // syncProtocol uses a single shared db for all users. Update only once.
+      if (appConfig.syncProtocol === '2' && localStorage.getItem('ran-update-v3.9.0')) return
+      console.log('Updating to v3.9.0...')
+      await userDb.put(TangyFormsDocs[0])
+      await userDb.query('responsesUnLockedAndNotUploaded')
+      localStorage.setItem('ran-update-v3.9.0', 'true')
     }
   }
 ]
