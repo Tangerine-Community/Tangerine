@@ -8,8 +8,8 @@ To add a new section to your instrument, hit "ADD SECTION".
 
 The interface allows a drag-and-drop feature which enables reordering of
 the sections already created. The order in which the sections are
-listed, is the same as the sequence of screen that will be shown on the
-tablet.
+listed, is the same as the sequence of screens that will be shown on the
+tablet when the tablet user is filling in the form.
 
 Section Editor
 --------------
@@ -18,21 +18,19 @@ Upon adding a new section, or selecting to "EDIT" your instrument
 section, you will see the section editor screen below.
 
 
-<img src="./media/image17.png" width="570">
+<img src="./media/sectionEditor.png" width="570">
 
 
-If this is a new section, you might give it a section header. Click the
-pen icon on the right of the blue bar and overwrite the "..." under
-"title". Or any other of the configuration options. Then hit **SUBMIT**
+If this is a new section, you might give it a new name from the section header. Click the pen icon on the right of the blue bar and overwrite the  "title". Or any other of the configuration options. Then hit **SUBMIT**
 to save your edits.
 
-<img src="./media/image18.png" width="570">
+<img src="./media/sectionHeader.gif" width="570">
 
 
 
 SECTION OPTIONS
 
-Each one of the sections has a some options that you can control:
+Each one of the sections has some options that you can control:
 
 **Show this section in the summary at the end** -- mark **only** if this
 section is the **last one**, and if you have **coded some
