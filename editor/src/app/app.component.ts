@@ -10,6 +10,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { UserService } from './core/auth/_services/user.service';
+import { AppConfigService } from './shared/_services/app-config.service';
 
 
 @Component({
@@ -43,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,
         media: MediaMatcher,
-        private http: HttpClient
+        private appConfigService: AppConfigService
     ) {
         translate.setDefaultLang('translation');
         translate.use('translation');
@@ -59,37 +60,29 @@ export class AppComponent implements OnInit, OnDestroy {
 
     async logout() {
         await this.authenticationService.logout();
-        this.router.navigate(['login']);
-        this.window.location.reload()
+        this.loggedIn = false;
+        this.isAdminUser = false;
+        this.canManageSitewideUsers = false;
+        this.user_id = null;
+        this.router.navigate(['/login']);
     }
 
     async ngOnInit() {
-        // Ensure user is logged in every 60 seconds.
-        await this.ensureLoggedIn();
-        this.isAdminUser = await this.userService.isCurrentUserAdmin()
-        setInterval(() => this.ensureLoggedIn(), 60 * 1000);
         this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
-            this.isAdminUser = await this.userService.isCurrentUserAdmin()
-            this.loggedIn = isLoggedIn;
-            this.user_id = localStorage.getItem('user_id');
-            this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
-            if (!isLoggedIn) { this.router.navigate(['login']); }
+            if (isLoggedIn) {
+                this.loggedIn = isLoggedIn;
+                this.isAdminUser = await this.userService.isCurrentUserAdmin();
+                this.user_id = localStorage.getItem('user_id');
+                this.canManageSitewideUsers = await this.userService.canManageSitewideUsers();
+            } else {
+                this.loggedIn = false;
+                this.isAdminUser = false;
+                this.canManageSitewideUsers = false;
+                this.user_id = null;
+                this.router.navigate(['/login']);
+            }
         });
-        fetch('assets/translation.json')
-          .then(response => response.json())
-          .then(json => {
-            this.window.translation = json
-          })
-    }
-
-    async ensureLoggedIn() {
-        this.loggedIn = await this.authenticationService.isLoggedIn();
-        if (this.loggedIn && await this.authenticationService.validateSession() === false) {
-            console.log('found invalid session');
-            this.isAdminUser = false
-            this.canManageSitewideUsers = false
-            this.logout();
-        }
+        this.window.translation = await this.appConfigService.getTranslations();
     }
     ngOnDestroy(): void {
         this.mobileQuery.removeListener(this._mobileQueryListener);

@@ -17,30 +17,24 @@ export class LoginComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
-    private windowRef: WindowRef
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'projects';
+    if (await this.authenticationService.isLoggedIn()) {
+      this.router.navigate([this.returnUrl]);
+    }
   }
-
   async loginUser() {
     try {
-      const data = await this.authenticationService.login(this.user.username, this.user.password);
-      if (data) {
-        this.router.navigate(['projects']);
-        setTimeout(() => {
-          if (this.windowRef.nativeWindow.location.hash === '#/login') {
-            console.log('force navigation')
-            this.windowRef.nativeWindow.location.hash = ''
-          }
-        }, 3000)
-
+      if (await this.authenticationService.login(this.user.username, this.user.password)) {
+        this.router.navigate(['/projects']);
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccesful');
       }
     } catch (error) {
       this.errorMessage = _TRANSLATE('Login Unsuccesful');
+      console.error(error);
     }
   }
 

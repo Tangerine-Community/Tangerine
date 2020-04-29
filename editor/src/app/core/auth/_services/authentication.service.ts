@@ -2,27 +2,33 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { Subject } from 'rxjs';
+import jwt_decode from 'jwt-decode';
 @Injectable()
 export class AuthenticationService {
   public currentUserLoggedIn$: any;
   private _currentUserLoggedIn: boolean;
-  constructor(private userService: UserService, private httpClient: HttpClient) {
+  constructor(private userService: UserService, private http: HttpClient) {
     this.currentUserLoggedIn$ = new Subject();
   }
   async login(username: string, password: string) {
-    const result = this.httpClient.post('/login', { username, password });
-    result.subscribe(async (data: any) => {
-      if (data.statusCode === 200) {
-        await localStorage.setItem('token', data.name);
-        await localStorage.setItem('user_id', data.name);
-        await localStorage.setItem('password', data.statusMessage);
-        this._currentUserLoggedIn = true;
-        this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+    try {
+     const data = await this.http.post('/login', {username, password}, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        const token = data.body['data']['token'];
+        const jwtData = jwt_decode(token);
+        localStorage.setItem('token', token);
+        localStorage.setItem('user_id', jwtData.username);
+        return true;
+      } else {
+        return false;
       }
-    });
-    return await result.toPromise().then((data: any) => data.statusCode === 200);
+    } catch (error) {
+      console.error(error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user_id');
+      return false;
+    }
   }
-
   async isLoggedIn():Promise<boolean> {
     this._currentUserLoggedIn = false;
     this._currentUserLoggedIn = !!localStorage.getItem('user_id');
@@ -31,7 +37,7 @@ export class AuthenticationService {
   }
 
   async validateSession():Promise<boolean> {
-    const status = await this.httpClient.get(`/login/validate/${localStorage.getItem('user_id')}`).toPromise()
+    const status = await this.http.get(`/login/validate/${localStorage.getItem('user_id')}`).toPromise()
     return status['valid']
   }
 
