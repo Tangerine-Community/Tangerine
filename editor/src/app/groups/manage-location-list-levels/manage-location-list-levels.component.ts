@@ -47,6 +47,14 @@ export class ManageLocationListLevelsComponent implements OnInit {
           fileContents: JSON.stringify(this.locationListData)
         };
         await this.http.post(`/editor/file/save`, payload).toPromise();
+        await this.http.post(`/group-responses/index/${this.groupId}`, {
+          index: {
+            fields: [
+              'type',
+              `location.${this.locationLabel.trim()}`
+            ]
+          }
+        }).toPromise();
         this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
         this.locationLabel = '';
         this.parentLevel = '';

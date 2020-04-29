@@ -94,3 +94,6 @@ T_HIDE_SKIP_IF="true"
 # In CSV output, set cell value to this when something is skipped. Set to "ORIGINAL_VALUE" if you want the actual value stored.
 T_REPORTING_MARK_SKIPPED_WITH="SKIPPED"
 
+# Set to true if you want Tangerine to ignore any settings in Sync Configuration and use Couchdb Sync for replication.
+T_COUCHDB_SYNC_4_ALL="false"
+

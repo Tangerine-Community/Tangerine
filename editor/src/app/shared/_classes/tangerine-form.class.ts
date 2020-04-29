@@ -22,6 +22,8 @@ export class TangerineFormInfo {
 }
 
 export interface CouchdbSyncSettings {
+  push:boolean
+  pull:boolean
   enabled: boolean
   filterByLocation:boolean
 }

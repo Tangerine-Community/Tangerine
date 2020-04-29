@@ -23,3 +23,15 @@
       <mat-card-subtitle>{{'Download CVSs of data.'|translate}}</mat-card-subtitle>
   </mat-card-header>
 </mat-card>
+
+<mat-card class="is-link mat-elevation-z3" routerLink="cases" *ngIf="config.enabledModules.includes('case')">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">cloud_download</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Cases'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Review uploaded cases.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>

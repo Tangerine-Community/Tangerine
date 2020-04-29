@@ -8,7 +8,12 @@ import { SyncCustomService } from './sync-custom.service';
 import { SyncComponent } from './components/sync/sync.component';
 import { PeersComponent} from '../core/sync-records/peers/peers.component';
 import {TranslateModule} from '@ngx-translate/core';
-import {MatCardModule, MatIconModule, MatProgressBarModule, MatButtonModule, MatTabsModule, MatChipsModule} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

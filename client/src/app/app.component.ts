@@ -3,7 +3,7 @@ import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.
 import { DeviceService } from './device/services/device.service';
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UserService } from './shared/_services/user.service';
 import PouchDB from 'pouchdb';
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
   languagePath:string
   translate: TranslateService
   ready = false
-  @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
+  @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
 
   constructor(
     private userService: UserService,
@@ -51,23 +51,25 @@ export class AppComponent implements OnInit {
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
       ? true
       : false
-    if (this.installed) {
-      this.freespaceCorrectionOccuring = false;
-      // Detect if this is the first time the app has loaded.
-      this.languageCode = this.window.localStorage.getItem('languageCode')
-      this.languageDirection = this.window.localStorage.getItem('languageDirection')
-      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
-      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
-      // Set up ngx-translate.
-      translate.setDefaultLang(this.languagePath);
-      translate.use(this.languagePath);
-      // Set required config for use of <t-lang> Web Component.
-      this.window.document.documentElement.lang = this.languageCode;
-      this.window.document.documentElement.dir = this.languageDirection;
-      this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
-      // Make database services available to eval'd code.
-      this.window.userService = this.userService
-    }
+    this.freespaceCorrectionOccuring = false;
+    // Detect if this is the first time the app has loaded.
+    this.languageCode = this.window.localStorage.getItem('languageCode')
+      ? this.window.localStorage.getItem('languageCode')
+      : 'en' 
+    this.languageDirection = this.window.localStorage.getItem('languageDirection')
+      ? this.window.localStorage.getItem('languageDirection')
+      : 'ltr'
+    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+    // Set up ngx-translate.
+    translate.setDefaultLang(this.languagePath);
+    translate.use(this.languagePath);
+    // Set required config for use of <t-lang> Web Component.
+    this.window.document.documentElement.lang = this.languageCode;
+    this.window.document.documentElement.dir = this.languageDirection;
+    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+    // Make database services available to eval'd code.
+    this.window.userService = this.userService
   }
 
 
@@ -75,47 +77,44 @@ export class AppComponent implements OnInit {
 
     // Installation check.
     if (!this.installed) {
-      await this.install()
-      return
-    } else {
-      this.checkPermissions();
+      await this.install();
     }
 
+    this.checkPermissions();
     // Initialize services.
-    await this.userService.initialize()
-    await this.searchService.start()
+    await this.userService.initialize();
+    await this.searchService.start();
 
     // Get globally exposed config.
-    this.appConfig = await this.appConfigService.getAppConfig()
-    this.window.appConfig = this.appConfig
-    this.window.device = await this.deviceService.getDevice()
-    this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise()
+    this.appConfig = await this.appConfigService.getAppConfig();
+    this.window.appConfig = this.appConfig;
+    this.window.device = await this.deviceService.getDevice();
+    this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
-      this.router.navigate(['/update'])
+      this.router.navigate(['/update']);
     }
 
     // Set up log in status.
-    this.isLoggedIn = this.userService.isLoggedIn()
+    this.isLoggedIn = this.userService.isLoggedIn();
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
-      this.isLoggedIn = true
+      this.isLoggedIn = true;
     });
     this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
-      this.isLoggedIn = false
+      this.isLoggedIn = false;
     });
 
     // Keep GPS chip warm.
     setInterval(this.getGeolocationPosition, 5000);
-    this.checkStorageUsage()
-    setInterval(this.checkStorageUsage.bind(this), 60*1000);
-    this.ready = true
+    this.checkStorageUsage();
+    setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    this.ready = true;
 
     // Lastly, navigate to update page if an update is running.
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
-      this.router.navigate(['/update'])
+      this.router.navigate(['/update']);
     }
-
   }
 
   async install() {
@@ -129,7 +128,8 @@ export class AppComponent implements OnInit {
       console.log('Error detected in install:')
       console.log(e)
     }
-    window.location.href = window.location.href.replace(window.location.hash, 'index.html')
+    // PWA's will have a hash; APK's won't.
+    window.location.href = window.location.hash ? window.location.href.replace(window.location.hash, 'index.html') : 'file:///android_asset/www/shell/index.html'
   }
 
   async checkPermissions() {

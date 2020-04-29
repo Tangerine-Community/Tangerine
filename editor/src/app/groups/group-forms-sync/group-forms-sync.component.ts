@@ -34,7 +34,7 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
   activeForms;
   groupUrl;
   formsJsonURL;
-  @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
+  @ViewChild('copyFormOverlay', {static: true}) copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private windowRef: WindowRef,
@@ -93,24 +93,18 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
           ? {
             ...form,
             couchdbSyncSettings: {
-              enabled: false,
-              filterByLocation: false
-            },
-            customSyncSettings: {
               enabled: true,
+              filterByLocation: true,
               push: true,
-              pull: false
+              pull: form.couchdbSyncSettings.pull ? false : true
             }
           }
           : {
             ...form,
             couchdbSyncSettings: {
               enabled: true,
-              filterByLocation: true 
-            },
-            customSyncSettings: {
-              enabled: false,
-              push: false,
+              filterByLocation: true,
+              push: true,
               pull: false
             }
           }

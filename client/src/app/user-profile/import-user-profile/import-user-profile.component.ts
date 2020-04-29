@@ -19,7 +19,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
   appConfig:AppConfig
   state = STATE_INPUT
   docs;
-  @ViewChild('userShortCode') userShortCodeInput: ElementRef;
+  @ViewChild('userShortCode', {static: true}) userShortCodeInput: ElementRef;
 
   constructor(
     private router: Router,
@@ -34,7 +34,6 @@ export class ImportUserProfileComponent implements AfterContentInit {
   async onSubmit() {
     const username = this.userService.getCurrentUser()
     const db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    const usersDb = new PouchDB('users')
     const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
     try {
       const profileToReplace = await db.get(userAccount.userUUID)
@@ -47,7 +46,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
     const shortCode = this.userShortCodeInput.nativeElement.value
     this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
     const newUserProfile = this.docs.find(doc => doc.form && doc.form.id === 'user-profile')
-    await usersDb.put({...userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
+    await this.userService.saveUserAccount({...userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
     for (let doc of this.docs) {
       delete doc._rev
       await db.put(doc)

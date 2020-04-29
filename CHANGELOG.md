@@ -1,8 +1,40 @@
 # Changelog
 
-## v3.8.2
-- Fix additional memory leaks in Case module causing tablets to slow down. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2025)
-- Make `getValue()` function in Event Form List Item related templates less likely to crash. [change](https://github.com/Tangerine-Community/Tangerine/pull/2018/files#diff-c26fa38f2c0963295bb906bd95baf8b0L50)
+## v3.9.0
+
+
+- Features
+  - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
+  - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
+- Fixes
+  - Fix additional memory leaks in Case module causing tablets to slow down. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2025)
+  - Make `getValue()` function in Event Form List Item related templates less likely to crash. [change](https://github.com/Tangerine-Community/Tangerine/pull/2018/files#diff-c26fa38f2c0963295bb906bd95baf8b0L50)
+  - Fixed incompatibilities with 2-way sync and P2P Sync. 
+  - Fixed issue causing tablets to crash when syncing with a database with tens of thousands of records.
+- Developer notes
+  - Editor and Clients upgraded to Angular 8.
+- Changes
+  - Due to current limitations of two way sync, two changes have been made to the Device form in Tangerine Editor. First, changing a Device's assigned location and sync settings after the Device record has been claimed will no longer be allowed. Second, devices will now always be required to be assigned to the last level in your location hierarchy.
+
+__Upgrade instructions:__
+
+When you run the upgrade script, if you are using sync protocol 2 and have enabled, forms configured for 2 way sync will now be configured to use CouchDB sync to push documents up as opposed to "custom sync". 
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.9.0
+# If you did not upgrade your config.sh in v3.8.1, migrate it now.
+# Move custom variables from config.sh_backup to config.sh. Note that T_ADMIN and T_PASS are no longer needed. 
+mv config.sh config.sh_backup
+cp config.defaults.sh config.sh
+# To edit both files in vim you would run...
+vim -O config.sh config.sh_backup
+# Now you are ready to start the server.
+./start.sh v3.9.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.9.0.js
+```
 
 ## v3.8.1
 - Client app performance improvements

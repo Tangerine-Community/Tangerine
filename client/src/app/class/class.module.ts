@@ -3,19 +3,17 @@ import { CommonModule } from '@angular/common';
 
 import { ClassRoutingModule } from './class-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import {
-  MatCardModule,
-  MatInputModule,
-  MatListModule,
-  MatTableModule,
-  MatTabsModule,
-  MatSelectModule,
-  MatMenuModule,
-  MatPaginatorIntl,
-  MatButtonModule,
-  MatIconModule,
-  MatToolbarModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {CdkTableModule} from "@angular/cdk/table";
 import {SharedModule} from "../shared/shared.module";
 import {DashboardService} from "./_services/dashboard.service";
@@ -31,6 +29,8 @@ import { StudentProgressTableComponent } from './reports/student-progress-table/
 import { CookieService } from "ngx-cookie-service";
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { TaskReportComponent } from './reports/task-report/task-report.component';
+import {ClassFormService} from './_services/class-form.service';
+import {UserService} from '../shared/_services/user.service';
 
 @NgModule({
   imports: [
@@ -45,7 +45,6 @@ import { TaskReportComponent } from './reports/task-report/task-report.component
     CdkTableModule,
     MatTableModule,
     MatSelectModule,
-    SharedModule,
     MatCheckboxModule,
     MatPaginatorModule,
     MatButtonModule,
@@ -54,7 +53,7 @@ import { TaskReportComponent } from './reports/task-report/task-report.component
     MatButtonToggleModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent],
-  providers: [DashboardService, CookieService, {
+  providers: [UserService, ClassFormService, DashboardService, CookieService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
       const service = new MatPaginationIntlService();

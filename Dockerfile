@@ -33,6 +33,7 @@ RUN cd /tangerine/editor && \
 
 # Install client.
 ADD client/package.json /tangerine/client/package.json
+ADD client/package-lock.json /tangerine/client/package-lock.json
 RUN cd /tangerine/client/ && \
     npm install
 
@@ -58,6 +59,9 @@ RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 ADD client /tangerine/client
 RUN cd /tangerine/client && \
     ./node_modules/.bin/ng build --base-href "./"
+
+# Modify links to javascript modules (Angular 8 work-around)
+RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/dist/tangerine-client/index.html
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \

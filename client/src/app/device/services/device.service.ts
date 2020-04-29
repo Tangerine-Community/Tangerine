@@ -5,6 +5,7 @@ import { Device } from './../classes/device.class';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import {AppConfig} from '../../shared/_classes/app-config.class';
 const bcrypt = window['dcodeIO'].bcrypt
 
 export interface AppInfo {
@@ -23,6 +24,8 @@ export class DeviceService {
 
   username:string
   password:string
+  rawBuildChannel:string
+  buildId:string
 
   constructor(
     private httpClient:HttpClient,
@@ -122,18 +125,19 @@ export class DeviceService {
 
   async getBuildId() {
     try {
-      return await this.httpClient.get('./assets/tangerine-build-id', {responseType: 'text'}).toPromise()
+      this.buildId = this.buildId ? this.buildId : await this.httpClient.get('./assets/tangerine-build-id', {responseType: 'text'}).toPromise();
+      return this.buildId.replace(/\n$/, '');
     } catch (e) {
-      return 'N/A'
+      return 'N/A';
     }
   }
 
   async getBuildChannel() {
     try {
-      const raw = await this.httpClient.get('./assets/tangerine-build-channel', {responseType: 'text'}).toPromise()
-      return raw.includes('prod')
+      this.rawBuildChannel = this.rawBuildChannel ? this.rawBuildChannel : await this.httpClient.get('./assets/tangerine-build-channel', {responseType: 'text'}).toPromise()
+      return this.rawBuildChannel.includes('prod')
         ? 'live'
-        : raw.includes('qa')
+        : this.rawBuildChannel.includes('qa')
           ? 'test'
           : 'unknown'
     } catch (e) {

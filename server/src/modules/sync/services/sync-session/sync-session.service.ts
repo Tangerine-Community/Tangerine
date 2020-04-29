@@ -26,7 +26,7 @@ export class SyncSessionService {
   async start(groupId:string, deviceId:string):Promise<string> {
     try {
       // Create sync user
-      const syncUsername = `syncUser-${UUID()}`
+      const syncUsername = `syncUser-${UUID()}-${Date.now()}`
       const syncPassword = UUID()
       const config = await this.configService.config()
       const syncUserDoc = {
@@ -41,6 +41,21 @@ export class SyncSessionService {
       return `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`
     } catch(e) {
       throw e
+    }
+  }
+
+  async expireSyncSessions() {
+    // Expire all sync sessions after 24 hours. This means if a sync session takes longer than
+    // 24 hours then it will be interrupted.
+    const expireLimit = 24*60*60*1000
+    const _usersDb = this.dbService.instantiate(`_users`)
+    const expiredSyncSessions = (await _usersDb.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
+      .filter(userDoc => userDoc._id.includes('org.couchdb.user:syncUser'))
+      .filter(userDoc => (Date.now() - parseInt(userDoc.name.split('-')[6])) > expireLimit)
+    for (const expiredSyncSession of expiredSyncSessions) {
+      await _usersDb.remove(expiredSyncSession)
     }
   }
 

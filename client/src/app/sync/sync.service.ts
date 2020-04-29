@@ -60,7 +60,8 @@ export class SyncService {
       deviceSyncLocations: device.syncLocations,
       formInfos
     })
-    // console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
+    console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
+
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
       serverUrl: appConfig.serverUrl,
