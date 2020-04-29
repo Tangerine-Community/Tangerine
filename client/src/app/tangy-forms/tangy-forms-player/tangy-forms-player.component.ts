@@ -7,7 +7,6 @@ import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } fro
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-import { CaseManagementService } from '../../case-management/_services/case-management.service';
 import { UserService } from '../../shared/_services/user.service';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
@@ -43,7 +42,6 @@ export class TangyFormsPlayerComponent {
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
     private service: TangyFormService,
-    private http: HttpClient,
     private userService: UserService,
   ) {
     this.window = window
