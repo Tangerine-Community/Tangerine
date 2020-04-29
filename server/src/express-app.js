@@ -25,7 +25,6 @@ const chalk = require('chalk');
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
-const bcrypt = require('bcryptjs');
 const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
