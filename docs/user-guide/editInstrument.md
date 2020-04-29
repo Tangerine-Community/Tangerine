@@ -10,15 +10,14 @@ The user moves through items by "scrolling" down the screen. The user
 moves through sections by hitting "Next" or "Back" on the tablet.
 
 
-<img src="./media/image13.png" width="570">
+<img src="./media/sectionListing.gif" width="570">
 
 
 The form editor provides the interface for adding and editing instrument
 sections and items. This interface provides controls that make the
 following actions possible:
 
--   **EDIT HTML** - This converts the interface from a WYSIWYG ("what
-    you see is what you get") to a HTML code interface
+-   **EDIT HTML** - Clicking this button shows you the HTML code behind the form. Please edit the HTML with care. 
 
 -   **PREVIEW** -- This control enables you to have a preview of your
     form in the current state
@@ -33,6 +32,7 @@ following actions possible:
 -   **ADD SECTION** -- This allows you to add a section of items to your
     instrument.
 
+For each section there are two actions available.
 -   **EDIT**  <img src="./media/image14.png" height="30">
 -- This icon opens the interface to
     edit an instrument section (e.g., add items)

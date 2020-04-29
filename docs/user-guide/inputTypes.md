@@ -8,7 +8,7 @@ contains the following elements:
 
 
 
-<img src="./media/image41.png" width="570">
+<img src="./media/inputVar.png" width="570">
 
 **Variable name**: This name has to be unique for any instrument/form,
 as this will be used for the CSV data output as column header with each
@@ -91,21 +91,20 @@ information such as, e.g., region, district, and school name. Before you
 add this item to your form, you need to upload a location list and
 configure Tangerine:
 
-To see a video of how to do this, please go to [Appendix
-B](#importing-a-location-list)
+To see a video of how to do this
+[![Watch the video](./media/locationVideo.png )](https://youtu.be/RSJmNu7ef3U)
+
 
 First, decide what levels you would like to show and prepare a CSV file
-that contains your locations accordingly. Each column header will
+that contains your locations and ids. Each column header will
 present a location level (e.g. column A header might be region; column B
 header might be district, etc.). Make sure each level/column header
 contains only a single word and no spaces.
 
-Second, define the location levels for Tangerine. Click on the tab
-"MANAGE LOCATION LIST LEVELS" located at the top of your group's main
-page that lists your instruments/forms.
+Second, define the location levels for Tangerine. Click Configure/Location Lists and add the desired levels using the '+' sign
 
 
-<img src="./media/image45.png" width="570">
+<img src="./media/locationLevel.png" width="570">
 
 
 Click "Create a New Location Level".
