@@ -1,17 +1,20 @@
-import { TangyFormsInfoService } from './tangy-forms-info.service';
-import { NgModule } from '@angular/core';
+import { TangyFormsInfoService } from './tangy-forms-info-service';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { TangyFormsRoutingModule } from './tangy-forms-routing.module';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
-import {MatTabsModule} from "@angular/material";
+import {MatTabsModule, MatMenuModule, MatButtonModule} from "@angular/material";
 import {SharedModule} from "../shared/shared.module";
 
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [TangyFormsPlayerComponent],
   imports: [
     CommonModule,
     MatTabsModule,
+    MatMenuModule,
+    MatButtonModule,
     SharedModule,
     TangyFormsRoutingModule
   ],

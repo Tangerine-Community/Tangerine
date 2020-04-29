@@ -1,3 +1,4 @@
+import { AppContext } from './../../app-context.enum';
 export class FormInfo {
   id:string
   src:string
@@ -6,6 +7,7 @@ export class FormInfo {
   description:string = ''
   listed = true
   archived = false
+  templates: Array<FormTemplate> = []
   searchSettings:FormSearchSettings =  <FormSearchSettings>{
     shouldIndex: true,
     variablesToIndex: [],
@@ -24,8 +26,18 @@ export class FormInfo {
   }
 }
 
+export interface FormTemplate {
+  id:string
+  src:string
+  label:string
+  appContext: AppContext
+}
+
+
 export interface CouchdbSyncSettings {
   enabled: boolean
+  push: boolean
+  pull: boolean
   filterByLocation:boolean
 }
 
