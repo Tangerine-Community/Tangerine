@@ -1,8 +1,8 @@
-import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { environment } from './../../../environments/environment';
 import { FormInfo, FormTemplate } from 'src/app/tangy-forms/classes/form-info.class';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Subject } from 'rxjs';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } from '@angular/core';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
@@ -127,14 +127,13 @@ export class TangyFormsPlayerComponent {
 
   async saveResponse(state) {
     let stateDoc = {}
-    try {
-      stateDoc = await this.service.getResponse(state._id)
-    } catch (e) {
+    stateDoc = await this.service.getResponse(state._id)
+    if (!stateDoc) {
       let r = await this.service.saveResponse(state)
       stateDoc = await this.service.getResponse(state._id)
     }
     await this.service.saveResponse({
-      state,
+      ...state,
       _rev: stateDoc['_rev'],
       location: this.location
     })
