@@ -10,7 +10,7 @@ import { t } from 'tangy-form/util/t.js'
 })
 export class SettingsComponent implements AfterContentInit {
 
-  @ViewChild('container', {static: false}) container: ElementRef;
+  @ViewChild('container') container: ElementRef;
   translations:any
   window:any
   languageCode = 'en'

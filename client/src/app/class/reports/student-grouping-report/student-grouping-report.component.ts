@@ -44,8 +44,8 @@ export class StudentGroupingReportComponent implements OnInit {
   clickPosition;
 
   @ViewChild('container', {static: true}) container: ElementRef;
-  @ViewChild('feedback', {static: false}) feedbackElement: ElementRef;
-  @ViewChild('feedbackMessage', {static: false}) feedbackMessage: ElementRef;
+  @ViewChild('feedback') feedbackElement: ElementRef;
+  @ViewChild('feedbackMessage') feedbackMessage: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
