@@ -11,6 +11,7 @@ import {CookieService} from 'ngx-cookie-service';
 import {ClassUtils} from '../class-utils';
 import {ClassGroupingReport} from '../reports/student-grouping-report/class-grouping-report';
 import {TangyFormService} from '../../tangy-forms/tangy-form.service';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 export interface StudentResult {
   id: string;
@@ -76,7 +77,8 @@ export class DashboardComponent implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private classFormService: ClassFormService,
-    private tangyFormService: TangyFormService
+    private tangyFormService: TangyFormService,
+    private tangyFormsInfoService: TangyFormsInfoService
   ) { }
 
   async ngOnInit() {
@@ -182,7 +184,7 @@ export class DashboardComponent implements OnInit {
     const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
     const fullCurrArray =  Promise.all(currArray.map(async curr => {
       const formId = curr.name;
-      const formInfo = await this.tangyFormService.getFormInfo(formId)
+      const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
       curr.label = formInfo.title
       return curr
     }));
