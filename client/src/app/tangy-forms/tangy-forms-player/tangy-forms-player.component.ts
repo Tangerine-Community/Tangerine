@@ -133,14 +133,13 @@ export class TangyFormsPlayerComponent {
 
   async saveResponse(state) {
     let stateDoc = {}
-    try {
-      stateDoc = await this.service.getResponse(state._id)
-    } catch (e) {
+    stateDoc = await this.service.getResponse(state._id)
+    if (!stateDoc) {
       let r = await this.service.saveResponse(state)
       stateDoc = await this.service.getResponse(state._id)
     }
     await this.service.saveResponse({
-      state,
+      ...state,
       _rev: stateDoc['_rev'],
       location: this.location
     })
