@@ -2,6 +2,10 @@
 
 set -e
 
+#
+# Set up data folders.
+#
+
 if [ ! -d data ]; then
   mkdir data
 fi
@@ -51,7 +55,10 @@ if [ ! -f data/paid-worker-state.json ]; then
   echo '{}' > data/paid-worker-state.json
 fi
 
+
+#
 # Load config.
+#
 
 source ./config.defaults.sh
 if [ -f "./config.sh" ]; then
@@ -60,12 +67,12 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
+T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
+
 docker build -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
-COUCHDB_OPTIONS=""
-if [ "$T_COUCHDB_LOCAL" = "true" ]; then
   if [ ! -d data/couchdb ]; then
     mkdir data/couchdb
   fi
@@ -100,24 +107,22 @@ require_valid_user = true
      -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
      --name $T_COUCHDB_CONTAINER_NAME \
      couchdb:2
-  COUCHDB_OPTIONS="
+
+sleep 10
+
+#
+# Start Tangerine.
+#
+
+CMD="docker run -it --name $T_CONTAINER_NAME \
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
     -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
     -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
     -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
-  "
-fi
-
-sleep 10
-
-CMD="docker run -it --name $T_CONTAINER_NAME \
-  $COUCHDB_OPTIONS \
   --entrypoint=\"/tangerine/entrypoint-development.sh\" \
   --env \"NODE_ENV=development\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
-  --env \"T_ADMIN=$T_ADMIN\" \
-  --env \"T_PASS=$T_PASS\" \
   --env \"T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN\" \
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
@@ -134,6 +139,9 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
   --env \"T_ORIENTATION=$T_ORIENTATION\" \
+  --env \"T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH\" \
+  --env \"T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH\" \
+  --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
