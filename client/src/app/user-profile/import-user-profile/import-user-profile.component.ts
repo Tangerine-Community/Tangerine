@@ -6,8 +6,6 @@ import PouchDB from 'pouchdb';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { AppConfig } from 'src/app/shared/_classes/app-config.class';
 
-const STATE_SYNCING = 'STATE_SYNCING'
-const STATE_INPUT = 'STATE_INPUT'
 
 @Component({
   selector: 'app-import-user-profile',
@@ -16,8 +14,10 @@ const STATE_INPUT = 'STATE_INPUT'
 })
 export class ImportUserProfileComponent implements AfterContentInit {
 
-  appConfig:AppConfig
-  state = STATE_INPUT
+  STATE_SYNCING = 'STATE_SYNCING'
+  STATE_INPUT = 'STATE_INPUT'
+  appConfig: AppConfig
+  state = this.STATE_INPUT
   docs;
   @ViewChild('userShortCode', {static: true}) userShortCodeInput: ElementRef;
 
@@ -41,7 +41,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
     } catch(e) {
       // It's ok if this fails. It's probably because they are trying again and the profile has already been deleted.
     }
-    this.state = STATE_SYNCING
+    this.state = this.STATE_SYNCING
     this.appConfig = await this.appConfigService.getAppConfig()
     const shortCode = this.userShortCodeInput.nativeElement.value
     this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
