@@ -1,3 +1,4 @@
+import { TangyFormService } from './tangy-forms/tangy-form.service';
 import { MenuService } from './shared/_services/menu.service';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
     mobileQuery: MediaQueryList;
     window:any
 
-    @ViewChild('snav') snav: MatSidenav
+    @ViewChild('snav', {static: true}) snav: MatSidenav
 
     private _mobileQueryListener: () => void;
     constructor(
@@ -38,6 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private userService:UserService,
         private menuService:MenuService,
         private authenticationService: AuthenticationService,
+        private tangyFormService:TangyFormService,
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,
         media: MediaMatcher,
@@ -46,9 +48,13 @@ export class AppComponent implements OnInit, OnDestroy {
         translate.setDefaultLang('translation');
         translate.use('translation');
         this.mobileQuery = media.matchMedia('(max-width: 600px)');
+        this.mobileQuery.addEventListener('change', (event => this.snav.opened = !event.matches))
         this._mobileQueryListener = () => changeDetectorRef.detectChanges();
         this.mobileQuery.addListener(this._mobileQueryListener);
         this.window = this.windowRef.nativeWindow;
+        // Tell tangyFormService which groupId to use.
+        tangyFormService.initialize(window.location.pathname.split('/')[2])
+ 
     }
 
     async logout() {
@@ -69,9 +75,6 @@ export class AppComponent implements OnInit, OnDestroy {
             this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
             if (!isLoggedIn) { this.router.navigate(['login']); }
         });
-
-        this.snav.toggle()
-
         fetch('assets/translation.json')
           .then(response => response.json())
           .then(json => {

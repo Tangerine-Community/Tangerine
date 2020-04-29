@@ -8,7 +8,10 @@ client/src/assets
 data
 .data
 config.env
-package-lock.json
+/package-lock.json
+editor/package-lock.json
+server/package-lock.json
+server/src/scripts/generate-uploads/package-lock.json
 
 couchdb.stdout
 

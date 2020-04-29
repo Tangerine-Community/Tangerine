@@ -12,7 +12,7 @@ export class DeviceLanguageComponent implements OnInit {
   testing = false
   done$ = new Subject()
 
-  @ViewChild('container') container:ElementRef
+  @ViewChild('container', {static: true}) container:ElementRef
   constructor(
     private languagesService:LanguagesService
   ) { }

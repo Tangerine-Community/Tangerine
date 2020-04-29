@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { MenuService } from './../shared/_services/menu.service';
 import { Component, OnInit } from '@angular/core';
 import { GroupsService } from './services/groups.service';
@@ -26,7 +27,8 @@ export class GroupsComponent implements OnInit {
     private menuService:MenuService,
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
-    private userService:UserService
+    private userService:UserService,
+    private router:Router
     ) {
     this.moment = moment
   }

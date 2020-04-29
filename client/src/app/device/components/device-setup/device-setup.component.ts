@@ -25,10 +25,10 @@ export class DeviceSetupComponent implements OnInit {
 
   ready$ = new Subject()
   step:string
-  @ViewChild('stepLanguageSelect') stepLanguageSelect:DeviceLanguageComponent
-  @ViewChild('stepDevicePassword') stepDevicePassword:DevicePasswordComponent
-  @ViewChild('stepDeviceRegistration') stepDeviceRegistration:DeviceRegistrationComponent
-  @ViewChild('stepDeviceSync') stepDeviceSync:DeviceSyncComponent
+  @ViewChild('stepLanguageSelect', {static: true}) stepLanguageSelect:DeviceLanguageComponent
+  @ViewChild('stepDevicePassword', {static: true}) stepDevicePassword:DevicePasswordComponent
+  @ViewChild('stepDeviceRegistration', {static: true}) stepDeviceRegistration:DeviceRegistrationComponent
+  @ViewChild('stepDeviceSync', {static: true}) stepDeviceSync:DeviceSyncComponent
 
   constructor(
     private languagesService:LanguagesService,
@@ -42,7 +42,7 @@ export class DeviceSetupComponent implements OnInit {
     if (isSandbox) {
       const device = await this.deviceService.register('test', 'test', true)
       await this.userService.createAdmin('password', <LockBoxContents>{
-        device 
+        device
       })
       await this.userService.login('admin', 'password')
       this.routerService.navigate([''])
@@ -72,7 +72,7 @@ export class DeviceSetupComponent implements OnInit {
         // that register returned.
         await this.deviceService.didUpdate(device._id, device.token)
         await this.userService.createAdmin(password, <LockBoxContents>{
-          device 
+          device
         })
         await this.userService.login('admin', password)
         this.step = STEP_SYNC

@@ -28,7 +28,9 @@ export class SyncCustomService {
 
   async sync(userDb:UserDatabase, syncDetails:SyncCustomDetails) {
     const uploadQueue = await this.uploadQueue(userDb, syncDetails.formInfos)
-    await this.push(userDb, syncDetails, uploadQueue)
+    if (uploadQueue.length > 0) {
+      await this.push(userDb, syncDetails, uploadQueue)
+    }
     // @TODO pull
   }
 
@@ -74,7 +76,7 @@ export class SyncCustomService {
         }
       }
       return queryKeys
-    }, []) 
+    }, [])
     const response = await userDb.query('sync-queue', { keys: queryKeys })
     return response
       .rows

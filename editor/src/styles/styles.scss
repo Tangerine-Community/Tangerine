@@ -247,3 +247,63 @@ mat-card-content > * {
 .tangy-content-top-margin {
   margin-top: 64px;
 }
+
+
+
+  /*
+   * Custom Icon List Item component
+   *
+   * Example:
+
+      <div class="icon-list-item">
+        <mwc-icon slot="item-icon">arrow_forward</mwc-icon>
+        <div>
+          <div>
+            foo
+          </div>
+          <div secondary>
+            bar
+          </div>
+        </div>
+      </div>
+
+   */
+   
+   .icon-list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-family: var(--paper-font-subhead_-_font-family);
+    font-size: var(--paper-font-subhead_-_font-size);
+    font-weight: var(--paper-font-subhead_-_font-weight);
+    line-height: var(--paper-font-subhead_-_line-height);
+    min-height: var(--paper-item-min-height, 48px);
+    padding: 0 16px;
+  }
+  .icon-list-item > mwc-icon {
+    width: 56px;
+  }
+  .icon-list-item > div {
+    min-height: var(--paper-item-body-two-line-min-height, 72px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    flex-basis: 0.0000000001px;
+  }
+  .icon-list-item > div > div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .icon-list-item > div > div + div {
+    font-size: var(--paper-font-body1_-_font-size);
+    font-weight: var(--paper-font-body1_-_font-weight);
+    line-height: var(--paper-font-body1_-_line-height);
+    color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
+  }
+
+  .icon-list-item>mwc-icon{
+    color: var(--primary-color) !important;
+  }

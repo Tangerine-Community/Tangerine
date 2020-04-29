@@ -14,7 +14,7 @@ export class GroupReleaseApkTestComponent implements OnInit {
   title = _TRANSLATE('Release Test Android App')
   breadcrumbs:Array<Breadcrumb> = []
  
-  @ViewChild('releaseApkComponent') releaseApkComponent:ReleaseApkComponent
+  @ViewChild('releaseApkComponent', {static: true}) releaseApkComponent:ReleaseApkComponent
   groupId:string
 
   constructor(

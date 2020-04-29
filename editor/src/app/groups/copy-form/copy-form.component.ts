@@ -12,7 +12,7 @@ export class CopyFormComponent implements OnInit {
   @Input('formId') formId:string
   @Input('sourceGroupId') sourceGroupId:string
   @Output('done') done = new EventEmitter();
-  @ViewChild('selectElement') selectElement: ElementRef
+  @ViewChild('selectElement', {static: true}) selectElement: ElementRef
   groups:Array<any> = []
 
 

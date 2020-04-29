@@ -13,7 +13,7 @@ PouchDB.defaults({auto_compaction: true, revs_limit: 1});
 
 export function DB(name, key = ''):PouchDB {
   let options = <any>{};
-  if (window['isCordovaApp'] && window['sqlitePlugin']) {
+  if (window['isCordovaApp'] && window['sqlitePlugin'] && !localStorage.getItem('ran-update-v3.8.0')) {
     options = {
       adapter: 'cordova-sqlite',
       location: 'default',

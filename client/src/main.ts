@@ -5,18 +5,10 @@ import 'hammerjs';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
-declare const window: any;
-
 if (environment.production) {
   enableProdMode();
 }
 
-if (window['isCordovaApp']) {
-  document.addEventListener('deviceready', () => {
-    platformBrowserDynamic().bootstrapModule(AppModule)
-      .catch(err => console.log(err));
-  }, false);
-} else {
-  platformBrowserDynamic().bootstrapModule(AppModule)
+platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.log(err));
-}
+

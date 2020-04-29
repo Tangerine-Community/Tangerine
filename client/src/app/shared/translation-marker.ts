@@ -1,3 +1,4 @@
+import { t } from 'tangy-form/util/t.js'
 export function _TRANSLATE(str: string) {
-    return str;
+    return t(str);
 }

@@ -1,3 +1,5 @@
+import { AppConfig } from './../../shared/_classes/app-config.class';
+import { ServerConfigService } from './../../shared/_services/server-config.service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from './../services/groups.service';
@@ -13,12 +15,18 @@ export class GroupDataComponent implements OnInit {
 
   title = 'Download Data'
   breadcrumbs:Array<Breadcrumb> = []
+  config:any = { enabledModules: [] }
   isGroupAdminUser
   groupId;
 
-  constructor(private userService:UserService, private route:ActivatedRoute) { }
+  constructor(
+    private serverConfig: ServerConfigService,
+    private userService:UserService,
+    private route:ActivatedRoute
+  ) { }
 
   async ngOnInit() {
+    this.config = await this.serverConfig.getServerConfig()
     this.breadcrumbs = []
     this.route.params.subscribe(async params => {
       this.groupId = params.groupId;

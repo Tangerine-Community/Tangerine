@@ -1,7 +1,7 @@
 <div class="tangy-main-container" [class.tangy-main-is-mobile]="mobileQuery.matches">
 
     <mat-sidenav-container class="tangy-main-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-        <mat-sidenav #snav [class.mat-drawer-opened]="snav.opened" [mode]="mobileQuery.matches ? 'over' : 'side'" disableClose>
+        <mat-sidenav #snav [class.mat-drawer-opened]="snav.opened" [mode]="mobileQuery.matches ? 'over' : 'side'" >
             <mat-nav-list class="tangy-full-width tangerine-logo">
                 <mat-list-item routerLink="/">
                     <!--img class="tangerine-logo-closed" src="/assets/img/solo-tangerine.png"-->

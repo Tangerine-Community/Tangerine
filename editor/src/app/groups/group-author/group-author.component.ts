@@ -18,7 +18,11 @@ export class GroupAuthorComponent implements OnInit {
   isGroupAdminUser
   groupId
 
-  constructor(private serverConfig: ServerConfigService, private userService:UserService,private route: ActivatedRoute) { }
+  constructor(
+    private serverConfig: ServerConfigService,
+    private userService:UserService,
+    private route: ActivatedRoute
+  ) { }
 
   async ngOnInit() {
     this.breadcrumbs = []

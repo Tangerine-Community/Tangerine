@@ -40,7 +40,7 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   activeForms;
   groupUrl;
   formsJsonURL;
- @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
+ @ViewChild('copyFormOverlay', {static: true}) copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private windowRef: WindowRef,
@@ -111,48 +111,15 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
     if (!confirmation) { return; }
     try {
       await this.tangerineForms.deleteForm(groupId, formId);
-      this.forms = await this.tangerineForms.getFormsInfo(this.groupId);
+      await this.getForms()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could not Delete Form.'));
     }
   }
-  async toggleTwoWaySyncOnForm(groupId, formId) {
-    const forms = await this.tangerineForms.getFormsInfo(groupId);
-    const updatedForms = <Array<TangerineFormInfo>>forms.map(form => {
-      return form.id === formId 
-        ? form.couchdbSyncSettings.enabled 
-          ? {
-            ...form,
-            couchdbSyncSettings: {
-              enabled: false,
-              filterByLocation: false
-            },
-            customSyncSettings: {
-              enabled: true,
-              push: true,
-              pull: false
-            }
-          }
-          : {
-            ...form,
-            couchdbSyncSettings: {
-              enabled: true,
-              filterByLocation: true 
-            },
-            customSyncSettings: {
-              enabled: false,
-              push: false,
-              pull: false
-            }
-          }
-        : form
-    })
-    await this.tangerineForms.saveFormsInfo(this.groupId, updatedForms)
-  }
 
   async closeCopyFormDialog() {
     this.copyFormOverlay.nativeElement.close();
-    this.forms = await this.tangerineForms.getFormsInfo(this.groupId);
+    await this.getForms()
   }
 
   onCopyFormClick(formId: string) {
@@ -181,15 +148,10 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
     }
   }
   async dropActive(event: CdkDragDrop<string[]>) {
-    if (event.previousIndex <= 1 || event.currentIndex <= 1) { return; }
     const confirmation = confirm(_TRANSLATE('Change order of forms?'));
     if (confirmation) {
       try {
         moveItemInArray(this.activeForms, event.previousIndex, event.currentIndex);
-        this.activeForms = (this.activeForms.filter(form => form.id !== 'user-profile' && form.id !== 'reports')).map(item => {
-          delete item.printUrl;
-          return item;
-        });
         await this.groupsService.saveFileToGroupDirectory(this.groupId, [...this.activeForms, ...this.archivedForms], this.formsJsonURL);
         await this.getForms();
       } catch (error) {
@@ -198,15 +160,10 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
     }
   }
   async dropArchived(event: CdkDragDrop<string[]>) {
-    if (event.previousIndex <= 1 || event.currentIndex <= 1) { return; }
     const confirmation = confirm(_TRANSLATE('Change order of forms?'));
     if (confirmation) {
       try {
         moveItemInArray(this.archivedForms, event.previousIndex, event.currentIndex);
-        this.activeForms = (this.activeForms.filter(form => form.id !== 'user-profile' && form.id !== 'reports')).map(item => {
-          delete item.printUrl;
-          return item;
-        });
         this.groupsService.saveFileToGroupDirectory(this.groupId, [...this.activeForms, ...this.archivedForms], this.formsJsonURL);
         await this.getForms();
       } catch (error) {

@@ -42,7 +42,7 @@
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
     <span>
-      <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
+      <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.pull ? 'on'  : ''}}">two-way sync</tangy-checkbox>
     </span>
     <mat-divider></mat-divider>
   </mat-list-item>
@@ -58,7 +58,7 @@
         <span [innerHTML]="form.title|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
         <span>
-          <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
+          <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.pull ? 'on'  : ''}}">two-way sync</tangy-checkbox>
         </span>
       </mat-list-item>
     </mat-list>
@@ -67,7 +67,7 @@
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
     <span >
-      <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
+      <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.pull ? 'on'  : ''}}">two-way sync</tangy-checkbox>
     </span>
     <mat-divider></mat-divider>
   </mat-list-item>

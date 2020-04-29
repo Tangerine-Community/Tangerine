@@ -1,20 +1,20 @@
 import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ClassFormService} from "../../_services/class-form.service";
-import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
-import {DashboardService} from "../../_services/dashboard.service";
-import {ClassUtils} from "../../class-utils";
-import {AppConfigService} from "../../../shared/_services/app-config.service";
+import {ClassFormService} from '../../_services/class-form.service';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {DashboardService} from '../../_services/dashboard.service';
+import {ClassUtils} from '../../class-utils';
+import {AppConfigService} from '../../../shared/_services/app-config.service';
 
 export interface ClassProgressReport {
   id: string;
   subtestName: string;
-  classSize:number;
-  studentsAssessed:number;
-  aveCorrectPerc:number;
-  aveCorrect:number;
-  attempted:number;
-  duration:number;
+  classSize: number;
+  studentsAssessed: number;
+  aveCorrectPerc: number;
+  aveCorrect: number;
+  attempted: number;
+  duration: number;
 }
 
 @Component({
@@ -24,17 +24,16 @@ export interface ClassProgressReport {
 })
 export class StudentProgressTableComponent implements OnInit {
 
-  classFormService:ClassFormService;
-  classUtils: ClassUtils
-  curriculumFormsList
-  students:any
-  studentCategorizedResults:any
+  classUtils: ClassUtils;
+  curriculumFormsList;
+  students: any;
+  studentCategorizedResults: any;
   categories: any;
-  totals:any;
-  curriculums:any;
-  subtestReports:any
-  classProgressReport:ClassProgressReport = {
-    id:null,
+  totals: any;
+  curriculums: any;
+  subtestReports: any;
+  classProgressReport: ClassProgressReport = {
+    id: null,
     subtestName: null,
     classSize: null,
     studentsAssessed: null,
@@ -42,31 +41,29 @@ export class StudentProgressTableComponent implements OnInit {
     aveCorrect: null,
     attempted: null,
     duration: null
-  }
+  };
 
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
     private dashboardService: DashboardService,
     private userService: UserService,
-    private appConfigService: AppConfigService
+    private classFormService: ClassFormService
   ) { }
 
   async ngOnInit() {
     const currentUser = await this.userService.getCurrentUser();
     if (currentUser) {
-      const classFormService = new ClassFormService({databaseName: currentUser});
-      this.classFormService = classFormService
       this.classUtils = new ClassUtils();
     }
     const classId = this.route.snapshot.paramMap.get('classId');
-    this.students = (await this.getMyStudents(classId)).sort((a, b) => a.student_name.localeCompare(b.student_name))
+    this.students = (await this.getMyStudents(classId)).sort((a, b) => a.student_name.localeCompare(b.student_name));
   }
 
   onStudentSelect(event) {
     if (event.value && event.value !== 'none') {
-      this.getReport(event.value)
+      this.getReport(event.value);
     }
   }
 
@@ -74,45 +71,45 @@ export class StudentProgressTableComponent implements OnInit {
 
     const tangyFormItem = this.route.snapshot.paramMap.get('type');
     const classId = this.route.snapshot.paramMap.get('classId');
-    let curriculumId = this.route.snapshot.paramMap.get('curriculumId');
-    let classDoc = await this.classFormService.getResponse(classId);
+    const curriculumId = this.route.snapshot.paramMap.get('curriculumId');
+    const classDoc = await this.classFormService.getResponse(classId);
 
     // Get data about this particular subtest
-    let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+    const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
+    const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
 
-    let subtest = curriculumFormsList.filter(obj => {
-      return obj.id === tangyFormItem
-    })
-    this.classProgressReport.subtestName = subtest[0].title
+    const subtest = curriculumFormsList.filter(obj => {
+      return obj.id === tangyFormItem;
+    });
+    this.classProgressReport.subtestName = subtest[0].title;
 
-    let studentResponses = await this.classFormService.getResponsesByStudentId(studentId)
+    const studentResponses = await this.classFormService.getResponsesByStudentId(studentId);
     // now feed into transform
-    let transformedStudentResponses = this.dashboardService.transformResultSet(studentResponses, curriculumFormsList, null);
+    const transformedStudentResponses = this.dashboardService.transformResultSet(studentResponses, curriculumFormsList, null);
     // @ts-ignore
     for (const result of transformedStudentResponses) {
-      let formTitle = result.formTitle
-      let studentId = result.studentId
-      let category = result.category
-      if (category === "") {
-        category = "Unassigned Category"
+      const formTitle = result.formTitle;
+      const studentId = result.studentId;
+      let category = result.category;
+      if (category === '') {
+        category = 'Unassigned Category';
       }
       // let score = parseInt(result.score).toString()
-      let percentCorrect = result.totalGridPercentageCorrect
-      let score = result.totalGridCorrect
+      const percentCorrect = result.totalGridPercentageCorrect;
+      const score = result.totalGridCorrect;
     }
   }
 
-  generateArray(obj){
-    return Object.keys(obj).map((key)=>{ return {key:key, value:obj[key]}});
+  generateArray(obj) {
+    return Object.keys(obj).map((key) => ({key: key, value: obj[key]}));
   }
 
   isEmpty(obj) {
-    let stringy = JSON.stringify(obj)
+    const stringy = JSON.stringify(obj);
     if (Object.keys(obj).length === 0) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 
@@ -120,25 +117,25 @@ export class StudentProgressTableComponent implements OnInit {
     const observations = [];
     try {
       // find which class is selected
-      let studentResults = await this.dashboardService.getMyStudents(classId);
+      const studentResults = await this.dashboardService.getMyStudents(classId);
       for (const result of studentResults) {
-        let student = {};
+        const student = {};
         result.doc['items'][0].inputs.forEach(item => {
           // inputs = [...inputs, ...item.value]
-          if (item.value !== "") {
+          if (item.value !== '') {
             student[item.name] = item.value;
             // if (item.name === curriculumFormsList[i]['id'] + "_score") {
             //   score = item.value
             // }
           }
-        })
-        student["id"] = result.doc['_id']
-        observations.push(student)
+        });
+        student['id'] = result.doc['_id'];
+        observations.push(student);
       }
     } catch (error) {
       console.error(error);
     }
-    return observations
+    return observations;
   }
 
   async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList) {
