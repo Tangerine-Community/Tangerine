@@ -24,6 +24,7 @@ import {
   MatButtonModule, MatIconModule, MatCheckboxModule, MatCardModule, MatMenuModule,
   MatSidenavModule, MatToolbarModule, MatDividerModule
 } from '@angular/material';
+import { httpInterceptorProviders } from './core/http/interceptors';
 
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -64,7 +65,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     }),
     BrowserAnimationsModule
   ],
-  providers: [TangyErrorHandler, WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
+  providers: [httpInterceptorProviders, TangyErrorHandler,
+    WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
