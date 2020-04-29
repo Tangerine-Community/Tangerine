@@ -1,12 +1,11 @@
-import { Component, ViewChild, ElementRef, AfterContentInit, OnInit, Input } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import {MatTabChangeEvent} from "@angular/material";
-
-import { UserService } from '../../core/auth/_services/user.service';
-import { WindowRef } from '../../core/window-ref.service';
-import { TangyFormService } from '../tangy-form-service';
-import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
+import { environment } from './../../../environments/environment';
+import { FormInfo, FormTemplate } from 'src/app/tangy-forms/classes/form-info.class';
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
+import { Subject } from 'rxjs';
+import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } from '@angular/core';
+import { _TRANSLATE } from '../../shared/translation-marker';
+import { TangyFormService } from '../tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 
@@ -15,55 +14,98 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   templateUrl: './tangy-forms-player.component.html',
   styleUrls: ['./tangy-forms-player.component.css']
 })
-export class TangyFormsPlayerComponent implements OnInit {
+export class TangyFormsPlayerComponent {
+
+  @Input('formId') formId:string
+  @Input('templateId') templateId:string
+  @Input('formResponseId') formResponseId:string
+  @Input('location') location:any
+
+  $rendered = new Subject()
+  $submit = new Subject()
+  rendered = false
+
+  formInfo:FormInfo
+  formTemplatesInContext:Array<FormTemplate>
+  response:any
 
   throttledSaveLoaded;
   throttledSaveFiring;
-  groupId;
-  @Input() preventSave = false
 
+  formEl;
+  window:any;
   @ViewChild('container', {static: true}) container: ElementRef;
-
   constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-  ) { }
+    private tangyFormsInfoService:TangyFormsInfoService,
+    private service: TangyFormService,
+  ) {
+    this.window = window
+  }
 
-  async ngOnInit() {
-    this.route.params.subscribe(async params => {
-      this.groupId = params['groupId']
-        ? params['groupId']
-        : params['groupName']
-      const responseId = params['responseId'];
-      const response = <TangyFormResponseModel>await this.http.get(`/api/${this.groupId}/${responseId}`).toPromise()
-      const formId = response.form.id
+  isDirty() {
+    if (this.formEl) {
+      const state = this.formEl.store.getState()
+      const isDirty = state.items.some((acc, item) => item.isDirty)
+      return isDirty
+    } else {
+      return true
+    }
+  }
+
+  isComplete() {
+    if (this.formEl) {
+      return this.formEl.store.getState().form.complete
+    } else {
+      return true
+    }
+  }
+
+  async render() {
+    //
+    // Get form ingredients.
+    const formResponse = this.formResponseId
+      ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
+      : ''
+    this.formId = this.formId
+      ? this.formId
+      : formResponse['form']['id']
+    this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
+    this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
+    if (this.templateId) {
+      let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
+      const response = formResponse
+      eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
+    } else {
+      let  formHtml =  await this.tangyFormsInfoService.getFormMarkup(this.formId)
+      // Put the form on the screen.
       const container = this.container.nativeElement
-      let formHtml = await this.http.get(`/editor/${this.groupId}/content/${formId}/form.html`, {responseType: 'text'}).toPromise()
       container.innerHTML = formHtml
       let formEl = container.querySelector('tangy-form')
-      if (responseId) {
-        formEl.response = response 
+      this.formEl = formEl;
+      // Put a response in the store by issuing the FORM_OPEN action.
+      if (formResponse) {
+        formEl.response = formResponse
       } else {
         formEl.newResponse()
+        this.formResponseId = formEl.response._id
       }
-      // Save in the db if the form response is not complete, otherwise no point in generating new response revisions.
-      if (!response.complete) {
-        formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-          let response = _.target.store.getState()
-          this.throttledSaveResponse(response)
-        })
-        formEl.addEventListener('submit', _ => {
-          setTimeout(() => window.history.back(), 1000)
-        })
-        if (formEl.getAttribute('id') === 'user-profile') {
-          formEl.addEventListener('submit', _ => {
-            _.preventDefault()
-            let response = _.target.store.getState()
-            this.throttledSaveResponse(response)
-          })
-        }
-      }
-    });
+      this.response = formEl.response
+      // Listen up, save in the db.
+      formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+        let response = _.target.store.getState()
+        this.throttledSaveResponse(response)
+      })
+      formEl.addEventListener('submit', () => {
+        this.$submit.next(true)
+      })
+    }
+    this.$rendered.next(true)
+    this.rendered = true
+  }
+
+  setTemplate(templateId) {
+    this.templateId = templateId
+    this.render()
   }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
@@ -84,8 +126,23 @@ export class TangyFormsPlayerComponent implements OnInit {
   }
 
   async saveResponse(state) {
-    await this.http.post(`/api/${this.groupId}/${state._id}`, state).toPromise()
+    let stateDoc = {}
+    try {
+      stateDoc = await this.service.getResponse(state._id)
+    } catch (e) {
+      let r = await this.service.saveResponse(state)
+      stateDoc = await this.service.getResponse(state._id)
+    }
+    await this.service.saveResponse({
+      state,
+      _rev: stateDoc['_rev'],
+      location: this.location
+    })
+    this.response = state
   }
 
+  print() {
+    window.print(); 
+  }
 
 }

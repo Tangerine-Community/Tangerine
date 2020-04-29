@@ -1,9 +1,12 @@
+import { environment } from './../../../environments/environment';
+import { FormInfo, FormTemplate } from 'src/app/tangy-forms/classes/form-info.class';
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
+import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { Component, ViewChild, ElementRef, AfterContentInit, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-import { CaseManagementService } from '../../case-management/_services/case-management.service';
 import { UserService } from '../../shared/_services/user.service';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
@@ -15,11 +18,20 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   templateUrl: './tangy-forms-player.component.html',
   styleUrls: ['./tangy-forms-player.component.css']
 })
-export class TangyFormsPlayerComponent implements AfterContentInit {
+export class TangyFormsPlayerComponent {
 
   @Input('formId') formId:string
-  @Input('viewId') viewId:string
+  @Input('templateId') templateId:string
   @Input('formResponseId') formResponseId:string
+  @Input('location') location:any
+
+  $rendered = new Subject()
+  $submit = new Subject()
+  rendered = false
+
+  formInfo:FormInfo
+  formTemplatesInContext:Array<FormTemplate>
+  response:any
 
   throttledSaveLoaded;
   throttledSaveFiring;
@@ -30,51 +42,76 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
     private service: TangyFormService,
-    private route: ActivatedRoute,
-    private http: HttpClient,
     private userService: UserService,
   ) {
     this.window = window
   }
 
   isDirty() {
-    const state = this.formEl.store.getState()
-    const isDirty = state.items.some((acc, item) => item.isDirty)
-    return isDirty
+    if (this.formEl) {
+      const state = this.formEl.store.getState()
+      const isDirty = state.items.some((acc, item) => item.isDirty)
+      return isDirty
+    } else {
+      return true
+    }
   }
 
   isComplete() {
-    return this.formEl.store.getState().form.complete
+    if (this.formEl) {
+      return this.formEl.store.getState().form.complete
+    } else {
+      return true
+    }
   }
 
-  async ngAfterContentInit() {
+  async render() {
     //
-    this.window.tangyLocationFilterBy = (await this.userService.getUserLocations()).join(',')
+    this.window.tangyLocationFilterBy = this.location || (await this.userService.getUserLocations()).join(',')
     // Get form ingredients.
     const formResponse = this.formResponseId
-      ? await this.service.getResponse(this.formResponseId)
+      ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
       : ''
     this.formId = this.formId
       ? this.formId
-      : formResponse.form.id
-    const formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId);
-    let  formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
-    // Put the form on the screen.
-    const container = this.container.nativeElement
-    container.innerHTML = formHtml
-    let formEl = container.querySelector('tangy-form')
-    this.formEl = formEl;
-    // Put a response in the store by issuing the FORM_OPEN action.
-    if (formResponse) {
-      formEl.response = formResponse
+      : formResponse['form']['id']
+    this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
+    this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
+    if (this.templateId) {
+      let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
+      const response = formResponse
+      eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
-      formEl.newResponse()
+      let  formHtml =  await this.tangyFormsInfoService.getFormMarkup(this.formId)
+      // Put the form on the screen.
+      const container = this.container.nativeElement
+      container.innerHTML = formHtml
+      let formEl = container.querySelector('tangy-form')
+      this.formEl = formEl;
+      // Put a response in the store by issuing the FORM_OPEN action.
+      if (formResponse) {
+        formEl.response = formResponse
+      } else {
+        formEl.newResponse()
+        this.formResponseId = formEl.response._id
+      }
+      this.response = formEl.response
+      // Listen up, save in the db.
+      formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+        let response = _.target.store.getState()
+        this.throttledSaveResponse(response)
+      })
+      formEl.addEventListener('submit', () => {
+        this.$submit.next(true)
+      })
     }
-    // Listen up, save in the db.
-    formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-      let response = _.target.store.getState()
-      this.throttledSaveResponse(response)
-    })
+    this.$rendered.next(true)
+    this.rendered = true
+  }
+
+  setTemplate(templateId) {
+    this.templateId = templateId
+    this.render()
   }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
@@ -102,8 +139,16 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       let r = await this.service.saveResponse(state)
       stateDoc = await this.service.getResponse(state._id)
     }
-    let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
-    await this.service.saveResponse(newStateDoc)
+    await this.service.saveResponse({
+      state,
+      _rev: stateDoc['_rev'],
+      location: this.location
+    })
+    this.response = state
+  }
+
+  print() {
+    window.print(); 
   }
 
 }

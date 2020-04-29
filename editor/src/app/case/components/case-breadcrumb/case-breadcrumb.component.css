@@ -1,3 +1,10 @@
+@media print {
+  :host {
+    display: none;
+  }
+}
+
+
 .primary {
     position: fixed;
     top: 0px;

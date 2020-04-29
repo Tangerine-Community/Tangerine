@@ -1,3 +1,4 @@
+import { UserService } from 'src/app/shared/_services/user.service';
 import { TangyFormsPlayerComponent } from './../tangy-forms-player/tangy-forms-player.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
@@ -14,15 +15,26 @@ export class TangyFormsPlayerRouteComponent implements OnInit {
   private sub:any
   formResponseId:string
   formId:string
+  templateId:string
+  location:any
 
   constructor(
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private userService:UserService 
   ) { }
 
   ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-       this.formResponseId = params['formResponseId'] 
-       this.formId = params['formId']
+    this.sub = this.route.params.subscribe(async params => {
+      this.formPlayer.location = await this.userService.getUserLocation()
+      if (params['templateId']) {
+        this.formPlayer.formResponseId = params['formResponseId'] 
+        this.formPlayer.templateId = params['templateId']
+        this.formPlayer.render()
+      } else {
+        this.formPlayer.formResponseId = params['formResponseId'] 
+        this.formPlayer.formId = params['formId']
+        this.formPlayer.render()
+      }
     });
   }
 
