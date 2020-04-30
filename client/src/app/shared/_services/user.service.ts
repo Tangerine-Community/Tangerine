@@ -182,7 +182,6 @@ export class UserService {
     })
     await this.usersDb.post(userAccount)
     let userDb = new UserDatabase('admin', userAccount.userUUID, lockBoxContents.device.key, lockBoxContents.device._id, true)
-    await this.installDefaultUserDocs(userDb)
     await userDb.put(userProfile)
     await this.lockBoxService.fillLockBox('admin', password, lockBoxContents)
     return userAccount
