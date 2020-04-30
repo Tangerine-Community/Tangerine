@@ -104,16 +104,14 @@ contains only a single word and no spaces.
 Second, define the location levels for Tangerine. Click Configure/Location Lists and add the desired levels using the '+' sign
 
 
-<img src="./media/locationLevel.png" width="570">
-
 
 Click "Create a New Location Level".
 
 
-<img src="./media/image46.png" width="570">
+<img src="./media/locationLevel.png" height="200">
 
 
-On the next screen, enter the name of the "highest" location level under
+Enter the name of the "highest" location level under
 "Label" (e.g. region). Repeat this process for all other location
 levels, however, for each "child" level, select which is the parent
 level. E.g. in the case of district, the "Parent Level" would be
@@ -123,12 +121,15 @@ level. E.g. in the case of district, the "Parent Level" would be
 as you define them for your group. If you made a mistake or need to make
 changes, contact the Tangerine helpdesk.
 
-<img src="./media/image47.png" width="570">
+<img src="./media/locationImport.png" height="200">
 
-Next, navigate to the "MANAGE LOCATION LIST CONTENT" tab and select
-"Import Location List". Double check that your CSV file contains only
+Next, click the Import tab and select
+"Import CSV". Double check that your CSV file contains only
 those columns that you have defined as levels and spelled exactly the
 same!
+
+[Download a sample location list file with IDs](http://bit.ly/2WzcTnB)
+
 
 Once you selected the CSV, Tangerine will ask you to map the location
 levels you already defined to the column headers found in your csv file.
@@ -150,7 +151,7 @@ is completed, you will receive a notification like this:
 
 
 Once you have successfully uploaded a location list and prepared
-Tangerine, you can add the location item to your form. The following
+Tangerine, you can add the location input item to your form. The following
 might be a way to configure this item, once you completed the above
 steps.
 
@@ -179,7 +180,7 @@ of the location list in your Excel file.
 
 Check out this Excel file to see a location list with IDs that you can
 import in Tangerine. The formula for generating the IDs can be copied to
-your own file: <http://bit.ly/2WzcTnB>
+your own file: [Download a sample location list file with IDs](http://bit.ly/2WzcTnB)
 
 
 <img src="./media/image51.png" width="570">
@@ -222,7 +223,7 @@ or more options.
 The following might be a way to configure this item:
 
 
-<img src="./media/image53.png" width="570">
+<img src="./media/checkboxGroup.png" width="570">
 
 
 **Variable name**: Enter "books".
@@ -251,7 +252,7 @@ Hit "ADD ANOTHER" to add additional answer options, e.g.:
 
 **Value** (answer option): "1"
 
-<img src="./media/image54.png" width="570">
+
 **Label** (answer option): "Storybooks
 (fiction)"
 
@@ -262,11 +263,6 @@ Hit "ADD ANOTHER" to add additional answer options, e.g.:
 **Label** (answer option): "Books about real things (non-fiction)
 
 When done adding all answer options, hit "**SUBMIT**".
-
-On the tablet this item will look like this:
-
-
-<img src="./media/image55.png" width="570">
 
 
 **NOTE:** The item type "CHECKBOX" only adds a single checkbox to the
@@ -344,7 +340,7 @@ first 4 items correct and then the following 10 items incorrect, the
 test will not autostop.
 
 
-<img src="./media/image61.png" width="570">
+<img src="./media/timedGrid.png" width="570">
 
 **Show if**: Leave blank
 
@@ -413,13 +409,13 @@ bolding a piece of text, etc.).
 
 When done adding all answer options, hit "**SUBMIT**".
 
-<img src="./media/image63.png" width="570">
+<img src="./media/htmlContainer.png" width="570">
 
 
 On the tablet this HTML container item will look like this:
 
 
-<img src="./media/image64.png" width="570">
+<img src="./media/htmlContainerView.png" width="570">
 
 
 Copying Items
