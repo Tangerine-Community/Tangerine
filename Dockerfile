@@ -35,6 +35,7 @@ RUN cd /tangerine/editor && \
 ADD client/package.json /tangerine/client/package.json
 RUN cd /tangerine/client/ && \
     npm install
+RUN cp /tangerine/client/package-lock.json /tangerine/client/package-lock-srv.json
 
 # Install PWA tools.
 RUN git config --global url."git://".insteadOf https://
@@ -57,10 +58,10 @@ RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 # Build client.
 ADD client /tangerine/client
 RUN cd /tangerine/client && \
-    ./node_modules/.bin/ng build --base-href "./"
+    ./node_modules/.bin/ng build --base-href "./"; exit 0
 
 # Modify links to javascript modules (Angular 8 work-around)
-RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/dist/tangerine-client/index.html
+RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/dist/tangerine-client/index.html ; exit 0
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
@@ -72,7 +73,7 @@ RUN cd /tangerine/client && \
     cp -r dist/tangerine-client builds/apk/www/shell && \
     cp -r pwa-tools/updater-app/build/default builds/pwa && \
     mkdir builds/pwa/release-uuid && \
-    cp -r dist/tangerine-client builds/pwa/release-uuid/app
+    cp -r dist/tangerine-client builds/pwa/release-uuid/app; exit 0
 
 # Add the rest of server.
 ADD server /tangerine/server
