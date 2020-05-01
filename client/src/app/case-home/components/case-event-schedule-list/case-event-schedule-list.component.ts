@@ -41,8 +41,11 @@ export class CaseEventScheduleListComponent implements OnInit {
   private _date = Date.now()
   @Input()
   set date(date:number) {
-    this._date = date
-    this.calculateEvents()
+    this._date = date;
+    // this.calculateEvents()
+      ( async (name) => {
+        await this.calculateEvents()
+      })();
   }
 
   private _mode = CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
@@ -51,8 +54,11 @@ export class CaseEventScheduleListComponent implements OnInit {
     if (this._mode === mode) {
       return;
     }
-    this._mode = mode
-    this.calculateEvents()
+    this._mode = mode;
+    //   await this.calculateEvents()
+     ( async (name) => {
+      await this.calculateEvents()
+    })();
   }
 
   constructor(
@@ -93,7 +99,7 @@ export class CaseEventScheduleListComponent implements OnInit {
       excludeEstimates = false
     }
     const events = await this.casesService.getEventsByDate(startDate, endDate, excludeEstimates)
-    this.render(events)
+    await this.render(events)
   }
 
   async render(events:Array<CaseEventInfo>) {
@@ -117,12 +123,12 @@ export class CaseEventScheduleListComponent implements OnInit {
       if (daysOfWeekSeen.indexOf(date.getDate()) === -1) {
         daysOfWeekSeen.push(date.getDate())
         eventInfo.newDateLabel = moment(date).format('ddd')
-        eventInfo.newDateNumber = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
+        eventInfo.newDateNumber = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
           ? date.getDate().toString()
           : ``
       }
       const searchDoc = searchDocs.find(searchDoc => searchDoc._id === event.caseId)
-      const response = responses.find(response => response._id === event.caseId) 
+      const response = responses.find(response => response._id === event.caseId)
       const formTypeInfo = FORM_TYPES_INFO.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
       const formId = formInfo.id
@@ -131,8 +137,9 @@ export class CaseEventScheduleListComponent implements OnInit {
       eventInfo.primary = formInfo.searchSettings.primaryTemplate ? eval('`' + formInfo.searchSettings.primaryTemplate + '`') : response._id
       eventInfo.secondary = formInfo.searchSettings.secondaryTemplate ? eval('`' + formInfo.searchSettings.secondaryTemplate + '`') : formInfo.title
       eventInfo.caseDefinition = this.getCaseDefinition(event)
-      return eventInfo 
+      return eventInfo
     })
+    // console.log('dude')
     this.ref.detectChanges()
     this.didSearch$.next(true)
   }
@@ -155,7 +162,7 @@ export class CaseEventScheduleListComponent implements OnInit {
       templateScheduleListItemPrimary,
       templateScheduleListItemSecondary
     }
-   
+
   }
 
 }

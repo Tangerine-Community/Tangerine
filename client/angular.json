@@ -140,5 +140,8 @@
       }
     }
   },
-  "defaultProject": "tangerine-client"
+  "defaultProject": "tangerine-client",
+  "cli": {
+    "analytics": "6e433983-c8e3-418a-89a5-1efa33add66b"
+  }
 }

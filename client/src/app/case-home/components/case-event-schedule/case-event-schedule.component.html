@@ -9,6 +9,7 @@
     <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">{{'Week View'|translate}}</option>
     <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">{{'Day View'|translate}}</option>
   </select>
-  <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
+  <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)" weekInViewport="{{weekInViewport}}" yearInViewport="{{yearInViewport}}" datePicked="{{today}}" #dateCarousel></date-carousel>
+<!--  <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)" weekinviewport=5 yearinviewport=2019 datepicked=1558526434000 #dateCarousel></date-carousel>-->
 </div>
 <app-case-event-schedule-list #list></app-case-event-schedule-list>
