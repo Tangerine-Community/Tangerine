@@ -52,7 +52,7 @@ export class CaseEventScheduleComponent implements OnInit {
   }
 
   onWeekChange(event) {
-    this.weekModeDate = moment(`${event.target.yearInViewport} ${event.target.weekInViewport}`, 'YYYY WW').unix()*1000
+    this.weekModeDate = moment(`${event.target.yearInViewport} ${event.target.weekInViewport + 1}`, 'YYYY WW').unix()*1000
     this.updateList()
   }
 
