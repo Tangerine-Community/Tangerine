@@ -118,7 +118,14 @@ export class EventFormComponent implements AfterContentInit {
       stateDoc = await this.tangyFormService.getResponse(state._id)
     }
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
-    await this.tangyFormService.saveResponse({...newStateDoc, location: this.caseService.case.location})
+    await this.tangyFormService.saveResponse({
+      ...newStateDoc,
+      location: this.caseService.case.location,
+      caseId: this.caseService.case._id,
+      caseEventId: this.caseEvent.id,
+      eventFormId: this.eventForm.id,
+      participantId: this.eventForm.participantId
+    })
   }
 
 }
