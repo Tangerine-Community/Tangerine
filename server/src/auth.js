@@ -77,9 +77,16 @@ const hashPassword = async (password) => {
   }
 };
 
+const extendSession = async (req, res) => {
+  const {username} = req.body;
+  const token = createLoginJWT({ username });
+  return res.status(200).send({data: { token }});
+};
+
 module.exports = {
   areCredentialsValid,
   doesUserExist,
+  extendSession,
   findUserByUsername,
   hashPassword,
   isSuperAdmin,

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const expiresIn = process.env.JWT_TOKEN_VALIDITY || '7 days';
+const expiresIn = process.env.JWT_TOKEN_VALIDITY || '15 minutes';
 const issuer = process.env.JWT_TOKEN_ISSUER || 'Tangerine Devs';
 const jwtTokenSecret =
   process.env.JWT_TOKEN_SECRET ||
@@ -7,9 +7,9 @@ const jwtTokenSecret =
 
 const createLoginJWT = ({ username }) => {
   const signingOptions = {
+    expiresIn,
     issuer,
     subject: username,
-    expiresIn,
   };
   return jwt.sign({ username }, jwtTokenSecret, signingOptions);
 };
@@ -34,6 +34,6 @@ const decodeJWT = (token) => {
 
 module.exports = {
   createLoginJWT,
-  verifyJWT,
   decodeJWT,
+  verifyJWT,
 };

@@ -38,7 +38,8 @@ const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
-const {doesUserExist, findUserByUsername, isSuperAdmin, hashPassword, USERS_DB, login} = require('./auth')
+const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
+  hashPassword, USERS_DB, login} = require('./auth')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 
@@ -93,6 +94,7 @@ var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-
 
 // Login service.
 app.post('/login', login);
+app.post('/extendSession', isAuthenticated, extendSession);
 
 app.get('/login/validate/:userName',
   function (req, res) {

@@ -49,4 +49,22 @@ export class AuthenticationService {
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
   }
+
+  async extendUserSession() {
+    const username = localStorage.getItem('user_id');
+    try {
+      const data = await this.http.post('/extendSession', {username}, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        const token = data.body['data']['token'];
+        const jwtData = jwt_decode(token);
+        localStorage.setItem('token', token);
+        localStorage.setItem('user_id', jwtData.username);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
