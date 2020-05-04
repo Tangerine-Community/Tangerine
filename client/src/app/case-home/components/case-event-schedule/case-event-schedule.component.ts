@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CASE_EVENT_SCHEDULE_LIST_MODE_DAILY, CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY, CaseEventScheduleListComponent } from '../case-event-schedule-list/case-event-schedule-list.component';
 import moment from 'moment/src/moment'
@@ -13,7 +13,6 @@ export class CaseEventScheduleComponent implements OnInit {
   didSearch$ = new Subject()
 
   @ViewChild(CaseEventScheduleListComponent, {static: true}) list:CaseEventScheduleListComponent
-  @ViewChild('dateCarousel', {static: true}) dateCarousel:ElementRef
 
   @Input()
   dayModeDate:number
@@ -29,11 +28,6 @@ export class CaseEventScheduleComponent implements OnInit {
     this.weekModeDate = moment(moment(new Date()).format('YYYY WW'), 'YYYY WW').unix()*1000
     this.dayModeDate = moment(moment(new Date()).format('YYYY MM DD'), 'YYYY MM DD').unix()*1000
     this.updateList()
-    // Work around for some issue where the <date-carousel> component is not rendering on first init.
-    setTimeout(() => {
-      this.dateCarousel.nativeElement._next()
-      this.dateCarousel.nativeElement._back()
-    }, 500)
   }
 
   onModeChange(event) {
@@ -52,7 +46,7 @@ export class CaseEventScheduleComponent implements OnInit {
   }
 
   onWeekChange(event) {
-    this.weekModeDate = moment(`${event.target.yearInViewport} ${event.target.weekInViewport + 1}`, 'YYYY WW').unix()*1000
+    this.weekModeDate = moment(`${event.target.yearInViewport} ${event.target.weekInViewport}`, 'YYYY WW').unix()*1000
     this.updateList()
   }
 
