@@ -20,9 +20,6 @@ class EventInfo {
   newDateNumber = ''
   newDateLabel = ''
   openLink = ''
-  icon = ''
-  primary = ''
-  secondary = ''
   caseDefinition: CaseDefinition
 }
 
@@ -92,11 +89,11 @@ export class CaseEventScheduleListComponent implements OnInit {
       endDate = endOfWeek
       excludeEstimates = false
     }
-    const events = await this.casesService.getEventsByDate(startDate, endDate, excludeEstimates)
+    const events = <Array<any>>await this.casesService.getEventsByDate(startDate, endDate, excludeEstimates)
     this.render(events)
   }
 
-  async render(events:Array<CaseEventInfo>) {
+  async render(events:Array<any>) {
     // Get some data together before rendering.
     const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     const searchDocs:Array<SearchDoc> = []
@@ -114,9 +111,10 @@ export class CaseEventScheduleListComponent implements OnInit {
     // Render.
     let markup = ``
     let daysOfWeekSeen = []
-    this.eventsInfo = events.map( event => {
+    const eventsInfo =  []
+    for (let eventInstance of events) {
       const eventInfo = <EventInfo>{}
-      const date = event.occurredOnDay || event.scheduledDay || event.estimatedDay || event.windowStartDay
+      const date = eventInstance.occurredOnDay || eventInstance.scheduledDay || eventInstance.estimatedDay || eventInstance.windowStartDay
       if (daysOfWeekSeen.indexOf(date) === -1) {
         daysOfWeekSeen.push(date)
         eventInfo.newDateLabel = moment(date).format('ddd')
@@ -124,30 +122,27 @@ export class CaseEventScheduleListComponent implements OnInit {
           ? moment(date).format('D') 
           : ``
       }
-      const searchDoc = searchDocs.find(searchDoc => searchDoc._id === event.caseId)
-      const response = responses.find(response => response._id === event.caseId) 
-      const formTypeInfo = FORM_TYPES_INFO.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-      const formInfo = formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      const formId = formInfo.id
-      eventInfo.openLink = `/case/event/${searchDoc._id}/${event.id}`
-      eventInfo.icon = eval('`' + formTypeInfo.iconTemplate + '`')
-      eventInfo.primary = formInfo.searchSettings.primaryTemplate ? eval('`' + formInfo.searchSettings.primaryTemplate + '`') : response._id
-      eventInfo.secondary = formInfo.searchSettings.secondaryTemplate ? eval('`' + formInfo.searchSettings.secondaryTemplate + '`') : formInfo.title
-      eventInfo.caseDefinition = this.getCaseDefinition(event)
-      return eventInfo 
-    })
+      // Note this rendering is a bit crufty. Could be simplified. CaseDefinition is being overloaded with things it shouldn't have.
+      eventInfo.openLink = `/case/event/${eventInstance.caseId}/${eventInstance.id}`
+      eventInfo.caseDefinition = await this.getCaseDefinition(eventInstance)
+      eventsInfo.push(eventInfo)
+    }
+    this.eventsInfo = eventsInfo
     this.ref.detectChanges()
     this.didSearch$.next(true)
   }
 
-    getCaseDefinition(caseEventInfo:CaseEventInfo){
+  async getCaseDefinition(caseEventInfo:CaseEventInfo){
       if(!caseEventInfo.caseDefinition) return
     let templateScheduleListItemIcon, templateScheduleListItemPrimary,templateScheduleListItemSecondary,caseEventDefinition;
     const caseDefinition = caseEventInfo.caseDefinition;
     caseEventDefinition = caseDefinition.eventDefinitions.find(({id}) => id === caseEventInfo.caseEventDefinitionId)
     const caseInstance = caseEventInfo.caseInstance;
+    const caseService =this.caseService
+    await caseService.load(caseInstance._id)
+    const caseEvent = caseService.case.events.find(caseEvent => caseEvent.id === caseEventInfo.id)
     const defaultTemplateScheduleListItemIcon = `${caseEventInfo.status === CASE_EVENT_STATUS_COMPLETED ? 'event_note' : 'event_available'}`
-    const defaultTemplateScheduleListItemPrimary = '<span>${caseEventDefinition.name}</span>'
+    const defaultTemplateScheduleListItemPrimary = '<span>${caseEventDefinition.name}</span> in Case ${caseService.case._id.substr(0,5)}'
     const defaultTemplateScheduleListItemSecondary = '<span>${caseInstance.label}</span>'
     eval(`templateScheduleListItemIcon = caseDefinition.templateScheduleListItemIcon ? \`${caseDefinition.templateScheduleListItemIcon}\` : \`${defaultTemplateScheduleListItemIcon}\``)
     eval(`templateScheduleListItemPrimary = caseDefinition.templateScheduleListItemPrimary ? \`${caseDefinition.templateScheduleListItemPrimary}\` : \`${defaultTemplateScheduleListItemPrimary}\``)
