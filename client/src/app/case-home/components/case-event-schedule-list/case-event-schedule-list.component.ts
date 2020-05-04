@@ -101,8 +101,12 @@ export class CaseEventScheduleListComponent implements OnInit {
     const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     const searchDocs:Array<SearchDoc> = []
     const responses:Array<TangyFormResponse> = []
-    const caseIds = events.reduce((caseIds, caseEventInfo) => caseIds.indexOf(caseEventInfo.caseId) === -1 ? [...caseIds, caseEventInfo.caseId] : caseIds, [])
-    for (const caseId of caseIds) {
+    const uniqueCaseIds = events.reduce((uniqueCaseIds, caseEventInfo) => {
+      return uniqueCaseIds.indexOf(caseEventInfo.caseId) === -1
+        ? [...uniqueCaseIds, caseEventInfo.caseId]
+        : uniqueCaseIds
+    }, [])
+    for (const caseId of uniqueCaseIds) {
       searchDocs.push(await this.searchService.getIndexedDoc(this.userService.getCurrentUser(), caseId))
       responses.push(await userDb.get(caseId))
     }
@@ -112,13 +116,12 @@ export class CaseEventScheduleListComponent implements OnInit {
     let daysOfWeekSeen = []
     this.eventsInfo = events.map( event => {
       const eventInfo = <EventInfo>{}
-      const searchDate = event.occurredOnDay || event.scheduledDay || event.estimatedDay || event.windowStartDay
-      const date = new Date(searchDate)
-      if (daysOfWeekSeen.indexOf(date.getDate()) === -1) {
-        daysOfWeekSeen.push(date.getDate())
+      const date = event.occurredOnDay || event.scheduledDay || event.estimatedDay || event.windowStartDay
+      if (daysOfWeekSeen.indexOf(date) === -1) {
+        daysOfWeekSeen.push(date)
         eventInfo.newDateLabel = moment(date).format('ddd')
         eventInfo.newDateNumber = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
-          ? date.getDate().toString()
+          ? moment(date).format('D') 
           : ``
       }
       const searchDoc = searchDocs.find(searchDoc => searchDoc._id === event.caseId)
