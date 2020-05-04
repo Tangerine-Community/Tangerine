@@ -1,4 +1,4 @@
-<div class="event-info" *ngFor="let eventInfo of eventsInfo">
+<div class="event-info" *ngFor="let eventInfo of eventsInfo" routerLink="{{eventInfo.openLink}}">
   <div *ngIf="eventInfo.newDateNumber" class="new-date"> 
     <div class="new-date-container">
       <div class="new-date-number">
