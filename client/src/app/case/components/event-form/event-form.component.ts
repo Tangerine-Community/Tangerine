@@ -124,7 +124,7 @@ export class EventFormComponent implements AfterContentInit {
       caseId: this.caseService.case._id,
       caseEventId: this.caseEvent.id,
       eventFormId: this.eventForm.id,
-      participantId: this.eventForm.participantId
+      participantId: this.eventForm.participantId || ''
     })
   }
 

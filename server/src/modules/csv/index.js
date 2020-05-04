@@ -87,7 +87,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
       caseId: formResponse.caseId,
       caseEventId: formResponse.caseEventId,
       eventFormId: formResponse.eventFormId,
-      participantId: formResponse.participantId
+      participantId: formResponse.participantId || ''
     } : {}
   };
   function set(input, key, value) {
