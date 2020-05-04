@@ -7,7 +7,6 @@ import { AuthenticationService } from './core/auth/_services/authentication.serv
 import { RegistrationService } from './registration/services/registration.service';
 import { WindowRef } from './core/window-ref.service';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { UserService } from './core/auth/_services/user.service';
 import { AppConfigService } from './shared/_services/app-config.service';
@@ -61,13 +60,13 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     async logout() {
+        clearInterval(this.sessionTimeoutCheckTimerID);
         await this.authenticationService.logout();
         this.loggedIn = false;
         this.isAdminUser = false;
         this.canManageSitewideUsers = false;
         this.user_id = null;
         this.router.navigate(['/login']);
-        clearInterval(this.sessionTimeoutCheckTimerID);
     }
 
     async ngOnInit() {
