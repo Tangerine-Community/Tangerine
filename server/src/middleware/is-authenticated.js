@@ -1,6 +1,6 @@
 const log = require('tangy-log').log;
 const { verifyJWT, decodeJWT } = require('../auth-utils');
-module.exports = function (req, res, next) {
+module.exports = function(req, res, next) {
   const token = req.headers.authorization;
   const errorMessage = `Permission denied at ${req.url}`;
   if (token && verifyJWT(token)) {
@@ -11,7 +11,6 @@ module.exports = function (req, res, next) {
     } else {
       req.user= {}
       req.user.name = username;
-      res.locals.username = username;
       next();
     }
   } else {

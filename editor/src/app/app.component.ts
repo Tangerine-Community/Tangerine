@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { UserService } from './core/auth/_services/user.service';
 import { AppConfigService } from './shared/_services/app-config.service';
+import { _TRANSLATE } from './shared/_services/translation-marker';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class AppComponent implements OnInit, OnDestroy {
     history: string[] = [];
     titleToUse: string;
     mobileQuery: MediaQueryList;
-    window:any
+    window: any;
+    sessionTimeoutCheckTimerID;
 
     @ViewChild('snav', {static: true}) snav: MatSidenav
 
@@ -65,6 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.canManageSitewideUsers = false;
         this.user_id = null;
         this.router.navigate(['/login']);
+        clearInterval(this.sessionTimeoutCheckTimerID);
     }
 
     async ngOnInit() {
@@ -74,6 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.isAdminUser = await this.userService.isCurrentUserAdmin();
                 this.user_id = localStorage.getItem('user_id');
                 this.canManageSitewideUsers = await this.userService.canManageSitewideUsers();
+                this.sessionTimeoutCheck();
             } else {
                 this.loggedIn = false;
                 this.isAdminUser = false;
@@ -86,6 +90,23 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     ngOnDestroy(): void {
         this.mobileQuery.removeListener(this._mobileQueryListener);
+    }
+
+     sessionTimeoutCheck() {
+       this.sessionTimeoutCheckTimerID = setInterval(async () => {
+        const token = localStorage.getItem('token');
+        const claims = JSON.parse(atob(token.split('.')[1]));
+        const expiryTimeInMs = claims['exp'] * 1000;
+        const minutesBeforeExpiry = expiryTimeInMs - (15 * 60 * 1000); // warn 15 minutes before expiry of token
+        if (Date.now() >= minutesBeforeExpiry) {
+            const extendSession = confirm(_TRANSLATE('You are about to be logged out from Tangerine. Should we extend your session?'));
+            if (extendSession) {
+                await this.authenticationService.extendUserSession();
+            } else {
+                await this.logout();
+            }
+        }
+       }, 10 * 60 * 1000); // check every 10 minutes
     }
 
 }
