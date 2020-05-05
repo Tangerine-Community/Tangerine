@@ -2,7 +2,7 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { Injectable } from '@angular/core';
 import { CaseEventInfo } from './case-event-info.class';
 import { CaseService } from './case.service';
-import moment from 'moment/src/moment';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
