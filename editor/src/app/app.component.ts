@@ -20,7 +20,6 @@ import { _TRANSLATE } from './shared/_services/translation-marker';
 })
 export class AppComponent implements OnInit, OnDestroy {
     loggedIn = false;
-    validSession: boolean;
     user_id: string = localStorage.getItem('user_id');
     private childValue: string;
     canManageSitewideUsers = false
@@ -31,17 +30,17 @@ export class AppComponent implements OnInit, OnDestroy {
     window: any;
     sessionTimeoutCheckTimerID;
 
-    @ViewChild('snav', {static: true}) snav: MatSidenav
+    @ViewChild('snav', { static: true }) snav: MatSidenav
 
     private _mobileQueryListener: () => void;
     constructor(
         private windowRef: WindowRef,
         private router: Router,
         private _registrationService: RegistrationService,
-        private userService:UserService,
-        private menuService:MenuService,
+        private userService: UserService,
+        private menuService: MenuService,
         private authenticationService: AuthenticationService,
-        private tangyFormService:TangyFormService,
+        private tangyFormService: TangyFormService,
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,
         media: MediaMatcher,
@@ -56,7 +55,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.window = this.windowRef.nativeWindow;
         // Tell tangyFormService which groupId to use.
         tangyFormService.initialize(window.location.pathname.split('/')[2])
- 
     }
 
     async logout() {
@@ -77,6 +75,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.user_id = localStorage.getItem('user_id');
                 this.canManageSitewideUsers = await this.userService.canManageSitewideUsers();
                 this.sessionTimeoutCheck();
+                this.sessionTimeoutCheckTimerID =
+                setInterval(await this.sessionTimeoutCheck.bind(this), 10 * 60 * 1000); // check every 10 minutes
             } else {
                 this.loggedIn = false;
                 this.isAdminUser = false;
@@ -91,8 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.mobileQuery.removeListener(this._mobileQueryListener);
     }
 
-     sessionTimeoutCheck() {
-       this.sessionTimeoutCheckTimerID = setInterval(async () => {
+    async sessionTimeoutCheck() {
         const token = localStorage.getItem('token');
         const claims = JSON.parse(atob(token.split('.')[1]));
         const expiryTimeInMs = claims['exp'] * 1000;
@@ -105,7 +104,6 @@ export class AppComponent implements OnInit, OnDestroy {
                 await this.logout();
             }
         }
-       }, 10 * 60 * 1000); // check every 10 minutes
     }
 
 }

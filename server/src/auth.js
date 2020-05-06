@@ -29,8 +29,8 @@ const areCredentialsValid = async (username, password) => {
   try {
     let isValid = false;
     if (
-      username == process.env.T_USER1 &&
-      password == process.env.T_USER1_PASSWORD
+      username === process.env.T_USER1 &&
+      password === process.env.T_USER1_PASSWORD
     ) {
       isValid = true;
       return isValid;
