@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken');
-const expiresIn = process.env.JWT_TOKEN_VALIDITY || '15 minutes';
-const issuer = process.env.JWT_TOKEN_ISSUER || 'Tangerine Devs';
-const jwtTokenSecret =
-  process.env.JWT_TOKEN_SECRET ||
-  'tstststsgsvdsjheytetew4567823e76tfvbendi876tfvewbndfitw562yhwbdnfjytf2wvedtrrfwvbhytfwhystrwfgtwfgwhygwvbtwtgvwftwghbb';
+const expiresIn ='5 minutes';
+const issuer = 'Tangerine';
+const jwtTokenSecret = require('crypto').randomBytes(256).toString('base64');
 
 const createLoginJWT = ({ username }) => {
   const signingOptions = {
