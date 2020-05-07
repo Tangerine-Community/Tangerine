@@ -100,16 +100,15 @@ export class CaseEventScheduleComponent implements OnInit {
     for (const caseId of uniqueCaseIds) {
       cases.push(await userDb.get(caseId))
     }
-
+    // Keept track of days of week seen. When we detect a new day, add a dateLabel and dateNumber.
     let daysOfWeekSeen = []
+    // Iterate over the caseEvents collecting their infos for templating.
     const caseEventInfos =  []
-
     for (let caseEventInstance of caseEvents) {
-
+      // Build up caseEventInfo to push into caseEventInfos.
       const caseEventInfo = <CaseEventInfo>{}
-
+      // Determine a date this event will rest on.
       const date = caseEventInstance.occurredOnDay || caseEventInstance.scheduledDay || caseEventInstance.estimatedDay || caseEventInstance.windowStartDay
-      
       // If this is a day of the week we have not seen, then attach a date label to this entry in the list.
       if (daysOfWeekSeen.indexOf(date) === -1) {
         daysOfWeekSeen.push(date)
@@ -118,31 +117,30 @@ export class CaseEventScheduleComponent implements OnInit {
           ? moment(date).format('D') 
           : ``
       }
-
+      // Determine the link to use when opening this event.
       caseEventInfo.openLink = `/case/event/${caseEventInstance.caseId}/${caseEventInstance.id}`
-
+      // Gather some variables to be available for the templates.
       const caseService = this.caseService
       await caseService.load(caseEventInstance.caseId)
       const caseDefinition = caseService.caseDefinition 
       const caseEventDefinition = caseDefinition.eventDefinitions.find(({id}) => id === caseEventInstance.caseEventDefinitionId)
       const caseInstance = caseService.case
       const caseEvent = caseEventInstance
-
+      // Provide default templates in case they are not provided in the CaseDefinition. 
       const defaultTemplateScheduleListItemIcon = '${caseEventInfo.status === \'CASE_EVENT_STATUS_COMPLETED\' ? \'event_note\' : \'event_available\'}'
       const defaultTemplateScheduleListItemPrimary = '<span>${caseEventDefinition.name}</span> in Case ${caseService.case._id.substr(0,5)}'
       const defaultTemplateScheduleListItemSecondary = '<span>${caseInstance.label}</span>'
-
+      // Template the event markup.
       eval(`caseEventInfo.scheduleListItemIcon = caseDefinition.templateScheduleListItemIcon ? \`${caseDefinition.templateScheduleListItemIcon}\` : \`${defaultTemplateScheduleListItemIcon}\``)
       eval(`caseEventInfo.scheduleListItemPrimary = caseDefinition.templateScheduleListItemPrimary ? \`${caseDefinition.templateScheduleListItemPrimary}\` : \`${defaultTemplateScheduleListItemPrimary}\``)
       eval(`caseEventInfo.scheduleListItemSecondary = caseDefinition.templateScheduleListItemSecondary ? \`${caseDefinition.templateScheduleListItemSecondary}\` : \`${defaultTemplateScheduleListItemSecondary}\``)
-
+      // Done.
       caseEventInfos.push(caseEventInfo)
     }
-
+    // Render the Angular Template.
     this.caseEventInfos = caseEventInfos
     this.ref.detectChanges()
     this.didSearch$.next(true)
-
   }
 
 
