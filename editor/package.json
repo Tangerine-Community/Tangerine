@@ -40,7 +40,7 @@
     "qrcode-generator-es6": "^1.1.4",
     "rangen": "^1.0.0",
     "redux": "^4.0.1",
-    "rxjs": "~6.5.4",
+    "rxjs": "~6.5.5",
     "tangy-form": "^4.12.1",
     "tangy-form-editor": "6.14.2",
     "translation-web-component": "0.0.3",
@@ -54,7 +54,7 @@
   "devDependencies": {
     "@babel/compat-data": "~7.8.0",
     "@angular-devkit/build-angular": "~0.803.21",
-    "@angular/cli": "~8.3.25",
+    "@angular/cli": "~8.3.26",
     "@angular/compiler-cli": "~8.2.14",
     "@angular/language-service": "~8.2.14",
     "@types/node": "~8.9.4",
