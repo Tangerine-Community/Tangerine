@@ -1,6 +1,6 @@
 # Editor Guide
 
-- [Tangerine Form Editor's Cookbook](cookbook.md)
+- [Tangerine Form Editor's Cookbook](cookbook/README.md)
 - [Local Content Development with Tangerine Preview](local-content-development.md)
 - [Configuring Case functionality](case-management-group.md)
 - [Case Module Cookbook](case-module-cookbook.md)
