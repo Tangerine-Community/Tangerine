@@ -8,7 +8,7 @@ import { RegistrationService } from './registration/services/registration.servic
 import { WindowRef } from './core/window-ref.service';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { HttpClient } from '@angular/common/http';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { UserService } from './core/auth/_services/user.service';
 
 
