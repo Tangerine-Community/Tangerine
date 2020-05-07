@@ -8,14 +8,14 @@ import { TangyFormsInfoService } from './../../../tangy-forms/tangy-forms-info-s
 import { SearchService } from './../../../shared/_services/search.service';
 import { UserService } from './../../../shared/_services/user.service';
 import { CasesService } from './../../../case/services/cases.service';
-import { Component, OnInit, Input, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Subject } from 'rxjs';
-import moment from 'moment/src/moment'
+import * as moment from 'moment'
 import { CaseEvent } from 'src/app/case/classes/case-event.class';
-//import { FORMAT_YEAR_WEEK, FORMAT_YEAR_MONTH_DAY } from 'date-carousel/date-carousel.js'
 export const CASE_EVENT_SCHEDULE_LIST_MODE_DAILY = 'CASE_EVENT_SCHEDULE_LIST_MODE_DAILY'
 export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'
 
+//import { FORMAT_YEAR_WEEK, FORMAT_YEAR_MONTH_DAY } from 'date-carousel/date-carousel.js'
 const FORMAT_YEAR_WEEK = 'YYYY-w'
 const FORMAT_YEAR_MONTH_DAY = 'YYYY-MM-DD'
 
