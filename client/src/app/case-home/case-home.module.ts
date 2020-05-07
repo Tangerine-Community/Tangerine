@@ -1,4 +1,3 @@
-import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharedModule } from './../shared/shared.module';
@@ -13,8 +12,7 @@ import { CommonModule } from '@angular/common';
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   declarations: [
     CaseHomeComponent,
-    CaseEventScheduleComponent,
-    CaseEventScheduleListComponent
+    CaseEventScheduleComponent
   ],
   imports: [
     CaseHomeRoutingModule,

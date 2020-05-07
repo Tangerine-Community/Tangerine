@@ -1,9 +1,4 @@
-<!--paper-dropdown-menu label="">
-  <paper-listbox slot="dropdown-content" class="dropdown-content" selected="0">
-    <paper-item (click)="mode = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'">week</paper-item>
-    <paper-item (click)="onDayModeSelect()">day</paper-item>
-  </paper-listbox>
-</paper-dropdown-menu-->
+
 <div class="header">
   <select (change)="onModeChange($event)">
     <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">{{'Week View'|translate}}</option>
@@ -11,4 +6,23 @@
   </select>
   <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)" #dateCarousel></date-carousel>
 </div>
-<app-case-event-schedule-list #list></app-case-event-schedule-list>
+<div class="event-info" *ngFor="let caseEventInfo of caseEventInfos" routerLink="{{caseEventInfo.openLink}}">
+  <div *ngIf="caseEventInfo.dateNumber" class="new-date"> 
+    <div class="new-date-container">
+      <div class="new-date-number">
+        {{caseEventInfo.dateNumber}}
+      </div>
+      <div class="new-date-label">
+        {{caseEventInfo.dateLabel}}
+      </div>
+      <iron-icon icon="av:fiber-manual-record" class="new-date-dot"></iron-icon>  
+    </div>
+  </div>
+  <div class="icon-list-item">
+    <mwc-icon [innerHTML]="caseEventInfo.scheduleListItemIcon" slot="item-icon"></mwc-icon>
+    <div>
+      <div [innerHTML]="caseEventInfo.scheduleListItemPrimary|unsanitizeHtml"></div>
+      <div [innerHTML]="caseEventInfo.scheduleListItemSecondary|unsanitizeHtml" secondary></div>
+    </div>
+  </div>
+</div>
