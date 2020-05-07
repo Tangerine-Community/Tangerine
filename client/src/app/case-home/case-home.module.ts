@@ -1,3 +1,5 @@
+import { CaseHomeDocs } from './case-home.docs';
+import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharedModule } from './../shared/shared.module';
@@ -21,6 +23,13 @@ import { CommonModule } from '@angular/common';
     SharedModule,
     MatTabsModule,
     CommonModule
+  ],
+  providers: [
+    {
+      provide: DEFAULT_USER_DOCS,
+      useValue: CaseHomeDocs,
+      multi: true
+    }
   ]
 })
 export class CaseHomeModule { }
