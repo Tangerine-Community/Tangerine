@@ -1,9 +1,8 @@
 # Changelog
 
 ## v3.9.0
-
-
 - Features
+  - Set and get properties for Case Event Forms [#2023](https://github.com/Tangerine-Community/Tangerine/issues/2023)
   - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
   - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
 - Fixes
