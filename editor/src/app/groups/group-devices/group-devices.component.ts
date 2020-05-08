@@ -172,7 +172,7 @@ export class GroupDevicesComponent implements OnInit {
     })
   }
 
-  async addDevice(deviceId:string) {
+  async addDevice() {
     const device = <GroupDevice>await this.groupDevicesService.createDevice(this.groupId)
     this.editDevice(device._id)
   }

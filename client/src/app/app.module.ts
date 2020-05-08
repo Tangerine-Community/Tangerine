@@ -2,7 +2,6 @@ import { CaseHomeModule } from './case-home/case-home.module';
 import { SyncModule } from './sync/sync.module';
 import { DeviceModule } from './device/device.module';
 import { SharedModule } from './shared/shared.module';
-import 'hammerjs';
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA, APP_INITIALIZER} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
