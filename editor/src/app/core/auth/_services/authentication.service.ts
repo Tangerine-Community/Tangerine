@@ -16,6 +16,7 @@ export class AuthenticationService {
       if (data.status === 200) {
         const token = data.body['data']['token'];
         const jwtData = jwt_decode(token);
+        document.cookie = `Authorization=${token}`
         localStorage.setItem('token', token);
         localStorage.setItem('user_id', jwtData.username);
         return true;
@@ -46,6 +47,7 @@ export class AuthenticationService {
     await localStorage.removeItem('token');
     await localStorage.removeItem('user_id');
     await localStorage.removeItem('password');
+    document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
   }
@@ -57,6 +59,7 @@ export class AuthenticationService {
       if (data.status === 200) {
         const token = data.body['data']['token'];
         const jwtData = jwt_decode(token);
+        document.cookie = `Authorization=${token}`
         localStorage.setItem('token', token);
         localStorage.setItem('user_id', jwtData.username);
         return true;

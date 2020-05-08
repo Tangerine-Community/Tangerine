@@ -42,6 +42,7 @@ const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
   hashPassword, USERS_DB, login} = require('./auth')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
+var cookieParser = require('cookie-parser')
 
 module.exports = async function expressAppBootstrap(app) {
 
@@ -82,7 +83,7 @@ app.use(cors({
   credentials: true,
 }));
 app.options('*', cors()) // include before other routes
-
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '1gb' }))
 app.use(bodyParser.text({ limit: '1gb' }))

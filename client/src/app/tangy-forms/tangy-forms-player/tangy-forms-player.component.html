@@ -1,4 +1,3 @@
-
 <div id="menu-container" *ngIf="rendered && formInfo && formInfo.templates && formInfo.templates.length > 0 && response && response.complete">
   <mwc-icon (click)="print()" class="print">print</mwc-icon>
   <mwc-icon [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>
@@ -9,6 +8,6 @@
     <button mat-menu-item *ngFor="let template of formTemplatesInContext" (click)="setTemplate(template.id)">
       {{template.label}}
     </button>
-  </mat-menu> 
+  </mat-menu>
 </div>
 <div #container> </div>
