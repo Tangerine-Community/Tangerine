@@ -1,4 +1,5 @@
-import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
+import { CaseHomeDocs } from './case-home.docs';
+import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharedModule } from './../shared/shared.module';
@@ -13,8 +14,7 @@ import { CommonModule } from '@angular/common';
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   declarations: [
     CaseHomeComponent,
-    CaseEventScheduleComponent,
-    CaseEventScheduleListComponent
+    CaseEventScheduleComponent
   ],
   imports: [
     CaseHomeRoutingModule,
@@ -23,6 +23,13 @@ import { CommonModule } from '@angular/common';
     SharedModule,
     MatTabsModule,
     CommonModule
+  ],
+  providers: [
+    {
+      provide: DEFAULT_USER_DOCS,
+      useValue: CaseHomeDocs,
+      multi: true
+    }
   ]
 })
 export class CaseHomeModule { }

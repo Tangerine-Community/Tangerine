@@ -1,3 +1,4 @@
+import { CaseHomeDocs } from './../../../case-home/case-home.docs';
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
 import {TangyFormsDocs} from '../../../tangy-forms/tangy-forms.docs';
@@ -270,6 +271,16 @@ export const updates = [
       await userDb.put(TangyFormsDocs[0])
       await userDb.query('responsesUnLockedAndNotUploaded')
       localStorage.setItem('ran-update-v3.9.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService) => {
+      if (appConfig.syncProtocol === '2' && localStorage.getItem('ran-update-v3.9.1')) return
+      console.log('Updating to v3.9.1...')
+      await userDb.put(CaseHomeDocs[0])
+      await userDb.query('case-events-by-all-days')
+      localStorage.setItem('ran-update-v3.9.1', 'true')
     }
   }
 ]
