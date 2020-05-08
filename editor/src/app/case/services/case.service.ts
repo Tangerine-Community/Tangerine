@@ -15,7 +15,7 @@ import { Query } from '../classes/query.class'
 // Other.
 import * as UUID from 'uuid/v4'
 import { Injectable } from '@angular/core';
-import moment from 'moment/src/moment';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
