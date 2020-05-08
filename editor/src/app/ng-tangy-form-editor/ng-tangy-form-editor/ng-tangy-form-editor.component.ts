@@ -2,7 +2,7 @@ import { ServerConfigService } from './../../shared/_services/server-config.serv
 import { AfterContentInit, OnInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import {MatTabChangeEvent} from "@angular/material";
+import { MatTabChangeEvent } from "@angular/material/tabs";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {FormMetadata} from "../feedback-editor/form-metadata";
 import {Feedback} from "../feedback-editor/feedback";

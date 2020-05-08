@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/tangerine-client",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -38,6 +39,12 @@
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -140,5 +147,8 @@
       }
     }
   },
-  "defaultProject": "tangerine-client"
+  "defaultProject": "tangerine-client",
+  "cli": {
+    "analytics": "8ea487ff-a3b2-45c5-9573-f6fe44d0cfdb"
+  }
 }

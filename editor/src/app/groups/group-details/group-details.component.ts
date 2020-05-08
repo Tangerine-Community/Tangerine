@@ -5,7 +5,7 @@ import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
-import { MatTabChangeEvent } from '@angular/material';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import uuidv4 from 'uuid/v4';
 import { WindowRef } from 'src/app/core/window-ref.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
