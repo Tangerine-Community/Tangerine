@@ -7,9 +7,10 @@ import { AuthenticationService } from './core/auth/_services/authentication.serv
 import { RegistrationService } from './registration/services/registration.service';
 import { WindowRef } from './core/window-ref.service';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { UserService } from './core/auth/_services/user.service';
+import { AppConfigService } from './shared/_services/app-config.service';
+import { _TRANSLATE } from './shared/_services/translation-marker';
 
 
 @Component({
@@ -19,7 +20,6 @@ import { UserService } from './core/auth/_services/user.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
     loggedIn = false;
-    validSession: boolean;
     user_id: string = localStorage.getItem('user_id');
     private childValue: string;
     canManageSitewideUsers = false
@@ -27,23 +27,24 @@ export class AppComponent implements OnInit, OnDestroy {
     history: string[] = [];
     titleToUse: string;
     mobileQuery: MediaQueryList;
-    window:any
+    window: any;
+    sessionTimeoutCheckTimerID;
 
-    @ViewChild('snav', {static: true}) snav: MatSidenav
+    @ViewChild('snav', { static: true }) snav: MatSidenav
 
     private _mobileQueryListener: () => void;
     constructor(
         private windowRef: WindowRef,
         private router: Router,
         private _registrationService: RegistrationService,
-        private userService:UserService,
-        private menuService:MenuService,
+        private userService: UserService,
+        private menuService: MenuService,
         private authenticationService: AuthenticationService,
-        private tangyFormService:TangyFormService,
+        private tangyFormService: TangyFormService,
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,
         media: MediaMatcher,
-        private http: HttpClient
+        private appConfigService: AppConfigService
     ) {
         translate.setDefaultLang('translation');
         translate.use('translation');
@@ -54,45 +55,55 @@ export class AppComponent implements OnInit, OnDestroy {
         this.window = this.windowRef.nativeWindow;
         // Tell tangyFormService which groupId to use.
         tangyFormService.initialize(window.location.pathname.split('/')[2])
- 
     }
 
     async logout() {
+        clearInterval(this.sessionTimeoutCheckTimerID);
         await this.authenticationService.logout();
-        this.router.navigate(['login']);
-        this.window.location.reload()
+        this.loggedIn = false;
+        this.isAdminUser = false;
+        this.canManageSitewideUsers = false;
+        this.user_id = null;
+        this.router.navigate(['/login']);
     }
 
     async ngOnInit() {
-        // Ensure user is logged in every 60 seconds.
-        await this.ensureLoggedIn();
-        this.isAdminUser = await this.userService.isCurrentUserAdmin()
-        setInterval(() => this.ensureLoggedIn(), 60 * 1000);
         this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
-            this.isAdminUser = await this.userService.isCurrentUserAdmin()
-            this.loggedIn = isLoggedIn;
-            this.user_id = localStorage.getItem('user_id');
-            this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
-            if (!isLoggedIn) { this.router.navigate(['login']); }
+            if (isLoggedIn) {
+                this.loggedIn = isLoggedIn;
+                this.isAdminUser = await this.userService.isCurrentUserAdmin();
+                this.user_id = localStorage.getItem('user_id');
+                this.canManageSitewideUsers = await this.userService.canManageSitewideUsers();
+                this.sessionTimeoutCheck();
+                this.sessionTimeoutCheckTimerID =
+                setInterval(await this.sessionTimeoutCheck.bind(this), 10 * 60 * 1000); // check every 10 minutes
+            } else {
+                this.loggedIn = false;
+                this.isAdminUser = false;
+                this.canManageSitewideUsers = false;
+                this.user_id = null;
+                this.router.navigate(['/login']);
+            }
         });
-        fetch('assets/translation.json')
-          .then(response => response.json())
-          .then(json => {
-            this.window.translation = json
-          })
-    }
-
-    async ensureLoggedIn() {
-        this.loggedIn = await this.authenticationService.isLoggedIn();
-        if (this.loggedIn && await this.authenticationService.validateSession() === false) {
-            console.log('found invalid session');
-            this.isAdminUser = false
-            this.canManageSitewideUsers = false
-            this.logout();
-        }
+        this.window.translation = await this.appConfigService.getTranslations();
     }
     ngOnDestroy(): void {
         this.mobileQuery.removeListener(this._mobileQueryListener);
+    }
+
+    async sessionTimeoutCheck() {
+        const token = localStorage.getItem('token');
+        const claims = JSON.parse(atob(token.split('.')[1]));
+        const expiryTimeInMs = claims['exp'] * 1000;
+        const minutesBeforeExpiry = expiryTimeInMs - (15 * 60 * 1000); // warn 15 minutes before expiry of token
+        if (Date.now() >= minutesBeforeExpiry) {
+            const extendSession = confirm(_TRANSLATE('You are about to be logged out from Tangerine. Should we extend your session?'));
+            if (extendSession) {
+                await this.authenticationService.extendUserSession();
+            } else {
+                await this.logout();
+            }
+        }
     }
 
 }

@@ -21,4 +21,11 @@ export class AppConfigService {
     const result:any = await this.getAppConfig(groupName);
     return result.homeUrl;
   }
+  async getTranslations() {
+    try {
+      return await this.http.get('assets/translation.json').toPromise();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
