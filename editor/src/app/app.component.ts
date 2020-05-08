@@ -1,103 +1,99 @@
-import {TangyFormService} from './tangy-forms/tangy-form.service';
-import {MenuService} from './shared/_services/menu.service';
-import {Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-import {TranslateService} from '@ngx-translate/core';
-import {AuthenticationService} from './core/auth/_services/authentication.service';
-import {RegistrationService} from './registration/services/registration.service';
-import {WindowRef} from './core/window-ref.service';
-import {MediaMatcher} from '@angular/cdk/layout';
-import {HttpClient} from '@angular/common/http';
+import { TangyFormService } from './tangy-forms/tangy-form.service';
+import { MenuService } from './shared/_services/menu.service';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { AuthenticationService } from './core/auth/_services/authentication.service';
+import { RegistrationService } from './registration/services/registration.service';
+import { WindowRef } from './core/window-ref.service';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { HttpClient } from '@angular/common/http';
 import {MatSidenav} from '@angular/material/sidenav';
-import {UserService} from './core/auth/_services/user.service';
+import { UserService } from './core/auth/_services/user.service';
 
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  loggedIn = false;
-  validSession: boolean;
-  user_id: string = localStorage.getItem('user_id');
-  private childValue: string;
-  canManageSitewideUsers = false;
-  isAdminUser = false;
-  history: string[] = [];
-  titleToUse: string;
-  mobileQuery: MediaQueryList;
-  window: any;
-  menuService: MenuService;
+    loggedIn = false;
+    validSession: boolean;
+    user_id: string = localStorage.getItem('user_id');
+    private childValue: string;
+    canManageSitewideUsers = false
+    isAdminUser = false
+    history: string[] = [];
+    titleToUse: string;
+    mobileQuery: MediaQueryList;
+    window:any
+    menuService: MenuService
 
-  @ViewChild('snav', {static: true}) snav: MatSidenav;
+    @ViewChild('snav', {static: true}) snav: MatSidenav
 
-  private _mobileQueryListener: () => void;
-
-  constructor(
-    private windowRef: WindowRef,
-    private router: Router,
-    private _registrationService: RegistrationService,
-    private userService: UserService,
-    menuService: MenuService,
-    private authenticationService: AuthenticationService,
-    private tangyFormService: TangyFormService,
-    translate: TranslateService,
-    changeDetectorRef: ChangeDetectorRef,
-    media: MediaMatcher,
-    private http: HttpClient
-  ) {
-    translate.setDefaultLang('translation');
-    translate.use('translation');
-    this.mobileQuery = media.matchMedia('(max-width: 600px)');
-    this.mobileQuery.addEventListener('change', (event => this.snav.opened = !event.matches));
-    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
-    this.mobileQuery.addListener(this._mobileQueryListener);
-    this.window = this.windowRef.nativeWindow;
-    // Tell tangyFormService which groupId to use.
-    tangyFormService.initialize(window.location.pathname.split('/')[2]);
-    this.menuService = menuService;
-  }
-
-  async logout() {
-    await this.authenticationService.logout();
-    this.router.navigate(['login']);
-    this.window.location.reload();
-  }
-
-  async ngOnInit() {
-    // Ensure user is logged in every 60 seconds.
-    await this.ensureLoggedIn();
-    this.isAdminUser = await this.userService.isCurrentUserAdmin();
-    setInterval(() => this.ensureLoggedIn(), 60 * 1000);
-    this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
-      this.isAdminUser = await this.userService.isCurrentUserAdmin();
-      this.loggedIn = isLoggedIn;
-      this.user_id = localStorage.getItem('user_id');
-      this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise();
-      if (!isLoggedIn) {
-        this.router.navigate(['login']);
-      }
-    });
-    fetch('assets/translation.json')
-      .then(response => response.json())
-      .then(json => {
-        this.window.translation = json;
-      });
-  }
-
-  async ensureLoggedIn() {
-    this.loggedIn = await this.authenticationService.isLoggedIn();
-    if (this.loggedIn && await this.authenticationService.validateSession() === false) {
-      console.log('found invalid session');
-      this.isAdminUser = false;
-      this.canManageSitewideUsers = false;
-      this.logout();
+    private _mobileQueryListener: () => void;
+    constructor(
+        private windowRef: WindowRef,
+        private router: Router,
+        private _registrationService: RegistrationService,
+        private userService:UserService,
+        menuService:MenuService,
+        private authenticationService: AuthenticationService,
+        private tangyFormService:TangyFormService,
+        translate: TranslateService,
+        changeDetectorRef: ChangeDetectorRef,
+        media: MediaMatcher,
+        private http: HttpClient
+    ) {
+        translate.setDefaultLang('translation');
+        translate.use('translation');
+        this.mobileQuery = media.matchMedia('(max-width: 600px)');
+        this.mobileQuery.addEventListener('change', (event => this.snav.opened = !event.matches))
+        this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+        this.mobileQuery.addListener(this._mobileQueryListener);
+        this.window = this.windowRef.nativeWindow;
+        // Tell tangyFormService which groupId to use.
+        tangyFormService.initialize(window.location.pathname.split('/')[2])
+        this.menuService = menuService;
     }
-  }
 
-  ngOnDestroy(): void {
-    this.mobileQuery.removeListener(this._mobileQueryListener);
-  }
+    async logout() {
+        await this.authenticationService.logout();
+        this.router.navigate(['login']);
+        this.window.location.reload()
+    }
+
+    async ngOnInit() {
+        // Ensure user is logged in every 60 seconds.
+        await this.ensureLoggedIn();
+        this.isAdminUser = await this.userService.isCurrentUserAdmin()
+        setInterval(() => this.ensureLoggedIn(), 60 * 1000);
+        this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
+            this.isAdminUser = await this.userService.isCurrentUserAdmin()
+            this.loggedIn = isLoggedIn;
+            this.user_id = localStorage.getItem('user_id');
+            this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
+            if (!isLoggedIn) { this.router.navigate(['login']); }
+        });
+        fetch('assets/translation.json')
+          .then(response => response.json())
+          .then(json => {
+            this.window.translation = json
+          })
+    }
+
+    async ensureLoggedIn() {
+        this.loggedIn = await this.authenticationService.isLoggedIn();
+        if (this.loggedIn && await this.authenticationService.validateSession() === false) {
+            console.log('found invalid session');
+            this.isAdminUser = false
+            this.canManageSitewideUsers = false
+            this.logout();
+        }
+    }
+    ngOnDestroy(): void {
+        this.mobileQuery.removeListener(this._mobileQueryListener);
+    }
 
 }
