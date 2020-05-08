@@ -2,7 +2,7 @@ import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
-import moment from 'moment/src/moment';
+import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
 
 class CaseEventInfo {
