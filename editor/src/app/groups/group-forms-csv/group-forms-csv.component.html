@@ -1,6 +1,6 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
-<mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropActive($event)">
+<mat-list class="drag-list" cdkDropList >
   <mat-list-item class="drag-item" *ngFor="let form of activeForms; let index=index" cdkDrag
     [cdkDragDisabled]="!isGroupAdminUser">
     <mat-list class="tangy-full-width" *cdkDragPreview>
@@ -27,7 +27,7 @@
   </mat-list-item>
 </mat-list>
 <h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
-<mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropArchived($event)">
+<mat-list class="drag-list" cdkDropList>
   <mat-list-item class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag
     [cdkDragDisabled]="!isGroupAdminUser">
     <mat-list class="tangy-full-width" *cdkDragPreview>
@@ -53,4 +53,3 @@
     <mat-divider></mat-divider>
   </mat-list-item>
 </mat-list>
- 

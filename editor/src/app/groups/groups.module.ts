@@ -155,6 +155,5 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     CaseSettingsComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
-  entryComponents: [CopyFormComponent]
 })
 export class GroupsModule { }
