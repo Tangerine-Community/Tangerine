@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef, MatTable} from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MatTable } from "@angular/material/table";
 import {FormMetadata} from "./form-metadata";
 import {Feedback} from "./feedback";
 import {FeedbackService} from "./feedback.service";
