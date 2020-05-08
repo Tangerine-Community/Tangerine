@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const expiresIn ='5 minutes';
+const expiresIn ='1h';
 const issuer = 'Tangerine';
 const jwtTokenSecret = require('crypto').randomBytes(256).toString('base64');
 
