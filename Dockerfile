@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:cordova-sqlite-storage-file
+FROM tangerine/docker-tangerine-base-image:v3.5.0-rc01
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
