@@ -9,6 +9,6 @@
     <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">{{'Week View'|translate}}</option>
     <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">{{'Day View'|translate}}</option>
   </select>
-  <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
+  <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)" #dateCarousel></date-carousel>
 </div>
 <app-case-event-schedule-list #list></app-case-event-schedule-list>

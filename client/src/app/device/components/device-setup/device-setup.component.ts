@@ -41,6 +41,7 @@ export class DeviceSetupComponent implements OnInit {
     const isSandbox = window.location.hostname === 'localhost' ? true : false
     if (isSandbox) {
       const device = await this.deviceService.register('test', 'test', true)
+      await this.userService.installSharedUserDatabase(device)
       await this.userService.createAdmin('password', <LockBoxContents>{
         device
       })
