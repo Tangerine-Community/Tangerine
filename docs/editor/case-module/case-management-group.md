@@ -1,6 +1,6 @@
 # Case Management Group (experimental)
 
-Case Management allows us to define Case Definitions for different purposes such as following a participant in a drug trial over the course of many events, where each event may require many forms to be filled out. In order to create and find cases, you will need to configure the `"search"` as the `"homeUrl"` value in `app-config.json`.
+Case Management allows us to define Case Definitions for different purposes such as following a participant in a drug trial over the course of many events, where each event may require many forms to be filled out. In order to create and find cases, you will need to configure the `"case-home"` as the `"homeUrl"` value in `app-config.json`.
 
 ## Configuring Cases
 Case Management allows us to define Case Definitions for different purposes such as following a participant in a drug trial over the course of many events, where each event may require many forms to be filled out.
@@ -90,3 +90,15 @@ File: `forms.json`
 
 ## Configuring two-way sync
 Because you may need to share cases across devices, configuring two-way sync may be necessary. See the [Two-way Sync Documentation](feature-two-way-sync.md) for more details. Note that you sync Form Responses, and it's the IDs of that you'll want to sync in the `"formId"` of the Case Definition in order to sync cases.
+
+
+## Configuring the Schedule
+One of the two tabs that Data Collectors see when they log into Tangerine is a "Schedule" tab. This schedule will show Case Event's on days where they are have an estimated day, scheduled day, and/or occurred on day. You can set these three dates on an event using the following APIs.
+
+```
+caseService.setEventEstimatedDay(idOfEvent, timeInUnixMilliseconds)
+caseService.setEventOccurredOn(idOfEvent, timeInUnixMilliseconds)
+caseService.setEventScheduledDay(idOfEvent, timeInUnixMilliseconds)
+```
+
+
