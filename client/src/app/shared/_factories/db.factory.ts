@@ -12,9 +12,7 @@ PouchDB.plugin(cordovaSqlitePlugin);
 PouchDB.plugin(window['PouchReplicationStream'].plugin);
 PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
 PouchDB.defaults({auto_compaction: true, revs_limit: 1});
-declare const cordova: any;
-// SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE
-// ref: https://www.sqlite.org/c3ref/open.html
+
 const OPEN_DATABASE_FLAGS = 6
 
 export function DB(name, key = ''):PouchDB {
@@ -54,12 +52,10 @@ export function DB(name, key = ''):PouchDB {
       androidDatabaseImplementation: 2
     };
     if (key) {
-      // window['sqlitePlugin'].openDatabase({name, key, location: 'default', androidDatabaseImplementation: 2});
-      // openFileDatabaseConnection(name, key, openCallback, errorCallback);
+      openFileDatabaseConnection(name, key, openCallback, errorCallback);
       options.key = key
     } else {
-      // window['sqlitePlugin'].openDatabase({name, location: 'default', androidDatabaseImplementation: 2});
-      // openFileDatabaseConnection(name, null, openCallback, errorCallback);
+      openFileDatabaseConnection(name, null, openCallback, errorCallback);
     }
   }
   return new PouchDB(name, options);
