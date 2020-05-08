@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { WindowRef } from './core/window-ref.service';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { UserService } from './core/auth/_services/user.service';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { _TRANSLATE } from './shared/_services/translation-marker';
