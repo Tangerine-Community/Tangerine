@@ -2,7 +2,7 @@ import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
-import moment from 'moment/src/moment';
+import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
 
 class CaseEventInfo {
@@ -30,7 +30,7 @@ export class CaseComponent implements AfterContentInit {
     private route: ActivatedRoute,
     private caseService: CaseService,
     private ref: ChangeDetectorRef
-  ) { 
+  ) {
     ref.detach()
     this.window = window
   }
@@ -71,8 +71,8 @@ export class CaseComponent implements AfterContentInit {
       })
     this.creatableCaseEventsInfo = this.caseEventsInfo
       .filter(caseEventInfo => {
-        return (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0) 
-          && undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id) 
+        return (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0)
+          && undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id)
       })
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')

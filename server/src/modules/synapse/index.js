@@ -28,43 +28,41 @@ module.exports = {
           console.log("Error creating db: " + JSON.stringify(e))
         }
         if (doc.form.id === 'user-profile') {
-          // await pushResponse(doc, synapseDb);
-          await processData({...doc, type : "user-profile"}, locationList, {}, sourceDb, resolve);
-        } else if (!doc.type || doc.type !== 'case') {
-          resolve(data)
+          await saveData({...doc, type : "user-profile"}, locationList, {}, sourceDb, resolve);
         } else {
+          if (doc.type === 'case') {
 
-          // output case
-          // await pushResponse(doc, synapseDb);
-          await processData(doc, locationList, {}, sourceDb, resolve);
+            // output case
+            await pushResponse(doc, synapseDb);
+            // await saveData(doc, locationList, {}, sourceDb, resolve);
 
-          let numInf = getItemValue(doc, 'numinf')
-          let participant_id = getItemValue(doc, 'participant_id')
+            let numInf = getItemValue(doc, 'numinf')
+            let participant_id = getItemValue(doc, 'participant_id')
 
-          // output participants
-          for (const participant of doc.participants) {
+            // output participants
+            for (const participant of doc.participants) {
               await pushResponse({...participant, _id: participant.id, caseId: doc._id, numInf: participant.participant_id === participant_id ? numInf : '', type: "participant"}, synapseDb);
-          }
+            }
 
-          // output case-events
-          for (const event of doc.events) {
-            // await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
+            // output case-events
+            for (const event of doc.events) {
+              await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
 
-            // output event-forms
-            for (const eventForm of event['eventForms']) {
-              // fetch and add the FormResponse to this eventForm
-              if (eventForm.formResponseId) {
-                let formResponse;
+              // output event-forms
+              for (const eventForm of event['eventForms']) {
                 try {
-                  formResponse = await sourceDb.get(eventForm.formResponseId)
-                  await processData({...formResponse, type : "event-form" }, locationList, eventForm, sourceDb, resolve);
+                  await pushResponse({type : "event-form" }, synapseDb);
                 } catch (e) {
                   if (e.status !== 404) {
-                    console.log("Error processing formResponse: " + JSON.stringify(e) + " e: " + e)
+                    console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
                   }
                 }
               }
             }
+          } else {
+            let flatResponse = await generateFlatResponse(doc, locationList);
+            await saveData({...doc, type : "form-response"}, flatResponse, sourceDb, resolve);
+            // resolve(data)
           }
         }
       })
@@ -94,11 +92,11 @@ function isValidDate(d) {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, eventForm, locationList) {
+const generateFlatResponse = async function (formResponse, locationList) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
-  let flatFormResponse = {...eventForm,
+  let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
     formTitle: formResponse.form.title,
@@ -116,11 +114,9 @@ const generateFlatResponse = async function (formResponse, eventForm, locationLi
         ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
         : value
   }
-  let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
-      // Simplify the keys by removing  formID.itemId
-      // let firstIdSegment = `${formID}.${item.id}.`
+      // Simplify the keys by removing formID.itemId
       let firstIdSegment = ""
       if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
@@ -186,84 +182,6 @@ String.prototype.rjust = function( width, padding ) {
     return this;
 }
 
-/**
- * Loop through date fields and add year, month, and day fields
- * Old versions of Tusome do not have a date_start field, so we need to loop through them.
- * @param processedResult
- */
-function createDateFields(processedResult) {
-  let fields = ['lesson_start_date', 'date_start']
-  fields.some(key => {
-    if (typeof processedResult[key] !== 'undefined') {
-      let done = addDatefields(processedResult[key], processedResult)
-      if (done) {
-        return true;
-      }
-    }
-  })
-}
-
-function addDatefields(val, doc) {
-  let startDateTimeValues = val.split('-')
-  doc['day_of_the_month'] = startDateTimeValues[2].rjust(2,'0')
-  doc['year_value'] = startDateTimeValues[0]
-  if(startDateTimeValues[1].rjust(2,'0') === '01') {
-    doc['month_value'] = 'Jan'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '02') {
-    doc['month_value'] = 'Feb'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '03') {
-    doc['month_value'] = 'Mar'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '04') {
-    doc['month_value'] = 'Apr'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '05') {
-    doc['month_value'] = 'May'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '06') {
-    doc['month_value'] = 'Jun'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '07') {
-    doc['month_value'] = 'Jul'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '08') {
-    doc['month_value'] = 'Aug'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '09') {
-    doc['month_value'] = 'Sep'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '10') {
-    doc['month_value'] = 'Oct'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '11') {
-    doc['month_value'] = 'Nov'
-  }
-  else if(startDateTimeValues[1].rjust(2,'0') === '12') {
-    doc['month_value'] = 'Dec'
-  }
-  return true
-}
-
-async function attachUserProfile(doc, sourceDb, synapseDb) {
-  try {
-    let userProfileDoc;
-    const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
-    let profileId = process.env['T_MODULES'].includes('sync-protocol-2') ? doc.tangerineModifiedByUserId : userProfileIdKey
-
-    // Get the user profile.
-    userProfileDoc = await synapseDb.get(doc[profileId])
-    // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
-    return Object.assign({}, doc, Object.keys(userProfileDoc.processedResult).reduce((acc, key) => {
-      return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc.processedResult[key] })
-    }, {}))
-  } catch (error) {
-    // There must not be a user profile yet doc uploaded yet.
-    return doc 
-  }
-}
-
 function pushResponse(doc, db) {
   return new Promise((resolve, reject) => {
     db.get(doc._id)
@@ -284,51 +202,17 @@ function pushResponse(doc, db) {
   })
 }
 
-async function processData(doc, locationList, eventForm, sourceDb, resolve) {
-  let flatResponse = await generateFlatResponse(doc, eventForm, locationList);
+async function saveData(doc, flatResponse, sourceDb, resolve) {
   // Process the flatResponse
   const synapseDb = new DB(`${sourceDb.name}-synapse`);
   let processedResult = flatResponse
-  // Don't add user-profile to the user-profile
-  if (flatResponse.formId !== 'user-profile') {
-    processedResult = await attachUserProfile(flatResponse, sourceDb, synapseDb)
-  }
-  try {
-    createDateFields(processedResult);
-  } catch (e) {
-    // Do nothing...
-  }
 
-  const startUnixtime = processedResult.startUnixtime;
-  let startDatetimeISO = null;
-  try {
-    const startDatetime = new Date(startUnixtime);
-    // console.log("converting startUnixtime " + startUnixtime + " to startDatetime: " + startDatetime)
-    if (isValidDate(startDatetime)) {
-      startDatetimeISO = startDatetime.toISOString()
-      // console.log("converted startDatetime: " + startDatetime + " to startDatetimeISO: " + startDatetimeISO)
-    } else {
-      console.log("Error converting startDatetime: " + startDatetime + " to startDatetimeISO.")
-    }
-    // mic check
-  } catch (e) {
-    console.log("error converting " + processedResult.startUnixtime + " to startDatetime. Error: " + e)
-    // console.trace()
-    // let err = new Error();
-    // err.stack
-    console.error(e);
-  }
   await pushResponse({
     type: doc.type,
     _id: processedResult._id,
     formId: processedResult.formId,
-    startDatetime: startDatetimeISO,
     startUnixtime: processedResult.startUnixtime,
-    processedResult,
-    'geoip': {
-      'lat': processedResult['geoip.lat'] ? processedResult['geoip.lat'] : '',
-      'lon': processedResult['geoip.lon'] ? processedResult['geoip.lon'] : ''
-    }
+    processedResult
   }, synapseDb);
   resolve('done!')
 }
