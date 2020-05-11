@@ -204,7 +204,7 @@ export class SyncCouchdbService {
           'docs_read': info.docs_read,
           'docs_written': pregressWritten,
           'doc_write_failures': info.doc_write_failures,
-          // 'pending': info.pending,
+          'pending': info.pending,
           'direction': direction
         };
         this.progress.written = pregressWritten
