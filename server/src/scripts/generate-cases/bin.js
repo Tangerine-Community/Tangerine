@@ -24,7 +24,6 @@ const groupPath = '/tangerine/client/content/groups/' + groupId
 
 async function setLocation(groupId) {
   // Get a Device to set the location
-  // let devices = await this.groupDeviceService.list(groupId)
   const response  = await groupDevicesDb.allDocs({include_docs:true})
   const devices = response
       .rows

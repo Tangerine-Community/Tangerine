@@ -2,7 +2,7 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Router } from '@angular/router';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
-import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info.service';
+import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info-service';
 import { FormInfo } from './../../tangy-forms/classes/form-info.class';
 import { GroupResponsesService } from './../services/group-responses.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';

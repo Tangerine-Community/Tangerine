@@ -1,4 +1,4 @@
-# Tangerine Technical Documentation
+# Tangerine Documentation
 
 Welcome to the Tangerine Documentation site. This is an MDWiki hosted on Github Pages. Find the source for this in the [Tangerine docs folder](https://github.com/Tangerine-Community/Tangerine/tree/master/docs) on Github.
 
