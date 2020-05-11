@@ -121,43 +121,19 @@ export class SyncCouchdbService {
     let pullSyncOptions;
 
     if (appConfig.couchdbPullUsingDocIds) {
-
-      const MAX_IDS = 250;
       const remoteIds = await remoteDb.find({
         'limit': 987654321,
         'fields': ['_id'],
         'selector': pullSelector
       });
-
-      // split the remoteIds docs array into memory-friendly chonks.
-
-      /**
-       * Returns an array with arrays of the given size.
-       *
-       * @param myArray {Array} Array to split
-       * @param chunkSize {Integer} Size of every group
-       */
-      function chunkArray(myArray, chunk_size){
-        const results = [];
-        while (myArray.length) {
-          results.push(myArray.splice(0, chunk_size));
-        }
-        return results;
+      pullSyncOptions = {
+        "since": pull_last_seq,
+        "batch_size": 50,
+        "batches_limit": 1,
+        "doc_ids": remoteIds.docs.map(doc => doc._id),
+        "checkpoint": false
       }
-
-      const chonks = chunkArray(remoteIds.docs, MAX_IDS);
-
-      for (let index = 0; index < chonks.length; index++) {
-        const theseRemoteIds = chonks[index]
-        pullSyncOptions = {
-          "since": pull_last_seq,
-          "batch_size": 50,
-          "batches_limit": 1,
-          "doc_ids": theseRemoteIds.map(doc => doc._id),
-          "checkpoint": false
-        }
-        replicationStatus = await this.doPull(userDb, remoteDb, pullSyncOptions);
-      }
+      replicationStatus = await this.doPull(userDb, remoteDb, pullSyncOptions);
     } else {
       pullSyncOptions = {
         "since": pull_last_seq,
