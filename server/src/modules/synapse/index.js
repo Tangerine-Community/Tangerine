@@ -80,10 +80,6 @@ const getItemValue = (doc, variableName) => {
   return variablesByName[variableName];
 };
 
-function isValidDate(d) {
-  return d instanceof Date && !isNaN(d);
-}
-
 /** This function processes form response for csv.
  *
  * @param {object} formData - form response from database
@@ -153,15 +149,6 @@ const generateFlatResponse = async function (formResponse, locationList) {
   }
   return flatFormResponse;
 };
-
-String.prototype.rjust = function( width, padding ) {
-  padding = padding || " ";
-  padding = padding.substr( 0, 1 );
-  if( this.length < width )
-    return padding.repeat( width - this.length ) + this;
-  else
-    return this;
-}
 
 function pushResponse(doc, db) {
   return new Promise((resolve, reject) => {
