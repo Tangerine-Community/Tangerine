@@ -53,8 +53,59 @@ export class SyncCouchdbService {
 
   // Note that if you run this with no forms configured to CouchDB sync, that will result in no filter query and everything will be synced. Use carefully.
   async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails): Promise<ReplicationStatus> {
+    const appConfig = await this.appConfigService.getAppConfig()
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
+    // From Form Info, generate the pull and push selectors.
+    const pullSelector = {
+      "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
+        if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+          $or = [
+            ...$or,
+            ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+              ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                // Get last value, that's the focused sync point.
+                let location = locationConfig.value.slice(-1).pop()
+                return {
+                  "form.id": formInfo.id,
+                  [`location.${location.level}`]: location.value
+                }
+              })
+              : [
+                {
+                  "form.id": formInfo.id
+                }
+              ]
+          ]
+        }
+        return $or
+      }, [])
+    }
+    const pushSelector = {
+      "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
+        if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
+          $or = [
+            ...$or,
+            ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+              ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                // Get last value, that's the focused sync point.
+                let location = locationConfig.value.slice(-1).pop()
+                return {
+                  "form.id": formInfo.id,
+                  [`location.${location.level}`]: location.value
+                }
+              })
+              : [
+                {
+                  "form.id": formInfo.id
+                }
+              ]
+          ]
+        }
+        return $or
+      }, [])
+    }
+    // Get the sequences we'll be starting with.
     let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
     let push_last_seq = await this.variableService.get('sync-push-last_seq')
     if (typeof pull_last_seq === 'undefined') {
@@ -63,71 +114,34 @@ export class SyncCouchdbService {
     if (typeof push_last_seq === 'undefined') {
       push_last_seq = 0;
     }
-
-    const pouchOptions = {
+    // Build the PouchSyncOptions.
+    const pouchSyncOptions = {
       "push": {
         "since": push_last_seq,
         "batch_size": 50,
-        "batches_limit": 1,
-        ...(await this.appConfigService.getAppConfig()).couchdbSync4All ? {} : { "selector": {
-            "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
-              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
-                $or = [
-                  ...$or,
-                  ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                    ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                      // Get last value, that's the focused sync point.
-                      let location = locationConfig.value.slice(-1).pop()
-                      return {
-                        "form.id": formInfo.id,
-                        [`location.${location.level}`]: location.value
-                      }
-                    })
-                    : [
-                      {
-                        "form.id": formInfo.id
-                      }
-                    ]
-                ]
-              }
-              return $or
-            }, [])
-          }
-        }
+        "batches_limit": 5,
+        ...appConfig.couchdbPush4All ? { } : { "selector": pushSelector }
       },
       "pull": {
         "since": pull_last_seq,
         "batch_size": 50,
         "batches_limit": 5,
-        "selector": {
-          "$or" : syncDetails.formInfos.reduce(($or, formInfo) => {
-            if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-              $or = [
-                ...$or,
-                ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                  ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                    // Get last value, that's the focused sync point.
-                    let location = locationConfig.value.slice(-1).pop()
-                    return {
-                      "form.id": formInfo.id,
-                      [`location.${location.level}`]: location.value
-                    }
-                  })
-                  : [
-                    {
-                      "form.id": formInfo.id
-                    }
-                  ]
-              ]
-            }
-            return $or
-          }, [])
-        }
+        ...appConfig.couchdbPullUsingDocIds
+          ? {
+            "doc_ids": (await remoteDb.find({
+              "limit": 987654321,
+              "fields": ["_id"],
+              "selector":  pullSelector
+            })).docs.map(doc => doc._id)
+          }
+          : {
+            "selector": pullSelector
+          }
       }
     }
 
     const replicationStatus = <ReplicationStatus>await new Promise((resolve, reject) => {
-      userDb.sync(remoteDb, pouchOptions).on('complete', async  (info) => {
+      userDb.sync(remoteDb, pouchSyncOptions).on('complete', async  (info) => {
         await this.variableService.set('sync-push-last_seq', info.push.last_seq)
         await this.variableService.set('sync-pull-last_seq', info.pull.last_seq)
         const conflictsQuery = await userDb.query('sync-conflicts');

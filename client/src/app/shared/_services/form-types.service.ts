@@ -4,8 +4,8 @@ import { FormType } from '../_classes/form-type.class';
 const FORM_TYPES_INFO:Array<FormType> = [
   <FormType>{
     id: 'form',
-    newFormResponseLinkTemplate: '/tangy-forms-player?formId=${formId}',
-    resumeFormResponseLinkTemplate: '/tangy-forms-player?formId=${formId}&responseId=${response._id}',
+    newFormResponseLinkTemplate: '/tangy-forms-player/new/${formId}',
+    resumeFormResponseLinkTemplate: '/tangy-forms-player/${response._id}',
     iconTemplate: '${response && response.complete ? `assignment-turned-in` : `assignment`}'
   },
   <FormType>{

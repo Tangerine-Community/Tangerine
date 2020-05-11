@@ -20,11 +20,15 @@ import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatButtonModule, MatIconModule, MatCheckboxModule, MatCardModule, MatMenuModule,
-  MatSidenavModule, MatToolbarModule, MatDividerModule
-} from '@angular/material';
-
+import { httpInterceptorProviders } from './core/http/interceptors';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
@@ -64,7 +68,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     }),
     BrowserAnimationsModule
   ],
-  providers: [TangyErrorHandler, WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
+  providers: [httpInterceptorProviders, TangyErrorHandler,
+    WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -280,6 +280,13 @@ export class UserService {
     return userProfile
   }
 
+  async getUserLocation(username?: string) {
+    const userProfile = username
+      ? await this.getUserProfile(username)
+      : await this.getUserProfile();
+    return userProfile.inputs.find(input => input.name === 'location')
+  }
+
   async getUserLocations(username?: string) {
     const userProfile = username ? await this.getUserProfile(username) : await this.getUserProfile();
     return userProfile.inputs.reduce((locationIds, input) => {

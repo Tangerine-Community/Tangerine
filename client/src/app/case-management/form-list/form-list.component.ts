@@ -1,3 +1,4 @@
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
@@ -13,14 +14,16 @@ import { CaseManagementService } from '../_services/case-management.service';
 export class FormListComponent implements OnInit {
   formList;
   @ViewChild('search', {static: true}) search: ElementRef;
-  constructor(private caseManagementService: CaseManagementService) {
+  constructor(
+    private tangyFormsInfoService:TangyFormsInfoService
+  ) {
   }
   ngOnInit() {
     this.getFormList();
   }
   async getFormList() {
     try {
-      this.formList = (await this.caseManagementService.getFormList()).filter(form => !form.archived && form.listed !== false);
+      this.formList = (await this.tangyFormsInfoService.getFormsInfo()).filter(form => !form.archived && form.listed !== false);
     } catch (error) {
       console.error(error);
     }
