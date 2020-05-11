@@ -135,24 +135,6 @@ const generateFlatResponse = async function (formResponse, locationList) {
             set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
-      } else if (input.tagName === 'TANGY-GPS') {
-        set(input, `${firstIdSegment}geoip.location.lat`, input.value.latitude)
-        set(input, `${firstIdSegment}geoip.location.lon`, input.value.longitude)
-        // Flatter...
-        set(input, `geoip.lat`, input.value.latitude)
-        set(input, `geoip.lon`, input.value.longitude)
-
-      } else if (input.tagName === 'TANGY-TIMED') {
-        set(input, `${firstIdSegment}${input.name}.duration`, input.duration)
-        set(input, `${firstIdSegment}${input.name}.time_remaining`, input.timeRemaining)
-        // Calculate Items Per Minute.
-        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
-        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
-        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-        set(input, `${firstIdSegment}${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-        set(input, `${firstIdSegment}${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
-        let timeSpent = input.duration - input.timeRemaining
-        set(input, `${firstIdSegment}${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
@@ -169,8 +151,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
       }
     }
   }
-  let data = await tangyModules.hook("flatFormResponse", {flatFormResponse, formResponse});
-  return data.flatFormResponse;
+  return flatFormResponse;
 };
 
 String.prototype.rjust = function( width, padding ) {
