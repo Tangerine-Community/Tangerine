@@ -5,6 +5,63 @@ Every instrument/form, section, and individual item provides an
 interface for adding logic, e.g. skip logic, that controls the
 interactivity and presentation of the instrument, section, or item.
 
+There are two types of skip logic that can be applied:
+
+- On form level - used to skip an entire section and implement logic that is applicable to the entire form
+- On section/page level
+  - **Most common case:** You can implement those in the item's 'Skip If' field, or
+  - **Used for more coplex conditions**Implement the skip in the section's on-change logic
+
+The functions that we use for skip logic are:
+- getValue('*name*') - to check the value of input '*name*'
+  - Use this for Text, Number, Dates, Time, Radio buttons, or Drop down lists
+- getValue('*name*').includes('*value*') - to check if '*value*' is in the selected items of '*name*'
+  - Use this call to check if a value is in the list of selected values of a checkbox group input.
+- grid specific functions - look at the end of this page for more information.
+
+#### Join skip logic conditions using the && (AND) and || (OR) operators
+**getValue(\'repeatedgrade\') == \'1\' && getValue(\'age\') >= 1** 
+
+#### Negate a condition using the ! (NOT) operator
+**getValue(\'repeatedgrade\') != \'1\'** Or **!getValue(\'grades_taught\').includes(\'1\')**
+
+
+### Logic at item level
+
+
+**You want to skip an item question:**
+
+Navigate to the "Show if" in the Item Editor.
+
+<img src="./media/image68.png" width="570">
+
+
+In this example this item (e.g., "Which grade did you repeat?" will ONLY
+be shown if the response to the previous item (e.g., asking about
+whether the person ever repeated a grade) was "yes" (data value 1).
+
+**getValue(\'repeatedgrade\') == \'1\'**
+
+Alternatively, for a preceding question that had "Other" as an answer
+option, the logic here might look like this:
+
+**getValue(\'q10\') == \'9\'**
+
+Other examples might include a specific value of a preceding item. Use
+the below example for questions of type checkbox group, where more than
+one answer can be selected.
+
+**getValue(\'q12\').includes(\'5\')**
+
+**\
+NOTE:** The skip logic commands used in Tangerine are case-sensitive and
+space-sensitive. You must type precisely the name of the variables which
+you want to reference.
+
+**NOTE:** Use single straight quotation marks to demarcate variables
+names \', do NOT use single slanted quotation marks ' or double
+quotation marks ".
+
 ### Logic at instrument/form level
 
 At the instrument/form level, accessing this logic editor is via
@@ -17,19 +74,6 @@ Click on **ADVANCED** to see the screen below with "on-open" and
 "on-change" entries.
 
 <img src="./media/image66.png" width="570">
-
-
-### Logic at section level
-
-At the section level, the logic editor can be accessed by editing the
-**Section Details** clicking the pen icon on the right of the blue bar
-(where one can also rename the section).
-
-
-<img src="./media/image67.png" width="570">
-
-
-### Logic at item level
 
 As outlined earlier, at the **item level**, such logic can be added in
 the "Show if" field in the item editor.
@@ -132,38 +176,19 @@ message.
 <img src="./media/image71.png" width="570">
 
 
-**You want to skip an item:**
+### Logic at section level
 
-Navigate to the "Show if" in the Item Editor.
+At the section level, the logic editor can be accessed by editing the
+**Section Details** clicking the pen icon on the right of the blue bar
+(where one can also rename the section).
 
-<img src="./media/image68.png" width="570">
+
+<img src="./media/image67.png" width="570">
 
 
-In this example this item (e.g., "Which grade did you repeat?" will ONLY
-be shown if the response to the previous item (e.g., asking about
-whether the person ever repeated a grade) was "yes" (data value 1).
 
-**getValue(\'repeatedgrade\') == \'1\'**
 
-Alternatively, for a preceding question that had "Other" as an answer
-option, the logic here might look like this:
 
-**getValue(\'q10\') == \'9\'**
-
-Other examples might include a specific value of a preceding item. Use
-the below example for questions of type checkbox group, where more than
-one answer can be selected.
-
-**getValue(\'q12\').includes(\'5\')**
-
-**\
-NOTE:** The skip logic commands used in Tangerine are case-sensitive and
-space-sensitive. You must type precisely the name of the variables which
-you want to reference.
-
-**NOTE:** Use single straight quotation marks to demarcate variables
-names \', do NOT use single slanted quotation marks ' or double
-quotation marks ".
 
 ### Skip logic with grid specific functions
 
