@@ -6,5 +6,6 @@ Welcome to the Tangerine Documentation site. This is an MDWiki hosted on Github 
 - [Data Collector Guide](data-collector/README.md)
 - [System Administrator Guide](system-administrator/README.md)
 - [Developer Guide](developer/README.md)
+- [User Guide](user-guide/README.md)
 
 
