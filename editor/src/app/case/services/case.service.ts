@@ -1,3 +1,4 @@
+import { IssueStatus } from './../classes/issue.class';
 import { Issue, IssueEvent } from 'src/app/case/classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
@@ -321,13 +322,15 @@ class CaseService {
 
   async createIssue (label = '', caseId:string, eventId:string, eventFormId:string,  formResponseId:string) {
     const issue = new Issue({
+      _id: UUID(),
       label,
       caseId,
       eventId,
       eventFormId,
+      status: IssueStatus.Open,
       formResponseId
     })
-    await this.tangyFormService.saveResponse(issue)
+    return await this.tangyFormService.saveResponse(issue)
   }
 
   async commentOnIssue(issueId, comment) {
