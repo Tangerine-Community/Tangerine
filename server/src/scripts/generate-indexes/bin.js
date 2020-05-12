@@ -14,24 +14,56 @@ const groupId = process.argv[2];
 const db = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}`)
 const groupPath = '/tangerine/client/content/groups/' + groupId
 
+function createIndex(index) {
+  return new Promise(async (resolve, reject) => {
+    async function tryToCreateIndex() {
+      let didSucceed;
+      try {
+        await db.createIndex(index)
+        didSucceed = true
+      } catch (error) {
+        didSucceed = false
+      }
+      return didSucceed
+    }
+    try {
+      while (await tryToCreateIndex() === false) {
+        // try again...
+      }
+    } catch (error) {
+      console.log(error)
+      reject()
+    }
+    resolve()
+  })
+}
+
 async function go() {
   console.log('Creating index for field of type')
-  await db.createIndex({
+  await createIndex({
     index: {
       fields: [
         'type',
       ]
     }
   })
-  console.log('Creating index for field of status (for Issues)')
-  await db.createIndex({
+  console.log('Creating index for field of type and status (for Issues mainly)')
+  await createIndex({
     index: {
       fields: [
-        'status',
+        'type',
+        'status'
       ]
     }
   })
   console.log('Creating index for field of form.id')
+  await createIndex({
+    index: {
+      fields: [
+        'form.id'
+      ]
+    }
+  })
   let indexDidIndex = true
   try {
     // Trigger the index to be indexed.
@@ -41,20 +73,45 @@ async function go() {
       },
       limit: 1
     })
+    await db.find({
+      selector: {
+        'type': ''
+      },
+      limit: 1
+    })
+    await db.find({
+      selector: {
+        'type': '',
+        'status': ''
+      },
+      limit: 1
+    })
   } catch (e) {
     // This will likely timeout, no problem.
     indexDidIndex = false
   }
 
+  //
+  // Location List Indexes
+  //
   const locationList = await fs.readJSON(`${groupPath}/location-list.json`)
   console.log(`Generating index for: ${locationList.locationsLevels.join(', ')}`)
   for (const level of locationList.locationsLevels) {
-    await db.createIndex({
+    await createIndex({
       index: {
         fields: [
           'type',
           `location.${level}`,
           'form.id'
+        ]
+      }
+    })
+    await createIndex({
+      index: {
+        fields: [
+          'type',
+          'status',
+          `location.${level}`,
         ]
       }
     })
@@ -64,6 +121,15 @@ async function go() {
       await db.find({
         selector: {
           type: '',
+          [`location.${level}`]: '',
+          'form.id': ''
+        },
+        limit: 1
+      })
+      await db.find({
+        selector: {
+          type: '',
+          status: '',
           [`location.${level}`]: '',
           'form.id': ''
         },
