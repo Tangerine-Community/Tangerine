@@ -1,3 +1,4 @@
+import { Issue, IssueEvent } from 'src/app/case/classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -316,6 +317,33 @@ class CaseService {
 
   getParticipantData(participantId:string, key:string) {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
+  }
+
+  async createIssue (label = '', caseId:string, eventId:string, eventFormId:string,  formResponseId:string) {
+    const issue = new Issue({
+      label,
+      caseId,
+      eventId,
+      eventFormId,
+      formResponseId
+    })
+    await this.tangyFormService.saveResponse(issue)
+  }
+
+  async commentOnIssue(issueId, comment) {
+    const issue = <Issue>await this.tangyFormService.getResponse(issueId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: 'comment'
+    })
+  }
+
+  async openIssue () {
+
+  }
+
+  async closeIssue() {
+
   }
 
   async getQueries (): Promise<Array<Query>> {

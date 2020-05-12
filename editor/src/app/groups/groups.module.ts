@@ -1,3 +1,4 @@
+import { GroupIssuesComponent } from './group-issues/group-issues.component';
 import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
@@ -152,6 +153,7 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     GroupUploadsViewComponent,
     GroupDeviceUserComponent,
     GroupCasesComponent,
+    GroupIssuesComponent,
     CaseSettingsComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
