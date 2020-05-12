@@ -1,3 +1,4 @@
+import { IssueStatus } from './../../case/classes/issue.class';
 import { Issue } from 'src/app/case/classes/issue.class';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
@@ -37,6 +38,7 @@ export class GroupIssuesComponent implements OnInit {
   issues:Array<Issue>
   loading = false
   @ViewChild('tangyLocation', {static: true}) tangyLocationEl:ElementRef
+  @ViewChild('showClosedIssues', {static: true}) showClosedIssues:ElementRef
 
   // Query params.
   selector:any = {}
@@ -57,7 +59,8 @@ export class GroupIssuesComponent implements OnInit {
     ]
     this.groupId = window.location.hash.split('/')[2]
     this.selector = {
-      "type": "issue"
+      "type": "issue",
+      'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
     }
     this.query()
   }
@@ -69,12 +72,14 @@ export class GroupIssuesComponent implements OnInit {
       .value
     if (!location || location.length === 0) {
       this.selector = {
-        'type': 'issue'
+        'type': 'issue',
+        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
       }
     } else {
       const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
       this.selector = {
         'type': 'issue',
+        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
         [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
       }
     }
