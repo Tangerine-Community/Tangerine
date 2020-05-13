@@ -20,6 +20,7 @@ export class TangyFormsPlayerComponent {
   @Input('templateId') templateId:string
   @Input('formResponseId') formResponseId:string
   @Input('location') location:any
+  @Input('skipSaving') skipSaving = false
 
   $rendered = new Subject()
   $submit = new Subject()
@@ -28,11 +29,11 @@ export class TangyFormsPlayerComponent {
   formInfo:FormInfo
   formTemplatesInContext:Array<FormTemplate>
   response:any
+  formEl:any
 
   throttledSaveLoaded;
   throttledSaveFiring;
 
-  formEl;
   window:any;
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
@@ -58,6 +59,10 @@ export class TangyFormsPlayerComponent {
     } else {
       return true
     }
+  }
+
+  unlock() {
+    this.formEl.unlock()
   }
 
   async render() {
@@ -91,10 +96,12 @@ export class TangyFormsPlayerComponent {
       }
       this.response = formEl.response
       // Listen up, save in the db.
-      formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-        let response = _.target.store.getState()
-        this.throttledSaveResponse(response)
-      })
+      if (!this.skipSaving) {
+        formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+          let response = _.target.store.getState()
+          this.throttledSaveResponse(response)
+        })
+      }
       formEl.addEventListener('submit', () => {
         this.$submit.next(true)
       })
