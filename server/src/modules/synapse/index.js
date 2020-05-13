@@ -28,14 +28,13 @@ module.exports = {
           console.log("Error creating db: " + JSON.stringify(e))
         }
         if (doc.form.id === 'user-profile') {
-          await saveData({...doc, type : "user-profile"}, locationList, {}, sourceDb, resolve);
+          await saveFlatResponse({...doc, type : "user-profile"}, locationList, synapseDb, resolve);
         } else {
           if (doc.type === 'case') {
 
             // output case
-            await pushResponse(doc, synapseDb);
-            // await saveData(doc, locationList, {}, sourceDb, resolve);
-
+            await saveFlatResponse(doc, locationList, synapseDb, resolve);
+            
             let numInf = getItemValue(doc, 'numinf')
             let participant_id = getItemValue(doc, 'participant_id')
 
@@ -51,7 +50,7 @@ module.exports = {
               // output event-forms
               for (const eventForm of event['eventForms']) {
                 try {
-                  await pushResponse({type : "event-form" }, synapseDb);
+                  await pushResponse({...eventForm, type : "event-form" }, synapseDb);
                 } catch (e) {
                   if (e.status !== 404) {
                     console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
@@ -60,9 +59,7 @@ module.exports = {
               }
             }
           } else {
-            let flatResponse = await generateFlatResponse(doc, locationList);
-            await saveData({...doc, type : "form-response"}, flatResponse, sourceDb, resolve);
-            // resolve(data)
+            await saveFlatResponse({...doc, type : "form-response"}, locationList, synapseDb, resolve);
           }
         }
       })
@@ -170,17 +167,13 @@ function pushResponse(doc, db) {
   })
 }
 
-async function saveData(doc, flatResponse, sourceDb, resolve) {
-  // Process the flatResponse
-  const synapseDb = new DB(`${sourceDb.name}-synapse`);
-  let processedResult = flatResponse
-
-  await pushResponse({
-    type: doc.type,
-    _id: processedResult._id,
-    formId: processedResult.formId,
-    startUnixtime: processedResult.startUnixtime,
-    processedResult
+async function saveFlatResponse(doc, locationList, synapseDb, resolve) {
+  let flatResponse = await generateFlatResponse(doc, locationList);
+  // make sure the top-level properties of doc are copied.
+  const topDoc = {}
+  Object.entries(doc).forEach(([key, value]) => value === Object(value) ? null : topDoc[key] = value);
+  await pushResponse({...topDoc,
+    data: flatResponse
   }, synapseDb);
   resolve('done!')
 }
