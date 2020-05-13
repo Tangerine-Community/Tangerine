@@ -1,4 +1,4 @@
-import { IssueStatus } from './../classes/issue.class';
+import { IssueStatus, IssueEventType } from './../classes/issue.class';
 import { Issue, IssueEvent } from 'src/app/case/classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
@@ -333,20 +333,49 @@ class CaseService {
     return await this.tangyFormService.saveResponse(issue)
   }
 
+  async getIssue(issueId) {
+    return new Issue(await this.tangyFormService.getResponse(issueId))
+  }
+
+  
+  async saveFormResponseRevision(response, issueId) {
+    const issue = <Issue>await this.tangyFormService.getResponse(issueId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.FormResponseRevision,
+      data: {
+        response
+      }
+    })
+    return await this.tangyFormService.saveResponse(issue)
+  }
+
   async commentOnIssue(issueId, comment) {
     const issue = <Issue>await this.tangyFormService.getResponse(issueId)
     issue.events.push(<IssueEvent>{
       id: UUID(),
-      type: 'comment'
+      type: IssueEventType.Comment,
+      data: {
+        comment
+      }
+    })
+    return await this.tangyFormService.saveResponse(issue)
+  }
+
+  async openIssue (issueId) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Open
     })
   }
 
-  async openIssue () {
-
-  }
-
-  async closeIssue() {
-
+  async closeIssue(issueId) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Closed
+    })
   }
 
   async getQueries (): Promise<Array<Query>> {

@@ -1,1 +1,4 @@
-<p>issue works!</p>
+<div *ngIf="ready">
+  <h1>{{issue.label}}</h1>
+  <paper-button routerLink="form-revision" *ngIf="issue.formResponseId">Revise Form</paper-button>
+</div>
