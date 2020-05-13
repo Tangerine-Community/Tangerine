@@ -22,6 +22,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
@@ -101,6 +102,7 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     MatGridListModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatSlideToggleModule,
     TangyFormsModule,
     SharedModule,
     NgTangyFormEditorModule,

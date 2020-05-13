@@ -22,6 +22,10 @@ tangy-location {
   margin-left: 15px;
 }
 
+.show-closed-issues {
+  color: white;
+}
+
 #header {
   background: var(--primary-color-lighter);
   margin-bottom: 15px;
