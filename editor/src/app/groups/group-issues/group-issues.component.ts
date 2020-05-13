@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { FormInfo } from './../../tangy-forms/classes/form-info.class';
 import { GroupResponsesService } from './../services/group-responses.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [

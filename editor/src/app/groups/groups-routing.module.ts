@@ -1,3 +1,4 @@
+import { IssueFormComponent } from './../case/components/issue-form/issue-form.component';
 import { IssueComponent } from './../case/components/issue/issue.component';
 import { GroupIssuesComponent } from './group-issues/group-issues.component';
 import { GroupCasesComponent } from './group-cases/group-cases.component';
@@ -62,6 +63,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/uploads/:responseId', component: GroupUploadsViewComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/issues/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues', component: GroupIssuesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard, AdminUserGuard] },
