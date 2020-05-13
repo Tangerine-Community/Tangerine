@@ -1,3 +1,4 @@
+import { Issue } from '../../classes/issue.class';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
@@ -9,12 +10,13 @@ import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
 
 @Component({
-  selector: 'app-event-form',
-  templateUrl: './event-form.component.html',
-  styleUrls: ['./event-form.component.css']
+  selector: 'app-issue-form',
+  templateUrl: './issue-form.component.html',
+  styleUrls: ['./issue-form.component.css']
 })
-export class EventFormComponent implements OnInit {
+export class IssueFormComponent implements OnInit {
 
+  issue:Issue
   caseEvent: CaseEvent
   caseEventDefinition: CaseEventDefinition
   eventFormDefinition: EventFormDefinition
@@ -44,19 +46,21 @@ export class EventFormComponent implements OnInit {
   async ngOnInit() {
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
-      await this.caseService.load(params.caseId)
+      window['caseService'] = this.caseService
+      this.issue = await this.caseService.getIssue(params.issueId)
+      await this.caseService.load(this.issue.caseId)
       this.window.caseService = this.caseService
       this.caseEvent = this
         .caseService
         .case
         .events
-        .find(caseEvent => caseEvent.id === params.eventId)
+        .find(caseEvent => caseEvent.id === this.issue.eventId)
       this.caseEventDefinition = this
         .caseService
         .caseDefinition
         .eventDefinitions
         .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
-      this.eventForm = this.caseEvent.eventForms.find(eventForm => eventForm.id === params.eventFormId)
+      this.eventForm = this.caseEvent.eventForms.find(eventForm => eventForm.id === this.issue.eventFormId)
       this.eventFormDefinition = this
         .caseEventDefinition
         .eventFormDefinitions
@@ -73,16 +77,12 @@ export class EventFormComponent implements OnInit {
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
       this.formPlayer.$rendered.subscribe(async () => {
-        if (!this.formResponseId) {
-          this.eventForm.formResponseId = this.formPlayer.formResponseId
-          await this.caseService.save()       
-        }
+        this.formPlayer.unlock()
       })
       this.formPlayer.$submit.subscribe(async () => {
         setTimeout(async () => {
-          this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
-          await this.caseService.save()
-          await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+          await this.caseService.saveFormResponseRevision(this.formPlayer.formEl.response, this.issue._id)
+          this.router.navigate([`../`], { relativeTo: this.route })
         }, 500)
       })
       this.loaded = true

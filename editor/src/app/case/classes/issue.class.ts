@@ -5,9 +5,15 @@ export enum IssueStatus {
   Closed='Closed'
 }
 
+export enum IssueEventType {
+  Comment='Comment',
+  FormResponseRevision='FormResponseRevision',
+  FormResponseMerge='FormMerge'
+}
+
 export class IssueEvent {
   id:string
-  type:string
+  type:IssueEventType
   userId:string
   date:number
   data:any
@@ -19,7 +25,7 @@ class Issue extends TangyFormResponseModel {
   label:string
   tags:Array<string>
   status:IssueStatus 
-  events:Array<IssueEvent>
+  events:Array<IssueEvent> = []
   caseId:string
   eventId:string
   eventFormId:string
@@ -28,6 +34,7 @@ class Issue extends TangyFormResponseModel {
 
   constructor(data?:any) {
     super()
+    if (data.type !== 'issue') throw new Error('Passed in data of the wrong type. Expected an Issue.')
     Object.assign(this, data)
   }
 
