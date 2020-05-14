@@ -480,6 +480,10 @@ class CaseService {
     return false;
   }
 
+  async getFormResponse(formResponseId:string) {
+    return await this.tangyFormService.getResponse(formResponseId)
+  }
+
   /**
    * Exports current case to json. Used in generate-cases as template.
    */
