@@ -16,9 +16,15 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 })
 export class TangyFormsPlayerComponent {
 
-  @Input('formId') formId:string
-  @Input('templateId') templateId:string
+  // Use on of three to do different things.
+  // 1. Use this to have the component load the response for you. 
   @Input('formResponseId') formResponseId:string
+  // 2. Use this if you want to attach the form response yourself.
+  @Input('response') response:TangyFormResponseModel
+  // 3. Use this is you want a new form response but want define which form to use.
+  @Input('formId') formId:string
+
+  @Input('templateId') templateId:string
   @Input('location') location:any
   @Input('skipSaving') skipSaving = false
 
@@ -28,7 +34,6 @@ export class TangyFormsPlayerComponent {
 
   formInfo:FormInfo
   formTemplatesInContext:Array<FormTemplate>
-  response:any
   formEl:any
 
   throttledSaveLoaded;
@@ -68,9 +73,11 @@ export class TangyFormsPlayerComponent {
   async render() {
     //
     // Get form ingredients.
-    const formResponse = this.formResponseId
-      ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
-      : ''
+    const formResponse = this.response
+      ? this.response
+      : this.formResponseId
+        ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
+        : ''
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']
