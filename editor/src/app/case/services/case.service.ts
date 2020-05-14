@@ -337,12 +337,14 @@ class CaseService {
     return new Issue(await this.tangyFormService.getResponse(issueId))
   }
 
-  
-  async saveFormResponseRevision(response, issueId) {
+
+  async saveFormResponseRevision(response, issueId, userId, userName) {
     const issue = <Issue>await this.tangyFormService.getResponse(issueId)
     issue.events.push(<IssueEvent>{
       id: UUID(),
       type: IssueEventType.FormResponseRevision,
+      userName,
+      userId,
       data: {
         response
       }
@@ -350,11 +352,13 @@ class CaseService {
     return await this.tangyFormService.saveResponse(issue)
   }
 
-  async commentOnIssue(issueId, comment) {
+  async commentOnIssue(issueId, comment, userId, userName) {
     const issue = <Issue>await this.tangyFormService.getResponse(issueId)
     issue.events.push(<IssueEvent>{
       id: UUID(),
       type: IssueEventType.Comment,
+      userName,
+      userId,
       data: {
         comment
       }
