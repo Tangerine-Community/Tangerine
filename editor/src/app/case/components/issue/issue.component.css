@@ -1,0 +1,40 @@
+.issue-event {
+  width: 100%;
+  margin: 15px;
+}
+
+.page {
+  margin: 0px 40px 0px 0px;
+}
+
+.header {
+  background: var(--primary-color-lighter);
+  color: #FFF;
+  margin: 1px 0px 0px;
+  padding: 15px 0px 0px;
+}
+
+.header h1 {
+  color: #FFF;
+}
+
+.issue-actions {
+}
+
+.issue-event--label mwc-icon {
+  position: relative;
+  top: 4px;
+}
+
+.issue-event--primary {
+  margin: 15px 0px;
+}
+
+paper-button {
+  background: var(--mdc-theme-secondary);
+  color: var(--accent-text-color);
+}
+
+paper-tabs {
+  --paper-tabs-selection-bar-color: var(--mdc-theme-secondary);
+}

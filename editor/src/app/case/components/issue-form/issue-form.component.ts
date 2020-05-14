@@ -1,3 +1,4 @@
+import { UserService } from './../../../core/auth/_services/user.service';
 import { Issue } from '../../classes/issue.class';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
@@ -38,6 +39,7 @@ export class IssueFormComponent implements OnInit {
     private route: ActivatedRoute,
     private hostElementRef: ElementRef,
     private router: Router,
+    private userService:UserService,
     private caseService: CaseService,
   ) {
     this.window = window
@@ -81,7 +83,11 @@ export class IssueFormComponent implements OnInit {
       })
       this.formPlayer.$submit.subscribe(async () => {
         setTimeout(async () => {
-          await this.caseService.saveFormResponseRevision(this.formPlayer.formEl.response, this.issue._id)
+          const userId = await this.userService.getCurrentUser()
+          // @TODO Look up the user's name.
+          const userName = userId
+
+          await this.caseService.saveFormResponseRevision(this.formPlayer.formEl.response, this.issue._id, userId, userName)
           this.router.navigate([`../`], { relativeTo: this.route })
         }, 500)
       })

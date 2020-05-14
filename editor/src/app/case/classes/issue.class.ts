@@ -14,6 +14,7 @@ export enum IssueEventType {
 export class IssueEvent {
   id:string
   type:IssueEventType
+  userName:string
   userId:string
   date:number
   data:any
@@ -22,6 +23,7 @@ export class IssueEvent {
 class Issue extends TangyFormResponseModel {
   
   _id: string
+  userId:string
   label:string
   tags:Array<string>
   status:IssueStatus 
