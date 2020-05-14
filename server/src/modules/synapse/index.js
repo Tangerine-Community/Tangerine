@@ -59,7 +59,7 @@ module.exports = {
               }
             }
           } else {
-            await saveFlatResponse({...doc, type : "form-response"}, locationList, synapseDb, resolve);
+            await saveFlatResponse(doc, locationList, synapseDb, resolve);
           }
         }
       })
