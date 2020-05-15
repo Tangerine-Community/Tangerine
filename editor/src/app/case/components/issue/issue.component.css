@@ -10,12 +10,44 @@
 .header {
   background: var(--primary-color-lighter);
   color: #FFF;
-  margin: 1px 0px 0px;
+  margin: 1px 0px 15px;
   padding: 15px 0px 0px;
 }
 
 .header h1 {
   color: #FFF;
+}
+
+.status {
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.status mwc-icon {
+  position: relative;
+  top: 5px;
+}
+
+.status-merged {
+  background: purple;
+  color: #FFF;
+}
+.status-open {
+  background: green;
+  color: #FFF;
+}
+.status-closed {
+  background: red;
+  color: #FFF;
+}
+
+.header-actions {
+  margin: 18px;
+}
+
+.header-actions a:active, .header-actions a:visited, .header-actions a {
+  text-decoration: none;
+
 }
 
 .issue-actions {
@@ -28,6 +60,10 @@
 
 .issue-event--primary {
   margin: 15px 0px;
+}
+
+.issue-event--date {
+  color: #CCC;
 }
 
 paper-button {

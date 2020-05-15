@@ -1,3 +1,4 @@
+import { MatChipsModule } from '@angular/material/chips';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -30,6 +31,7 @@ import { IssueComponent } from './components/issue/issue.component';
     CaseRoutingModule,
     SharedModule,
     TangyFormsModule,
+    MatChipsModule,
     CommonModule
   ],
   providers: [

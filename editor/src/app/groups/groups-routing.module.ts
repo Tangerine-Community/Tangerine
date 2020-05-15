@@ -64,6 +64,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/issues/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues', component: GroupIssuesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard, AdminUserGuard] },
