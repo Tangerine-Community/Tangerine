@@ -8,7 +8,7 @@
 }
 
 .header {
-  background: var(--primary-color-lighter);
+  background: #333;
   color: #FFF;
   margin: 1px 0px 15px;
   padding: 15px 0px 0px;
@@ -73,4 +73,16 @@ paper-button {
 
 paper-tabs {
   --paper-tabs-selection-bar-color: var(--mdc-theme-secondary);
+}
+
+.no-proposed-changes-message {
+  padding: 15px 25px;
+}
+
+.diff {
+  margin-left: 15px;
+}
+
+.diff--arrow {
+  font-size: .9em;
 }

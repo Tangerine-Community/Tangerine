@@ -50,40 +50,25 @@ export class IssueFormComponent implements OnInit {
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
-      await this.caseService.load(this.issue.caseId)
       this.window.caseService = this.caseService
-      this.caseEvent = this
-        .caseService
-        .case
-        .events
-        .find(caseEvent => caseEvent.id === this.issue.eventId)
-      this.caseEventDefinition = this
-        .caseService
-        .caseDefinition
-        .eventDefinitions
-        .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
-      this.eventForm = this.caseEvent.eventForms.find(eventForm => eventForm.id === this.issue.eventFormId)
-      this.eventFormDefinition = this
-        .caseEventDefinition
-        .eventFormDefinitions
-        .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
-      this.formId = this.eventFormDefinition.formId
-
+      let caseData:any
       if (params.eventId) {
         // We're viewing a specific form revision.
         let formResponseRevision = this.issue.events.find(event => event.id === params.eventId).data.response
+        caseData = this.issue.events.find(event => event.id === params.eventId).data.caseData
         this.formResponseId = formResponseRevision._id
         this.formPlayer.response = formResponseRevision 
       }
-      else if (await this.caseService.canMergeProposedFormResponse(this.issue._id)) {
+      else if (await this.caseService.canMergeProposedChange(this.issue._id)) {
         // Create a revision based on the last proposed revision.
-        let proposedFormResponse = await this.caseService.getProposedFormResponse(this.issue._id)
-        this.formResponseId = proposedFormResponse._id
+        const change = await this.caseService.getProposedChange(this.issue._id)
+        let proposedFormResponse = change.response
+        await this.caseService.loadInMemory(change.caseInstance)
         this.formPlayer.response = proposedFormResponse
       } else {
         // Create a revision based on the current form response because we can't merge the last proposed revision.
         let formResponse = await this.caseService.getFormResponse(this.issue.formResponseId)
-        this.formResponseId = formResponse._id
+        this.caseService.loadInMemory(await this.caseService.getFormResponse(this.issue.caseId))
         this.formPlayer.response = formResponse
       }
       this.formPlayer.render()
@@ -99,7 +84,7 @@ export class IssueFormComponent implements OnInit {
           // @TODO Look up the user's name.
           const userName = userId
 
-          await this.caseService.saveFormResponseRevision(this.formPlayer.formEl.response, this.issue._id, userId, userName)
+          await this.caseService.saveProposedChange(this.formPlayer.formEl.response, this.caseService.case, this.issue._id, userId, userName)
           this.router.navigate([`../`], { relativeTo: this.route })
         }, 500)
       })
