@@ -4,8 +4,8 @@
     <paper-button *ngIf="issue.merged && !isOpen" class="status-merged"><mwc-icon>call_merge</mwc-icon>merged</paper-button>
     <paper-button *ngIf="!issue.merged && !isOpen" class="status-closed"><mwc-icon>check</mwc-icon>closed</paper-button>
     <paper-button *ngIf="isOpen" class="status-open"><mwc-icon>list</mwc-icon>open</paper-button>
-    <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> jump to case</paper-button></a>
-    <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> jump to form</paper-button></a>
+    <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review case</paper-button></a>
+    <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review form</paper-button></a>
   </div>
   <paper-tabs class="tabs" selected="0">
     <paper-tab (click)="tab = 'activity'">Activity</paper-tab>
@@ -25,29 +25,28 @@
           <mwc-icon slot="item-icon">{{eventInfo.icon}}</mwc-icon>
           {{eventInfo.label}} by {{eventInfo.userName}} <span class="issue-event--date">{{eventInfo.date}}</span>
         </div>
-        <div class="issue-event--primary">
-          {{eventInfo.primary}}
+        <div class="issue-event--primary" [innerHTML]="eventInfo.primary|unsanitizeHtml">
         </div>
       </div>
-      <div class="card-actions" *ngIf="eventInfo.type === 'FormResponseRevision'">
+      <div class="card-actions" *ngIf="eventInfo.type === 'ProposedCHange'">
         <paper-button class="card-action" routerLink="form-revision/{{eventInfo.id}}">view</paper-button>
       </div>
     </paper-card>
 
-    <paper-card class="issue-event issue-actions" *ngIf="canMergeFormResponse">
+    <paper-card class="issue-event issue-actions" *ngIf="canMergeProposedChange">
       <div class="card-content">
         <div class="issue-event--label">
           <mwc-icon slot="item-icon">done</mwc-icon>
-          {{numberOfChanges}} {{ numberOfChanges === 1 ? 'change' : 'changes'}}
+          {{numberOfChanges}} {{ numberOfChanges === 1 ? 'change' : 'changes'}} and {{numberOfRevisions}} {{ numberOfRevisions === 1 ? 'revision' : 'revisions'}}
         </div>
       </div>
       <div class="card-actions">
         <paper-button routerLink="form-revision"><mwc-icon>call_split</mwc-icon>Propose</paper-button>
-        <paper-button (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Merge</paper-button>
+        <paper-button *ngIf="hasProposedChange" (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Merge</paper-button>
       </div>
     </paper-card>
 
-    <paper-card class="issue-event issue-actions" *ngIf="!canMergeFormResponse && isOpen">
+    <paper-card class="issue-event issue-actions" *ngIf="!canMergeProposedChange && isOpen">
       <div class="card-content">
         <div class="issue-event--label">
           <mwc-icon slot="item-icon">error</mwc-icon>
@@ -83,11 +82,17 @@
   </div>
 
   <div [hidden]="tab !== 'proposed'">
-    <app-tangy-forms-player [skipSaving]="true" #proposedFormResponseContainer></app-tangy-forms-player>
+    <app-tangy-forms-player [hidden]="hasProposedChange === false" [skipSaving]="true" #proposedFormResponseContainer></app-tangy-forms-player>
+    <p class="no-proposed-changes-message" [hidden]="hasProposedChange === true">
+      {{'No changes proposed yet.'|translate}}
+    </p>
   </div>
 
-  <div [hidden]="tab !== 'diff'">
-    diff...
+  <div [hidden]="tab !== 'differences'" class="diff">
+    <span [innerHTML]="diffMarkup | unsanitizeHtml"></span>
+    <p class="no-proposed-changes-message" [hidden]="hasProposedChange === true">
+      {{'No changes proposed yet.'|translate}}
+    </p>
   </div>
 
 

@@ -11,19 +11,20 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CaseService } from '../../services/case.service';
 import { Route } from '@angular/compiler/src/core';
 import moment from 'moment';
+import { diffTemplate } from './diff-template';
 
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
-  [IssueEventType.FormResponseRevision]: 'call_split',
-  [IssueEventType.FormResponseMerge]: 'call_merge',
-  [IssueEventType.Open]: 'list',
-  [IssueEventType.Close]: 'check'
+  [IssueEventType.ProposedChange]: 'call_split',
+  [IssueEventType.Merge]: 'call_merge',
+  [IssueEventType.Open]: 'playlist_add',
+  [IssueEventType.Close]: 'playlist_add_check'
 }
 
 const IssueEventTypeLabelMap = {
   [IssueEventType.Comment]: _TRANSLATE('comment'),
-  [IssueEventType.FormResponseRevision]: _TRANSLATE('revision'),
-  [IssueEventType.FormResponseMerge]: _TRANSLATE('proposed changes merged'),
+  [IssueEventType.ProposedChange]: _TRANSLATE('revision'),
+  [IssueEventType.Merge]: _TRANSLATE('proposed changes merged'),
   [IssueEventType.Open]: _TRANSLATE('opened'),
   [IssueEventType.Close]: _TRANSLATE('closed')
 }
@@ -49,8 +50,12 @@ export class IssueComponent implements OnInit {
   eventInfos:Array<EventInfo> = []
   issue:Issue
   numberOfChanges:number
-  canMergeFormResponse = false
+  numberOfRevisions:number
+  canMergeProposedChange = false
+  hasProposedChange = false
   isOpen = false
+  diffMarkup:string
+  diff:any
 
   @ViewChild('commentForm', {static: false}) commentForm:ElementRef
   @ViewChild('proposedFormResponseContainer', {static: false}) proposedFormResponseContainer:TangyFormsPlayerComponent
@@ -70,21 +75,22 @@ export class IssueComponent implements OnInit {
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
-      this.numberOfChanges = this.issue.events.reduce((numberOfChanges, event) => {
-        return event.type === IssueEventType.FormResponseRevision
+      this.numberOfRevisions = this.issue.events.reduce((numberOfChanges, event) => {
+        return event.type === IssueEventType.ProposedChange
           ? numberOfChanges + 1
           : numberOfChanges
       }, 0)
+      this.numberOfChanges = (await this.caseService.issueDiff(this.issue._id)).length
       await this.caseService.load(this.issue.caseId)
-      this.update()
-      
+      await this.update()
       this.ready = true
     })
   }
 
   async update() {
     this.isOpen = this.issue.status === IssueStatus.Open ? true : false
-    this.canMergeFormResponse = await this.caseService.canMergeProposedFormResponse(this.issue._id)
+    this.canMergeProposedChange = await this.caseService.canMergeProposedChange(this.issue._id)
+    this.hasProposedChange = await this.caseService.hasProposedChange(this.issue._id)
     this.eventInfos = this.issue.events.map(event => {
       return <EventInfo>{
         id: event.id,
@@ -95,14 +101,18 @@ export class IssueComponent implements OnInit {
         userName: event.userName,
         primary: `
           ${event.data && event.data.comment ? event.data.comment : ``}
+          ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
         `
       }
     })
-    this.proposedFormResponseContainer.response = await this.caseService.getProposedFormResponse(this.issue._id)
+    const proposedChange = await this.caseService.getProposedChange(this.issue._id)
+    this.proposedFormResponseContainer.response = proposedChange.response 
     this.proposedFormResponseContainer.render()
     const currentFormResponse = await this.caseService.getFormResponse(this.issue.formResponseId)
     this.currentFormResponseContainer.response = currentFormResponse
     this.currentFormResponseContainer.render()
+    this.diff = await this.caseService.issueDiff(this.issue._id)
+    this.diffMarkup = diffTemplate(this.diff)
   }
 
   async onCommentFormSubmit() {
@@ -119,7 +129,7 @@ export class IssueComponent implements OnInit {
     const userId = await this.userService.getCurrentUser()
     // @TODO Look up the user's name.
     const userName = userId
-    await this.caseService.mergeProposedFormResponse(this.issue._id, userId, userName)
+    await this.caseService.mergeProposedChange(this.issue._id, userId, userName)
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
   }

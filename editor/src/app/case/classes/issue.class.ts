@@ -2,6 +2,7 @@ import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 
 export enum IssueStatus {
   Open='Open',
+  Merged='Merged',
   Closed='Closed'
 }
 
@@ -10,8 +11,8 @@ export enum IssueEventType {
   Open='Open',
   Close='Close',
   Comment='Comment',
-  FormResponseRevision='FormResponseRevision',
-  FormResponseMerge='FormMerge'
+  ProposedChange='ProposedChange',
+  Merge='Merge'
 }
 
 export class IssueEvent {
@@ -37,7 +38,6 @@ class Issue extends TangyFormResponseModel {
   formResponseId:string
   type:string = 'issue'
   createdOn:number
-  merged = false
 
   constructor(data?:any) {
     super()
