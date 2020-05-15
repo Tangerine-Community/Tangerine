@@ -5,7 +5,10 @@ export enum IssueStatus {
   Closed='Closed'
 }
 
+
 export enum IssueEventType {
+  Open='Open',
+  Close='Close',
   Comment='Comment',
   FormResponseRevision='FormResponseRevision',
   FormResponseMerge='FormMerge'
@@ -33,10 +36,12 @@ class Issue extends TangyFormResponseModel {
   eventFormId:string
   formResponseId:string
   type:string = 'issue'
+  createdOn:number
+  merged = false
 
   constructor(data?:any) {
     super()
-    if (data.type !== 'issue') throw new Error('Passed in data of the wrong type. Expected an Issue.')
+    if (data.type && data.type !== 'issue') throw new Error('Passed in data of the wrong type. Expected an Issue.')
     Object.assign(this, data)
   }
 

@@ -69,17 +69,29 @@ export class IssueFormComponent implements OnInit {
         .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
       this.formId = this.eventFormDefinition.formId
 
-      this.formResponseId = this.eventForm.formResponseId || ''
-      this.formPlayer.formId = this.formId
-      this.formPlayer.formResponseId = this.formResponseId
-      this.formPlayer.templateId = this.templateId
-      this.formPlayer.location = this.caseService.case.location
+      if (params.eventId) {
+        // We're viewing a specific form revision.
+        let formResponseRevision = this.issue.events.find(event => event.id === params.eventId).data.response
+        this.formResponseId = formResponseRevision._id
+        this.formPlayer.response = formResponseRevision 
+      }
+      else if (await this.caseService.canMergeProposedFormResponse(this.issue._id)) {
+        // Create a revision based on the last proposed revision.
+        let proposedFormResponse = await this.caseService.getProposedFormResponse(this.issue._id)
+        this.formResponseId = proposedFormResponse._id
+        this.formPlayer.response = proposedFormResponse
+      } else {
+        // Create a revision based on the current form response because we can't merge the last proposed revision.
+        let formResponse = await this.caseService.getFormResponse(this.issue.formResponseId)
+        this.formResponseId = formResponse._id
+        this.formPlayer.response = formResponse
+      }
       this.formPlayer.render()
 
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
       this.formPlayer.$rendered.subscribe(async () => {
-        this.formPlayer.unlock()
+        if (!params.eventId) this.formPlayer.unlock()
       })
       this.formPlayer.$submit.subscribe(async () => {
         setTimeout(async () => {

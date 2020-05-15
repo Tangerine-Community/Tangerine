@@ -325,6 +325,7 @@ class CaseService {
       _id: UUID(),
       label,
       caseId,
+      createdOn: Date.now(),
       eventId,
       eventFormId,
       status: IssueStatus.Open,
@@ -344,6 +345,7 @@ class CaseService {
       id: UUID(),
       type: IssueEventType.FormResponseRevision,
       userName,
+      date: Date.now(),
       userId,
       data: {
         response
@@ -358,6 +360,7 @@ class CaseService {
       id: UUID(),
       type: IssueEventType.Comment,
       userName,
+      date: Date.now(),
       userId,
       data: {
         comment
@@ -366,16 +369,70 @@ class CaseService {
     return await this.tangyFormService.saveResponse(issue)
   }
 
-  async openIssue (issueId) {
+  async getProposedFormResponse(issueId) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    let proposedFormResponse = <TangyFormResponseModel>issue.events.reduce((lastProposedFormResponse, event) => event.type === IssueEventType.FormResponseRevision ? event.data.response : lastProposedFormResponse, {})
+    if (!proposedFormResponse._id) {
+      proposedFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+    }
+    return proposedFormResponse
+  }
+
+  async canMergeProposedFormResponse(issueId:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const proposedFormResponse = await this.getProposedFormResponse(issueId)
+    const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+    return currentFormResponse._rev === proposedFormResponse._rev ? true : false
+  }
+
+  async mergeProposedFormResponse(issueId:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.FormResponseMerge,
+      date: Date.now(),
+      userName,
+      userId
+    })
+    const proposedFormResponse = await this.getProposedFormResponse(issueId)
+    this.tangyFormService.saveResponse(proposedFormResponse)
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      merged: true,
+      status: IssueStatus.Closed
+    })
+  }
+
+  async openIssue(issueId:string, comment:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Open,
+      date: Date.now(),
+      userName,
+      userId,
+      data: {
+        comment
+      }
+    })
     return await this.tangyFormService.saveResponse({
       ...issue,
       status: IssueStatus.Open
     })
   }
 
-  async closeIssue(issueId) {
+  async closeIssue(issueId:string, comment:string, userId:string, userName:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Close,
+      date: Date.now(),
+      userName,
+      userId,
+      data: {
+        comment
+      }
+    })
     return await this.tangyFormService.saveResponse({
       ...issue,
       status: IssueStatus.Closed
