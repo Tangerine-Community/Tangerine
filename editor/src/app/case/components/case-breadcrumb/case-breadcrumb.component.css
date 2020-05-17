@@ -6,7 +6,8 @@
 
 
 .primary {
-    position: fixed;
+    /* absolute on server, fixed on client */
+    position: absolute;
     top: 0px;
     z-index: 99999;
     color: var(--primary-text-color-overlay);
