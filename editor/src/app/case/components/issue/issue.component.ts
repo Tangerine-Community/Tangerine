@@ -12,6 +12,7 @@ import { CaseService } from '../../services/case.service';
 import { Route } from '@angular/compiler/src/core';
 import moment from 'moment';
 import { diffTemplate } from './diff-template';
+import { Marked } from '@ts-stack/markdown';
 
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
@@ -100,7 +101,13 @@ export class IssueComponent implements OnInit {
         type: event.type,
         userName: event.userName,
         primary: `
-          ${event.data && event.data.comment ? event.data.comment : ``}
+          <style>
+            /* We cannot put this CSS in issue.component.css because Angular will remove it because nothing in the template uses it. */
+            .issue-event h1, .issue-event h2, .issue-event h3, .issue-event h4, .issue-event h5 {
+              margin: 15px 0px 5px;
+            }
+          </style>
+          ${event.data && event.data.comment ? Marked.parse(event.data.comment) : ``}
           ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
         `
       }

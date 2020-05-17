@@ -28,6 +28,7 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@polymer/paper-dialog": "^3.0.1",
+    "@ts-stack/markdown": "^1.0.0",
     "@vaadin/vaadin-upload": "^4.3.0",
     "@webcomponents/webcomponentsjs": "^2.4.3",
     "axios": "^0.19.2",
