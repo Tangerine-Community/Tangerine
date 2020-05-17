@@ -50,6 +50,10 @@
 
 }
 
+.issue-event h1, .issue-event h2, .issue-event h3, .issue-event h4, .issue-event h5 {
+  margin: 15px 0px 5px;
+}
+
 .issue-actions {
 }
 
