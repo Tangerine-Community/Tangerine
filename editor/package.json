@@ -40,7 +40,7 @@
     "qrcode-generator-es6": "^1.1.4",
     "rangen": "^1.0.0",
     "tangy-form": "^4.15.0",
-    "tangy-form-editor": "7.0.0",
+    "tangy-form-editor": "7.0.1",
     "redux": "^4.0.5",
     "rxjs-compat": "^6.5.5",
     "rxjs": "~6.5.5",
