@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "dockerdev": "ng build --watch --poll 100 --base-href ./",
+    "dockerdev": "ng build --aot=false --namedChunks=false --optimization=false --prod=false --watch --poll 1000 --base-href ./",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
