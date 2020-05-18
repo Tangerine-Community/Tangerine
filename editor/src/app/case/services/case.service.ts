@@ -18,6 +18,7 @@ import { Query } from '../classes/query.class'
 import * as UUID from 'uuid/v4'
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
+import { AppContext } from 'src/app/app-context.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -351,6 +352,8 @@ class CaseService {
       label,
       caseId,
       createdOn: Date.now(),
+      createdAppContext: AppContext.Editor,
+      resolveOnAppContext: AppContext.Editor,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
@@ -374,6 +377,7 @@ class CaseService {
       date: Date.now(),
       userName,
       userId,
+      createdAppContext: AppContext.Editor,
       data: {
         comment,
         caseInstance,
@@ -394,6 +398,7 @@ class CaseService {
       date: Date.now(),
       userName,
       userId,
+      createdAppContext: AppContext.Editor,
       data: {
         comment
       }
@@ -411,6 +416,7 @@ class CaseService {
       id: UUID(),
       type: IssueEventType.Comment,
       userName,
+      createdAppContext: AppContext.Editor,
       date: Date.now(),
       userId,
       data: {
@@ -442,6 +448,7 @@ class CaseService {
       id: UUID(),
       type: IssueEventType.ProposedChange,
       userName,
+      createdAppContext: AppContext.Editor,
       date: Date.now(),
       userId,
       data: {
@@ -459,6 +466,7 @@ class CaseService {
       id: UUID(),
       type: IssueEventType.Merge,
       date: Date.now(),
+      createdAppContext: AppContext.Editor,
       userName,
       userId
     })

@@ -1,3 +1,4 @@
+import { AppContext } from './../../app-context.enum';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 
 export enum IssueStatus {
@@ -20,6 +21,7 @@ export class IssueEvent {
   type:IssueEventType
   userName:string
   userId:string
+  createdAppContext:AppContext
   date:number
   data:any
 }
@@ -38,6 +40,8 @@ class Issue extends TangyFormResponseModel {
   formResponseId:string
   type:string = 'issue'
   createdOn:number
+  createdAppContext:AppContext
+  resolveOnAppContext:AppContext
 
   constructor(data?:any) {
     super()
