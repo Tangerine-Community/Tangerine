@@ -350,6 +350,7 @@ class CaseService {
     const issue = new Issue({
       _id: UUID(),
       label,
+      location: caseData.location,
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Editor,
