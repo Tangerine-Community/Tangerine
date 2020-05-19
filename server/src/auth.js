@@ -2,12 +2,15 @@ const log = require('tangy-log').log;
 const bcrypt = require('bcryptjs');
 const DB = require('./db.js');
 const USERS_DB = new DB('users');
+const GROUPS_DB = new DB('groups');
 const { createLoginJWT } = require('./auth-utils');
+const {permissionsList} = require('./permissions-list.js');
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
     if (await areCredentialsValid(username, password)) {
-      const token = createLoginJWT({ username });
+      const permissions = await getUserPermissions(username);
+      const token = createLoginJWT({ username, permissions });
       log.info(`${username} login success`);
       return res.status(200).send({data: { token }});
     } else {
@@ -16,7 +19,32 @@ const login = async (req, res) => {
     }
   } catch (error) {
     log.info(`${username} login failure`);
+    console.log(error)
     return res.status(401).send({ data: 'Could not login user' });
+  }
+};
+
+const getUserPermissions = async username => {
+  if (username === process.env.T_USER1) {
+    const groups = ((await GROUPS_DB.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
+      .filter(doc => !doc._id.includes('_design')));
+    const groupPermissions = groups.map(group=>{
+      return{groupName: group._id, permissions: permissionsList.groupPermissions};
+    });
+    return {sitewidePermissions: permissionsList.sitewidePermissions, groupPermissions};
+  } else {
+    const data = await findUserByUsername(username);
+    const sitewidePermissions = data.sitewidePermissions || [];
+    if (data.groups.length > 0) {
+    const groupPermissions = data.groups.map(group => {
+      return {groupName: group.groupName, permissions: group.permissions || []};
+    });
+    return {sitewidePermissions, groupPermissions};
+  } else {
+    return {sitewidePermissions, groupPermissions: []};
+  }
   }
 };
 

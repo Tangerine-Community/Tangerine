@@ -9,9 +9,9 @@ module.exports = function(req, res, next) {
       log.warn(errorMessage);
       res.status(401).send(errorMessage);
     } else {
-      req.user= {}
+      req.user = {};
       req.user.name = username;
-      req.user.permissions = permissions;
+      req.user.permissions = permissions || [];
       next();
     }
   } else {
