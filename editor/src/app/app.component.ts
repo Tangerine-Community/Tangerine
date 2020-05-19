@@ -10,6 +10,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { UserService } from './core/auth/_services/user.service';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { _TRANSLATE } from './shared/_services/translation-marker';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-root',
@@ -45,7 +46,8 @@ export class AppComponent implements OnInit, OnDestroy {
     translate: TranslateService,
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private permissionService: NgxPermissionsService
   ) {
     translate.setDefaultLang('translation');
     translate.use('translation');

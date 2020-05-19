@@ -29,7 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
+import { NgxPermissionsModule } from 'ngx-permissions';
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
@@ -66,6 +66,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    NgxPermissionsModule.forRoot(),
     BrowserAnimationsModule
   ],
   providers: [httpInterceptorProviders, TangyErrorHandler,
