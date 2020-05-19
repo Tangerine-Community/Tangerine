@@ -65,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
     await this.authenticationService.logout();
     this.loggedIn = false;
     this.isAdminUser = false;
-    this.canManageSitewideUsers = false;
+    this.permissionService.flushPermissions();
     this.user_id = null;
     this.router.navigate(['/login']);
   }
@@ -75,15 +75,16 @@ export class AppComponent implements OnInit, OnDestroy {
       if (isLoggedIn) {
         this.loggedIn = isLoggedIn;
         this.isAdminUser = await this.userService.isCurrentUserAdmin();
+        const permissions = ['can_manage_site_wide_users','can_create_group'];
+        this.permissionService.loadPermissions(permissions);
         this.user_id = localStorage.getItem('user_id');
-        this.canManageSitewideUsers = await this.userService.canManageSitewideUsers();
         this.sessionTimeoutCheck();
         this.sessionTimeoutCheckTimerID =
         setInterval(await this.sessionTimeoutCheck.bind(this), 10 * 60 * 1000); // check every 10 minutes
       } else {
         this.loggedIn = false;
         this.isAdminUser = false;
-        this.canManageSitewideUsers = false;
+        this.permissionService.flushPermissions();
         this.user_id = null;
         this.router.navigate(['/login']);
       }
