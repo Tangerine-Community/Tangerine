@@ -103,7 +103,7 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     TangyFormsModule,
     SharedModule,
     NgTangyFormEditorModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   declarations: [
     LocationListEditorComponent,
