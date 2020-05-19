@@ -58,6 +58,8 @@ describe('SearchBarcodeComponent', () => {
     })
     setTimeout(() => {
       fixture.nativeElement.querySelector('tangy-qr').stopScanning()
+      // @TODO Shouldn't call done here. For some reason comonent.cancel.subscribe is not working in this context :-(.
+      done()
     }, 300)
   })
 
