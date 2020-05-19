@@ -31,7 +31,7 @@ export class GroupComponent implements OnInit {
     const allPermissions = JSON.parse(localStorage.getItem('permissions'));
     const groupPermissions = allPermissions.groupPermissions;
     const permissions = groupPermissions.find(permission=>permission.groupName===group._id)
-    this.permissionsService.addPermission(permissions)
+    this.permissionsService.addPermission(permissions.permissions)
     this.permissionsService.addPermission(allPermissions.sitewidePermissions)
   }
 
