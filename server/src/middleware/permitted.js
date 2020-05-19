@@ -1,7 +1,7 @@
-const permit = (allowedRoles) => {
-    const isAllowed = roles => (allowedRoles.filter(Set.prototype.has, new Set(roles))).length > 0;
+const permit = (allowedPermissions) => {
+    const isAllowed = permissions => (allowedPermissions.filter(Set.prototype.has, new Set(permissions))).length > 0;
     return (req, res, next) => {
-      if (isAllowed(req.user.roles)) {
+      if (isAllowed(req.user.permissions)) {
           next();
       } else {
         res.status(403).send(`Access Denied at ${req.url}`);
