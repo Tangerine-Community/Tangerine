@@ -23,7 +23,6 @@ export class AppComponent implements OnInit, OnDestroy {
   validSession: boolean;
   user_id: string = localStorage.getItem('user_id');
   private childValue: string;
-  canManageSitewideUsers = false;
   isAdminUser = false;
   history: string[] = [];
   titleToUse: string;

@@ -122,8 +122,8 @@
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width" *ngIf="canManageSitewideUsers">
-                <mat-list-item *ngIf="loggedIn && isAdminUser && canManageSitewideUsers && menuService.groupId === ''"
+            <mat-nav-list class="tangy-full-width" *ngxPermissionsOnly="['can_manage_site_wide_users']">
+                <mat-list-item *ngIf="loggedIn &&  menuService.groupId === ''"
                     class="manage-users-list-item" [class.active-menu-item]="menuService.section === 'manage-users'"
                     routerLink="/manage-users">
                     <span class=""><i class="material-icons menu-icon">group</i></span>

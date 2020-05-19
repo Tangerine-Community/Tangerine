@@ -6,6 +6,8 @@ import { UserResgistrationComponent } from './_components/user-resgistration/use
 import { LoginGuard } from './_guards/login-guard.service';
 import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import {AddUserComponent} from '../../groups/add-users/add-user.component';
+import { NgxPermissionsGuard, NgxPermissionsModule } from 'ngx-permissions';
+const data = {permissions:{only:['can_manage_site_wide_users'], redirectTo:'/projects'}};
 const routes: Routes = [{
   path: 'register-user',
   component: UserResgistrationComponent
