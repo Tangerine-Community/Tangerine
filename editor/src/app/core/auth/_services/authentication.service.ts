@@ -19,6 +19,7 @@ export class AuthenticationService {
         document.cookie = `Authorization=${token}`
         localStorage.setItem('token', token);
         localStorage.setItem('user_id', jwtData.username);
+        localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
         return true;
       } else {
         return false;
@@ -27,6 +28,7 @@ export class AuthenticationService {
       console.error(error);
       localStorage.removeItem('token');
       localStorage.removeItem('user_id');
+      localStorage.removeItem('permissions');
       return false;
     }
   }
@@ -47,6 +49,7 @@ export class AuthenticationService {
     await localStorage.removeItem('token');
     await localStorage.removeItem('user_id');
     await localStorage.removeItem('password');
+    localStorage.removeItem('permissions');
     document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
@@ -62,6 +65,7 @@ export class AuthenticationService {
         document.cookie = `Authorization=${token}`
         localStorage.setItem('token', token);
         localStorage.setItem('user_id', jwtData.username);
+        localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
         return true;
       } else {
         return false;
