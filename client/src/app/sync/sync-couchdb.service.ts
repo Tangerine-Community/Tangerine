@@ -163,10 +163,10 @@ export class SyncCouchdbService {
         "batches_limit": 5,
         ...appConfig.couchdbPullUsingDocIds
           ? {
-            "doc_ids": (await remoteDb.find({ 
-              "limit": 987654321, 
-              "fields": ["_id"], 
-              "selector":  pullSelector 
+            "doc_ids": (await remoteDb.find({
+              "limit": 987654321,
+              "fields": ["_id"],
+              "selector":  pullSelector
             })).docs.map(doc => doc._id)
           }
           : {
