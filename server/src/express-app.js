@@ -90,6 +90,7 @@ app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
+var {permit} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
@@ -241,7 +242,7 @@ app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
   }
 
 });
-app.post('/users/register-user', isAuthenticated, async (req, res) => {
+app.post('/users/register-user', isAuthenticated, permit(['can_create_user']), async (req, res) => {
   try {
     if (!(await doesUserExist(req.body.username))) {
       const user = req.body;
