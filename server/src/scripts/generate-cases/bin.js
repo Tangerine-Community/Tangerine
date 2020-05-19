@@ -94,6 +94,7 @@ async function go() {
     for (let caseEvent of caseDoc.events) {
       const caseEventId = uuidv1()
       caseEvent.id = caseEventId
+      caseEvent.caseId = caseId
       for (let eventForm of caseEvent.eventForms) {
         eventForm.id = uuidv1()
         eventForm.caseId = caseId
