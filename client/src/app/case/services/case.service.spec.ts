@@ -15,7 +15,7 @@ import PouchDB from 'pouchdb';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { CaseParticipant } from '../classes/case-participant.class';
-import moment from 'moment/src/moment';
+import * as moment from 'moment';
 class MockCaseDefinitionsService {
   async load() {
     return <Array<CaseDefinition>>[
