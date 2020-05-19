@@ -51,7 +51,7 @@ ssh <your server>
 sudo su
 screen -R git-integration
 cd tangerine/data/client/content/groups/<group id>
-watch -n10 "GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master
+watch -n10 "GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master"
 ```
 
 At this point you have created "virtual screen session" called "git-integration" that is using the `watch` command to run the `git pull` command every 10 seconds. You'll want to leave this screen session open after your terminal disconnects. To "detach" from a screen session but leave it running in the background, press `ctrl-a` `ctrl-d`. Now you can safely log out from your SSH session while the screen session continutes. 
