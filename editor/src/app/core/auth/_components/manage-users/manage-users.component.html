@@ -1,6 +1,7 @@
 <h1>{{'Manage Users'|translate}}</h1>
-<paper-fab  mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user">
-</paper-fab>
+<span *ngxPermissionsOnly="['can_create_user']">
+  <paper-fab  mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user"></paper-fab>
+</span>
 
 <mat-table [dataSource]="users" class="mat-elevation-z8">
   <ng-container matColumnDef="username">

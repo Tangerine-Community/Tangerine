@@ -18,17 +18,20 @@ const routes: Routes = [{
 }, {
   path: 'manage-users',
   component: ManageUsersComponent,
-  canActivate: [LoginGuard]
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data
 },
 {
   path: 'manage-users/new-user',
   component: UserResgistrationComponent,
-  canActivate: [LoginGuard]
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: {permissions:{only:['can_create_user'], redirectTo:'/projects'}}
 },
 {
   path: 'manage-users/users/:id',
   component: UserResgistrationComponent,
-  canActivate: [LoginGuard]
+  canActivate: [LoginGuard, NgxPermissionsModule],
+  data
 }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
