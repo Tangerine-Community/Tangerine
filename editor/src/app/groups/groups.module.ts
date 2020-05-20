@@ -73,6 +73,7 @@ import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-vi
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
+import { AssignPermissionsComponent } from './assign-permissions/assign-permissions.component';
 
 
 
@@ -152,7 +153,8 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     GroupUploadsViewComponent,
     GroupDeviceUserComponent,
     GroupCasesComponent,
-    CaseSettingsComponent
+    CaseSettingsComponent,
+    AssignPermissionsComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })
