@@ -60,8 +60,6 @@ module.exports = {
               await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
             }
           } else {
-            doc.type = 'response'
-            // TODO: client will provide eventFormId to maintain the parent relationship to event-form. Be sure to check this is happening.
             await saveFlatResponse(doc, locationList, synapseDb, resolve);
           }
         }
