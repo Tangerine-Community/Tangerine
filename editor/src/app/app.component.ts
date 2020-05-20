@@ -75,8 +75,10 @@ export class AppComponent implements OnInit, OnDestroy {
       if (isLoggedIn) {
         this.loggedIn = isLoggedIn;
         this.isAdminUser = await this.userService.isCurrentUserAdmin();
-        const permissions = JSON.parse(localStorage.getItem('permissions'));
-        this.permissionService.loadPermissions(permissions.sitewidePermissions);
+        if(Object.entries(this.permissionService.getPermissions()).length===0){
+          const permissions = JSON.parse(localStorage.getItem('permissions'));
+          this.permissionService.loadPermissions(permissions.sitewidePermissions);
+        }
         this.user_id = localStorage.getItem('user_id');
         this.sessionTimeoutCheck();
         this.sessionTimeoutCheckTimerID =
