@@ -1,1 +1,13 @@
-<p>assign-permissions works!</p>
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<mat-card>
+    <mat-card-content>
+        <form class="tangy-full-width" novalidate #assinPermissions="ngForm">
+            <h1>{{'Sitewide permissions'|translate}}</h1>
+            <mat-checkbox *ngFor="let sitewidePermission of permissionsList.sitewidePermissions">{{sitewidePermission}}</mat-checkbox>
+
+            <h1>{{'Group permissions'|translate}}</h1>
+            <mat-checkbox *ngFor="let groupPermission of permissionsList.groupPermissions">{{groupPermission}}</mat-checkbox>
+            <button (click)="addPermissionsToUser()">{{'Add Permissions to User'|translate}}</button>
+        </form>
+    </mat-card-content>
+</mat-card>
