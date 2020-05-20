@@ -5,7 +5,7 @@
 <mat-table [dataSource]="users" class="mat-elevation-z8">
   <ng-container matColumnDef="username">
     <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
-    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary" [routerLink]="['/groups',groupId, 'configure', 'security','role', user.username]">
+    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary" [routerLink]="['/groups',groupId, 'configure', 'security','permissions', user.username]">
       <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
     </a><span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
   </ng-container>

@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { fromEvent, of } from 'rxjs';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-list-users',
