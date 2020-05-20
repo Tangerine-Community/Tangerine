@@ -42,7 +42,8 @@ const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
   hashPassword, USERS_DB, login} = require('./auth')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
+const { getPermissionsList } = require('./permissions-list.js');
 
 module.exports = async function expressAppBootstrap(app) {
 
@@ -97,6 +98,7 @@ var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-
 // Login service.
 app.post('/login', login);
 app.post('/extendSession', isAuthenticated, extendSession);
+app.get('/permissionsList', isAuthenticated, getPermissionsList);
 
 app.get('/login/validate/:userName',
   function (req, res) {

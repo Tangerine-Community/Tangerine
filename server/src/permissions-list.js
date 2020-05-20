@@ -5,4 +5,8 @@ const permissionsList = {
     'can_create_group',
     'can_create_user'],
 };
-module.exports = { permissionsList };
+
+const getPermissionsList = async (req, res) => {
+  return res.status(200).send(permissionsList);
+};
+module.exports = { permissionsList , getPermissionsList};
