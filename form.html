@@ -1,29 +1,27 @@
 
-      <tangy-form id="data-dashboard" title="Data Dashboard" category="null"
+      <tangy-form id="form-65d55bea-62dd-4093-902d-e005acd14c65" title="Data Dashboard" category="null"
         
         on-open="
+       
         
         "
         exit-clicks=""
         on-change="
-         
+        
+        
         "
         on-submit="
           
-         
+       
         "
       >
         
           <tangy-form-item id="item-100" 
             title="Raw Data Dashboard"
             
-             
             
             on-open="
-              
-              
-              
-                
+                 
               
 var my_awesome_script = document.createElement('script');
 my_awesome_script.setAttribute('src','https://cdn.plot.ly/plotly-latest.min.js');
@@ -42,17 +40,10 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 } 
 } )
           
-     
-            
-            
-            
-            
+           
             "
             on-change="
-              
-              
-              
-                 
+                  
         var doc = ''
 
         function loadFormMeta () {
@@ -144,7 +135,8 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
                     
                y.inputs.forEach(
                 function (z) {
-                  if (z.name != '' &&  z.tagName != 'TANGY-BOX') {
+                    
+                  if (z.name != '' &&  z.tagName != 'TANGY-BOX' &&  z.tagName != 'TANGY-SIGNATURE' &&  z.tagName != 'TANGY-PHOTO-CAPTURE' &&  z.tagName != 'TANGY-TEMPLATE' &&  z.tagName != 'DIV'  ) {
                     //create type for all elements
                     var type = typeof z.type == 'undefined' ? 
                         (z.tagName == 'TANGY-TIMED'? 'grid': 
@@ -153,8 +145,19 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
                                   (z.tagName == 'TANGY-SELECT'? 'single':
                                       (z.tagName == 'TANGY-CHECKBOX'? 'toggle':
                                           (z.tagName == 'TANGY-GPS'? 'gps':
-                                              (z.tagName == 'TANGY-CONSENT'? 'consent':'unknown')))))
-                        	)): z.type
+                                              (z.tagName == 'TANGY-CONSENT'? 'consent':
+                                                  (z.tagName == 'TANGY-PARTIAL-DATE'? 'Date':
+                                                      (z.tagName == 'TANGY-UNTIMED-GRID'? 'untimed grid':
+                                                          (z.tagName == 'TANGY-QR'? 'QR Code':'unknown')
+                                                        )
+                                                   )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ): z.type
                     //process the name and value labels
                     var obj = findFormObject(z.name)  
                     
@@ -188,6 +191,11 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
                           else
                         	allVariables[z.name].wpm = [0]
                        }
+                     if (z.tagName == 'TANGY-UNTIMED-GRID') {
+                         var incorrect = parseInt(z.value.filter(x=> x.value == 'on').length)
+                         allVariables[z.name].correct = [parseInt(z.value.length) - incorrect]
+                         allVariables[z.name].incorrect = [incorrect]
+                      }
                     } else {
                       var variable = allVariables[z.name]
                       variable.values.push(z.value)
@@ -199,6 +207,11 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
                           var lastItem = z.value.filter(x=> x.highlighted == true)
                           if (lastItem.length != 0)
                             allVariables[z.name].wpm.push((parseInt(z.value.filter(x=> x.highlighted == true)[0].name) + 1 - parseInt(allVariables[z.name].incorrect))/((z.duration-z.timeRemaining)/60))
+                      }
+                      if (z.tagName == 'UNTIMED-GRID') {
+                          var incorrect = parseInt(z.value.filter(x=> x.value == 'on').length)
+                          allVariables[z.name].correct.push(parseInt(z.value.length) - incorrect)
+                          allVariables[z.name].incorrect.push(incorrect)
                       }
                     }
                   }
@@ -260,6 +273,13 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
                yAxis= data.duration
                xAxis=data.wpm
                zAxis= data.timeRemaining
+               wAxis.push(avg)
+            } else if (tagName == 'TANGY-UNTIMED-GRID' ){
+               var sum = data.correct.reduce((a, b) => a + b, 0);
+               var avg = (sum / data.correct.length) || 0;
+    	
+               xAxis = data.correct
+               yAxis = data.incorrect
                wAxis.push(avg)
         
            } else {
@@ -456,15 +476,21 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 	                    }
 	            
 	            
-	                    if (y.type == 'grid') {
+	                    if (y.type == 'grid') { 
 	                
 	                          var d = processSingle(y, y.tagName)
 	                          addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${d[0].length}</b> `)
 	                          printGrid(d, 'Results for ' + y.name,y.name, y.type)
 	                          printBar([d[0]], 'WPM ' + y.name, '#ff7f0e',y.name, y.type)
 	                    }
+	                    if (y.type == 'untimed grid') {
+	                          //var d = processSingle(y, y.tagName)
+	                         // addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${d[0].length}</b> `)
+	                          
+	                          //printBar([d[0]], 'Correct answers ' + y.name, '#ff7f0e',y.name, y.type)
+	                    }
+                        
 	                    if (y.type == 'single' || y.type == 'consent') {
-	           
 	                      var d = processSingle(y, y.tagName)
 	                      var sum =  d[1].reduce((a, b) => a + b, 0);
 	                      addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
@@ -472,7 +498,7 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 	                    }
 	                    
 	    
-	                    if (y.type == 'text') {
+	                    if (y.type == 'text' || y.type == 'QR Code') {
 	                      var d = processSingle(y, y.tagName, y.name)
 	                      var sum =  d[1].reduce((a, b) => a + b, 0);
 	                      addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
@@ -485,15 +511,12 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 	                      printBar (d, y.label, y.type)
 	                    }
 	    
-	                    var i = 0
-	                      //if (i++ < 15) {
-	                        var d = processSingle(y, y.tagName, y.name)
-	                        if (y.name != 'startDatetime' && y.name != 'userProfileId' && y.type != '' && y.type != 'text' && y.type != 'number' && y.type != 'grid' && y.type != 'single' && y.type != 'gps' && y.type != 'consent' && y.tagName != 'TANGY-LOCATION' ) {
-	                              var sum =  d[1].reduce((a, b) => a + b, 0);
-	                              addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
-	                              printBar (d, y.label, '#ff7f0e',y.name, y.type)
-	                          }
-	                      //}
+                        if (y.name != 'startDatetime' && y.name != 'userProfileId' && y.type != '' && y.type != 'text' && y.type != 'number' && y.type != 'grid' && y.type != 'single' && y.type != 'gps' && y.type != 'consent' && y.tagName != 'TANGY-LOCATION' && y.type != 'untimed grid' && y.type != 'QR Code'  ) {
+                              var d = processSingle(y, y.tagName, y.name)
+                              var sum =  d[1].reduce((a, b) => a + b, 0);
+                              addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
+                              printBar (d, y.label, '#ff7f0e',y.name, y.type)
+                          }
 	                 })
 	            } else {
 	            	addDivText ('No Results',`There are no results uploaded for the selected month/year`, true)
@@ -505,45 +528,16 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
         setTimeout(makeReport, 500)   
           
       
-             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             
             "
             category="
-              
-              
-              
-              
-              
-            
-            
             
             
             "
           >
             <template>
               
-              
-              
-              
-              
+                
       <tangy-box name="" class="" style="">
         	Please select month, year and form you wish to see the data for   
               <table>
@@ -591,10 +585,7 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 </div></tangy-box>
     
       <tangy-box name="" class="" style=""><tangy-complete-button hidden="" name=""></tangy-complete-button></tangy-box>
-    
-            
-            
-            
+         
             
             </template>
           </tangy-form-item>
