@@ -1,0 +1,12 @@
+{
+  "_id": "_design/responsesByStartUnixTime",
+  "_rev": "18-ea7a88669a4a77f363ed53688fa1e5f5",
+  "views": {
+    "responsesByStartUnixTime": {
+      "map": "function(doc) {\n  if (doc.collection = \"TangyFormResponse\") {\n    return emit(doc.startUnixtime, true)\n  }\n}"
+    },
+    "responsesByStartUnixTimeAndFormId": {
+      "map": "function(doc) {\n  if (doc.form && doc.form.id) {\n    return emit([doc.form.id,doc.startUnixtime], doc)\n  }\n}"
+    }
+  }
+}
