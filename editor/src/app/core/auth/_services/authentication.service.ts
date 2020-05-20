@@ -74,4 +74,14 @@ export class AuthenticationService {
       console.log(error);
     }
   }
+
+  async getPermissionsList(){
+    try {
+      const data = await this.http.get('/permissionsList', {observe: 'response'}).toPromise();
+      if(data.status==200) return data.body;
+    } catch (error) {
+      return {groupPermissions:[], sitewidePermissions:[]}
+      console.error(error);
+    }
+  }
 }
