@@ -1,7 +1,6 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { GroupsService } from './../services/groups.service';
-import { Component, OnInit, ElementRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/core/auth/_services/user.service';
 import { NgxPermissionsService } from 'ngx-permissions';
 
