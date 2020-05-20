@@ -2,12 +2,11 @@
 
 ## Client-side testing
 
-Go to any case record and enter the following in the js console:
+Generate a PWA. Go to any case record and enter the following in the js console:
 
 ```js
 this.caseService.generateCases(1)
 ```
-
 You may change the number of cases generated. It uses the current case as a template for the generated cases. 
 TODO: Use the case-export.json in the group.
 
@@ -17,37 +16,36 @@ You can check how many docs are in the db with:
 this.userService.getSharedDBDocCount()
 ```
 
+Select "Sync Online" to test syncing a large recordset.
+
 ## Server-side generation
 
-### Populate database
-
-One may populate a Tangerine instance with records using the cli:
+One may populate a vanilla Tangerine instance with records using the cli:
 
 ```
-docker exec tangerine generate-uploads 500 group-uuid 2000 100 case-mother
+docker exec tangerine generate-uploads 500 group-uuid 2000 100
 ```
 
-That command generates 500 'case-mother' cases (each of which has 2 records) in batches of 100, posted every 2000 ms. The 'case-mother' switch uses templates stored in the 'response-templates' directory of that group in the data dir. (Read server/src/scripts/generate-uploads/bin.js for more details.)
+That command generates 500 sets (each of which has 2 records) in batches of 100, posted every 2000 ms. Each doc are generated from templates in server/src/scripts/generate-uploads.
 
-### Push changed code
+Add the 'class' switch to the end of that command will generate a studentRegistrationDoc in addition to the other 2 docs. (Read server/src/scripts/generate-uploads/bin.js for more details.)
 
-If you make modifications to your Angular code, run the following command while exec'd into the container:
+You may need to modify the templates to suit the docs you wish to generate.
 
+### Case generation
+
+Case generation uses a case-export.json file placed in the group directory as the template for record generation. 
+
+Generate a PWA, create a new case. While still in the case, use the `copy(await this.caseService.export())` command to copy the json into a case-export.json file. You'll need to surround the generated code with to brackets `[]` to make the json kosher. 
+
+To generate cases, use the following docker command:
+        
 ```
-cd /tangerine/client && rm -rf builds/apk/www/shell && rm -rf builds/pwa/release-uuid/app && cp -r dev builds/apk/www/shell && cp -r pwa-tools/updater-app/build/default builds/pwa && cp -r dev builds/pwa/release-uuid/app
+docker exec tangerine generate-cases 1 group-uuid
 ```
 
-### Build an APK
+This would generate one case.
 
-In editor, build an APK.
-
-### Update and test
-
-On the tablet, in the menu select "Check for Update" to update the code and then select "Sync Online" to download the records.
-
-### Clean things up
+## Clean things up
 
 To delete all generated records (but keep the views), use [bulkdelete](https://github.com/chrisekelley/scripts).
-
-
-

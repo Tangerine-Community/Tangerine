@@ -21,10 +21,9 @@ batchSize = batchSize <= numberOfUploads ? batchSize : numberOfUploads
 const alternativeTemplate = process.argv[6] ? process.argv[6] : ''
 let templateDocfilename;
 let templateDoc;
-if (alternativeTemplate !== 'case-mother') {
-  templateDocfilename = './template-' + alternativeTemplate + '-doc.js'
-  templateDoc = require(templateDocfilename).doc
-}
+templateDocfilename = './template-' + alternativeTemplate + '-doc.js'
+templateDoc = require(templateDocfilename).doc
+
 const userProfileTemplateDoc = require('./template-user-profile-doc.js').doc
 const groupPath = '../../../../client/content/groups/' + groupName
 
@@ -59,54 +58,6 @@ async function go() {
           }
         }
         doc = Object.assign({}, templateDoc, studentRegistration)
-      } else if (alternativeTemplate === 'case-mother') {
-        const form01ATemplateDoc = require(groupPath + '/response-templates/template-case-form01A-doc.js').doc
-        const caseMotherTemplateDoc = require(groupPath + '/response-templates/template-case-mother-doc.js').doc
-        let participantId = uuidv1()
-        let caseId = uuidv1();
-        let participant_id = Math.round(Math.random() * 1000000)
-        let firstname = random_name({ first: true, gender: "female" })
-        let surname = random_name({ last: true })
-        let barcode_data =  { "participant_id": participant_id, "treatment_assignment": "Experiment", "bin-mother": "A", "bin-infant": "B", "sub-studies": { "S1": true, "S2": false, "S3": false, "S4": true } }
-        let tangerineModifiedOn = new Date();
-        // tangerineModifiedOn is set to batchCount days before today, and its time is set based upon numberOfUploadsCompleted.
-        tangerineModifiedOn.setDate( tangerineModifiedOn.getDate() - batchCount );
-        tangerineModifiedOn.setTime( tangerineModifiedOn.getTime() - ( numberOfUploads - numberOfUploadsCompleted ) )
-        const day = String(tangerineModifiedOn.getDate()).padStart(2, '0');
-        const month = String(tangerineModifiedOn.getMonth() + 1).padStart(2, '0');
-        const year = tangerineModifiedOn.getFullYear();
-        const screening_date = year + '-' + month + '-' + day;
-        const enrollment_date = screening_date;
-        let caseMother = {
-          _id: caseId,
-          tangerineModifiedOn: tangerineModifiedOn,
-          "participants": [{
-            "id": participantId,
-            "caseRoleId": "mother-role",
-            "data": {
-              "firstname": firstname,
-              "surname": surname,
-              "participant_id": participant_id
-            }
-          }],
-        }
-        console.log("motherId: " + caseId + " participantId: " + participantId + " participant_id: " + participant_id);
-        doc = Object.assign({}, caseMotherTemplateDoc, caseMother);
-        caseMotherTemplateDoc.items[0].inputs[0].value = participant_id;
-        caseMotherTemplateDoc.items[0].inputs[5].value = enrollment_date;
-        caseMotherTemplateDoc.items[0].inputs[9].value = firstname;
-        caseMotherTemplateDoc.items[0].inputs[10].value = surname;
-        form01ATemplateDoc.items[0].inputs[4].value = screening_date;
-        form01ATemplateDoc.items[10].inputs[1].value = barcode_data;
-        form01ATemplateDoc.items[10].inputs[2].value = participant_id;
-        form01ATemplateDoc.items[10].inputs[7].value = enrollment_date;
-        form01ATemplateDoc.items[12].inputs[2].value = surname;
-        form01ATemplateDoc.items[12].inputs[3].value = firstname;
-        linkedDoc1 =  Object.assign({}, form01ATemplateDoc, {
-          _id: participantId,
-          caseId: caseId
-        });
-
       } else {
         let date = randomDate(new Date(2019, 0, 1), new Date())
         let d = new Date(date),
