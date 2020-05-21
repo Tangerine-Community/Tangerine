@@ -36,7 +36,7 @@ You may need to modify the templates to suit the docs you wish to generate.
 
 Case generation uses a case-export.json file placed in the group directory as the template for record generation. 
 
-Generate a PWA, create a new case. While still in the case, use the `copy(await this.caseService.export())` command to copy the json into a case-export.json file. You'll need to surround the generated code with to brackets `[]` to make the json kosher. 
+Generate a PWA, create a new case. While still in the case, use the `copy(await this.caseService.export())` command to copy the json into a case-export.json file. 
 
 To generate cases, use the following docker command:
         
