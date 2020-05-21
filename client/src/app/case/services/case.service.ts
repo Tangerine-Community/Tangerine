@@ -684,10 +684,10 @@ class CaseService {
         }],
       }
       const doc = Object.assign({}, caseDoc, caseMother);
-      caseDoc.items[0].inputs[1].value = participant_id;
-      caseDoc.items[0].inputs[2].value = enrollment_date;
-      caseDoc.items[0].inputs[8].value = firstname;
-      caseDoc.items[0].inputs[10].value = surname;
+      caseDoc.items[0].inputs[6].value = participant_id;
+      // caseDoc.items[0].inputs[2].value = enrollment_date;
+      caseDoc.items[0].inputs[4].value = firstname;
+      caseDoc.items[0].inputs[5].value = surname;
       for (let caseEvent of caseDoc['events']) {
         const caseEventId = UUID()
         caseEvent.id = caseEventId
@@ -709,15 +709,17 @@ class CaseService {
         }
       }
       // modify the demographics form - s01a-participant-information-f254b9
-      const demoDoc = templateDocs.find(doc => doc.form.id === 's01a-participant-information-f254b9')
-      demoDoc.items[0].inputs[4].value = screening_date;
-      // "id": "randomization",
-      demoDoc.items[10].inputs[1].value = barcode_data;
-      demoDoc.items[10].inputs[2].value = participant_id;
-      demoDoc.items[10].inputs[7].value = enrollment_date;
-      // "id": "participant_information",
-      demoDoc.items[12].inputs[2].value = surname;
-      demoDoc.items[12].inputs[3].value = firstname;
+      const demoDoc = templateDocs.find(doc => doc.form.id === 'mnh_screening_and_enrollment')
+      if (demoDoc) {
+        demoDoc.items[0].inputs[3].value = screening_date;
+        // "id": "randomization",
+        // demoDoc.items[10].inputs[1].value = barcode_data;
+        demoDoc.items[10].inputs[2].value = participant_id;
+        demoDoc.items[10].inputs[7].value = enrollment_date;
+        // "id": "participant_information",
+        demoDoc.items[5].inputs[1].value = firstname;
+        demoDoc.items[5].inputs[2].value = surname;
+      }
 
       for (let doc of templateDocs) {
         // @ts-ignore

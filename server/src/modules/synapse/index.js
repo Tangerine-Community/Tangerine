@@ -31,7 +31,6 @@ module.exports = {
           await saveFlatResponse({...doc, type : "user-profile"}, locationList, synapseDb, resolve);
         } else {
           if (doc.type === 'case') {
-
             // output case
             await saveFlatResponse(doc, locationList, synapseDb, resolve);
             
@@ -42,21 +41,23 @@ module.exports = {
             for (const participant of doc.participants) {
               await pushResponse({...participant, _id: participant.id, caseId: doc._id, numInf: participant.participant_id === participant_id ? numInf : '', type: "participant"}, synapseDb);
             }
-
             // output case-events
             for (const event of doc.events) {
-              await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
 
               // output event-forms
               for (const eventForm of event['eventForms']) {
                 try {
-                  await pushResponse({...eventForm, type : "event-form" }, synapseDb);
+                  await pushResponse({...eventForm, type : "event-form", _id : eventForm.id }, synapseDb);
                 } catch (e) {
                   if (e.status !== 404) {
                     console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
                   }
                 }
               }
+              // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
+              // since we are already serializing each event-form and have the parent caseEventId on each one.
+              delete event.eventForms
+              await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
             }
           } else {
             await saveFlatResponse(doc, locationList, synapseDb, resolve);
