@@ -24,6 +24,7 @@ export class TangyFormsPlayerComponent {
   @Input('templateId') templateId:string
   @Input('formResponseId') formResponseId:string
   @Input('location') location:any
+  @Input('metadata') metadata:any
 
   $rendered = new Subject()
   $submit = new Subject()
@@ -141,13 +142,14 @@ export class TangyFormsPlayerComponent {
     await this.service.saveResponse({
       ...state,
       _rev: stateDoc['_rev'],
-      location: this.location
+      location: this.location,
+      ...this.metadata
     })
     this.response = state
   }
 
   print() {
-    window.print(); 
+    window.print();
   }
 
 }
