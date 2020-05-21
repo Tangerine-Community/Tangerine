@@ -1,5 +1,5 @@
 import { UserService } from './../../../core/auth/_services/user.service';
-import { Issue } from '../../classes/issue.class';
+import { Issue, IssueEventType } from '../../classes/issue.class';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
@@ -54,23 +54,23 @@ export class IssueFormComponent implements OnInit {
       this.window.isRevision = true
       let caseData:any
       if (params.eventId) {
-        // We're viewing a specific form revision.
+        // We're viewing a specific form revision, not making a revision.
         let formResponseRevision = this.issue.events.find(event => event.id === params.eventId).data.response
         caseData = this.issue.events.find(event => event.id === params.eventId).data.caseData
         this.formResponseId = formResponseRevision._id
         this.formPlayer.response = formResponseRevision 
       }
-      else if (await this.caseService.canMergeProposedChange(this.issue._id)) {
+      else if (await this.caseService.hasProposedChange(this.issue._id)) {
         // Create a revision based on the last proposed revision.
-        const change = await this.caseService.getProposedChange(this.issue._id)
-        let proposedFormResponse = change.response
-        await this.caseService.loadInMemory(change.caseInstance)
+        const proposedRevisionEvent = await this.caseService.getProposedChange(this.issue._id)
+        let proposedFormResponse = proposedRevisionEvent.response
+        await this.caseService.loadInMemory(proposedRevisionEvent.caseInstance)
         this.formPlayer.response = proposedFormResponse
       } else {
-        // Create a revision based on the current form response because we can't merge the last proposed revision.
-        let formResponse = await this.caseService.getFormResponse(this.issue.formResponseId)
-        this.caseService.loadInMemory(await this.caseService.getFormResponse(this.issue.caseId))
-        this.formPlayer.response = formResponse
+        // Create a revision based on the base event.
+        const baseEvent = [...this.issue.events].reverse().find(event => event.type === IssueEventType.Open || IssueEventType.Rebase)
+        this.caseService.loadInMemory(baseEvent.data.case)
+        this.formPlayer.response = baseEvent.data.response
       }
       this.formPlayer.render()
 

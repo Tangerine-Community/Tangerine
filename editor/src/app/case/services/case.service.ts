@@ -391,6 +391,30 @@ class CaseService {
     })
   }
 
+  async rebaseIssue(issueId:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+    const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Rebase,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        caseInstance,
+        response 
+      }
+    })
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Open
+    })
+  }
+
+
+
   async closeIssue(issueId:string, comment:string, userId:string, userName:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     issue.events.push(<IssueEvent>{
@@ -444,7 +468,18 @@ class CaseService {
 
   async saveProposedChange(response, caseInstance, issueId, userId, userName) {
     const issue = <Issue>await this.tangyFormService.getResponse(issueId)
-    const currentProposedChange = await this.getProposedChange(issueId)
+    // Calculate the diff.
+    let a:any
+    let b = response
+    if (await this.hasProposedChange(issueId)) {
+      const currentProposedChange = await this.getProposedChange(issueId)
+      a = currentProposedChange.response
+    } else {
+      const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+      a = baseEvent.data.response
+    }
+    const diff = this.diffFormResponses(a, b)
+    // Create the ProposedChange event.
     issue.events.push(<IssueEvent>{
       id: UUID(),
       type: IssueEventType.ProposedChange,
@@ -453,7 +488,7 @@ class CaseService {
       date: Date.now(),
       userId,
       data: {
-        diff: this.diffFormResponses(currentProposedChange.response, response),
+        diff,
         response,
         caseInstance
       }
@@ -462,6 +497,7 @@ class CaseService {
   }
 
   async mergeProposedChange(issueId:string, userId:string, userName:string) {
+    // @TODO Throw error is baseEvent's _rev's don't match what is in the db.
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     issue.events.push(<IssueEvent>{
       id: UUID(),
@@ -482,23 +518,25 @@ class CaseService {
 
   async hasProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    return !!issue.events.find(event => event.type === IssueEventType.ProposedChange)
+    const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const indexOfBaseEvent = issue.events.findIndex(event => event.id === baseEvent.id)
+    return !!issue.events.find((event, i) => event.type === IssueEventType.ProposedChange && i > indexOfBaseEvent)
   }
 
   async canMergeProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    const firstOpenEvent = issue.events.find(event => event.type === IssueEventType.Open)
+    const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
     const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
-    return currentFormResponse._rev === firstOpenEvent.data.response._rev && currentCaseInstance._rev === firstOpenEvent.data.caseInstance._rev ? true : false
+    return currentFormResponse._rev === event.data.response._rev && currentCaseInstance._rev === event.data.caseInstance._rev ? true : false
   }
 
   async issueDiff(issueId) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    const firstOpenEvent = issue.events.find(event => event.type === IssueEventType.Open)
+    const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
     const lastProposedChangeEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.ProposedChange)
     return lastProposedChangeEvent
-      ? this.diffFormResponses(firstOpenEvent.data.response, lastProposedChangeEvent.data.response)
+      ? this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response)
       : []
   }
 
