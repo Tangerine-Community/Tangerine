@@ -74,6 +74,12 @@ export class EventFormComponent implements OnInit {
       this.formPlayer.formResponseId = this.formResponseId
       this.formPlayer.templateId = this.templateId
       this.formPlayer.location = this.caseService.case.location
+      this.formPlayer.metadata = {
+        caseId: this.caseEvent.caseId,
+        eventId: this.caseEvent.id,
+        eventFormId: this.eventForm.id,
+        participantId: this.eventForm.participantId
+      }
       this.formPlayer.render()
 
       // After render of the player, it will have created a new form response if one was not assigned.
@@ -81,7 +87,7 @@ export class EventFormComponent implements OnInit {
       this.formPlayer.$rendered.subscribe(async () => {
         if (!this.formResponseId) {
           this.eventForm.formResponseId = this.formPlayer.formResponseId
-          await this.caseService.save()       
+          await this.caseService.save()
         }
       })
       this.formPlayer.$submit.subscribe(async () => {
