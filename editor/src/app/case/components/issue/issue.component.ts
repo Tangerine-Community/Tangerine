@@ -19,7 +19,7 @@ const IssueEventTypeIconMap = {
   [IssueEventType.ProposedChange]: 'call_split',
   [IssueEventType.Merge]: 'call_merge',
   [IssueEventType.Open]: 'playlist_add',
-  [IssueEventType.Close]: 'playlist_add_check'
+  [IssueEventType.Rebase]: 'settings_backup_restore'
 }
 
 const IssueEventTypeLabelMap = {
@@ -27,7 +27,8 @@ const IssueEventTypeLabelMap = {
   [IssueEventType.ProposedChange]: _TRANSLATE('revision'),
   [IssueEventType.Merge]: _TRANSLATE('proposed changes merged'),
   [IssueEventType.Open]: _TRANSLATE('opened'),
-  [IssueEventType.Close]: _TRANSLATE('closed')
+  [IssueEventType.Close]: _TRANSLATE('closed'),
+  [IssueEventType.Rebase]: _TRANSLATE('issue rebased on updated response')
 }
 
 interface EventInfo {
@@ -76,12 +77,6 @@ export class IssueComponent implements OnInit {
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
-      this.numberOfRevisions = this.issue.events.reduce((numberOfChanges, event) => {
-        return event.type === IssueEventType.ProposedChange
-          ? numberOfChanges + 1
-          : numberOfChanges
-      }, 0)
-      this.numberOfChanges = (await this.caseService.issueDiff(this.issue._id)).length
       await this.caseService.load(this.issue.caseId)
       await this.update()
       this.ready = true
@@ -119,7 +114,19 @@ export class IssueComponent implements OnInit {
     this.currentFormResponseContainer.response = currentFormResponse
     this.currentFormResponseContainer.render()
     this.diff = await this.caseService.issueDiff(this.issue._id)
-    this.diffMarkup = diffTemplate(this.diff)
+    this.diffMarkup = this.hasProposedChange
+      ? diffTemplate(this.diff)
+      : ''
+    const baseEvent = [...this.issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const indexOfBaseEvent = this.issue.events.findIndex(event => event.id === baseEvent.id)
+    this.numberOfRevisions = this.issue.events.reduce((numberOfChanges, event, i) => {
+      return event.type === IssueEventType.ProposedChange && i > indexOfBaseEvent
+        ? numberOfChanges + 1
+        : numberOfChanges
+    }, 0)
+    this.numberOfChanges = this.hasProposedChange 
+      ? this.diff.length
+      : 0
   }
 
   async onCommentFormSubmit() {
@@ -139,6 +146,15 @@ export class IssueComponent implements OnInit {
     await this.caseService.mergeProposedChange(this.issue._id, userId, userName)
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
+  }
+
+  async onRebaseClick() {
+    const userId = await this.userService.getCurrentUser()
+    // @TODO Look up the user's name.
+    const userName = userId
+    await this.caseService.rebaseIssue(this.issue._id, userId, userName)
+    this.issue = await this.caseService.getIssue(this.issue._id)
+    this.update()   
   }
 
   async onOpenClick() {

@@ -54,7 +54,7 @@
         </div>
       </div>
       <div class="card-actions">
-        <paper-button routerLink="form-revision" *ngIf="issue.formResponseId"><mwc-icon>call_split</mwc-icon>Propose</paper-button>
+        <paper-button (click)="onRebaseClick()" *ngIf="issue.formResponseId"><mwc-icon>call_split</mwc-icon>Rebase issue on current response</paper-button>
       </div>
     </paper-card>
 
