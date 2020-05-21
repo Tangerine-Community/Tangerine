@@ -108,7 +108,7 @@
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <span *ngxPermissionsOnly="['can_manage_group_deployment']"><mat-list-item  [class.active-menu-item]="menuService.section === 'deploy'"
+            <span><mat-list-item  [class.active-menu-item]="menuService.section === 'deploy'"
                 routerLink="/groups/{{menuService.groupId}}/deploy" *ngIf="menuService.groupId && isAdminUser">
                 <span class=""><i class="material-icons menu-icon">phonelink_ring</i></span>
                 <a matLine>{{'Deploy'|translate}}</a>

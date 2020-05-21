@@ -70,7 +70,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/permissions/:username', component: AssignPermissionsComponent, canActivate: [LoginGuard, NgxPermissionsGuard] ,data: {permissions:{only:['can_assign_permissions_to_group_user'], redirectTo:'/projects'}}},
-  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard, NgxPermissionsGuard],data: {permissions:{only:['can_manage_group_deployment'], redirectTo:'/projects'}} },
+  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard },
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },
