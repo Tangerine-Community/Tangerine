@@ -44,7 +44,6 @@ import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-t
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
-import { AssignPermissionsComponent } from './assign-permissions/assign-permissions.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -69,8 +68,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/configure/security/permissions/:username', component: AssignPermissionsComponent, canActivate: [LoginGuard, NgxPermissionsGuard] ,data: {permissions:{only:['can_assign_permissions_to_group_user'], redirectTo:'/projects'}}},
-  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard },
+  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },
