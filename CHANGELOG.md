@@ -1,9 +1,20 @@
 # Changelog
+## v3.9.1
+- Fixes
+  - Database views are missing when running `tangerine-preview` or `npm start` [#2096](https://github.com/Tangerine-Community/Tangerine/issues/2096)
+  - Event Schedule day view duplicates day event and show it in previous day as well [#2103](https://github.com/Tangerine-Community/Tangerine/issues/2103)
+  - According to date carousel, events appear off by one week [#2094](https://github.com/Tangerine-Community/Tangerine/issues/2094)
+  - Event Schedule templates are failing [#2085](https://github.com/Tangerine-Community/Tangerine/issues/2085)
+  - Reports form is not added to forms.json [#2088](https://github.com/Tangerine-Community/Tangerine/issues/2088)
+  - Events appear off by one day in Schedule List [#2101](https://github.com/Tangerine-Community/Tangerine/issues/2101)
+  - CouchDB port should be configurable in config.sh [#2092](https://github.com/Tangerine-Community/Tangerine/issues/2092)
+  - When opening the schedule view the first page is missing the header dates [#2082](https://github.com/Tangerine-Community/Tangerine/issues/2082)
+  - Data Collector unable to open an Event from the Event Schedule [#2102](https://github.com/Tangerine-Community/Tangerine/issues/2102)
+  - When editing a radio button options in editor, options should be in one column, not two [#2090](https://github.com/Tangerine-Community/Tangerine/issues/2090)
 
 ## v3.9.0
-
-
 - Features
+  - Set and get properties for Case Event Forms [#2023](https://github.com/Tangerine-Community/Tangerine/issues/2023)
   - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
   - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
 - Fixes

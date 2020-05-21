@@ -163,7 +163,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
       }
     }
   }
-  let data = await tangyModules.hook("flatFormReponse", {flatFormResponse, formResponse});
+  let data = await tangyModules.hook("flatFormResponse", {flatFormResponse, formResponse});
   return data.flatFormResponse;
 };
 

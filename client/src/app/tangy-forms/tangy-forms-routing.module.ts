@@ -12,7 +12,7 @@ import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@ang
 
 
 @Injectable()
-class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
+export class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
   constructor() {}
   canDeactivate(
     component: TangyFormsPlayerComponent,

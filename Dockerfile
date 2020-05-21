@@ -33,7 +33,6 @@ RUN cd /tangerine/editor && \
 
 # Install client.
 ADD client/package.json /tangerine/client/package.json
-ADD client/package-lock.json /tangerine/client/package-lock.json
 RUN cd /tangerine/client/ && \
     npm install
 
