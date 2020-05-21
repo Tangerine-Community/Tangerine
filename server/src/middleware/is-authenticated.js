@@ -1,13 +1,20 @@
-const log = require('tangy-log').log
-
-module.exports = function (req, res, next) {
-  // Uncomment next two lines when you want to turn off authentication during development.
-  // req.user = {}; req.user.name = 'user1';
-  // return next();
-  if (req.isAuthenticated()) {
-    return next();
+const log = require('tangy-log').log;
+const { verifyJWT, decodeJWT } = require('../auth-utils');
+module.exports = function(req, res, next) {
+  const token = req.headers.authorization || req.cookies.Authorization
+  const errorMessage = `Permission denied at ${req.url}`;
+  if (token && verifyJWT(token)) {
+    const { username } = decodeJWT(token);
+    if (!username) {
+      log.warn(errorMessage);
+      res.status(401).send(errorMessage);
+    } else {
+      req.user= {}
+      req.user.name = username;
+      next();
+    }
+  } else {
+    log.warn(errorMessage);
+    res.status(401).send(errorMessage);
   }
-  let errorMessage = `Permission denied at ${req.url}`;
-  log.warn(errorMessage)
-  res.status(401).send(errorMessage)
-}
+};

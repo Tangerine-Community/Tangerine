@@ -182,5 +182,9 @@ T_HOST_NAME='123random.ngrok.io'
 T_PROTOCOL="https"
 ```
 
+## Deprecated Version of Tangerine
+
+Some projects are still using the deprecated v2 version of Tangerine. If you need to install this version, use the `v2.2.5-couchdb-1.7.2-e` Docker image.
+
 ## Trademark and License
 Tangerine Logo is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).

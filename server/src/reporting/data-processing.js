@@ -11,11 +11,6 @@
  */
 
 const PouchDB = require('pouchdb');
-const log = require('tangy-log').log
-const clog = require('tangy-log').clog
-const {promisify} = require('util');
-const fs = require('fs');
-const readFile = promisify(fs.readFile);
 const tangyModules = require('../modules/index.js')()
 
 const CODE_SKIP = '999'

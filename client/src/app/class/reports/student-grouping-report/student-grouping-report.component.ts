@@ -9,18 +9,6 @@ import {ClassGroupingReport} from './class-grouping-report';
 import {StudentResult} from './student-result';
 import {Feedback} from '../../feedback';
 
-export interface StudentResult {
-  id: string;
-  name: string;
-  classId: string;
-  forms: [];
-  response: any;
-  score: any;
-  max: any;
-  totalGridPercentageCorrect: number;
-  percentile: string;
-  maxValueAnswer: number;
-}
 @Component({
   selector: 'app-student-grouping-report',
   templateUrl: './student-grouping-report.component.html',
@@ -44,8 +32,8 @@ export class StudentGroupingReportComponent implements OnInit {
   clickPosition;
 
   @ViewChild('container', {static: true}) container: ElementRef;
-  @ViewChild('feedback', {static: false}) feedbackElement: ElementRef;
-  @ViewChild('feedbackMessage', {static: false}) feedbackMessage: ElementRef;
+  @ViewChild('feedback') feedbackElement: ElementRef;
+  @ViewChild('feedbackMessage') feedbackMessage: ElementRef;
 
   constructor(
     private route: ActivatedRoute,

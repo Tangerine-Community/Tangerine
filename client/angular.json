@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/tangerine-client",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -29,7 +30,8 @@
               "src/logo.png",
               "src/loading.gif",
               "src/shell/index.html",
-              "src/assets"
+              "src/assets",
+              "src/libs/SQLitePlugin.js"
             ],
             "styles": [
               "./node_modules/material-design-icons/iconfont/material-icons.css",
@@ -39,6 +41,12 @@
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -141,5 +149,8 @@
       }
     }
   },
-  "defaultProject": "tangerine-client"
+  "defaultProject": "tangerine-client",
+  "cli": {
+    "analytics": "8ea487ff-a3b2-45c5-9573-f6fe44d0cfdb"
+  }
 }

@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/tangerine-editor",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -23,9 +24,16 @@
               "src/logo.png",
               "src/loading.gif",
               "src/assets",
-              { "glob": "**/*", "input": "./node_modules/tangy-form-editor/ckeditor/", "output": "./ckeditor/" },
-              { "glob": "**/*", "input": "./node_modules/ace-builds/src-noconflict/", "output": "./" }
-      
+              {
+                "glob": "**/*",
+                "input": "./node_modules/tangy-form-editor/ckeditor/",
+                "output": "./ckeditor/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/ace-builds/src-noconflict/",
+                "output": "./"
+              }
             ],
             "styles": [
               "src/custom-theme.scss",
@@ -58,6 +66,10 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -142,5 +154,8 @@
       }
     }
   },
-  "defaultProject": "tangerine-editor"
+  "defaultProject": "tangerine-editor",
+  "cli": {
+    "analytics": "68e01fb5-1f69-4d3a-8a72-d75a608a9eb0"
+  }
 }
