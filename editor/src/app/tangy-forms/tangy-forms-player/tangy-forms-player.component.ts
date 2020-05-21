@@ -16,10 +16,17 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 })
 export class TangyFormsPlayerComponent {
 
-  @Input('formId') formId:string
-  @Input('templateId') templateId:string
+  // Use on of three to do different things.
+  // 1. Use this to have the component load the response for you. 
   @Input('formResponseId') formResponseId:string
+  // 2. Use this if you want to attach the form response yourself.
+  @Input('response') response:TangyFormResponseModel
+  // 3. Use this is you want a new form response but want define which form to use.
+  @Input('formId') formId:string
+
+  @Input('templateId') templateId:string
   @Input('location') location:any
+  @Input('skipSaving') skipSaving = false
   @Input('metadata') metadata:any
 
   $rendered = new Subject()
@@ -28,12 +35,11 @@ export class TangyFormsPlayerComponent {
 
   formInfo:FormInfo
   formTemplatesInContext:Array<FormTemplate>
-  response:any
+  formEl:any
 
   throttledSaveLoaded;
   throttledSaveFiring;
 
-  formEl;
   window:any;
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
@@ -61,12 +67,18 @@ export class TangyFormsPlayerComponent {
     }
   }
 
+  unlock() {
+    this.formEl.unlock()
+  }
+
   async render() {
     //
     // Get form ingredients.
-    const formResponse = this.formResponseId
-      ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
-      : ''
+    const formResponse = this.response
+      ? this.response
+      : this.formResponseId
+        ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
+        : ''
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']
@@ -92,10 +104,12 @@ export class TangyFormsPlayerComponent {
       }
       this.response = formEl.response
       // Listen up, save in the db.
-      formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-        let response = _.target.store.getState()
-        this.throttledSaveResponse(response)
-      })
+      if (!this.skipSaving) {
+        formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+          let response = _.target.store.getState()
+          this.throttledSaveResponse(response)
+        })
+      }
       formEl.addEventListener('submit', () => {
         this.$submit.next(true)
       })

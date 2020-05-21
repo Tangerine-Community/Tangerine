@@ -14,6 +14,7 @@
     "generate-uploads": "./src/scripts/generate-uploads/bin.js",
     "generate-cases": "./src/scripts/generate-cases/bin.js",
     "generate-location-level-indexes": "./src/scripts/generate-location-level-indexes/bin.js",
+    "generate-indexes": "./src/scripts/generate-indexes/bin.js",
     "push-all-groups-views": "./src/scripts/push-all-groups-views.js",
     "find-missing-records": "./src/scripts/find-missing-records.js",
     "import-archives": "./src/scripts/import-archives/bin.js",
