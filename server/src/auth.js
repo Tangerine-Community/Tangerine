@@ -2,12 +2,15 @@ const log = require('tangy-log').log;
 const bcrypt = require('bcryptjs');
 const DB = require('./db.js');
 const USERS_DB = new DB('users');
+const GROUPS_DB = new DB('groups');
 const { createLoginJWT } = require('./auth-utils');
+const {permissionsList} = require('./permissions-list.js');
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
     if (await areCredentialsValid(username, password)) {
-      const token = createLoginJWT({ username });
+      const permissions = await collateUserPermissions(username);
+      const token = createLoginJWT({ username, permissions });
       log.info(`${username} login success`);
       return res.status(200).send({data: { token }});
     } else {
@@ -16,7 +19,43 @@ const login = async (req, res) => {
     }
   } catch (error) {
     log.info(`${username} login failure`);
+    console.log(error)
     return res.status(401).send({ data: 'Could not login user' });
+  }
+};
+
+const getUserPermissions = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const data = await collateUserPermissions(username);
+    res.send(data);
+  } catch (error) {
+    console.log(error);
+    res.send({sitewidePermissions:[], groupPermissions: []})
+  }
+};
+
+const collateUserPermissions = async username => {
+  if (username === process.env.T_USER1) {
+    const groups = ((await GROUPS_DB.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
+      .filter(doc => !doc._id.includes('_design')));
+    const groupPermissions = groups.map(group=>{
+      return{groupName: group._id, permissions: permissionsList.groupPermissions};
+    });
+    return {sitewidePermissions: permissionsList.sitewidePermissions, groupPermissions};
+  } else {
+    const data = await findUserByUsername(username);
+    const sitewidePermissions = data.sitewidePermissions || [];
+    if (data.groups.length > 0) {
+    const groupPermissions = data.groups.map(group => {
+      return {groupName: group.groupName, permissions: group.permissions || []};
+    });
+    return {sitewidePermissions, groupPermissions};
+  } else {
+    return {sitewidePermissions, groupPermissions: []};
+  }
   }
 };
 
@@ -79,10 +118,26 @@ const hashPassword = async (password) => {
 
 const extendSession = async (req, res) => {
   const {username} = req.body;
-  const token = createLoginJWT({ username });
+  const permissions = await collateUserPermissions(username);
+  const token = createLoginJWT({ username, permissions });
   return res.status(200).send({data: { token }});
 };
-
+const updateUserSiteWidePermissions = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const {sitewidePermissions} = req.body;
+    if (username && sitewidePermissions.length >= 0 ) {
+    const user = findUserByUsername(username);
+    user.sitewidePermissions = [...sitewidePermissions];
+    const data = await USERS_DB.put(user);
+    res.send({ data, statusCode: 200, statusMessage: `User permissions updated` });
+  } else {
+    res.send(`Could not update permissions`);
+  }
+  } catch (error) {
+    res.send(`Could not update permissions`);
+  }
+};
 module.exports = {
   areCredentialsValid,
   doesUserExist,
@@ -91,5 +146,7 @@ module.exports = {
   hashPassword,
   isSuperAdmin,
   login,
+  getUserPermissions,
+  updateUserSiteWidePermissions,
   USERS_DB,
 };
