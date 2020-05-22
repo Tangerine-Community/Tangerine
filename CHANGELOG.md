@@ -5,6 +5,7 @@
   - Data Inquiry [#1768](https://github.com/Tangerine-Community/Tangerine/issues/1768), [#1982](https://github.com/Tangerine-Community/Tangerine/issues/1982), [#1760](https://github.com/Tangerine-Community/Tangerine/issues/1760)
   - Role Based Access Controls for sitewide permissions [#2027](https://github.com/Tangerine-Community/Tangerine/issues/2027)
   - Case Reporting outputs [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
+  - Refactor Editor UI for question editing [#119](https://github.com/Tangerine-Community/tangy-form-editor/pull/119)
 - Fixes
   - Use of doc_id's instead of selector for sync push [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
   - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
