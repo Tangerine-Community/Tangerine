@@ -94,6 +94,7 @@ async function go() {
     for (let caseEvent of caseDoc.events) {
       const caseEventId = uuidv1()
       caseEvent.id = caseEventId
+      caseEvent.caseId = caseId
       for (let eventForm of caseEvent.eventForms) {
         eventForm.id = uuidv1()
         eventForm.caseId = caseId
@@ -113,24 +114,31 @@ async function go() {
           }
           formResponse._id = newId
           formResponse.location = location
+          formResponse.caseEventId = caseEventId
+          formResponse.caseId = caseId
+          formResponse.eventFormId = eventForm.id
+          if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
+            formResponse.participantId = participantId
+          }
         }
       }
     }
     caseDoc.location = await setLocation.call(this);
 
     // modify the demographics form - s01a-participant-information-f254b9
-    const demoDoc = templateDocs.find(doc => doc.form.id === 's01a-participant-information-f254b9')
+    const demoDoc = templateDocs.find(doc => doc.form.id === 'mnh_screening_and_enrollment')
     if (typeof demoDoc !== 'undefined') {
-      demoDoc.items[0].inputs[4].value = screening_date;
+      demoDoc.items[0].inputs[1].value = participant_id;
+      demoDoc.items[0].inputs[3].value = screening_date;
       // "id": "randomization",
-      demoDoc.items[10].inputs[1].value = barcode_data;
-      demoDoc.items[10].inputs[2].value = participant_id;
-      demoDoc.items[10].inputs[7].value = enrollment_date;
+      // demoDoc.items[10].inputs[1].value = barcode_data;
+      // demoDoc.items[10].inputs[2].value = participant_id;
+      // demoDoc.items[10].inputs[7].value = enrollment_date;
       // "id": "participant_information",
-      demoDoc.items[12].inputs[2].value = surname;
-      demoDoc.items[12].inputs[3].value = firstname;
+      demoDoc.items[5].inputs[1].value = firstname;
+      demoDoc.items[5].inputs[2].value = surname;
     }
-
+    
     // Upload the profiles first
     // now upload the others
     for (let doc of templateDocs) {

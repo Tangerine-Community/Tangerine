@@ -253,7 +253,7 @@ class MockPeersService {
 }
 
 describe('PeersService', () => {
-  const endpoints: Endpoint[] = [];
+  let endpoints: Endpoint[] = [];
   beforeEach(
     () => {
       const originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -272,7 +272,7 @@ describe('PeersService', () => {
         ]
       });
       // this.peerService = pService;
-      TestBed.get(PeersService);
+      const service = TestBed.get(PeersService);
 
       PouchDB.plugin(window['PouchReplicationStream'].plugin);
       PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
@@ -320,11 +320,11 @@ describe('PeersService', () => {
         console.log('Already have Alma:' + e);
       }
 
-      this.endpoints = [];
-      if (typeof this.el  === 'undefined') {
-        this.el = document.createElement('div');
+      endpoints = [];
+      if (typeof service.el  === 'undefined') {
+        service.el = document.createElement('div');
       }
-      const startAdvertisingBtnEl = this.el;
+      const startAdvertisingBtnEl = service.el;
       startAdvertisingBtnEl.addEventListener('log', e => {
           console.log('log message: ' + JSON.stringify(e.detail));
         }
@@ -336,7 +336,7 @@ describe('PeersService', () => {
       startAdvertisingBtnEl.addEventListener('endpoints', e => {
           console.log('endpoints: ' + JSON.stringify(e.detail));
           const message: Message = e.detail;
-          this.endpoints = message.object;
+          endpoints = message.object;
         }
       );
       startAdvertisingBtnEl.addEventListener('payload', e => {
@@ -385,8 +385,8 @@ describe('PeersService', () => {
   it('start advertising', async()  => {
     // this.peerService = realPeersService;
     const service: PeersService = TestBed.get(PeersService);
-    this.endpoints = [];
-    await service.startAdvertising(this.endpoints);
+    endpoints = [];
+    await service.startAdvertising(endpoints);
     // this.endpoints = message.object;
 
     // TODO: test the events dispatched by startAdvertising

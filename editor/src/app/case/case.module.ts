@@ -1,3 +1,5 @@
+import { MatChipsModule } from '@angular/material/chips';
+import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CaseComponent } from './components/case/case.component';
@@ -17,6 +19,8 @@ import { CaseEventListItemComponent } from './components/case-event-list-item/ca
 import { EventFormListItemComponent } from './components/event-form-list-item/event-form-list-item.component';
 import { QueryComponent } from './components/query/query.component';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
+import { IssueComponent } from './components/issue/issue.component';
+import { NewIssueComponent } from './components/new-issue/new-issue.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -28,6 +32,7 @@ import { EventFormAddComponent } from './components/event-form-add/event-form-ad
     CaseRoutingModule,
     SharedModule,
     TangyFormsModule,
+    MatChipsModule,
     CommonModule
   ],
   providers: [
@@ -40,11 +45,14 @@ import { EventFormAddComponent } from './components/event-form-add/event-form-ad
     CaseComponent,
     NewCaseComponent,
     EventFormComponent,
+    IssueFormComponent,
     CaseBreadcrumbComponent,
     CaseEventListItemComponent,
     EventFormListItemComponent,
     QueryComponent,
-    EventFormAddComponent
+    EventFormAddComponent,
+    IssueComponent,
+    NewIssueComponent
   ]
 })
 export class CaseModule { }
