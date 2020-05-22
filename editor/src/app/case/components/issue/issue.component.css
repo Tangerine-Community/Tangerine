@@ -1,0 +1,90 @@
+.issue-event {
+  width: 100%;
+  margin: 15px;
+}
+
+.page {
+  margin: 0px 40px 0px 0px;
+}
+
+.header {
+  background: #333;
+  color: #FFF;
+  margin: 1px 0px 15px;
+  padding: 15px 0px 0px;
+}
+
+.header h1 {
+  color: #FFF;
+  margin-left: 20px;
+}
+
+.status {
+  margin-left: 0px;
+}
+
+.status mwc-icon {
+}
+
+.status-merged {
+  background: purple;
+  color: #FFF;
+}
+.status-open {
+  background: green;
+  color: #FFF;
+}
+.status-closed {
+  background: red;
+  color: #FFF;
+}
+
+.header-actions {
+  margin: 18px;
+}
+
+.header-actions a:active, .header-actions a:visited, .header-actions a {
+  text-decoration: none;
+
+}
+
+.issue-event h1, .issue-event h2, .issue-event h3, .issue-event h4, .issue-event h5 {
+  margin: 15px 0px 5px;
+}
+
+.issue-actions {
+}
+
+.issue-event--label mwc-icon {
+  position: relative;
+  top: 4px;
+}
+
+.issue-event--primary {
+  margin: 15px 0px;
+}
+
+.issue-event--date {
+  color: #CCC;
+}
+
+paper-button {
+  background: var(--mdc-theme-secondary);
+  color: var(--accent-text-color);
+}
+
+paper-tabs {
+  --paper-tabs-selection-bar-color: var(--mdc-theme-secondary);
+}
+
+.no-proposed-changes-message {
+  padding: 15px 25px;
+}
+
+.diff {
+  margin-left: 15px;
+}
+
+.diff--arrow {
+  font-size: .9em;
+}

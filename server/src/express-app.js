@@ -6,7 +6,6 @@ const http = require('axios');
 const read = require('read-yaml')
 const express = require('express')
 var session = require("express-session")
-const PouchSession = require("session-pouchdb-store")
 const bodyParser = require('body-parser');
 const path = require('path')
 const fs = require('fs-extra')

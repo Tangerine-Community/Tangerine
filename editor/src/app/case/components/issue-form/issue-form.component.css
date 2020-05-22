@@ -6,10 +6,3 @@
   background-attachment: fixed;
   background-position: center;
 }
-
-.new-issue-button {
-  position: absolute;
-  top: 74px;
-  right: 15px;
-  color: #fff;
-}

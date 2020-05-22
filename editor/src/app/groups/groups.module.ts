@@ -1,3 +1,4 @@
+import { GroupIssuesComponent } from './group-issues/group-issues.component';
 import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
@@ -21,6 +22,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
@@ -100,6 +102,7 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     MatGridListModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatSlideToggleModule,
     TangyFormsModule,
     SharedModule,
     NgTangyFormEditorModule,
@@ -152,7 +155,8 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     GroupUploadsViewComponent,
     GroupDeviceUserComponent,
     GroupCasesComponent,
-    CaseSettingsComponent,
+    GroupIssuesComponent,
+    CaseSettingsComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

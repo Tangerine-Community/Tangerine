@@ -1,0 +1,25 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div id="header">
+  <tangy-location #tangyLocation></tangy-location>
+  <div id="header-buttons">
+    <paper-checkbox #showClosedIssues class="show-closed-issues">show closed issues</paper-checkbox>
+    <paper-button id="reset-button" (click)="onResetClick()" [disabled]="loading === true">reset</paper-button>
+    <paper-button id="search-button" (click)="onSearchClick()" [disabled]="loading === true">search</paper-button>
+  </div>
+</div>
+<div class="loading" *ngIf="loading">Loading...</div>
+<div class="no-issues-found" *ngIf="issues && issues.length === 0">No issues found.</div>
+<div [hidden]="loading">
+  <div *ngFor="let issue of issues" class="icon-list-item search-result" routerLink="{{issue._id}}">
+    <mwc-icon slot="item-icon">receipt</mwc-icon>
+    <div>
+      <div>{{issue.label}}</div>
+      <div secondary>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="paginator" [hidden]="loading">
+  <paper-icon-button icon="arrow-back" class="previous" (click)="onPreviousClick()" [disabled]="skip === 0 || loading === true"></paper-icon-button>
+  <paper-icon-button icon="arrow-forward" class="next" (click)="onNextClick()" [disabled]="loading === true || (issues && issues.length !== limit)"></paper-icon-button>
+</div>

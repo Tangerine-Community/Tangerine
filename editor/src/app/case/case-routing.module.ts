@@ -1,3 +1,4 @@
+import { NewIssueComponent } from './components/new-issue/new-issue.component';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { NgModule, Injectable } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -32,6 +33,11 @@ const routes: Routes = [
   {
     path: 'new-case',
     component: NewCaseComponent,
+    canActivate: [LoginGuard]
+  },
+  {
+    path: 'new-issue/:caseId/:eventId/:eventFormId',
+    component: NewIssueComponent,
     canActivate: [LoginGuard]
   }
 ];
