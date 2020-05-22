@@ -39,7 +39,7 @@ const cors = require('cors')
 const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
-  hashPassword, USERS_DB, login} = require('./auth')
+  hashPassword, USERS_DB, login, getUserPermissions, updateUserSiteWidePermissions} = require('./auth')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
@@ -99,7 +99,8 @@ var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-
 app.post('/login', login);
 app.post('/extendSession', isAuthenticated, extendSession);
 app.get('/permissionsList', isAuthenticated, getPermissionsList);
-
+app.get('/permissions/:username', isAuthenticated, getUserPermissions);
+app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, updateUserSiteWidePermissions);
 app.get('/login/validate/:userName',
   function (req, res) {
     if (req.user && (req.params.userName === req.user.name)) {

@@ -9,7 +9,7 @@ const login = async (req, res) => {
   const { username, password } = req.body;
   try {
     if (await areCredentialsValid(username, password)) {
-      const permissions = await getUserPermissions(username);
+      const permissions = await collateUserPermissions(username);
       const token = createLoginJWT({ username, permissions });
       log.info(`${username} login success`);
       return res.status(200).send({data: { token }});
@@ -24,7 +24,18 @@ const login = async (req, res) => {
   }
 };
 
-const getUserPermissions = async username => {
+const getUserPermissions = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const data = await collateUserPermissions(username);
+    res.send(data);
+  } catch (error) {
+    console.log(error);
+    res.send({sitewidePermissions:[], groupPermissions: []})
+  }
+};
+
+const collateUserPermissions = async username => {
   if (username === process.env.T_USER1) {
     const groups = ((await GROUPS_DB.allDocs({ include_docs: true }))
       .rows
@@ -107,11 +118,26 @@ const hashPassword = async (password) => {
 
 const extendSession = async (req, res) => {
   const {username} = req.body;
-  const permissions = await getUserPermissions(username);
+  const permissions = await collateUserPermissions(username);
   const token = createLoginJWT({ username, permissions });
   return res.status(200).send({data: { token }});
 };
-
+const updateUserSiteWidePermissions = async (req, res) => {
+  try {
+    const username = req.params.username;
+    const {sitewidePermissions} = req.body;
+    if (username && sitewidePermissions.length >= 0 ) {
+    const user = findUserByUsername(username);
+    user.sitewidePermissions = [...sitewidePermissions];
+    const data = await USERS_DB.put(user);
+    res.send({ data, statusCode: 200, statusMessage: `User permissions updated` });
+  } else {
+    res.send(`Could not update permissions`);
+  }
+  } catch (error) {
+    res.send(`Could not update permissions`);
+  }
+};
 module.exports = {
   areCredentialsValid,
   doesUserExist,
@@ -120,5 +146,7 @@ module.exports = {
   hashPassword,
   isSuperAdmin,
   login,
+  getUserPermissions,
+  updateUserSiteWidePermissions,
   USERS_DB,
 };

@@ -7,6 +7,7 @@ import { LoginGuard } from './_guards/login-guard.service';
 import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import {AddUserComponent} from '../../groups/add-users/add-user.component';
 import { NgxPermissionsGuard, NgxPermissionsModule } from 'ngx-permissions';
+import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
 const data = {permissions:{only:['can_manage_site_wide_users'], redirectTo:'/projects'}};
 const routes: Routes = [{
   path: 'register-user',
@@ -26,6 +27,12 @@ const routes: Routes = [{
   component: UserResgistrationComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
   data: {permissions:{only:['can_create_user'], redirectTo:'/projects'}}
+},
+{
+  path: 'manage-users/sitewide-permissions/:username',
+  component: ManageSitewidePermissionsComponent,
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: {permissions:{only:['can_manage_site_wide_users'], redirectTo:'/projects'}}
 },
 {
   path: 'manage-users/users/:id',
