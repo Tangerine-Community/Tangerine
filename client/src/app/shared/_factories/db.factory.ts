@@ -31,11 +31,11 @@ export function DB(name, key = ''):PouchDB {
       function (path) {
         console.log('database file path: ' + path)
         if (key !== null) {
-          window['sqliteBatchConnection'].openDatabaseConnection(
+          window['sqliteBatchConnectionManager'].openDatabaseConnection(
             { path: path, flags: OPEN_DATABASE_FLAGS, key: key }, openCallback, errorCallback
           )
         } else {
-          window['sqliteBatchConnection'].openDatabaseConnection(
+          window['sqliteBatchConnectionManager'].openDatabaseConnection(
             { path: path, flags: OPEN_DATABASE_FLAGS }, openCallback, errorCallback
           )
         }
