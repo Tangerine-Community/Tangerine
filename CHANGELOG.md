@@ -1,4 +1,14 @@
 # Changelog
+## v3.10.0
+- Features
+  - SAE Process [#2012](https://github.com/Tangerine-Community/Tangerine/issues/2012)
+  - Data Inquiry [#1768](https://github.com/Tangerine-Community/Tangerine/issues/1768), [#1982](https://github.com/Tangerine-Community/Tangerine/issues/1982), [#1760](https://github.com/Tangerine-Community/Tangerine/issues/1760)
+  - Role Based Access Controls for sitewide permissions [#2027](https://github.com/Tangerine-Community/Tangerine/issues/2027)
+  - Case Reporting outputs [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
+- Fixes
+  - Use of doc_id's instead of selector for sync push [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
+  - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
+
 ## v3.9.1
 - Fixes
   - Database views are missing when running `tangerine-preview` or `npm start` [#2096](https://github.com/Tangerine-Community/Tangerine/issues/2096)
