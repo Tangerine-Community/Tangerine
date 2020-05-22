@@ -10,6 +10,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { UserService } from './core/auth/_services/user.service';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { _TRANSLATE } from './shared/_services/translation-marker';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +23,6 @@ export class AppComponent implements OnInit, OnDestroy {
   validSession: boolean;
   user_id: string = localStorage.getItem('user_id');
   private childValue: string;
-  canManageSitewideUsers = false;
   isAdminUser = false;
   history: string[] = [];
   titleToUse: string;
@@ -45,7 +45,8 @@ export class AppComponent implements OnInit, OnDestroy {
     translate: TranslateService,
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private permissionService: NgxPermissionsService
   ) {
     translate.setDefaultLang('translation');
     translate.use('translation');
@@ -64,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
     await this.authenticationService.logout();
     this.loggedIn = false;
     this.isAdminUser = false;
-    this.canManageSitewideUsers = false;
+    this.permissionService.flushPermissions();
     this.user_id = null;
     this.router.navigate(['/login']);
   }
@@ -75,15 +76,18 @@ export class AppComponent implements OnInit, OnDestroy {
       if (isLoggedIn) {
         this.loggedIn = isLoggedIn;
         this.isAdminUser = await this.userService.isCurrentUserAdmin();
+        if(Object.entries(this.permissionService.getPermissions()).length===0){
+          const permissions = JSON.parse(localStorage.getItem('permissions'));
+          this.permissionService.loadPermissions(permissions.sitewidePermissions);
+        }
         this.user_id = localStorage.getItem('user_id');
-        this.canManageSitewideUsers = await this.userService.canManageSitewideUsers();
         this.sessionTimeoutCheck();
         this.sessionTimeoutCheckTimerID =
         setInterval(await this.sessionTimeoutCheck.bind(this), 10 * 60 * 1000); // check every 10 minutes
       } else {
         this.loggedIn = false;
         this.isAdminUser = false;
-        this.canManageSitewideUsers = false;
+        this.permissionService.flushPermissions();
         this.user_id = null;
         this.router.navigate(['/login']);
       }

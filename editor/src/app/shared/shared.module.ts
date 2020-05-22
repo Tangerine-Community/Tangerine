@@ -8,13 +8,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from "../shared/_services/app-config.service";
 import { TangyLoadingComponent } from './_components/tangy-loading/tangy-loading.component';
 import { BreadcrumbComponent } from './_components/breadcrumb/breadcrumb.component';
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 @NgModule({
   imports: [
     CommonModule
   ],
   providers: [AppConfigService, ServerConfigService, LoginGuard],
-  exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent, BreadcrumbComponent, UnsanitizeHtmlPipe],
+  exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent, BreadcrumbComponent, UnsanitizeHtmlPipe, NgxPermissionsModule],
   declarations: [TangyLoadingComponent, UnsanitizeHtmlPipe, BreadcrumbComponent]
 })
 export class SharedModule { }

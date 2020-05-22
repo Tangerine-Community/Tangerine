@@ -18,6 +18,8 @@ import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
 import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
+import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [
@@ -32,10 +34,11 @@ import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
         BrowserAnimationsModule,
         AuthRoutingModule,
         SharedModule,
-        MatTableModule
+        MatTableModule,
+        MatCheckboxModule
 
     ],
-  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent],
+  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent],
   providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
 })
 export class AuthModule { }

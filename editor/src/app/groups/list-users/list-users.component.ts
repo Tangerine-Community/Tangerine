@@ -2,8 +2,6 @@ import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.com
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { fromEvent, of } from 'rxjs';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 

@@ -1,11 +1,12 @@
 
 <h1>Groups</h1>
-<paper-fab *ngIf="canManageSitewideUsers" mat-raised-button icon="add" color="accent" class="action" routerLink="/groups/new-group">
+<span *ngxPermissionsOnly="['can_create_group']"><paper-fab  mat-raised-button icon="add" color="accent" class="action" routerLink="/groups/new-group">
 </paper-fab>
+</span>
 <div id="content">
 <mat-grid-list [cols]="breakpoint" rowHeight="120" (window:resize)="onResize($event.target)">
     <mat-grid-tile *ngFor="let group of groups">
-            <mat-card class="mat-elevation-z3 group-card" (click)="navigateToGroup(group._id)">
+            <mat-card class="mat-elevation-z3 group-card" [routerLink]="['/groups/', group._id]">
                 <mat-card-header>
                     <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">group_work</i>
                     </div>

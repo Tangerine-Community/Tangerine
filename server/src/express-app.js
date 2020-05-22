@@ -38,10 +38,11 @@ const cors = require('cors')
 const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
-  hashPassword, USERS_DB, login} = require('./auth')
+  hashPassword, USERS_DB, login, getUserPermissions, updateUserSiteWidePermissions} = require('./auth')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
+const { getPermissionsList } = require('./permissions-list.js');
 
 module.exports = async function expressAppBootstrap(app) {
 
@@ -89,13 +90,16 @@ app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
+var {permit} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
 // Login service.
 app.post('/login', login);
 app.post('/extendSession', isAuthenticated, extendSession);
-
+app.get('/permissionsList', isAuthenticated, getPermissionsList);
+app.get('/permissions/:username', isAuthenticated, getUserPermissions);
+app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, updateUserSiteWidePermissions);
 app.get('/login/validate/:userName',
   function (req, res) {
     if (req.user && (req.params.userName === req.user.name)) {
@@ -240,7 +244,7 @@ app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
   }
 
 });
-app.post('/users/register-user', isAuthenticated, async (req, res) => {
+app.post('/users/register-user', isAuthenticated, permit(['can_create_user']), async (req, res) => {
   try {
     if (!(await doesUserExist(req.body.username))) {
       const user = req.body;

@@ -1,8 +1,8 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { GroupsService } from './../services/groups.service';
-import { Component, OnInit, ElementRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/core/auth/_services/user.service';
+import { NgxPermissionsService } from 'ngx-permissions';
 
 
 @Component({
@@ -18,7 +18,8 @@ export class GroupComponent implements OnInit {
 
   constructor(
     private groupsService: GroupsService,
-    private userService:UserService
+    private userService:UserService,
+    private permissionsService:NgxPermissionsService
   ) {}
 
   async ngOnInit() {
@@ -26,6 +27,11 @@ export class GroupComponent implements OnInit {
     const group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
     this.title = group.label
     this.breadcrumbs = []
+    const allPermissions = JSON.parse(localStorage.getItem('permissions'));
+    const groupPermissions = allPermissions.groupPermissions;
+    const permissions = groupPermissions.find(permission=>permission.groupName===group._id)
+    this.permissionsService.addPermission(permissions.permissions)
+    this.permissionsService.addPermission(allPermissions.sitewidePermissions)
   }
 
 
