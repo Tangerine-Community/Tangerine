@@ -12,7 +12,7 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Query } from '../classes/query.class'
-import moment from 'moment/src/moment';
+import * as moment from 'moment'
 import { HttpClient } from '@angular/common/http';
 import { CaseParticipant } from '../classes/case-participant.class';
 
