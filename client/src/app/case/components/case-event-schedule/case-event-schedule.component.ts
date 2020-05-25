@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CASE_EVENT_SCHEDULE_LIST_MODE_DAILY, CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY, CaseEventScheduleListComponent } from '../case-event-schedule-list/case-event-schedule-list.component';
-import moment from 'moment/src/moment'
+import * as moment from 'moment'
 
 @Component({
   selector: 'app-case-event-schedule',

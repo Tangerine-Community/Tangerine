@@ -4,6 +4,10 @@
   <input value="{{datUrl}}">
   <br><br>
 </div>
+<a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: 'data-dashboard', groupName: groupName}">
+{{'Data Dashboard'|translate}}</a>
+<br/>
+<br/>
 Filter:
 <select name="form" (change)="filterByForm($event)">
   <option value="*">*</option>
