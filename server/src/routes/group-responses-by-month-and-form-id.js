@@ -6,6 +6,7 @@ module.exports = async (req, res) => {
   try {
     const groupDb = new DB(req.params.groupId)
     let options = {key: req.params.keys, include_docs: true}
+    options.stale = 'ok'
     
     if (req.params.limit) {
       options.limit = req.params.limit
