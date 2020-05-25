@@ -1,32 +1,14 @@
-<tangy-form id="data-dashboard" title="Data Dashboard" category="null"
-        
-        on-open="
-          
-          
-        
-        
-        "
-        exit-clicks=""
-        on-change="
-          
-          
-          
-          
-        "
-        on-submit="
+<tangy-form id="data-dashboard" title="Data Dashboard" category="null" on-open="
+         
+        " exit-clicks="" on-change="
+           
+        " on-submit="
           
          
-        "
-      >
-        
-          <tangy-form-item id="item-100" 
-            title="Raw Data Dashboard"
-            
-            
-            on-open="
-              
-                  
-              
+        ">
+
+  <tangy-form-item id="item-100" title="Raw Data Dashboard" on-open="
+               
 var my_awesome_script = document.createElement('script');
 my_awesome_script.setAttribute('src','https://cdn.plot.ly/plotly-latest.min.js');
 document.head.appendChild(my_awesome_script);    
@@ -47,8 +29,7 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 
          
             
-            "
-            on-change="
+            " on-change="
               
               
                  
@@ -379,6 +360,20 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
         addChart([trace1], layout)
         }
 
+        function printNumber (data, title, id) {
+            var trace1 = {
+                type: 'indicator',
+                mode: 'number',
+                gauge: { shape: 'bullet' },
+                value: data,
+                title: { text: id }, 
+                name: id,
+                id: id
+            };
+            var layout = {title: title, showlegend: true}
+            addChart([trace1], layout)
+            }
+
         function printMap (data, title, id, type) {
         var trace1 =  [{
            type:'scattermapbox',
@@ -415,7 +410,7 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
         .then(response => response.json())
         .then (loadFormMeta())
         .then(json => { 
-        	inputShow('single')
+        	//inputShow('single')
     		//move to correct format for unproceesed
     		//filter on selected form
     		var rows = json.rows
@@ -427,19 +422,24 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
             	//inputs.form.childNodes.forEach(x => {if (x.value ==getValue('form') ) formName = x.label} )
                 
                 formName = inputs.form.childNodes.forEach(x => {if (x.value ==getValue('form') ) formName = x.label} )
-                debugger
+                
                 inputs.total.value = unprocessed['startDatetime'].values.length
-	            addDivText ('summary',`<p>There are a total of <b>${unprocessed['startDatetime'].values.length}</b> submissions for <b>${formName}</b> </p>`, true, '100%')
-	    
+                //clear the screen
+                addDivText ('Loading','', true, '100%')
+	            //addDivText ('summary',`<p>There are a total of <b>${unprocessed['startDatetime'].values.length}</b> submissions for <b>${formName}</b> </p>`, true, '100%')
+                printNumber(unprocessed['startDatetime'].values.length, '', 'Total submissions this period')
+
 	            //if (getValue('form') != '' && getValue('single') == 'on')
-	                addVarOptions(Object.keys(unprocessed))
+                //populate single var selection    
+                //addVarOptions(Object.keys(unprocessed))
 	    
 	    
 	            var data = processData(unprocessed['startDatetime'])
 	    
-	            addDivText ('startDatetime',`NAME: <b>startDatetime</b> </br> TYPE: <b>Date</b> </br> Number of results uploaded  containing this field: <b>${unprocessed['startDatetime'].values.length}</b> `)
-	    
-	            printScatter(data, 'Results by date', 'Date', 'date')
+	            //addDivText ('startDatetime',`<figure class='mat-figure'>NAME: <b>startDatetime</b> </br> TYPE: <b>Date</b> </br> Number of results uploaded  containing this field: <b>${unprocessed['startDatetime'].values.length}</b> </figure> `)
+                addDivText('startDatetime',`<figure class='mat-figure'><mat-card ><mat-card-header  class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  class='mat-card-title'><a >Total submission</a></mat-card-title> <mat-card-subtitle  class='mat-card-subtitle'><p>Total submission by date</b></p><p> Number of uploads containing this field: <b> ${unprocessed['startDatetime'].values.length}</b> </p></mat-card-subtitle></mat-card-header> </mat-card></figure>`)
+
+	            printScatter(data, '', 'Date', 'date')
 	    
 	            if (getValue('single') == 'on' && getValue('var') != '') {
 	                var temp = {}
@@ -451,38 +451,48 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 	            Object.values(unprocessed).forEach( y => {
 	                    if (y.type == 'gps') {
 	                          var d = processSingle(y, y.tagName)
-	                          addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field:<b> ${d[0].length}</b> `)
-	                          printMap(d, 'Results collected at locations', y.name, y.type)
+	                          //addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field:<b> ${d[0].length}</b> `)
+                              addDivText(y.name,`<figure class='mat-figure'><mat-card ><mat-card-header  class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  class='mat-card-title'><a >${y.name}</a></mat-card-title> <mat-card-subtitle  class='mat-card-subtitle'><p>TYPE: <b>${y.type}</b></p><p> Number of uploads containing this field: <b> ${d[0].length}</b> </p></mat-card-subtitle></mat-card-header> </mat-card></figure>`)
+
+                              printMap(d, 'Results collected at locations', y.name, y.type)
 	                    }
 	            
 	            
 	                    if (y.type == 'grid') {
 	                
 	                          var d = processSingle(y, y.tagName)
-	                          addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${d[0].length}</b> `)
-	                          printGrid(d, 'Results for ' + y.name,y.name, y.type)
+	                          //addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${d[0].length}</b> `)
+                              addDivText(y.name,`<figure class='mat-figure'><mat-card ><mat-card-header  class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  class='mat-card-title'><a >${y.name}</a></mat-card-title> <mat-card-subtitle  class='mat-card-subtitle'><p>TYPE: <b>${y.type}</b></p><p> Number of uploads containing this field: <b> ${d[0].length}</b> </p></mat-card-subtitle></mat-card-header> </mat-card></figure>`)
+
+                              printGrid(d, 'Results for ' + y.name,y.name, y.type)
 	                          printBar([d[0]], 'WPM ' + y.name, '#ff7f0e',y.name, y.type)
 	                    }
 	                    if (y.type == 'single' || y.type == 'consent') {
 	           
 	                      var d = processSingle(y, y.tagName)
 	                      var sum =  d[1].reduce((a, b) => a + b, 0);
-	                      addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
-	                      printPie([d[0], d[1]],  y.label, y.name, y.type)
+                          //addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
+                          addDivText(y.name,`<figure class='mat-figure'><mat-card ><mat-card-header  class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  class='mat-card-title'><a >${y.name}</a></mat-card-title> <mat-card-subtitle  class='mat-card-subtitle'><p>TYPE: <b>${y.type}</b></p><p> Number of uploads containing this field: <b> ${d[0].length}</b> </p></mat-card-subtitle></mat-card-header> </mat-card></figure>`)
+
+                          printPie([d[0], d[1]],  y.label, y.name, y.type)
 	                    }
 	                    
 	    
 	                    if (y.type == 'text') {
 	                      var d = processSingle(y, y.tagName, y.name)
 	                      var sum =  d[1].reduce((a, b) => a + b, 0);
-	                      addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
-	                      printTable ([d[0],d[1]], y.label, y.type)
+	                      //addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
+                          addDivText(y.name,`<figure class='mat-figure'><mat-card ><mat-card-header  class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  class='mat-card-title'><a >${y.name}</a></mat-card-title> <mat-card-subtitle  class='mat-card-subtitle'><p>TYPE: <b>${y.type}</b></p><p> Number of uploads containing this field: <b> ${sum}</b> </p></mat-card-subtitle></mat-card-header> </mat-card></figure>`)
+
+                          printTable ([d[0],d[1]], y.label, y.type)
 	                    }
 	                    if (y.type == 'number') {
 	                      var d = processSingle(y, y.tagName, y.name)
 	                      var sum =  d[1].reduce((a, b) => a + b, 0);
-	                      addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
-	                      printBar (d, y.label, y.type)
+	                      //addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
+                          addDivText(y.name,`<figure class='mat-figure'><mat-card ><mat-card-header  class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  class='mat-card-title'><a >${y.name}</a></mat-card-title> <mat-card-subtitle  class='mat-card-subtitle'><p>TYPE: <b>${y.type}</b></p><p> Number of uploads containing this field: <b> ${sum}</b> </p></mat-card-subtitle></mat-card-header> </mat-card></figure>`)
+
+                          printBar (d, y.label, y.type)
 	                    }
 	    
 	                    var i = 0
@@ -490,8 +500,10 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 	                        var d = processSingle(y, y.tagName, y.name)
 	                        if (y.name != 'startDatetime' && y.name != 'userProfileId' && y.type != '' && y.type != 'text' && y.type != 'number' && y.type != 'grid' && y.type != 'single' && y.type != 'gps' && y.type != 'consent' && y.tagName != 'TANGY-LOCATION' ) {
 	                              var sum =  d[1].reduce((a, b) => a + b, 0);
-	                              addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
-	                              printBar (d, y.label, '#ff7f0e',y.name, y.type)
+	                              //addDivText (y.name,`NAME: <b>${y.name}</b> </br> TYPE: <b>${y.type}</b> </br> Number of results uploaded  containing this field: <b>${sum}</b> `)
+                                  addDivText(y.name,`<figure class='mat-figure'><mat-card ><mat-card-header  class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  class='mat-card-title'><a >${y.name}</a></mat-card-title> <mat-card-subtitle  class='mat-card-subtitle'><p>TYPE: <b>${y.type}</b></p><p> Number of uploads containing this field: <b> ${sum}</b> </p></mat-card-subtitle></mat-card-header> </mat-card></figure>`)
+
+                                  printBar (d, y.label, '#ff7f0e',y.name, y.type)
 	                          }
 	                      //}
 	                 })
@@ -504,112 +516,77 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
         }      
         setTimeout(makeReport, 500)   
           
-      
-             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            "
-            category="
-              
-              
-            
-            "
-          >
-            <template>
-              
-              
-      <tangy-box name="" class="" style="">
-        	Please select month, year and form you wish to see the data for   
-              <table>
-              	<tbody><tr>
-              		<td>
-      <tangy-select name="month" class="" style="" required="" question-number="" label="Month" error-text="" hint-text="" option-select-label="----" secondary-label="">
-          <option value="Jan">Jan</option>
-          <option value="Feb">Feb</option>
-          <option value="Mar">Mar</option>
-          <option value="Apr">Apr</option>
-          <option value="May">May</option>
-          <option value="Jun">Jun</option>
-          <option value="Jul">Jul</option>
-          <option value="Aug">Aug</option>
-          <option value="Sep">Sep</option>
-         <option value="Oct">Oct</option>
-         <option value="Nov">Nov</option>
-         <option value="Dec">Dec</option>
+       
+            " category="  ">
+    <template>
 
-        
+      <tangy-box name="" class="" style="">
+        Please select month, year and form you wish to see the data for
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <tangy-select name="month" class="" style="" required="" question-number="" label="Month" error-text=""
+                  hint-text="" option-select-label="----" secondary-label="">
+                  <option value="Jan">Jan</option>
+                  <option value="Feb">Feb</option>
+                  <option value="Mar">Mar</option>
+                  <option value="Apr">Apr</option>
+                  <option value="May">May</option>
+                  <option value="Jun">Jun</option>
+                  <option value="Jul">Jul</option>
+                  <option value="Aug">Aug</option>
+                  <option value="Sep">Sep</option>
+                  <option value="Oct">Oct</option>
+                  <option value="Nov">Nov</option>
+                  <option value="Dec">Dec</option>
+
+
+                </tangy-select>
+              </td>
+              <td>
+                <tangy-select name="year" class="" style="" required="" question-number="" label="Year" error-text=""
+                  hint-text="" option-select-label="----" secondary-label="">
+                  <option value="2018">2018</option>
+                  <option value="2019">2019</option>
+                  <option value="2020">2020</option>
+
+                </tangy-select>
+              </td>
+              <td>
+                <tangy-select name="form" class="" style="" required="" question-number="" label="Report Form"
+                  error-text="" hint-text="" option-select-label="----" secondary-label="">
+
+                </tangy-select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </tangy-box>
+
+      <tangy-input name="total" class="" style="" hidden="" question-number="" label="" error-text="" hint-text=""
+        type="number" inner-label="" allowed-pattern=""></tangy-input>
+
+      <tangy-checkbox name="single" class="" style="" hidden="" question-number=""
+        label="If you wish to report on a single variable click here" error-text="" hint-text="">
+      </tangy-checkbox>
+
+      <tangy-select name="var" class="" style="" tangy-if="getValue('single') == 'on'" required="" question-number=""
+        label="Select the variable you want for the report" error-text="" hint-text="">
+
       </tangy-select>
-      </td><td>
-            <tangy-select name="year" class="" style="" required="" question-number="" label="Year" error-text="" hint-text="" option-select-label="----" secondary-label="">
-          <option value="2018">2018</option>
-          <option value="2019">2019</option>
-          <option value="2020">2020</option>
-         
-      </tangy-select>
-      </td>
-      <td> <tangy-select name="form" class="" style="" required="" question-number="" label="Report Form" error-text="" hint-text="" option-select-label="----" secondary-label="">
-        
-      </tangy-select></td>
-      </tr>
-       </tbody></table>
-    </tangy-box>
-    
-      <tangy-input name="total" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
-    
-      <tangy-checkbox name="single" class="" style="" hidden="" question-number="" label="If you wish to report on a single variable click here" error-text="" hint-text=""></tangy-checkbox>
-    
-      <tangy-select name="var" class="" style="" tangy-if="getValue('single') == 'on'" required="" question-number="" label="Select the variable you want for the report" error-text="" hint-text="">
-        
-      </tangy-select>
-    
-      <tangy-box name="" class="" style=""><div id="show_feedback">
-</div></tangy-box>
-    
-      <tangy-box name="" class="" style=""><tangy-complete-button hidden="" name=""></tangy-complete-button></tangy-box>
-    
-            
-            </template>
-          </tangy-form-item>
-        
-      </tangy-form>
-    
+
+      <tangy-box name="" class="" style="">
+        <div id="show_feedback">
+        </div>
+      </tangy-box>
+
+      <tangy-box name="" class="" style="">
+        <tangy-complete-button hidden="" name=""></tangy-complete-button>
+      </tangy-box>
+
+
+    </template>
+  </tangy-form-item>
+
+</tangy-form>
