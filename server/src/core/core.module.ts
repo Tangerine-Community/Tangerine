@@ -38,7 +38,7 @@ export class CoreModule implements NestModule {
       .apply(isAuthenticated)
       .forRoutes(GroupDeviceManageController)
     consumer
-      .apply(permit(['can_create_group']))
+      .apply(isAuthenticated, permit(['can_create_group']))
       .forRoutes({path: 'nest/group/create', method: RequestMethod.POST});
   }
 }
