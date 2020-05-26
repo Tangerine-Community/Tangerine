@@ -100,7 +100,7 @@ app.post('/login', login);
 app.post('/extendSession', isAuthenticated, extendSession);
 app.get('/permissionsList', isAuthenticated, getPermissionsList);
 app.get('/permissions/:username', isAuthenticated, getUserPermissions);
-app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, updateUserSiteWidePermissions);
+app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated,permit(['can_manage_site_wide_users']), updateUserSiteWidePermissions);
 app.get('/login/validate/:userName',
   function (req, res) {
     if (req.user && (req.params.userName === req.user.name)) {
