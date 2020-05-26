@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
@@ -20,6 +21,7 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   constructor(
     private caseService: CaseService,
+    private router: Router,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -66,6 +68,10 @@ export class CaseBreadcrumbComponent implements OnInit {
         : \`Case: ${caseInstance._id.substr(0,6)} \`
     `)
     this.ref.detectChanges()
+  }
+
+  goBackToCases() {
+    this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
   }
 
 }
