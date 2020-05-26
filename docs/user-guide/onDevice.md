@@ -35,7 +35,7 @@ Log in following registration.
 You should now see the main Tangerine screen with your group's
 instrument listed on the tablet.
 
-<img src="./media/imaimage91ge90.png" width="570">
+<img src="./media/image91.png" width="570">
 
 
 

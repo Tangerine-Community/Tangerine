@@ -48,7 +48,11 @@ installation or web browser installation:
     suitable in places of good connectivity.
 
 **NOTE**: We recommend thoroughly testing your instruments and its data
-output before releasing them!
+output before releasing them! To test your instrument use the Test Release mode.
+
+
+# Using standard installation 
+
 
 Android Installation
 --------------------
@@ -108,7 +112,6 @@ as on a tablet/smartphone.
 <img src="./media/image81.png" width="570">
 
 
-<img src="./media/image82.png" width="570">
 
 **NOTE**: Every time an instrument/form is changed, added, or deleted
 from the group, it is necessary to release the apk/pwa again, but **NO
@@ -126,3 +129,395 @@ Select "**Check for Update**" and proceed to install the update.
 edits, new forms, or form deletions, but also any **updates to the
 Tangerine application** made in the meantime and applied to your group
 (if any).
+
+
+# Using Device Setup Installation
+
+
+Installation 
+============
+
+Tangerine offers two deployment /installation strategies, Android
+installation or web browser installation:
+
+-   Android Installation. This is the standard deployment package where
+    an actual apk file can be generated on the computer, downloaded, and
+    then copied over to a mobile device via a USB cable and installed.
+    This method of deployment is suitable in slow network environment or
+    when the apk is large.
+
+-   Web Browser Installation. This deployment strategy requires an
+    Internet connection on the tablet for the Tangerine to be installed.
+    Once installed, the app can work again offline. This method is
+    suitable in places of good connectivity. This method of installation
+    can also be used for installing app on your Chrome browser on a PC
+    or laptop
+
+For both of the installation models you will need a Registration Code
+(QR Code) or a device ID and Token. If you don't have this information
+you will not be able to install the application on your device.
+
+We recommend that the initial device setup is done by a responsible
+person at the site. This can be someone who will handle queries
+regarding Tangerine or an IT staff. Each device registration requires
+that an admin user is create on that device. This admin user is the one
+that can authorize the registration of a user account. This is to make
+sure that your data can only be accessed by authorized personnel and no
+untheorized accounts exist on the tablet.
+
+Installation on a tablet/phone
+------------------------------
+
+Copy the apk file to the tablet and open it. Follow the installation
+prompts until you receive a message that the app has been installed.
+Locate the Tangerine app in the application drawer and click it.
+
+**Note that you must be online on the tablet to do the initial
+installation.**
+
+The first step is to select the language for the user interface
+
+![A screenshot of a cell phone Description automatically
+generated](media/device2.png){width="3.2444444444444445in"
+height="3.9680850831146106in"}
+
+Select the language and click Submit
+
+Now enter the administration password for this tablet. You may wish to
+use the same admin password for all tables at your site. This same
+password will be required each time a user is registering to use the app
+on this device.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device3.png){width="2.9328477690288715in"
+height="3.3475174978127735in"}
+
+Select Yes if you have a device code or No if you are going to insert a
+device ID and Token for the registration.
+
+![A picture containing bird, flower, tree Description automatically
+generated](media/device4.png){width="3.2666557305336834in"
+height="2.42494094488189in"}![A screenshot of a cell phone Description
+automatically generated](media/device5.png){width="2.468086176727909in"
+height="2.4085345581802273in"}
+
+Insert the ID and Token or click the Scan icon to scan the registration
+QR code.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device6.png){width="3.3191491688538934in"
+height="4.046876640419947in"}
+
+Click Submit when done. The next screen will show you some information
+for this device. If it is correct select Yes, if the scanned device code
+and ID correspond to a different device select No and start over with
+the correct device code.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device7.png){width="3.4451531058617673in"
+height="2.719857830271216in"}
+
+On the next screen you will see some synchronization information. The
+app at this moment is contacting the server and obtaining users assigned
+to your device location. If you have already collected data on another
+tablet for this location, this data will also be pulled.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device8.png){width="3.793170384951881in"
+height="3.131796806649169in"}
+
+Click Next and then go to the Registration tap. Ask your administrator
+to enter the admin password and enter your user information below. Click
+submit when ready.
+
+If you are an administrator handing off the tablet to a user, enter your
+password and ask the user to enter their username and password. Here the
+Year of Birth can be used by the user to reset their password in case
+they forgot it.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device9.png){width="2.861573709536308in"
+height="4.262706692913386in"}
+
+On the next screen you will see a dropdown of all users for this
+location. Select the one that corresponds to you and click Submit.
+
+![A screenshot of a social media post Description automatically
+generated](media/device10.png){width="2.710064523184602in"
+height="2.8976837270341207in"}
+
+You will now see a screen similar to the one below where you can start
+working
+
+![A screenshot of a cell phone Description automatically
+generated](media/device11.png){width="3.0010356517935257in"
+height="4.574468503937008in"}
+
+Installation in your Chrome browser
+-----------------------------------
+
+Tangerine can be installed and used offline in the Chrome browser. To do
+this we follow similar installation instructions as above.
+
+**Note that you must be online on to do the initial installation.**
+
+The first step is to follow the link for Browser installation that has
+been given to you or copied directly after it's generation in the
+backend. Copy the link and paste it in the Chrome's address bar. You
+will see a screen indicating that the app is being installed.
+
+![A close up of a logo Description automatically
+generated](media/device12.png){width="2.430184820647419in"
+height="3.5336876640419947in"}
+
+After a successful installation you will receive a confirmation screen
+like the one below. **Do not click the link to proceed**.
+
+![A screenshot of a social media post Description automatically
+generated](media/device13.png){width="3.497069116360455in"
+height="2.291402012248469in"}
+
+Click the + icon beside the address bar to install Tangerine in your
+browser. A popup will open to give you the option to install the app.
+Click Install
+
+![A screenshot of a cell phone Description automatically
+generated](media/device14.png){width="4.474430227471566in"
+height="2.9609634733158354in"}
+
+Depending on your browser setup, you may be asked to create a shortcut
+on your desktop or in your program folder or the browser may close
+automatically and offer you the link for Tangerine to open. If you see
+the link click it
+
+If you cannot find it type this into the address bar of your browser:
+[[chrome://apps/]{.underline}](chrome://apps/)
+
+NOTE: **Always start Tangerine from the application icon**
+
+![A screenshot of a cell phone Description automatically
+generated](media/device15.png){width="3.0801968503937007in"
+height="3.521195319335083in"}
+
+Click the Tangerine app to start the application.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device16.png){width="4.2659580052493435in"
+height="2.6174595363079614in"}
+
+Select the language and click Submit
+
+Now enter the administration password for this tablet. You may wish to
+use the same admin password for all tables at your site. This same
+password will be required each time a user is registering to use the app
+on this device.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device17.png){width="4.926755249343832in"
+height="2.297871828521435in"}
+
+Select Yes if you have a device code or No if you are going to insert a
+device ID and Token for the registration.
+
+![A picture containing bird, flower, tree Description automatically
+generated](media/device4.png){width="3.2666557305336834in"
+height="2.42494094488189in"}![A screenshot of a cell phone Description
+automatically generated](media/device5.png){width="2.468086176727909in"
+height="2.4085345581802273in"}
+
+Insert the ID and Token or click the Scan icon to scan the registration
+QR code. If your PC or laptop doesn't have a camera that can be used to
+scan the barcode, you'd have to type in the ID and Token
+
+![A screenshot of a cell phone Description automatically
+generated](media/device18.png){width="4.2659580052493435in"
+height="2.9430489938757654in"}
+
+Click Submit when done. The next screen will show you some information
+for this device. If it is correct select Yes, if the scanned device code
+and ID correspond to a different device select No and start over with
+the correct device code.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device7.png){width="3.4451531058617673in"
+height="2.719857830271216in"}
+
+On the next screen you will see some synchronization information. The
+app at this moment is contacting the server and obtaining users assigned
+to your device location. If you have already collected data on another
+tablet for this location, this data will also be pulled.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device8.png){width="3.793170384951881in"
+height="3.131796806649169in"}
+
+Click Next and then go to the Registration tap. Ask your administrator
+to enter the admin password and enter your user information below. Click
+submit when ready.
+
+If you are an administrator handing off the tablet to a user, enter your
+password and ask the user to enter their username and password. Here the
+Year of Birth can be used by the user to reset their password in case
+they forgot it.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device9.png){width="2.861573709536308in"
+height="4.262706692913386in"}
+
+On the next screen you will see a dropdown of all users for this
+location. Select the one that corresponds to you and click Submit.
+
+![A screenshot of a social media post Description automatically
+generated](media/device10.png){width="2.710064523184602in"
+height="2.8976837270341207in"}
+
+You will now see a screen similar to the one below where you can start
+working
+
+Synchronization 
+===============
+
+User setup
+----------
+
+Follow to below steps to prepare the Tangerine backend to allow
+installation of your app on the user device or Chrome browser. The menu
+items used during setup can be found under the Deploy link in the left
+side navigation menu.
+
+![A screenshot of a cell phone Description automatically
+generated](media/device19.png){width="4.106382327209099in"
+height="1.3731813210848645in"}
+
+Click the Device Users section to create a new tablet user profile. On
+this screen you will see a listing of all users already created. At the
+bottom left of the screen there is a'+' icon which allows you to add a
+new device user profile.
+
+-   Click the + icon to create a user profile on the server
+
+-   Fill in all information required in the profile and click Submit
+
+-   You will see that next to the Submit button a blue check marks
+    appears indicating that the profile was saved
+
+![A screenshot of a cell phone Description automatically
+generated](media/device20.png){width="1.4255314960629921in"
+height="0.9418689851268591in"}
+
+-   Repeat the above steps for all users
+
+Device setup
+------------
+
+Now we have to create the 'virtual' devices that will be associated with
+a real device or browser upon installation. The devices that you create
+represent a real user device. Each virtual device can be associated with
+a real tablet only once. After being claimed the device cannot be reused
+(unless reset and the app re-installed). Each device requires that we
+assign it to a particular location. This assigned location is
+automatically attached to each form collected from the tablet. We can
+also control the synchronization level. This level will indicate to
+Tangerine what records should be kept in sync across tablets. If you
+select to synchronize on a top level, all tablets will contain all
+records collected over all of the facilities in under this top level. It
+may be better to choose to synchronize only at the bottom level.
+
+The device listing go to Deploy-\>Devices
+
+-   Here, if you have some devices already created you will see a full
+    listing with some other information
+
+> ![A screenshot of a cell phone Description automatically
+> generated](media/device21.png){width="5.308510498687664in"
+> height="1.5301673228346457in"}
+
+-   The device listing gives you:
+
+    -   The ID of the device
+
+    -   The assigned location
+
+    -   Whether this device has already been used in an installation or
+        not. A checkmark under Claimed indicates that it has been used.
+
+    -   Registered on gives you the date this device was first
+        registered
+
+    -   The last synchronization date for this device
+
+    -   Updated on is the date this device was last updated
+
+    -   Version is the version of the application this device is running
+
+    -   Under options you will have access to a menu allowing you to
+        Edit, Reset, Delete, get The QR registration code for a device.
+
+Create a new device by going to Deploy-\>Devices
+
+-   Click the + icon at the bottom of the page
+
+-   Note that you have the ID and Token listed here (can also be access
+    by clicking Edit for a particular device on the device listing
+    screen) In cases where the QR code cannot be sent to the site for
+    installation you can also use the ID and Token to install Tangerine.
+
+![A screenshot of a social media post Description automatically
+generated](media/device22.png){width="3.0531922572178476in"
+height="2.105919728783902in"}
+
+-   Select the location this device is assigned to
+
+-   Select the synchronization level
+
+-   Select the actual site to be used for synchronization. Be careful
+    here not to assign the device to one location and select a different
+    one for synchronization.
+
+-   Click Submit
+
+-   The device now shows up on the of the list and you can get the QR
+    code for it by clicking the Options menu and selecting Registration
+    Code
+
+![A screenshot of a cell phone Description automatically
+generated](media/device23.png){width="6.117020997375328in"
+height="1.669109798775153in"}
+
+-   Repeat the above steps for all devices that you need to use on your
+    project.
+
+NOTE: you may wish to store the device ID and Token in a file for safe
+keeping. Such a sample file can be found
+[here](https://docs.google.com/spreadsheets/d/1T-aPKfWnCwgwp3J8NSOQmGOTcMvQRT1yfm85OkNBnTU/edit?usp=sharing).
+Put the device ID and the Token in the corresponding columns and the QR
+code will be generated for you. Keep in mind that his worksheet
+functions correctly only on Google Drive. You can also print this file
+and distribute the installation codes on paper.
+
+Device modification
+-------------------
+
+It may happen that you want to modify a device that is already in use.
+Although you will be able to do that in the interface, this modification
+is not pushed to the actual tablet. The way to go here is to apply the
+modification reset the device, and send the new Registration Code or ID
+and Token to the admin to reinstall the application. Make sure that
+before re-installing the app all data is synchronized.
+
+NOTE: You can edit all devices that have not been claimed yet.
+
+To Edit a device, click the Edit button in the Options menu. Apply any
+modifications and click Submit
+
+To Delete a device , click the Delete button in the Options menu. Keep
+in mind that any device that you delete will disallow this device from
+synchronization or updates. Use this option if you have had one of your
+devices stolen or lost.
+
+To Reset a device, click the Reset button in the options menu. This
+action will disallow the device from receiving updates or synchronizing
+data. Use this option, if one of your staff members leaves and will no
+longer use this device. Make sure data is synchronized before you reset
+the device.
+
