@@ -105,7 +105,7 @@ GPS: This item type automatically collects GPS coordinates of the tablet
 
 LOCATION: The location item type requires a list of locations, e.g.
 school names by district and region to be imported to the Tangerine
-editor.
+editor. [Check out the location list section](inputTypes.md)
 
 <img src="./media/image26.png" height="30">
 
