@@ -4,14 +4,15 @@ module.exports = function(req, res, next) {
   const token = req.headers.authorization || req.cookies.Authorization
   const errorMessage = `Permission denied at ${req.url}`;
   if (token && verifyJWT(token)) {
-    const { username, permissions } = decodeJWT(token);
+    const { username, permissions:{sitewidePermissions = [], groupPermissions = []} } = decodeJWT(token);
     if (!username) {
       log.warn(errorMessage);
       res.status(401).send(errorMessage);
     } else {
       req.user = {};
       req.user.name = username;
-      req.user.permissions = permissions || [];
+      req.user.sitewidePermissions = sitewidePermissions;
+      req.user.groupPermissions = groupPermissions;
       next();
     }
   } else {
