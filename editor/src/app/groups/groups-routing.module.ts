@@ -49,7 +49,7 @@ const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
   { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
-  { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, AdminUserGuard, NgxPermissionsGuard], data:{permissions:{only:['can_create_group'], redirectTo:'/projects'}} },
+  { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, NgxPermissionsGuard], data:{permissions:{only:['can_create_group'], redirectTo:'/projects'}} },
   { path: 'groups/:groupId', component: GroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author', component: GroupAuthorComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author/forms', component: GroupFormsComponent, canActivate: [LoginGuard] },
