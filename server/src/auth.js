@@ -127,7 +127,7 @@ const updateUserSiteWidePermissions = async (req, res) => {
     const username = req.params.username;
     const {sitewidePermissions} = req.body;
     if (username && sitewidePermissions.length >= 0 ) {
-    const user = findUserByUsername(username);
+    const user = await findUserByUsername(username);
     user.sitewidePermissions = [...sitewidePermissions];
     const data = await USERS_DB.put(user);
     res.send({ data, statusCode: 200, statusMessage: `User permissions updated` });
@@ -139,14 +139,14 @@ const updateUserSiteWidePermissions = async (req, res) => {
   }
 };
 module.exports = {
+  USERS_DB,
   areCredentialsValid,
   doesUserExist,
   extendSession,
   findUserByUsername,
+  getUserPermissions,
   hashPassword,
   isSuperAdmin,
   login,
-  getUserPermissions,
   updateUserSiteWidePermissions,
-  USERS_DB,
 };
