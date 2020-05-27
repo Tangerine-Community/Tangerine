@@ -107,7 +107,29 @@ async function getGroupsByUser(username) {
   }
 }
 
+const deleteUser = async (req, res) => {
+  try {
+    const username = req.params.username;
+    if (username) {
+      const user = await findUserByUsername(username);
+      user['isActive'] = false;
+      const data = await USERS_DB.put(user);
+      res.status(200).send({
+        data,
+        statusCode: 200,
+        statusMessage: `User Deleted Successfully`,
+      });
+    } else {
+      res.status(500).send({data: `Could not Delete User`});
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({data: `Could not Delete User`});
+  }
+};
+
 module.exports = {
+  deleteUser,
   getGroupsByUser,
   getUserByUsername,
   isUserAnAdminUser,

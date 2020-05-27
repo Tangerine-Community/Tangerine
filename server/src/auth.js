@@ -130,12 +130,12 @@ const updateUserSiteWidePermissions = async (req, res) => {
     const user = await findUserByUsername(username);
     user.sitewidePermissions = [...sitewidePermissions];
     const data = await USERS_DB.put(user);
-    res.send({ data, statusCode: 200, statusMessage: `User permissions updated` });
+    res.status(200).send({ data, statusCode: 200, statusMessage: `User permissions updated` });
   } else {
-    res.send(`Could not update permissions`);
+    res.status(500).send({data: `Could not update permissions`});
   }
   } catch (error) {
-    res.send(`Could not update permissions`);
+    res.status(500).send({data: `Could not update permissions`});
   }
 };
 module.exports = {
