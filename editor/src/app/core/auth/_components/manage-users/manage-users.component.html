@@ -18,7 +18,7 @@
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
     <mat-cell *matCellDef="let user">
-      <a class="tangy-foreground-primary" [routerLink]="['/users/edit',  user.username]">
+      <a class="tangy-foreground-primary" [routerLink]="['/manage-users/users/edit/',  user.username]">
         <i class="material-icons mat-18 tangy-location-list-icon">edit</i>
       </a>
       <span class="tangy-foreground-primary" (click)="deleteUser(user.username)">
