@@ -224,6 +224,7 @@
           console.log('path: ' + path);
           opts = {
             fullName: path,
+            key: _this.openargs.key || '',
             flags: 6
           };
           return window.sqliteBatchConnectionManager.openDatabaseConnection(opts, function(id) {
@@ -242,9 +243,6 @@
   };
 
   SQLitePlugin.prototype.close = function(success, error) {
-    return nextTick(function() {
-      return error();
-    });
     if (this.dbname in this.openDBs) {
       if (txLocks[this.dbname] && txLocks[this.dbname].inProgress) {
         console.log('cannot close: transaction is in progress');
@@ -258,6 +256,9 @@
       } else {
         console.log('closing db with no transaction lock state');
       }
+    return nextTick(function() {
+      return success();
+    });
     } else {
       console.log('cannot close: database is not open');
       if (error) {
@@ -501,8 +502,8 @@
       return function(batchResults) {
         var columns, j, k, l, len1, len2, r, ref, ref1, results, row, rows, rr;
         console.log('received execute batch results');
-        console.log(batchResults);
-        console.log(JSON.stringify(batchResults));
+        // console.log(batchResults);
+        // console.log(JSON.stringify(batchResults));
         results = [];
         for (j = 0, len1 = batchResults.length; j < len1; j++) {
           r = batchResults[j];
@@ -541,7 +542,7 @@
             });
           }
         }
-        console.log(JSON.stringify(results));
+        // console.log(JSON.stringify(results));
         mycb(results);
       };
     })(this));
@@ -689,31 +690,31 @@
        * NOTE: This should properly close the database
        * (at least on the JavaScript side) before deleting.
       args = {}
-      
+
       if first.constructor == String
         #console.log "delete db name: #{first}"
         #args.path = first
         #args.dblocation = dblocations[0]
         throw newSQLError 'Sorry first deleteDatabase argument must be an object'
-      
+
       else
         #console.log "delete db args: #{JSON.stringify first}"
         if !(first and first['name']) then throw new Error "Please specify db name"
         dbname = first.name
-      
+
         if typeof dbname != 'string'
           throw newSQLError 'delete database name must be a string'
-      
+
         args.path = dbname
         #dblocation = if !!first.location then dblocations[first.location] else null
         #args.dblocation = dblocation || dblocations[0]
-      
+
       if !first.iosDatabaseLocation and !first.location and first.location isnt 0
         throw newSQLError 'Database location or iosDatabaseLocation setting is now mandatory in deleteDatabase call.'
-      
+
       if !!first.location and !!first.iosDatabaseLocation
         throw newSQLError 'AMBIGUOUS: both location and iosDatabaseLocation settings are present in deleteDatabase call. Please use either setting value, not both.'
-      
+
       dblocation =
         if !!first.location and first.location is 'default'
           iosLocationMap['default']
@@ -721,12 +722,12 @@
           iosLocationMap[first.iosDatabaseLocation]
         else
           dblocations[first.location]
-      
+
       if !dblocation
         throw newSQLError 'Valid iOS database location could not be determined in deleteDatabase call'
-      
+
       args.dblocation = dblocation
-      
+
        * XXX TODO BUG litehelpers/Cordova-sqlite-storage#367 (repeated here):
        * abort all pending transactions (with error callback)
        * when deleting a database

@@ -112,8 +112,7 @@ export class SyncCouchdbService {
       "since": push_last_seq,
       "batch_size": 20,
       "batches_limit": 1,
-      ...appConfig.couchdbPush4All ? { } : { "selector": pushSelector },
-      "checkpoint": false
+      ...appConfig.couchdbPush4All ? { } : { "selector": pushSelector }
     }
 
     let replicationStatus = await this.doPush(userDb, remoteDb, pushSyncOptions);
@@ -130,15 +129,14 @@ export class SyncCouchdbService {
         "since": pull_last_seq,
         "batch_size": 50,
         "batches_limit": 1,
-        "doc_ids": remoteIds.docs.map(doc => doc._id),
-        "checkpoint": false
+        "doc_ids": remoteIds.docs.map(doc => doc._id)
       }
       replicationStatus = await this.doPull(userDb, remoteDb, pullSyncOptions);
     } else {
       pullSyncOptions = {
         "since": pull_last_seq,
         "batch_size": 50,
-        "batches_limit": 5,
+        "batches_limit": 1,
         ...appConfig.couchdbPullUsingDocIds
           ? {
             "doc_ids": (await remoteDb.find({
