@@ -21,18 +21,26 @@ export class ManageUsersComponent implements OnInit {
 
   async ngOnInit() {
     this.menuService.setContext(_TRANSLATE('Manage Users'), '', 'manage-users')
+    this.getAllUsers();
+  }
+
+  async getAllUsers() {
     try {
       this.users = await this.userService.getAllUsers();
     } catch (error) {
       console.error(error);
     }
   }
-
   async deleteUser(username) {
     try {
-      const confirmDelete = confirm(`${_TRANSLATE('Delete User')} ${username}?`);
+      const confirmDelete = confirm(`${_TRANSLATE('Delete User named')} "${username}"?`);
       if (confirmDelete) {
-        await this.userService.deleteUser(username);
+        if (await this.userService.deleteUser(username)) {
+          this.errorHandler.handleError(_TRANSLATE('User Deleted Successfully'));
+          this.getAllUsers();
+        } else {
+          this.errorHandler.handleError(_TRANSLATE('Could not delete user'));
+        }
       }
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could not delete user'));

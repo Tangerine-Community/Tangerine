@@ -112,10 +112,11 @@ export class UserService {
     try {
       const data = await this.http.delete(`/users/delete/${username}`, {observe: 'response'}).toPromise();
       if (data.status === 200) {
-        return data.body;
+        return true;
       }
     } catch (error) {
       console.error(error);
+      return false;
     }
   }
 
