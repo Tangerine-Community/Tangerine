@@ -163,13 +163,59 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const findOneUserByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (!username) {
+      return res.status(500).send({ data: `Could not find User` });
+    }
+    const user = await findUserByUsername(username);
+    const { _id, email, firstName, lastName } = user;
+    res.status(200).send({
+      data: { _id, username: user.username, email, firstName, lastName },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ data: `Could not find User` });
+  }
+};
+
+const updateUser = async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (!username) {
+      return res.status(500).send({ data: `Could not update User` });
+    }
+    const { firstName, lastName, email, password, confirmPassword } = req.body;
+    if (password !== confirmPassword) {
+      return res.status(500).send({ data: `Could not update User` });
+    } else {
+      const user = await findUserByUsername(username);
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.password = await hashPassword(password);
+      const data = await USERS_DB.put(user);
+      res.status(200).send({
+        data,
+        statusCode: 200,
+        statusMessage: `User updated Successfully`,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({ data: `Could not update User` });
+  }
+};
+
 module.exports = {
   checkIfUserExistByUsername,
   deleteUser,
+  findOneUserByUsername,
   getAllUsers,
   getGroupsByUser,
   getUserByUsername,
   isUserAnAdminUser,
   isUserSuperAdmin,
   registerUser,
+  updateUser,
 };

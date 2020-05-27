@@ -108,6 +108,33 @@ export class UserService {
     return <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
   }
 
+  async getAUserByUsername(username) {
+    try {
+      const data = await this.http.get(`/users/findOneUser/${username}`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.body['data'];
+      }
+    } catch (error) {
+      console.error(error);
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+
+  async searchUsersByUsername(username: string) {
+    try {
+      const data: any = await this.httpClient
+        .get(`/users/byUsername/${username}`)
+        .toPromise();
+      return data.data;
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
   async deleteUser(username: string) {
     try {
       const data = await this.http.delete(`/users/delete/${username}`, {observe: 'response'}).toPromise();
@@ -122,12 +149,13 @@ export class UserService {
 
   async updateUserDetails(payload) {
     try {
-      const data = await this.httpClient.put(`/users/${payload.username}`, payload, {observe: 'response'}).toPromise();
+      const data = await this.httpClient.put(`/users/update/${payload.username}`, payload, {observe: 'response'}).toPromise();
       if (data.status === 200) {
-        return data.body;
+        return data.status;
       }
     } catch (error) {
       console.error(error);
+      return 500;
     }
   }
 

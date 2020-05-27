@@ -39,7 +39,7 @@ const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
    USERS_DB, login, getUserPermissions, updateUserSiteWidePermissions} = require('./auth');
-const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser, getAllUsers, checkIfUserExistByUsername} = require('./users');
+const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser, getAllUsers, checkIfUserExistByUsername, findOneUserByUsername, updateUser} = require('./users');
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
@@ -222,11 +222,13 @@ app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUserna
 app.post('/users/register-user', isAuthenticated, permit(['can_create_user']), registerUser);
 
 app.get('/users/byUsername/:username', isAuthenticated, getUserByUsername);
+app.get('/users/findOneUser/:username', isAuthenticated, findOneUserByUsername);
 
 app.get('/users/isSuperAdminUser/:username', isAuthenticated, isUserSuperAdmin);
 
 app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
 app.delete('/users/delete/:username', isAuthenticated, deleteUser);
+app.put('/users/update/:username', isAuthenticated, updateUser);
 
 app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.body.filePath
