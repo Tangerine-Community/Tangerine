@@ -24,6 +24,23 @@ const registerUser = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  const result = await USERS_DB.allDocs({ include_docs: true });
+  const data = result.rows
+    .map(doc => doc)
+    .filter(doc => !doc['id'].startsWith('_design'))
+    .map(doc => {
+      const user = doc['doc'];
+      return {
+        _id: user._id,
+        email: user.email,
+        isActive: user.isActive,
+        username: user.username,
+      };
+    });
+  res.send({ statusCode: 200, data });
+};
+
 const getUserByUsername = async (req, res) => {
   const username = req.params.username;
   try {
@@ -35,6 +52,20 @@ const getUserByUsername = async (req, res) => {
     res.send({ data, statusCode: 200, statusMessage: 'Ok' });
   } catch (error) {
     res.sendStatus(500);
+  }
+};
+
+const checkIfUserExistByUsername = async (req, res) => {
+  try {
+    const data = await doesUserExist(req.params.username);
+    if (!data) {
+      res.send({ statusCode: 200, data: !!data });
+    } else {
+      res.send({ statusCode: 409, data: !!data });
+    }
+  } catch (error) {
+    // In case of error assume user exists. Helps avoid same username used multiple times
+    res.send({ statusCode: 500, data: true });
   }
 };
 
@@ -120,16 +151,18 @@ const deleteUser = async (req, res) => {
         statusMessage: `User Deleted Successfully`,
       });
     } else {
-      res.status(500).send({data: `Could not Delete User`});
+      res.status(500).send({ data: `Could not Delete User` });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send({data: `Could not Delete User`});
+    res.status(500).send({ data: `Could not Delete User` });
   }
 };
 
 module.exports = {
+  checkIfUserExistByUsername,
   deleteUser,
+  getAllUsers,
   getGroupsByUser,
   getUserByUsername,
   isUserAnAdminUser,

@@ -39,7 +39,7 @@ const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
    USERS_DB, login, getUserPermissions, updateUserSiteWidePermissions} = require('./auth');
-const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser} = require('./users');
+const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser, getAllUsers, checkIfUserExistByUsername} = require('./users');
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
@@ -216,35 +216,9 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
-app.get('/users', isAuthenticated, async (req, res) => {
-  const result = await USERS_DB.allDocs({ include_docs: true });
-  const data = result.rows
-    .map((doc) => doc)
-    .filter((doc) => !doc['id'].startsWith('_design'))
-    .map((doc) => {
-      const user = doc['doc'];
-      return { _id: user._id, username: user.username, email: user.email };
-    });
-  res.send({ statusCode: 200, data });
-});
+app.get('/users', isAuthenticated, getAllUsers);
 
-app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
-  let data;
-  let statusCode;
-  try {
-    data = await doesUserExist(req.params.username);
-    if (!data) {
-      statusCode = 200;
-    } else {
-      statusCode = 409;
-    }
-    res.send({ statusCode, data: !!data });
-  } catch (error) {
-    statusCode = 500;
-    res.send({ statusCode, data: true }); // In case of error assume user exists. Helps avoid same username used multiple times
-  }
-
-});
+app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
 app.post('/users/register-user', isAuthenticated, permit(['can_create_user']), registerUser);
 
 app.get('/users/byUsername/:username', isAuthenticated, getUserByUsername);
