@@ -35,7 +35,10 @@ const getAllUsers = async (req, res) => {
       return {
         _id: user._id,
         email: user.email,
-        isActive: user.isActive,
+        // Users created before the introduction of the isActive property should be assumed to be active
+        // Where the isActive property does not exist, we can safely assume the user has not been deleted
+        // We should probably create an upgrade path to set and iSActive property to all user documents
+        isActive: user.isActive === undefined ? true : user.isActive,
         username: user.username,
       };
     });
