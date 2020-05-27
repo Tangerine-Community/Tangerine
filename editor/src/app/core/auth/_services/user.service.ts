@@ -108,4 +108,26 @@ export class UserService {
     return <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
   }
 
+  async deleteUser(username: string) {
+    try {
+      const data = await this.http.delete(`/users/delete/${username}`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.body;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async updateUserDetails(payload) {
+    try {
+      const data = await this.httpClient.put(`/users/${payload.username}`, payload, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.body;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 }
