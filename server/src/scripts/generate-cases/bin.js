@@ -86,9 +86,9 @@ async function go() {
 
     caseDoc.items[0].inputs[0].value = participant_id;
     // caseDoc.items[0].inputs[2].value = enrollment_date;
-    caseDoc.items[0].inputs[2].value = firstname;
-    caseDoc.items[0].inputs[3].value = surname;
-    caseDoc.items[0].inputs[4].value = participant_id;
+    caseDoc.items[0].inputs[4].value = firstname;
+    caseDoc.items[0].inputs[5].value = surname;
+    caseDoc.items[0].inputs[6].value = participant_id;
     caseDoc.location = location
 
     for (let caseEvent of caseDoc.events) {
