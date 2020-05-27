@@ -68,7 +68,7 @@ export class IssueFormComponent implements OnInit {
         this.formPlayer.response = proposedFormResponse
       } else {
         // Create a revision based on the base event.
-        const baseEvent = [...this.issue.events].reverse().find(event => event.type === IssueEventType.Open || IssueEventType.Rebase)
+        const baseEvent = [...this.issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
         this.caseService.loadInMemory(baseEvent.data.case)
         this.formPlayer.response = baseEvent.data.response
       }
