@@ -13,6 +13,7 @@ const registerUser = async (req, res) => {
   try {
     if (!(await doesUserExist(req.body.username))) {
       const user = req.body;
+      user.isActive = true;
       user.password = await hashPassword(user.password);
       user.groups = [];
       const data = await USERS_DB.post(user);
