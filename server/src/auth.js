@@ -76,6 +76,10 @@ const areCredentialsValid = async (username, password) => {
     } else {
       if (await doesUserExist(username)) {
         const data = await findUserByUsername(username);
+        // if user is deleted the login attempt should fail
+        if (data.isActive !== undefined && !data.isActive) {
+          return false;
+        }
         const hashedPassword = data.password;
         isValid = await bcrypt.compare(password, hashedPassword);
         return isValid;
