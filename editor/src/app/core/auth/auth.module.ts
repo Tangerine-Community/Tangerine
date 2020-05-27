@@ -20,6 +20,7 @@ import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
 import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { EditUserComponent } from './_components/edit-user/edit-user.component';
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [
@@ -38,7 +39,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         MatCheckboxModule
 
     ],
-  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent],
+  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent],
   providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
 })
 export class AuthModule { }
