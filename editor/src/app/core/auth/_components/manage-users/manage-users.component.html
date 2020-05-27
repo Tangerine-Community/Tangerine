@@ -1,18 +1,30 @@
 <h1>{{'Manage Users'|translate}}</h1>
 <span *ngxPermissionsOnly="['can_create_user']">
-  <paper-fab  mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user"></paper-fab>
+  <paper-fab mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user"></paper-fab>
 </span>
 
 <mat-table [dataSource]="users" class="mat-elevation-z8">
   <ng-container matColumnDef="username">
     <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
-    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary" [routerLink]="['/manage-users/sitewide-permissions',  user.username]">
-      <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-    </a><span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
+    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary"
+        [routerLink]="['/manage-users/sitewide-permissions',  user.username]">
+        <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+      </a><span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
   </ng-container>
   <ng-container matColumnDef="email">
     <mat-header-cell *matHeaderCellDef> {{'Email'|translate}} </mat-header-cell>
     <mat-cell *matCellDef="let user"> {{user.email}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let user">
+      <a class="tangy-foreground-primary" [routerLink]="['/users/edit',  user.username]">
+        <i class="material-icons mat-18 tangy-location-list-icon">edit</i>
+      </a>
+      <span class="tangy-foreground-primary" (click)="deleteUser(user.username)">
+        <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
+      </span>
+    </mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="usersDisplayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: usersDisplayedColumns;"></mat-row>

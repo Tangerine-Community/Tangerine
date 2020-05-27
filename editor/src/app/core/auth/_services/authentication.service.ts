@@ -75,28 +75,35 @@ export class AuthenticationService {
     }
   }
 
-  async getPermissionsList(){
+  async getPermissionsList() {
     try {
       const data = await this.http.get('/permissionsList', {observe: 'response'}).toPromise();
-      if(data.status==200) return data.body;
+      if (data.status === 200) {
+        return data.body;
+      }
     } catch (error) {
       console.error(error);
-      return {groupPermissions:[], sitewidePermissions:[]}
+      return {groupPermissions: [], sitewidePermissions: []}
     }
   }
-  async getUserPermissions(username){
+  async getUserPermissions(username) {
     try {
       const data = await this.http.get(`/permissions/${username}`, {observe: 'response'}).toPromise();
-      if(data.status==200) return data.body;
+      if (data.status === 200) {
+        return data.body;
+      }
     } catch (error) {
       console.error(error);
       return {groupPermissions:[], sitewidePermissions:[]}
     }
   }
-  async updateUserPermissions(username,sitewidePermissions){
+  async updateUserPermissions(username, sitewidePermissions) {
     try {
-      const data = await this.http.post(`/permissions/updateUserSitewidePermissions:username/${username}`, {sitewidePermissions},{observe: 'response'}).toPromise();
-      if(data.status==200) return data.body;
+      const data = await this.http.
+      post(`/permissions/updateUserSitewidePermissions:username/${username}`, {sitewidePermissions}, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.body;
+      }
     } catch (error) {
       console.error(error);
       return {groupPermissions:[], sitewidePermissions:[]}
