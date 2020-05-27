@@ -6,6 +6,7 @@ import { UserResgistrationComponent } from './_components/user-resgistration/use
 import { LoginGuard } from './_guards/login-guard.service';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
+import { EditUserComponent } from './_components/edit-user/edit-user.component';
 const routes: Routes = [{
   path: 'register-user',
   component: UserResgistrationComponent
@@ -32,8 +33,8 @@ const routes: Routes = [{
   data: { permissions: { only: ['can_manage_site_wide_users'], redirectTo: '/projects' } }
 },
 {
-  path: 'manage-users/users/:id',
-  component: UserResgistrationComponent,
+  path: 'manage-users/users/edit/:username',
+  component: EditUserComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
   data: { permissions: { only: ['can_manage_site_wide_users'], redirectTo: '/projects' } }
 }];

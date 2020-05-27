@@ -21,20 +21,6 @@ export class GroupsService {
       .toPromise();
   }
 
-  async getUsersByUsername(username: string) {
-    try {
-      const data: any = await this.httpClient
-        .get(`/users/byUsername/${username}`)
-        .toPromise();
-      return data.data;
-    } catch (error) {
-      console.error(error);
-      if (typeof error.status === 'undefined') {
-        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
-      }
-    }
-  }
-
   async getAllGroups() {
     try {
       return await this.httpClient.get('/nest/group/list').toPromise();
