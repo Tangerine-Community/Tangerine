@@ -29,12 +29,12 @@ export class EditUserComponent implements OnInit {
       }
       const data = await this.userService.updateUserDetails({...this.user, updateUserPassword: this.updateUserPassword});
       if (data === 200) {
-        this.errorHandler.handleError(_TRANSLATE('USer Details Updated Successfully'));
+        this.errorHandler.handleError(_TRANSLATE('User Details Updated Successfully'));
       } else {
-        this.errorHandler.handleError(_TRANSLATE('USer Details could not be Updated'));
+        this.errorHandler.handleError(_TRANSLATE('User Details could not be Updated'));
       }
     } catch (error) {
-      this.errorHandler.handleError(_TRANSLATE('USer Details could not be Updated'));
+      this.errorHandler.handleError(_TRANSLATE('User Details could not be Updated'));
     }
   }
 }
