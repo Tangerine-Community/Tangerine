@@ -33,19 +33,24 @@
           </mat-form-field>
           <br>
           <br>
-          <mat-form-field class="tangy-full-width">
-            <input name="password" [(ngModel)]="user.password" #password="ngModel" type="password" matInput placeholder="{{'Password'|translate}}"
-              required>
-          </mat-form-field>
+          <mat-checkbox [(ngModel)]="updateUserPassword" name="updateUserPassword">Update User password?</mat-checkbox>
           <br>
           <br>
-          <mat-form-field class="tangy-full-width">
-            <input name="confirmPassword" [(ngModel)]="user.confirmPassword" #confirmPassword="ngModel" type="password" matInput placeholder="{{'Confirm Password'|translate}}"
-              required>
-            <mat-error *ngIf="(user.password!==user.confirmPassword) && ((confirmPassword.dirty || confirmPassword.touched)||(password.dirty||password.touched))">
-              {{'Passwords do not match'|translate}}
-            </mat-error>
-          </mat-form-field>
+          <div *ngIf="updateUserPassword">
+            <mat-form-field class="tangy-full-width">
+              <input name="password" [(ngModel)]="user.password" #password="ngModel" type="password" matInput placeholder="{{'Password'|translate}}"
+                required>
+            </mat-form-field>
+            <br>
+            <br>
+            <mat-form-field class="tangy-full-width">
+              <input name="confirmPassword" [(ngModel)]="user.confirmPassword" #confirmPassword="ngModel" type="password" matInput placeholder="{{'Confirm Password'|translate}}"
+                required>
+              <mat-error *ngIf="(user.password!==user.confirmPassword) && ((confirmPassword.dirty || confirmPassword.touched)||(password.dirty||password.touched))">
+                {{'Passwords do not match'|translate}}
+              </mat-error>
+            </mat-form-field>
+          </div>
           <br>
           <br>
           <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)" mat-raised-button color="warn" (click)="editUser()">{{'REGISTER'|translate}}</button>

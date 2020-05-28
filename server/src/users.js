@@ -202,16 +202,19 @@ const updateUser = async (req, res) => {
     if (!username) {
       return res.status(500).send({ data: `Could not update User` });
     }
-    const { firstName, lastName, email, password, confirmPassword } = req.body;
-    if (password !== confirmPassword) {
+    const { firstName, lastName, email, password, confirmPassword, updateUserPassword } = req.body;
+    if (!firstName || !lastName || !email) {
+      return res.status(500).send({ data: `Could not update User` });
+    }
+    if (updateUserPassword && (password !== confirmPassword)) {
       return res.status(500).send({ data: `Could not update User` });
     } else {
       const user = await findUserByUsername(username);
       user.firstName = firstName;
       user.lastName = lastName;
       user.email = email;
-      user.password = await hashPassword(password);
-      const data = await USERS_DB.put(user);
+      user.password = updateUserPassword ? await hashPassword(password) : user.password;
+      await USERS_DB.put(user);
       res.status(200).send({
         data: `User updated Successfully`,
       });
