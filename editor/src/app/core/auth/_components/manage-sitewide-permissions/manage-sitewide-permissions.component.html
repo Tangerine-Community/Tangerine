@@ -1,5 +1,5 @@
 <!-- -->
-<h1>{{'Manage Sitewide Permssions for'|translate}}</h1>
+<h1>{{'Manage Sitewide Permissions for'|translate}} {{username}}</h1>
 <div *ngIf="userPermissions"><span *ngxPermissionsOnly="['can_manage_site_wide_users']">
     <mat-checkbox #f (change)="onSelectChange(permission, f.checked)"  [checked]="doesUserHavePermission(permission)" *ngFor="let permission of permissionsList" [name]="permission">{{permission}}</mat-checkbox>
 </span></div>
