@@ -1,7 +1,20 @@
-<!-- -->
 <h1>{{'Manage Sitewide Permissions for'|translate}} {{username}}</h1>
-<div *ngIf="userPermissions"><span *ngxPermissionsOnly="['can_manage_site_wide_users']">
-    <mat-checkbox #f (change)="onSelectChange(permission, f.checked)"  [checked]="doesUserHavePermission(permission)" *ngFor="let permission of permissionsList" [name]="permission">{{permission}}</mat-checkbox>
-</span></div>
-
-<button mat-raised-button color="warn" (click)="submit()">{{'Update permissions'|translate}}</button>
+<p>
+    {{'Note that users will need to log out and back in to receive updated permissions.'|translate}}
+</p>
+<p *ngIf="userPermissions">
+    <span *ngxPermissionsOnly="['can_manage_site_wide_users']">
+        <mat-checkbox 
+            #f
+            (change)="onSelectChange(permission, f.checked)" 
+            [checked]="doesUserHavePermission(permission)"
+            *ngFor="let permission of permissionsList"
+            [name]="permission"
+        >
+            {{permission}}
+        </mat-checkbox>
+    </span>
+</p>
+<p>
+    <button mat-raised-button color="warn" (click)="submit()">{{'Update permissions'|translate}}</button>
+</p>
