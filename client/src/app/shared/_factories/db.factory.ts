@@ -44,21 +44,21 @@ export function DB(name, key = ''):PouchDB {
     )
   }
 
-  let options = <any>{};
+  let pouchDBOptions = <any>{};
   if (window['isCordovaApp'] && window['sqlitePlugin'] && !localStorage.getItem('ran-update-v3.8.0')) {
-    options = {
+    pouchDBOptions = {
       adapter: 'cordova-sqlite',
       location: 'default',
       androidDatabaseImplementation: 2
     };
     if (key) {
       openFileDatabaseConnection(name, key, openCallback, errorCallback);
-      options.key = key
+      pouchDBOptions.key = key
     } else {
       openFileDatabaseConnection(name, null, openCallback, errorCallback);
     }
   }
-  return new PouchDB(name, options);
+  return new PouchDB(name, pouchDBOptions);
 }
 
 
