@@ -44,7 +44,10 @@ const collateUserPermissions = async username => {
     const groupPermissions = groups.map(group=>{
       return{groupName: group._id, permissions: permissionsList.groupPermissions};
     });
-    return {sitewidePermissions: permissionsList.sitewidePermissions, groupPermissions: []};
+    return {
+      groupPermissions: [],
+      sitewidePermissions: [...permissionsList.sitewidePermissions].filter(perm => perm !=='non_user1_user'),
+      };
   } else {
     const data = await findUserByUsername(username);
     const sitewidePermissions = data.sitewidePermissions || [];
@@ -52,7 +55,7 @@ const collateUserPermissions = async username => {
     const groupPermissions = data.groups.map(group => {
       return {groupName: group.groupName, permissions: group.permissions || []};
     });
-    return {sitewidePermissions, groupPermissions: []};
+    return {sitewidePermissions: [...sitewidePermissions, 'non_user1_user'], groupPermissions: []};
   } else {
     return {sitewidePermissions, groupPermissions: []};
   }

@@ -3,7 +3,7 @@ const permissionsList = {
   sitewidePermissions: [
     'can_manage_site_wide_users',
     'can_create_group',
-    'can_create_user'],
+    'can_create_user', 'non_user1_user'],
 };
 
 const getPermissionsList = async (req, res) => {
