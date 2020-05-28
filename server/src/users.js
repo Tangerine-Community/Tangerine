@@ -7,6 +7,7 @@ const {
   USERS_DB,
   isSuperAdmin,
   findUserByUsername,
+  areCredentialsValid,
 } = require('./auth');
 
 const registerUser = async (req, res) => {
@@ -223,6 +224,38 @@ const updateUser = async (req, res) => {
     return res.status(500).send({ data: `Could not update User` });
   }
 };
+const updatePersonalProfile = async (req, res) => {
+  try {
+    const { username } = req.params;
+    // The username in the request params must match the username as decode from the JWT
+    if (!username || username !== req.user.name) {
+      return res.status(500).send({ data: `Could not update User` });
+    }
+    const { firstName, lastName, email, currentPassword, password, confirmPassword, updateUserPassword } = req.body;
+    if (!firstName || !lastName || !email) {
+      return res.status(500).send({ data: `Could not update User` });
+    }
+    if (updateUserPassword && (password !== confirmPassword)) {
+      return res.status(500).send({ data: `Could not update User` });
+    } else {
+      // Check if username and currentPassword supplied are equal to the values stored in the database
+      if (!await areCredentialsValid(username, currentPassword)) {
+        return res.status(500).send({ data: `Could not update User` });
+      }
+      const user = await findUserByUsername(username);
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.password = updateUserPassword ? await hashPassword(password) : user.password;
+      await USERS_DB.put(user);
+      res.status(200).send({
+        data: `User updated Successfully`,
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({ data: `Could not update User` });
+  }
+};
 
 module.exports = {
   checkIfUserExistByUsername,
@@ -235,5 +268,6 @@ module.exports = {
   isUserSuperAdmin,
   registerUser,
   restoreUser,
+  updatePersonalProfile,
   updateUser,
 };

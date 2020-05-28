@@ -57,7 +57,7 @@ const collateUserPermissions = async username => {
     });
     return {sitewidePermissions: [...sitewidePermissions, 'non_user1_user'], groupPermissions: []};
   } else {
-    return {sitewidePermissions, groupPermissions: []};
+    return {sitewidePermissions: [...sitewidePermissions, 'non_user1_user'], groupPermissions: []};
   }
   }
 };
