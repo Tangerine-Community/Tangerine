@@ -10,7 +10,8 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
   styleUrls: ['./manage-users.component.css']
 })
 export class ManageUsersComponent implements OnInit {
-  users;
+  activeUsers;
+  archivedUsers;
   usersDisplayedColumns = ['username', 'email', 'actions']
 
   constructor(
@@ -26,8 +27,11 @@ export class ManageUsersComponent implements OnInit {
 
   async getAllUsers() {
     try {
-      this.users = await this.userService.getAllUsers();
+      this.activeUsers = [...await this.userService.getAllUsers()].filter(user => user.isActive);
+      this.archivedUsers = [...await this.userService.getAllUsers()].filter(user => !user.isActive);
     } catch (error) {
+      this.activeUsers = [];
+      this.archivedUsers = [];
       console.error(error);
     }
   }
@@ -44,6 +48,22 @@ export class ManageUsersComponent implements OnInit {
       }
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could not delete user'));
+    }
+  }
+
+  async restoreUser(username) {
+    try {
+      const confirmRestore = confirm(`${_TRANSLATE('Restore User named')} "${username}"?`);
+      if (confirmRestore) {
+        if (await this.userService.restoreUser(username)) {
+          this.errorHandler.handleError(_TRANSLATE('User Restored Successfully'));
+          this.getAllUsers();
+        } else {
+          this.errorHandler.handleError(_TRANSLATE('Could not restore user'));
+        }
+      }
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could not restore user'));
     }
   }
 
