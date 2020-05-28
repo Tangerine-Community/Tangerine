@@ -169,5 +169,17 @@ export class UserService {
       return 500;
     }
   }
+  async updatePersonalProfile(payload) {
+    try {
+      const data = await this.httpClient.put(`/users/updatePersonalProfile/${payload.username}`,
+      payload, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.status;
+      }
+    } catch (error) {
+      console.error(error);
+      return 500;
+    }
+  }
 
 }
