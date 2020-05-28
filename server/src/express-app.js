@@ -128,7 +128,8 @@ app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
 app.patch('/users/restore/:username', isAuthenticated, permit(['can_edit_users']), restoreUser);
 app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']), deleteUser);
 app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
-app.put('/users/updatePersonalProfile/:username', isAuthenticated, permit(['can_edit_users']), updatePersonalProfile)
+// Permission check for username belonging to session is done in route callback.
+app.put('/users/updatePersonalProfile/:username', isAuthenticated, updatePersonalProfile)
 
 /*
  * More API
