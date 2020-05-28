@@ -94,12 +94,21 @@ var {permit} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
-// Login service.
+
+/*
+ * User API
+ */
+
 app.post('/login', login);
+
 app.post('/extendSession', isAuthenticated, extendSession);
-app.get('/permissionsList', isAuthenticated, getPermissionsList);
-app.get('/permissions/:username', isAuthenticated, getUserPermissions);
-app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated,permit(['can_manage_site_wide_users']), updateUserSiteWidePermissions);
+
+app.get('/permissionsList', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getPermissionsList);
+
+app.get('/permissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getUserPermissions);
+
+app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
+
 app.get('/login/validate/:userName',
   function (req, res) {
     if (req.user && (req.params.userName === req.user.name)) {
@@ -109,6 +118,84 @@ app.get('/login/validate/:userName',
     }
   }
 );
+
+app.get('/users', isAuthenticated, permit(['can_view_users_list']), async (req, res) => {
+  const result = await USERS_DB.allDocs({ include_docs: true });
+  const data = result.rows
+    .map((doc) => doc)
+    .filter((doc) => !doc['id'].startsWith('_design'))
+    .map((doc) => {
+      const user = doc['doc'];
+      return { _id: user._id, username: user.username, email: user.email };
+    });
+  res.send({ statusCode: 200, data });
+});
+
+app.get('/users/byUsername/:username', isAuthenticated, permit(['can_view_users_list']), async (req, res) => {
+  const username = req.params.username;
+  try {
+    await USERS_DB.createIndex({ index: { fields: ['username'] } });
+    const results = await USERS_DB.find({ selector: { username: { '$regex': `(?i)${username}` } } });
+    const data = results.docs.map(username => username.username)
+    res.send({ data, statusCode: 200, statusMessage: 'Ok' });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
+  let data;
+  let statusCode;
+  try {
+    data = await doesUserExist(req.params.username);
+    if (!data) {
+      statusCode = 200;
+    } else {
+      statusCode = 409;
+    }
+    res.send({ statusCode, data: !!data });
+  } catch (error) {
+    statusCode = 500;
+    res.send({ statusCode, data: true }); // In case of error assume user exists. Helps avoid same username used multiple times
+  }
+});
+
+app.post('/users/register-user', isAuthenticated, permit(['can_create_users']), async (req, res) => {
+  try {
+    if (!(await doesUserExist(req.body.username))) {
+      const user = req.body;
+      user.password = await hashPassword(user.password);
+      user.groups = [];
+      const data = await USERS_DB.post(user);
+      res.send({ statusCode: 200, data });
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return false; // @TODO return meaningful error
+  }
+});
+
+app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) => {
+  try {
+    const data = await isSuperAdmin(req.params.username);
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
+  try {
+    const data = await isAdminUser(req.params.username);
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
 
 // API
 app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
@@ -215,83 +302,6 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
-app.get('/users', isAuthenticated, async (req, res) => {
-  const result = await USERS_DB.allDocs({ include_docs: true });
-  const data = result.rows
-    .map((doc) => doc)
-    .filter((doc) => !doc['id'].startsWith('_design'))
-    .map((doc) => {
-      const user = doc['doc'];
-      return { _id: user._id, username: user.username, email: user.email };
-    });
-  res.send({ statusCode: 200, data });
-});
-
-app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
-  let data;
-  let statusCode;
-  try {
-    data = await doesUserExist(req.params.username);
-    if (!data) {
-      statusCode = 200;
-    } else {
-      statusCode = 409;
-    }
-    res.send({ statusCode, data: !!data });
-  } catch (error) {
-    statusCode = 500;
-    res.send({ statusCode, data: true }); // In case of error assume user exists. Helps avoid same username used multiple times
-  }
-
-});
-app.post('/users/register-user', isAuthenticated, permit(['can_create_user']), async (req, res) => {
-  try {
-    if (!(await doesUserExist(req.body.username))) {
-      const user = req.body;
-      user.password = await hashPassword(user.password);
-      user.groups = [];
-      const data = await USERS_DB.post(user);
-      res.send({ statusCode: 200, data });
-      return data;
-    }
-  } catch (error) {
-    console.log(error);
-    return false; // @TODO return meaningful error
-  }
-});
-
-app.get('/users/byUsername/:username', isAuthenticated, async (req, res) => {
-  const username = req.params.username;
-  try {
-    await USERS_DB.createIndex({ index: { fields: ['username'] } });
-    const results = await USERS_DB.find({ selector: { username: { '$regex': `(?i)${username}` } } });
-    const data = results.docs.map(username => username.username)
-    res.send({ data, statusCode: 200, statusMessage: 'Ok' });
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
-
-app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) => {
-  try {
-    const data = await isSuperAdmin(req.params.username);
-    res.send({ data, statusCode: 200, statusMessage: 'ok' })
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
-
-app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
-  try {
-    const data = await isAdminUser(req.params.username);
-    res.send({ data, statusCode: 200, statusMessage: 'ok' })
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
 
 app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.body.filePath
