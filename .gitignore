@@ -10,6 +10,7 @@ data
 config.env
 /package-lock.json
 editor/package-lock.json
+client/package-lock.json
 server/package-lock.json
 server/src/scripts/generate-uploads/package-lock.json
 
