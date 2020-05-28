@@ -26,25 +26,25 @@ const routes: Routes = [{
   path: 'manage-users',
   component: ManageUsersComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
-  data: { permissions: { only: ['can_manage_site_wide_users'], redirectTo: '/projects' } }
+  data: { permissions: { only: ['can_view_users_list'], redirectTo: '/projects' } }
 },
 {
   path: 'manage-users/new-user',
   component: UserResgistrationComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
-  data: { permissions: { only: ['can_create_user'], redirectTo: '/projects' } }
+  data: { permissions: { only: ['can_create_users'], redirectTo: '/projects' } }
 },
 {
   path: 'manage-users/sitewide-permissions/:username',
   component: ManageSitewidePermissionsComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
-  data: { permissions: { only: ['can_manage_site_wide_users'], redirectTo: '/projects' } }
+  data: { permissions: { only: ['can_manage_users_site_wide_permissions'], redirectTo: '/projects' } }
 },
 {
   path: 'manage-users/users/edit/:username',
   component: EditUserComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
-  data: { permissions: { only: ['can_manage_site_wide_users'], redirectTo: '/projects' } }
+  data: { permissions: { only: ['can_manage_users_site_wide_permissions'], redirectTo: '/projects' } }
 }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
