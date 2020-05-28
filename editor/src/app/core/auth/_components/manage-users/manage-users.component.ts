@@ -21,7 +21,7 @@ export class ManageUsersComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.menuService.setContext(_TRANSLATE('Manage Users'), '', 'manage-users')
+    this.menuService.setContext(_TRANSLATE('Users'), '', 'users')
     this.getAllUsers();
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -17,6 +17,7 @@ export class ManageSitewidePermissionsComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
     private permissionsService: NgxPermissionsService,
+    private router:Router,
     private errorHandler: TangyErrorHandler
   ) { }
 
@@ -41,6 +42,7 @@ export class ManageSitewidePermissionsComponent implements OnInit {
     try {
       const data = await this.authenticationService.updateUserPermissions(this.username, this.userPermissions.sitewidePermissions);
       this.errorHandler.handleError(_TRANSLATE('Permissions Updated Successfully. User will need to log out and log back in to receive updated permissions.'));
+      this.router.navigate(['users'])
     } catch (error) {
       console.error(error);
     }

@@ -125,8 +125,8 @@
             </mat-nav-list>
             <mat-nav-list class="tangy-full-width" *ngxPermissionsOnly="['can_view_users_list']">
                 <mat-list-item *ngIf="loggedIn &&  menuService.groupId === ''"
-                    class="manage-users-list-item" [class.active-menu-item]="menuService.section === 'manage-users'"
-                    routerLink="/manage-users">
+                    class="manage-users-list-item" [class.active-menu-item]="menuService.section === 'users'"
+                    routerLink="/users">
                     <span class=""><i class="material-icons menu-icon">group</i></span>
                     <a matLine>{{'Users'|translate}}</a>
                 </mat-list-item>

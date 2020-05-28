@@ -1,9 +1,7 @@
-<h1>{{'Manage Users'|translate}}</h1>
+<h1>{{'Users'|translate}}</h1>
 <span *ngxPermissionsOnly="['can_create_users']">
   <paper-fab  mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user"></paper-fab>
 </span>
-<br/>
-<br/>
 <h2>{{'Active Users'|translate}}</h2>
 <mat-table [dataSource]="activeUsers" class="mat-elevation-z8">
   <ng-container matColumnDef="username">
@@ -45,8 +43,6 @@
   <mat-header-row *matHeaderRowDef="usersDisplayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: usersDisplayedColumns;"></mat-row>
 </mat-table>
-<br/>
-<br/>
 <h2>{{'Archived Users'|translate}}</h2>
 <mat-table [dataSource]="archivedUsers" class="mat-elevation-z8">
   <ng-container matColumnDef="username">

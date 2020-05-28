@@ -2,7 +2,6 @@ const permissionsList = {
   groupPermissions: ['can_manage_group_deployment','can_assign_permissions_to_group_user'],
   sitewidePermissions: [
     'can_create_group',
-    'non_user1_user',
     'can_view_users_list',
     'can_create_users',
     'can_edit_users',
