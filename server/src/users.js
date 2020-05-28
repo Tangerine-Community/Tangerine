@@ -17,7 +17,7 @@ const registerUser = async (req, res) => {
       user.password = await hashPassword(user.password);
       user.groups = [];
       const data = await USERS_DB.post(user);
-      res.send({ statusCode: 200, data });
+      res.send({ statusCode: 200, data: `User registered Successfully` });
       return data;
     }
   } catch (error) {
@@ -150,9 +150,7 @@ const deleteUser = async (req, res) => {
       user['isActive'] = false;
       const data = await USERS_DB.put(user);
       res.status(200).send({
-        data,
-        statusCode: 200,
-        statusMessage: `User Deleted Successfully`,
+        data: `User Deleted Successfully`,
       });
     } else {
       res.status(500).send({ data: `Could not Delete User` });
@@ -160,6 +158,24 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ data: `Could not Delete User` });
+  }
+};
+const restoreUser = async (req, res) => {
+  try {
+    const username = req.params.username;
+    if (username) {
+      const user = await findUserByUsername(username);
+      user['isActive'] = true;
+      const data = await USERS_DB.put(user);
+      res.status(200).send({
+        data: `User Restored Successfully`,
+      });
+    } else {
+      res.status(500).send({ data: `Could not restore User` });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ data: `Could not restore User` });
   }
 };
 
@@ -197,9 +213,7 @@ const updateUser = async (req, res) => {
       user.password = await hashPassword(password);
       const data = await USERS_DB.put(user);
       res.status(200).send({
-        data,
-        statusCode: 200,
-        statusMessage: `User updated Successfully`,
+        data: `User updated Successfully`,
       });
     }
   } catch (error) {
@@ -217,5 +231,6 @@ module.exports = {
   isUserAnAdminUser,
   isUserSuperAdmin,
   registerUser,
+  restoreUser,
   updateUser,
 };

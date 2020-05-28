@@ -146,6 +146,17 @@ export class UserService {
       return false;
     }
   }
+  async restoreUser(username: string) {
+    try {
+      const data = await this.http.patch(`/users/restore/${username}`, {isActive: true}, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
 
   async updateUserDetails(payload) {
     try {
