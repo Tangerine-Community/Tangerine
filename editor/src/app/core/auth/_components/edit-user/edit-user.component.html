@@ -1,9 +1,7 @@
-<div class="tangy-content-top-margin" *ngIf="user">
-    <mat-card>
-      <mat-card-title class="tangy-foreground-secondary">
+<div *ngIf="user">
+      <h1 class="tangy-foreground-secondary">
         {{'Edit User'|translate}} {{user.username}}
-      </mat-card-title>
-      <mat-card-content>
+      </h1>
         <form class="tangy-full-width" novalidate #editUserForm="ngForm">
           
           <mat-form-field class="tangy-full-width">
@@ -55,6 +53,4 @@
           <br>
           <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE USER'|translate}}</button>
         </form>
-      </mat-card-content>
-    </mat-card>
     </div>
