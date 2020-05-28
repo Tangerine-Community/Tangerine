@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user-resgistration/user.model.interface';
 import { UserService } from '../../_services/user.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 
@@ -13,7 +13,12 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 export class EditUserComponent implements OnInit {
   user: User;
   updateUserPassword = false;
-  constructor(private userService: UserService, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
+  constructor(
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private errorHandler: TangyErrorHandler
+  ) { }
 
   async ngOnInit() {
     this.user = await this.userService.getAUserByUsername(this.route.snapshot.paramMap.get('username')) as User;
@@ -30,6 +35,7 @@ export class EditUserComponent implements OnInit {
       const data = await this.userService.updateUserDetails({...this.user, updateUserPassword: this.updateUserPassword});
       if (data === 200) {
         this.errorHandler.handleError(_TRANSLATE('User Details Updated Successfully'));
+        this.router.navigate(['manage-users'])
       } else {
         this.errorHandler.handleError(_TRANSLATE('User Details could not be Updated'));
       }
