@@ -7,6 +7,7 @@ import { LoginGuard } from './_guards/login-guard.service';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
 import { EditUserComponent } from './_components/edit-user/edit-user.component';
+import { UpdatePersonalProfileComponent } from './_components/update-personal-profile/update-personal-profile.component';
 const routes: Routes = [{
   path: 'register-user',
   component: UserResgistrationComponent
@@ -14,7 +15,14 @@ const routes: Routes = [{
 {
   path: 'login',
   component: LoginComponent
-}, {
+},
+{
+  path: 'update-personal-profile',
+  component: UpdatePersonalProfileComponent,
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: { permissions: { only: ['non_user1_user'], redirectTo: '/projects' } }
+},
+{
   path: 'manage-users',
   component: ManageUsersComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
