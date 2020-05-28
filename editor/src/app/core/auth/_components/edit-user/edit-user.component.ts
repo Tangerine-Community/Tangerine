@@ -35,7 +35,7 @@ export class EditUserComponent implements OnInit {
       const data = await this.userService.updateUserDetails({...this.user, updateUserPassword: this.updateUserPassword});
       if (data === 200) {
         this.errorHandler.handleError(_TRANSLATE('User Details Updated Successfully'));
-        this.router.navigate(['manage-users'])
+        this.router.navigate(['users'])
       } else {
         this.errorHandler.handleError(_TRANSLATE('User Details could not be Updated'));
       }

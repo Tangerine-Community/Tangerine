@@ -23,7 +23,7 @@ const routes: Routes = [{
   data: { permissions: { only: ['non_user1_user'], redirectTo: '/projects' } }
 },
 {
-  path: 'manage-users',
+  path: 'users',
   component: ManageUsersComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
   data: { permissions: { only: ['can_view_users_list'], redirectTo: '/projects' } }
@@ -44,7 +44,7 @@ const routes: Routes = [{
   path: 'manage-users/users/edit/:username',
   component: EditUserComponent,
   canActivate: [LoginGuard, NgxPermissionsGuard],
-  data: { permissions: { only: ['can_manage_users_site_wide_permissions'], redirectTo: '/projects' } }
+  data: { permissions: { only: ['can_edit_users'], redirectTo: '/projects' } }
 }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
