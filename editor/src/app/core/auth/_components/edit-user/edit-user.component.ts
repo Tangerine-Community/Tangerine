@@ -12,6 +12,7 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 })
 export class EditUserComponent implements OnInit {
   user: User;
+  updateUserPassword = false;
   constructor(private userService: UserService, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
@@ -22,7 +23,11 @@ export class EditUserComponent implements OnInit {
 
   async editUser() {
     try {
-      const data = await this.userService.updateUserDetails(this.user);
+      if (!this.updateUserPassword) {
+        this.user.password = null;
+        this.user.confirmPassword = null;
+      }
+      const data = await this.userService.updateUserDetails({...this.user, updateUserPassword: this.updateUserPassword});
       if (data === 200) {
         this.errorHandler.handleError(_TRANSLATE('USer Details Updated Successfully'));
       } else {
