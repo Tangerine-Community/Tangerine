@@ -40,7 +40,7 @@ export class ManageSitewidePermissionsComponent implements OnInit {
   async submit() {
     try {
       const data = await this.authenticationService.updateUserPermissions(this.username, this.userPermissions.sitewidePermissions);
-      this.errorHandler.handleError(_TRANSLATE('Permissions Updated Successfully.'));
+      this.errorHandler.handleError(_TRANSLATE('Permissions Updated Successfully. User will need to log out and log back in to receive updated permissions.'));
     } catch (error) {
       console.error(error);
     }

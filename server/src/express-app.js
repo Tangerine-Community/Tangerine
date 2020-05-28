@@ -95,12 +95,11 @@ var {permit} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
-// Login service.
+/*
+ * Login and session API
+ */
+
 app.post('/login', login);
-app.post('/extendSession', isAuthenticated, extendSession);
-app.get('/permissionsList', isAuthenticated, getPermissionsList);
-app.get('/permissions/:username', isAuthenticated, getUserPermissions);
-app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated,permit(['can_manage_site_wide_users']), updateUserSiteWidePermissions);
 app.get('/login/validate/:userName',
   function (req, res) {
     if (req.user && (req.params.userName === req.user.name)) {
@@ -110,8 +109,31 @@ app.get('/login/validate/:userName',
     }
   }
 );
+app.post('/extendSession', isAuthenticated, extendSession);
+app.get('/permissionsList', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getPermissionsList);
+app.get('/permissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getUserPermissions);
+app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
 
-// API
+/*
+ * User API
+ */
+
+app.get('/users', isAuthenticated, permit(['can_view_users_list']), getAllUsers);
+app.get('/users/byUsername/:username', isAuthenticated, permit(['can_view_users_list']), getUserByUsername);
+app.get('/users/findOneUser/:username', isAuthenticated, permit(['can_view_users_list']), findOneUserByUsername);
+app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
+app.post('/users/register-user', isAuthenticated, permit(['can_create_users']), registerUser);
+app.get('/users/isSuperAdminUser/:username', isAuthenticated, isUserSuperAdmin);
+app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
+app.patch('/users/restore/:username', isAuthenticated, permit(['can_edit_users']), restoreUser);
+app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']), deleteUser);
+app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
+app.put('/users/updatePersonalProfile/:username', isAuthenticated, permit(['can_edit_users']), updatePersonalProfile)
+
+/*
+ * More API
+ */
+
 app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
 app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
@@ -215,21 +237,6 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
     res.send({ statusCode: 500, data: error })
   }
 })
-
-app.get('/users', isAuthenticated, getAllUsers);
-
-app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
-app.post('/users/register-user', isAuthenticated, permit(['can_create_user']), registerUser);
-
-app.get('/users/byUsername/:username', isAuthenticated, getUserByUsername);
-app.get('/users/findOneUser/:username', isAuthenticated, findOneUserByUsername);
-
-app.get('/users/isSuperAdminUser/:username', isAuthenticated, isUserSuperAdmin);
-
-app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
-app.patch('/users/restore/:username', isAuthenticated, permit(['can_manage_site_wide_users']), restoreUser);
-app.delete('/users/delete/:username', isAuthenticated, permit(['can_manage_site_wide_users']), deleteUser);
-app.put('/users/updatePersonalProfile/:username', isAuthenticated, permit(['non_user1_user']), updatePersonalProfile);
 
 app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.body.filePath

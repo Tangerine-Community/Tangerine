@@ -1,17 +1,16 @@
 <h1>{{'Manage Users'|translate}}</h1>
-<span *ngxPermissionsOnly="['can_create_user']">
-  <paper-fab mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user"></paper-fab>
+<span *ngxPermissionsOnly="['can_create_users']">
+  <paper-fab  mat-raised-button icon="add" class="action" color="accent" routerLink="/manage-users/new-user"></paper-fab>
 </span>
 <br/>
 <br/>
-<h3>{{'Active Users'|translate}}</h3>
+<h2>{{'Active Users'|translate}}</h2>
 <mat-table [dataSource]="activeUsers" class="mat-elevation-z8">
   <ng-container matColumnDef="username">
     <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
-    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary"
-        [routerLink]="['/manage-users/sitewide-permissions',  user.username]">
-        <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-      </a><span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
+    <mat-cell *matCellDef="let user">
+      <span class="tangy-foreground-secondary">{{user.username}}</span>
+    </mat-cell>
   </ng-container>
   <ng-container matColumnDef="email">
     <mat-header-cell *matHeaderCellDef> {{'Email'|translate}} </mat-header-cell>
@@ -20,10 +19,25 @@
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
     <mat-cell *matCellDef="let user">
-      <a class="tangy-foreground-primary" [routerLink]="['/manage-users/users/edit/',  user.username]">
+      <a
+        class="tangy-foreground-primary"
+        *ngxPermissionsOnly="['can_manage_users_site_wide_permissions']"
+        [routerLink]="['/manage-users/sitewide-permissions',  user.username]"
+      >
+        <i class="material-icons mat-18 tangy-location-list-icon">security</i>
+      </a>
+      <a
+        class="tangy-foreground-primary"
+        *ngxPermissionsOnly="['can_edit_users']"
+        [routerLink]="['/manage-users/users/edit/',  user.username]"
+      >
         <i class="material-icons mat-18 tangy-location-list-icon">edit</i>
       </a>
-      <span class="tangy-foreground-primary" (click)="deleteUser(user.username)">
+      <span
+        class="tangy-foreground-primary"
+        *ngxPermissionsOnly="['can_edit_users']"
+        (click)="deleteUser(user.username)"
+      >
         <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
       </span>
     </mat-cell>
@@ -33,14 +47,11 @@
 </mat-table>
 <br/>
 <br/>
-<h3>{{'Archived Users'|translate}}</h3>
+<h2>{{'Archived Users'|translate}}</h2>
 <mat-table [dataSource]="archivedUsers" class="mat-elevation-z8">
   <ng-container matColumnDef="username">
     <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
-    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary"
-        [routerLink]="['/manage-users/sitewide-permissions',  user.username]">
-        <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-      </a><span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
+    <mat-cell *matCellDef="let user"> <span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
   </ng-container>
   <ng-container matColumnDef="email">
     <mat-header-cell *matHeaderCellDef> {{'Email'|translate}} </mat-header-cell>

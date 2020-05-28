@@ -52,11 +52,12 @@ export class IssueFormComponent implements OnInit {
       this.issue = await this.caseService.getIssue(params.issueId)
       this.window.caseService = this.caseService
       this.window.isRevision = true
-      let caseData:any
+      let caseInstance:any
       if (params.eventId) {
         // We're viewing a specific form revision, not making a revision.
         let formResponseRevision = this.issue.events.find(event => event.id === params.eventId).data.response
-        caseData = this.issue.events.find(event => event.id === params.eventId).data.caseData
+        caseInstance = this.issue.events.find(event => event.id === params.eventId).data.caseInstance
+        await this.caseService.loadInMemory(caseInstance)
         this.formResponseId = formResponseRevision._id
         this.formPlayer.response = formResponseRevision 
       }
@@ -68,8 +69,8 @@ export class IssueFormComponent implements OnInit {
         this.formPlayer.response = proposedFormResponse
       } else {
         // Create a revision based on the base event.
-        const baseEvent = [...this.issue.events].reverse().find(event => event.type === IssueEventType.Open || IssueEventType.Rebase)
-        this.caseService.loadInMemory(baseEvent.data.case)
+        const baseEvent = [...this.issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+        this.caseService.loadInMemory(baseEvent.data.caseInstance)
         this.formPlayer.response = baseEvent.data.response
       }
       this.formPlayer.render()
