@@ -166,7 +166,6 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
   --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
-  --volume $(pwd)/../../brodybits/cordova-plugin-sqlite-batch-connection-manager-core-pro-free:/tangerine/client/cordova-plugin-sqlite-batch-connection-manager-core-pro-free \
   tangerine/tangerine:local
  "
 
