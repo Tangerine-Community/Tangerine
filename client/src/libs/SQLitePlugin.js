@@ -165,22 +165,22 @@
 
   SQLitePlugin.prototype.open = function(success, error) {
     var name, openerrorcb, opensuccesscb;
-    // console.log('OPEN database with name: ' + this.dbname);
+    console.log('OPEN database with name: ' + this.dbname);
     if (this.dbname in this.openDBs) {
-      // console.log('database already open: ' + this.dbname);
+      console.log('database already open: ' + this.dbname);
       nextTick((function(_this) {
         return function() {
           success(_this);
         };
       })(this));
     } else {
-      // console.log('OPEN database: ' + this.dbname);
+      console.log('OPEN database: ' + this.dbname);
       opensuccesscb = (function(_this) {
         return function() {
           var txLock;
-          // console.log('OPEN database: ' + _this.dbname + ' - OK');
+          console.log('OPEN database: ' + _this.dbname + ' - OK');
           if (!_this.openDBs[_this.dbname]) {
-            // console.log('database was closed during open operation');
+            console.log('database was closed during open operation');
           }
           if (_this.dbname in _this.openDBs) {
             _this.openDBs[_this.dbname] = DB_STATE_OPEN;
@@ -196,7 +196,7 @@
       })(this);
       openerrorcb = (function(_this) {
         return function() {
-          // console.log('OPEN database: ' + _this.dbname + ' FAILED, aborting any pending transactions');
+          console.log('OPEN database: ' + _this.dbname + ' FAILED, aborting any pending transactions');
           if (!!error) {
             error(newSQLError('Could not open database'));
           }
@@ -212,7 +212,7 @@
         return
       cordova.exec step2, step2, 'SQLitePlugin', 'close', [ { path: @dbname } ]
        */
-      // console.log('resolve path now');
+      console.log('resolve path now');
       name = this.dbname;
       window.sqliteStorageFile.resolveAbsolutePath({
         name: name,
@@ -223,28 +223,26 @@
           console.log('resolve path cb received');
           console.log('path: ' + path);
           opts = {
-            path: path,
+            fullName: path,
+            key: _this.openargs.key || '',
             flags: 6
           };
-          return window.sqliteBatchConnection.openDatabaseConnection(opts, function(id) {
+          return window.sqliteBatchConnectionManager.openDatabaseConnection(opts, function(id) {
             console.log('open success');
             console.log('connection id: ' + id);
             idmap[name] = id;
             return opensuccesscb();
           });
         };
-      })(this), error((function(_this) {
-        return function() {
+      })(this), (function(_this) {
+        return function(error) {
           return console.log('resolve path error');
         };
-      })(this)));
+      })(this));
     }
   };
 
   SQLitePlugin.prototype.close = function(success, error) {
-    return nextTick(function() {
-      return error();
-    });
     if (this.dbname in this.openDBs) {
       if (txLocks[this.dbname] && txLocks[this.dbname].inProgress) {
         console.log('cannot close: transaction is in progress');
@@ -258,6 +256,9 @@
       } else {
         console.log('closing db with no transaction lock state');
       }
+    return nextTick(function() {
+      return success();
+    });
     } else {
       console.log('cannot close: database is not open');
       if (error) {
@@ -429,7 +430,7 @@
 
   SQLitePluginTransaction.prototype.run = function() {
     var batchExecutes, handlerFor, i, id, mycb, mycbmap, request, tropts, tx, txFailure, waiting;
-    // console.log('run transaction now');
+    console.log('run transaction now');
     txFailure = null;
     tropts = [];
     batchExecutes = this.executes;
@@ -483,7 +484,7 @@
         q = mycbmap[resultIndex];
         if (q) {
           if (q[type]) {
-            // console.log('signal result');
+            console.log('signal result: ' + type);
             // console.log(type);
             // console.log(JSON.stringify(res));
             q[type](res);
@@ -491,16 +492,16 @@
         }
       }
     };
-    // console.log('check db name');
-    // console.log(this.db.dbname);
+    console.log('check db name');
+    console.log(this.db.dbname);
     id = idmap[this.db.dbname];
-    // console.log('id: ' + id);
+    console.log('id: ' + id);
     console.log(JSON.stringify(tropts));
     console.log('execute batch now');
-    window.sqliteBatchConnection.executeBatch(id, tropts, (function(_this) {
+    window.sqliteBatchConnectionManager.executeBatch(id, tropts, (function(_this) {
       return function(batchResults) {
         var columns, j, k, l, len1, len2, r, ref, ref1, results, row, rows, rr;
-        // console.log('received execute batch results');
+        console.log('received execute batch results');
         // console.log(batchResults);
         // console.log(JSON.stringify(batchResults));
         results = [];
