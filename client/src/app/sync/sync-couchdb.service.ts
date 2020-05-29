@@ -114,7 +114,7 @@ export class SyncCouchdbService {
       ...appConfig.couchdbPush4All ? { } : { "selector": pushSelector }
     }
 
-    let replicationStatus = await this.doPush(userDb, remoteDb, pushSyncOptions);
+    let replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
 
     let pullSyncOptions;
 
@@ -130,7 +130,7 @@ export class SyncCouchdbService {
         "batches_limit": 1,
         "doc_ids": remoteIds.docs.map(doc => doc._id)
       }
-      replicationStatus = await this.doPull(userDb, remoteDb, pullSyncOptions);
+      replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
     } else {
       pullSyncOptions = {
         "since": pull_last_seq,
@@ -148,12 +148,12 @@ export class SyncCouchdbService {
             "selector": pullSelector
           }
       }
-      replicationStatus = await this.doPull(userDb, remoteDb, pullSyncOptions);
+      replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
     }
     return replicationStatus
   }
 
-  async doPush(userDb, remoteDb, pouchSyncOptions) {
+  async push(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
       userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
@@ -191,7 +191,7 @@ export class SyncCouchdbService {
     return status;
   }
 
-  async doPull(userDb, remoteDb, pouchSyncOptions) {
+  async pull(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
       userDb.db['replicate'].from(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-pull-last_seq', info.last_seq);
