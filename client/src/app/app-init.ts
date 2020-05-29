@@ -13,6 +13,9 @@ export class AppInit {
       if (window['isCordovaApp']) {
         debugger;
         document.addEventListener('deviceready', async () => {
+          while(!window['sqlitePlugin']) {
+            console.log("Waiting for sqlitePlugin to become ready.")
+          }
           resolve()
         })
       } else {

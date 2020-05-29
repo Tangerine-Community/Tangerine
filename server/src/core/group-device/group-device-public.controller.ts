@@ -48,7 +48,7 @@ export class GroupDevicePublicController {
       const device = await this.groupDeviceService.read(groupId, deviceId)
       return device
     } catch (error) {
-      log.error('Error registering device')
+      log.error('Error registering device for group ' + groupId + ' and deviceId ' + deviceId)
       console.log(error)
       return 'There was an error.'
     }
