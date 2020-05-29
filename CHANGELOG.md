@@ -9,6 +9,8 @@
 - Fixes
   - Use of doc_id's instead of selector for sync push [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
   - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
+  - Resolve Out-of-memory issue when syncing large number of records [#2146](https://github.com/Tangerine-Community/Tangerine/issues/2146)
+  - Implemented improvements to sync strategy [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
 
 ## v3.9.1
 - Fixes
