@@ -25,5 +25,6 @@ export class AppConfig {
   passwordRecipe:string
   couchdbPush4All:boolean
   couchdbPullUsingDocIds:boolean
+  couchdbPushUsingDocIds:boolean
 }
 
