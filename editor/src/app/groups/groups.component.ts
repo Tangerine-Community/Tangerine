@@ -52,4 +52,9 @@ export class GroupsComponent implements OnInit {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
+
+  navigateToGroup(groupId) {
+    window.location.href = `${window.location.origin}/app/${groupId}/index.html#/groups/${groupId}`
+  }
+
 }
