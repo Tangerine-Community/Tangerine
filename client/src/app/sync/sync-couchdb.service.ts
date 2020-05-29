@@ -31,7 +31,6 @@ export class SyncCouchdbDetails {
 export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
-  progress = {"written" : 0}
 
   constructor(
     private http: HttpClient,
@@ -207,15 +206,13 @@ export class SyncCouchdbService {
         if (typeof info.direction === 'undefined') {
           direction = '';
         }
-        const pregressWritten = info.docs_written + this.progress.written;
         const progress = {
           'docs_read': info.docs_read,
-          'docs_written': pregressWritten,
+          'docs_written': info.docs_written,
           'doc_write_failures': info.doc_write_failures,
           'pending': info.pending,
           'direction': direction
         };
-        this.progress.written = pregressWritten
         this.syncMessage$.next(progress);
       }).on('active', function (info) {
         if (info) {

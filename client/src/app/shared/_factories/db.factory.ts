@@ -25,25 +25,6 @@ export function DB(name, key = ''):PouchDB {
     console.log('UNEXPECTED SQLitePlugin ERROR: ' + e)
   }
 
-  function openFileDatabaseConnection (name, key, openCallback, errorCallback) {
-    window['sqliteStorageFile'].resolveAbsolutePath(
-      {name: name, location: 2},
-      function (path) {
-        console.log('database file path: ' + path)
-        if (key !== null) {
-          window['sqliteBatchConnectionManager'].openDatabaseConnection(
-            { path: path, flags: OPEN_DATABASE_FLAGS, key: key }, openCallback, errorCallback
-          )
-        } else {
-          window['sqliteBatchConnectionManager'].openDatabaseConnection(
-            { path: path, flags: OPEN_DATABASE_FLAGS }, openCallback, errorCallback
-          )
-        }
-
-      }
-    )
-  }
-
   let pouchDBOptions = <any>{};
   if (window['isCordovaApp'] && window['sqlitePlugin'] && !localStorage.getItem('ran-update-v3.8.0')) {
     pouchDBOptions = {
@@ -52,10 +33,7 @@ export function DB(name, key = ''):PouchDB {
       androidDatabaseImplementation: 2
     };
     if (key) {
-      openFileDatabaseConnection(name, key, openCallback, errorCallback);
       pouchDBOptions.key = key
-    } else {
-      openFileDatabaseConnection(name, null, openCallback, errorCallback);
     }
   }
   return new PouchDB(name, pouchDBOptions);
