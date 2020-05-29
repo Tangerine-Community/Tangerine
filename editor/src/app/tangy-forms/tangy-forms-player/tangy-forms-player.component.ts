@@ -27,6 +27,7 @@ export class TangyFormsPlayerComponent {
   @Input('templateId') templateId:string
   @Input('location') location:any
   @Input('skipSaving') skipSaving = false
+  @Input('preventSubmit') preventSubmit = false
   @Input('metadata') metadata:any
 
   $rendered = new Subject()
@@ -110,7 +111,8 @@ export class TangyFormsPlayerComponent {
           this.throttledSaveResponse(response)
         })
       }
-      formEl.addEventListener('submit', () => {
+      formEl.addEventListener('submit', (event) => {
+        if (this.preventSubmit) event.preventDefault() 
         this.$submit.next(true)
       })
     }
