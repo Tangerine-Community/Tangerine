@@ -1,7 +1,8 @@
-import { ActivatedRoute } from '@angular/router';
+import { TangyFormsPlayerComponent } from './../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-group-uploads-view',
@@ -12,9 +13,11 @@ export class GroupUploadsViewComponent implements OnInit {
 
   title = _TRANSLATE('View Upload')
   breadcrumbs:Array<Breadcrumb> = []
+  @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
  
   constructor(
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private router:Router
   ) { }
 
   ngOnInit() {
@@ -29,6 +32,11 @@ export class GroupUploadsViewComponent implements OnInit {
           url: `uploads/view/${params.responseId}` 
         }
       ]
+      this.formPlayer.formResponseId = params.responseId
+      this.formPlayer.render()
+      this.formPlayer.$submit.subscribe(async () => {
+        this.router.navigate([`../`], { relativeTo: this.route })
+      })
     })
   }
 
