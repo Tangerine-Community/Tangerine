@@ -484,9 +484,9 @@
         q = mycbmap[resultIndex];
         if (q) {
           if (q[type]) {
-            console.log('signal result');
-            console.log(type);
-            console.log(JSON.stringify(res));
+            console.log('signal result: ' + type);
+            // console.log(type);
+            // console.log(JSON.stringify(res));
             q[type](res);
           }
         }

@@ -36,7 +36,15 @@ export function DB(name, key = ''):PouchDB {
       pouchDBOptions.key = key
     }
   }
-  return new PouchDB(name, pouchDBOptions);
+  let pouch;
+
+  try {
+    pouch = new PouchDB(name, pouchDBOptions);
+    return pouch
+  } catch (e) {
+    console.log("Database error: " + e);
+    console.trace();
+  }
 }
 
 

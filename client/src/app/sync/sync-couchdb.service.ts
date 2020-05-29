@@ -107,32 +107,27 @@ export class SyncCouchdbService {
 
     // First do the push:
     // Build the PouchSyncOptions.
+    // TODO: consider using a similar doc_id approach
     const pushSyncOptions = {
       "since": push_last_seq,
-      "batch_size": 20,
+      "batch_size": 50,
       "batches_limit": 1,
-      ...appConfig.couchdbPush4All ? { } : { "selector": pushSelector }
+      ...appConfig.couchdbPush4All ? { } : appConfig.couchdbPushUsingDocIds
+        ? {
+          "doc_ids": (await userDb.db.find({
+            "limit": 987654321,
+            "fields": ["_id"],
+            "selector":  pushSelector
+          })).docs.map(doc => doc._id)
+        }
+        : {
+          "selector": pushSelector
+        }
     }
 
     let replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
 
-    let pullSyncOptions;
-
-    if (appConfig.couchdbPullUsingDocIds) {
-      const remoteIds = await remoteDb.find({
-        'limit': 987654321,
-        'fields': ['_id'],
-        'selector': pullSelector
-      });
-      pullSyncOptions = {
-        "since": pull_last_seq,
-        "batch_size": 50,
-        "batches_limit": 1,
-        "doc_ids": remoteIds.docs.map(doc => doc._id)
-      }
-      replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
-    } else {
-      pullSyncOptions = {
+    let pullSyncOptions = {
         "since": pull_last_seq,
         "batch_size": 50,
         "batches_limit": 1,
@@ -149,7 +144,6 @@ export class SyncCouchdbService {
           }
       }
       replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
-    }
     return replicationStatus
   }
 
@@ -164,17 +158,12 @@ export class SyncCouchdbService {
         });
       }).on('change', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
-        // const pending = info.pending;
-        let direction = info.direction;
-        if (typeof info.direction === 'undefined') {
-          direction = '';
-        }
         const progress = {
           'docs_read': info.docs_read,
           'docs_written': info.docs_written,
           'doc_write_failures': info.doc_write_failures,
           'pending': info.pending,
-          'direction': direction
+          'direction': 'push'
         };
         this.syncMessage$.next(progress);
       }).on('active', function (info) {
@@ -202,16 +191,12 @@ export class SyncCouchdbService {
         });
       }).on('change', async (info) => {
         await this.variableService.set('sync-pull-last_seq', info.last_seq);
-        let direction = info.direction;
-        if (typeof info.direction === 'undefined') {
-          direction = '';
-        }
         const progress = {
           'docs_read': info.docs_read,
           'docs_written': info.docs_written,
           'doc_write_failures': info.doc_write_failures,
           'pending': info.pending,
-          'direction': direction
+          'direction': 'pull'
         };
         this.syncMessage$.next(progress);
       }).on('active', function (info) {
