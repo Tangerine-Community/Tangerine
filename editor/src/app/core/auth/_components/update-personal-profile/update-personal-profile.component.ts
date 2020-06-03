@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { MenuService } from 'src/app/shared/_services/menu.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -14,11 +15,16 @@ export class UpdatePersonalProfileComponent implements OnInit {
 
   user;
   updateUserPassword = false;
-  constructor(private menuService: MenuService, private userService: UserService, private errorHandler: TangyErrorHandler) { }
+  constructor(
+    private menuService: MenuService,
+    private userService: UserService,
+    private errorHandler: TangyErrorHandler,
+    private router: Router
+  ) { }
 
   async ngOnInit() {
-    this.menuService.setContext(_TRANSLATE('Update Personal Profile'));
-    this.user = await this.userService.getAUserByUsername(await this.userService.getCurrentUser());
+    this.menuService.setContext(_TRANSLATE('Update My Profile'));
+    this.user = await this.userService.getMyUser();
     this.user.password = '';
     this.user.confirmPassword = '';
   }
@@ -29,9 +35,10 @@ export class UpdatePersonalProfileComponent implements OnInit {
         this.user.confirmPassword = null;
         this.user.currentPassword = null;
       }
-      const data = await this.userService.updatePersonalProfile({...this.user, updateUserPassword: this.updateUserPassword});
+      const data = await this.userService.updateMyUser({...this.user, updateUserPassword: this.updateUserPassword});
       if (data === 200) {
         this.errorHandler.handleError(_TRANSLATE('User Details Updated Successfully'));
+        this.router.navigate(['/'])
       } else {
         this.errorHandler.handleError(_TRANSLATE('User Details could not be Updated'));
       }

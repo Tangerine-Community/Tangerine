@@ -39,7 +39,7 @@ const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
    USERS_DB, login, getUserPermissions, updateUserSiteWidePermissions} = require('./auth');
-const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser, getAllUsers, checkIfUserExistByUsername, findOneUserByUsername, updateUser, restoreUser, updatePersonalProfile} = require('./users');
+const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser, getAllUsers, checkIfUserExistByUsername, findOneUserByUsername, findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
@@ -121,6 +121,8 @@ app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuth
 app.get('/users', isAuthenticated, permit(['can_view_users_list']), getAllUsers);
 app.get('/users/byUsername/:username', isAuthenticated, permit(['can_view_users_list']), getUserByUsername);
 app.get('/users/findOneUser/:username', isAuthenticated, permit(['can_view_users_list']), findOneUserByUsername);
+app.get('/users/findMyUser/', isAuthenticated, findMyUser);
+app.put('/users/updateMyUser/', isAuthenticated, updateMyUser);
 app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
 app.post('/users/register-user', isAuthenticated, permit(['can_create_users']), registerUser);
 app.get('/users/isSuperAdminUser/:username', isAuthenticated, isUserSuperAdmin);
@@ -128,8 +130,6 @@ app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
 app.patch('/users/restore/:username', isAuthenticated, permit(['can_edit_users']), restoreUser);
 app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']), deleteUser);
 app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
-// Permission check for username belonging to session is done in route callback.
-app.put('/users/updatePersonalProfile/:username', isAuthenticated, updatePersonalProfile)
 
 /*
  * More API

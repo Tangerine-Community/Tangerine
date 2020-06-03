@@ -38,7 +38,7 @@
           <br>
           <div *ngIf="updateUserPassword">
             <mat-form-field class="tangy-full-width">
-              <input name="password" [(ngModel)]="user.currentPassword" #currentPassword="ngModel" type="currentPassword" matInput placeholder="{{'Current Password'|translate}}"
+              <input name="password" type="password" [(ngModel)]="user.currentPassword" #currentPassword="ngModel" matInput placeholder="{{'Current Password'|translate}}"
                 required>
             </mat-form-field>
             <mat-form-field class="tangy-full-width">
