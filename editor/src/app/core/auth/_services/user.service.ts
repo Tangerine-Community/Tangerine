@@ -108,6 +108,18 @@ export class UserService {
     return <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
   }
 
+  async getMyUser() {
+    try {
+      const data = await this.http.get(`/users/findMyUser/`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.body['data'];
+      }
+    } catch (error) {
+      console.error(error);
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
   async getAUserByUsername(username) {
     try {
       const data = await this.http.get(`/users/findOneUser/${username}`, {observe: 'response'}).toPromise();
@@ -169,9 +181,9 @@ export class UserService {
       return 500;
     }
   }
-  async updatePersonalProfile(payload) {
+  async updateMyUser(payload) {
     try {
-      const data = await this.httpClient.put(`/users/updatePersonalProfile/${payload.username}`,
+      const data = await this.httpClient.put(`/users/updateMyUser/`,
       payload, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         return data.status;

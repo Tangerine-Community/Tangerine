@@ -180,6 +180,19 @@ const restoreUser = async (req, res) => {
   }
 };
 
+const findMyUser = async (req, res) => {
+  try {
+    const user = await findUserByUsername(req.user.name);
+    const { _id, email, firstName, lastName } = user;
+    res.status(200).send({
+      data: { _id, username: user.username, email, firstName, lastName },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ data: `Could not find User` });
+  }
+};
+
 const findOneUserByUsername = async (req, res) => {
   try {
     const { username } = req.params;
@@ -224,14 +237,12 @@ const updateUser = async (req, res) => {
     return res.status(500).send({ data: `Could not update User` });
   }
 };
-const updatePersonalProfile = async (req, res) => {
+
+const updateMyUser = async (req, res) => {
   try {
-    const { username } = req.params;
-    // The username in the request params must match the username as decode from the JWT
-    if (!username || username !== req.user.name) {
-      return res.status(500).send({ data: `Could not update User` });
-    }
+    const username = req.user.name;
     const { firstName, lastName, email, currentPassword, password, confirmPassword, updateUserPassword } = req.body;
+    console.log(req.body)
     if (!firstName || !lastName || !email) {
       return res.status(500).send({ data: `Could not update User` });
     }
@@ -239,7 +250,7 @@ const updatePersonalProfile = async (req, res) => {
       return res.status(500).send({ data: `Could not update User` });
     } else {
       // Check if username and currentPassword supplied are equal to the values stored in the database
-      if (!await areCredentialsValid(username, currentPassword)) {
+      if (updateUserPassword && !await areCredentialsValid(username, currentPassword)) {
         return res.status(500).send({ data: `Could not update User` });
       }
       const user = await findUserByUsername(username);
@@ -253,6 +264,7 @@ const updatePersonalProfile = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error)
     return res.status(500).send({ data: `Could not update User` });
   }
 };
@@ -261,6 +273,8 @@ module.exports = {
   checkIfUserExistByUsername,
   deleteUser,
   findOneUserByUsername,
+  findMyUser,
+  updateMyUser,
   getAllUsers,
   getGroupsByUser,
   getUserByUsername,
@@ -268,6 +282,5 @@ module.exports = {
   isUserSuperAdmin,
   registerUser,
   restoreUser,
-  updatePersonalProfile,
-  updateUser,
+  updateUser
 };
