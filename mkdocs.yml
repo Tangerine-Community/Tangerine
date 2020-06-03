@@ -2,13 +2,39 @@ site_name: Tangerine Documentation
 repo_url: https://github.com/Tangerine-Community/Tangerine
 site_author: Tangerine Community
 theme:
-  name: readthedocs
-  highlightjs: true
-  hljs_languages:
-    - yaml
-    - JavaScript
-    - TypeScript
+  name: material
+  language: en
+  features:
+    - tabs
+  logo: assets/tangerine-logo.svg
+extra_css:
+  - stylesheets/extra.css
 plugins:
   - search
+  - git-revision-date-localized
+  - awesome-pages
+  - minify:
+      minify_html: true
 markdown_extensions:
-  - smarty
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed
+  - pymdownx.tilde
