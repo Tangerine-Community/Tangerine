@@ -110,9 +110,19 @@ export class UserService {
 
   async getMyUser() {
     try {
-      const data = await this.http.get(`/users/findMyUser/`, {observe: 'response'}).toPromise();
-      if (data.status === 200) {
-        return data.body['data'];
+      if (localStorage.getItem('user_id') === 'user1') {
+        return {
+          email: 'user1@tangerinecentral.org',
+          firstName: 'user1',
+          lastName: 'user1',
+          username: 'user1',
+          _id: 'user1'
+        }
+      } else {
+        const data = await this.http.get(`/users/findMyUser/`, {observe: 'response'}).toPromise();
+        if (data.status === 200) {
+          return data.body['data'];
+        }
       }
     } catch (error) {
       console.error(error);
