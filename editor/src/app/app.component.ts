@@ -30,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
   window: any;
   menuService: MenuService;
   sessionTimeoutCheckTimerID;
+  isConfirmDialogActive = false;
 
   @ViewChild('snav', {static: true}) snav: MatSidenav;
 
@@ -104,10 +105,12 @@ export class AppComponent implements OnInit, OnDestroy {
     const claims = JSON.parse(atob(token.split('.')[1]));
     const expiryTimeInMs = claims['exp'] * 1000;
     const minutesBeforeExpiry = expiryTimeInMs - (15 * 60 * 1000); // warn 15 minutes before expiry of token
-    if (Date.now() >= minutesBeforeExpiry) {
+    if (Date.now() >= minutesBeforeExpiry && !this.isConfirmDialogActive) {
+      this.isConfirmDialogActive = true;
       const extendSession = confirm(_TRANSLATE('You are about to be logged out from Tangerine. Should we extend your session?'));
       if (extendSession) {
         await this.authenticationService.extendUserSession();
+        this.isConfirmDialogActive = false;
       } else {
         await this.logout();
       }
