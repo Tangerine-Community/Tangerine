@@ -76,10 +76,11 @@ export class TangyFormsPlayerComponent {
     //
     // Get form ingredients.
     const formResponse = this.response
-      ? this.response
+      ? new TangyFormResponseModel(this.response)
       : this.formResponseId
         ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
         : ''
+    const response = formResponse
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']
@@ -152,7 +153,7 @@ export class TangyFormsPlayerComponent {
     await this.service.saveResponse({
       ...state,
       _rev: stateDoc['_rev'],
-      location: this.location,
+      location: this.location || state.location,
       ...this.metadata
     })
     this.response = state
