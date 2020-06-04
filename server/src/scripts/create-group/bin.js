@@ -35,7 +35,7 @@ async function getUser1HttpInterface() {
 
 async function createGroup() {
   const http = await getUser1HttpInterface()
-  const serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
+  const serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
   const groupLabel = process.argv[2]
   const group = (await http.post('/nest/group/create', {label: groupLabel}))['data']
   console.log('Created group:')
