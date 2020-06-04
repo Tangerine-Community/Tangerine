@@ -4,12 +4,12 @@ if (process.argv[2] === '--help') {
   console.log('Create a group given a label and an optional content set.'
   console.log('A local content set is any directory found in the /tangerine/content-sets/ directory.')
   console.log('Usage:')
-  console.log('       generate-cases <label> [contentSet]')
+  console.log('       create-group <label> [contentSet]')
   console.log('')
   console.log('Examples:')
-  console.log('       generate-cases "New Group A"')
-  console.log('       generate-cases "New Group B" case-module')
-  console.log('       generate-cases "New Group C" https://github.com/rjsteinert/tangerine-content-set-test.git')
+  console.log('       create-group "New Group A"')
+  console.log('       create-group "New Group B" case-module')
+  console.log('       create-group "New Group C" https://github.com/rjsteinert/tangerine-content-set-test.git')
   process.exit()
 }
 
