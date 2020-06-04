@@ -1,3 +1,4 @@
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
@@ -24,13 +25,7 @@ export class EventFormComponent implements OnInit {
   templateId:string
   formResponseId:string
 
-  tangyFormEl:any
-  throttledSaveLoaded:boolean;
-  throttledSaveFiring:boolean;
-  formResponse:any
-
   loaded = false
-  lastResponseSeen:any
 
   window:any
 
@@ -94,6 +89,21 @@ export class EventFormComponent implements OnInit {
         setTimeout(async () => {
           this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
           await this.caseService.save()
+          const tangyFormResponseModel = new TangyFormResponseModel(this.formPlayer.response)
+          const inputsWithDiscrepancy = tangyFormResponseModel.inputs
+            .reduce((inputsWithDiscrepancy, input) => input.hasDiscrepancy ? [...inputsWithDiscrepancy, input] : inputsWithDiscrepancy, [])
+          if (inputsWithDiscrepancy.length > 0) {
+            const formInfo = this.formPlayer.formInfo
+            await this.caseService.createIssue(
+              `Discrepancy on ${formInfo.title}`, 
+              '', 
+              this.caseService.case._id, 
+              this.caseEvent.id,
+              this.eventForm.id,
+              window['userProfile']._id,
+              window['username']
+            )
+          }
           await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
         }, 500)
       })
