@@ -364,13 +364,13 @@ export class UserService {
       if (appConfig.syncProtocol === '2') {
         await this.lockBoxService.openLockBox(username, password)
       }
-      // Make the user's database available for code in forms to use.
+      const userAccount = await this.getUserAccount(username)
+      this.setCurrentUser(userAccount.username)
+      // Make globals available for form developers.
       window['userDb'] = await this.getUserDatabase(username)
       window['username'] = this.getCurrentUser()
       window['userProfile'] = await this.getUserProfile()
       window['userId'] = window['userProfile']._id
-      const userAccount = await this.getUserAccount(username)
-      this.setCurrentUser(userAccount.username)
       this.userLoggedIn$.next(userAccount)
       return true
     } else {;
