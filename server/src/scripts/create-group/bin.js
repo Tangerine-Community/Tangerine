@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 if (process.argv[2] === '--help') {
-  console.log('Create a group given a label and an optional content set.')
+  console.log('Create a group given a label and an optional content set.'
+  console.log('A local content set is any directory found in the /tangerine/content-sets/ directory.')
   console.log('Usage:')
   console.log('       generate-cases <label> [contentSet]')
   console.log('')
@@ -42,7 +43,7 @@ async function createGroup() {
   if (process.argv[3]) {
     const contentSet = process.argv[3].includes('.git')
       ? process.argv[3]
-      : `/tangerine/test/content-sets/${process.argv[3]}`
+      : `/tangerine/content-sets/${process.argv[3]}`
     const groupId = group._id
     const groupPath = '/tangerine/client/content/groups/' + groupId
     await exec(`rm -r ${groupPath}`)
