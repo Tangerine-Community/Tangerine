@@ -4,10 +4,6 @@ import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js'
 import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-
-import { UserService } from '../../shared/_services/user.service';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
@@ -20,10 +16,18 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 })
 export class TangyFormsPlayerComponent {
 
-  @Input('formId') formId:string
-  @Input('templateId') templateId:string
+  // Use on of three to do different things.
+  // 1. Use this to have the component load the response for you. 
   @Input('formResponseId') formResponseId:string
+  // 2. Use this if you want to attach the form response yourself.
+  @Input('response') response:TangyFormResponseModel
+  // 3. Use this is you want a new form response but want define which form to use.
+  @Input('formId') formId:string
+
+  @Input('templateId') templateId:string
   @Input('location') location:any
+  @Input('skipSaving') skipSaving = false
+  @Input('preventSubmit') preventSubmit = false
   @Input('metadata') metadata:any
 
   $rendered = new Subject()
@@ -32,18 +36,16 @@ export class TangyFormsPlayerComponent {
 
   formInfo:FormInfo
   formTemplatesInContext:Array<FormTemplate>
-  response:any
+  formEl:any
 
   throttledSaveLoaded;
   throttledSaveFiring;
 
-  formEl;
   window:any;
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
     private service: TangyFormService,
-    private userService: UserService,
   ) {
     this.window = window
   }
@@ -66,13 +68,19 @@ export class TangyFormsPlayerComponent {
     }
   }
 
+  unlock() {
+    this.formEl.unlock()
+  }
+
   async render() {
     //
-    this.window.tangyLocationFilterBy = this.location || (await this.userService.getUserLocations()).join(',')
     // Get form ingredients.
-    const formResponse = this.formResponseId
-      ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
-      : ''
+    const formResponse = this.response
+      ? new TangyFormResponseModel(this.response)
+      : this.formResponseId
+        ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
+        : ''
+    const response = formResponse
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']
@@ -98,11 +106,14 @@ export class TangyFormsPlayerComponent {
       }
       this.response = formEl.response
       // Listen up, save in the db.
-      formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-        let response = _.target.store.getState()
-        this.throttledSaveResponse(response)
-      })
-      formEl.addEventListener('submit', () => {
+      if (!this.skipSaving) {
+        formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+          let response = _.target.store.getState()
+          this.throttledSaveResponse(response)
+        })
+      }
+      formEl.addEventListener('submit', (event) => {
+        if (this.preventSubmit) event.preventDefault() 
         this.$submit.next(true)
       })
     }
@@ -142,7 +153,7 @@ export class TangyFormsPlayerComponent {
     await this.service.saveResponse({
       ...state,
       _rev: stateDoc['_rev'],
-      location: this.location,
+      location: this.location || state.location,
       ...this.metadata
     })
     this.response = state
