@@ -24,6 +24,7 @@ export class EventFormComponent implements OnInit {
   formId:string
   templateId:string
   formResponseId:string
+  caseId:string
 
   loaded = false
 
@@ -46,6 +47,7 @@ export class EventFormComponent implements OnInit {
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
+      this.caseId = params.caseId
       this.window.caseService = this.caseService
       this.caseEvent = this
         .caseService
