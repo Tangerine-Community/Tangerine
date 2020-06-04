@@ -166,6 +166,7 @@ RUN_OPTIONS="
   --env \"T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH\" \
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
   $T_PORT_MAPPING \
+  --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \

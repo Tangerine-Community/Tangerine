@@ -158,6 +158,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/:delegated \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups:delegated \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets:delegated \
+  --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json:delegated \
   --volume $(pwd)/server/src:/tangerine/server/src:delegated \
   --volume $(pwd)/client/src:/tangerine/client/src:delegated \
