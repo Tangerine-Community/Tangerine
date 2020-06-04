@@ -3,6 +3,7 @@
 echo ""
 echo "Tangerine Commands:"
 echo ""
+echo "create-group             (Create a new group with label and optional content-set)"
 echo "reporting-cache-clear    (Clear all reporting caches)"
 echo "reporting-worker-pause   (Pause the reporting worker to prevent reporting caches from being built)"
 echo "reporting-worker-unpause (Unpause the reporting worker to continue building caches)"
