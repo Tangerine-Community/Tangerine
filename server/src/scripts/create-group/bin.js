@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 if (process.argv[2] === '--help') {
-  console.log('Create a group given a label and an optional content set.'
+  console.log('Create a group given a label and an optional content set.')
   console.log('A local content set is any directory found in the /tangerine/content-sets/ directory.')
   console.log('Usage:')
   console.log('       create-group <label> [contentSet]')
