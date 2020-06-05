@@ -15,6 +15,18 @@
 - Developer notes
   - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
 
+__Upgrade instructions:__
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.10.0
+# Now you are ready to start the server.
+./start.sh v3.10.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.10.0.js
+```
+
 ## v3.9.1
 - Fixes
   - Database views are missing when running `tangerine-preview` or `npm start` [#2096](https://github.com/Tangerine-Community/Tangerine/issues/2096)
