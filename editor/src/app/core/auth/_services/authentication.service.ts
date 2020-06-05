@@ -66,6 +66,7 @@ export class AuthenticationService {
       if (data.status === 200) {
         const token = data.body['data']['token'];
         const jwtData = jwt_decode(token);
+        document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
         document.cookie = `Authorization=${token}`
         localStorage.setItem('token', token);
         localStorage.setItem('user_id', jwtData.username);
