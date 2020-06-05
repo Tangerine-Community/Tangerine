@@ -1,16 +1,17 @@
 # Changelog
 ## v3.10.0
-- Features
-  - SAE Process [#2012](https://github.com/Tangerine-Community/Tangerine/issues/2012)
-  - Data Inquiry [#1768](https://github.com/Tangerine-Community/Tangerine/issues/1768), [#1982](https://github.com/Tangerine-Community/Tangerine/issues/1982), [#1760](https://github.com/Tangerine-Community/Tangerine/issues/1760)
-  - Role Based Access Controls for sitewide permissions [#2027](https://github.com/Tangerine-Community/Tangerine/issues/2027)
-  - Case Reporting outputs [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
-  - Refactor Editor UI for question editing [#119](https://github.com/Tangerine-Community/tangy-form-editor/pull/119)
-- Fixes
-  - Use of doc_id's instead of selector for sync push [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
-  - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
+- New Features 
+  - Data Collector causes Issue to be created due to use of API in the form [#2145](https://github.com/Tangerine-Community/Tangerine/issues/2145) [[demo](https://youtu.be/sgGRS110qq4)]
+  - Data Collector causes Issue to be created due to `discrepancy-if` logic in form [#2171](https://github.com/Tangerine-Community/Tangerine/issues/2171) [[demo](https://youtu.be/GSQfP-6HBiY)]
+  - Editor user with appropriate permission manages site level permissions of users and edits details and password of user [#2155](https://github.com/Tangerine-Community/Tangerine/issues/2155) [[demo](https://youtu.be/Nz8Cu--Ek1E)]
+  - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]
+  - Editor views question configuration by category (as opposed to long list) [#2097](https://github.com/Tangerine-Community/Tangerine/issues/2097) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2097#issue-611877603)]
+  - Synapse consumes structured outputs based on Case ER Diagram [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
+- Bug Fixes
   - Resolve Out-of-memory issue when syncing large number of records [#2146](https://github.com/Tangerine-Community/Tangerine/issues/2146)
-  - Implemented improvements to sync strategy [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
+  - Improve two-way sync efficiency in PouchDB by using `doc_ids` filter as opposed to mango query [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
+- Developer notes
+  - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
 
 ## v3.9.1
 - Fixes
