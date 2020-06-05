@@ -11,3 +11,5 @@ The following command downloads a content set known to support comon Tangerine f
 If you add `--help` to the `create-group` command you may see other options as well.
 
 `docker exec tangerine create-group --help`
+
+To see more examples, check out the [demo video](https://youtu.be/dGo4C90aAto) from the v3.10.0 release.
