@@ -43,6 +43,9 @@ fi
 if [ ! -d data/client/releases/qa/dat ]; then
   mkdir data/client/releases/qa/dat
 fi
+if [ ! -f data/id_rsa.pub ]; then
+  echo '' > data/id_rsa.pub
+fi
 if [ ! -f data/reporting-worker-state.json ]; then
   echo '{}' > data/reporting-worker-state.json
 fi
@@ -170,6 +173,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
+  --volume $(pwd)/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/archives:/archives/ \
