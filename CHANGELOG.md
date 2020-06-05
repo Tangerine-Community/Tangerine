@@ -8,6 +8,7 @@
   - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]
   - Editor views question configuration by category (as opposed to long list) [#2097](https://github.com/Tangerine-Community/Tangerine/issues/2097) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2097#issue-611877603)]
   - Synapse consumes structured outputs based on Case ER Diagram [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
+  - Server Admin creates group on command line with local or remote content set [#2174](https://github.com/Tangerine-Community/Tangerine/issues/2174) [[demo](https://youtu.be/dGo4C90aAto)]
 - Bug Fixes
   - Resolve Out-of-memory issue when syncing large number of records [#2146](https://github.com/Tangerine-Community/Tangerine/issues/2146)
   - Improve two-way sync efficiency in PouchDB by using `doc_ids` filter as opposed to mango query [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
