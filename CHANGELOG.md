@@ -7,6 +7,7 @@
   - Editor user with appropriate permission manages site level permissions of users and edits details and password of user [#2155](https://github.com/Tangerine-Community/Tangerine/issues/2155) [[demo](https://youtu.be/Nz8Cu--Ek1E)]
   - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]
   - Editor views question configuration by category (as opposed to long list) [#2097](https://github.com/Tangerine-Community/Tangerine/issues/2097) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2097#issue-611877603)]
+  - Tangerine User views form response in alternative templates [#2176](https://github.com/Tangerine-Community/Tangerine/issues/2176) [[demo](https://youtu.be/f9gGjXDeiuw)]
   - Synapse consumes structured outputs based on Case ER Diagram [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
   - Server Admin creates group on command line with local or remote content set [#2174](https://github.com/Tangerine-Community/Tangerine/issues/2174)
     - [Demo: Server Admin creates group on command line from local or remote content set](https://youtu.be/dGo4C90aAto)
