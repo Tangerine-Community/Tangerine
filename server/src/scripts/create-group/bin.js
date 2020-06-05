@@ -47,7 +47,7 @@ async function createGroup() {
     const groupId = group._id
     const groupPath = '/tangerine/client/content/groups/' + groupId
     await exec(`rm -r ${groupPath}`)
-    await exec(`${contentSet.includes('.git') ? `git clone ` : `cp -r `} ${contentSet} ${groupPath}`)
+    await exec(`${contentSet.includes('.git') ? `GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no' git clone ` : `cp -r `} ${contentSet} ${groupPath}`)
     const appConfig = await fs.readJson(`${groupPath}/app-config.json_example`)
     await fs.writeJson(`${groupPath}/app-config.json`, {
       ...appConfig,
