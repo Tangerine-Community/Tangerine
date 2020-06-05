@@ -11,3 +11,7 @@ table, tr, td {
 mat-table {
   margin-bottom: 100px;
 }
+
+.location-cell {
+  padding: 5px;
+}
