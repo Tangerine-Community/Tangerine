@@ -4,9 +4,13 @@
         <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="location">
-        <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
-        <mat-cell *matCellDef="let element"><div [innerHTML]="element.syncLocations"></div></mat-cell>
+      <ng-container matColumnDef="assigned-location">
+        <mat-header-cell *matHeaderCellDef> Assigned Location </mat-header-cell>
+        <mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.assignedLocation"></div></mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="sync-location">
+        <mat-header-cell *matHeaderCellDef> Sync Settings </mat-header-cell>
+        <mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.syncLocations"></div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="claimed">
         <mat-header-cell *matHeaderCellDef> Claimed </mat-header-cell>
