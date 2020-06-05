@@ -55,7 +55,7 @@
           "id": "event-form-definition-naeu32",
           "formId": "test-issues-created-programatically-on-client",
           "forCaseRole": "role-2",
-          "name": "Test Issues Created Programatically on Client",
+          "name": "Data Collector causes Issue to be created due to use of API in the form",
           "required": true,
           "repeatable": false 
         },
@@ -63,7 +63,7 @@
           "id": "event-form-definition-vwgpn6",
           "formId": "test-issues-created-on-client",
           "forCaseRole": "role-2",
-          "name": "Test Issues Created on Client",
+          "name": "Data Collector causes Issue to be created due to `discrepancy-if` logic in form",
           "required": true,
           "repeatable": false 
         }
