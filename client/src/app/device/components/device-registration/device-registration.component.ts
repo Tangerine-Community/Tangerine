@@ -94,7 +94,10 @@ export class DeviceRegistrationComponent implements OnInit {
       device = await this.deviceService.getRemoteDeviceInfo(deviceId, deviceToken)
     } catch (error) {
       if (typeof error !== 'undefined') {
-        if ((typeof error.message !== 'undefined') && (error.message.includes('Http failure response'))) {
+        if (typeof error.error !== 'undefined' && typeof error.error.error !== 'undefined') {
+          // TODO: do something with the errorDetails object, which has the groupId that was passed in.
+          this.gatherInfo(error.error.error)
+        } else if ((typeof error.message !== 'undefined') && (error.message.includes('Http failure response'))) {
           const errorMessage = error.message.slice(0, 50) + '...'
           this.gatherInfo(_TRANSLATE('Something went wrong; you may not have Internet access.') + ` <br/>Error:  ${errorMessage}`)
         } else {
