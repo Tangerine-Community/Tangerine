@@ -113,7 +113,7 @@
 
   SQLitePlugin.prototype.transaction = function(fn, error, success) {
     if (!this.openDBs[this.dbname]) {
-      error(newSQLError('database not open'));
+      error(newSQLError('database ' + this.dbname + ' not open'));
       return;
     }
     this.addTransaction(new SQLitePluginTransaction(this, fn, error, success, true, false));
