@@ -7,7 +7,7 @@ Before you install `tangerine-preview`, make sure to install [node.js](https://n
 
 If you are on macOS, you will need to set permissions to allow for global installs by running the following command.
 ```
-sudo chown -R \`whoami\` /usr/local/lib/node_modules
+sudo chown -R `whoami` /usr/local/lib/node_modules
 ```
 
 For all platforms, open a command line terminal and run Tangerine Preview install command.
