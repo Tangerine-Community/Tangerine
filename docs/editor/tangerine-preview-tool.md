@@ -1,5 +1,5 @@
 ## Tangerine Preview
-Tangerine Preview is a command line tool for previewing the Tangerine content you are working on your local computer. It work on Windows, Mac, and Linux. 
+Tangerine Preview is a command line tool for previewing the Tangerine content you are working on your local computer. It work on Windows, Mac, and Linux. If you are on macOS, check out this [video](https://youtu.be/WV3U7AABjXA) that demonstrates how to install and use the Tangerine Preview tool.
 
 
 ## Install
