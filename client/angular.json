@@ -22,7 +22,6 @@
             "es5BrowserSupport": false,
             "assets": [
               "src/libs/bcrypt.min.js",
-              "src/libs/SQLitePlugin.js",
               "src/libs/plotly-latest.min.js",
               "src/app/core/sync-records/peers/memorystream-standalone.js",
               "src/app/core/sync-records/peers/pouchdb.replication-stream.min.js",
@@ -30,8 +29,7 @@
               "src/logo.png",
               "src/loading.gif",
               "src/shell/index.html",
-              "src/assets",
-              "src/libs/SQLitePlugin.js"
+              "src/assets"
             ],
             "styles": [
               "./node_modules/material-design-icons/iconfont/material-icons.css",

@@ -13,8 +13,6 @@ PouchDB.plugin(window['PouchReplicationStream'].plugin);
 PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
 PouchDB.defaults({auto_compaction: true, revs_limit: 1});
 
-const OPEN_DATABASE_FLAGS = 6
-
 export function DB(name, key = ''):PouchDB {
 
   function openCallback (connectionId) {
@@ -33,7 +31,10 @@ export function DB(name, key = ''):PouchDB {
       androidDatabaseImplementation: 2
     };
     if (key) {
+      window['sqlitePlugin'].openDatabase({name, key, location: 'default', androidDatabaseImplementation: 2});
       pouchDBOptions.key = key
+    } else {
+      window['sqlitePlugin'].openDatabase({name, location: 'default', androidDatabaseImplementation: 2});
     }
   }
   let pouch;
