@@ -11,15 +11,14 @@ export enum NotificationType {
 
 class Notification {
   id: string
-  userId:string
-  userName:string
   label:string
   description:string
+  link:string
+  icon:string
+  color:string
+  enforceAttention:boolean
+  persist:boolean
   status:NotificationStatus 
-  caseId:string
-  eventId:string
-  eventFormId:string
-  formResponseId:string
   createdOn:number
   createdAppContext:AppContext
   constructor(data?:any) {

@@ -1,5 +1,5 @@
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
-import { Issue, IssueStatus, IssueEvent } from './../classes/issue.class';
+import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -324,26 +324,21 @@ class CaseService {
   /*
    * Notification API
    */
-  createNotification (label = '', description = '', type:NotificationType, eventId:string, eventFormId:string, userId, userName) {
-    const formResponseId = this.case 
-      .events.find(event => event.id === eventId)
-      .eventForms.find(eventForm => eventForm.id === eventFormId)
-      .formResponseId
+
+  createNotification (label = '', description = '', link = '', icon = 'notification_important', color = '#CCC', enforceAttention = false, persist = false) {
     const notification = <Notification>{
       id: UUID(),
       status: NotificationStatus.Open,
-      type,
-      userId,
-      userName,
-      label,
-      description,
-      caseId: this.case._id,
-      eventId,
-      eventFormId,
-      formResponseId,
       createdAppContext: AppContext.Client,
       createdOn: Date.now(),
-    }
+      label,
+      description,
+      link,
+      icon,
+      color,
+      enforceAttention,
+      persist
+   }
     this.case.notifications.push(notification)
   }
 
