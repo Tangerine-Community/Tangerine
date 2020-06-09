@@ -426,6 +426,11 @@ export class UserService {
     this.setCurrentUser('');
     this.getUserAccount(username)
       .then((userAccount) => this.userLoggedOut$.next(userAccount))
+    // TODO test on upgrades - pathing may have changed.
+    // TODO: need to add index.html/full path ???
+    if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
+      window.location.href = window.location.protocol + '//' + window.location.pathname + 'index.html'
+    }
   }
 
   isLoggedIn() {
