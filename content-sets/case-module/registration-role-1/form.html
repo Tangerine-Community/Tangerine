@@ -30,6 +30,20 @@
         caseService.setParticipantData(participantRole2.id, 'participant_id', `${getValue('participant_id')}-${role2ParticipantNumber}`)
         role2ParticipantNumber++
       }
+      caseService.createNotification(
+        `Registration success!`, 
+        `
+          Thank you for registering 
+            ${caseService.getParticipantData(participantRole1.id, 'first_name')}
+            ${caseService.getParticipantData(participantRole1.id, 'last_name')}.
+
+          We have created ${parseInt(getValue('number_of_role_2_participants_to_enroll'))} additional participants for you.
+          Please complete their registration forms.
+        `,
+        ``,
+        `thumb_up`,
+        `#b2fba5`
+      )
     }
   "
 >
