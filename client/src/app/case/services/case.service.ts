@@ -1,4 +1,4 @@
-import { IssueEventType } from './../classes/issue.class';
+import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent } from './../classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
@@ -321,6 +321,53 @@ class CaseService {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
+  /*
+   * Notification API
+   */
+  createNotification (label = '', description = '', type:NotificationType, eventId:string, eventFormId:string, userId, userName) {
+    const formResponseId = this.case 
+      .events.find(event => event.id === eventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
+    const notification = <Notification>{
+      id: UUID(),
+      status: NotificationStatus.Open,
+      type,
+      userId,
+      userName,
+      label,
+      description,
+      caseId: this.case._id,
+      eventId,
+      eventFormId,
+      formResponseId,
+      createdAppContext: AppContext.Client,
+      createdOn: Date.now(),
+    }
+    this.case.notifications.push(notification)
+  }
+
+  async openNotification(notificationId:string) {
+    this.case.notifications = this.case.notifications.map(notification => {
+      return notification.id === notificationId
+        ? <Notification>{
+          ...notification,
+          status: NotificationStatus.Open
+        }
+        : notification
+    })
+  }
+
+  async closeNotification(notificationId:string) {
+    this.case.notifications = this.case.notifications.map(notification => {
+      return notification.id === notificationId
+        ? <Notification>{
+          ...notification,
+          status: NotificationStatus.Closed
+        }
+        : notification
+    })
+  }
 
   /*
    *
