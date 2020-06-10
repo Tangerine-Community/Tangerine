@@ -2,6 +2,15 @@ h2 {
     margin: 30px 0px 25px 20px;
 }
 
+.screen {
+    position: absolute;
+    background: #000;
+    opacity: .5;
+    z-index: 987654321;
+    width: 100%;
+    height: 5000px;
+}
+
 .subject-header {
     background: #212a3f;
     color: white;
@@ -34,8 +43,10 @@ h2 {
 }
 
 .wrapper {
+    position: relative;
     margin: 0px;
 }
+
 paper-button {
     background: var(--accent-color);
     color: white;

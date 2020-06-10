@@ -325,7 +325,7 @@ class CaseService {
    * Notification API
    */
 
-  createNotification (label = '', description = '', link = '', icon = 'notification_important', color = '#CCC', enforceAttention = false, persist = false) {
+  createNotification (label = '', description = '', link = '', icon = 'notification_important', color = '#CCC', persist = false, enforceAttention = false ) {
     const notification = <Notification>{
       id: UUID(),
       status: NotificationStatus.Open,
