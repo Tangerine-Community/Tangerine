@@ -62,9 +62,9 @@ There is no template for this one but make sure to add the `technical` label.
   
   Git commands to keep your branch in-sync:
   ```shell script
-    git pull
-    git merge release/v3.x.x # (if currently in feature freeze)
-    git merge next
+    git fetch origin
+    git merge origin/release/v3.x.x # (if currently in feature freeze)
+    git merge origin/next  
   ```
 - When your PR is ready, add notes to the `CHANGELOG.md` file in your branch and request a review.
 - After code review, if code is merged, the Maintainer will tag the next branch with a prerelease tag and mark corresponding issue with "review" tag for QA.
