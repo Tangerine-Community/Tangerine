@@ -102,5 +102,4 @@ button[type="submit"] {
     border-radius: .25rem;
 }
 :host {
-    position: relative;
 }
