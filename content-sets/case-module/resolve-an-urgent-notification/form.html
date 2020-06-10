@@ -1,0 +1,15 @@
+<tangy-form id="resolve-an-urgent-notification" title="Data Collector resolves urgent notification"
+  on-submit="
+    for (let notification of caseService.case.notifications) {
+      if (notification.link === window.location.hash.substr(1)) {
+        caseService.closeNotification(notification.id)
+      }
+    }
+  "
+>
+  <tangy-form-item id="item1">
+    <tangy-box name="info">
+      Submitting this form will resolve the urgent notification related to it.
+    </tangy-box>
+  </tangy-form-item>
+</tangy-form>
