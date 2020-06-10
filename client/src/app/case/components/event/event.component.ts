@@ -1,3 +1,4 @@
+import { NotificationStatus } from './../../classes/notification.class';
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 
 import { Component, OnInit, AfterContentInit, ChangeDetectorRef } from '@angular/core';
@@ -34,6 +35,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
+  hasNotificationEnforcingAttention = false
   window:any
 
   constructor(
@@ -82,6 +84,17 @@ export class EventComponent implements OnInit, AfterContentInit {
       this.getParticipantInfo()
       // ^ Remove this filter??
       //this.calculateAvailableEventFormDefinitions()
+      if (this.caseService.case.notifications) {
+        this.hasNotificationEnforcingAttention = this
+          .caseService
+          .case
+          .notifications
+          .reduce((hasNotificationEnforcingAttention, notification) => {
+            return hasNotificationEnforcingAttention || (notification.enforceAttention && notification.status === NotificationStatus.Open)
+             ? true
+             : false
+          }, false)
+      }
       this.loaded = true
       this.ref.detectChanges()
     })
