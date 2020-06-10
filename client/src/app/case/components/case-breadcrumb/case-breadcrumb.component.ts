@@ -1,3 +1,4 @@
+import { NotificationStatus } from './../../classes/notification.class';
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
@@ -17,6 +18,7 @@ export class CaseBreadcrumbComponent implements OnInit {
   primaryText = ''
   secondaryText = ''
   secondaryLink = ''
+  hasActiveNotification = false
 
   constructor(
     private caseService: CaseService,
@@ -71,7 +73,13 @@ export class CaseBreadcrumbComponent implements OnInit {
         ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\`
         : \`Case: ${caseInstance._id.substr(0,6)} \`
     `)
+    this.evaluateHasActiveNotifications()
     this.ref.detectChanges()
+  }
+
+  evaluateHasActiveNotifications() {
+    this.hasActiveNotification = this.caseService.case.notifications
+      .reduce((hasActiveNotification, notification) => hasActiveNotification || notification.status === NotificationStatus.Open ? true : false, false) 
   }
 
 }
