@@ -36,6 +36,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
   hasNotificationEnforcingAttention = false
+  _canExitToRoute = []
   window:any
 
   constructor(
@@ -94,10 +95,23 @@ export class EventComponent implements OnInit, AfterContentInit {
              ? true
              : false
           }, false)
+        this._canExitToRoute = this
+          .caseService
+          .case
+          .notifications
+          .reduce((canExitToRoute, notification) => {
+            return (notification.enforceAttention && notification.status === NotificationStatus.Open)
+             ? [...canExitToRoute, notification.link]
+             : canExitToRoute
+          }, [])
       }
       this.loaded = true
       this.ref.detectChanges()
     })
+  }
+
+  exitRoutes() {
+    return this._canExitToRoute
   }
 
   calculateAvailableEventFormDefinitionsForParticipant(participantId) {
