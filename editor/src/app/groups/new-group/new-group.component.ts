@@ -39,6 +39,7 @@ export class NewGroupComponent implements OnInit {
       }
     } catch (error) {
       console.log(error);
+      this.errorHandler.handleError(_TRANSLATE('Could not create Group'));
     }
   }
 

@@ -1,3 +1,5 @@
+import { IssueStatus, IssueEventType } from './../classes/issue.class';
+import { Issue, IssueEvent } from 'src/app/case/classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -16,6 +18,7 @@ import { Query } from '../classes/query.class'
 import * as UUID from 'uuid/v4'
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
+import { AppContext } from 'src/app/app-context.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +35,8 @@ class CaseService {
   queryFormId: any
 
   openCaseConfirmed = false
+
+  _shouldSave = true
 
   constructor(
     private tangyFormService: TangyFormService,
@@ -86,6 +91,12 @@ class CaseService {
 
   async load(id:string) {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
+    this._shouldSave = true
+  }
+
+  async loadInMemory(caseData:Case) {
+    await this.setCase(new Case(caseData))
+    this._shouldSave = false
   }
 
   async getCaseDefinitionByID(id:string) {
@@ -94,8 +105,10 @@ class CaseService {
   }
 
   async save() {
-    await this.tangyFormService.saveResponse(this.case)
-    await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    if (this._shouldSave) {
+      await this.tangyFormService.saveResponse(this.case)
+      await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    }
   }
 
   createEvent(eventDefinitionId:string, createRequiredEventForms = false): CaseEvent {
@@ -168,6 +181,7 @@ class CaseService {
   getCurrentCaseEventId() {
     return window.location.hash.split('/')[5];
   }
+
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     const eventForm = <EventForm>{
       id: UUID(),
@@ -185,6 +199,7 @@ class CaseService {
       .push(eventForm)
     return eventForm
   }
+
   deleteEventFormInstance(caseEventId: string, eventFormId: string) {
     this
     .case
@@ -194,6 +209,7 @@ class CaseService {
       .events
       .find(caseEvent => caseEvent.id === caseEventId).eventForms.filter(eventForm => eventForm.id !== eventFormId);
   }
+
   setCaseEventFormsData(caseEventId:string,eventFormId:string, key:string, value:string) {
     const index = this
     .case
@@ -221,6 +237,7 @@ class CaseService {
     .events
     .find(caseEvent => caseEvent.id === caseEventId).eventForms[index].data[key] || ''
   }
+
   markEventFormComplete(caseEventId:string, eventFormId:string) {
     let caseEvent = this
       .case
@@ -318,6 +335,236 @@ class CaseService {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
+  /*
+   *
+   * START Issues API.
+   * 
+   */
+
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
+    const caseData = await this.tangyFormService.getResponse(caseId)
+    const formResponseId = caseData
+      .events.find(event => event.id === eventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
+    const issue = new Issue({
+      _id: UUID(),
+      label,
+      location: caseData.location,
+      caseId,
+      createdOn: Date.now(),
+      createdAppContext: AppContext.Editor,
+      resolveOnAppContext: AppContext.Editor,
+      eventId,
+      eventFormId,
+      status: IssueStatus.Open,
+      formResponseId
+    })
+    await this.tangyFormService.saveResponse(issue)
+    return await this.openIssue(issue._id, comment, userId, userName)
+  }
+
+  async getIssue(issueId) {
+    return new Issue(await this.tangyFormService.getResponse(issueId))
+  }
+
+  async openIssue(issueId:string, comment:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+    const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Open,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        comment,
+        caseInstance,
+        response 
+      }
+    })
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Open
+    })
+  }
+
+  async rebaseIssue(issueId:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+    const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Rebase,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        caseInstance,
+        response 
+      }
+    })
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Open
+    })
+  }
+
+
+
+  async closeIssue(issueId:string, comment:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Close,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        comment
+      }
+    })
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Closed
+    })
+  }
+
+
+  async commentOnIssue(issueId, comment, userId, userName) {
+    const issue = <Issue>await this.tangyFormService.getResponse(issueId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Comment,
+      userName,
+      createdAppContext: AppContext.Editor,
+      date: Date.now(),
+      userId,
+      data: {
+        comment
+      }
+    })
+    return await this.tangyFormService.saveResponse(issue)
+  }
+
+  async getProposedChange(issueId) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const lastProposedChangeEvent = [...issue.events]
+      .reverse()
+      .find(event => event.type === IssueEventType.ProposedChange)
+    if (!lastProposedChangeEvent) {
+      return {
+        response: await this.tangyFormService.getResponse(issue.formResponseId),
+        caseInstance: await this.tangyFormService.getResponse(issue.caseId)
+      }
+    } else {
+      return lastProposedChangeEvent.data 
+    }
+  }
+
+  async saveProposedChange(response, caseInstance, issueId, userId, userName) {
+    const issue = <Issue>await this.tangyFormService.getResponse(issueId)
+    // Calculate the diff.
+    let a:any
+    let b = response
+    if (await this.hasProposedChange(issueId)) {
+      const currentProposedChange = await this.getProposedChange(issueId)
+      a = currentProposedChange.response
+    } else {
+      const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+      a = baseEvent.data.response
+    }
+    const diff = this.diffFormResponses(a, b)
+    // Create the ProposedChange event.
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.ProposedChange,
+      userName,
+      createdAppContext: AppContext.Editor,
+      date: Date.now(),
+      userId,
+      data: {
+        diff,
+        response,
+        caseInstance
+      }
+    })
+    return await this.tangyFormService.saveResponse(issue)
+  }
+
+  async mergeProposedChange(issueId:string, userId:string, userName:string) {
+    // @TODO Throw error is baseEvent's _rev's don't match what is in the db.
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Merge,
+      date: Date.now(),
+      createdAppContext: AppContext.Editor,
+      userName,
+      userId
+    })
+    const proposedFormResponse = await this.getProposedChange(issueId)
+    await this.tangyFormService.saveResponse(proposedFormResponse.response)
+    await this.tangyFormService.saveResponse(proposedFormResponse.caseInstance)
+    await this.load(proposedFormResponse.caseInstance._id)
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Merged
+    })
+  }
+
+  async hasProposedChange(issueId:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const indexOfBaseEvent = issue.events.findIndex(event => event.id === baseEvent.id)
+    return !!issue.events.find((event, i) => event.type === IssueEventType.ProposedChange && i > indexOfBaseEvent)
+  }
+
+  async canMergeProposedChange(issueId:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+    const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
+    return currentFormResponse._rev === event.data.response._rev && currentCaseInstance._rev === event.data.caseInstance._rev ? true : false
+  }
+
+  async issueDiff(issueId) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const lastProposedChangeEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.ProposedChange)
+    return lastProposedChangeEvent
+      ? this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response)
+      : []
+  }
+
+  diffFormResponses(a, b) {
+    const A = new TangyFormResponseModel(a)
+    const B = new TangyFormResponseModel(b)
+    const diff = A.inputs.reduce((diff, input) => {
+      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value) 
+        ? [
+          ...diff,
+          {
+            name: input.name,
+            a: A.inputsByName[input.name],
+            b: B.inputsByName[input.name]
+          }
+        ] 
+        : diff
+    }, [])
+    return diff
+  }
+
+  /*
+   *
+   * END Issues API.
+   *
+   */
+
   async getQueries (): Promise<Array<Query>> {
     const queryForms = await this.tangyFormService.getResponsesByFormId(this.queryFormId);
     const queries = Array<Query>();
@@ -414,6 +661,10 @@ class CaseService {
       }
     }
     return false;
+  }
+
+  async getFormResponse(formResponseId:string) {
+    return await this.tangyFormService.getResponse(formResponseId)
   }
 
   /**

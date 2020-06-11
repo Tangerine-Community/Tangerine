@@ -6,7 +6,6 @@ const http = require('axios');
 const read = require('read-yaml')
 const express = require('express')
 var session = require("express-session")
-const PouchSession = require("session-pouchdb-store")
 const bodyParser = require('body-parser');
 const path = require('path')
 const fs = require('fs-extra')
@@ -25,7 +24,6 @@ const chalk = require('chalk');
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
-const bcrypt = require('bcryptjs');
 const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
@@ -34,15 +32,18 @@ const multer = require('multer')
 const upload = multer({ dest: '/tmp-uploads/' })
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 var newGroupQueue = []
-const DB = require('./db.js')
-const USERS_DB = new DB('users');
 let crypto = require('crypto');
 const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
+const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
+   USERS_DB, login, getUserPermissions, updateUserSiteWidePermissions} = require('./auth');
+const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser, getAllUsers, checkIfUserExistByUsername, findOneUserByUsername, findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
+var cookieParser = require('cookie-parser');
+const { getPermissionsList } = require('./permissions-list.js');
 
 module.exports = async function expressAppBootstrap(app) {
 
@@ -83,100 +84,57 @@ app.use(cors({
   credentials: true,
 }));
 app.options('*', cors()) // include before other routes
-
-/*
- * Auth
- */
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
-
-// This determines wether or not a login is valid.
-passport.use(new LocalStrategy(
-  async function (username, password, done) {
-    if (await areCredentialsValid(username, password)) {
-      log.info(`${username} login success`)
-      return done(null, {
-        name: username
-      });
-    } else {
-      log.info(`${username} login fail`)
-      return done(null, false, { message: 'Incorrect username or password' })
-    }
-  }
-));
-
-async function findUserByUsername(username) {
-  const result = await USERS_DB.find({ selector: { username } });
-  return result.docs[0];
-}
-
-async function areCredentialsValid(username, password) {
-  try {
-    let isValid = false;
-    if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
-      isValid = true;
-      return isValid;
-    } else {
-      if (await doesUserExist(username)) {
-        const data = await findUserByUsername(username);
-        const hashedPassword = data.password;
-        isValid = await bcrypt.compare(password, hashedPassword);
-        return isValid;
-      }
-      else { return isValid; }
-    }
-  } catch (error) {
-    return false;
-  }
-}
-
-// This decides what identifying piece of information to put in a cookie for the session.
-passport.serializeUser(function (user, done) {
-  done(null, user.name);
-});
-
-// This transforms the id in the session cookie to pass to req.user object.
-passport.deserializeUser(function (id, done) {
-  done(null, { name: id });
-});
-
-// Use sessions.
-app.use(session({
-  secret: "cats",
-  resave: false,
-  saveUninitialized: new PouchSession(new DB('sessions'))
-}));
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '1gb' }))
 app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
+var {permit} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
-// Login service.
-app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  function (req, res) {
-    res.send({ name: req.user.name, statusCode: 200, statusMessage: 'ok' });
-  }
-);
+/*
+ * Login and session API
+ */
 
+app.post('/login', login);
 app.get('/login/validate/:userName',
   function (req, res) {
-    if (req.user && req.params.userName === req.user.name) {
+    if (req.user && (req.params.userName === req.user.name)) {
       res.send({ valid: true });
     } else {
       res.send({ valid: false });
     }
   }
 );
+app.post('/extendSession', isAuthenticated, extendSession);
+app.get('/permissionsList', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getPermissionsList);
+app.get('/permissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getUserPermissions);
+app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
 
-// API
+/*
+ * User API
+ */
+
+app.get('/users', isAuthenticated, permit(['can_view_users_list']), getAllUsers);
+app.get('/users/byUsername/:username', isAuthenticated, permit(['can_view_users_list']), getUserByUsername);
+app.get('/users/findOneUser/:username', isAuthenticated, permit(['can_view_users_list']), findOneUserByUsername);
+app.get('/users/findMyUser/', isAuthenticated, findMyUser);
+app.put('/users/updateMyUser/', isAuthenticated, updateMyUser);
+app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
+app.post('/users/register-user', isAuthenticated, permit(['can_create_users']), registerUser);
+app.get('/users/isSuperAdminUser/:username', isAuthenticated, isUserSuperAdmin);
+app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
+app.patch('/users/restore/:username', isAuthenticated, permit(['can_edit_users']), restoreUser);
+app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']), deleteUser);
+app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
+
+/*
+ * More API
+ */
+
 app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
 app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
@@ -281,111 +239,6 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
-app.get('/users', isAuthenticated, async (req, res) => {
-  const result = await USERS_DB.allDocs({ include_docs: true });
-  const data = result.rows
-    .map((doc) => doc)
-    .filter((doc) => !doc['id'].startsWith('_design'))
-    .map((doc) => {
-      const user = doc['doc'];
-      return { _id: user._id, username: user.username, email: user.email };
-    });
-  res.send({ statusCode: 200, data });
-});
-
-app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
-  let data;
-  let statusCode;
-  try {
-    data = await doesUserExist(req.params.username);
-    if (!data) {
-      statusCode = 200;
-    } else {
-      statusCode = 409;
-    }
-    res.send({ statusCode, data: !!data });
-  } catch (error) {
-    statusCode = 500;
-    res.send({ statusCode, data: true }); // In case of error assume user exists. Helps avoid same username used multiple times
-  }
-
-});
-
-async function doesUserExist(username) {
-  try {
-    if (await isSuperAdmin(username)) {
-      return true;
-    } else {
-      await USERS_DB.createIndex({ index: { fields: ['username'] } });
-      const data = await findUserByUsername(username);
-      return data && data.username && data.username.length > 0;
-    }
-
-  } catch (error) {
-    console.error(error);
-    return true; // In case of error assume user exists. Helps avoid same username used multiple times
-  }
-}
-
-app.post('/users/register-user', isAuthenticated, async (req, res) => {
-  try {
-    if (!(await doesUserExist(req.body.username))) {
-      const user = req.body;
-      user.password = await hashPassword(user.password);
-      user.groups = [];
-      const data = await USERS_DB.post(user);
-      res.send({ statusCode: 200, data });
-      return data;
-    }
-  } catch (error) {
-    console.log(error);
-    return false; // @TODO return meaningful error
-  }
-});
-
-app.get('/users/byUsername/:username', isAuthenticated, async (req, res) => {
-  const username = req.params.username;
-  try {
-    await USERS_DB.createIndex({ index: { fields: ['username'] } });
-    const results = await USERS_DB.find({ selector: { username: { '$regex': `(?i)${username}` } } });
-    const data = results.docs.map(username => username.username)
-    res.send({ data, statusCode: 200, statusMessage: 'Ok' });
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
-
-app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) => {
-  try {
-    const data = await isSuperAdmin(req.params.username);
-    res.send({ data, statusCode: 200, statusMessage: 'ok' })
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
-
-app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
-  try {
-    const data = await isAdminUser(req.params.username);
-    res.send({ data, statusCode: 200, statusMessage: 'ok' })
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-});
-
-async function hashPassword(password) {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.body.filePath
   const groupId = req.body.groupId
@@ -426,57 +279,7 @@ app.get('/groups/:username', isAuthenticated, async function (req, res) {
     res.sendStatus(500)
   }
 })
-  
-async function getGroupsByUser(username) {
-  if (await isSuperAdmin(username)) {
-    const readdirPromisified = util.promisify(fs.readdir)
-    const files = await readdirPromisified('/tangerine/client/content/groups');
-    let filteredFiles = files.filter(junk.not).filter(name => name !== '.git' && name !== 'README.md')
-    let groups = [];
-    groups = filteredFiles.map((groupName) => {
-      return {
-        attributes: {
-          name: groupName,
-          role: 'admin'
-        }
-      }
-    })
-    return groups;
-  } else {
-    const user = await findUserByUsername(username);
-    let groups = [];
-    if (typeof user.groups !== 'undefined') {
-      groups = user.groups.map(group => {
-        return {
-          attributes: {
-            name: group.groupName,
-            role: group.role
-          }
-        }
-      });
-    }
-    return groups;
-  }
-}
-async function isSuperAdmin(username) {
-  return username === process.env.T_USER1;
-}
 
-// If is not admin, return false else return the list of the groups to which user isAdmin
-async function isAdminUser(username) {
-  try {
-    const groups = await getGroupsByUser(username);
-    let data = groups.filter(group => group.attributes.role === 'admin');
-    if (data.length < 1) {
-      data = false;
-    }
-    return data;
-  }
-  catch (error) {
-    return false;
-    console.log(error)
-  }
-}
 app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async (req, res) => {
   const payload = req.body;
   const groupName = req.params.groupName;

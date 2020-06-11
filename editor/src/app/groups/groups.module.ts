@@ -1,3 +1,4 @@
+import { GroupIssuesComponent } from './group-issues/group-issues.component';
 import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
@@ -7,12 +8,21 @@ import { TangyFormService } from './../tangy-forms/tangy-form.service';
 import { GroupDevicesService } from './services/group-devices.service';
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import {
-  MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule,
-  MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule,
-  MatIconModule, MatMenuModule, MatCheckboxModule, MatFormFieldModule
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
@@ -92,10 +102,11 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     MatGridListModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatSlideToggleModule,
     TangyFormsModule,
     SharedModule,
     NgTangyFormEditorModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   declarations: [
     LocationListEditorComponent,
@@ -144,9 +155,9 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     GroupUploadsViewComponent,
     GroupDeviceUserComponent,
     GroupCasesComponent,
+    GroupIssuesComponent,
     CaseSettingsComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
-  entryComponents: [CopyFormComponent]
 })
 export class GroupsModule { }

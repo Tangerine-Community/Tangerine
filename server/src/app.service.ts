@@ -45,6 +45,10 @@ export class AppService {
     await this.httpClient.put(`${this.config.couchdbEndpoint}/_users`).toPromise()
     await this.appDb.put({_id: 'installed', value: true})
     await this.appDb.put({_id: 'version', value: process.env.TANGERINE_VERSION})
+    await exec(`ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa-tmp -P "" -C "tangerine@${process.env.T_HOST_NAME}"`)
+    await exec(`cat /root/.ssh/id_rsa-tmp > /root/.ssh/id_rsa`)
+    await exec(`cat /root/.ssh/id_rsa-tmp.pub > /root/.ssh/id_rsa.pub`)
+    await exec(`chmod 600 /root/.ssh/id_rsa`)
     log.info('Installed')
   }
 

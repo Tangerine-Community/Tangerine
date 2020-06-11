@@ -111,6 +111,7 @@ import '@vaadin/vaadin-upload/vaadin-upload.js'
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
 
 import * as moment from 'moment'
-(window as any).moment = moment 
+(window as any).moment = moment
+
 
 

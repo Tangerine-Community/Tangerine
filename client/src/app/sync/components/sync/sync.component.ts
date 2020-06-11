@@ -30,7 +30,7 @@ export class SyncComponent implements OnInit {
     this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         let pendingMessage = ''
-        if (progress.pending) {
+        if (typeof progress.pending !== 'undefined') {
           pendingMessage = progress.pending + ' pending;'
         }
         this.syncMessage =  progress.docs_written + ' docs saved; ' + pendingMessage
@@ -44,7 +44,9 @@ export class SyncComponent implements OnInit {
       await this.syncService.sync()
       this.status = STATUS_COMPLETED
     } catch (e) {
+      console.log('Sync Error: ' + e)
       this.status = STATUS_ERROR
+      this.syncMessage = this.syncMessage + ' ERROR: ' + e
     }
   }
 

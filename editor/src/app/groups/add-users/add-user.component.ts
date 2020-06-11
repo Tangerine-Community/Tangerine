@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import {Breadcrumb} from '../../shared/_components/breadcrumb/breadcrumb.component';
+import { UserService } from 'src/app/core/auth/_services/user.service';
 @Component({
   selector: 'app-add-user',
   templateUrl: './add-user.component.html',
@@ -20,10 +21,11 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
   title = _TRANSLATE('Assign User Role')
   breadcrumbs: Array<Breadcrumb> = []
   newUser = true;
-  @ViewChild('search', {static: false}) search: ElementRef;
+  @ViewChild('search', { static: false }) search: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
+    private usersService: UserService,
     private errorHandler: TangyErrorHandler,
     private router: Router
   ) { }
@@ -74,7 +76,7 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
 
   async getUsers(username: string) {
     try {
-      this.users = await this.groupsService.getUsersByUsername(username);
+      this.users = await this.usersService.searchUsersByUsername(username);
     } catch (error) {
       console.log(error);
     }

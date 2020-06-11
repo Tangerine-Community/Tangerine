@@ -1,11 +1,15 @@
+@media print {
+  :host {
+    display: none;
+  }
+}
+
+
 .primary {
-    position: fixed;
-    top: 0px;
-    z-index: 99999;
+    /* absolute on server, fixed on client */
     color: var(--primary-text-color-overlay);
     height: 34px;
-    padding-top: 21px;
-    margin-right: 80px;
+    padding-top: 10px;
     padding-left: 22px;
     background: var(--primary-color-dark);
     font-size: 1.5em;

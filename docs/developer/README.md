@@ -11,6 +11,7 @@
 - [How Tangerine code is generated](how-tangerine-is-built.md)
 
 ## Debugging
+- [Creating Clean Development Content](creating-clean-dev-content.md)
 - [debugging-reporting.md](debugging-reporting.md)
 - [debugging_node_apps.md](debugging_node_apps.md)
 
