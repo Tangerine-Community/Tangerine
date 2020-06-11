@@ -1,0 +1,12 @@
+<div class="icon-list-item" *ngFor="let notification of notifications" style="background: {{notification.color}};">
+  <mwc-icon *ngIf="notification.link" [routerLink]="notification.link" [innerHTML]="notification.icon" slot="item-icon"></mwc-icon>
+  <mwc-icon *ngIf="!notification.link" [innerHTML]="notification.icon" slot="item-icon"></mwc-icon>
+  <div *ngIf="notification.link" [routerLink]="notification.link">
+    <div>{{notification.label}}</div>
+    <div style="white-space: normal" secondary>{{notification.description}}</div>
+  </div>
+  <div *ngIf="!notification.link">
+    <div>{{notification.label}}</div>
+    <div style="white-space: normal" secondary>{{notification.description}}</div>
+  </div>
+</div>
