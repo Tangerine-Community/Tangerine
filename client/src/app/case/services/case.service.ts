@@ -1,5 +1,5 @@
-import { IssueEventType } from './../classes/issue.class';
-import { Issue, IssueStatus, IssueEvent } from './../classes/issue.class';
+import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
+import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -321,6 +321,48 @@ class CaseService {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
+  /*
+   * Notification API
+   */
+
+  createNotification (label = '', description = '', link = '', icon = 'notification_important', color = '#CCC', persist = false, enforceAttention = false ) {
+    const notification = <Notification>{
+      id: UUID(),
+      status: NotificationStatus.Open,
+      createdAppContext: AppContext.Client,
+      createdOn: Date.now(),
+      label,
+      description,
+      link,
+      icon,
+      color,
+      enforceAttention,
+      persist
+   }
+    this.case.notifications.push(notification)
+  }
+
+  async openNotification(notificationId:string) {
+    this.case.notifications = this.case.notifications.map(notification => {
+      return notification.id === notificationId
+        ? <Notification>{
+          ...notification,
+          status: NotificationStatus.Open
+        }
+        : notification
+    })
+  }
+
+  async closeNotification(notificationId:string) {
+    this.case.notifications = this.case.notifications.map(notification => {
+      return notification.id === notificationId
+        ? <Notification>{
+          ...notification,
+          status: NotificationStatus.Closed
+        }
+        : notification
+    })
+  }
 
   /*
    *
