@@ -10,6 +10,8 @@
     - [Demo: Server Admin creates group on command line from content set in a private repository on Github](https://youtu.be/OhyCse2jT4M)
 - New Features in Tangerine with Case Module enabled
   - Tangerine User views form response in alternative templates [#2176](https://github.com/Tangerine-Community/Tangerine/issues/2176) [[demo](https://youtu.be/f9gGjXDeiuw)]
+  - Data Manager rebases proposed changes in Issue [#2179](https://github.com/Tangerine-Community/Tangerine/issues/1982) [[demo](https://youtu.be/vJRd_MIE2yo)]
+  - Data Manager rebases proposed changes in Issue [#2179](https://github.com/Tangerine-Community/Tangerine/issues/2179) [[demo](https://youtu.be/hChZgxOko2k)]
   - Data Manager creates Data Issue [#2144](https://github.com/Tangerine-Community/Tangerine/issues/2144) [[demo](https://youtu.be/1yQBI5iPYS0)]
   - Data Collector causes Issue to be created due to use of API in the form [#2145](https://github.com/Tangerine-Community/Tangerine/issues/2145) [[demo](https://youtu.be/sgGRS110qq4)]
   - Data Collector causes Issue to be created due to `discrepancy-if` logic in form [#2171](https://github.com/Tangerine-Community/Tangerine/issues/2171) [[demo](https://youtu.be/GSQfP-6HBiY)]
