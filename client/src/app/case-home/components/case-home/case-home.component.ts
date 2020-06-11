@@ -10,6 +10,7 @@ import { CaseService } from '../../../case/services/case.service';
 export class CaseHomeComponent implements OnInit {
 
   showQueries = true;
+  showCaseReports = false
   openQueriesCount = 0;
 
   constructor(
@@ -21,6 +22,7 @@ export class CaseHomeComponent implements OnInit {
   async ngOnInit() {
     const config = await this.appConfig.getAppConfig();
     this.showQueries = config.showQueries;
+    this.showCaseReports = config.showCaseReports
     if (this.showQueries) {
       this.openQueriesCount = await this.caseService.getOpenQueriesCount();
      }
