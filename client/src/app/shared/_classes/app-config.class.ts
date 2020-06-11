@@ -18,6 +18,7 @@ export class AppConfig {
   usageCleanupBatchSize
   barcodeSearchMapFunction:string
   showQueries:boolean
+  showCaseReports:boolean
   groupId:string
   groupName:string
   p2pSync = 'false'
