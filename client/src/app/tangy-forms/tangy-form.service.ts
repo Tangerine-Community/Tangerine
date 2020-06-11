@@ -20,7 +20,7 @@ export class TangyFormService {
   ) { }
 
   async getFormInput(formId, inputVariable) {
-    const formInfo = await this.getFormInfo(formId)
+    const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
     let formMarkup: any = this.formsMarkup[formInfo.src]
     if (!this.formsMarkup[formInfo.src]) {
       formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
@@ -46,7 +46,7 @@ export class TangyFormService {
   }
 
   async getFormMarkup(formId) {
-    const formInfo = await this.getFormInfo(formId)
+    const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
     let formMarkup:any = this.formsMarkup[formInfo.src]
     if (!this.formsMarkup[formInfo.src]) {
       formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
@@ -55,22 +55,11 @@ export class TangyFormService {
     return formMarkup
   }
 
-  /**
-   * Provides metadata for a single form, which is cached from './assets/forms.json'
-   * @param formId
-   */
-  async getFormInfo(formId) {
-    const formsInfo: any = await this.tangyFormsInfoService.getFormsInfo()
-    return formsInfo.find(formInfo => formInfo.id === formId)
-  }
-
-  /**
-   * @deprecated since version 3.8.1.
-   * Use TangyFormsInfoService.getFormsInfo() instead.
-   */
-  async getFormsInfo() {
-    this.formsInfo = await this.tangyFormsInfoService.getFormsInfo()
-    return this.formsInfo
+  async getFormTemplateMarkup(formId:string, formTemplateId:string):Promise<string> {
+    const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
+    const formTemplate = formInfo.templates.find(formTemplate => formTemplate.id === formTemplateId)
+    const formTemplateMarkup = await this.http.get(formTemplate.src, { responseType: 'text' }).toPromise()
+    return formTemplateMarkup
   }
 
   async saveForm(formDoc) {

@@ -1,5 +1,5 @@
 import { GroupDeviceService } from './../../shared/services/group-device/group-device.service';
-import { Controller, All, Param, Body } from '@nestjs/common';
+import {Controller, All, Param, Body, HttpException, HttpStatus} from '@nestjs/common';
 const log = require('tangy-log').log
 
 @Controller('group-device-public')
@@ -48,12 +48,22 @@ export class GroupDevicePublicController {
       const device = await this.groupDeviceService.read(groupId, deviceId)
       return device
     } catch (error) {
-      log.error('Error registering device')
-      console.log(error)
-      return 'There was an error.'
+      let message = 'Error registering device for group ' + groupId + ' and deviceId ' + deviceId
+      let errorDetails = {
+        "message" : message,
+        "groupId" : groupId,
+        "deviceId" : deviceId,
+        "error" : error
+      }
+      log.error(errorDetails)
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: message,
+        errorDetails: errorDetails,
+      }, HttpStatus.NOT_FOUND);
     }
   }
-
+  
   @All('register/:groupId/:deviceId/:token')
   async register(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string, @Param('token') token:string) {
     try {

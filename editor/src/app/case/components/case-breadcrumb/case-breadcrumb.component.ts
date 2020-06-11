@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
@@ -20,6 +21,7 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   constructor(
     private caseService: CaseService,
+    private router: Router,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -27,11 +29,13 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   ngOnInit() {
     const caseInstance = this.caseService.case
+    window['caseInstance'] = caseInstance
     const caseEvent = this.caseEventId
       ? caseInstance
         .events
         .find(caseEvent => caseEvent.id === this.caseEventId)
       : null
+    window['caseEvent'] = caseEvent 
     const caseEventDefinition = this.caseEventId
       ? this
         .caseService
@@ -39,19 +43,23 @@ export class CaseBreadcrumbComponent implements OnInit {
         .eventDefinitions
         .find(caseEventDefinition => caseEventDefinition.id === caseEvent.caseEventDefinitionId)
       : null
+    window['caseEventDefinition'] = caseEvent 
     const eventForm = this.eventFormId
       ? caseEvent
         .eventForms
         .find(eventForm => eventForm.id === this.eventFormId)
       : null
+    window['eventForm'] = eventForm 
     const eventFormDefinition = this.eventFormId
       ? caseEventDefinition
         .eventFormDefinitions
         .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
       : null
+    window['eventFormDefinition'] = eventFormDefinition 
     const participant = eventForm
       ? this.caseService.case.participants.find(participant => participant.id === eventForm.participantId)
       : null
+    window['participant'] = participant 
     this.secondaryText = eventFormDefinition
       ? eventFormDefinition.name
       : caseEventDefinition 
@@ -66,6 +74,10 @@ export class CaseBreadcrumbComponent implements OnInit {
         : \`Case: ${caseInstance._id.substr(0,6)} \`
     `)
     this.ref.detectChanges()
+  }
+
+  goBackToCases() {
+    this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
   }
 
 }

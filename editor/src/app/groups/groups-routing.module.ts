@@ -1,3 +1,6 @@
+import { IssueFormComponent } from './../case/components/issue-form/issue-form.component';
+import { IssueComponent } from './../case/components/issue/issue.component';
+import { GroupIssuesComponent } from './group-issues/group-issues.component';
 import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
 import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
@@ -43,12 +46,13 @@ import { CreateCaseDefinitionComponent } from './case-management-editor/create-c
 import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
+import { NgxPermissionsGuard } from 'ngx-permissions';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
   { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
-  { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, AdminUserGuard] },
+  { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, NgxPermissionsGuard], data:{permissions:{only:['can_create_group'], redirectTo:'/projects'}} },
   { path: 'groups/:groupId', component: GroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author', component: GroupAuthorComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author/forms', component: GroupFormsComponent, canActivate: [LoginGuard] },
@@ -60,6 +64,10 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/uploads/:responseId', component: GroupUploadsViewComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/issues/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/issues/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/issues/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/issues', component: GroupIssuesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
@@ -67,7 +75,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard] },
+  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },

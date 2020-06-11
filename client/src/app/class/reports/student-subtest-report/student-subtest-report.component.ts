@@ -7,6 +7,7 @@ import {ClassUtils} from '../../class-utils';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {StudentResult} from '../student-grouping-report/student-result';
 import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 export class SubtestReport {
   curriculumId: any;
@@ -47,7 +48,8 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
     private userService: UserService,
     private appConfigService: AppConfigService,
     private classFormService: ClassFormService,
-    private tangyFormService: TangyFormService
+    private tangyFormService: TangyFormService,
+    private tangyFormsInfoService: TangyFormsInfoService
   ) { }
 
   async ngOnInit() {
@@ -105,7 +107,7 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
     for (const curriculum of allCurriculums as any[] ) {
       if (curriculum['value'] === 'on') {
         const formId = curriculum.name;
-        const formInfo = await this.tangyFormService.getFormInfo(formId)
+        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
         curriculum.label = formInfo.title;
         this.curriculums.push(curriculum);
       }

@@ -280,6 +280,13 @@ export class UserService {
     return userProfile
   }
 
+  async getUserLocation(username?: string) {
+    const userProfile = username
+      ? await this.getUserProfile(username)
+      : await this.getUserProfile();
+    return userProfile.inputs.find(input => input.name === 'location')
+  }
+
   async getUserLocations(username?: string) {
     const userProfile = username ? await this.getUserProfile(username) : await this.getUserProfile();
     return userProfile.inputs.reduce((locationIds, input) => {
@@ -357,10 +364,13 @@ export class UserService {
       if (appConfig.syncProtocol === '2') {
         await this.lockBoxService.openLockBox(username, password)
       }
-      // Make the user's database available for code in forms to use.
-      window['userDb'] = await this.getUserDatabase(username)
       const userAccount = await this.getUserAccount(username)
       this.setCurrentUser(userAccount.username)
+      // Make globals available for form developers.
+      window['userDb'] = await this.getUserDatabase(username)
+      window['username'] = this.getCurrentUser()
+      window['userProfile'] = await this.getUserProfile()
+      window['userId'] = window['userProfile']._id
       this.userLoggedIn$.next(userAccount)
       return true
     } else {;
@@ -416,6 +426,11 @@ export class UserService {
     this.setCurrentUser('');
     this.getUserAccount(username)
       .then((userAccount) => this.userLoggedOut$.next(userAccount))
+    // TODO test on upgrades - pathing may have changed.
+    // TODO: need to add index.html/full path ???
+    if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
+      window.location.href = window.location.protocol + '//' + window.location.pathname + 'index.html'
+    }
   }
 
   isLoggedIn() {

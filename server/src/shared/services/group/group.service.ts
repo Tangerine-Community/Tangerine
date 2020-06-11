@@ -253,7 +253,8 @@ export class GroupService {
       "locations": {},
       "metadata": {}
     }))
-
+    // Generate Mango Query Indexes. Note we do this here because it depends on the location list being there.
+    await exec(`generate-indexes ${group._id}`)
     const data = await tangyModules.hook('groupNew', {groupName: groupId, groupId, appConfig})
     appConfig = data.appConfig
     await fs.writeFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, JSON.stringify(appConfig))

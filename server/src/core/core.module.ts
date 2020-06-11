@@ -1,12 +1,13 @@
 import { GroupDevicePublicController } from './group-device/group-device-public.controller';
 import { GroupDeviceManageController } from './group-device/group-device-manage.controller';
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { SharedModule } from '../shared/shared.module';
 import { GroupController } from './group/group.controller';
 import { UserController } from './user/user.controller';
 import { ConfigController } from './config/config.controller';
 import { GroupResponsesController } from './group-responses/group-responses.controller';
-import isAuthenticated = require('../middleware/is-authenticated')
+import isAuthenticated = require('../middleware/is-authenticated');
+const {permit} = require('../middleware/permitted');
 
 @Module({
   controllers: [
@@ -36,5 +37,8 @@ export class CoreModule implements NestModule {
     consumer
       .apply(isAuthenticated)
       .forRoutes(GroupDeviceManageController)
+    consumer
+      .apply(isAuthenticated, permit(['can_create_group']))
+      .forRoutes({path: 'nest/group/create', method: RequestMethod.POST});
   }
 }

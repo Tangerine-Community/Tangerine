@@ -108,4 +108,100 @@ export class UserService {
     return <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
   }
 
+  async getMyUser() {
+    try {
+      if (localStorage.getItem('user_id') === 'user1') {
+        return {
+          email: 'user1@tangerinecentral.org',
+          firstName: 'user1',
+          lastName: 'user1',
+          username: 'user1',
+          _id: 'user1'
+        }
+      } else {
+        const data = await this.http.get(`/users/findMyUser/`, {observe: 'response'}).toPromise();
+        if (data.status === 200) {
+          return data.body['data'];
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async getAUserByUsername(username) {
+    try {
+      const data = await this.http.get(`/users/findOneUser/${username}`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.body['data'];
+      }
+    } catch (error) {
+      console.error(error);
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+
+  async searchUsersByUsername(username: string) {
+    try {
+      const data: any = await this.httpClient
+        .get(`/users/byUsername/${username}`)
+        .toPromise();
+      return data.data;
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async deleteUser(username: string) {
+    try {
+      const data = await this.http.delete(`/users/delete/${username}`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+  async restoreUser(username: string) {
+    try {
+      const data = await this.http.patch(`/users/restore/${username}`, {isActive: true}, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  async updateUserDetails(payload) {
+    try {
+      const data = await this.httpClient.put(`/users/update/${payload.username}`, payload, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.status;
+      }
+    } catch (error) {
+      console.error(error);
+      return 500;
+    }
+  }
+  async updateMyUser(payload) {
+    try {
+      const data = await this.httpClient.put(`/users/updateMyUser/`,
+      payload, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.status;
+      }
+    } catch (error) {
+      console.error(error);
+      return 500;
+    }
+  }
+
 }

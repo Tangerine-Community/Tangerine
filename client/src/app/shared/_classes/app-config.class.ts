@@ -23,6 +23,8 @@ export class AppConfig {
   p2pSync = 'false'
   passwordPolicy:string
   passwordRecipe:string
-  couchdbSync4All:boolean
+  couchdbPush4All:boolean
+  couchdbPullUsingDocIds:boolean
+  couchdbPushUsingDocIds:boolean
 }
 

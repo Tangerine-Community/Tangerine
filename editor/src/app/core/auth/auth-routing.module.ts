@@ -4,8 +4,10 @@ import { LoginComponent } from './_components/login/login.component';
 import { ManageUsersComponent } from './_components/manage-users/manage-users.component';
 import { UserResgistrationComponent } from './_components/user-resgistration/user-resgistration.component';
 import { LoginGuard } from './_guards/login-guard.service';
-import { AdminUserGuard } from './_guards/admin-user-guard.service';
-import {AddUserComponent} from '../../groups/add-users/add-user.component';
+import { NgxPermissionsGuard } from 'ngx-permissions';
+import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
+import { EditUserComponent } from './_components/edit-user/edit-user.component';
+import { UpdatePersonalProfileComponent } from './_components/update-personal-profile/update-personal-profile.component';
 const routes: Routes = [{
   path: 'register-user',
   component: UserResgistrationComponent
@@ -13,20 +15,36 @@ const routes: Routes = [{
 {
   path: 'login',
   component: LoginComponent
-}, {
-  path: 'manage-users',
+},
+{
+  path: 'update-personal-profile',
+  component: UpdatePersonalProfileComponent,
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: { permissions: { only: ['non_user1_user'], redirectTo: '/projects' } }
+},
+{
+  path: 'users',
   component: ManageUsersComponent,
-  canActivate: [LoginGuard]
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: { permissions: { only: ['can_view_users_list'], redirectTo: '/projects' } }
 },
 {
   path: 'manage-users/new-user',
   component: UserResgistrationComponent,
-  canActivate: [LoginGuard]
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: { permissions: { only: ['can_create_users'], redirectTo: '/projects' } }
 },
 {
-  path: 'manage-users/users/:id',
-  component: UserResgistrationComponent,
-  canActivate: [LoginGuard]
+  path: 'manage-users/sitewide-permissions/:username',
+  component: ManageSitewidePermissionsComponent,
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: { permissions: { only: ['can_manage_users_site_wide_permissions'], redirectTo: '/projects' } }
+},
+{
+  path: 'manage-users/users/edit/:username',
+  component: EditUserComponent,
+  canActivate: [LoginGuard, NgxPermissionsGuard],
+  data: { permissions: { only: ['can_edit_users'], redirectTo: '/projects' } }
 }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

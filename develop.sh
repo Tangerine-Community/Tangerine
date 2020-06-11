@@ -48,6 +48,12 @@ fi
 if [ ! -d data/client/releases/qa/pwas ]; then
   mkdir data/client/releases/qa/pwas
 fi
+if [ ! -f data/id_rsa ]; then
+  echo '' > data/id_rsa
+fi
+if [ ! -f data/id_rsa.pub ]; then
+  echo '' > data/id_rsa.pub
+fi
 if [ ! -f data/reporting-worker-state.json ]; then
   echo '{}' > data/reporting-worker-state.json
 fi
@@ -158,6 +164,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/:delegated \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups:delegated \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets:delegated \
+  --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json:delegated \
   --volume $(pwd)/server/src:/tangerine/server/src:delegated \
   --volume $(pwd)/client/src:/tangerine/client/src:delegated \
@@ -165,8 +172,9 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/upgrades:/tangerine/upgrades:delegated \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
   --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
+  --volume $(pwd)/data/id_rsa:/root/.ssh/id_rsa:delegated \
+  --volume $(pwd)/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
-  --volume $(pwd)/../cordova-plugin-nearby-connections:/tangerine/client/cordova-plugin-nearby-connections \
   tangerine/tangerine:local
  "
 
