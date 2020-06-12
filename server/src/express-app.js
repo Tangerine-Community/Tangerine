@@ -134,6 +134,7 @@ app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
 app.patch('/users/restore/:username', isAuthenticated, permit(['can_edit_users']), restoreUser);
 app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']), deleteUser);
 app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
+app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUserGroupPermissionsByGroupName);
 
 /*
  * More API

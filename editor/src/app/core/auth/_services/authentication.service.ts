@@ -101,6 +101,24 @@ export class AuthenticationService {
       return {groupPermissions:[], sitewidePermissions:[]}
     }
   }
+
+  async getUserGroupPermissionsByGroupName(groupName) {
+    try {
+      const data = await this.http.get(`/users/groupPermissionsByGroupName/${groupName}`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        const token = data.body['data']['token'];
+        await this.setTokens(token);
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  setUserGroupPermissionsByGroupName(groupName) {
+
+  }
   async updateUserPermissions(username, sitewidePermissions) {
     try {
       const data = await this.http.
