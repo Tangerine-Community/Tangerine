@@ -52,3 +52,5 @@ client/src/assets-local/
 client/makeApk.sh
 scripts/apk-build.sh
 
+/site
+

@@ -6,3 +6,4 @@
     <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>
     <span [innerHTML]="secondaryText|unsanitizeHtml"></span>
 </div>
+<mwc-icon class="notification" [hidden]="!hasActiveNotification">notifications</mwc-icon>
