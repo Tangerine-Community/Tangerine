@@ -282,5 +282,13 @@ export const updates = [
       await userDb.query('case-events-by-all-days')
       localStorage.setItem('ran-update-v3.9.1', 'true')
     }
+  },
+  {
+    requiresViewsUpdate: true,
+    script: async (userDb, appConfig, userService: UserService) => {
+      console.log('Updating to v3.11.0...')
+      if ( localStorage.getItem('ran-update-v3.11.0')) return
+      localStorage.setItem('ran-update-v3.11.0', 'true')
+    }
   }
 ]
