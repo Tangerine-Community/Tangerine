@@ -91,9 +91,9 @@ export class AuthenticationService {
       return {groupPermissions: [], sitewidePermissions: []}
     }
   }
-  async getUserPermissions(username) {
+  async getSitewidePermissionsByUsername(username) {
     try {
-      const data = await this.http.get(`/permissions/${username}`, {observe: 'response'}).toPromise();
+      const data = await this.http.get(`/sitewidePermissionsByUsername/${username}`, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         return data.body;
       }
