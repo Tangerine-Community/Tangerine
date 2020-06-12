@@ -1,12 +1,30 @@
+import { Observable } from 'rxjs';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { NgModule, Injectable } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { LoginGuard } from '../shared/_guards/login-guard.service';
 import { _TRANSLATE } from '../shared/translation-marker';
 import { NewCaseComponent } from './components/new-case/new-case.component';
 import { CaseComponent } from './components/case/case.component';
 import { EventComponent } from './components/event/event.component'
 import { EventFormComponent } from './components/event-form/event-form.component'
+
+@Injectable()
+export class CanDeactivateEvent implements CanDeactivate<EventComponent> {
+  constructor() {}
+  canDeactivate(
+    component: EventComponent,
+    currentRoute: ActivatedRouteSnapshot,
+    currentState: RouterStateSnapshot,
+    nextState: RouterStateSnapshot
+  ): Observable<boolean>|Promise<boolean>|boolean {
+    if (component.hasNotificationEnforcingAttention && !component.exitRoutes().includes(nextState.url)) {
+      return confirm(_TRANSLATE('There is an urgent notification that needs attention. Are you sure you want to exit this event?'));
+    } else {
+      return true;
+    }
+  }
+}
 
 const routes: Routes = [
   {
@@ -17,7 +35,8 @@ const routes: Routes = [
   {
     path: 'case/event/:caseId/:eventId',
     component: EventComponent,
-    canActivate: [LoginGuard]
+    canActivate: [LoginGuard],
+    canDeactivate: [ CanDeactivateEvent ]
   },
   {
     path: 'case/event/form-add/:caseId/:eventId/:participantId',
@@ -36,9 +55,10 @@ const routes: Routes = [
   }
 ];
 
+
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: []
+  providers: [ CanDeactivateEvent ]
 })
 export class CaseRoutingModule { }
