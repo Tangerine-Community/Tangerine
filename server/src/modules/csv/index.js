@@ -62,7 +62,7 @@ module.exports = {
           flatResponse = await generateFlatResponse(doc, locationList, true);
           // Process the flatResponse
           // @TODO Rename `-reporting` to `-csv`.
-          REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitize`);
+          REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
           // @TODO Ensure design docs are in the database.
           await saveFormInfo(flatResponse, REPORTING_DB);
           await saveFlatFormResponse(flatResponse, REPORTING_DB);
