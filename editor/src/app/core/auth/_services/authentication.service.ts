@@ -131,4 +131,21 @@ export class AuthenticationService {
       return {groupPermissions:[], sitewidePermissions:[]}
     }
   }
+
+  doesUserHaveAPermission(groupId, permission) {
+    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
+    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    return groupPermissions.includes(permission);
+  }
+  doesUserHaveAllPermissions(groupId, permissions= []) {
+    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
+    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    return permissions.every(e => groupPermissions.includes(e));
+  }
+
+  doesUserHaveSomePermissions(groupId, permissions) {
+    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
+    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    return permissions.some(e => groupPermissions.includes(e));
+  }
 }
