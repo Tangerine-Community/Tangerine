@@ -15,15 +15,7 @@ export class AuthenticationService {
      const data = await this.http.post('/login', {username, password}, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         const token = data.body['data']['token'];
-        const jwtData = jwt_decode(token);
-        document.cookie = `Authorization=${token}`
-        localStorage.setItem('token', token);
-        localStorage.setItem('user_id', jwtData.username);
-        localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
-        const user = await this.userService.getMyUser()
-        window['userProfile'] = user 
-        window['userId'] = user._id 
-        window['username'] = jwtData.username
+        await this.setTokens(token);
         return true;
       } else {
         return false;
@@ -65,12 +57,7 @@ export class AuthenticationService {
       const data = await this.http.post('/extendSession', {username}, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         const token = data.body['data']['token'];
-        const jwtData = jwt_decode(token);
-        document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        document.cookie = `Authorization=${token}`
-        localStorage.setItem('token', token);
-        localStorage.setItem('user_id', jwtData.username);
-        localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
+       await this.setTokens(token);
         return true;
       } else {
         return false;
@@ -80,6 +67,18 @@ export class AuthenticationService {
     }
   }
 
+  async setTokens(token) {
+    const jwtData = jwt_decode(token);
+    document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = `Authorization=${token}`;
+    localStorage.setItem('token', token);
+    localStorage.setItem('user_id', jwtData.username);
+    localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
+    const user = await this.userService.getMyUser();
+    window['userProfile'] = user;
+    window['userId'] = user._id;
+    window['username'] = jwtData.username;
+  }
   async getPermissionsList() {
     try {
       const data = await this.http.get('/permissionsList', {observe: 'response'}).toPromise();
