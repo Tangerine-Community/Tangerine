@@ -86,16 +86,20 @@ export class GroupsService {
     }
   }
 
-  async downloadCSV(groupName: string, formId: string, selectedYear = '*', selectedMonth = '*') {
+  async downloadCSV(groupName: string, formId: string, selectedYear = '*', selectedMonth = '*', excludePII: boolean) {
+    let sanitized = ''
+    if (excludePII) {
+      sanitized = '-sanitized'
+    }
     try {
       if (selectedMonth === '*' || selectedYear === '*') {
         const result = await this.httpClient
-          .get(`/api/csv/${groupName}/${formId}`)
+          .get(`/api/csv${sanitized}/${groupName}/${formId}`)
           .toPromise();
         return result;
       } else {
         const result = await this.httpClient
-          .get(`/api/csv/${groupName}/${formId}/${selectedYear}/${selectedMonth}`)
+          .get(`/api/csv${sanitized}/${groupName}/${formId}/${selectedYear}/${selectedMonth}`)
           .toPromise();
         return result;
       }

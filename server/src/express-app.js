@@ -152,6 +152,8 @@ if (process.env.T_LEGACY === "true") {
 }
 app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
 app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
 app.get('/api/usage', require('./routes/usage'));
 // For backwards compatibility for older consumers of this API.
 app.get('/usage', require('./routes/usage'));
