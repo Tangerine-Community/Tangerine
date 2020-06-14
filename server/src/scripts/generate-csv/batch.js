@@ -20,11 +20,12 @@ const params = {
 }
 
 function getData(dbName, formId, skip, batchSize, year, month) {
+  console.log("Getting data in batch.js. dbName: " + dbName + " formId: " + formId)
   const limit = batchSize
   return new Promise((resolve, reject) => {
     try {
       const key = (year && month) ? `${formId}_${year}_${month}` : formId
-      const target = `${dbDefaults.prefix}/${dbName}-reporting/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
+      const target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
       console.log(target)
       axios.get(target)
         .then(response => {
@@ -45,7 +46,7 @@ async function getRelatedProfileDocs(docs, state) {
   for (let doc of docs) {
     const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
     try {
-      let response = await axios.get(`${dbDefaults.prefix}/${state.dbName}-reporting/${doc[userProfileIdKey]}`)
+      let response = await axios.get(`${dbDefaults.prefix}/${state.dbName}/${doc[userProfileIdKey]}`)
       if (response.data) userProfileDocs.push(response.data)
     } catch (e) {
       // Doesn't exist? Hmm...
@@ -55,6 +56,7 @@ async function getRelatedProfileDocs(docs, state) {
 }
 
 async function batch() {
+  console.log("in batch.")
   const state = JSON.parse(await readFile(params.statePath))
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
   // Only get relatedProfileDocs if this is not the user profile CSV. An empty array here is important for not confusing the code below.

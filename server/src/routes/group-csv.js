@@ -8,11 +8,18 @@ const exec = util.promisify(require('child_process').exec)
 module.exports = async function (req, res) {
   const groupId = sanitize(req.params.groupId)
   const formId = sanitize(req.params.formId)
-  const fileName = `${groupId}-${formId}-${Date.now()}.csv`
+  let sanitizedExtension = ''
+  if (req.originalUrl.includes('-sanitized')) {
+    sanitizedExtension = '-sanitized'
+  }
+  let dbName = `${groupId}-reporting${sanitizedExtension}`;
+  const fileName = `${groupId}-${formId}${sanitizedExtension}-${Date.now()}.csv`
+  let outputPath = `/csv/${fileName}`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
-  const outputPath = `/csv/${fileName}`
-  const delayBetweenBatches = 0
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${groupId} ${formId} ${outputPath} ${batchSize} ${delayBetweenBatches}`
+  console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
+  
+  const sleepTimeBetweenBatches = 0
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${dbName} ${formId} ${outputPath} ${batchSize} ${sleepTimeBetweenBatches}`
   if (req.params.year && req.params.month) {
     cmd += ` ${sanitize(req.params.year)} ${sanitize(req.params.month)}`
   }
