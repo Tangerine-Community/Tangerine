@@ -17,6 +17,8 @@
             <mat-option *ngFor="let year of years" value="{{year}}">{{year}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-checkbox name="excludePII"  [(ngModel)]="excludePII">{{'Exclude PII?'|translate}}
+        </mat-checkbox>
         <paper-button class="button" (click)="process()">submit</paper-button>
       </div>
     </form>
