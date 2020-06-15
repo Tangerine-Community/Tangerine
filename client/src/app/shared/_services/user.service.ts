@@ -1,3 +1,5 @@
+import {HttpClient} from "@angular/common/http";
+
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 import { DeviceService } from './../../device/services/device.service';
 import { Subject } from 'rxjs';
@@ -38,7 +40,8 @@ export class UserService {
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockBoxService:LockBoxService,
     private deviceService:DeviceService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private http: HttpClient
   ) {
     this.window = window;
   }
@@ -50,6 +53,17 @@ export class UserService {
   async installSharedUserDatabase(device) {
     this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
     await this.installDefaultUserDocs(this.sharedUserDatabase)
+    // install any extra views
+    try {
+      let queryJson: any[] = <Array<any>>await this.http.get('./assets/query.json').toPromise()
+      for (const moduleDocs of queryJson) {
+        for (const doc of moduleDocs) {
+          await this.sharedUserDatabase.put(doc)
+        }
+      }
+    } catch (e) {
+      console.log("Error: " + e)
+    }
     await this.sharedUserDatabase.put({
       _id: 'info',
       atUpdateIndex: updates.length - 1
