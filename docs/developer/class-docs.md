@@ -1,4 +1,4 @@
-# Getting Started - 1
+# Getting Started
 
 ## How to get data out of a TangyFormResponse
 
