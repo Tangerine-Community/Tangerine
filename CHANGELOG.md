@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.11.0
+- New Features in all Tangerine
+  - Support for filtering out PII from CSV output. On the backend, editor indicates question on form is PII. [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
+  - Reports tab for case home screen [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143)
+  - Enable modification of APK package and name [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
+- Developer notes
+  - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
+
 ## v3.10.0
 - New Features in all Tangerine
   - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]
