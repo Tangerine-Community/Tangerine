@@ -1,3 +1,4 @@
+import { CaseReportsComponent } from './components/case-reports/case-reports.component';
 import { CaseHomeDocs } from './case-home.docs';
 import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
@@ -14,6 +15,7 @@ import { CommonModule } from '@angular/common';
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   declarations: [
     CaseHomeComponent,
+    CaseReportsComponent,
     CaseEventScheduleComponent
   ],
   imports: [
