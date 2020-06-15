@@ -48,6 +48,7 @@ import { GroupDeviceUserComponent } from './group-device-user/group-device-user.
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
+import { ManageGroupRolesPermissionsComponent } from '../core/auth/_components/manage-group-roles-permissions/manage-group-roles-permissions.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -76,6 +77,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/security', component: ConfigureGroupSecurityComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/assign-role', component: ListUsersComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/configure-roles', component: ManageGroupRolesPermissionsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },

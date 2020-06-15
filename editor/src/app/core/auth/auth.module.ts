@@ -22,6 +22,7 @@ import { ManageSitewidePermissionsComponent } from './_components/manage-sitewid
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { EditUserComponent } from './_components/edit-user/edit-user.component';
 import { UpdatePersonalProfileComponent } from './_components/update-personal-profile/update-personal-profile.component';
+import { ManageGroupRolesPermissionsComponent } from './_components/manage-group-roles-permissions/manage-group-roles-permissions.component';
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [
@@ -40,7 +41,7 @@ import { UpdatePersonalProfileComponent } from './_components/update-personal-pr
         MatCheckboxModule
 
     ],
-  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent],
+  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, ManageGroupRolesPermissionsComponent],
   providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
 })
 export class AuthModule { }
