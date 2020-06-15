@@ -2,9 +2,11 @@
 
 ## v3.11.0
 - New Features in all Tangerine
-  - Support for filtering out PII from CSV output. On the backend, editor indicates question on form is PII. [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
-  - Reports tab for case home screen [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143)
-  - Enable modification of APK package and name [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
+  - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
+  - Editor User indicates wether or not to include PII in CSV export [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
+- New Features in Tangerine with Case Module enabled
+  - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143)
+  - Data Collector views an alert [#2020](https://github.com/Tangerine-Community/Tangerine/issues/2020) [[demo](https://youtu.be/iw1emB9Ddis)]
 - Developer notes
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
 
