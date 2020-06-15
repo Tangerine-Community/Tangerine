@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
+import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-manage-group-roles-permissions',
@@ -6,10 +9,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./manage-group-roles-permissions.component.css']
 })
 export class ManageGroupRolesPermissionsComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
+  title = _TRANSLATE('Security');
+  breadcrumbs;
+  groupId;
+  constructor(private route: ActivatedRoute) { }
+  async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Security'),
+        url: `security`
+      },
+      <Breadcrumb>{
+        label: _TRANSLATE('Configure Roles'),
+        url: `security/configure-roles`
+      }
+    ];
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
   }
-
 }
