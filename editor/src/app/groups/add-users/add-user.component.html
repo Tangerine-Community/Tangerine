@@ -20,6 +20,15 @@
       </ng-template>
       <br>
       <br>
+
+      <p *ngIf="roles" class="tangy-input-width">
+        <mat-checkbox #f (change)="onSelectChange(r.role, f.checked)"
+            [checked]="doesUserHaveRole(r.role)" *ngFor="let r of roles"
+            [name]="r.role">
+            {{r.role}}
+        </mat-checkbox>
+    </p>
+
       <mat-form-field class="tangy-full-width">
         <mat-select [(value)]="role" placeholder="Role" required>
           <mat-option value="_">None</mat-option>

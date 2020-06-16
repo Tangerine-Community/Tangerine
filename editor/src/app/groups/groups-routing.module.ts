@@ -51,6 +51,7 @@ import { ConfigureGroupSecurityComponent } from './configure-group-security/conf
 import { ManageGroupRolesPermissionsComponent } from '../core/auth/_components/manage-group-roles-permissions/manage-group-roles-permissions.component';
 import { AddRoleToGroupComponent } from '../core/auth/_components/add-role-to-group/add-role-to-group.component';
 import { UpdateGroupRolesComponent } from '../core/auth/_components/update-group-roles/update-group-roles.component';
+import { AddUserToAGroupComponent } from '../core/auth/_components/add-user-to-a-group/add-user-to-a-group.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -93,7 +94,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy/releases/release-apk-test', component: GroupReleaseApkTestComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-apk-live', component: GroupReleaseApkLiveComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/addUser', component: AddUserToAGroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
     path: 'groups/:groupId/configure/location-list/import-location-list',

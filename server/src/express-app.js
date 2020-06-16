@@ -291,22 +291,22 @@ app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async (req, res) 
   try {
     const user = await findUserByUsername(payload.username)
     /**
-     *  If the groups array is existent on the user object, check if the is already in the groups array i.e. it is being updated
-     *    If it exists, update the role, otherwise add a new record to the groups array and save.
-     * 
-     * If the groups array is non existent on the user object, assign the groups array with the corresponding groupname and role
+     *  If the groups array is existent on the user object,
+     * check if the is already in the groups array i.e. it is being updated
+     * If it exists, update the roles, otherwise add a new record to the groups array and save.
+     * If the groups array is non existent on the user object,
+     *  assign the groups array with the corresponding groupname and roles
      * This is needful especially for users created before role management was added.
-     * 
      */
     if (typeof user.groups !== 'undefined') {
       const index = user.groups.findIndex(group => group.groupName === groupName);
       if (index > -1) {
-        user.groups[index] = { groupName, role: payload.role }
+        user.groups[index] = { ...payload.role }
       } else {
-        user.groups.push({ groupName, role: payload.role })
+        user.groups.push({ ...payload.role })
       }
     } else {
-      user.groups = [{ groupName, role: payload.role }];
+      user.groups = [{ ...payload.role }];
     }
     const data = await USERS_DB.put(user);
     res.send({ data, statusCode: 200, statusMessage: `User Added to Group ${groupName}` })
