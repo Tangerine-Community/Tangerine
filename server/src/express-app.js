@@ -39,7 +39,7 @@ const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const { extendSession, findUserByUsername,
    USERS_DB, login, getSitewidePermissionsByUsername,
-   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName, getAllRoles} = require('./auth');
+   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName, getAllRoles, updateRoleInGroup} = require('./auth');
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
@@ -390,6 +390,7 @@ app.post('/permissions/addRoleToGroup/:groupId',
 app.get('/rolesByGroupId/:groupId/role/:role',
           isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), findRoleByName);
 app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), getAllRoles);
+app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied

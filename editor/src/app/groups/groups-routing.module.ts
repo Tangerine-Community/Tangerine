@@ -81,7 +81,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/security/assign-role', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/configure-roles', component: ManageGroupRolesPermissionsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/configure-roles/add-role', component: AddRoleToGroupComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/configure/security/configure-roles/update/:role', component: UpdateGroupRolesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/configure-roles/update/:roleName', component: UpdateGroupRolesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },

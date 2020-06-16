@@ -195,21 +195,21 @@ const getUserGroupPermissionsByGroupName = async (req, res) => {
 };
 
 const addRoleToGroup = async (req, res) => {
-  const {data} = req.body;
-  const {groupId} = req.params;
+  const { data } = req.body;
+  const { groupId } = req.params;
   if (!groupId || !data.role) {
     res.status(500).send('Could not add role');
   } else {
     try {
       const myGroup = await GROUPS_DB.get(groupId);
       myGroup.roles = myGroup.roles ? myGroup.roles : [];
-      const exists = myGroup.roles.find( x => x.role === data.role);
+      const exists = myGroup.roles.find(x => x.role === data.role);
       if (exists) {
         return res.status(409).send('Role already exists');
       }
-      myGroup.roles = [...myGroup.roles, {...data}];
+      myGroup.roles = [...myGroup.roles, { ...data }];
       await GROUPS_DB.put(myGroup);
-      res.status(200).send({data: 'Role Added Successfully'});
+      res.status(200).send({ data: 'Role Added Successfully' });
     } catch (error) {
       console.error(error);
       res.status(500).send('Could not add role');
@@ -219,17 +219,17 @@ const addRoleToGroup = async (req, res) => {
 
 const findRoleByName = async (req, res) => {
   try {
-    const {groupId, role} = req.params;
+    const { groupId, role } = req.params;
     if (!groupId) {
-      res.status(500).send('Could  not find role');
+      return res.status(500).send('Could  not find role');
     }
     const data = await GROUPS_DB.get(groupId);
     if (data.roles) {
       const foundRole = data.roles.find(d => d.role === role);
-      res.status(200).send({data: foundRole || {}});
+      return res.status(200).send({ data: foundRole || {} });
     } else {
-      res.status(200).send({data: {}});
-  }
+      return res.status(200).send({ data: {} });
+    }
   } catch (error) {
     res.status(500).send('Could not find role');
   }
@@ -237,20 +237,45 @@ const findRoleByName = async (req, res) => {
 
 const getAllRoles = async (req, res) => {
   try {
-    const {groupId, role} = req.params;
+    const { groupId } = req.params;
     if (!groupId) {
-      res.status(500).send('Could  not get roles');
+      return res.status(500).send('Could  not get roles');
     }
     const data = await GROUPS_DB.get(groupId);
     if (data.roles && data.roles.length > 0) {
-      res.status(200).send({data: data.roles});
+      return res.status(200).send({ data: data.roles });
     } else {
-      res.status(200).send({data: []});
-  }
+      return res.status(200).send({ data: [] });
+    }
   } catch (error) {
     res.status(500).send('Could not find role');
   }
 };
+
+const updateRoleInGroup = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const { role, permissions } = req.body;
+    if (!groupId || !role || !permissions) {
+      return res.status(500).send('Could  not update role');
+    }
+    const data = await GROUPS_DB.get(groupId);
+    data.roles = data.roles ? data.roles : [];
+    if (data.roles.length > 0) {
+      const index = data.roles.findIndex(r => r.role === role);
+      data.roles[index] = {role, permissions};
+      await GROUPS_DB.put(data);
+      return res.status(200).send({ data: 'Role Updated successfully' });
+    } else {
+      data.roles = { role, permissions };
+      await GROUPS_DB.put(data);
+      return res.status(200).send({ data: 'Role Updated successfully' });
+    }
+  } catch (error) {
+    return res.status(500).send('Could  not update role');
+  }
+};
+
 module.exports = {
   USERS_DB,
   addRoleToGroup,
@@ -265,6 +290,6 @@ module.exports = {
   hashPassword,
   isSuperAdmin,
   login,
+  updateRoleInGroup,
   updateUserSiteWidePermissions,
-
 };
