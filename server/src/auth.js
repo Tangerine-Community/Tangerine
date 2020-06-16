@@ -221,7 +221,7 @@ const findRoleByName = async (req, res) => {
   try {
     const {groupId, role} = req.params;
     if (!groupId) {
-      res.status(500).send('Could  notfind role');
+      res.status(500).send('Could  not find role');
     }
     const data = await GROUPS_DB.get(groupId);
     if (data.roles) {
@@ -235,6 +235,22 @@ const findRoleByName = async (req, res) => {
   }
 };
 
+const getAllRoles = async (req, res) => {
+  try {
+    const {groupId, role} = req.params;
+    if (!groupId) {
+      res.status(500).send('Could  not get roles');
+    }
+    const data = await GROUPS_DB.get(groupId);
+    if (data.roles && data.roles.length > 0) {
+      res.status(200).send({data: data.roles});
+    } else {
+      res.status(200).send({data: []});
+  }
+  } catch (error) {
+    res.status(500).send('Could not find role');
+  }
+};
 module.exports = {
   USERS_DB,
   addRoleToGroup,
@@ -243,6 +259,7 @@ module.exports = {
   extendSession,
   findRoleByName,
   findUserByUsername,
+  getAllRoles,
   getSitewidePermissionsByUsername,
   getUserGroupPermissionsByGroupName,
   hashPassword,
