@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -19,6 +19,7 @@ export class UpdateGroupRolesComponent implements OnInit {
   title = _TRANSLATE('Security');
   constructor(private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
+    private router: Router,
     private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
@@ -57,5 +58,6 @@ export class UpdateGroupRolesComponent implements OnInit {
   async submit() {
     this.authenticationService.updateRoleInGroup(this.groupId, this.role);
     this.errorHandler.handleError('Role Updated Successfully');
+    this.router.navigate([`groups/${this.groupId}/configure/security/configure-roles`]);
   }
 }
