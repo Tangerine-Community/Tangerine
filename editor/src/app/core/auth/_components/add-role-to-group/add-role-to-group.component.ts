@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -20,6 +20,7 @@ export class AddRoleToGroupComponent implements OnInit {
   groupPermissions = [];
   constructor(private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
+    private router: Router,
     private errorHandler: TangyErrorHandler) { }
   async ngOnInit() {
     this.breadcrumbs = [
@@ -57,5 +58,6 @@ export class AddRoleToGroupComponent implements OnInit {
     const data = { role: this.newRole, permissions: this.groupPermissions };
     this.authenticationService.addNewRoleToGroup(this.groupId, data);
     this.errorHandler.handleError('Role Added to Group Successfully');
+    this.router.navigate([`groups/${this.groupId}/configure/security/configure-roles`]);
   }
 }
