@@ -39,7 +39,7 @@ const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const { extendSession, findUserByUsername,
    USERS_DB, login, getSitewidePermissionsByUsername,
-   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName} = require('./auth');
+   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName} = require('./auth');
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
@@ -116,7 +116,7 @@ app.post('/extendSession', isAuthenticated, extendSession);
 app.get('/permissionsList', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getPermissionsList);
 app.get('/sitewidePermissionsByUsername/:username', 
           isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getSitewidePermissionsByUsername);
-app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
+app.post('/permissions/updateUserSitewidePermissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
 
 /*
  * User API
