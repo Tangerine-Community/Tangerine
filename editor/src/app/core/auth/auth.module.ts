@@ -27,6 +27,7 @@ import { AddRoleToGroupComponent } from './_components/add-role-to-group/add-rol
 import { UpdateGroupRolesComponent } from './_components/update-group-roles/update-group-roles.component';
 import { AddUserToAGroupComponent } from './_components/add-user-to-a-group/add-user-to-a-group.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { UpdateUserRoleComponent } from './_components/update-user-role/update-user-role.component';
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [
@@ -46,7 +47,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         MatCheckboxModule
 
     ],
-  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, ManageGroupRolesPermissionsComponent, AddRoleToGroupComponent, UpdateGroupRolesComponent, AddUserToAGroupComponent],
+  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, ManageGroupRolesPermissionsComponent, AddRoleToGroupComponent, UpdateGroupRolesComponent, AddUserToAGroupComponent, UpdateUserRoleComponent],
   providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
 })
 export class AuthModule { }
