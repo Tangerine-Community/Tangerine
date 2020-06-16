@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import {UserService} from "../../../shared/_services/user.service";
+import {Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 
 @Component({
   selector: 'app-case-reports',
@@ -10,16 +9,19 @@ import {UserService} from "../../../shared/_services/user.service";
 export class CaseReportsComponent implements OnInit {
 
   @ViewChild('container', {static: true}) container: ElementRef
-
+  reportsHtml
   constructor(
     private http:HttpClient,
-    private userService: UserService,
-  ) { }
+    private ref: ChangeDetectorRef,
+  ) {
+    ref.detach();
+  }
 
   async ngOnInit() {
-    window['TangyDb'] = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    const reportsHtml = await this.http.get('./assets/reports.html', {responseType: 'text'}).toPromise()
-    this.container.nativeElement.innerHTML = reportsHtml
+    this.reportsHtml = await this.http.get('./assets/reports.html', {responseType: 'text'}).toPromise()
+    const reportsJs = await this.http.get('./assets/reports.js', {responseType: 'text'}).toPromise()
+    this.ref.detectChanges();
+    eval(reportsJs)
   }
 
 }
