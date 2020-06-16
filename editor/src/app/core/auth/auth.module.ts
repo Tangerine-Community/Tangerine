@@ -24,6 +24,7 @@ import { EditUserComponent } from './_components/edit-user/edit-user.component';
 import { UpdatePersonalProfileComponent } from './_components/update-personal-profile/update-personal-profile.component';
 import { ManageGroupRolesPermissionsComponent } from './_components/manage-group-roles-permissions/manage-group-roles-permissions.component';
 import { AddRoleToGroupComponent } from './_components/add-role-to-group/add-role-to-group.component';
+import { UpdateGroupRolesComponent } from './_components/update-group-roles/update-group-roles.component';
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [
@@ -42,7 +43,7 @@ import { AddRoleToGroupComponent } from './_components/add-role-to-group/add-rol
         MatCheckboxModule
 
     ],
-  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, ManageGroupRolesPermissionsComponent, AddRoleToGroupComponent],
+  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, ManageGroupRolesPermissionsComponent, AddRoleToGroupComponent, UpdateGroupRolesComponent],
   providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
 })
 export class AuthModule { }
