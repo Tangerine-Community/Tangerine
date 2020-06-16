@@ -55,14 +55,26 @@ export class UserService {
     await this.installDefaultUserDocs(this.sharedUserDatabase)
     // install any extra views
     try {
-      let queryJson: any[] = <Array<any>>await this.http.get('./assets/query.json').toPromise()
-      for (const moduleDocs of queryJson) {
-        for (const doc of moduleDocs) {
+      let queryJs = await this.http.get('./assets/queries.js', {responseType: 'text'}).toPromise()
+        let queries;
+        eval(`queries = ${queryJs}`)
+        for (const query of queries) {
+          let doc = {
+            _id: '_design/' + query.id,
+            version: query.version,
+            views: {
+              [query.id]: {
+                ...typeof query.view === 'string'? {"map": query.view.toString()}: {
+                  ...query.view.map? {"map": query.view.map.toString()}: {},
+                  ...query.view.reduce? {"reduce": query.view.reduce.toString()}: {}
+                },
+              }
+            }
+          }
           await this.sharedUserDatabase.put(doc)
         }
-      }
     } catch (e) {
-      console.log("Error: " + e)
+      console.log("Error: " + JSON.stringify(e))
     }
     await this.sharedUserDatabase.put({
       _id: 'info',
