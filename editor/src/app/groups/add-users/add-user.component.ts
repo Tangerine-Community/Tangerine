@@ -56,10 +56,14 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
             url: `security`
           },
           <Breadcrumb>{
+            label: _TRANSLATE('Configure Roles'),
+            url: `security/assign-role`
+          },
+          <Breadcrumb>{
             label: _TRANSLATE('Assign Role'),
             url: `security/role/${this.selectedUser}`
           }
-        ]
+        ];
       }
     });
   }
