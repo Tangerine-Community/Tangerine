@@ -12,7 +12,8 @@ export class ManageGroupRolesPermissionsComponent implements OnInit {
   title = _TRANSLATE('Security');
   breadcrumbs;
   groupId;
-  constructor(private route: ActivatedRoute) { }
+  roles;
+  constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService) { }
   async ngOnInit() {
     this.breadcrumbs = [
       <Breadcrumb>{
@@ -25,5 +26,6 @@ export class ManageGroupRolesPermissionsComponent implements OnInit {
       }
     ];
     this.groupId = this.route.snapshot.paramMap.get('groupId');
+    this.roles = await this.authenticationService.getAllRoles(this.groupId);
   }
 }

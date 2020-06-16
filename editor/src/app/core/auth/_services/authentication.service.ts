@@ -153,6 +153,17 @@ export class AuthenticationService {
     }
   }
 
+  async getAllRoles(groupId) {
+    try {
+      const data = await this.http.get(`/rolesByGroupId/${groupId}/roles`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        return data.body['data'];
+      }
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
   async findRoleByName(groupId, roleName) {
     try {
       const data = await this.http.get(`/rolesByGroupId/${groupId}/role/${roleName}`, {observe: 'response'}).toPromise();
@@ -163,7 +174,6 @@ export class AuthenticationService {
       console.error(error);
       return {};
     }
-    // /rolesByGroupId/:groupId/role/:username
   }
   doesUserHaveAPermission(groupId, permission) {
     const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];

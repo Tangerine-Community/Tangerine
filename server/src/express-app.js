@@ -39,7 +39,7 @@ const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const { extendSession, findUserByUsername,
    USERS_DB, login, getSitewidePermissionsByUsername,
-   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName} = require('./auth');
+   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName, getAllRoles} = require('./auth');
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
@@ -94,7 +94,7 @@ app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
-var {permit} = require('./middleware/permitted.js')
+var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
@@ -383,6 +383,13 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
     res.sendStatus(500);
   }
 })
+
+app.post('/permissions/addRoleToGroup/:groupId', 
+          isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), addRoleToGroup);
+
+app.get('/rolesByGroupId/:groupId/role/:role',
+          isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), findRoleByName);
+app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), getAllRoles);
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
