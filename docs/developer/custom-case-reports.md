@@ -18,6 +18,8 @@ The queries in this doc are installed when the app is installed. Support for upd
 
 ## Helper functions
 
-When writing queries or organizing the javascript logic to fetch the results, use the globally-exposed $get and $get functions to get the value of inputs; this will save you from having to wrote deeply nested code (`doc.items[0].inputs[3].value[0].value`)
+When writing queries or organizing the javascript logic to fetch the results, use the globally-exposed $.Get function to get the value of inputs; this will save you from having to wrote deeply nested code (`doc.items[0].inputs[3].value[0].value`)
+
+`$.Get(doc, 'consent')`
 
 
