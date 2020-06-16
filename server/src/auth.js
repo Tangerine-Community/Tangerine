@@ -193,11 +193,55 @@ const getUserGroupPermissionsByGroupName = async (req, res) => {
     res.status(500).send('Could not get permissions');
   }
 };
+
+const addRoleToGroup = async (req, res) => {
+  const {data} = req.body;
+  const {groupId} = req.params;
+  if (!groupId || !data.role) {
+    res.status(500).send('Could not add role');
+  } else {
+    try {
+      const myGroup = await GROUPS_DB.get(groupId);
+      myGroup.roles = myGroup.roles ? myGroup.roles : [];
+      const exists = myGroup.roles.find( x => x.role === data.role);
+      if (exists) {
+        return res.status(409).send('Role already exists');
+      }
+      myGroup.roles = [...myGroup.roles, {...data}];
+      await GROUPS_DB.put(myGroup);
+      res.status(200).send({data: 'Role Added Successfully'});
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Could not add role');
+    }
+  }
+};
+
+const findRoleByName = async (req, res) => {
+  try {
+    const {groupId, role} = req.params;
+    if (!groupId) {
+      res.status(500).send('Could  notfind role');
+    }
+    const data = await GROUPS_DB.get(groupId);
+    if (data.roles) {
+      const foundRole = data.roles.find(d => d.role === role);
+      res.status(200).send({data: foundRole || {}});
+    } else {
+      res.status(200).send({data: {}});
+  }
+  } catch (error) {
+    res.status(500).send('Could not find role');
+  }
+};
+
 module.exports = {
   USERS_DB,
+  addRoleToGroup,
   areCredentialsValid,
   doesUserExist,
   extendSession,
+  findRoleByName,
   findUserByUsername,
   getSitewidePermissionsByUsername,
   getUserGroupPermissionsByGroupName,

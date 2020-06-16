@@ -2,6 +2,16 @@ const permissionsList = {
   groupPermissions: [
     'can_manage_group_deployment',
     'can_assign_permissions_to_group_user',
+    'can_manage_data',
+    'can_author',
+    'can_configure',
+    'can_deploy',
+    'can_PII',
+    'can_view_form_responses',
+    'can_download_csv',
+    'can_review_issues',
+    'can_review_uploaded__cases',
+    'can_manage_group_roles'
   ],
   sitewidePermissions: [
     'can_create_group',
