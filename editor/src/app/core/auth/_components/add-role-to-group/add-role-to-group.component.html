@@ -6,7 +6,8 @@
                 <input name="role" [(ngModel)]="newRole" #role="ngModel" matInput (blur)="doesRoleExistOnGroup(newRole)"
                     placeholder="{{'Role Name'|translate}}" required>
                 <span>
-                    <mat-error *ngIf="(roleExists!==null&&roleExists)&&(role.dirty || role.touched)" style="font-size:75%;"> {{'Role Unavailable'|translate}}
+                    <mat-error *ngIf="(roleExists!==null&&roleExists)&&(role.dirty || role.touched)"
+                        style="font-size:75%;"> {{'Role Unavailable'|translate}}
                     </mat-error>
                     <mat-error *ngIf="(roleExists!==null&&!roleExists)&&(role.dirty || role.touched)"
                         style="font-size:75%;color: green"> {{'Role Available'|translate}}</mat-error>
@@ -14,7 +15,6 @@
                         {{'This Field is Required'|translate}}
                     </mat-error>
                 </span>
-
             </mat-form-field>
             <p *ngIf="permissionsList" class="tangy-input-width">
                 <mat-checkbox #f (change)="onSelectChange(permission, f.checked)"
@@ -23,7 +23,8 @@
                 </mat-checkbox>
             </p>
             <p>
-                <button [disabled]="addRoleForm.invalid||roleExists||roleExists===null" mat-raised-button color="warn" (click)="submit()">{{'Add Role'|translate}}</button>
+                <button [disabled]="addRoleForm.invalid||roleExists||roleExists===null" mat-raised-button color="warn"
+                    (click)="submit()">{{'Add Role'|translate}}</button>
             </p>
         </form>
     </mat-card-content>
