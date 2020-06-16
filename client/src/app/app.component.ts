@@ -12,6 +12,8 @@ import { _TRANSLATE } from './shared/translation-marker';
 import { AppConfig } from './shared/_classes/app-config.class';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { SearchService } from './shared/_services/search.service';
+import { Get } from 'tangy-form/helpers.js'
+
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -55,7 +57,7 @@ export class AppComponent implements OnInit {
     // Detect if this is the first time the app has loaded.
     this.languageCode = this.window.localStorage.getItem('languageCode')
       ? this.window.localStorage.getItem('languageCode')
-      : 'en' 
+      : 'en'
     this.languageDirection = this.window.localStorage.getItem('languageDirection')
       ? this.window.localStorage.getItem('languageDirection')
       : 'ltr'
@@ -90,6 +92,11 @@ export class AppComponent implements OnInit {
     this.window.appConfig = this.appConfig;
     this.window.device = await this.deviceService.getDevice();
     this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
+
+    //  Expose helpers inside $:
+    window['$'] = {
+      Get: Get
+    }
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {

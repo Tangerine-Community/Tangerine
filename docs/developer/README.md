@@ -1,5 +1,6 @@
 # Developer Guide Contents
 
+- [Custom Case Reports](custom-case-reports.mdr5ft)
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
 
