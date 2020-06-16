@@ -152,6 +152,23 @@ export class AuthenticationService {
       }
     }
   }
+  async updateRoleInGroup(groupId, role) {
+    try {
+      const result = await this.http.
+      post(`/permissions/updateRoleInGroup/${groupId}`, role, {observe: 'response'}).toPromise();
+      if (result.status === 200) {
+        return result.body;
+      }
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+      if (error.status === 409) {
+        this.errorHandler.handleError(_TRANSLATE(error.error));
+      }
+    }
+  }
 
   async getAllRoles(groupId) {
     try {
