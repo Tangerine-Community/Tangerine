@@ -5,8 +5,6 @@ const USERS_DB = new DB('users');
 const GROUPS_DB = new DB('groups');
 const { createLoginJWT } = require('./auth-utils');
 const { permissionsList } = require('./permissions-list.js');
-const { get } = require('http');
-const { group } = require('console');
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -171,16 +169,28 @@ const getUserGroupPermissionsByGroupName = async (req, res) => {
       };
     } else {
       const data = await findUserByUsername(username);
+      const sitewidePermissions = data.sitewidePermissions || [];
       if (data.groups && data.groups.length > 0) {
         const groupData = data.groups.find(
           g => g.groupName === groupName || g.name === groupName,
         );
-        const groupPermissions = groupData
-          ? [{ ...groupData }]
-          : [{ groupName, permissions: [] }];
-        const sitewidePermissions = data.sitewidePermissions || [];
+        const userRolesInGroup = groupData.roles || [];
+        const currentGroup = await GROUPS_DB.get(groupName);
+        // Get all the permissions associated with all the user's roles
+        const perm = userRolesInGroup.map(r => {
+          const g = currentGroup.roles.find(f => f.role === r);
+          return g.permissions;
+        });
+        // Flatten array, would be good to use array.flat() when our node version supports it
+        const myGroupPermissions = [...new Set(perm.reduce((acc, val) => acc.concat(val), []))];
+        const groupPermissions = [{ groupName, permissions: myGroupPermissions || [] }];
         permissions = {
           groupPermissions,
+          sitewidePermissions: [...sitewidePermissions, 'non_user1_user'],
+        };
+      } else {
+        permissions = {
+          groupPermissions: [],
           sitewidePermissions: [...sitewidePermissions, 'non_user1_user'],
         };
       }
@@ -272,6 +282,7 @@ const updateRoleInGroup = async (req, res) => {
       return res.status(200).send({ data: 'Role Updated successfully' });
     }
   } catch (error) {
+    console.log(error)
     return res.status(500).send('Could  not update role');
   }
 };
