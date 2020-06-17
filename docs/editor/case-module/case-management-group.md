@@ -1,4 +1,4 @@
-# Case Management Group (experimental)
+# Case Management Group 
 
 Case Management allows us to define Case Definitions for different purposes such as following a participant in a drug trial over the course of many events, where each event may require many forms to be filled out. In order to create and find cases, you will need to configure the `"case-home"` as the `"homeUrl"` value in `app-config.json`.
 
@@ -39,7 +39,7 @@ File: `case-definition-1.json`
     "eventFormId": "event-form-1"
   },
   "eventDefinitions": [
-    {
+   {
       "id": "event-definition-1",
       "name": "Event Definition 1",
       "description": "Description...",
@@ -59,7 +59,36 @@ File: `case-definition-1.json`
 }
 ```
 
-### Debugging Case Templates
+### Case Definition Templates
+As a Data Collector uses the Client App, they navigate a Case's hierarchy of Events and Forms. Almost every piece of information they see can be overriden to display custom variables and logic by using the Case Definition's templates. This section describes the templates available and what variables are available. Note that all templates are evaluated as Javascript Template Literals. There are many good tutorials online about how to use Javascipt Template Literals, here are [a couple of Javascript Template Literals examples](https://gist.github.com/rjsteinert/795fcc4f6899a337bcc5a9967557dcf2) that we reference often for things like doing conditionals and loops.
+
+#### Schedule
+
+![case schedule templates](case-schedule-templates.png)
+
+`templateScheduleListItemIcon` default:
+```
+"templateScheduleListItemIcon": "${caseEvent.status === 'CASE_EVENT_STATUS_COMPLETED' ? 'event_note' : 'event_available'}"
+```
+
+`templateScheduleListItemPrimary` default:
+```
+"templateScheduleListItemPrimary": "<span>${caseEventDefinition.name}</span> in Case ${caseService.case._id.substr(0,5)}"
+```
+
+`templateScheduleListItemSecondary` default: 
+```
+"templateScheduleListItemSecondary": "<span>${caseInstance.label}</span>"
+```
+
+Variables available:
+- `caseService`: [CaseService](https://github.com/Tangerine-Community/Tangerine/blob/master/client/src/app/case/services/case.service.ts)
+- `caseDefinition`: [CaseDefinition](https://github.com/Tangerine-Community/Tangerine/blob/master/client/src/app/case/classes/case-definition.class.ts)
+- `caseEventDefinition`: [CaseEventDefinition](https://github.com/Tangerine-Community/Tangerine/blob/master/client/src/app/case/classes/case-event-definition.class.ts)
+- `caseInstance`: [Case](https://github.com/Tangerine-Community/Tangerine/blob/master/client/src/app/case/classes/case.class.ts)
+- `caseEvent`: [CaseEvent](https://github.com/Tangerine-Community/Tangerine/blob/master/client/src/app/case/classes/case-event.class.ts)
+
+### Debugging Case Definition Templates
 ![debug case templates](debug-case-templates.png)
 
 ## Configuring search
