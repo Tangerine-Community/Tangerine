@@ -10,7 +10,7 @@ async function run() {
         const docs = results.rows.map(row => row.doc)
         // console.log("docs: " + JSON.stringify(docs))
         for (const doc of docs) {
-          report1.innerHTML += `<p>${doc._id}: ${$.Get(doc, 'first_name')} ${$.Get(doc, 'last_name')} Consent: ${$.Get(doc, 'consent')}</p>`
+          report1.innerHTML += `<p>${doc._id}: ${T.form.Get(doc, 'first_name')} ${T.form.Get(doc, 'last_name')} Consent: ${T.form.Get(doc, 'consent')}</p>`
         }
     } catch (e) {
         console.log("Error: " + JSON.stringify(e))
