@@ -76,6 +76,8 @@ import { GroupDeviceUserComponent } from './group-device-user/group-device-user.
 import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { HasAllPermissionsDirective } from '../core/auth/_directives/has-all-permissions.directive';
 
 
 
@@ -83,6 +85,7 @@ import { ConfigureGroupSecurityComponent } from './configure-group-security/conf
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
+    BrowserModule,
     MatGridListModule,
     FormsModule,
     DragDropModule,
@@ -158,7 +161,8 @@ import { ConfigureGroupSecurityComponent } from './configure-group-security/conf
     GroupCasesComponent,
     GroupIssuesComponent,
     CaseSettingsComponent,
-    ConfigureGroupSecurityComponent
+    ConfigureGroupSecurityComponent,
+    HasAllPermissionsDirective
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })
