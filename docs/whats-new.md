@@ -124,6 +124,7 @@
     # Now you are ready to start the server.
     ./start.sh v3.8.1
     ```
+
 ## v3.8.0
 v3.8.0 is a big and exciting release! To accomodate the long list of changes, we split up this round of release notes into sections: General, Sync Protocol 2 Module, and Case Module, and Developer notes.
 
@@ -134,38 +135,40 @@ The following are features and fixes that are coming to all Tangerine installs. 
 | ----------------------------------------- | --------------------------------------------- |
 | ![group page](screenshots/group-page.png) | ![form editing](screenshots/form-editing.png) |
 
-- Editor User browses Group UI by nested categories (as opposed to flat list) [#1880](https://github.com/Tangerine-Community/Tangerine/issues/1880)
-- Device Administrator is prompted to authorize permissions on first app load [#1896](https://github.com/Tangerine-Community/Tangerine/issues/1896)
-- Data Collector defines password according to policy [#1867](https://github.com/Tangerine-Community/Tangerine/issues/1867)
-- Data Collector views device info such as Device ID, Assigned Location, Server URL, Group Name, and Release Channel. [#1834](https://github.com/Tangerine-Community/Tangerine/issues/1834)
-- Data Collector in checkboxes chooses "none of the above", then other options are unselected [#1822](https://github.com/Tangerine-Community/Tangerine/issues/1822)
-- Editor distinguishes between inputs that are hidden and skipped [#1800](https://github.com/Tangerine-Community/Tangerine/issues/1800)
-- Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
+??? note "New Features" 
+    - Editor User browses Group UI by nested categories (as opposed to flat list) [#1880](https://github.com/Tangerine-Community/Tangerine/issues/1880)
+    - Device Administrator is prompted to authorize permissions on first app load [#1896](https://github.com/Tangerine-Community/Tangerine/issues/1896)
+    - Data Collector defines password according to policy [#1867](https://github.com/Tangerine-Community/Tangerine/issues/1867)
+    - Data Collector views device info such as Device ID, Assigned Location, Server URL, Group Name, and Release Channel. [#1834](https://github.com/Tangerine-Community/Tangerine/issues/1834)
+    - Data Collector in checkboxes chooses "none of the above", then other options are unselected [#1822](https://github.com/Tangerine-Community/Tangerine/issues/1822)
+    - Editor distinguishes between inputs that are hidden and skipped [#1800](https://github.com/Tangerine-Community/Tangerine/issues/1800)
+    - Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
 
 ### Sync Protocol 2 Module
 Sync Protocol 2 is a new module that can be enabled on a Tangerine installation that adds Device management, the ability for form responses to sync to the server and back down to tablets, the ablity for two tablets to sync form responses with each other offline, and much more.
 
-| Manage which devices have access to sync, when they last synced, when they last updated and which version | Define which form responses are synced up and back down to tablets   |
-| ------------------------------------------------------- | ----------------------------------------------- |
-| ![device management](screenshots/device-management.png) | ![sync settings](screenshots/sync-settings.png) |
+??? note "Sync Protocol 2 Module Features" 
+    | Manage which devices have access to sync, when they last synced, when they last updated and which version | Define which form responses are synced up and back down to tablets   |
+    | ------------------------------------------------------- | ----------------------------------------------- |
+    | ![device management](screenshots/device-management.png) | ![sync settings](screenshots/sync-settings.png) |
+        
+
+    - Data Collector generates encrypted backup of Device [#1909](https://github.com/Tangerine-Community/Tangerine/issues/1909)
+    - Data Collector conducts a two-way sync with server only getting data from server relevant to their location [#1755](https://github.com/Tangerine-Community/Tangerine/issues/1755)
+    - Device sync by Location: Sync Protocol 2: Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
+    - Data Collector syncs to server with large dataset [#1757](https://github.com/Tangerine-Community/Tangerine/issues/1755)
+    - Data collector synchronizes data between devices using an Offline P2P mechanism [#279](https://github.com/Tangerine-Community/Tangerine/issues/279)
+    - Editor User configures two-way sync for form responses from specific forms [#1753](https://github.com/Tangerine-Community/Tangerine/issues/1753)
+    - Editor revokes access to syncing with server for a lost Device [#1894](https://github.com/Tangerine-Community/Tangerine/issues/1894)
+
+??? note "Case Module Features"
+    - Data Collector views Case Events in Schedule with Estimated Day, Scheduled Day, Window, and Occurred On Dates [#1737](https://github.com/Tangerine-Community/Tangerine/issues/1737)
+    - Data Collector creates (another) instance of a repeatable form for a specific participant in a specific event(8hrs) [#1786](https://github.com/Tangerine-Community/Tangerine/issues/1786)
+    - Data Collector views which Participant they are filling out a form for [#1820](https://github.com/Tangerine-Community/Tangerine/issues/1820)
+    - Data Collector searches for a Case in a large dataset [#1893](https://github.com/Tangerine-Community/Tangerine/issues/1893)
+    - Improvements to Case Home search - limit docs to 25 when no phrase is entered: #1871. Added rule to delay search in Case Home until at least two characters have been entered. Search results now sorted by date record updated.
+    - Lazy loading tabs in Case Home - this helps resolve some of the slowness in loading Case Home. Also disabled animations on tabs to remove jankiness.
     
-
-- Data Collector generates encrypted backup of Device [#1909](https://github.com/Tangerine-Community/Tangerine/issues/1909)
-- Data Collector conducts a two-way sync with server only getting data from server relevant to their location [#1755](https://github.com/Tangerine-Community/Tangerine/issues/1755)
-  - Device sync by Location: Sync Protocol 2: Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
-- Data Collector syncs to server with large dataset [#1757](https://github.com/Tangerine-Community/Tangerine/issues/1755)
-- Data collector synchronizes data between devices using an Offline P2P mechanism [#279](https://github.com/Tangerine-Community/Tangerine/issues/279)
-- Editor User configures two-way sync for form responses from specific forms [#1753](https://github.com/Tangerine-Community/Tangerine/issues/1753)
-- Editor revokes access to syncing with server for a lost Device [#1894](https://github.com/Tangerine-Community/Tangerine/issues/1894)
-
-### Case Module
-- Data Collector views Case Events in Schedule with Estimated Day, Scheduled Day, Window, and Occurred On Dates [#1737](https://github.com/Tangerine-Community/Tangerine/issues/1737)
-- Data Collector creates (another) instance of a repeatable form for a specific participant in a specific event(8hrs) [#1786](https://github.com/Tangerine-Community/Tangerine/issues/1786)
-- Data Collector views which Participant they are filling out a form for [#1820](https://github.com/Tangerine-Community/Tangerine/issues/1820)
-- Data Collector searches for a Case in a large dataset [#1893](https://github.com/Tangerine-Community/Tangerine/issues/1893)
-  - Improvements to Case Home search - limit docs to 25 when no phrase is entered: #1871. Added rule to delay search in Case Home until at least two characters have been entered. Search results now sorted by date record updated.
-- Lazy loading tabs in Case Home - this helps resolve some of the slowness in loading Case Home. Also disabled animations on tabs to remove jankiness.
-  
 ### Developer Updates
 - Re-enabled git config in Dockerfile - still having git networking error even when off corp network. 
 - Updated docker-tangerine-base-image to v3.4.0
