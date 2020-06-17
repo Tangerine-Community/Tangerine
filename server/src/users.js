@@ -200,9 +200,9 @@ const findOneUserByUsername = async (req, res) => {
       return res.status(500).send({ data: `Could not find User` });
     }
     const user = await findUserByUsername(username);
-    const { _id, email, firstName, lastName } = user;
+    const { _id, email, firstName, lastName, groups } = user;
     res.status(200).send({
-      data: { _id, username: user.username, email, firstName, lastName },
+      data: { _id, username: user.username, email, firstName, lastName, groups },
     });
   } catch (error) {
     console.error(error);
