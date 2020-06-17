@@ -1,6 +1,6 @@
 <div *ngIf="group?._id">
   <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<mat-card *ngIf="hasAllPermissions(['can_author'])" class="mat-elevation-z3" routerLink="author">
+<mat-card *appHasAPermission="let i;group:group._id; permission:'can_author'" class="mat-elevation-z3" routerLink="author">
   <mat-card-header>
       <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">edit</i>
       </div>
