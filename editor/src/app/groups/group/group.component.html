@@ -10,7 +10,7 @@
       <mat-card-subtitle>Manage forms, case definitions, and media assets.</mat-card-subtitle>
   </mat-card-header>
 </mat-card>
-<mat-card *appHasAllPermissions="let i;group:group._id; permissions:['can_manage_data']" class="mat-elevation-z3" routerLink="data">
+<mat-card *appHasAPermission="let i;group:group._id; permission:'can_manage_data'" class="mat-elevation-z3" routerLink="data">
   <mat-card-header>
       <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">list_alt</i>
       </div>
