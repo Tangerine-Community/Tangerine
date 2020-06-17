@@ -1,4 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GroupsService } from 'src/app/groups/services/groups.service';
+import { UserService } from '../../_services/user.service';
+import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
+import { AuthenticationService } from '../../_services/authentication.service';
 
 @Component({
   selector: 'app-update-user-role',
@@ -7,9 +14,54 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UpdateUserRoleComponent implements OnInit {
 
-  constructor() { }
+  user;
+  username;
+  role;
+  groupId;
+  title = _TRANSLATE('Assign User Role');
+  breadcrumbs: Array<Breadcrumb> = [];
+  allRoles;
+  myGroup;
+  @ViewChild('search', { static: false }) search: ElementRef;
+  constructor(
+    private route: ActivatedRoute,
+    private groupsService: GroupsService,
+    private usersService: UserService,
+    private errorHandler: TangyErrorHandler,
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    this.username = this.route.snapshot.paramMap.get('username');
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
+    this.allRoles = await this.authenticationService.getAllRoles(this.groupId);
+    this.breadcrumbs = [];
+    this.user = await this.usersService.getAUserByUsername(this.username);
+    this.myGroup = this.user.groups.find(g => g.groupName === this.groupId);
+    this.myGroup.roles = this.myGroup?.roles ?? [];
+    this.role = { groupName: this.groupId, roles: this.myGroup.roles };
+  }
+
+  async addUserToGroup() {
+    try {
+      await this.groupsService.addUserToGroup(this.groupId, this.username, this.role);
+      this.errorHandler.handleError(_TRANSLATE('User Added to Group Successfully'));
+      this.router.navigate([`groups/${this.groupId}`]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  doesUserHaveRole(role) {
+    return this.myGroup.roles.indexOf(role) >= 0;
+  }
+  onSelectChange(role, value) {
+    if (value) {
+      this.role.roles = [...new Set([...this.role.roles, role])];
+    } else {
+      this.role.roles = this.role.roles.filter(perm => perm !== role);
+    }
   }
 
 }
