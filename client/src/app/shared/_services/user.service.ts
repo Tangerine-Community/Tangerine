@@ -1,3 +1,5 @@
+import {HttpClient} from "@angular/common/http";
+
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 import { DeviceService } from './../../device/services/device.service';
 import { Subject } from 'rxjs';
@@ -38,7 +40,8 @@ export class UserService {
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockBoxService:LockBoxService,
     private deviceService:DeviceService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private http: HttpClient
   ) {
     this.window = window;
   }
@@ -50,6 +53,29 @@ export class UserService {
   async installSharedUserDatabase(device) {
     this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
     await this.installDefaultUserDocs(this.sharedUserDatabase)
+    // install any extra views
+    try {
+      let queryJs = await this.http.get('./assets/queries.js', {responseType: 'text'}).toPromise()
+        let queries;
+        eval(`queries = ${queryJs}`)
+        for (const query of queries) {
+          let doc = {
+            _id: '_design/' + query.id,
+            version: query.version,
+            views: {
+              [query.id]: {
+                ...typeof query.view === 'string'? {"map": query.view.toString()}: {
+                  ...query.view.map? {"map": query.view.map.toString()}: {},
+                  ...query.view.reduce? {"reduce": query.view.reduce.toString()}: {}
+                },
+              }
+            }
+          }
+          await this.sharedUserDatabase.put(doc)
+        }
+    } catch (e) {
+      console.log("Error: " + JSON.stringify(e))
+    }
     await this.sharedUserDatabase.put({
       _id: 'info',
       atUpdateIndex: updates.length - 1
