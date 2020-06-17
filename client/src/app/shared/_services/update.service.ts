@@ -9,7 +9,6 @@ import {HttpClient} from "@angular/common/http";
 import {UserDatabase} from "../_classes/user-database.class";
 
 const VAR_CURRENT_UPDATE_INDEX = 'VAR_CURRENT_UPDATE_INDEX'
-const VAR_VERSION = 'VAR_VERSION_'
 export const VAR_UPDATE_IS_RUNNING = 'VAR_UPDATE_IS_RUNNING'
 
 @Injectable({
@@ -143,9 +142,17 @@ export class UpdateService {
       eval(`queries = ${queryJs}`)
       // iterate each one, look at each doc, look at the version property, and compare to the one in variablesService. If not matching, do a put
       for (const query of queries) {
-        let version = query.version
-        let versionQuery = <number>await this.variableService.get(VAR_VERSION + query.id)
-        if (version !== versionQuery) {
+        let dbVersion, dbRev;
+        let fileVersion = query.version
+        // get the view doc from the db
+        try {
+          const docInDb = await userDb.get('_design/' + query.id)
+          dbVersion = docInDb.version
+          dbRev = docInDb._rev
+        } catch (err) {
+          // We don't have this design doc.
+        }
+        if (fileVersion !== dbVersion) {
           console.log("Updating custom view: " + query.id)
           let doc = {
             _id: '_design/' + query.id,
@@ -159,15 +166,16 @@ export class UpdateService {
               }
             }
           }
-          // get the view doc from the db
-          try {
-            const docInDb = await userDb.get('_design/' + query.id)
-            await userDb.put({
-              ...doc,
-              _rev: docInDb._rev
-            })
-            await this.variableService.set(VAR_VERSION + query.id, version)
-          } catch (err) {
+          if (dbRev) {
+            try {
+              await userDb.put({
+                ...doc,
+                _rev: dbRev
+              })
+            } catch (err) {
+              console.log('Error putting ' + '_design/' + query.id + ' Error: ' + err)
+            }
+          } else {
             await userDb.put(doc)
           }
         }
