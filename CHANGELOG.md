@@ -3,12 +3,14 @@
 ## v3.11.0
 - New Features in all Tangerine
   - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
-  - Editor User indicates wether or not to include PII in CSV export [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
+  - Editor User indicates whether to include PII in CSV export [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
+  - New 'T' namespace for helper functions [#2198](https://github.com/Tangerine-Community/Tangerine/issues/2198)
 - New Features in Tangerine with Case Module enabled
-  - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143)
+  - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](docs/editor/case-module/custom-case-reports.md)
   - Data Collector views an alert [#2020](https://github.com/Tangerine-Community/Tangerine/issues/2020) [[demo](https://youtu.be/iw1emB9Ddis)]
 - Developer notes
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
+  
 
 ## v3.10.0
 - New Features in all Tangerine
