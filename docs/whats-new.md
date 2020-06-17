@@ -1,116 +1,129 @@
 # What's New
 
 ## v3.10.0
-- New Features in all Tangerine
-  - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]
-  - Editor User with appropriate permission manages site level permissions of users and edits details and password of user [#2155](https://github.com/Tangerine-Community/Tangerine/issues/2155) [[demo](https://youtu.be/Nz8Cu--Ek1E)]
-  - Editor User views question configuration by category (as opposed to long list) [#2097](https://github.com/Tangerine-Community/Tangerine/issues/2097) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2097#issue-611877603)]
-  - Server Admin creates group on command line with local or remote content set [#2174](https://github.com/Tangerine-Community/Tangerine/issues/2174)
-    - [Demo: Server Admin creates group on command line from local or remote content set](https://youtu.be/dGo4C90aAto)
-    - [Demo: Server Admin creates group on command line from content set in a private repository on Github](https://youtu.be/OhyCse2jT4M)
-- New Features in Tangerine with Case Module enabled
-  - Tangerine User views form response in alternative templates [#2176](https://github.com/Tangerine-Community/Tangerine/issues/2176) [[demo](https://youtu.be/f9gGjXDeiuw)]
-  - Data Manager manages Data Issues [#1982](https://github.com/Tangerine-Community/Tangerine/issues/1982) [[demo](https://youtu.be/vJRd_MIE2yo)]
-  - Data Manager rebases proposed changes in Issue [#2179](https://github.com/Tangerine-Community/Tangerine/issues/2179) [[demo](https://youtu.be/hChZgxOko2k)]
-  - Data Manager creates Data Issue [#2144](https://github.com/Tangerine-Community/Tangerine/issues/2144) [[demo](https://youtu.be/1yQBI5iPYS0)]
-  - Data Collector causes Issue to be created due to use of API in the form [#2145](https://github.com/Tangerine-Community/Tangerine/issues/2145) [[demo](https://youtu.be/sgGRS110qq4)]
-  - Data Collector causes Issue to be created due to `discrepancy-if` logic in form [#2171](https://github.com/Tangerine-Community/Tangerine/issues/2171) [[demo](https://youtu.be/GSQfP-6HBiY)]
-  - Synapse consumes structured outputs based on Case ER Diagram [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
-- New features in Tangerine with Sync Protocol 2 Enabled
-  - Improve two-way sync efficiency in PouchDB by using `doc_ids` filter as opposed to mango query [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
-- Developer notes
-  - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
 
-__Upgrade instructions:__
-```
-# Fetch the updates.
-cd tangerine
-git fetch origin
-git checkout v3.10.0
-# Now you are ready to start the server.
-./start.sh v3.10.0
-# Run upgrade
-docker exec -it tangerine /tangerine/server/src/upgrade/v3.10.0.js
-```
+??? note "New Features"
+    - New Features in all Tangerine
+    - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]
+    - Editor User with appropriate permission manages site level permissions of users and edits details and password of user [#2155](https://github.com/Tangerine-Community/Tangerine/issues/2155) [[demo](https://youtu.be/Nz8Cu--Ek1E)]
+    - Editor User views question configuration by category (as opposed to long list) [#2097](https://github.com/Tangerine-Community/Tangerine/issues/2097) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2097#issue-611877603)]
+    - Server Admin creates group on command line with local or remote content set [#2174](https://github.com/Tangerine-Community/Tangerine/issues/2174)
+        - [Demo: Server Admin creates group on command line from local or remote content set](https://youtu.be/dGo4C90aAto)
+        - [Demo: Server Admin creates group on command line from content set in a private repository on Github](https://youtu.be/OhyCse2jT4M)
+    - New Features in Tangerine with Case Module enabled
+    - Tangerine User views form response in alternative templates [#2176](https://github.com/Tangerine-Community/Tangerine/issues/2176) [[demo](https://youtu.be/f9gGjXDeiuw)]
+    - Data Manager manages Data Issues [#1982](https://github.com/Tangerine-Community/Tangerine/issues/1982) [[demo](https://youtu.be/vJRd_MIE2yo)]
+    - Data Manager rebases proposed changes in Issue [#2179](https://github.com/Tangerine-Community/Tangerine/issues/2179) [[demo](https://youtu.be/hChZgxOko2k)]
+    - Data Manager creates Data Issue [#2144](https://github.com/Tangerine-Community/Tangerine/issues/2144) [[demo](https://youtu.be/1yQBI5iPYS0)]
+    - Data Collector causes Issue to be created due to use of API in the form [#2145](https://github.com/Tangerine-Community/Tangerine/issues/2145) [[demo](https://youtu.be/sgGRS110qq4)]
+    - Data Collector causes Issue to be created due to `discrepancy-if` logic in form [#2171](https://github.com/Tangerine-Community/Tangerine/issues/2171) [[demo](https://youtu.be/GSQfP-6HBiY)]
+    - Synapse consumes structured outputs based on Case ER Diagram [#2051](https://github.com/Tangerine-Community/Tangerine/issues/2051)
+    - New features in Tangerine with Sync Protocol 2 Enabled
+    - Improve two-way sync efficiency in PouchDB by using `doc_ids` filter as opposed to mango query [#2040](https://github.com/Tangerine-Community/Tangerine/issues/2040)
+    - Developer notes
+    - Resolve problems with client compilation in Angular [#2091](https://github.com/Tangerine-Community/Tangerine/issues/2091)
+
+??? tip "__Upgrade instructions__"
+    ```
+    # Fetch the updates.
+    cd tangerine
+    git fetch origin
+    git checkout v3.10.0
+    # Now you are ready to start the server.
+    ./start.sh v3.10.0
+    # Run upgrade
+    docker exec -it tangerine /tangerine/server/src/upgrade/v3.10.0.js
+    ```
 
 ## v3.9.1
-- Fixes
-  - Database views are missing when running `tangerine-preview` or `npm start` [#2096](https://github.com/Tangerine-Community/Tangerine/issues/2096)
-  - Event Schedule day view duplicates day event and show it in previous day as well [#2103](https://github.com/Tangerine-Community/Tangerine/issues/2103)
-  - According to date carousel, events appear off by one week [#2094](https://github.com/Tangerine-Community/Tangerine/issues/2094)
-  - Event Schedule templates are failing [#2085](https://github.com/Tangerine-Community/Tangerine/issues/2085)
-  - Reports form is not added to forms.json [#2088](https://github.com/Tangerine-Community/Tangerine/issues/2088)
-  - Events appear off by one day in Schedule List [#2101](https://github.com/Tangerine-Community/Tangerine/issues/2101)
-  - CouchDB port should be configurable in config.sh [#2092](https://github.com/Tangerine-Community/Tangerine/issues/2092)
-  - When opening the schedule view the first page is missing the header dates [#2082](https://github.com/Tangerine-Community/Tangerine/issues/2082)
-  - Data Collector unable to open an Event from the Event Schedule [#2102](https://github.com/Tangerine-Community/Tangerine/issues/2102)
-  - When editing a radio button options in editor, options should be in one column, not two [#2090](https://github.com/Tangerine-Community/Tangerine/issues/2090)
+
+??? note "Fixes"
+    - Database views are missing when running `tangerine-preview` or `npm start` [#2096](https://github.com/Tangerine-Community/Tangerine/issues/2096)
+    - Event Schedule day view duplicates day event and show it in previous day as well [#2103](https://github.com/Tangerine-Community/Tangerine/issues/2103)
+    - According to date carousel, events appear off by one week [#2094](https://github.com/Tangerine-Community/Tangerine/issues/2094)
+    - Event Schedule templates are failing [#2085](https://github.com/Tangerine-Community/Tangerine/issues/2085)
+    - Reports form is not added to forms.json [#2088](https://github.com/Tangerine-Community/Tangerine/issues/2088)
+    - Events appear off by one day in Schedule List [#2101](https://github.com/Tangerine-Community/Tangerine/issues/2101)
+    - CouchDB port should be configurable in config.sh [#2092](https://github.com/Tangerine-Community/Tangerine/issues/2092)
+    - When opening the schedule view the first page is missing the header dates [#2082](https://github.com/Tangerine-Community/Tangerine/issues/2082)
+    - Data Collector unable to open an Event from the Event Schedule [#2102](https://github.com/Tangerine-Community/Tangerine/issues/2102)
+    - When editing a radio button options in editor, options should be in one column, not two [#2090](https://github.com/Tangerine-Community/Tangerine/issues/2090)
 
 ## v3.9.0
-- Features
-  - Set and get properties for Case Event Forms [#2023](https://github.com/Tangerine-Community/Tangerine/issues/2023)
-  - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
-  - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
-- Fixes
-  - Fix additional memory leaks in Case module causing tablets to slow down. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2025)
-  - Make `getValue()` function in Event Form List Item related templates less likely to crash. [change](https://github.com/Tangerine-Community/Tangerine/pull/2018/files#diff-c26fa38f2c0963295bb906bd95baf8b0L50)
-  - Fixed incompatibilities with 2-way sync and P2P Sync. 
-  - Fixed issue causing tablets to crash when syncing with a database with tens of thousands of records.
-- Developer notes
-  - Editor and Clients upgraded to Angular 8.
-- Changes
-  - Due to current limitations of two way sync, two changes have been made to the Device form in Tangerine Editor. First, changing a Device's assigned location and sync settings after the Device record has been claimed will no longer be allowed. Second, devices will now always be required to be assigned to the last level in your location hierarchy.
 
-__Upgrade instructions:__
+??? note "New Features"
+    - Set and get properties for Case Event Forms [#2023](https://github.com/Tangerine-Community/Tangerine/issues/2023)
+    - Data Manager reviews Cases [PR](https://github.com/Tangerine-Community/Tangerine/pull/2011)
+    - Data Collector removes Event Form. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2026)
+    
+??? note "Fixes"
+    - Fix additional memory leaks in Case module causing tablets to slow down. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2025)
+    - Make `getValue()` function in Event Form List Item related templates less likely to crash. [change](https://github.com/Tangerine-Community/Tangerine/pull/2018/files#diff-c26fa38f2c0963295bb906bd95baf8b0L50)
+    - Fixed incompatibilities with 2-way sync and P2P Sync. 
+    - Fixed issue causing tablets to crash when syncing with a database with tens of thousands of records.
 
-When you run the upgrade script, if you are using sync protocol 2 and have enabled, forms configured for 2 way sync will now be configured to use CouchDB sync to push documents up as opposed to "custom sync". 
-```
-# Fetch the updates.
-cd tangerine
-git fetch origin
-git checkout v3.9.0
-# If you did not upgrade your config.sh in v3.8.1, migrate it now.
-# Move custom variables from config.sh_backup to config.sh. Note that T_ADMIN and T_PASS are no longer needed. 
-mv config.sh config.sh_backup
-cp config.defaults.sh config.sh
-# To edit both files in vim you would run...
-vim -O config.sh config.sh_backup
-# Now you are ready to start the server.
-./start.sh v3.9.0
-# Run upgrade
-docker exec -it tangerine /tangerine/server/src/upgrade/v3.9.0.js
-```
+!!! info "Developer Notes"
+    - Editor and Clients upgraded to Angular 8.
+    
+??? attention "Changes"
+    - Due to current limitations of two way sync, two changes have been made to the Device form in Tangerine Editor: 
+    - First, changing a Device's assigned location and sync settings after the Device record has been claimed will no longer be allowed. 
+    - Second, devices will now always be required to be assigned to the last level in your location hierarchy.
+
+??? tip "__Upgrade instructions__"
+
+    When you run the upgrade script, if you are using sync protocol 2 and have enabled, forms configured for 2 way sync will now be configured to use CouchDB sync to push documents up as opposed to "custom sync". 
+    ```
+    # Fetch the updates.
+    cd tangerine
+    git fetch origin
+    git checkout v3.9.0
+    # If you did not upgrade your config.sh in v3.8.1, migrate it now.
+    # Move custom variables from config.sh_backup to config.sh. Note that T_ADMIN and T_PASS are no longer needed. 
+    mv config.sh config.sh_backup
+    cp config.defaults.sh config.sh
+    # To edit both files in vim you would run...
+    vim -O config.sh config.sh_backup
+    # Now you are ready to start the server.
+    ./start.sh v3.9.0
+    # Run upgrade
+    docker exec -it tangerine /tangerine/server/src/upgrade/v3.9.0.js
+    ```
 
 ## v3.8.1
-- Client app performance improvements
-  - Improved caching of files. We are caching important configuration files for faster page loads (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. [1991](https://github.com/Tangerine-Community/Tangerine/pull/1991)
-  - Loading spinner when opening an Event Form in a Case. [#1992](https://github.com/Tangerine-Community/Tangerine/pull/1992)
-  - Fixed a memory leak when viewing a Case which was causing tablets to crash if spending too much time on a Case screen. [#2000](https://github.com/Tangerine-Community/Tangerine/issues/2000)
-  - Radiobuttons now load faster on forms.
-- Editor fixes
-  - Fixed an issue causing editor content region to be untouchable when window was narrow. [#1940](https://github.com/Tangerine-Community/Tangerine/issues/1940)
-  - Improved CSV output so it now contains Release ID, Device ID, and Build Channel on every row [#349](https://github.com/Tangerine-Community/Tangerine/issues/349)
-- Developer notes
-  - We focused on issues with slow performance on tablets when viewing forms. We are caching important configuration files (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. More information in the [Globals doc](./docs/developer/tangerine-globals.md).  
-- Server Admin notes
-  - We cleaned up config variables in `config.sh`, deprecated `T_ADMIN` and `T_PASS` [#1986](https://github.com/Tangerine-Community/Tangerine/pull/1986)
-  - New `generate-cases` command for load testing a large number of Cases based on your custom content in a group. [#1993](https://github.com/Tangerine-Community/Tangerine/pull/1993) 
-  - New `reset-all-devices` command for reseting the server token and database keys for all devices. Note that after running this command you will need to reinstall on all devices and reregister with new QR codes. This command is useful if you are migrating a large amount of devices to a new group or a new server and you want to maintain Device ID consistency with the Device Serial numbers you are tracking.
 
-__Upgrade instructions:__
-```
-# Fetch the updates.
-cd tangerine
-git fetch origin
-git checkout v3.8.1
-# Now migrate custom variables from config.sh_backup to config.sh. Note that T_ADMIN and T_PASS are no longer needed. 
-mv config.sh config.sh_backup
-cp config.defaults.sh config.sh
-# To edit both files in vim you would run...
-vim -O config.sh config.sh_backup
-# Now you are ready to start the server.
-./start.sh v3.8.1
-```
+??? note "Fixes"
+    - Client app performance improvements
+    - Improved caching of files. We are caching important configuration files for faster page loads (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. [1991](https://github.com/Tangerine-Community/Tangerine/pull/1991)
+    - Loading spinner when opening an Event Form in a Case. [#1992](https://github.com/Tangerine-Community/Tangerine/pull/1992)
+    - Fixed a memory leak when viewing a Case which was causing tablets to crash if spending too much time on a Case screen. [#2000](https://github.com/Tangerine-Community/Tangerine/issues/2000)
+    - Radiobuttons now load faster on forms.
+    - Editor fixes
+    - Fixed an issue causing editor content region to be untouchable when window was narrow. [#1940](https://github.com/Tangerine-Community/Tangerine/issues/1940)
+    - Improved CSV output so it now contains Release ID, Device ID, and Build Channel on every row [#349](https://github.com/Tangerine-Community/Tangerine/issues/349)
+
+!!! info "Developer Notes"
+    - We focused on issues with slow performance on tablets when viewing forms. We are caching important configuration files (app-config.json, forms.json, location-list.json) and the Roboto font and have reduced redundant rendering calls. More information in the [Globals doc](./docs/developer/tangerine-globals.md).  
+
+!!! info "Server Admin Notes"
+    - We cleaned up config variables in `config.sh`, deprecated `T_ADMIN` and `T_PASS` [#1986](https://github.com/Tangerine-Community/Tangerine/pull/1986)
+    - New `generate-cases` command for load testing a large number of Cases based on your custom content in a group. [#1993](https://github.com/Tangerine-Community/Tangerine/pull/1993) 
+    - New `reset-all-devices` command for reseting the server token and database keys for all devices. Note that after running this command you will need to reinstall on all devices and reregister with new QR codes. This command is useful if you are migrating a large amount of devices to a new group or a new server and you want to maintain Device ID consistency with the Device Serial numbers you are tracking.
+
+??? tip "__Upgrade instructions__"
+    ```
+    # Fetch the updates.
+    cd tangerine
+    git fetch origin
+    git checkout v3.8.1
+    # Now migrate custom variables from config.sh_backup to config.sh. Note that T_ADMIN and T_PASS are no longer needed. 
+    mv config.sh config.sh_backup
+    cp config.defaults.sh config.sh
+    # To edit both files in vim you would run...
+    vim -O config.sh config.sh_backup
+    # Now you are ready to start the server.
+    ./start.sh v3.8.1
+    ```
 ## v3.8.0
 v3.8.0 is a big and exciting release! To accomodate the long list of changes, we split up this round of release notes into sections: General, Sync Protocol 2 Module, and Case Module, and Developer notes.
 
