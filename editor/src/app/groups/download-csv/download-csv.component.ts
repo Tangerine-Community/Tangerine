@@ -29,6 +29,7 @@ export class DownloadCsvComponent implements OnInit {
   result;
   checkDownloadStatusInterval;
   nothingToDownload = false;
+  excludePII = false;
 
   constructor(
     private groupsService: GroupsService,
@@ -68,7 +69,7 @@ export class DownloadCsvComponent implements OnInit {
     }
     this.processing = true
     try {
-      const result: any = await this.groupsService.downloadCSV(this.groupName, this.formId, this.selectedYear, this.selectedMonth);
+      const result: any = await this.groupsService.downloadCSV(this.groupName, this.formId, this.selectedYear, this.selectedMonth, this.excludePII);
       this.stateUrl = result.stateUrl;
       this.downloadUrl = result.downloadUrl;
       // TODO call download status immediately then after every few second, Probably use RXJS to ensure we only use the latest values

@@ -15,15 +15,7 @@ export class AuthenticationService {
      const data = await this.http.post('/login', {username, password}, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         const token = data.body['data']['token'];
-        const jwtData = jwt_decode(token);
-        document.cookie = `Authorization=${token}`
-        localStorage.setItem('token', token);
-        localStorage.setItem('user_id', jwtData.username);
-        localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
-        const user = await this.userService.getMyUser()
-        window['userProfile'] = user 
-        window['userId'] = user._id 
-        window['username'] = jwtData.username
+        await this.setTokens(token);
         return true;
       } else {
         return false;
@@ -65,12 +57,7 @@ export class AuthenticationService {
       const data = await this.http.post('/extendSession', {username}, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         const token = data.body['data']['token'];
-        const jwtData = jwt_decode(token);
-        document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        document.cookie = `Authorization=${token}`
-        localStorage.setItem('token', token);
-        localStorage.setItem('user_id', jwtData.username);
-        localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
+       await this.setTokens(token);
         return true;
       } else {
         return false;
@@ -80,6 +67,18 @@ export class AuthenticationService {
     }
   }
 
+  async setTokens(token) {
+    const jwtData = jwt_decode(token);
+    document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = `Authorization=${token}`;
+    localStorage.setItem('token', token);
+    localStorage.setItem('user_id', jwtData.username);
+    localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
+    const user = await this.userService.getMyUser();
+    window['userProfile'] = user;
+    window['userId'] = user._id;
+    window['username'] = jwtData.username;
+  }
   async getPermissionsList() {
     try {
       const data = await this.http.get('/permissionsList', {observe: 'response'}).toPromise();
@@ -91,9 +90,9 @@ export class AuthenticationService {
       return {groupPermissions: [], sitewidePermissions: []}
     }
   }
-  async getUserPermissions(username) {
+  async getSitewidePermissionsByUsername(username) {
     try {
-      const data = await this.http.get(`/permissions/${username}`, {observe: 'response'}).toPromise();
+      const data = await this.http.get(`/sitewidePermissionsByUsername/${username}`, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         return data.body;
       }
@@ -101,6 +100,24 @@ export class AuthenticationService {
       console.error(error);
       return {groupPermissions:[], sitewidePermissions:[]}
     }
+  }
+
+  async getUserGroupPermissionsByGroupName(groupName) {
+    try {
+      const data = await this.http.get(`/users/groupPermissionsByGroupName/${groupName}`, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        const token = data.body['data']['token'];
+        await this.setTokens(token);
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  setUserGroupPermissionsByGroupName(groupName) {
+
   }
   async updateUserPermissions(username, sitewidePermissions) {
     try {
@@ -113,5 +130,22 @@ export class AuthenticationService {
       console.error(error);
       return {groupPermissions:[], sitewidePermissions:[]}
     }
+  }
+
+  doesUserHaveAPermission(groupId, permission) {
+    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
+    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    return groupPermissions.includes(permission);
+  }
+  doesUserHaveAllPermissions(groupId, permissions= []) {
+    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
+    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    return permissions.every(e => groupPermissions.includes(e));
+  }
+
+  doesUserHaveSomePermissions(groupId, permissions) {
+    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
+    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    return permissions.some(e => groupPermissions.includes(e));
   }
 }

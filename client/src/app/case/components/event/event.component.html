@@ -1,7 +1,8 @@
 <div *ngIf="loaded">
   <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
-
+  <app-case-notifications></app-case-notifications>
   <div class="wrapper">
+    <div class="screen" *ngIf="hasNotificationEnforcingAttention"></div>
     <app-event-form-list-item
       *ngFor="let eventFormInfo of noRoleEventFormInfos"
       [case]="caseService.case"

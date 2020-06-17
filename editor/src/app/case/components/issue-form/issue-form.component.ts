@@ -49,6 +49,7 @@ export class IssueFormComponent implements OnInit {
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
+      window['T']['case'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
       this.window.caseService = this.caseService
       this.window.isRevision = true
@@ -59,7 +60,7 @@ export class IssueFormComponent implements OnInit {
         caseInstance = this.issue.events.find(event => event.id === params.eventId).data.caseInstance
         await this.caseService.loadInMemory(caseInstance)
         this.formResponseId = formResponseRevision._id
-        this.formPlayer.response = formResponseRevision 
+        this.formPlayer.response = formResponseRevision
       }
       else if (await this.caseService.hasProposedChange(this.issue._id)) {
         // Create a revision based on the last proposed revision.

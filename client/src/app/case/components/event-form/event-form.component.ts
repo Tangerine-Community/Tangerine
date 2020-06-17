@@ -47,6 +47,7 @@ export class EventFormComponent implements OnInit {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.window.caseService = this.caseService
+      this.window['T']['case'] = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -95,9 +96,9 @@ export class EventFormComponent implements OnInit {
           if (inputsWithDiscrepancy.length > 0) {
             const formInfo = this.formPlayer.formInfo
             await this.caseService.createIssue(
-              `Discrepancy on ${formInfo.title}`, 
-              '', 
-              this.caseService.case._id, 
+              `Discrepancy on ${formInfo.title}`,
+              '',
+              this.caseService.case._id,
               this.caseEvent.id,
               this.eventForm.id,
               window['userProfile']._id,

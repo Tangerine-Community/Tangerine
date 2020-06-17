@@ -37,9 +37,12 @@ const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
-const {doesUserExist, extendSession, findUserByUsername, isSuperAdmin,
-   USERS_DB, login, getUserPermissions, updateUserSiteWidePermissions} = require('./auth');
-const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser, getAllUsers, checkIfUserExistByUsername, findOneUserByUsername, findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
+const { extendSession, findUserByUsername,
+   USERS_DB, login, getSitewidePermissionsByUsername,
+   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName} = require('./auth');
+const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
+   getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
+   findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
@@ -111,7 +114,8 @@ app.get('/login/validate/:userName',
 );
 app.post('/extendSession', isAuthenticated, extendSession);
 app.get('/permissionsList', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getPermissionsList);
-app.get('/permissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getUserPermissions);
+app.get('/sitewidePermissionsByUsername/:username', 
+          isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getSitewidePermissionsByUsername);
 app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
 
 /*
@@ -130,6 +134,7 @@ app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
 app.patch('/users/restore/:username', isAuthenticated, permit(['can_edit_users']), restoreUser);
 app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']), deleteUser);
 app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
+app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUserGroupPermissionsByGroupName);
 
 /*
  * More API
@@ -152,6 +157,8 @@ if (process.env.T_LEGACY === "true") {
 }
 app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
 app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
 app.get('/api/usage', require('./routes/usage'));
 // For backwards compatibility for older consumers of this API.
 app.get('/usage', require('./routes/usage'));
