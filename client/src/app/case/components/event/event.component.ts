@@ -44,7 +44,7 @@ export class EventComponent implements OnInit, AfterContentInit {
     private router: Router,
     private caseService: CaseService,
     private ref: ChangeDetectorRef
-  ) { 
+  ) {
     ref.detach()
     this.window = window
   }
@@ -56,6 +56,7 @@ export class EventComponent implements OnInit, AfterContentInit {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.window.caseService = this.caseService
+      this.window['T']['case'] = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -143,7 +144,7 @@ export class EventComponent implements OnInit, AfterContentInit {
       const data = participant.data
       const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
       let renderedListItem:string
-      eval(`renderedListItem = \`${role.templateListItem}\``) 
+      eval(`renderedListItem = \`${role.templateListItem}\``)
       return <ParticipantInfo>{
         id,
         renderedListItem,
