@@ -10,7 +10,7 @@ const permissionsList = {
     'can_view_form_responses',
     'can_download_csv',
     'can_review_issues',
-    'can_review_uploaded__cases',
+    'can_review_uploaded_cases',
     'can_manage_group_roles'
   ],
   sitewidePermissions: [
