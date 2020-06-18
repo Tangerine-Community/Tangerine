@@ -2,5 +2,6 @@ arrange:
     - about.md
     - getting-started.md
     - whats-new.md
-    - index.md
     - navigation.md 
+    - CONTRIBUTING.md
+    - index.md
