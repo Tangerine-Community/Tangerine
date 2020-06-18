@@ -91,7 +91,11 @@ class CaseService {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
   }
 
-  async changeLocation(location:any) {
+  // @Param location: Can be Object where keys are levels and values are IDs of locations or an Array from the Tangy Location input's value.
+  async changeLocation(location:any):Promise<void> {
+    location = Array.isArray(location)
+      ? location.reduce((location, level) => { return {...location, [level.level]: level.value} }, {})
+      : location
     this.case.location = location
     const eventForms:Array<EventForm> = this.case.events
       .reduce((eventForms, event) => {
