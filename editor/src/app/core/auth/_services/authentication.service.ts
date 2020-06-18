@@ -192,20 +192,23 @@ export class AuthenticationService {
       return {};
     }
   }
-  doesUserHaveAPermission(groupId, permission) {
+
+  getUserGroupPermissions(groupId) {
     const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
     const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    return groupPermissions;
+  }
+  doesUserHaveAPermission(groupId, permission) {
+    const groupPermissions = this.getUserGroupPermissions(groupId);
     return groupPermissions.includes(permission);
   }
   doesUserHaveAllPermissions(groupId, permissions= []) {
-    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
-    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    const groupPermissions = this.getUserGroupPermissions(groupId);
     return permissions.every(e => groupPermissions.includes(e));
   }
 
   doesUserHaveSomePermissions(groupId, permissions) {
-    const allGroupsPermissions = JSON.parse(localStorage.getItem('permissions'))?.groupPermissions ?? [];
-    const groupPermissions = (allGroupsPermissions.find(group => group.groupName === groupId)).permissions;
+    const groupPermissions = this.getUserGroupPermissions(groupId);
     return permissions.some(e => groupPermissions.includes(e));
   }
 }

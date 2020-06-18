@@ -1,4 +1,4 @@
-<div *ngIf="group?._id">
+<div *ngIf="isGroupPermissionsSet">
   <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <mat-card *appHasAPermission="let i;group:group._id; permission:'can_author'" class="mat-elevation-z3" routerLink="author">
   <mat-card-header>

@@ -1,10 +1,10 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, AfterViewInit } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
 import { AuthenticationService } from '../_services/authentication.service';
 
 @Directive({
   selector: '[appHasAPermission]'
 })
-export class HasAPermissionDirective  implements AfterViewInit {
+export class HasAPermissionDirective implements OnInit {
   private _groupId;
   private _permission;
   @Input()
@@ -19,7 +19,7 @@ export class HasAPermissionDirective  implements AfterViewInit {
   constructor(private authenticationService: AuthenticationService,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef) { }
-  async ngAfterViewInit() {
+  async ngOnInit() {
     const isPermitted = await this.authenticationService.doesUserHaveAPermission(this._groupId, this._permission);
     if (isPermitted) {
       this.viewContainer.createEmbeddedView(this.templateRef);
