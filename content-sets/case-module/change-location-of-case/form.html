@@ -1,6 +1,6 @@
 <tangy-form title="Change location of case" id="change-location-of-case"
   on-submit="
-    caseService.case.location = this.response.location
+    caseService.changeLocation(inputs.location.value)
   "
 >
   <tangy-form-item id="item1">
