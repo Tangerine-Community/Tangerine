@@ -68,6 +68,22 @@
           "repeatable": false 
         }
       ]
+    },
+    {
+      "id": "change-location-of-case",
+      "name": "Change location of case",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-zibe83",
+          "formId": "change-location-of-case",
+          "forCaseRole": "role-1",
+          "name": "Change location of case",
+          "required": true,
+          "repeatable": false 
+        }
+      ]
     }
   ]
 }
