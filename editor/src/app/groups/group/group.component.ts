@@ -16,6 +16,7 @@ export class GroupComponent implements OnInit {
   breadcrumbs:Array<Breadcrumb>
   isAdminUser = false
   group
+  isGroupPermissionsSet;
   constructor(
     private groupsService: GroupsService,
     private userService: UserService,
@@ -27,6 +28,6 @@ export class GroupComponent implements OnInit {
     this.group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
     this.title = this.group.label
     this.breadcrumbs = []
-    await this.authenticationService.getUserGroupPermissionsByGroupName(this.group._id);
+    this.isGroupPermissionsSet = await this.authenticationService.getUserGroupPermissionsByGroupName(this.group._id);
   }
 }
