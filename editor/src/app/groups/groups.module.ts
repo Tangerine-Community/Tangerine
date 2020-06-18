@@ -77,9 +77,6 @@ import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { HasAllPermissionsDirective } from '../core/auth/_directives/has-all-permissions.directive';
-import { HasSomePermissionsDirective } from '../core/auth/_directives/has-some-permissions.directive';
-import { HasAPermissionDirective } from '../core/auth/_directives/has-a-permission.directive';
 
 
 
@@ -164,9 +161,6 @@ import { HasAPermissionDirective } from '../core/auth/_directives/has-a-permissi
     GroupIssuesComponent,
     CaseSettingsComponent,
     ConfigureGroupSecurityComponent,
-    HasAllPermissionsDirective,
-    HasSomePermissionsDirective,
-    HasAPermissionDirective
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })
