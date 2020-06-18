@@ -1,0 +1,9 @@
+<tangy-form title="Change location of case" id="change-location-of-case"
+  on-submit="
+    caseService.changeLocation(inputs.new_location_assignment.value)
+  "
+>
+  <tangy-form-item id="item1">
+    <tangy-location label="Choose a location to assign this case to." name="new_location_assignment" required></tangy-location>
+  </tangy-form-item>
+</tangy-form>
