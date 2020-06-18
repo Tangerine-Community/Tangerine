@@ -47,6 +47,8 @@ log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
 const { getPermissionsList } = require('./permissions-list.js');
+const PACKAGENAME = "org.rti.tangerine"
+const APPNAME = "Tangerine"
 
 module.exports = async function expressAppBootstrap(app) {
 
@@ -208,7 +210,10 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
+  const config = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${group}/app-config.json`, "utf8"));
+  const packageName = config.packageName? config.packageName: PACKAGENAME
+  const appName = config.appName ? config.appName: APPNAME
+  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${packageName} "${appName}" 2>&1 | tee -a /apk.log`
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
   // Do not await. The browser just needs to know the process has started and will monitor the status file.
   exec(cmd).catch(log.error)
