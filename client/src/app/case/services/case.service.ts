@@ -91,6 +91,21 @@ class CaseService {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
   }
 
+  async changeLocation(location:any) {
+    this.case.location = location
+    const eventForms:Array<EventForm> = this.case.events
+      .reduce((eventForms, event) => {
+        return [...eventForms, ...event.eventForms]
+      }, [])
+    for (let eventForm of eventForms) {
+      if (eventForm.formResponseId) {
+        const response = await this.tangyFormService.getResponse(eventForm.formResponseId)
+        response.location = location
+        await this.tangyFormService.saveResponse(response)
+      }
+    }
+  }
+
   async getCaseDefinitionByID(id:string) {
     return <CaseDefinition>await this.http.get(`./assets/${id}.json`)
       .toPromise()
