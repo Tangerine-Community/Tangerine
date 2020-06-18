@@ -1,4 +1,4 @@
-
+# Other Resources
 <style>
   .nav li a {
     height: 75px;
@@ -20,9 +20,6 @@
 
 </style>
 
-# Tangerine Documentation
-
-[Other Resources]()
 
   * [How to contribute documentation](CONTRIBUTING.md)
   * [Issue Queue](https://github.com/Tangerine-Community/Tangerine/issues)
