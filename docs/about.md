@@ -2,7 +2,7 @@
 
 Tangerine is electronic data collection software designed for use on Android mobile devices. Its primary use is to enable offline data capture in low-resource areas. 
 
-Tangerine was first developed to capture student responses in in oral early grade reading and mathematics skills assessments, specifically Early Grade Reading Assessment (EGRA) and Early Grade Mathematics Assessment (EGMA), and interview responses from students, teachers and principals on home and school context information. Tangerine's capabilities have expanded for data capture and management for rural health intervention projects. 
+Tangerine was first developed to capture student responses in in oral early grade reading and mathematics skills assessments, specifically Early Grade Reading Assessment (EGRA) and Early Grade Mathematics Assessment (EGMA). As well as capture interview responses from students, teachers and principals on home and school context information. Tangerine's capabilities have been expanded for data capture and management for rural health intervention projects. 
 
 Using Tangerine improves data quality and the efficiency of data collection and analysis by simplifying the preparation and implementation of field work, reducing measurement and data entry errors, and eliminating manual data entry from paper forms. 
 
