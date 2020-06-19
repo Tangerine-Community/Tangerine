@@ -10,8 +10,14 @@ import { _TRANSLATE } from '../../shared/_services/translation-marker';
 export class ConfigureGroupSecurityComponent implements OnInit {
   title = _TRANSLATE('Security');
   breadcrumbs;
-  constructor() { }
-    async ngOnInit() {
+  groupId:string
+  constructor(
+
+  ) {
+    this.groupId = window.location.hash.split('/')[2]
+  }
+
+  async ngOnInit() {
     this.breadcrumbs = [
       <Breadcrumb>{
         label: _TRANSLATE('Security'),
