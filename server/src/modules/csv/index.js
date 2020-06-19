@@ -52,20 +52,32 @@ module.exports = {
           // Process the flatResponse
           // @TODO Rename `-reporting` to `-csv`.
           let REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+          let processedResult = flatResponse;
+          // Don't add user-profile to the user-profile
+          if (processedResult.formId !== 'user-profile') {
+            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb)
+          }
+          // console.log("processedResult: " + JSON.stringify(processedResult))
           // @TODO Ensure design docs are in the database.
-          await saveFormInfo(flatResponse, REPORTING_DB);
-          await saveFlatFormResponse(flatResponse, REPORTING_DB);
+          await saveFormInfo(processedResult, REPORTING_DB);
+          await saveFlatFormResponse(processedResult, REPORTING_DB);
           // Index the view now.
           await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
 
-          // Sanitize
+          // Repeat the flattening in order to deliver sanitized (non-PII) output
           flatResponse = await generateFlatResponse(doc, locationList, true);
           // Process the flatResponse
+          processedResult = flatResponse
+          console.log(`fetching user-profile for ${processedResult._id}`)
           // @TODO Rename `-reporting` to `-csv`.
           REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
+          // Don't add user-profile to the user-profile
+          if (flatResponse.formId !== 'user-profile') {
+            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb)
+          }
           // @TODO Ensure design docs are in the database.
-          await saveFormInfo(flatResponse, REPORTING_DB);
-          await saveFlatFormResponse(flatResponse, REPORTING_DB);
+          await saveFormInfo(processedResult, REPORTING_DB);
+          await saveFlatFormResponse(processedResult, REPORTING_DB);
           // Index the view now.
           await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           resolve(data)
@@ -108,6 +120,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
+    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,
       caseEventId: formResponse.caseEventId,
@@ -321,4 +334,35 @@ function saveFlatFormResponse(doc, db) {
               .catch(error => reject(`Could not save Flattened Form Response ${JSON.stringify(doc)._id} because Error of ${JSON.stringify(error)}`))
         });
   })
+}
+
+
+
+async function attachUserProfile(doc, reportingDb, sourceDb) {
+  console.log("attachUserProfile")
+  try {
+    // Find the key that points to user profile ID.
+    const userProfileIdKey = Object.keys(doc).find(key => key.includes('tangerineModifiedByUserId'))
+    // Get the user profile.
+    let userProfileDoc;
+    try {
+      userProfileDoc = await reportingDb.get(doc[userProfileIdKey])
+    } catch (e) {
+      console.log("Error: reportingDb userProfileIdKey: " + doc[userProfileIdKey] + " Error: " + JSON.stringify(e))
+      try {
+        let userProfileDocOriginal = await sourceDb.get(doc[userProfileIdKey])
+        userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false);
+      } catch (e) {
+        console.log("Error: sourceDb userProfileIdKey: " + doc[userProfileIdKey] + " Error: " + JSON.stringify(e))
+      }
+    }
+    
+    // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
+    return Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
+      return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })
+    }, {}))
+  } catch (error) {
+    // There must not be a user profile yet doc uploaded yet.
+    return doc
+  }
 }
