@@ -30,7 +30,10 @@ export class GroupService {
   DB = DB
   groupsDb = new DB('groups');
 
-  constructor(private readonly configService: TangerineConfigService, private readonly userService: UserService){}
+  constructor(
+    private readonly configService: TangerineConfigService,
+    private readonly userService: UserService
+  ){}
 
   async initialize() {
     const groups = await this.listGroups()
