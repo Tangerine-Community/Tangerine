@@ -10,16 +10,25 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./manage-group-roles-permissions.component.css']
 })
 export class ManageGroupRolesPermissionsComponent implements OnInit {
+
   title = _TRANSLATE('Security');
   breadcrumbs;
   groupId;
   roles;
+  columns = ['role', 'permissions', 'actions']
+
   constructor(
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService
   ) { }
+
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupId');
     this.roles = await this.authenticationService.getAllRoles(this.groupId);
   }
+
+  removeRoleFromGroup(roleId) {
+
+  }
+
 }

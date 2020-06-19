@@ -1,10 +1,36 @@
-<div *ngIf="roles && roles.length>0">
-    <mat-list role="list">
-        <mat-list-item *ngFor="let role of roles" role="listitem"><a [routerLink]="'update/'+role.role">{{role.role}}</a></mat-list-item>
-    </mat-list>
-</div>
+
+<mat-table [dataSource]="roles" class="mat-elevation-z8">
+  <ng-container matColumnDef="role">
+    <mat-header-cell *matHeaderCellDef> {{'Roles'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let role">
+      {{role.role}}
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="permissions">
+    <mat-header-cell *matHeaderCellDef> {{'Permissions'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let role">
+      <ul>
+        <li *ngFor="let permission of role.permissions">{{permission}}</li>
+      </ul>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let role">
+        <a alt="Modify role's permissions" class="tangy-foreground-primary" [routerLink]="'update-role/'+role.role">
+          <i class="material-icons mat-18 tangy-location-list-icon">rule</i> 
+        </a>
+        <a alt="Remove role from group" class="tangy-foreground-primary" (click)="removeRoleFromGroup(role.role)">
+          <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
+        </a>
+    </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: columns;"></mat-row>
+</mat-table>
+
 <div *ngIf="roles && roles.length<=0">
-<p>{{'No roles exist yet for this group.'| translate}}</p>
+  <p>{{'No roles exist yet for this group.'| translate}}</p>
 </div>
 
 <paper-fab mat-raised-button icon="add" color="accent" [routerLink]="['add-role']"></paper-fab>
