@@ -28,10 +28,6 @@ export class NewGroupComponent implements OnInit {
     try {
       const username = await this.userService.getCurrentUser();
       const result: any = await this.groupsService.createGroup(this.groupName);
-      const isSuperAdmin = await this.userService.isSuperAdmin(username);
-      if (!isSuperAdmin) {
-        const addUserResult = await this.groupsService.addUserToGroup(result._id, username, 'admin');
-      }
       this.window.nativeWindow.location = `${this.window.nativeWindow.location.origin}/app/${result._id}/index.html#/groups/${result._id}`
       if (result && result.statusCode && result.statusCode === 200) {
         this.groupName = '';
