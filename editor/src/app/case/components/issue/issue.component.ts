@@ -76,7 +76,6 @@ export class IssueComponent implements OnInit {
 
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
-      window['T']['case'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
       await this.caseService.load(this.issue.caseId)
       await this.update()
