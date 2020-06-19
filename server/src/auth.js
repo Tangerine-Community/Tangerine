@@ -174,7 +174,7 @@ const getUserGroupPermissionsByGroupName = async (req, res) => {
         const groupData = data.groups.find(
           g => g.groupName === groupName || g.name === groupName,
         );
-        const userRolesInGroup = groupData.roles || [];
+        const userRolesInGroup = groupData && groupData.roles ? groupData.roles : [];
         const currentGroup = await GROUPS_DB.get(groupName);
         // Get all the permissions associated with all the user's roles
         const perm = userRolesInGroup.map(r => {
