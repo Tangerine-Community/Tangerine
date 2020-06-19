@@ -1,3 +1,4 @@
+import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
@@ -16,6 +17,7 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
 {
   users;
   selectedUser;
+  roles = []
   role;
   group;
   title = _TRANSLATE('Assign User Role')
@@ -27,6 +29,7 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
     private groupsService: GroupsService,
     private usersService: UserService,
     private errorHandler: TangyErrorHandler,
+    private authenticationService:AuthenticationService,
     private router: Router
   ) { }
 
@@ -38,6 +41,7 @@ export class AddUserComponent implements OnInit, AfterContentInit, AfterViewInit
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
+      this.roles = await this.authenticationService.getAllRoles(params.groupId);
       this.selectedUser = params.username;
       if (typeof this.selectedUser !== 'undefined') {
         this.newUser = false;

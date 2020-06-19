@@ -1,5 +1,20 @@
 # Changelog
 
+## v3.11.0
+- New Features in all Tangerine
+  - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
+  - Editor User indicates whether to include PII in CSV export [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
+  - New 'T' namespace for helper functions [#2198](https://github.com/Tangerine-Community/Tangerine/issues/2198)
+- New Features in Tangerine with Case Module enabled
+  - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](docs/editor/case-module/custom-case-reports.md)
+  - Data Collector views an alert [#2020](https://github.com/Tangerine-Community/Tangerine/issues/2020) [[demo](https://youtu.be/iw1emB9Ddis)]
+- Developer notes
+  - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
+  
+__Upgrade instructions:__
+  - To use the new "Exclude PII" feature in Data/Download CSV, rebuild your reporting databases: `docker exec tangerine reporting-cache-clear`. This will create a new `-reporting-sanitize` database, which has records that have PII filtered out.
+  
+
 ## v3.10.0
 - New Features in all Tangerine
   - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]
@@ -10,6 +25,8 @@
     - [Demo: Server Admin creates group on command line from content set in a private repository on Github](https://youtu.be/OhyCse2jT4M)
 - New Features in Tangerine with Case Module enabled
   - Tangerine User views form response in alternative templates [#2176](https://github.com/Tangerine-Community/Tangerine/issues/2176) [[demo](https://youtu.be/f9gGjXDeiuw)]
+  - Data Manager manages Data Issues [#1982](https://github.com/Tangerine-Community/Tangerine/issues/1982) [[demo](https://youtu.be/vJRd_MIE2yo)]
+  - Data Manager rebases proposed changes in Issue [#2179](https://github.com/Tangerine-Community/Tangerine/issues/2179) [[demo](https://youtu.be/hChZgxOko2k)]
   - Data Manager creates Data Issue [#2144](https://github.com/Tangerine-Community/Tangerine/issues/2144) [[demo](https://youtu.be/1yQBI5iPYS0)]
   - Data Collector causes Issue to be created due to use of API in the form [#2145](https://github.com/Tangerine-Community/Tangerine/issues/2145) [[demo](https://youtu.be/sgGRS110qq4)]
   - Data Collector causes Issue to be created due to `discrepancy-if` logic in form [#2171](https://github.com/Tangerine-Community/Tangerine/issues/2171) [[demo](https://youtu.be/GSQfP-6HBiY)]

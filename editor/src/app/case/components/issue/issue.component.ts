@@ -108,7 +108,7 @@ export class IssueComponent implements OnInit {
       }
     })
     const proposedChange = await this.caseService.getProposedChange(this.issue._id)
-    this.proposedFormResponseContainer.response = proposedChange.response 
+    this.proposedFormResponseContainer.response = proposedChange.response
     this.proposedFormResponseContainer.render()
     const currentFormResponse = await this.caseService.getFormResponse(this.issue.formResponseId)
     this.currentFormResponseContainer.response = currentFormResponse
@@ -124,7 +124,7 @@ export class IssueComponent implements OnInit {
         ? numberOfChanges + 1
         : numberOfChanges
     }, 0)
-    this.numberOfChanges = this.hasProposedChange 
+    this.numberOfChanges = this.hasProposedChange
       ? this.diff.length
       : 0
   }
@@ -154,7 +154,7 @@ export class IssueComponent implements OnInit {
     const userName = userId
     await this.caseService.rebaseIssue(this.issue._id, userId, userName)
     this.issue = await this.caseService.getIssue(this.issue._id)
-    this.update()   
+    this.update()
   }
 
   async onOpenClick() {

@@ -13,7 +13,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 export class ListUsersComponent implements OnInit {
   groupId;
   users;
-  usersDisplayedColumns = ['username', 'email', 'actions']
+  usersDisplayedColumns = ['username', 'email', 'roles', 'actions']
   @ViewChild('search', {static: true}) search: ElementRef;
   title = _TRANSLATE('Assign User to Role')
   breadcrumbs:Array<Breadcrumb> = []
@@ -24,16 +24,6 @@ export class ListUsersComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.breadcrumbs = [
-      <Breadcrumb>{
-        label: _TRANSLATE('Security'),
-        url: `security`
-      },
-      <Breadcrumb>{
-        label: _TRANSLATE('Assign User to Role'),
-        url: `security/assign-role`
-      }
-    ];
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
     });

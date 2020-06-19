@@ -18,7 +18,7 @@ export class UpdateUserRoleComponent implements OnInit {
   username;
   role;
   groupId;
-  title = _TRANSLATE('Assign User Role');
+  title = _TRANSLATE('Update User\'s roles');
   breadcrumbs: Array<Breadcrumb> = [];
   allRoles;
   myGroup;
@@ -33,10 +33,19 @@ export class UpdateUserRoleComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Security'),
+        url: `security`
+      },
+      <Breadcrumb>{
+        label: _TRANSLATE(`Update User's Roles`),
+        url: `security/assign-role`
+      }
+    ];
     this.username = this.route.snapshot.paramMap.get('username');
     this.groupId = this.route.snapshot.paramMap.get('groupId');
     this.allRoles = await this.authenticationService.getAllRoles(this.groupId);
-    this.breadcrumbs = [];
     this.user = await this.usersService.getAUserByUsername(this.username);
     this.myGroup = this.user.groups.find(g => g.groupName === this.groupId);
     this.myGroup.roles = this.myGroup?.roles ?? [];

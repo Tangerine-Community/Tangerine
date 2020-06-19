@@ -47,6 +47,8 @@ log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
 const { getPermissionsList } = require('./permissions-list.js');
+const PACKAGENAME = "org.rti.tangerine"
+const APPNAME = "Tangerine"
 
 module.exports = async function expressAppBootstrap(app) {
 
@@ -123,8 +125,8 @@ app.post('/permissions/updateUserSitewidePermissions/:username', isAuthenticated
  */
 
 app.get('/users', isAuthenticated, permit(['can_view_users_list']), getAllUsers);
-app.get('/users/byUsername/:username', isAuthenticated, permit(['can_view_users_list']), getUserByUsername);
-app.get('/users/findOneUser/:username', isAuthenticated, permit(['can_view_users_list']), findOneUserByUsername);
+app.get('/users/byUsername/:username', isAuthenticated, getUserByUsername);
+app.get('/users/findOneUser/:username', isAuthenticated, findOneUserByUsername);
 app.get('/users/findMyUser/', isAuthenticated, findMyUser);
 app.put('/users/updateMyUser/', isAuthenticated, updateMyUser);
 app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
@@ -157,6 +159,8 @@ if (process.env.T_LEGACY === "true") {
 }
 app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
 app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
 app.get('/api/usage', require('./routes/usage'));
 // For backwards compatibility for older consumers of this API.
 app.get('/usage', require('./routes/usage'));
@@ -206,7 +210,10 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
+  const config = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${group}/app-config.json`, "utf8"));
+  const packageName = config.packageName? config.packageName: PACKAGENAME
+  const appName = config.appName ? config.appName: APPNAME
+  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${packageName} "${appName}" 2>&1 | tee -a /apk.log`
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
   // Do not await. The browser just needs to know the process has started and will monitor the status file.
   exec(cmd).catch(log.error)
@@ -329,6 +336,7 @@ app.get('/groups/users/byGroup/:groupName', isAuthenticated, async (req, res) =>
         username: result.username,
         email: result.email,
         firstName: result.firstName,
+        roles: result.groups.find(group => group.groupName === groupName).roles,
         lastName: result.lastName
       }
     });
@@ -387,9 +395,8 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
 app.post('/permissions/addRoleToGroup/:groupId', 
           isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), addRoleToGroup);
 
-app.get('/rolesByGroupId/:groupId/role/:role',
-          isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), findRoleByName);
-app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), getAllRoles);
+app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
+app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
 
 /**

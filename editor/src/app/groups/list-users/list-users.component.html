@@ -1,23 +1,30 @@
-<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-
-<paper-fab mat-raised-button icon="add" color="accent" [routerLink]="['/groups/',groupId,'addUser']"></paper-fab>
+<paper-fab mat-raised-button icon="add" color="accent" [routerLink]="['/groups/',groupId,'configure', 'security', 'add-user']"></paper-fab>
 
 <mat-table [dataSource]="users" class="mat-elevation-z8">
   <ng-container matColumnDef="username">
     <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
-    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary" [routerLink]="['/groups',groupId, 'configure', 'security','role', user.username]">
-      <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-    </a><span class="tangy-foreground-secondary">{{user.username}}</span> </mat-cell>
+    <mat-cell *matCellDef="let user">
+      {{user.username}}
+    </mat-cell>
   </ng-container>
   <ng-container matColumnDef="email">
     <mat-header-cell *matHeaderCellDef> {{'Email'|translate}} </mat-header-cell>
     <mat-cell *matCellDef="let user"> {{user.email}} </mat-cell>
   </ng-container>
+  <ng-container matColumnDef="roles">
+    <mat-header-cell *matHeaderCellDef> {{'Roles'|translate}} </mat-header-cell>
+    <mat-cell *matCellDef="let user"> {{user.roles.join(', ')}} </mat-cell>
+  </ng-container>
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
-    <mat-cell *matCellDef="let user"> <a class="tangy-foreground-primary" (click)="removeUserFromGroup(user.username)">
-      <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
-    </a></mat-cell>
+    <mat-cell *matCellDef="let user">
+     <a alt="Modify users's roles" class="tangy-foreground-primary" [routerLink]="['/groups',groupId, 'configure', 'security','role', user.username]">
+        <i class="material-icons mat-18 tangy-location-list-icon">rule</i> 
+      </a>
+      <a alt="Remove user from group" class="tangy-foreground-primary" (click)="removeUserFromGroup(user.username)">
+        <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
+      </a>
+    </mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="usersDisplayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: usersDisplayedColumns;"></mat-row>

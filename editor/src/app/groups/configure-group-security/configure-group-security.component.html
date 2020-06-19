@@ -1,6 +1,9 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-
-<mat-list role="list">
-    <mat-list-item role="listitem"><a routerLink="configure-roles">{{'Configure Group Roles'|translate}}</a></mat-list-item>
-    <mat-list-item role="listitem"><a routerLink="assign-role">{{'Assign User to a Role'|translate}}</a></mat-list-item>
-</mat-list>
+<mat-tab-group>
+  <mat-tab label="{{'Users'|translate}}">
+      <app-list-users></app-list-users>
+  </mat-tab>
+  <mat-tab label="{{'Roles'|translate}}" *appHasAPermission="let i;group:groupId; permission:'can_manage_group_roles'">
+      <app-manage-group-roles-permissions></app-manage-group-roles-permissions>
+  </mat-tab>
+</mat-tab-group>
