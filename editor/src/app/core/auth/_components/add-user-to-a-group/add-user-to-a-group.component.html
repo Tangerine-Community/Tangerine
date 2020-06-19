@@ -1,29 +1,26 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<mat-card>
-  <mat-card-content>
-    <form class="tangy-full-width" novalidate #addUserToGroupForm="ngForm">
-      <div>
-        <p>Begin typing the username to choose the user:</p>
-        <mat-form-field class="tangy-full-width">
-          <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)='usernameSelected($event.option.value)'>
-            <mat-option *ngFor="let username of users" [value]="username">
-              {{ username }}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </div>
-      <p *ngIf="allRoles" class="tangy-input-width">
-        <mat-checkbox #f (change)="onSelectChange(role.role, f.checked)"
-             *ngFor="let role of allRoles"
-            [name]="role.role">
-            {{role.role}}
-        </mat-checkbox>
-    </p>
-      <br>
-      <br>
-      <p *ngIf="allRoles.length<1" class="tangy-input-width">{{'No Roles exist yet. '|translate}}</p>
-      <button [disabled]="!selectedUser" mat-raised-button color="warn" (click)="addUserToGroup();addUserToGroupForm.reset()">{{'Add User to Group'|translate}}</button>
-    </form>
-  </mat-card-content>
-</mat-card>
+<form novalidate #addUserToGroupForm="ngForm">
+  <div>
+    <p>Begin typing the username to choose the user:</p>
+    <mat-form-field class="tangy-full-width">
+      <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='usernameSelected($event.option.value)'>
+        <mat-option *ngFor="let username of users" [value]="username">
+          {{ username }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+  <p>
+    Role:
+  </p>
+  <p *ngIf="allRoles" class="tangy-input-width">
+    <mat-checkbox #f (change)="onSelectChange(role.role, f.checked)"
+          *ngFor="let role of allRoles"
+        [name]="role.role">
+        {{role.role}}
+    </mat-checkbox>
+</p>
+  <p *ngIf="allRoles.length<1" class="tangy-input-width">{{'No Roles exist yet. '|translate}}</p>
+  <button [disabled]="!selectedUser" mat-raised-button color="warn" (click)="addUserToGroup();addUserToGroupForm.reset()">{{'Add User to Group'|translate}}</button>
+</form>

@@ -1,17 +1,12 @@
-.tangy-input-width{
-    width: 80%;
-}
-
-p {
+form {
     margin: 15px;
 }
 
 mat-checkbox{
-    margin: 0 10px;
+    display: block;
+    margin-left: 5px;
 }
-.tangy-full-width{
-    width: 90%;
-  }
-span.tangy-foreground-secondary{
-    padding-top: 0.3rem;
+
+button {
+    margin-top: 15px;
 }
