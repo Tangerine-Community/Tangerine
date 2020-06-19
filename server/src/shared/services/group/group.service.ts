@@ -30,7 +30,10 @@ export class GroupService {
   DB = DB
   groupsDb = new DB('groups');
 
-  constructor(private readonly configService: TangerineConfigService, private readonly userService: UserService){}
+  constructor(
+    private readonly configService: TangerineConfigService,
+    private readonly userService: UserService
+  ){}
 
   async initialize() {
     const groups = await this.listGroups()
@@ -132,7 +135,7 @@ export class GroupService {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const created = new Date().toJSON()
-    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions };
+    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles') };
     const memberRole = { role: 'Member', permissions: ['can_manage_data', 'can_download_csv'] };
     const group = <Group>{_id: groupId, label, created, roles :[
       adminRole, memberRole

@@ -5,6 +5,9 @@ CONTENT_PATH="$2"
 RELEASE_TYPE="$3"
 T_PROTOCOL="$4"
 T_HOST_NAME="$5"
+PACKAGE="$6"
+APPNAME="$7"
+APPNAME_REPLACE="<name>${7}"
 CORDOVA_DIRECTORY="/tangerine/client/builds/apk"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP"
 STATUS_FILE="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP.json"
@@ -57,6 +60,12 @@ cd $RELEASE_DIRECTORY
 
 # replace the URL property in config.xml
 sed -i -e "s#CHCP_URL#"$CHCP_URL"#g" $RELEASE_DIRECTORY/config.xml
+
+# replace the package id value in config.xml
+sed -i -e "s#org.rti.tangerine#"$PACKAGE"#g" $RELEASE_DIRECTORY/config.xml
+
+# replace the app name value in config.xml
+sed -i -e s#"<name>Tangerine"#"${APPNAME_REPLACE}"#g $RELEASE_DIRECTORY/config.xml
 
 echo "Copying cordova-hcp.json $RELEASE_DIRECTORY"
 cp /tangerine/client/android-tools/cordova-hot-code-push/cordova-hcp-template.json $RELEASE_DIRECTORY/cordova-hcp.json

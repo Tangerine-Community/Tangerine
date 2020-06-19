@@ -16,7 +16,7 @@ export class UpdateGroupRolesComponent implements OnInit {
   role;
   roleName;
   groupId;
-  title = _TRANSLATE('Security');
+  title = _TRANSLATE('Update Role:');
   constructor(private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
     private router: Router,
@@ -26,6 +26,7 @@ export class UpdateGroupRolesComponent implements OnInit {
     this.roleName = this.route.snapshot.paramMap.get('roleName');
     this.groupId = this.route.snapshot.paramMap.get('groupId');
     this.role = await this.authenticationService.findRoleByName(this.groupId, this.roleName);
+    this.title = `${_TRANSLATE('Update Role:')} ${this.role.role}`
     const permissions = await this.authenticationService.getPermissionsList();
     this.permissionsList = permissions['groupPermissions'].sort();
     this.breadcrumbs = [
@@ -34,12 +35,8 @@ export class UpdateGroupRolesComponent implements OnInit {
         url: `security`
       },
       <Breadcrumb>{
-        label: _TRANSLATE('Configure Roles'),
-        url: `security/configure-roles`
-      },
-      <Breadcrumb>{
-        label: _TRANSLATE('Update Role'),
-        url: `security/configure-roles/update/${this.roleName}`
+        label: this.title,
+        url: `security/update-role/${this.roleName}`
       }
     ];
 

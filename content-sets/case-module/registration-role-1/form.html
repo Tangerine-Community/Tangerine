@@ -30,6 +30,25 @@
         caseService.setParticipantData(participantRole2.id, 'participant_id', `${getValue('participant_id')}-${role2ParticipantNumber}`)
         role2ParticipantNumber++
       }
+      // The parameters for caseService.createNotification() are label, description, link, icon (see https://material.io/icons), background color, 
+      // whether or not to persist more than once (true or false), and wether or not this notification should enforce attention and warn when 
+      // navigating away from the case (true or false).
+      caseService.createNotification(
+        `Registration success!`, 
+        `
+          Thank you for registering 
+            ${caseService.getParticipantData(participantRole1.id, 'first_name')}
+            ${caseService.getParticipantData(participantRole1.id, 'last_name')}.
+
+          We have created ${parseInt(getValue('number_of_role_2_participants_to_enroll'))} additional participants for you.
+          Please complete their registration forms.
+        `,
+        ``,
+        `thumb_up`,
+        `#b2fba5`,
+        false,
+        false
+      )
     }
   "
 >

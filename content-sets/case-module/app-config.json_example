@@ -13,6 +13,7 @@
    "groupId" : "example",
    "direction" : "undefined",
    "columnsOnVisitsTab" : [],
+   "showCaseReports": true,
    "listUsernamesOnLoginScreen" : true,
    "securityPolicy" : [
       "password"

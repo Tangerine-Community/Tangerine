@@ -5,6 +5,8 @@ import { AppConfigService } from './app-config.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Injectable } from '@angular/core';
 import { updates } from '../../core/update/update/updates';
+import {HttpClient} from "@angular/common/http";
+import {UserDatabase} from "../_classes/user-database.class";
 
 const VAR_CURRENT_UPDATE_INDEX = 'VAR_CURRENT_UPDATE_INDEX'
 export const VAR_UPDATE_IS_RUNNING = 'VAR_UPDATE_IS_RUNNING'
@@ -19,7 +21,8 @@ export class UpdateService {
   constructor(
     private userService:UserService,
     private variableService:VariableService,
-    private appConfigService:AppConfigService
+    private appConfigService:AppConfigService,
+    private http: HttpClient
   ) { }
 
   async install() {
@@ -115,7 +118,7 @@ export class UpdateService {
     const username = await this.userService.getCurrentUser();
     const appConfig = await this.appConfigService.getAppConfig()
     const userDb = await this.userService.getUserDatabase(username);
-    let atUpdateIndex = await this.getCurrentUpdateIndex() 
+    let atUpdateIndex = await this.getCurrentUpdateIndex()
     const finalUpdateIndex = updates.length - 1;
     let requiresViewsRefresh = false;
 
@@ -128,7 +131,59 @@ export class UpdateService {
         await this.setCurrentUpdateIndex(atUpdateIndex)
       }
     }
+    await this.updateCustomViews(userDb);
+  }
 
+  private async updateCustomViews(userDb: UserDatabase) {
+    try {
+      // Get the queries.js using eval()
+      let queryJs = await this.http.get('./assets/queries.js', {responseType: 'text'}).toPromise()
+      let queries;
+      eval(`queries = ${queryJs}`)
+      // iterate each one, look at each doc, look at the version property, and compare to the one in variablesService. If not matching, do a put
+      for (const query of queries) {
+        let dbVersion, dbRev;
+        let fileVersion = query.version
+        // get the view doc from the db
+        try {
+          const docInDb = await userDb.get('_design/' + query.id)
+          dbVersion = docInDb.version
+          dbRev = docInDb._rev
+        } catch (err) {
+          // We don't have this design doc.
+        }
+        if (fileVersion !== dbVersion) {
+          console.log("Updating custom view: " + query.id)
+          let doc = {
+            _id: '_design/' + query.id,
+            version: query.version,
+            views: {
+              [query.id]: {
+                ...typeof query.view === 'string' ? {"map": query.view.toString()} : {
+                  ...query.view.map ? {"map": query.view.map.toString()} : {},
+                  ...query.view.reduce ? {"reduce": query.view.reduce.toString()} : {}
+                },
+              }
+            }
+          }
+          if (dbRev) {
+            try {
+              await userDb.put({
+                ...doc,
+                _rev: dbRev
+              })
+            } catch (err) {
+              console.log('Error putting ' + '_design/' + query.id + ' Error: ' + err)
+            }
+          } else {
+            await userDb.put(doc)
+          }
+        }
+      }
+      // TODO: do we initiate indexing here (be sure to use a limit:0 in the options so as to not choke the system memory), or first time report is run?
+    } catch (e) {
+      console.log("Error: " + JSON.stringify(e))
+    }
   }
 
   async getCurrentUpdateIndex() {

@@ -15,6 +15,18 @@ sudo su
 ssh-keygen -t rsa -b 4096 -C "your_server_name@domain_of_server"
 cat /root/.ssh/id_rsa.pub
 ```
+
+Now add an entry in your config.sh or create this file if it doesn't exist
+```
+vi ~/.ssh/config
+
+host github.com
+ HostName github.com
+ IdentityFile ~/.ssh/id_rsa
+ User lachko
+```
+Change the key permissions if necessary 
+
 Copy the key contents that we just "cat'ed" to the screen. Then go to your Repository on Github and click on `Settings -> Deploy keys -> Add deploy key` and paste that key in the key contents, enable "Allow write access" and save.
 
 ## Step 4
@@ -39,7 +51,7 @@ ssh <your server>
 sudo su
 screen -R git-integration
 cd tangerine/data/client/content/groups/<group id>
-watch -n10 "GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master
+watch -n10 "GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master"
 ```
 
 At this point you have created "virtual screen session" called "git-integration" that is using the `watch` command to run the `git pull` command every 10 seconds. You'll want to leave this screen session open after your terminal disconnects. To "detach" from a screen session but leave it running in the background, press `ctrl-a` `ctrl-d`. Now you can safely log out from your SSH session while the screen session continutes. 

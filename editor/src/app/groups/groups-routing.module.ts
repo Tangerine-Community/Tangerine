@@ -45,7 +45,6 @@ import { GroupDeviceUserComponent } from './group-device-user/group-device-user.
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
 import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
-import { ManageGroupRolesPermissionsComponent } from '../core/auth/_components/manage-group-roles-permissions/manage-group-roles-permissions.component';
 import { AddRoleToGroupComponent } from '../core/auth/_components/add-role-to-group/add-role-to-group.component';
 import { UpdateGroupRolesComponent } from '../core/auth/_components/update-group-roles/update-group-roles.component';
 import { AddUserToAGroupComponent } from '../core/auth/_components/add-user-to-a-group/add-user-to-a-group.component';
@@ -78,9 +77,8 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard, AdminUserGuard] },
   { path: 'groups/:groupId/configure/security', component: ConfigureGroupSecurityComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/assign-role', component: ListUsersComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/configure/security/configure-roles', component: ManageGroupRolesPermissionsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/configure-roles/add-role', component: AddRoleToGroupComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/configure/security/configure-roles/update/:roleName', component: UpdateGroupRolesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/update-role/:roleName', component: UpdateGroupRolesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: UpdateUserRoleComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
@@ -92,7 +90,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy/releases/release-apk-test', component: GroupReleaseApkTestComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-apk-live', component: GroupReleaseApkLiveComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/addUser', component: AddUserToAGroupComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/add-user', component: AddUserToAGroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
     path: 'groups/:groupId/configure/location-list/import-location-list',
