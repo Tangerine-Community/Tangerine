@@ -13,7 +13,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 export class ListUsersComponent implements OnInit {
   groupId;
   users;
-  usersDisplayedColumns = ['username', 'email', 'actions']
+  usersDisplayedColumns = ['username', 'email', 'roles', 'actions']
   @ViewChild('search', {static: true}) search: ElementRef;
   title = _TRANSLATE('Assign User to Role')
   breadcrumbs:Array<Breadcrumb> = []

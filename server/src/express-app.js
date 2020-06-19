@@ -336,6 +336,7 @@ app.get('/groups/users/byGroup/:groupName', isAuthenticated, async (req, res) =>
         username: result.username,
         email: result.email,
         firstName: result.firstName,
+        roles: result.groups.find(group => group.groupName === groupName).roles,
         lastName: result.lastName
       }
     });
