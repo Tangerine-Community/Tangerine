@@ -395,9 +395,8 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
 app.post('/permissions/addRoleToGroup/:groupId', 
           isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), addRoleToGroup);
 
-app.get('/rolesByGroupId/:groupId/role/:role',
-          isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), findRoleByName);
-app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), getAllRoles);
+app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
+app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
 
 /**
