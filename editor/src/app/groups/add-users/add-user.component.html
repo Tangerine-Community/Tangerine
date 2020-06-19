@@ -3,7 +3,7 @@
   <mat-card-content>
     <form class="tangy-full-width" novalidate #addUserToGroupForm="ngForm">
       <div *ngIf="newUser; else showSelected">
-        <p>Begin typing the username to choose the user:</p>
+        Begin typing the username to choose the user:
         <mat-form-field class="tangy-full-width">
           <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">
           <mat-autocomplete #auto="matAutocomplete" (optionSelected)='usernameSelected($event.option.value)'>
@@ -18,26 +18,14 @@
           User: {{ selectedUser }}
         </div>
       </ng-template>
-      <br>
-      <br>
-
       <p *ngIf="roles" class="tangy-input-width">
         <mat-checkbox #f (change)="onSelectChange(r.role, f.checked)"
             [checked]="doesUserHaveRole(r.role)" *ngFor="let r of roles"
             [name]="r.role">
             {{r.role}}
         </mat-checkbox>
-    </p>
+      </p>
 
-      <mat-form-field class="tangy-full-width">
-        <mat-select [(value)]="role" placeholder="Role" required>
-          <mat-option value="_">None</mat-option>
-          <mat-option value="admin">Admin</mat-option>
-          <mat-option value="member">Member</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br>
-      <br>
       <button [disabled]="role==='_'||!role||!selectedUser" mat-raised-button color="warn" (click)="addUserToGroup();addUserToGroupForm.reset()">{{'Add User to Group'|translate}}</button>
     </form>
   </mat-card-content>
