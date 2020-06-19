@@ -19,7 +19,7 @@ export class AddUserToAGroupComponent implements OnInit, AfterViewInit {
   selectedUser;
   role;
   groupId;
-  title = _TRANSLATE('Assign User Role');
+  title = _TRANSLATE('Add user to group');
   breadcrumbs: Array<Breadcrumb> = [];
   allRoles;
   @ViewChild('search', { static: false }) search: ElementRef;
@@ -35,7 +35,16 @@ export class AddUserToAGroupComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupId');
     this.allRoles = await this.authenticationService.getAllRoles(this.groupId);
-    this.breadcrumbs = [];
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Security'),
+        url: `security`
+      },
+      <Breadcrumb>{
+        label: _TRANSLATE(`Add user to group`),
+        url: `security/add-user`
+      }
+    ];
     this.role = {groupName: this.groupId, roles: []};
   }
   ngAfterViewInit(): void {
