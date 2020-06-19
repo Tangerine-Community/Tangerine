@@ -113,7 +113,7 @@ app.get('/login/validate/:userName',
   }
 );
 app.post('/extendSession', isAuthenticated, extendSession);
-app.get('/permissionsList', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getPermissionsList);
+app.get('/permissionsList', isAuthenticated, getPermissionsList);
 app.get('/sitewidePermissionsByUsername/:username', 
           isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getSitewidePermissionsByUsername);
 app.post('/permissions/updateUserSitewidePermissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
