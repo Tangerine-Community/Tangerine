@@ -15,7 +15,7 @@ export class ListUsersComponent implements OnInit {
   users;
   usersDisplayedColumns = ['username', 'email', 'actions']
   @ViewChild('search', {static: true}) search: ElementRef;
-  title = _TRANSLATE("Security")
+  title = _TRANSLATE('Assign User to Role')
   breadcrumbs:Array<Breadcrumb> = []
   constructor(
     private groupsService: GroupsService,
@@ -28,8 +28,12 @@ export class ListUsersComponent implements OnInit {
       <Breadcrumb>{
         label: _TRANSLATE('Security'),
         url: `security`
+      },
+      <Breadcrumb>{
+        label: _TRANSLATE('Assign User to Role'),
+        url: `security/assign-role`
       }
-    ]
+    ];
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
     });

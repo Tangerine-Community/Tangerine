@@ -98,7 +98,7 @@ const isUserAnAdminUser = async (req, res) => {
 async function isAdminUser(username) {
   try {
     const groups = await getGroupsByUser(username);
-    let data = groups.filter(group => group.attributes.role === 'admin');
+    let data = groups.filter(group => group.attributes.roles.includes('Admin'));
     if (data.length < 1) {
       data = false;
     }
@@ -121,7 +121,7 @@ async function getGroupsByUser(username) {
       return {
         attributes: {
           name: groupName,
-          role: 'admin',
+          roles:['Admin']
         },
       };
     });
@@ -134,7 +134,7 @@ async function getGroupsByUser(username) {
         return {
           attributes: {
             name: group.groupName,
-            role: group.role,
+            roles: group.roles,
           },
         };
       });
@@ -200,9 +200,9 @@ const findOneUserByUsername = async (req, res) => {
       return res.status(500).send({ data: `Could not find User` });
     }
     const user = await findUserByUsername(username);
-    const { _id, email, firstName, lastName } = user;
+    const { _id, email, firstName, lastName, groups } = user;
     res.status(200).send({
-      data: { _id, username: user.username, email, firstName, lastName },
+      data: { _id, username: user.username, email, firstName, lastName, groups },
     });
   } catch (error) {
     console.error(error);

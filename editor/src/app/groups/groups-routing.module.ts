@@ -10,7 +10,6 @@ import { GroupReleasePwaTestComponent } from './group-release-pwa-test/group-rel
 import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
 import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
 import { GroupReleasesComponent } from './group-releases/group-releases.component';
-import { ResponsesComponent } from './responses/responses.component';
 import { GroupDevicesComponent } from './group-devices/group-devices.component';
 import { GroupDeviceUsersComponent } from './group-device-users/group-device-users.component';
 import { ListUsersComponent } from './list-users/list-users.component';
@@ -29,14 +28,12 @@ import { GroupDeployComponent } from './group-deploy/group-deploy.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginGuard } from '../core/auth/_guards/login-guard.service';
-import { GroupDetailsComponent } from './group-details/group-details.component';
 import { GroupsComponent } from './groups.component';
 import { NewGroupComponent } from './new-group/new-group.component';
 import { ReleaseApkComponent } from './release-apk/release-apk.component';
 import { ReleasePwaComponent } from './release-pwa/release-pwa.component';
 import { ReleaseDatComponent } from './release-dat/release-dat.component';
 import { DownloadCsvComponent } from './download-csv/download-csv.component';
-import { AddUserComponent } from './add-users/add-user.component';
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
 import { SuperAdminUserGuard } from '../core/auth/_guards/super-admin-user-guard.service';
@@ -47,6 +44,12 @@ import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-t
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { NgxPermissionsGuard } from 'ngx-permissions';
+import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
+import { ManageGroupRolesPermissionsComponent } from '../core/auth/_components/manage-group-roles-permissions/manage-group-roles-permissions.component';
+import { AddRoleToGroupComponent } from '../core/auth/_components/add-role-to-group/add-role-to-group.component';
+import { UpdateGroupRolesComponent } from '../core/auth/_components/update-group-roles/update-group-roles.component';
+import { AddUserToAGroupComponent } from '../core/auth/_components/add-user-to-a-group/add-user-to-a-group.component';
+import { UpdateUserRoleComponent } from '../core/auth/_components/update-user-role/update-user-role.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -73,8 +76,12 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard, AdminUserGuard] },
-  { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/configure/security/role/:username', component: AddUserComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security', component: ConfigureGroupSecurityComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/assign-role', component: ListUsersComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/configure-roles', component: ManageGroupRolesPermissionsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/configure-roles/add-role', component: AddRoleToGroupComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/configure-roles/update/:roleName', component: UpdateGroupRolesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security/role/:username', component: UpdateUserRoleComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },
@@ -85,7 +92,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy/releases/release-apk-test', component: GroupReleaseApkTestComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-apk-live', component: GroupReleaseApkLiveComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/addUser', component: AddUserToAGroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
     path: 'groups/:groupId/configure/location-list/import-location-list',
