@@ -12,5 +12,5 @@
     </p>
     <p *ngIf="allRoles.length<1" class="tangy-input-width">{{'No Roles exist yet. '|translate}}</p>
     <button [disabled]="!username" mat-raised-button color="warn"
-        (click)="addUserToGroup();updateUserRoleForm.reset()">{{"Update user's Role"|translate}}</button>
+        (click)="addUserToGroup();updateUserRoleForm.reset()">{{"submit"|translate}}</button>
 </form>
