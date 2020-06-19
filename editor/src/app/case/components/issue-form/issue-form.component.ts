@@ -49,7 +49,6 @@ export class IssueFormComponent implements OnInit {
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
-      window['T']['case'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
       this.window.caseService = this.caseService
       this.window.isRevision = true
