@@ -1,0 +1,17 @@
+.tangy-input-width{
+    width: 80%;
+}
+
+p {
+    margin: 15px;
+}
+
+mat-checkbox{
+    margin: 0 10px;
+}
+.tangy-full-width{
+    width: 90%;
+  }
+span.tangy-foreground-secondary{
+    padding-top: 0.3rem;
+}
