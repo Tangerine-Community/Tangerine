@@ -24,16 +24,6 @@ export class ListUsersComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.breadcrumbs = [
-      <Breadcrumb>{
-        label: _TRANSLATE('Security'),
-        url: `security`
-      },
-      <Breadcrumb>{
-        label: _TRANSLATE('Assign User to Role'),
-        url: `security/assign-role`
-      }
-    ];
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
     });

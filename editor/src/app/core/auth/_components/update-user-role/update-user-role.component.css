@@ -7,11 +7,10 @@ p {
 }
 
 mat-checkbox{
+    display: block;
     margin: 0 10px;
 }
-.tangy-full-width{
-    width: 90%;
-  }
-span.tangy-foreground-secondary{
-    padding-top: 0.3rem;
+
+button {
+    margin-left: 15px;
 }

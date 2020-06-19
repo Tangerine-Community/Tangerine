@@ -1,3 +1,4 @@
+import { ManageGroupRolesPermissionsComponent } from './manage-group-roles-permissions/manage-group-roles-permissions.component';
 import { GroupIssuesComponent } from './group-issues/group-issues.component';
 import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
@@ -113,6 +114,7 @@ import { BrowserModule } from '@angular/platform-browser';
   ],
   declarations: [
     LocationListEditorComponent,
+    ManageGroupRolesPermissionsComponent,
     GroupsComponent,
     GroupComponent,
     NewGroupComponent,

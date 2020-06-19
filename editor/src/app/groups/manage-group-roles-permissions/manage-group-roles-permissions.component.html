@@ -1,5 +1,3 @@
-<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-
 <div *ngIf="roles && roles.length>0">
     <mat-list role="list">
         <mat-list-item *ngFor="let role of roles" role="listitem"><a [routerLink]="'update/'+role.role">{{role.role}}</a></mat-list-item>
