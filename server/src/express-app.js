@@ -125,8 +125,8 @@ app.post('/permissions/updateUserSitewidePermissions/:username', isAuthenticated
  */
 
 app.get('/users', isAuthenticated, permit(['can_view_users_list']), getAllUsers);
-app.get('/users/byUsername/:username', isAuthenticated, permit(['can_view_users_list']), getUserByUsername);
-app.get('/users/findOneUser/:username', isAuthenticated, permit(['can_view_users_list']), findOneUserByUsername);
+app.get('/users/byUsername/:username', isAuthenticated, getUserByUsername);
+app.get('/users/findOneUser/:username', isAuthenticated, findOneUserByUsername);
 app.get('/users/findMyUser/', isAuthenticated, findMyUser);
 app.put('/users/updateMyUser/', isAuthenticated, updateMyUser);
 app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
