@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
 // Services.
@@ -91,6 +92,8 @@ class CaseService {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
   }
 
+  onChangeLocation$ = new Subject()
+
   // @Param location: Can be Object where keys are levels and values are IDs of locations or an Array from the Tangy Location input's value.
   async changeLocation(location:any):Promise<void> {
     location = Array.isArray(location)
@@ -108,6 +111,7 @@ class CaseService {
         await this.tangyFormService.saveResponse(response)
       }
     }
+    this.onChangeLocation$.next(location)
   }
 
   async getCaseDefinitionByID(id:string) {
