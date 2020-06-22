@@ -16,12 +16,16 @@ import { UserResgistrationComponent } from './_components/user-resgistration/use
 import { LoginGuard } from './_guards/login-guard.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
-import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
 import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { EditUserComponent } from './_components/edit-user/edit-user.component';
 import { UpdatePersonalProfileComponent } from './_components/update-personal-profile/update-personal-profile.component';
+import { AddRoleToGroupComponent } from './_components/add-role-to-group/add-role-to-group.component';
+import { UpdateGroupRolesComponent } from './_components/update-group-roles/update-group-roles.component';
+import { AddUserToAGroupComponent } from './_components/add-user-to-a-group/add-user-to-a-group.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { UpdateUserRoleComponent } from './_components/update-user-role/update-user-role.component';
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [
@@ -35,12 +39,13 @@ import { UpdatePersonalProfileComponent } from './_components/update-personal-pr
         ReactiveFormsModule,
         BrowserAnimationsModule,
         AuthRoutingModule,
+        MatAutocompleteModule,
         SharedModule,
         MatTableModule,
         MatCheckboxModule
 
     ],
-  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent],
-  providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
+  declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, AddRoleToGroupComponent, UpdateGroupRolesComponent, AddUserToAGroupComponent, UpdateUserRoleComponent],
+  providers: [AuthenticationService, LoginGuard, SuperAdminUserGuard, UserService]
 })
 export class AuthModule { }

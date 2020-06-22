@@ -60,40 +60,7 @@ export class UserService {
       return false;
     }
   }
-  // Note that user1 is always assumed to be an admin.
-  // returns false or the list of groups a user is an admin to
-  // If user1, returns an empty list
-  async isAdmin(username: string) {
-    try {
-      const data: any = await this.httpClient.get(`/users/isAdminUser/${username}`).toPromise();
-      return (username === 'user1' && data.data === false) ? [] : data.data;
-    } catch (error) {
-      this.showError(error);
-      return false;
-    }
-  }
-  async isCurrentUserAdmin() {
-    try {
-      const username = await this.getCurrentUser();
-      return await this.isAdmin(username);
-    } catch (error) {
-      this.showError(error);
-      return false;
-    }
-  }
-
-  async isCurrentUserGroupAdmin(groupName: string) {
-    try {
-      const username = await this.getCurrentUser();
-      const admin = await this.isAdmin(username);
-      const isAdmin = admin && admin.filter(a => a.attributes.name === groupName && a.attributes.role === 'admin');
-      return isAdmin && isAdmin.length > 0;
-    } catch (error) {
-      this.showError(error);
-      return false;
-    }
-  }
-
+  
   async getCurrentUser() {
     return await localStorage.getItem('user_id');
   }

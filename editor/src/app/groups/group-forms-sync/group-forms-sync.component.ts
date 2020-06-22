@@ -24,8 +24,6 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
   groupId;
   group;
   groupLabel;
-  isSuperAdminUser;
-  isGroupAdminUser;
   responses;
   selectedTabIndex;
   enabledModules;
@@ -61,8 +59,6 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
       this.formsJsonURL = `./forms.json`;
     });
     try {
-      this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
-      this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupId);
       await this.getForms();
       this.groupUrl = `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;
     } catch (error) {
