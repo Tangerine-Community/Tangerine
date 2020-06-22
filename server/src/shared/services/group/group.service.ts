@@ -136,7 +136,7 @@ export class GroupService {
     const groupId = `group-${UUID()}`
     const created = new Date().toJSON()
     const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles') };
-    const memberRole = { role: 'Member', permissions: ['can_manage_data', 'can_download_csv'] };
+    const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_data', 'can_access_download_csv'] };
     const group = <Group>{_id: groupId, label, created, roles :[
       adminRole, memberRole
     ]} ;

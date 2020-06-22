@@ -14,7 +14,7 @@ export class GroupComponent implements OnInit {
   title:string = ''
   breadcrumbs:Array<Breadcrumb>
   group
-  isGroupPermissionsSet;
+  ready = false
   constructor(
     private groupsService: GroupsService,
     private authenticationService: AuthenticationService
@@ -24,6 +24,7 @@ export class GroupComponent implements OnInit {
     this.group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
     this.title = this.group.label
     this.breadcrumbs = []
-    this.isGroupPermissionsSet = await this.authenticationService.getUserGroupPermissionsByGroupName(this.group._id);
+    await this.authenticationService.getUserGroupPermissionsByGroupName(this.group._id);
+    this.ready = true
   }
 }

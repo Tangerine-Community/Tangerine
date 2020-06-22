@@ -38,7 +38,7 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   activeForms;
   groupUrl;
   formsJsonURL;
-  hasEditFormsPermission = true
+  canManageForms = false
  @ViewChild('copyFormOverlay', {static: true}) copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
@@ -68,6 +68,8 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
     try {
       await this.getForms();
       this.groupUrl = `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;
+      // @todo
+      this.canManageForms = true
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

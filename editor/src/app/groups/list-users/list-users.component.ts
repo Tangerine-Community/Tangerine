@@ -11,22 +11,20 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
   styleUrls: ['./list-users.component.css']
 })
 export class ListUsersComponent implements OnInit {
-  groupId;
   users;
   usersDisplayedColumns = ['username', 'email', 'roles', 'actions']
   @ViewChild('search', {static: true}) search: ElementRef;
   title = _TRANSLATE('Assign User to Role')
   breadcrumbs:Array<Breadcrumb> = []
+  groupId:string
   constructor(
     private groupsService: GroupsService,
-    private route: ActivatedRoute,
     private errorHandler: TangyErrorHandler
-  ) { }
+  ) {
+    this.groupId = window.location.hash.split('/')[2]
+  }
 
   async ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.groupId = params.groupId;
-    });
     await this.getUsersByGroup();
   }
 
