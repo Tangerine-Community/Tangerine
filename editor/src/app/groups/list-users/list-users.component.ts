@@ -46,6 +46,7 @@ export class ListUsersComponent implements OnInit {
       if (removeUser) {
         const result = await this.groupsService.removeUserFromGroup(this.groupId, username);
         this.errorHandler.handleError(_TRANSLATE('User Removed from Group Successfully'));
+        this.getUsersByGroup()
       }
     } catch (error) {
       console.log(error);
