@@ -16,7 +16,6 @@ import { UserResgistrationComponent } from './_components/user-resgistration/use
 import { LoginGuard } from './_guards/login-guard.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
-import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
 import { ManageSitewidePermissionsComponent } from './_components/manage-sitewide-permissions/manage-sitewide-permissions.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -47,6 +46,6 @@ import { UpdateUserRoleComponent } from './_components/update-user-role/update-u
 
     ],
   declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, AddRoleToGroupComponent, UpdateGroupRolesComponent, AddUserToAGroupComponent, UpdateUserRoleComponent],
-  providers: [AuthenticationService, LoginGuard, AdminUserGuard, SuperAdminUserGuard, UserService]
+  providers: [AuthenticationService, LoginGuard, SuperAdminUserGuard, UserService]
 })
 export class AuthModule { }

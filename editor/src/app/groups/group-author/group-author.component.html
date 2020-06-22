@@ -11,19 +11,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card *ngIf="isCaseModuleEnabled && isGroupAdminUser && false" class="is-link mat-elevation-z3" routerLink="case-definitions">
-  <mat-card-header>
-      <div mat-card-avatar>
-        <mwc-icon class="tangy-foreground-secondary">folder</mwc-icon>
-      </div>
-      <mat-card-title>
-          <a>{{'Case Definitions'|translate}}</a>
-      </mat-card-title>
-      <mat-card-subtitle>Define structure of cases.</mat-card-subtitle>
-  </mat-card-header>
-</mat-card>
-
-<mat-card *ngIf="isGroupAdminUser" class="is-link mat-elevation-z3" routerLink="media-library">
+<mat-card class="is-link mat-elevation-z3" routerLink="media-library">
   <mat-card-header>
       <div mat-card-avatar>
         <i class="material-icons tangy-foreground-secondary group-avatar">perm_media</i>
