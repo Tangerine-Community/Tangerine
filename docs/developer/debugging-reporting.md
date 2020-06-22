@@ -43,7 +43,7 @@ cp /reporting-worker-state.json_tmp /reporting-worker-state.json
 
 Keep repeating to continue processing...
 ```
-cat /reporting-worker-state.json | node /tangerine/server/reporting/run-worker.js | tee /reporting-worker-state.json_tmp
+cat /reporting-worker-state.json | /tangerine/serversrc/scripts/reporting-worker-batch.js | tee /reporting-worker-state.json_tmp
 cp /reporting-worker-state.json_tmp /reporting-worker-state.json
 ```
 

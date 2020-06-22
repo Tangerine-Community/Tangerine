@@ -52,20 +52,30 @@ module.exports = {
           // Process the flatResponse
           // @TODO Rename `-reporting` to `-csv`.
           let REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+          let processedResult = flatResponse;
+          // Don't add user-profile to the user-profile
+          if (processedResult.formId !== 'user-profile') {
+            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+          }
           // @TODO Ensure design docs are in the database.
-          await saveFormInfo(flatResponse, REPORTING_DB);
-          await saveFlatFormResponse(flatResponse, REPORTING_DB);
+          await saveFormInfo(processedResult, REPORTING_DB);
+          await saveFlatFormResponse(processedResult, REPORTING_DB);
           // Index the view now.
           await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
 
-          // Sanitize
+          // Repeat the flattening in order to deliver sanitized (non-PII) output
           flatResponse = await generateFlatResponse(doc, locationList, true);
           // Process the flatResponse
           // @TODO Rename `-reporting` to `-csv`.
           REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
+          processedResult = flatResponse
+          // Don't add user-profile to the user-profile
+          if (flatResponse.formId !== 'user-profile') {
+            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+          }
           // @TODO Ensure design docs are in the database.
-          await saveFormInfo(flatResponse, REPORTING_DB);
-          await saveFlatFormResponse(flatResponse, REPORTING_DB);
+          await saveFormInfo(processedResult, REPORTING_DB);
+          await saveFlatFormResponse(processedResult, REPORTING_DB);
           // Index the view now.
           await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           resolve(data)
@@ -108,6 +118,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
+    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,
       caseEventId: formResponse.caseEventId,
@@ -289,7 +300,14 @@ function saveFormInfo(flatResponse, db) {
         // Make the header property (AKA label) just the variable name.
         const firstOccurenceIndex = safeKey.indexOf('.')
         const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
-        formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
+        let keyArray = key.split('.')
+        // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+        // Preserve the namespacing of user-profile
+        if (keyArray[0] === 'user-profile') {
+          formDoc.columnHeaders.push({ key, header: safeKey })
+        } else {
+          formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
+        }
         foundNewHeaders = true
       }
     })
@@ -321,4 +339,75 @@ function saveFlatFormResponse(doc, db) {
               .catch(error => reject(`Could not save Flattened Form Response ${JSON.stringify(doc)._id} because Error of ${JSON.stringify(error)}`))
         });
   })
+}
+
+
+
+async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
+    try {
+      let userProfileId = doc.tangerineModifiedByUserId
+      if (!userProfileId) {
+        // try an older profileId
+        // Find the key that points to user profile ID.
+        const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
+        userProfileId = doc[userProfileIdKey]
+      }
+      console.log("userProfileId: " + userProfileId)
+      // Get the user profile.
+      let userProfileDoc;
+      try {
+        userProfileDoc = await reportingDb.get(userProfileId)
+      } catch (e) {
+        console.log("Error: reportingDb userProfileId: " + userProfileId + " Error: " + JSON.stringify(e))
+        // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
+        try {
+          let userProfileDocOriginal = await sourceDb.get(userProfileId)
+          userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false);
+        } catch (e) {
+          console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
+        }
+      }
+
+      // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
+      let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
+        let docNamespaced;
+        let keyArray = key.split('.')
+        // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+        if (keyArray[0] === 'user-profile') {
+          docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
+        } else {
+          docNamespaced = Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })
+        }
+        return docNamespaced
+      }, {}))
+      // Remove some unnecessary properties
+      delete docWithProfile['user-profile._rev']
+      delete docWithProfile['user-profile.formId']
+      delete docWithProfile['user-profile.startUnixtime']
+      delete docWithProfile['user-profile.endUnixtime']
+      delete docWithProfile['user-profile.lastSaveUnixtime']
+      delete docWithProfile['user-profile.buildId']
+      delete docWithProfile['user-profile.buildChannel']
+      delete docWithProfile['user-profile.deviceId']
+      delete docWithProfile['user-profile.groupId']
+      delete docWithProfile['user-profile.complete']
+      delete docWithProfile['user-profile.item1_firstOpenTime']
+      delete docWithProfile['user-profile.item1.location.region_id']
+      delete docWithProfile['user-profile.item1.location.region_level']
+      delete docWithProfile['user-profile.item1.location.region_parent']
+      delete docWithProfile['user-profile.item1.location.region_descendantsCount']
+      delete docWithProfile['user-profile.item1.location.district_id']
+      delete docWithProfile['user-profile.item1.location.district_level']
+      delete docWithProfile['user-profile.item1.location.district_parent']
+      delete docWithProfile['user-profile.item1.location.district_descendantsCount']
+      delete docWithProfile['user-profile.item1.location.facility_id']
+      delete docWithProfile['user-profile.item1.location.facility_level']
+      delete docWithProfile['user-profile.item1.location.facility_parent']
+      delete docWithProfile['user-profile.item1.location.facility_descendantsCount']
+      
+      return docWithProfile
+    } catch (error) {
+      // There must not be a user profile yet doc uploaded yet.
+      return doc
+    }
 }
