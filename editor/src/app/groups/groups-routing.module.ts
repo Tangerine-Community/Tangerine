@@ -37,7 +37,6 @@ import { DownloadCsvComponent } from './download-csv/download-csv.component';
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
 import { SuperAdminUserGuard } from '../core/auth/_guards/super-admin-user-guard.service';
-import { AdminUserGuard } from '../core/auth/_guards/admin-user-guard.service';
 import { ImportLocationListComponent } from './import-location-list/import-location-list.component';
 import { CreateCaseDefinitionComponent } from './case-management-editor/create-case-definition/create-case-definition.component';
 import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
@@ -70,17 +69,17 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/issues/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues', component: GroupIssuesComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard, AdminUserGuard] },
+  { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard, AdminUserGuard] },
+  { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security', component: ConfigureGroupSecurityComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/assign-role', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/configure-roles/add-role', component: AddRoleToGroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/update-role/:roleName', component: UpdateGroupRolesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/role/:username', component: UpdateUserRoleComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard, AdminUserGuard ]},
+  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },
@@ -94,7 +93,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
     path: 'groups/:groupId/configure/location-list/import-location-list',
-    component: ImportLocationListComponent, canActivate: [LoginGuard, AdminUserGuard]
+    component: ImportLocationListComponent, canActivate: [LoginGuard]
   },
   {
     path: 'groups/:groupId/manage-location-list-metadata/:locationLevel',

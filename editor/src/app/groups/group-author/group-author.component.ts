@@ -14,8 +14,6 @@ export class GroupAuthorComponent implements OnInit {
 
   title = _TRANSLATE('Author')
   breadcrumbs:Array<Breadcrumb> = []
-  isCaseModuleEnabled:boolean
-  isGroupAdminUser
   groupId
 
   constructor(
@@ -29,9 +27,6 @@ export class GroupAuthorComponent implements OnInit {
     this.route.params.subscribe(async params => {
       this.groupId = params.groupId;
     });
-    const config = await this.serverConfig.getServerConfig()
-    this.isCaseModuleEnabled = !!(config.enabledModules.find(module=>module==='case'))
-    this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupId);
   }
 
  }
