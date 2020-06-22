@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 const PouchDB = require('pouchdb')
+const util = require('util');
+const exec = util.promisify(require('child_process').exec)
 
 async function go() {
   try {
@@ -25,6 +27,9 @@ async function go() {
     for (const user of users) {
       await usersDb.put(user)
     }
+    console.log('User schema successfully updated.')
+    console.log('Clearing reporting caches.')
+    await exec(`reporting-cache-clear`)
   } catch (error) {
     console.log(error)
   }
