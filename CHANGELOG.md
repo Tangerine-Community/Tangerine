@@ -17,9 +17,9 @@ __Upgrade instructions:__
 # Fetch the updates.
 cd tangerine
 git fetch origin
-git checkout v3.10.0
+git checkout v3.11.0
 # Now you are ready to start the server.
-./start.sh v3.10.0
+./start.sh v3.11.0
 # Run upgrade
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
 ```
