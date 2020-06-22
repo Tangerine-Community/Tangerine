@@ -28,9 +28,7 @@ export class GroupDataComponent implements OnInit {
   async ngOnInit() {
     this.config = await this.serverConfig.getServerConfig()
     this.breadcrumbs = []
-    this.route.params.subscribe(async params => {
-      this.groupId = params.groupId;
-    });
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
     this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupId);
   }
 

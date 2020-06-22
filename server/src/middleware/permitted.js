@@ -10,7 +10,6 @@ const permit = (allowedPermissions) => {
   };
 
 const permitOnGroupIfAll = (permissions) => {
-  console.log(permissions)
   const isAllowed = groupPermissions => permissions.every(e => groupPermissions.includes(e));
   return (req, res, next) => {
     try {
