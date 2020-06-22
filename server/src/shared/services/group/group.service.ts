@@ -4,10 +4,13 @@ import { Group } from '../../classes/group';
 import PouchDB from 'pouchdb'
 import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { UserService } from '../user/user.service';
 const DB = require('../../../db')
 const log = require('tangy-log').log
 const fs = require('fs-extra')
 const tangyModules = require('../../../modules/index.js')()
+const {permissionsList} = require('../../../permissions-list.js')
+const {findUserByUsername, USERS_DB} = require('../../../auth.js')
 
 
 const util = require('util');
@@ -27,7 +30,10 @@ export class GroupService {
   DB = DB
   groupsDb = new DB('groups');
 
-  constructor(private readonly configService:TangerineConfigService){}
+  constructor(
+    private readonly configService: TangerineConfigService,
+    private readonly userService: UserService
+  ){}
 
   async initialize() {
     const groups = await this.listGroups()
@@ -125,12 +131,21 @@ export class GroupService {
     }
   }
 
-  async create(label):Promise<Group> {
+  async create(label, username):Promise<Group> {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const created = new Date().toJSON()
-    const group = <Group>{_id: groupId, label, created}
-    this.groupsDb.put(group)
+    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles') };
+    const memberRole = { role: 'Member', permissions: ['can_manage_data', 'can_download_csv'] };
+    const group = <Group>{_id: groupId, label, created, roles :[
+      adminRole, memberRole
+    ]} ;
+    await this.groupsDb.put(group)
+    if (username !== process.env.T_USER1) {
+      const user = await this.userService.getUserByUsername(username);
+      user.groups.push({groupName: groupId, roles: [adminRole.role]});
+      await this.userService.usersDb.put(user);
+    }
     const groupDb = new DB(groupId)
     let groupName = label 
     await this.installViews(groupDb)

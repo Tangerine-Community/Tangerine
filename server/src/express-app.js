@@ -39,7 +39,7 @@ const sep = path.sep;
 const tangyModules = require('./modules/index.js')()
 const { extendSession, findUserByUsername,
    USERS_DB, login, getSitewidePermissionsByUsername,
-   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName} = require('./auth');
+   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName, getAllRoles, updateRoleInGroup} = require('./auth');
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
@@ -96,7 +96,7 @@ app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
-var {permit} = require('./middleware/permitted.js')
+var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
@@ -115,18 +115,18 @@ app.get('/login/validate/:userName',
   }
 );
 app.post('/extendSession', isAuthenticated, extendSession);
-app.get('/permissionsList', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getPermissionsList);
+app.get('/permissionsList', isAuthenticated, getPermissionsList);
 app.get('/sitewidePermissionsByUsername/:username', 
           isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getSitewidePermissionsByUsername);
-app.post('/permissions/updateUserSitewidePermissions:username/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
+app.post('/permissions/updateUserSitewidePermissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
 
 /*
  * User API
  */
 
 app.get('/users', isAuthenticated, permit(['can_view_users_list']), getAllUsers);
-app.get('/users/byUsername/:username', isAuthenticated, permit(['can_view_users_list']), getUserByUsername);
-app.get('/users/findOneUser/:username', isAuthenticated, permit(['can_view_users_list']), findOneUserByUsername);
+app.get('/users/byUsername/:username', isAuthenticated, getUserByUsername);
+app.get('/users/findOneUser/:username', isAuthenticated, findOneUserByUsername);
 app.get('/users/findMyUser/', isAuthenticated, findMyUser);
 app.put('/users/updateMyUser/', isAuthenticated, updateMyUser);
 app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
@@ -298,22 +298,22 @@ app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async (req, res) 
   try {
     const user = await findUserByUsername(payload.username)
     /**
-     *  If the groups array is existent on the user object, check if the is already in the groups array i.e. it is being updated
-     *    If it exists, update the role, otherwise add a new record to the groups array and save.
-     * 
-     * If the groups array is non existent on the user object, assign the groups array with the corresponding groupname and role
+     *  If the groups array is existent on the user object,
+     * check if the is already in the groups array i.e. it is being updated
+     * If it exists, update the roles, otherwise add a new record to the groups array and save.
+     * If the groups array is non existent on the user object,
+     *  assign the groups array with the corresponding groupname and roles
      * This is needful especially for users created before role management was added.
-     * 
      */
     if (typeof user.groups !== 'undefined') {
       const index = user.groups.findIndex(group => group.groupName === groupName);
       if (index > -1) {
-        user.groups[index] = { groupName, role: payload.role }
+        user.groups[index] = { ...payload.role }
       } else {
-        user.groups.push({ groupName, role: payload.role })
+        user.groups.push({ ...payload.role })
       }
     } else {
-      user.groups = [{ groupName, role: payload.role }];
+      user.groups = [{ ...payload.role }];
     }
     const data = await USERS_DB.put(user);
     res.send({ data, statusCode: 200, statusMessage: `User Added to Group ${groupName}` })
@@ -336,6 +336,7 @@ app.get('/groups/users/byGroup/:groupName', isAuthenticated, async (req, res) =>
         username: result.username,
         email: result.email,
         firstName: result.firstName,
+        roles: result.groups.find(group => group.groupName === groupName).roles,
         lastName: result.lastName
       }
     });
@@ -390,6 +391,13 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
     res.sendStatus(500);
   }
 })
+
+app.post('/permissions/addRoleToGroup/:groupId', 
+          isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), addRoleToGroup);
+
+app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
+app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
+app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
