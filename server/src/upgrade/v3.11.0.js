@@ -30,7 +30,9 @@ async function go() {
                     'can_access_cases',
                     'can_access_issues',
                   'can_access_author',
-                    'can_manage_forms',
+                    'can_access_forms',
+                      'can_manage_forms',
+                    'can_access_media',
                   'can_access_deploy'
                 ],
               },
@@ -38,8 +40,9 @@ async function go() {
                 role: 'Member',
                 permissions: [
                   'can_access_author',
+                    'can_access_forms',
                   'can_access_data',
-                  'can_access_download_csv'
+                    'can_access_download_csv'
                 ]
               }
             ] 

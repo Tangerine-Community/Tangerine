@@ -10,7 +10,9 @@ const permissionsList = {
       'can_access_cases',
       'can_access_issues',
     'can_access_author',
-      'can_manage_forms',
+      'can_access_forms',
+        'can_manage_forms',
+      'can_access_media',
     'can_access_deploy'
   ],
   sitewidePermissions: [
