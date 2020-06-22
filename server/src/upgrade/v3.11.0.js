@@ -20,23 +20,26 @@ async function go() {
               {
                 role: 'Admin',
                 permissions: [
-                  'can_manage_group_deployment',
-                  'can_assign_permissions_to_group_user',
-                  'can_manage_data',
-                  'can_author',
-                  'can_configure',
-                  'can_deploy',
-                  'can_view_form_responses',
-                  'can_download_csv',
-                  'can_review_issues',
-                  'can_review_uploaded_cases'
+                  'can_access_configure',
+                    'can_access_security',
+                      'can_manage_group_users',
+                      'can_manage_group_roles',
+                  'can_access_data',
+                    'can_access_uploads',
+                    'can_access_download_csv',
+                    'can_access_cases',
+                    'can_access_issues',
+                  'can_access_author',
+                    'can_manage_forms',
+                  'can_access_deploy'
                 ],
               },
               {
                 role: 'Member',
                 permissions: [
-                  'can_manage_data',
-                  'can_download_csv'
+                  'can_access_author',
+                  'can_access_data',
+                  'can_access_download_csv'
                 ]
               }
             ] 

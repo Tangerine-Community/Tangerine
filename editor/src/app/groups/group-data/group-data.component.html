@@ -1,7 +1,7 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
 <ng-container *ngIf="groupId">
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_view_form_responses'" class="is-link mat-elevation-z3" routerLink="uploads">
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_uploads'" class="is-link mat-elevation-z3" routerLink="uploads">
     <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
@@ -13,7 +13,7 @@
     </mat-card-header>
   </mat-card>
   
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_download_csv'" class="is-link mat-elevation-z3" routerLink="download-csv">
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="download-csv">
     <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">table_chart</mwc-icon>
@@ -25,7 +25,7 @@
     </mat-card-header>
   </mat-card>
   
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_review_uploaded_cases'"  class="is-link mat-elevation-z3" routerLink="cases">
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_cases'"  class="is-link mat-elevation-z3" routerLink="cases">
     <mat-card-header *ngIf="config.enabledModules.includes('case')">
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">folder</mwc-icon>
@@ -37,7 +37,7 @@
     </mat-card-header>
   </mat-card>
   
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_review_issues'" class="is-link mat-elevation-z3" routerLink="issues">
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_issues'" class="is-link mat-elevation-z3" routerLink="issues">
     <mat-card-header *ngIf="config.enabledModules.includes('case')">
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">receipt</mwc-icon>

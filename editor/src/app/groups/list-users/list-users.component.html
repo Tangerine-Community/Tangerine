@@ -1,5 +1,11 @@
-<paper-fab mat-raised-button icon="add" color="accent" [routerLink]="['/groups/',groupId,'configure', 'security', 'add-user']"></paper-fab>
-
+<paper-fab
+  mat-raised-button
+  icon="add"
+  color="accent"
+  [routerLink]="['/groups/',groupId,'configure', 'security', 'add-user']"
+  *appHasAPermission="let i;group:groupId; permission:'can_manage_group_users'"
+>
+</paper-fab>
 <mat-table [dataSource]="users" class="mat-elevation-z8">
   <ng-container matColumnDef="username">
     <mat-header-cell *matHeaderCellDef> {{'Username'|translate}} </mat-header-cell>
@@ -18,12 +24,14 @@
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
     <mat-cell *matCellDef="let user">
-     <a alt="Modify users's roles" class="tangy-foreground-primary" [routerLink]="['/groups',groupId, 'configure', 'security','role', user.username]">
-        <i class="material-icons mat-18 tangy-location-list-icon">rule</i> 
-      </a>
-      <a alt="Remove user from group" class="tangy-foreground-primary" (click)="removeUserFromGroup(user.username)">
-        <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
-      </a>
+      <span *appHasAPermission="let i;group:groupId; permission:'can_manage_group_users'">
+        <a alt="Modify users's roles" class="tangy-foreground-primary" [routerLink]="['/groups',groupId, 'configure', 'security','role', user.username]">
+          <i class="material-icons mat-18 tangy-location-list-icon">rule</i> 
+        </a>
+        <a alt="Remove user from group" class="tangy-foreground-primary" (click)="removeUserFromGroup(user.username)">
+          <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
+        </a>
+      </span>
     </mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="usersDisplayedColumns"></mat-header-row>
