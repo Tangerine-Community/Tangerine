@@ -23,7 +23,6 @@ export class AppComponent implements OnInit, OnDestroy {
   validSession: boolean;
   user_id: string = localStorage.getItem('user_id');
   private childValue: string;
-  isAdminUser = false;
   history: string[] = [];
   titleToUse: string;
   mobileQuery: MediaQueryList;
@@ -65,7 +64,6 @@ export class AppComponent implements OnInit, OnDestroy {
     clearInterval(this.sessionTimeoutCheckTimerID);
     await this.authenticationService.logout();
     this.loggedIn = false;
-    this.isAdminUser = false;
     this.permissionService.flushPermissions();
     this.user_id = null;
     this.router.navigate(['/login']);
@@ -76,7 +74,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
       if (isLoggedIn) {
         this.loggedIn = isLoggedIn;
-        this.isAdminUser = await this.userService.isCurrentUserAdmin();
         if(Object.entries(this.permissionService.getPermissions()).length===0){
           const permissions = JSON.parse(localStorage.getItem('permissions'));
           this.permissionService.loadPermissions(permissions.sitewidePermissions);
@@ -87,7 +84,6 @@ export class AppComponent implements OnInit, OnDestroy {
         setInterval(await this.sessionTimeoutCheck.bind(this), 10 * 60 * 1000); // check every 10 minutes
       } else {
         this.loggedIn = false;
-        this.isAdminUser = false;
         this.permissionService.flushPermissions();
         this.user_id = null;
         this.router.navigate(['/login']);

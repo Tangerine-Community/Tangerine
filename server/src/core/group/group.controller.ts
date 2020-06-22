@@ -14,8 +14,8 @@ export class GroupController {
   ) { }
 
   @All('create')
-  async create(@Body('label') label:string):Promise<Group> {
-    return await this.groupService.create(label)
+  async create(@Body('label') label:string, @Req() request: Request):Promise<Group> {
+    return await this.groupService.create(label, request['user']['name']);
   }
 
   @All('read/:groupId')

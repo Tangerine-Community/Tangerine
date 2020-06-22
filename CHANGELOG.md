@@ -12,8 +12,18 @@
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
   
 __Upgrade instructions:__
-  - To use the new "Exclude PII" feature in Data/Download CSV, rebuild your reporting databases: `docker exec tangerine reporting-cache-clear`. This will create a new `-reporting-sanitize` database, which has records that have PII filtered out.
-  
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.11.0
+# Now you are ready to start the server.
+./start.sh v3.11.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
+```
+Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
 
 ## v3.10.0
 - New Features in all Tangerine
