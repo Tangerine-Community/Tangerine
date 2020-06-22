@@ -41,45 +41,22 @@ function getData(dbName, formId, skip, batchSize, year, month) {
   });
 }
 
-async function getRelatedProfileDocs(docs, state) {
-  let userProfileDocs = []
-  for (let doc of docs) {
-    const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
-    try {
-      let response = await axios.get(`${dbDefaults.prefix}/${state.dbName}/${doc[userProfileIdKey]}`)
-      if (response.data) userProfileDocs.push(response.data)
-    } catch (e) {
-      // Doesn't exist? Hmm...
-    }
-  }
-  return userProfileDocs
-}
-
 async function batch() {
   console.log("in batch.")
   const state = JSON.parse(await readFile(params.statePath))
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
-  // Only get relatedProfileDocs if this is not the user profile CSV. An empty array here is important for not confusing the code below.
-  const relatedProfileDocs = state.formId !== 'user-profile' ? await getRelatedProfileDocs(docs, state) : []
   if (docs.length === 0) {
     state.complete = true
   } else {
     // Order each datum's properties by the headers for consistent columns.
     try {
       const rows = docs.map(doc => {
-        const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
-        const userProfileId = doc[userProfileIdKey]
-        const userProfileDoc = relatedProfileDocs.find(doc => doc._id === userProfileId)
         return [ doc._id, ...state.headersKeys.map(header => {
-          if (header.includes('user-profile.') && userProfileDoc) {
-            return userProfileDoc[header.replace('user-profile.', '')] ? userProfileDoc[header.replace('user-profile.', '')] : ''
-          } else {
             if (typeof doc[header]!== 'undefined') {
               return doc[header]
             } else {
               return ""
             }
-          }
         })]
       })
       const output = `\n${new CSV(rows).encode()}`
