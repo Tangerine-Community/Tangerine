@@ -16,17 +16,12 @@ export class GroupAuthorComponent implements OnInit {
   breadcrumbs:Array<Breadcrumb> = []
   groupId
 
-  constructor(
-    private serverConfig: ServerConfigService,
-    private userService:UserService,
-    private route: ActivatedRoute
-  ) { }
+  constructor() {
+    this.groupId = window.location.hash.split('/')[2]
+  }
 
   async ngOnInit() {
     this.breadcrumbs = []
-    this.route.params.subscribe(async params => {
-      this.groupId = params.groupId;
-    });
   }
 
  }
