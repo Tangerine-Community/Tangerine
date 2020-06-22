@@ -6,7 +6,6 @@ const permissionsList = {
     'can_author',
     'can_configure',
     'can_deploy',
-    'can_PII',
     'can_view_form_responses',
     'can_download_csv',
     'can_review_issues',
