@@ -31,10 +31,7 @@ export function DB(name, key = ''):PouchDB {
       androidDatabaseImplementation: 2
     };
     if (key) {
-      window['sqlitePlugin'].openDatabase({name, key, location: 'default', androidDatabaseImplementation: 2});
       pouchDBOptions.key = key
-    } else {
-      window['sqlitePlugin'].openDatabase({name, location: 'default', androidDatabaseImplementation: 2});
     }
   }
   let pouch;

@@ -1,3 +1,4 @@
+import { AppConfigService } from './../../../shared/_services/app-config.service';
 import { Subject } from 'rxjs';
 import { LanguagesService } from './../../../shared/_services/languages.service';
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
@@ -14,17 +15,19 @@ export class DeviceLanguageComponent implements OnInit {
 
   @ViewChild('container', {static: true}) container:ElementRef
   constructor(
-    private languagesService:LanguagesService
+    private languagesService:LanguagesService,
+    private appConfigService:AppConfigService
   ) { }
 
   async ngOnInit() {
+    const appConfig = await this.appConfigService.getAppConfig()
     const languages = await this.languagesService.list()
     this.container.nativeElement.innerHTML = `
       <tangy-form id="language-select">
         <tangy-form-item id="language-select">
           <div style="text-align: center">
             <img style="width: 30%; margin: auto" id="logo" src='./logo.png'/><br>
-            <h2>Welcome! Let's get started by setting up your language.</h2>
+            <h2>Welcome to the ${appConfig.groupName} group on the ${appConfig.serverUrl} server. Let's get started by setting up your language.</h2>
           </div>
           <tangy-select name="language-select" required>
             ${languages.map(language => `

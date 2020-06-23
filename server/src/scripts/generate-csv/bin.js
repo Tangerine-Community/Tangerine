@@ -2,12 +2,13 @@
 
 if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('  generate-csv <groupName> <formId> <outputPath> [batchSize]  ')
+  console.log('  generate-csv <groupName> <formId> <outputPath> [batchSize] <sleepTimeBetweenBatches> <year> <month>`  ')
   console.log('Example:')
   console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv`)
-  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv 0 2018 Jan`)
+  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv 10 5 2018 Jan true`)
   process.exit()
 }
+
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const CSV = require('comma-separated-values')
@@ -38,7 +39,8 @@ let state = Object.assign({}, params, {
 
 async function go(state) {
   try {
-    const db = new DB(`${state.dbName}-reporting`)
+    console.log(`dbName: ${state.dbName}`)
+    const db = new DB(`${state.dbName}`)
     // Create the headers.
       let headersDoc = {} 
     try {
@@ -51,16 +53,6 @@ async function go(state) {
     }
     state.headers = headersDoc.columnHeaders.map(header => header.header)
     state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
-    // Join user-profile headers.
-    if (state.formId !== 'user-profile') {
-      try {
-        const userProfileHeadersDoc = await db.get('user-profile')
-        state.headers = [...state.headers, ...userProfileHeadersDoc.columnHeaders.map(header => `user-profile.${header.header}`)]
-        state.headersKeys = [...state.headersKeys, ...userProfileHeadersDoc.columnHeaders.map(header => `user-profile.${header.key}`)]
-      } catch(e) {
-        // No user-profile form. No worries.
-      }
-    }
     state.headers.unshift('_id')
     const headersRow = new CSV([state.headers]).encode()
     await writeFile(state.outputPath, headersRow, 'utf-8')
@@ -68,7 +60,7 @@ async function go(state) {
     await writeFile(state.statePath, JSON.stringify(state), 'utf-8')
     //  Run batches.
     while (state.complete === false) {
-      console.log(`Run batch at skip of ${state.skip}`)
+      console.log(`Run batch at skip of ${state.skip} at statePath: ${state.statePath}`)
       await exec(`./batch.js '${state.statePath}'`)
       state = JSON.parse(await readFile(state.statePath))
       await sleep(state.sleepTimeBetweenBatches)

@@ -66,6 +66,38 @@
           "name": "Data Collector causes Issue to be created due to `discrepancy-if` logic in form",
           "required": true,
           "repeatable": false 
+        },
+        {
+          "id": "event-form-definition-fin2z8",
+          "formId": "create-an-urgent-notification",
+          "forCaseRole": "role-2",
+          "name": "Data Collector causes an urgent notification to be created",
+          "required": true,
+          "repeatable": false 
+        },
+        {
+          "id": "event-form-definition-fdkai3",
+          "formId": "resolve-an-urgent-notification",
+          "forCaseRole": "role-2",
+          "name": "Data Collector resolves urgent notification",
+          "required": false,
+          "repeatable": true 
+        }
+      ]
+    },
+    {
+      "id": "change-location-of-case",
+      "name": "Change location of case",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-zibe83",
+          "formId": "change-location-of-case",
+          "forCaseRole": "role-1",
+          "name": "Change location of case",
+          "required": true,
+          "repeatable": false 
         }
       ]
     },

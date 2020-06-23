@@ -1,0 +1,17 @@
+.tangy-full-width{
+    width: 95%;
+  }
+paper-fab {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+}
+a {
+  text-decoration: none;
+}
+.tangy-full-width{
+  width: 90%;
+}
+span.tangy-foreground-secondary{
+  padding-top: 0.3rem;
+}

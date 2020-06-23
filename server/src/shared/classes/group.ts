@@ -7,4 +7,5 @@ export interface Group {
   created: string
   // A general config object for modules to attach whatever settings they need.
   config:any
+  roles: any []
 }

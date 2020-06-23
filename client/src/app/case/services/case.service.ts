@@ -1,5 +1,6 @@
-import { IssueEventType } from './../classes/issue.class';
-import { Issue, IssueStatus, IssueEvent } from './../classes/issue.class';
+import { Subject } from 'rxjs';
+import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
+import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
 // Services.
 import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -89,6 +90,28 @@ class CaseService {
 
   async load(id:string) {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
+  }
+
+  onChangeLocation$ = new Subject()
+
+  // @Param location: Can be Object where keys are levels and values are IDs of locations or an Array from the Tangy Location input's value.
+  async changeLocation(location:any):Promise<void> {
+    location = Array.isArray(location)
+      ? location.reduce((location, level) => { return {...location, [level.level]: level.value} }, {})
+      : location
+    this.case.location = location
+    const eventForms:Array<EventForm> = this.case.events
+      .reduce((eventForms, event) => {
+        return [...eventForms, ...event.eventForms]
+      }, [])
+    for (let eventForm of eventForms) {
+      if (eventForm.formResponseId) {
+        const response = await this.tangyFormService.getResponse(eventForm.formResponseId)
+        response.location = location
+        await this.tangyFormService.saveResponse(response)
+      }
+    }
+    this.onChangeLocation$.next(location)
   }
 
   async getCaseDefinitionByID(id:string) {
@@ -321,6 +344,48 @@ class CaseService {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
+  /*
+   * Notification API
+   */
+
+  createNotification (label = '', description = '', link = '', icon = 'notification_important', color = '#CCC', persist = false, enforceAttention = false ) {
+    const notification = <Notification>{
+      id: UUID(),
+      status: NotificationStatus.Open,
+      createdAppContext: AppContext.Client,
+      createdOn: Date.now(),
+      label,
+      description,
+      link,
+      icon,
+      color,
+      enforceAttention,
+      persist
+   }
+    this.case.notifications.push(notification)
+  }
+
+  async openNotification(notificationId:string) {
+    this.case.notifications = this.case.notifications.map(notification => {
+      return notification.id === notificationId
+        ? <Notification>{
+          ...notification,
+          status: NotificationStatus.Open
+        }
+        : notification
+    })
+  }
+
+  async closeNotification(notificationId:string) {
+    this.case.notifications = this.case.notifications.map(notification => {
+      return notification.id === notificationId
+        ? <Notification>{
+          ...notification,
+          status: NotificationStatus.Closed
+        }
+        : notification
+    })
+  }
 
   /*
    *

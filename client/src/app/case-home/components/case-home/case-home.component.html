@@ -14,4 +14,9 @@
       <app-query></app-query>
     </ng-template>
   </mat-tab>
+  <mat-tab *ngIf="showCaseReports" label="{{'REPORTS'|translate}}">
+    <ng-template matTabContent>
+      <app-case-reports></app-case-reports>
+    </ng-template>
+  </mat-tab>
 </mat-tab-group>

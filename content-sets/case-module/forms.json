@@ -175,6 +175,62 @@
     }
   },
   {
+    "id" : "create-an-urgent-notification",
+    "src" : "./assets/create-an-urgent-notification/form.html",
+    "description" : "Data Collector causes an urgent notification to be created",
+    "listed" : false,
+    "title" : "Data Collector causes an urgent notification to be created",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id" : "resolve-an-urgent-notification",
+    "src" : "./assets/resolve-an-urgent-notification/form.html",
+    "description" : "Data Collector resolves urgent notification",
+    "listed" : false,
+    "title" : "Data Collector resolves urgent notification",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
     "id" : "test-issues-created-programatically-on-client",
     "src" : "./assets/test-issues-created-programatically-on-client/form.html",
     "description" : "Test Issues created programatically on Client",

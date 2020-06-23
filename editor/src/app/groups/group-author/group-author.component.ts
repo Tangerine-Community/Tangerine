@@ -14,24 +14,14 @@ export class GroupAuthorComponent implements OnInit {
 
   title = _TRANSLATE('Author')
   breadcrumbs:Array<Breadcrumb> = []
-  isCaseModuleEnabled:boolean
-  isGroupAdminUser
   groupId
 
-  constructor(
-    private serverConfig: ServerConfigService,
-    private userService:UserService,
-    private route: ActivatedRoute
-  ) { }
+  constructor() {
+    this.groupId = window.location.hash.split('/')[2]
+  }
 
   async ngOnInit() {
     this.breadcrumbs = []
-    this.route.params.subscribe(async params => {
-      this.groupId = params.groupId;
-    });
-    const config = await this.serverConfig.getServerConfig()
-    this.isCaseModuleEnabled = !!(config.enabledModules.find(module=>module==='case'))
-    this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupId);
   }
 
  }

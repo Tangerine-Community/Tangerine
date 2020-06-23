@@ -1,0 +1,12 @@
+form {
+    margin: 15px;
+}
+
+mat-checkbox{
+    display: block;
+    margin-left: 5px;
+}
+
+button {
+    margin-top: 15px;
+}

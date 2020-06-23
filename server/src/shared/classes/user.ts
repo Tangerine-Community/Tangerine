@@ -3,7 +3,8 @@ type doc_id = string
 
 export interface UserMembership {
   groupName:string
-  role: string
+  role?: string
+  roles?: string[]
 }
 
 export interface User {

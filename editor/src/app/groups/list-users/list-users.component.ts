@@ -11,28 +11,20 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
   styleUrls: ['./list-users.component.css']
 })
 export class ListUsersComponent implements OnInit {
-  groupId;
   users;
-  usersDisplayedColumns = ['username', 'email', 'actions']
+  usersDisplayedColumns = ['username', 'email', 'roles', 'actions']
   @ViewChild('search', {static: true}) search: ElementRef;
-  title = _TRANSLATE("Security")
+  title = _TRANSLATE('Assign User to Role')
   breadcrumbs:Array<Breadcrumb> = []
+  groupId:string
   constructor(
     private groupsService: GroupsService,
-    private route: ActivatedRoute,
     private errorHandler: TangyErrorHandler
-  ) { }
+  ) {
+    this.groupId = window.location.hash.split('/')[2]
+  }
 
   async ngOnInit() {
-    this.breadcrumbs = [
-      <Breadcrumb>{
-        label: _TRANSLATE('Security'),
-        url: `security`
-      }
-    ]
-    this.route.params.subscribe(params => {
-      this.groupId = params.groupId;
-    });
     await this.getUsersByGroup();
   }
 
@@ -54,6 +46,7 @@ export class ListUsersComponent implements OnInit {
       if (removeUser) {
         const result = await this.groupsService.removeUserFromGroup(this.groupId, username);
         this.errorHandler.handleError(_TRANSLATE('User Removed from Group Successfully'));
+        this.getUsersByGroup()
       }
     } catch (error) {
       console.log(error);

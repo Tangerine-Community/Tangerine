@@ -1,3 +1,4 @@
+import { ManageGroupRolesPermissionsComponent } from './manage-group-roles-permissions/manage-group-roles-permissions.component';
 import { GroupIssuesComponent } from './group-issues/group-issues.component';
 import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
@@ -35,7 +36,6 @@ import { TangerineFormsService } from './services/tangerine-forms.service';
 import { FilesService } from './services/files.service';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { GroupDetailsComponent } from './group-details/group-details.component';
 import { DownloadCsvComponent } from './download-csv/download-csv.component';
 import { AddUserComponent } from './add-users/add-user.component';
 import { ListUsersComponent } from './list-users/list-users.component';
@@ -75,6 +75,8 @@ import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-vi
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
+import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
+import { BrowserModule } from '@angular/platform-browser';
 
 
 
@@ -82,6 +84,7 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
+    BrowserModule,
     MatGridListModule,
     FormsModule,
     DragDropModule,
@@ -110,12 +113,12 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
   ],
   declarations: [
     LocationListEditorComponent,
+    ManageGroupRolesPermissionsComponent,
     GroupsComponent,
     GroupComponent,
     NewGroupComponent,
     ReleaseApkComponent,
     ReleasePwaComponent,
-    GroupDetailsComponent,
     DownloadCsvComponent,
     AddUserComponent,
     ListUsersComponent,
@@ -156,7 +159,8 @@ import { CaseSettingsComponent } from './case-settings/case-settings.component';
     GroupDeviceUserComponent,
     GroupCasesComponent,
     GroupIssuesComponent,
-    CaseSettingsComponent
+    CaseSettingsComponent,
+    ConfigureGroupSecurityComponent,
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

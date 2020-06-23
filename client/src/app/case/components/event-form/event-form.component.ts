@@ -47,6 +47,7 @@ export class EventFormComponent implements OnInit {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.window.caseService = this.caseService
+      this.window['T']['case'] = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -77,6 +78,10 @@ export class EventFormComponent implements OnInit {
       }
       this.formPlayer.render()
 
+      this.caseService.onChangeLocation$.subscribe(location => {
+        this.formPlayer.location = this.caseService.case.location
+      })
+
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
       this.formPlayer.$rendered.subscribe(async () => {
@@ -95,9 +100,9 @@ export class EventFormComponent implements OnInit {
           if (inputsWithDiscrepancy.length > 0) {
             const formInfo = this.formPlayer.formInfo
             await this.caseService.createIssue(
-              `Discrepancy on ${formInfo.title}`, 
-              '', 
-              this.caseService.case._id, 
+              `Discrepancy on ${formInfo.title}`,
+              '',
+              this.caseService.case._id,
               this.caseEvent.id,
               this.eventForm.id,
               window['userProfile']._id,
