@@ -288,7 +288,7 @@ export const updates = [
     script: async (userDb, appConfig, userService: UserService) => {
       console.log('Updating to v3.12.0...')
       if ( localStorage.getItem('ran-update-v3.12.0')) return
-      localStorage.setItem('ran-update-v3.11.0', 'true')
+      localStorage.setItem('ran-update-v3.12.0', 'true')
     }
   }
 ]
