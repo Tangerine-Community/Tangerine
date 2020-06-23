@@ -177,9 +177,7 @@ installation.**
 
 The first step is to select the language for the user interface
 
-![A screenshot of a cell phone Description automatically
-generated](media/device2.png){width="3.2444444444444445in"
-height="3.9680850831146106in"}
+<img src="./media/device2.png" width="570">
 
 Select the language and click Submit
 
@@ -188,43 +186,37 @@ use the same admin password for all tables at your site. This same
 password will be required each time a user is registering to use the app
 on this device.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device3.png){width="2.9328477690288715in"
-height="3.3475174978127735in"}
+<img src="./media/device3.png" width="570">
+
 
 Select Yes if you have a device code or No if you are going to insert a
 device ID and Token for the registration.
 
-![A picture containing bird, flower, tree Description automatically
-generated](media/device4.png){width="3.2666557305336834in"
-height="2.42494094488189in"}![A screenshot of a cell phone Description
-automatically generated](media/device5.png){width="2.468086176727909in"
-height="2.4085345581802273in"}
+<img src="./media/device4.png" width="570">
+
+<img src="./media/device5.png" width="570">
+
 
 Insert the ID and Token or click the Scan icon to scan the registration
 QR code.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device6.png){width="3.3191491688538934in"
-height="4.046876640419947in"}
+<img src="./media/device6.png" width="570">
+
 
 Click Submit when done. The next screen will show you some information
 for this device. If it is correct select Yes, if the scanned device code
 and ID correspond to a different device select No and start over with
 the correct device code.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device7.png){width="3.4451531058617673in"
-height="2.719857830271216in"}
+<img src="./media/device7.png" width="570">
+
 
 On the next screen you will see some synchronization information. The
 app at this moment is contacting the server and obtaining users assigned
 to your device location. If you have already collected data on another
 tablet for this location, this data will also be pulled.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device8.png){width="3.793170384951881in"
-height="3.131796806649169in"}
+<img src="./media/device8.png" width="570">
 
 Click Next and then go to the Registration tap. Ask your administrator
 to enter the admin password and enter your user information below. Click
@@ -235,23 +227,20 @@ password and ask the user to enter their username and password. Here the
 Year of Birth can be used by the user to reset their password in case
 they forgot it.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device9.png){width="2.861573709536308in"
-height="4.262706692913386in"}
+<img src="./media/device9.png" width="570">
+
 
 On the next screen you will see a dropdown of all users for this
 location. Select the one that corresponds to you and click Submit.
 
-![A screenshot of a social media post Description automatically
-generated](media/device10.png){width="2.710064523184602in"
-height="2.8976837270341207in"}
+<img src="./media/device10.png" width="570">
+
 
 You will now see a screen similar to the one below where you can start
 working
 
-![A screenshot of a cell phone Description automatically
-generated](media/device11.png){width="3.0010356517935257in"
-height="4.574468503937008in"}
+<img src="./media/device11.png" width="570">
+
 
 Installation in your Chrome browser
 -----------------------------------
@@ -266,24 +255,21 @@ been given to you or copied directly after it's generation in the
 backend. Copy the link and paste it in the Chrome's address bar. You
 will see a screen indicating that the app is being installed.
 
-![A close up of a logo Description automatically
-generated](media/device12.png){width="2.430184820647419in"
-height="3.5336876640419947in"}
+<img src="./media/device12.png" width="570">
+
 
 After a successful installation you will receive a confirmation screen
 like the one below. **Do not click the link to proceed**.
 
-![A screenshot of a social media post Description automatically
-generated](media/device13.png){width="3.497069116360455in"
-height="2.291402012248469in"}
+<img src="./media/device13.png" width="570">
+
 
 Click the + icon beside the address bar to install Tangerine in your
 browser. A popup will open to give you the option to install the app.
 Click Install
 
-![A screenshot of a cell phone Description automatically
-generated](media/device14.png){width="4.474430227471566in"
-height="2.9609634733158354in"}
+<img src="./media/device14.png" width="570">
+
 
 Depending on your browser setup, you may be asked to create a shortcut
 on your desktop or in your program folder or the browser may close
@@ -295,15 +281,13 @@ If you cannot find it type this into the address bar of your browser:
 
 NOTE: **Always start Tangerine from the application icon**
 
-![A screenshot of a cell phone Description automatically
-generated](media/device15.png){width="3.0801968503937007in"
-height="3.521195319335083in"}
+<img src="./media/device15.png" width="570">
+
 
 Click the Tangerine app to start the application.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device16.png){width="4.2659580052493435in"
-height="2.6174595363079614in"}
+<img src="./media/device16.png" width="570">
+
 
 Select the language and click Submit
 
@@ -312,44 +296,38 @@ use the same admin password for all tables at your site. This same
 password will be required each time a user is registering to use the app
 on this device.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device17.png){width="4.926755249343832in"
-height="2.297871828521435in"}
+<img src="./media/device17.png" width="570">
+
 
 Select Yes if you have a device code or No if you are going to insert a
 device ID and Token for the registration.
 
-![A picture containing bird, flower, tree Description automatically
-generated](media/device4.png){width="3.2666557305336834in"
-height="2.42494094488189in"}![A screenshot of a cell phone Description
-automatically generated](media/device5.png){width="2.468086176727909in"
-height="2.4085345581802273in"}
+<img src="./media/device4.png" width="570">
+
+<img src="./media/device5.png" width="570">
+
 
 Insert the ID and Token or click the Scan icon to scan the registration
 QR code. If your PC or laptop doesn't have a camera that can be used to
 scan the barcode, you'd have to type in the ID and Token
 
-![A screenshot of a cell phone Description automatically
-generated](media/device18.png){width="4.2659580052493435in"
-height="2.9430489938757654in"}
+<img src="./media/device18.png" width="570">
+
 
 Click Submit when done. The next screen will show you some information
 for this device. If it is correct select Yes, if the scanned device code
 and ID correspond to a different device select No and start over with
 the correct device code.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device7.png){width="3.4451531058617673in"
-height="2.719857830271216in"}
+<img src="./media/device7.png" width="570">
+
 
 On the next screen you will see some synchronization information. The
 app at this moment is contacting the server and obtaining users assigned
 to your device location. If you have already collected data on another
 tablet for this location, this data will also be pulled.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device8.png){width="3.793170384951881in"
-height="3.131796806649169in"}
+<img src="./media/device8.png" width="570">
 
 Click Next and then go to the Registration tap. Ask your administrator
 to enter the admin password and enter your user information below. Click
@@ -360,16 +338,14 @@ password and ask the user to enter their username and password. Here the
 Year of Birth can be used by the user to reset their password in case
 they forgot it.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device9.png){width="2.861573709536308in"
-height="4.262706692913386in"}
+<img src="./media/device9.png" width="570">
+
 
 On the next screen you will see a dropdown of all users for this
 location. Select the one that corresponds to you and click Submit.
 
-![A screenshot of a social media post Description automatically
-generated](media/device10.png){width="2.710064523184602in"
-height="2.8976837270341207in"}
+<img src="./media/device10.png" width="570">
+
 
 You will now see a screen similar to the one below where you can start
 working
@@ -385,9 +361,8 @@ installation of your app on the user device or Chrome browser. The menu
 items used during setup can be found under the Deploy link in the left
 side navigation menu.
 
-![A screenshot of a cell phone Description automatically
-generated](media/device19.png){width="4.106382327209099in"
-height="1.3731813210848645in"}
+<img src="./media/device19.png" width="570">
+
 
 Click the Device Users section to create a new tablet user profile. On
 this screen you will see a listing of all users already created. At the
@@ -401,9 +376,8 @@ new device user profile.
 -   You will see that next to the Submit button a blue check marks
     appears indicating that the profile was saved
 
-![A screenshot of a cell phone Description automatically
-generated](media/device20.png){width="1.4255314960629921in"
-height="0.9418689851268591in"}
+<img src="./media/device20.png" width="240">
+
 
 -   Repeat the above steps for all users
 
@@ -428,9 +402,8 @@ The device listing go to Deploy-\>Devices
 -   Here, if you have some devices already created you will see a full
     listing with some other information
 
-> ![A screenshot of a cell phone Description automatically
-> generated](media/device21.png){width="5.308510498687664in"
-> height="1.5301673228346457in"}
+<img src="./media/device21.png" width="570">
+
 
 -   The device listing gives you:
 
@@ -462,9 +435,8 @@ Create a new device by going to Deploy-\>Devices
     screen) In cases where the QR code cannot be sent to the site for
     installation you can also use the ID and Token to install Tangerine.
 
-![A screenshot of a social media post Description automatically
-generated](media/device22.png){width="3.0531922572178476in"
-height="2.105919728783902in"}
+<img src="./media/device22.png" width="570">
+
 
 -   Select the location this device is assigned to
 
@@ -480,17 +452,15 @@ height="2.105919728783902in"}
     code for it by clicking the Options menu and selecting Registration
     Code
 
-![A screenshot of a cell phone Description automatically
-generated](media/device23.png){width="6.117020997375328in"
-height="1.669109798775153in"}
+<img src="./media/device23.png" width="570">
+
 
 -   Repeat the above steps for all devices that you need to use on your
     project.
 
 NOTE: you may wish to store the device ID and Token in a file for safe
 keeping. Such a sample file can be found
-[here](https://docs.google.com/spreadsheets/d/1T-aPKfWnCwgwp3J8NSOQmGOTcMvQRT1yfm85OkNBnTU/edit?usp=sharing).
-Put the device ID and the Token in the corresponding columns and the QR
+[here](https://docs.google.com/spreadsheets/d/1T-aPKfWnCwgwp3J8NSOQmGOTcMvQRT1yfm85OkNBnTU/edit?usp=sharing). Put the device ID and the Token in the corresponding columns and the QR
 code will be generated for you. Keep in mind that his worksheet
 functions correctly only on Google Drive. You can also print this file
 and distribute the installation codes on paper.
