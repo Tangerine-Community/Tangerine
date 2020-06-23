@@ -44,9 +44,9 @@ export class SyncComponent implements OnInit {
       await this.syncService.sync()
       this.status = STATUS_COMPLETED
     } catch (e) {
-      console.log('Sync Error: ' + e)
+      console.log('Sync Error: ' + JSON.stringify(e))
       this.status = STATUS_ERROR
-      this.syncMessage = this.syncMessage + ' ERROR: ' + e
+      this.syncMessage = this.syncMessage + ' ERROR: ' + JSON.stringify(e)
     }
   }
 
