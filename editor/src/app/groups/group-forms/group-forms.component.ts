@@ -30,8 +30,6 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   groupId;
   group;
   groupLabel;
-  isSuperAdminUser;
-  isGroupAdminUser;
   responses;
   selectedTabIndex;
   enabledModules;
@@ -40,6 +38,7 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   activeForms;
   groupUrl;
   formsJsonURL;
+  canManageForms = false
  @ViewChild('copyFormOverlay', {static: true}) copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
@@ -67,10 +66,10 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
       this.formsJsonURL = `./forms.json`;
     });
     try {
-      this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
-      this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupId);
       await this.getForms();
       this.groupUrl = `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;
+      // @todo
+      this.canManageForms = true
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

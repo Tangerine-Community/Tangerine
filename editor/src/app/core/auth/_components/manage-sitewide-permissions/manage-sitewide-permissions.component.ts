@@ -25,7 +25,7 @@ export class ManageSitewidePermissionsComponent implements OnInit {
     this.username = this.username = this.route.snapshot.paramMap.get('username')
     const permissions = await this.authenticationService.getPermissionsList()
     this.permissionsList = permissions['sitewidePermissions'];
-    this.userPermissions = await this.authenticationService.getUserPermissions(this.username)
+    this.userPermissions = await this.authenticationService.getSitewidePermissionsByUsername(this.username)
   }
   doesUserHavePermission(permission) {
     return this.userPermissions.sitewidePermissions.indexOf(permission) >= 0

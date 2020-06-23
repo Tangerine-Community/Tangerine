@@ -48,6 +48,12 @@ fi
 if [ ! -d data/client/releases/qa/pwas ]; then
   mkdir data/client/releases/qa/pwas
 fi
+if [ ! -f data/id_rsa ]; then
+  echo '' > data/id_rsa
+fi
+if [ ! -f data/id_rsa.pub ]; then
+  echo '' > data/id_rsa.pub
+fi
 if [ ! -f data/reporting-worker-state.json ]; then
   echo '{}' > data/reporting-worker-state.json
 fi
@@ -73,17 +79,17 @@ docker build -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
-  if [ ! -d data/couchdb ]; then
-    mkdir data/couchdb
-  fi
-  if [ ! -d data/couchdb/data ]; then
-    mkdir data/couchdb/data
-  fi
-  if [ ! -d data/couchdb/local.d ]; then
-    mkdir data/couchdb/local.d
-  fi
-  if [ ! -f data/couchdb/local.d/local.ini ]; then
-    echo "
+if [ ! -d data/couchdb ]; then
+  mkdir data/couchdb
+fi
+if [ ! -d data/couchdb/data ]; then
+  mkdir data/couchdb/data
+fi
+if [ ! -d data/couchdb/local.d ]; then
+  mkdir data/couchdb/local.d
+fi
+if [ ! -f data/couchdb/local.d/local.ini ]; then
+  echo "
 [chttpd]
 bind_address = any
 
@@ -95,18 +101,20 @@ require_valid_user = true
 
 [chttpd]
 require_valid_user = true
-    " > data/couchdb/local.d/local.ini
-  fi
-  [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
-  [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
-  docker run -d \
-     -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
-     -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
-     -p 5984:5984 \
-     -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
-     -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
-     --name $T_COUCHDB_CONTAINER_NAME \
-     couchdb:2
+  " > data/couchdb/local.d/local.ini
+fi
+
+[ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
+[ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
+
+docker run -d \
+   -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
+   -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
+   -p 5984:5984 \
+   -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
+   -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
+   --name $T_COUCHDB_CONTAINER_NAME \
+   couchdb:2
 
 sleep 10
 
@@ -115,10 +123,10 @@ sleep 10
 #
 
 CMD="docker run -it --name $T_CONTAINER_NAME \
-    --link $T_COUCHDB_CONTAINER_NAME:couchdb \
-    -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
-    -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
-    -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
+  --link $T_COUCHDB_CONTAINER_NAME:couchdb \
+  -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
+  -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
+  -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
   --entrypoint=\"/tangerine/entrypoint-development.sh\" \
   --env \"NODE_ENV=development\" \
   --env \"T_VERSION=$T_TAG\" \

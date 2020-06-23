@@ -1,3 +1,4 @@
+import { NotificationStatus } from './../../classes/notification.class';
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 
 import { Component, OnInit, AfterContentInit, ChangeDetectorRef } from '@angular/core';
@@ -34,6 +35,8 @@ export class EventComponent implements OnInit, AfterContentInit {
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
+  hasNotificationEnforcingAttention = false
+  _canExitToRoute = []
   window:any
 
   constructor(
@@ -41,7 +44,7 @@ export class EventComponent implements OnInit, AfterContentInit {
     private router: Router,
     private caseService: CaseService,
     private ref: ChangeDetectorRef
-  ) { 
+  ) {
     ref.detach()
     this.window = window
   }
@@ -53,6 +56,7 @@ export class EventComponent implements OnInit, AfterContentInit {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.window.caseService = this.caseService
+      this.window['T']['case'] = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -82,9 +86,33 @@ export class EventComponent implements OnInit, AfterContentInit {
       this.getParticipantInfo()
       // ^ Remove this filter??
       //this.calculateAvailableEventFormDefinitions()
+      if (this.caseService.case.notifications) {
+        this.hasNotificationEnforcingAttention = this
+          .caseService
+          .case
+          .notifications
+          .reduce((hasNotificationEnforcingAttention, notification) => {
+            return hasNotificationEnforcingAttention || (notification.enforceAttention && notification.status === NotificationStatus.Open)
+             ? true
+             : false
+          }, false)
+        this._canExitToRoute = this
+          .caseService
+          .case
+          .notifications
+          .reduce((canExitToRoute, notification) => {
+            return (notification.enforceAttention && notification.status === NotificationStatus.Open)
+             ? [...canExitToRoute, notification.link]
+             : canExitToRoute
+          }, [])
+      }
       this.loaded = true
       this.ref.detectChanges()
     })
+  }
+
+  exitRoutes() {
+    return this._canExitToRoute
   }
 
   calculateAvailableEventFormDefinitionsForParticipant(participantId) {
@@ -116,7 +144,7 @@ export class EventComponent implements OnInit, AfterContentInit {
       const data = participant.data
       const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
       let renderedListItem:string
-      eval(`renderedListItem = \`${role.templateListItem}\``) 
+      eval(`renderedListItem = \`${role.templateListItem}\``)
       return <ParticipantInfo>{
         id,
         renderedListItem,

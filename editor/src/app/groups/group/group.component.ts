@@ -1,8 +1,7 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { GroupsService } from './../services/groups.service';
 import { Component, OnInit } from '@angular/core';
-import { UserService } from 'src/app/core/auth/_services/user.service';
-import { NgxPermissionsService } from 'ngx-permissions';
+import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 
 
 @Component({
@@ -14,25 +13,18 @@ export class GroupComponent implements OnInit {
 
   title:string = ''
   breadcrumbs:Array<Breadcrumb>
-  isAdminUser = false
-
+  group
+  ready = false
   constructor(
     private groupsService: GroupsService,
-    private userService:UserService,
-    private permissionsService:NgxPermissionsService
+    private authenticationService: AuthenticationService
   ) {}
 
   async ngOnInit() {
-    this.isAdminUser = await this.userService.isCurrentUserAdmin()
-    const group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
-    this.title = group.label
+    this.group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
+    this.title = this.group.label
     this.breadcrumbs = []
-    const allPermissions = JSON.parse(localStorage.getItem('permissions'));
-    const groupPermissions = allPermissions.groupPermissions;
-    const permissions = groupPermissions.find(permission=>permission.groupName===group._id)
-    this.permissionsService.addPermission(permissions.permissions)
-    this.permissionsService.addPermission(allPermissions.sitewidePermissions)
+    await this.authenticationService.getUserGroupPermissionsByGroupName(this.group._id);
+    this.ready = true
   }
-
-
 }

@@ -84,36 +84,50 @@
                     <img class="tangerine-logo-opened" src="/assets/tangerine-logo-box.png">
                 </mat-list-item>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width" *ngIf="isAdminUser">
-                <mat-list-item [class.active-menu-item]="menuService.section === 'author'"
-                    routerLink="/groups/{{menuService.groupId}}/author" *ngIf="menuService.groupId">
+            <mat-nav-list class="tangy-full-width"  *ngIf="menuService.groupId">
+                <mat-list-item 
+                    [class.active-menu-item]="menuService.section === 'author'"
+                    routerLink="/groups/{{menuService.groupId}}/author"
+                    *appHasAPermission="let i;group:menuService.groupId; permission:'can_access_author'"
+                >
                     <span class=""><i class="material-icons menu-icon">create</i></span>
                     <a matLine>{{'Author'|translate}}</a>
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width" *ngIf="loggedIn">
-                <mat-list-item [class.active-menu-item]="menuService.section === 'data'"
-                    routerLink="/groups/{{menuService.groupId}}/data" *ngIf="menuService.groupId">
+            <mat-nav-list class="tangy-full-width" *ngIf="menuService.groupId">
+                <mat-list-item
+                    [class.active-menu-item]="menuService.section === 'data'"
+                    routerLink="/groups/{{menuService.groupId}}/data"
+                    *appHasAPermission="let i;group:menuService.groupId; permission:'can_access_data'"
+                >
                     <span class=""><i class="material-icons menu-icon list_alt-icon">list_alt</i></span>
                     <a matLine>{{'Data'|translate}}</a>
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width" *ngIf="isAdminUser">
-                <mat-list-item [class.active-menu-item]="menuService.section === 'configure'"
-                    routerLink="/groups/{{menuService.groupId}}/configure" *ngIf="menuService.groupId">
+            <mat-nav-list class="tangy-full-width" *ngIf="menuService.groupId">
+                <mat-list-item
+                    [class.active-menu-item]="menuService.section === 'configure'"
+                    routerLink="/groups/{{menuService.groupId}}/configure"
+                    *appHasAPermission="let i;group:menuService.groupId; permission:'can_access_configure'"
+                >
                     <span class=""><i class="material-icons menu-icon">settings_applications</i></span>
                     <a matLine>{{'Configure'|translate}}</a>
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <span><mat-list-item  [class.active-menu-item]="menuService.section === 'deploy'"
-                routerLink="/groups/{{menuService.groupId}}/deploy" *ngIf="menuService.groupId && isAdminUser">
+            <mat-nav-list class="tangy-full-width" *ngIf="menuService.groupId">
+                <mat-list-item 
+                    [class.active-menu-item]="menuService.section === 'deploy'"
+                    routerLink="/groups/{{menuService.groupId}}/deploy"
+                    *appHasAPermission="let i;group:menuService.groupId; permission:'can_access_deploy'"
+                >
                 <span class=""><i class="material-icons menu-icon">phonelink_ring</i></span>
                 <a matLine>{{'Deploy'|translate}}</a>
             </mat-list-item>
-            </span>
+            <mat-divider></mat-divider>
+            </mat-nav-list>
             <mat-divider></mat-divider>
             <mat-nav-list class="tangy-full-width">
                 <mat-list-item *ngIf="loggedIn && menuService.groupId === ''"

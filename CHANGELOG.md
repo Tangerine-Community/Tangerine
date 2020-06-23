@@ -1,5 +1,37 @@
 # Changelog
 
+## v3.11.0
+- New Features in all Tangerine
+  - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
+  - CSV output enhancements:
+    - Editor User indicates whether to include PII in CSV export [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
+    - User profile information available in CSV export [#2081](https://github.com/Tangerine-Community/Tangerine/issues/2081)
+    - Editor User exports CSV file that contains the group and form name [#2108](https://github.com/Tangerine-Community/Tangerine/issues/2108)
+  - New 'T' namespace for helper functions [#2198](https://github.com/Tangerine-Community/Tangerine/issues/2198)
+- New Features in Tangerine with Case Module enabled
+  - Data Collector changes location of Case [#2098](https://github.com/Tangerine-Community/Tangerine/issues/20980) [[demo](https://youtu.be/kqf63PGudwc)]
+  - Data Collector views an alert [#2020](https://github.com/Tangerine-Community/Tangerine/issues/2020) [[demo](https://youtu.be/iw1emB9Ddis)]
+  - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](https://docs.tangerinecentral.org/editor/case-module/custom-case-reports.md)
+- Developer notes
+  - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.11.0
+# Now you are ready to start the server.
+./start.sh v3.11.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
+```
+Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
+
+__Android upgrade instructions:__
+In this release there has been an upgrade of the underlying database layer that is packaged with APK files for installation on Android. We currently don't have a way to remotely upgrade that part of the app on Android thus a reinstall of the APK is required in order to upgrade Android Tablets using the APK installation method. In each of your groups you will need to publish an Android release, download the new APK file, uninstall the APK from existing Tablets, and install the new APK file on all Android Tablets. 
+
 ## v3.10.0
 - New Features in all Tangerine
   - Editor User updates own profile and/or password [#2166](https://github.com/Tangerine-Community/Tangerine/issues/2166) [[demo](https://github.com/Tangerine-Community/Tangerine/issues/2166#issue-630070570)]

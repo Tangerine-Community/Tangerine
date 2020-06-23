@@ -1,0 +1,14 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<form class="tangy-input-width" novalidate #addRoleForm="ngForm">
+    <p *ngIf="permissionsList" class="tangy-input-width">
+        <mat-checkbox #f (change)="onSelectChange(permission, f.checked)"
+            [checked]="doesRoleHavePermission(permission)" *ngFor="let permission of permissionsList"
+            [name]="permission">
+            {{permission}}
+        </mat-checkbox>
+    </p>
+    <p>
+        <button [disabled]="addRoleForm.invalid" mat-raised-button color="warn"
+            (click)="submit()">{{'Update Role'|translate}}</button>
+    </p>
+</form>

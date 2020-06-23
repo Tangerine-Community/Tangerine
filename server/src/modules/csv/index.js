@@ -17,6 +17,15 @@ async function insertGroupReportingViews(groupName) {
   } catch (error) {
     log.error(error)
   }
+
+  // sanitized
+  groupDb = new DB(`${groupName}-reporting-sanitized`)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`group reporting views inserted into ${groupName}-reporting-sanitized`)
+  } catch (error) {
+    log.error(error)
+  }
 }
 
 module.exports = {
@@ -24,7 +33,9 @@ module.exports = {
     clearReportingCache: async function(data) {
       const { groupNames } = data
       for (let groupName of groupNames) {
-        const db = DB(`${groupName}-reporting`)
+        let db = DB(`${groupName}-reporting`)
+        await db.destroy()
+        db = DB(`${groupName}-reporting-sanitized`)
         await db.destroy()
         await insertGroupReportingViews(groupName)
       }
@@ -34,18 +45,41 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
         try {
           const {doc, sourceDb} = data
+          // TODO: Can't this be cached?
           const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-          let flatResponse = await generateFlatResponse(doc, locationList);
+
+          let flatResponse = await generateFlatResponse(doc, locationList, false);
           // Process the flatResponse
           // @TODO Rename `-reporting` to `-csv`.
-          const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+          let REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+          let processedResult = flatResponse;
+          // Don't add user-profile to the user-profile
+          if (processedResult.formId !== 'user-profile') {
+            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+          }
           // @TODO Ensure design docs are in the database.
-          await saveFormInfo(flatResponse, REPORTING_DB);
-          await saveFlatFormResponse(flatResponse, REPORTING_DB);
+          await saveFormInfo(processedResult, REPORTING_DB);
+          await saveFlatFormResponse(processedResult, REPORTING_DB);
+          // Index the view now.
+          await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+
+          // Repeat the flattening in order to deliver sanitized (non-PII) output
+          flatResponse = await generateFlatResponse(doc, locationList, true);
+          // Process the flatResponse
+          // @TODO Rename `-reporting` to `-csv`.
+          REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
+          processedResult = flatResponse
+          // Don't add user-profile to the user-profile
+          if (flatResponse.formId !== 'user-profile') {
+            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+          }
+          // @TODO Ensure design docs are in the database.
+          await saveFormInfo(processedResult, REPORTING_DB);
+          await saveFlatFormResponse(processedResult, REPORTING_DB);
           // Index the view now.
           await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           resolve(data)
-        } catch(e) { 
+        } catch(e) {
           reject(e)
         }
       })
@@ -64,11 +98,12 @@ module.exports = {
  *
  * @param {object} formData - form response from database
  * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
+ * @param {boolean} sanitized - flag if data must filter data based on the identifier flag.
  *
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList) {
+const generateFlatResponse = async function (formResponse, locationList, sanitized) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
@@ -83,7 +118,8 @@ const generateFlatResponse = async function (formResponse, locationList) {
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
-    ...formResponse.caseId ? { 
+    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
+    ...formResponse.caseId ? {
       caseId: formResponse.caseId,
       caseEventId: formResponse.caseEventId,
       eventFormId: formResponse.eventFormId,
@@ -92,130 +128,141 @@ const generateFlatResponse = async function (formResponse, locationList) {
   };
   function set(input, key, value) {
     flatFormResponse[key] = input.skipped
-      ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-      : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-        ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : value
+        ? process.env.T_REPORTING_MARK_SKIPPED_WITH
+        : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH
+            : value
   }
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     flatFormResponse[`${item.id}_firstOpenTime`]= item.firstOpenTime? item.firstOpenTime:''
     for (let input of item.inputs) {
-      if (input.tagName === 'TANGY-LOCATION') {
-        // Populate the ID and Label columns for TANGY-LOCATION levels.
-        locationKeys = []
-        for (let group of input.value) {
-          set(input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
-          locationKeys.push(group.value)
-          try {
-            const location = getLocationByKeys(locationKeys, locationList)
-            for (let keyName in location) {
-              if (keyName !== 'children') {
-                set(input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])
-              }
-            }
-          } catch(e) {
-            set(input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
-          }
+      let sanitize = false;
+      if (sanitized) {
+        if (input.identifier) {
+          sanitize = true
         }
-      } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
-        set(input, `${formID}.${item.id}.${input.name}`, input.value.find(input => input.value == 'on')
-          ? input.value.find(input => input.value == 'on').name
-          : ''
-        )
-      } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
-        set(input, `${formID}.${item.id}.${input.name}`, input.value
-          ? '1'
-          : '0'
-        )
-      } else if (input.tagName === 'TANGY-CHECKBOXES') {
-        for (let checkboxInput of input.value) {
-          set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
-            ? "1"
-            : "0"
-          )
-        };
-      } else if (input.tagName === 'TANGY-CHECKBOX') {
-        set(input, `${formID}.${item.id}.${input.name}`, input.value
-          ? "1"
-          : "0"
-        )
-      } else if (input.tagName === 'TANGY-TIMED') {
-        let hitLastAttempted = false
-        for (let toggleInput of input.value) {
-          let derivedValue = ''
-          if (hitLastAttempted === true) {
-            // Not attempted.
-            derivedValue = '.'
-          } else if (toggleInput.value === 'on' || toggleInput.pressed === true) {
-            // If toggle is 'on' (manually pressed) or pressed is true (row marked), the item is incorrect.
-            derivedValue = '0'
-          } else {
-            // Correct.
-            derivedValue = '1'
-          }
-          set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
-          if (toggleInput.highlighted === true) {
-            hitLastAttempted = true
-          }
-        };
-        set(input, `${formID}.${item.id}.${input.name}.duration`, input.duration)
-        set(input, `${formID}.${item.id}.${input.name}.time_remaining`, input.timeRemaining)
-        set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
-        set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
-        set(input, `${formID}.${item.id}.${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
-        set(input, `${formID}.${item.id}.${input.name}.time_intermediate_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
-        // Calculate Items Per Minute.
-        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
-        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
-        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-        set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-        set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
-        let timeSpent = input.duration - input.timeRemaining
-        set(input, `${formID}.${item.id}.${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
-      } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
-        let hitLastAttempted = false
-        for (let toggleInput of input.value) {
-          let derivedValue = ''
-          if (hitLastAttempted === true) {
-            // Not attempted.
-            derivedValue = '.'
-          } else if (toggleInput.value === 'on') {
-            // Incorrect.
-            derivedValue = '0'
-          } else {
-            // Correct.
-            derivedValue = '1'
-          }
-          set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
-          if (toggleInput.highlighted === true) {
-            hitLastAttempted = true
-          }
-        };
-        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
-        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
-        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-        set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-        set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
-        set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
-        set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
-      } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
-        // Do nothing :).
-      } else if (input && typeof input.value === 'string') {
-        set(input, `${formID}.${item.id}.${input.name}`, input.value)
-      } else if (input && typeof input.value === 'number') {
-        set(input, `${formID}.${item.id}.${input.name}`, input.value)
-      } else if (input && Array.isArray(input.value)) {
-        for (let group of input.value) {
-          set(input, `${formID}.${item.id}.${input.name}.${group.name}`, group.value)
-        }
-      } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
-        let elementKeys = Object.keys(input.value);
-        for (let key of elementKeys) {
-          set(input, `${formID}.${item.id}.${input.name}.${key}`, input.value[key])
-        };
       }
-
+      if (!sanitize) {
+        if (input.tagName === 'TANGY-LOCATION') {
+          // Populate the ID and Label columns for TANGY-LOCATION levels.
+          locationKeys = []
+          for (let group of input.value) {
+            set(input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
+            locationKeys.push(group.value)
+            try {
+              const location = getLocationByKeys(locationKeys, locationList)
+              for (let keyName in location) {
+                if (keyName !== 'children') {
+                  set(input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])
+                }
+              }
+            } catch (e) {
+              set(input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
+            }
+          }
+        } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value.find(input => input.value == 'on')
+              ? input.value.find(input => input.value == 'on').name
+              : ''
+          )
+        } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? '1'
+              : '0'
+          )
+        } else if (input.tagName === 'TANGY-CHECKBOXES') {
+          for (let checkboxInput of input.value) {
+            set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
+                ? "1"
+                : "0"
+            )
+          }
+          ;
+        } else if (input.tagName === 'TANGY-CHECKBOX') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? "1"
+              : "0"
+          )
+        } else if (input.tagName === 'TANGY-TIMED') {
+          let hitLastAttempted = false
+          for (let toggleInput of input.value) {
+            let derivedValue = ''
+            if (hitLastAttempted === true) {
+              // Not attempted.
+              derivedValue = '.'
+            } else if (toggleInput.value === 'on' || toggleInput.pressed === true) {
+              // If toggle is 'on' (manually pressed) or pressed is true (row marked), the item is incorrect.
+              derivedValue = '0'
+            } else {
+              // Correct.
+              derivedValue = '1'
+            }
+            set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
+            if (toggleInput.highlighted === true) {
+              hitLastAttempted = true
+            }
+          }
+          ;
+          set(input, `${formID}.${item.id}.${input.name}.duration`, input.duration)
+          set(input, `${formID}.${item.id}.${input.name}.time_remaining`, input.timeRemaining)
+          set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
+          set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
+          set(input, `${formID}.${item.id}.${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
+          set(input, `${formID}.${item.id}.${input.name}.time_intermediate_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
+          // Calculate Items Per Minute.
+          let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+          let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+          let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+          set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+          set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
+          let timeSpent = input.duration - input.timeRemaining
+          set(input, `${formID}.${item.id}.${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
+        } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
+          let hitLastAttempted = false
+          for (let toggleInput of input.value) {
+            let derivedValue = ''
+            if (hitLastAttempted === true) {
+              // Not attempted.
+              derivedValue = '.'
+            } else if (toggleInput.value === 'on') {
+              // Incorrect.
+              derivedValue = '0'
+            } else {
+              // Correct.
+              derivedValue = '1'
+            }
+            set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
+            if (toggleInput.highlighted === true) {
+              hitLastAttempted = true
+            }
+          }
+          ;
+          let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+          let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+          let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+          set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+          set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
+          set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
+          set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
+        } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
+          // Do nothing :).
+        } else if (input && typeof input.value === 'string') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value)
+        } else if (input && typeof input.value === 'number') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value)
+        } else if (input && Array.isArray(input.value)) {
+          for (let group of input.value) {
+            set(input, `${formID}.${item.id}.${input.name}.${group.name}`, group.value)
+          }
+        } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
+          let elementKeys = Object.keys(input.value);
+          for (let key of elementKeys) {
+            set(input, `${formID}.${item.id}.${input.name}.${key}`, input.value[key])
+          }
+          ;
+        }
+      } // sanitize
     }
   }
   let data = await tangyModules.hook("csv_flatFormReponse", {flatFormResponse, formResponse});
@@ -253,7 +300,14 @@ function saveFormInfo(flatResponse, db) {
         // Make the header property (AKA label) just the variable name.
         const firstOccurenceIndex = safeKey.indexOf('.')
         const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
-        formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
+        let keyArray = key.split('.')
+        // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+        // Preserve the namespacing of user-profile
+        if (keyArray[0] === 'user-profile') {
+          formDoc.columnHeaders.push({ key, header: safeKey })
+        } else {
+          formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
+        }
         foundNewHeaders = true
       }
     })
@@ -272,17 +326,88 @@ function saveFormInfo(flatResponse, db) {
 function saveFlatFormResponse(doc, db) {
   return new Promise((resolve, reject) => {
     db.get(doc._id)
-      .then(oldDoc => {
-        // Overrite the _rev property with the _rev in the db and save again.
-        const updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
-        db.put(updatedDoc)
-          .then(_ => resolve(true))
-          .catch(error => reject(`Could not save Flattened Form Response ${JSON.stringify(updatedDoc._id)} because Error of ${JSON.stringify(error)}`))
-      })
-      .catch(error => {
-        db.put(doc)
-          .then(_ => resolve(true))
-          .catch(error => reject(`Could not save Flattened Form Response ${JSON.stringify(doc)._id} because Error of ${JSON.stringify(error)}`))
-    });
+        .then(oldDoc => {
+          // Overrite the _rev property with the _rev in the db and save again.
+          const updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
+          db.put(updatedDoc)
+              .then(_ => resolve(true))
+              .catch(error => reject(`Could not save Flattened Form Response ${JSON.stringify(updatedDoc._id)} because Error of ${JSON.stringify(error)}`))
+        })
+        .catch(error => {
+          db.put(doc)
+              .then(_ => resolve(true))
+              .catch(error => reject(`Could not save Flattened Form Response ${JSON.stringify(doc)._id} because Error of ${JSON.stringify(error)}`))
+        });
   })
+}
+
+
+
+async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
+    try {
+      let userProfileId = doc.tangerineModifiedByUserId
+      if (!userProfileId) {
+        // try an older profileId
+        // Find the key that points to user profile ID.
+        const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
+        userProfileId = doc[userProfileIdKey]
+      }
+      console.log("userProfileId: " + userProfileId)
+      // Get the user profile.
+      let userProfileDoc;
+      try {
+        userProfileDoc = await reportingDb.get(userProfileId)
+      } catch (e) {
+        console.log("Error: reportingDb userProfileId: " + userProfileId + " Error: " + JSON.stringify(e))
+        // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
+        try {
+          let userProfileDocOriginal = await sourceDb.get(userProfileId)
+          userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false);
+        } catch (e) {
+          console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
+        }
+      }
+
+      // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
+      let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
+        let docNamespaced;
+        let keyArray = key.split('.')
+        // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+        if (keyArray[0] === 'user-profile') {
+          docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
+        } else {
+          docNamespaced = Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })
+        }
+        return docNamespaced
+      }, {}))
+      // Remove some unnecessary properties
+      delete docWithProfile['user-profile._rev']
+      delete docWithProfile['user-profile.formId']
+      delete docWithProfile['user-profile.startUnixtime']
+      delete docWithProfile['user-profile.endUnixtime']
+      delete docWithProfile['user-profile.lastSaveUnixtime']
+      delete docWithProfile['user-profile.buildId']
+      delete docWithProfile['user-profile.buildChannel']
+      delete docWithProfile['user-profile.deviceId']
+      delete docWithProfile['user-profile.groupId']
+      delete docWithProfile['user-profile.complete']
+      delete docWithProfile['user-profile.item1_firstOpenTime']
+      delete docWithProfile['user-profile.item1.location.region_id']
+      delete docWithProfile['user-profile.item1.location.region_level']
+      delete docWithProfile['user-profile.item1.location.region_parent']
+      delete docWithProfile['user-profile.item1.location.region_descendantsCount']
+      delete docWithProfile['user-profile.item1.location.district_id']
+      delete docWithProfile['user-profile.item1.location.district_level']
+      delete docWithProfile['user-profile.item1.location.district_parent']
+      delete docWithProfile['user-profile.item1.location.district_descendantsCount']
+      delete docWithProfile['user-profile.item1.location.facility_id']
+      delete docWithProfile['user-profile.item1.location.facility_level']
+      delete docWithProfile['user-profile.item1.location.facility_parent']
+      delete docWithProfile['user-profile.item1.location.facility_descendantsCount']
+      
+      return docWithProfile
+    } catch (error) {
+      // There must not be a user profile yet doc uploaded yet.
+      return doc
+    }
 }

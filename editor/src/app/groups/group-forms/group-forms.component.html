@@ -9,36 +9,48 @@
   </div>
 </paper-dialog>
 
-<paper-fab *ngIf="isGroupAdminUser" mat-raised-button icon="add" color="accent" class="action" (click)="addForm()">
+<paper-fab 
+  mat-raised-button
+  icon="add"
+  color="accent"
+  class="action"
+  *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'"
+  (click)="addForm()"
+>
 </paper-fab>
 
 <h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
 <mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropActive($event)">
   <mat-list-item class="drag-item" *ngFor="let form of activeForms; let index=index" cdkDrag
-    [cdkDragDisabled]="!isGroupAdminUser">
+    [cdkDragDisabled]="!canManageForms">
     <mat-list class="tangy-full-width" *cdkDragPreview>
       <mat-list-item>
         <span>{{index+1}}</span>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span [innerHTML]="form.title|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span>
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">print</i>
           </a>
         </span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
           </a>
         </span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
           </a>
         </span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
           </a>
         </span>
@@ -48,7 +60,7 @@
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
-    <span *ngIf="isGroupAdminUser">
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <a mat-icon-button routerLink="edit/{{form.id}}">
         <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
@@ -70,25 +82,32 @@
       </a>
     </span>
 
-    <span *ngIf="isGroupAdminUser">
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <a mat-icon-button (click)="onCopyFormClick(form.id)">
         <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
       </a>
     </span>
 
-    <span *ngIf="isGroupAdminUser"><button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-        (click)="deleteForm(groupId, form.id)">
-        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-          class="material-icons mat-32 tangy-location-list-icon">delete</i>
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <button mat-icon-button
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+        (click)="deleteForm(groupId, form.id)"
+      >
+        <i 
+          [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
+          class="material-icons mat-32 tangy-location-list-icon"
+        >
+          delete
+        </i>
       </button>
     </span>
 
-    <span *ngIf="isGroupAdminUser">
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-        (click)="onArchiveFormClick(groupId, form.id)">
-        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+        (click)="onArchiveFormClick(groupId, form.id)"
+      >
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
           class="material-icons mat-32 tangy-location-list-icon">archive</i>
       </button>
     </span>
@@ -97,31 +116,35 @@
 </mat-list>
 <h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
 <mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropArchived($event)">
-  <mat-list-item class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag
-    [cdkDragDisabled]="!isGroupAdminUser">
+  <mat-list-item class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag>
     <mat-list class="tangy-full-width" *cdkDragPreview>
       <mat-list-item>
         <span>{{index+1}}</span>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span [innerHTML]="form.title|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span>
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">print</i>
           </a>
         </span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
           </a>
         </span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
           </a>
         </span>
-        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
+        <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+          <a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
           </a>
         </span>
@@ -131,37 +154,39 @@
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
-    <span *ngIf="isGroupAdminUser"><a mat-icon-button
-        [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupId+'/'+form.id:'/groups/'+groupId">
-        <i [class.disabled-button]="!isGroupAdminUser"
-          class="material-icons mat-32 tangy-location-list-icon">edit</i>
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <a mat-icon-button
+        [routerLink]="'/tangy-form-editor/'+groupId+'/'+form.id">
+        <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
     </span>
 
-    <span *ngIf="isGroupAdminUser"><a mat-icon-button target="_new" href="{{form.printUrl}}">
+    <span >
+      <a mat-icon-button target="_new" href="{{form.printUrl}}">
         <i class="material-icons mat-32 tangy-location-list-icon">print</i>
       </a>
     </span>
 
-    <span *ngIf="isGroupAdminUser">
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <a mat-icon-button (click)="onCopyFormClick(form.id)">
         <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
       </a>
     </span>
 
-    <span *ngIf="isGroupAdminUser"><button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <button mat-icon-button
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
         (click)="deleteForm(groupId, form.id)">
-        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
           class="material-icons mat-32 tangy-location-list-icon">delete</i>
       </button>
     </span>
 
-    <span *ngIf="isGroupAdminUser">
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
         (click)="onUnArchiveFormClick(groupId, form.id)">
-        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
           class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
       </button>
     </span>
