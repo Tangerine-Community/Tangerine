@@ -30,7 +30,7 @@ docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
 Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
 
 __Android upgrade instructions:__
-In this release there has been an upgrade of the underlying database layer that is packaged with APK files for installation on Android. We currently don't have a way to remotely upgrade that part of the app on Android thus a reinstall of the APK is required in order to upgrade Android Tablets using the APK installation method. In each of your groups you will need to publish an Android release, download the new APK file, uninstall the APK from existing Tablets, and install the new APK file on all Android Tablets. 
+If your groups are using Sync Protocol 2 module, an APK reinstall is required. Release the APK and reinstall on all Android Devices. If your groups are not using Sync Protocol 2, you may upgrade Android tablets over the air using the usual release process.
 
 ## v3.10.0
 - New Features in all Tangerine
