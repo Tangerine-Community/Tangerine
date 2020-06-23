@@ -37,7 +37,6 @@ module.exports = async function (req, res) {
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/ /g, '_')
-  console.log("groupLabel: " + groupLabel)
   const options = {
     replacement: '_'
   }
