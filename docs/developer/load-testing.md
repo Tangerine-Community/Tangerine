@@ -38,6 +38,8 @@ Case generation uses a case-export.json file placed in the group directory as th
 
 Generate a PWA, create a new case. While still in the case, use the `copy(await this.caseService.export())` command to copy the json into a case-export.json file. 
 
+By the way - you may create a group for testing using the `create-group` command. See the [creating clean dev conntent](../developer/creating-clean-dev-content.md) doc for more information. 
+
 To generate cases, use the following docker command:
         
 ```

@@ -25,7 +25,11 @@ export class DeviceSyncComponent implements OnInit {
     this.syncInProgress = true
     this.syncService.syncMessage$.subscribe({
       next: (progress) => {
-        this.syncMessage =  'Direction: ' + progress.direction + '; ' + progress.docs_written + ' docs saved; ' + progress.pending + ' pending'
+        let pendingMessage = ''
+        if (typeof progress.pending !== 'undefined') {
+          pendingMessage = progress.pending + ' pending;'
+        }
+        this.syncMessage =  'Direction: ' + progress.direction + '; ' + progress.docs_written + ' docs saved; ' + pendingMessage
         console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
