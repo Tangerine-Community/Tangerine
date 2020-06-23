@@ -9,8 +9,9 @@
     - Editor User exports CSV file that contains the group and form name [#2108](https://github.com/Tangerine-Community/Tangerine/issues/2108)
   - New 'T' namespace for helper functions [#2198](https://github.com/Tangerine-Community/Tangerine/issues/2198)
 - New Features in Tangerine with Case Module enabled
-  - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](docs/editor/case-module/custom-case-reports.md)
+  - Data Collector changes location of Case [#2098](https://github.com/Tangerine-Community/Tangerine/issues/20980) [[demo](https://youtu.be/kqf63PGudwc)]
   - Data Collector views an alert [#2020](https://github.com/Tangerine-Community/Tangerine/issues/2020) [[demo](https://youtu.be/iw1emB9Ddis)]
+  - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](https://docs.tangerinecentral.org/editor/case-module/custom-case-reports.md)
 - Developer notes
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
   
