@@ -25,8 +25,8 @@
     </mat-card-header>
   </mat-card>
   
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_cases'"  class="is-link mat-elevation-z3" routerLink="cases">
-    <mat-card-header *ngIf="config.enabledModules.includes('case')">
+  <mat-card *ngIf="config.enabledModules.includes('case')" *appHasAPermission="let i;group:groupId; permission:'can_access_cases'"  class="is-link mat-elevation-z3" routerLink="cases">
+    <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">folder</mwc-icon>
         </div>
@@ -37,8 +37,8 @@
     </mat-card-header>
   </mat-card>
   
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_issues'" class="is-link mat-elevation-z3" routerLink="issues">
-    <mat-card-header *ngIf="config.enabledModules.includes('case')">
+  <mat-card *ngIf="config.enabledModules.includes('case')" *appHasAPermission="let i;group:groupId; permission:'can_access_issues'" class="is-link mat-elevation-z3" routerLink="issues">
+    <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">receipt</mwc-icon>
         </div>
