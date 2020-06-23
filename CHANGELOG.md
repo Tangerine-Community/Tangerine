@@ -15,7 +15,7 @@
 - Developer notes
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
   
-__Upgrade instructions:__
+__Server upgrade instructions:__
 
 ```
 # Fetch the updates.
@@ -28,6 +28,9 @@ git checkout v3.11.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
 ```
 Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
+
+__Android upgrade instructions:__
+In this release there has been an upgrade of the underlying database layer that is packaged with APK files for installation on Android. We currently don't have a way to remotely upgrade that part of the app on Android thus a reinstall of the APK is required in order to upgrade Android Tablets using the APK installation method. In each of your groups you will need to publish an Android release, download the new APK file, uninstall the APK from existing Tablets, and install the new APK file on all Android Tablets. 
 
 ## v3.10.0
 - New Features in all Tangerine
