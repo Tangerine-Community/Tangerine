@@ -51,13 +51,10 @@ async function go() {
     // Change the case's ID.
     const caseId = uuidv1()
     caseDoc._id = caseId
-    // note that participant_id and participantId are different!
+    // note that participant_id and participantUuid are different!
     const participant_id = Math.round(Math.random() * 1000000)
-    const participantId = uuidv1()
-    let subs = {
-    }
-    subs.firstname = random_name({ first: true, gender: "female" })
-    subs.surname = random_name({ last: true })
+    const participantUuid = uuidv1()
+    
     let barcode_data =  { "participant_id": participant_id, "treatment_assignment": "Experiment", "bin-mother": "A", "bin-infant": "B", "sub-studies": { "S1": true, "S2": false, "S3": false, "S4": true } }
     let tangerineModifiedOn = new Date();
     // tangerineModifiedOn is set to numberOfCasesCompleted days before today, and its time is set based upon numberOfCasesCompleted.
@@ -68,24 +65,36 @@ async function go() {
     const day = String(tangerineModifiedOn.getDate()).padStart(2, '0');
     const month = String(tangerineModifiedOn.getMonth() + 1).padStart(2, '0');
     const year = tangerineModifiedOn.getFullYear();
-    const screening_date = year + '-' + month + '-' + day;
-    const enrollment_date = screening_date;
+    const date = year + '-' + month + '-' + day;
+
+    let subs = {}
+    subs.firstname = random_name({ first: true, gender: "female" })
+    subs.surname = random_name({ last: true })
+    subs.tangerineModifiedOn = tangerineModifiedOn
+    subs.day = day
+    subs.month = month
+    subs.year = year
+    subs.date = date
+    subs.participant_id = participant_id
+    subs.participantUuid = participantUuid
+    
     let caseMother = {
       _id: caseId,
-      tangerineModifiedOn: tangerineModifiedOn,
+      tangerineModifiedOn: subs.tangerineModifiedOn,
       "participants": [{
-        "id": participantId,
+        "id": participantUuid,
         "caseRoleId": "mother-role",
         "data": {
           "firstname": subs.firstname,
           "surname": subs.surname,
-          "participant_id": participant_id
+          "participant_id": subs.participant_id
         }
       }],
     }
     // console.log("motherId: " + caseId + " participantId: " + participant_id + " surname: " + subs.surname);
     console.log("caseMother: " + JSON.stringify(caseMother));
     Object.assign(caseDoc, caseMother);
+    
     if (substitutions) {
       const caseDocSubs = substitutions.find(doc => doc.type === 'caseDoc')
       if (caseDocSubs['substitutions']) {
@@ -95,11 +104,11 @@ async function go() {
         }
       }
     } else {
-      caseDoc.items[0].inputs[0].value = participant_id;
+      caseDoc.items[0].inputs[0].value = subs.participant_id;
       // caseDoc.items[0].inputs[2].value = enrollment_date;
       caseDoc.items[0].inputs[4].value = subs.firstname;
       caseDoc.items[0].inputs[5].value = subs.surname;
-      caseDoc.items[0].inputs[6].value = participant_id;
+      caseDoc.items[0].inputs[6].value = subs.participant_id;
       caseDoc.location = location
     }
     
@@ -112,7 +121,7 @@ async function go() {
         eventForm.caseId = caseId
         eventForm.caseEventId = caseEventId
         if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
-          eventForm.participantId = participantId
+          eventForm.participantId = participantUuid
         }
         // Some eventForms might not have a corresponding form response.
         if (eventForm.formResponseId) {
@@ -130,7 +139,7 @@ async function go() {
           formResponse.caseId = caseId
           formResponse.eventFormId = eventForm.id
           if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
-            formResponse.participantId = participantId
+            formResponse.participantId = participantUuid
           }
         }
       }
@@ -139,7 +148,7 @@ async function go() {
 
     if (substitutions) {
       const demoDocSubs = substitutions.find(doc => doc.type === 'demoDoc')
-      const demoDoc = templateDocs.find(doc => doc.form.id === demoDocSubs.id)
+      const demoDoc = templateDocs.find(doc => doc.form.id === demoDocSubs.formId)
       let inputs = []
       demoDoc.items.forEach(item => inputs = [...inputs, ...item.inputs])
       
@@ -157,11 +166,11 @@ async function go() {
       // modify the demographics form - s01a-participant-information-f254b9
       const demoDoc = templateDocs.find(doc => doc.form.id === 'mnh_screening_and_enrollment')
       if (typeof demoDoc !== 'undefined') {
-        demoDoc.items[0].inputs[1].value = participant_id;
-        demoDoc.items[0].inputs[3].value = screening_date;
+        demoDoc.items[0].inputs[1].value = subs.participant_id;
+        demoDoc.items[0].inputs[3].value = subs.date;
         // "id": "randomization",
         // demoDoc.items[10].inputs[1].value = barcode_data;
-        // demoDoc.items[10].inputs[2].value = participant_id;
+        // demoDoc.items[10].inputs[2].value = subs.participant_id;
         // demoDoc.items[10].inputs[7].value = enrollment_date;
         // "id": "participant_information",
         demoDoc.items[5].inputs[1].value = subs.firstname;
