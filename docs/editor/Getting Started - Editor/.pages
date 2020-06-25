@@ -1,3 +1,7 @@
 title: "Getting Started with Editor"
 arrange:
     - editor-overview.md
+    - create-new-group.md
+    - create-new-form.md
+    - edit-form.md
+    - add-sections.md
