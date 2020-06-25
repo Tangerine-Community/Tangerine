@@ -4,9 +4,9 @@ Tangerine contains an extremely extensible foundational framework that allows th
 
 ## What is a Tangerine form?
 -	[Create a New Group](create-new-group.md)
--	Create New Form 
--	Editing the Form
--	Adding Sections and Questions
+-	[Create New Form](create-new-form.md) 
+-	[Editing the Form](edit-form.md)
+-	[Adding Sections and Questions](add-sections.md)
 -	Section Editor
 -	Copying Items
 -	Different Input Types
@@ -15,16 +15,7 @@ Tangerine contains an extremely extensible foundational framework that allows th
 -	Why custom build forms?
 -	Custom Form Building in JavaScript
 -	[Tangerine Preview](tangerine-preview-tool.md)
-## Items
--	What is an item?
--	Item editor
--	GPS Item
--	Location 
--	Checkbox group
--	Radio Buttons
--	Drop down
--	Timed Grid
--	HTML content container
+
 ## Custom Logic
 -	Logic at instrument/form level
 -	Logic at section level
