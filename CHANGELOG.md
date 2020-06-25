@@ -1,5 +1,21 @@
 # Changelog
 
+## v3.11.1
+- Bug Fixes
+  - User profile and report form unavailable after upgrading from Tangerine v3.7.0 to v3.11.0 [#2208](https://github.com/Tangerine-Community/Tangerine/issues/2208)
+  - Phantom mat-cards on editor/data listing when case module IS NOT enabled [#2214](https://github.com/Tangerine-Community/Tangerine/issues/2214)
+
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.11.1
+# Now you are ready to start the server.
+./start.sh v3.11.1
+```
+
 ## v3.11.0
 - New Features in all Tangerine
   - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
