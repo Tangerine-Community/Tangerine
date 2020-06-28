@@ -38,29 +38,49 @@ You may create a group for testing using the `create-group` command. See the [cr
 
 Case generation uses a case-export.json file placed in the group directory as the template for record generation. To create this json file, generate a PWA and create a new case. While viewing the case, open the javascript console and use the `copy(await this.caseService.export())` command to copy the json. Then paste this data into a case-export.json file. Please note that some groups, such as those created by the case-module mentioned earlier, already have a case-export.json file; however, you may be testing for different scenarios so feel free to create your own. 
 
-Create or modify the load-testing-definitions.json file if you have different variable substitutions. Here is an example:
+Create or modify the custom-generators.js file if you have different variable substitutions. This file exports:
+- customGenerators: An object that has custom functions you may define
+- customSubstitutions: An array of substitutions. 
 
-```json
-[
-  {
-    "type": "caseDoc"
-  },
-  {
-    "type": "demoDoc",
-    "formId": "registration-role-1",
-    "substitutions": {
-      "first_name": "firstname",
-      "last_name": "surname"
+
+Here is an example of substitutions:
+
+```javascript
+const substitutions = [
+    {
+        "type": "caseDoc"
+    },
+    {
+        "type": "demoDoc",
+        "formId": "registration-role-1",
+        "substitutions": {
+            "first_name": {
+                "functionName": "firstname",
+                "runOnce":"perCase"
+            },
+            "last_name": {
+                "functionName": "surname",
+                "runOnce":"perCase"
+            },
+            "consent": {
+                "functionName": "yes_no",
+                "runOnce": false
+            }
+        }
     }
-  }
 ]
 ```
 
 In this example, there are two files that can have variable substitution:
-- caseDoc - This is the case manifest, which has the doc.type === 'case'. 
+- caseDoc - This is the case manifest, which has the doc.type === 'case'. No substitutions are listed for this doc.
 - demoDoc - This is the demographics form that corresponds to the formId, which is "registration-role-1" in the example. 
 
-Since the current case-module example does not have any substitutions happening in the caseDoc inpputs, there are no entries for substitutions in it. The demoDoc does have substitutions. The substitutions are key/value pairs. The substitutions key is the variable name of the input you wish to substitute, and the substitutions value  is the pre-built randomised field you wish to substitute. In this example, first_name is being replaced with the firstname randomised field. 
+Since the current case-module example does not have any substitutions happening in the caseDoc inputs, there are no entries for substitutions in it. The demoDoc does have substitutions. The substitutions are key/value pairs. The substitutions key is the variable name of the input you wish to substitute, and the substitutions value is an object that may declare several properties:
+- functionName: how the function is called
+- runOnce: if the function is executed when the script is initialized per case, or when each doc is generated. 
+the pre-built randomised field you wish to substitute. 
+
+In this example, first_name is being populated by the firstname function, which is run when each case is generated. 
 
 Case generation also performs other types of randomization. Here are some examples:
 - firstname: Randomises a female first name 
@@ -73,7 +93,7 @@ Case generation also performs other types of randomization. Here are some exampl
 - participant_id: Random number under 1000000.
 - participantUuid: A UUID.
 
-Before generating cases, create a device registration in order to properly generate a location property in the generated docs. When setting location, case generation uses the first doc in the group's devices database. If you don't have one, sync won't work properly. 
+Before generating cases, create a device registration in order to properly generate a location property in the generated docs. When setting location, case generation uses the first doc in the group's devices database. If you don't have one, sync won't work properly. Case generation will fail if there are no device registrations. 
 
 To generate cases, use the following docker command:
         

@@ -8,9 +8,11 @@ The following command downloads a content set known to support common Tangerine 
 
 `docker exec tangerine create-group "New Group C" https://github.com/rjsteinert/tangerine-content-set-test.git`
 
-There is also support for creating a group using local content from the `content-sets` directory' in the Tangerine repository. Currently there is support for creating a case-module:
+There is also support for creating a group using local content from the `content-sets` directory' in the Tangerine repository. Currently, there is support for creating a case-module:
 
 `docker exec tangerine create-group "New Group D" case-module`
+
+You may also configure how inputs are populated by custom functions; see the Case generation section in the [Load testing doc](load-testing.md).
 
 If you add `--help` to the `create-group` command you may see other options as well.
 
