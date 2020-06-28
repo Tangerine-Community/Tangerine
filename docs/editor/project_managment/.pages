@@ -1,0 +1,8 @@
+title: "Project and Case Management"
+arrange:
+    - project_admin.md 
+    - case-module
+    - editor-guide.md 
+    - class.md
+    - feature-two-way-sync.md
+    
