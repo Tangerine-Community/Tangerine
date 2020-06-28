@@ -14,22 +14,9 @@ Tangerine contains an extremely extensible foundational framework that allows th
 -	[Validation](validation.md)
 -	Why custom build forms?
 -	Custom Form Building in JavaScript
+
+## Tangerine Preview
 -	[Tangerine Preview](tangerine-preview-tool.md)
 
-## Custom Logic
--	Logic at instrument/form level
--	Logic at section level
--	Logic at item level
--	On-open/On-change logic
--	Skip Logic examples
--	Skip logic with grid specific functions
--	Field Validation
--	Field Validation examples
--	Form HTML Editor
--	Warn-if
--	Valid-if
--	Don’t Skip If
--	Logic to enable and disable sections
--	Hide button example
--	Logic for ‘None of the Above’
+## 
 
