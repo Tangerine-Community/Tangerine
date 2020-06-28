@@ -9,9 +9,9 @@ Tangerine contains an extremely extensible foundational framework that allows th
 -	[Adding Sections and Questions](add-sections.md)
 -	Section Editor
 -	Copying Items
--	Different Input Types
--	Skip Logic
--	Validation
+-	[Different Input Types](input-types.md)
+-	[Skip Logic](skip-logic.md)
+-	[Validation](validation.md)
 -	Why custom build forms?
 -	Custom Form Building in JavaScript
 -	[Tangerine Preview](tangerine-preview-tool.md)
