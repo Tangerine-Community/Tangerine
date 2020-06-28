@@ -5,3 +5,7 @@ arrange:
     - create-new-form.md
     - edit-form.md
     - add-sections.md
+    - input-types.md
+    - skip-logic.md
+    - validation.md
+    
