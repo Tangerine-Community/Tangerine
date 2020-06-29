@@ -147,7 +147,7 @@ class CaseService {
    * Case Event API
    */
 
-  createEvent(eventDefinitionId:string, createRequiredEventForms = false): CaseEvent {
+  createEvent(eventDefinitionId:string): CaseEvent {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -169,7 +169,7 @@ class CaseService {
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole) {
+        if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && eventFormDefinition.autoPopulate) {
           this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
@@ -177,9 +177,6 @@ class CaseService {
     return caseEvent
   }
 
-  startEvent(eventId) {
-    // ??
-  }
   setEventEstimatedDay(eventId, timeInMs: number) {
     const estimatedDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
@@ -343,7 +340,7 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.required) {
+        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.autoPopulate) {
           this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
