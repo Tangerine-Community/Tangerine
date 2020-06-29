@@ -48,6 +48,10 @@ class CaseService {
     this.queryFormId = 'query-form';
   }
 
+  /*
+   * Case API
+   */
+
   async create(caseDefinitionId) {
     this.caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseDefinitionId)
@@ -124,6 +128,25 @@ class CaseService {
     await this.setCase(await this.tangyFormService.getResponse(this.case._id))
   }
 
+  setVariable(variableName, value) {
+    let input = this.case.items[0].inputs.find(input => input.name === variableName)
+    if (input) {
+      input.value = value
+    } else {
+      this.case.items[0].inputs.push({name: variableName, value: value})
+    }
+  }
+
+  getVariable(variableName) {
+    return this.case.items[0].inputs.find(input => input.name === variableName)
+      ? this.case.items[0].inputs.find(input => input.name === variableName).value
+      : undefined
+  }
+
+  /*
+   * Case Event API
+   */
+
   createEvent(eventDefinitionId:string, createRequiredEventForms = false): CaseEvent {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
@@ -191,9 +214,16 @@ class CaseService {
     })
   }
 
-  getCurrentCaseEventId() {
-    return window.location.hash.split('/')[5];
+  disableEventDefinition(eventDefinitionId) {
+    if (this.case.disabledEventDefinitionIds.indexOf(eventDefinitionId) === -1) {
+      this.case.disabledEventDefinitionIds.push(eventDefinitionId)
+    }
   }
+
+  /*
+   * Event Form API
+   */
+
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     const eventForm = <EventForm>{
       id: UUID(),
@@ -211,6 +241,7 @@ class CaseService {
       .push(eventForm)
     return eventForm
   }
+
   deleteEventFormInstance(caseEventId: string, eventFormId: string) {
     this
     .case
@@ -220,6 +251,7 @@ class CaseService {
       .events
       .find(caseEvent => caseEvent.id === caseEventId).eventForms.filter(eventForm => eventForm.id !== eventFormId);
   }
+
   setCaseEventFormsData(caseEventId:string,eventFormId:string, key:string, value:string) {
     const index = this
     .case
@@ -247,6 +279,7 @@ class CaseService {
     .events
     .find(caseEvent => caseEvent.id === caseEventId).eventForms[index].data[key] || ''
   }
+
   markEventFormComplete(caseEventId:string, eventFormId:string) {
     let caseEvent = this
       .case
@@ -291,26 +324,9 @@ class CaseService {
       .complete = numberOfCaseEventsRequired === numberOfUniqueCompleteCaseEvents ? true : false
   }
 
-  disableEventDefinition(eventDefinitionId) {
-    if (this.case.disabledEventDefinitionIds.indexOf(eventDefinitionId) === -1) {
-      this.case.disabledEventDefinitionIds.push(eventDefinitionId)
-    }
-  }
-
-  setVariable(variableName, value) {
-    let input = this.case.items[0].inputs.find(input => input.name === variableName)
-    if (input) {
-      input.value = value
-    } else {
-      this.case.items[0].inputs.push({name: variableName, value: value})
-    }
-  }
-
-  getVariable(variableName) {
-    return this.case.items[0].inputs.find(input => input.name === variableName)
-      ? this.case.items[0].inputs.find(input => input.name === variableName).value
-      : undefined
-  }
+  /*
+   * Participant API
+   */
 
   createParticipant(caseRoleId = ''):CaseParticipant {
     const id = UUID()
@@ -388,9 +404,7 @@ class CaseService {
   }
 
   /*
-   *
-   * START Issues API.
-   * 
+   * Issues API.
    */
 
   async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
@@ -573,9 +587,7 @@ class CaseService {
   }
 
   /*
-   *
-   * END Issues API.
-   *
+   * Data Inquiries API
    */
 
   async getQueries (): Promise<Array<Query>> {
@@ -676,9 +688,11 @@ class CaseService {
     return false;
   }
 
-  /**
-   * Exports current case to json. Used in generate-cases as template.
-   */
+  /*
+   * Case Template API
+   */ 
+
+  // Exports current case to json. Used in generate-cases as template.
   async export():Promise<Array<TangyFormResponseModel>> {
     const docs = [this.case]
     const formResponseDocIds = this.case.events.reduce((formResponseDocIds, caseEvent) => {
