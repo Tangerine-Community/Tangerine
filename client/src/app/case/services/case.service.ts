@@ -63,7 +63,7 @@ class CaseService {
     document.body.appendChild(tangyFormContainerEl)
     try {
       const device = await this.deviceService.getDevice()
-      this.case.location = device.assignedLocation.value.reduce((location, levelInfo) => { return {...location, [levelInfo.level]: levelInfo.value}}, {})
+      this.case.location = device.assignedLocation?.value.reduce((location, levelInfo) => { return {...location, [levelInfo.level]: levelInfo.value}}, {})
     } catch(error) {
       console.log("There was error setting the location on the case.")
       console.log(error)
