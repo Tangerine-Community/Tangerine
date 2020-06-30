@@ -16,7 +16,7 @@ import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseParticipant } from '../classes/case-participant.class';
 import { Query } from '../classes/query.class'
 // Other.
-import * as UUID from 'uuid/v4'
+import { v4 as UUID } from 'uuid';
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
@@ -390,7 +390,7 @@ class CaseService {
   /*
    *
    * START Issues API.
-   * 
+   *
    */
 
   async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
@@ -434,7 +434,7 @@ class CaseService {
       data: {
         comment,
         caseInstance,
-        response 
+        response
       }
     })
     return await this.tangyFormService.saveResponse({
@@ -490,7 +490,7 @@ class CaseService {
         caseInstance: await this.tangyFormService.getResponse(issue.caseId)
       }
     } else {
-      return lastProposedChangeEvent.data 
+      return lastProposedChangeEvent.data
     }
   }
 
@@ -558,7 +558,7 @@ class CaseService {
     const A = new TangyFormResponseModel(a)
     const B = new TangyFormResponseModel(b)
     const diff = A.inputs.reduce((diff, input) => {
-      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value) 
+      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value)
         ? [
           ...diff,
           {
@@ -566,7 +566,7 @@ class CaseService {
             a: A.inputsByName[input.name],
             b: B.inputsByName[input.name]
           }
-        ] 
+        ]
         : diff
     }, [])
     return diff
