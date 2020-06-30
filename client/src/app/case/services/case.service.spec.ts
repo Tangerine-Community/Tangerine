@@ -1,20 +1,23 @@
+import { EventFormDefinition } from './../classes/event-form-definition.class';
+import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { CaseRole } from './../classes/case-role.class';
 import { TestBed } from '@angular/core/testing';
 
-import { CaseService } from './case.service';
+import { CaseService, markQualifyingEventsAsComplete } from './case.service';
 import { CaseDefinitionsService } from './case-definitions.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 // NOTE: For some reason if this is WindowRef from the shared module, this fails to inject.
-import { CaseDefinition } from '../classes/case-definition.class';
-import { EventFormDefinition } from '../classes/event-form-definition.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import PouchDB from 'pouchdb';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { CaseParticipant } from '../classes/case-participant.class';
 import * as moment from 'moment';
+import { Case } from '../classes/case.class';
+import { EventForm } from '../classes/event-form.class';
+import { CaseEvent } from '../classes/case-event.class';
 class MockCaseDefinitionsService {
   async load() {
     return <Array<CaseDefinition>>[
@@ -225,6 +228,7 @@ describe('CaseService', () => {
     service.setEventOccurredOn(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].occurredOnDay).toEqual(date)
   })
+
   it('should set an event EstimatedDay date', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
@@ -234,6 +238,7 @@ describe('CaseService', () => {
     service.setEventEstimatedDay(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].estimatedDay).toEqual(date)
   })
+
   it('should set an event ScheduledDay date', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
@@ -243,6 +248,7 @@ describe('CaseService', () => {
     service.setEventScheduledDay(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].scheduledDay).toEqual(date)
   })
+
   it('should set an event Window period', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
@@ -259,11 +265,281 @@ describe('CaseService', () => {
   it('should create participant and create forms for existing events', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
-    await service.createEvent('event-definition-screening', true)
+    await service.createEvent('event-definition-screening')
     expect(service.case.events[0].eventForms.length).toEqual(0)
     const caseParticipant = await service.createParticipant('role1')
     expect(service.case.participants[0].id).toEqual(caseParticipant.id)
     expect(service.case.events[0].eventForms.length).toEqual(1)
+  })
+
+
+  it('should have an event marked incomplete because of condition 1', async() => {
+    const caseInstance = new Case({
+      events: [
+        <CaseEvent>{
+          id: 'event-1',
+          complete: false,
+          caseEventDefinitionId: 'case-event-definition-1',
+          eventForms: [
+            <EventForm>{
+              id: 'event-form-2',
+              complete: false,
+              required: false, 
+              eventFormDefinitionId: 'event-form-definition-2'
+            },
+            <EventForm>{
+              id: 'event-form-3',
+              complete: true,
+              required: false,
+              eventFormDefinitionId: 'event-form-definition-3'
+            }
+          ]
+        }
+      ]
+    }) 
+    const caseDefinition = new CaseDefinition(<CaseDefinition>{
+      eventDefinitions: [
+        <CaseEventDefinition>{
+          id: 'case-event-definition-1',
+          eventFormDefinitions: [
+            <EventFormDefinition>{
+              id: 'event-form-definition-1',
+              required: true
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-2',
+              required: false 
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-3',
+              required: false 
+            }
+          ]
+        }
+      ]
+    })
+    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    expect(revisedCaseInstance.events[0].complete).toEqual(false)
+  })
+
+  it('should have an event marked incomplete because of condition 2', async() => {
+    const caseInstance = new Case({
+      events: [
+        <CaseEvent>{
+          id: 'event-1',
+          complete: false,
+          caseEventDefinitionId: 'case-event-definition-1',
+          eventForms: [
+            <EventForm>{
+              id: 'event-form-1',
+              complete: false,
+              required: true,
+              eventFormDefinitionId: 'event-form-definition-1'
+            },
+            <EventForm>{
+              id: 'event-form-2',
+              complete: false,
+              required: false, 
+              eventFormDefinitionId: 'event-form-definition-2'
+            },
+            {
+              id: 'event-form-3',
+              complete: true,
+              required: false,
+              eventFormDefinitionId: 'event-form-definition-3'
+            }
+          ]
+        }
+      ]
+    }) 
+    const caseDefinition = new CaseDefinition(<CaseDefinition>{
+      eventDefinitions: [
+        <CaseEventDefinition>{
+          id: 'case-event-definition-1',
+          eventFormDefinitions: [
+            <EventFormDefinition>{
+              id: 'event-form-definition-1',
+              required: true
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-2',
+              required: false 
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-3',
+              required: false 
+            }
+          ]
+        }
+      ]
+    })
+    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    expect(revisedCaseInstance.events[0].complete).toEqual(false)
+  })
+
+  it('should have an event marked complete because of condition 2', async() => {
+    const caseInstance = new Case({
+      events: [
+        <CaseEvent>{
+          id: 'event-1',
+          complete: false,
+          caseEventDefinitionId: 'case-event-definition-1',
+          eventForms: [
+            <EventForm>{
+              id: 'event-form-1',
+              complete: true,
+              required: true,
+              eventFormDefinitionId: 'event-form-definition-1'
+            },
+            <EventForm>{
+              id: 'event-form-2',
+              complete: false,
+              required: false, 
+              eventFormDefinitionId: 'event-form-definition-2'
+            },
+            {
+              id: 'event-form-3',
+              complete: true,
+              required: false,
+              eventFormDefinitionId: 'event-form-definition-3'
+            }
+          ]
+        }
+      ]
+    }) 
+    const caseDefinition = new CaseDefinition(<CaseDefinition>{
+      eventDefinitions: [
+        <CaseEventDefinition>{
+          id: 'case-event-definition-1',
+          eventFormDefinitions: [
+            <EventFormDefinition>{
+              id: 'event-form-definition-1',
+              required: true
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-2',
+              required: false 
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-3',
+              required: false 
+            }
+          ]
+        }
+      ]
+    })
+    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    expect(revisedCaseInstance.events[0].complete).toEqual(true)
+  })
+
+  it('should have an event marked incomplete because of condition 3', async() => {
+    const caseInstance = new Case({
+      events: [
+        <CaseEvent>{
+          id: 'event-1',
+          complete: false,
+          caseEventDefinitionId: 'case-event-definition-1',
+          eventForms: [
+            <EventForm>{
+              id: 'event-form-1',
+              complete: true,
+              required: true,
+              eventFormDefinitionId: 'event-form-definition-1'
+            },
+            <EventForm>{
+              id: 'event-form-2',
+              complete: false,
+              required: true, 
+              eventFormDefinitionId: 'event-form-definition-2'
+            },
+            <EventForm>{
+              id: 'event-form-3',
+              complete: true,
+              required: false,
+              eventFormDefinitionId: 'event-form-definition-3'
+            }
+          ]
+        }
+      ]
+    }) 
+    const caseDefinition = new CaseDefinition(<CaseDefinition>{
+      eventDefinitions: [
+        <CaseEventDefinition>{
+          id: 'case-event-definition-1',
+          eventFormDefinitions: [
+            <EventFormDefinition>{
+              id: 'event-form-definition-1',
+              required: true
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-2',
+              required: false 
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-3',
+              required: false 
+            }
+          ]
+        }
+      ]
+    })
+    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    expect(revisedCaseInstance.events[0].complete).toEqual(false)
+  })
+
+  it('should have an event marked complete because of condition 3', async() => {
+    const caseInstance = new Case({
+      events: [
+        <CaseEvent>{
+          id: 'event-1',
+          complete: false,
+          caseEventDefinitionId: 'case-event-definition-1',
+          eventForms: [
+            <EventForm>{
+              id: 'event-form-1',
+              complete: true,
+              required: true,
+              eventFormDefinitionId: 'event-form-definition-1'
+            },
+            <EventForm>{
+              id: 'event-form-2',
+              complete: true,
+              required: true, 
+              eventFormDefinitionId: 'event-form-definition-2'
+            },
+            <EventForm>{
+              id: 'event-form-3',
+              complete: true,
+              required: false,
+              eventFormDefinitionId: 'event-form-definition-3'
+            }
+          ]
+        }
+      ]
+    }) 
+    const caseDefinition = new CaseDefinition(<CaseDefinition>{
+      eventDefinitions: [
+        <CaseEventDefinition>{
+          id: 'case-event-definition-1',
+          eventFormDefinitions: [
+            <EventFormDefinition>{
+              id: 'event-form-definition-1',
+              required: true
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-2',
+              required: false 
+            },
+            <EventFormDefinition>{
+              id: 'event-form-definition-3',
+              required: false 
+            }
+          ]
+        }
+      ]
+    })
+    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    expect(revisedCaseInstance.events[0].complete).toEqual(true)
   })
 
   it('should create CaseEvent and also create corresponding required EventForms for Participants', async() => {
