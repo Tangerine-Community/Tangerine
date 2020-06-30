@@ -30,7 +30,7 @@ describe('TangyFormsPlayerComponent', () => {
           useClass: MockTangyFormService,
           provide: TangyFormService
         }],
-      imports: [TangyFormsModule, CaseManagementModule, AppRoutingModule]
+      imports: [TangyFormsModule, AppRoutingModule]
     })
     .compileComponents();
   }));
