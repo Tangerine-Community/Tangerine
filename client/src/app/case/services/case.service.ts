@@ -853,4 +853,45 @@ class CaseService {
 
 }
 
+export const markQualifyingEventsAsComplete = (caseInstance:Case, caseDefinition:CaseDefinition):Case => {
+  return {
+    ...caseInstance,
+    events: caseInstance.events.map(event => {
+      return {
+        ...event,
+        complete: event.complete === true
+          // If it's already complete, it stays complete.
+          ? true
+          // CaseEvent is not complete if at least one of the related EventFormDefinition(s) meets any condition...
+          : !caseDefinition
+            .eventDefinitions
+            .find(eventDefinition => eventDefinition.id === event.caseEventDefinitionId)
+            .eventFormDefinitions
+            .some(eventFormDefinition => {
+              // 1. Is required and has no Event Form instances.
+              return (
+                  eventFormDefinition.required === true &&
+                  !event.eventForms.some(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                ) ||
+                // 2. Is required and at least one Event Form instance is not complete.
+                (
+                  eventFormDefinition.required === true &&
+                  event.eventForms
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .some(eventForm => !eventForm.complete)
+                ) ||
+                // 3. Is not required and has at least one Event Form instance that is both incomplete and required.
+                (
+                  eventFormDefinition.required === false &&
+                  event.eventForms
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .some(eventForm => !eventForm.complete && eventForm.required)
+                )
+            })
+      }
+
+    })
+  }
+}
+
 export { CaseService };
