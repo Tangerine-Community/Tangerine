@@ -72,7 +72,7 @@ export class SyncCouchdbService {
           }
           return $or
         }, []),
-        ...syncDetails.deviceSyncLocations.length > 0 
+        ...syncDetails.deviceSyncLocations.length > 0
           ? syncDetails.deviceSyncLocations.map(locationConfig => {
             // Get last value, that's the focused sync point.
             let location = locationConfig.value.slice(-1).pop()
@@ -162,13 +162,17 @@ export class SyncCouchdbService {
 
   async push(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
-      userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
+      let checkpointProgress = "", diffingProgress = "", startBatchProgress = "", pendingBatchProgress = ""
+      const direction =  'push'
+      const replicate = userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
         const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
           pushed: info.docs_written,
           conflicts: conflictsQuery.rows.map(row => row.id)
         });
+        replicate.cancel();
+        // clean up the listeners - unsub from the change and other listeners to the pouchdb
       }).on('change', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
         const progress = {
@@ -176,7 +180,7 @@ export class SyncCouchdbService {
           'docs_written': info.docs_written,
           'doc_write_failures': info.doc_write_failures,
           'pending': info.pending,
-          'direction': 'push'
+          'direction': direction
         };
         this.syncMessage$.next(progress);
       }).on('active', function (info) {
@@ -184,6 +188,49 @@ export class SyncCouchdbService {
           console.log('Push replication is active. Info: ' + JSON.stringify(info));
         } else {
           console.log('Push replication is active.');
+        }
+      }).on('checkpoint', (info) => {
+        if (info) {
+          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          let progress;
+          if (info.checkpoint) {
+            checkpointProgress = checkpointProgress + "&#10003; "
+            progress = {
+              'message': checkpointProgress,
+              'type': 'checkpoint',
+              'direction': direction
+            };
+          } else if (info.diffing) {
+            diffingProgress = diffingProgress + "&#8783; "
+            progress = {
+              'message': diffingProgress,
+              'type': 'diffing',
+              'direction': direction
+            };
+          } else if (info.startNextBatch) {
+            startBatchProgress = startBatchProgress + "&#8859; "
+            progress = {
+              'message': startBatchProgress,
+              'type': 'startNextBatch',
+              'direction': direction
+            };
+          } else if (info.pendingBatch) {
+            pendingBatchProgress = pendingBatchProgress + "&#10058; "
+            progress = {
+              'message': pendingBatchProgress,
+              'type': 'pendingBatch',
+              'direction': direction
+            };
+          } else {
+            progress = {
+              'message': JSON.stringify(info),
+              'type': 'other',
+              'direction': direction
+            };
+          }
+          this.syncMessage$.next(progress);
+        } else {
+          console.log(direction + ': Calculating Checkpoints.');
         }
       }).on('error', function (errorMessage) {
         console.log('boo, something went wrong! error: ' + errorMessage);
@@ -195,6 +242,8 @@ export class SyncCouchdbService {
 
   async pull(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
+      let checkpointProgress = "", diffingProgress = "", startBatchProgress = "", pendingBatchProgress = ""
+      const direction =  'pull'
       userDb.db['replicate'].from(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-pull-last_seq', info.last_seq);
         const conflictsQuery = await userDb.query('sync-conflicts');
@@ -217,6 +266,49 @@ export class SyncCouchdbService {
           console.log('Pull replication is active. Info: ' + JSON.stringify(info));
         } else {
           console.log('Pull replication is active.');
+        }
+      }).on('checkpoint', (info) => {
+        if (info) {
+          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          let progress;
+          if (info.checkpoint) {
+            checkpointProgress = checkpointProgress + "&#10003; "
+            progress = {
+              'message': checkpointProgress,
+              'type': 'checkpoint',
+              'direction': direction
+            };
+          } else if (info.diffing) {
+            diffingProgress = diffingProgress + "&#8783; "
+            progress = {
+              'message': diffingProgress,
+              'type': 'diffing',
+              'direction': direction
+            };
+          } else if (info.startNextBatch) {
+            startBatchProgress = startBatchProgress + "&#8859; "
+            progress = {
+              'message': startBatchProgress,
+              'type': 'startNextBatch',
+              'direction': direction
+            };
+          } else if (info.pendingBatch) {
+            pendingBatchProgress = pendingBatchProgress + "&#10058; "
+            progress = {
+              'message': pendingBatchProgress,
+              'type': 'pendingBatch',
+              'direction': direction
+            };
+          } else {
+            progress = {
+              'message': JSON.stringify(info),
+              'type': 'other',
+              'direction': direction
+            };
+          }
+          this.syncMessage$.next(progress);
+        } else {
+          console.log(direction + ': Calculating Checkpoints.');
         }
       }).on('error', function (errorMessage) {
         console.log('boo, something went wrong! error: ' + errorMessage);
