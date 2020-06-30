@@ -1,4 +1,4 @@
-<div class="icon-list-item">
+<div class="icon-list-item {{eventForm.required ? 'required' : ''}}" >
 	<mwc-icon routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}" [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
 	<div routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>

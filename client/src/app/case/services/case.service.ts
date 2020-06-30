@@ -8,7 +8,6 @@ import { CaseDefinitionsService } from './case-definitions.service';
 import { HttpClient } from '@angular/common/http';
 // Classes.
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
-import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { Case } from '../classes/case.class'
 import { CaseEvent } from '../classes/case-event.class'
 import { EventForm } from '../classes/event-form.class'
@@ -154,8 +153,8 @@ class CaseService {
     const caseEvent = <CaseEvent>{
       id: UUID(),
       caseId: this.case._id,
-      status: CASE_EVENT_STATUS_IN_PROGRESS,
       name: caseEventDefinition.name,
+      complete: false,
       estimate: true,
       caseEventDefinitionId: eventDefinitionId,
       windowEndDay: undefined,
@@ -222,21 +221,37 @@ class CaseService {
    */
 
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
-    const eventForm = <EventForm>{
-      id: UUID(),
-      complete: false,
-      caseId: this.case._id,
-      participantId,
-      caseEventId,
-      eventFormDefinitionId: eventFormDefinitionId
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    const eventFormId = UUID()
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id === caseEventId
+        ? {
+            ...event,
+            eventForms: [
+              ...event.eventForms,
+              <EventForm>{
+                id: eventFormId,
+                complete: false,
+                required: this
+                  .caseDefinition
+                  .eventDefinitions
+                  .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId).required,
+                caseId: this.case._id,
+                participantId,
+                caseEventId,
+                eventFormDefinitionId: eventFormDefinitionId
+              }
+            ]
+        }
+        : event
+      )
     }
-    this
-      .case
+    return this.case
       .events
-      .find(caseEvent => caseEvent.id === caseEventId)
+      .find(event => event.id === caseEvent.id)
       .eventForms
-      .push(eventForm)
-    return eventForm
+      .find(eventForm => eventForm.id === eventFormId)
   }
 
   deleteEventFormInstance(caseEventId: string, eventFormId: string) {
@@ -277,6 +292,43 @@ class CaseService {
     .find(caseEvent => caseEvent.id === caseEventId).eventForms[index].data[key] || ''
   }
 
+  markEventFormRequired(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              required: true
+            }
+          )
+        }
+      )
+    }
+  }
+
+  markEventFormNotRequired(caseEventId:string, eventFormId:string) {
+    this.case.events = this.case.events.map(event => {
+      return event.id !== caseEventId
+        ? event
+        : <CaseEvent>{
+          ...event,
+          eventForms: event.eventForms.map(eventForm => {
+            return eventForm.id !== eventFormId
+              ? eventForm
+              : {
+                ...eventForm,
+                required: false
+              }
+          })
+        }
+    })
+  }
+
   markEventFormComplete(caseEventId:string, eventFormId:string) {
     let caseEvent = this
       .case
@@ -290,28 +342,13 @@ class CaseService {
       .eventForms
       .find(eventForm => eventForm.id === eventFormId)
       .complete = true
-    const allRequiredFormsComplete = caseEvent.eventForms.reduce((allRequiredFormsComplete, eventForm) => {
-      if (allRequiredFormsComplete === false) {
-        return false
-      } else {
-        const eventFormDefinition = eventDefinition
-          .eventFormDefinitions
-          .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId )
-        return !eventFormDefinition.required || (eventFormDefinition.required && eventForm.complete) ? true : false
-      }
-    }, true)
-    this
-      .case
-      .events
-      .find(caseEvent => caseEvent.id === caseEventId)
-      .status = allRequiredFormsComplete ? CASE_EVENT_STATUS_COMPLETED : CASE_EVENT_STATUS_IN_PROGRESS
     // Check to see if all required Events are complete in Case. If so, mark Case complete.
     let numberOfCaseEventsRequired = this.caseDefinition
       .eventDefinitions
       .reduce((acc, definition) => definition.required ? acc + 1 : acc, 0)
     let numberOfUniqueCompleteCaseEvents = this.case
       .events
-      .reduce((acc, instance) => instance.status === CASE_EVENT_STATUS_COMPLETED
+      .reduce((acc, instance) => instance.complete === true
           ? Array.from(new Set([...acc, instance.caseEventDefinitionId]))
           : acc
         , [])

@@ -1,3 +1,7 @@
+.required {
+    border-left: red solid 4px;
+}
+
 .icon-list-item {
 	display: flex;
 	flex-direction: row;
