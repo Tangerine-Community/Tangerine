@@ -52,6 +52,7 @@ class MockCaseDefinitionsService {
                 'forCaseRole': 'role1',
                 'name': 'Form 1',
                 'required': true,
+                'autoPopulate': true,
                 'repeatable': false
               },
               <EventFormDefinition>{
@@ -60,6 +61,7 @@ class MockCaseDefinitionsService {
                 'forCaseRole': 'role2',
                 'name': 'Form 2',
                 'required': true,
+                'autoPopulate': true,
                 'repeatable': false
               }
             ]
@@ -79,6 +81,7 @@ class MockCaseDefinitionsService {
                 'forCaseRole': 'role1',
                 'name': 'Form 1',
                 'required': true,
+                'autoPopulate': true,
                 'repeatable': false
               },
               <EventFormDefinition>{
@@ -87,6 +90,7 @@ class MockCaseDefinitionsService {
                 'forCaseRole': 'role1',
                 'name': 'Form 2 (repeatable)',
                 'required': true,
+                'autoPopulate': true,
                 'repeatable': true 
               },
               <EventFormDefinition>{
@@ -95,6 +99,7 @@ class MockCaseDefinitionsService {
                 'forCaseRole': 'role1',
                 'name': 'Form 3',
                 'required': false,
+                'autoPopulate': false,
                 'repeatable': false 
               }
             ]
@@ -114,6 +119,7 @@ class MockCaseDefinitionsService {
                 'forCaseRole': 'role1',
                 'name': 'Form 1',
                 'required': true,
+                'autoPopulate': true,
                 'repeatable': false
               }
             ]
@@ -133,6 +139,7 @@ class MockCaseDefinitionsService {
                 'forCaseRole': 'role1',
                 'name': 'Form 1',
                 'required': true,
+                'autoPopulate': true,
                 'repeatable': false
               }
             ]
@@ -542,7 +549,7 @@ describe('CaseService', () => {
     expect(revisedCaseInstance.events[0].complete).toEqual(true)
   })
 
-  it('should create CaseEvent and also create corresponding required EventForms for Participants', async() => {
+  it('should create CaseEvent and also create EventForms with autoPopulate for Participants', async() => {
     const service: CaseService = TestBed.get(CaseService);
     await service.create('caseDefinition1')
     const caseParticipant = await service.createParticipant('role1')
