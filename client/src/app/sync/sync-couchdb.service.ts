@@ -162,17 +162,15 @@ export class SyncCouchdbService {
 
   async push(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
-      let checkpointProgress = "", diffingProgress = "", startBatchProgress = "", pendingBatchProgress = ""
+      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction =  'push'
-      const replicate = userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
+      userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
         const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
           pushed: info.docs_written,
           conflicts: conflictsQuery.rows.map(row => row.id)
         });
-        replicate.cancel();
-        // clean up the listeners - unsub from the change and other listeners to the pouchdb
       }).on('change', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
         const progress = {
@@ -194,28 +192,28 @@ export class SyncCouchdbService {
           console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
-            checkpointProgress = checkpointProgress + "&#10003; "
+            checkpointProgress = checkpointProgress + 1
             progress = {
               'message': checkpointProgress,
               'type': 'checkpoint',
               'direction': direction
             };
           } else if (info.diffing) {
-            diffingProgress = diffingProgress + "&#8783; "
+            diffingProgress = diffingProgress + 1
             progress = {
               'message': diffingProgress,
               'type': 'diffing',
               'direction': direction
             };
           } else if (info.startNextBatch) {
-            startBatchProgress = startBatchProgress + "&#8859; "
+            startBatchProgress = startBatchProgress + 1
             progress = {
               'message': startBatchProgress,
               'type': 'startNextBatch',
               'direction': direction
             };
           } else if (info.pendingBatch) {
-            pendingBatchProgress = pendingBatchProgress + "&#10058; "
+            pendingBatchProgress = pendingBatchProgress + 1
             progress = {
               'message': pendingBatchProgress,
               'type': 'pendingBatch',
@@ -272,37 +270,31 @@ export class SyncCouchdbService {
           console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
-            checkpointProgress = checkpointProgress + "&#10003; "
+            checkpointProgress = checkpointProgress + 1
             progress = {
               'message': checkpointProgress,
               'type': 'checkpoint',
               'direction': direction
             };
           } else if (info.diffing) {
-            diffingProgress = diffingProgress + "&#8783; "
+            diffingProgress = diffingProgress + 1
             progress = {
               'message': diffingProgress,
               'type': 'diffing',
               'direction': direction
             };
           } else if (info.startNextBatch) {
-            startBatchProgress = startBatchProgress + "&#8859; "
+            startBatchProgress = startBatchProgress + 1
             progress = {
               'message': startBatchProgress,
               'type': 'startNextBatch',
               'direction': direction
             };
           } else if (info.pendingBatch) {
-            pendingBatchProgress = pendingBatchProgress + "&#10058; "
+            pendingBatchProgress = pendingBatchProgress + 1
             progress = {
               'message': pendingBatchProgress,
               'type': 'pendingBatch',
-              'direction': direction
-            };
-          } else {
-            progress = {
-              'message': JSON.stringify(info),
-              'type': 'other',
               'direction': direction
             };
           }
