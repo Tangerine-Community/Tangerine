@@ -21,48 +21,52 @@ module.exports = {
     },
     reportingOutputs: function(data) {
       
-      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, resolve) {
+      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
 
-        if (doc.form.id === 'user-profile') {
-          await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized, resolve);
+        if (exclusions && exclusions.find(doc.form.id)) {
+          // skip!
         } else {
-          if (doc.type === 'case') {
-            // output case
-            await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
+          if (doc.form.id === 'user-profile') {
+            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized, resolve);
+          } else {
+            if (doc.type === 'case') {
+              // output case
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
 
-            let numInf = getItemValue(doc, 'numinf')
-            let participant_id = getItemValue(doc, 'participant_id')
+              let numInf = getItemValue(doc, 'numinf')
+              let participant_id = getItemValue(doc, 'participant_id')
 
-            // output participants
-            for (const participant of doc.participants) {
-              await pushResponse({
-                ...participant,
-                _id: participant.id,
-                caseId: doc._id,
-                numInf: participant.participant_id === participant_id ? numInf : '',
-                type: "participant"
-              }, targetDb);
-            }
-            // output case-events
-            for (const event of doc.events) {
+              // output participants
+              for (const participant of doc.participants) {
+                await pushResponse({
+                  ...participant,
+                  _id: participant.id,
+                  caseId: doc._id,
+                  numInf: participant.participant_id === participant_id ? numInf : '',
+                  type: "participant"
+                }, targetDb);
+              }
+              // output case-events
+              for (const event of doc.events) {
 
-              // output event-forms
-              for (const eventForm of event['eventForms']) {
-                try {
-                  await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
-                } catch (e) {
-                  if (e.status !== 404) {
-                    console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                // output event-forms
+                for (const eventForm of event['eventForms']) {
+                  try {
+                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                  } catch (e) {
+                    if (e.status !== 404) {
+                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                    }
                   }
                 }
+                // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
+                // since we are already serializing each event-form and have the parent caseEventId on each one.
+                delete event.eventForms
+                await pushResponse({...event, _id: event.id, type: "case-event"}, targetDb)
               }
-              // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
-              // since we are already serializing each event-form and have the parent caseEventId on each one.
-              delete event.eventForms
-              await pushResponse({...event, _id: event.id, type: "case-event"}, targetDb)
+            } else {
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
             }
-          } else {
-            await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
           }
         }
       }
@@ -70,6 +74,8 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
         const {doc, sourceDb} = data
         const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+        const groupPath = '/tangerine/client/content/groups/' + sourceDb.name
+        const exclusions = await fs.readJSON(`${groupPath}/synapse-exclusions.json`)
 
         // First generate the full-cream database
         let synapseDb
@@ -78,7 +84,8 @@ module.exports = {
         } catch (e) {
           console.log("Error creating db: " + JSON.stringify(e))
         }
-        await generateDatabase(sourceDb, synapseDb, doc, locationList, resolve, false);
+        let sanitized = false;
+        await generateDatabase(sourceDb, synapseDb, doc, locationList, sanitized, exclusions, resolve);
         
         // Then create the sanitized version
         let synapseSanitizedDb
@@ -87,7 +94,8 @@ module.exports = {
         } catch (e) {
           console.log("Error creating db: " + JSON.stringify(e))
         }
-        await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, resolve, false);
+        sanitized = true;
+        await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, resolve);
         
       })
     }
