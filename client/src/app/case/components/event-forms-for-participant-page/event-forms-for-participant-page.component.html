@@ -1,0 +1,9 @@
+<div *ngIf="ready">
+  <a *ngIf="breadcrumbText" class="primary" [href]="breadcrumbUrl"><mwc-icon>chevron_left</mwc-icon> {{breadcrumbText}}</a>
+  <app-event-forms-for-participant
+    [caseId]="caseId"
+    [eventId]="eventId"
+    [participantId]="participantId"
+  >
+  </app-event-forms-for-participant>
+</div>

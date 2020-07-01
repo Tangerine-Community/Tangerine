@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build --base-href \"./\"",
     "test": "ng test",
+    "test-ci": "ng test --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
@@ -46,7 +47,7 @@
     "ngx-cookie-service": "^2.1.0",
     "pako": "^1.0.6",
     "plotly.js-dist": "^1.39.3",
-    "pouchdb": "^7.1.1",
+    "pouchdb": "github:chrisekelley/pouchdb#build_6903",
     "pouchdb-adapter-cordova-sqlite": "^2.0.7",
     "pouchdb-debug": "^7.2.1",
     "pouchdb-find": "^7.1.1",
