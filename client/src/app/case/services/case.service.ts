@@ -169,7 +169,7 @@ class CaseService {
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && eventFormDefinition.autoPopulate) {
-          this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
     }
@@ -220,7 +220,7 @@ class CaseService {
    * Event Form API
    */
 
-  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
+  createEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     const caseEvent = this.case.events.find(event => event.id === caseEventId)
     const eventFormId = UUID()
     this.case = {
@@ -252,6 +252,12 @@ class CaseService {
       .find(event => event.id === caseEvent.id)
       .eventForms
       .find(eventForm => eventForm.id === eventFormId)
+  }
+
+  // @TODO Deprecated.
+  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
+    console.warn('caseService.startEventForm(...) is deprecated. Please use caseService.createEventForm(...) before startEventForm is removed.')
+    return this.createEventForm(caseEventId, eventFormDefinitionId, participantId)
   }
 
   deleteEventFormInstance(caseEventId: string, eventFormId: string) {
@@ -378,7 +384,7 @@ class CaseService {
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.autoPopulate) {
-          this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
     }
@@ -657,7 +663,7 @@ class CaseService {
         .find(caseEventInfo => caseEventInfo.caseEventDefinitionId === this.queryCaseEventDefinitionId);
       }
 
-      const c = this.startEventForm(caseEvent.id, this.queryEventFormDefinitionId);
+      const c = this.createEventForm(caseEvent.id, this.queryEventFormDefinitionId);
       await this.save();
 
       caseEvent = this.case.events.find(c => c.caseEventDefinitionId === this.queryCaseEventDefinitionId);

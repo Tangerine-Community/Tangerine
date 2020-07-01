@@ -29,7 +29,7 @@ export class NewCaseComponent implements AfterContentInit {
         const caseEvent = this.caseService.createEvent(this.caseService.caseDefinition.startFormOnOpen.eventId)
         eventForm = caseEvent.eventForms.find(eventForm => eventForm.eventFormDefinitionId === this.caseService.caseDefinition.startFormOnOpen.eventFormId)
         if (!eventForm){
-          eventForm = this.caseService.startEventForm(caseEvent.id, this.caseService.caseDefinition.startFormOnOpen.eventFormId) 
+          eventForm = this.caseService.createEventForm(caseEvent.id, this.caseService.caseDefinition.startFormOnOpen.eventFormId) 
         }
         await this.caseService.save()
         this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
