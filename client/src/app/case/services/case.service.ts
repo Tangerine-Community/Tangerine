@@ -268,17 +268,21 @@ class CaseService {
     return this.createEventForm(caseEventId, eventFormDefinitionId, participantId)
   }
 
-  deleteEventFormInstance(caseEventId: string, eventFormId: string) {
-    this
-    .case
-    .events
-    .find(caseEvent => caseEvent.id === caseEventId).eventForms = this
-      .case
-      .events
-      .find(caseEvent => caseEvent.id === caseEventId).eventForms.filter(eventForm => eventForm.id !== eventFormId);
+  deleteEventForm(caseEventId: string, eventFormId: string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return {
+          ...event,
+          eventForms: event.id === caseEventId
+            ? event.eventForms.filter(eventForm => eventForm.id === eventFormId)
+            : event.eventForms
+        }
+      })
+    }
   }
 
-  setCaseEventFormsData(caseEventId:string,eventFormId:string, key:string, value:string) {
+  setEventFormData(caseEventId:string,eventFormId:string, key:string, value:string) {
     const index = this
     .case
     .events
@@ -294,7 +298,7 @@ class CaseService {
       .find(caseEvent => caseEvent.id === caseEventId).eventForms[index].data, [key]:value};
   }
 
-  getCaseEventFormsData(caseEventId:string,eventFormId:string, key:string,) {
+  getEventFormData(caseEventId:string,eventFormId:string, key:string,) {
     const index = this
     .case
     .events
