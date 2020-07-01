@@ -7,7 +7,20 @@ import {
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
 
-declare const require: any;
+window['dcodeIO'] = {
+  bcrypt: { 
+    genSaltSync: function(x) { return 'foo' },
+    genHashSync: function(x, y) { return 'foo' },
+    compareSync: function(x, y) {return true }
+  }
+}
+
+declare const require: {
+  context(path: string, deep?: boolean, filter?: RegExp): {
+    keys(): string[];
+    <T>(id: string): T;
+  };
+};
 
 // First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(

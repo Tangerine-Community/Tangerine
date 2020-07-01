@@ -48,6 +48,7 @@
           "formId": "registration-role-2",
           "forCaseRole": "role-2",
           "name": "Registration for Role 2",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -56,6 +57,7 @@
           "formId": "test-issues-created-programatically-on-client",
           "forCaseRole": "role-2",
           "name": "Data Collector causes Issue to be created due to use of API in the form",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -64,6 +66,7 @@
           "formId": "test-issues-created-on-client",
           "forCaseRole": "role-2",
           "name": "Data Collector causes Issue to be created due to `discrepancy-if` logic in form",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -72,6 +75,7 @@
           "formId": "create-an-urgent-notification",
           "forCaseRole": "role-2",
           "name": "Data Collector causes an urgent notification to be created",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -82,6 +86,24 @@
           "name": "Data Collector resolves urgent notification",
           "required": false,
           "repeatable": true 
+        },
+        {
+          "id": "event-form-definition-abxo39",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Example of an Event Form that DOES NOT auto-populate when a participant is added or the event is created.",
+          "autoPopulate": false,
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-aieb38",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Example of an Event Form that DOES auto-populate when a participant is added or the event is created.",
+          "autoPopulate": true,
+          "required": false,
+          "repeatable": false
         }
       ]
     },
