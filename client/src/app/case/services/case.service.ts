@@ -25,16 +25,24 @@ import { AppContext } from 'src/app/app-context.enum';
 })
 class CaseService {
 
-  _id:string
-  _rev:string
-  case:Case
+  _case:Case
   caseDefinition:CaseDefinition
-
+  openCaseConfirmed = false
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
 
-  openCaseConfirmed = false
+  set case(caseInstance:Case) {
+    const caseInfo:CaseInfo = { 
+      caseInstance,
+      caseDefinition: this.caseDefinition
+    }
+    this._case = markQualifyingCaseAsComplete(markQualifyingEventsAsComplete(caseInfo)).caseInstance
+  }
+
+  get case():Case {
+    return this._case
+  }
 
   constructor(
     private tangyFormService: TangyFormService,
@@ -85,10 +93,10 @@ class CaseService {
   }
 
   async setCase(caseInstance) {
-    this.case = caseInstance
+    // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
-      .find(caseDefinition => caseDefinition.id === this.case.caseDefinitionId)
-
+      .find(caseDefinition => caseDefinition.id === caseInstance.caseDefinitionId)
+    this.case = caseInstance
   }
 
   async load(id:string) {
@@ -318,50 +326,41 @@ class CaseService {
   }
 
   markEventFormNotRequired(caseEventId:string, eventFormId:string) {
-    this.case.events = this.case.events.map(event => {
-      return event.id !== caseEventId
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
         ? event
-        : <CaseEvent>{
+        : {
           ...event,
-          eventForms: event.eventForms.map(eventForm => {
-            return eventForm.id !== eventFormId
-              ? eventForm
-              : {
-                ...eventForm,
-                required: false
-              }
-          })
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              required: false
+            }
+          )
         }
-    })
+      )
+    }
   }
-
+  
   markEventFormComplete(caseEventId:string, eventFormId:string) {
-    let caseEvent = this
-      .case
-      .events
-      .find(caseEvent => caseEvent.id === caseEventId)
-    let eventDefinition = this
-      .caseDefinition
-      .eventDefinitions
-      .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
-    caseEvent
-      .eventForms
-      .find(eventForm => eventForm.id === eventFormId)
-      .complete = true
-    // Check to see if all required Events are complete in Case. If so, mark Case complete.
-    let numberOfCaseEventsRequired = this.caseDefinition
-      .eventDefinitions
-      .reduce((acc, definition) => definition.required ? acc + 1 : acc, 0)
-    let numberOfUniqueCompleteCaseEvents = this.case
-      .events
-      .reduce((acc, instance) => instance.complete === true
-          ? Array.from(new Set([...acc, instance.caseEventDefinitionId]))
-          : acc
-        , [])
-        .length
-    this
-      .case
-      .complete = numberOfCaseEventsRequired === numberOfUniqueCompleteCaseEvents ? true : false
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              complete: true 
+            }
+          )
+        }
+      )
+    }
   }
 
   /*
@@ -859,39 +858,65 @@ class CaseService {
 
 }
 
-export const markQualifyingEventsAsComplete = (caseInstance:Case, caseDefinition:CaseDefinition):Case => {
+interface CaseInfo {
+  caseInstance: Case
+  caseDefinition:CaseDefinition
+}
+
+// @TODO We should revisit this logic. Not sure it's what we want.
+export const markQualifyingCaseAsComplete = ({caseInstance, caseDefinition}:CaseInfo):CaseInfo => {
+  // Check to see if all required Events are complete in Case. If so, mark Case complete.
+  let numberOfCaseEventsRequired = caseDefinition
+    .eventDefinitions
+    .reduce((acc, definition) => definition.required ? acc + 1 : acc, 0)
+  let numberOfUniqueCompleteCaseEvents = caseInstance
+    .events
+    .reduce((acc, instance) => instance.complete === true
+        ? Array.from(new Set([...acc, instance.caseEventDefinitionId]))
+        : acc
+      , [])
+      .length
+  caseInstance
+    .complete = numberOfCaseEventsRequired === numberOfUniqueCompleteCaseEvents ? true : false
+  return { caseInstance, caseDefinition }
+}
+
+export const markQualifyingEventsAsComplete = ({caseInstance, caseDefinition}:CaseInfo):CaseInfo => {
   return {
-    ...caseInstance,
-    events: caseInstance.events.map(event => {
-      return {
-        ...event,
-        complete: !caseDefinition
-          .eventDefinitions
-          .find(eventDefinition => eventDefinition.id === event.caseEventDefinitionId)
-          .eventFormDefinitions
-          .some(eventFormDefinition => {
-            // 1. Is required and has no Event Form instances.
-            return (
-                eventFormDefinition.required === true &&
-                !event.eventForms.some(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
-              ) ||
-              // 2. Is required and at least one Event Form instance is not complete.
-              (
-                eventFormDefinition.required === true &&
-                event.eventForms
-                  .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
-                  .some(eventForm => !eventForm.complete)
-              ) ||
-              // 3. Is not required and has at least one Event Form instance that is both incomplete and required.
-              (
-                eventFormDefinition.required === false &&
-                event.eventForms
-                  .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
-                  .some(eventForm => !eventForm.complete && eventForm.required)
-              )
-          })
-      }
-    })
+    caseInstance: {
+      ...caseInstance,
+      events: caseInstance.events.map(event => {
+        return {
+          ...event,
+          complete: !caseDefinition
+            .eventDefinitions
+            .find(eventDefinition => eventDefinition.id === event.caseEventDefinitionId)
+            .eventFormDefinitions
+            .some(eventFormDefinition => {
+              // 1. Is required and has no Event Form instances.
+              return (
+                  eventFormDefinition.required === true &&
+                  !event.eventForms.some(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                ) ||
+                // 2. Is required and at least one Event Form instance is not complete.
+                (
+                  eventFormDefinition.required === true &&
+                  event.eventForms
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .some(eventForm => !eventForm.complete)
+                ) ||
+                // 3. Is not required and has at least one Event Form instance that is both incomplete and required.
+                (
+                  eventFormDefinition.required === false &&
+                  event.eventForms
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .some(eventForm => !eventForm.complete && eventForm.required)
+                )
+            })
+        }
+      })
+    },
+    caseDefinition
   }
 }
 
