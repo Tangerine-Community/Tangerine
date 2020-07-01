@@ -1,3 +1,4 @@
+import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 import { Observable } from 'rxjs';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { NgModule, Injectable } from '@angular/core';
@@ -37,6 +38,11 @@ const routes: Routes = [
     component: EventComponent,
     canActivate: [LoginGuard],
     canDeactivate: [ CanDeactivateEvent ]
+  },
+  {
+    path: 'case/event/participant/:caseId/:eventId/:participantId',
+    component: EventFormsForParticipantPageComponent,
+    canActivate: [LoginGuard]
   },
   {
     path: 'case/event/form-add/:caseId/:eventId/:participantId',

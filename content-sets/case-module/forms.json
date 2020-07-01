@@ -265,5 +265,33 @@
       "push": true,
       "pull": true
     }
-  }    
+  },
+  {
+    "id" : "test-form",
+    "src" : "./assets/test-form/form.html",
+    "description" : "Test Form",
+    "listed" : false,
+    "title" : "Test Form",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  }     
 ]

@@ -26,6 +26,7 @@ install:
 script:
   - cd ../editor && npm run build 
   - cd ../client/ && npm run build 
+  - cd ../client/ && npm run test-ci
   - cd ../server && npm run test 
 notifications:
   webhooks:
