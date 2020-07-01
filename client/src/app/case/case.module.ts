@@ -18,6 +18,8 @@ import { EventFormListItemComponent } from './components/event-form-list-item/ev
 import { QueryComponent } from './components/query/query.component';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { CaseNotificationsComponent } from './components/case-notifications/case-notifications.component';
+import { EventFormsForParticipantComponent } from './components/event-forms-for-participant/event-forms-for-participant.component';
+import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -46,7 +48,9 @@ import { CaseNotificationsComponent } from './components/case-notifications/case
     EventFormListItemComponent,
     QueryComponent,
     EventFormAddComponent,
-    CaseNotificationsComponent
+    CaseNotificationsComponent,
+    EventFormsForParticipantComponent,
+    EventFormsForParticipantPageComponent
   ]
 })
 export class CaseModule { }
