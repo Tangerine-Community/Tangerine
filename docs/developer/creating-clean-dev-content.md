@@ -4,9 +4,15 @@ If you are trying to fix an issue, it is helpful to begin development using cont
 
 The `create-group` command to the rescue!
 
-The following command downloads a content set known to support comon Tangerine features and is used for load-testing. Notice that it is a github repo; therefore, you may clone it and modify at will. 
+The following command downloads a content set known to support common Tangerine features and is used for load-testing. Notice that it is a github repo; therefore, you may clone it and modify at will. 
 
 `docker exec tangerine create-group "New Group C" https://github.com/rjsteinert/tangerine-content-set-test.git`
+
+There is also support for creating a group using local content from the `content-sets` directory' in the Tangerine repository. Currently, there is support for creating a case-module:
+
+`docker exec tangerine create-group "New Group D" case-module`
+
+You may also configure how inputs are populated by custom functions; see the Case generation section in the [Load testing doc](load-testing.md).
 
 If you add `--help` to the `create-group` command you may see other options as well.
 
