@@ -41,6 +41,8 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemSecondary = '';
   canUserDeleteForms: boolean;
 
+  response:any
+
   constructor(
     private formService: TangyFormService,
     private ref: ChangeDetectorRef,
@@ -53,6 +55,7 @@ export class EventFormListItemComponent implements OnInit {
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
     const response = await this.formService.getResponse(this.eventForm.formResponseId);
+    this.response = response
     const getValue = (variableName) => {
       if (response) {
         const variablesByName = response.items.reduce((variablesByName, item) => {
