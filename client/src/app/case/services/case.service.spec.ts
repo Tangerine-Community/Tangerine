@@ -325,7 +325,7 @@ describe('CaseService', () => {
         }
       ]
     })
-    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    const revisedCaseInstance = markQualifyingEventsAsComplete({ caseInstance, caseDefinition }).caseInstance
     expect(revisedCaseInstance.events[0].complete).toEqual(false)
   })
 
@@ -380,7 +380,7 @@ describe('CaseService', () => {
         }
       ]
     })
-    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    const revisedCaseInstance = markQualifyingEventsAsComplete({ caseInstance, caseDefinition }).caseInstance
     expect(revisedCaseInstance.events[0].complete).toEqual(false)
   })
 
@@ -435,7 +435,7 @@ describe('CaseService', () => {
         }
       ]
     })
-    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    const revisedCaseInstance = markQualifyingEventsAsComplete({ caseInstance, caseDefinition }).caseInstance
     expect(revisedCaseInstance.events[0].complete).toEqual(true)
   })
 
@@ -490,7 +490,7 @@ describe('CaseService', () => {
         }
       ]
     })
-    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    const revisedCaseInstance = markQualifyingEventsAsComplete({ caseInstance, caseDefinition }).caseInstance
     expect(revisedCaseInstance.events[0].complete).toEqual(false)
   })
 
@@ -545,7 +545,7 @@ describe('CaseService', () => {
         }
       ]
     })
-    const revisedCaseInstance = markQualifyingEventsAsComplete(caseInstance, caseDefinition)
+    const revisedCaseInstance = markQualifyingEventsAsComplete({ caseInstance, caseDefinition }).caseInstance
     expect(revisedCaseInstance.events[0].complete).toEqual(true)
   })
 
