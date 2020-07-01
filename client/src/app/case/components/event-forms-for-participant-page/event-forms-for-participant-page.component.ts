@@ -12,6 +12,8 @@ export class EventFormsForParticipantPageComponent implements OnInit {
   caseId:string
   eventId:string
   participantId:string
+  breadcrumbUrl = ''
+  breadcrumbText = ''
 
   constructor(
     private route: ActivatedRoute
@@ -22,6 +24,8 @@ export class EventFormsForParticipantPageComponent implements OnInit {
       this.caseId = params.caseId
       this.eventId = params.eventId
       this.participantId = params.participantId
+      this.breadcrumbText = window['breadcrumbText'] || this.breadcrumbText
+      this.breadcrumbUrl = window['breadcrumbUrl'] || this.breadcrumbUrl
       this.ready = true
     })
   }
