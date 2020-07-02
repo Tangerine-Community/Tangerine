@@ -46,13 +46,11 @@ module.exports = {
             
               // output case-events
               for (const event of doc.events) {
-                console.log("Processing doc _id: " + doc._id + " in database " +  sourceDb.name)
-                console.log("event: " + JSON.stringify(event))
-                console.log("event.eventForms: " + typeof event.eventForms)
                 // output event-forms
-                // for (const eventForm of event['eventForms']) {
-                for (let index = 0; index < event['eventForms'].length; index++) {
-                  const eventForm = event['eventForms'][index]
+                if (event['eventForms']) {
+                  for (const eventForm of event['eventForms']) {
+                    // for (let index = 0; index < event['eventForms'].length; index++) {
+                    // const eventForm = event['eventForms'][index]
                     try {
                       await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
                     } catch (e) {
@@ -60,12 +58,17 @@ module.exports = {
                         console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
                       }
                     }
+                  }
+                } else {
+                  console.log("Synapse - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
                 }
-                console.log("Delete the eventForms array from the case-event object")
+                // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
+                // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+                const eventClone = Object.assign({}, event);
                 // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
                 // since we are already serializing each event-form and have the parent caseEventId on each one.
-                delete event.eventForms
-                await pushResponse({...event, _id: event.id, type: "case-event"}, targetDb)
+                delete eventClone.eventForms
+                await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
               }
             } else {
               await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
@@ -73,7 +76,6 @@ module.exports = {
           }
         }
       }
-      
         
       return new Promise(async (resolve, reject) => {
         const {doc, sourceDb} = data
@@ -207,11 +209,14 @@ function pushResponse(doc, db) {
           .catch(error => reject(`synapse pushResponse could not overwrite ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
       })
       .catch(error => {
-        // delete the _rev property from the doc
-        delete doc._rev
-        db.put(doc)
+        const docClone = Object.assign({}, doc);
+        // Make a clone of the doc so we can delete part of it but not lose it in other iterations of this code
+        // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+        // delete the _rev property from the docClone
+        delete docClone._rev
+        db.put(docClone)
           .then(_ => resolve(true))
-          .catch(error => reject(`synapse pushResponse could not save ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
+          .catch(error => reject(`synapse pushResponse could not save ${docClone._id} to ${docClone.name} because Error of ${JSON.stringify(error)}`))
     });
   })
 }
