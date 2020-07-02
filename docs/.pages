@@ -1,7 +1,11 @@
 arrange:
+    - index.md
     - about.md
     - getting-started.md
     - whats-new.md
     - navigation.md 
     - CONTRIBUTING.md
-    - index.md
+    - editor
+    - data-collector
+    - developer
+    - system-administrator
