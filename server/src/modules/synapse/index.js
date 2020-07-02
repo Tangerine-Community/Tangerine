@@ -20,10 +20,8 @@ module.exports = {
       return data
     },
     reportingOutputs: function(data) {
-      
       async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
-
-        if (exclusions && exclusions.find(doc.form.id)) {
+        if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
         } else {
           if (doc.form.id === 'user-profile') {
@@ -32,7 +30,6 @@ module.exports = {
             if (doc.type === 'case') {
               // output case
               await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
-
               let numInf = getItemValue(doc, 'numinf')
               let participant_id = getItemValue(doc, 'participant_id')
 
@@ -46,19 +43,25 @@ module.exports = {
                   type: "participant"
                 }, targetDb);
               }
+            
               // output case-events
               for (const event of doc.events) {
-
+                console.log("Processing doc _id: " + doc._id + " in database " +  sourceDb.name)
+                console.log("event: " + JSON.stringify(event))
+                console.log("event.eventForms: " + typeof event.eventForms)
                 // output event-forms
-                for (const eventForm of event['eventForms']) {
-                  try {
-                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
-                  } catch (e) {
-                    if (e.status !== 404) {
-                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                // for (const eventForm of event['eventForms']) {
+                for (let index = 0; index < event['eventForms'].length; index++) {
+                  const eventForm = event['eventForms'][index]
+                    try {
+                      await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                    } catch (e) {
+                      if (e.status !== 404) {
+                        console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                      }
                     }
-                  }
                 }
+                console.log("Delete the eventForms array from the case-event object")
                 // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
                 // since we are already serializing each event-form and have the parent caseEventId on each one.
                 delete event.eventForms
@@ -70,13 +73,15 @@ module.exports = {
           }
         }
       }
-
+      
+        
       return new Promise(async (resolve, reject) => {
         const {doc, sourceDb} = data
         const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-        const groupPath = '/tangerine/client/content/groups/' + sourceDb.name
-        const exclusions = await fs.readJSON(`${groupPath}/synapse-exclusions.json`)
-
+        // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
+        const groupsDb = await new DB(`groups`);
+        const groupDoc = await groupsDb.get(`${sourceDb.name}`)
+        const exclusions = groupDoc['exclusions']
         // First generate the full-cream database
         let synapseDb
         try {
@@ -96,7 +101,6 @@ module.exports = {
         }
         sanitized = true;
         await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, resolve);
-        
       })
     }
   }
@@ -112,7 +116,8 @@ const getItemValue = (doc, variableName) => {
   return variablesByName[variableName];
 };
 
-/** This function processes form response for csv.
+
+/** This function processes form response, making the data structure flatter.
  *
  * @param {object} formData - form response from database
  * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
