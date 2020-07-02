@@ -21,6 +21,7 @@ markdown_extensions:
       guess_lang: false
   - toc:
       permalink: true
+      toc_depth: 3
   - pymdownx.betterem:
       smart_enable: all
   - pymdownx.caret
