@@ -1,3 +1,4 @@
+import { CustomAppComponent } from './components/custom-app/custom-app.component';
 import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 import { Observable } from 'rxjs';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
@@ -28,6 +29,11 @@ export class CanDeactivateEvent implements CanDeactivate<EventComponent> {
 }
 
 const routes: Routes = [
+  {
+    path: 'custom-app',
+    component: CustomAppComponent,
+    canActivate: [LoginGuard]
+  },
   {
     path: 'case/:id',
     component: CaseComponent,
