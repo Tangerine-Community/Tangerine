@@ -28,9 +28,10 @@ A TangyFormResponse is a very generic container for data; it does not by default
 
 ```json
 {
-"collection": "TangyFormResponse"
-"type": "case",
-"eventForms": [
+  "_id": "8744ff38-4c3e-487d-814d-ddcb916a41d5",
+  "collection": "TangyFormResponse",
+  "type": "case",
+  "eventForms": [
     {
       "id": "c7b6ee21-793a-11ea-9144-710703689c79",
       "complete": true,
