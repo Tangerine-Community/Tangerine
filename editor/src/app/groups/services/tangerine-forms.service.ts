@@ -45,7 +45,7 @@ export class TangerineFormsService {
       title: formTitle,
       src: `./assets/${formId}/form.html`,
       searchSettings:  <FormSearchSettings>{
-        shouldIndex: config.enabledModules.includes('case') ? true : false,
+        shouldIndex: false,
         variablesToIndex: [],
         primaryTemplate: '',
         secondaryTemplate: ''
