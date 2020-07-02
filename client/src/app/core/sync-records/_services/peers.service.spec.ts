@@ -374,6 +374,7 @@ describe('PeersService', () => {
   });
 
 
+  /*
   it('got permissions', async () => {
     const service: PeersService = TestBed.get(PeersService);
     const message: Message = await service.getTangyP2PPermissions();
@@ -439,5 +440,5 @@ describe('PeersService', () => {
   //   expect(hasDoc).toEqual(true);
   // });
 
-
+  */
 });
