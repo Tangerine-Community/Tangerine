@@ -106,7 +106,9 @@ export class EventFormComponent implements OnInit {
               window['username']
             )
           }
-          await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+          window.location.hash = window['eventFormRedirect']
+            ? window['eventFormRedirect']
+            : `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
         }, 500)
       })
       this.loaded = true

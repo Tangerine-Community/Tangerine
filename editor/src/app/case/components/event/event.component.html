@@ -1,7 +1,8 @@
 <div *ngIf="loaded">
   <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
-
+  <app-case-notifications></app-case-notifications>
   <div class="wrapper">
+    <div class="screen" *ngIf="hasNotificationEnforcingAttention"></div>
     <app-event-form-list-item
       *ngFor="let eventFormInfo of noRoleEventFormInfos"
       [case]="caseService.case"
@@ -14,33 +15,13 @@
       routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
     >
     </app-event-form-list-item>
-    <div
-      class="form-cards" 
-      *ngFor="let participantInfo of participantInfos"
+    <app-event-forms-for-participant
+      [caseId]="caseService.case._id"
+      [eventId]="caseEvent.id"
+      [participantId]="participant.id"
+      *ngFor="let participant of caseService.case.participants"
     >
-      <h2 [innerHTML]="participantInfo.renderedListItem|unsanitizeHtml"></h2>
-      <div 
-        *ngIf="participantInfo.availableEventFormDefinitionsForParticipant && participantInfo.availableEventFormDefinitionsForParticipant.length > 0"
-        class="new-form-container"
-      >
-        <paper-fab 
-          class="new-form-button"
-          routerLink="{{participantInfo.newFormLink}}"
-          icon="add"
-        >
-        </paper-fab>
-      </div>
-      <app-event-form-list-item (formDeleted)="updateFormList($event)"
-        *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
-        [case]="caseService.case"
-        [caseDefinition]="caseService.caseDefinition"
-        [caseEvent]="caseEvent"
-        [caseEventDefinition]="caseEventDefinition"
-        [eventForm]="eventFormInfo.eventForm"
-        [eventFormDefinition]="eventFormInfo.eventFormDefinition"
-        class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
-      >
-      </app-event-form-list-item>
-    </div>
+    </app-event-forms-for-participant>
+     
   </div>
 </div>
