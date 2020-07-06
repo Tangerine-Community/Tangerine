@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.12.0
+- Fixes
+  - Autostop is not triggered when marking the entire lineas incorrect [#1869](https://github.com/Tangerine-Community/Tangerine/issues/1869)
+  - Mark entire line of grid as incorrect cannot be undone [#1651](https://github.com/Tangerine-Community/Tangerine/issues/1651)
+  - Meta data print screen Prompt and Hint are not displayed for Radio Buttons (single type) [#1748](https://github.com/Tangerine-Community/Tangerine/issues/1748)
+  - Form Metadata view of Checkboxes with one option is missing [#2239](https://github.com/Tangerine-Community/Tangerine/issues/2239)
+
+
 ## v3.11.0
 - New Features in all Tangerine
   - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
