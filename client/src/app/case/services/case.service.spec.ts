@@ -558,7 +558,7 @@ describe('CaseService', () => {
     expect(service.case.events[0].eventForms.length).toEqual(1)
   })
 
-  it('CaseEvent should have status of comleted when all required forms are completed', async () => {
+  it('CaseEvent should have status of completed when all required forms are completed', async () => {
     const service: CaseService = TestBed.get(CaseService);
     await service.create('caseDefinition1')
     const caseParticipant = await service.createParticipant('role1')
@@ -568,7 +568,7 @@ describe('CaseService', () => {
     for (const eventForm of service.case.events[0].eventForms) {
       service.markEventFormComplete(caseEvent.id, eventForm.id)
     }
-    //expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_COMPLETED)
+    expect(service.case.events[0].complete).toEqual(true)
   })
 
 });

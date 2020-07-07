@@ -12,57 +12,97 @@ module.exports = {
       const { groupNames } = data
       for (let groupName of groupNames) {
         console.log(`removing db ${groupName}-synapse`)
-        const db = new DB(`${groupName}-synapse`)
+        let db = new DB(`${groupName}-synapse`)
+        await db.destroy()
+        db = new DB(`${groupName}-synapse-sanitized`)
         await db.destroy()
       }
       return data
     },
     reportingOutputs: function(data) {
+      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
+        if (exclusions && exclusions.includes(doc.form.id)) {
+          // skip!
+        } else {
+          if (doc.form.id === 'user-profile') {
+            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized, resolve);
+          } else {
+            if (doc.type === 'case') {
+              // output case
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
+              let numInf = getItemValue(doc, 'numinf')
+              let participant_id = getItemValue(doc, 'participant_id')
+
+              // output participants
+              for (const participant of doc.participants) {
+                await pushResponse({
+                  ...participant,
+                  _id: participant.id,
+                  caseId: doc._id,
+                  numInf: participant.participant_id === participant_id ? numInf : '',
+                  type: "participant"
+                }, targetDb);
+              }
+            
+              // output case-events
+              for (const event of doc.events) {
+                // output event-forms
+                if (event['eventForms']) {
+                  for (const eventForm of event['eventForms']) {
+                    // for (let index = 0; index < event['eventForms'].length; index++) {
+                    // const eventForm = event['eventForms'][index]
+                    try {
+                      await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                    } catch (e) {
+                      if (e.status !== 404) {
+                        console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                      }
+                    }
+                  }
+                } else {
+                  console.log("Synapse - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                }
+                // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
+                // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+                const eventClone = Object.assign({}, event);
+                // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
+                // since we are already serializing each event-form and have the parent caseEventId on each one.
+                delete eventClone.eventForms
+                await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
+              }
+            } else {
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
+            }
+          }
+        }
+      }
+        
       return new Promise(async (resolve, reject) => {
         const {doc, sourceDb} = data
         const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+        // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
+        const groupsDb = await new DB(`groups`);
+        const groupDoc = await groupsDb.get(`${sourceDb.name}`)
+        const exclusions = groupDoc['exclusions']
+        // First generate the full-cream database
         let synapseDb
         try {
           synapseDb = await new DB(`${sourceDb.name}-synapse`);
         } catch (e) {
           console.log("Error creating db: " + JSON.stringify(e))
         }
-        if (doc.form.id === 'user-profile') {
-          await saveFlatResponse({...doc, type : "user-profile"}, locationList, synapseDb, resolve);
-        } else {
-          if (doc.type === 'case') {
-            // output case
-            await saveFlatResponse(doc, locationList, synapseDb, resolve);
-            
-            let numInf = getItemValue(doc, 'numinf')
-            let participant_id = getItemValue(doc, 'participant_id')
-
-            // output participants
-            for (const participant of doc.participants) {
-              await pushResponse({...participant, _id: participant.id, caseId: doc._id, numInf: participant.participant_id === participant_id ? numInf : '', type: "participant"}, synapseDb);
-            }
-            // output case-events
-            for (const event of doc.events) {
-
-              // output event-forms
-              for (const eventForm of event['eventForms']) {
-                try {
-                  await pushResponse({...eventForm, type : "event-form", _id : eventForm.id }, synapseDb);
-                } catch (e) {
-                  if (e.status !== 404) {
-                    console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
-                  }
-                }
-              }
-              // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
-              // since we are already serializing each event-form and have the parent caseEventId on each one.
-              delete event.eventForms
-              await pushResponse({...event, _id: event.id, type : "case-event"}, synapseDb)
-            }
-          } else {
-            await saveFlatResponse(doc, locationList, synapseDb, resolve);
-          }
+        let sanitized = false;
+        await generateDatabase(sourceDb, synapseDb, doc, locationList, sanitized, exclusions, resolve);
+        
+        // Then create the sanitized version
+        let synapseSanitizedDb
+        try {
+          synapseSanitizedDb = await new DB(`${sourceDb.name}-synapse-sanitized`);
+        } catch (e) {
+          console.log("Error creating db: " + JSON.stringify(e))
         }
+        sanitized = true;
+        await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, resolve);
       })
     }
   }
@@ -78,15 +118,17 @@ const getItemValue = (doc, variableName) => {
   return variablesByName[variableName];
 };
 
-/** This function processes form response for csv.
+
+/** This function processes form response, making the data structure flatter.
  *
  * @param {object} formData - form response from database
  * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
+ * @param {boolean} sanitized - flag if data must filter data based on the identifier flag.
  *
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList) {
+const generateFlatResponse = async function (formResponse, locationList, sanitized) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
@@ -110,6 +152,13 @@ const generateFlatResponse = async function (formResponse, locationList) {
   }
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
+      let sanitize = false;
+      if (sanitized) {
+        if (input.identifier) {
+          sanitize = true
+        }
+      }
+      if (!sanitize) {
       // Simplify the keys by removing formID.itemId
       let firstIdSegment = ""
       if (input.tagName === 'TANGY-LOCATION') {
@@ -143,6 +192,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
           set(input, `${firstIdSegment}${input.name}.${key}`, input.value[key])
         };
       }
+      } // sanitize
     }
   }
   return flatFormResponse;
@@ -159,23 +209,26 @@ function pushResponse(doc, db) {
           .catch(error => reject(`synapse pushResponse could not overwrite ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
       })
       .catch(error => {
-        // delete the _rev property from the doc
-        delete doc._rev
-        db.put(doc)
+        const docClone = Object.assign({}, doc);
+        // Make a clone of the doc so we can delete part of it but not lose it in other iterations of this code
+        // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+        // delete the _rev property from the docClone
+        delete docClone._rev
+        db.put(docClone)
           .then(_ => resolve(true))
-          .catch(error => reject(`synapse pushResponse could not save ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
+          .catch(error => reject(`synapse pushResponse could not save ${docClone._id} to ${docClone.name} because Error of ${JSON.stringify(error)}`))
     });
   })
 }
 
-async function saveFlatResponse(doc, locationList, synapseDb, resolve) {
-  let flatResponse = await generateFlatResponse(doc, locationList);
+async function saveFlatResponse(doc, locationList, targetDb, sanitized, resolve) {
+  let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
   // make sure the top-level properties of doc are copied.
   const topDoc = {}
   Object.entries(doc).forEach(([key, value]) => value === Object(value) ? null : topDoc[key] = value);
   await pushResponse({...topDoc,
     data: flatResponse
-  }, synapseDb);
+  }, targetDb);
   resolve('done!')
 }
 

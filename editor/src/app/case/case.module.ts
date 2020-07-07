@@ -7,6 +7,7 @@ import { EventComponent } from './components/event/event.component';
 //import { FormComponent } from './components/form/form.component';
 import { NewCaseComponent } from './components/new-case/new-case.component';
 import { CaseRoutingModule } from './case-routing.module';
+import { EventFormsForParticipantComponent } from './components/event-forms-for-participant/event-forms-for-participant.component';
 import { EventFormComponent } from './components/event-form/event-form.component';
 import { CaseBreadcrumbComponent } from './components/case-breadcrumb/case-breadcrumb.component';
 import { SharedModule } from '../shared/shared.module'
@@ -52,6 +53,7 @@ import { NewIssueComponent } from './components/new-issue/new-issue.component';
     QueryComponent,
     EventFormAddComponent,
     IssueComponent,
+    EventFormsForParticipantComponent,
     NewIssueComponent
   ]
 })

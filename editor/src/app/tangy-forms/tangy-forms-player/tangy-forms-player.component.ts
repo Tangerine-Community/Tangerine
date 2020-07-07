@@ -3,7 +3,7 @@ import { FormInfo, FormTemplate } from 'src/app/tangy-forms/classes/form-info.cl
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { Component, ViewChild, ElementRef, AfterContentInit, Input, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
@@ -16,12 +16,12 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 })
 export class TangyFormsPlayerComponent {
 
-  // Use on of three to do different things.
+  // Use one of three to do different things.
   // 1. Use this to have the component load the response for you. 
   @Input('formResponseId') formResponseId:string
   // 2. Use this if you want to attach the form response yourself.
   @Input('response') response:TangyFormResponseModel
-  // 3. Use this is you want a new form response but want define which form to use.
+  // 3. Use this is you want a new form response.
   @Input('formId') formId:string
 
   @Input('templateId') templateId:string
@@ -73,7 +73,6 @@ export class TangyFormsPlayerComponent {
   }
 
   async render() {
-    //
     // Get form ingredients.
     const formResponse = this.response
       ? new TangyFormResponseModel(this.response)
@@ -103,6 +102,7 @@ export class TangyFormsPlayerComponent {
       } else {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
+        this.throttledSaveResponse(formEl.response)
       }
       this.response = formEl.response
       // Listen up, save in the db.

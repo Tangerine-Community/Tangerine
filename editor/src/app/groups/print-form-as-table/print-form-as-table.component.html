@@ -44,7 +44,7 @@
             </td>
             <td>{{input.hintText}}</td>
             <td>
-              <span *ngIf="input.value.length>1">
+              <span *ngIf="input.value.length>0">
                 <span *ngFor="let option of input.value; let index=index">
                   {{option.value}} {{'"'+option.label+'"'}}{{index+1===input.value.length?'':' ,'}}
                 </span>
