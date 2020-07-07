@@ -1,0 +1,13 @@
+.new-form-container {
+  position:relative;
+}
+
+.new-form-button {
+  position: absolute;
+  top: -64px;
+  right: 23px;
+}
+
+h2 {
+  margin: 30px 0px 25px 20px;
+}
