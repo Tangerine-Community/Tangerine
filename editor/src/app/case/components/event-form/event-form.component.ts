@@ -79,6 +79,10 @@ export class EventFormComponent implements OnInit {
       }
       this.formPlayer.render()
 
+      this.caseService.onChangeLocation$.subscribe(location => {
+        this.formPlayer.location = this.caseService.case.location
+      })
+
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
       this.formPlayer.$rendered.subscribe(async () => {

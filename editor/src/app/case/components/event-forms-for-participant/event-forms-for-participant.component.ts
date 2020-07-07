@@ -57,7 +57,6 @@ export class EventFormsForParticipantComponent implements OnInit {
   async ngOnInit() {
     await this.caseService.load(this.caseId)
     this.window.caseService = this.caseService
-    this.window['T']['case'] = this.caseService
     this.caseEvent = this
       .caseService
       .case
