@@ -16,8 +16,9 @@ interface EventFormInfo {
 interface ParticipantInfo {
   id: string
   renderedListItem:string
-  availableEventFormDefinitionsForParticipant: Array<string>
   newFormLink:string
+  eventFormsParticipantCanCreate: Array<string>
+  caseEventHasEventFormsForParticipantsRole:boolean
   eventFormInfos: Array<EventFormInfo>
 }
 
@@ -54,7 +55,16 @@ export class EventFormsForParticipantComponent implements OnInit {
     this.window = window
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.render()
+  }
+
+  onFormDelete() {
+    console.log('form delete detected')
+    this.render()
+  }
+
+  async render() {
     await this.caseService.load(this.caseId)
     this.window.caseService = this.caseService
     this.caseEvent = this
@@ -76,7 +86,7 @@ export class EventFormsForParticipantComponent implements OnInit {
     return this._canExitToRoute
   }
 
-  calculateAvailableEventFormDefinitionsForParticipant(participantId) {
+  eventFormsParticipantCanCreate(participantId) {
     const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
     return this.caseEventDefinition.eventFormDefinitions
       .filter(eventFormDefinition => eventFormDefinition.forCaseRole === participant.caseRoleId)
@@ -110,7 +120,8 @@ export class EventFormsForParticipantComponent implements OnInit {
       id,
       renderedListItem,
       newFormLink: `/case/event/form-add/${this.caseService.case._id}/${this.caseEvent.id}/${participant.id}`,
-      availableEventFormDefinitionsForParticipant: this.calculateAvailableEventFormDefinitionsForParticipant(participant.id),
+      caseEventHasEventFormsForParticipantsRole: this.caseEventDefinition.eventFormDefinitions.some(eventDef => eventDef.forCaseRole === participant.caseRoleId),
+      eventFormsParticipantCanCreate: this.eventFormsParticipantCanCreate(participant.id),
       eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
         return eventForm.participantId === participant.id
           ? [...eventFormInfos, <EventFormInfo>{

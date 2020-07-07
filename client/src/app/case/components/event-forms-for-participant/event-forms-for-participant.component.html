@@ -1,9 +1,10 @@
 <div class="form-cards"
-  *ngIf="participantInfo.availableEventFormDefinitionsForParticipant && participantInfo.availableEventFormDefinitionsForParticipant.length > 0"
+    *ngIf="participantInfo.caseEventHasEventFormsForParticipantsRole"
 >
   <h2 [innerHTML]="participantInfo.renderedListItem|unsanitizeHtml"></h2>
   <div 
     class="new-form-container"
+    *ngIf="participantInfo.eventFormsParticipantCanCreate && participantInfo.eventFormsParticipantCanCreate.length > 0"
   >
     <paper-fab 
       class="new-form-button"
@@ -20,6 +21,7 @@
     [caseEventDefinition]="caseEventDefinition"
     [eventForm]="eventFormInfo.eventForm"
     [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+    (formDeleted)="onFormDelete()"
     class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
   >
   </app-event-form-list-item>
