@@ -40,6 +40,7 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemPrimary = '';
   renderedTemplateListItemSecondary = '';
   canUserDeleteForms: boolean;
+  response:any
 
   constructor(
     private formService: TangyFormService,
@@ -53,6 +54,7 @@ export class EventFormListItemComponent implements OnInit {
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
     const response = await this.formService.getResponse(this.eventForm.formResponseId);
+    this.response = response
     const getValue = (variableName) => {
       if (response) {
         const variablesByName = response.items.reduce((variablesByName, item) => {
@@ -91,7 +93,7 @@ export class EventFormListItemComponent implements OnInit {
       _TRANSLATE('Are you sure you want to delete this form instance? You will not be able to undo the operation')
       );
     if (confirmDelete) {
-      this.caseService.deleteEventFormInstance(this.eventForm.caseEventId, this.eventForm.id);
+      this.caseService.deleteEventForm(this.eventForm.caseEventId, this.eventForm.id);
       await this.caseService.save();
       this.formDeleted.emit('formDeleted');
       this.ref.detectChanges();
