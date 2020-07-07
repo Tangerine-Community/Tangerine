@@ -275,7 +275,7 @@ class CaseService {
         return {
           ...event,
           eventForms: event.id === caseEventId
-            ? event.eventForms.filter(eventForm => eventForm.id === eventFormId)
+            ? event.eventForms.filter(eventForm => eventForm.id !== eventFormId)
             : event.eventForms
         }
       })
