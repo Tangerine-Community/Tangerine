@@ -1,8 +1,12 @@
 # Restoring from an Encrypted Backup
 
-## Android app
+## Restoring a backed-up encrypted database onto a fresh Tangerine app installation.
 
-TBD
+This only works for sync-protocol-2. 
+
+Connect the tablet to the pc with a USB cable. Use Android File transfer to browse to the `Download` directory. Create a new directory called `restore` inside the `Download` directory so that the following directory structure exists: `Download/restore`. Copy the database file from the pc to the `restore` directory. 
+
+Install the Tangerine app on the tablet.  From the language dropdown screen, click a link marke `Restore database`.
 
 ## Viewing data from an encrypted backup
 
