@@ -293,5 +293,61 @@
       "push": true,
       "pull": true
     }
+  },
+  {
+    "id" : "dynamically-make-an-optional-form-required",
+    "src" : "./assets/dynamically-make-an-optional-form-required/form.html",
+    "description" : "Dynamically make an optional form required",
+    "listed" : false,
+    "title" : "Dynamically make an optional form required",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id" : "form-that-syncs-up-but-not-down",
+    "src" : "./assets/form-that-syncs-up-but-not-down/form.html",
+    "description" : "A form that syncs up but not down",
+    "listed" : false,
+    "title" : "A form that syncs up but not down",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": false 
+    }
   }     
 ]

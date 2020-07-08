@@ -19,7 +19,7 @@
   "templateCaseDescription": "${getVariable('participant_id') ? `Participant ID: ${getVariable('participant_id')}&nbsp;&nbsp;&nbsp;&nbsp; Location: ${getVariable('location')}` : '...'}",
   "templateCaseEventListItemIcon": "${caseEvent.complete ? 'event_available' : 'event_note'}",
   "templateCaseEventListItemPrimary": "<span>${caseEventDefinition.name}</span>",
-  "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.status !== 'complete' ? 'Incomplete' : 'Complete'}",
+  "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.complete ? 'Complete' : 'Incomplete'}",
   "templateEventFormListItemIcon": "",
   "templateEventFormListItemPrimary": "<span>${eventFormDefinition.name}</span>",
   "templateEventFormListItemSecondary": "Status: ${!eventForm.complete ? 'Incomplete' : 'Complete'}",
@@ -104,6 +104,28 @@
           "autoPopulate": true,
           "required": false,
           "repeatable": false
+        },
+        {
+          "id": "event-form-definition-81a9b92",
+          "formId": "dynamically-make-an-optional-form-required",
+          "forCaseRole": "role-2",
+          "name": "Dynamically make an optional form required",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-a6haeb",
+          "formId": "form-that-syncs-up-but-not-down",
+          "forCaseRole": "role-2",
+          "name": "A form that syncs up but not down",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
         }
       ]
     },
@@ -135,6 +157,36 @@
           "forCaseRole": "role-1",
           "name": "An Event Form you can delete",
           "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "test-event-completion-logic",
+      "name": "Test the Event completion logic",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-zafbe02",
+          "formId": "test-form",
+          "forCaseRole": "role-1",
+          "name": "An Event Form required in the EventFormDefinition",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-81b9i90",
+          "formId": "dynamically-make-an-optional-form-required",
+          "forCaseRole": "role-1",
+          "name": "Dynamically make an optional form required",
+          "autoPopulate": false,
           "allowDeleteIfFormNotCompleted": true,
           "allowDeleteIfFormNotStarted": true,
           "required": false,
