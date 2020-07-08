@@ -115,6 +115,17 @@
           "allowDeleteIfFormNotStarted": true,
           "required": false,
           "repeatable": false
+        },
+        {
+          "id": "event-form-definition-a6haeb",
+          "formId": "form-that-syncs-up-but-not-down",
+          "forCaseRole": "role-2",
+          "name": "A form that syncs up but not down",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
         }
       ]
     },
