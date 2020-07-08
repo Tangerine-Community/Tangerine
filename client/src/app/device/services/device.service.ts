@@ -145,17 +145,4 @@ export class DeviceService {
     }
   }
 
-  setPassword(password:string) {
-    const salt = bcrypt.genSaltSync(10);
-    localStorage.setItem('tangerine-device-password', bcrypt.hashSync(password, salt))
-  }
-
-  verifyPassword(password:string) {
-    return bcrypt.compareSync(password, localStorage.getItem('tangerine-device-password'))
-  }
-
-  passwordIsSet():boolean {
-    return localStorage.getItem('tangerine-device-password') ? true : false
-  }
-
 }
