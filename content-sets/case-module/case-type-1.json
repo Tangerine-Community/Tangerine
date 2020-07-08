@@ -124,18 +124,21 @@
       ]
     },
     {
-      "id": "change-location-of-case",
-      "name": "Change location of case",
+      "id": "event-with-an-event-form-you-can-delete",
+      "name": "An Event with an Event Form you can delete",
       "repeatable": true,
       "required": false,
       "eventFormDefinitions": [
         {
-          "id": "event-form-definition-zibe83",
-          "formId": "change-location-of-case",
+          "id": "event-form-definition-zafbe02",
+          "formId": "test-form",
           "forCaseRole": "role-1",
-          "name": "Change location of case",
-          "required": true,
-          "repeatable": false 
+          "name": "An Event Form you can delete",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
         }
       ]
     }
