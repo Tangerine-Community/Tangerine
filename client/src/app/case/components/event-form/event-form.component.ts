@@ -109,9 +109,14 @@ export class EventFormComponent implements OnInit {
               window['username']
             )
           }
-          window.location.hash = window['eventFormRedirect']
-            ? window['eventFormRedirect']
-            : `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
+          // @TODO Why do we have to redirect back to the case event page to avoid a database conflict error when redirecting 
+          // to another event form???
+          window.location.hash = `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
+          if (window['eventFormRedirect']) {
+            window.location.hash = window['eventFormRedirect']
+            // Reset the event form redirect so it doesn't become permanent.
+            window['eventFormRedirect'] = ''
+          }
         }, 500)
       })
       this.loaded = true
