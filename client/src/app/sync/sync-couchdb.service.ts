@@ -189,7 +189,7 @@ export class SyncCouchdbService {
         }
       }).on('checkpoint', (info) => {
         if (info) {
-          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
             checkpointProgress = checkpointProgress + 1
@@ -267,7 +267,7 @@ export class SyncCouchdbService {
         }
       }).on('checkpoint', (info) => {
         if (info) {
-          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
             checkpointProgress = checkpointProgress + 1

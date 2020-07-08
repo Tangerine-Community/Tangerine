@@ -493,7 +493,7 @@
       }
     };
     // console.log('check db name');
-    console.log('db name: ' + this.db.dbname);
+    // console.log('db name: ' + this.db.dbname);
     id = idmap[this.db.dbname];
     // console.log('id: ' + id);
     // console.log(JSON.stringify(tropts));

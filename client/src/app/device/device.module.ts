@@ -8,6 +8,9 @@ import { DeviceService } from './services/device.service';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DevicePasswordComponent } from './components/device-password/device-password.component';
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -21,7 +24,9 @@ import { DevicePasswordComponent } from './components/device-password/device-pas
   imports: [
     CommonModule,
     SharedModule,
-    DeviceRoutingModule 
+    DeviceRoutingModule,
+    MatButtonModule, MatIconModule,
+    RouterModule
   ],
   providers: [
     DeviceService

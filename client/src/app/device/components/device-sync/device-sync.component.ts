@@ -27,17 +27,16 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         let pendingMessage = '', docsWritten = '', direction = ''
-
         if (typeof progress.direction !== 'undefined') {
           direction = 'Direction: ' + progress.direction + '; '
-        }
-        if (typeof progress.docs_written !== 'undefined') {
-          docsWritten = progress.docs_written + ' docs saved; '
         }
         if (typeof progress.pending !== 'undefined') {
           pendingMessage = progress.pending + ' pending; '
         }
-        this.syncMessage =  direction + docsWritten + pendingMessage
+        if (typeof progress.docs_written !== 'undefined') {
+          docsWritten = progress.docs_written + ' docs saved; '
+          this.syncMessage =  direction + docsWritten + pendingMessage
+        }
         console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
