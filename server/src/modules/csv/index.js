@@ -121,11 +121,12 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,
-      caseEventId: formResponse.caseEventId,
+      eventId: formResponse.eventId,
       eventFormId: formResponse.eventFormId,
       participantId: formResponse.participantId || ''
     } : {}
   };
+  
   function set(input, key, value) {
     flatFormResponse[key] = input.skipped
         ? process.env.T_REPORTING_MARK_SKIPPED_WITH

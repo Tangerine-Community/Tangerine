@@ -11,6 +11,9 @@ import { DevicePasswordComponent } from './components/device-password/device-pas
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import { RouterModule } from '@angular/router';
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatCardModule} from "@angular/material/card";
+import { RestoreBackupComponent } from './components/restore-backup/restore-backup.component';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -19,14 +22,15 @@ import { RouterModule } from '@angular/router';
     DeviceRegistrationComponent,
     DeviceLanguageComponent,
     DeviceSyncComponent,
-    DevicePasswordComponent
+    DevicePasswordComponent,
+    RestoreBackupComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
     DeviceRoutingModule,
     MatButtonModule, MatIconModule,
-    RouterModule
+    RouterModule, MatTabsModule, MatCardModule
   ],
   providers: [
     DeviceService
