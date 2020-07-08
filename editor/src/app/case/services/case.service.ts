@@ -253,11 +253,14 @@ class CaseService {
                 required: this
                   .caseDefinition
                   .eventDefinitions
-                  .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId).required,
+                  .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+                  .eventFormDefinitions
+                  .find(eventFormDefinition => eventFormDefinition.id === eventFormDefinitionId)
+                  .required,
                 caseId: this.case._id,
                 participantId,
                 caseEventId,
-                eventFormDefinitionId: eventFormDefinitionId
+                eventFormDefinitionId
               }
             ]
         }
@@ -270,7 +273,7 @@ class CaseService {
       .eventForms
       .find(eventForm => eventForm.id === eventFormId)
   }
-
+  
   // @TODO Deprecated.
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     console.warn('caseService.startEventForm(...) is deprecated. Please use caseService.createEventForm(...) before startEventForm is removed.')
