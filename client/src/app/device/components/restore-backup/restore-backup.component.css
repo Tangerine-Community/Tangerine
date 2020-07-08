@@ -1,0 +1,22 @@
+mat-card {
+  margin-top: 1em;
+}
+
+.mat-card-header-text {
+  margin: 1em 0;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.status {
+  text-align: center;
+  margin-top: 2em;
+  font-size: large;
+}
+
+.error {
+  text-align: center;
+  margin-top: 2em;
+  color: red;
+  font-size: large;
+}

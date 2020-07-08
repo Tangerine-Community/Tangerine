@@ -6,6 +6,7 @@ import {AppConfigService} from '../../../shared/_services/app-config.service';
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const USERS_DATABASE_NAME = 'users';
 const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
+const VARIABLES_DATABASE_NAME = 'tangerine-variables';
 declare const cordova: any;
 @Component({
   selector: 'app-export-data',
@@ -25,7 +26,7 @@ export class ExportDataComponent implements OnInit {
   async exportAllRecords() {
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
-      const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME]
+      const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
       for (const dbName of dbNames) {
         // copy the database
         console.log(`copying ${dbName} db over to the user accessible fs`)
