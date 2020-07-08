@@ -1,0 +1,13 @@
+<tangy-form
+  title=""
+  id="dynamically-make-an-optional-form-required"
+  on-open="
+    caseService.markEventFormRequired(caseEvent.id, eventForm.id)
+  "
+>
+  <tangy-form-item id="item-1">
+    <tangy-box name="info">
+      This form when it was created was optional. However, in this form's `on-open` hook it uses the caseService.markEventFormRequired(caseEventId, eventFormId) API to make itself required. Click back to see that it is now required.
+    </tangy-box>
+  </tangy-form-item>
+</tangy-form-item>
