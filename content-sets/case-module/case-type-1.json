@@ -104,6 +104,17 @@
           "autoPopulate": true,
           "required": false,
           "repeatable": false
+        },
+        {
+          "id": "event-form-definition-81a9b92",
+          "formId": "dynamically-make-an-optional-form-required",
+          "forCaseRole": "role-2",
+          "name": "Dynamically make an optional form required",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
         }
       ]
     },
