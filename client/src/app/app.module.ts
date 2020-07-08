@@ -31,6 +31,7 @@ import { AboutModule } from './core/about/about.module';
 import { SearchModule } from './core/search/search.module';
 import { NewFormResponseModule } from './core/new-form-response/new-form-response.module';
 import {AppInit} from './app-init';
+import {ImportDataModule} from "./core/import-data/import-data.module";
 export { AppComponent }
 
 export function initializeApp1(appInit: AppInit) {
@@ -66,6 +67,7 @@ export function initializeApp1(appInit: AppInit) {
     UpdateModule,
     SyncRecordsModule,
     ExportDataModule,
+    ImportDataModule,
     AppRoutingModule,
     SharedModule
   ],

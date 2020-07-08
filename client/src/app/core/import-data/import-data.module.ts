@@ -1,20 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExportDataComponent } from './export-data/export-data.component';
-import { ExportDataRoutingModule } from './export-data-routing.module';
+import { ImportDataComponent } from "./import-data/import-data.component";
+import { ImportDataRoutingModule } from './import-data-routing.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharedModule } from '../../shared/shared.module';
+
 @NgModule({
+  declarations: [ImportDataComponent],
   imports: [
     CommonModule,
-    ExportDataRoutingModule,
+    ImportDataRoutingModule,
     MatButtonModule,
     SharedModule,
     MatTabsModule,
     MatCardModule
-  ],
-  declarations: [ExportDataComponent]
+  ]
 })
-export class ExportDataModule { }
+export class ImportDataModule { }
