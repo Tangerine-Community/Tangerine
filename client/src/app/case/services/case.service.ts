@@ -244,11 +244,14 @@ class CaseService {
                 required: this
                   .caseDefinition
                   .eventDefinitions
-                  .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId).required,
+                  .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+                  .eventFormDefinitions
+                  .find(eventFormDefinition => eventFormDefinition.id === eventFormDefinitionId)
+                  .required,
                 caseId: this.case._id,
                 participantId,
                 caseEventId,
-                eventFormDefinitionId: eventFormDefinitionId
+                eventFormDefinitionId
               }
             ]
         }
