@@ -21,7 +21,6 @@ import { VARIABLE_FINISH_UPDATE_ON_LOGIN } from '../../update/update/update.comp
 export class LoginComponent implements OnInit {
   errorMessage = '';
   adminPassword = ''
-  requiresDevicePasswordToRecover
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '', newPassword: '' };
   users = [];
@@ -38,7 +37,6 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private userService:UserService,
     private usersService: UserService,
-    private deviceService:DeviceService,
     private variableService:VariableService,
     private appConfigService: AppConfigService
   ) {
@@ -49,7 +47,6 @@ export class LoginComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
     this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
-    this.requiresDevicePasswordToRecover = this.deviceService.passwordIsSet()
     this.securityQuestionText = appConfig.securityQuestionText;
     this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
     this.passwordPolicy = appConfig.passwordPolicy;
