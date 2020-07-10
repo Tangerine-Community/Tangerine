@@ -234,6 +234,32 @@
           "repeatable": false
         }
       ]
+    },
+    {
+      "id": "mark-form-as-required-example",
+      "name": "Mark a form as required example",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form--mark-form-as-required-example-1",
+          "formId": "mark-form-as-required-example--form-1",
+          "forCaseRole": "role-1",
+          "name": "Form 1",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--mark-form-as-required-example-2",
+          "formId": "mark-form-as-required-example--form-2",
+          "forCaseRole": "role-1",
+          "name": "Form 2",
+          "autoPopulate": false,
+          "required": false,
+          "repeatable": false
+        }
+      ]
     }
   ]
 }
