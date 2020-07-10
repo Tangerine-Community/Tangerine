@@ -20,7 +20,7 @@
 
 - API Changes for Case Module
   - `caseEvent.status` is now `caseEvent.complete` which has a value of `true` or `false` as opposed to the status strings.
-  - `caseService.startEventForm(...)` is now `caseService.createEventForm`.
+  - `caseService.startEventForm(...)` is now `caseService.createEventForm(...)`.
   - `caseService.deleteEventFormInstance(...)` is now `caseService.deleteEventForm(...)`.
   - `caseService.getCaseEventFormsData(...)` is now `caseService.getEventFormData(...)`.
   - `caseService.setCaseEventFormsData(...)` is now `caseService.setEventFormData(...)`.
