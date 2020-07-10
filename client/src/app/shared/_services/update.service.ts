@@ -115,7 +115,7 @@ export class UpdateService {
 
   async sp2_processUpdates() {
 
-    const username = await this.userService.getCurrentUser();
+    const username = this.userService.getCurrentUser();
     const appConfig = await this.appConfigService.getAppConfig()
     const userDb = await this.userService.getUserDatabase(username);
     let atUpdateIndex = await this.getCurrentUpdateIndex()

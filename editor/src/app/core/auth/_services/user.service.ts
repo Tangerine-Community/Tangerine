@@ -60,7 +60,7 @@ export class UserService {
       return false;
     }
   }
-  
+
   async getCurrentUser() {
     return await localStorage.getItem('user_id');
   }

@@ -53,7 +53,7 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
   ) { }
 
   async ngOnInit() {
-    const currentUser = await this.userService.getCurrentUser();
+    const currentUser = this.userService.getCurrentUser();
     if (currentUser) {
       this.classUtils = new ClassUtils();
     }

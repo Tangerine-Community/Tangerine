@@ -4,14 +4,18 @@ import { DB } from '../_factories/db.factory';
 @Injectable({
   providedIn: 'root'
 })
+
+/**
+ * The VariablesService database is only for non-sensitive data. It is currently stored in an un-encrypted database.
+ */
 export class VariableService {
 
-  db = DB('tangerine-variables', 'hocuspocus')
+  db = DB('tangerine-variables')
 
   constructor() { }
 
   deprecatedLocalStorageFields = [
-    'currentUser','languageCode','appInstalled','installed','languageDirection','release-uuid','ran-update-v3.4.0',
+    'languageCode','installed','installed','languageDirection','ran-update-v3.4.0',
     'ran-update-v3.7.5','ran-update-v3.8.0','ran-update-v3.9.0','ran-update-v3.9.1','ran-update-v3.12.0'
   ]
 

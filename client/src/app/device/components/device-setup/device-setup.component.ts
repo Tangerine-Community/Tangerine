@@ -38,6 +38,7 @@ export class DeviceSetupComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
     const isSandbox = window.location.hostname === 'localhost' ? true : false
     if (isSandbox) {
       const device = await this.deviceService.register('test', 'test', true)
@@ -46,25 +47,27 @@ export class DeviceSetupComponent implements OnInit {
         device
       })
       await this.userService.login('admin', 'password')
-      this.routerService.navigate([''])
+      await this.routerService.navigate([''])
     } else {
       let password = ''
       // Initial step. First we ask for the language, then the language step reloads page,
       // that's when language will be set and we go to the next step of setting up a password.
-      if (!this.languagesService.userHasSetLanguage()) {
+      if (!await this.languagesService.userHasSetLanguage()) {
         this.step = STEP_LANGUAGE_SELECT
       } else {
         this.step = STEP_DEVICE_PASSWORD
       }
       // On language select done.
-      this.stepLanguageSelect.done$.subscribe(value => {
+      this.stepLanguageSelect.done$.subscribe(async value => {
+        await sleep(2000)
         window.location.href = window.location.href.replace(window.location.hash, 'index.html')
       })
       // On device admin password set.
-      this.stepDevicePassword.done$.subscribe({next: setPassword => {
-        password = setPassword
-        this.step = STEP_DEVICE_REGISTRATION
-      }})
+      this.stepDevicePassword.done$.subscribe({next: async setPassword => {
+          password = setPassword
+          await sleep(2000)
+          this.step = STEP_DEVICE_REGISTRATION
+        }})
       // On device registration complete.
       this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
         const device = await this.deviceService.register(deviceDoc._id, deviceDoc.token)
@@ -76,13 +79,15 @@ export class DeviceSetupComponent implements OnInit {
           device
         })
         await this.userService.login('admin', password)
+        await sleep(2000)
         this.step = STEP_SYNC
-        this.stepDeviceSync.sync()
+        await this.stepDeviceSync.sync()
       })
       // On device sync.
       this.stepDeviceSync.done$.subscribe(async (value) => {
         await this.userService.logout()
-        this.routerService.navigate([''])
+        await sleep(2000)
+        await this.routerService.navigate([''])
       })
     }
     this.ready$.next(true)
