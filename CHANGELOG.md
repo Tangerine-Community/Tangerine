@@ -7,6 +7,30 @@
   - Meta data print screen Prompt and Hint are not displayed for Radio Buttons (single type) [#1748](https://github.com/Tangerine-Community/Tangerine/issues/1748)
   - Form Metadata view of Checkboxes with one option is missing [#2239](https://github.com/Tangerine-Community/Tangerine/issues/2239)
 
+- API Changes for Case Module
+  - `caseEvent.status` is now `caseEvent.complete` which has a value of `true` or `false` as opposed to the status strings.
+  - `caseService.startEventForm(...)` is now `caseService.createEventForm`.
+  - `caseService.deleteEventFormInstance(...)` is now `caseService.deleteEventForm(...)`.
+  - `caseService.getCaseEventFormsData(...)` is now `caseService.getEventFormData(...)`.
+  - `caseService.setCaseEventFormsData(...)` is now `caseService.setEventFormData(...)`.
+
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.12.0
+# Now you are ready to start the server.
+./start.sh v3.12.0
+# Run upgrade
+docker exec -it tangerine reporting-cache-clear 
+```
+Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
+
+__Android upgrade instructions:__
+If you are upgrading an Android device that was installed with Tangerine v3.8.0 or greater, you will need to regenerate your APK and reinstall, otherwise you may use the over the air updater.
 
 ## v3.11.0
 - New Features in all Tangerine
@@ -22,23 +46,6 @@
   - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](https://docs.tangerinecentral.org/editor/case-module/custom-case-reports.md)
 - Developer notes
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
-  
-__Server upgrade instructions:__
-
-```
-# Fetch the updates.
-cd tangerine
-git fetch origin
-git checkout v3.11.0
-# Now you are ready to start the server.
-./start.sh v3.11.0
-# Run upgrade
-docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
-```
-Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
-
-__Android upgrade instructions:__
-If your groups are using Sync Protocol 2 module, an APK reinstall is required. Release the APK and reinstall on all Android Devices. If your groups are not using Sync Protocol 2, you may upgrade Android tablets over the air using the usual release process.
 
 ## v3.10.0
 - New Features in all Tangerine
