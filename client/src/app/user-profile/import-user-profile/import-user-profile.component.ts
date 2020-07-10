@@ -33,8 +33,8 @@ export class ImportUserProfileComponent implements AfterContentInit {
 
   async onSubmit() {
     const username = this.userService.getCurrentUser()
-    const db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
+    const db = await this.userService.getUserDatabase(await this.userService.getCurrentUser())
+    const userAccount = await this.userService.getUserAccount(await this.userService.getCurrentUser())
     try {
       const profileToReplace = await db.get(userAccount.userUUID)
       await db.remove(profileToReplace)

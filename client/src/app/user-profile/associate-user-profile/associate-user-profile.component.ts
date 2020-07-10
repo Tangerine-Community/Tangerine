@@ -59,7 +59,7 @@ export class AssociateUserProfileComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig()
     const db = await this.userService.getUserDatabase()
     const usersDb = this.userService.getUsersDatabase()
-    const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
+    const userAccount = await this.userService.getUserAccount(await this.userService.getCurrentUser())
     try {
       const profileToReplace = await db.get(userAccount.userUUID)
       await db.remove(profileToReplace)

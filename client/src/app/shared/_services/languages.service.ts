@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import {DeviceService} from "../../device/services/device.service";
+import {VariableService} from "./variable.service";
 
 class LanguageInfo {
   label:string
@@ -17,20 +19,21 @@ const USER_HAS_SET_LANGUAGE = 'userHasSetLanguage'
 export class LanguagesService {
 
   constructor(
-    private http:HttpClient
+    private http:HttpClient,
+    private variableService: VariableService
   ) { }
 
   async install() {
     const language = (await this.list())[0]
-    localStorage.setItem(LANGUAGE_CODE, language.languageCode)
-    localStorage.setItem(LANGUAGE_DIRECTION, language.languageDirection)
-    localStorage.setItem(USER_HAS_SET_LANGUAGE, 'false')
+    await this.variableService.set(LANGUAGE_CODE, language.languageCode)
+    await this.variableService.set(LANGUAGE_DIRECTION, language.languageDirection)
+    await this.variableService.set(USER_HAS_SET_LANGUAGE, 'false')
   }
 
-  uninstall() {
-    localStorage.removeItem(LANGUAGE_CODE)
-    localStorage.removeItem(LANGUAGE_DIRECTION)
-    localStorage.removeItem(USER_HAS_SET_LANGUAGE)
+  async uninstall() {
+    await this.variableService.set(LANGUAGE_CODE, null)
+    await this.variableService.set(LANGUAGE_DIRECTION, null)
+    await this.variableService.set(USER_HAS_SET_LANGUAGE, null)
   }
 
   async list() {
@@ -38,20 +41,20 @@ export class LanguagesService {
   }
 
   async getCurrentLanguage() {
-    const languageCode = localStorage.getItem(LANGUAGE_CODE)
+    const languageCode = await this.variableService.get(LANGUAGE_CODE)
     const language = (await this.list()).find(languageInfo => languageInfo.languageCode === languageCode)
     return language
   }
 
   async setLanguage(languageCode, userHasSetLanguage = false) {
     const language = (await this.list()).find(languageInfo => languageInfo.languageCode === languageCode)
-    localStorage.setItem(LANGUAGE_CODE, language.languageCode)
-    localStorage.setItem(LANGUAGE_DIRECTION, language.languageDirection)
-    localStorage.setItem(USER_HAS_SET_LANGUAGE, userHasSetLanguage ? 'true' : 'false')
+    await this.variableService.set(LANGUAGE_CODE, language.languageCode)
+    await this.variableService.set(LANGUAGE_DIRECTION, language.languageDirection)
+    await this.variableService.set(USER_HAS_SET_LANGUAGE, userHasSetLanguage ? 'true' : 'false')
   }
 
-  userHasSetLanguage():boolean {
-    return localStorage.getItem(USER_HAS_SET_LANGUAGE) === 'true' ? true : false
+  async userHasSetLanguage(): Promise<boolean> {
+    return await this.variableService.get(USER_HAS_SET_LANGUAGE) === 'true' ? true : false
   }
 
 }

@@ -17,6 +17,7 @@ import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
 import { AppConfig } from '../_classes/app-config.class';
 import { LockBoxContents } from '../_classes/lock-box-contents.class';
 import { DB } from '../_factories/db.factory';
+import {VariableService} from "./variable.service";
 
 @Injectable()
 export class UserService {
@@ -41,7 +42,8 @@ export class UserService {
     private lockBoxService:LockBoxService,
     private deviceService:DeviceService,
     private appConfigService: AppConfigService,
-    private http: HttpClient
+    private http: HttpClient,
+    private variableService: VariableService,
   ) {
     this.window = window;
   }
@@ -107,11 +109,11 @@ export class UserService {
   }
 
   async getUserDatabase(username = ''):Promise<UserDatabase> {
-    if (username === '' && !this.isLoggedIn()) {
+    if (username === '' && !await this.isLoggedIn()) {
       throw new Error('UserService.getUserDatabase was called but no one is logged in.')
     }
     const userAccount = username === ''
-      ? await this.getUserAccount(this.getCurrentUser())
+      ? await this.getUserAccount(await this.getCurrentUser())
       : await this.getUserAccount(username)
     const appConfig = await this.appConfigService.getAppConfig()
     const deviceInfo = await this.deviceService.getAppInfo()
@@ -215,7 +217,7 @@ export class UserService {
 
   async getDevice():Promise<Device> {
     try {
-      const lockBox = this.lockBoxService.getOpenLockBox(this.getCurrentUser())
+      const lockBox = this.lockBoxService.getOpenLockBox(await this.getCurrentUser())
       return lockBox.contents.device
     } catch (e) {
       return new Device()
@@ -297,9 +299,10 @@ export class UserService {
   }
 
   async getUserProfile(username?: string) {
+    const currentUser = await this.getCurrentUser()
     username = username
       ? username
-      : this.getCurrentUser()
+      : currentUser
     const userAccount = <UserAccount>await this.getUserAccount(username)
     const userDb = await this.getUserDatabase(username)
     const userProfile = new TangyFormResponseModel(await userDb.get(userAccount.userUUID))
@@ -394,7 +397,7 @@ export class UserService {
       this.setCurrentUser(userAccount.username)
       // Make globals available for form developers.
       window['userDb'] = await this.getUserDatabase(username)
-      window['username'] = this.getCurrentUser()
+      window['username'] = await this.getCurrentUser()
       window['userProfile'] = await this.getUserProfile()
       window['userId'] = window['userProfile']._id
       this.userLoggedIn$.next(userAccount)
@@ -435,7 +438,7 @@ export class UserService {
 
   async logout() {
     const appConfig = await this.appConfigService.getAppConfig()
-    const username = this.getCurrentUser()
+    const username = await this.getCurrentUser()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
       await this.lockBoxService.closeLockBox(username)
       try {
@@ -458,13 +461,13 @@ export class UserService {
     }
   }
 
-  isLoggedIn() {
-    return this.getCurrentUser() ? true : false
+  async isLoggedIn() {
+    return (await this.getCurrentUser()) ? true : false
   }
 
-  getCurrentUser():string {
+  async getCurrentUser(): Promise<string> {
     return window.location.hostname === 'localhost'
-      ? localStorage.getItem('currentUser')
+      ? await this.variableService.get('currentUser')
       : this._currentUser
   }
 

@@ -33,8 +33,8 @@ export class AppComponent implements OnInit {
   languageCode:string
   languageDirection:string
   languagePath:string
-  translate: TranslateService
   ready = false
+  currentUser: string;
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
 
   constructor(
@@ -42,47 +42,29 @@ export class AppComponent implements OnInit {
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
-    private updateService:UpdateService,
-    private searchService:SearchService,
+    private updateService: UpdateService,
+    private searchService: SearchService,
     private deviceService: DeviceService,
-    private variableService:VariableService,
-    translate: TranslateService
+    private variableService: VariableService,
+    private translate: TranslateService
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
-    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
-      ? true
-      : false
     this.freespaceCorrectionOccuring = false;
-    // Detect if this is the first time the app has loaded.
-    this.languageCode = this.window.localStorage.getItem('languageCode')
-      ? this.window.localStorage.getItem('languageCode')
-      : 'en'
-    this.languageDirection = this.window.localStorage.getItem('languageDirection')
-      ? this.window.localStorage.getItem('languageDirection')
-      : 'ltr'
-    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
-    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
-    // Set up ngx-translate.
-    translate.setDefaultLang(this.languagePath);
-    translate.use(this.languagePath);
-    // Set required config for use of <t-lang> Web Component.
-    this.window.document.documentElement.lang = this.languageCode;
-    this.window.document.documentElement.dir = this.languageDirection;
-    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+
+
     // Make database services available to eval'd code.
     this.window.userService = this.userService
   }
 
-
   async ngOnInit() {
 
+    await this.initFields();
     // Installation check.
     if (!this.installed) {
       await this.install();
     }
-
-    this.checkPermissions();
+    await this.checkPermissions();
     // Initialize services.
     await this.userService.initialize();
     await this.searchService.start();
@@ -103,11 +85,11 @@ export class AppComponent implements OnInit {
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
-      this.router.navigate(['/update']);
+      await this.router.navigate(['/update']);
     }
 
     // Set up log in status.
-    this.isLoggedIn = this.userService.isLoggedIn();
+    this.isLoggedIn = await this.userService.isLoggedIn();
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
       this.isLoggedIn = true;
     });
@@ -131,15 +113,45 @@ export class AppComponent implements OnInit {
     try {
       const config =<any> await this.http.get('./assets/app-config.json').toPromise()
       await this.updateService.install()
-      window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
-      window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-      window.localStorage.setItem('installed', 'true')
+      await this.variableService.set('languageCode', config.languageCode ? config.languageCode : 'en')
+      await this.variableService.set('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+      await this.variableService.set('appInstalled', 'true')
+      await this.variableService.set('koko', 'poco')
+      await this.variableService.set('kinko', 'pinko')
+      // await this.variableService.close()
     } catch (e) {
       console.log('Error detected in install:')
       console.log(e)
     }
     // PWA's will have a hash; APK's won't.
     window.location.href = window.location.hash ? window.location.href.replace(window.location.hash, 'index.html') : 'file:///android_asset/www/shell/index.html'
+  }
+
+  async initFields() {
+    // Detect if this is the first time the app has loaded.
+    let languageCode = await this.variableService.get('languageCode')
+    let languageDirection = await this.variableService.get('languageDirection')
+    let koko = await this.variableService.get('koko')
+    let installed = await this.variableService.get('appInstalled')
+    this.installed = installed && languageCode
+      ? true
+      : false
+    // Preload some properties if installing app.
+    this.languageCode = languageCode
+      ? languageCode
+      : 'en'
+    this.languageDirection = languageDirection
+      ? languageDirection
+      : 'ltr'
+    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+    // Set up ngx-translate.
+    this.translate.setDefaultLang(this.languagePath);
+    this.translate.use(this.languagePath);
+    // Set required config for use of <t-lang> Web Component.
+    this.window.document.documentElement.lang = this.languageCode;
+    this.window.document.documentElement.dir = this.languageDirection;
+    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
   }
 
   async checkPermissions() {
@@ -195,7 +207,8 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      const DB = await this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
+      let currentUser = await this.variableService.get('currentUser')
+      const DB = await this.userService.getUserDatabase(currentUser)
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
@@ -224,7 +237,7 @@ export class AppComponent implements OnInit {
     try {
       const response = await this.http.get('../../release-uuid.txt').toPromise();
       const foundReleaseUuid = `${response}`.replace(/\n|\r/g, '');
-      const storedReleaseUuid = localStorage.getItem('release-uuid');
+      const storedReleaseUuid = await this.variableService.get('release-uuid')
       this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
     } catch (e) {
     }
@@ -269,15 +282,17 @@ export class AppComponent implements OnInit {
     } else {
       // Forward to PWA Updater App.
       const currentPath = this.window.location.pathname;
-      const storedReleaseUuid = localStorage.getItem('release-uuid');
+      const storedReleaseUuid = await this.variableService.get('release-uuid')
       this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/app\/`, ''));
     }
   }
 
-  getGeolocationPosition() {
+  async getGeolocationPosition() {
     const options = {
       enableHighAccuracy: true
     };
+    // We prefer not to use localstorage so that our app databases may be portable and easily restored; however,
+    // for some data this is fine, especially if the underlying lib uses localStorage for the same field.
     const queue = JSON.parse(localStorage.getItem('gpsQueue')) ? (JSON.parse(localStorage.getItem('gpsQueue'))) : null;
     navigator.geolocation.getCurrentPosition((position: Position) => {
       // Accuracy is in meters, a lower reading is better

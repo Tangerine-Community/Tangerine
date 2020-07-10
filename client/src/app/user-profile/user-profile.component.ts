@@ -28,7 +28,7 @@ export class UserProfileComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     const appConfig = await this.appConfigService.getAppConfig();
-    const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
+    const userAccount = await this.userService.getUserAccount(await this.userService.getCurrentUser())
     const homeUrl = appConfig.homeUrl;
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
     const userDb = await this.userService.getUserDatabase();
