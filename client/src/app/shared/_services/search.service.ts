@@ -42,12 +42,12 @@ export class SearchService {
   ) { }
 
   async start():Promise<void> {
-    if (this.userService.isLoggedIn() === true) {
-      const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
-      this.subscribeToChanges(userAccount)
+    if (await this.userService.isLoggedIn() === true) {
+      const userAccount = await this.userService.getUserAccount(await this.userService.getCurrentUser())
+      await this.subscribeToChanges(userAccount)
     }
     this.userService.userLoggedIn$.subscribe(async (userAccount:UserAccount) => {
-      this.subscribeToChanges(userAccount)
+      await this.subscribeToChanges(userAccount)
     })
     this.userService.userLoggedOut$.subscribe((userAccount:UserAccount) => {
       this.userDbSubscription.cancel()

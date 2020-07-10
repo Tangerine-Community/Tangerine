@@ -90,7 +90,7 @@ export class UpdateService {
         if (updates[atUpdateIndex+1].requiresViewsUpdate) {
           requiresViewsRefresh = true;
         }
-        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService);
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService);
         totalUpdatesApplied++;
         atUpdateIndex++;
         if (requiresViewsRefresh) {
@@ -126,7 +126,7 @@ export class UpdateService {
       while (atUpdateIndex < finalUpdateIndex) {
         this.status$.next(_TRANSLATE(`Applying Update: ${atUpdateIndex+1}`))
         if (updates[atUpdateIndex+1].requiresViewsUpdate) requiresViewsRefresh = true;
-        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService);
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService);
         atUpdateIndex++;
         await this.setCurrentUpdateIndex(atUpdateIndex)
       }

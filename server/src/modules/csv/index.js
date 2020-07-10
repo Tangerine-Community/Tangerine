@@ -55,7 +55,7 @@ module.exports = {
           let processedResult = flatResponse;
           // Don't add user-profile to the user-profile
           if (processedResult.formId !== 'user-profile') {
-            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
           }
           // @TODO Ensure design docs are in the database.
           await saveFormInfo(processedResult, REPORTING_DB);
@@ -69,10 +69,7 @@ module.exports = {
           // @TODO Rename `-reporting` to `-csv`.
           REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
           processedResult = flatResponse
-          // Don't add user-profile to the user-profile
-          if (flatResponse.formId !== 'user-profile') {
-            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
-          }
+          // Don't add user-profile to the sanitized db
           // @TODO Ensure design docs are in the database.
           await saveFormInfo(processedResult, REPORTING_DB);
           await saveFlatFormResponse(processedResult, REPORTING_DB);
@@ -93,6 +90,7 @@ module.exports = {
     }
   }
 }
+
 
 /** This function processes form response for csv.
  *

@@ -5,6 +5,7 @@ import * as pako from 'pako';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../../shared/_services/user.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
+import {VariableService} from "../../../shared/_services/variable.service";
 
 @Injectable()
 export class SyncingService {
@@ -13,13 +14,14 @@ export class SyncingService {
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private tangyFormsInfoService: TangyFormsInfoService,
-    private userService: UserService
+    private userService: UserService,
+    private variableService:VariableService
   ) {
     this.window = window;
   }
 
-  getLoggedInUser(): string {
-    return localStorage.getItem('currentUser');
+  async getLoggedInUser(): Promise<string> {
+    return await this.variableService.get('currentUser');
   }
 
   async sync(username, skipByFormId?:Array<string>) {

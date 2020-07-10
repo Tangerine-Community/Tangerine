@@ -6,15 +6,38 @@ import { DB } from '../_factories/db.factory';
 })
 export class VariableService {
 
-  db = DB('tangerine-variables')
+  db = DB('tangerine-variables', 'hocuspocus')
 
   constructor() { }
 
+  deprecatedLocalStorageFields = [
+    'currentUser','languageCode','appInstalled','installed','languageDirection','release-uuid','ran-update-v3.4.0',
+    'ran-update-v3.7.5','ran-update-v3.8.0','ran-update-v3.9.0','ran-update-v3.9.1','ran-update-v3.12.0'
+  ]
+
+  /**
+   * For backward comparability, checks if deprecatedLocalStorageFields includes `name` and is in localStorage.
+   * If it is, adds it to VariableService db and removes it from localStorage
+   * @param name
+   */
   async get(name) {
-    try {
-      return (await this.db.get(name)).value
-    } catch {
-      return undefined
+    let value;
+    if (this.deprecatedLocalStorageFields.includes(name)) {
+      value = localStorage.getItem(name);
+    }
+    if (value) {
+      await this.set(name, value)
+      localStorage.removeItem(name)
+      return value
+    } else {
+      try {
+        return (await this.db.get(name)).value
+      } catch (error) {
+        if (error.status && error.status !== 404) {
+          console.log("error: " + JSON.stringify(error))
+        }
+        return undefined
+      }
     }
   }
 
@@ -24,13 +47,22 @@ export class VariableService {
     }
     try {
        variable = await this.db.get(name)
-    } catch {
-      //
+    } catch (error) {
+      if (error.status && error.status !== 404) {
+        console.log("error: " + JSON.stringify(error))
+      }
     }
     this.db.put({
       ...variable,
       value
-    })
+    }, function(err, response) {
+      if (err) { return console.log(err); }
+      // handle response
+    });
+  }
+
+  async close() {
+    this.db.close()
   }
 
 }

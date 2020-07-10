@@ -80,7 +80,7 @@ export class CaseEventScheduleComponent implements OnInit {
       ? this.datePicked
       : moment(this.weekInView, FORMAT_YEAR_WEEK).format(FORMAT_YEAR_MONTH_DAY)
     let endDate = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_DAILY
-      ? this.datePicked 
+      ? this.datePicked
       : moment(this.weekInView, FORMAT_YEAR_WEEK).add(6, 'days').format(FORMAT_YEAR_MONTH_DAY)
     let excludeEstimates = false
     const events = <Array<any>>await this.casesService.getEventsByDate(startDate, endDate, excludeEstimates)
@@ -89,7 +89,7 @@ export class CaseEventScheduleComponent implements OnInit {
 
   async render(caseEvents:Array<CaseEvent>) {
     // Get an array of unique cases found related to the events.
-    const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
+    const userDb = await this.userService.getUserDatabase(await this.userService.getCurrentUser())
     const cases:Array<TangyFormResponse> = []
     const uniqueCaseIds = caseEvents.reduce((uniqueCaseIds, caseEventInstance) => {
       return uniqueCaseIds.indexOf(caseEventInstance.caseId) === -1
@@ -112,8 +112,8 @@ export class CaseEventScheduleComponent implements OnInit {
       if (daysOfWeekSeen.indexOf(date) === -1) {
         daysOfWeekSeen.push(date)
         caseEventInfo.dateLabel = moment(date).format('ddd')
-        caseEventInfo.dateNumber = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
-          ? moment(date).format('D') 
+        caseEventInfo.dateNumber = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
+          ? moment(date).format('D')
           : ``
       }
       // Determine the link to use when opening this event.
@@ -121,11 +121,11 @@ export class CaseEventScheduleComponent implements OnInit {
       // Gather some variables to be available for the templates.
       const caseService = this.caseService
       await caseService.load(caseEventInstance.caseId)
-      const caseDefinition = caseService.caseDefinition 
+      const caseDefinition = caseService.caseDefinition
       const caseEventDefinition = caseDefinition.eventDefinitions.find(({id}) => id === caseEventInstance.caseEventDefinitionId)
       const caseInstance = caseService.case
       const caseEvent = caseEventInstance
-      // Provide default templates in case they are not provided in the CaseDefinition. 
+      // Provide default templates in case they are not provided in the CaseDefinition.
       const defaultTemplateScheduleListItemIcon = '${caseEventInfo.status === \'CASE_EVENT_STATUS_COMPLETED\' ? \'event_note\' : \'event_available\'}'
       const defaultTemplateScheduleListItemPrimary = '<span>${caseEventDefinition.name}</span> in Case ${caseService.case._id.substr(0,5)}'
       const defaultTemplateScheduleListItemSecondary = '<span>${caseInstance.label}</span>'
