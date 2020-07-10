@@ -34,7 +34,6 @@ export class AppComponent implements OnInit {
   languageDirection:string
   languagePath:string
   ready = false
-  currentUser: string;
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
 
   constructor(
@@ -99,13 +98,13 @@ export class AppComponent implements OnInit {
 
     // Keep GPS chip warm.
     setInterval(this.getGeolocationPosition, 5000);
-    this.checkStorageUsage();
+    await this.checkStorageUsage();
     setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
     this.ready = true;
 
     // Lastly, navigate to update page if an update is running.
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
-      this.router.navigate(['/update']);
+      await this.router.navigate(['/update']);
     }
   }
 
@@ -115,7 +114,8 @@ export class AppComponent implements OnInit {
       await this.updateService.install()
       await this.variableService.set('languageCode', config.languageCode ? config.languageCode : 'en')
       await this.variableService.set('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-      await this.variableService.set('appInstalled', 'true')
+      await this.variableService.set('installed', 'true')
+      // TODO - abstract into an immportable function to set a delay (sleep)
       await this.variableService.set('koko', 'poco')
       await this.variableService.set('kinko', 'pinko')
       // await this.variableService.close()
@@ -132,7 +132,7 @@ export class AppComponent implements OnInit {
     let languageCode = await this.variableService.get('languageCode')
     let languageDirection = await this.variableService.get('languageDirection')
     let koko = await this.variableService.get('koko')
-    let installed = await this.variableService.get('appInstalled')
+    let installed = await this.variableService.get('installed')
     this.installed = installed && languageCode
       ? true
       : false
@@ -207,7 +207,7 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      let currentUser = await this.variableService.get('currentUser')
+      let currentUser = this.userService.getCurrentUser()
       const DB = await this.userService.getUserDatabase(currentUser)
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
@@ -237,7 +237,7 @@ export class AppComponent implements OnInit {
     try {
       const response = await this.http.get('../../release-uuid.txt').toPromise();
       const foundReleaseUuid = `${response}`.replace(/\n|\r/g, '');
-      const storedReleaseUuid = await this.variableService.get('release-uuid')
+      const storedReleaseUuid = localStorage.getItem('release-uuid');
       this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
     } catch (e) {
     }
@@ -282,12 +282,12 @@ export class AppComponent implements OnInit {
     } else {
       // Forward to PWA Updater App.
       const currentPath = this.window.location.pathname;
-      const storedReleaseUuid = await this.variableService.get('release-uuid')
+      const storedReleaseUuid = localStorage.getItem('release-uuid');
       this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/app\/`, ''));
     }
   }
 
-  async getGeolocationPosition() {
+  getGeolocationPosition() {
     const options = {
       enableHighAccuracy: true
     };

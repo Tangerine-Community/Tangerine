@@ -217,7 +217,7 @@ export class UserService {
 
   async getDevice():Promise<Device> {
     try {
-      const lockBox = this.lockBoxService.getOpenLockBox(await this.getCurrentUser())
+      const lockBox = this.lockBoxService.getOpenLockBox(this.getCurrentUser())
       return lockBox.contents.device
     } catch (e) {
       return new Device()
@@ -462,14 +462,13 @@ export class UserService {
   }
 
   async isLoggedIn() {
-    const currentUser = await this.getCurrentUser()
-    return currentUser ? true : false
+    return this.getCurrentUser() ? true : false
   }
 
-  async getCurrentUser(): Promise<string> {
-    const currentUser = await this.variableService.get('currentUser')
+  getCurrentUser(): string {
+    // if developing locally, pull current user from the cache...
     return window.location.hostname === 'localhost'
-      ? currentUser
+      ? localStorage.getItem('currentUser')
       : this._currentUser
   }
 

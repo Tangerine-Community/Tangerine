@@ -54,7 +54,7 @@ export class SearchComponent implements OnInit {
 
   async ngOnInit() {
     this.formsInfo = await this.formsInfoService.getFormsInfo()
-    this.username = await this.userService.getCurrentUser()
+    this.username = this.userService.getCurrentUser()
     this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
       .pipe(debounceTime(300))

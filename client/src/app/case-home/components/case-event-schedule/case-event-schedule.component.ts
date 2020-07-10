@@ -89,7 +89,7 @@ export class CaseEventScheduleComponent implements OnInit {
 
   async render(caseEvents:Array<CaseEvent>) {
     // Get an array of unique cases found related to the events.
-    const userDb = await this.userService.getUserDatabase(await this.userService.getCurrentUser())
+    const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     const cases:Array<TangyFormResponse> = []
     const uniqueCaseIds = caseEvents.reduce((uniqueCaseIds, caseEventInstance) => {
       return uniqueCaseIds.indexOf(caseEventInstance.caseId) === -1

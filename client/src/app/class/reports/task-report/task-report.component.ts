@@ -45,7 +45,7 @@ export class TaskReportComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    const currentUser = await this.userService.getCurrentUser();
+    const currentUser = this.userService.getCurrentUser();
     if (currentUser) {
     }
     this.classUtils = new ClassUtils();
@@ -56,7 +56,7 @@ export class TaskReportComponent implements OnInit {
     const classDoc = await this.classFormService.getResponse(this.classId);
     const classRegistration = this.classUtils.getInputValues(classDoc);
     const allCurriculums = classRegistration.curriculum;
-    for (const curriculum of allCurriculums as any[] ) {
+    for (const curriculum of allCurriculums as any[]) {
       if (curriculum['value'] === 'on') {
         const formId = curriculum.name;
         const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)

@@ -54,7 +54,7 @@ export class LanguagesService {
   }
 
   async userHasSetLanguage(): Promise<boolean> {
-    return await this.variableService.get(USER_HAS_SET_LANGUAGE) === 'true' ? true : false
+    return (await this.variableService.get(USER_HAS_SET_LANGUAGE)) === 'true' ? true : false
   }
 
 }
