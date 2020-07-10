@@ -193,6 +193,47 @@
           "repeatable": false
         }
       ]
+    },
+    {
+      "id": "form-workflow-example",
+      "name": "Form Workflow Example",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form--workflow-form-1",
+          "formId": "workflow-form-1",
+          "forCaseRole": "role-1",
+          "name": "First form in a workflow",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--workflow-form-2",
+          "formId": "workflow-form-2",
+          "forCaseRole": "role-1",
+          "name": "Second form in a workflow",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--workflow-form-3",
+          "formId": "workflow-form-3",
+          "forCaseRole": "role-1",
+          "name": "Third form in a workflow",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        }
+      ]
     }
   ]
 }
