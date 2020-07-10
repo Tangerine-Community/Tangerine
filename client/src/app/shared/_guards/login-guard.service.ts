@@ -14,7 +14,7 @@ export class LoginGuard implements CanActivate {
   ) { }
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.userService.isLoggedIn()) {
+    if (await this.userService.isLoggedIn()) {
       return true;
     }
     //  else if (!this.authenticationService.isLoggedIn() && this.authenticationService.isNoPasswordMode()) {
@@ -29,7 +29,7 @@ export class LoginGuard implements CanActivate {
       } else {
         this.router.navigate(['device-setup'], { queryParams: { returnUrl: state.url } });
       }
-      
+
     } else {
       this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
     }

@@ -462,12 +462,14 @@ export class UserService {
   }
 
   async isLoggedIn() {
-    return (await this.getCurrentUser()) ? true : false
+    const currentUser = await this.getCurrentUser()
+    return currentUser ? true : false
   }
 
   async getCurrentUser(): Promise<string> {
+    const currentUser = await this.variableService.get('currentUser')
     return window.location.hostname === 'localhost'
-      ? await this.variableService.get('currentUser')
+      ? currentUser
       : this._currentUser
   }
 
