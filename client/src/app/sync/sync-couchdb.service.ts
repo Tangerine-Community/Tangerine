@@ -159,13 +159,8 @@ export class SyncCouchdbService {
       replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
     // Now that we've pulled, many changes have happened since we pushed that we can skip the next time we push.
     // Find the last sequence in the local database and set the sync-push-last_seq variable.
-    let lastSequence = await this.variableService.get('sync-push-last_seq')
-    let nextSequence = (await userDb.changes({since:lastSequence, limit:1})).last_seq
-    while (lastSequence !== nextSequence) {
-      lastSequence = nextSequence
-      nextSequence = (await userDb.changes({since:lastSequence, limit:1})).last_seq
-    }
-    await this.variableService.set('sync-push-last_seq', lastSequence)
+    const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+    await this.variableService.set('sync-push-last_seq', lastLocalSequence)
     return replicationStatus
   }
 
