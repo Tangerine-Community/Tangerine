@@ -126,6 +126,17 @@
           "allowDeleteIfFormNotStarted": true,
           "required": false,
           "repeatable": false
+        },
+        {
+          "id": "event-form-definition-bvye73g",
+          "formId": "form-with-alternative-template",
+          "forCaseRole": "role-2",
+          "name": "A form with an alternative template",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": true 
         }
       ]
     },
