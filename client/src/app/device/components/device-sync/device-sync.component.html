@@ -2,7 +2,7 @@
   <div *ngIf="syncInProgress === true">
     <h2>{{'Syncing'|translate}}...</h2>
     <paper-progress indeterminate></paper-progress>
-    <div>{{ syncMessage }}</div>
+    <div class="status">{{ syncMessage }}</div>
   </div>
   <div *ngIf="syncIsComplete === true">
     <h2>{{'Sync has completed'|translate}}.</h2>

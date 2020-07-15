@@ -38,7 +38,7 @@ export class DeviceSetupComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+    const sleep = (milliseconds) => new Promise((res) => setTimeout(() => {res(true)}, milliseconds))
     const isSandbox = window.location.hostname === 'localhost' ? true : false
     if (isSandbox) {
       const device = await this.deviceService.register('test', 'test', true)
@@ -52,6 +52,7 @@ export class DeviceSetupComponent implements OnInit {
       let password = ''
       // Initial step. First we ask for the language, then the language step reloads page,
       // that's when language will be set and we go to the next step of setting up a password.
+      console.log("checking userHasSetLanguage.")
       if (!await this.languagesService.userHasSetLanguage()) {
         this.step = STEP_LANGUAGE_SELECT
       } else {
@@ -59,7 +60,9 @@ export class DeviceSetupComponent implements OnInit {
       }
       // On language select done.
       this.stepLanguageSelect.done$.subscribe(async value => {
+        console.log("stepLanguageSelect is done.")
         await sleep(2000)
+        // alert("Please close and re-open the app.")
         window.location.href = window.location.href.replace(window.location.hash, 'index.html')
       })
       // On device admin password set.

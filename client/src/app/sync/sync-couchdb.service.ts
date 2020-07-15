@@ -240,7 +240,7 @@ export class SyncCouchdbService {
 
   async pull(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
-      let checkpointProgress = "", diffingProgress = "", startBatchProgress = "", pendingBatchProgress = ""
+      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction =  'pull'
       userDb.db['replicate'].from(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-pull-last_seq', info.last_seq);
