@@ -13,7 +13,8 @@
             <button color="primary" mat-raised-button (click)="importBackups()">{{'RESTORE BACKUP'|translate}}</button>
           </mat-card-actions>
         </mat-card>
-          <div class="status">{{statusMessage}}</div>
+<!--          <div [innerHTML]="statusMessage | safeHtml" class="status"></div>-->
+          <div [innerHTML]="statusMessage" class="status"></div>
           <div class="error">{{errorMessage}}</div>
       </div>
     </ng-template>

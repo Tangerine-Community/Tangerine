@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
+const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
 const USERS_DATABASE_NAME = 'users';
 const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
 const VARIABLES_DATABASE_NAME = 'tangerine-variables';
@@ -35,7 +36,7 @@ export class RestoreBackupComponent implements OnInit {
     this.errorMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
-      const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+      const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
       const len = dbNames.length
       for (const dbName of dbNames) {
         // copy the database
@@ -49,7 +50,7 @@ export class RestoreBackupComponent implements OnInit {
               this.success = true
               console.log('DB Copied!');
               // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.applicationStorageDirectory}/databases/${dbName}`);
-              this.statusMessage += `<p>File stored at ${directory}/${dbName}</p>`
+              this.statusMessage += `<p>File stored at ${directory.fullPath}${dbName}</p>`
               if (dbNames[len - 1] === dbName) {
                 if (this.success) {
                   this.statusMessage += `<p>Please exit the app and restart.</p>`

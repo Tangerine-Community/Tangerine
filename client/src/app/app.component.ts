@@ -50,8 +50,6 @@ export class AppComponent implements OnInit {
     this.window = window;
     this.window.PouchDB = PouchDB
     this.freespaceCorrectionOccuring = false;
-
-
     // Make database services available to eval'd code.
     this.window.userService = this.userService
   }

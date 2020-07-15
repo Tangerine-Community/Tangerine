@@ -10,7 +10,7 @@ import { DB } from '../_factories/db.factory';
  */
 export class VariableService {
 
-  db = DB('tangerine-variables')
+  db = DB('tangerine-variables',)
 
   constructor() { }
 
@@ -46,6 +46,12 @@ export class VariableService {
   }
 
   async set(name, value) {
+    // try {
+    //   let dbInfo = await this.db.info();
+    //   console.log("db info: " + JSON.stringify(dbInfo))
+    // } catch (err) {
+    //   console.log("Error getting pouchdb info: " + err);
+    // }
     let variable = {
       _id: name
     }
