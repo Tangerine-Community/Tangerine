@@ -45,7 +45,7 @@ export class LocationListEditorComponent implements OnInit {
       this.groupId = params.groupId;
     });
     try {
-      const data: any = await this.http.get(`/editor/${this.groupId}/content/${this.locationListFileName}`).toPromise();
+      const data: any = await this.groupsService.getLocationList(this.groupId);
       const flatLocationList = Loc.flatten(data);
       // TODO Why do we need zoneLevelLocations???
       const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone');
