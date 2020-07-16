@@ -24,7 +24,7 @@ export function DB(name, key = ''):PouchDB {
   }
 
   let pouchDBOptions = <any>{};
-  if (window['isCordovaApp'] && window['sqlitePlugin'] && !localStorage.getItem('ran-update-v3.8.0')) {
+  if (window['isCordovaApp'] && window['sqliteStorageFile']) {
     pouchDBOptions = {
       adapter: 'cordova-sqlite',
       location: 'default',

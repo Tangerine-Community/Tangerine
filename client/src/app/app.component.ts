@@ -33,7 +33,6 @@ export class AppComponent implements OnInit {
   languageCode:string
   languageDirection:string
   languagePath:string
-  translate: TranslateService
   ready = false
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
 
@@ -46,43 +45,45 @@ export class AppComponent implements OnInit {
     private searchService:SearchService,
     private deviceService: DeviceService,
     private variableService:VariableService,
-    translate: TranslateService
+    private translate: TranslateService
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
-    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
+  }
+  
+  async ngOnInit() {
+
+    this.installed = await this.variableService.get('installed') && await this.variableService.get('languageCode')
       ? true
-      : false
-    this.freespaceCorrectionOccuring = false;
+      : false;
     // Detect if this is the first time the app has loaded.
-    this.languageCode = this.window.localStorage.getItem('languageCode')
-      ? this.window.localStorage.getItem('languageCode')
-      : 'en'
-    this.languageDirection = this.window.localStorage.getItem('languageDirection')
-      ? this.window.localStorage.getItem('languageDirection')
-      : 'ltr'
+    this.languageCode = await this.variableService.get('languageCode')
+      ? await this.variableService.get('languageCode')
+      : 'en';
+    this.languageDirection = await this.variableService.get('languageDirection')
+      ? await this.variableService.get('languageDirection')
+      : 'ltr';
+
+    this.freespaceCorrectionOccuring = false;
+
     // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
     this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
     // Set up ngx-translate.
-    translate.setDefaultLang(this.languagePath);
-    translate.use(this.languagePath);
+    this.translate.setDefaultLang(this.languagePath);
+    this.translate.use(this.languagePath);
     // Set required config for use of <t-lang> Web Component.
     this.window.document.documentElement.lang = this.languageCode;
     this.window.document.documentElement.dir = this.languageDirection;
     this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
     // Make database services available to eval'd code.
     this.window.userService = this.userService
-  }
-
-
-  async ngOnInit() {
 
     // Installation check.
     if (!this.installed) {
       await this.install();
     }
 
-    this.checkPermissions();
+    await this.checkPermissions();
     // Initialize services.
     await this.userService.initialize();
     await this.searchService.start();
@@ -131,9 +132,9 @@ export class AppComponent implements OnInit {
     try {
       const config =<any> await this.http.get('./assets/app-config.json').toPromise()
       await this.updateService.install()
-      window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
-      window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-      window.localStorage.setItem('installed', 'true')
+      await this.variableService.set('languageCode', config.languageCode ? config.languageCode : 'en')
+      await this.variableService.set('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+      await this.variableService.set('installed', 'true')
     } catch (e) {
       console.log('Error detected in install:')
       console.log(e)
@@ -195,7 +196,7 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      const DB = await this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
+      const DB = await this.userService.getUserDatabase(this.userService.getCurrentUser())
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,

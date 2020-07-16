@@ -39,11 +39,10 @@ export class LoginComponent implements OnInit {
     private usersService: UserService,
     private variableService:VariableService,
     private appConfigService: AppConfigService
-  ) {
-    this.installed = localStorage.getItem('installed') ? true : false
-  }
+  ) { }
 
   async ngOnInit() {
+    this.installed = await this.variableService.get('installed') ? true : false
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
     this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
