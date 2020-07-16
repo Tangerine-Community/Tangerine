@@ -2,6 +2,7 @@ import { CaseHomeDocs } from './../../../case-home/case-home.docs';
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
 import {TangyFormsDocs} from '../../../tangy-forms/tangy-forms.docs';
+import {VariableService} from "../../../shared/_services/variable.service";
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 const bcrypt = window['dcodeIO'].bcrypt
 
@@ -157,9 +158,9 @@ export const updates = [
     }
   },
   {
-    script: async (userDb, appConfig, userService:UserService) => {
+    script: async (userDb, appConfig, userService:UserService, variableService:VariableService) => {
       // Prevent this update from running for every user. We handle that in this update.
-      if (localStorage.getItem('ran-update-v3.4.0')) return
+      if (await variableService.get('ran-update-v3.4.0')) return
       console.log('Updating to v3.4.0...')
       const usersDb = new PouchDB('users')
       const userDocs = (await usersDb.allDocs({include_docs: true}))
@@ -216,7 +217,7 @@ export const updates = [
       //await userService.updateAllDefaultUserDocs()
       // Doing this later.
       //await userService.indexAllUserViews()
-      localStorage.setItem('ran-update-v3.4.0', 'true')
+      await variableService.set('ran-update-v3.4.0', 'true')
     }
   },
   {
@@ -227,20 +228,20 @@ export const updates = [
   },
   {
     requiresViewsUpdate: false,
-    script: async (userDb, appConfig, userService:UserService) => {
-      if (localStorage.getItem('ran-update-v3.7.5')) return
+    script: async (userDb, appConfig, userService:UserService, variableService:VariableService) => {
+      if (await variableService.get('ran-update-v3.7.5')) return
       console.log('Updating to v3.7.5...')
       // skip, covered in future updates.
       //await userService.updateAllDefaultUserDocs()
       // skip, covered in future updates.
       //await userService.indexAllUserViews()
-      localStorage.setItem('ran-update-v3.7.5', 'true')
+      await variableService.set('ran-update-v3.7.5', 'true')
     }
   },
   {
-    script: async (userDb, appConfig, userService:UserService) => {
+    script: async (userDb, appConfig, userService:UserService, variableService:VariableService) => {
       // Prevent this update from running for every user. We handle that in this update.
-      if (localStorage.getItem('ran-update-v3.8.0')) return
+      if (await variableService.get('ran-update-v3.8.0')) return
       console.log('Updating to v3.8.0...')
       const usersDb = new PouchDB('users')
       // Update user account docs so they have the new initialProfileComplete flag set to true.
@@ -259,36 +260,36 @@ export const updates = [
       for (let userDoc of userDocs) {
         await usersDb.put(userDoc)
       }
-      localStorage.setItem('ran-update-v3.8.0', 'true')
+      await variableService.set('ran-update-v3.8.0', 'true')
     }
   },
   {
     requiresViewsUpdate: false,
-    script: async (userDb, appConfig, userService: UserService) => {
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
       // syncProtocol uses a single shared db for all users. Update only once.
-      if (appConfig.syncProtocol === '2' && localStorage.getItem('ran-update-v3.9.0')) return
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.0')) return
       console.log('Updating to v3.9.0...')
       await userDb.put(TangyFormsDocs[0])
       await userDb.query('responsesUnLockedAndNotUploaded')
-      localStorage.setItem('ran-update-v3.9.0', 'true')
+      await variableService.set('ran-update-v3.9.0', 'true')
     }
   },
   {
     requiresViewsUpdate: false,
-    script: async (userDb, appConfig, userService: UserService) => {
-      if (appConfig.syncProtocol === '2' && localStorage.getItem('ran-update-v3.9.1')) return
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.1')) return
       console.log('Updating to v3.9.1...')
       await userDb.put(CaseHomeDocs[0])
       await userDb.query('case-events-by-all-days')
-      localStorage.setItem('ran-update-v3.9.1', 'true')
+      await variableService.set('ran-update-v3.9.1', 'true')
     }
   },
   {
     requiresViewsUpdate: true,
-    script: async (userDb, appConfig, userService: UserService) => {
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
       console.log('Updating to v3.12.0...')
-      if ( localStorage.getItem('ran-update-v3.12.0')) return
-      localStorage.setItem('ran-update-v3.12.0', 'true')
+      if ( await variableService.get('ran-update-v3.12.0')) return
+      await variableService.set('ran-update-v3.12.0', 'true')
     }
   }
 ]
