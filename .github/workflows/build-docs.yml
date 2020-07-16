@@ -4,9 +4,11 @@ name: Build Documentation using MkDocs
 # events but only for the master branch
 on:
   push:
-    branches: [master]
+    branches: 
+      - master
   pull_request:
-    branches: [master]
+    branches: 
+      - master
 
 jobs:
   build:
