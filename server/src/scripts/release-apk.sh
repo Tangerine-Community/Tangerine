@@ -52,7 +52,7 @@ rm -rf $RELEASE_DIRECTORY/www/shell/assets
 cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
 cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 
-CUSTOM_SCRIPTS_PATH="$CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets/custom-scripts.js"
+CUSTOM_SCRIPTS_PATH="$RELEASE_DIRECTORY/www/shell/assets/custom-scripts.js"
 if [ -f "$CUSTOM_SCRIPTS_PATH" ]; then
   webpack $CUSTOM_SCRIPTS_PATH -o "$CUSTOM_SCRIPTS_PATH.tmp"
   mv "$CUSTOM_SCRIPTS_PATH.tmp" $CUSTOM_SCRIPTS_PATH 
