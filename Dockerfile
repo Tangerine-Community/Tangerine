@@ -59,9 +59,6 @@ ADD client /tangerine/client
 RUN cd /tangerine/client && \
     ./node_modules/.bin/ng build --base-href "./"
 
-# Modify links to javascript modules (Angular 8 work-around)
-RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/dist/tangerine-client/index.html
-
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm run build && \
@@ -73,6 +70,9 @@ RUN cd /tangerine/client && \
     cp -r pwa-tools/updater-app/build/default builds/pwa && \
     mkdir builds/pwa/release-uuid && \
     cp -r dist/tangerine-client builds/pwa/release-uuid/app
+
+# Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
+RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
 
 # Add the rest of server.
 ADD server /tangerine/server
