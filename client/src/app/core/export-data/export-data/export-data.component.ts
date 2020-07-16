@@ -48,7 +48,7 @@ export class ExportDataComponent implements OnInit {
         };
       }));
       const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const currentUser = await localStorage.getItem('currentUser');
+      const currentUser = this.userService.getCurrentUser();
       const now = new Date();
       const fileName =
         `${currentUser}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
