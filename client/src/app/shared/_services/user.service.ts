@@ -462,6 +462,9 @@ export class UserService {
     return this.getCurrentUser() ? true : false
   }
 
+  /**
+   *  if developing locally, pull current user from the cache...
+   */
   getCurrentUser():string {
     return window.location.hostname === 'localhost'
       ? localStorage.getItem('currentUser')
