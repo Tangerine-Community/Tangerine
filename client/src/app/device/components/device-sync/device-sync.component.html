@@ -7,7 +7,7 @@
   <div *ngIf="syncIsComplete === true">
     <h2>{{'Sync has completed'|translate}}.</h2>
     <paper-progress value="100" min="0" max="100"></paper-progress>
-    <div>{{ syncMessage }}</div>
+    <div class="status">{{ syncMessage }}</div>
     <paper-button (click)="onContinueClick()">{{'next'|translate}}</paper-button>
   </div>
 </div>
