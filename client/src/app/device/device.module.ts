@@ -8,12 +8,12 @@ import { DeviceService } from './services/device.service';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DevicePasswordComponent } from './components/device-password/device-password.component';
-import {RestoreBackupComponent} from "./components/restore-backup/restore-backup.component";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
-import {MatCardModule} from "@angular/material/card";
+import { RouterModule } from '@angular/router';
 import {MatTabsModule} from "@angular/material/tabs";
-import {RouterModule} from "@angular/router";
+import {MatCardModule} from "@angular/material/card";
+import { RestoreBackupComponent } from './components/restore-backup/restore-backup.component';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
