@@ -193,7 +193,7 @@ export class SyncCouchdbService {
         }
       }).on('checkpoint', (info) => {
         if (info) {
-          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
             checkpointProgress = checkpointProgress + 1
@@ -244,7 +244,7 @@ export class SyncCouchdbService {
 
   async pull(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
-      let checkpointProgress = "", diffingProgress = "", startBatchProgress = "", pendingBatchProgress = ""
+      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction =  'pull'
       userDb.db['replicate'].from(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-pull-last_seq', info.last_seq);
@@ -271,7 +271,7 @@ export class SyncCouchdbService {
         }
       }).on('checkpoint', (info) => {
         if (info) {
-          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
             checkpointProgress = checkpointProgress + 1
