@@ -1,0 +1,22 @@
+<mat-tab-group>
+  <mat-tab label="{{'Restore Backup'|translate}}">
+    <ng-template matTabContent>
+      <div class="container">
+        <mat-card>
+          <div class="mat-card-header-text">
+            Restore Backup
+          </div>
+          <mat-card-content class="card-content">
+            <p>Restore Backup copies backup databases to the Tangerine application.</p>
+          </mat-card-content>
+          <mat-card-actions class="card-actions">
+            <button color="primary" mat-raised-button (click)="importBackups()">{{'RESTORE BACKUP'|translate}}</button>
+          </mat-card-actions>
+        </mat-card>
+<!--          <div [innerHTML]="statusMessage | safeHtml" class="status"></div>-->
+          <div [innerHTML]="statusMessage" class="status"></div>
+          <div class="error">{{errorMessage}}</div>
+      </div>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

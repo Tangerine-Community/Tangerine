@@ -1,1 +1,7 @@
 <div #container></div>
+<div class="ooch-right" *ngIf="showRestoreButton">
+  <button mat-raised-button color="primary" routerLink="/restore-backup">
+    <mat-icon class="material-icons">import_export</mat-icon>
+    <span>Restore Backup</span>
+  </button>
+</div>
