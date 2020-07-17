@@ -12,6 +12,7 @@ export class DeviceLanguageComponent implements OnInit {
 
   testing = false
   done$ = new Subject()
+  showRestoreButton = true
 
   @ViewChild('container', {static: true}) container:ElementRef
   constructor(
@@ -42,6 +43,7 @@ export class DeviceLanguageComponent implements OnInit {
       .querySelector('tangy-form')
     languageSelectFormEl
       .addEventListener('submit', async (event) => {
+        this.showRestoreButton = false
         const languageCode = event.target.getValue('language-select')
         await this.languagesService.setLanguage(languageCode, true)
         this.done$.next(true)
