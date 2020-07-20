@@ -47,6 +47,7 @@ export class EventFormComponent implements OnInit {
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
+      this.caseService.setContext(params.eventId, params.eventFormId)
       this.caseId = params.caseId
       this.window.caseService = this.caseService
       this.caseEvent = this
