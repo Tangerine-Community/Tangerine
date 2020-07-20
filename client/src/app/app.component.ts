@@ -1,3 +1,15 @@
+import { LockBoxService } from './shared/_services/lock-box.service';
+import { ClassFormService } from './class/_services/class-form.service';
+import { DashboardService } from './class/_services/dashboard.service';
+import { SyncService } from './sync/sync.service';
+import { SyncingService } from './core/sync-records/_services/syncing.service';
+import { FormTypesService } from './shared/_services/form-types.service';
+import { LanguagesService } from './shared/_services/languages.service';
+import { CasesService } from './case/services/cases.service';
+import { CaseDefinitionsService } from './case/services/case-definitions.service';
+import { TangyFormService } from './tangy-forms/tangy-form.service';
+import { TangyFormsInfoService } from './tangy-forms/tangy-forms-info-service';
+import { CaseService } from 'src/app/case/services/case.service';
 import { VariableService } from './shared/_services/variable.service';
 import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
@@ -42,13 +54,48 @@ export class AppComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private updateService:UpdateService,
+    private caseService:CaseService,
+    private casesService:CasesService,
+    private caseDefinitionsService:CaseDefinitionsService,
     private searchService:SearchService,
     private deviceService: DeviceService,
+    private tangyFormsInfoService:TangyFormsInfoService,
+    private tangyFormService:TangyFormService,
+    private languagesService:LanguagesService,
+    private formTypesService:FormTypesService,
+    private syncingService:SyncingService,
+    private syncService:SyncService,
+    private classFormService:ClassFormService,
+    private lockBoxService:LockBoxService,
+    private dashboardService:DashboardService,
     private variableService:VariableService,
     private translate: TranslateService
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
+    this.window.T = {
+      router,
+      http,
+      user: userService,
+      lockBox: lockBoxService,
+      syncing: syncingService,
+      sync: syncService,
+      appConfig: appConfigService,
+      update: updateService,
+      search: searchService,
+      device: deviceService,
+      tangyFormsInfo: tangyFormsInfoService,
+      tangyForms: tangyFormService,
+      formTypes: formTypesService,
+      case: caseService,
+      cases: casesService,
+      caseDefinition: caseDefinitionsService,
+      languages: languagesService,
+      variable: variableService,
+      classForm: classFormService,
+      classDashboard: dashboardService,
+      translate: window['t']
+    }
   }
   
   async ngOnInit() {
