@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+// @TODO This file is cruft? We have the the `Loc` class in `tangy-form/utils/loc.js`. 
+
 @Injectable()
 export class Loc {
   query(levels, criteria, locationList) {
