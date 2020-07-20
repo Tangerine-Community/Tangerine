@@ -57,22 +57,26 @@ class CaseService {
   participant:CaseParticipant
 
   setContext(caseEventId = '', eventFormId = '') {
+    window['caseInstance'] = this.case
     this.caseEvent = caseEventId
       ? this.case 
         .events
         .find(caseEvent => caseEvent.id === caseEventId)
       : null
+    window['caseEvent'] = this.caseEvent
     this.caseEventDefinition = caseEventId
       ? this
         .caseDefinition
         .eventDefinitions
         .find(caseEventDefinition => caseEventDefinition.id === this.caseEvent.caseEventDefinitionId)
       : null
+    window['caseEventDefinition'] = this.caseEventDefinition
     this.eventForm = eventFormId
       ? this.caseEvent
         .eventForms
         .find(eventForm => eventForm.id === eventFormId)
       : null
+    window['eventForm'] = this.eventForm
     this.eventFormDefinition = eventFormId
       ? this.caseEventDefinition
         .eventFormDefinitions
@@ -81,6 +85,7 @@ class CaseService {
     this.participant = this.eventForm
       ? this.case.participants.find(participant => participant.id === this.eventForm.participantId)
       : null
+    window['participant'] = this.participant
   }
 
   constructor(
