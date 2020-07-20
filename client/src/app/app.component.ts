@@ -74,6 +74,9 @@ export class AppComponent implements OnInit {
     this.window = window;
     this.window.PouchDB = PouchDB
     this.window.T = {
+      form: {
+        Get: Get
+      },
       router,
       http,
       user: userService,
@@ -140,14 +143,6 @@ export class AppComponent implements OnInit {
     this.window.appConfig = this.appConfig;
     this.window.device = await this.deviceService.getDevice();
     this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
-
-    //  Expose helpers inside T:
-    window['T'] = {
-      "form": {
-        Get: Get
-      },
-      "user": this.userService
-    }
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {

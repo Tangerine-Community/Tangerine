@@ -44,7 +44,6 @@ export class CaseComponent implements AfterContentInit {
       this.caseService.openCaseConfirmed = false
     }
     this.window.caseService = this.caseService
-    this.window['T']['case'] = this.caseService
     this.calculateTemplateData()
     this.ready = true
   }
