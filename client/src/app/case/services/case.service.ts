@@ -118,12 +118,7 @@ class CaseService {
   get forms() {
     return this._case.events.reduce((forms, event) => {
       return [
-        ...event.eventForms.map(eventForm => {
-          return {
-            ...eventForm,
-            eventId: event.id
-          }
-        }) || [],
+        ...event.eventForms || [],
         ...forms
       ]
     }, [])
