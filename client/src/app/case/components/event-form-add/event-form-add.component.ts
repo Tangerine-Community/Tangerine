@@ -40,7 +40,6 @@ export class EventFormAddComponent implements AfterContentInit {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.window.caseService = this.caseService
-      this.window['T']['case'] = this.caseService
       this.caseEvent = this
         .caseService
         .case

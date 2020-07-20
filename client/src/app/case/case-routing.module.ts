@@ -1,3 +1,4 @@
+import { CreateProfileGuardService } from './../shared/_guards/create-profile-guard.service';
 import { CustomAppComponent } from './components/custom-app/custom-app.component';
 import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 import { Observable } from 'rxjs';
@@ -32,7 +33,7 @@ const routes: Routes = [
   {
     path: 'custom-app',
     component: CustomAppComponent,
-    canActivate: [LoginGuard]
+    canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {
     path: 'case/:id',
