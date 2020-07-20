@@ -20,6 +20,7 @@ import { v4 as UUID } from 'uuid';
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
+import { CaseEventDefinition } from '../classes/case-event-definition.class';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,39 @@ class CaseService {
 
   get case():Case {
     return this._case
+  }
+
+  caseEvent:CaseEvent
+  caseEventDefinition:CaseEventDefinition
+  eventForm:EventForm
+  eventFormDefinition:EventFormDefinition
+  participant:CaseParticipant
+
+  setContext(caseEventId = '', eventFormId = '') {
+    this.caseEvent = caseEventId
+      ? this.case 
+        .events
+        .find(caseEvent => caseEvent.id === caseEventId)
+      : null
+    this.caseEventDefinition = caseEventId
+      ? this
+        .caseDefinition
+        .eventDefinitions
+        .find(caseEventDefinition => caseEventDefinition.id === this.caseEvent.caseEventDefinitionId)
+      : null
+    this.eventForm = eventFormId
+      ? this.caseEvent
+        .eventForms
+        .find(eventForm => eventForm.id === eventFormId)
+      : null
+    this.eventFormDefinition = eventFormId
+      ? this.caseEventDefinition
+        .eventFormDefinitions
+        .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
+      : null
+    this.participant = this.eventForm
+      ? this.case.participants.find(participant => participant.id === this.eventForm.participantId)
+      : null
   }
 
   constructor(
