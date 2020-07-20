@@ -1,3 +1,4 @@
+import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
@@ -27,10 +28,14 @@ class CaseService {
 
   _case:Case
   caseDefinition:CaseDefinition
+
+  // Opening a case confirmation semaphore.
   openCaseConfirmed = false
+  // Query properties.
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
+
 
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = { 
@@ -58,6 +63,54 @@ class CaseService {
   /*
    * Case API
    */
+  
+  get id() {
+    return this._case._id
+  }
+
+  get participants() {
+    return this._case.participants || []
+  }
+
+  get events() {
+    return this._case.events || []
+  }
+
+  get forms() {
+    return this._case.events.reduce((forms, event) => {
+      return [
+        ...event.eventForms.map(eventForm => {
+          return {
+            ...eventForm,
+            eventId: event.id
+          }
+        }) || [],
+        ...forms
+      ]
+    }, [])
+  }
+
+  get roleDefinitions() {
+    return this.caseDefinition.caseRoles
+  }
+
+  get caseEventDefinitions() {
+    return this.caseDefinition.eventDefinitions || []
+  }
+
+  get eventFormDefinitions() {
+    return this.caseDefinition.eventDefinitions.reduce((formDefs, eventDef) => {
+      return [
+        ...eventDef.eventFormDefinitions.map(eventFormDef => {
+          return {
+            ...eventFormDef,
+            eventDefinitionId: eventDef.id
+          }
+        }) || [],
+        ...formDefs
+      ]
+    }, [])
+  }
 
   async create(caseDefinitionId) {
     this.caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
