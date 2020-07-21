@@ -5,6 +5,8 @@ name: Build Documentation using MkDocs
 on:
   release:
     types: [released]
+  push:
+    branches: [master]
 
 jobs:
   build:
