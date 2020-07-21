@@ -47,6 +47,7 @@ export class EventFormComponent implements OnInit {
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
+      this.caseService.setContext(params.eventId, params.eventFormId)
       this.caseId = params.caseId
       this.window.caseService = this.caseService
       this.caseEvent = this
@@ -79,6 +80,10 @@ export class EventFormComponent implements OnInit {
       }
       this.formPlayer.render()
 
+      this.caseService.onChangeLocation$.subscribe(location => {
+        this.formPlayer.location = this.caseService.case.location
+      })
+
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
       this.formPlayer.$rendered.subscribe(async () => {
@@ -106,7 +111,9 @@ export class EventFormComponent implements OnInit {
               window['username']
             )
           }
-          await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+          window.location.hash = window['eventFormRedirect']
+            ? window['eventFormRedirect']
+            : `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
         }, 500)
       })
       this.loaded = true

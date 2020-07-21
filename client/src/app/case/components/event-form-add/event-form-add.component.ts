@@ -40,7 +40,6 @@ export class EventFormAddComponent implements AfterContentInit {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.window.caseService = this.caseService
-      this.window['T']['case'] = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -89,13 +88,12 @@ export class EventFormAddComponent implements AfterContentInit {
       }, [])
   }
 
-
   onFormSelect(formId) {
     this.startEventForm(formId, this.selectedParticipant)
   }
 
   async startEventForm(eventFormDefinitionId:string, participantId:string) {
-    const eventForm = this.caseService.startEventForm(this.caseEvent.id, eventFormDefinitionId, participantId)
+    const eventForm = this.caseService.createEventForm(this.caseEvent.id, eventFormDefinitionId, participantId)
     await this.caseService.save()
     // Then navigate
     this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])

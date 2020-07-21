@@ -3,7 +3,12 @@ import { UserService } from '../../../shared/_services/user.service';
 import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
+import {VariableService} from "../../../shared/_services/variable.service";
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
+const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
+const USERS_DATABASE_NAME = 'users';
+const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
+const VARIABLES_DATABASE_NAME = 'tangerine-variables';
 declare const cordova: any;
 @Component({
   selector: 'app-export-data',
@@ -14,7 +19,12 @@ export class ExportDataComponent implements OnInit {
 
   window:any;
 
-  constructor(private userService: UserService, private syncingService: SyncingService, private appConfigService: AppConfigService) {
+  constructor(
+    private userService: UserService,
+    private syncingService: SyncingService,
+    private appConfigService: AppConfigService,
+    private variableService: VariableService,
+  ) {
     this.window = window;
   }
 
@@ -23,21 +33,24 @@ export class ExportDataComponent implements OnInit {
   async exportAllRecords() {
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
-      // copy the database
-      console.log('copying the db over to the user accesisble fs')
-      // tslint:disable-next-line:max-line-length
-      this.window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory + 'databases/' + SHARED_USER_DATABASE_NAME, (fileEntry) => {
-        this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (directory) {
-          fileEntry.copyTo(directory, SHARED_USER_DATABASE_NAME, function() {
-              console.log('DB Copied!');
-              alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${SHARED_USER_DATABASE_NAME}`);
-            },
-            function(e) {
-              console.log('Unable to copy DB');
-              alert(`${_TRANSLATE('Write Failed: ')}` + e.toString());
-            });
+      const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+      for (const dbName of dbNames) {
+        // copy the database
+        console.log(`copying ${dbName} db over to the user accessible fs`)
+        // tslint:disable-next-line:max-line-length
+        this.window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory + 'databases/' + dbName, (fileEntry) => {
+          this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (directory) {
+            fileEntry.copyTo(directory, dbName, function() {
+                console.log('DB Copied!');
+                alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${dbName}`);
+              },
+              function(e) {
+                console.log('Unable to copy DB');
+                alert(`${_TRANSLATE('Write Failed: ')}` + e.toString());
+              });
+          }, null);
         }, null);
-      }, null);
+      }
     } else {
       const usernames = await this.userService.getUsernames();
       const data = await Promise.all(usernames.map(async databaseName => {
@@ -48,7 +61,7 @@ export class ExportDataComponent implements OnInit {
         };
       }));
       const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const currentUser = await localStorage.getItem('currentUser');
+      const currentUser = this.userService.getCurrentUser();
       const now = new Date();
       const fileName =
         `${currentUser}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;

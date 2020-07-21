@@ -3,6 +3,7 @@ export class EventFormDefinition {
   id:string
   formId:string
   name:string
+  autoPopulate:boolean
   forCaseRole:string
   templateListItem:string
   repeatable: boolean

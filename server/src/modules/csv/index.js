@@ -69,10 +69,7 @@ module.exports = {
           // @TODO Rename `-reporting` to `-csv`.
           REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
           processedResult = flatResponse
-          // Don't add user-profile to the user-profile
-          if (flatResponse.formId !== 'user-profile') {
-            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
-          }
+          // Don't add user-profile to the sanitized db
           // @TODO Ensure design docs are in the database.
           await saveFormInfo(processedResult, REPORTING_DB);
           await saveFlatFormResponse(processedResult, REPORTING_DB);
@@ -121,7 +118,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,
-      caseEventId: formResponse.caseEventId,
+      eventId: formResponse.eventId,
       eventFormId: formResponse.eventFormId,
       participantId: formResponse.participantId || ''
     } : {}
@@ -348,17 +345,18 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
       let userProfileId = doc.tangerineModifiedByUserId
       if (!userProfileId) {
         // try an older profileId
+        console.log("CSV generation - using older userProfileId as key instead of tangerineModifiedByUserId: " + userProfileId)
         // Find the key that points to user profile ID.
         const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
         userProfileId = doc[userProfileIdKey]
       }
-      console.log("userProfileId: " + userProfileId)
+      console.log("CSV generation - userProfileId: " + userProfileId)
       // Get the user profile.
       let userProfileDoc;
       try {
         userProfileDoc = await reportingDb.get(userProfileId)
       } catch (e) {
-        console.log("Error: reportingDb userProfileId: " + userProfileId + " Error: " + JSON.stringify(e))
+        console.log("Error: CSV reportingDb userProfileId: " + userProfileId + " doc id: " + doc._id + " Error: " + JSON.stringify(e))
         // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
         try {
           let userProfileDocOriginal = await sourceDb.get(userProfileId)

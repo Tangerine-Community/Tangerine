@@ -25,6 +25,27 @@ Seed the `foo` group with 100 form responses.
 docker exec tangerine generate-uploads 100 foo
 ```
 
+Clear the cache
+
+```shell script
+docker exec tangerine reporting-cache-clear
+```
+
+If you get the error message 'Waiting for current reporting worker to stop...', you must exec into the container and remove the semaphore:
+
+```shell script
+rm /reporting-worker-running
+```
+
+and then run reporting-cache-clear again.
+
+Start the reporting-worker-batch.js batch process manually and check for errors
+
+```shell script
+/tangerine/server/src/scripts/reporting-worker-batch.js
+```
+
+
 In Chrome, go to `chrome://inspect`, click `Configure...`, and add `127.0.0.1:9228` as an entry in "Target discovery settings".
 
 //@TODO OUTDATED but still relevant

@@ -430,7 +430,7 @@
 
   SQLitePluginTransaction.prototype.run = function() {
     var batchExecutes, handlerFor, i, id, mycb, mycbmap, request, tropts, tx, txFailure, waiting;
-    console.log('run transaction now');
+    // console.log('run transaction now');
     txFailure = null;
     tropts = [];
     batchExecutes = this.executes;
@@ -484,7 +484,7 @@
         q = mycbmap[resultIndex];
         if (q) {
           if (q[type]) {
-            console.log('signal result: ' + type);
+            // console.log('signal result: ' + type);
             // console.log(type);
             // console.log(JSON.stringify(res));
             q[type](res);
@@ -492,16 +492,16 @@
         }
       }
     };
-    console.log('check db name');
-    console.log(this.db.dbname);
+    // console.log('check db name');
+    // console.log('db name: ' + this.db.dbname);
     id = idmap[this.db.dbname];
-    console.log('id: ' + id);
-    console.log(JSON.stringify(tropts));
-    console.log('execute batch now');
+    // console.log('id: ' + id);
+    // console.log(JSON.stringify(tropts));
+    // console.log('execute batch now');
     window.sqliteBatchConnectionManager.executeBatch(id, tropts, (function(_this) {
       return function(batchResults) {
         var columns, j, k, l, len1, len2, r, ref, ref1, results, row, rows, rr;
-        console.log('received execute batch results');
+        // console.log('received execute batch results');
         // console.log(batchResults);
         // console.log(JSON.stringify(batchResults));
         results = [];

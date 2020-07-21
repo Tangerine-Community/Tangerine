@@ -1,15 +1,15 @@
 import { LockBoxContents } from './../_classes/lock-box-contents.class';
 import * as CryptoJS from 'crypto-js';
-import PouchDB from 'pouchdb';
 import { Injectable } from '@angular/core';
 import { LockBox } from './../_classes/lock-box.class'
+import { DB } from '../_factories/db.factory';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LockBoxService {
 
-  db = new PouchDB('tangerine-lock-boxes')
+  db = DB('tangerine-lock-boxes')
   _openLockBoxes = []
 
   constructor() { }

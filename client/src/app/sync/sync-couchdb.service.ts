@@ -72,7 +72,7 @@ export class SyncCouchdbService {
           }
           return $or
         }, []),
-        ...syncDetails.deviceSyncLocations.length > 0 
+        ...syncDetails.deviceSyncLocations.length > 0
           ? syncDetails.deviceSyncLocations.map(locationConfig => {
             // Get last value, that's the focused sync point.
             let location = locationConfig.value.slice(-1).pop()
@@ -157,11 +157,17 @@ export class SyncCouchdbService {
           }
       }
       replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
+    // Now that we've pulled, many changes have happened since we pushed that we can skip the next time we push.
+    // Find the last sequence in the local database and set the sync-push-last_seq variable.
+    const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+    await this.variableService.set('sync-push-last_seq', lastLocalSequence)
     return replicationStatus
   }
 
   async push(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
+      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
+      const direction =  'push'
       userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
         const conflictsQuery = await userDb.query('sync-conflicts');
@@ -176,7 +182,7 @@ export class SyncCouchdbService {
           'docs_written': info.docs_written,
           'doc_write_failures': info.doc_write_failures,
           'pending': info.pending,
-          'direction': 'push'
+          'direction': direction
         };
         this.syncMessage$.next(progress);
       }).on('active', function (info) {
@@ -184,6 +190,49 @@ export class SyncCouchdbService {
           console.log('Push replication is active. Info: ' + JSON.stringify(info));
         } else {
           console.log('Push replication is active.');
+        }
+      }).on('checkpoint', (info) => {
+        if (info) {
+          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          let progress;
+          if (info.checkpoint) {
+            checkpointProgress = checkpointProgress + 1
+            progress = {
+              'message': checkpointProgress,
+              'type': 'checkpoint',
+              'direction': direction
+            };
+          } else if (info.diffing) {
+            diffingProgress = diffingProgress + 1
+            progress = {
+              'message': diffingProgress,
+              'type': 'diffing',
+              'direction': direction
+            };
+          } else if (info.startNextBatch) {
+            startBatchProgress = startBatchProgress + 1
+            progress = {
+              'message': startBatchProgress,
+              'type': 'startNextBatch',
+              'direction': direction
+            };
+          } else if (info.pendingBatch) {
+            pendingBatchProgress = pendingBatchProgress + 1
+            progress = {
+              'message': pendingBatchProgress,
+              'type': 'pendingBatch',
+              'direction': direction
+            };
+          } else {
+            progress = {
+              'message': JSON.stringify(info),
+              'type': 'other',
+              'direction': direction
+            };
+          }
+          this.syncMessage$.next(progress);
+        } else {
+          console.log(direction + ': Calculating Checkpoints.');
         }
       }).on('error', function (errorMessage) {
         console.log('boo, something went wrong! error: ' + errorMessage);
@@ -195,6 +244,8 @@ export class SyncCouchdbService {
 
   async pull(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
+      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
+      const direction =  'pull'
       userDb.db['replicate'].from(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-pull-last_seq', info.last_seq);
         const conflictsQuery = await userDb.query('sync-conflicts');
@@ -217,6 +268,43 @@ export class SyncCouchdbService {
           console.log('Pull replication is active. Info: ' + JSON.stringify(info));
         } else {
           console.log('Pull replication is active.');
+        }
+      }).on('checkpoint', (info) => {
+        if (info) {
+          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          let progress;
+          if (info.checkpoint) {
+            checkpointProgress = checkpointProgress + 1
+            progress = {
+              'message': checkpointProgress,
+              'type': 'checkpoint',
+              'direction': direction
+            };
+          } else if (info.diffing) {
+            diffingProgress = diffingProgress + 1
+            progress = {
+              'message': diffingProgress,
+              'type': 'diffing',
+              'direction': direction
+            };
+          } else if (info.startNextBatch) {
+            startBatchProgress = startBatchProgress + 1
+            progress = {
+              'message': startBatchProgress,
+              'type': 'startNextBatch',
+              'direction': direction
+            };
+          } else if (info.pendingBatch) {
+            pendingBatchProgress = pendingBatchProgress + 1
+            progress = {
+              'message': pendingBatchProgress,
+              'type': 'pendingBatch',
+              'direction': direction
+            };
+          }
+          this.syncMessage$.next(progress);
+        } else {
+          console.log(direction + ': Calculating Checkpoints.');
         }
       }).on('error', function (errorMessage) {
         console.log('boo, something went wrong! error: ' + errorMessage);

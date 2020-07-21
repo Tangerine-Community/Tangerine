@@ -7,6 +7,6 @@ export class UserAccount {
   initialProfileComplete:boolean
   constructor(data:any) {
     Object.assign(this, data)
-    this.username = data._id
+    this.username = data?._id
   }
 } 

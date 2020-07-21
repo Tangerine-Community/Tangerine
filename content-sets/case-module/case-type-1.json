@@ -19,7 +19,7 @@
   "templateCaseDescription": "${getVariable('participant_id') ? `Participant ID: ${getVariable('participant_id')}&nbsp;&nbsp;&nbsp;&nbsp; Location: ${getVariable('location')}` : '...'}",
   "templateCaseEventListItemIcon": "${caseEvent.complete ? 'event_available' : 'event_note'}",
   "templateCaseEventListItemPrimary": "<span>${caseEventDefinition.name}</span>",
-  "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.status !== 'complete' ? 'Incomplete' : 'Complete'}",
+  "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.complete ? 'Complete' : 'Incomplete'}",
   "templateEventFormListItemIcon": "",
   "templateEventFormListItemPrimary": "<span>${eventFormDefinition.name}</span>",
   "templateEventFormListItemSecondary": "Status: ${!eventForm.complete ? 'Incomplete' : 'Complete'}",
@@ -48,6 +48,7 @@
           "formId": "registration-role-2",
           "forCaseRole": "role-2",
           "name": "Registration for Role 2",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -56,6 +57,7 @@
           "formId": "test-issues-created-programatically-on-client",
           "forCaseRole": "role-2",
           "name": "Data Collector causes Issue to be created due to use of API in the form",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -64,6 +66,7 @@
           "formId": "test-issues-created-on-client",
           "forCaseRole": "role-2",
           "name": "Data Collector causes Issue to be created due to `discrepancy-if` logic in form",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -72,6 +75,7 @@
           "formId": "create-an-urgent-notification",
           "forCaseRole": "role-2",
           "name": "Data Collector causes an urgent notification to be created",
+          "autoPopulate": true,
           "required": true,
           "repeatable": false 
         },
@@ -80,6 +84,57 @@
           "formId": "resolve-an-urgent-notification",
           "forCaseRole": "role-2",
           "name": "Data Collector resolves urgent notification",
+          "required": false,
+          "repeatable": true 
+        },
+        {
+          "id": "event-form-definition-abxo39",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Example of an Event Form that DOES NOT auto-populate when a participant is added or the event is created.",
+          "autoPopulate": false,
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-aieb38",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Example of an Event Form that DOES auto-populate when a participant is added or the event is created.",
+          "autoPopulate": true,
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-81a9b92",
+          "formId": "dynamically-make-an-optional-form-required",
+          "forCaseRole": "role-2",
+          "name": "Dynamically make an optional form required",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-a6haeb",
+          "formId": "form-that-syncs-up-but-not-down",
+          "forCaseRole": "role-2",
+          "name": "A form that syncs up but not down",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-bvye73g",
+          "formId": "form-with-alternative-template",
+          "forCaseRole": "role-2",
+          "name": "A form with an alternative template",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
           "required": false,
           "repeatable": true 
         }
@@ -102,18 +157,118 @@
       ]
     },
     {
-      "id": "change-location-of-case",
-      "name": "Change location of case",
+      "id": "event-with-an-event-form-you-can-delete",
+      "name": "An Event with an Event Form you can delete",
       "repeatable": true,
       "required": false,
       "eventFormDefinitions": [
         {
-          "id": "event-form-definition-zibe83",
-          "formId": "change-location-of-case",
+          "id": "event-form-definition-zafbe02",
+          "formId": "test-form",
           "forCaseRole": "role-1",
-          "name": "Change location of case",
+          "name": "An Event Form you can delete",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "test-event-completion-logic",
+      "name": "Test the Event completion logic",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-zafbe02",
+          "formId": "test-form",
+          "forCaseRole": "role-1",
+          "name": "An Event Form required in the EventFormDefinition",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
           "required": true,
-          "repeatable": false 
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-81b9i90",
+          "formId": "dynamically-make-an-optional-form-required",
+          "forCaseRole": "role-1",
+          "name": "Dynamically make an optional form required",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "form-workflow-example",
+      "name": "Form Workflow Example",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form--workflow-form-1",
+          "formId": "workflow-form-1",
+          "forCaseRole": "role-1",
+          "name": "First form in a workflow",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--workflow-form-2",
+          "formId": "workflow-form-2",
+          "forCaseRole": "role-1",
+          "name": "Second form in a workflow",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--workflow-form-3",
+          "formId": "workflow-form-3",
+          "forCaseRole": "role-1",
+          "name": "Third form in a workflow",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "mark-form-as-required-example",
+      "name": "Mark a form as required example",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form--mark-form-as-required-example-1",
+          "formId": "mark-form-as-required-example--form-1",
+          "forCaseRole": "role-1",
+          "name": "Form 1",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--mark-form-as-required-example-2",
+          "formId": "mark-form-as-required-example--form-2",
+          "forCaseRole": "role-1",
+          "name": "Form 2",
+          "autoPopulate": false,
+          "required": false,
+          "repeatable": false
         }
       ]
     }

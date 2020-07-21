@@ -1,0 +1,28 @@
+<div class="form-cards"
+    *ngIf="participantInfo.caseEventHasEventFormsForParticipantsRole"
+>
+  <h2 [innerHTML]="participantInfo.renderedListItem|unsanitizeHtml"></h2>
+  <div 
+    class="new-form-container"
+    *ngIf="participantInfo.eventFormsParticipantCanCreate && participantInfo.eventFormsParticipantCanCreate.length > 0"
+  >
+    <paper-fab 
+      class="new-form-button"
+      routerLink="{{participantInfo.newFormLink}}"
+      icon="add"
+    >
+    </paper-fab>
+  </div>
+  <app-event-form-list-item (formDeleted)="updateFormList($event)"
+    *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
+    [case]="caseService.case"
+    [caseDefinition]="caseService.caseDefinition"
+    [caseEvent]="caseEvent"
+    [caseEventDefinition]="caseEventDefinition"
+    [eventForm]="eventFormInfo.eventForm"
+    [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+    (formDeleted)="onFormDelete()"
+    class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
+  >
+  </app-event-form-list-item>
+</div>

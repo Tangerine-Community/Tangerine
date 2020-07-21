@@ -117,6 +117,17 @@ File: `forms.json`
 ]
 ```
 
+The variables you list in `variablesToIndex` will now be available for searching on with the Tablet level search.  To configure the QR code search on Tablets, in your `app-config.json`, there is a `"barcodeSearchMapFunction"` property. This is a map function for receiving the value of the Search Scan for you to parse out and return the value that should be used for search. A `data` variable is passed in for you to parse, and the return value is what ends up in the search bar as a text search.
+
+Example:
+```
+if ((JSON.parse(data)).participant_id) { 
+  return (JSON.parse(data)).participant_id
+} else { 
+  throw 'Incorrect format'
+} 
+```
+
 ## Configuring two-way sync
 Because you may need to share cases across devices, configuring two-way sync may be necessary. See the [Two-way Sync Documentation](feature-two-way-sync.md) for more details. Note that you sync Form Responses, and it's the IDs of that you'll want to sync in the `"formId"` of the Case Definition in order to sync cases.
 

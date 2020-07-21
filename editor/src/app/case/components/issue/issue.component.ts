@@ -1,3 +1,4 @@
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { UserService } from './../../../core/auth/_services/user.service';
@@ -69,6 +70,7 @@ export class IssueComponent implements OnInit {
   constructor(
     private caseService:CaseService,
     private userService:UserService,
+    private tangyFormService:TangyFormService,
     private route:ActivatedRoute
   ) { }
 
@@ -110,7 +112,7 @@ export class IssueComponent implements OnInit {
     const proposedChange = await this.caseService.getProposedChange(this.issue._id)
     this.proposedFormResponseContainer.response = proposedChange.response
     this.proposedFormResponseContainer.render()
-    const currentFormResponse = await this.caseService.getFormResponse(this.issue.formResponseId)
+    const currentFormResponse = await this.tangyFormService.getResponse(this.issue.formResponseId)
     this.currentFormResponseContainer.response = currentFormResponse
     this.currentFormResponseContainer.render()
     this.diff = await this.caseService.issueDiff(this.issue._id)

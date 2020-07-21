@@ -3,7 +3,7 @@
 /*}*/
 
 .status {
-  margin: 15px 0px 0px;
+  margin-left: 0px;
 }
 
 mat-card {
@@ -26,4 +26,8 @@ mat-card {
 
 div {
   margin: 1em;
+}
+
+.debugging {
+  margin: 0em;
 }
