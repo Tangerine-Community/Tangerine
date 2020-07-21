@@ -1,5 +1,52 @@
 # Changelog
 
+## v3.12.0
+- New Features for Case Module
+  - Data Collector finds Event Forms are automatically created on Case Event creation and after adding a Participant [#2147](https://github.com/Tangerine-Community/Tangerine/issues/2147) [[Demo](https://youtu.be/cNZhLNEKq0A)]
+  - Data Collector has found a non required form has become required [#2233](https://github.com/Tangerine-Community/Tangerine/issues/2233)
+    - Demo Part 1: https://youtu.be/dnJk4LaGuQw
+    - Demo Part 2: https://youtu.be/I0JOZounZc4
+  - Data Collector finds Case Event is automatically marked as complete [#2235](https://github.com/Tangerine-Community/Tangerine/issues/2235) [[Demo](https://youtu.be/AsWox69W9vY)]
+  - Data Collector sees indicator on Event Form when corresponding Form Response has not been synced to a device [#2232](https://github.com/Tangerine-Community/Tangerine/issues/2232) [[Demo](https://youtu.be/0nEHvO6Wdy0)]
+  - Data Collector views a dedicated page for a Participant's Event Forms for a specific Case Event [#2236](https://github.com/Tangerine-Community/Tangerine/issues/2236) [[Demo](https://youtu.be/0qrpnRM43gg)]
+  - Data Collector is redirected to custom route after Event Form is submitted [#2237](https://github.com/Tangerine-Community/Tangerine/issues/2237) [[Demo](https://youtu.be/AoowqmZzMOM)]
+- Fixes for Case Module
+  - Device User registering only sees user profiles they can associate with restricted by location the Device is assigned [#2248](https://github.com/Tangerine-Community/Tangerine/issues/2248)
+  - When all optional and incomplete forms are removed (no required forms in the event) from an event on the client the + button is not shown to re-add any of them [#2113](https://github.com/Tangerine-Community/Tangerine/issues/2113)
+  - Delete an incomplete form from a case does not refresh the screen [#2114](https://github.com/Tangerine-Community/Tangerine/issues/2114)
+- Fixes for all of Tangerine
+  - Autostop is not triggered when marking the entire lineas incorrect [#1869](https://github.com/Tangerine-Community/Tangerine/issues/1869)
+  - Mark entire line of grid as incorrect cannot be undone [#1651](https://github.com/Tangerine-Community/Tangerine/issues/1651)
+  - Meta data print screen Prompt and Hint are not displayed for Radio Buttons (single type) [#1748](https://github.com/Tangerine-Community/Tangerine/issues/1748)
+  - Form Metadata view of Checkboxes with one option is missing [#2239](https://github.com/Tangerine-Community/Tangerine/issues/2239)
+- New features for Sync Protocol 2
+  - Restore encrypted backup on Device [#2127](https://github.com/Tangerine-Community/Tangerine/issues/2127)
+
+- API Changes for Case Module
+  - `caseEvent.status` is now `caseEvent.complete` which has a value of `true` or `false` as opposed to the status strings.
+  - `caseService.startEventForm(...)` is now `caseService.createEventForm(...)`.
+  - `caseService.deleteEventFormInstance(...)` is now `caseService.deleteEventForm(...)`.
+  - `caseService.getCaseEventFormsData(...)` is now `caseService.getEventFormData(...)`.
+  - `caseService.setCaseEventFormsData(...)` is now `caseService.setEventFormData(...)`.
+
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.12.0
+# Now you are ready to start the server.
+./start.sh v3.12.0
+# Run upgrade
+docker exec -it tangerine reporting-cache-clear 
+```
+Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
+
+__Android upgrade instructions:__
+If you are upgrading an Android device that was installed with Tangerine v3.8.0 or greater, you will need to regenerate your APK and reinstall, otherwise you may use the over the air updater.
+
 ## v3.11.0
 - New Features in all Tangerine
   - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
@@ -14,23 +61,6 @@
   - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](https://docs.tangerinecentral.org/editor/case-module/custom-case-reports.md)
 - Developer notes
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
-  
-__Server upgrade instructions:__
-
-```
-# Fetch the updates.
-cd tangerine
-git fetch origin
-git checkout v3.11.0
-# Now you are ready to start the server.
-./start.sh v3.11.0
-# Run upgrade
-docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
-```
-Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
-
-__Android upgrade instructions:__
-If your groups are using Sync Protocol 2 module, an APK reinstall is required. Release the APK and reinstall on all Android Devices. If your groups are not using Sync Protocol 2, you may upgrade Android tablets over the air using the usual release process.
 
 ## v3.10.0
 - New Features in all Tangerine

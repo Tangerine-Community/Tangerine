@@ -24,9 +24,13 @@ export class CaseDetailsComponent implements OnInit, AfterContentInit {
   }
 
   async ngAfterContentInit() {
-    const container = this.reportsContainer.nativeElement
-    let formHtml =  await this.http.get('./assets/reports/form.html', {responseType: 'text'}).toPromise();
-    container.innerHTML = formHtml
+    try {
+      const container = this.reportsContainer.nativeElement
+      let formHtml =  await this.http.get('./assets/reports/form.html', {responseType: 'text'}).toPromise();
+      container.innerHTML = formHtml
+    } catch (e) {
+      // Do nothing.
+    }
   }
 
   async setURL() {

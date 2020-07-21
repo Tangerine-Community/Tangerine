@@ -1,7 +1,7 @@
 // @ts-ignore
 import PouchDB from 'pouchdb';
 // @ts-ignore
-import PouchDBFind from 'pouchdb-find';
+import * as PouchDBFind from 'pouchdb-find';
 import * as cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import * as PouchDBUpsert from 'pouchdb-upsert';
 import debugPouch from 'pouchdb-debug';
@@ -24,7 +24,7 @@ export function DB(name, key = ''):PouchDB {
   }
 
   let pouchDBOptions = <any>{};
-  if (window['isCordovaApp'] && window['sqlitePlugin'] && !localStorage.getItem('ran-update-v3.8.0')) {
+  if (window['isCordovaApp'] && window['sqliteStorageFile']) {
     pouchDBOptions = {
       adapter: 'cordova-sqlite',
       location: 'default',

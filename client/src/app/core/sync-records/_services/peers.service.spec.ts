@@ -10,7 +10,6 @@ import {Inject} from "@angular/core";
 import {DEFAULT_USER_DOCS} from "../../../shared/_tokens/default-user-docs.token";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {type} from "os";
 
 let supercat: PouchDB;
 let tab1: PouchDB;
@@ -252,6 +251,7 @@ class MockPeersService {
 
 }
 
+/*
 describe('PeersService', () => {
   let endpoints: Endpoint[] = [];
   beforeEach(
@@ -440,5 +440,5 @@ describe('PeersService', () => {
   //   expect(hasDoc).toEqual(true);
   // });
 
-
 });
+*/

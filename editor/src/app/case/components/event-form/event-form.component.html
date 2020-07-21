@@ -4,6 +4,6 @@
     [caseEventId]="caseEvent.id"
     [eventFormId]="eventForm.id"
 ></app-case-breadcrumb>
-<paper-button class="new-issue-button" routerLink="/new-issue/{{caseId}}/{{caseEvent.id}}/{{eventForm.id}}"><mwc-icon>playlist_add</mwc-icon> new issue</paper-button>
+<paper-button *ngIf="loaded" class="new-issue-button" routerLink="/new-issue/{{caseId}}/{{caseEvent.id}}/{{eventForm.id}}"><mwc-icon>playlist_add</mwc-icon> new issue</paper-button>
 <app-tangy-forms-player #formPlayer></app-tangy-forms-player>
 

@@ -3,7 +3,6 @@ import { FormInfo } from './../../../tangy-forms/classes/form-info.class';
 import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
 import { FORM_TYPES_INFO } from './../../../core/search/search.component';
 import { CaseService } from 'src/app/case/services/case.service';
-import {  CASE_EVENT_STATUS_COMPLETED } from 'src/app/case/classes/case-event.class';
 import { TangyFormsInfoService } from './../../../tangy-forms/tangy-forms-info-service';
 import { SearchService } from './../../../shared/_services/search.service';
 import { UserService } from './../../../shared/_services/user.service';

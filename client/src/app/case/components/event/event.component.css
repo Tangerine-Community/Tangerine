@@ -67,10 +67,6 @@ app-event-form-list-item:focus {
     border-top: 1px solid #ccc;
 }
 
-.form.required {
-    border-left: red solid 4px;
-}
-
 .form.new-form {
     border: 1px dashed #ccc;
 }

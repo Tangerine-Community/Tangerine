@@ -265,5 +265,265 @@
       "push": true,
       "pull": true
     }
-  }    
+  },
+  {
+    "id" : "test-form",
+    "src" : "./assets/test-form/form.html",
+    "description" : "Test Form",
+    "listed" : false,
+    "title" : "Test Form",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id" : "dynamically-make-an-optional-form-required",
+    "src" : "./assets/dynamically-make-an-optional-form-required/form.html",
+    "description" : "Dynamically make an optional form required",
+    "listed" : false,
+    "title" : "Dynamically make an optional form required",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id" : "form-that-syncs-up-but-not-down",
+    "src" : "./assets/form-that-syncs-up-but-not-down/form.html",
+    "description" : "A form that syncs up but not down",
+    "listed" : false,
+    "title" : "A form that syncs up but not down",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": false 
+    }
+  },
+  {
+    "id" : "workflow-form-1",
+    "src" : "./assets/workflow-form-1/form.html",
+    "description" : "First form in a workflow",
+    "listed" : false,
+    "title" : "First form in a workflow",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": false 
+    }
+  },
+  {
+    "id" : "workflow-form-2",
+    "src" : "./assets/workflow-form-2/form.html",
+    "description" : "Second form in a workflow",
+    "listed" : false,
+    "title" : "Second form in a workflow",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": false 
+    }
+  },
+  {
+    "id" : "workflow-form-3",
+    "src" : "./assets/workflow-form-3/form.html",
+    "description" : "Third form in a workflow",
+    "listed" : false,
+    "title" : "Third form in a workflow",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": false 
+    }
+  },
+  {
+    "id" : "mark-form-as-required-example--form-1",
+    "src" : "./assets/mark-form-as-required-example--form-1/form.html",
+    "description" : "Mark a Form as required example: form 1",
+    "listed" : false,
+    "title" : "Mark a Form as required example: form 1",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true 
+    }
+  },
+  {
+    "id" : "mark-form-as-required-example--form-2",
+    "src" : "./assets/mark-form-as-required-example--form-2/form.html",
+    "description" : "Mark a Form as required example: form 2",
+    "listed" : false,
+    "title" : "Mark a Form as required example: form 2",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true 
+    }
+  },
+  {
+    "id" : "form-with-alternative-template",
+    "src" : "./assets/form-with-alternative-template/form.html",
+    "description" : "A form with an alternative template",
+    "listed" : false,
+    "title" : "A form with an alternative template",
+    "icon" : "assignment",
+    "type" : "form",
+    "templates": [
+      {
+        "id": "alt",
+        "label": "Alternative template",
+        "appContext": "CLIENT",
+        "src" : "./assets/form-with-alternative-template/alt.html"
+      }
+    ],
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true 
+    }
+  }
 ]

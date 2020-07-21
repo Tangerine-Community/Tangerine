@@ -23,7 +23,7 @@ class CaseDefinition {
   templateScheduleListItemIcon:string
   templateScheduleListItemPrimary:string
   templateScheduleListItemSecondary:string
-  constructor(init:CaseDefinition) {
+  constructor(init:any) {
     Object.assign(this, init);
     /*
     this.id = caseDefinitionData.id;

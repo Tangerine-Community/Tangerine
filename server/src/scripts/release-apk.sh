@@ -52,6 +52,12 @@ rm -rf $RELEASE_DIRECTORY/www/shell/assets
 cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
 cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 
+CUSTOM_SCRIPTS_PATH="$RELEASE_DIRECTORY/www/shell/assets/custom-scripts.js"
+if [ -f "$CUSTOM_SCRIPTS_PATH" ]; then
+  webpack $CUSTOM_SCRIPTS_PATH -o "$CUSTOM_SCRIPTS_PATH.tmp"
+  mv "$CUSTOM_SCRIPTS_PATH.tmp" $CUSTOM_SCRIPTS_PATH 
+fi
+
 # Stash the Build ID in the release.
 echo $BUILD_ID > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-id 
 echo $RELEASE_TYPE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-channel

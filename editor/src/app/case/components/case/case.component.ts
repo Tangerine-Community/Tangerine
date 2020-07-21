@@ -43,6 +43,7 @@ export class CaseComponent implements AfterContentInit {
       await this.caseService.load(caseId)
       this.caseService.openCaseConfirmed = false
     }
+    this.caseService.setContext()
     this.window.caseService = this.caseService
     this.calculateTemplateData()
     this.ready = true
@@ -88,7 +89,7 @@ export class CaseComponent implements AfterContentInit {
 
   async onSubmit() {
     const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
-    const caseEvent = this.caseService.createEvent(this.selectedNewEventType, true)
+    const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
     await this.caseService.save()
     this.calculateTemplateData()
   }

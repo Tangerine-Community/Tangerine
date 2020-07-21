@@ -1,3 +1,6 @@
+import { CreateProfileGuardService } from './../shared/_guards/create-profile-guard.service';
+import { CustomAppComponent } from './components/custom-app/custom-app.component';
+import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 import { Observable } from 'rxjs';
 import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { NgModule, Injectable } from '@angular/core';
@@ -28,6 +31,11 @@ export class CanDeactivateEvent implements CanDeactivate<EventComponent> {
 
 const routes: Routes = [
   {
+    path: 'custom-app',
+    component: CustomAppComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
     path: 'case/:id',
     component: CaseComponent,
     canActivate: [LoginGuard]
@@ -37,6 +45,11 @@ const routes: Routes = [
     component: EventComponent,
     canActivate: [LoginGuard],
     canDeactivate: [ CanDeactivateEvent ]
+  },
+  {
+    path: 'case/event/participant/:caseId/:eventId/:participantId',
+    component: EventFormsForParticipantPageComponent,
+    canActivate: [LoginGuard]
   },
   {
     path: 'case/event/form-add/:caseId/:eventId/:participantId',

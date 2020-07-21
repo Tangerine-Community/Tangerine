@@ -82,7 +82,7 @@ export const TangyFormsQueries = {
   responsesByFormIdAndStartDatetime: {
     map: function (doc) {
       if (doc.collection !== 'TangyFormResponse') return
-      emit(`${doc.form.id}-${doc.startDatetime}`, true)
+      emit(`${doc.form.id}-${doc.startUnixtime}`, true)
     }.toString()
   },
   responseByUploadDatetime: {
