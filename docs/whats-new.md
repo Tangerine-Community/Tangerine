@@ -1,4 +1,68 @@
 # What's New
+## v3.12.0
+
+??? note "New Features for Case Module"
+
+    - Data Collector finds Event Forms are automatically created on Case Event creation and after adding a Participant [#2147](https://github.com/Tangerine-Community/Tangerine/issues/2147) [Demo](https://youtu.be/cNZhLNEKq0A)
+    - Data Collector has found a non required form has become required [#2233](https://github.com/Tangerine-Community/Tangerine/issues/2233)
+        - Demo Part 1: https://youtu.be/dnJk4LaGuQw
+        - Demo Part 2: https://youtu.be/I0JOZounZc4
+    - Data Collector finds Case Event is automatically marked as complete [#2235](https://github.com/Tangerine-Community/Tangerine/issues/2235) [Demo](https://youtu.be/AsWox69W9vY)
+    - Data Collector sees indicator on Event Form when corresponding Form Response has not been synced to a device [#2232](https://github.com/Tangerine-Community/Tangerine/issues/2232) [Demo](https://youtu.be/0nEHvO6Wdy0)
+    - Data Collector views a dedicated page for a Participant's Event Forms for a specific Case Event [#2236](https://github.com/Tangerine-Community/Tangerine/issues/2236) [Demo](https://youtu.be/0qrpnRM43gg)
+    - Data Collector is redirected to custom route after Event Form is submitted [#2237](https://github.com/Tangerine-Community/Tangerine/issues/2237) [Demo](https://youtu.be/AoowqmZzMOM)
+
+??? note "Fixes"
+
+    - Autostop is not triggered when marking the entire lineas incorrect [#1869](https://github.com/Tangerine-Community/Tangerine/issues/1869)
+    - Mark entire line of grid as incorrect cannot be undone [#1651](https://github.com/Tangerine-Community/Tangerine/issues/1651)
+    - Meta data print screen Prompt and Hint are not displayed for Radio Buttons (single type) [#1748](https://github.com/Tangerine-Community/Tangerine/issues/1748)
+    - Form Metadata view of Checkboxes with one option is missing [#2239](https://github.com/Tangerine-Community/Tangerine/issues/2239)
+    - Delete a an incomplete form from a case does not refresh the screen [#2114](https://github.com/Tangerine-Community/Tangerine/issues/2114)
+    - When all optional and incomplete forms are removed (no required forms in the event) from an event on the client the + button is not shown to re-add any of them [#2113](https://github.com/Tangerine-Community/Tangerine/issues/2113)
+
+!!! info "API Changes for Case Module"
+
+    - caseEvent.status is now caseEvent.complete which has a value of true or false as opposed to the status strings.
+    - caseService.startEventForm(...) is now caseService.createEventForm(...).
+    - caseService.deleteEventFormInstance(...) is now caseService.deleteEventForm(...).
+    - caseService.getCaseEventFormsData(...) is now caseService.getEventFormData(...).
+    - caseService.setCaseEventFormsData(...) is now caseService.setEventFormData(...).
+
+??? tip "__Upgrade instructions__"
+    ```
+    # Fetch the updates.
+    cd tangerine
+    git fetch origin
+    git checkout v3.12.0
+    # Now you are ready to start the server.
+    ./start.sh v3.12.0
+    # Run upgrade
+    docker exec -it tangerine reporting-cache-clear 
+    ```
+
+
+## v3.11.0
+
+??? note "New Features in all Tangerine"
+    - Device Manager installs many Tangerine APKs on a single device [#2182](https://github.com/Tangerine-Community/Tangerine/issues/2182)
+    - CSV output enhancements:
+        - Editor User indicates whether to include PII in CSV export [#1771](https://github.com/Tangerine-Community/Tangerine/issues/1771)
+        - User profile information available in CSV export [#2081](https://github.com/Tangerine-Community/Tangerine/issues/2081)
+        - Editor User exports CSV file that contains the group and form name [#2108](https://github.com/Tangerine-Community/Tangerine/issues/2108)
+    - New 'T' namespace for helper functions [#2198](https://github.com/Tangerine-Community/Tangerine/issues/2198)
+
+??? note "New Features in Tangerine with Case Module Enabled"
+    - New Features in Tangerine with Case Module enabled
+        - Data Collector changes location of Case [#2098](https://github.com/Tangerine-Community/Tangerine/issues/2098) [demo](https://youtu.be/kqf63PGudwc)
+        - Data Collector views an alert [#2020](https://github.com/Tangerine-Community/Tangerine/issues/2020) [demo](https://youtu.be/iw1emB9Ddis)
+        - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](https://docs.tangerinecentral.org/editor/case-module/custom-case-reports.md)
+
+!!! info "Developer Notes"
+    - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/issues/2187)
+
+
+
 
 ## v3.10.0
 
