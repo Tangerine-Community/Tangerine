@@ -1,6 +1,7 @@
 arrange:
     - index.md
     - about.md
+    - guides.md
     - getting-started.md
     - whats-new.md
     - navigation.md 
