@@ -12,7 +12,13 @@
     - Data Collector views a dedicated page for a Participant's Event Forms for a specific Case Event [#2236](https://github.com/Tangerine-Community/Tangerine/issues/2236) [Demo](https://youtu.be/0qrpnRM43gg)
     - Data Collector is redirected to custom route after Event Form is submitted [#2237](https://github.com/Tangerine-Community/Tangerine/issues/2237) [Demo](https://youtu.be/AoowqmZzMOM)
 
-??? note "Fixes"
+??? note "Fixes for Case Module"
+
+      - Device User registering only sees user profiles they can associate with restricted by location the Device is assigned [#2248](https://github.com/Tangerine-Community/Tangerine/issues/2248)
+      - When all optional and incomplete forms are removed (no required forms in the event) from an event on the client the + button is not shown to re-add any of them [#2113](https://github.com/Tangerine-Community/Tangerine/issues/2113)
+      - Delete an incomplete form from a case does not refresh the screen [#2114](https://github.com/Tangerine-Community/Tangerine/issues/2114)
+
+??? note "Fixes for all of Tangerine"
 
     - Autostop is not triggered when marking the entire lineas incorrect [#1869](https://github.com/Tangerine-Community/Tangerine/issues/1869)
     - Mark entire line of grid as incorrect cannot be undone [#1651](https://github.com/Tangerine-Community/Tangerine/issues/1651)
@@ -20,6 +26,9 @@
     - Form Metadata view of Checkboxes with one option is missing [#2239](https://github.com/Tangerine-Community/Tangerine/issues/2239)
     - Delete a an incomplete form from a case does not refresh the screen [#2114](https://github.com/Tangerine-Community/Tangerine/issues/2114)
     - When all optional and incomplete forms are removed (no required forms in the event) from an event on the client the + button is not shown to re-add any of them [#2113](https://github.com/Tangerine-Community/Tangerine/issues/2113)
+
+??? note "New features for Sync Protocol 2"
+    - Restore encrypted backup on Device [#2127](https://github.com/Tangerine-Community/Tangerine/issues/2127)
 
 !!! info "API Changes for Case Module"
 
@@ -40,6 +49,10 @@
     # Run upgrade
     docker exec -it tangerine reporting-cache-clear 
     ```
+    Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
+
+    __Android upgrade instructions:__
+    If you are upgrading an Android device that was installed with Tangerine v3.8.0 or greater, you will need to regenerate your APK and reinstall, otherwise you may use the over the air updater.
 
 
 ## v3.11.0
