@@ -78,10 +78,11 @@ nano config.sh
 ./start.sh <version tag>
 ```
 
-__Step 6__: Keep Tangerine alive with cron
+__Step 6__: Keep Tangerine alive and Ubuntu up to date with cron
 
-To reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. As a user with docker permission on the command line run `crontab -e` and add the following line. Also added to this cron is an entry to start tangerine in case the machine is rebooted.
+To reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. Also it's important to update Ubuntu every week to stay current with security fixes. Enter crontab for root with `sudo su && crontab -e` and add the following lines. 
 ```
+0 0 * * SAT sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo reboot
 0 0 * * * docker stop tangerine && docker start tangerine
 @reboot docker start couchdb && sleep 10 && docker start tangerine
 ```
