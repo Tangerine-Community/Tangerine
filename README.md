@@ -86,6 +86,10 @@ To reset caches and free up memory every so often, we recommend restarting the s
 @reboot docker start couchdb && sleep 10 && docker start tangerine
 ```
 
+__Step 7__: Log into Tangerine Editor
+
+Using the credentials you set for `USER1` in your config.sh file, go to the URL of your server and log in.
+
 ### Tablet
 To install on Tablets, proceed to the "Releases" tab in the Online Editor. There you will find two methods for installing on Tablets, Web Browser Installation and Android Installation. Each of these release types have two different channels you can publish to, Test and Live. It is recommended that for every deployment of Tangerine you have at least one designated device subscribed to the Test channel so that you may release to that Device to test Tangerine upgrades and content updates before releasing to the remaining tablets subscribed to the Live channel.
 
