@@ -37,7 +37,7 @@ Currently the most commonly deployed tablet with Tangerine is the [Lenovo Tab 4 
 ### Server
 We recommend using AWS for hosting have documented detailed [instructions for AWS](docs/install-on-aws.md). Below are general instructions for installing on any machine.
 
-__Step 1__: SSH into your machine from a terminal.
+__Step 1__: Create an Ubuntu Server and SSH into it from your machine from a terminal. See instructions for setting up a server on AWS [here](docs/system-administrator/install-on-aws.md).
 
 __Step 2__: [Install Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/), 
 
