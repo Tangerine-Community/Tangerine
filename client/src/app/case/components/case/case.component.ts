@@ -43,8 +43,8 @@ export class CaseComponent implements AfterContentInit {
       await this.caseService.load(caseId)
       this.caseService.openCaseConfirmed = false
     }
+    this.caseService.setContext()
     this.window.caseService = this.caseService
-    this.window['T']['case'] = this.caseService
     this.calculateTemplateData()
     this.ready = true
   }

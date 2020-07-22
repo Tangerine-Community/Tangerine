@@ -1,3 +1,7 @@
+import { CaseDefinitionsService } from './case/services/case-definitions.service';
+import { CasesService } from './case/services/cases.service';
+import { HttpClient } from '@angular/common/http';
+import { TangyFormsInfoService } from './tangy-forms/tangy-forms-info-service';
 import { TangyFormService } from './tangy-forms/tangy-form.service';
 import { MenuService } from './shared/_services/menu.service';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
@@ -11,6 +15,8 @@ import { UserService } from './core/auth/_services/user.service';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { _TRANSLATE } from './shared/_services/translation-marker';
 import { NgxPermissionsService } from 'ngx-permissions';
+import { CaseService } from './case/services/case.service';
+import { Get } from 'tangy-form/helpers.js'
 
 @Component({
   selector: 'app-root',
@@ -36,12 +42,17 @@ export class AppComponent implements OnInit, OnDestroy {
   private _mobileQueryListener: () => void;
 
   constructor(
+    private http: HttpClient,
     private windowRef: WindowRef,
     private router: Router,
     private userService: UserService,
     menuService: MenuService,
     private authenticationService: AuthenticationService,
     private tangyFormService: TangyFormService,
+    private caseService:CaseService,
+    private caseDefinitionsService:CaseDefinitionsService,
+    private tangyFormsInfoService:TangyFormsInfoService,
+    private casesService:CasesService,
     translate: TranslateService,
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
@@ -58,6 +69,21 @@ export class AppComponent implements OnInit, OnDestroy {
     // Tell tangyFormService which groupId to use.
     tangyFormService.initialize(window.location.pathname.split('/')[2]);
     this.menuService = menuService;
+    this.window.T = {
+      form: {
+        Get: Get
+      },
+      router,
+      http,
+      user: userService,
+      appConfig: appConfigService,
+      tangyFormsInfo: tangyFormsInfoService,
+      tangyForms: tangyFormService,
+      case: caseService,
+      cases: casesService,
+      caseDefinition: caseDefinitionsService,
+      translate: window['t']
+    }
   }
 
   async logout() {

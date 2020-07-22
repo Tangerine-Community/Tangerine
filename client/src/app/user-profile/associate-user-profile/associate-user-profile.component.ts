@@ -1,3 +1,4 @@
+import { DeviceService } from './../../device/services/device.service';
 import { InjectionToken } from '@angular/core';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { SyncService } from './../../sync/sync.service';
@@ -22,17 +23,17 @@ export class AssociateUserProfileComponent implements OnInit {
     private userService: UserService,
     private appConfigService: AppConfigService,
     private syncService: SyncService,
+    private deviceService: DeviceService,
     private tangyFormService:TangyFormService
   ) { }
 
   async ngOnInit() {
+    const deviceInfo = await this.deviceService.getDevice()
+    const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]
     const userProfiles = await this.tangyFormService.getResponsesByFormId('user-profile')
+    const localUserProfiles = userProfiles.filter(profile => profile.location[lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
     const userAccounts = await this.userService.getAllUserAccounts()
-    const availableUserProfiles = userProfiles.reduce((availableUserProfiles, userProfile) => {
-      return !userAccounts.find(userAccount => userAccount.userUUID === userProfile._id)
-        ? [...availableUserProfiles, userProfile]
-        : availableUserProfiles
-    }, [])
+    const availableUserProfiles = localUserProfiles.filter((userProfile) => !userAccounts.find(userAccount => userAccount.userUUID === userProfile._id))
     this.container.nativeElement.innerHTML = `
       <tangy-form id="user-profile-select-form">
         <tangy-form-item id="user-profile-select-item">
