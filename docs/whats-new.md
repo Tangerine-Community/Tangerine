@@ -48,6 +48,8 @@
     ./start.sh v3.12.0
     # Run upgrade
     docker exec -it tangerine reporting-cache-clear 
+    # Remove Tangerine's previous version Docker Image.
+    docker rmi tangerine/tangerine:v3.11.0
     ```
     Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
 
