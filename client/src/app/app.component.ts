@@ -1,3 +1,15 @@
+import { LockBoxService } from './shared/_services/lock-box.service';
+import { ClassFormService } from './class/_services/class-form.service';
+import { DashboardService } from './class/_services/dashboard.service';
+import { SyncService } from './sync/sync.service';
+import { SyncingService } from './core/sync-records/_services/syncing.service';
+import { FormTypesService } from './shared/_services/form-types.service';
+import { LanguagesService } from './shared/_services/languages.service';
+import { CasesService } from './case/services/cases.service';
+import { CaseDefinitionsService } from './case/services/case-definitions.service';
+import { TangyFormService } from './tangy-forms/tangy-form.service';
+import { TangyFormsInfoService } from './tangy-forms/tangy-forms-info-service';
+import { CaseService } from 'src/app/case/services/case.service';
 import { VariableService } from './shared/_services/variable.service';
 import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
@@ -33,7 +45,6 @@ export class AppComponent implements OnInit {
   languageCode:string
   languageDirection:string
   languagePath:string
-  translate: TranslateService
   ready = false
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
 
@@ -43,46 +54,86 @@ export class AppComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private updateService:UpdateService,
+    private caseService:CaseService,
+    private casesService:CasesService,
+    private caseDefinitionsService:CaseDefinitionsService,
     private searchService:SearchService,
     private deviceService: DeviceService,
+    private tangyFormsInfoService:TangyFormsInfoService,
+    private tangyFormService:TangyFormService,
+    private languagesService:LanguagesService,
+    private formTypesService:FormTypesService,
+    private syncingService:SyncingService,
+    private syncService:SyncService,
+    private classFormService:ClassFormService,
+    private lockBoxService:LockBoxService,
+    private dashboardService:DashboardService,
     private variableService:VariableService,
-    translate: TranslateService
+    private translate: TranslateService
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
-    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
+    this.window.T = {
+      form: {
+        Get: Get
+      },
+      router,
+      http,
+      user: userService,
+      lockBox: lockBoxService,
+      syncing: syncingService,
+      sync: syncService,
+      appConfig: appConfigService,
+      update: updateService,
+      search: searchService,
+      device: deviceService,
+      tangyFormsInfo: tangyFormsInfoService,
+      tangyForms: tangyFormService,
+      formTypes: formTypesService,
+      case: caseService,
+      cases: casesService,
+      caseDefinition: caseDefinitionsService,
+      languages: languagesService,
+      variable: variableService,
+      classForm: classFormService,
+      classDashboard: dashboardService,
+      translate: window['t']
+    }
+  }
+  
+  async ngOnInit() {
+
+    this.installed = await this.variableService.get('installed') && await this.variableService.get('languageCode')
       ? true
-      : false
-    this.freespaceCorrectionOccuring = false;
+      : false;
     // Detect if this is the first time the app has loaded.
-    this.languageCode = this.window.localStorage.getItem('languageCode')
-      ? this.window.localStorage.getItem('languageCode')
-      : 'en'
-    this.languageDirection = this.window.localStorage.getItem('languageDirection')
-      ? this.window.localStorage.getItem('languageDirection')
-      : 'ltr'
+    this.languageCode = await this.variableService.get('languageCode')
+      ? await this.variableService.get('languageCode')
+      : 'en';
+    this.languageDirection = await this.variableService.get('languageDirection')
+      ? await this.variableService.get('languageDirection')
+      : 'ltr';
+
+    this.freespaceCorrectionOccuring = false;
+
     // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
     this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
     // Set up ngx-translate.
-    translate.setDefaultLang(this.languagePath);
-    translate.use(this.languagePath);
+    this.translate.setDefaultLang(this.languagePath);
+    this.translate.use(this.languagePath);
     // Set required config for use of <t-lang> Web Component.
     this.window.document.documentElement.lang = this.languageCode;
     this.window.document.documentElement.dir = this.languageDirection;
     this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
     // Make database services available to eval'd code.
     this.window.userService = this.userService
-  }
-
-
-  async ngOnInit() {
 
     // Installation check.
     if (!this.installed) {
       await this.install();
     }
 
-    this.checkPermissions();
+    await this.checkPermissions();
     // Initialize services.
     await this.userService.initialize();
     await this.searchService.start();
@@ -92,14 +143,6 @@ export class AppComponent implements OnInit {
     this.window.appConfig = this.appConfig;
     this.window.device = await this.deviceService.getDevice();
     this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
-
-    //  Expose helpers inside T:
-    window['T'] = {
-      "form": {
-        Get: Get
-      },
-      "user": this.userService
-    }
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
@@ -131,9 +174,9 @@ export class AppComponent implements OnInit {
     try {
       const config =<any> await this.http.get('./assets/app-config.json').toPromise()
       await this.updateService.install()
-      window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
-      window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-      window.localStorage.setItem('installed', 'true')
+      await this.variableService.set('languageCode', config.languageCode ? config.languageCode : 'en')
+      await this.variableService.set('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+      await this.variableService.set('installed', 'true')
     } catch (e) {
       console.log('Error detected in install:')
       console.log(e)
@@ -195,7 +238,7 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      const DB = await this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
+      const DB = await this.userService.getUserDatabase(this.userService.getCurrentUser())
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,

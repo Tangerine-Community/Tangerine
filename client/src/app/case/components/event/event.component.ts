@@ -55,8 +55,8 @@ export class EventComponent implements OnInit, AfterContentInit {
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
+      this.caseService.setContext(params.eventId)
       this.window.caseService = this.caseService
-      this.window['T']['case'] = this.caseService
       this.caseEvent = this
         .caseService
         .case

@@ -2,7 +2,7 @@
 
   on-submit="
     debugger
-    const resolveNotificationEventForm = caseService.startEventForm(caseEvent.id, 'event-form-definition-fdkai3', participant.id)
+    const resolveNotificationEventForm = caseService.createEventForm(caseEvent.id, 'event-form-definition-fdkai3', participant.id)
     caseService.createNotification(
       `This is an urgent notification!`, 
       `

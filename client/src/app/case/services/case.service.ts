@@ -1,3 +1,4 @@
+import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
@@ -19,6 +20,7 @@ import { v4 as UUID } from 'uuid';
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
+import { CaseEventDefinition } from '../classes/case-event-definition.class';
 
 @Injectable({
   providedIn: 'root'
@@ -27,10 +29,14 @@ class CaseService {
 
   _case:Case
   caseDefinition:CaseDefinition
+
+  // Opening a case confirmation semaphore.
   openCaseConfirmed = false
+  // Query properties.
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
+
 
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = { 
@@ -42,6 +48,44 @@ class CaseService {
 
   get case():Case {
     return this._case
+  }
+
+  caseEvent:CaseEvent
+  caseEventDefinition:CaseEventDefinition
+  eventForm:EventForm
+  eventFormDefinition:EventFormDefinition
+  participant:CaseParticipant
+
+  setContext(caseEventId = '', eventFormId = '') {
+    window['caseInstance'] = this.case
+    this.caseEvent = caseEventId
+      ? this.case 
+        .events
+        .find(caseEvent => caseEvent.id === caseEventId)
+      : null
+    window['caseEvent'] = this.caseEvent
+    this.caseEventDefinition = caseEventId
+      ? this
+        .caseDefinition
+        .eventDefinitions
+        .find(caseEventDefinition => caseEventDefinition.id === this.caseEvent.caseEventDefinitionId)
+      : null
+    window['caseEventDefinition'] = this.caseEventDefinition
+    this.eventForm = eventFormId
+      ? this.caseEvent
+        .eventForms
+        .find(eventForm => eventForm.id === eventFormId)
+      : null
+    window['eventForm'] = this.eventForm
+    this.eventFormDefinition = eventFormId
+      ? this.caseEventDefinition
+        .eventFormDefinitions
+        .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
+      : null
+    this.participant = this.eventForm
+      ? this.case.participants.find(participant => participant.id === this.eventForm.participantId)
+      : null
+    window['participant'] = this.participant
   }
 
   constructor(
@@ -58,6 +102,49 @@ class CaseService {
   /*
    * Case API
    */
+  
+  get id() {
+    return this._case._id
+  }
+
+  get participants() {
+    return this._case.participants || []
+  }
+
+  get events() {
+    return this._case.events || []
+  }
+
+  get forms() {
+    return this._case.events.reduce((forms, event) => {
+      return [
+        ...event.eventForms || [],
+        ...forms
+      ]
+    }, [])
+  }
+
+  get roleDefinitions() {
+    return this.caseDefinition.caseRoles
+  }
+
+  get caseEventDefinitions() {
+    return this.caseDefinition.eventDefinitions || []
+  }
+
+  get eventFormDefinitions() {
+    return this.caseDefinition.eventDefinitions.reduce((formDefs, eventDef) => {
+      return [
+        ...eventDef.eventFormDefinitions.map(eventFormDef => {
+          return {
+            ...eventFormDef,
+            eventDefinitionId: eventDef.id
+          }
+        }) || [],
+        ...formDefs
+      ]
+    }, [])
+  }
 
   async create(caseDefinitionId) {
     this.caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())

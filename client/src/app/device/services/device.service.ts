@@ -51,12 +51,34 @@ export class DeviceService {
     const appConfig = await this.appConfigService.getAppConfig()
     let device:Device
     if (isTest) {
+      // Pick a location out of the location list.
+      const locationList = await this.appConfigService.getLocationList()
+      const flatLocationList = Loc.flatten(locationList)
+      const pickedLocation = [...flatLocationList.locationsLevels]
+        // Pick any first node at the bottom of the tree, work our way up into an array of location nodes.
+        .reverse()
+        .reduce((locationArray, level, i) => {
+          return [
+            i === 0
+              ? flatLocationList.locations.find(node => node.level === level)
+              : flatLocationList.locations.find(node => node.id === locationArray[0].parent),
+            ...locationArray
+          ]
+        }, [])    
+        // Transform the array of location nodes into a location object where the keys are the level and the values are the node IDs.
+        .reduce((location, node) => {
+          return {
+            ...location,
+            [node.level]: node.id
+          }
+        }, {})
+      // @TODO Assign a location.
       device = <Device>{
         _id: id,
         token,
         key: 'test',
-        assignedLocation: {},
-        syncLocations: []
+        assignedLocation: pickedLocation,
+        syncLocations: [pickedLocation]
       }
     } else {
       device = <Device>await this

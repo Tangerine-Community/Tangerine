@@ -126,6 +126,17 @@
           "allowDeleteIfFormNotStarted": true,
           "required": false,
           "repeatable": false
+        },
+        {
+          "id": "event-form-definition-bvye73g",
+          "formId": "form-with-alternative-template",
+          "forCaseRole": "role-2",
+          "name": "A form with an alternative template",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": true 
         }
       ]
     },
@@ -189,6 +200,73 @@
           "autoPopulate": false,
           "allowDeleteIfFormNotCompleted": true,
           "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "form-workflow-example",
+      "name": "Form Workflow Example",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form--workflow-form-1",
+          "formId": "workflow-form-1",
+          "forCaseRole": "role-1",
+          "name": "First form in a workflow",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--workflow-form-2",
+          "formId": "workflow-form-2",
+          "forCaseRole": "role-1",
+          "name": "Second form in a workflow",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--workflow-form-3",
+          "formId": "workflow-form-3",
+          "forCaseRole": "role-1",
+          "name": "Third form in a workflow",
+          "autoPopulate": false,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "mark-form-as-required-example",
+      "name": "Mark a form as required example",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form--mark-form-as-required-example-1",
+          "formId": "mark-form-as-required-example--form-1",
+          "forCaseRole": "role-1",
+          "name": "Form 1",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form--mark-form-as-required-example-2",
+          "formId": "mark-form-as-required-example--form-2",
+          "forCaseRole": "role-1",
+          "name": "Form 2",
+          "autoPopulate": false,
           "required": false,
           "repeatable": false
         }

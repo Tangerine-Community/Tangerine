@@ -51,7 +51,7 @@ export class DeviceSetupComponent implements OnInit {
       let password = ''
       // Initial step. First we ask for the language, then the language step reloads page,
       // that's when language will be set and we go to the next step of setting up a password.
-      if (!this.languagesService.userHasSetLanguage()) {
+      if (!await this.languagesService.userHasSetLanguage()) {
         this.step = STEP_LANGUAGE_SELECT
       } else {
         this.step = STEP_DEVICE_PASSWORD
