@@ -59,6 +59,7 @@ Now visit your Tangerine installation at the IP address or hostname of your inst
 Lastly, to reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. As a user with docker permission on the command line run `crontab -e` and add the following line.
 ```
 0 0 * * * docker stop tangerine && docker start tangerine
+@reboot docker start couchdb && sleep 10 && docker start tangerine
 ```
 
 ### Tablet
