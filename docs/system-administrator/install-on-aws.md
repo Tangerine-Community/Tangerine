@@ -54,12 +54,5 @@ Once your server is created, login with your key:
 ```` 
  ssh -i ~/.ssh/iyour_key -l ubuntu <your EC2 instance's IP address>
 ````
-## Install Docker
-Follow the instructions here: https://docs.docker.com/engine/installation/linux/ubuntulinux/
 
-## Install Tangerine
-Follow the instructions here: https://github.com/tangerine-community/tangerine#installation
-
-## View Tangerine in browser
-
-You should now be able to view Tangerine in your web browser by pasting the ip address of your instance and log in with the credentials for user1 that you added to your `config.sh`.
+Now you may continue to step 2 in the installation instructions.
