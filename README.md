@@ -37,7 +37,35 @@ Currently the most commonly deployed tablet with Tangerine is the [Lenovo Tab 4 
 ### Server
 We recommend using AWS for hosting have documented detailed [instructions for AWS](docs/install-on-aws.md). Below are general instructions for installing on any machine.
 
-SSH into your machine from a terminal, [install Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases), note the release number and use it to replace all instances of `<version tag>` in the commands below.
+__Step 1__: SSH into your machine from a terminal.
+
+__Step 2__: [Install Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/), 
+
+__Step 3__: Configure Docker to not fill up the hard drive with logs.
+
+Create `/etc/docker/daemon.json` with the following contents.
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m",
+    "max-file": "3",
+    "labels": "production_status",
+    "env": "os,customer"
+  }
+}
+```
+
+Then restart the daemon with `sudo service docker restart`.
+
+__Step 4__: Configure SSL
+
+To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. Note that in order to publish Tangerine for data collection using the Web App method (PWA), SSL is required. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
+Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
+
+__Step 5__: Install Tangerine
+
+You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases), note the release number and use it to replace all instances of `<version tag>` in the commands below.
 ```
 # Get the software.
 git clone https://github.com/tangerine-community/tangerine.git
@@ -51,12 +79,9 @@ nano config.sh
 ./start.sh <version tag>
 ```
 
-If your server restarts or the container stops, you can later run the `./start.sh <version tag>` script in the Tangerine folder.
+__Step 6__: Keep Tangerine alive with cron
 
-To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. Note that in order to publish Tangerine for data collection using the Web App method (PWA), SSL is required. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
-Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
-
-Lastly, to reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. As a user with docker permission on the command line run `crontab -e` and add the following line.
+To reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. As a user with docker permission on the command line run `crontab -e` and add the following line. Also added to this cron is an entry to start tangerine in case the machine is rebooted.
 ```
 0 0 * * * docker stop tangerine && docker start tangerine
 @reboot docker start couchdb && sleep 10 && docker start tangerine
