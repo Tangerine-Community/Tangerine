@@ -1,5 +1,7 @@
 # Changelog
 
+## v3.12.1
+
 ## v3.12.0
 - New Features for Case Module
   - Data Collector finds Event Forms are automatically created on Case Event creation and after adding a Participant [#2147](https://github.com/Tangerine-Community/Tangerine/issues/2147) [[Demo](https://youtu.be/cNZhLNEKq0A)]
