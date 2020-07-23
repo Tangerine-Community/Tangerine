@@ -1,27 +1,28 @@
-import { ConflictManifest } from '../classes/conflict-manifest';
+import { MergeInfo } from './../classes/merge-info.class';
 import { EventForm } from 'src/app/case/classes/event-form.class';
 
-export const CONFLICT_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED = 'CONFLICT_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED' 
+export const DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED = 'DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED' 
 
-export function detect({a, b, conflicts, merged, caseDefinition}:ConflictManifest):ConflictManifest {
+export function detect({a, b, diffs, merged, caseDefinition}:MergeInfo):MergeInfo {
   const aEventForms:Array<EventForm> = a.events.reduce((eventForms, caseEvent) => {
     return [...eventForms, ...caseEvent.eventForms]
   }, [])
   const bEventForms:Array<EventForm> = b.events.reduce((eventForms, caseEvent) => {
     return [...eventForms, ...caseEvent.eventForms]
   }, [])
-  conflicts = [
-    ...conflicts,
-    ...aEventForms.reduce((conflicts, aEventForm) => {
+  diffs = [
+    ...diffs,
+    ...aEventForms.reduce((diffs, aEventForm) => {
       return [
-        ...conflicts,
+        ...diffs,
         ...(
           aEventForm.formResponseId &&
           bEventForms.some(bEventForm => bEventForm.id === aEventForm.id) &&
           !bEventForms.find(bEventForm => bEventForm.id === aEventForm.id).formResponseId 
         )
           ? [{
-            type: CONFLICT_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+            type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+            resolved: false,
             info: {
               where: 'a',
               eventFormId: aEventForm.id,
@@ -32,16 +33,17 @@ export function detect({a, b, conflicts, merged, caseDefinition}:ConflictManifes
           : []
       ]
     }, []),
-    ...bEventForms.reduce((conflicts, bEventForm) => {
+    ...bEventForms.reduce((diffs, bEventForm) => {
       return [
-        ...conflicts,
+        ...diffs,
         ...(
           bEventForm.formResponseId &&
           aEventForms.some(aEventForm => aEventForm.id === bEventForm.id) &&
           !aEventForms.find(aEventForm => aEventForm.id === bEventForm.id).formResponseId 
         )
           ? [{
-            type: CONFLICT_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+            type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+            resolved: false,
             info: {
               where: 'b',
               eventFormId: bEventForm.id,
@@ -57,24 +59,24 @@ export function detect({a, b, conflicts, merged, caseDefinition}:ConflictManifes
   return {
     a,
     b,
-    conflicts,
+    diffs,
     merged,
     caseDefinition
   }
 }
 
-export function resolve({a, b, conflicts, merged, caseDefinition}:ConflictManifest):ConflictManifest {
+export function resolve({a, b, diffs, merged, caseDefinition}:MergeInfo):MergeInfo {
   return {
     a,
     b,
-    conflicts,
+    diffs,
     merged,
     caseDefinition
   }
 }
 
-export const conflictType_EventForm_FormResponseIDCreated = {
-  type: CONFLICT_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+export const diffType_EventForm_FormResponseIDCreated = {
+  type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
   detect,
   resolve
 }

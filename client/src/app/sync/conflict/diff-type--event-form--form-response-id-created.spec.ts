@@ -1,4 +1,4 @@
-import { conflictType_EventForm_FormResponseIDCreated } from './conflict-type--event-form--form-response-id-created';
+import { diffType_EventForm_FormResponseIDCreated, DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED } from './diff-type--event-form--form-response-id-created';
 import { Case } from 'src/app/case/classes/case.class';
 import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
 
@@ -77,18 +77,20 @@ const b:Case = {
 
 describe('ConflictResolver_EventFormResponseCreation', () => {
 
-  fit('should detect conflict', () => {
-    const conflictManifest = conflictType_EventForm_FormResponseIDCreated.detect({
+  fit('should detect difference', () => {
+    const conflictManifest = diffType_EventForm_FormResponseIDCreated.detect({
       a,
       b,
-      conflicts: [],
+      diffs: [],
       merged: a,
       caseDefinition
     })
-    expect(conflictManifest.conflicts.length).toEqual(1)
-    expect(conflictManifest.conflicts[0].info.where).toEqual('b')
-    expect(conflictManifest.conflicts[0].info.eventFormId).toEqual('event-form-2')
-    expect(conflictManifest.conflicts[0].info.formResponseId).toEqual('form-response-2')
+    expect(conflictManifest.diffs.length).toEqual(1)
+    expect(conflictManifest.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)
+    expect(conflictManifest.diffs[0].resolved).toEqual(false)
+    expect(conflictManifest.diffs[0].info.where).toEqual('b')
+    expect(conflictManifest.diffs[0].info.eventFormId).toEqual('event-form-2')
+    expect(conflictManifest.diffs[0].info.formResponseId).toEqual('form-response-2')
   })
 
 })
