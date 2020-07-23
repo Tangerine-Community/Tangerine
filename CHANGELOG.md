@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.12.1
+- Change behavior of `show-if` logic so that when a question hides, the value is reset.
+- Adjust behavior of how Event Forms are added: If `EventForm.autoPopulate` is left undefined and required is true, then the form should be added.
+
 ## v3.12.0
 - New Features for Case Module
   - Data Collector finds Event Forms are automatically created on Case Event creation and after adding a Participant [#2147](https://github.com/Tangerine-Community/Tangerine/issues/2147) [[Demo](https://youtu.be/cNZhLNEKq0A)]
