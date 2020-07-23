@@ -263,7 +263,13 @@ class CaseService {
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && eventFormDefinition.autoPopulate) {
+        if (
+          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
           this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
@@ -476,7 +482,13 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.autoPopulate) {
+        if (
+          caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
           this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
