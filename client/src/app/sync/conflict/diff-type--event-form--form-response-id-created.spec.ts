@@ -78,18 +78,33 @@ const b:Case = {
 describe('diffType_EventForm_FormResponseIDCreated', () => {
 
   fit('should detect difference', () => {
-    const conflictManifest = diffType_EventForm_FormResponseIDCreated.detect({
+    const diffInfo = diffType_EventForm_FormResponseIDCreated.detect({
       a,
       b,
       diffs: [],
       caseDefinition
     })
-    expect(conflictManifest.diffs.length).toEqual(1)
-    expect(conflictManifest.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)
-    expect(conflictManifest.diffs[0].resolved).toEqual(false)
-    expect(conflictManifest.diffs[0].info.where).toEqual('b')
-    expect(conflictManifest.diffs[0].info.eventFormId).toEqual('event-form-2')
-    expect(conflictManifest.diffs[0].info.formResponseId).toEqual('form-response-2')
+    expect(diffInfo.diffs.length).toEqual(1)
+    expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)
+    expect(diffInfo.diffs[0].resolved).toEqual(false)
+    expect(diffInfo.diffs[0].info.where).toEqual('b')
+    expect(diffInfo.diffs[0].info.eventFormId).toEqual('event-form-2')
+    expect(diffInfo.diffs[0].info.formResponseId).toEqual('form-response-2')
+  })
+
+  fit('should resolve merge', () => {
+    const diffInfo = diffType_EventForm_FormResponseIDCreated.detect({
+      a,
+      b,
+      diffs: [],
+      caseDefinition
+    })
+    const mergeInfo = diffType_EventForm_FormResponseIDCreated.resolve({
+      diffInfo,
+      merged: a
+    })
+    expect(mergeInfo.diffInfo.diffs[0].resolved).toEqual(true)
+    expect(mergeInfo.merged.events[0].eventForms.find(eventForm => eventForm.id === 'event-form-2').formResponseId).toEqual('form-response-2')
   })
 
 })
