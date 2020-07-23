@@ -75,14 +75,13 @@ const b:Case = {
   }
 }
 
-describe('ConflictResolver_EventFormResponseCreation', () => {
+describe('diffType_EventForm_FormResponseIDCreated', () => {
 
   fit('should detect difference', () => {
     const conflictManifest = diffType_EventForm_FormResponseIDCreated.detect({
       a,
       b,
       diffs: [],
-      merged: a,
       caseDefinition
     })
     expect(conflictManifest.diffs.length).toEqual(1)

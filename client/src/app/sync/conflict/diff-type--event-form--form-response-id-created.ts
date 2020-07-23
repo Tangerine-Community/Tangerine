@@ -1,9 +1,10 @@
 import { MergeInfo } from './../classes/merge-info.class';
+import { DiffInfo } from './../classes/diff-info.class';
 import { EventForm } from 'src/app/case/classes/event-form.class';
 
 export const DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED = 'DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED' 
 
-export function detect({a, b, diffs, merged, caseDefinition}:MergeInfo):MergeInfo {
+export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   const aEventForms:Array<EventForm> = a.events.reduce((eventForms, caseEvent) => {
     return [...eventForms, ...caseEvent.eventForms]
   }, [])
@@ -60,18 +61,14 @@ export function detect({a, b, diffs, merged, caseDefinition}:MergeInfo):MergeInf
     a,
     b,
     diffs,
-    merged,
     caseDefinition
   }
 }
 
-export function resolve({a, b, diffs, merged, caseDefinition}:MergeInfo):MergeInfo {
+export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
   return {
-    a,
-    b,
-    diffs,
+    diffInfo,
     merged,
-    caseDefinition
   }
 }
 
