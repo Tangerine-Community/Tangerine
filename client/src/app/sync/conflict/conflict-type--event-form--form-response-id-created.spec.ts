@@ -1,7 +1,6 @@
-import { ConflictResolverManifest } from './../../classes/conflict-resolver-manifest';
+import { conflictType_EventForm_FormResponseIDCreated } from './conflict-type--event-form--form-response-id-created';
 import { Case } from 'src/app/case/classes/case.class';
 import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
-import { resolveEventFormResponseCreation } from './resolve-event-form-response-creation';
 
 const caseDefinition:CaseDefinition = {
   id: "test",
@@ -78,14 +77,18 @@ const b:Case = {
 
 describe('ConflictResolver_EventFormResponseCreation', () => {
 
-  fit('should resolve conflict', () => {
-    const conflictResolverManifest = resolveEventFormResponseCreation({
+  fit('should detect conflict', () => {
+    const conflictManifest = conflictType_EventForm_FormResponseIDCreated.detect({
       a,
       b,
+      conflicts: [],
       merged: a,
       caseDefinition
     })
-    expect(conflictResolverManifest.merged.events[0].eventForms[1].formResponseId).toEqual('form-response-2')
+    expect(conflictManifest.conflicts.length).toEqual(1)
+    expect(conflictManifest.conflicts[0].info.where).toEqual('b')
+    expect(conflictManifest.conflicts[0].info.eventFormId).toEqual('event-form-2')
+    expect(conflictManifest.conflicts[0].info.formResponseId).toEqual('form-response-2')
   })
 
 })
