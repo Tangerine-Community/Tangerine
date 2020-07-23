@@ -7,15 +7,13 @@ class Case extends TangyFormResponseModel {
   
   _id:string
   _rev:string
-  caseDefinitionId:string
-  label:string
-  status:string
-  openedDate:number
-  participants:Array<CaseParticipant> = []
-  disabledEventDefinitionIds: Array<string> = []
-  events: Array<CaseEvent> = []
-  notifications: Array<Notification> = []
   type:string = 'case'
+  caseDefinitionId:string
+  events: Array<CaseEvent> = []
+  openedDate?:number
+  participants?:Array<CaseParticipant> = []
+  disabledEventDefinitionIds?: Array<string> = []
+  notifications?: Array<Notification> = []
 
   constructor(data?:any) {
     super()

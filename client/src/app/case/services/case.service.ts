@@ -175,7 +175,6 @@ class CaseService {
     tangyFormContainerEl.remove()
     await this.setCase(this.case)
     this.case.caseDefinitionId = caseDefinitionId;
-    this.case.label = this.caseDefinition.name
     await this.save()
   }
 
@@ -763,7 +762,6 @@ class CaseService {
       const eventForm = caseEvent.eventForms.find(d => d.id === c.id);
 
       const referringCaseEvent: CaseEvent = this.case.events.find((event) => event.id === eventId);
-      const referringEventName = referringCaseEvent.name;
       const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
@@ -776,12 +774,11 @@ class CaseService {
       tangyFormEl.newResponse();
 
       tangyFormEl.response.items[0].inputs = [
-        { name: 'associatedCaseType', value: this.case.label },
+        { name: 'associatedCaseType', value: this.case.caseDefinitionId },
         { name: 'associatedCaseId', value: caseId },
         { name: 'associatedEventId', value: eventId },
         { name: 'associatedFormId', value: formId },
         { name: 'associatedCaseName', value: participantId },
-        { name: 'associatedEventName', value: referringEventName },
         { name: 'associatedFormName', value: formTitle },
         { name: 'associatedFormLink', value: formLink },
         { name: 'associatedVariable', value: variableName },
