@@ -1,6 +1,7 @@
-import { diffType_EventForm_FormResponseIDCreated, DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED } from './diff-type--event-form--form-response-id-created';
+import { DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED, diffType_EventForm_FormResponseIDCreated } from './diff-type--event-form--form-response-id-created';
 import { Case } from 'src/app/case/classes/case.class';
 import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
+import { diff } from './diff';
 
 const caseDefinition:CaseDefinition = {
   id: "test",
@@ -74,6 +75,21 @@ const b:Case = {
     ]
   }
 }
+
+describe('diff', () => {
+
+  fit('should detect difference', () => {
+    const diffInfo = diff(a, b, caseDefinition)
+    expect(diffInfo.diffs.length).toEqual(1)
+    expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)
+    expect(diffInfo.diffs[0].resolved).toEqual(false)
+    expect(diffInfo.diffs[0].info.where).toEqual('b')
+    expect(diffInfo.diffs[0].info.eventFormId).toEqual('event-form-2')
+    expect(diffInfo.diffs[0].info.formResponseId).toEqual('form-response-2')
+  })
+
+})
+
 
 describe('diffType_EventForm_FormResponseIDCreated', () => {
 
