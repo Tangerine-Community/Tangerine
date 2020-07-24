@@ -5,9 +5,9 @@ import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
 import { Case } from "src/app/case/classes/case.class";
 import { diff } from './diff';
 
-export function merge(a:Case, b:Case, caseDefinition:CaseDefinition) {
+export function merge(a:Case, b:Case, caseDefinition:CaseDefinition):MergeInfo {
   const diffInfo = diff(a, b , caseDefinition) 
-  const mergeReducer = (diffInfo:DiffInfo, diffType) => diffType.detect(diffInfo)
+  const mergeReducer = (mergeInfo:MergeInfo, diffType) => diffType.merge(mergeInfo)
   const initialMergeInfo = {
     a,
     b,
