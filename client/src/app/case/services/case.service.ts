@@ -88,6 +88,14 @@ class CaseService {
     window['participant'] = this.participant
   }
 
+  getCurrentCaseEventId() {
+    return this?.caseEvent?.id
+  }
+  
+  getCurrentEventFormId() {
+    return this?.eventForm?.id
+  }
+
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
