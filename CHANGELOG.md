@@ -4,6 +4,7 @@
 - When saving edits to a form, "Show if" logic has been written as `tangy-if` logic in the HTML. Form now on it will be written as `show-if` logic for consistency.
 - `tangy-if` logic in has in the past in just showing/hiding an question on a form. It will now also reset the value if there is input and it is then hidden.
 - In v3.12.0, `caseService.getCurrentCaseEventId()` was incorrectly removed. It has been added back, and an additional `caseService.getCurrentEventFormId()` function has been added for consistency.
+- Fix Android 10 compatibility issue with P2P Sync mechanism causing tablets to crash.
 
 ## v3.12.1
 - Change behavior of `show-if` logic so that when a question hides, the value is reset.
