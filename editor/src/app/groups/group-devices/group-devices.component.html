@@ -1,4 +1,11 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div class="device-sheet-btn">
+  <a routerLink="../device-sheet">
+    <button mat-raised-button color="accent">
+      Export Device Sheet
+    </button>
+  </a>
+</div>
     <mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
