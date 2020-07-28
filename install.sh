@@ -5,5 +5,6 @@
 # Create DNS records in AWS Route 53
 # Set up Nginx Reverse Proxy with SSL 
 # Configure cron
+# Set up backups
 # Find latest release of Tangerine and start.
 
