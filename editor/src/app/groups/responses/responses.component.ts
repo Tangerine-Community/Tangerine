@@ -15,12 +15,14 @@ export class ResponsesComponent implements OnInit {
   @Input() filterBy:string = '*'
   @Input() excludeForms:Array<string> = []
   @Input() hideFilterBy = false
+  @Input() fields = '';
 
   moment;
   responses;
   skip = 0;
   limit = 30;
   forms = [];
+  fieldList = [];
 
   constructor(
     private groupsService: GroupsService,
@@ -34,6 +36,7 @@ export class ResponsesComponent implements OnInit {
     this.forms = (await this.tangerineFormsService.getFormsInfo(this.groupId))
       .filter(formInfo => !this.excludeForms.includes(formInfo.id) )
     await this.getResponses()
+    this.fieldList = this.fields.split(" ")
   }
 
   async getResponses() {
