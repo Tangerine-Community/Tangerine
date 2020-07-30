@@ -16,16 +16,7 @@ ssh-keygen -t rsa -b 4096 -C "your_server_name@domain_of_server"
 cat /root/.ssh/id_rsa.pub
 ```
 
-Now add an entry in your config.sh or create this file if it doesn't exist
-```
-vi ~/.ssh/config
-
-host github.com
- HostName github.com
- IdentityFile ~/.ssh/id_rsa
- User lachko
-```
-Change the key permissions if necessary 
+Change the key permissions if necessary.
 
 Copy the key contents that we just "cat'ed" to the screen. Then go to your Repository on Github and click on `Settings -> Deploy keys -> Add deploy key` and paste that key in the key contents, enable "Allow write access" and save.
 
