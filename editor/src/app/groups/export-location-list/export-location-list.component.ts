@@ -14,6 +14,7 @@ export class ExportLocationListComponent implements OnInit {
   locationObject = {};
   nextLevelProcessed = '';
   locationLevels = [];
+  coreProperties = ['level', 'label', 'id', 'children', 'parent'];
   constructor(private groupService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
@@ -33,7 +34,7 @@ export class ExportLocationListComponent implements OnInit {
   unwrap(data) {
     this.locationObject = { ...this.locationObject, [`${data.level}_id`]: data.id, [data.level]: data.label };
     Object.keys(data).forEach(e => {
-      if (e !== 'level' && e !== 'label' && e !== 'id' && e !== 'children' && e !== 'parent') {
+      if (!this.coreProperties.includes(e)) {
         this.locationObject[e] = data[e];
       }
     });
