@@ -31,6 +31,13 @@ export class ExportLocationListComponent implements OnInit {
     XLSX.writeFile(workbook, 'location-list.xlsx');
   }
 
+  /**
+   *
+   * @param data  location node containing id:string, level:string, label:string, children:object and any metadata properties
+   * The unwrap method is used to create an array of location objects.
+   * Each of the objects correspond to the leaf node of the location tree with corresponding properties of the parent
+   * It also adds any metadata for each of the location levels
+   */
   unwrap(data) {
     this.locationObject = { ...this.locationObject, [`${data.level}_id`]: data.id, [data.level]: data.label };
     Object.keys(data).forEach(e => {
