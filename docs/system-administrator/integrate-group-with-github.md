@@ -12,7 +12,7 @@ SSH into the server and create a "deploy key" the server will use to authenticat
 ```
 ssh <your server>
 sudo su
-ssh-keygen -t rsa -b 4096 -C "your_server_name@domain_of_server"
+ssh-keygen -t rsa -b 4096 -C "root@domain_of_server"
 cat /root/.ssh/id_rsa.pub
 ```
 
@@ -44,5 +44,5 @@ crontab -e
 ```
 Enter the following onto a new line. Replace `<group id>` with appropriate Group ID.
 ```
-* * * * * cd /tangerine/data/client/content/groups/<group id> && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master
+* * * * * cd /home/ubuntu/tangerine/data/client/content/groups/<group id> && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master
 ```
