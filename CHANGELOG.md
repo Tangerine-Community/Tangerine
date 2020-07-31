@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.12.3
+- Fixed issue with mutually exclusive checkboxes in tangy-form [#154](https://github.com/Tangerine-Community/tangy-form/issues/154).  Bumped tangy-form v4.17.9 and tangy-form-editor to 7.2.3
+
 ## v3.12.2
 - When saving edits to a form, "Show if" logic has been written as `tangy-if` logic in the HTML. Form now on it will be written as `show-if` logic for consistency.
 - `tangy-if` logic in has in the past in just showing/hiding an question on a form. It will now also reset the value if there is input and it is then hidden.
