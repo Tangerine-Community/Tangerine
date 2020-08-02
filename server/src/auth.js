@@ -126,10 +126,10 @@ const hashPassword = async password => {
 const extendSession = async (req, res) => {
   const { username } = req.body;
   let permissions;
-  if (!req.params.groupName) {
+  if (req.user.groupPermissions.length <= 0) {
     permissions = await getSitewidePermissions(username);
   } else {
-    permissions = await getGroupAndSitewidePermissions(username, req.params.groupName);
+    permissions = await getGroupAndSitewidePermissions(username, req.user.groupPermissions[0].groupName);
   }
   const token = createLoginJWT({ username, permissions });
   return res.status(200).send({ data: { token } });
