@@ -125,7 +125,12 @@ const hashPassword = async password => {
 
 const extendSession = async (req, res) => {
   const { username } = req.body;
-  const permissions = await getSitewidePermissions(username);
+  let permissions;
+  if (!req.params.groupName) {
+    permissions = await getSitewidePermissions(username);
+  } else {
+    permissions = await getGroupAndSitewidePermissions(username, req.params.groupName);
+  }
   const token = createLoginJWT({ username, permissions });
   return res.status(200).send({ data: { token } });
 };
@@ -149,15 +154,9 @@ const updateUserSiteWidePermissions = async (req, res) => {
     res.status(500).send({ data: `Could not update permissions` });
   }
 };
-
-const getUserGroupPermissionsByGroupName = async (req, res) => {
+const getGroupAndSitewidePermissions = async (username, groupName) => {
+  let permissions = {groupPermissions: [], sitewidePermissions: []};
   try {
-    const username = req.user.name;
-    const groupName = req.params.groupName;
-    if (!username || !groupName) {
-      return res.status(500).send('Could not get permissions');
-    }
-    let permissions;
     if (username === process.env.T_USER1) {
       permissions = {
         groupPermissions: [
@@ -195,6 +194,20 @@ const getUserGroupPermissionsByGroupName = async (req, res) => {
         };
       }
     }
+    return permissions;
+  } catch (error) {
+    console.error(error);
+    return permissions;
+  }
+};
+const getUserGroupPermissionsByGroupName = async (req, res) => {
+  try {
+    const username = req.user.name;
+    const groupName = req.params.groupName;
+    if (!username || !groupName) {
+      return res.status(500).send('Could not get permissions');
+    }
+    let permissions = await getGroupAndSitewidePermissions(username, groupName);
     const token = createLoginJWT({ username, permissions });
     log.info(`${username} login success`);
     return res.status(200).send({ data: { token } });
