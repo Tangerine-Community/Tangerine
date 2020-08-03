@@ -25,6 +25,10 @@ export class EventFormComponent implements OnInit {
   templateId:string
   formResponseId:string
 
+  hasEventFormRedirect = false
+  eventFormRedirectUrl = ''
+  eventFormRedirectBackButtonText = ''
+
   loaded = false
 
   window:any
@@ -43,7 +47,10 @@ export class EventFormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
+    setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 1500)
+    this.hasEventFormRedirect = window['eventFormRedirect'] ? true : false
+    this.eventFormRedirectUrl = window['eventFormRedirect']
+    this.eventFormRedirectBackButtonText = window['eventFormRedirectBackButtonText']
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.caseService.setContext(params.eventId, params.eventFormId)
@@ -113,14 +120,18 @@ export class EventFormComponent implements OnInit {
           // to another event form???
           window.location.hash = `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
           if (window['eventFormRedirect']) {
-            window.location.hash = window['eventFormRedirect']
-            // Reset the event form redirect so it doesn't become permanent.
-            window['eventFormRedirect'] = ''
+            this.eventFormRedirect()
           }
         }, 500)
       })
       this.loaded = true
     })
+  }
+  
+  eventFormRedirect() {
+    window.location.hash = window['eventFormRedirect']
+    // Reset the event form redirect so it doesn't become permanent.
+    window['eventFormRedirect'] = ''
   }
 
 }
