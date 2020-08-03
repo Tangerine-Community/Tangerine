@@ -12,8 +12,8 @@
 
 # Domain name of the Tangerine installation.
 T_HOST_NAME='example.com'
-# Set to HTTPS for redirecting any requests to https. However you will need to put a reverse proxy with SSL in front.
-T_PROTOCOL="http"
+# Email for registering SSL Certificates.
+CERTBOT_EMAIL="owner@example.com"
 # Administrator User for logging into 
 T_USER1="user1"
 T_USER1_PASSWORD="password"
