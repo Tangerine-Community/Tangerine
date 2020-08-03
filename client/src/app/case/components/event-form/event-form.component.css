@@ -6,3 +6,15 @@
   background-attachment: fixed;
   background-position: center;
 }
+
+.event-form-redirect-back-button {
+  width: 100%;
+  background-color: #546e7a;
+  color: #cfd8dc;
+  padding: 1rem;
+  position: relative;
+}
+
+.event-form-redirect-back-button .icon {
+  vertical-align: bottom;
+}
