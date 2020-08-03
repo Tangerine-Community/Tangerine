@@ -171,7 +171,6 @@ RUN_OPTIONS="
   --env \"T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH\" \
   --env \"T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH\" \
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
-  $T_PORT_MAPPING \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
@@ -189,6 +188,17 @@ CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
 echo "$CMD"
 eval ${CMD}
+
+docker run -d \
+  --name nginx-certbot \
+  --env T_HOSTNAME="$T_HOST_NAME" \
+  --env CERTBOT_EMAIL="$CERTBOT_EMAIL" \
+  --volume ./.proxy-conf:/etc/nginx/user.conf.d:ro \
+  --volume letsencrypt:/etc/letsencrypt \
+  -p 80:80/tcp \
+  -p 443:443/tcp \
+  --link $T_CONTAINER_NAME:tangerine \
+  staticfloat/nginx-certbot
 
 echo "Installing missing plugin..."
 docker exec ${T_CONTAINER_NAME} bash -c "cd /tangerine/client/builds/apk/ && cordova --no-telemetry plugin add cordova-plugin-whitelist --save"

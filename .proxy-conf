@@ -1,0 +1,10 @@
+server {
+    listen              443 ssl;
+    server_name         ${T_HOST_NAME};
+    ssl_certificate     /etc/letsencrypt/live/${T_HOST_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${T_HOST_NAME}/privkey.pem;
+
+    location / {
+      proxy_pass http://tangerine/;
+    }
+}
