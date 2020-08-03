@@ -32,6 +32,8 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "@polymer/font-roboto-local": "^3.0.2",
     "@polymer/paper-item": "^3.0.1",
+    "@polymer/paper-listbox": "^3.0.1",
+    "@polymer/paper-menu-button": "^3.0.1",
     "@polymer/paper-progress": "^3.0.1",
     "@webcomponents/webcomponentsjs": "^2.2.1",
     "axios": "^0.19.2",
