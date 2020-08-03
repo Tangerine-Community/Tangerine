@@ -8,9 +8,11 @@
 import * as Redux from 'redux';
 (window as any).Redux = Redux;
 
-import { LitElement, html } from 'lit-element';
+import { LitElement, html, css, unsafeCSS } from 'lit-element';
 (window as any).LitElement = LitElement;
 (window as any).html = html;
+(window as any).css = css;
+(window as any).unsafeCSS = unsafeCSS;
 
 import * as _ from 'underscore';
 (window as any)._ = _;
