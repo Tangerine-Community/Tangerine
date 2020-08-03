@@ -56,6 +56,10 @@ import '@polymer/paper-item/paper-icon-item.js';
 import '@polymer/paper-item/paper-item-body.js';
 import '@polymer/iron-icons/notification-icons.js';
 import '@polymer/paper-progress/paper-progress.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-menu-button/paper-menu-button.js';
 
 import * as moment from 'moment'
 (window as any).moment = moment
