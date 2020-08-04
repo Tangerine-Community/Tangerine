@@ -65,6 +65,9 @@ export class SyncCustomService {
     // TODO, only for custom protocol I think.
   }
 
+  /*
+  Generates a list of docIds by querying sync-queue with an array of keys with properties: [needsUploading, formId, isComplete]
+   */
   async uploadQueue(userDb:UserDatabase, formInfos:Array<FormInfo>) {
     let queryKeys = formInfos.reduce((queryKeys, formInfo) => {
       if (formInfo.customSyncSettings.enabled && formInfo.customSyncSettings.push) {
