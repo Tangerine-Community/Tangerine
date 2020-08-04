@@ -1,0 +1,11 @@
+table {
+  width: 100%
+}
+
+.qrcode-div {
+  margin: 1em;
+}
+
+@media print {
+  table {page-break-after: always;}
+}
