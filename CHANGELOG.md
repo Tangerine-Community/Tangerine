@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.13.0
+- New Features:
+  - Export location list [#2107](https://github.com/Tangerine-Community/Tangerine/issues/2107)
+  - View device sheets [#2269](https://github.com/Tangerine-Community/Tangerine/issues/2269)
+- Fix group refresh token - When prompted to extend session shows up session is not really extended. [#2266](https://github.com/Tangerine-Community/Tangerine/issues/2266)
+  
 ## v3.12.4
 - Fixed issue with QR code boundary boxes in tangy-form [#158](https://github.com/Tangerine-Community/tangy-form/issues/158).  Bumped tangy-form v4.17.10 and tangy-form-editor to 7.2.5
 
