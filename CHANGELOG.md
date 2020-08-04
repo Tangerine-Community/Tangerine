@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.12.4
+- Fixed issue with QR code boundary boxes in tangy-form [#158](https://github.com/Tangerine-Community/tangy-form/issues/158).  Bumped tangy-form v4.17.10 and tangy-form-editor to 7.2.5
+
 ## v3.12.3
 - Fixed issue with mutually exclusive checkboxes in tangy-form [#154](https://github.com/Tangerine-Community/tangy-form/issues/154).  Bumped tangy-form v4.17.9 and tangy-form-editor to 7.2.3
 
