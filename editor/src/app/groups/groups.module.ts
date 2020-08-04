@@ -77,6 +77,7 @@ import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
 import { BrowserModule } from '@angular/platform-browser';
+import { ExportLocationListComponent } from './export-location-list/export-location-list.component';
 
 
 
@@ -161,6 +162,7 @@ import { BrowserModule } from '@angular/platform-browser';
     GroupIssuesComponent,
     CaseSettingsComponent,
     ConfigureGroupSecurityComponent,
+    ExportLocationListComponent,
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })
