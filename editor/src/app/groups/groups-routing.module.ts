@@ -48,6 +48,10 @@ import { AddRoleToGroupComponent } from '../core/auth/_components/add-role-to-gr
 import { UpdateGroupRolesComponent } from '../core/auth/_components/update-group-roles/update-group-roles.component';
 import { AddUserToAGroupComponent } from '../core/auth/_components/add-user-to-a-group/add-user-to-a-group.component';
 import { UpdateUserRoleComponent } from '../core/auth/_components/update-user-role/update-user-role.component';
+import { GroupDeviceSheetComponent } from './group-device-sheet/group-device-sheet.component';
+import {MatTableModule} from "@angular/material/table";
+import {CommonModule} from "@angular/common";
+import {TranslateModule} from "@ngx-translate/core";
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -83,6 +87,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/device-sheet', component: GroupDeviceSheetComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases', component: GroupReleasesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-pwa-test', component: GroupReleasePwaTestComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-pwa-live', component: GroupReleasePwaLiveComponent, canActivate: [LoginGuard] },
@@ -111,10 +116,14 @@ const groupsRoutes: Routes = [
 ];
 @NgModule({
   imports: [
-    RouterModule.forChild(groupsRoutes)
+    RouterModule.forChild(groupsRoutes),
+    MatTableModule,
+    CommonModule,
+    TranslateModule
   ],
   exports: [
     RouterModule
-  ]
+  ],
+  declarations: [GroupDeviceSheetComponent]
 })
 export class GroupsRoutingModule { }
