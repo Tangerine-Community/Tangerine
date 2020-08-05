@@ -119,8 +119,6 @@ export class SyncCouchdbService {
     }
 
     // First do the push:
-    // Build the PouchSyncOptions.
-    // TODO: consider using a similar doc_id approach
     const pushSyncOptions = {
       "since": push_last_seq,
       "batch_size": 50,
@@ -140,6 +138,7 @@ export class SyncCouchdbService {
 
     let replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
 
+    // Then do the pull:
     let pullSyncOptions = {
         "since": pull_last_seq,
         "batch_size": 50,
