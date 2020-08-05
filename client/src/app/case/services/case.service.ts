@@ -184,6 +184,10 @@ class CaseService {
     await this.setCase(this.case)
     this.case.caseDefinitionId = caseDefinitionId;
     this.case.label = this.caseDefinition.name
+    if (this.caseDefinition.startFormOnOpen && this.caseDefinition.startFormOnOpen.eventFormId) {
+      const caseEvent = this.createEvent(this.caseDefinition.startFormOnOpen.eventId)
+      this.createEventForm(caseEvent.id, this.caseDefinition.startFormOnOpen.eventFormId) 
+    }
     await this.save()
   }
 
