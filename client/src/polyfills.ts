@@ -39,6 +39,9 @@ import 'tangy-form/input/tangy-partial-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 
+import { Loc } from 'tangy-form/util/loc.js';
+(window as any).Loc = Loc
+
 import 'date-carousel/date-carousel.js'
 
 // An attempt to fix something...
