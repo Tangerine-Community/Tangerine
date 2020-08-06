@@ -89,3 +89,10 @@ In the following example hide the next button given the value of some user input
 
 ![dynamically-prevent-next](./dynamically-prevent-next.gif)
 
+## Proactive input validation 
+In the following example we validate an input after focusing on the next input. This approach is more proactive than running the validation logic when clicking next or submit. 
+[Run example](https://proactive-input-validation.glitch.me/) - [Open Editor](https://proactive-input-validation.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/proactive-input-validation)
+
+![proactive-input-validation](./proactive-input-validation.gif)
+
+
