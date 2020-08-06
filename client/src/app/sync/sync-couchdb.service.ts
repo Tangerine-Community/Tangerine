@@ -10,6 +10,10 @@ import {Subject} from 'rxjs';
 import {VariableService} from '../shared/_services/variable.service';
 import {AppConfigService} from '../shared/_services/app-config.service';
 import { AppContext } from '../app-context.enum';
+import {diffType_EventForm_FormResponseIDCreated} from "./conflict/diff-type--event-form--form-response-id-created";
+import {Case} from "../case/classes/case.class";
+import {CaseDefinition} from "../case/classes/case-definition.class";
+import {CaseDefinitionsService} from "../case/services/case-definitions.service";
 
 export interface LocationQuery {
   level:string
@@ -36,7 +40,8 @@ export class SyncCouchdbService {
   constructor(
     private http: HttpClient,
     private variableService: VariableService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private caseDefinitionsService: CaseDefinitionsService
   ) { }
 
   /*
@@ -139,7 +144,7 @@ export class SyncCouchdbService {
     }
 
     let replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-
+    await this.resolveConflicts(replicationStatus, userDb);
     let pullSyncOptions = {
         "since": pull_last_seq,
         "batch_size": 50,
@@ -156,12 +161,39 @@ export class SyncCouchdbService {
             "selector": pullSelector
           }
       }
-      replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
+    replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
+    await this.resolveConflicts(replicationStatus, userDb);
+
     // Now that we've pulled, many changes have happened since we pushed that we can skip the next time we push.
     // Find the last sequence in the local database and set the sync-push-last_seq variable.
     const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
     await this.variableService.set('sync-push-last_seq', lastLocalSequence)
     return replicationStatus
+  }
+
+  private async resolveConflicts(replicationStatus: ReplicationStatus, userDb: UserDatabase) {
+    for (const id of replicationStatus.conflicts) {
+      let currentDoc = await userDb.db.get(id, {conflicts: true})
+      let conflictRev = currentDoc._conflicts
+      if (conflictRev) {
+        let conflictDoc = await userDb.db.get(id, {rev: conflictRev})
+        if (currentDoc.type === 'case') {
+          let a:Case = currentDoc
+          let b:Case = conflictDoc
+          let caseDefinitionId = a.caseDefinitionId
+          let caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
+            .find(caseDefinition => caseDefinition.id === caseDefinitionId)
+          const diffInfo = diffType_EventForm_FormResponseIDCreated.detect({
+            a,
+            b,
+            diffs: [],
+            caseDefinition
+          })
+        }
+
+      }
+
+    }
   }
 
   async push(userDb, remoteDb, pouchSyncOptions) {
