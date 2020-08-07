@@ -14,7 +14,7 @@ export class ExportLocationListComponent implements OnInit {
   locationObject = {};
   nextLevelProcessed = '';
   locationLevels = [];
-  coreProperties = ['level', 'label', 'id', 'children', 'parent'];
+  coreProperties = ['level', 'label', 'id', 'children', 'parent', 'descendantsCount'];
   constructor(private groupService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
@@ -32,7 +32,7 @@ export class ExportLocationListComponent implements OnInit {
     this.resetValues();
   }
 
-  resetValues(){
+  resetValues() {
     this.locationEntries = [];
     this.locationObject = {};
     this.nextLevelProcessed = '';
