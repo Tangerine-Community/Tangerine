@@ -91,11 +91,12 @@ In the following example hide the next button given the value of some user input
 
 ## Proactive input validation 
 In the following example we validate an input after focusing on the next input. This approach is more proactive than running the validation logic when clicking next or submit. 
+
 [Run example](https://proactive-input-validation.glitch.me/) - [Open Editor](https://proactive-input-validation.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/proactive-input-validation)
 
 ![proactive-input-validation](./proactive-input-validation.gif)
 
-## A Content Box with Tabs 
+## Content Box with Tabs 
 In the following example we display content in a set of tabs.  
 
 [Run example](https://tangy-form-tabs.glitch.me/) - [Open Editor](https://tangy-form-tabs.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/tangy-form-tabs)
