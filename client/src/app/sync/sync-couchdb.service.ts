@@ -10,10 +10,15 @@ import {Subject} from 'rxjs';
 import {VariableService} from '../shared/_services/variable.service';
 import {AppConfigService} from '../shared/_services/app-config.service';
 import { AppContext } from '../app-context.enum';
-import {diffType_EventForm_FormResponseIDCreated} from "./conflict/diff-type--event-form--form-response-id-created";
+import {
+  DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+  diffType_EventForm_FormResponseIDCreated
+} from "./conflict/diff-type--event-form--form-response-id-created";
 import {Case} from "../case/classes/case.class";
 import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
+import {MergeInfo} from "./classes/merge-info.class";
+import {CaseService} from "../case/services/case.service";
 
 export interface LocationQuery {
   level:string
@@ -41,7 +46,8 @@ export class SyncCouchdbService {
     private http: HttpClient,
     private variableService: VariableService,
     private appConfigService: AppConfigService,
-    private caseDefinitionsService: CaseDefinitionsService
+    private caseDefinitionsService: CaseDefinitionsService,
+    private caseService: CaseService
   ) { }
 
   /*
@@ -189,6 +195,31 @@ export class SyncCouchdbService {
             diffs: [],
             caseDefinition
           })
+          if ((diffInfo.diffs.length === 1) && (diffInfo.diffs[0].type === DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)) {
+            const mergeInfo = diffType_EventForm_FormResponseIDCreated.resolve({
+              merged: {...a},
+              diffInfo: diffInfo
+            })
+            // if successful, then tell couchdb this one is the new winner'
+            if (mergeInfo.merged.events.length > 0) {
+              // remove the conflict
+              await userDb.db.remove(a._id, conflictRev)
+              await userDb.put(a) // create a new rev
+              // create an issue if successful or failed
+              // TODO: figure out which is actually the correct eventForm...
+              await this.caseService.createIssue(
+                `Conflict on ${a.form.title}`,
+                '',
+                this.caseService.case._id,
+                mergeInfo.merged.events[0].id,
+                mergeInfo.merged.events[0].eventForms[1].formResponseId,
+                window['userProfile']._id,
+                window['username']
+              )
+            }
+          }
+      //TODO create an issue if successful or failed
+          //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
         }
 
       }
