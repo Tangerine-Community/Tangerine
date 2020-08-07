@@ -95,4 +95,11 @@ In the following example we validate an input after focusing on the next input. 
 
 ![proactive-input-validation](./proactive-input-validation.gif)
 
+## A Content Box with Tabs 
+In the following example we display content in a set of tabs.  
+
+[Run example](https://tangy-form-tabs.glitch.me/) - [Open Editor](https://tangy-form-tabs.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/tangy-form-tabs)
+
+![tangy-form-tabs](./tangy-form-tabs.gif)
+
 
