@@ -29,8 +29,14 @@ export class ExportLocationListComponent implements OnInit {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'location-list');
     XLSX.writeFile(workbook, 'location-list.xlsx');
+    this.resetValues();
   }
 
+  resetValues(){
+    this.locationEntries = [];
+    this.locationObject = {};
+    this.nextLevelProcessed = '';
+  }
   /**
    *
    * @param data  location node containing id:string, level:string, label:string, children:object and any metadata properties
