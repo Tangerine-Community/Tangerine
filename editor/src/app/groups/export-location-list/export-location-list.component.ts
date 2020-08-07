@@ -15,11 +15,13 @@ export class ExportLocationListComponent implements OnInit {
   nextLevelProcessed = '';
   locationLevels = [];
   coreProperties = ['level', 'label', 'id', 'children', 'parent', 'descendantsCount'];
+  isExporting = false;
   constructor(private groupService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
   }
   async export() {
+    this.isExporting = true;
     const data = await this.groupService.getLocationList(this.route.snapshot.paramMap.get('groupId'));
     this.locationLevels = data['locationsLevels'] as [];
     Object.values(data['locations']).forEach(e => {
@@ -36,6 +38,7 @@ export class ExportLocationListComponent implements OnInit {
     this.locationEntries = [];
     this.locationObject = {};
     this.nextLevelProcessed = '';
+    this.isExporting = false;
   }
   /**
    *
