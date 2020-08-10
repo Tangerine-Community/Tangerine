@@ -14,12 +14,14 @@ export class ExportLocationListComponent implements OnInit {
   locationObject = {};
   nextLevelProcessed = '';
   locationLevels = [];
-  coreProperties = ['level', 'label', 'id', 'children', 'parent'];
+  coreProperties = ['level', 'label', 'id', 'children', 'parent', 'descendantsCount'];
+  isExporting = false;
   constructor(private groupService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
   }
   async export() {
+    this.isExporting = true;
     const data = await this.groupService.getLocationList(this.route.snapshot.paramMap.get('groupId'));
     this.locationLevels = data['locationsLevels'] as [];
     Object.values(data['locations']).forEach(e => {
@@ -29,8 +31,15 @@ export class ExportLocationListComponent implements OnInit {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'location-list');
     XLSX.writeFile(workbook, 'location-list.xlsx');
+    this.resetValues();
   }
 
+  resetValues() {
+    this.locationEntries = [];
+    this.locationObject = {};
+    this.nextLevelProcessed = '';
+    this.isExporting = false;
+  }
   /**
    *
    * @param data  location node containing id:string, level:string, label:string, children:object and any metadata properties
