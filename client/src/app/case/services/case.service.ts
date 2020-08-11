@@ -39,7 +39,7 @@ class CaseService {
 
 
   set case(caseInstance:Case) {
-    const caseInfo:CaseInfo = { 
+    const caseInfo:CaseInfo = {
       caseInstance,
       caseDefinition: this.caseDefinition
     }
@@ -59,7 +59,7 @@ class CaseService {
   setContext(caseEventId = '', eventFormId = '') {
     window['caseInstance'] = this.case
     this.caseEvent = caseEventId
-      ? this.case 
+      ? this.case
         .events
         .find(caseEvent => caseEvent.id === caseEventId)
       : null
@@ -102,7 +102,7 @@ class CaseService {
   /*
    * Case API
    */
-  
+
   get id() {
     return this._case._id
   }
@@ -436,7 +436,7 @@ class CaseService {
       )
     }
   }
-  
+
   markEventFormComplete(caseEventId:string, eventFormId:string) {
     this.case = {
       ...this.case,
@@ -448,7 +448,7 @@ class CaseService {
             ? eventForm
             : {
               ...eventForm,
-              complete: true 
+              complete: true
             }
           )
         }
@@ -539,7 +539,7 @@ class CaseService {
    * Issues API.
    */
 
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
+  async createIssue(label = '', comment = '', caseId: string, eventId: string, eventFormId: string, userId, userName, metadata: any = null) {
     const caseData = await this.tangyFormService.getResponse(caseId)
     const formResponseId = caseData
       .events.find(event => event.id === eventId)
@@ -559,14 +559,14 @@ class CaseService {
       formResponseId
     })
     await this.tangyFormService.saveResponse(issue)
-    return await this.openIssue(issue._id, comment, userId, userName)
+    return await this.openIssue(issue._id, comment, userId, userName, metadata)
   }
 
   async getIssue(issueId) {
     return new Issue(await this.tangyFormService.getResponse(issueId))
   }
 
-  async openIssue(issueId:string, comment:string, userId:string, userName:string) {
+  async openIssue(issueId: string, comment: string, userId: string, userName: string, metadata: any = null) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
     const response = await this.tangyFormService.getResponse(issue.formResponseId)
@@ -580,7 +580,8 @@ class CaseService {
       data: {
         comment,
         caseInstance,
-        response
+        response,
+        metadata
       }
     })
     return await this.tangyFormService.saveResponse({
@@ -820,7 +821,7 @@ class CaseService {
 
   /*
    * Case Template API
-   */ 
+   */
 
   // Exports current case to json. Used in generate-cases as template.
   async export():Promise<Array<TangyFormResponseModel>> {

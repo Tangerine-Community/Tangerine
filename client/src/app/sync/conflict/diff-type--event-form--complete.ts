@@ -2,7 +2,7 @@ import { MergeInfo } from './../classes/merge-info.class';
 import { DiffInfo } from './../classes/diff-info.class';
 import { EventForm } from 'src/app/case/classes/event-form.class';
 
-export const DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED = 'DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED'
+export const DIFF_TYPE__EVENT_FORM__COMPLETE = 'DIFF_TYPE__EVENT_FORM__COMPLETE'
 
 export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   const aEventForms:Array<EventForm> = a.events.reduce((eventForms, caseEvent) => {
@@ -17,44 +17,22 @@ export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
       return [
         ...diffs,
         ...(
-          aEventForm.formResponseId &&
-          bEventForms.some(bEventForm => bEventForm.id === aEventForm.id) &&
-          !bEventForms.find(bEventForm => bEventForm.id === aEventForm.id).formResponseId
+          bEventForms.find(bEventForm => (bEventForm.id === aEventForm.id) && (bEventForm.complete !== aEventForm.complete))
         )
           ? [{
-            type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+            type: DIFF_TYPE__EVENT_FORM__COMPLETE,
             resolved: false,
             info: {
               where: 'a',
               eventFormId: aEventForm.id,
-              formResponseId: aEventForm.formResponseId
+              formResponseId: aEventForm.formResponseId,
+              complete: aEventForm.complete
             }
 
           }]
           : []
       ]
-    }, []),
-    ...bEventForms.reduce((diffs, bEventForm) => {
-      return [
-        ...diffs,
-        ...(
-          bEventForm.formResponseId &&
-          aEventForms.some(aEventForm => aEventForm.id === bEventForm.id) &&
-          !aEventForms.find(aEventForm => aEventForm.id === bEventForm.id).formResponseId
-        )
-          ? [{
-            type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
-            resolved: false,
-            info: {
-              where: 'b',
-              eventFormId: bEventForm.id,
-              formResponseId: bEventForm.formResponseId
-            }
-
-          }]
-          : []
-      ]
-    }, []),
+    }, [])
   ]
 
   return {
@@ -66,13 +44,13 @@ export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
 }
 
 export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
-  const recognizedDiffs = diffInfo.diffs.filter(diff => diff.type === DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)
-  const affectedEventFormIds = recognizedDiffs.map(diff => diff.info.eventFormId)
+  const recognizedDiffs = diffInfo.diffs.filter(diff => diff.type === DIFF_TYPE__EVENT_FORM__COMPLETE)
+  // const affectedEventFormIds = recognizedDiffs.map(diff => diff.info.eventFormId)
   return {
     diffInfo: {
       ...diffInfo,
       diffs: diffInfo.diffs.map(diff => {
-        return diff.type === DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED
+        return diff.type === DIFF_TYPE__EVENT_FORM__COMPLETE
           ? {
             ...diff,
             resolved: true
@@ -89,7 +67,7 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
             return recognizedDiffs.some(diff => diff.info.eventFormId === eventForm.id)
               ? {
                 ...eventForm,
-                formResponseId: recognizedDiffs.find(diff => diff.info.eventFormId === eventForm.id).info.formResponseId
+                complete: recognizedDiffs.find(diff => diff.info.eventFormId === eventForm.id).info.complete
               }
               : eventForm
           })
@@ -100,8 +78,8 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
   }
 }
 
-export const diffType_EventForm_FormResponseIDCreated = {
-  type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+export const diffType_EventForm_Complete = {
+  type: DIFF_TYPE__EVENT_FORM__COMPLETE,
   detect,
   resolve
 }
