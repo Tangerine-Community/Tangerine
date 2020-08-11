@@ -19,6 +19,9 @@ import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
 import {MergeInfo} from "./classes/merge-info.class";
 import {CaseService} from "../case/services/case.service";
+import {DIFF_TYPE__EVENT_FORM__COMPLETE, diffType_EventForm_Complete} from "./conflict/diff-type--event-form--complete";
+import {diff} from "./conflict/diff";
+import {merge} from "./conflict/merge";
 
 export interface LocationQuery {
   level:string
@@ -189,41 +192,69 @@ export class SyncCouchdbService {
           let caseDefinitionId = a.caseDefinitionId
           let caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
             .find(caseDefinition => caseDefinition.id === caseDefinitionId)
-          const diffInfo = diffType_EventForm_FormResponseIDCreated.detect({
-            a,
-            b,
-            diffs: [],
-            caseDefinition
-          })
-          if ((diffInfo.diffs.length === 1) && (diffInfo.diffs[0].type === DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)) {
-            const mergeInfo = diffType_EventForm_FormResponseIDCreated.resolve({
-              merged: {...a},
-              diffInfo: diffInfo
-            })
-            // if successful, then tell couchdb this one is the new winner'
-            if (mergeInfo.merged.events.length > 0) {
-              // remove the conflict
-              await userDb.db.remove(a._id, conflictRev)
-              await userDb.put(a) // create a new rev
-              // create an issue if successful or failed
-              // TODO: figure out which is actually the correct eventForm...
-              await this.caseService.createIssue(
-                `Conflict on ${a.form.title}`,
-                '',
-                this.caseService.case._id,
-                mergeInfo.merged.events[0].id,
-                mergeInfo.merged.events[0].eventForms[1].formResponseId,
-                window['userProfile']._id,
-                window['username']
-              )
-            }
-          }
-      //TODO create an issue if successful or failed
+          const diffInfo = diff(a, b, caseDefinition)
+          const mergeInfo = merge(diffInfo)
+          // remove the conflict
+          await userDb.db.remove(mergeInfo.merged._id, conflictRev)
+          // test if the correct rev will be in the merged document - is this the winning rev/conflictRev?
+          const mergeDoc = await userDb.put(mergeInfo.merged) // create a new rev
+          await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[1].id, window['userProfile']._id, window['username'], mergeInfo)
           //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
         }
-
       }
+    }
+  }
 
+  private async resolve_diffType_EventForm_FormResponseIDCreated(a: Case, b: Case, caseDefinition: CaseDefinition, userDb: UserDatabase, conflictRev) {
+    const diffInfo = diffType_EventForm_FormResponseIDCreated.detect({
+      a,
+      b,
+      diffs: [],
+      caseDefinition
+    })
+    debugger;
+    if ((diffInfo.diffs.length === 1) && (diffInfo.diffs[0].type === DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)) {
+      const mergeInfo = diffType_EventForm_FormResponseIDCreated.resolve({
+        merged: {...a},
+        diffInfo: diffInfo
+      })
+      // if successful, then tell couchdb this one is the new winner'
+      if (mergeInfo.merged.events.length > 0) {
+        // remove the conflict
+        await userDb.db.remove(a._id, conflictRev)
+        await userDb.put(a) // create a new rev
+        // create an issue if successful or failed
+        // TODO: figure out which is actually the correct eventForm...
+        await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, diffInfo.diffs[0].info.formResponseId, window['userProfile']._id, window['username'])
+      }
+    }
+  }
+
+  private async resolve_diffType_EventForm_Complete(a: Case, b: Case, caseDefinition: CaseDefinition, userDb: UserDatabase, conflictRev) {
+    const diffInfo = await diffType_EventForm_Complete.detect({
+      a,
+      b,
+      diffs: [],
+      caseDefinition
+    })
+    debugger;
+    if ((diffInfo.diffs.length === 1) && (diffInfo.diffs[0].type === DIFF_TYPE__EVENT_FORM__COMPLETE)) {
+      const mergeInfo = await diffType_EventForm_Complete.resolve({
+        merged: {...a},
+        diffInfo: diffInfo
+      })
+      // if successful, then tell couchdb this one is the new winner.
+      // check for diffinfo.resolve === false instead
+      if (mergeInfo.merged.events.length > 0) {
+        // remove the conflict
+        await userDb.db.remove(a._id, conflictRev)
+        await userDb.put(a) // create a new rev
+        // create an issue if successful or failed
+        // TODO: figure out which is actually the correct eventForm...
+        // TODO: add deleted rev to comment
+        // stash diffs in an object atached to this issue
+        await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, diffInfo.diffs[0].info.formResponseId, window['userProfile']._id, window['username'])
+      }
     }
   }
 

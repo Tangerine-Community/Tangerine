@@ -99,17 +99,9 @@ export class EventFormComponent implements OnInit {
             .reduce((inputsWithDiscrepancy, input) => input.hasDiscrepancy ? [...inputsWithDiscrepancy, input] : inputsWithDiscrepancy, [])
           if (inputsWithDiscrepancy.length > 0) {
             const formInfo = this.formPlayer.formInfo
-            await this.caseService.createIssue(
-              `Discrepancy on ${formInfo.title}`,
-              '',
-              this.caseService.case._id,
-              this.caseEvent.id,
-              this.eventForm.id,
-              window['userProfile']._id,
-              window['username']
-            )
+            await this.caseService.createIssue(`Discrepancy on ${formInfo.title}`, '', this.caseService.case._id, this.caseEvent.id, this.eventForm.id, window['userProfile']._id, window['username'], null)
           }
-          // @TODO Why do we have to redirect back to the case event page to avoid a database conflict error when redirecting 
+          // @TODO Why do we have to redirect back to the case event page to avoid a database conflict error when redirecting
           // to another event form???
           window.location.hash = `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
           if (window['eventFormRedirect']) {

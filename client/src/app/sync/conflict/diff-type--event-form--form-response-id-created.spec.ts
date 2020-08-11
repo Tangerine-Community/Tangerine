@@ -117,6 +117,7 @@ describe('diffType_EventForm_FormResponseIDCreated', () => {
       }
     })
     expect(mergeInfo.merged.events[0].eventForms[1].formResponseId).toEqual('form-response-2')
+    expect(mergeInfo.diffInfo.diffs[0].resolved).toEqual(true)
   })
 
 })
@@ -139,11 +140,25 @@ describe('merge', () => {
 
   fit('should resolve merge', () => {
     const mergeInfo = merge(
+      {
       a,
-      b,
-      caseDefinition
+        b,
+        diffs: [
+        {
+          type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
+          resolved: false,
+          info: {
+            where: 'b',
+            eventFormId: 'event-form-2',
+            formResponseId: 'form-response-2'
+          }
+        }
+      ],
+        caseDefinition
+    }
     )
     expect(mergeInfo.merged.events[0].eventForms[1].formResponseId).toEqual('form-response-2')
+    expect(mergeInfo.diffInfo.diffs[0].resolved).toEqual(true)
   })
 
 })
