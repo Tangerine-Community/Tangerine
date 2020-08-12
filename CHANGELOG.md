@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.12.5
+- Fixed issue with black screen when moving from p2p tab to home
+
 ## v3.12.4
 - Fixed issue with QR code boundary boxes in tangy-form [#158](https://github.com/Tangerine-Community/tangy-form/issues/158).  Bumped tangy-form v4.17.10 and tangy-form-editor to 7.2.5
 
