@@ -1,6 +1,7 @@
 import { MergeInfo } from './../classes/merge-info.class';
 import { DiffInfo } from './../classes/diff-info.class';
 import { EventForm } from 'src/app/case/classes/event-form.class';
+import {CaseDiffTypes} from "./diff-types.const";
 
 export const DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED = 'DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED'
 
@@ -103,6 +104,8 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
 export const diffType_EventForm_FormResponseIDCreated = {
   type: DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
   detect,
-  resolve
-}
+  resolve,
+  diffType: 'case'
+} as CaseDiffTypes;
+
 

@@ -85,7 +85,9 @@ export class SyncComponent implements OnInit, OnDestroy {
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
     } catch (e) {
-      console.log('Sync Error: ' + JSON.stringify(e, Object.getOwnPropertyNames(e)))
+      // console.log('Sync Error: ' + JSON.stringify(e, Object.getOwnPropertyNames(e)))
+      // console.trace()
+      console.log(e)
       this.status = STATUS_ERROR
       this.syncMessage = this.syncMessage + ' ERROR: ' + JSON.stringify(e.message)
       this.subscription.unsubscribe();
