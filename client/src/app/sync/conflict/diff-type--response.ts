@@ -56,8 +56,16 @@ export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   }
 }
 
+/**
+ * This is unfinished...
+ * @param diffInfo
+ * @param merged
+ */
 export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
   const recognizedDiffs = diffInfo.diffs.filter(diff => ['DIFF_TYPE__RESPONSE__COMPLETE','DIFF_TYPE__RESPONSE__INPUTS'].includes(diff.type))
+  //TODO: diffInfo.diffs.map(diff => {
+    // if it is recognised, mark resolved, otherwise let it pass (don't modify...)
+  // })
   return {
     diffInfo: {
       ...diffInfo,
@@ -68,6 +76,7 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
         }
       })
     },
+    // should return a doc, not an array - not [a]
     merged: recognizedDiffs.map(diff => {
         if ((diff.type === DIFF_TYPE__RESPONSE__INPUTS) && (diff.info.where === 'a')) {
           // return a
