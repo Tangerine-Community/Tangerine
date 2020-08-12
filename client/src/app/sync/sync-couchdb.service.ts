@@ -23,6 +23,7 @@ import {DIFF_TYPE__EVENT_FORM__COMPLETE, diffType_EventForm_Complete} from "./co
 import {diff} from "./conflict/diff";
 import {merge} from "./conflict/merge";
 import {TangyFormResponse} from "../tangy-forms/tangy-form-response.class";
+import {EventForm} from "../case/classes/event-form.class";
 
 export interface LocationQuery {
   level:string
@@ -133,9 +134,33 @@ export class SyncCouchdbService {
       push_last_seq = 0;
     }
 
-    // First do the push:
-    // Build the PouchSyncOptions.
-    // TODO: consider using a similar doc_id approach
+    const startLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+    await this.variableService.set('sync-push-last_seq-start', startLocalSequence)
+
+    let pullSyncOptions = {
+      "since": pull_last_seq,
+      "batch_size": 50,
+      "batches_limit": 1,
+      ...appConfig.couchdbPullUsingDocIds
+        ? {
+          "doc_ids": (await remoteDb.find({
+            "limit": 987654321,
+            "fields": ["_id"],
+            "selector":  pullSelector
+          })).docs.map(doc => doc._id)
+        }
+        : {
+          "selector": pullSelector
+        }
+    }
+    let replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
+    await this.resolveConflicts(replicationStatus, userDb, remoteDb);
+
+    // Now that we've pulled, let's find the last_seq that we can skip the next time we push.
+    // Find the last sequence in the local database and set the sync-push-last_seq variable.
+    const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+    await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+
     const pushSyncOptions = {
       "since": push_last_seq,
       "batch_size": 50,
@@ -153,31 +178,9 @@ export class SyncCouchdbService {
         }
     }
 
-    let replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-    await this.resolveConflicts(replicationStatus, userDb, remoteDb);
-    let pullSyncOptions = {
-        "since": pull_last_seq,
-        "batch_size": 50,
-        "batches_limit": 1,
-        ...appConfig.couchdbPullUsingDocIds
-          ? {
-            "doc_ids": (await remoteDb.find({
-              "limit": 987654321,
-              "fields": ["_id"],
-              "selector":  pullSelector
-            })).docs.map(doc => doc._id)
-          }
-          : {
-            "selector": pullSelector
-          }
-      }
-    replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
+    replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
     await this.resolveConflicts(replicationStatus, userDb, remoteDb);
 
-    // Now that we've pulled, many changes have happened since we pushed that we can skip the next time we push.
-    // Find the last sequence in the local database and set the sync-push-last_seq variable.
-    const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-    await this.variableService.set('sync-push-last_seq', lastLocalSequence)
     return replicationStatus
   }
 
@@ -195,6 +198,10 @@ export class SyncCouchdbService {
           let caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
             .find(caseDefinition => caseDefinition.id === caseDefinitionId)
           const diffInfo = diff(a, b, caseDefinition)
+          // Create issue if we have not detected the conflict type...
+          if (diffInfo.diffs.length === 0) {
+            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, '', a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], diffInfo)
+          }
           const mergeInfo = merge(diffInfo)
           // remove the conflict
           await remoteDb.remove(mergeInfo.merged._id, conflictRev)
@@ -202,72 +209,29 @@ export class SyncCouchdbService {
           // test if the correct rev will be in the merged document - is this the winning rev/conflictRev?
           const mergeDocLocal = await userDb.put(mergeInfo.merged) // create a new rev
           const mergeDocRemote = await remoteDb.put(mergeDocLocal) // create a new rev
+          // loop through the diffs and see if any have resolve: false
+          // do we need a difftype that detects but doesn't resolve - recogises that we cannot act upon it.
+          // identify what form type it is
           await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], mergeInfo)
           //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
         } else if (currentDoc.type === 'response') {
-          let a:TangyFormResponse = currentDoc
-          let b:TangyFormResponse = conflictDoc
-          const diffInfo = diff(a, b, null)
-          const mergeInfo = merge(diffInfo)
+        //   let a:TangyFormResponse = currentDoc
+        //   let b:TangyFormResponse = conflictDoc
+        //   const diffInfo = diff(a, b, null)
+        //   const mergeInfo = merge(diffInfo)
+          const response:EventForm = currentDoc
+          const diffInfo = {
+            currentDoc,
+            conflictDoc
+          }
+          await this.caseService.createIssue(`Unresolved Conflict on ${currentDoc.form.title}`, '', response.caseId, response.caseEventId, response.id, window['userProfile']._id, window['username'], diffInfo)
         } else {
           console.log("unexpected document type " + currentDoc.type + " for " + currentDoc._id)
         }
       }
     }
   }
-
-  private async resolve_diffType_EventForm_FormResponseIDCreated(a: Case, b: Case, caseDefinition: CaseDefinition, userDb: UserDatabase, conflictRev) {
-    const diffInfo = diffType_EventForm_FormResponseIDCreated.detect({
-      a,
-      b,
-      diffs: [],
-      caseDefinition
-    })
-    debugger;
-    if ((diffInfo.diffs.length === 1) && (diffInfo.diffs[0].type === DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED)) {
-      const mergeInfo = diffType_EventForm_FormResponseIDCreated.resolve({
-        merged: {...a},
-        diffInfo: diffInfo
-      })
-      // if successful, then tell couchdb this one is the new winner'
-      if (mergeInfo.merged.events.length > 0) {
-        // remove the conflict
-        await userDb.db.remove(a._id, conflictRev)
-        await userDb.put(a) // create a new rev
-        // create an issue if successful or failed
-        // TODO: figure out which is actually the correct eventForm...
-        await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, diffInfo.diffs[0].info.formResponseId, window['userProfile']._id, window['username'])
-      }
-    }
-  }
-
-  private async resolve_diffType_EventForm_Complete(a: Case, b: Case, caseDefinition: CaseDefinition, userDb: UserDatabase, conflictRev) {
-    const diffInfo = await diffType_EventForm_Complete.detect({
-      a,
-      b,
-      diffs: [],
-      caseDefinition
-    })
-    debugger;
-    if ((diffInfo.diffs.length === 1) && (diffInfo.diffs[0].type === DIFF_TYPE__EVENT_FORM__COMPLETE)) {
-      const mergeInfo = await diffType_EventForm_Complete.resolve({
-        merged: {...a},
-        diffInfo: diffInfo
-      })
-      // if successful, then tell couchdb this one is the new winner.
-      // check for diffinfo.resolve === false instead
-      if (mergeInfo.merged.events.length > 0) {
-        // remove the conflict
-        await userDb.db.remove(a._id, conflictRev)
-        await userDb.put(a) // create a new rev
-        // create an issue if successful or failed
-        // TODO: figure out which is actually the correct eventForm...
-        // TODO: add deleted rev to comment
-        // stash diffs in an object atached to this issue
-        await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, diffInfo.diffs[0].info.formResponseId, window['userProfile']._id, window['username'])
-      }
-    }
-  }
+  
 
   async push(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
