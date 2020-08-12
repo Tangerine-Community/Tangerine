@@ -22,6 +22,7 @@ import {CaseService} from "../case/services/case.service";
 import {DIFF_TYPE__EVENT_FORM__COMPLETE, diffType_EventForm_Complete} from "./conflict/diff-type--event-form--complete";
 import {diff} from "./conflict/diff";
 import {merge} from "./conflict/merge";
+import {TangyFormResponse} from "../tangy-forms/tangy-form-response.class";
 
 export interface LocationQuery {
   level:string
@@ -153,7 +154,7 @@ export class SyncCouchdbService {
     }
 
     let replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-    await this.resolveConflicts(replicationStatus, userDb);
+    await this.resolveConflicts(replicationStatus, userDb, remoteDb);
     let pullSyncOptions = {
         "since": pull_last_seq,
         "batch_size": 50,
@@ -171,7 +172,7 @@ export class SyncCouchdbService {
           }
       }
     replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
-    await this.resolveConflicts(replicationStatus, userDb);
+    await this.resolveConflicts(replicationStatus, userDb, remoteDb);
 
     // Now that we've pulled, many changes have happened since we pushed that we can skip the next time we push.
     // Find the last sequence in the local database and set the sync-push-last_seq variable.
@@ -180,11 +181,12 @@ export class SyncCouchdbService {
     return replicationStatus
   }
 
-  private async resolveConflicts(replicationStatus: ReplicationStatus, userDb: UserDatabase) {
+  private async resolveConflicts(replicationStatus: ReplicationStatus, userDb: UserDatabase, remoteDb: PouchDB = null) {
     for (const id of replicationStatus.conflicts) {
       let currentDoc = await userDb.db.get(id, {conflicts: true})
-      let conflictRev = currentDoc._conflicts
-      if (conflictRev) {
+      let conflictRevArray = currentDoc._conflicts
+      if (conflictRevArray) {
+        const conflictRev = conflictRevArray[0]
         let conflictDoc = await userDb.db.get(id, {rev: conflictRev})
         if (currentDoc.type === 'case') {
           let a:Case = currentDoc
@@ -195,11 +197,20 @@ export class SyncCouchdbService {
           const diffInfo = diff(a, b, caseDefinition)
           const mergeInfo = merge(diffInfo)
           // remove the conflict
+          await remoteDb.remove(mergeInfo.merged._id, conflictRev)
           await userDb.db.remove(mergeInfo.merged._id, conflictRev)
           // test if the correct rev will be in the merged document - is this the winning rev/conflictRev?
-          const mergeDoc = await userDb.put(mergeInfo.merged) // create a new rev
-          await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[1].id, window['userProfile']._id, window['username'], mergeInfo)
+          const mergeDocLocal = await userDb.put(mergeInfo.merged) // create a new rev
+          const mergeDocRemote = await remoteDb.put(mergeDocLocal) // create a new rev
+          await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], mergeInfo)
           //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
+        } else if (currentDoc.type === 'response') {
+          let a:TangyFormResponse = currentDoc
+          let b:TangyFormResponse = conflictDoc
+          const diffInfo = diff(a, b, null)
+          const mergeInfo = merge(diffInfo)
+        } else {
+          console.log("unexpected document type " + currentDoc.type + " for " + currentDoc._id)
         }
       }
     }
