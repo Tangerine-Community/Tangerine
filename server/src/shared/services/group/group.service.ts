@@ -135,7 +135,7 @@ export class GroupService {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const created = new Date().toJSON()
-    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles') };
+    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
     const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_forms', 'can_access_data', 'can_access_download_csv'] };
     const group = <Group>{_id: groupId, label, created, roles :[
       adminRole, memberRole
