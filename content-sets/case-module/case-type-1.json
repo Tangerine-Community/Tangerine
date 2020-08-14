@@ -21,7 +21,7 @@
   "templateCaseEventListItemPrimary": "<span>${caseEventDefinition.name}</span>",
   "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.complete ? 'Complete' : 'Incomplete'}",
   "templateEventFormListItemIcon": "",
-  "templateEventFormListItemPrimary": "<span>${eventFormDefinition.name}</span>",
+  "templateEventFormListItemPrimary": "<span>${eventForm?.data?.title ? eventForm.data.title : eventFormDefinition.name}</span>",
   "templateEventFormListItemSecondary": "Status: ${!eventForm.complete ? 'Incomplete' : 'Complete'}",
   "templateBreadcrumbText": "${caseService.getVariable('participant_id') ? ` ${caseService.getVariable('participant_id')}` :  ` ${caseService.case._id.substring(0,6)}`}",
   "startFormOnOpen": {
@@ -269,6 +269,32 @@
           "autoPopulate": false,
           "required": false,
           "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "dynamic-form-instance-creation",
+      "name": "Fruit Labs creates optional lab results forms",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "ef-dynamic-form-instance-creation--form-1",
+          "formId": "dynamic-form-instance-creation--form-1",
+          "forCaseRole": "role-1",
+          "name": "Fruit Labs",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "ef-dynamic-form-instance-creation--form-2",
+          "formId": "dynamic-form-instance-creation--form-2",
+          "forCaseRole": "role-1",
+          "name": "Fruit Lab Result",
+          "autoPopulate": false,
+          "required": false,
+          "repeatable": true
         }
       ]
     }
