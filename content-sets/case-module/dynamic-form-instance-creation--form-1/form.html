@@ -1,0 +1,99 @@
+<tangy-form id="dynamic-form-instance-creation--form-1" title="Form submit creates multiple instances of follow-up form"
+
+  on-submit="
+    debugger
+
+    if(getValue('fruit_tests').includes('1') && getValue('apple_result_received')[0] === '0'){
+      var resultForm = caseService.createEventForm(T.case.caseEvent.id, 'ef-dynamic-form-instance-creation--form-2', window.participant.id);
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'title', 'Fruit Lab Result - Apple');
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'resultType', 'apple');
+      caseService.markEventFormRequired(T.case.caseEvent.id, resultForm.id);
+    }
+    if(getValue('fruit_tests').includes('2') && getValue('tangerine_result_received')[0] === '0'){
+      var resultForm = caseService.createEventForm(T.case.caseEvent.id, 'ef-dynamic-form-instance-creation--form-2', window.participant.id);
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'title', 'Fruit Lab Result - Tangerine');
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'resultType', 'tangerine');
+      caseService.markEventFormRequired(T.case.caseEvent.id, resultForm.id);
+    }
+    if(getValue('fruit_tests').includes('3') && getValue('kiwi_result_received')[0] === '0'){
+      var resultForm = caseService.createEventForm(T.case.caseEvent.id, 'ef-dynamic-form-instance-creation--form-2', window.participant.id);
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'title', 'Fruit Lab Result - Kiwi');
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'resultType', 'kiwi');
+      caseService.markEventFormRequired(T.case.caseEvent.id, resultForm.id);
+    }
+    if(getValue('fruit_tests').includes('4') && getValue('tomato_result_received')[0] === '0'){
+      var resultForm = caseService.createEventForm(T.case.caseEvent.id, 'ef-dynamic-form-instance-creation--form-2', window.participant.id);
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'title', 'Fruit Lab Result - Tomato');
+      caseService.setEventFormData(T.case.caseEvent.id, resultForm.id, 'resultType', 'tomato');
+      caseService.markEventFormRequired(T.case.caseEvent.id, resultForm.id);
+    }
+
+
+    
+  "
+
+>
+  <tangy-form-item id="item1"
+    on-change="
+    "
+  >
+    
+
+    <tangy-checkboxes
+    name="fruit_tests"
+    label="What fruits did you test today?"
+    >
+      <option value="1">Apple</option>
+      <option value="2">Tangerine</option>
+      <option value="3">Kiwi</option>
+      <option value="4">Tomato</option>
+    </tangy-checkboxes>
+
+
+    <tangy-radio-buttons name="apple_result_received" show-if="getValue('fruit_tests').includes('1')" required="" question-number="2" label="Did you receive the results for your Apple test?" hint-text="" error-text="" warn-text="" class="" style="">
+        
+      <option value="1">Yes</option>
+    
+      <option value="0">No</option>
+    
+    </tangy-radio-buttons>
+
+    <tangy-input type="text" show-if="getValue('apple_result_received') === '1'" inner-label="" name="apple_result" required="" question-number="3" label="Enter your Apple results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+
+    <tangy-radio-buttons name="tangerine_result_received" show-if="getValue('fruit_tests').includes('2')" required="" question-number="4" label="Did you receive the results for your Tangerine test?" hint-text="" error-text="" warn-text="" class="" style="">
+        
+      <option value="1">Yes</option>
+    
+      <option value="0">No</option>
+    
+    </tangy-radio-buttons>
+
+    <tangy-input type="text" show-if="getValue('tangerine_result_received') === '1'" inner-label="" name="tangerine_result" required="" question-number="5" label="Enter your Tangerine results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+    
+
+    <tangy-radio-buttons name="kiwi_result_received" show-if="getValue('fruit_tests').includes('3')" required="" question-number="6" label="Did you receive the results for your Kiwi test?" hint-text="" error-text="" warn-text="" class="" style="">
+        
+      <option value="1">Yes</option>
+    
+      <option value="0">No</option>
+    
+    </tangy-radio-buttons>
+
+    <tangy-input type="text" show-if="getValue('kiwi_result_received') === '1'" inner-label="" name="kiwi_result" required="" question-number="7" label="Enter your Kiwi results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+
+    <tangy-radio-buttons name="tomato_result_received" show-if="getValue('fruit_tests').includes('4')" required="" question-number="8" label="Did you receive the results for your Tomato test?" hint-text="" error-text="" warn-text="" class="" style="">
+        
+      <option value="1">Yes</option>
+    
+      <option value="0">No</option>
+    
+    </tangy-radio-buttons>
+
+    <tangy-input type="text" show-if="getValue('tomato_result_received') === '1'" inner-label="" name="tomato_result" required="" question-number="9" label="Enter your Tomato results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+
+  </tangy-form-item>
+</tangy-form>

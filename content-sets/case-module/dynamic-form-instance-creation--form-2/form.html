@@ -1,0 +1,21 @@
+<tangy-form id="dynamic-form-instance-creation--form-2" title="Follow-up form instance"
+
+  on-submit="
+    debugger
+
+  "
+
+>
+  <tangy-form-item id="item1" on-change="debugger">
+    
+
+    <tangy-input type="text" allowed-pattern="" show-if="(window.eventForm.data?.resultType === 'apple') && getValue('isCored') === true" inner-label="" name="apple_result" required="" question-number="3" label="Enter your Apple results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+    <tangy-input type="text" allowed-pattern="" show-if="window.eventForm.data?.resultType === 'tangerine'" inner-label="" name="tangerine_result" required="" question-number="5" label="Enter your Tangerine results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+    <tangy-input type="text" allowed-pattern="" show-if="window.eventForm.data?.resultType === 'kiwi'" inner-label="" name="kiwi_result" required="" question-number="7" label="Enter your Kiwi results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+    <tangy-input type="text" allowed-pattern="" show-if="window.eventForm.data?.resultType === 'tomato'" inner-label="" name="tomato_result" required="" question-number="9" label="Enter your Tomato results" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+  </tangy-form-item>
+</tangy-form>

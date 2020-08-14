@@ -525,5 +525,63 @@
       "push": true,
       "pull": true 
     }
+  },
+  {
+    "id" : "dynamic-form-instance-creation--form-1",
+    "src" : "./assets/dynamic-form-instance-creation--form-1/form.html",
+    "description" : "Fruit Labs",
+    "listed" : false,
+    "title" : "Fruit Labs",
+    "icon" : "assignment",
+    "type" : "form",
+    "templates": [],
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true 
+    }
+  },
+  {
+    "id" : "dynamic-form-instance-creation--form-2",
+    "src" : "./assets/dynamic-form-instance-creation--form-2/form.html",
+    "description" : "Fruit Lab Result",
+    "listed" : false,
+    "title" : "Fruit Lab Result",
+    "icon" : "assignment",
+    "type" : "form",
+    "templates": [],
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true 
+    }
   }
 ]
