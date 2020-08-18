@@ -13,7 +13,10 @@ const permissionsList = {
       'can_access_forms',
         'can_manage_forms',
       'can_access_media',
-    'can_access_deploy'
+    'can_access_deploy',
+      'can_access_device_users',
+      'can_access_devices',
+      'can_access_releases'
   ],
   sitewidePermissions: [
     'can_create_group',
