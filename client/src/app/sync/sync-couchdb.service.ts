@@ -10,20 +10,16 @@ import {Subject} from 'rxjs';
 import {VariableService} from '../shared/_services/variable.service';
 import {AppConfigService} from '../shared/_services/app-config.service';
 import { AppContext } from '../app-context.enum';
-import {
-  DIFF_TYPE__EVENT_FORM__FORM_RESPONSE_ID_CREATED,
-  diffType_EventForm_FormResponseIDCreated
-} from "./conflict/diff-type--event-form--form-response-id-created";
 import {Case} from "../case/classes/case.class";
 import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
 import {MergeInfo} from "./classes/merge-info.class";
 import {CaseService} from "../case/services/case.service";
-import {DIFF_TYPE__EVENT_FORM__COMPLETE, diffType_EventForm_Complete} from "./conflict/diff-type--event-form--complete";
 import {diff} from "./conflict/diff";
 import {merge} from "./conflict/merge";
 import {TangyFormResponse} from "../tangy-forms/tangy-form-response.class";
 import {EventForm} from "../case/classes/event-form.class";
+import {TangyFormService} from "../tangy-forms/tangy-form.service";
 
 export interface LocationQuery {
   level:string
@@ -52,7 +48,8 @@ export class SyncCouchdbService {
     private variableService: VariableService,
     private appConfigService: AppConfigService,
     private caseDefinitionsService: CaseDefinitionsService,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private tangyFormService: TangyFormService,
   ) { }
 
   /*
@@ -197,12 +194,24 @@ export class SyncCouchdbService {
           let caseDefinitionId = a.caseDefinitionId
           let caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
             .find(caseDefinition => caseDefinition.id === caseDefinitionId)
-          const diffInfo = diff(a, b, caseDefinition)
+          let diffInfo = diff(a, b, caseDefinition)
           // Create issue if we have not detected the conflict type...
           if (diffInfo.diffs.length === 0) {
-            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, '', a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], diffInfo)
+            let issueMetadata = diffInfo as any
+            issueMetadata = {
+              ...diffInfo,
+              type: 'conflict',
+              conflictType: 'case',
+              error: 'Unable to detect conflict type.'
+            }
+            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, 'Unable to detect conflict type.', a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
           }
           const mergeInfo = merge(diffInfo)
+          // TODO: uncoment if this is necessary
+          // Goal is to run markQualifyingCaseAsComplete and markQualifyingEventsAsComplete
+          // await this.caseService.load(a._id)
+          // this.caseService.setContext(a.events[0].id, a.events[0].eventForms[0].id)
+
           // remove the conflict
           await remoteDb.remove(mergeInfo.merged._id, conflictRev)
           await userDb.db.remove(mergeInfo.merged._id, conflictRev)
@@ -215,23 +224,24 @@ export class SyncCouchdbService {
           await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], mergeInfo)
           //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
         } else if (currentDoc.type === 'response') {
-        //   let a:TangyFormResponse = currentDoc
-        //   let b:TangyFormResponse = conflictDoc
-        //   const diffInfo = diff(a, b, null)
-        //   const mergeInfo = merge(diffInfo)
-          const response:EventForm = currentDoc
-          const diffInfo = {
+          const issueMetadata = {
             currentDoc,
-            conflictDoc
+            conflictDoc,
+            type: 'conflict',
+            conflictType: 'response',
+            error: 'Conflict resolution not available for responses.'
           }
-          await this.caseService.createIssue(`Unresolved Conflict on ${currentDoc.form.title}`, '', response.caseId, response.caseEventId, response.id, window['userProfile']._id, window['username'], diffInfo)
+          const issue = await this.caseService.createIssue(`Unresolved Conflict for response on ${currentDoc.form.title}`, `response id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], issueMetadata)
+          const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+          // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
+          await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue.id, conflictDoc.userProfileId, conflictDoc.username )
         } else {
           console.log("unexpected document type " + currentDoc.type + " for " + currentDoc._id)
         }
       }
     }
   }
-  
+
 
   async push(userDb, remoteDb, pouchSyncOptions) {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
