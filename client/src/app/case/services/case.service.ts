@@ -306,7 +306,7 @@ class CaseService {
     })
   }
   setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
-    const windowStartDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    const windowStartDay = moment((new Date(windowStartDayTimeInMs))).format('YYYY-MM-DD')
     const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
