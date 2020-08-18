@@ -44,5 +44,5 @@ crontab -e
 ```
 Enter the following onto a new line. Replace `<group id>` with appropriate Group ID.
 ```
-* * * * * cd /home/ubuntu/tangerine/data/client/content/groups/<group id> && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master
+* * * * * cd /home/ubuntu/tangerine/data/client/content/groups/<group id> && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa' git push origin master
 ```
