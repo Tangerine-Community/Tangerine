@@ -1,10 +1,11 @@
 # Changelog
 
-## v3.14.0
+## v3.13.0
 - New Features for all Tangerine
   - When editing a form, you can now easily duplicate an entire section with the "duplicate section" button.
 
-## v3.13.0
+## v3.12.5
+- Fixed issue with black screen when moving from p2p tab to home
 
 ## v3.12.4
 - Fixed issue with QR code boundary boxes in tangy-form [#158](https://github.com/Tangerine-Community/tangy-form/issues/158).  Bumped tangy-form v4.17.10 and tangy-form-editor to 7.2.5
