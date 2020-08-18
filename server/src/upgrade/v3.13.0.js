@@ -18,7 +18,9 @@ async function go() {
                 ...role.permissions,
                 'can_access_devices',
                 'can_access_device_users',
-                'can_access_releases'
+                'can_access_releases',
+                'can_access_configure_sync',
+                'can_access_configure_location_list'
               ]
             }
             : role
