@@ -2,7 +2,6 @@ import { AppContext } from 'src/app/app-context.enum';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Issue } from '../../classes/issue.class';
-import { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG } from 'constants';
 
 @Component({
   selector: 'app-issues',
