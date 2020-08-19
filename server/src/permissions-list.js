@@ -1,6 +1,8 @@
 const permissionsList = {
   groupPermissions: [
     'can_access_configure',
+      'can_access_configure_sync',
+      'can_access_configure_location_list',
       'can_access_security',
         'can_manage_group_users',
         'can_manage_group_roles',
@@ -13,7 +15,10 @@ const permissionsList = {
       'can_access_forms',
         'can_manage_forms',
       'can_access_media',
-    'can_access_deploy'
+    'can_access_deploy',
+      'can_access_device_users',
+      'can_access_devices',
+      'can_access_releases'
   ],
   sitewidePermissions: [
     'can_create_group',
