@@ -1,3 +1,4 @@
+import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { IssueComponent } from './components/issue/issue.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -45,6 +46,7 @@ import { IssuesComponent } from './components/issues/issues.component';
   declarations: [
     EventComponent,
     IssueComponent,
+    IssueFormComponent,
     CaseComponent,
     NewCaseComponent,
     EventFormComponent,

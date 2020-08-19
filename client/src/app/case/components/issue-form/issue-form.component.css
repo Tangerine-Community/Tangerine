@@ -1,0 +1,8 @@
+:host(:not(.hide-spinner)) {
+  display: block;
+  min-height: 500px;
+  background: url('../../../../loading.gif');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
