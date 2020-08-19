@@ -20,6 +20,7 @@ import {merge} from "./conflict/merge";
 import {TangyFormResponse} from "../tangy-forms/tangy-form-response.class";
 import {EventForm} from "../case/classes/event-form.class";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
+import {UserService} from "../shared/_services/user.service";
 
 export interface LocationQuery {
   level:string
@@ -50,6 +51,7 @@ export class SyncCouchdbService {
     private caseDefinitionsService: CaseDefinitionsService,
     private caseService: CaseService,
     private tangyFormService: TangyFormService,
+    private userService: UserService,
   ) { }
 
   /*
@@ -219,22 +221,20 @@ export class SyncCouchdbService {
           const mergeDocLocal = await userDb.put(mergeInfo.merged) // create a new rev
           const mergeDocRemote = await remoteDb.put(mergeDocLocal) // create a new rev
           // loop through the diffs and see if any have resolve: false
-          // do we need a difftype that detects but doesn't resolve - recogises that we cannot act upon it.
+          // do we need a difftype that detects but doesn't resolve - recognises that we cannot act upon it.
           // identify what form type it is
-          await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], mergeInfo)
+          const issue = await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'])
           //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
-        } else if (currentDoc.type === 'response') {
-          const issueMetadata = {
-            currentDoc,
-            conflictDoc,
-            type: 'conflict',
-            conflictType: 'response',
-            error: 'Conflict resolution not available for responses.'
-          }
-          const issue = await this.caseService.createIssue(`Unresolved Conflict for response on ${currentDoc.form.title}`, `response id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], issueMetadata)
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
           // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
-          await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue.id, conflictDoc.userProfileId, conflictDoc.username )
+          // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
+          await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
+        } else if (currentDoc.type === 'response') {
+          const issue = await this.caseService.createIssue(`Unresolved Conflict for response on ${currentDoc.form.title}`, `response id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'])
+          const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+          // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
+          // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
+          await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
         } else {
           console.log("unexpected document type " + currentDoc.type + " for " + currentDoc._id)
         }

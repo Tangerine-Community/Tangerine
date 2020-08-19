@@ -13,77 +13,41 @@ export const DIFF_TYPE__EVENT_FORM = 'DIFF_TYPE__EVENT_FORM'
 // better run them in the higher merge function.
 
 function differ(comparison:string, eventForm: EventForm, conflictEventForms: Array<EventForm>) {
-  let diffRequireds = diffRequired(comparison, eventForm, conflictEventForms)
-  let diffFormResponseIds = diffFormResponseId(comparison, eventForm, conflictEventForms)
-  let diffCompletes = diffComplete(comparison, eventForm, conflictEventForms)
-  return [...diffRequireds, ...diffFormResponseIds, ...diffCompletes]
-}
-
-function diffFormResponseId(comparison:string, eventForm: EventForm, conflictEventForms: Array<EventForm>) {
-  return (
-    eventForm.formResponseId &&
-    conflictEventForms.some(bEventForm => bEventForm.id === eventForm.id) &&
-    !conflictEventForms.find(bEventForm => bEventForm.id === eventForm.id).formResponseId
-  )
-    ? [{
-      type: DIFF_TYPE__EVENT_FORM,
-      subType: 'formResponseId',
-      resolved: false,
-      info: {
-        where: comparison,
-        eventFormId: eventForm.id,
-        formResponseId: eventForm.formResponseId
+  let conflicts = []
+  let diffArray: EventForm[] = []
+  if (conflictEventForms.some(compareEventForm => compareEventForm.id === eventForm.id)) {
+    diffArray = conflictEventForms.filter(compareEventForm => {
+      if (compareEventForm.id === eventForm.id) {
+        if (eventForm.formResponseId && !compareEventForm.formResponseId) {
+          conflicts.push('formResponseId')
+        } else if (eventForm.required && !compareEventForm.required) {
+          conflicts.push('required')
+        } else if (eventForm.complete && !compareEventForm.complete) {
+          conflicts.push('complete')
+        }
+        if (conflicts.length > 0) {
+          return compareEventForm
+        }
       }
-    }]
-    : [];
-}
-
-function diffRequired(comparison:string, eventForm: EventForm, conflictEventForms: Array<EventForm>) {
-  return (
-    eventForm.required &&
-    conflictEventForms.some(bEventForm => bEventForm.id === eventForm.id) &&
-    !conflictEventForms.find(bEventForm => bEventForm.id === eventForm.id).required
-  )
-    ? [{
+    })
+  }
+  if (diffArray.length > 0) {
+    return [{
       type: DIFF_TYPE__EVENT_FORM,
-      subType: 'required',
       resolved: false,
       info: {
         where: comparison,
         eventFormId: eventForm.id,
         formResponseId: eventForm.formResponseId,
-        required: eventForm.required
+        required: eventForm.required ? eventForm.required : null,
+        complete: eventForm.complete ? eventForm.complete : null,
+        conflicts: conflicts
       }
-
     }]
-    : [];
+  } else {
+    return []
+  }
 }
-
-function diffComplete(comparison:string, eventForm: EventForm, conflictEventForms: Array<EventForm>) {
-  return (
-    eventForm.complete &&
-    conflictEventForms.some(bEventForm => bEventForm.id === eventForm.id) &&
-    !conflictEventForms.find(bEventForm => bEventForm.id === eventForm.id).complete
-  )
-    ? [{
-      type: DIFF_TYPE__EVENT_FORM,
-      subType: 'complete',
-      resolved: false,
-      info: {
-        where: comparison,
-        eventFormId: eventForm.id,
-        formResponseId: eventForm.formResponseId,
-        complete: eventForm.complete
-      }
-
-    }]
-    : [];
-}
-
-// TODO - most important property is the eventForm id - all the other data can be resolved in the merge.
-// We are too specific w/ the current approach.
-// show only that there is a difference, and let the merge command suss out the differences and merge.
-// there may be different cases/combinations of differences
 
 export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   const aEventForms:Array<EventForm> = a.events.reduce((eventForms, caseEvent) => {
@@ -95,17 +59,18 @@ export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   diffs = [
     ...diffs,
     ...aEventForms.reduce((diffs, aEventForm) => {
+      aEventForm['conflicts'] = []
       return [
         ...diffs,
         ...(differ('a', aEventForm, bEventForms))
       ]
     }, []),
-    // ...bEventForms.reduce((diffs, bEventForm) => {
-    //   return [
-    //     ...diffs,
-    //     ...(differ('b', bEventForm, aEventForms))
-    //   ]
-    // }, []),
+    ...bEventForms.reduce((diffs, bEventForm) => {
+      return [
+        ...diffs,
+        ...(differ('b', bEventForm, aEventForms))
+      ]
+    }, []),
   ]
 
   return {
@@ -140,24 +105,21 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
               let mergedEventForm = eventForm
               recognizedDiffs.forEach(diff => {
                 if (diff.info.eventFormId === eventForm.id) {
-                  if (diff.subType === 'formResponseId') {
+                  if (diff.info.conflicts.includes('formResponseId')) {
                     mergedEventForm = {
                       ...mergedEventForm,
                       formResponseId: diff.info.formResponseId
                     }
-                  } else if (diff.subType === 'required') {
+                  } else if (diff.info.conflicts.includes('required')) {
                     mergedEventForm =  {
                       ...mergedEventForm,
                       required: diff.info.required
                     }
-                  } else if (diff.subType === 'complete') {
+                  } else if (diff.info.conflicts.includes('complete')) {
                     mergedEventForm = {
                       ...mergedEventForm,
                       complete: diff.info.complete
                     }
-                  } else {
-                    console.log("unimplemented subType: " + diff.subType)
-                    eventForms.push(mergedEventForm)
                   }
                 }
               })
