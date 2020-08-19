@@ -36,7 +36,7 @@ class CaseService {
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
-
+  _shouldSave = true
 
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = { 
@@ -200,6 +200,13 @@ class CaseService {
 
   async load(id:string) {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
+    this._shouldSave = false
+  }
+
+
+  async loadInMemory(caseData:Case) {
+    await this.setCase(new Case(caseData))
+    this._shouldSave = false
   }
 
   onChangeLocation$ = new Subject()
@@ -230,8 +237,10 @@ class CaseService {
   }
 
   async save() {
-    await this.tangyFormService.saveResponse(this.case)
-    await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    if (this._shouldSave) {
+      await this.tangyFormService.saveResponse(this.case)
+      await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    }
   }
 
   setVariable(variableName, value) {
