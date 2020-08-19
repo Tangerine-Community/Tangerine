@@ -13,7 +13,8 @@ export enum IssueEventType {
   Close='Close',
   Comment='Comment',
   ProposedChange='ProposedChange',
-  Merge='Merge'
+  Merge='Merge',
+  Rebase='Rebase'
 }
 
 export class IssueEvent {
