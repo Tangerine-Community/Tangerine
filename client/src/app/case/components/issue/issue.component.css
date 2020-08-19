@@ -8,7 +8,7 @@
 }
 
 .header {
-  background: #333;
+  background: var(--primary-color-dark) !important;
   color: #FFF;
   margin: 1px 0px 15px;
   padding: 15px 0px 0px;
@@ -69,12 +69,12 @@
 }
 
 paper-button {
-  background: var(--mdc-theme-secondary);
+  background: var(--accent-color);
   color: var(--accent-text-color);
 }
 
 paper-tabs {
-  --paper-tabs-selection-bar-color: var(--mdc-theme-secondary);
+  --paper-tabs-selection-bar-color: var(--accent-color);
 }
 
 .no-proposed-changes-message {
