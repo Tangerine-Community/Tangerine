@@ -1,3 +1,4 @@
+import { AppDocs } from './../../../app.docs';
 import { CaseHomeDocs } from './../../../case-home/case-home.docs';
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
@@ -290,6 +291,17 @@ export const updates = [
       console.log('Updating to v3.12.0...')
       if ( await variableService.get('ran-update-v3.12.0')) return
       await variableService.set('ran-update-v3.12.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      console.log('Updating to v3.13.0...')
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.13.0')) return
+      // Set up and index new byType query.
+      await userDb.put(AppDocs[0])
+      await userDb.query('byType')
+      await variableService.set('ran-update-v3.13.0', 'true')
     }
   }
 ]
