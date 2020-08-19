@@ -21,10 +21,12 @@ import { CaseNotificationsComponent } from './components/case-notifications/case
 import { EventFormsForParticipantComponent } from './components/event-forms-for-participant/event-forms-for-participant.component';
 import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 import { CustomAppComponent } from './components/custom-app/custom-app.component';
+import { IssuesComponent } from './components/issues/issues.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   exports: [
+    IssuesComponent,
     QueryComponent
   ],
   imports: [
@@ -52,7 +54,8 @@ import { CustomAppComponent } from './components/custom-app/custom-app.component
     CaseNotificationsComponent,
     EventFormsForParticipantComponent,
     EventFormsForParticipantPageComponent,
-    CustomAppComponent
+    CustomAppComponent,
+    IssuesComponent
   ]
 })
 export class CaseModule { }
