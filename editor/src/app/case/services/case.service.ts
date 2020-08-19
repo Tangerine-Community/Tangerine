@@ -36,7 +36,7 @@ class CaseService {
   _shouldSave = true
 
   set case(caseInstance:Case) {
-    const caseInfo:CaseInfo = { 
+    const caseInfo:CaseInfo = {
       caseInstance,
       caseDefinition: this.caseDefinition
     }
@@ -56,7 +56,7 @@ class CaseService {
   setContext(caseEventId = '', eventFormId = '') {
     window['caseInstance'] = this.case
     this.caseEvent = caseEventId
-      ? this.case 
+      ? this.case
         .events
         .find(caseEvent => caseEvent.id === caseEventId)
       : null
@@ -142,7 +142,7 @@ class CaseService {
       ]
     }, [])
   }
-  
+
   async create(caseDefinitionId) {
     this.caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseDefinitionId)
@@ -356,7 +356,7 @@ class CaseService {
       .eventForms
       .find(eventForm => eventForm.id === eventFormId)
   }
-  
+
   // @TODO Deprecated.
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     console.warn('caseService.startEventForm(...) is deprecated. Please use caseService.createEventForm(...) before startEventForm is removed.')
@@ -442,7 +442,7 @@ class CaseService {
       )
     }
   }
-  
+
   markEventFormComplete(caseEventId:string, eventFormId:string) {
     this.case = {
       ...this.case,
@@ -454,7 +454,7 @@ class CaseService {
             ? eventForm
             : {
               ...eventForm,
-              complete: true 
+              complete: true
             }
           )
         }
@@ -586,7 +586,7 @@ class CaseService {
       data: {
         comment,
         caseInstance,
-        response 
+        response
       }
     })
     return await this.tangyFormService.saveResponse({
@@ -608,7 +608,7 @@ class CaseService {
       createdAppContext: AppContext.Editor,
       data: {
         caseInstance,
-        response 
+        response
       }
     })
     return await this.tangyFormService.saveResponse({
@@ -666,7 +666,7 @@ class CaseService {
         caseInstance: await this.tangyFormService.getResponse(issue.caseId)
       }
     } else {
-      return lastProposedChangeEvent.data 
+      return lastProposedChangeEvent.data
     }
   }
 
@@ -749,7 +749,8 @@ class CaseService {
     const A = new TangyFormResponseModel(a)
     const B = new TangyFormResponseModel(b)
     const diff = A.inputs.reduce((diff, input) => {
-      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value) 
+      if (B.inputsByName[input.name]) {
+      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value)
         ? [
           ...diff,
           {
@@ -757,8 +758,19 @@ class CaseService {
             a: A.inputsByName[input.name],
             b: B.inputsByName[input.name]
           }
-        ] 
+        ]
         : diff
+      } else {
+        return [
+          ...diff,
+          {
+            name: input.name,
+            error: 'Missing input',
+            a: A.inputsByName[input.name],
+            b: B.inputsByName[input.name]
+          }
+        ]
+      }
     }, [])
     return diff
   }
@@ -867,7 +879,7 @@ class CaseService {
 
   /*
    * Case Template API
-   */ 
+   */
 
   // Exports current case to json. Used in generate-cases as template.
   async export():Promise<Array<TangyFormResponseModel>> {

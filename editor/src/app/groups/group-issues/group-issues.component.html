@@ -13,8 +13,10 @@
   <div *ngFor="let issue of issues" class="icon-list-item search-result" routerLink="{{issue._id}}">
     <mwc-icon slot="item-icon">receipt</mwc-icon>
     <div>
-      <div>{{issue.label}}</div>
+      <div><strong>{{issue.label}}</strong> {{moment(issue.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
+      </div>
       <div secondary>
+        Status: {{issue.status}}
       </div>
     </div>
   </div>

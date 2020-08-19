@@ -705,16 +705,29 @@ class CaseService {
     const A = new TangyFormResponseModel(a)
     const B = new TangyFormResponseModel(b)
     const diff = A.inputs.reduce((diff, input) => {
-      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value)
-        ? [
+      if (B.inputsByName[input.name]) {
+        return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value)
+          ? [
+            ...diff,
+            {
+              name: input.name,
+              a: A.inputsByName[input.name],
+              b: B.inputsByName[input.name]
+            }
+          ]
+          : diff
+      } else {
+        return [
           ...diff,
           {
             name: input.name,
+            error: 'Missing input',
             a: A.inputsByName[input.name],
             b: B.inputsByName[input.name]
           }
         ]
-        : diff
+      }
+
     }, [])
     return diff
   }
