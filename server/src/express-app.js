@@ -181,6 +181,10 @@ app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   let contentPath = '/tangerine/client/content/groups/' + req.params.group
   return express.static(contentPath).apply(this, arguments);
 });
+app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
+  let contentPath = '/tangerine/groups/' + req.params.group
+  return express.static(contentPath).apply(this, arguments);
+});
 
 app.use('/editor/groups', isAuthenticated, express.static('/tangerine/client/content/groups'));
 app.use('/editor/assets/', express.static('/tangerine/client/content/assets/'));

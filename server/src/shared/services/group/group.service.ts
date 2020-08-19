@@ -135,7 +135,7 @@ export class GroupService {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const created = new Date().toJSON()
-    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles') };
+    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
     const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_forms', 'can_access_data', 'can_access_download_csv'] };
     const group = <Group>{_id: groupId, label, created, roles :[
       adminRole, memberRole
@@ -149,9 +149,13 @@ export class GroupService {
     const groupDb = new DB(groupId)
     let groupName = label 
     await this.installViews(groupDb)
-    await exec(`cp -r /tangerine/client/default-assets  /tangerine/client/content/groups/${groupId}`)
-    await exec(`mkdir /tangerine/client/content/groups/${groupId}/media`)
-    //
+    await exec(`mkdir /tangerine/groups/${groupId}/`)
+    await exec(`mkdir /tangerine/groups/${groupId}/editor`)
+    await exec(`cp -r /tangerine/client/default-assets  /tangerine/groups/${groupId}/client`)
+    await exec(`mkdir /tangerine/groups/${groupId}/client/media`)
+    // @TODO Create a symlink to the old group client directory until all the other APIs are updated and we have 
+    // a proper upgrade script to migrate group directories.
+    await exec(`ln -s /tangerine/groups/${groupId}/client /tangerine/client/content/groups/${groupId}`)
     // app-config.json
     //
     let appConfig = <any>{}
