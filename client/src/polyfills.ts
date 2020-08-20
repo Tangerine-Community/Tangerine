@@ -38,6 +38,7 @@ import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 
 import 'date-carousel/date-carousel.js'
+import '@telecomsante/pdf-viewer/pdf-viewer.js'
 
 // An attempt to fix something...
 //import 'core-js/es7/reflect';
