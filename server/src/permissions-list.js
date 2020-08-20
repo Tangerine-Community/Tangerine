@@ -1,5 +1,6 @@
 const permissionsList = {
   groupPermissions: [
+    'can_access_dashboard',
     'can_access_configure',
       'can_access_configure_sync',
       'can_access_configure_location_list',

@@ -1,3 +1,4 @@
+import { GroupDashboardComponent } from './group-dashboard/group-dashboard.component';
 import { IssueFormComponent } from './../case/components/issue-form/issue-form.component';
 import { IssueComponent } from './../case/components/issue/issue.component';
 import { GroupIssuesComponent } from './group-issues/group-issues.component';
@@ -59,6 +60,7 @@ const groupsRoutes: Routes = [
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, NgxPermissionsGuard], data:{permissions:{only:['can_create_group'], redirectTo:'/projects'}} },
   { path: 'groups/:groupId', component: GroupComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/dashboard', component: GroupDashboardComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author', component: GroupAuthorComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author/forms', component: GroupFormsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author/forms/edit/:formId', component: GroupFormsEditComponent, canActivate: [LoginGuard] },
