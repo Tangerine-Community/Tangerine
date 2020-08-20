@@ -54,11 +54,14 @@ export class SyncCouchdbService {
     private userService: UserService,
   ) { }
 
-  /*
-   Note that if you run this with no forms configured to CouchDB sync,
-   that will result in no filter query and everything will be synced. Use carefully.
-  */
-  async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails): Promise<ReplicationStatus> {
+  /**
+   * Note that if you run this with no forms configured to CouchDB sync,
+   * that will result in no filter query and everything will be synced. Use carefully.
+   * @param userDb
+   * @param syncDetails
+   * @param caseDefinitions - null if not testing.
+   */
+  async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails, caseDefinitions:CaseDefinition[] = null): Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -152,8 +155,10 @@ export class SyncCouchdbService {
           "selector": pullSelector
         }
     }
-    let replicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
-    await this.resolveConflicts(replicationStatus, userDb, remoteDb);
+    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
+    if (pullReplicationStatus.pullConflicts.length > 0) {
+      await this.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
+    }
 
     // Now that we've pulled, let's find the last_seq that we can skip the next time we push.
     // Find the last sequence in the local database and set the sync-push-last_seq variable.
@@ -177,14 +182,17 @@ export class SyncCouchdbService {
         }
     }
 
-    replicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-    await this.resolveConflicts(replicationStatus, userDb, remoteDb);
-
+    let pushReplicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
+    if (pushReplicationStatus.pushConflicts.length > 0) {
+      await this.resolveConflicts(pushReplicationStatus, userDb, remoteDb, 'push', caseDefinitions);
+    }
+    let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
 
-  private async resolveConflicts(replicationStatus: ReplicationStatus, userDb: UserDatabase, remoteDb: PouchDB = null) {
-    for (const id of replicationStatus.conflicts) {
+  private async resolveConflicts(replicationStatus: ReplicationStatus, userDb: UserDatabase, remoteDb = null, direction: string, caseDefinitions:CaseDefinition[]) {
+    let conflicts: Array<string> = direction === 'pull' ? replicationStatus.pullConflicts : replicationStatus.pushConflicts
+    for (const id of conflicts) {
       let currentDoc = await userDb.db.get(id, {conflicts: true})
       let conflictRevArray = currentDoc._conflicts
       if (conflictRevArray) {
@@ -194,8 +202,10 @@ export class SyncCouchdbService {
           let a:Case = currentDoc
           let b:Case = conflictDoc
           let caseDefinitionId = a.caseDefinitionId
-          let caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
-            .find(caseDefinition => caseDefinition.id === caseDefinitionId)
+          if (!caseDefinitions) {
+            caseDefinitions = await this.caseDefinitionsService.load();
+          }
+          let caseDefinition = <CaseDefinition>caseDefinitions.find(caseDefinition => caseDefinition.id === caseDefinitionId)
           let diffInfo = diff(a, b, caseDefinition)
           // Create issue if we have not detected the conflict type...
           if (diffInfo.diffs.length === 0) {
@@ -207,30 +217,32 @@ export class SyncCouchdbService {
               error: 'Unable to detect conflict type.'
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
-            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, 'Unable to detect conflict type.', a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
-          }
-          const mergeInfo = merge(diffInfo)
-          // TODO: uncomment if this is necessary
-          // Goal is to run markQualifyingCaseAsComplete and markQualifyingEventsAsComplete
-          // await this.caseService.load(a._id)
-          // this.caseService.setContext(a.events[0].id, a.events[0].eventForms[0].id)
+            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
+          } else {
+            const mergeInfo = merge(diffInfo)
 
-          // remove the conflict
-          await remoteDb.remove(mergeInfo.merged._id, conflictRev)
-          await userDb.db.remove(mergeInfo.merged._id, conflictRev)
-          // test if the correct rev will be in the merged document - is this the winning rev/conflictRev?
-          const mergeDocLocal = await userDb.put(mergeInfo.merged) // create a new rev
-          const mergeDocRemote = await remoteDb.put(mergeDocLocal) // create a new rev
-          // loop through the diffs and see if any have resolve: false
-          // do we need a difftype that detects but doesn't resolve - recognises that we cannot act upon it.
-          // identify what form type it is
-          // provide the full diffInfo to the issueMetadata field
-          const issue = await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'])
-          //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
-          const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
-          // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
-          // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
-          await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
+            // TODO: uncomment if this is necessary
+            // Goal is to run markQualifyingCaseAsComplete and markQualifyingEventsAsComplete
+            // await this.caseService.load(a._id)
+            // this.caseService.setContext(a.events[0].id, a.events[0].eventForms[0].id)
+
+            // remove the conflict
+            await remoteDb.remove(mergeInfo.merged._id, conflictRev)
+            await userDb.db.remove(mergeInfo.merged._id, conflictRev)
+            // test if the correct rev will be in the merged document - is this the winning rev/conflictRev?
+            const mergeDocLocal = await userDb.put(mergeInfo.merged) // create a new rev
+            const mergeDocRemote = await remoteDb.put(mergeDocLocal) // create a new rev
+            // loop through the diffs and see if any have resolve: false
+            // do we need a difftype that detects but doesn't resolve - recognises that we cannot act upon it.
+            // identify what form type it is
+            // provide the full diffInfo to the issueMetadata field
+            const issue = await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'])
+            //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
+            const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+            // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
+            // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
+            await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
+          }
         } else if (currentDoc.type === 'response') {
           const issue = await this.caseService.createIssue(`Unresolved Conflict for response on ${currentDoc.form.title}`, `response id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'])
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
@@ -245,7 +257,7 @@ export class SyncCouchdbService {
   }
 
 
-  async push(userDb, remoteDb, pouchSyncOptions) {
+  async push(userDb, remoteDb, pouchSyncOptions): Promise<ReplicationStatus> {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction =  'push'
@@ -254,7 +266,7 @@ export class SyncCouchdbService {
         const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
           pushed: info.docs_written,
-          conflicts: conflictsQuery.rows.map(row => row.id)
+          pushConflicts: conflictsQuery.rows.map(row => row.id)
         });
       }).on('change', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
@@ -323,7 +335,7 @@ export class SyncCouchdbService {
     return status;
   }
 
-  async pull(userDb, remoteDb, pouchSyncOptions) {
+  async pull(userDb, remoteDb, pouchSyncOptions): Promise<ReplicationStatus> {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction =  'pull'
@@ -332,7 +344,7 @@ export class SyncCouchdbService {
         const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
           pulled: info.docs_written,
-          conflicts: conflictsQuery.rows.map(row => row.id)
+          pullConflicts: conflictsQuery.rows.map(row => row.id)
         });
       }).on('change', async (info) => {
         await this.variableService.set('sync-pull-last_seq', info.last_seq);
