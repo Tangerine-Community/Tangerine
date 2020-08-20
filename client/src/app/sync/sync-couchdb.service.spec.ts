@@ -10,15 +10,11 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
-
-
 import { SyncCouchdbService, LocationQuery, SyncCouchdbDetails } from './sync-couchdb.service';
 import {Device} from "../device/classes/device.class";
-import {LockBoxContents} from "../shared/_classes/lock-box-contents.class";
-import {Case} from "../case/classes/case.class";
-import {updates} from "../core/update/update/updates";
-import {DB} from "../shared/_factories/db.factory";
+import {CaseDefinition} from "../case/classes/case-definition.class";
+import {TangyFormService} from "../tangy-forms/tangy-form.service";
+
 
 const TEST_USERNAME = 'test-user'
 
@@ -37,8 +33,59 @@ const MOCK_LOCAL_DB_CONNECT_STRING = 'MOCK_LOCAL_DB_CONNECT_STRING'
 
 const MOCK_APP_CONFIG = <AppConfig><unknown>{
   "sharedUserDatabase": true,
-  "couchdbPushUsingDocIds": true
+  "couchdbPushUsingDocIds": true,
 }
+
+const MOCK_LOCATION_LIST = {
+  "locationsLevels": [
+    "region",
+    "district",
+    "facility"
+  ],
+  "locations": {
+    "B7BzlR6h": {
+      "label": "Region 1",
+      "id": "B7BzlR6h",
+      "children": {
+        "rrCuQT12": {
+          "label": "District A",
+          "id": "rrCuQT12",
+          "children": {
+            "K0xhy1Su": {
+              "label": "Facility 2",
+              "id": "K0xhy1Su",
+              "level": "facility",
+              "parent": "rrCuQT12",
+              "children": {},
+              "descendantsCount": 0
+            },
+            "RJghrv5d": {
+              "label": "Facility 1",
+              "id": "RJghrv5d",
+              "level": "facility",
+              "parent": "rrCuQT12",
+              "children": {},
+              "descendantsCount": 0
+            }
+          },
+          "level": "district",
+          "parent": "B7BzlR6h",
+          "descendantsCount": 2
+        }
+      },
+      "level": "region",
+      "parent": "root",
+      "descendantsCount": 4
+    }
+  },
+  "metadata": {}
+}
+
+window['userProfile'] = {
+  _id: 'testuser'
+}
+window['username'] = 'testuser'
+let userDb: UserDatabase;
 
 class MockAppConfigService {
   getAppConfig():Promise<AppConfig> {
@@ -46,8 +93,14 @@ class MockAppConfigService {
       resolve(MOCK_APP_CONFIG)
     })
   }
+  getLocationList():Promise<any> {
+    return new Promise((resolve, reject) => {
+      resolve(MOCK_LOCATION_LIST)
+    })
+  }
+
 }
-const a =
+let a =
 {
   "_id": "doc1",
   "collection": "TangyFormResponse",
@@ -91,14 +144,165 @@ const a =
   "caseDefinitionId": "test"
 }
 
+// Set up form infos and a mock remote database to sync with.
+const FORM_INFOS = [
+  <FormInfo><unknown>{
+    id: TEST_FORM_ID_1,
+    formId: "test",
+    name: "Test",
+    eventDefinitions: [
+      {
+        id: 'event-definition-1',
+        name: 'Event 1',
+        eventFormDefinitions: [
+          {
+            id: 'event-form-definition-1',
+            name: 'Event Form 1',
+            formId: 'form-1'
+          },
+          {
+            id: 'event-form-definition-2',
+            name: 'Event Form 2',
+            formId: 'form-2'
+          }
+        ]
+      }
+    ],
+    customSyncSettings: {
+      enabled: false,
+      push: false,
+      pull: false,
+      excludeIncomplete: false
+    },
+    couchdbSyncSettings: <CouchdbSyncSettings>{
+      enabled: true,
+      filterByLocation: true,
+      push: true,
+      pull: true
+    }
+  }
+]
+
+let device: Device
+device = new Device()
+device._id = MOCK_DEVICE_ID
+device.token = MOCK_DEVICE_TOKEN
+device.key = 'test'
+device.claimed = true
+device.syncLocations = [
+  {
+    "value": [
+      {
+        "level": "region",
+        "value": "B7BzlR6h"
+      }
+    ],
+    "showLevels": [
+      "region"
+    ]
+  }
+]
+device.assignedLocation = {
+  "value": [
+    {
+      "level": "region",
+      "value": "B7BzlR6h"
+    },
+    {
+      "level": "district",
+      "value": "rrCuQT12"
+    },
+    {
+      "level": "facility",
+      "value": "RJghrv5d"
+    }
+  ],
+  "showLevels": [
+    "region",
+    "district",
+    "facility"
+  ]
+}
+
+const caseDefinitions:CaseDefinition[] =
+  [
+    {
+      "id": "test",
+      "formId": "test",
+      "name": "Case Type 1",
+      "description": "This is Case Type 1.",
+      eventDefinitions: [
+        {
+          id: 'event-definition-1',
+          name: 'Event 1',
+          eventFormDefinitions: [
+            {
+              id: 'event-form-definition-1',
+              name: 'Event Form 1',
+              formId: 'form-1'
+            },
+            {
+              id: 'event-form-definition-2',
+              name: 'Event Form 2',
+              formId: 'form-2'
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+async function destroyDatabases() {
+  const sharedDb = new PouchDB('shared-user-database')
+  await sharedDb.destroy()
+  const boxesDb = new PouchDB('tangerine-lock-boxes')
+  await boxesDb.destroy()
+  const varsDb = new PouchDB('tangerine-variables')
+  await varsDb.destroy()
+  const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_CONNECT_STRING)
+  await mockRemoteDb.destroy()
+  const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_CONNECT_STRING)
+  await mockLocalDb.destroy()
+}
+
+class MockTangyFormService {
+
+  response:any
+
+  async getFormMarkup(formId) {
+    return `
+      <tangy-form id='caseDefinition1Form'>
+        <tangy-form-item id='item1'>
+          <tangy-input name='input1'></tangy-input>
+        </tangy-form>
+      </tangy-form>
+    `
+  }
+  async saveResponse(responseDoc) {
+    let db = userDb
+    let r
+    if (!responseDoc._id) {
+      r = await db.post(responseDoc)
+    }
+    else {
+      r = await db.put(responseDoc)
+    }
+    return await db.get(r.id)
+  }
+
+  async getResponse(id) {
+    const response = await userDb.get(id)
+    return response
+    ///
+  }
+}
+
 describe('SyncCouchdbService', () => {
 
   let httpClient: HttpClient
   let httpTestingController: HttpTestingController
   let userService: UserService
   let syncCouchdbService: SyncCouchdbService
-  let userDb: UserDatabase
-  let device: Device
 
   beforeEach(async() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000000;
@@ -114,39 +318,35 @@ describe('SyncCouchdbService', () => {
           multi: true
         },
         UserService,
-        SyncCouchdbService
+        SyncCouchdbService,
+        {
+          provide: TangyFormService,
+          useClass: MockTangyFormService
+        }
       ]
     })
+    const sharedDb = new PouchDB('shared-user-database')
+    await sharedDb.destroy()
+    const boxesDb = new PouchDB('tangerine-lock-boxes')
+    await boxesDb.destroy()
+    const varsDb = new PouchDB('tangerine-variables')
+    await varsDb.destroy()
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_CONNECT_STRING)
+    await mockRemoteDb.destroy()
+    const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_CONNECT_STRING)
+    await mockLocalDb.destroy()
     // Get fresh injected instances.
     httpClient = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     userService = TestBed.get(UserService);
     syncCouchdbService = TestBed.get(SyncCouchdbService)
+    // In case there was an error, make sure all db's are destroyed.
+    // await destroyDatabases();
 
-    await userService.uninstall()
-    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_CONNECT_STRING)
-    await mockRemoteDb.destroy()
-    const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_CONNECT_STRING)
-    await mockLocalDb.destroy()
-
-    // await userService.installSharedUserDatabase(device)
-    // // Create the user.
-    // // await userService.create(<UserSignup>{
-    // //   username: TEST_USERNAME,
-    // //   password: 'password',
-    // //   securityQuestionResponse: '...'
-    // // })
-    // await userService.createAdmin(MOCK_PASSWORD, <LockBoxContents>{
-    //   device
-    // })
-    // await userService.login('admin', MOCK_PASSWORD)
-    // debugger;
-    // userDb = await userService.getUserDatabase()
   })
 
   afterEach(async () => {
-    // await userService.uninstall()
-    // await userDb.destroy()
+    // await destroyDatabases();
     const sharedDb = new PouchDB('shared-user-database')
     await sharedDb.destroy()
     const boxesDb = new PouchDB('tangerine-lock-boxes')
@@ -164,95 +364,27 @@ describe('SyncCouchdbService', () => {
   })
 
   fit('should sync but with conflicts', async (done) => {
-    device = new Device()
-    device._id = MOCK_DEVICE_ID
-    device.token = MOCK_DEVICE_TOKEN
-    device.key = 'test'
-    device.claimed = true
-    device.syncLocations = [
-      {
-        "value": [
-          {
-            "level": "region",
-            "value": "B7BzlR6h"
-          }
-        ],
-        "showLevels": [
-          "region"
-        ]
-      }
-    ]
-    device.assignedLocation = {
-      "value": [
-        {
-          "level": "region",
-          "value": "B7BzlR6h"
-        },
-        {
-          "level": "district",
-          "value": "rrCuQT12"
-        },
-        {
-          "level": "facility",
-          "value": "RJghrv5d"
-        }
-      ],
-      "showLevels": [
-        "region",
-        "district",
-        "facility"
-      ]
-    }
+
+    userService.setCurrentUser('testuser')
+    localStorage.setItem('buildId', '12345')
+    localStorage.setItem('rawBuildChannel', 'test')
     // Initialize to install docs.
     await userService.initialize()
-    // const usersDb = userService.getUsersDatabase()
-    // const usersDb = DB('users');
     await userService.installSharedUserDatabaseOnly(device)
     userDb =  new UserDatabase(TEST_USERNAME, '1', device.key, device._id, true, '12345', 'test', 'test-group')
-
-    // Set up form infos and a mock remote database to sync with.
-    const FORM_INFOS = [
-      <FormInfo><unknown>{
-        id: TEST_FORM_ID_1,
-        formId: "test",
-        name: "Test",
-        eventDefinitions: [
-          {
-            id: 'event-definition-1',
-            name: 'Event 1',
-            eventFormDefinitions: [
-              {
-                id: 'event-form-definition-1',
-                name: 'Event Form 1',
-                formId: 'form-1'
-              },
-              {
-                id: 'event-form-definition-2',
-                name: 'Event Form 2',
-                formId: 'form-2'
-              }
-            ]
-          }
-        ],
-        customSyncSettings: {
-          enabled: false,
-          push: false,
-          pull: false,
-          excludeIncomplete: false
-        },
-        couchdbSyncSettings: <CouchdbSyncSettings>{
-          enabled: true,
-          filterByLocation: true,
-          push: true,
-          pull: true
-        }
-      }
-    ]
-    // const userDb = new PouchDB(MOCK_LOCAL_DB_CONNECT_STRING)
     const mockRemoteDb:PouchDB = new PouchDB(MOCK_REMOTE_DB_CONNECT_STRING)
     // Pre-populate the a doc then send to remote.
-    // await userDb.put({_id:"foo", collection: 'TangyFormResponse', form: {id: TEST_FORM_ID_1}, items: [], complete: true})
     await userDb.put(a)
+    await userDb.put({
+      _id:"form-response-1",
+      location: {
+        "region": "B7BzlR6h"
+      },
+      collection: 'TangyFormResponse',
+      form: {id: TEST_FORM_ID_1},
+      items: [],
+      complete: true
+    })
     await mockRemoteDb.sync(userDb.db)
     // Get and edit the doc in both places to make a conflict.
     const localDoc1 = await userDb.get('doc1')
@@ -279,7 +411,19 @@ describe('SyncCouchdbService', () => {
           ]
         }
       ]})
-    // Sync.
+      await mockRemoteDb.put({
+        _id:"form-response-2",
+        location: {
+          "region": "B7BzlR6h"
+        },
+        collection: 'TangyFormResponse',
+        form: {id: TEST_FORM_ID_1},
+        items: [],
+        complete: true
+      })
+    // sync the change to the doc
+    await mockRemoteDb.sync(userDb.db)
+    // Now use syncCouchdbService to sync userDb and pull down the changes
     syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
       serverUrl: MOCK_SERVER_URL,
       groupId: MOCK_GROUP_ID,
@@ -288,9 +432,9 @@ describe('SyncCouchdbService', () => {
       formInfos: FORM_INFOS,
       locationQueries: [],
       deviceSyncLocations: device.syncLocations
-    }).then(async status => {
+    }, caseDefinitions).then(async status => {
       expect(status.pushed).toBe(1)
-      expect(status.conflicts.length).toBe(1)
+      expect(status.pushConflicts.length).toBe(1)
       done()
     })
     setTimeout(() => {
