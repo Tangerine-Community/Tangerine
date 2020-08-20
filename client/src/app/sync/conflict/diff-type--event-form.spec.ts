@@ -86,7 +86,7 @@ const b:Case = {
 
 describe('diffType_EventForm', () => {
 
-  fit('should detect difference', () => {
+  it('should detect difference', () => {
     const diffInfo = diffType_EventForm.detect({
       a,
       b,
@@ -103,7 +103,7 @@ describe('diffType_EventForm', () => {
     expect(diffInfo.diffs[0].info.required).toEqual(true)
   })
 
-  fit('should resolve', () => {
+  it('should resolve', () => {
     const mergeInfo = diffType_EventForm.resolve({
       merged: {...a},
       diffInfo: {

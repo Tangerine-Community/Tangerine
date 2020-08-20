@@ -206,10 +206,11 @@ export class SyncCouchdbService {
               conflictType: 'case',
               error: 'Unable to detect conflict type.'
             }
+            // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
             await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, 'Unable to detect conflict type.', a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
           }
           const mergeInfo = merge(diffInfo)
-          // TODO: uncoment if this is necessary
+          // TODO: uncomment if this is necessary
           // Goal is to run markQualifyingCaseAsComplete and markQualifyingEventsAsComplete
           // await this.caseService.load(a._id)
           // this.caseService.setContext(a.events[0].id, a.events[0].eventForms[0].id)
@@ -223,6 +224,7 @@ export class SyncCouchdbService {
           // loop through the diffs and see if any have resolve: false
           // do we need a difftype that detects but doesn't resolve - recognises that we cannot act upon it.
           // identify what form type it is
+          // provide the full diffInfo to the issueMetadata field
           const issue = await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'])
           //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
