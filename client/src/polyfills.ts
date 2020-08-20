@@ -38,7 +38,9 @@ import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 
 import 'date-carousel/date-carousel.js'
-import '@telecomsante/pdf-viewer/pdf-viewer.js'
+import './libs/pdfjs/pdf-viewer.js'
+import pdfjsLib from 'pdfjs-dist/build/pdf.min.js'
+(window as any).pdfjsLib = pdfjsLib
 
 // An attempt to fix something...
 //import 'core-js/es7/reflect';
