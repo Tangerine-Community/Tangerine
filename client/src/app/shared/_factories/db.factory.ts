@@ -1,11 +1,12 @@
 // @ts-ignore
 import PouchDB from 'pouchdb';
 // @ts-ignore
-import * as PouchDBFind from 'pouchdb-find';
+// import * as PouchDBFind from 'pouchdb-find';
 import * as cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import * as PouchDBUpsert from 'pouchdb-upsert';
 import debugPouch from 'pouchdb-debug';
 PouchDB.plugin(debugPouch);
+import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
 PouchDB.plugin(PouchDBUpsert);
 PouchDB.plugin(cordovaSqlitePlugin);

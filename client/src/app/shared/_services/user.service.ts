@@ -82,6 +82,15 @@ export class UserService {
     })
   }
 
+  async installSharedUserDatabaseOnly(device) {
+    this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
+    await this.installDefaultUserDocs(this.sharedUserDatabase)
+    await this.sharedUserDatabase.put({
+      _id: 'info',
+      atUpdateIndex: updates.length - 1
+    })
+  }
+
   async uninstall() {
     const device = await this.getDevice()
     const userAccounts = await this.getAllUserAccounts()
@@ -137,7 +146,11 @@ export class UserService {
     console.log('Installing default user docs...')
     for (const moduleDocs of this.defaultUserDocs) {
       for (const doc of moduleDocs) {
-        await userDb.put(doc)
+        try {
+          await userDb.put(doc)
+        } catch (e) {
+          console.log(e)
+        }
       }
     }
   }
