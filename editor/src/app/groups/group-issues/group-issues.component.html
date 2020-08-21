@@ -16,7 +16,7 @@
       <div><strong>{{issue.label}}</strong> {{moment(issue.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
       </div>
       <div secondary>
-        Status: {{issue.status}}
+        Status: {{issue.status}} Response id: {{issue.formResponseId | slice:0:8}}
       </div>
     </div>
   </div>
