@@ -2,15 +2,17 @@
 
 ## v3.13.0
 - New Features for all Tangerine
-  - When editing a form, you can now easily duplicate an entire section with the "duplicate section" button.
+  - Download Location List as CSV: You can now download a location list as a CSV. If you prefer editing a Location List via something like Excel, this makes editing an existing location list easier, which can then be imported when done editing in Excel. [#2107](https://github.com/Tangerine-Community/Tangerine/issues/2107)
+  - When editing a form, you can now easily duplicate an entire section with the "duplicate section" button. [#2109](https://github.com/Tangerine-Community/Tangerine/issues/2109)
   - Group Dashboard in Editor: "Dashboard" is now a top level group menu item that can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
   - Add additional Editor permissions to completely cover menu level access in a group
 - New Features and Fixes for Case Module
   - Client Issues feature: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
   - Easier searching on Client: Previously on Client when searching for "Facility 8" you would need to type exactly "Facility 8". Now search is case insensitive and you may type "facility 8" to match against "Facility 8".
-  - Event Window API fix: Previously when setting an Event window, the end time for the window was mistakenly ignored and set to the start time. This is now fixed.
+  - Event Window API fix: Previously when setting an Event window, the end time for the window was mistakenly ignored and set to the start time. This is now fixed. [#2304](https://github.com/Tangerine-Community/Tangerine/issues/2304)
 - New Features for Sync Protocol 2 Module
-  - Export device sheets: When registering Devices, we now offer an option to print "Device Sheets". Device Sheets include the registration codes for a Device and also some human readable metadata. Each row can also be used as a label for each device that can be fastened to a device using affordable clear packing tape. :w
+  - Export device sheets: When registering Devices, we now offer an option to print "Device Sheets". Device Sheets include the registration codes for a Device and also some human readable metadata. Each row can also be used as a label for each device that can be fastened to a device using affordable clear packing tape. [#2269](https://github.com/Tangerine-Community/Tangerine/issues/2269)
+  - Restore Backup: Backups can now be restored. Restore is an option when first opening a freshly installed APK. [#2127](https://github.com/Tangerine-Community/Tangerine/issues/2127)
 
  
 __Server upgrade instructions:__
