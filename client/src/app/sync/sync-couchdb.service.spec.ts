@@ -24,6 +24,7 @@ const TEST_FORM_ID_3 = 'TEST_FORM_ID_3'
 
 const MOCK_GROUP_ID = 'MOCK_GROUP_ID'
 const MOCK_DEVICE_ID = 'MOCK_DEVICE_ID'
+const MOCK_REMOTE_DEVICE_ID = 'MOCK_REMOTE_DEVICE_ID'
 const MOCK_DEVICE_TOKEN = 'MOCK_DEVICE_TOKEN'
 const MOCK_SERVER_URL = 'MOCK_SERVER_URL'
 const MOCK_PASSWORD = 'a'
@@ -126,14 +127,10 @@ let a =
         "id": "event-form-1",
         "eventFormDefinitionId": "event-form-definition-1",
         "formResponseId": "form-response-1",
-        "conflicts": []
       },
       {
         "id": "event-form-2",
-        "eventFormDefinitionId": "event-form-definition-2",
-        "formResponseId": "form-response-2",
-        "required": true,
-        "conflicts": []
+        "eventFormDefinitionId": "event-form-definition-2"
       }
     ]
   }
@@ -363,8 +360,7 @@ describe('SyncCouchdbService', () => {
     expect(!!syncCouchdbService).toEqual(true);
   })
 
-  fit('should sync but with conflicts', async (done) => {
-
+  it('should sync but with conflicts', async (done) => {
     userService.setCurrentUser('testuser')
     localStorage.setItem('buildId', '12345')
     localStorage.setItem('rawBuildChannel', 'test')
@@ -392,6 +388,7 @@ describe('SyncCouchdbService', () => {
     const remoteDoc1 = await mockRemoteDb.get('doc1')
     await mockRemoteDb.put({
       ...remoteDoc1,
+      tangerineModifiedByDeviceId: MOCK_REMOTE_DEVICE_ID,
       events: [
         {
           id: 'event1',
@@ -405,14 +402,14 @@ describe('SyncCouchdbService', () => {
             {
               id: 'event-form-2',
               eventFormDefinitionId: 'event-form-definition-2',
-              formResponseId: 'form-response-2',
-              required: true
+              formResponseId: 'form-response-2'
             }
           ]
         }
       ]})
       await mockRemoteDb.put({
         _id:"form-response-2",
+        tangerineModifiedByDeviceId: MOCK_REMOTE_DEVICE_ID,
         location: {
           "region": "B7BzlR6h"
         },
@@ -434,7 +431,7 @@ describe('SyncCouchdbService', () => {
       deviceSyncLocations: device.syncLocations
     }, caseDefinitions).then(async status => {
       expect(status.pushed).toBe(1)
-      expect(status.pushConflicts.length).toBe(1)
+      expect(status.pullConflicts.length).toBe(1)
       done()
     })
     setTimeout(() => {

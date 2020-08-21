@@ -740,8 +740,21 @@ class CaseService {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
     const lastProposedChangeEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.ProposedChange)
+    let diffMetadata = [
+      {
+        "name": "Date (Original)",
+        "a": {
+          "name": "Date",
+          "value": moment(event.date).format('dddd MMMM D, YYYY hh:mma')
+        },
+        "b": {
+          "name": "Date (Proposed)",
+          "value": moment(lastProposedChangeEvent.date).format('dddd MMMM D, YYYY hh:mma')
+        }
+      }]
     return lastProposedChangeEvent
-      ? this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response)
+      ? ([...this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response) ])
+      // ? ([...diffMetadata, ...this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response) ])
       : []
   }
 

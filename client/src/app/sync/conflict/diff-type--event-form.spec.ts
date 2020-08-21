@@ -93,7 +93,6 @@ describe('diffType_EventForm', () => {
       diffs: [],
       caseDefinition
     })
-    debugger;
     expect(diffInfo.diffs.length).toEqual(1)
     expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM)
     expect(diffInfo.diffs[0].resolved).toEqual(false)

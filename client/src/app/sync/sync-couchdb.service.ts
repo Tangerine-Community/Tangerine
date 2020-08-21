@@ -209,53 +209,87 @@ export class SyncCouchdbService {
           let diffInfo = diff(a, b, caseDefinition)
           // Create issue if we have not detected the conflict type...
           if (diffInfo.diffs.length === 0) {
-            let issueMetadata = diffInfo as any
-            issueMetadata = {
-              ...diffInfo,
+            let issueMetadata = {
+              diffInfo: diffInfo,
+              mergeInfo: null,
               type: 'conflict',
               conflictType: 'case',
+              merged: false,
               error: 'Unable to detect conflict type.'
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
             await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
           } else {
-            const mergeInfo = merge(diffInfo)
+            const mergeInfo:MergeInfo = merge(diffInfo)
 
-            // TODO: uncomment if this is necessary
-            // Goal is to run markQualifyingCaseAsComplete and markQualifyingEventsAsComplete
+            // TODO: run markQualifyingCaseAsComplete and markQualifyingEventsAsComplete
             // await this.caseService.load(a._id)
             // this.caseService.setContext(a.events[0].id, a.events[0].eventForms[0].id)
 
             // remove the conflict
             await remoteDb.remove(mergeInfo.merged._id, conflictRev)
             await userDb.db.remove(mergeInfo.merged._id, conflictRev)
-            // test if the correct rev will be in the merged document - is this the winning rev/conflictRev?
-            const mergeDocLocal = await userDb.put(mergeInfo.merged) // create a new rev
-            const mergeDocRemote = await remoteDb.put(mergeDocLocal) // create a new rev
-            // loop through the diffs and see if any have resolve: false
-            // do we need a difftype that detects but doesn't resolve - recognises that we cannot act upon it.
-            // identify what form type it is
-            // provide the full diffInfo to the issueMetadata field
-            const issue = await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'])
+            await userDb.put(mergeInfo.merged) // create a new rev
+            // Replicate the merged doc to the remoteDb.
+            const options = {doc_ids:[mergeInfo.merged._id]}
+            PouchDB.replicate(userDb.db, remoteDb, options)
+
+            let issueMetadata = {
+              diffInfo: null,
+              mergeInfo: mergeInfo,
+              type: 'conflict',
+              conflictType: 'case',
+              merged: true
+            }
+            const issue = await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
             //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
             const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
             // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
             // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
             await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
           }
-        } else if (currentDoc.type === 'response') {
-          const issue = await this.caseService.createIssue(`Unresolved Conflict for response on ${currentDoc.form.title}`, `response id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'])
+        } else {
+          let issueMetadata = {
+            diffInfo: null,
+            mergeInfo: null,
+            type: 'conflict',
+            conflictType: currentDoc.type,
+            merged: false,
+            error: 'No diff handler available.'
+          }
+          const issue = await this.caseService.createIssue(`Unresolved Conflict for ${currentDoc.form.title}`, `type: ${currentDoc.type}; id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], issueMetadata)
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
           // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
           // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
           await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
-        } else {
-          console.log("unexpected document type " + currentDoc.type + " for " + currentDoc._id)
+          // remove the conflict
+          let metadata = {
+            currentDoc: {
+            tangerineModifiedOn: currentDoc.tangerineModifiedOn
+          },
+            conflictDoc: {
+            tangerineModifiedOn: conflictDoc.tangerineModifiedOn
+            }
+          }
+          console.log("metadata: " + JSON.stringify(metadata))
+          let winningRev, winningDoc, losingRev
+          if (currentDoc.tangerineModifiedOn > conflictDoc.tangerineModifiedOn) {
+            winningDoc = currentDoc
+            losingRev = conflictRev
+          } else {
+            winningDoc = conflictDoc
+            losingRev = currentDoc._rev
+          }
+          await remoteDb.remove(winningDoc._id, losingRev)
+          await userDb.db.remove(winningDoc._id, losingRev)
+          await userDb.put(winningDoc) // create a new rev
+          // Replicate the merged doc to the remoteDb.
+          const options = {doc_ids:[winningDoc._id]}
+          PouchDB.replicate(userDb.db, remoteDb, options)
         }
       }
     }
   }
-
 
   async push(userDb, remoteDb, pouchSyncOptions): Promise<ReplicationStatus> {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
