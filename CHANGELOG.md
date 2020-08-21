@@ -3,6 +3,31 @@
 ## v3.13.0
 - New Features for all Tangerine
   - When editing a form, you can now easily duplicate an entire section with the "duplicate section" button.
+  - Group Dashboard in Editor: "Dashboard" is now a top level group menu item that can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
+  - Add additional Editor permissions to completely cover menu level access in a group
+- New Features and Fixes for Case Module
+  - Client Issues feature: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
+  - Easier searching on Client: Previously on Client when searching for "Facility 8" you would need to type exactly "Facility 8". Now search is case insensitive and you may type "facility 8" to match against "Facility 8".
+  - Event Window API fix: Previously when setting an Event window, the end time for the window was mistakenly ignored and set to the start time. This is now fixed.
+- New Features for Sync Protocol 2 Module
+  - Export device sheets: When registering Devices, we now offer an option to print "Device Sheets". Device Sheets include the registration codes for a Device and also some human readable metadata. Each row can also be used as a label for each device that can be fastened to a device using affordable clear packing tape. :w
+
+ 
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.13.0
+# Now you are ready to start the server.
+./start.sh v3.13.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.0.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.12.0
+```
+
 
 ## v3.12.5
 - Fixed issue with black screen when moving from p2p tab to home
