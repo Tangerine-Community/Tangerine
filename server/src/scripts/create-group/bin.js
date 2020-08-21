@@ -61,13 +61,17 @@ async function createGroup() {
     }
     await exec(`rm -r ${groupPath}`)
     await exec(`mv ${tmpGroupPath} ${groupPath}`)
+
+    let appConfigDefaultsPath
     let appConfigPath
     if (contentSetVersion === 1) {
-      appConfigPath = `${groupPath}/app-config.json_example`
+      appConfigDefaultsPath = `${groupPath}/app-config.json_example`
+      appConfigPath = `${groupPath}/app-config.json`
     } else if (contentSetVersion === 2) {
-      appConfigPath = `${groupPath}/client/app-config.defaults.json`
+      appConfigDefaultsPath = `${groupPath}/client/app-config.defaults.json`
+      appConfigPath = `${groupPath}/client/app-config.json`
     }
-    const appConfig = await fs.readJson(appConfigPath)
+    const appConfig = await fs.readJson(appConfigDefaultsPath)
     await fs.writeJson(appConfigPath, {
       ...appConfig,
       groupId,
