@@ -147,6 +147,8 @@ app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-u
 app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
 app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))
+app.get('/api/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
+
 // Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
 app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./routes/group-responses-by-user-profile-id.js'))
 app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./routes/group-responses-by-user-profile-short-code.js'))

@@ -4,6 +4,19 @@
     <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
   </tangy-select>
 </div>
+<<<<<<< HEAD
+=======
+<a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: 'data-dashboard', groupName: groupName}">
+{{'Data Dashboard'|translate}}</a>
+<br/>
+<br/>
+Filter:
+<select name="form" (change)="filterByForm($event)">
+  <option value="*">*</option>
+  <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
+</select>
+
+>>>>>>> origin/reporting-dashboard
 <table>
   <tr>
     <th>ID</th>
