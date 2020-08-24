@@ -186,7 +186,7 @@ app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   return express.static(contentPath).apply(this, arguments);
 });
 app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
-  let contentPath = `/tangerine/groups/${req.params.group}/client`
+  let contentPath = `/tangerine/groups/${req.params.group}/`
   return express.static(contentPath).apply(this, arguments);
 });
 
