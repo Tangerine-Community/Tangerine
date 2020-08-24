@@ -557,7 +557,7 @@ class CaseService {
    * Issues API.
    */
 
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor]) {
     const caseData = await this.tangyFormService.getResponse(caseId)
     const formResponseId = caseData
       .events.find(event => event.id === eventId)
@@ -570,7 +570,7 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Editor,
-      resolveOnAppContext: AppContext.Editor,
+      resolveOnAppContexts,
       eventId,
       eventFormId,
       status: IssueStatus.Open,

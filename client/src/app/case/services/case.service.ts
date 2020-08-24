@@ -36,7 +36,7 @@ class CaseService {
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
-
+  _shouldSave = true
 
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = { 
@@ -200,6 +200,13 @@ class CaseService {
 
   async load(id:string) {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
+    this._shouldSave = false
+  }
+
+
+  async loadInMemory(caseData:Case) {
+    await this.setCase(new Case(caseData))
+    this._shouldSave = false
   }
 
   onChangeLocation$ = new Subject()
@@ -230,8 +237,10 @@ class CaseService {
   }
 
   async save() {
-    await this.tangyFormService.saveResponse(this.case)
-    await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    if (this._shouldSave) {
+      await this.tangyFormService.saveResponse(this.case)
+      await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    }
   }
 
   setVariable(variableName, value) {
@@ -564,7 +573,7 @@ class CaseService {
    * Issues API.
    */
 
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor]) {
     const caseData = await this.tangyFormService.getResponse(caseId)
     const formResponseId = caseData
       .events.find(event => event.id === eventId)
@@ -577,7 +586,7 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Client,
-      resolveOnAppContext: AppContext.Editor,
+      resolveOnAppContexts,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
@@ -630,6 +639,28 @@ class CaseService {
     return await this.tangyFormService.saveResponse({
       ...issue,
       status: IssueStatus.Closed
+    })
+  }
+
+  async rebaseIssue(issueId:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+    const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Rebase,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        caseInstance,
+        response 
+      }
+    })
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Open
     })
   }
 
