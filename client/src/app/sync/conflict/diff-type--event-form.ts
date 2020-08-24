@@ -12,36 +12,59 @@ export const DIFF_TYPE__EVENT_FORM = 'DIFF_TYPE__EVENT_FORM'
 // should this running of the reducers be run here or in the higher merge function?
 // better run them in the higher merge function.
 
-function differ(comparison:string, eventForm: EventForm, conflictEventForms: Array<EventForm>) {
-  let conflicts = []
-  let diffArray: EventForm[] = []
-  if (conflictEventForms.some(compareEventForm => compareEventForm.id === eventForm.id)) {
-    diffArray = conflictEventForms.filter(compareEventForm => {
-      if (compareEventForm.id === eventForm.id) {
-        if (eventForm.formResponseId && !compareEventForm.formResponseId) {
-          conflicts.push('formResponseId')
-        } else if (eventForm.required && !compareEventForm.required) {
-          conflicts.push('required')
-        } else if (eventForm.complete && !compareEventForm.complete) {
-          conflicts.push('complete')
-        }
-        if (conflicts.length > 0) {
-          return compareEventForm
-        }
-      }
-    })
+function differ(comparison:string, eventForm: EventForm, comparisonEventForms: Array<EventForm>) {
+  let differences = []
+  let compareEventForm:EventForm = comparisonEventForms.find(comparisonEventform => {
+    if (comparisonEventform.id === eventForm.id) {
+      return comparisonEventform
+    }
+  })
+  if (compareEventForm) {
+    if (eventForm.formResponseId && !compareEventForm.formResponseId) {
+      differences.push('formResponseId')
+    }
+    if ((eventForm.complete) && (!compareEventForm.complete)) {
+      differences.push('complete')
+    }
+    if ((eventForm.required) && (!compareEventForm.required)) {
+      differences.push('required')
+    }
+  } else {
+    // throw a diff when there is no matches - i.e. a new eventForm
+    differences.push('new')
   }
-  if (diffArray.length > 0) {
+
+  // TODO: we will miss any new eventForms if they do not match the id of the eventForm we are currently looking at (for example, a new eventForm)
+  // if (conflictEventForms.some(compareEventForm => compareEventForm.id === eventForm.id)) {
+  //   diffArray = conflictEventForms.filter(compareEventForm => {
+  //     if (compareEventForm.id === eventForm.id) {
+  //       if (eventForm.formResponseId && !compareEventForm.formResponseId) {
+  //         conflicts.push('formResponseId')
+  //       } else if (eventForm.required && !compareEventForm.required) {
+  //         conflicts.push('required')
+  //       } else if (eventForm.complete && !compareEventForm.complete) {
+  //         conflicts.push('complete')
+  //       }
+  //       if (conflicts.length > 0) {
+  //         return compareEventForm
+  //       }
+  //     }
+  //   })
+  // } else {
+  //   // throw a diff when there is no matches - i.e. a new eventForm
+  // }
+  if (differences.length > 0) {
     return [{
       type: DIFF_TYPE__EVENT_FORM,
       resolved: false,
       info: {
         where: comparison,
+        caseEventId: eventForm.caseEventId,
         eventFormId: eventForm.id,
         formResponseId: eventForm.formResponseId,
         required: eventForm.required ? eventForm.required : null,
         complete: eventForm.complete ? eventForm.complete : null,
-        conflicts: conflicts
+        differences: differences
       }
     }]
   } else {
@@ -59,7 +82,6 @@ export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   diffs = [
     ...diffs,
     ...aEventForms.reduce((diffs, aEventForm) => {
-      aEventForm['conflicts'] = []
       return [
         ...diffs,
         ...(differ('a', aEventForm, bEventForms))
@@ -84,6 +106,65 @@ export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
 export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
   const recognizedDiffs = diffInfo.diffs.filter(diff => diff.type === DIFF_TYPE__EVENT_FORM)
   // const affectedEventFormIds = recognizedDiffs.map(diff => diff.info.eventFormId)
+
+  // Should we add any new eventforms from b to a? Otherwise we will miss them when we hit a 'new' difference...
+  // no don't do that - remember that each eventForm can have its own diff, so new eventForms will trigger the creation of a new diff.
+  // plus we are looking at both a and b. so we might miss it on the a side, but will get it when detect for bEventForms happens.
+
+  recognizedDiffs.forEach(diff => {
+      if (diff.info.differences.includes('formResponseId')) {
+        merged.events.map(event => {
+           if (event.id === diff.info.caseEventId) {
+             event.eventForms.map(eventForm => {
+               eventForm.formResponseId = diff.info.formResponseId
+             })
+           }
+        })
+      } else if (diff.info.differences.includes('required')) {
+        merged.events.map(event => {
+          event.eventForms.map(eventForm => {
+            eventForm.required = diff.info.required
+          })
+        })
+      } else if (diff.info.differences.includes('complete')) {
+        merged.events.map(event => {
+             event.eventForms.map(eventForm => {
+               eventForm.complete = diff.info.complete
+             })
+        })
+      } else if (diff.info.differences.includes('new')) {
+        // find the new eventForm
+             diffInfo[diff.info.where].events.forEach(event => {
+               let eventform;
+               if (event.id === diff.info.caseEventId) {
+                 event.eventForms.find(currentEventform => {
+                   if (currentEventform.formResponseId === diff.info.formResponseId) {
+                     eventform =  currentEventform
+                     if (eventform) {
+                       // push to the merged event.
+                       merged.events.map(event => {
+                         if (event.id === diff.info.caseEventId) {
+                           event.eventForms.push(eventform)
+                         }
+                       })
+                     }
+                   }
+                 })
+               }
+               // if (eventform) {
+               //   console.log("found")
+               //   // push to the merged event.
+               //   merged.events.map(event => {
+               //     if (event.id === diff.info.caseEventId) {
+               //       event.eventForms.push(eventform)
+               //     }
+               //   })
+               // }
+             })
+
+      }
+  })
+
   return {
     diffInfo: {
       ...diffInfo,
@@ -97,42 +178,7 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
       })
     },
     merged: {
-      ...merged,
-      events: merged.events.map(event => {
-        let eventForms = []
-          event.eventForms.map(eventForm => {
-            if (recognizedDiffs.some(diff => diff.info.eventFormId === eventForm.id)) {
-              let mergedEventForm = eventForm
-              recognizedDiffs.forEach(diff => {
-                if (diff.info.eventFormId === eventForm.id) {
-                  if (diff.info.conflicts.includes('formResponseId')) {
-                    mergedEventForm = {
-                      ...mergedEventForm,
-                      formResponseId: diff.info.formResponseId
-                    }
-                  } else if (diff.info.conflicts.includes('required')) {
-                    mergedEventForm =  {
-                      ...mergedEventForm,
-                      required: diff.info.required
-                    }
-                  } else if (diff.info.conflicts.includes('complete')) {
-                    mergedEventForm = {
-                      ...mergedEventForm,
-                      complete: diff.info.complete
-                    }
-                  }
-                }
-              })
-              eventForms.push(mergedEventForm)
-            } else {
-              eventForms.push(eventForm)
-            }
-          })
-        return {
-            ...event,
-          eventForms: eventForms
-        }
-      })
+      ...merged
     }
   }
 }

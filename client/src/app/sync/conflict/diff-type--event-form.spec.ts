@@ -42,14 +42,14 @@ const a:Case = {
         eventForms: [
           {
             id: 'event-form-1',
+            "caseEventId": "event1",
             eventFormDefinitionId: 'event-form-definition-1',
             formResponseId: 'form-response-1'
           },
           {
             id: 'event-form-2',
+            "caseEventId": "event1",
             eventFormDefinitionId: 'event-form-definition-2',
-            formResponseId: 'form-response-2',
-            required: true
           }
         ]
       }
@@ -68,15 +68,15 @@ const b:Case = {
         eventForms: [
           {
             id: 'event-form-1',
+            "caseEventId": "event1",
             eventFormDefinitionId: 'event-form-definition-1',
             formResponseId: 'form-response-1'
           },
           {
             id: 'event-form-2',
+            "caseEventId": "event1",
             eventFormDefinitionId: 'event-form-definition-2',
-            formResponseId: 'form-response-2',
-            required: true,
-            complete: true
+            formResponseId: 'form-response-2'
           }
         ]
       }
@@ -86,10 +86,29 @@ const b:Case = {
 
 describe('diffType_EventForm', () => {
 
-  it('should detect difference', () => {
+  it('should detect difference in formResponseId property', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
     const diffInfo = diffType_EventForm.detect({
-      a,
-      b,
+      a:aCopy,
+      b: {
+        ...bCopy,
+        events: bCopy.events.map(event => {
+          return event.id === 'event1'
+            ? {
+              ...event,
+                eventForms: event.eventForms.map(eventForm => {
+                  return eventForm.id === 'event-form-2'
+                    ? {
+                      ...eventForm,
+                        // complete: true
+                      }
+                    : eventForm
+                })
+              }
+            : event
+        })
+      },
       diffs: [],
       caseDefinition
     })
@@ -97,28 +116,117 @@ describe('diffType_EventForm', () => {
     expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM)
     expect(diffInfo.diffs[0].resolved).toEqual(false)
     expect(diffInfo.diffs[0].info.where).toEqual('b')
-    expect(diffInfo.diffs[0].info.eventFormId).toEqual('event-form-2')
-    expect(diffInfo.diffs[0].info.formResponseId).toEqual('form-response-2')
-    expect(diffInfo.diffs[0].info.required).toEqual(true)
+    expect(diffInfo.diffs[0].info.differences[0]).toEqual('formResponseId')
   })
 
-  it('should resolve', () => {
+  it('should detect 2 differences with formResponseId and complete properties', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
+    const diffInfo = diffType_EventForm.detect({
+      a:aCopy,
+      b:{
+        ...bCopy,
+        events: bCopy.events.map(event => {
+          return event.id === 'event1'
+            ? {
+              ...event,
+              eventForms: event.eventForms.map(eventForm => {
+                return eventForm.id === 'event-form-2'
+                  ? {
+                    ...eventForm,
+                    formResponseId: 'form-response-2',
+                    complete: true
+                  }
+                  : eventForm
+              })
+            }
+            : event
+        })
+      },
+      diffs: [],
+      caseDefinition
+    })
+    expect(diffInfo.diffs.length).toEqual(1)
+    expect(diffInfo.diffs[0].info.differences.length).toEqual(2)
+    expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM)
+    expect(diffInfo.diffs[0].resolved).toEqual(false)
+    expect(diffInfo.diffs[0].info.where).toEqual('b')
+    expect(diffInfo.diffs[0].info.differences[0]).toEqual('formResponseId')
+    expect(diffInfo.diffs[0].info.differences[1]).toEqual('complete')
+  })
+
+  it('should detect 2 differences with formResponseId and a new eventForm', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
+    const diffInfo = diffType_EventForm.detect({
+      a:aCopy,
+      b:{
+        ...bCopy,
+        events: bCopy.events.map(event => {
+          return event.id === 'event1'
+            ? {
+              ...event,
+              eventForms: [...event.eventForms,
+                {
+                  id: 'event-form-3',
+                  caseEventId: event.id,
+                  eventFormDefinitionId: 'event-form-definition-3',
+                  formResponseId: 'form-response-3'
+                }
+              ]
+
+            }
+            : event
+        })
+      },
+      diffs: [],
+      caseDefinition
+    })
+    expect(diffInfo.diffs.length).toEqual(2)
+    expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM)
+    expect(diffInfo.diffs[0].resolved).toEqual(false)
+    expect(diffInfo.diffs[0].info.where).toEqual('b')
+    expect(diffInfo.diffs[0].info.differences[0]).toEqual('formResponseId')
+    expect(diffInfo.diffs[1].info.differences[0]).toEqual('new')
+    expect(diffInfo.diffs.length).toEqual(2)
+  })
+
+  it('should resolve a difference that has a complete property', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
     const mergeInfo = diffType_EventForm.resolve({
-      merged: {...a},
+      merged: {...aCopy},
       diffInfo: {
-        a,
-        b,
+        a:aCopy,
+        b: {
+          ...bCopy,
+          events: bCopy.events.map(event => {
+            return event.id === 'event1'
+              ? {
+                ...event,
+                eventForms: event.eventForms.map(eventForm => {
+                  return eventForm.id === 'event-form-2'
+                    ? {
+                      ...eventForm,
+                      complete: true
+                    }
+                    : eventForm
+                })
+              }
+              : event
+          })
+        },
         diffs: [
           {
             "type": "DIFF_TYPE__EVENT_FORM",
             "resolved": false,
             "info": {
               "where": "b",
+              "caseEventId": "event1",
               "eventFormId": "event-form-2",
               "formResponseId": "form-response-2",
-              "required": true,
               "complete": true,
-              "conflicts": [
+              "differences": [
                 "complete"
               ]
             }
@@ -129,14 +237,203 @@ describe('diffType_EventForm', () => {
     })
     expect(mergeInfo.merged.events[0].eventForms[1].complete).toEqual(true)
     expect(mergeInfo.diffInfo.diffs[0].resolved).toEqual(true)
-    // expect(mergeInfo.diffInfo.diffs[0].required).toEqual(true)
+  })
+
+  it('should resolve a difference that has a complete property and a new formResponse', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
+    const mergeInfo = diffType_EventForm.resolve({
+      merged: {...aCopy},
+      diffInfo: {
+        a:aCopy,
+        b: {
+          ...bCopy,
+          events: bCopy.events.map(event => {
+            return event.id === 'event1'
+              ? {
+                ...event,
+                eventForms: [...event.eventForms.map(eventForm => {
+                  return eventForm.id === 'event-form-2'
+                    ? {
+                      ...eventForm,
+                      complete: true
+                    }
+                    : eventForm
+                }), {
+                  id: 'event-form-3',
+                  caseEventId: event.id,
+                  eventFormDefinitionId: 'event-form-definition-3',
+                  formResponseId: 'form-response-3'
+                }]
+              }
+              : event
+          })
+        },
+        diffs: [
+          {
+            "type": "DIFF_TYPE__EVENT_FORM",
+            "resolved": false,
+            "info": {
+              "where": "b",
+              "caseEventId": "event1",
+              "eventFormId": "event-form-2",
+              "required": null,
+              "complete": true,
+              "differences": [
+                "complete"
+              ]
+            }
+          },
+          {
+            "type": "DIFF_TYPE__EVENT_FORM",
+            "resolved": false,
+            "info": {
+              "where": "b",
+              "caseEventId": "event1",
+              "eventFormId": "event-form-3",
+              "formResponseId": "form-response-3",
+              "required": null,
+              "complete": null,
+              "differences": [
+                "new"
+              ]
+            }
+          }
+        ],
+        caseDefinition
+      }
+    })
+    expect(mergeInfo.merged.events[0].eventForms[1].complete).toEqual(true)
+    expect(mergeInfo.diffInfo.diffs[0].resolved).toEqual(true)
+    expect(mergeInfo.merged.events[0].eventForms[2].formResponseId).toEqual('form-response-3')
+    expect(mergeInfo.merged.events[0].eventForms.length).toEqual(3)
+    expect(mergeInfo.diffInfo.diffs[1].resolved).toEqual(true)
+  })
+
+  it('should resolve a difference that has a new eventForm', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
+    const mergeInfo = diffType_EventForm.resolve({
+      merged: {...aCopy},
+      diffInfo: {
+        a:aCopy,
+        b:{
+          ...bCopy,
+          events: bCopy.events.map(event => {
+            return event.id === 'event1'
+              ? {
+                ...event,
+                eventForms: [...event.eventForms,
+                  {
+                    id: 'event-form-3',
+                    caseEventId: event.id,
+                    eventFormDefinitionId: 'event-form-definition-3',
+                    formResponseId: 'form-response-3'
+                  }
+                ]
+              }
+              : event
+          })
+        },
+        diffs: [
+          {
+            "type": "DIFF_TYPE__EVENT_FORM",
+            "resolved": false,
+            "info": {
+              "where": "b",
+              "caseEventId": "event1",
+              "eventFormId": "event-form-3",
+              "formResponseId": "form-response-3",
+              "required": null,
+              "complete": null,
+              "differences": [
+                "new"
+              ]
+            }
+          }
+        ],
+        caseDefinition
+      }
+    })
+    expect(mergeInfo.merged.events[0].eventForms.length).toEqual(3)
+    expect(mergeInfo.diffInfo.diffs[0].resolved).toEqual(true)
+  })
+
+  it('should resolve a difference that has two new eventForms', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
+    const mergeInfo = diffType_EventForm.resolve({
+      merged: {...aCopy},
+      diffInfo: {
+        a:aCopy,
+        b:{
+          ...bCopy,
+          events: bCopy.events.map(event => {
+            return event.id === 'event1'
+              ? {
+                ...event,
+                eventForms: [...event.eventForms,
+                  {
+                    id: 'event-form-3',
+                    caseEventId: event.id,
+                    eventFormDefinitionId: 'event-form-definition-3',
+                    formResponseId: 'form-response-3'
+                  },
+                  {
+                    id: 'event-form-4',
+                    caseEventId: event.id,
+                    eventFormDefinitionId: 'event-form-definition-2',
+                    formResponseId: 'form-response-4'
+                  }
+                ]
+              }
+              : event
+          })
+        },
+        diffs: [
+          {
+            "type": "DIFF_TYPE__EVENT_FORM",
+            "resolved": false,
+            "info": {
+              "where": "b",
+              "caseEventId": "event1",
+              "eventFormId": "event-form-3",
+              "formResponseId": "form-response-3",
+              "required": null,
+              "complete": null,
+              "differences": [
+                "new"
+              ]
+            }
+          },
+          {
+            "type": "DIFF_TYPE__EVENT_FORM",
+            "resolved": false,
+            "info": {
+              "where": "b",
+              "caseEventId": "event1",
+              "eventFormId": "event-form-4",
+              "formResponseId": "form-response-4",
+              "required": null,
+              "complete": null,
+              "differences": [
+                "new"
+              ]
+            }
+          }
+        ],
+        caseDefinition
+      }
+    })
+    expect(mergeInfo.merged.events[0].eventForms.length).toEqual(4)
+    expect(mergeInfo.diffInfo.diffs[0].resolved).toEqual(true)
   })
 
 })
 
 describe('diff using diffType_EventForm scaffolding', () => {
 
-  it('should detect difference', () => {
+  fit('should detect difference', () => {
     const diffInfo = diff(a, b, caseDefinition)
     expect(diffInfo.diffs.length).toEqual(1)
     expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM)
@@ -149,8 +446,7 @@ describe('diff using diffType_EventForm scaffolding', () => {
 })
 
 describe('merge using diffType_EventForm scaffolding', () => {
-
-  it('should resolve merge', () => {
+  fit('should resolve merge', () => {
     const mergeInfo = merge(
       {
         a,
@@ -161,12 +457,13 @@ describe('merge using diffType_EventForm scaffolding', () => {
             "resolved": false,
             "info": {
               "where": "b",
+              "caseEventId": "event1",
               "eventFormId": "event-form-2",
               "formResponseId": "form-response-2",
-              "required": true,
-              "complete": true,
-              "conflicts": [
-                "complete"
+              "required": null,
+              "complete": null,
+              "differences": [
+                "formResponseId"
               ]
             }
           }
