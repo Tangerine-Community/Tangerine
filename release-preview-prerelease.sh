@@ -8,7 +8,7 @@ cd tangerine-preview
 npm install
 git clone git@github.com:tangerine-community/tangerine tmp
 cd tmp 
-git checkout next 
+git checkout $VERSION 
 cd client
 npm install
 npm run build
