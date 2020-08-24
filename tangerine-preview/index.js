@@ -21,7 +21,7 @@ async function go() {
   const appConfigExamplePath = `${process.cwd()}/app-config.json_example`
   const appConfigDefaultsPath = `${process.cwd()}/app-config.defaults.json`
   // Set up app-config.json using app-config.json_example, unless app-config.json is already set up.
-  if (!fs.existsSync(appConfigPath) && (fs.existsSync(appConfigExamplePath) || fs.existsSync(appConfigDefaultsPath)) {
+  if (!fs.existsSync(appConfigPath) && (fs.existsSync(appConfigExamplePath) || fs.existsSync(appConfigDefaultsPath))) {
     if (fs.existsSync(appConfigDefaultsPath)) {
       fs.copyFileSync(appConfigDefaultsPath, appConfigPath)
     } else {
