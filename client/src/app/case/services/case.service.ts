@@ -200,7 +200,7 @@ class CaseService {
 
   async load(id:string) {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
-    this._shouldSave = false
+    this._shouldSave = true 
   }
 
 
