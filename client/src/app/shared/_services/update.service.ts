@@ -43,16 +43,11 @@ export class UpdateService {
       .filter(doc => doc._id.substr(0,7) !== '_design' )
       .map(doc => doc.username ? doc.username : doc._id);
     for (const username of usernames) {
-      const userDb = await this.userService.getUserDatabase(username);
-      // Use try in case this is an old account where info doc was not created.
-      let infoDoc = { _id: '', atUpdateIndex: 0 };
-      try {
-        infoDoc = await userDb.get('info');
-      } catch (e) {
-        await userDb.put({ _id: 'info', atUpdateIndex: 0 });
-        infoDoc = await userDb.get('info');
+      let atUpdateIndex = await this.variableService.get('atUpdateIndex');
+      if (!atUpdateIndex) {
+        const userDb = await this.userService.getUserDatabase(username);
+        atUpdateIndex = await this.migrateInfodoc(userDb, atUpdateIndex);
       }
-      const atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
       const finalUpdateIndex = updates.length - 1;
       if (finalUpdateIndex !== atUpdateIndex) {
         return true
@@ -60,6 +55,19 @@ export class UpdateService {
         return false
       }
     }
+  }
+
+  private async migrateInfodoc(userDb: UserDatabase, atUpdateIndex) {
+    // Use try in case this is an old account where info doc was not created.
+    try {
+      const infoDoc = await userDb.get('info');
+      atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex')
+      await this.variableService.set('atUpdateIndex', atUpdateIndex);
+    } catch (e) {
+      await this.variableService.set('atUpdateIndex', 0);
+      atUpdateIndex = 0;
+    }
+    return atUpdateIndex;
   }
 
   async sp1_processUpdates() {
@@ -72,16 +80,12 @@ export class UpdateService {
   }
 
   async sp1_processUpdatesForUser(userDb, appConfig) {
-    // Use try in case this is an old account where info doc was not created.
-    let infoDoc = { _id: '', atUpdateIndex: 0 };
-    try {
-      infoDoc = await userDb.get('info');
-    } catch (e) {
-      await userDb.put({ _id: 'info', atUpdateIndex: 0 });
-      infoDoc = await userDb.get('info');
-    }
     let totalUpdatesApplied = 0
-    let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
+    let atUpdateIndex = await this.variableService.get('atUpdateIndex');
+    if (!atUpdateIndex) {
+      atUpdateIndex = await this.migrateInfodoc(userDb, atUpdateIndex);
+    }
+
     const finalUpdateIndex = updates.length - 1;
     if (finalUpdateIndex !== atUpdateIndex) {
       let requiresViewsRefresh = false;
@@ -98,8 +102,7 @@ export class UpdateService {
         }
       }
       atUpdateIndex--;
-      infoDoc.atUpdateIndex = atUpdateIndex;
-      await userDb.put(infoDoc);
+      await this.variableService.set('atUpdateIndex', atUpdateIndex);
     }
   }
 
