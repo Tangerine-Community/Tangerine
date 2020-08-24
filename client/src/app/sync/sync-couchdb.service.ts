@@ -183,9 +183,11 @@ export class SyncCouchdbService {
     }
 
     let pushReplicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-    if (pushReplicationStatus.pushConflicts.length > 0) {
-      await this.resolveConflicts(pushReplicationStatus, userDb, remoteDb, 'push', caseDefinitions);
-    }
+    // if (pushReplicationStatus.pushConflicts.length > 0) {
+      // await this.resolveConflicts(pushReplicationStatus, userDb, remoteDb, 'push', caseDefinitions);
+      // TODO: tell user to wait and resolve conflicts later in the pull... and it may be as simple as waiting...
+     // TODO : consider supplying some feedback in case we need to push again due to conflicts
+    // }
     let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
@@ -193,6 +195,7 @@ export class SyncCouchdbService {
   private async resolveConflicts(replicationStatus: ReplicationStatus, userDb: UserDatabase, remoteDb = null, direction: string, caseDefinitions:CaseDefinition[]) {
     let conflicts: Array<string> = direction === 'pull' ? replicationStatus.pullConflicts : replicationStatus.pushConflicts
     for (const id of conflicts) {
+      // PouchDb just did a sync and has marked this doc as having conflicts. This doc could represent either the version from the remoteDB or the local version.
       let currentDoc = await userDb.db.get(id, {conflicts: true})
       let conflictRevArray = currentDoc._conflicts
       if (conflictRevArray) {
@@ -249,6 +252,7 @@ export class SyncCouchdbService {
             await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
           }
         } else {
+          // TODO indicate that the merge did happen - and which rev won.
           let issueMetadata = {
             diffInfo: null,
             mergeInfo: null,
@@ -261,7 +265,6 @@ export class SyncCouchdbService {
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
           // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
           // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
-          await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
           // remove the conflict
           let metadata = {
             currentDoc: {
@@ -272,20 +275,25 @@ export class SyncCouchdbService {
             }
           }
           console.log("metadata: " + JSON.stringify(metadata))
-          let winningRev, winningDoc, losingRev
+
+          // await remoteDb.remove(currentDoc._id, conflictRev)
+          await userDb.db.remove(currentDoc._id, conflictRev)
+
+          // TODO: move this into its own diff type....
+          let winningDoc, losingDoc
           if (currentDoc.tangerineModifiedOn > conflictDoc.tangerineModifiedOn) {
             winningDoc = currentDoc
-            losingRev = conflictRev
+            losingDoc = conflictDoc
           } else {
             winningDoc = conflictDoc
-            losingRev = currentDoc._rev
+            losingDoc = currentDoc
           }
-          await remoteDb.remove(winningDoc._id, losingRev)
-          await userDb.db.remove(winningDoc._id, losingRev)
+          // Saving the losingDoc in case it needs to be reverted.
+          await this.caseService.saveProposedChange(losingDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
           await userDb.put(winningDoc) // create a new rev
-          // Replicate the merged doc to the remoteDb.
-          const options = {doc_ids:[winningDoc._id]}
-          PouchDB.replicate(userDb.db, remoteDb, options)
+          // TODO: if this was a pull, should we check if the remoteDb has a different rev at this point - to avoid another conflict?
+          // if the remoteDB is at a different seq id, return false, and then keep pulling, until it returns true, and then push.
+          // This particular solution may be too much of an edge case...
         }
       }
     }
@@ -297,10 +305,13 @@ export class SyncCouchdbService {
       const direction =  'push'
       userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
-        const conflictsQuery = await userDb.query('sync-conflicts');
+        // TODO: change to remoteDB and check if it is one of the id's we are concerned about
+        // don't want to act on docs we are not concerned w/
+        // act upon only docs in our region...
+        //const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
-          pushed: info.docs_written,
-          pushConflicts: conflictsQuery.rows.map(row => row.id)
+          pushed: info.docs_written
+          //pushConflicts: conflictsQuery.rows.map(row => row.id)
         });
       }).on('change', async (info) => {
         await this.variableService.set('sync-push-last_seq', info.last_seq);
