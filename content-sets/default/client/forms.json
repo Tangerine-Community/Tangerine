@@ -1,0 +1,15 @@
+[
+  {
+    "title": "Example Form",
+    "src": "./assets/example/form.html",
+    "id": "example",
+    "templates": [
+      {
+        "src": "./assets/example/alt.html",
+        "id": "alt",
+        "label": "Alternative View"
+      }
+    ]
+  }
+
+]

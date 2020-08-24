@@ -1,9 +1,16 @@
+#!/usr/bin/env node
+
+const groupsListLegacy = require('/tangerine/server/src/groups-list.js')
+const util = require('util');
+const exec = util.promisify(require('child_process').exec)
+const axios = require('axios')
+const DB = require('../db')
 // Stub emit function to please TS.
-const emit = (key, value:any) => {
+const emit = (key, value) => {
   return true;
 }
 
-export const SharedQueries = {
+const SharedQueries = {
 
   conflicts: {
     map: function (doc) {
@@ -25,6 +32,17 @@ export const SharedQueries = {
     map: function(doc) {
       if (doc.collection === "TangyFormResponse") {
         return emit(doc.startUnixtime, true)
+      }
+    }.toString()
+  },
+
+  responsesByMonthAndFormId: {
+    map: function(doc) {
+      if (doc.form && doc.form.id) {
+          const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              const startUnixtime = new Date(doc.startUnixtime);
+              const key = doc.form.id + '_' + startUnixtime.getFullYear() + '_' + MONTHS[startUnixtime.getMonth()];
+        return emit(key, doc)
       }
     }.toString()
   },
@@ -89,3 +107,12 @@ export const SharedQueries = {
   }
 
 }
+
+async function go() {
+  const groupNames = await groupsList()
+  for (let groupName of groupNames) {
+    await exec(`cp -R /tangerine/client/default-assets/data-dashboard /tangerine/client/content/groups/${groupName}/`) 
+  }
+}
+go()
+
