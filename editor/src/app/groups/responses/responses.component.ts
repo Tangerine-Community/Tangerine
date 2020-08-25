@@ -1,3 +1,4 @@
+import { Router, ActivatedRoute } from '@angular/router';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { generateFlatResponse } from './tangy-form-response-flatten';
 import { TangerineFormsService } from './../services/tangerine-forms.service';
@@ -30,7 +31,9 @@ export class ResponsesComponent implements OnInit {
     private groupsService: GroupsService,
     private tangerineFormsService:TangerineFormsService,
     private appConfigService:AppConfigService,
-    private http: HttpClient
+    private route:ActivatedRoute,
+    private http: HttpClient,
+    private router:Router
   ) {
     this.moment = moment
   }
@@ -79,6 +82,10 @@ export class ResponsesComponent implements OnInit {
   previousPage() {
     this.skip = this.skip - this.limit
     this.getResponses();
+  }
+
+  onRowClick(row) {
+    this.router.navigate([row._id], {relativeTo: this.route})
   }
 
 }

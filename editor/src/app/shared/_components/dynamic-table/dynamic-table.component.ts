@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -7,6 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class DynamicTableComponent implements OnInit {
 
+  @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
   @Input() data:Array<any> = []
   @Input() columnLabels = {}
   columns:Array<any>
@@ -14,7 +15,6 @@ export class DynamicTableComponent implements OnInit {
   dataSource:any
 
   ngOnInit(): void {
-    debugger
     // Get list of columns by gathering unique keys of objects found in DATA.
     const columns = this.data 
       .reduce((columns, row) => {
@@ -36,6 +36,10 @@ export class DynamicTableComponent implements OnInit {
     this.displayedColumns = this.columns.map(c => c.columnDef);
     // Set the dataSource for <mat-table>.
     this.dataSource = this.data 
+  }
+
+  onRowClick(row) {
+    this.rowClick.emit(row)
   }
 
 }
