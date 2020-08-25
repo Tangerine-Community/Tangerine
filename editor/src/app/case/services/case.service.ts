@@ -749,7 +749,7 @@ class CaseService {
         },
         "b": {
           "name": "Date (Proposed)",
-          "value": moment(lastProposedChangeEvent.date).format('dddd MMMM D, YYYY hh:mma')
+          "value": lastProposedChangeEvent? moment(lastProposedChangeEvent.date).format('dddd MMMM D, YYYY hh:mma'):null
         }
       }]
     return lastProposedChangeEvent

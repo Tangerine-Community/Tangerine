@@ -34,25 +34,6 @@ function differ(comparison:string, eventForm: EventForm, comparisonEventForms: A
     differences.push('new')
   }
 
-  // TODO: we will miss any new eventForms if they do not match the id of the eventForm we are currently looking at (for example, a new eventForm)
-  // if (conflictEventForms.some(compareEventForm => compareEventForm.id === eventForm.id)) {
-  //   diffArray = conflictEventForms.filter(compareEventForm => {
-  //     if (compareEventForm.id === eventForm.id) {
-  //       if (eventForm.formResponseId && !compareEventForm.formResponseId) {
-  //         conflicts.push('formResponseId')
-  //       } else if (eventForm.required && !compareEventForm.required) {
-  //         conflicts.push('required')
-  //       } else if (eventForm.complete && !compareEventForm.complete) {
-  //         conflicts.push('complete')
-  //       }
-  //       if (conflicts.length > 0) {
-  //         return compareEventForm
-  //       }
-  //     }
-  //   })
-  // } else {
-  //   // throw a diff when there is no matches - i.e. a new eventForm
-  // }
   if (differences.length > 0) {
     return [{
       type: DIFF_TYPE__EVENT_FORM,

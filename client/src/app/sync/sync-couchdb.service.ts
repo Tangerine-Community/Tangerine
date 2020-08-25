@@ -221,7 +221,7 @@ export class SyncCouchdbService {
               error: 'Unable to detect conflict type.'
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
-            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.title}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
+            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.id}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
           } else {
             const mergeInfo:MergeInfo = merge(diffInfo)
 
@@ -244,7 +244,7 @@ export class SyncCouchdbService {
               conflictType: 'case',
               merged: true
             }
-            const issue = await this.caseService.createIssue(`Conflict on ${a.form.title}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
+            const issue = await this.caseService.createIssue(`Conflict on ${a.form.id}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
             //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
             const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
             // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
