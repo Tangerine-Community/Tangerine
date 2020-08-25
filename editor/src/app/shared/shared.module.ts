@@ -1,3 +1,4 @@
+import { MatTableModule } from '@angular/material/table';
 import { LoginGuard } from './_guards/login-guard.service';
 import { ServerConfigService } from './_services/server-config.service';
 import { UnsanitizeHtmlPipe } from './../pipes/unsanitize.pipe';
@@ -16,7 +17,8 @@ import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    MatTableModule,
   ],
   providers: [
     AppConfigService,
@@ -25,6 +27,7 @@ import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table
   ],
   exports: [
     TranslateModule,
+    DynamicTableComponent,
     MatSnackBarModule,
     TangyLoadingComponent,
     BreadcrumbComponent,
