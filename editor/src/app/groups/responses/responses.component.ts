@@ -17,6 +17,7 @@ export class ResponsesComponent implements OnInit {
   @Input() groupId = '';
   @Input() filterBy:string = '*'
   @Input() excludeForms:Array<string> = []
+  @Input() excludeColumns:Array<string> = []
   @Input() hideFilterBy = false
 
   ready = false
@@ -55,8 +56,9 @@ export class ResponsesComponent implements OnInit {
     }
     const flatResponses = []
     for (let response of responses) {
-      flatResponses.push(await generateFlatResponse(response, locationList, false))
-
+      const flatResponse = await generateFlatResponse(response, locationList, false)
+      this.excludeColumns.forEach(column => delete flatResponse[column])
+      flatResponses.push(flatResponse)
     }
     this.responses = flatResponses 
   }
