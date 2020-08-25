@@ -1,3 +1,5 @@
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
+import { generateFlatResponse } from './tangy-form-response-flatten';
 import { TangerineFormsService } from './../services/tangerine-forms.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
@@ -16,6 +18,8 @@ export class ResponsesComponent implements OnInit {
   @Input() excludeForms:Array<string> = []
   @Input() hideFilterBy = false
 
+  ready = false
+
   moment;
   responses;
   skip = 0;
@@ -25,6 +29,7 @@ export class ResponsesComponent implements OnInit {
   constructor(
     private groupsService: GroupsService,
     private tangerineFormsService:TangerineFormsService,
+    private appConfigService:AppConfigService,
     private http: HttpClient
   ) {
     this.moment = moment
@@ -34,21 +39,23 @@ export class ResponsesComponent implements OnInit {
     this.forms = (await this.tangerineFormsService.getFormsInfo(this.groupId))
       .filter(formInfo => !this.excludeForms.includes(formInfo.id) )
     await this.getResponses()
+    this.ready = true
   }
 
   async getResponses() {
+    const locationList = await this.http.get('./assets/location-list.json').toPromise()
     let responses = []
     if (this.filterBy === '*') {
       responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responses/${this.limit}/${this.skip}`).toPromise()
     } else {
       responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responsesByFormId/${this.filterBy}/${this.limit}/${this.skip}`).toPromise()
     }
-    this.responses = responses.map(response => {
-      return {
-        ...response,
-        userProfileId: response.tangerineModifiedBy ? response.tangerineModifiedBy : 'anonymous'
-      }
-    })
+    const flatResponses = []
+    for (let response of responses) {
+      flatResponses.push(await generateFlatResponse(response, locationList, false))
+
+    }
+    this.responses = flatResponses 
   }
 
   async filterByForm(event) {
