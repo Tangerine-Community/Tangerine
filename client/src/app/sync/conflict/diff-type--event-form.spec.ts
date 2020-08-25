@@ -433,7 +433,7 @@ describe('diffType_EventForm', () => {
 
 describe('diff using diffType_EventForm scaffolding', () => {
 
-  fit('should detect difference', () => {
+  it('should detect difference', () => {
     const diffInfo = diff(a, b, caseDefinition)
     expect(diffInfo.diffs.length).toEqual(1)
     expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM)
@@ -446,7 +446,7 @@ describe('diff using diffType_EventForm scaffolding', () => {
 })
 
 describe('merge using diffType_EventForm scaffolding', () => {
-  fit('should resolve merge', () => {
+  it('should resolve merge', () => {
     const mergeInfo = merge(
       {
         a,
