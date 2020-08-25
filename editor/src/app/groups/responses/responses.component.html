@@ -5,7 +5,7 @@
   </tangy-select>
 </div>
 <div *ngIf="ready">
-  <app-dynamic-table [data]="responses"></app-dynamic-table>
+  <app-dynamic-table [data]="responses" (rowClick)="onRowClick($event)"></app-dynamic-table>
 </div>
 <paper-button *ngIf="this.skip !== 0" (click)="previousPage()">< back</paper-button>
 <paper-button (click)="nextPage()">next ></paper-button>
