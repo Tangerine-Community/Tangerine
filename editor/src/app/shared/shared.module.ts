@@ -12,16 +12,36 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { HasAPermissionDirective } from '../core/auth/_directives/has-a-permission.directive';
 import { HasSomePermissionsDirective } from '../core/auth/_directives/has-some-permissions.directive';
 import { HasAllPermissionsDirective } from '../core/auth/_directives/has-all-permissions.directive';
+import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table.component';
 
 @NgModule({
   imports: [
     CommonModule
   ],
-  providers: [AppConfigService, ServerConfigService, LoginGuard],
-  exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent,
-    BreadcrumbComponent, UnsanitizeHtmlPipe, NgxPermissionsModule, HasAPermissionDirective,
-    HasSomePermissionsDirective, HasAllPermissionsDirective],
-  declarations: [TangyLoadingComponent, UnsanitizeHtmlPipe, BreadcrumbComponent,
-    HasAPermissionDirective, HasSomePermissionsDirective, HasAllPermissionsDirective]
+  providers: [
+    AppConfigService,
+    ServerConfigService,
+    LoginGuard
+  ],
+  exports: [
+    TranslateModule,
+    MatSnackBarModule,
+    TangyLoadingComponent,
+    BreadcrumbComponent,
+    UnsanitizeHtmlPipe,
+    NgxPermissionsModule,
+    HasAPermissionDirective,
+    HasSomePermissionsDirective,
+    HasAllPermissionsDirective
+  ],
+  declarations: [
+    TangyLoadingComponent,
+    UnsanitizeHtmlPipe,
+    BreadcrumbComponent,
+    HasAPermissionDirective,
+    HasSomePermissionsDirective,
+    HasAllPermissionsDirective,
+    DynamicTableComponent
+  ]
 })
 export class SharedModule { }
