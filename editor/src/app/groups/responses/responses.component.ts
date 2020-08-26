@@ -86,8 +86,12 @@ export class ResponsesComponent implements OnInit {
     this.getResponses();
   }
 
-  onRowClick(row) {
-    this.router.navigate([row._id], {relativeTo: this.route})
+  onRowEdit(row) {
+    this.router.navigate([row._id ? row._id : row.id], {relativeTo: this.route})
+  }
+
+  onRowDelete(row) {
+    this.deleteResponse(row._id ? row._id : row.id)
   }
 
 }

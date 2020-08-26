@@ -1,3 +1,5 @@
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { LoginGuard } from './_guards/login-guard.service';
 import { ServerConfigService } from './_services/server-config.service';
@@ -14,11 +16,15 @@ import { HasAPermissionDirective } from '../core/auth/_directives/has-a-permissi
 import { HasSomePermissionsDirective } from '../core/auth/_directives/has-some-permissions.directive';
 import { HasAllPermissionsDirective } from '../core/auth/_directives/has-all-permissions.directive';
 import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   imports: [
     CommonModule,
     MatTableModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     AppConfigService,
