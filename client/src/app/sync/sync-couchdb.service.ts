@@ -221,18 +221,33 @@ export class SyncCouchdbService {
               error: 'Unable to detect conflict type.'
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
-            await this.caseService.createIssue(`Unresolved Conflict on ${a.form.id}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
+            const issue = await this.caseService.createIssue(`Unresolved Conflict on ${a.form.id}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
+            // TODO delete the conflict!!!
+            try {
+              await userDb.db.remove(diffInfo.a._id, conflictRev)
+            } catch (e) {
+              console.log("Error: " + e)
+            }
+            //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
+            const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+            // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
+            // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
+            await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId)
           } else {
             const mergeInfo:MergeInfo = merge(diffInfo)
 
             // TODO: run markQualifyingCaseAsComplete and markQualifyingEventsAsComplete
-            // await this.caseService.load(a._id)
-            // this.caseService.setContext(a.events[0].id, a.events[0].eventForms[0].id)
-
             // remove the conflict
-            await remoteDb.remove(mergeInfo.merged._id, conflictRev)
-            await userDb.db.remove(mergeInfo.merged._id, conflictRev)
-            await userDb.put(mergeInfo.merged) // create a new rev
+            try {
+              await userDb.db.remove(mergeInfo.merged._id, conflictRev)
+            } catch (e) {
+              console.log("Error: " + e)
+            }
+            try {
+              await userDb.put(mergeInfo.merged) // create a new rev
+            } catch (e) {
+              console.log("Error: " + e)
+            }
             // Replicate the merged doc to the remoteDb.
             const options = {doc_ids:[mergeInfo.merged._id]}
             PouchDB.replicate(userDb.db, remoteDb, options)
@@ -244,12 +259,13 @@ export class SyncCouchdbService {
               conflictType: 'case',
               merged: true
             }
-            const issue = await this.caseService.createIssue(`Conflict on ${a.form.id}`, '', a._id, mergeInfo.merged.events[0].id, mergeInfo.merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], issueMetadata)
+
+            const issue = await this.caseService.createIssue(`Conflict on ${a.form.id}`, '', a._id, null, null, window['userProfile']._id, window['username'], issueMetadata)
             //the non-winning rev is a proposal, giving the server user the opportunity to resolve it.
             const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
             // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
             // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
-            await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
+            await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId)
           }
         } else {
           // TODO indicate that the merge did happen - and which rev won.
@@ -261,22 +277,12 @@ export class SyncCouchdbService {
             merged: false,
             error: 'No diff handler available.'
           }
+          // TODO need correct event id and eventFormId from a.
           const issue = await this.caseService.createIssue(`Unresolved Conflict for ${currentDoc.form.title}`, `type: ${currentDoc.type}; id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], issueMetadata)
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
           // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
           // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
           // remove the conflict
-          let metadata = {
-            currentDoc: {
-            tangerineModifiedOn: currentDoc.tangerineModifiedOn
-          },
-            conflictDoc: {
-            tangerineModifiedOn: conflictDoc.tangerineModifiedOn
-            }
-          }
-          console.log("metadata: " + JSON.stringify(metadata))
-
-          // await remoteDb.remove(currentDoc._id, conflictRev)
           await userDb.db.remove(currentDoc._id, conflictRev)
 
           // TODO: move this into its own diff type....

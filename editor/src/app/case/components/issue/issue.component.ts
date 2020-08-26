@@ -112,7 +112,12 @@ export class IssueComponent implements OnInit {
     const proposedChange = await this.caseService.getProposedChange(this.issue._id)
     this.proposedFormResponseContainer.response = proposedChange.response
     this.proposedFormResponseContainer.render()
-    const currentFormResponse = await this.tangyFormService.getResponse(this.issue.formResponseId)
+    let currentFormResponse;
+    if (this.issue.docType === 'response') {
+       currentFormResponse = await this.tangyFormService.getResponse(this.issue.formResponseId)
+    } else {
+      currentFormResponse = await this.tangyFormService.getResponse(this.issue.caseId)
+    }
     this.currentFormResponseContainer.response = currentFormResponse
     this.currentFormResponseContainer.render()
     this.diff = await this.caseService.issueDiff(this.issue._id)

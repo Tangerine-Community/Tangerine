@@ -537,14 +537,26 @@ class CaseService {
 
   /*
    * Issues API.
+   * If the issue is a formResponse, the eventId will be available.
+   * If the issue is a case or other type, createIssue will get the type from metadata.conflictType
+   * and use it to populate docType in the Issue it creates.
    */
 
   async createIssue(label = '', comment = '', caseId: string, eventId: string, eventFormId: string, userId, userName, metadata: any = null) {
     const caseData = await this.tangyFormService.getResponse(caseId)
-    const formResponseId = caseData
-      .events.find(event => event.id === eventId)
-      .eventForms.find(eventForm => eventForm.id === eventFormId)
-      .formResponseId
+    let formResponseId, docType
+    if (eventId) {
+      formResponseId = caseData
+        .events.find(event => event.id === eventId)
+        .eventForms.find(eventForm => eventForm.id === eventFormId)
+        .formResponseId
+    }
+    if (metadata) {
+      docType = metadata.conflictType
+    } else {
+      docType = 'response'
+    }
+
     const issue = new Issue({
       _id: UUID(),
       label,
@@ -556,7 +568,8 @@ class CaseService {
       eventId,
       eventFormId,
       status: IssueStatus.Open,
-      formResponseId
+      formResponseId,
+      docType
     })
     await this.tangyFormService.saveResponse(issue)
     return await this.openIssue(issue._id, comment, userId, userName, metadata)
@@ -566,10 +579,20 @@ class CaseService {
     return new Issue(await this.tangyFormService.getResponse(issueId))
   }
 
+  /**
+   * Creates an IssueEvent with the formResponse in the data object if 'response' caseInstance if 'case'
+   * @param issueId
+   * @param comment
+   * @param userId
+   * @param userName
+   * @param metadata
+   */
   async openIssue(issueId: string, comment: string, userId: string, userName: string, metadata: any = null) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
-    const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    const response = issue.formResponseId ? await this.tangyFormService.getResponse(issue.formResponseId) : caseInstance
+    const docType = issue.docType ? issue.docType : 'response'
+
     issue.events.push(<IssueEvent>{
       id: UUID(),
       type: IssueEventType.Open,
@@ -577,6 +600,7 @@ class CaseService {
       userName,
       userId,
       createdAppContext: AppContext.Client,
+      docType,
       data: {
         comment,
         caseInstance,
