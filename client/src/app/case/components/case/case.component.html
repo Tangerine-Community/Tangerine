@@ -28,13 +28,13 @@
           <form (ngSubmit)="onSubmit()" #form="ngForm">
             <div class="dropdown-container">
               <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
-                <option value="" disabled selected>{{'Choose type...'|translate}}</option>
+                <option value="" selected>{{'Choose type...'|translate}}</option>
                 <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">
                   {{eventInfo.caseEventDefinition.name}}</option>
               </select>
             </div>         
             <div class="text-right">
-              <paper-button (click)="onSubmit()" class="button">{{'Create'|translate}}</paper-button>
+              <paper-button (click)="onSubmit();" class="button">{{'Create'|translate}}</paper-button>
             </div>
           </form>
         </div>
