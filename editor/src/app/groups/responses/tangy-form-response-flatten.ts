@@ -50,17 +50,12 @@ export const generateFlatResponse = async function (formResponse, locationList, 
           // Populate the ID and Label columns for TANGY-LOCATION levels.
           const locationKeys = []
           for (let group of input.value) {
-            set(input, `${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
             try {
               const location = getLocationByKeys(locationKeys, locationList)
-              for (let keyName in location) {
-                if (keyName !== 'children') {
-                  set(input, `${input.name}.${group.level}_${keyName}`, location[keyName])
-                }
-              }
+              set(input, location.level, location.label)
             } catch (e) {
-              set(input, `${input.name}.${group.level}_label`, 'orphaned')
+              set(input, group.level, 'orphaned')
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
