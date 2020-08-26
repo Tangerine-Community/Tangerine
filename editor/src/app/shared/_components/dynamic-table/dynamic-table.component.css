@@ -19,8 +19,7 @@ th.mat-column-position, td.mat-column-position {
 }
 
 mat-cell, mat-header-cell {
-
-  padding-left: 5px;
+  padding: 5px;
   max-height: 300px;
   max-width: 300px;
   overflow: scroll;
