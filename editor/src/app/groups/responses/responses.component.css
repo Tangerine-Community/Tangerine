@@ -11,6 +11,13 @@
     margin-top: -30px;
   }
 
+  .table {
+    display: flex;
+    overflow-y: scroll;
+    overflow: scroll;
+  }
+
   #filter tangy-select {
     margin-top:0px;
+    height: 150px;
   }
