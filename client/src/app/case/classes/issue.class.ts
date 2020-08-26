@@ -24,15 +24,16 @@ export class IssueEvent {
   createdAppContext:AppContext
   date:number
   data:any
+  docType:string
 }
 
 class Issue extends TangyFormResponseModel {
-  
+
   _id: string
   userId:string
   label:string
   tags:Array<string>
-  status:IssueStatus 
+  status:IssueStatus
   events:Array<IssueEvent> = []
   caseId:string
   eventId:string
@@ -42,6 +43,7 @@ class Issue extends TangyFormResponseModel {
   createdOn:number
   createdAppContext:AppContext
   resolveOnAppContext:AppContext
+  docType:string
 
   constructor(data?:any) {
     super()
