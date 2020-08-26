@@ -112,8 +112,11 @@ export class TangyFormsPlayerComponent {
           this.throttledSaveResponse(response)
         })
       }
-      formEl.addEventListener('submit', (event) => {
+      formEl.addEventListener('submit', async (event) => {
         if (this.preventSubmit) event.preventDefault() 
+        while (this.throttledSaveFiring === true) {
+          await sleep(1000)
+        }
         this.$submit.next(true)
       })
     }
