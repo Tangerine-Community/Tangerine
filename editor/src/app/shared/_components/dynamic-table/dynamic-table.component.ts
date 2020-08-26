@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MatTable } from '@angular/material/table';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -8,6 +9,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class DynamicTableComponent implements OnInit {
 
   @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowEdit: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowDelete: EventEmitter<any> = new EventEmitter<any>();
   @Input() data:Array<any> = []
   @Input() columnLabels = {}
   columns:Array<any>
@@ -33,7 +36,7 @@ export class DynamicTableComponent implements OnInit {
         cell: (element: any) => `${element[column] ? element[column] : ``}`     
       }
     })
-    this.displayedColumns = this.columns.map(c => c.columnDef);
+    this.displayedColumns = [...this.columns.map(c => c.columnDef), 'actions'];
     // Set the dataSource for <mat-table>.
     this.dataSource = this.data 
   }
@@ -41,5 +44,15 @@ export class DynamicTableComponent implements OnInit {
   onRowClick(row) {
     this.rowClick.emit(row)
   }
+
+  onRowEdit(row) {
+    this.rowEdit.emit(row)
+  }
+
+  onRowDelete(row) {
+    this.rowDelete.emit(row)
+  }
+
+
 
 }

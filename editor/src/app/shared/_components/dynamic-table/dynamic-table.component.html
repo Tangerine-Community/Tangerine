@@ -5,6 +5,25 @@
     <mat-cell *matCellDef="let row">{{ column.cell(row) }}</mat-cell>
   </ng-container>
 
+  <ng-container matColumnDef="actions" stickyEnd>
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <div class="actions-container" >
+        <button class="actions-menu" mat-stroked-button color="primary" [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button (click)="onRowEdit(row)" mat-menu-item>
+            <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
+          </button>
+          <button (click)="onRowDelete(row)" mat-menu-item>
+            <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
+          </button>
+        </mat-menu>
+      </div>
+    </mat-cell>
+  </ng-container>
+
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClick(row)"></mat-row>
