@@ -1,15 +1,5 @@
 <div *ngIf="ready">
   <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-  <mat-card *appHasAPermission="let i;group:group._id; permission:'can_access_dashboard'" class="mat-elevation-z3" routerLink="dashboard">
-    <mat-card-header>
-        <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">dashboard</i>
-        </div>
-        <mat-card-title>
-            <a>Dashboard</a>
-        </mat-card-title>
-        <mat-card-subtitle>Dashboard with custom reports.</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
   <mat-card *appHasAPermission="let i;group:group._id; permission:'can_access_author'" class="mat-elevation-z3" routerLink="author">
     <mat-card-header>
         <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">edit</i>

@@ -84,17 +84,6 @@
                     <img class="tangerine-logo-opened" src="/assets/tangerine-logo-box.png">
                 </mat-list-item>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width" *ngIf="menuService.groupId">
-                <mat-list-item
-                    [class.active-menu-item]="menuService.section === 'dashboard'"
-                    routerLink="/groups/{{menuService.groupId}}/dashboard"
-                    *appHasAPermission="let i;group:menuService.groupId; permission:'can_access_dashboard'"
-                >
-                    <span class=""><i class="material-icons menu-icon list_alt-icon">dashboard</i></span>
-                    <a matLine>{{'Dashboard'|translate}}</a>
-                </mat-list-item>
-                <mat-divider></mat-divider>
-            </mat-nav-list>
             <mat-nav-list class="tangy-full-width"  *ngIf="menuService.groupId">
                 <mat-list-item 
                     [class.active-menu-item]="menuService.section === 'author'"
