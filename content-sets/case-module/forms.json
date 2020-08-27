@@ -519,6 +519,34 @@
     }
   },
   {
+    "id" : "template-event-form-listing",
+    "src" : "./assets/template-event-form-listing/form.html",
+    "description" : "Template Event Form listing",
+    "listed" : false,
+    "title" : "Template Event Form listing",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true 
+    }
+  },
+  {
     "id" : "form-with-alternative-template",
     "src" : "./assets/form-with-alternative-template/form.html",
     "description" : "A form with an alternative template",

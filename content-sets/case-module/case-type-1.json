@@ -21,7 +21,7 @@
   "templateCaseEventListItemPrimary": "<span>${T.case.getVariable(`${caseEvent.id}-title`) ? T.case.getVariable(`${caseEvent.id}-title`) : caseEventDefinition.name}</span>",
   "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.complete ? 'Complete' : 'Incomplete'}",
   "templateEventFormListItemIcon": "",
-  "templateEventFormListItemPrimary": "<span>${eventFormDefinition.name}</span>",
+  "templateEventFormListItemPrimary": "<span>${eventForm?.data?.title ? eventForm.data.title : eventFormDefinition.name}</span>",
   "templateEventFormListItemSecondary": "Status: ${!eventForm.complete ? 'Incomplete' : 'Complete'}",
   "templateBreadcrumbText": "${caseService.getVariable('participant_id') ? ` ${caseService.getVariable('participant_id')}` :  ` ${caseService.case._id.substring(0,6)}`}",
   "startFormOnOpen": {
@@ -158,7 +158,7 @@
     },
     {
       "id": "template-event-listing",
-      "name": "Template event listing",
+      "name": "Template Event listing",
       "repeatable": true,
       "required": false,
       "eventFormDefinitions": [
@@ -167,6 +167,22 @@
           "formId": "template-event-listing",
           "forCaseRole": "role-1",
           "name": "Template event listing",
+          "required": true,
+          "repeatable": false 
+        }
+      ]
+    },
+    {
+      "id": "template-event-form-listing",
+      "name": "Template Event Form listing",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-Id20b2k",
+          "formId": "template-event-form-listing",
+          "forCaseRole": "role-1",
+          "name": "Template Event Form listing",
           "required": true,
           "repeatable": false 
         }
