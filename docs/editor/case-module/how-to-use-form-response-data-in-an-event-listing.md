@@ -23,7 +23,7 @@ File: `./template-event-listing/form.html`
 ```
 
 ## Step 2: Use `templateCaseEventListItemPrimary` property in the Case Definition to print the Case variable in the Event Listing
-After a user has submitted the Event Form mentioned above, we can now get that Case level variable when templating out Event listings. In the Case Definition, we add ternary to check if the variable exists, if it does then print it out in the listing, else show the name of the Event Definition.
+After a user has submitted the Event Form mentioned above, we can now get that Case level variable when templating out Event listings. In the Case Definition, we add ternary to check if the variable exists, if it does then print it out in the listing, else show the name of the Event Definition. Note how we are again referencing the variable name by preprending the Event ID on the variable name. This ensures we are getting the `title` variable for that specific event and not accidentally overriding other/all event listings.
 
 Section of File: `./case-definition-1.json`
 ```
