@@ -1,5 +1,4 @@
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
-import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { UserService } from './../../../core/auth/_services/user.service';
 import { CommonModule } from '@angular/common';
@@ -14,6 +13,9 @@ import { Route } from '@angular/compiler/src/core';
 import moment from 'moment';
 import { diffTemplate } from './diff-template';
 import { Marked } from '@ts-stack/markdown';
+import {Conflict} from "../../classes/conflict.class";
+import { conflictTemplate } from './conflict-template';
+import { diffString, diff } from 'json-diff';
 
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
@@ -66,6 +68,12 @@ export class IssueComponent implements OnInit {
 
   tab = 'activity'
   ready = false
+  private conflict: Conflict;
+  conflictMarkup:string
+  private diffOutput: any;
+  private merged: any;
+  private mergedMarkup: string;
+  private diffMergedMarkup: string;
 
   constructor(
     private caseService:CaseService,
@@ -87,8 +95,6 @@ export class IssueComponent implements OnInit {
 
   async update() {
     this.isOpen = this.issue.status === IssueStatus.Open ? true : false
-    this.canMergeProposedChange = await this.caseService.canMergeProposedChange(this.issue._id)
-    this.hasProposedChange = await this.caseService.hasProposedChange(this.issue._id)
     this.eventInfos = this.issue.events.map(event => {
       return <EventInfo>{
         id: event.id,
@@ -109,12 +115,23 @@ export class IssueComponent implements OnInit {
         `
       }
     })
+
+    if (this.issue.docType === 'response') {
+      await this.showProposedChange();
+    } else {
+      await this.showConflictResolutionOptions()
+    }
+  }
+
+  private async showProposedChange() {
+    this.canMergeProposedChange = await this.caseService.canMergeProposedChange(this.issue._id)
+    this.hasProposedChange = await this.caseService.hasProposedChange(this.issue._id)
     const proposedChange = await this.caseService.getProposedChange(this.issue._id)
     this.proposedFormResponseContainer.response = proposedChange.response
     this.proposedFormResponseContainer.render()
     let currentFormResponse;
     if (this.issue.docType === 'response') {
-       currentFormResponse = await this.tangyFormService.getResponse(this.issue.formResponseId)
+      currentFormResponse = await this.tangyFormService.getResponse(this.issue.formResponseId)
     } else {
       currentFormResponse = await this.tangyFormService.getResponse(this.issue.caseId)
     }
@@ -134,6 +151,63 @@ export class IssueComponent implements OnInit {
     this.numberOfChanges = this.hasProposedChange
       ? this.diff.length
       : 0
+  }
+
+  private async showConflictResolutionOptions() {
+    this.conflict = this.issue.events.length > 0 ? this.issue.events[0].data.conflict : null
+    if (this.conflict) {
+      let a, b,merged
+      if (this.conflict.merged) {
+         a = this.conflict.mergeInfo.diffInfo.a
+         b = this.conflict.mergeInfo.diffInfo.b
+         merged = this.conflict.mergeInfo.merged
+      } else {
+        a = this.conflict.diffInfo.a
+        b = this.conflict.diffInfo.b
+      }
+      const output = diff(a, b)
+      let diffArray = []
+      Object.keys(output).forEach(function (diff) {
+        let value = output[diff]
+        let newValue = value.__new
+        let oldValue = value.__old
+        let diffObject = {
+          name: diff,
+          newValue: newValue,
+          oldValue: oldValue,
+          value: value
+        }
+        diffArray.push(diffObject)
+      });
+      this.diffOutput = diffArray
+      this.conflictMarkup = conflictTemplate(this.diffOutput, false)
+      let mergedClone = JSON.parse(JSON.stringify(merged))
+      // remove some noise
+      delete mergedClone.form
+      let diffMergedArray = []
+      Object.keys(output).forEach(function (prop) {
+        let value = mergedClone[prop]
+        let diffObject = {
+          name: prop,
+          value: value
+        }
+        diffMergedArray.push(diffObject)
+      });
+      let mergedArray = []
+      Object.keys(mergedClone).forEach(function (prop) {
+        let value = mergedClone[prop]
+        let diffObject = {
+          name: prop,
+          value: value
+        }
+        mergedArray.push(diffObject)
+      });
+      this.merged = mergedArray
+      this.diffMergedMarkup = conflictTemplate(diffMergedArray, true)
+      this.mergedMarkup = conflictTemplate(mergedArray, true)
+
+    }
+
   }
 
   async onCommentFormSubmit() {

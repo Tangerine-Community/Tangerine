@@ -21,6 +21,7 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
+import {Conflict} from "../classes/conflict.class";
 
 @Injectable({
   providedIn: 'root'
@@ -538,11 +539,11 @@ class CaseService {
   /*
    * Issues API.
    * If the issue is a formResponse, the eventId will be available.
-   * If the issue is a case or other type, createIssue will get the type from metadata.conflictType
+   * If the issue is a case or other type, createIssue will get the type from metadata.docType
    * and use it to populate docType in the Issue it creates.
    */
 
-  async createIssue(label = '', comment = '', caseId: string, eventId: string, eventFormId: string, userId, userName, metadata: any = null) {
+  async createIssue(label = '', comment = '', caseId: string, eventId: string, eventFormId: string, userId, userName, conflict: any = null) {
     const caseData = await this.tangyFormService.getResponse(caseId)
     let formResponseId, docType
     if (eventId) {
@@ -551,8 +552,8 @@ class CaseService {
         .eventForms.find(eventForm => eventForm.id === eventFormId)
         .formResponseId
     }
-    if (metadata) {
-      docType = metadata.conflictType
+    if (conflict) {
+      docType = conflict.docType
     } else {
       docType = 'response'
     }
@@ -572,7 +573,7 @@ class CaseService {
       docType
     })
     await this.tangyFormService.saveResponse(issue)
-    return await this.openIssue(issue._id, comment, userId, userName, metadata)
+    return await this.openIssue(issue._id, comment, userId, userName, conflict)
   }
 
   async getIssue(issueId) {
@@ -585,9 +586,9 @@ class CaseService {
    * @param comment
    * @param userId
    * @param userName
-   * @param metadata
+   * @param conflict
    */
-  async openIssue(issueId: string, comment: string, userId: string, userName: string, metadata: any = null) {
+  async openIssue(issueId: string, comment: string, userId: string, userName: string, conflict: Conflict = null) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
     const response = issue.formResponseId ? await this.tangyFormService.getResponse(issue.formResponseId) : caseInstance
@@ -605,7 +606,7 @@ class CaseService {
         comment,
         caseInstance,
         response,
-        metadata
+        conflict
       }
     })
     return await this.tangyFormService.saveResponse({

@@ -1,5 +1,10 @@
 import { AppContext } from './../../app-context.enum';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
+import {Conflict} from "./conflict.class";
+import {TangyFormResponse} from "../../tangy-forms/tangy-form-response.class";
+import {Case} from "./case.class";
+import {Diff} from "../../sync/diff.class";
+import {InputChange} from "../components/issue/diff-template";
 
 export enum IssueStatus {
   Open='Open',
@@ -24,8 +29,16 @@ export class IssueEvent {
   userId:string
   createdAppContext:AppContext
   date:number
-  data:any
+  data:IssueData
   docType:string
+}
+
+export class IssueData {
+  comment:string
+  caseInstance:Case
+  response:any
+  conflict:Conflict
+  diff:InputChange[]
 }
 
 class Issue extends TangyFormResponseModel {
