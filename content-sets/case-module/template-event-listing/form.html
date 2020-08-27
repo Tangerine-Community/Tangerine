@@ -1,0 +1,11 @@
+<tangy-form
+  id="template-event-listing"
+  title="Template Event Listing"
+  on-submit="
+    T.case.setVariable(`${caseEvent.id}-title`, getValue('title'))
+  "
+>
+  <tangy-form-item id="item-1">
+    <tangy-input type="text" name="title" label="Set the custom title for this event."></tangy-input>
+  </tangy-form-item>
+</tangy-form>

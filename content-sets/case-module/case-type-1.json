@@ -18,7 +18,7 @@
   "templateCaseTitle": "${getVariable('participant_id') ? `${getVariable('first_name')} ${getVariable('last_name')}` : '...'}",
   "templateCaseDescription": "${getVariable('participant_id') ? `Participant ID: ${getVariable('participant_id')}&nbsp;&nbsp;&nbsp;&nbsp; Location: ${getVariable('location')}` : '...'}",
   "templateCaseEventListItemIcon": "${caseEvent.complete ? 'event_available' : 'event_note'}",
-  "templateCaseEventListItemPrimary": "<span>${caseEventDefinition.name}</span>",
+  "templateCaseEventListItemPrimary": "<span>${T.case.getVariable(`${caseEvent.id}-title`) ? T.case.getVariable(`${caseEvent.id}-title`) : caseEventDefinition.name}</span>",
   "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.complete ? 'Complete' : 'Incomplete'}",
   "templateEventFormListItemIcon": "",
   "templateEventFormListItemPrimary": "<span>${eventFormDefinition.name}</span>",
@@ -151,6 +151,22 @@
           "formId": "change-location-of-case",
           "forCaseRole": "role-1",
           "name": "Change location of case",
+          "required": true,
+          "repeatable": false 
+        }
+      ]
+    },
+    {
+      "id": "template-event-listing",
+      "name": "Template event listing",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-3f8fsg",
+          "formId": "template-event-listing",
+          "forCaseRole": "role-1",
+          "name": "Template event listing",
           "required": true,
           "repeatable": false 
         }
