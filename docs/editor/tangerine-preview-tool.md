@@ -35,5 +35,11 @@ When new releases come out for tangerine, `tangerine-preview` will also be updat
 npm install -g tangerine-preview
 ```
 
+## Check your currently install version
+
+```
+npm list -g tangerine-preview
+```
+
 
 
