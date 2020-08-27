@@ -36,7 +36,7 @@ pip install mkdocs-awesome-pages-plugin
 pip install mkdocs-minify-plugin
 ```
 
-Now you have everything installed, get started viewing content by running...
+Now you have everything installed, get started viewing content by running the following in the `tangerine` root directory (not the `tangerine/docs/` directory!)...
 
 ```
 mkdocs serve
