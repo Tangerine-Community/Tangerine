@@ -11,7 +11,7 @@ export const generateFlatResponse = async function (formResponse, locationList, 
   }
   let flatFormResponse = {
     _id: formResponse._id,
-    id: formResponse._id.substr(0,6),
+    ID: formResponse._id.substr(0,6),
     formId: formResponse.form.id,
     startUnixtime: formResponse.startUnixtime||'',
     endUnixtime: formResponse.endUnixtime||'',
