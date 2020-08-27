@@ -1,23 +1,14 @@
-tr.header {
-  font-weight: bold;
-}
-table, tr, td {
-  border: 1px solid black;
-}
-.add-device-button {
-  margin: 0px 0px 15px 0px;
-}
-
-mat-table {
-  margin-bottom: 100px;
-}
-
-.location-cell {
-  padding: 5px;
-}
 .device-sheet-btn {
-  position: relative;
-  top: -60px;
-  float: right;
-  margin-right: 1em;
+  position: absolute;
+  top: 135px;
+  right: 20px; 
+}
+.table-container {
+  max-width: 100%;
+  /* This is key for scrolling the table as opposed to the table pushing layout out. */
+  overflow: auto;
+}
+mat-table {
+  /* Setting min-width here is the key to when the sticky column engages. */
+  min-width: 1400px
 }
