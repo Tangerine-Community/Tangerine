@@ -1,4 +1,8 @@
-# Sync Protocol 2
+# Sync Protocol 2 (two-way sync)
+
+This feature when enabled allows some or all of forms responses to be synced between devices. The form responses that are synced depend on which forms are configured for sync and limited to a grouping by the "location" field in that users' profile.
+
+For example: An installation has two Forms, Form A and Form B. Only Form A is configured to sync. User A who has "facility 1" assigned to them in their user profile creates a form response for Form A and Form B then initiates a sync to find that two form responses have been pushed up. User B has "facility 1" assigned to them in their user profile and initiates a sync to find they pulled down one form response for Form A that originated on User A's device. If User B modifies this form response, it will be pushed on the next sync and then later User A would pull down the change. Let's say there is a User C who is assigned to "facility 2" in their user profile. When they initiate a sync, they will not receive any form responses from the server because the server only has form responses from User A who is assigned to "facility 1".
 
 # Enabling Sync Protocol 2 for new Groups
 
