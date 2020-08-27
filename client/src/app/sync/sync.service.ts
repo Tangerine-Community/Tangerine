@@ -9,6 +9,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplicationStatus } from './classes/replication-status.class';
 import {Subject} from 'rxjs';
+import {CaseService} from "../case/services/case.service";
+import {CaseDefinitionsService} from "../case/services/case-definitions.service";
+import {TangyFormService} from "../tangy-forms/tangy-form.service";
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
@@ -26,7 +29,10 @@ export class SyncService {
     private deviceService:DeviceService,
     private appConfigService:AppConfigService,
     private userService:UserService,
-    private tangyFormsInfoService:TangyFormsInfoService
+    private tangyFormsInfoService:TangyFormsInfoService,
+    private caseService: CaseService,
+    private caseDefinitionsService: CaseDefinitionsService,
+    private tangyFormService: TangyFormService
   ) { }
 
   syncMessage: any = {};
@@ -72,5 +78,7 @@ export class SyncService {
     })
     await this.deviceService.didSync()
   }
+
+
 
 }
