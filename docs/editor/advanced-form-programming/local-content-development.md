@@ -4,7 +4,12 @@ Tangerine Preview is a command line tool for previewing the Tangerine content yo
 ## Install
 Before you install `tangerine-preview`, make sure to install [node.js](https://nodejs.org/en/). 
 
-Install the Tangerine Preview tool by opening a command prompt and running the following command.
+If you are on macOS, you will need to set permissions to allow for global installs by running the following command.
+```
+sudo chown -R `whoami` /usr/local/lib/node_modules
+```
+
+For all platforms, open a command line terminal and run Tangerine Preview install command.
 ```
 npm install -g tangerine-preview
 ```
@@ -29,5 +34,9 @@ When new releases come out for tangerine, `tangerine-preview` will also be updat
 npm install -g tangerine-preview
 ```
 
+## Check your currently install version
 
+```
+npm list -g tangerine-preview
+```
 
