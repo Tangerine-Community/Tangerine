@@ -6,6 +6,7 @@
     </button>
   </a>
 </div>
+<div class="table-container">
     <mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
@@ -41,8 +42,11 @@
         <mat-header-cell *matHeaderCellDef> Version </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.version}} </mat-cell>
       </ng-container>
+
+      
+
       <!-- Star Column -->
-      <ng-container matColumnDef="star" >
+      <ng-container matColumnDef="star" stickyEnd>
         <mat-header-cell *matHeaderCellDef> Options </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div>
@@ -69,5 +73,6 @@
       <mat-header-row *matHeaderRowDef="devicesDisplayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: devicesDisplayedColumns;"></mat-row>
     </mat-table>
+</div>
     <paper-fab mat-raised-button icon="add" color="accent" class="action" (click)="addDevice()">
     </paper-fab>
