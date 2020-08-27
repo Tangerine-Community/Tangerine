@@ -26,9 +26,21 @@ nav:
 
 ## Setting up your Environment for Local Documentation Development
 
-Since Tangerine documentation is written in Markdown it's not necessary to have a full local development environment setup to add or modify documentation. That said, if you're making significant changes you may desire to have the ability to build the documentation locally.
+Since Tangerine documentation is written in Markdown it's not necessary to have a full local development environment setup to add or modify documentation. That said, if you're making significant changes you may desire to have the ability to build the documentation locally. If you are on Mac OS, you will first need to install python 3. [This tutorial](https://opensource.com/article/19/5/python-3-default-mac) worked great for RJ. Make sure to follow the "What to do" section, not the others. Then in the top level tangerine directory, run the following commands to install dependencies. If any of the commands fail, try running the failed command again (that worked for R.J.). 
 
-If you do want to setup a local development environment, I would recommend following [MkDocs-Material Installation Instructions](https://squidfunk.github.io/mkdocs-material/getting-started/) and starting your local environment with the `mkdocs serve` command.
+```
+pip install mkdocs
+pip install mkdocs-material
+pip install mkdocs-git-revision-date-localized-plugin
+pip install mkdocs-awesome-pages-plugin
+pip install mkdocs-minify-plugin
+```
+
+Now you have everything installed, get started viewing content by running...
+
+```
+mkdocs serve
+```
 
 ## Contribution Guide
 
