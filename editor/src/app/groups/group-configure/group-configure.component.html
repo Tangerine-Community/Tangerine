@@ -1,6 +1,6 @@
 <div *ngIf="ready">
   <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-  <mat-card class="is-link mat-elevation-z3" routerLink="location-list">
+  <mat-card class="is-link mat-elevation-z3" routerLink="location-list" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_location_list'">
     <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">place</mwc-icon>
@@ -11,7 +11,7 @@
         <mat-card-subtitle>{{'Manage locations levels and content related to choosing locations on forms, sync, and more.'|translate}}</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-  <mat-card *ngIf="syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="sync">
+  <mat-card [hidden]="!syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="sync" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_sync'">
     <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">sync</mwc-icon>

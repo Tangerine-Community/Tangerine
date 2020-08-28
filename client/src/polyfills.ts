@@ -9,10 +9,13 @@ import * as Redux from 'redux';
 (window as any).Redux = Redux;
 
 import { LitElement, html, css, unsafeCSS } from 'lit-element';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 (window as any).LitElement = LitElement;
 (window as any).html = html;
 (window as any).css = css;
 (window as any).unsafeCSS = unsafeCSS;
+(window as any).unsafeHTML = unsafeHTML;
+
 
 import * as _ from 'underscore';
 (window as any)._ = _;
@@ -38,6 +41,9 @@ import 'tangy-form/input/tangy-consent.js';
 import 'tangy-form/input/tangy-partial-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
+
+import { Loc } from 'tangy-form/util/loc.js';
+(window as any).Loc = Loc
 
 import 'date-carousel/date-carousel.js'
 
