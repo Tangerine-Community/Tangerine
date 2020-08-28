@@ -10,6 +10,7 @@ import {diff} from "../conflict/diff";
 import {MergeInfo} from "../classes/merge-info.class";
 import {merge} from "../conflict/merge";
 import {Conflict} from "../../case/classes/conflict.class";
+import {AppContext} from "../../app-context.enum";
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +51,7 @@ export class ConflictService {
               error: 'Unable to detect conflict type.'
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
-            const issue = await this.caseService.createIssue(`Unresolved Conflict on ${a.form.id}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], conflict)
+            const issue = await this.caseService.createIssue(`Unresolved Conflict on ${a.form.id}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
             // TODO delete the conflict!!!
             try {
               await userDb.db.remove(diffInfo.a._id, conflictRev)
@@ -81,12 +82,12 @@ export class ConflictService {
               diffInfo: null,
               mergeInfo: mergeInfo,
               type: 'conflict',
-              docType: 'case',
+              docType: currentDoc.type,
               merged: true,
-              error:null
+              error:null,
             }
 
-            const issue = await this.caseService.createIssue(`Conflict on ${a.form.id}`, '', a._id, null, null, window['userProfile']._id, window['username'], conflict)
+            const issue = await this.caseService.createIssue(`Conflict on ${a.form.id}`, '', a._id, null, null, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
           }
         } else {
           // TODO indicate that the merge did happen - and which rev won.
@@ -99,7 +100,7 @@ export class ConflictService {
             error: 'No diff handler available.'
           }
           // TODO need correct event id and eventFormId from a.
-          const issue = await this.caseService.createIssue(`Unresolved Conflict for ${currentDoc.form.title}`, `type: ${currentDoc.type}; id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], conflict)
+          const issue = await this.caseService.createIssue(`Unresolved Conflict for ${currentDoc.form.title}`, `type: ${currentDoc.type}; id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
           // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
           // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
