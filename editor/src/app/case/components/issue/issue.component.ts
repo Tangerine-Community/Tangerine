@@ -72,8 +72,8 @@ export class IssueComponent implements OnInit {
   conflictMarkup:string
   private diffOutput: any;
   private merged: any;
-  private mergedMarkup: string;
-  private diffMergedMarkup: string;
+  mergedMarkup: string;
+  diffMergedMarkup: string;
 
   constructor(
     private caseService:CaseService,
