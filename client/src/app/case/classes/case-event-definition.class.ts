@@ -4,21 +4,18 @@ class CaseEventDefinition {
 
   id:string
   name:string
-  description:string
-  repeatable:boolean
-  required:boolean
-  templateListItemIcon:string
-  templateListItemPrimary:string
-  templateListItemSecondary:string
-  templateCaseEventListItemIcon:string
-  templateCaseEventListItemPrimary:string
-  templateCaseEventListItemSecondary:string
-  templateEventFormListItemIcon:string
-  templateEventFormListItemPrimary:string
-  templateEventFormListItemSecondary:string
-  estimatedTimeFromCaseOpening:number
-  estimatedTimeWindow:number
   eventFormDefinitions:Array<EventFormDefinition> = []
+  repeatable?:boolean = false
+  required?:boolean = false
+  templateListItemIcon?:string
+  templateListItemPrimary?:string
+  templateListItemSecondary?:string
+  templateCaseEventListItemIcon?:string
+  templateCaseEventListItemPrimary?:string
+  templateCaseEventListItemSecondary?:string
+  templateEventFormListItemIcon?:string
+  templateEventFormListItemPrimary?:string
+  templateEventFormListItemSecondary?:string
   constructor() {
   }
 

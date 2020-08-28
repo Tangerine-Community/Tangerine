@@ -33,9 +33,9 @@ export function diffTemplate(diff:Array<InputChange>) {
     </style>
     <table class="diff-table">
       <tr>
-        <td class="blank-cell"></td> 
-        <td class="header-cell">Original</td> 
-        <td class="header-cell">Proposed</td> 
+        <td class="blank-cell"></td>
+        <td class="header-cell">Original</td>
+        <td class="header-cell">Proposed</td>
       </tr>
       ${diff.map(change => `
       <tr>
@@ -46,7 +46,7 @@ export function diffTemplate(diff:Array<InputChange>) {
           ${valueTemplate(change.a.value)}
         </td>
         <td class="value">
-          ${valueTemplate(change.b.value)}
+          ${change.b ? valueTemplate(change.b.value): 'Missing input'}
         </td>
       </tr>
       `).join('')}

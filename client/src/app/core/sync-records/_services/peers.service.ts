@@ -1,10 +1,11 @@
 import {Injectable, OnInit} from '@angular/core';
 import {Message} from '../peers/message';
 import {Endpoint} from '../peers/endpoint';
-import {MOCK_ENDPOINTS} from '../peers/mock-endpoints';
 // @ts-ignore
 import PouchDB from 'pouchdb';
 import {UserService} from '../../../shared/_services/user.service';
+import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
+import {ConflictService} from "../../../sync/services/conflict.service";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,8 @@ export class PeersService {
   endpoints: Endpoint[];
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private conflictService: ConflictService
   ) {
     this.window = window;
     this.init();
@@ -123,7 +125,6 @@ export class PeersService {
       } else if (response['messageType'] === 'payload') {
         // load the data sent from the peer and then send your own.
         // TODO: JSONObject is available if we need it.
-        // const msg: Message = <Message>response.object;
         const msg = <Message>response.object;
         const payload = msg.payloadData;
         // const payload = msg.object;
@@ -131,69 +132,77 @@ export class PeersService {
         // const databaseDump = await (new Response(blob)).text();
         const writeStream = new window['Memorystream'];
         writeStream.end(payload);
-        // TODO: delete tempDB when done.
         const tempDb = new PouchDB('tempDb');
         console.log('Loading data into tempDb');
-        await tempDb.load(writeStream).then(async () => {
-          // replicate received database to the local db
-          // await new Promise((resolve, reject) => {
-          const localDb = this.localDatabase;
-          console.log('Replicating data to PouchDB: ' + localDb.name);
-          // TODO: Probably don't need the .on since we've already got an await.
-          // TODO: This could possible have created two stacks, and commands could happen out of order.
-          await tempDb.replicate.to(localDb)
-            .on('complete',  () => {
-              const repliMessage  = 'Data downloaded to tablet.'
-              console.log(repliMessage);
-              message = new Message('done', repliMessage, null, null, this.peer.id, null);
-              const event = new CustomEvent('progress', {detail: message});
-              this.el.dispatchEvent(event);
-          }).on('error', function (err) {
-            console.log('error in replication: ' + err);
-          });
-          if (this.isMaster) {
-            // TODO - should be a confirmation that *some* data was sent - a proof of life
-            // TODO at this point, he can move to another peer.
-            const doneMessage = 'Done! Sync next device.'
-            console.log('done! ' + doneMessage);
-            let currentEndpointId;
-            if (this.currentEndpoint) {
-              currentEndpointId = this.currentEndpoint.id;
+        try {
+        await tempDb.load(writeStream)
+        // replicate received database to the local db
+        const localDb = this.localDatabase;
+        console.log('Replicating data to PouchDB: ' + localDb.name);
+        // TODO: Probably don't need the .on since we've already got an await.
+        // TODO: This could possible have created two stacks, and commands could happen out of order.
+        await tempDb.replicate.to(localDb)
+          .on('complete', async (info) => {
+            const conflictsQuery = await localDb.query('sync-conflicts');
+            const pullReplicationStatus = <ReplicationStatus>{
+              pulled: info.docs_written,
+              pullConflicts: conflictsQuery.rows.map(row => row.id)
             }
-            message = new Message('done', doneMessage, null, currentEndpointId, null, null);
-            const event = new CustomEvent('done', {detail: message});
+            if (pullReplicationStatus.pullConflicts.length > 0) {
+              await this.conflictService.resolveConflicts(pullReplicationStatus, localDb, null, 'pull', null);
+            }
+            const repliMessage  = 'Data downloaded to tablet.'
+            console.log(repliMessage);
+            message = new Message('done', repliMessage, null, null, this.peer.id, null);
+            const event = new CustomEvent('progress', {detail: message});
             this.el.dispatchEvent(event);
-          } else {
-            const dumpedString = await this.dumpData(this.localDatabase)
-            let pushDataMessage: Message;
-            try {
-              const pluginMessage = 'Pushing local db to master.';
-              console.log(pluginMessage);
-              // const base64dumpPeer = btoa(dumpedString);
-              // const blob = new Blob([JSON.stringify(dumpedString, null, 2)], {type : 'application/json'});
-              // const blob = new Blob([dumpedString], {type : 'application/json'});
-              // const upload: Message = new Message('payload', pluginMessage, blob, null, null);
-              const upload: Message = new Message('payload', pluginMessage, null, null, null, null);
-              pushDataMessage = await this.pushData(upload, dumpedString);
-              if (typeof pushDataMessage !== 'undefined') {
-                console.log('pushDataMessage message: ' + pushDataMessage['message']);
-                message = new Message('done', pushDataMessage['message'], null, null, null, null);
-                const event = new CustomEvent('done', {detail: message});
-                this.el.dispatchEvent(event);
-              }
-            } catch (e) {
-              message = pushDataMessage;
-              console.log('Error pushing data: ' + JSON.stringify(message));
-              const event = new CustomEvent('error', {detail: message});
+        }).on('error', function (err) {
+          console.log('error in replication: ' + err);
+        });
+        if (this.isMaster) {
+          // TODO - should be a confirmation that *some* data was sent - a proof of life
+          // TODO at this point, he can move to another peer.
+          const doneMessage = 'Done! Sync next device.'
+          console.log('done! ' + doneMessage);
+          let currentEndpointId;
+          if (this.currentEndpoint) {
+            currentEndpointId = this.currentEndpoint.id;
+          }
+          message = new Message('done', doneMessage, null, currentEndpointId, null, null);
+          const event = new CustomEvent('done', {detail: message});
+          this.el.dispatchEvent(event);
+        } else {
+          const dumpedString = await this.dumpData(this.localDatabase)
+          let pushDataMessage: Message;
+          try {
+            const pluginMessage = 'Pushing local db to master.';
+            console.log(pluginMessage);
+            // const base64dumpPeer = btoa(dumpedString);
+            // const blob = new Blob([JSON.stringify(dumpedString, null, 2)], {type : 'application/json'});
+            // const blob = new Blob([dumpedString], {type : 'application/json'});
+            // const upload: Message = new Message('payload', pluginMessage, blob, null, null);
+            const upload: Message = new Message('payload', pluginMessage, null, null, null, null);
+            pushDataMessage = await this.pushData(upload, dumpedString);
+            if (typeof pushDataMessage !== 'undefined') {
+              console.log('pushDataMessage message: ' + pushDataMessage['message']);
+              message = new Message('done', pushDataMessage['message'], null, null, null, null);
+              const event = new CustomEvent('done', {detail: message});
               this.el.dispatchEvent(event);
             }
+          } catch (e) {
+            message = pushDataMessage;
+            console.log('Error pushing data: ' + JSON.stringify(message));
+            const event = new CustomEvent('error', {detail: message});
+            this.el.dispatchEvent(event);
           }
-        }).catch((err) => {
+        }
+        } catch (err) {
           console.log(err);
           message = new Message('error', err, null, null, null, null);
           const event = new CustomEvent('error', {detail: message});
           this.el.dispatchEvent(event);
-        });
+        };
+        tempDb.destroy()
       }
     };
 

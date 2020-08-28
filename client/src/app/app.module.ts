@@ -1,3 +1,5 @@
+import { AppDocs } from './app.docs';
+import { DEFAULT_USER_DOCS } from './shared/_tokens/default-user-docs.token';
 import { CaseHomeModule } from './case-home/case-home.module';
 import { SyncModule } from './sync/sync.module';
 import { DeviceModule } from './device/device.module';
@@ -70,7 +72,12 @@ export function initializeApp1(appInit: AppInit) {
     SharedModule
   ],
   providers: [AppInit,
-    { provide: APP_INITIALIZER, useFactory: initializeApp1, deps: [AppInit], multi: true}
+    { provide: APP_INITIALIZER, useFactory: initializeApp1, deps: [AppInit], multi: true},
+    {
+      provide: DEFAULT_USER_DOCS,
+      useValue: AppDocs,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

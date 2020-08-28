@@ -4,33 +4,8 @@
     <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
   </tangy-select>
 </div>
-<table>
-  <tr>
-    <th>ID</th>
-    <th>Date</th>
-    <th>Form</th>
-    <th>User ID</th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr *ngFor="let response of responses">
-    <td>{{response._id}}</td>
-    <td>{{moment(response.startUnixtime).format()}}</td>
-    <td>{{response.form?.id}}</td>
-    <td>{{(response.userProfileId) ? response.userProfileId : 'anonymous'}}</td>
-    <td>
-      <a routerLink="{{response._id}}">
-        <paper-button raised>
-          view
-        </paper-button>
-      </a>
-    </td>
-    <td>
-      <paper-button (click)="deleteResponse(response._id)" raised>
-        delete
-      </paper-button>
-    </td>
-  </tr>
-</table>
+<div class="table" *ngIf="ready">
+  <app-dynamic-table [data]="responses" (rowDelete)="onRowDelete($event)" (rowEdit)="onRowEdit($event)"></app-dynamic-table>
+</div>
 <paper-button *ngIf="this.skip !== 0" (click)="previousPage()">< back</paper-button>
 <paper-button (click)="nextPage()">next ></paper-button>

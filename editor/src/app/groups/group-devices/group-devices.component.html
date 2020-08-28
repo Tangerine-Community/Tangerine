@@ -6,45 +6,49 @@
     </button>
   </a>
 </div>
-    <mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
+<div class="table-container">
+    <table mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
-        <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </mat-cell>
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </td>
       </ng-container>
       <ng-container matColumnDef="assigned-location">
-        <mat-header-cell *matHeaderCellDef> Assigned Location </mat-header-cell>
-        <mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.assignedLocation"></div></mat-cell>
+        <th mat-header-cell *matHeaderCellDef> Assigned Location </th>
+        <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.assignedLocation"></div></td>
       </ng-container>
       <ng-container matColumnDef="sync-location">
-        <mat-header-cell *matHeaderCellDef> Sync Settings </mat-header-cell>
-        <mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.syncLocations"></div></mat-cell>
+        <th mat-header-cell *matHeaderCellDef> Sync Settings </th>
+        <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.syncLocations"></div></td>
       </ng-container>
       <ng-container matColumnDef="claimed">
-        <mat-header-cell *matHeaderCellDef> Claimed </mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <th mat-header-cell *matHeaderCellDef> Claimed </th>
+        <td mat-cell *matCellDef="let element">
           <mwc-icon *ngIf="element.claimed">done</mwc-icon>
-        </mat-cell>
+        </td>
       </ng-container>
       <ng-container matColumnDef="registeredOn">
-        <mat-header-cell *matHeaderCellDef> Registered on </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.registeredOn}} </mat-cell>
+        <th mat-header-cell *matHeaderCellDef> Registered on </th>
+        <td mat-cell *matCellDef="let element"> {{element.registeredOn}} </td>
       </ng-container>
       <ng-container matColumnDef="syncedOn">
-        <mat-header-cell *matHeaderCellDef> Synced on </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.syncedOn}} </mat-cell>
+        <th mat-header-cell *matHeaderCellDef> Synced on </th>
+        <td mat-cell *matCellDef="let element"> {{element.syncedOn}} </td>
       </ng-container>
       <ng-container matColumnDef="updatedOn">
-        <mat-header-cell *matHeaderCellDef> Updated on </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.updatedOn}} </mat-cell>
+        <th mat-header-cell *matHeaderCellDef> Updated on </th>
+        <td mat-cell *matCellDef="let element"> {{element.updatedOn}} </td>
       </ng-container>
       <ng-container matColumnDef="version">
-        <mat-header-cell *matHeaderCellDef> Version </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.version}} </mat-cell>
+        <th mat-header-cell *matHeaderCellDef> Version </th>
+        <td mat-cell *matCellDef="let element"> {{element.version}} </td>
       </ng-container>
+
+      
+
       <!-- Star Column -->
-      <ng-container matColumnDef="star" >
-        <mat-header-cell *matHeaderCellDef> Options </mat-header-cell>
-        <mat-cell *matCellDef="let element">
+      <ng-container matColumnDef="star" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let element">
           <div>
             <button mat-stroked-button color="primary" [matMenuTriggerFor]="menu">
               <mat-icon>more_vert</mat-icon>
@@ -64,10 +68,11 @@
               </button>
             </mat-menu>
           </div>
-        </mat-cell>
+        </td>
       </ng-container>
-      <mat-header-row *matHeaderRowDef="devicesDisplayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: devicesDisplayedColumns;"></mat-row>
-    </mat-table>
+      <tr mat-header-row *matHeaderRowDef="devicesDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: devicesDisplayedColumns;"></tr>
+    </table>
+</div>
     <paper-fab mat-raised-button icon="add" color="accent" class="action" (click)="addDevice()">
     </paper-fab>

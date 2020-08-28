@@ -8,9 +8,10 @@ import {
 } from '@angular/platform-browser-dynamic/testing';
 
 window['dcodeIO'] = {
-  bcrypt: { 
+  bcrypt: {
     genSaltSync: function(x) { return 'foo' },
     genHashSync: function(x, y) { return 'foo' },
+    hashSync: function(x, y) { return 'foo' },
     compareSync: function(x, y) {return true }
   }
 }

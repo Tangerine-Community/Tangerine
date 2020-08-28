@@ -7,11 +7,17 @@
     <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review case</paper-button></a>
     <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review form</paper-button></a>
   </div>
-  <paper-tabs class="tabs" selected="0">
+  <paper-tabs class="tabs" selected="0" *ngIf="!conflict">
     <paper-tab (click)="tab = 'activity'">Activity</paper-tab>
     <paper-tab (click)="tab = 'current'">Current</paper-tab>
     <paper-tab (click)="tab = 'proposed'">Proposed</paper-tab>
     <paper-tab (click)="tab = 'differences'">Differences</paper-tab>
+  </paper-tabs>
+
+  <paper-tabs class="tabs" selected="0" *ngIf="conflict">
+    <paper-tab (click)="tab = 'activity'">Activity</paper-tab>
+    <paper-tab (click)="tab = 'a'">Diff A and B</paper-tab>
+    <paper-tab (click)="tab = 'merged'">Merged</paper-tab>
   </paper-tabs>
 </div>
 
@@ -28,7 +34,7 @@
         <div class="issue-event--primary" [innerHTML]="eventInfo.primary|unsanitizeHtml">
         </div>
       </div>
-      <div class="card-actions" *ngIf="eventInfo.type === 'ProposedCHange'">
+      <div class="card-actions" *ngIf="eventInfo.type === 'ProposedChange'">
         <paper-button class="card-action" routerLink="form-revision/{{eventInfo.id}}">view</paper-button>
       </div>
     </paper-card>
@@ -46,7 +52,24 @@
       </div>
     </paper-card>
 
-    <paper-card class="issue-event issue-actions" *ngIf="!canMergeProposedChange && isOpen">
+    <paper-card class="issue-event issue-actions" *ngIf="conflict">
+      <div class="card-content">
+        <p class="issue-event--label">
+          <mwc-icon slot="item-icon">info</mwc-icon>
+          Merged: {{conflict.merged}}
+          <p *ngIf="!conflict.merged">Error: {{this.conflict.error}}</p>
+          <p>DiffTypes:</p>
+        <ul>
+          <li *ngFor="let diff of conflict.mergeInfo.diffInfo.diffs"> (1)
+            {{ diff.type }}
+          </li>
+        </ul>
+      </div>
+      <div class="card-actions">
+      </div>
+    </paper-card>
+
+    <paper-card class="issue-event issue-actions" *ngIf="!conflict && !canMergeProposedChange && isOpen">
       <div class="card-content">
         <div class="issue-event--label">
           <mwc-icon slot="item-icon">error</mwc-icon>
@@ -62,7 +85,7 @@
       <div class="card-content">
         <div class="issue-event--label">
           <mwc-icon slot="item-icon">comment</mwc-icon>
-          New comment by you 
+          New comment by you
         </div>
         <div class="issue-event--primary">
           <paper-textarea #commentForm></paper-textarea>
@@ -93,6 +116,16 @@
     <p class="no-proposed-changes-message" [hidden]="hasProposedChange === true">
       {{'No changes proposed yet.'|translate}}
     </p>
+  </div>
+
+  <div [hidden]="tab !== 'a'" class="diff">
+    <span [innerHTML]="conflictMarkup | unsanitizeHtml"></span>
+  </div>
+
+  <div [hidden]="tab !== 'merged'" class="diff">
+    <span [innerHTML]="diffMergedMarkup | unsanitizeHtml"></span>
+    <p>All Merged Properties</p>
+    <span [innerHTML]="mergedMarkup | unsanitizeHtml"></span>
   </div>
 
 

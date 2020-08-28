@@ -14,7 +14,19 @@ export class GroupDeviceUsersComponent implements OnInit {
   
   title = _TRANSLATE('Device Users')
   breadcrumbs:Array<Breadcrumb> = []
- 
+  excludeColumns = [
+    'formId',
+    'startUnixtime',
+    'endUnixtime',
+    'lastSaveUnixtime',
+    'groupId',
+    'item-1_firstOpenTime',
+    'complete',
+    'deviceId',
+    'buildChannel',
+    'buildId',
+    'tangerineModifiedByUserId'
+  ]
   groupId:string
 
   constructor(
