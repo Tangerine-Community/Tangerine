@@ -17,6 +17,7 @@ import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
 import { AppConfig } from '../_classes/app-config.class';
 import { LockBoxContents } from '../_classes/lock-box-contents.class';
 import { DB } from '../_factories/db.factory';
+import {VariableService} from "./variable.service";
 
 @Injectable()
 export class UserService {
@@ -41,7 +42,8 @@ export class UserService {
     private lockBoxService:LockBoxService,
     private deviceService:DeviceService,
     private appConfigService: AppConfigService,
-    private http: HttpClient
+    private http: HttpClient,
+    private variableService:VariableService,
   ) {
     this.window = window;
   }
@@ -76,10 +78,7 @@ export class UserService {
     } catch (e) {
       console.log("Error: " + JSON.stringify(e))
     }
-    await this.sharedUserDatabase.put({
-      _id: 'info',
-      atUpdateIndex: updates.length - 1
-    })
+    await this.variableService.set('atUpdateIndex', updates.length - 1);
   }
 
   async installSharedUserDatabaseOnly(device) {
@@ -273,10 +272,7 @@ export class UserService {
       })
       await this.usersDb.post(userAccount)
       const userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
-      await userDb.put({
-        _id: 'info',
-        atUpdateIndex: updates.length - 1
-      })
+      await this.variableService.set('atUpdateIndex', updates.length - 1);
       await userDb.put(userProfile)
     }
     return userAccount
