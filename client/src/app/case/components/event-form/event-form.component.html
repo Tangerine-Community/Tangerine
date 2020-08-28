@@ -1,8 +1,15 @@
 <app-case-breadcrumb 
-    *ngIf="loaded" 
+    *ngIf="loaded && !hasEventFormRedirect" 
     [caseId]="caseService.case._id" 
     [caseEventId]="caseEvent.id"
     [eventFormId]="eventForm.id"
 ></app-case-breadcrumb>
+<div 
+    class="event-form-redirect-back-button"
+    *ngIf="hasEventFormRedirect"
+    (click)="eventFormRedirect()"
+>
+  <mwc-icon class="icon">chevron_left</mwc-icon> {{eventFormRedirectBackButtonText}}
+</div>
 <app-tangy-forms-player #formPlayer></app-tangy-forms-player>
 

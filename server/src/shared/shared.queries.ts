@@ -29,6 +29,17 @@ export const SharedQueries = {
     }.toString()
   },
 
+  responsesByMonthAndFormId: {
+    map: function(doc) {
+      if (doc.form && doc.form.id) {
+          const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              const startUnixtime = new Date(doc.startUnixtime);
+              const key = doc.form.id + '_' + startUnixtime.getFullYear() + '_' + MONTHS[startUnixtime.getMonth()];
+        return emit(key, doc)
+      }
+    }.toString()
+  },
+
   responsesByUserProfileId: {
     map: function(doc) {
       if (doc.collection === "TangyFormResponse") {

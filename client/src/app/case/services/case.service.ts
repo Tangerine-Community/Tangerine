@@ -37,7 +37,7 @@ class CaseService {
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
-
+  _shouldSave = true
 
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = {
@@ -87,6 +87,14 @@ class CaseService {
       ? this.case.participants.find(participant => participant.id === this.eventForm.participantId)
       : null
     window['participant'] = this.participant
+  }
+
+  getCurrentCaseEventId() {
+    return this?.caseEvent?.id
+  }
+  
+  getCurrentEventFormId() {
+    return this?.eventForm?.id
   }
 
   constructor(
@@ -176,9 +184,14 @@ class CaseService {
     tangyFormContainerEl.remove()
     await this.setCase(this.case)
     this.case.caseDefinitionId = caseDefinitionId;
+    if (this.caseDefinition.startFormOnOpen && this.caseDefinition.startFormOnOpen.eventFormId) {
+      const caseEvent = this.createEvent(this.caseDefinition.startFormOnOpen.eventId)
+      this.createEventForm(caseEvent.id, this.caseDefinition.startFormOnOpen.eventFormId) 
+    }
     await this.save()
   }
 
+  
   async setCase(caseInstance) {
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
@@ -188,6 +201,13 @@ class CaseService {
 
   async load(id:string) {
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
+    this._shouldSave = true 
+  }
+
+
+  async loadInMemory(caseData:Case) {
+    await this.setCase(new Case(caseData))
+    this._shouldSave = false
   }
 
   onChangeLocation$ = new Subject()
@@ -218,8 +238,10 @@ class CaseService {
   }
 
   async save() {
-    await this.tangyFormService.saveResponse(this.case)
-    await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    if (this._shouldSave) {
+      await this.tangyFormService.saveResponse(this.case)
+      await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+    }
   }
 
   setVariable(variableName, value) {
@@ -263,7 +285,13 @@ class CaseService {
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && eventFormDefinition.autoPopulate) {
+        if (
+          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
           this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
@@ -288,7 +316,7 @@ class CaseService {
     })
   }
   setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
-    const windowStartDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    const windowStartDay = moment((new Date(windowStartDayTimeInMs))).format('YYYY-MM-DD')
     const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
@@ -476,7 +504,13 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.autoPopulate) {
+        if (
+          caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
           this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
@@ -542,8 +576,9 @@ class CaseService {
    * If the issue is a case or other type, createIssue will get the type from metadata.docType
    * and use it to populate docType in the Issue it creates.
    */
+  
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor], conflict: any = null) {
 
-  async createIssue(label = '', comment = '', caseId: string, eventId: string, eventFormId: string, userId, userName, conflict: any = null) {
     const caseData = await this.tangyFormService.getResponse(caseId)
     let formResponseId, docType
     if (eventId) {
@@ -565,7 +600,7 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Client,
-      resolveOnAppContext: AppContext.Editor,
+      resolveOnAppContexts,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
@@ -631,6 +666,28 @@ class CaseService {
     return await this.tangyFormService.saveResponse({
       ...issue,
       status: IssueStatus.Closed
+    })
+  }
+
+  async rebaseIssue(issueId:string, userId:string, userName:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+    const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.Rebase,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        caseInstance,
+        response 
+      }
+    })
+    return await this.tangyFormService.saveResponse({
+      ...issue,
+      status: IssueStatus.Open
     })
   }
 
