@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RestoreBackupComponent } from './restore-backup.component';
+import { GroupDeviceSheetComponent } from './group-device-sheet.component';
 
-describe('RestoreBackupComponent', () => {
-  let component: RestoreBackupComponent;
-  let fixture: ComponentFixture<RestoreBackupComponent>;
+describe('GroupDeviceSheetComponent', () => {
+  let component: GroupDeviceSheetComponent;
+  let fixture: ComponentFixture<GroupDeviceSheetComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RestoreBackupComponent ]
+      declarations: [ GroupDeviceSheetComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RestoreBackupComponent);
+    fixture = TestBed.createComponent(GroupDeviceSheetComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

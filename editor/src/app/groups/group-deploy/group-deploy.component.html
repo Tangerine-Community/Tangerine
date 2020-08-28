@@ -1,5 +1,5 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<mat-card *ngIf="syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="devices">
+<mat-card [hidden]="!syncProtocol2Enabled" *appHasAllPermissions="let i;group:groupId; permissions:['can_access_devices']" class="is-link mat-elevation-z3" routerLink="devices">
   <mat-card-header>
       <div mat-card-avatar>
         <i class="material-icons tangy-foreground-secondary group-avatar">stay_current_portrait</i>
@@ -11,7 +11,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="device-users">
+<mat-card *appHasAllPermissions="let i;group:groupId; permissions:['can_access_device_users']" class="is-link mat-elevation-z3" routerLink="device-users">
   <mat-card-header>
       <div mat-card-avatar>
         <mwc-icon class="tangy-foreground-secondary">people</mwc-icon>
@@ -23,7 +23,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="releases">
+<mat-card *appHasAllPermissions="let i;group:groupId; permissions:['can_access_releases']" class="is-link mat-elevation-z3" routerLink="releases">
   <mat-card-header>
       <div mat-card-avatar>
         <i class="material-icons tangy-foreground-secondary group-avatar">system_update</i>

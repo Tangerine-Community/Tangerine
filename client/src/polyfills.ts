@@ -8,9 +8,14 @@
 import * as Redux from 'redux';
 (window as any).Redux = Redux;
 
-import { LitElement, html } from 'lit-element';
+import { LitElement, html, css, unsafeCSS } from 'lit-element';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 (window as any).LitElement = LitElement;
 (window as any).html = html;
+(window as any).css = css;
+(window as any).unsafeCSS = unsafeCSS;
+(window as any).unsafeHTML = unsafeHTML;
+
 
 import * as _ from 'underscore';
 (window as any)._ = _;
@@ -37,6 +42,9 @@ import 'tangy-form/input/tangy-partial-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 
+import { Loc } from 'tangy-form/util/loc.js';
+(window as any).Loc = Loc
+
 import 'date-carousel/date-carousel.js'
 
 // An attempt to fix something...
@@ -54,6 +62,10 @@ import '@polymer/paper-item/paper-icon-item.js';
 import '@polymer/paper-item/paper-item-body.js';
 import '@polymer/iron-icons/notification-icons.js';
 import '@polymer/paper-progress/paper-progress.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-menu-button/paper-menu-button.js';
 
 import * as moment from 'moment'
 (window as any).moment = moment

@@ -1,3 +1,6 @@
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 import { LoginGuard } from './_guards/login-guard.service';
 import { ServerConfigService } from './_services/server-config.service';
 import { UnsanitizeHtmlPipe } from './../pipes/unsanitize.pipe';
@@ -12,16 +15,42 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { HasAPermissionDirective } from '../core/auth/_directives/has-a-permission.directive';
 import { HasSomePermissionsDirective } from '../core/auth/_directives/has-some-permissions.directive';
 import { HasAllPermissionsDirective } from '../core/auth/_directives/has-all-permissions.directive';
+import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    MatTableModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule
   ],
-  providers: [AppConfigService, ServerConfigService, LoginGuard],
-  exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent,
-    BreadcrumbComponent, UnsanitizeHtmlPipe, NgxPermissionsModule, HasAPermissionDirective,
-    HasSomePermissionsDirective, HasAllPermissionsDirective],
-  declarations: [TangyLoadingComponent, UnsanitizeHtmlPipe, BreadcrumbComponent,
-    HasAPermissionDirective, HasSomePermissionsDirective, HasAllPermissionsDirective]
+  providers: [
+    AppConfigService,
+    ServerConfigService,
+    LoginGuard
+  ],
+  exports: [
+    TranslateModule,
+    DynamicTableComponent,
+    MatSnackBarModule,
+    TangyLoadingComponent,
+    BreadcrumbComponent,
+    UnsanitizeHtmlPipe,
+    NgxPermissionsModule,
+    HasAPermissionDirective,
+    HasSomePermissionsDirective,
+    HasAllPermissionsDirective
+  ],
+  declarations: [
+    TangyLoadingComponent,
+    UnsanitizeHtmlPipe,
+    BreadcrumbComponent,
+    HasAPermissionDirective,
+    HasSomePermissionsDirective,
+    HasAllPermissionsDirective,
+    DynamicTableComponent
+  ]
 })
 export class SharedModule { }

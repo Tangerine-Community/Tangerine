@@ -1,0 +1,99 @@
+<div *ngIf="ready" class="header">
+  <h1>{{issue.label}}</h1>
+  <div class="header-actions">
+    <paper-button *ngIf="issue.merged && !isOpen" class="status status-merged"><mwc-icon>call_merge</mwc-icon>merged</paper-button>
+    <paper-button *ngIf="!issue.merged && !isOpen" class="status status-closed"><mwc-icon>check</mwc-icon>closed</paper-button>
+    <paper-button *ngIf="isOpen" class="status status-open"><mwc-icon>list</mwc-icon>open</paper-button>
+    <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review case</paper-button></a>
+    <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review form</paper-button></a>
+  </div>
+  <paper-tabs class="tabs" selected="0">
+    <paper-tab (click)="tab = 'activity'">Activity</paper-tab>
+    <paper-tab (click)="tab = 'current'">Current</paper-tab>
+    <paper-tab (click)="tab = 'proposed'">Proposed</paper-tab>
+    <paper-tab (click)="tab = 'differences'">Differences</paper-tab>
+  </paper-tabs>
+</div>
+
+<div class="page">
+
+  <div [hidden]="tab !== 'activity'" *ngIf="ready">
+
+    <paper-card class="issue-event" alt="Issue Event" *ngFor="let eventInfo of eventInfos">
+      <div class="card-content">
+        <div class="issue-event--label">
+          <mwc-icon slot="item-icon">{{eventInfo.icon}}</mwc-icon>
+          {{eventInfo.label}} by {{eventInfo.userName}} <span class="issue-event--date">{{eventInfo.date}}</span>
+        </div>
+        <div class="issue-event--primary" [innerHTML]="eventInfo.primary|unsanitizeHtml">
+        </div>
+      </div>
+      <div class="card-actions" *ngIf="eventInfo.type === 'ProposedCHange'">
+        <paper-button class="card-action" routerLink="form-revision/{{eventInfo.id}}">view</paper-button>
+      </div>
+    </paper-card>
+
+    <paper-card class="issue-event issue-actions" *ngIf="canMergeProposedChange">
+      <div class="card-content">
+        <div class="issue-event--label">
+          <mwc-icon slot="item-icon">done</mwc-icon>
+          {{numberOfChanges}} {{ numberOfChanges === 1 ? 'change' : 'changes'}} and {{numberOfRevisions}} {{ numberOfRevisions === 1 ? 'revision' : 'revisions'}}
+        </div>
+      </div>
+      <div class="card-actions">
+        <paper-button routerLink="form-revision"><mwc-icon>call_split</mwc-icon>Propose</paper-button>
+        <paper-button *ngIf="hasProposedChange" (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Merge</paper-button>
+      </div>
+    </paper-card>
+
+    <paper-card class="issue-event issue-actions" *ngIf="!canMergeProposedChange && isOpen">
+      <div class="card-content">
+        <div class="issue-event--label">
+          <mwc-icon slot="item-icon">error</mwc-icon>
+          You cannot merge the proposed changes because the Form Response has been updated since the Issue was created. Propose a new change based on the current version of the Form Response.
+        </div>
+      </div>
+      <div class="card-actions">
+        <paper-button (click)="onRebaseClick()" *ngIf="issue.formResponseId"><mwc-icon>call_split</mwc-icon>Rebase issue on current response</paper-button>
+      </div>
+    </paper-card>
+
+    <paper-card class="comment-form issue-event">
+      <div class="card-content">
+        <div class="issue-event--label">
+          <mwc-icon slot="item-icon">comment</mwc-icon>
+          New comment by you 
+        </div>
+        <div class="issue-event--primary">
+          <paper-textarea #commentForm></paper-textarea>
+        </div>
+      </div>
+      <div class="card-actions">
+        <paper-button *ngIf="isOpen" (click)="onCloseClick()">close issue</paper-button>
+        <paper-button *ngIf="!isOpen && !issue.merged" (click)="onOpenClick()">open issue</paper-button>
+        <paper-button (click)="onCommentFormSubmit()">comment</paper-button>
+      </div>
+    </paper-card>
+
+  </div>
+
+  <div [hidden]="tab !== 'current'">
+    <app-tangy-forms-player [skipSaving]="true" #currentFormResponseContainer></app-tangy-forms-player>
+  </div>
+
+  <div [hidden]="tab !== 'proposed'">
+    <app-tangy-forms-player [hidden]="hasProposedChange === false" [skipSaving]="true" #proposedFormResponseContainer></app-tangy-forms-player>
+    <p class="no-proposed-changes-message" [hidden]="hasProposedChange === true">
+      {{'No changes proposed yet.'|translate}}
+    </p>
+  </div>
+
+  <div [hidden]="tab !== 'differences'" class="diff">
+    <span [innerHTML]="diffMarkup | unsanitizeHtml"></span>
+    <p class="no-proposed-changes-message" [hidden]="hasProposedChange === true">
+      {{'No changes proposed yet.'|translate}}
+    </p>
+  </div>
+
+
+</div>

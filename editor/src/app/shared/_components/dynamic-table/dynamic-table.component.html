@@ -1,0 +1,31 @@
+<table mat-table #table [dataSource]="dataSource">
+
+  <ng-container *ngFor="let column of columns" matColumnDef="{{column.columnDef}}">
+    <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
+    <td mat-cell *matCellDef="let row">{{ column.cell(row) }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions" stickyEnd>
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let row">
+      <div class="actions-container" >
+        <button class="actions-menu" mat-stroked-button color="primary" [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button (click)="onRowEdit(row)" mat-menu-item>
+            <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
+          </button>
+          <button (click)="onRowDelete(row)" mat-menu-item>
+            <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
+          </button>
+        </mat-menu>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClick(row)"></tr>
+
+</table>

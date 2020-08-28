@@ -1,0 +1,14 @@
+<h1>{{'Devices'|translate}}</h1>
+<div *ngFor="let devices of tableArray;let i = index;">
+  <table mat-table [dataSource]="devices" class="mat-elevation-z8">
+    <ng-container matColumnDef="desc">
+      <td mat-cell *matCellDef="let element" [innerHTML]="element.desc" width="60%"></td>
+    </ng-container>
+    <ng-container matColumnDef="qr-code">
+      <td mat-cell *matCellDef="let element">
+        <div class="qrcode-div" [innerHTML]="element.qrSvg"></div>
+      </td>
+    </ng-container>
+    <tr mat-row *matRowDef="let row; columns: devicesDisplayedColumns;"></tr>
+  </table>
+</div>

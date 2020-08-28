@@ -268,7 +268,13 @@ class CaseService {
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && eventFormDefinition.autoPopulate) {
+        if (
+          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
           this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
@@ -481,7 +487,13 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.autoPopulate) {
+        if (
+          caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
           this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
@@ -545,7 +557,7 @@ class CaseService {
    * Issues API.
    */
 
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor]) {
     const caseData = await this.tangyFormService.getResponse(caseId)
     const formResponseId = caseData
       .events.find(event => event.id === eventId)
@@ -558,7 +570,7 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Editor,
-      resolveOnAppContext: AppContext.Editor,
+      resolveOnAppContexts,
       eventId,
       eventFormId,
       status: IssueStatus.Open,

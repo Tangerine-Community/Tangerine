@@ -1,0 +1,4 @@
+<div class="tangy-content tangy-full-width">
+    <p *ngIf="isExporting">{{'Downloading file...'}}</p>
+    <button mat-raised-button color="warn" (click)="export()" [disabled]="isExporting">{{'Export Location List'|translate}}</button>
+</div>
