@@ -7,6 +7,7 @@
   - __Duplicate a Section__:When editing a form, you can now easily duplicate an entire section with the "duplicate section" button. [#2109](https://github.com/Tangerine-Community/Tangerine/issues/2109)
   - __Group Dashboard in Editor__: "Dashboard" is now a top level group menu item that can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
   - __More permissions in Editor__:Add additional Editor permissions to completely cover menu level access in a group
+  -__Automatic conflict resolution__: After a sync pull on client, detects type of conflict and resolves it. View status of merges in the Issues feature. [#1763](https://github.com/Tangerine-Community/Tangerine/issues/1763)
 - __New Features and Fixes for Case Module__
   - __Client "Issues" feature__: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
   - __Easier searching on Client__: Previously on Client when searching for "Facility 8" you would need to type exactly "Facility 8". Now search is case insensitive and you may type "facility 8" to match against "Facility 8".
