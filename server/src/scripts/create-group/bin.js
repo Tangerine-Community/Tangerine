@@ -59,17 +59,22 @@ async function createGroup() {
       console.log('Could not detect valid content set')
       exec(`rm -rf ${tmpGroupPath}`)
     }
+    // Set up the group content directory.
     await exec(`rm -r ${groupPath}`)
-    await exec(`mv ${tmpGroupPath} ${groupPath}`)
-
-    let appConfigDefaultsPath
-    let appConfigPath
     if (contentSetVersion === 1) {
-      appConfigDefaultsPath = `${groupPath}/app-config.json_example`
-      appConfigPath = `${groupPath}/app-config.json`
+      await exec(`mkdir ${groupPath}`)
+      await exec(`mkdir ${groupPath}/editor`)
+      await exec(`mv ${tmpGroupPath} ${groupPath}/client`)
+    } else if (contentSetVersion === 2) {
+      await exec(`mv ${tmpGroupPath} ${groupPath}`)
+    }
+    // Set up the app-config.json
+    let appConfigPath = `${groupPath}/client/app-config.json`
+    let appConfigDefaultsPath
+    if (contentSetVersion === 1) {
+      appConfigDefaultsPath = `${groupPath}/client/app-config.json_example`
     } else if (contentSetVersion === 2) {
       appConfigDefaultsPath = `${groupPath}/client/app-config.defaults.json`
-      appConfigPath = `${groupPath}/client/app-config.json`
     }
     const appConfig = await fs.readJson(appConfigDefaultsPath)
     await fs.writeJson(appConfigPath, {
