@@ -18,7 +18,8 @@
   - __Export device sheets__: When registering Devices, we now offer an option to print "Device Sheets". Device Sheets include the registration codes for a Device and also some human readable metadata. Each row can also be used as a label for each device that can be fastened to a device using affordable clear packing tape. [#2269](https://github.com/Tangerine-Community/Tangerine/issues/2269)
   - __Restore Backup on Android Tablet__: Backups can now be restored. Restore is an option when first opening a freshly installed APK. [#2127](https://github.com/Tangerine-Community/Tangerine/issues/2127)
   - __Better support for working on the same Case on two devices__: When working offline on the same Case on two Devices, after a sync, it may seem like the changes on one Tablet have gone missing for some time until the "database conflicts" are resolved using the CouchDB Futon interface on the server. Starting in v3.13.0 we'll start to employ algorithms for automatically merging to speed up the process of resolving these database conflicts.
-
+- Notes for System Administrators
+  - After upgrade, you will no longer find group content directories in `./data/client/content/groups/`, they will be in `./data/groups/`. Inside each group's directory you will also find they have been split into a `client` and `editor` directory. All previous content will now be in the `client` directory while you may place content for the Group's Data Dashboard in the `editor` folder.
  
 __Server upgrade instructions:__
 
