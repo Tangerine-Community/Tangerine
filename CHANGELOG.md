@@ -5,9 +5,9 @@
 - __New Features for all Tangerine__
   - __Download Location List as CSV__: You can now download a location list as a CSV. If you prefer editing a Location List via something like Excel, this makes editing an existing location list easier, which can then be imported when done editing in Excel. [#2107](https://github.com/Tangerine-Community/Tangerine/issues/2107)
   - __Duplicate a Section__:When editing a form, you can now easily duplicate an entire section with the "duplicate section" button. [#2109](https://github.com/Tangerine-Community/Tangerine/issues/2109)
-  - __Group Dashboard in Editor__: "Dashboard" is now a top level group menu item that can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
+  - __Group Data Dashboard in Editor__: "Dashboard" is now a menu item available in a Group under the Data menu. This link can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
   - __More permissions in Editor__:Add additional Editor permissions to completely cover menu level access in a group
-  -__Automatic conflict resolution__: After a sync pull on client, detects type of conflict and resolves it. View status of merges in the Issues feature. [#1763](https://github.com/Tangerine-Community/Tangerine/issues/1763)
+  - __Automatic conflict resolution__: After a sync pull on client, detects type of conflict and resolves it. View status of merges in the Issues feature. [#1763](https://github.com/Tangerine-Community/Tangerine/issues/1763)
 - __Fixes for all Tangerine__
   - __Fix extending session in Editor__ - When prompted to extend session shows up session is not really extended. [#2266](https://github.com/Tangerine-Community/Tangerine/issues/2266)
 - __New Features and Fixes for Case Module__
