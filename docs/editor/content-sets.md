@@ -1,5 +1,5 @@
 ## Content Sets 
-Content Sets are 
+Content Sets are groups of forms and configuration you can use as a template for new groups.
 
 ## Anatomy of a Content Set
 
