@@ -1,12 +1,12 @@
 ## Content Sets 
-Content Sets are 
+Content Sets are groups of forms and configuration you can use as a template for new groups.
 
 ## Anatomy of a Content Set
 
 ### Version 1 (< Tangerine v3.13.0)
 In the root directory of a v1 Content Set, you will find the following:
 - `./app-config.json_example` (required)
-- `./client/forms.json` (required)
+- `./forms.json` (required)
 
 ### Version 2 (> Tangerine v3.13.0)
 Starting in Tangerine v3.13.0, the second iteration of Content Sets was launched. In the root directory of a v2 Content Set, you will find the following:
