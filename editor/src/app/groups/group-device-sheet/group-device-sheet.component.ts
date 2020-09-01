@@ -62,7 +62,7 @@ export class GroupDeviceSheetComponent implements OnInit {
   }
 
   async listDevices() {
-    const devices = await this.groupDevicesService.list(this.groupId)
+    const devices = (await this.groupDevicesService.list(this.groupId)).filter(device => !device.claimed)
     const countsByVersion = devices
       .reduce((countsByVersion, device) => {
         countsByVersion[device.version] = countsByVersion[device.version]
