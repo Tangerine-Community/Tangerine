@@ -39,10 +39,10 @@ export class CaseComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     const caseId = window.location.hash.split('/')[2]
-    if (!this.caseService.case || caseId !== this.caseService.case._id) {
-      await this.caseService.load(caseId)
-      this.caseService.openCaseConfirmed = false
-    }
+    // if (!this.caseService.case || caseId !== this.caseService.case._id) {
+    await this.caseService.load(caseId)
+    this.caseService.openCaseConfirmed = false
+    // }
     this.caseService.setContext()
     this.window.caseService = this.caseService
     this.calculateTemplateData()
