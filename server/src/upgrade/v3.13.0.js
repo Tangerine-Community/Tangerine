@@ -43,6 +43,30 @@ async function go() {
     }
 
   }
+  for (let group of groups) {
+    let groupId = group._id
+    console.log(`Checking group ${groupId} for needed forms.json fixes from v3.7.0...`)
+    let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+    try {
+      let hasFormIssues = false
+      forms = forms.map(form => {
+        if (form.id === 'user-profile' && form.src ==='user-profile/form.html') {
+          hasFormIssues = true
+          form.src = './assets/user-profile/form.html'
+        }
+        if (form.id === 'reports' && form.src ==='reports/form.html') {
+          hasFormIssues = true
+          form.src = './assets/reports/form.html'
+        }
+        return form
+      })
+      if (hasFormIssues) {
+        await fs.writeJson(`/tangerine/client/content/groups/${groupId}/forms.json`, forms)
+      }
+    } catch (e) {
+      console.log(`Error trying to fix forms.json for ${groupId}`)
+    }
+  }
 }
 
 go()
