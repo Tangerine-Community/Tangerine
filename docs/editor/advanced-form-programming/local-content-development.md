@@ -40,3 +40,18 @@ npm install -g tangerine-preview
 npm list -g tangerine-preview
 ```
 
+## Set up VS Code with Syntax Highlighting for `on-open`, `on-change`, etc.
+
+### Step 1 
+Open Visual Studio configuration file. If you have the VS Code CLI installed, run the following in a terminal.
+```
+code /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/extensions/html/syntaxes/html.tmLanguage.json
+```
+
+### Step 2
+Find `on(s(c` and replace with `on-open|on-change|on-submit|skip-if|hide-if|dont-skip-if|disable-if|valid-if|discrepancy-if|warn-if|on(s(c`.
+
+<img width="1363" alt="Screen Shot 2020-02-13 at 11 58 59 AM" src="https://user-images.githubusercontent.com/156575/74458893-606bfd80-4e58-11ea-986b-84b2d4c0c43b.png">
+
+### Step 3
+Restart Visual Studio.
