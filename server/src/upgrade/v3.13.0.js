@@ -2,6 +2,7 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const PouchDB = require('pouchdb')
+const fs = require('fs-extra')
 async function go() {
   console.log('Upgrading groups Admin roles with new permissions...')
   const groupsDb = new PouchDB(`${process.env['T_COUCHDB_ENDPOINT']}/groups`)
@@ -45,7 +46,7 @@ async function go() {
   }
   for (let group of groups) {
     let groupId = group._id
-    console.log(`Checking group ${groupId} for needed forms.json fixes from v3.7.0...`)
+    console.log(`Checking group ${groupId} for needed forms.json fixes from v3.8.0...`)
     let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
     try {
       let hasFormIssues = false
