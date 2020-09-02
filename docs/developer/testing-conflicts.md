@@ -1,6 +1,6 @@
 # Testing Conflicts
 
-## Category of Scenarios: Two tablets modifying the same Case
+## Supported Scenarios
 
 ### DiffType: EventForm - Tablet 1 opens but doesn't complete Event Form, Tablet 2 opens and completes Event Form
 Steps:
