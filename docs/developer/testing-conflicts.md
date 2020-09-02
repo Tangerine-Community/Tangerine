@@ -11,34 +11,40 @@ Status: Complete
 
 ### DiffType: EventForm - Tablet 1 opens but doesn't complete Event Form, Tablet 2 opens and completes Event Form
 
-Steps:
-- Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Create a New Event of type "An Event with an event form you can delete" and open but do not submit the form in "An Event with an Event Form you can delete." Sync.
-- In PWA2, sync. Enter the case you just synced. Enter the event of type "An Event with an event form you can delete" and complete the form in "An Event with an Event Form you can delete." Sync.
-- In PWA1, Sync. This should *NOT* create a conflict. Check the case and confirm that the event of type "An Event with an event form you can delete" and its form were sync'd.
-- Check data/issues on server. No new issue.
+*Steps*
 
-### DiffType: EventForm - Tablet 1 creates new Event, Tablet 2 opens and completes Event Form
+Setup:
+- Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Create a New Event of type "An Event with an event form you can delete". Sync.
+- In PWA2, sync. 
 
-Steps:
-- Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Create a New Event of type "An Event with an event form you can delete"." Sync.
-- In PWA2, sync. Enter the case you just synced. Enter the event of type "An Event with an event form you can delete" and complete the form in "An Event with an Event Form you can delete." Sync.
-- In PWA1, Sync. This should *NOT* create a conflict. Check the case and confirm that the event of type "An Event with an event form you can delete" and its form were sync'd.
-- Check data/issues on server. No new issue.
+Create a divergence: 
+- In PWA1, open the form and exit (don't submit form). This should create a diverging tree in the revisions.
+- In PWA2, Enter the case you just synced. Enter the event of type "An Event with an event form you can delete" and complete the form in "An Event with an Event Form you can delete."  Sync.
 
-### DiffType: EventForm - Tablet 1 creates and opens Event, Tablet 2 opens and completes Event Form
-
-Steps:
-- Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Create a New Event of type "An Event with an event form you can delete"." Open that new event but *do not* click on the form "An Event Form you can delete". Sync.
-- In PWA2, sync. Enter the case you just synced. Enter the event of type "An Event with an event form you can delete" and complete the form in "An Event with an Event Form you can delete." Sync.
-- In PWA1, Sync. This should *NOT* create a conflict. Check the case and confirm that the event of type "An Event with an event form you can delete" and its form were sync'd.
-- Check data/issues on server. No new issue.
-
+Syncing to create the conflict:
+- In PWA1, Sync. *This should create a conflict.* Note that Sync status displays "Conflicts detected." This conflict is resolved on the client and sync'd to the server.
+- Check data/issues on server. There should be a new issue, which should display the following:
+```
+Merged: true
+DiffTypes:
+    (1) DIFF_TYPE__METADATA
+```
+- In PWA2, sync. This should *NOT* create a conflict. 
+- Check to see that data is identical on both PWA's.
+  
 ### DiffType: Event - Tablet 1 creates an new Event and Tablet 2 creates a new Event
 
-Steps:
-- Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Sync
+*Steps*
+
+Setup:
+- Create a new case with PWA1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Sync
 - In PWA2, sync. Enter the case you just synced. Create a New Event of type "An Event with an event form you can delete" and complete the form in "An Event with an Event Form you can delete." Sync.
-- In PWA1, Enter the same case (don't sync yet) and create a New Event of type "An Event with an event form you can delete". Complete the form in "An Event with an Event Form you can delete." Sync. *This should create a conflict.* Note that Sync status displays "Conflicts detected." This conflict is resolved on the client and sync'd to the server.
+
+Create a divergence: 
+- In PWA1, enter the same case (don't sync yet) and create a New Event of type "An Event with an event form you can delete". Complete the form in "An Event with an Event Form you can delete." 
+
+Syncing to create the conflict:
+- In PWA1, sync. *This should create a conflict.* Note that Sync status displays "Conflicts detected." This conflict is resolved on the client and sync'd to the server.
 - Check data/issues on server. There should be a new issue, which should display the following:
 ```
 Merged: true
@@ -63,10 +69,17 @@ DiffTypes:
   - Check the case on PWA2. There should be 2 instances of "An Event with an Event Form you can delete" - one from PWA1, and another from PWA2.
 
 ### DiffType: EventForm - Tablet 1 creates a new Event Form and Tablet 2 makes some other change
-Steps:
-- Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Create a New Event of type "An Event with an event form you can delete"." Open that new event but *do not* click on the form "An Event Form you can delete". Sync.
+*Steps*
+
+Setup:
+- Create a new case with PWA1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Create a New Event of type "An Event with an event form you can delete"." Open that new event but *do not* click on the form "An Event Form you can delete". Sync.
 - In PWA2, sync. Enter the case you just synced. View the "Registration for Role 1" form. Sync.
-- In PWA1, Enter the same case (don't sync yet) and enter a New Event of type "An Event with an event form you can delete". Complete the form in "An Event with an Event Form you can delete." Sync. *This should create a conflict.* Note that Sync status displays "Conflicts detected." This conflict is resolved on the client and sync'd to the server.
+
+Create a divergence: 
+- In PWA1, Enter the same case (don't sync yet) and enter a New Event of type "An Event with an event form you can delete". Complete the form in "An Event with an Event Form you can delete." 
+
+Syncing to create the conflict:
+- In PWA1, sync. *This should create a conflict.* Note that Sync status displays "Conflicts detected." This conflict is resolved on the client and sync'd to the server.
 - Check data/issues on server. There should be a new issue, which should display the following:
 ```
 Merged: true
@@ -83,8 +96,9 @@ DiffTypes:
     (1) DIFF_TYPE__METADATA
 ```
   - Check the case on PWA2. There should be 1 instances of "An Event with an Event Form you can delete" - with the form completed from PWA1
-  
-### DiffType: Metadata - Modify Case variables on Tablet 1 and Tablet 2
+
+### DiffType: Metadata - Change location on Tablet 1 and Tablet 2
+
 Steps:
 - In PWA1, pull up the case you just created. Submit a "Change Location of Case" form, setting it for Facility 1. *Don't Sync.*
 - In PWA2, pull up the same case. Submit a "Change Location of Case" form, setting it for Facility 2. Sync.
@@ -104,6 +118,11 @@ Status: Error
    Sync again. Note that Sync status displays "Conflicts detected."  This conflict is resolved on the client and sync'd to the server. 
    
 - In PWA2, pull up the case. Note that there are two "Change location of case" forms, one for Facility 1 and another for Facility 2. In the js console, enter `T.case._case.location.facility`. It should display "K0xhy1Su".
+
+  
+### DiffType: Metadata - Modify Case variables on Tablet 1 and Tablet 2
+
+TODO: Create a form in the Case Module that uses setVariable and getVariable function
 
 ## Scenarios not yet supported
 
