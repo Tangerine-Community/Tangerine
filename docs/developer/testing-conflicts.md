@@ -1,9 +1,8 @@
 # Testing Conflicts
 
-## Scenario: 2 Tablets working on the same case
+## Category of Scenarios: Two tablets modifying the same Case
 
-### DiffType: EventForm data conflict 4 - Tablet 1 opens but doesn't complete Event Form, Tablet 2 opens and completes Event Form
-
+### DiffType: EventForm - Tablet 1 opens but doesn't complete Event Form, Tablet 2 opens and completes Event Form
 Steps:
 - Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Sync
 - In PWA2, sync. Enter the case you just synced. Create a New Event of type "An Event with an event form you can delete" and complete the form in "An Event with an Event Form you can delete." Sync.
@@ -14,6 +13,10 @@ Steps:
   - Check data/issues on server - there may be three DIFF_TYPE__EVENT_FORMs and one  DIFF_TYPE__METADATA. Merged: true.
   - Check the case on PWA2 - how many instances of "An Event with an Event Form you can delete" are there? Are they duplicates, or does it have the one from PWA2?
 
+### DiffType: EventForm - Tablet 1 creates an new Event Form and Tablet 2 makes some other change
+Steps:
+- ...
+
 ### DiffType: Metadata - Modify Case variables on Tablet 1 and Tablet 2
 Steps:
 - ...
@@ -21,6 +24,21 @@ Steps:
 ### DiffType: Event - Tablet 1 creates an new Event and Tablet 2 creates a new Event
 Steps:
 - ...
+
+## Scenarios not yet supported
+
+### DiffType: EventForm - Tablet 1 removes an Event Form and Tablet 2 makes some other change
+
+### DiffType: EventForm - Tablet 1 makes an Event Form required and Tablet 2 makes some other change
+
+### DiffType: EventForm - Tablet 1 makes adds an Event Form variable and Tablet 2 makes some other change
+
+### DiffType: EventForm - Tablet 1 makes modifies existing Event Form variable and Tablet 2 makes some other change
+
+### DiffType: EventForm - Tablet 1 makes modifies existing Event Form variable and Tablet 2 modifies the same Event Form variable with same value
+
+### DiffType: EventForm - Tablet 1 makes modifies existing Event Form variable and Tablet 2 modifies the same Event Form variable with different value
+
 
 ## Exploring unexpected sync conflicts
 
