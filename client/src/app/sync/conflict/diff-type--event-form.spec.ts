@@ -350,23 +350,27 @@ describe('diffType_EventForm', () => {
               : event
           })
         },
-        diffs: [
-          {
-            "type": "DIFF_TYPE__EVENT_FORM",
-            "resolved": false,
-            "info": {
-              "where": "b",
+        diffs: [{
+          "type": "DIFF_TYPE__EVENT_FORM",
+          "resolved": false,
+          "info": {
+            "where": "b",
+            "caseEventId": "event1",
+            "eventFormId": "event-form-3",
+            "formResponseId": "form-response-3",
+            "required": null,
+            "complete": null,
+            "differences": [
+              "new"
+            ],
+            "newEventform": {
+              "id": "event-form-3",
               "caseEventId": "event1",
-              "eventFormId": "event-form-3",
-              "formResponseId": "form-response-3",
-              "required": null,
-              "complete": null,
-              "differences": [
-                "new"
-              ]
+              "eventFormDefinitionId": "event-form-definition-3",
+              "formResponseId": "form-response-3"
             }
           }
-        ],
+        }],
         caseDefinition
       }
     })
@@ -418,7 +422,13 @@ describe('diffType_EventForm', () => {
               "complete": null,
               "differences": [
                 "new"
-              ]
+              ],
+              "newEventform": {
+                "id": "event-form-3",
+                "caseEventId": "event1",
+                "eventFormDefinitionId": "event-form-definition-3",
+                "formResponseId": "form-response-3"
+              }
             }
           },
           {
@@ -433,7 +443,13 @@ describe('diffType_EventForm', () => {
               "complete": null,
               "differences": [
                 "new"
-              ]
+              ],
+              "newEventform": {
+                "id": "event-form-4",
+                "caseEventId": "event1",
+                "eventFormDefinitionId": "event-form-definition-3",
+                "formResponseId": "form-response-4"
+              }
             }
           }
         ],
