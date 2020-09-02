@@ -174,19 +174,11 @@ export class SyncCouchdbService {
           "selector": pushSelector
         }
     }
-
     let pushReplicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-    // if (pushReplicationStatus.pushConflicts.length > 0) {
-      // await this.resolveConflicts(pushReplicationStatus, userDb, remoteDb, 'push', caseDefinitions);
-      // TODO: tell user to wait and resolve conflicts later in the pull... and it may be as simple as waiting...
-     // TODO : consider supplying some feedback in case we need to push again due to conflicts
-    // }
     let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
-
-
-
+  
   async push(userDb, remoteDb, pouchSyncOptions): Promise<ReplicationStatus> {
     const status = <ReplicationStatus>await new Promise((resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0

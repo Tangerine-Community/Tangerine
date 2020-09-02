@@ -37,6 +37,7 @@ export class SyncService {
 
   syncMessage: any = {};
   public readonly syncMessage$: Subject<any> = new Subject();
+  replicationStatus: ReplicationStatus
 
   async sync(useSharedUser = false) {
     const appConfig = await this.appConfigService.getAppConfig()
@@ -58,7 +59,7 @@ export class SyncService {
       }
     })
 
-    const replicationStatus: ReplicationStatus = await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
+    this.replicationStatus = await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
       serverUrl: appConfig.serverUrl,
       groupId: appConfig.groupId,
       deviceId: device._id,

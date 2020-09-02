@@ -1,5 +1,6 @@
 import { SyncService } from './../../sync.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ReplicationStatus} from "../../classes/replication-status.class";
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
 const STATUS_IN_PROGRESS = 'STATUS_IN_PROGRESS'
@@ -23,6 +24,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   otherMessage: any
   subscription: any
   show:boolean=false;
+  replicationStatus: ReplicationStatus
 
   constructor(
     private syncService: SyncService,
@@ -71,7 +73,7 @@ export class SyncComponent implements OnInit, OnDestroy {
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending;'
           }
-          this.syncMessage = progress.docs_written + ' docs saved; ' + pendingMessage
+          this.syncMessage = progress.docs_written + ' docs synced; ' + pendingMessage
           if (progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
           }
@@ -82,6 +84,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     })
     try {
       await this.syncService.sync()
+      this.replicationStatus = this.syncService.replicationStatus
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
     } catch (e) {

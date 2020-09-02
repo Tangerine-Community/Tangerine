@@ -47,7 +47,7 @@ Steps:
 
 Steps:
 - Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Sync
-- In PWA2, sync. Enter the case you just synced. Create a New Event of type "An Event with an event form you can delete".  and complete the form in "An Event with an Event Form you can delete." Sync.
+- In PWA2, sync. Enter the case you just synced. Create a New Event of type "An Event with an event form you can delete" and complete the form in "An Event with an Event Form you can delete." Sync.
 - In PWA1, Enter the same case (don't sync yet) and create a New Event of type "An Event with an event form you can delete". Complete the form in "An Event with an Event Form you can delete." Sync. *This should create a conflict.* 
   - Check data/issues on server - should be two DIFF_TYPE__EVENT_FORMs and one  DIFF_TYPE__METADATA. Merged: true.
   - Check the case on PWA1 - how many instances of "An Event with an Event Form you can delete" are there? Are they duplicates, or does it have the one from PWA2?
