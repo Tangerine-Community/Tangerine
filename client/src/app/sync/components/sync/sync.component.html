@@ -33,8 +33,16 @@
           <button mat-raised-button color="primary" (click)="sync()">Start</button>
           <mat-progress-bar mode="buffer" value="100"></mat-progress-bar>
           <div class="status">Status: Complete</div>
-          <div class="status">{{syncMessage}}</div>
-          <div class="status">{{direction}}</div>
+          <div class="status" *ngIf="replicationStatus">
+            <div *ngIf="replicationStatus.pullConflicts?.length > 0">
+              <p class="mat-error">Conflicts detected.</p>
+            </div>
+            <ul>
+              <li>Pulled from the server: {{replicationStatus.pulled}}</li>
+              <li>Pushed to the server: {{replicationStatus.pushed}}</li>
+            </ul>
+            
+          </div>
           <div class="debugging">
             <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
           </div>

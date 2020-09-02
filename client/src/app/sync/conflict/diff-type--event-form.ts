@@ -5,8 +5,7 @@ import {CaseDiffTypes} from "./diff-types.const";
 
 export const DIFF_TYPE__EVENT_FORM = 'DIFF_TYPE__EVENT_FORM'
 
-// TODO: move to a more general event form diff, and expand to deal with data(?), required, complete, and formResponseId fields
-// What happens when an event form is marked complete? An event can be marked complete after that.
+// TODO: What happens when an event form is marked complete? An event can be marked complete after that.
 // should we run this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id) if complete is true in the conflictDoc?
 // run the merge doc through the case service reducers - add export to the reducers, and run them in our resolve functions.
 // should this running of the reducers be run here or in the higher merge function?
@@ -30,7 +29,7 @@ function differ(comparison:string, eventForm: EventForm, comparisonEventForms: A
       differences.push('required')
     }
   } else {
-    // throw a diff when there is no matches - i.e. a new eventForm
+    // throw a diff when eventForms does not exist in comparisonEventForms - i.e. a new eventForm
     differences.push('new')
   }
 
@@ -45,7 +44,8 @@ function differ(comparison:string, eventForm: EventForm, comparisonEventForms: A
         formResponseId: eventForm.formResponseId,
         required: eventForm.required ? eventForm.required : null,
         complete: eventForm.complete ? eventForm.complete : null,
-        differences: differences
+        differences: differences,
+        newEventform: eventForm
       }
     }]
   } else {
@@ -53,6 +53,14 @@ function differ(comparison:string, eventForm: EventForm, comparisonEventForms: A
   }
 }
 
+/**
+ * Compare all eventForms between the 2 docs.
+ * Only looping through the eventForms in b - the losing conflict - to see if there are any differences that should be merged with a - the winning conflict.
+ * @param a
+ * @param b
+ * @param diffs
+ * @param caseDefinition
+ */
 export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   const aEventForms:Array<EventForm> = a.events.reduce((eventForms, caseEvent) => {
     return [...eventForms, ...caseEvent.eventForms]
@@ -62,12 +70,6 @@ export function detect({a, b, diffs, caseDefinition}:DiffInfo):DiffInfo {
   }, [])
   diffs = [
     ...diffs,
-    ...aEventForms.reduce((diffs, aEventForm) => {
-      return [
-        ...diffs,
-        ...(differ('a', aEventForm, bEventForms))
-      ]
-    }, []),
     ...bEventForms.reduce((diffs, bEventForm) => {
       return [
         ...diffs,
@@ -114,35 +116,14 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
              })
         })
       } else if (diff.info.differences.includes('new')) {
-        // find the new eventForm
-             diffInfo[diff.info.where].events.forEach(event => {
-               let eventform;
-               if (event.id === diff.info.caseEventId) {
-                 event.eventForms.find(currentEventform => {
-                   if (currentEventform.formResponseId === diff.info.formResponseId) {
-                     eventform =  currentEventform
-                     if (eventform) {
-                       // push to the merged event.
-                       merged.events.map(event => {
-                         if (event.id === diff.info.caseEventId) {
-                           event.eventForms.push(eventform)
-                         }
-                       })
-                     }
-                   }
-                 })
-               }
-               // if (eventform) {
-               //   console.log("found")
-               //   // push to the merged event.
-               //   merged.events.map(event => {
-               //     if (event.id === diff.info.caseEventId) {
-               //       event.eventForms.push(eventform)
-               //     }
-               //   })
-               // }
-             })
-
+        // Add new eventForm to the correct event.
+        let comparison = diff.info.where = 'a' ? 'b' : 'a';
+        let newEventform = diff.info.newEventform
+        merged.events.forEach(event => {
+         if (event.id === diff.info.caseEventId) {
+           event.eventForms.push(newEventform)
+         }
+        })
       }
   })
 
