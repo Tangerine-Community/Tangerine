@@ -2,7 +2,7 @@
 
 ## Scenario: 2 Tablets working on the same case
 
-### Metadata conflict
+### DiffType: Metadata - Two cases view the same case but make no modification (this __should not__ cause a conflict)
 
 A metadata conflict is easy to create: whenever a case is viewed, its metadata is modified. 
 
@@ -14,25 +14,27 @@ Steps:
 - In PWA1, sync. Still no conflicts. The new form does not appear either. Do a hard refresh. The new form should now appear in the case. Sync.
 - In PWA2, sync. Conflicts arise. Check data/issues on server - should be type (1) DIFF_TYPE__METADATA. Merged: true. There is a 50/50 chance this record won't have a conflict...
 
-### Event data conflict 1 - Don't touch the event
+### DiffType: EventForm - data conflict 1 - Don't touch the event (this __should not__ cause a conflict)
+So far, this has not made a conflict for me...
 
 Steps:
 - Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. On the same case, create a New Event of type "An Event with an event form you can delete". Don't view that event or enter data in its form. Sync. 
 - In PWA2, sync. Enter the case you just synced and complete the form in "An Event with an Event Form you can delete." Sync.
 - In PWA1, sync. The new form does not appear. Do a hard refresh. The new form should now appear in the case. Sync.
 - In PWA2, sync. Conflicts arise. Or not. Check data/issues on server - should be type (1) DIFF_TYPE__METADATA. Merged: true. There is a 50/50 chance this record won't have a conflict...
-- So far, this has not made a conflict for me...
 
-### Event data conflict 2 - Touch the event
+
+### DiffType: EventForm - data conflict 2 - Touch the event (this __should not__ cause a conflict)
+So far, this has not made a conflict for me...
 
 Steps:
 - Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. On the same case, create a New Event of type "An Event with an event form you can delete". View the event, but don't view the form. Sync. 
 - In PWA2, sync. Enter the case you just synced and complete the form in "An Event with an Event Form you can delete." Sync.
 - In PWA1, sync. The new form does not appear. Do a hard refresh. The new form should now appear in the case. Sync.
 - In PWA2, sync. Conflicts arise. Or not. Check data/issues on server - should be type (1) DIFF_TYPE__METADATA. Merged: true. There is a 50/50 chance this record won't have a conflict...
-- So far, this has not made a conflict for me...
 
-### Event data conflict 3 - Open but don't save the form
+
+### DiffType: EventForm - data conflict 3 - Open but don't save the form (this __should not__ cause a conflict)
 
 Steps:
 - Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. On the same case, create a New Event of type "An Event with an event form you can delete". View the event, then view the form, but don't submit it. Sync. 
@@ -43,7 +45,7 @@ Steps:
 
 
 
-### Event data conflict 3 - same but different event forms.
+### DiffType: EventForm data conflict 4 - Tablet 1 opens but doesn't complete Event Form, Tablet 2 opens and completes Event Form
 
 Steps:
 - Create a new case with pwa1. Fill out "Registration for Role 1" - enter '0' for "How many participant of type Role 2 would you like to enroll in this case?", submit. Sync
@@ -55,3 +57,8 @@ Steps:
   - Check data/issues on server - there may be three DIFF_TYPE__EVENT_FORMs and one  DIFF_TYPE__METADATA. Merged: true.
   - Check the case on PWA2 - how many instances of "An Event with an Event Form you can delete" are there? Are they duplicates, or does it have the one from PWA2?
 
+## DiffType: Metadata - Modify Case variables on Tablet 1 and Tablet 2
+Steps:
+- ...
+
+## DiffType: Event - Tablet 1 creates an new Event and Tablet 2 creates a new Event
