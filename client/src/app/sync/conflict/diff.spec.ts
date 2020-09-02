@@ -86,7 +86,7 @@ describe('diff', () => {
     expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT_FORM)
     expect(diffInfo.diffs[0].resolved).toEqual(false)
     expect(diffInfo.diffs[0].info.where).toEqual('b')
-    expect(diffInfo.diffs[0].info.conflicts[0]).toEqual('complete')
+    expect(diffInfo.diffs[0].info.differences[0]).toEqual('complete')
     expect(diffInfo.diffs[0].info.eventFormId).toEqual('event-form-1')
     expect(diffInfo.diffs[0].info.formResponseId).toEqual('form-response-1')
   })

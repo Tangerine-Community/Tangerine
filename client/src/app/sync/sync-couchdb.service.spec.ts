@@ -430,7 +430,7 @@ describe('SyncCouchdbService', () => {
       locationQueries: [],
       deviceSyncLocations: device.syncLocations
     }, caseDefinitions).then(async status => {
-      expect(status.pushed).toBe(1)
+      expect(status.pushed).toBe(3)
       expect(status.pullConflicts.length).toBe(1)
       done()
     })

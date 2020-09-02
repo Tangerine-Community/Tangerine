@@ -98,7 +98,7 @@ const b:any = {
   }
 }
 
-describe('diffType_EventForm', () => {
+describe('diffType_Metadata', () => {
 
   it('should detect difference in 6 properties', () => {
     const aCopy = JSON.parse(JSON.stringify(a))
@@ -116,7 +116,7 @@ describe('diffType_EventForm', () => {
     expect(diffInfo.diffs[0].info.differences.length).toEqual(6)
   })
 
-  fit('should resolve a difference that has a complete property', () => {
+  it('should resolve a difference that has a complete property', () => {
     const aCopy = JSON.parse(JSON.stringify(a))
     const bCopy = JSON.parse(JSON.stringify(b))
     const mergeInfo = diffType_Metadata.resolve({
