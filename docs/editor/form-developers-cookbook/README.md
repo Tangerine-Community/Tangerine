@@ -103,4 +103,11 @@ In the following example we display content in a set of tabs.
 
 ![tangy-form-tabs](./tangy-form-tabs.gif)
 
+## Dynamic Changing of Text Color 
+In the following example we change the color of text depending on a user's selection.  
+
+[Run example](https://dynamically-change-text-color.glitch.me/) - [Open Editor](https://dynamically-change-text-color.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/dynamically-change-text-color)
+
+![dynamically-change-text-color](./dynamically-change-text-color.gif)
+
 
