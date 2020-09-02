@@ -117,11 +117,18 @@ export function resolve({diffInfo, merged}:MergeInfo):MergeInfo {
         })
       } else if (diff.info.differences.includes('new')) {
         // Add new eventForm to the correct event.
-        let comparison = diff.info.where = 'a' ? 'b' : 'a';
         let newEventform = diff.info.newEventform
         merged.events.forEach(event => {
          if (event.id === diff.info.caseEventId) {
-           event.eventForms.push(newEventform)
+           // if resolveConflicts has just resolved a new event, check if this newEventform was already added 
+           const existingEventform: EventForm = event.eventForms.find(eventForm => {
+             if (eventForm.id === newEventform.id) {
+               return eventForm
+             }
+           })
+           if (!existingEventform) {
+             event.eventForms.push(newEventform)
+           }
          }
         })
       }
