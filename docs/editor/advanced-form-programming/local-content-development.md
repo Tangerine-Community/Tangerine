@@ -41,6 +41,7 @@ npm list -g tangerine-preview
 ```
 
 ## Set up VS Code with Syntax Highlighting for `on-open`, `on-change`, etc.
+Ideally we would have a VS Code plugin for you to install. Until then, this is our workaround. If you are interested in helping with the development of a VS Code plugin, feel free to reach out to us via the issue queue.
 
 ### Step 1 
 Open Visual Studio configuration file. If you have the VS Code CLI installed, run the following in a terminal.
