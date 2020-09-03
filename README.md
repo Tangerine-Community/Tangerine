@@ -187,6 +187,12 @@ Now open <http://localhost/> in your web browser. To debug the node.js server, i
 
 __Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox publicly accessible at a URL. Tangerine Developers have had good luck using [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL that NGROK gives you. It can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
 
+Example config.sh when using ngrok:
+```
+T_HOST_NAME='123random.ngrok.io'
+T_PROTOCOL="https"
+```
+
 ### Develop for Client 
 Prereqs include node and `npm install -g @angular/cli`. 
 ```
@@ -208,11 +214,6 @@ ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
 
-
-```
-T_HOST_NAME='123random.ngrok.io'
-T_PROTOCOL="https"
-```
 
 ## Deprecated Version of Tangerine
 
