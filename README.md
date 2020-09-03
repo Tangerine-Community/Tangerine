@@ -185,6 +185,8 @@ cp config.defaults.sh config.sh
 
 Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
+__Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox publicly accessible at a URL. Tangerine Developers have had good luck using [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL that NGROK gives you. It can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
+
 ### Develop for Client 
 Prereqs include node and `npm install -g @angular/cli`. 
 ```
@@ -197,7 +199,7 @@ npm start
 
 View the app at <http://localhost:4200>.
 
-If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
+__Optional__: If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
 
 ```
 rm -r node_modules/tangy-form
@@ -205,7 +207,7 @@ ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
-If you are developing PWA's and want to test locally, or if you are testing APK's and want to update the content easily while doing local development (because the APK's basically act as a container for the PWA's), use [ngrok](https://ngrok.com/) to create an https tunnel to your local code. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh.
+
 
 ```
 T_HOST_NAME='123random.ngrok.io'
