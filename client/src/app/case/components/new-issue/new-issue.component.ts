@@ -3,6 +3,7 @@ import { UserService } from './../../../shared/_services/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CaseService } from '../../services/case.service';
+import { AppContext } from 'src/app/app-context.enum';
 
 @Component({
   selector: 'app-new-issue',
@@ -41,7 +42,7 @@ export class NewIssueComponent implements OnInit {
         const response = new TangyFormResponseModel(event.target.response)
         const title = response.inputsByName.title.value
         const description = response.inputsByName.description.value
-        const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName)
+        const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, [AppContext.Editor, AppContext.Client])
         this.router.navigate(['issue', issue._id])
         
 
