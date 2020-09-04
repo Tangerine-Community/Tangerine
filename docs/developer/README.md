@@ -18,8 +18,9 @@
 ## Managing Deployments
 - [Upgrades](upgrades.md)
 
-## Load Testing
+## Testing
 - [Load Testing](load-testing.md)
+- [Testing conflicts](testing-conflicts.md)
 
 ## Developing Cordova Plugins
 - [cordova-plugin-development.md](cordova-plugin-development.md)
