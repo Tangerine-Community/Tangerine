@@ -525,5 +525,33 @@
       "push": true,
       "pull": true 
     }
+  },
+  {
+    "id" : "kitchen-sink-form",
+    "src" : "./assets/kitchen-sink-form/form.html",
+    "description" : "Kitchen Sink Form",
+    "listed" : false,
+    "title" : "Kitchen Sink Form",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
   }
 ]
