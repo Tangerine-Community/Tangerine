@@ -1,3 +1,4 @@
+import { UserDatabase } from './../shared/_classes/user-database.class';
 import { HttpClient } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
@@ -16,14 +17,14 @@ export class TangyFormService {
   }
 
   initialize(groupId) {
-    this.groupId = groupId
+    this.db = new UserDatabase('Editor', groupId)
   }
 
   // Would be nice if this was queue based so if two saves get called at the same time, the differentials are sequentials updated
   // into the database. Using a getter and setter for property fields, this would be one way to queue.
   async saveResponse(response) {
     try {
-      const doc = <any>await this.httpClient.post(`/group-responses/update/${this.groupId}`, { response }).toPromise()
+      const doc = <any>await this.db.post(response)
       return doc
     } catch (e) {
       return false
@@ -32,7 +33,7 @@ export class TangyFormService {
 
   async getResponse(responseId) {
     try {
-      const doc = <any>await this.httpClient.get(`/group-responses/read/${this.groupId}/${responseId}`).toPromise()
+      const doc = <any>await this.db.get(responseId)
       return doc
     } catch (e) {
       return false
