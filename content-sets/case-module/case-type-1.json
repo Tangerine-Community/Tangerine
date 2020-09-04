@@ -59,7 +59,7 @@
           "name": "Data Collector causes Issue to be created due to use of API in the form",
           "autoPopulate": true,
           "required": true,
-          "repeatable": false 
+          "repeatable": true 
         },
         {
           "id": "event-form-definition-vwgpn6",
