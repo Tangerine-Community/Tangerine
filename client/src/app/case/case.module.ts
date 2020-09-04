@@ -1,3 +1,4 @@
+import { NewIssueComponent } from './components/new-issue/new-issue.component';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { IssueComponent } from './components/issue/issue.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -59,7 +60,8 @@ import { IssuesComponent } from './components/issues/issues.component';
     EventFormsForParticipantComponent,
     EventFormsForParticipantPageComponent,
     CustomAppComponent,
-    IssuesComponent
+    IssuesComponent,
+    NewIssueComponent
   ]
 })
 export class CaseModule { }

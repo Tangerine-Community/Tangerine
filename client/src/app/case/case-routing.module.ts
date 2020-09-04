@@ -1,3 +1,4 @@
+import { NewIssueComponent } from './components/new-issue/new-issue.component';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { IssueComponent } from './components/issue/issue.component';
 import { CreateProfileGuardService } from './../shared/_guards/create-profile-guard.service';
@@ -73,6 +74,11 @@ const routes: Routes = [
   { path: 'issue/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'issue/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'issue/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
+  {
+    path: 'new-issue/:caseId/:eventId/:eventFormId',
+    component: NewIssueComponent,
+    canActivate: [LoginGuard]
+  }
  
  
 ];

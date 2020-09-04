@@ -20,6 +20,7 @@ export class EventFormComponent implements OnInit {
   caseEventDefinition: CaseEventDefinition
   eventFormDefinition: EventFormDefinition
   eventForm: EventForm
+  caseId:string
   formInfo: FormInfo
   formId:string
   templateId:string
@@ -52,7 +53,8 @@ export class EventFormComponent implements OnInit {
     this.eventFormRedirectUrl = window['eventFormRedirect']
     this.eventFormRedirectBackButtonText = window['eventFormRedirectBackButtonText']
     this.route.params.subscribe(async params => {
-      await this.caseService.load(params.caseId)
+      this.caseId = params.caseId
+      await this.caseService.load(this.caseId)
       this.caseService.setContext(params.eventId, params.eventFormId)
       this.window.caseService = this.caseService
       this.caseEvent = this
