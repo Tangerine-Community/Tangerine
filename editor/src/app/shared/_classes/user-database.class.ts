@@ -10,22 +10,24 @@ export class UserDatabase {
   buildChannel:string;
   groupId:string;
 
-  constructor(username: string, userId: string, key:string = '', deviceId: string, shared = false, buildId = '', buildChannel = '', groupId = '') {
+  constructor(userId: string, groupId = '') {
     this.userId = userId
-    this.username = username
-    this.name = username
-    this.deviceId = deviceId
-    this.buildId = buildId
-    this.buildChannel = buildChannel
+    this.username = userId
+    this.name = userId
+    this.deviceId = 'EDITOR' 
+    this.buildId = 'EDITOR' 
+    this.buildChannel = 'EDITOR' 
     this.groupId = groupId 
   }
 
   async get(id) {
-    await axios.get(`/api/${this.groupId}/${id}`)
+    const token = localStorage.getItem('token');
+    return (<any>await axios.get(`/group-responses/read/${this.groupId}/${id}`, { headers: { authorization: token }})).data
   }
 
   async put(doc) {
-    return await axios.put(`/api/${this.groupId}`, {
+    const token = localStorage.getItem('token');
+    return await (<any>axios.post(`/group-responses/update/${this.groupId}`, {response: {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
@@ -36,11 +38,18 @@ export class UserDatabase {
       buildChannel: this.buildChannel,
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
-    });
+    }},
+    {
+      headers: {
+        authorization: token
+      }
+    })).data;
   }
 
   async post(doc) {
-    return await axios.post(`/api/${this.groupId}`, {
+    const token = localStorage.getItem('token');
+    debugger
+    return (<any>await axios.post(`/group-responses/update/${this.groupId}`, {response: {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
@@ -51,10 +60,18 @@ export class UserDatabase {
       buildChannel: this.buildChannel,
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
-    });
+    }},
+    {
+      headers: {
+        authorization: token
+      }
+    }
+    )).data;
   }
 
   async remove(doc) {
+    // This is not implemented...
+    const token = localStorage.getItem('token');
     return await axios.delete(`/api/${this.groupId}`, doc)
   }
 
