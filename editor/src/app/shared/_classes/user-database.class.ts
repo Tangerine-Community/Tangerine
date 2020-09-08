@@ -48,7 +48,6 @@ export class UserDatabase {
 
   async post(doc) {
     const token = localStorage.getItem('token');
-    debugger
     return (<any>await axios.post(`/group-responses/update/${this.groupId}`, {response: {
       ...doc,
       tangerineModifiedByUserId: this.userId,
