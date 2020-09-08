@@ -7,4 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'online-survey-app';
+  isLoggedIn = true;
+  languageDirection = 'ltr';
+  appName = 'Evano';
 }
