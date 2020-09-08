@@ -24,7 +24,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/tangerine-theme.scss",
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -119,6 +120,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "online-survey-app"
+    }
+  },
+  "defaultProject": "online-survey-app",
+  "cli": {
+    "analytics": false
+  }
 }
