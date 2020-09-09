@@ -45,6 +45,9 @@ import 'tangy-form/input/tangy-toggle.js';
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc
 
+import { t } from 'tangy-form/util/t.js';
+(window as any).t = t 
+
 import 'date-carousel/date-carousel.js'
 
 // An attempt to fix something...
