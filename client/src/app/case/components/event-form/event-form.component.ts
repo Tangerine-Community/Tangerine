@@ -1,7 +1,7 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -42,7 +42,9 @@ export class EventFormComponent implements OnInit {
     private hostElementRef: ElementRef,
     private router: Router,
     private caseService: CaseService,
+    private ref: ChangeDetectorRef
   ) {
+    ref.detach()
     this.window = window
   }
 
@@ -117,6 +119,7 @@ export class EventFormComponent implements OnInit {
         }, 500)
       })
       this.loaded = true
+      this.ref.detectChanges()
     })
   }
   
