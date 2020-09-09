@@ -61,11 +61,13 @@ export class UpdateService {
     // Use try in case this is an old account where info doc was not created.
     try {
       const infoDoc = await userDb.get('info');
-      atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex')
+      atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc['atUpdateIndex'] : 0
       await this.variableService.set('atUpdateIndex', atUpdateIndex);
+      console.log("migrateInfodoc atUpdateIndex migrated from infoDoc: " + atUpdateIndex)
     } catch (e) {
       await this.variableService.set('atUpdateIndex', 0);
       atUpdateIndex = 0;
+      console.log("migrateInfodoc atUpdateIndex set to: " + atUpdateIndex)
     }
     return atUpdateIndex;
   }
