@@ -9,7 +9,7 @@
     *ngIf="hasEventFormRedirect"
     (click)="eventFormRedirect()"
 >
-  <mwc-icon class="icon">chevron_left</mwc-icon> {{eventFormRedirectBackButtonText}}
+  <mwc-icon class="icon">chevron_left</mwc-icon> <span [innerHTML]="eventFormRedirectBackButtonText"></span>
 </div>
 <app-tangy-forms-player #formPlayer></app-tangy-forms-player>
 
