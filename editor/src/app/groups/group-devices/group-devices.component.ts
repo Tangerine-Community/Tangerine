@@ -172,11 +172,6 @@ export class GroupDevicesComponent implements OnInit {
     })
   }
 
-  async addDevice() {
-    const device = <GroupDevice>await this.groupDevicesService.createDevice(this.groupId)
-    this.editDevice(device._id)
-  }
-
   async resetDevice(deviceId:string) {
     const device = await this.groupDevicesService.resetDevice(this.groupId, deviceId)
     this.update()
@@ -279,7 +274,7 @@ export class GroupDevicesComponent implements OnInit {
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="
         ">
-          <tangy-input name="number_of_devices" label="Number of devices to generate" type="number" required></tangy-input>
+          <tangy-input name="number_of_devices" value="1" label="Number of devices to generate" type="number" required></tangy-input>
           <tangy-location
             required
             name="assigned_location"
@@ -302,7 +297,6 @@ export class GroupDevicesComponent implements OnInit {
     `
     window['dialog'].querySelector('tangy-form').addEventListener('submit', async (event) => {
       const numberOfDevicesToGenerate = parseInt(event.target.inputs.find(input => input.name === 'number_of_devices').value) 
-      debugger
       const assignedLevels = event.target.inputs.find(input => input.name === 'assigned_location').showLevels.split(',')
       const assignedLocationNodes = event.target.inputs.find(input => input.name === 'assigned_location').value
       const syncLevels = event.target.inputs
