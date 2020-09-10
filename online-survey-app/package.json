@@ -21,8 +21,11 @@
     "@angular/platform-browser": "~10.1.0",
     "@angular/platform-browser-dynamic": "~10.1.0",
     "@angular/router": "~10.1.0",
+    "@webcomponents/webcomponentsjs": "^2.4.4",
     "material-design-icons-iconfont": "^6.1.0",
+    "redux": "^4.0.5",
     "rxjs": "~6.6.0",
+    "tangy-form": "^4.18.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
