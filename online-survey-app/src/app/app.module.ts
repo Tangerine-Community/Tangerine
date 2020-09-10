@@ -24,7 +24,10 @@ import { HttpClientModule } from '@angular/common/http';
     MatToolbarModule,
     MatMenuModule,
     MatIconModule,
-    HttpClientModule
+    HttpClientModule,
+    MatCardModule,
+    MatTabsModule,
+    MatListModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
