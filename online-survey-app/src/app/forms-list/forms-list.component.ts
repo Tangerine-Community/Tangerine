@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FormsListComponent implements OnInit {
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(private httpClient: HttpClient) { }
+  formsList;
+  async ngOnInit(): Promise<any> {
+    this.formsList = await this.httpClient.get('./assets/forms.json').toPromise();
   }
 
 }
