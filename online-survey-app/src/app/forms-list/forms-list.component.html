@@ -1,9 +1,9 @@
 <mat-tab-group>
-    <mat-tab label="{{'My Forms'}}">
+    <mat-tab label="{{'My Surveys'}}">
       <mat-card class="tangy-card-content-container">
         <mat-list role="list">
           <mat-list-item role="listitem" class="tangy-location-list">
-            <span class="tangy-foreground-primary">{{'Select Form Name'}}</span>
+            <span class="tangy-foreground-primary">{{'Select Survey Name'}}</span>
           </mat-list-item>
           <mat-list-item role="listitem" class="tangy-location-list" *ngFor="let form of formsList">
             <a class="tangy-foreground-primary" routerLink="/tangy-forms/new/{{form.id}}">
