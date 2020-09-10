@@ -8,13 +8,13 @@ import { AppConfig } from '../classes/app-config';
 export class AppConfigService {
 
   constructor(private httpClient: HttpClient) { }
-  async getAppConfig(): Promise<AppConfig> {
+  async getAppConfig(): Promise<Partial<AppConfig>> {
     try {
       const data = await this.httpClient.get('./assets/app-config.json').toPromise() as AppConfig;
       return data;
     } catch (error) {
       console.error(error);
-      return { appName: '', languageCode: '', languageDirection: '' };
+      return { appName: '' };
     }
   }
 
