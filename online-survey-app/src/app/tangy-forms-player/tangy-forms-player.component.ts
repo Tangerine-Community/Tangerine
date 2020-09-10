@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsServiceService } from '../shared/_services/forms-service.service';
 
 @Component({
   selector: 'app-tangy-forms-player',
@@ -9,12 +11,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class TangyFormsPlayerComponent implements OnInit {
   formMarkup;
-  constructor(private httpClient: HttpClient, private sanitizer: DomSanitizer) { }
+  constructor(private router: ActivatedRoute, private sanitizer: DomSanitizer, private formsService: FormsServiceService) { }
 
   async ngOnInit(): Promise<any> {
-    const forms = await this.httpClient.get('./assets/forms.json').toPromise();
-    const data = await this.httpClient.get(forms[0].src, {responseType: 'text'}).toPromise();
+    const formId = this.router.snapshot.paramMap.get('formId');
+    const data = await this.formsService.getFormMarkUpById(formId);
     this.formMarkup = this.sanitizer.bypassSecurityTrustHtml(data);
   }
-
 }
