@@ -5,17 +5,22 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatCardModule} from '@angular/material/card';
+import {MatTabsModule} from '@angular/material/tabs';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatListModule} from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { TangySvgLogoComponent } from './shared/tangy-svg-logo/tangy-svg-logo.component';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsListComponent } from './forms-list/forms-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TangySvgLogoComponent,
-    TangyFormsPlayerComponent
+    TangyFormsPlayerComponent,
+    FormsListComponent
   ],
   imports: [
     BrowserModule,
