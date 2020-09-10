@@ -8,11 +8,14 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatMenuModule} from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { TangySvgLogoComponent } from './shared/tangy-svg-logo/tangy-svg-logo.component';
+import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TangySvgLogoComponent
+    TangySvgLogoComponent,
+    TangyFormsPlayerComponent
   ],
   imports: [
     BrowserModule,
@@ -20,7 +23,8 @@ import { TangySvgLogoComponent } from './shared/tangy-svg-logo/tangy-svg-logo.co
     BrowserAnimationsModule,
     MatToolbarModule,
     MatMenuModule,
-    MatIconModule
+    MatIconModule,
+    HttpClientModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
