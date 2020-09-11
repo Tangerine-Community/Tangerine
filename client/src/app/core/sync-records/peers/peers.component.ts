@@ -49,6 +49,10 @@ export class PeersComponent implements OnInit, AfterContentInit {
     }
   }
 
+  t(fragment) {
+    return window['t'](fragment)
+  }
+
   ngAfterContentInit() {
     // const startAdvertisingBtnEl = this.p2p.nativeElement.querySelector('#startAdvertisingBtn');
     const startAdvertisingBtnEl = this.peersService.el;
