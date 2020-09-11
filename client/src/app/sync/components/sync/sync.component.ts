@@ -30,6 +30,11 @@ export class SyncComponent implements OnInit, OnDestroy {
     private syncService: SyncService,
   ) { }
 
+  t(fragment) {
+    return window['t'](fragment)
+  }
+
+
   async ngOnInit() {
     this.syncMessage = ''
     this.direction = ''
