@@ -266,9 +266,9 @@ export const updates = [
   },
   {
     requiresViewsUpdate: false,
-    script: async (userDb, appConfig, userService: UserService) => {
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
       // syncProtocol uses a single shared db for all users. Update only once.
-      if (appConfig.syncProtocol === '2' && localStorage.getItem('ran-update-v3.9.0')) return
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.0')) return
       console.log('Updating to v3.9.0...')
       try {
         const view = await userDb.get('_design/responsesUnLockedAndNotUploaded')
@@ -277,7 +277,7 @@ export const updates = [
       }
       await userDb.put(TangyFormsDocs[0])
       await userDb.query('responsesUnLockedAndNotUploaded')
-      localStorage.setItem('ran-update-v3.9.0', 'true')
+      await variableService.set('ran-update-v3.9.0', 'true')
     }
   },
   {
