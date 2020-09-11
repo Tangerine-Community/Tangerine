@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsServiceService } from '../shared/_services/forms-service.service';
 
@@ -9,12 +8,21 @@ import { FormsServiceService } from '../shared/_services/forms-service.service';
   styleUrls: ['./tangy-forms-player.component.css']
 })
 export class TangyFormsPlayerComponent implements OnInit {
-  formMarkup;
-  constructor(private router: ActivatedRoute, private sanitizer: DomSanitizer, private formsService: FormsServiceService) { }
+  @ViewChild('container', {static: true}) container: ElementRef;
+  constructor(private router: ActivatedRoute, private formsService: FormsServiceService) { }
 
   async ngOnInit(): Promise<any> {
     const formId = this.router.snapshot.paramMap.get('formId');
     const data = await this.formsService.getFormMarkUpById(formId);
-    this.formMarkup = this.sanitizer.bypassSecurityTrustHtml(data);
+    this.container.nativeElement.innerHTML = data;
+    const tangyForm = this.container.nativeElement.querySelector('tangy-form');
+    tangyForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      try {
+        await this.formsService.uploadFormResponse(event.target.response);
+      } catch (error) {
+        console.error(error);
+      }
+    });
   }
 }
