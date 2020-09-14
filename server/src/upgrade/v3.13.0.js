@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+import {AppDocs} from "../../../client/src/app/app.docs";
+const insertGroupViews = require(`../insert-group-views.js`)
+const groupsList = require('/tangerine/server/src/groups-list.js')
+
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const PouchDB = require('pouchdb')
@@ -67,6 +71,35 @@ async function go() {
     } catch (e) {
       console.log(`Error trying to fix forms.json for ${groupId}`)
     }
+  }
+
+  const groupNames = await groupsList()
+  for (let groupName of groupNames) {
+    console.log(`Updating group views for ${groupName} `)
+    // await insertGroupViews(groupName)
+    let groupDb = new dbConnection(databaseName)
+    for (let prop in views) {
+      const view = views[prop]
+      const designDoc = {
+        _id: `_design/${prop}`,
+        views: {
+          [prop]: {
+            map: view.toString()
+          }
+        }
+      }
+      try {
+        const existingDesignDoc = await groupDb.get(`_design/${prop}`)
+        designDoc._rev = existingDesignDoc._rev
+      } catch(err) {
+        // Do nothing... Assume this is the first time the views have been inserted.
+      }
+      try {
+        let status = await groupDb.post(designDoc)
+        log.info(`group views inserted into ${databaseName}`)
+      } catch (error) {
+        log.error(error)
+      }
   }
 }
 
