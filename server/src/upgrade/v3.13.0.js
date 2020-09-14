@@ -5,8 +5,8 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const PouchDB = require('pouchdb')
 const fs = require('fs-extra')
-const views = require(`./group-views.js`)
-const dbConnection = require('./db')
+const views = require(`../group-views.js`)
+const dbConnection = require('../db')
 
 async function go() {
   console.log('Upgrading groups Admin roles with new permissions...')
@@ -97,9 +97,9 @@ async function go() {
     }
     try {
       let status = await groupDb.post(designDoc)
-      log.info(`group views inserted into ${groupName}`)
+      console.log(`group views inserted into ${groupName}`)
     } catch (error) {
-      log.error(error)
+      console.log(error)
     }
   }
 }
