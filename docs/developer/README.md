@@ -17,6 +17,7 @@
 
 ## Managing Deployments
 - [Upgrades](upgrades.md)
+- [Installing Multiple Tangerine apps on the same tablet](install-multiple-apks-config.md)
 
 ## Testing
 - [Load Testing](load-testing.md)
