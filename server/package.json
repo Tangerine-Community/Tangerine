@@ -81,7 +81,8 @@
     "rxjs": "^6.3.3",
     "sanitize-filename": "^1.6.1",
     "tangy-log": "^1.0.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.0.0",
