@@ -295,6 +295,22 @@ export class GroupsService {
       }
     }
   }
+
+  async publishSurvey(groupId, formId) {
+    try {
+      return await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+  async unPublishSurvey(groupId, formId) {
+    try {
+      return await this.httpClient.
+        put(`/onlineSurvey/unpublish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
   generateUUID(separator?: string) {
     if (!separator) {
       separator = '';
