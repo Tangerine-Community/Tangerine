@@ -61,6 +61,7 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
 import * as Redux from 'redux';
 (window as any).Redux = Redux;
 import 'tangy-form/tangy-form.js';
