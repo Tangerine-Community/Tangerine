@@ -145,7 +145,7 @@ app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUse
  */
 
 app.post('/onlineSurvey/publish/:groupId/:formId', isAuthenticated, publishSurvey);
-app.update('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
+app.put('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
 app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, saveSurveyResponse);
 /*
  * More API
