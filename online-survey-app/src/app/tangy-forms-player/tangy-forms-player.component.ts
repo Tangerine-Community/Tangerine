@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsServiceService } from '../shared/_services/forms-service.service';
 
 @Component({
@@ -9,17 +9,21 @@ import { FormsServiceService } from '../shared/_services/forms-service.service';
 })
 export class TangyFormsPlayerComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;
-  constructor(private router: ActivatedRoute, private formsService: FormsServiceService) { }
+  constructor(private route: ActivatedRoute, private formsService: FormsServiceService, private router: Router) { }
 
   async ngOnInit(): Promise<any> {
-    const formId = this.router.snapshot.paramMap.get('formId');
+    const formId = this.route.snapshot.paramMap.get('formId');
     const data = await this.formsService.getFormMarkUpById(formId);
     this.container.nativeElement.innerHTML = data;
     const tangyForm = this.container.nativeElement.querySelector('tangy-form');
-    tangyForm.addEventListener('submit', async event => {
+    tangyForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       try {
-        await this.formsService.uploadFormResponse(event.target.response);
+        if (await this.formsService.uploadFormResponse(event.target.response)){
+          this.router.navigate(['/form-submitted-success']);
+        } else {
+          alert('Form could not be submitted. Please retry');
+        }
       } catch (error) {
         console.error(error);
       }

@@ -14,13 +14,15 @@ import { TangySvgLogoComponent } from './shared/tangy-svg-logo/tangy-svg-logo.co
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsListComponent } from './forms-list/forms-list.component';
+import { FormSubmittedSuccessComponent } from './form-submitted-success/form-submitted-success.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TangySvgLogoComponent,
     TangyFormsPlayerComponent,
-    FormsListComponent
+    FormsListComponent,
+    FormSubmittedSuccessComponent
   ],
   imports: [
     BrowserModule,
