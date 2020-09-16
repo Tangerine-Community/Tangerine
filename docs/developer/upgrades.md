@@ -22,7 +22,6 @@ docker exec -it tangerine reporting-cache-clear
 git checkout v3.7.1
 ./start.sh v3.7.1
 docker exec tangerine translations-update
-# NOTE that APK's from earlier versions cannot be upgraded to v3.8.0. Must install v3.8.0 version.
 git checkout v3.8.0
 ./start.sh v3.8.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.8.0.js
@@ -41,6 +40,13 @@ docker exec -it tangerine /tangerine/server/src/upgrade/v3.10.0.js
 git checkout v3.11.0
 ./start.sh v3.11.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
+# There was a bug in 3.11.0 that causes a blank screen in earlier APK's
+git checkout v3.11.1-rc-2
+./start.sh v3.11.1-rc-2
+git checkout v3.12.0
+./start.sh v3.12.0
+# Run upgrade
+docker exec -it tangerine reporting-cache-clear 
 git checkout v3.13.0
 ./start.sh v3.13.0
 docker exec -it tangerine reporting-cache-clear 
