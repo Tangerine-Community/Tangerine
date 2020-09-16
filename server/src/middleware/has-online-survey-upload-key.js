@@ -1,5 +1,5 @@
 const log = require('tangy-log').log;
-const DB = require('./db.js');
+const DB = require('../db.js');
 const GROUPS_DB = new DB('groups');
 module.exports = async (req, res, next) => {
   const errorMessage = `Permission denied at ${req.url}`;
