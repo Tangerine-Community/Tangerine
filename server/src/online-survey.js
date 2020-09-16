@@ -24,14 +24,14 @@ const publishSurvey = async (req, res) => {
     data.onlineSurveys = data.onlineSurveys ? data.onlineSurveys : [];
     let surveysIndex = data.onlineSurveys.findIndex((e) => e.formId === formId);
     if (surveysIndex < 0) {
-      const data = {
+      const surveyData = {
         formId,
         published: true,
         updatedOn: new Date(),
         updatedBy: req.user.name,
         uploadKey: createFormKey(),
       };
-      data.onlineSurveys = [...data.onlineSurveys, { ...data }];
+      data.onlineSurveys = [...data.onlineSurveys, { ...surveyData }];
       await GROUPS_DB.post(data);
     } else {
       data.onlineSurveys[surveysIndex] = {
@@ -42,8 +42,9 @@ const publishSurvey = async (req, res) => {
         updatedBy: req.user.name,
         uploadKey: createFormKey(),
       };
-      GROUPS_DB.put(data);
+      await GROUPS_DB.put(data);
     }
+
     return res.status(200).send({ data: 'Survey Published Successfully' });
   } catch (error) {
     console.error(error);
