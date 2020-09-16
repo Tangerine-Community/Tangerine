@@ -43,6 +43,7 @@ const { extendSession, findUserByUsername,
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
+ const {saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
@@ -98,6 +99,7 @@ app.use(compression())
 var isAuthenticated = require('./middleware/is-authenticated.js')
 var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
+var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
 /*
@@ -138,6 +140,13 @@ app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']
 app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
 app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUserGroupPermissionsByGroupName);
 
+/**
+ * Online survey routes
+ */
+
+app.post('/onlineSurvey/publish/:groupId/:formId', isAuthenticated, publishSurvey);
+app.update('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
+app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, saveSurveyResponse);
 /*
  * More API
  */
