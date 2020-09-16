@@ -72,3 +72,8 @@ const unpublishSurvey = async (req, res) => {
   }
 };
 
+module.exports ={
+    saveResponse,
+    publishSurvey,
+    unpublishSurvey
+}
