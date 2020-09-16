@@ -3,4 +3,5 @@ export class AppConfig {
     languageCode: string;
     languageDirection: string;
     formUploadURL: string;
+    groupId: string;
 }

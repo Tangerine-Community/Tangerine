@@ -35,10 +35,10 @@ export class FormsServiceService {
     }
   }
 
-  async uploadFormResponse(formResponse): Promise<boolean>{
+  async uploadFormResponse(formResponse, formId): Promise<boolean>{
     try {
-      const uploadURL = (await this.appConfigService.getAppConfig()).formUploadURL;
-      const data = await this.httpClient.post(uploadURL, formResponse, {observe: 'response'}).toPromise();
+      const {formUploadURL, groupId} = await this.appConfigService.getAppConfig();
+      const data = await this.httpClient.post(`${formUploadURL}/onlineSurvey/saveResponse/${groupId}/${formId}`, formResponse, {observe: 'response'}).toPromise();
       return data.status === 200;
     } catch (error) {
       console.error(error);
