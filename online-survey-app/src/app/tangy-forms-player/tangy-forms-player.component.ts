@@ -16,10 +16,10 @@ export class TangyFormsPlayerComponent implements OnInit {
     const data = await this.formsService.getFormMarkUpById(formId);
     this.container.nativeElement.innerHTML = data;
     const tangyForm = this.container.nativeElement.querySelector('tangy-form');
-    tangyForm.addEventListener('submit', async (event) => {
+    tangyForm.addEventListener('click', async (event) => {
       event.preventDefault();
       try {
-        if (await this.formsService.uploadFormResponse(event.target.response)){
+        if (await this.formsService.uploadFormResponse(event.target.response, formId)){
           this.router.navigate(['/form-submitted-success']);
         } else {
           alert('Form could not be submitted. Please retry');
