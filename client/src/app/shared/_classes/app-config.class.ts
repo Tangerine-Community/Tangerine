@@ -19,6 +19,7 @@ export class AppConfig {
   barcodeSearchMapFunction:string
   showQueries:boolean
   showCaseReports:boolean
+  showIssues:boolean
   groupId:string
   groupName:string
   p2pSync = 'false'
