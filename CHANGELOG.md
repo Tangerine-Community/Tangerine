@@ -10,7 +10,7 @@
   - __Automatic conflict resolution__: After a sync pull on client, detects type of conflict and resolves it. View status of merges in the Issues feature. [#1763](https://github.com/Tangerine-Community/Tangerine/issues/1763)
   - __Fix extending session in Editor__ - When prompted to extend session shows up session is not really extended. [#2266](https://github.com/Tangerine-Community/Tangerine/issues/2266)
 - __New Features and Fixes for Case Module__
-  - __Client "Issues" feature__: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
+  - __Client "Issues" feature__: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. This tab is disabled by default; it is activated by adding `"showIssues": true,` to app-config.json. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
   - __Easier searching on Client__: Previously on Client when searching for "Facility 8" you would need to type exactly "Facility 8". Now search is case insensitive and you may type "facility 8" to match against "Facility 8".
   - __T.case.setEventWindow API fix__: Previously when setting an Event window, the end time for the window was mistakenly ignored and set to the start time. This is now fixed. [#2304](https://github.com/Tangerine-Community/Tangerine/issues/2304)
 - __New Features for Sync Protocol 2 Module__
@@ -31,6 +31,7 @@ git checkout v3.13.0
 ./start.sh v3.13.0
 # Run upgrade
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.0.js
+# Add `"showIssues": true,` to the group's app-config.json if you want to display the Issues tab in client.
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.12.0
 ```
