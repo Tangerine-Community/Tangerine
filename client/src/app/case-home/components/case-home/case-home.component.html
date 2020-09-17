@@ -9,7 +9,7 @@
       <app-case-event-schedule></app-case-event-schedule>
     </ng-template>
   </mat-tab>
-  <mat-tab label="{{'ISSUES'|translate}}">
+  <mat-tab *ngIf="showIssues" label="{{'ISSUES'|translate}}">
     <ng-template matTabContent>
       <app-issues></app-issues>
     </ng-template>
