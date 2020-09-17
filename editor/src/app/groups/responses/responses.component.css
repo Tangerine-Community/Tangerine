@@ -2,22 +2,26 @@
     width: 95%;
   }
 
-  input {
-    width: 80%;
-  }
+input {
+  width: 80%;
+}
 
-  #filter {
-    height: 150px;
-    margin-top: -30px;
-  }
+#filter {
+  height: 150px;
+  margin-top: -30px;
+}
 
-  .table {
-    display: flex;
-    overflow-y: scroll;
-    overflow: scroll;
-  }
+.table {
+  display: flex;
+  overflow-y: scroll;
+  overflow: scroll;
+}
 
-  #filter tangy-select {
-    margin-top:0px;
-    height: 150px;
-  }
+#filter tangy-select {
+  margin-top:0px;
+  height: 150px;
+}
+
+app-dynamic-table {
+  width:100%
+}

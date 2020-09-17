@@ -1,5 +1,6 @@
 .mat-table-sticky:last-child {
   border-left: 1px solid #e0e0e0;
+  width:50px;
 }
 
 th.mat-column-position, td.mat-column-position {
@@ -7,7 +8,7 @@ th.mat-column-position, td.mat-column-position {
 }
 
 .actions-container {
-  width: 300px;
+  width: 100px;
   padding-right: 8px;
 }
 .actions-menu {
@@ -25,4 +26,8 @@ mat-cell, mat-header-cell {
   overflow: scroll;
   overflow-y: scroll;
   overflow-x: scroll;
+}
+
+.mat-table {
+  width:100%
 }
