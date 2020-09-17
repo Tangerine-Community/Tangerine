@@ -41,6 +41,7 @@ async function go() {
       await exec(`mkdir /tangerine/groups/${groupId}/`)
       await exec(`mv /tangerine/client/content/groups/${groupId} /tangerine/groups/${groupId}/client`)
       await exec(`mkdir /tangerine/groups/${groupId}/editor`)
+      await exec(`cp /tangerine/content-sets/default/editor/index.html /tangerine/groups/${groupId}/editor`)
       // @TODO Create a symlink to the old group client directory until all the other APIs are updated and we have 
       // a proper upgrade script to migrate group directories.
       await exec(`ln -s /tangerine/groups/${groupId}/client /tangerine/client/content/groups/${groupId}`)
