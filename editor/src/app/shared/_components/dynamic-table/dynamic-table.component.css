@@ -29,5 +29,10 @@ mat-cell, mat-header-cell {
 }
 
 .mat-table {
-  width:100%
+  width: 100%;
+  /*margin-left: 5px;*/
+}
+
+.mat-header-cell, .mat-cell {
+  padding-left: 5px;
 }

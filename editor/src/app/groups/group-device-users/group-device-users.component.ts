@@ -22,6 +22,7 @@ export class GroupDeviceUsersComponent implements OnInit {
     'lastSaveUnixtime',
     'groupId',
     'item-1_firstOpenTime',
+    'item1_firstOpenTime',
     'complete',
     'deviceId',
     'buildChannel',
