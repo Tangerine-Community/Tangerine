@@ -25,6 +25,7 @@ export class CaseHomeComponent implements OnInit {
     this.showQueries = config.showQueries;
     this.showCaseReports = config.showCaseReports
     this.showIssues = config.showIssues
+    // TODO: replace showQueries with showIssues
     if (this.showQueries) {
       this.openQueriesCount = await this.caseService.getOpenQueriesCount();
      }
