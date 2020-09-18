@@ -15,6 +15,7 @@
 
     <span >{{form.updatedOn|date :'medium'}}
     </span>
+    <span class="link"><a href="/releases/prod/online-survey-apps/{{group._id}}/{{form.id}}/index.html" target="_new"> <i class="material-icons mat-32 tangy-location-list-icon">link</i>link</a></span>
   </mat-list-item>
 </mat-list>
 
@@ -27,7 +28,7 @@
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button (click)="publishSurvey(form.id)">
+      <button mat-icon-button (click)="publishSurvey(form.id, form.title)">
         <i class="material-icons mat-32 tangy-location-list-icon">published_with_changes</i>
       </button>
     </span>
