@@ -1,8 +1,45 @@
 # Changelog
 
+
+## v3.13.0
+- __New Features and fixes for all Tangerine__
+  - __Download Location List as CSV__: You can now download a location list as a CSV. If you prefer editing a Location List via something like Excel, this makes editing an existing location list easier, which can then be imported when done editing in Excel. *Note:* Advise careful use of this export feature until [#2336](https://github.com/Tangerine-Community/Tangerine/issues/2336) is fixed. [#2107](https://github.com/Tangerine-Community/Tangerine/issues/2107)
+  - __Duplicate a Section__:When editing a form, you can now easily duplicate an entire section with the "duplicate section" button. [#2109](https://github.com/Tangerine-Community/Tangerine/issues/2109). Warning - this feature does not handle complex objects such as tangy checkbox groups well; be sure to check the code it generates. This issue will be addressed in the next 3.13 point release.
+  - __Group Data Dashboard in Editor__: "Dashboard" is now a menu item available in a Group under the Data menu. This link can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
+  - __More Menu Permissions in Editor__:Add additional Editor permissions to completely cover menu level access in a group
+  - __Automatic conflict resolution__: After a sync pull on client, detects type of conflict and resolves it. View status of merges in the Issues feature. [#1763](https://github.com/Tangerine-Community/Tangerine/issues/1763)
+  - __Fix extending session in Editor__ - When prompted to extend session shows up session is not really extended. [#2266](https://github.com/Tangerine-Community/Tangerine/issues/2266)
+- __New Features and Fixes for Case Module__
+  - __Client "Issues" feature__: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. This tab can be disabled adding or modifying `"showIssues": false,` to app-config.json. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
+  - __Easier searching on Client__: Previously on Client when searching for "Facility 8" you would need to type exactly "Facility 8". Now search is case insensitive and you may type "facility 8" to match against "Facility 8".
+  - __T.case.setEventWindow API fix__: Previously when setting an Event window, the end time for the window was mistakenly ignored and set to the start time. This is now fixed. [#2304](https://github.com/Tangerine-Community/Tangerine/issues/2304)
+- __New Features for Sync Protocol 2 Module__
+  - __Export device sheets__: When registering Devices, we now offer an option to print "Device Sheets". Device Sheets include the registration codes for a Device and also some human readable metadata. Each row can also be used as a label for each device that can be fastened to a device using affordable clear packing tape. [#2269](https://github.com/Tangerine-Community/Tangerine/issues/2269)
+  - __Restore Backup on Android Tablet__: Backups can now be restored. Restore is an option when first opening a freshly installed APK. [#2127](https://github.com/Tangerine-Community/Tangerine/issues/2127)
+  - __Better support for working on the same Case on two devices__: When working offline on the same Case on two Devices, after a sync, it may seem like the changes on one Tablet have gone missing for some time until the "database conflicts" are resolved using the CouchDB Futon interface on the server. Starting in v3.13.0 we'll start to employ algorithms for automatically merging to speed up the process of resolving these database conflicts.
+- __Notes for System Administrators__
+  - After upgrade, you will no longer find group content directories in `./data/client/content/groups/`, they will be in `./data/groups/`. Inside each group's directory you will also find they have been split into a `client` and `editor` directory. All previous content will now be in the `client` directory while you may place content for the Group's Data Dashboard in the `editor` folder.
+ 
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.13.0
+# Now you are ready to start the server.
+./start.sh v3.13.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.0.js
+# Add or modify `"showIssues": false,` to the group's app-config.json if you do not want to display the Issues tab in client.
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.12.0
+```
+
+
 ## v3.12.5
 - Fixed issue with black screen when moving from p2p tab to home
-
+  
 ## v3.12.4
 - Fixed issue with QR code boundary boxes in tangy-form [#158](https://github.com/Tangerine-Community/tangy-form/issues/158).  Bumped tangy-form v4.17.10 and tangy-form-editor to 7.2.5
 

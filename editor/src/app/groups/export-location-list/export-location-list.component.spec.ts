@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CustomAppComponent } from './custom-app.component';
+import { ExportLocationListComponent } from './export-location-list.component';
 
-describe('CustomAppComponent', () => {
-  let component: CustomAppComponent;
-  let fixture: ComponentFixture<CustomAppComponent>;
+describe('ExportLocationListComponent', () => {
+  let component: ExportLocationListComponent;
+  let fixture: ComponentFixture<ExportLocationListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomAppComponent ]
+      declarations: [ ExportLocationListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CustomAppComponent);
+    fixture = TestBed.createComponent(ExportLocationListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

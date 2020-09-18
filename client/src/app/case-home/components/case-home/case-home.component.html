@@ -9,9 +9,9 @@
       <app-case-event-schedule></app-case-event-schedule>
     </ng-template>
   </mat-tab>
-  <mat-tab *ngIf="showQueries" label="{{'DATA QUERIES'|translate}} ({{openQueriesCount}})">
+  <mat-tab *ngIf="showIssues" label="{{'ISSUES'|translate}}">
     <ng-template matTabContent>
-      <app-query></app-query>
+      <app-issues></app-issues>
     </ng-template>
   </mat-tab>
   <mat-tab *ngIf="showCaseReports" label="{{'REPORTS'|translate}}">

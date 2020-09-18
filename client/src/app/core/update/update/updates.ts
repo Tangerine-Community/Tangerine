@@ -1,3 +1,4 @@
+import { AppDocs } from './../../../app.docs';
 import { CaseHomeDocs } from './../../../case-home/case-home.docs';
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
@@ -269,6 +270,11 @@ export const updates = [
       // syncProtocol uses a single shared db for all users. Update only once.
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.0')) return
       console.log('Updating to v3.9.0...')
+      try {
+        const view = await userDb.get('_design/responsesUnLockedAndNotUploaded')
+        TangyFormsDocs[0]['_rev'] = view._rev
+      } catch (e) {
+      }
       await userDb.put(TangyFormsDocs[0])
       await userDb.query('responsesUnLockedAndNotUploaded')
       await variableService.set('ran-update-v3.9.0', 'true')
@@ -279,6 +285,11 @@ export const updates = [
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.1')) return
       console.log('Updating to v3.9.1...')
+      try {
+        const view = await userDb.get('_design/case-events-by-all-days')
+        CaseHomeDocs[0]['_rev'] = view._rev
+      } catch (e) {
+      }
       await userDb.put(CaseHomeDocs[0])
       await userDb.query('case-events-by-all-days')
       await variableService.set('ran-update-v3.9.1', 'true')
@@ -290,6 +301,22 @@ export const updates = [
       console.log('Updating to v3.12.0...')
       if ( await variableService.get('ran-update-v3.12.0')) return
       await variableService.set('ran-update-v3.12.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      console.log('Updating to v3.13.0...')
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.13.0')) return
+      // Set up and index new byType query.
+      try {
+        const view = await userDb.get('_design/byType')
+        AppDocs[0]['_rev'] = view._rev
+      } catch (e) {
+      }
+      await userDb.put(AppDocs[0])
+      await userDb.query('byType')
+      await variableService.set('ran-update-v3.13.0', 'true')
     }
   }
 ]

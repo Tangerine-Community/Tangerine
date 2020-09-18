@@ -1,3 +1,5 @@
+import { IssueFormComponent } from './components/issue-form/issue-form.component';
+import { IssueComponent } from './components/issue/issue.component';
 import { CreateProfileGuardService } from './../shared/_guards/create-profile-guard.service';
 import { CustomAppComponent } from './components/custom-app/custom-app.component';
 import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
@@ -65,7 +67,14 @@ const routes: Routes = [
     path: 'new-case',
     component: NewCaseComponent,
     canActivate: [LoginGuard]
-  }
+  },
+  //{ path: 'groups/:groupId/data/issues/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
+  //{ path: 'groups/:groupId/data/issues/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
+  { path: 'issue/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
+  { path: 'issue/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
+  { path: 'issue/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
+ 
+ 
 ];
 
 

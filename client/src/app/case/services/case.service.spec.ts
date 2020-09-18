@@ -127,11 +127,8 @@ class MockCaseDefinitionsService {
           {
             'id': 'event-definition-not-required-event',
             'name': 'A Event that is not require',
-            'description': 'An event that is not required.',
             'repeatable': true,
             'required': false,
-            'estimatedTimeFromCaseOpening': 0,
-            'estimatedTimeWindow': 0,
             'eventFormDefinitions': [
               <EventFormDefinition>{
                 'id': 'event-form-1',

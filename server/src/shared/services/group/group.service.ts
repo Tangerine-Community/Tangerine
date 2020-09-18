@@ -135,7 +135,7 @@ export class GroupService {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const created = new Date().toJSON()
-    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles') };
+    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
     const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_forms', 'can_access_data', 'can_access_download_csv'] };
     const group = <Group>{_id: groupId, label, created, roles :[
       adminRole, memberRole
@@ -149,13 +149,15 @@ export class GroupService {
     const groupDb = new DB(groupId)
     let groupName = label 
     await this.installViews(groupDb)
-    await exec(`cp -r /tangerine/client/default-assets  /tangerine/client/content/groups/${groupId}`)
-    await exec(`mkdir /tangerine/client/content/groups/${groupId}/media`)
-    //
+    await exec(`cp -r /tangerine/content-sets/default  /tangerine/groups/${groupId}`)
+    await exec(`mkdir /tangerine/groups/${groupId}/client/media`)
+    // @TODO Create a symlink to the old group client directory until all the other APIs are updated and we have 
+    // a proper upgrade script to migrate group directories.
+    await exec(`ln -s /tangerine/groups/${groupId}/client /tangerine/client/content/groups/${groupId}`)
     // app-config.json
     //
     let appConfig = <any>{}
-    appConfig = <any>JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, "utf8"))
+    appConfig = <any>JSON.parse(await fs.readFile(`/tangerine/groups/${groupId}/client/app-config.defaults.json`, "utf8"))
     appConfig.groupName = groupName 
     appConfig.groupId = groupId 
     appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
@@ -258,12 +260,12 @@ export class GroupService {
         ]
         : []
     ]
-    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, JSON.stringify(forms))
+    await fs.writeFile(`/tangerine/groups/${groupId}/client/forms.json`, JSON.stringify(forms))
 
     //
     // location-list.json
     //
-    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/location-list.json`, JSON.stringify({
+    await fs.writeFile(`/tangerine/groups/${groupId}/client/location-list.json`, JSON.stringify({
       "locationsLevels": [],
       "locations": {},
       "metadata": {}
@@ -272,7 +274,8 @@ export class GroupService {
     await exec(`generate-indexes ${group._id}`)
     const data = await tangyModules.hook('groupNew', {groupName: groupId, groupId, appConfig})
     appConfig = data.appConfig
-    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, JSON.stringify(appConfig))
+    
+    await fs.writeFile(`/tangerine/groups/${groupId}/client/app-config.json`, JSON.stringify(appConfig))
         .then(status => log.info('Wrote app-config.json'))
         .catch(err => log.error('An error copying app-config: ' + err))
 
@@ -296,7 +299,8 @@ export class GroupService {
     await this.groupsDb.delete(group)
     const groupDb = this.getGroupDatabase(group._id)
     await groupDb.destroy()
-    await exec(`rm -r /tangerine/client/content/groups/${group._id}`)
+    await exec(`rm -r /tangerine/groups/${group._id}`)
+    await exec(`rm /tangerine/client/content/groups/${group._id}`)
   }
 
 }
