@@ -3,19 +3,26 @@ if [ ! $1 ]; then
  exit
 fi
 VERSION=$1
-echo "Building beta from next branch for $VERSION"
-cd tangerine-preview
-npm install
+
+echo "Building RC from $VERSION"
+# Get the software.
 git clone git@github.com:tangerine-community/tangerine tmp
 cd tmp 
-git checkout next 
-cd client
+git checkout $VERSION 
+# Set up tangerine-preview.
+cd tangerine-preview
+npm install
+# Set up client.
+cd ../client
 npm install
 npm run build
-rm -fr ../../app
-mv dist/tangerine-client ../../app
-cd ../../
-rm -rf tmp
+# Swap out.
+rm -fr ../tangerine-preview/app
+mv dist/tangerine-client ../tangerine-preview/app
+# Release.
+cd ../tangerine-preview/
 npm version $VERSION
 npm publish --tag rc 
+# Clean up.
 cd ../
+rm -rf tmp
