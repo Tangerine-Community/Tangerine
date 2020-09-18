@@ -37,6 +37,8 @@ rm -r $RELEASE_DIRECTORY
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
 
+FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
+
 sed -i -e "s#GROUP_ID#"$GROUP_ID"#g" $RELEASE_DIRECTORY/assets/app-config.json
 sed -i -e "s#FORM_UPLOAD_URL#"$FORM_UPLOAD_URL"#g" $RELEASE_DIRECTORY/assets/app-config.json
 sed -i -e "s#UPLOAD_KEY#"$UPLOAD_KEY"#g" $RELEASE_DIRECTORY/assets/app-config.json
