@@ -1,9 +1,9 @@
 # Installing Tangerine on AWS
 
 ## Creating the AWS instance
-Login to AWS and Launch a new instance with Ubuntu 16.04 using a t2.medium server with 4 GiB memory. 
+Login to AWS and Launch a new instance with Ubuntu 18.04 using a t2.medium server with 4 GiB memory. 
 
-Volume should be larger than the 8GB default. 24GB would be useful.
+Volume should be larger than the 8GB default. 24GB would be useful, but if you're planning to test different Tangerine images, go for 64GB.
 
 ### Security
 Make sure to assign a security group to your instance that allows you to access port 80 via a web browser and port 22 via ssh. 
