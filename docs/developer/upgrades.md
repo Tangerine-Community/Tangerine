@@ -41,8 +41,7 @@ git checkout v3.11.0
 ./start.sh v3.11.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
 # There was a bug in 3.11.0 that causes a blank screen in earlier APK's
-git checkout v3.11.1-rc-2
-./start.sh v3.11.1-rc-2
+# It is resolved in v3.12.
 git checkout v3.12.0
 ./start.sh v3.12.0
 # Run upgrade
