@@ -250,15 +250,30 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
 
 app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/:uploadKey/', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
-  const group = sanitize(req.params.groupId)
+  const groupId = sanitize(req.params.groupId)
   const formId = sanitize(req.params.formId)
   const releaseType = sanitize(req.params.releaseType)
   const appName = sanitize(req.params.appName)
   const uploadKey = sanitize(req.params.uploadKey)
 
   try {
-    const cmd = `release-online-survey-app ${groupId} ${formId} ${releaseType} ${appName} ${uploadKey} `
+    const cmd = `release-online-survey-app ${groupId} ${formId} ${releaseType} "${appName}" ${uploadKey} `
     log.info(`RELEASING Online survey app: ${cmd}`)
+    await exec(cmd)
+    res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
+})
+
+app.use('/editor/unrelease-online-survey-app/:groupId/:formId/:releaseType/', isAuthenticated, async function (req, res, next) {
+  // @TODO Make sure user is member of group.
+  const groupId = sanitize(req.params.groupId)
+  const formId = sanitize(req.params.formId)
+  const releaseType = sanitize(req.params.releaseType)
+  try {
+    const cmd = `rm -rf /tangerine/client/releases/${releaseType}/online-survey-apps/${groupId}/${formId}`
+    log.info(`UNRELEASING Online survey app: ${cmd}`)
     await exec(cmd)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {

@@ -296,17 +296,18 @@ export class GroupsService {
     }
   }
 
-  async publishSurvey(groupId, formId) {
+  async publishSurvey(groupId, formId, releaseType = 'prod', appName) {
     try {
-      return await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      const response = await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}/${response.body['uploadKey']}`).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
   async unPublishSurvey(groupId, formId) {
     try {
-      return await this.httpClient.
-        put(`/onlineSurvey/unpublish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.put(`/onlineSurvey/unpublish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/unrelease-online-survey-app/${groupId}/${formId}/prod`).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

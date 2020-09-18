@@ -18,34 +18,27 @@ const saveResponse = async (req, res) => {
 };
 
 const publishSurvey = async (req, res) => {
+  let surveyInfo = {}
   try {
     const { formId, groupId } = req.params;
     const data = (await GROUPS_DB.get(groupId));
     data.onlineSurveys = data.onlineSurveys ? data.onlineSurveys : [];
     let surveysIndex = data.onlineSurveys.findIndex((e) => e.formId === formId);
+    surveyInfo = {
+      formId,
+      published: true,
+      updatedOn: new Date(),
+      updatedBy: req.user.name,
+      uploadKey: createFormKey(),
+    };
     if (surveysIndex < 0) {
-      const surveyData = {
-        formId,
-        published: true,
-        updatedOn: new Date(),
-        updatedBy: req.user.name,
-        uploadKey: createFormKey(),
-      };
-      data.onlineSurveys = [...data.onlineSurveys, { ...surveyData }];
+      data.onlineSurveys = [...data.onlineSurveys, surveyInfo];
       await GROUPS_DB.post(data);
     } else {
-      data.onlineSurveys[surveysIndex] = {
-        ...data.onlineSurveys[surveysIndex],
-        formId,
-        published: true,
-        updatedOn: new Date(),
-        updatedBy: req.user.name,
-        uploadKey: createFormKey(),
-      };
+      data.onlineSurveys[surveysIndex] = surveyInfo
       await GROUPS_DB.put(data);
     }
-
-    return res.status(200).send({ data: 'Survey Published Successfully' });
+    return res.status(200).send(surveyInfo);
   } catch (error) {
     console.error(error);
     return res.status(500).send('Could  not Publish Survey');
