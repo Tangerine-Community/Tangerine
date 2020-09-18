@@ -143,35 +143,7 @@ cd tangerine
 For the app on the tablet, wether you are using the Android Installation method or the Web Browser installation method, the update process is the same. After server upgrades or content changes, return to the "Releases" tab in the online Editor and click "Test Release". When that completes, fetch your designated test tablet. Ensure you have an Internet connection on your designated test tablet, open the app, log in, and from the top right menu select "Check for Update". Follow the prompts to update. If the updates are satisfactory, return to your "Releases" tab online and click "Live Release". Proceed to update your Tablets with the "Live Release" app.
 
 ## Local Content Development
-Install [nodejs](https://nodejs.org/en/) and [git](https://git-scm.com/) on your local machine. Then run the following commands.
-```
-git clone https://github.com/tangerine-community/tangerine
-cd tangerine
-git checkout <most recent release version, ie. v3.0.0-rc5>
-cd client/
-npm install
-npm start
-```
-Then open <http://localhost:4200> in your web browser. The content is found in the `tangerine/client/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
-
-If the process has stopped, you can restart by running...
-
-```
-cd tangerine/client/
-npm start
-```
-
-To update to a new version of tangerine, run...
-
-```
-cd tangerine
-git fetch
-git checkout <new version listed in the releases tab on github>
-cd client/
-rm -r node_modules
-npm install
-npm start
-```
+We use a tool called `tangerine-preview` to do local content development. Note this is content development via code as opposed to the Editor GUI interface. To read more about the process, see our docs site on [local content development](https://docs.tangerinecentral.org/editor/advanced-form-programming/local-content-development/).
 
 ## App Development
 
@@ -185,6 +157,14 @@ cp config.defaults.sh config.sh
 
 Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
+__Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox publicly accessible at a URL. Tangerine Developers have had good luck using [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL that NGROK gives you. It can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
+
+Example config.sh when using ngrok:
+```
+T_HOST_NAME='123random.ngrok.io'
+T_PROTOCOL="https"
+```
+
 ### Develop for Client 
 Prereqs include node and `npm install -g @angular/cli`. 
 ```
@@ -197,7 +177,7 @@ npm start
 
 View the app at <http://localhost:4200>.
 
-If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
+__Optional__: If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
 
 ```
 rm -r node_modules/tangy-form
@@ -205,12 +185,7 @@ ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
-If you are developing PWA's and want to test locally, or if you are testing APK's and want to update the content easily while doing local development (because the APK's basically act as a container for the PWA's), use [ngrok](https://ngrok.com/) to create an https tunnel to your local code. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh.
 
-```
-T_HOST_NAME='123random.ngrok.io'
-T_PROTOCOL="https"
-```
 
 ## Deprecated Version of Tangerine
 
