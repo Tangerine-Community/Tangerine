@@ -248,6 +248,24 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
+app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/:uploadKey/', isAuthenticated, async function (req, res, next) {
+  // @TODO Make sure user is member of group.
+  const group = sanitize(req.params.groupId)
+  const formId = sanitize(req.params.formId)
+  const releaseType = sanitize(req.params.releaseType)
+  const appName = sanitize(req.params.appName)
+  const uploadKey = sanitize(req.params.uploadKey)
+
+  try {
+    const cmd = `release-online-survey-app ${groupId} ${formId} ${releaseType} ${appName} ${uploadKey} `
+    log.info(`RELEASING Online survey app: ${cmd}`)
+    await exec(cmd)
+    res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
+})
+
 app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.body.filePath
   const groupId = req.body.groupId
