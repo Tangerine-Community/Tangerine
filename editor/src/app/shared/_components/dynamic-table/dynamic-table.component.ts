@@ -1,6 +1,6 @@
 import { MatTable } from '@angular/material/table';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnChanges } from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
+
 @Component({
   selector: 'app-dynamic-table',
   templateUrl: './dynamic-table.component.html',
@@ -16,11 +16,6 @@ export class DynamicTableComponent implements OnInit, OnChanges {
   columns:Array<any>
   displayedColumns:Array<any>
   dataSource:any
-
-  constructor(translate: TranslateService) {
-    translate.setDefaultLang('en');
-    translate.use('en');
-  }
 
   ngOnInit(): void {
     this.render()
