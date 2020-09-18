@@ -48,7 +48,7 @@ export class AuthenticationService {
     await localStorage.removeItem('user_id');
     await localStorage.removeItem('password');
     localStorage.removeItem('permissions');
-    document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "Authorization=;max-age=-1";
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
   }
@@ -71,11 +71,11 @@ export class AuthenticationService {
 
   async setTokens(token) {
     const jwtData = jwt_decode(token);
-    document.cookie = "Authorization=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = `Authorization=${token}`;
+    document.cookie = "Authorization=;max-age=-1";
     localStorage.setItem('token', token);
     localStorage.setItem('user_id', jwtData.username);
     localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
+    document.cookie = `Authorization=${token}`;
     const user = await this.userService.getMyUser();
     window['userProfile'] = user;
     window['userId'] = user._id;

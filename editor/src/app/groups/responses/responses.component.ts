@@ -1,3 +1,6 @@
+import { Router, ActivatedRoute } from '@angular/router';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
+import { generateFlatResponse } from './tangy-form-response-flatten';
 import { TangerineFormsService } from './../services/tangerine-forms.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
@@ -14,7 +17,10 @@ export class ResponsesComponent implements OnInit {
   @Input() groupId = '';
   @Input() filterBy:string = '*'
   @Input() excludeForms:Array<string> = []
+  @Input() excludeColumns:Array<string> = []
   @Input() hideFilterBy = false
+
+  ready = false
 
   moment;
   responses;
@@ -25,7 +31,10 @@ export class ResponsesComponent implements OnInit {
   constructor(
     private groupsService: GroupsService,
     private tangerineFormsService:TangerineFormsService,
-    private http: HttpClient
+    private appConfigService:AppConfigService,
+    private route:ActivatedRoute,
+    private http: HttpClient,
+    private router:Router
   ) {
     this.moment = moment
   }
@@ -34,21 +43,24 @@ export class ResponsesComponent implements OnInit {
     this.forms = (await this.tangerineFormsService.getFormsInfo(this.groupId))
       .filter(formInfo => !this.excludeForms.includes(formInfo.id) )
     await this.getResponses()
+    this.ready = true
   }
 
   async getResponses() {
+    const locationList = await this.http.get('./assets/location-list.json').toPromise()
     let responses = []
     if (this.filterBy === '*') {
       responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responses/${this.limit}/${this.skip}`).toPromise()
     } else {
       responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responsesByFormId/${this.filterBy}/${this.limit}/${this.skip}`).toPromise()
     }
-    this.responses = responses.map(response => {
-      return {
-        ...response,
-        userProfileId: response.tangerineModifiedBy ? response.tangerineModifiedBy : 'anonymous'
-      }
-    })
+    const flatResponses = []
+    for (let response of responses) {
+      const flatResponse = await generateFlatResponse(response, locationList, false)
+      this.excludeColumns.forEach(column => delete flatResponse[column])
+      flatResponses.push(flatResponse)
+    }
+    this.responses = flatResponses 
   }
 
   async filterByForm(event) {
@@ -72,6 +84,14 @@ export class ResponsesComponent implements OnInit {
   previousPage() {
     this.skip = this.skip - this.limit
     this.getResponses();
+  }
+
+  onRowEdit(row) {
+    this.router.navigate([row._id ? row._id : row.id], {relativeTo: this.route})
+  }
+
+  onRowDelete(row) {
+    this.deleteResponse(row._id ? row._id : row.id)
   }
 
 }

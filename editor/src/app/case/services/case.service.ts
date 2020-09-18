@@ -36,7 +36,7 @@ class CaseService {
   _shouldSave = true
 
   set case(caseInstance:Case) {
-    const caseInfo:CaseInfo = { 
+    const caseInfo:CaseInfo = {
       caseInstance,
       caseDefinition: this.caseDefinition
     }
@@ -56,7 +56,7 @@ class CaseService {
   setContext(caseEventId = '', eventFormId = '') {
     window['caseInstance'] = this.case
     this.caseEvent = caseEventId
-      ? this.case 
+      ? this.case
         .events
         .find(caseEvent => caseEvent.id === caseEventId)
       : null
@@ -142,7 +142,7 @@ class CaseService {
       ]
     }, [])
   }
-  
+
   async create(caseDefinitionId) {
     this.caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseDefinitionId)
@@ -362,7 +362,7 @@ class CaseService {
       .eventForms
       .find(eventForm => eventForm.id === eventFormId)
   }
-  
+
   // @TODO Deprecated.
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     console.warn('caseService.startEventForm(...) is deprecated. Please use caseService.createEventForm(...) before startEventForm is removed.')
@@ -448,7 +448,7 @@ class CaseService {
       )
     }
   }
-  
+
   markEventFormComplete(caseEventId:string, eventFormId:string) {
     this.case = {
       ...this.case,
@@ -460,7 +460,7 @@ class CaseService {
             ? eventForm
             : {
               ...eventForm,
-              complete: true 
+              complete: true
             }
           )
         }
@@ -557,7 +557,7 @@ class CaseService {
    * Issues API.
    */
 
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName) {
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor]) {
     const caseData = await this.tangyFormService.getResponse(caseId)
     const formResponseId = caseData
       .events.find(event => event.id === eventId)
@@ -570,7 +570,7 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Editor,
-      resolveOnAppContext: AppContext.Editor,
+      resolveOnAppContexts,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
@@ -598,7 +598,7 @@ class CaseService {
       data: {
         comment,
         caseInstance,
-        response 
+        response
       }
     })
     return await this.tangyFormService.saveResponse({
@@ -620,7 +620,7 @@ class CaseService {
       createdAppContext: AppContext.Editor,
       data: {
         caseInstance,
-        response 
+        response
       }
     })
     return await this.tangyFormService.saveResponse({
@@ -673,12 +673,20 @@ class CaseService {
       .reverse()
       .find(event => event.type === IssueEventType.ProposedChange)
     if (!lastProposedChangeEvent) {
+      const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
+      let proposedChangeResponse;
+      if (issue.docType === 'response') {
+        proposedChangeResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+      } else {
+        // TODO: add condition for issue.docType === 'issue'
+        proposedChangeResponse = caseInstance
+      }
       return {
-        response: await this.tangyFormService.getResponse(issue.formResponseId),
-        caseInstance: await this.tangyFormService.getResponse(issue.caseId)
+        response: proposedChangeResponse,
+        caseInstance: caseInstance
       }
     } else {
-      return lastProposedChangeEvent.data 
+      return lastProposedChangeEvent.data
     }
   }
 
@@ -743,17 +751,36 @@ class CaseService {
   async canMergeProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
-    const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+    // const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
-    return currentFormResponse._rev === event.data.response._rev && currentCaseInstance._rev === event.data.caseInstance._rev ? true : false
+    let currentResponse
+    if (issue.docType === 'response') {
+      currentResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+    } else if (issue.docType === 'case') {
+      currentResponse = currentCaseInstance
+    }
+    return currentResponse._rev === event.data.response._rev && currentCaseInstance._rev === event.data.caseInstance._rev ? true : false
   }
 
   async issueDiff(issueId) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
     const lastProposedChangeEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.ProposedChange)
+    let diffMetadata = [
+      {
+        "name": "Date (Original)",
+        "a": {
+          "name": "Date",
+          "value": moment(event.date).format('dddd MMMM D, YYYY hh:mma')
+        },
+        "b": {
+          "name": "Date (Proposed)",
+          "value": lastProposedChangeEvent? moment(lastProposedChangeEvent.date).format('dddd MMMM D, YYYY hh:mma'):null
+        }
+      }]
     return lastProposedChangeEvent
-      ? this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response)
+      ? ([...this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response) ])
+      // ? ([...diffMetadata, ...this.diffFormResponses(event.data.response, lastProposedChangeEvent.data.response) ])
       : []
   }
 
@@ -761,7 +788,8 @@ class CaseService {
     const A = new TangyFormResponseModel(a)
     const B = new TangyFormResponseModel(b)
     const diff = A.inputs.reduce((diff, input) => {
-      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value) 
+      if (B.inputsByName[input.name]) {
+      return JSON.stringify(input.value) !== JSON.stringify(B.inputsByName[input.name].value)
         ? [
           ...diff,
           {
@@ -769,8 +797,19 @@ class CaseService {
             a: A.inputsByName[input.name],
             b: B.inputsByName[input.name]
           }
-        ] 
+        ]
         : diff
+      } else {
+        return [
+          ...diff,
+          {
+            name: input.name,
+            error: 'Missing input',
+            a: A.inputsByName[input.name],
+            b: B.inputsByName[input.name]
+          }
+        ]
+      }
     }, [])
     return diff
   }
@@ -879,7 +918,7 @@ class CaseService {
 
   /*
    * Case Template API
-   */ 
+   */
 
   // Exports current case to json. Used in generate-cases as template.
   async export():Promise<Array<TangyFormResponseModel>> {

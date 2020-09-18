@@ -14,11 +14,13 @@ export class GroupDeployComponent implements OnInit {
   title = _TRANSLATE('Deploy')
   breadcrumbs:Array<Breadcrumb> = []
   syncProtocol2Enabled: boolean
+  groupId:string
 
   constructor(private serverConfig:ServerConfigService ) { }
 
   async ngOnInit() {
     this.breadcrumbs = []
+    this.groupId = window.location.pathname.split('/')[2]
     const config = await this.serverConfig.getServerConfig()
     this.syncProtocol2Enabled = !!(config.enabledModules.find(module=>module==='sync-protocol-2'))
   }

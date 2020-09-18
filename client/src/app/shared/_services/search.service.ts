@@ -140,7 +140,7 @@ export class SearchService {
     })
     return phrase === ''
       ? allDocs
-      : allDocs.filter(doc => JSON.stringify(doc).search(phrase) !== -1)
+      : allDocs.filter(doc => JSON.stringify(doc).toLowerCase().search(phrase.toLowerCase()) !== -1)
   }
 
   async getIndexedDoc(username:string, docId):Promise<SearchDoc> {

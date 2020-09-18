@@ -45,11 +45,39 @@ async function createGroup() {
       ? process.argv[3]
       : `/tangerine/content-sets/${process.argv[3]}`
     const groupId = group._id
-    const groupPath = '/tangerine/client/content/groups/' + groupId
+    const groupPath = '/tangerine/groups/' + groupId
+    const tmpGroupPath = '/.' + groupId
+    // Get the contents into the temporary group path.
+    await exec(`${contentSet.includes('.git') ? `GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no' git clone ` : `cp -r `} ${contentSet} ${tmpGroupPath}`)
+    // Detect if content-set v1 or content-set v2.
+    let contentSetVersion 
+    if (await fs.exists(`${tmpGroupPath}/app-config.json_example`)) {
+      contentSetVersion = 1
+    } else if (await fs.exists(`${tmpGroupPath}/client/app-config.defaults.json`)) {
+      contentSetVersion = 2 
+    } else {
+      console.log('Could not detect valid content set')
+      exec(`rm -rf ${tmpGroupPath}`)
+    }
+    // Set up the group content directory.
     await exec(`rm -r ${groupPath}`)
-    await exec(`${contentSet.includes('.git') ? `GIT_SSH_COMMAND='ssh -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no' git clone ` : `cp -r `} ${contentSet} ${groupPath}`)
-    const appConfig = await fs.readJson(`${groupPath}/app-config.json_example`)
-    await fs.writeJson(`${groupPath}/app-config.json`, {
+    if (contentSetVersion === 1) {
+      await exec(`mkdir ${groupPath}`)
+      await exec(`mkdir ${groupPath}/editor`)
+      await exec(`mv ${tmpGroupPath} ${groupPath}/client`)
+    } else if (contentSetVersion === 2) {
+      await exec(`mv ${tmpGroupPath} ${groupPath}`)
+    }
+    // Set up the app-config.json
+    let appConfigPath = `${groupPath}/client/app-config.json`
+    let appConfigDefaultsPath
+    if (contentSetVersion === 1) {
+      appConfigDefaultsPath = `${groupPath}/client/app-config.json_example`
+    } else if (contentSetVersion === 2) {
+      appConfigDefaultsPath = `${groupPath}/client/app-config.defaults.json`
+    }
+    const appConfig = await fs.readJson(appConfigDefaultsPath)
+    await fs.writeJson(appConfigPath, {
       ...appConfig,
       groupId,
       groupName: groupLabel,

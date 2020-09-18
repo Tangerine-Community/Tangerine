@@ -19,9 +19,14 @@ app.use(express.static(TANGERINE_CLIENT_DIR))
 async function go() {
   const appConfigPath = `${process.cwd()}/app-config.json`
   const appConfigExamplePath = `${process.cwd()}/app-config.json_example`
+  const appConfigDefaultsPath = `${process.cwd()}/app-config.defaults.json`
   // Set up app-config.json using app-config.json_example, unless app-config.json is already set up.
-  if (!fs.existsSync(appConfigPath) && fs.existsSync(appConfigExamplePath)) {
-    fs.copyFileSync(appConfigExamplePath, appConfigPath)
+  if (!fs.existsSync(appConfigPath) && (fs.existsSync(appConfigExamplePath) || fs.existsSync(appConfigDefaultsPath))) {
+    if (fs.existsSync(appConfigDefaultsPath)) {
+      fs.copyFileSync(appConfigDefaultsPath, appConfigPath)
+    } else {
+      fs.copyFileSync(appConfigExamplePath, appConfigPath)
+    }
     appConfig = await fs.readJSON(appConfigPath)
     appConfig.serverUrl = url
     await fs.writeJson(appConfigPath, appConfig)
@@ -29,7 +34,7 @@ async function go() {
   // If neither an app-config.json or app-config.json_example file exists, we're likely not in a content set directory.
   if (!fs.existsSync(appConfigPath) && !fs.existsSync(appConfigExamplePath)) {
     console.log('')
-    console.log('This does not appear to be a Tangerine content set. No app-config.json or app-config.json_example found. See the documentation on content sets at https://docs.tangerinecentral.org/.')
+    console.log('This does not appear to be a Tangerine content set. No app-config.json, app-config.defaults.json, or app-config.json_example found. See the documentation on content sets at https://docs.tangerinecentral.org/.')
     console.log('')
   }
   try {

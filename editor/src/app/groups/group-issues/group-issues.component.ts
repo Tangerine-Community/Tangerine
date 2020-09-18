@@ -7,6 +7,7 @@ import { FormInfo } from './../../tangy-forms/classes/form-info.class';
 import { GroupResponsesService } from './../services/group-responses.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import * as moment from 'moment'
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -45,11 +46,14 @@ export class GroupIssuesComponent implements OnInit {
   selector:any = {}
   limit = 10
   skip = 0
+  moment
 
   constructor(
     private groupResponsesService:GroupResponsesService,
     private router: Router
-  ) { }
+  ) {
+    this.moment = moment
+  }
 
   async ngOnInit() {
     this.breadcrumbs = [
@@ -109,7 +113,8 @@ export class GroupIssuesComponent implements OnInit {
     this.issues = await this.groupResponsesService.query(this.groupId, {
       selector: this.selector,
       limit: this.limit,
-      skip: this.skip
+      skip: this.skip,
+      sort: [{'tangerineModifiedOn':'desc'}]
     })
     this.loading = false
   }

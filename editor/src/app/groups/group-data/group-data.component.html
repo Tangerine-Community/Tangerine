@@ -1,6 +1,18 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
 <ng-container *ngIf="groupId">
+
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_dashboard'" class="mat-elevation-z3" routerLink="../dashboard">
+    <mat-card-header>
+        <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">dashboard</i>
+        </div>
+        <mat-card-title>
+            <a>Dashboard</a>
+        </mat-card-title>
+        <mat-card-subtitle>Dashboard with custom reports.</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
   <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_uploads'" class="is-link mat-elevation-z3" routerLink="uploads">
     <mat-card-header>
         <div mat-card-avatar>

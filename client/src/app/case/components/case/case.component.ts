@@ -39,10 +39,10 @@ export class CaseComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     const caseId = window.location.hash.split('/')[2]
-    if (!this.caseService.case || caseId !== this.caseService.case._id) {
-      await this.caseService.load(caseId)
-      this.caseService.openCaseConfirmed = false
-    }
+    // if (!this.caseService.case || caseId !== this.caseService.case._id) {
+    await this.caseService.load(caseId)
+    this.caseService.openCaseConfirmed = false
+    // }
     this.caseService.setContext()
     this.window.caseService = this.caseService
     this.calculateTemplateData()
@@ -77,6 +77,7 @@ export class CaseComponent implements AfterContentInit {
         return (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0)
           && undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id)
       })
+
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
     this.ref.detectChanges()
@@ -88,10 +89,12 @@ export class CaseComponent implements AfterContentInit {
   }
 
   async onSubmit() {
-    const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
-    const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
-    await this.caseService.save()
-    this.calculateTemplateData()
+    if (this.selectedNewEventType !== '') {
+      const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
+      const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
+      await this.caseService.save()
+      this.calculateTemplateData()
+    }
   }
 
 }

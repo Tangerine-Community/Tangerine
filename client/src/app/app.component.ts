@@ -186,7 +186,7 @@ export class AppComponent implements OnInit {
   }
 
   async checkPermissions() {
-    if (this.window.isCordovaApp) {
+    if (this.window.isCordovaApp && window['cordova']['plugins']) {
       const permissions = window['cordova']['plugins']['permissions'];
       if (typeof permissions !== 'undefined') {
         const list = [

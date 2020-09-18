@@ -10,4 +10,3 @@ Tangerine was developed in 2011 by RTI International with its own internal resea
 
 ## How it works
 ![How it works](how-it-works.png)
-

@@ -1,17 +1,28 @@
-tr.header {
-  font-weight: bold;
+.device-sheet-btn {
+  position: absolute;
+  top: 135px;
+  right: 20px; 
 }
-table, tr, td {
-  border: 1px solid black;
-}
-.add-device-button {
-  margin: 0px 0px 15px 0px;
-}
-
-mat-table {
-  margin-bottom: 100px;
+.table-container {
+  max-width: 100%;
+  /* This is key for scrolling the table as opposed to the table pushing layout out. */
+  overflow: auto;
 }
 
-.location-cell {
-  padding: 5px;
+table {
+  /* Setting min-width here is the key to when the sticky column engages. */
+  min-width: 1400px
+}
+
+.mat-table-sticky:last-child {
+  border-left: 1px solid #e0e0e0;
+}
+
+td.mat-column-star {
+  width: 64px;
+  padding: 5px !important;
+}
+
+th, td {
+  padding: 5px !important;
 }

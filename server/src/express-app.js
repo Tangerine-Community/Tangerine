@@ -147,6 +147,10 @@ app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-u
 app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
 app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))
+app.get('/api/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
+// Support for API working with group pathed cookie :). We should do this for others because our group cookies can't access /api/.
+app.get('/app/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
+
 // Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
 app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./routes/group-responses-by-user-profile-id.js'))
 app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./routes/group-responses-by-user-profile-short-code.js'))
@@ -168,7 +172,6 @@ app.get('/usage/:startdate', require('./routes/usage'));
 app.get('/usage/:startdate/:enddate', require('./routes/usage'));
 
 
-
 // Static assets.
 app.use('/client', express.static('/tangerine/client/dev'));
 app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
@@ -178,14 +181,14 @@ app.use('/app/:group/media-list', require('./routes/group-media-list.js'));
 app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
 app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
-  let contentPath = '/tangerine/client/content/groups/' + req.params.group
+  let contentPath = `/tangerine/groups/${req.params.group}/client`
+  return express.static(contentPath).apply(this, arguments);
+});
+app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
+  let contentPath = `/tangerine/groups/${req.params.group}/`
   return express.static(contentPath).apply(this, arguments);
 });
 
-app.use('/editor/groups', isAuthenticated, express.static('/tangerine/client/content/groups'));
-app.use('/editor/assets/', express.static('/tangerine/client/content/assets/'));
-app.use('/client/content/assets/', express.static('/tangerine/client/content/assets/'));
-app.use('/app/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/csv/', express.static('/csv/'));
 
 app.use('/releases/', express.static('/tangerine/client/releases'))
@@ -197,7 +200,7 @@ app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, ne
   return express.static(contentPath).apply(this, arguments);
 });
 app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
-  let contentPath = '/tangerine/client/content/groups/' + req.params.group
+  let contentPath = `/tangerine/groups/${req.params.group}/client`
   return express.static(contentPath).apply(this, arguments);
 });
 
@@ -210,10 +213,10 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  const config = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${group}/app-config.json`, "utf8"));
+  const config = JSON.parse(await fs.readFile(`/tangerine/groups/${group}/client/app-config.json`, "utf8"));
   const packageName = config.packageName? config.packageName: PACKAGENAME
   const appName = config.appName ? config.appName: APPNAME
-  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${packageName} "${appName}" 2>&1 | tee -a /apk.log`
+  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/groups/${group}/client ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${packageName} "${appName}" 2>&1 | tee -a /apk.log`
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
   // Do not await. The browser just needs to know the process has started and will monitor the status file.
   exec(cmd).catch(log.error)
@@ -225,7 +228,7 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
   try {
-    const cmd = `release-pwa ${group} /tangerine/client/content/groups/${group} ${releaseType}`
+    const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${releaseType}`
     log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
     log.info(`RELEASING PWA: ${cmd}`)
     await exec(cmd)
@@ -235,27 +238,11 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
-app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async function (req, res, next) {
-  // @TODO Make sure user is member of group.
-  const group = sanitize(req.params.group)
-  const releaseType = sanitize(req.params.releaseType)
-  try {
-    const status = await exec(`cd /tangerine/server/src/scripts && \
-        ./release-dat.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
-    `)
-    // Clean up whitespace.
-    const datArchiveUrl = status.stdout.replace('\u001b[?25l','')
-    res.send({ statusCode: 200, datArchiveUrl })
-  } catch (error) {
-    res.send({ statusCode: 500, data: error })
-  }
-})
-
 app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.body.filePath
   const groupId = req.body.groupId
   const fileContents = req.body.fileContents
-  const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
+  const actualFilePath = `/tangerine/groups/${groupId}/client/${filePath}`
   await fs.outputFile(actualFilePath, fileContents)
   res.send({status: 'ok'})
   // ok
@@ -265,7 +252,7 @@ app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.query.filePath
   const groupId = req.query.groupId
   if (filePath && groupId) {
-    const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
+    const actualFilePath = `/tangerine/groups/${groupId}/client/${filePath}`
     await fs.remove(actualFilePath)
     res.send({status: 'ok'})
   } else {
@@ -410,7 +397,7 @@ const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lsta
  * Listens for the changes feed on each of the group's database
  */
 function allGroups() {
-  const CONTENT_PATH = '/tangerine/client/content/groups/'
+  const CONTENT_PATH = '/tangerine/groups/'
   const groups = getDirectories(CONTENT_PATH)
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }

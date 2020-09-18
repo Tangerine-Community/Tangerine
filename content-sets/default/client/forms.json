@@ -1,0 +1,31 @@
+[
+  {
+    "title": "Example Form",
+    "src": "./assets/example/form.html",
+    "id": "example",
+    "templates": [
+      {
+        "src": "./assets/example/alt.html",
+        "id": "alt",
+        "label": "Alternative View"
+      }
+    ]
+  },
+  {
+    "title": "User Profile",
+    "src": "./assets/user-profile/form.html",
+    "id": "user-profile"
+    "customSyncSettings" : {
+       "pull" : false,
+       "enabled" : false,
+       "excludeIncomplete" : false,
+       "push" : false
+    },
+    "couchdbSyncSettings" : {
+       "pull" : true,
+       "enabled" : true,
+       "push" : true,
+       "filterByLocation" : true
+    }
+  }
+]
