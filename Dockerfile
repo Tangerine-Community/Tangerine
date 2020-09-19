@@ -21,6 +21,11 @@ ENV T_PROTOCOL http
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
 
+# Install online-survey-app.
+ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
+RUN cd /tangerine/online-survey-app/ && \
+    npm install
+
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
@@ -48,6 +53,11 @@ RUN git config --global url."git://".insteadOf https://
 RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root
+
+# Build online-survey-app.
+ADD online-survey-app /tangerine/online-survey-app/
+RUN cd /tangerine/online-survey-app && \
+    ./node_modules/.bin/ng build --base-href "./"
 
 # Build editor.
 ADD editor /tangerine/editor
@@ -80,17 +90,6 @@ ADD server /tangerine/server
 # Link up global commands.
 RUN cd /tangerine/server && \
     npm link
-
-# Install online-survey-app.
-ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
-RUN cd /tangerine/online-survey-app/ && \
-    npm install
-
-# build online-survey-app.
-ADD online-survey-app /tangerine/online-survey-app/
-RUN cd /tangerine/online-survey-app && \
-    ./node_modules/.bin/ng build --base-href "./"
-
 
 
 
