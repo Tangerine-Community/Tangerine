@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsServiceService } from '../shared/_services/forms-service.service';
@@ -9,14 +10,16 @@ import { FormsServiceService } from '../shared/_services/forms-service.service';
 })
 export class TangyFormsPlayerComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;
-  constructor(private route: ActivatedRoute, private formsService: FormsServiceService, private router: Router) { }
+  constructor(private route: ActivatedRoute, private formsService: FormsServiceService, private router: Router,
+    private httpClient:HttpClient
+  ) { }
 
   async ngOnInit(): Promise<any> {
     const formId = this.route.snapshot.paramMap.get('formId');
-    const data = await this.formsService.getFormMarkUpById(formId);
+    const data = await this.httpClient.get('./assets/form/form.html', {responseType: 'text'}).toPromise();
     this.container.nativeElement.innerHTML = data;
     const tangyForm = this.container.nativeElement.querySelector('tangy-form');
-    tangyForm.addEventListener('click', async (event) => {
+    tangyForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       try {
         if (await this.formsService.uploadFormResponse(event.target.response, formId)){

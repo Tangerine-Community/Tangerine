@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Form } from '../classes/form';
 import { AppConfigService } from './app-config.service';
@@ -37,8 +37,10 @@ export class FormsServiceService {
 
   async uploadFormResponse(formResponse, formId): Promise<boolean>{
     try {
-      const {formUploadURL, groupId} = await this.appConfigService.getAppConfig();
-      const data = await this.httpClient.post(`${formUploadURL}/onlineSurvey/saveResponse/${groupId}/${formId}`, formResponse, {observe: 'response'}).toPromise();
+      const {formUploadURL, groupId, uploadKey} = await this.appConfigService.getAppConfig();
+      const headers = new HttpHeaders();
+      headers.set('formUploadToken', uploadKey);
+      const data = await this.httpClient.post(formUploadURL, formResponse, {headers, observe: 'response'}).toPromise();
       return data.status === 200;
     } catch (error) {
       console.error(error);

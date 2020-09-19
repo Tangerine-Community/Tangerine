@@ -1,26 +1,3 @@
-  <mat-toolbar  dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
-    <span class="home-icon">
-      <a class="tangy-no-text-decoration" routerLink="/forms">
-        <app-tangy-svg-logo [tangyLogoStyle]="{'height':'45px'}"></app-tangy-svg-logo>
-      </a>
-    </span>
-    <span>
-      <a class="tangy-no-text-decoration tangy-app-name" routerLink="forms">{{appName}}</a>
-    </span>
-    <span class="tangy-spacer"></span>
-    <mat-icon [matMenuTriggerFor]="appMenu" class="hamburger-menu">
-        more_vert
-    </mat-icon>
-    <mat-menu #appMenu="matMenu">
-      <button routerLink="about" mat-menu-item>
-        <mat-icon class="material-icons menu-tangy-location-list-icon">info</mat-icon>
-        <span>{{'About'}}</span>
-      </button>
-  
-    </mat-menu>
-  
-  </mat-toolbar>
-  <div class="tangerine-app-content mat-typography">
-    <router-outlet></router-outlet>
-  </div>
-  
+<div class="tangerine-app-content mat-typography">
+  <router-outlet></router-outlet>
+</div>
