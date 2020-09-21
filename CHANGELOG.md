@@ -22,6 +22,16 @@
  
 __Server upgrade instructions:__
 
+This update changes the path to group content to `/tangerine/groups/${groupId}/client`. If your group is managing content 
+via a Github/cron integration, you will need to change the path to content in its cron job. Change `GROUP-UUID` to your 
+group id in the following command:
+
+```
+cd /home/ubuntu/tangerine/data/groups/GROUP-UUID/client && GIT_SSH_COMMAND='ssh -i /root/.ssh/arc-forms-dev' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/arc-forms-dev' git push origin master
+```
+
+The update:
+
 ```
 # Fetch the updates.
 cd tangerine
