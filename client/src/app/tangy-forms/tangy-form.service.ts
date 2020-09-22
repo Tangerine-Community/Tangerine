@@ -19,17 +19,10 @@ export class TangyFormService {
     private tangyFormsInfoService: TangyFormsInfoService
   ) { }
 
-  async getFormInput(formId, inputVariable) {
+  async getFormInput(formId, inputVariable, revision) {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-    let formMarkup: any = this.formsMarkup[formInfo.src]
-    if (!this.formsMarkup[formInfo.src]) {
-      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[formInfo.src] = formMarkup;
-    }
-    // return formMarkup
-
-    const tangyFormMarkup = await this.getFormMarkup(formId)
-    const variableName = formInfo.src + inputVariable;
+    let key = revision ? formInfo.src + revision : formInfo.src;
+    const variableName = key + inputVariable;
     const formInput: any = this.formInputs[variableName]
     if (!this.formInputs[variableName]) {
       // first populate the array
@@ -45,12 +38,20 @@ export class TangyFormService {
     }
   }
 
-  async getFormMarkup(formId) {
+  /**
+   * Gets markup for a form. If displaying a formResponse, populate the revision in order to display the correct form version.
+   * @param formId
+   * @param revision - null if creating a new form.
+   */
+  async getFormMarkup(formId, revision:string) {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-    let formMarkup:any = this.formsMarkup[formInfo.src]
-    if (!this.formsMarkup[formInfo.src]) {
-      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[formInfo.src] = formMarkup;
+    let key = revision ? formInfo.src + revision : formInfo.src;
+    let formMarkup:any = this.formsMarkup[key]
+    if (!this.formsMarkup[key]) {
+      const revisionData =  formInfo.revisions.find(rev => rev['id'] === revision )
+      let src = revision ? revisionData['src'] : formInfo.src
+      formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
+      this.formsMarkup[key] = formMarkup;
     }
     return formMarkup
   }
