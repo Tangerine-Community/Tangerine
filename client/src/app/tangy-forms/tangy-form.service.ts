@@ -49,7 +49,7 @@ export class TangyFormService {
     let formMarkup:any = this.formsMarkup[key]
     if (!this.formsMarkup[key]) {
       const revisionData =  formInfo.revisions.find(rev => rev['id'] === revision )
-      let src = revision ? revisionData['src'] : formInfo.src
+      let src = revisionData ? revisionData['src'] : formInfo.src
       formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
       this.formsMarkup[key] = formMarkup;
     }
