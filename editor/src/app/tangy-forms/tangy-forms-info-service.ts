@@ -29,7 +29,6 @@ export class TangyFormsInfoService {
       const revisionData =  formInfo.revisions.find(rev => rev['id'] === revision )
       let src = revision ? revisionData['src'] : formInfo.src
       formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
-      let key = revision ? formInfo.src + revision : formInfo.src;
       this.formsMarkup[key] = formMarkup;
     }
     return formMarkup
