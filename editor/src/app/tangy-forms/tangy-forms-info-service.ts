@@ -21,19 +21,6 @@ export class TangyFormsInfoService {
     return (await this.getFormsInfo()).find(formInfo => formInfo.id === id)
   }
 
-  async getFormMarkup(formId, revision:string) {
-    const formInfo = await this.getFormInfo(formId)
-    let key = revision ? formInfo.src + revision : formInfo.src;
-    let formMarkup:any = this.formsMarkup[key]
-    if (!this.formsMarkup[key]) {
-      const revisionData =  formInfo.revisions.find(rev => rev['id'] === revision )
-      let src = revision ? revisionData['src'] : formInfo.src
-      formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[key] = formMarkup;
-    }
-    return formMarkup
-  }
-
   async getFormTemplateMarkup(formId:string, formTemplateId:string):Promise<string> {
     const formInfo = await this.getFormInfo(formId)
     const formTemplate = formInfo.templates.find(formTemplate => formTemplate.id === formTemplateId)

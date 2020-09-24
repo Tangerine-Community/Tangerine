@@ -24,8 +24,8 @@ export class FormInfo {
     enabled: false,
     filterByLocation: false
   }
-  revision:string
-  revisions:[]
+  formVersionId:string
+  formVersions:[]
 }
 
 export interface FormTemplate {
