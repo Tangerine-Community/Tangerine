@@ -102,16 +102,6 @@ async function go() {
       console.log(error)
     }
   }
-
-  for (const group of groups) {
-    const groupId = group._id
-    try {
-      await exec(`/tangerine/server/src/scripts/generate-indexes/bin.js ${groupId}`)
-      console.log(`group views indexed in ${groupId}`)
-    } catch (e) {
-      console.log(e)
-    }
-  }
 }
 
 go()
