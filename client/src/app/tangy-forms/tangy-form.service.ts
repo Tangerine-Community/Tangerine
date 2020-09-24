@@ -55,7 +55,9 @@ export class TangyFormService {
         const formVersion: FormVersion =  formInfo.formVersions.find((version:FormVersion) => version.id === lookupFormVersionId )
         src = formVersion ? formVersion.src : formInfo.src
       } else {
-        src = formInfo.src
+        // also look for legacyOriginal
+        const formVersion: FormVersion =  formInfo.formVersions.find((version:FormVersion) => version.legacyOriginal === true )
+        src = formVersion ? formVersion.src : formInfo.src
       }
       formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
       this.formsMarkup[key] = formMarkup;
