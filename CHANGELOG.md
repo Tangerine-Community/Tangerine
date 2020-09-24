@@ -4,6 +4,7 @@
 
 - Fix: Issues on Editor always ask us to rebase [#2376](https://github.com/Tangerine-Community/Tangerine/issues/2376)
 - Fix: Issues screen will not load after upgrading from v3.10.0 to v3.13.0 [#2378](https://github.com/Tangerine-Community/Tangerine/issues/2378)
+- Fix: Issues go missing after upgrading to v3.13.0 from v3.12.x [#2377](https://github.com/Tangerine-Community/Tangerine/issues/2377)
   
 __Server upgrade instructions:__
 
