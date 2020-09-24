@@ -79,19 +79,17 @@ export class TangyFormsPlayerComponent {
       : this.formResponseId
         ? new TangyFormResponseModel(await this.tangyFormService.getResponse(this.formResponseId))
         : ''
-    const response = formResponse
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']
     this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
     this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
-    const revision = formResponse["formRevision"] ? formResponse["formRevision"] : this.formInfo.revision
+    const formVersionId = formResponse["formVersionId"] ? formResponse["formVersionId"] : this.formInfo.formVersionId
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
-      const response = formResponse
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
-      let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, revision)
+      let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId)
       // Put the form on the screen.
       const container = this.container.nativeElement
       container.innerHTML = formHtml
@@ -103,7 +101,7 @@ export class TangyFormsPlayerComponent {
       } else {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
-        formEl.response.formRevision = this.formInfo.revision
+        formEl.response.formVersionId = this.formInfo.formVersionId
         this.throttledSaveResponse(formEl.response)
       }
       this.response = formEl.response

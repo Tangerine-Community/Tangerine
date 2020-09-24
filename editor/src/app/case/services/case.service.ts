@@ -149,7 +149,7 @@ class CaseService {
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
     const tangyFormContainerEl:any = document.createElement('div')
-    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
+    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId, null)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form')
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
@@ -863,7 +863,7 @@ class CaseService {
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
       const tangyFormContainerEl:any = document.createElement('div');
-      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
+      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId, null);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
       document.body.appendChild(tangyFormContainerEl);
@@ -899,10 +899,6 @@ class CaseService {
       await this.save();
 
       return queryResponseId;
-  }
-
-  getQuestionMarkup(form: string, question: string): Promise<string> {
-    return this.tangyFormService.getFormMarkup(form);
   }
 
   async valueExists(form, variable, value) {

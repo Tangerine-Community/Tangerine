@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormInfo } from './classes/form-info.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import {TangyFormsInfoService} from './tangy-forms-info-service';
+import {FormVersion} from "./classes/form-version.class";
 
 
 @Injectable({
@@ -41,15 +42,21 @@ export class TangyFormService {
   /**
    * Gets markup for a form. If displaying a formResponse, populate the revision in order to display the correct form version.
    * @param formId
-   * @param revision - null if creating a new form.
+   * @param formVersionId - Uses this value to lookup the correct version to display. It is null if creating a new response.
    */
-  async getFormMarkup(formId, revision:string) {
+  async getFormMarkup(formId, formVersionId:string) {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-    let key = revision ? formInfo.src + revision : formInfo.src;
+    const lookupFormVersionId = (!formVersionId && formInfo.formVersionId) ? formInfo.formVersionId : formVersionId
+    let key = lookupFormVersionId ? formInfo.src + formVersionId : formInfo.src;
     let formMarkup:any = this.formsMarkup[key]
     if (!this.formsMarkup[key]) {
-      const revisionData =  formInfo.revisions.find(rev => rev['id'] === revision )
-      let src = revisionData ? revisionData['src'] : formInfo.src
+      let src: string;
+      if (formInfo.formVersions) {
+        const formVersion: FormVersion =  formInfo.formVersions.find((version:FormVersion) => version.id === lookupFormVersionId )
+        src = formVersion ? formVersion.src : formInfo.src
+      } else {
+        src = formInfo.src
+      }
       formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
       this.formsMarkup[key] = formMarkup;
     }

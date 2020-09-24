@@ -857,7 +857,6 @@ class CaseService {
       caseEvent = this.case.events.find(c => c.caseEventDefinitionId === this.queryCaseEventDefinitionId);
       const eventForm = caseEvent.eventForms.find(d => d.id === c.id);
 
-      // const referringCaseEvent: CaseEvent = this.case.events.find((event) => event.id === eventId);
       const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
@@ -897,10 +896,6 @@ class CaseService {
       await this.save();
 
       return queryResponseId;
-  }
-
-  getQuestionMarkup(form: string, question: string, revision: string): Promise<string> {
-    return this.tangyFormService.getFormMarkup(form, revision);
   }
 
   async valueExists(form, variable, value) {
