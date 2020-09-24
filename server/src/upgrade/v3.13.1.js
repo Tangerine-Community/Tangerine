@@ -23,6 +23,29 @@ async function go() {
       console.log(e)
     }
   }
+  
+  console.log('Adding lastModified to root of each doc in each group.')
+  for (let group of groups) {
+    const db = new dbConnection(group._id)
+    console.log(`updating docs in   ${group._id}`)
+    const allDocs = await db.allDocs({include_docs: true});
+    for (let record of allDocs.rows) {
+      const doc = record.doc
+      if (!doc._id.includes('_design')) {
+        if (!doc.tangerineModifiedOn) {
+          console.log(`updating doc id: ${doc._id}`)
+          doc.tangerineModifiedOn = doc.startUnixtime
+          try {
+            await db.put(doc)
+            console.log("doc.tangerineModifiedOn: " + doc.tangerineModifiedOn)
+          } catch (e) {
+            console.log("e:" + e)
+          }
+        }
+      }
+    }
+  }
+  
 }
 
 go()
