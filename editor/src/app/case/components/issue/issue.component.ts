@@ -115,8 +115,11 @@ export class IssueComponent implements OnInit {
         `
       }
     })
-
-    if (this.issue.docType === 'response') {
+    // Determine Issue Type to enter different Issue Modes.
+    // Sniff the issue to see if it an Issue of type Event Form or an Issue of type Database Conflict.
+    // @TODO There is more work to be done here so that we can cleanly detect what type of issue we have.
+    // @TODO Also, the data that Database Conflicts add to the Issue could be data in an Event on the Issue. Just food for thought, however a generic top level data object could be useful on Issue.
+    if (!this.issue['data'] || !this.issue['data'].conflict) {
       await this.showProposedChange();
     } else {
       await this.showConflictResolutionOptions()
