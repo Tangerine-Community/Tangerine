@@ -7,7 +7,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
-import uuidv4 from 'uuid/v4'
+import {v4 as uuidv4} from 'uuid';
 import { TangerineFormInfo, TangerineForm } from '../../../../src/app/shared/_classes/tangerine-form.class';
 import { FilesService } from './files.service';
 
