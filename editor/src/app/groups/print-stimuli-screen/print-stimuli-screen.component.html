@@ -1,32 +1,14 @@
-<style>
-    .tangy-main-container {
-      left: 0px;
-      position: relative !important
-    }
-  
-    mat-toolbar,
-    mat-tab-header {
-      display: none !important;
-    }
-  </style>
   <div class="tangy-content tangy-full-width">
-    <mat-card>
-      <mat-card-title>
+      <div>
         <div #container></div>
         {{'Group'|translate}}: {{groupDetails?.label}}<br>
-        {{'Group ID'}}: {{groupDetails?.id}}<br>
+        {{'Group ID'}}: {{groupDetails._id}}<br>
         {{'Form'|translate}}: {{meta?.form.title}}
-      </mat-card-title>
+      </div>
       <br><br><br>
-      <div>
-        <div *ngFor="let section of meta?.items;let index= index">
-          <p>Section {{index+1}}</p>
-          <p>ID: {{section.id}}</p>
-          <p *ngFor="let input of section.inputs; let i=index">{{i+1}} {{input.label}}</p>
-          <br>
-          <hr>
-          <br><br>
+    <div>
+        <div style="page-break-after: always;" *ngFor="let section of meta?.items">
+          <p style="font-size: 32px;" *ngFor="let input of section.inputs; let index=index">{{index+1}}. {{input.label}}</p>
         </div>
       </div>
-    </mat-card>
   </div>
