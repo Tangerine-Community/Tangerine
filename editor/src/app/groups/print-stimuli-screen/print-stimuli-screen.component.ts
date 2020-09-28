@@ -16,8 +16,7 @@ export class PrintStimuliScreenComponent implements OnInit {
   meta;
   constructor(private route: ActivatedRoute,
     private http: HttpClient,
-    private tangerineFormsService:TangerineFormsService,
-    private appConfigService: AppConfigService,
+    private tangerineFormsService: TangerineFormsService,
     private groupsService: GroupsService) { }
 
   async ngOnInit() {
@@ -28,11 +27,8 @@ export class PrintStimuliScreenComponent implements OnInit {
     const myForm = forms.find(e => e['id'] === formId);
     const formHtml = await this.http.get(`/editor/${groupId}/content/${myForm.id}/form.html`, { responseType: 'text' }).toPromise();
     const container = this.container.nativeElement;
-    const appConfig = await this.appConfigService.getAppConfig(groupId);
-    const appConfigCategories = appConfig.categories;
-    const categories = JSON.stringify(appConfigCategories);
     container.innerHTML = `
-    <tangy-form-editor style="margin:15px; display:none;" categories ='${categories}' print>${formHtml}</tangy-form-editor>
+    <div style="margin:15px; display:none;" print>${formHtml}</div>
     `;
     this.meta = (container.querySelector('tangy-form')).getMeta();
   }
