@@ -1,5 +1,26 @@
 # Changelog
 
+## v3.13.1
+
+- Fix: Issues on Editor always ask us to rebase [#2376](https://github.com/Tangerine-Community/Tangerine/issues/2376)
+- Fix: Issues screen will not load after upgrading from v3.10.0 to v3.13.0 [#2378](https://github.com/Tangerine-Community/Tangerine/issues/2378)
+- Fix: Issues go missing after upgrading to v3.13.0 from v3.12.x [#2377](https://github.com/Tangerine-Community/Tangerine/issues/2377)
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.13.1
+# Now you are ready to start the server.
+./start.sh v3.13.1
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.1.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.13.0
+```
+
 
 ## v3.13.0
 - __New Features and fixes for all Tangerine__
