@@ -53,6 +53,7 @@ import { GroupDeviceSheetComponent } from './group-device-sheet/group-device-she
 import {MatTableModule} from "@angular/material/table";
 import {CommonModule} from "@angular/common";
 import {TranslateModule} from "@ngx-translate/core";
+import { PrintFormBackupComponent } from './print-form-backup/print-form-backup.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -115,6 +116,7 @@ const groupsRoutes: Routes = [
     canActivate: [LoginGuard, SuperAdminUserGuard]
   },
   { path: 'groups/:groupId/printFormAsTable/:formId', component: PrintFormAsTableComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/printFormBackup/:formId', component: PrintFormBackupComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [
