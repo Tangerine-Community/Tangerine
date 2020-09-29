@@ -79,6 +79,11 @@ export class TangyFormsPlayerComponent {
       : this.formResponseId
         ? new TangyFormResponseModel(await this.tangyFormService.getResponse(this.formResponseId))
         : ''
+    
+    // happens during testing
+    if (!this.response && this.formResponseId) {
+      this.response = await this.tangyFormService.getResponse(this.formResponseId)
+    }
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']

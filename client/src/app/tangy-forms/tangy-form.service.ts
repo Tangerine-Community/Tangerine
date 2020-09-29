@@ -45,39 +45,19 @@ export class TangyFormService {
    * @param formVersionId - Uses this value to lookup the correct version to display. It is null if 
    */
   async getFormMarkup(formId, formVersionId:string = '') {
-    const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
     // const lookupFormVersionId = (!formVersionId && formInfo.formVersionId) ? formInfo.formVersionId : formVersionId
     // let key = lookupFormVersionId ? formInfo.src + formVersionId : formInfo.src;
     let formMarkup:any
     // = this.formsMarkup[key]
     // if (!this.formsMarkup[key]) {
-      let src: string;
-    // check if window is localhost to see if we're in preview mode.
-    // check if formInfo.formVersions is empty or len === 0
-      if (!formVersionId && (!formInfo.formVersions || (formInfo.formVersions && formInfo.formVersions.length === 0))) {
-        const legacyVersion: FormVersion =  formInfo.formVersions.find((version:FormVersion) => version.legacyOriginal === true )
-        src = legacyVersion ? legacyVersion.src : formInfo.src
-      } else {
-        // check for a match w/ formVersionId; if no match, also check for legacyOriginal
-        const formVersion: FormVersion =  formInfo.formVersions.find((version:FormVersion) => version.id === formVersionId )
-        src = formVersion ? formVersion.src : formInfo.src
-        // } else {
-        if (!formVersion) {
-          src = formInfo.src
-        }
-        // }
-      }
-      // last ditch case
-      if (!src) {
-        console.log("Why is there no src? ")
-        src = formInfo.src
-      }
-      
-      formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
+    let src: string = await this.tangyFormsInfoService.getFormSrc(formId, formVersionId)
+    formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
       // this.formsMarkup[key] = formMarkup;
     // }
     return formMarkup
   }
+
+  
 
   async getFormTemplateMarkup(formId:string, formTemplateId:string):Promise<string> {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
