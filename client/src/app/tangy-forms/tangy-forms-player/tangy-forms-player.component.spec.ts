@@ -23,10 +23,6 @@ describe('TangyFormsPlayerComponent', () => {
           useClass: MockUserService
         },
         {
-          provide: TangyFormsInfoService,
-          useClass: MockTangyFormsInfoService
-        }, 
-        {
           useClass: MockTangyFormService,
           provide: TangyFormService
         }],
@@ -50,7 +46,24 @@ describe('TangyFormsPlayerComponent', () => {
     component.formResponseId = '123'
     component.templateId = 'foo'
     component.$rendered.subscribe(() => {
+      debugger;
       expect(component.container.nativeElement.querySelector('h1').innerHTML).toEqual('This is input1.')
+      done()
+    })
+    component.render()
+  })
+
+  // other tests
+  // - formVersionId but no formVersions
+  // - no formVersionId
+  // check if isSandbox.
+  fit('should load response and show correct version', (done) => {
+    // See MockTangyFormsInfoService for the data and template being used.
+    component.formId = 'original'
+    component.formResponseId = '123'
+    component.$rendered.subscribe(() => {
+      debugger;
+      expect(component.container.nativeElement.querySelector('#item1').title).toEqual('Screening')
       done()
     })
     component.render()

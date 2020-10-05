@@ -74,7 +74,9 @@ class MockFormsInfoService {
           push: false,
           pull: false,
           excludeIncomplete: false
-        }
+        },
+        formVersionId: null, 
+        formVersions: null
       }
     ]
   }
