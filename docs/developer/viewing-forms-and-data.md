@@ -1,10 +1,10 @@
 # Viewing Forms and Form Data
 
-Use TangyFormService to retrieve form definitions and response data:
+Use TangyFormService to retrieve form definitions and response data. The revision is used to get the correct version of the form.
 
 ```js
     this.formResponse = await this.tangyFormService.getResponse(this.eventForm.formResponseId)
-    const tangyFormMarkup = await this.tangyFormService.getFormMarkup(this.eventFormDefinition.formId)
+    const tangyFormMarkup = await this.tangyFormService.getFormMarkup(this.eventFormDefinition.formId, this.formResponse.formVersionId)
 ```
 
 But there are other ways of getting data out of Tangerine. First you need to see where you are getting data from.
