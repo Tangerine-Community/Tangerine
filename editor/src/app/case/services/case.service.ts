@@ -750,16 +750,12 @@ class CaseService {
 
   async canMergeProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
-    // const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+    const eventBase = [...issue.events]
+      .reverse()
+      .find(event => event.type === IssueEventType.Rebase || event.type === IssueEventType.Open)
+    const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
-    let currentResponse
-    if (issue.docType === 'response') {
-      currentResponse = await this.tangyFormService.getResponse(issue.formResponseId)
-    } else if (issue.docType === 'case') {
-      currentResponse = currentCaseInstance
-    }
-    return currentResponse._rev === event.data.response._rev && currentCaseInstance._rev === event.data.caseInstance._rev ? true : false
+    return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
   }
 
   async issueDiff(issueId) {
