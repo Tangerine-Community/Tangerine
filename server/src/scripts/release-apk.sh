@@ -81,6 +81,10 @@ sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
 /tangerine/server/node_modules/cordova-hot-code-push-cli/bin/cordova-hcp build
 echo '{"processing":true,"step":"Compiling APK"}' > $STATUS_FILE
 
+echo "RELEASE APK: removing Android platform"
+cordova platform rm android
+cordova platform add android
+
 echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android
 
