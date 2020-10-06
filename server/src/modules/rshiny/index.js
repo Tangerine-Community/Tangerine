@@ -151,6 +151,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
         : value
   }
+  let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
       let sanitize = false;
@@ -161,7 +162,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
       }
       if (!sanitize) {
       // Simplify the keys by removing formID.itemId
-      let firstIdSegment = ""
+      let firstIdSegment = `${formID}_${item.id}_`
       if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
@@ -179,6 +180,31 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             set(input, `${firstIdSegment}${input.name}${sep}${group.level}_label`, 'orphaned')
           }
         }
+      } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+        set(input, `${firstIdSegment}${input.name}`, input.value.find(input => input.value == 'on')
+          ? input.value.find(input => input.value == 'on').name
+          : ''
+        )
+      } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
+        set(input, `${firstIdSegment}${input.name}`, input.value
+          ? '1'
+          : '0'
+        )
+      } else if (input.tagName === 'TANGY-CHECKBOXES') {
+        for (let checkboxInput of input.value) {
+          set(input, `${firstIdSegment}${input.name}_${checkboxInput.name}`, checkboxInput.value
+            ? "1"
+            : "0"
+          )
+        }
+        ;
+      } else if (input.tagName === 'TANGY-CHECKBOX') {
+        set(input, `${firstIdSegment}${input.name}`, input.value
+          ? "1"
+          : "0"
+        )
+      } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
+        // Do nothing :).
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
