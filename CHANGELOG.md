@@ -2,7 +2,7 @@
 
 ## v3.14.0
 - __New Features and fixes for all Tangerine__
-  - __Automatic conflict resolution on client__: Basic support for automatic merges of conflicts in EventForms. [#2272](https://github.com/Tangerine-Community/Tangerine/pull/2272)
+  - __Automatic conflict resolution on client__: Basic support for automatic merges of conflicts in EventForms. Documentation for [testing conflicts](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/developer/testing-conflicts.md) [#2272](https://github.com/Tangerine-Community/Tangerine/pull/2272) 
   - __Form version support__: Enables use of previous form versions for form display. [Documentation](https://github.com/Tangerine-Community/Tangerine/blob/release/3.14.0/docs/editor/form-versions.md) [#2365](https://github.com/Tangerine-Community/Tangerine/issues/2365)
   - __User Interface updates__: The 4.19.0 tangy-form lib version features the following fixes:
     - Required Field Asterisk (*) does not align with the question text [#2363](https://github.com/Tangerine-Community/Tangerine/issues/2363)
