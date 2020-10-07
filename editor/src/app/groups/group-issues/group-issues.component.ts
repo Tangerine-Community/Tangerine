@@ -86,6 +86,9 @@ export class GroupIssuesComponent implements OnInit {
         'type': 'issue',
         'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
         [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
+        // 'events[0].data.conflicts': {
+        //   $exists: false
+        // }
       }
     }
     this.query()
