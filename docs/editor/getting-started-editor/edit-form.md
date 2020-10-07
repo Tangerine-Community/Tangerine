@@ -4,7 +4,8 @@ Once you have selected to edit your new or existing instrument/form, you will se
 
 On the tablet, items in any one section can be seen on a single screen. The user moves through items by "scrolling" down the screen. The user moves through sections by hitting "Next" or "Back" on the tablet.
 
-![editForm](media/editForm.gif)
+<img src="../media/editForm.gif" width="570">
+
 
 The form editor provides the interface for adding and editing instrument sections and items. This interface provides controls that make the following actions possible:
 
@@ -20,8 +21,8 @@ The form editor provides the interface for adding and editing instrument section
 
 For each section there are two actions available.
 
-<B>EDIT</B> ![editButton](media/editButton.png) -- This icon opens the interface to edit an instrument section (e.g., add items)
+<B>EDIT</B> <img src="../media/editButton.png" width="30"> -- This icon opens the interface to edit an instrument section (e.g., add items)
 
-<B>DELETE </B> ![deleteButton](media/deleteButton.png)-- This icon deletes this instrument section
+<B>DELETE </B> <img src="../media/deleteButton.png" width="30"> -- This icon deletes this instrument section
 
 In this view, you can drag sections to reorder them.
