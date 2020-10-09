@@ -34,3 +34,43 @@ Click **Download** to download the file.
 
 
 Once the CSV has been downloaded, you can find it in your Downloads folder.
+
+
+### Metadata included in CSV ###
+
+Each csv output from data collected by Tangerine has a set of metadata variables that are automatically output. Here is the current list:
+
+|Variable Name |	Meaning |
+| ---------- | ------------------------------------------------|
+|_id	|32-digit uuid identifying the unique form taken|
+|formId	|text name of the form|
+|startUnixtime	|unix timestamp that the form was first opened|
+|endUnixtime	|unix timestamp that the form was completed|
+|lastSaveUnixtime	|unix timestamp that the form was last opened and saved|
+|buildId	|32-digit uuid identifying the app version|
+|buildChannel	|type of build: will be either build or production|
+|deviceId	|32-digit uuid identifying the registered device|
+|groupId	|identifyer of the Tangerine group to which this device is registered|
+|complete	|TRUE or FALSE, whether the form is complete|
+|tangerineModifiedByUserId	3|2-digit uuid identifying the registered user who filled the form|
+|caseId	|32-digit uuid identifying the Case the form is associated with|
+|eventId	|32-digit uuid identifying the Event within the Case that the form is associated with|
+|eventFormId	|32-digit uuid identifying the Form within the Event within the Case that the form is associated with|
+|participantId	|32-digit uuid identifying the participant for whom the form was filled|
+
+
+#### User Profile Metadata ####
+
+The information for the user logged in to the Tangerine app is also included in the CSV outputs. This includes the metadata below. The location metadata is based on the location defined in the location list. The table below includes three location levels as an example. 
+
+|Variable Name |	Meaning |
+| ---------- | ------------------------------------------------|
+|user-profile._id	|32-digit uuid identifying the registered user who filled the form|
+|user-profile.item-1_firstOpenTime	|unix timestamp of when the form was opened|
+|user-profile.item-1.first_name	|user's first name|
+|user-profile.item-1.last_name	|user's last name|
+|user-profile.item-1.gender	|user's gender|
+|user-profile.item-1.phone	|user's phone number|
+|user-profile.item-1.location.Region	|user's assigned Region|
+|user-profile.item-1.location.District	|user's assigned District|
+|user-profile.item-1.location.Village	|user's assigned Village|
