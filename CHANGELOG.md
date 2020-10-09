@@ -2,6 +2,7 @@
 
 ## v3.14.0
 - __New Features and fixes for all Tangerine__
+  - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
   - __Automatic conflict resolution on client__: Basic support for automatic merges of conflicts in EventForms. Documentation for [testing conflicts](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/developer/testing-conflicts.md) [#2272](https://github.com/Tangerine-Community/Tangerine/pull/2272) 
   - __Form version support__: Enables use of previous form versions for form display. [Documentation](https://github.com/Tangerine-Community/Tangerine/blob/release/3.14.0/docs/editor/form-versions.md) [#2365](https://github.com/Tangerine-Community/Tangerine/issues/2365)
   - __User Interface updates__: The 4.19.0 tangy-form lib version features the following fixes:
@@ -9,6 +10,7 @@
     - Error Text and Warning Text have the same style - this is confusing for users [#2364](https://github.com/Tangerine-Community/Tangerine/issues/2364)
   - __Setting packageName in app-config.json causes app to crash__: The docker-tangerine-base-image update to 3.7.0 improves Android and Cordova lib dependencies, and the release-apk code now rebuilds the Android code whenever an APK is built. [#2366](https://github.com/Tangerine-Community/Tangerine/issues/2366)
   - __New module for rshiny development__: Adds option to csv module to change delimiter from '.' to '_'[#2314](https://github.com/Tangerine-Community/Tangerine/issues/2314)
+  - __Documentation Update__:   Re-organization of some documentation and addition of missing image files. [#2401](https://github.com/Tangerine-Community/Tangerine/issues/2401)
 - __Upgrades in the Developers' Interest__
   - __Upgraded docker-tangerine-base-image to v3.7.0: Upgrade to Android API_LEVEL 30, Cordova 10, node:14.12.0-stretch. [1890](https://github.com/Tangerine-Community/Tangerine/issues/1890)
 
