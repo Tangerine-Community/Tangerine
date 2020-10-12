@@ -2,6 +2,7 @@
 <div id="header">
   <tangy-location #tangyLocation></tangy-location>
   <div id="header-buttons">
+    <paper-checkbox #showConflicts class="show-conflicts">show conflicts</paper-checkbox>
     <paper-checkbox #showClosedIssues class="show-closed-issues">show closed issues</paper-checkbox>
     <paper-button id="reset-button" (click)="onResetClick()" [disabled]="loading === true">reset</paper-button>
     <paper-button id="search-button" (click)="onSearchClick()" [disabled]="loading === true">search</paper-button>
