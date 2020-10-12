@@ -41,12 +41,20 @@ export class GroupIssuesComponent implements OnInit {
   loading = false
   @ViewChild('tangyLocation', {static: true}) tangyLocationEl:ElementRef
   @ViewChild('showClosedIssues', {static: true}) showClosedIssues:ElementRef
+  @ViewChild('showConflicts', {static: true}) showConflicts:ElementRef
 
   // Query params.
   selector:any = {}
   limit = 10
   skip = 0
   moment
+  filterConflictsSelector = {
+    "$elemMatch": {
+      "data.conflict": {
+        "$exists": false
+      }
+    }
+  }
 
   constructor(
     private groupResponsesService:GroupResponsesService,
@@ -67,6 +75,10 @@ export class GroupIssuesComponent implements OnInit {
       "type": "issue",
       'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
     }
+    // this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
+    if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
+      this.selector["events"] = this.filterConflictsSelector
+    }
     this.query()
   }
 
@@ -79,17 +91,18 @@ export class GroupIssuesComponent implements OnInit {
       this.selector = {
         'type': 'issue',
         'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
-      }
+        }
     } else {
       const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
       this.selector = {
         'type': 'issue',
         'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
         [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
-        // 'events[0].data.conflicts': {
-        //   $exists: false
-        // }
       }
+    }
+    // this.selector = this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
+    if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
+      this.selector["events"] = this.filterConflictsSelector
     }
     this.query()
   }

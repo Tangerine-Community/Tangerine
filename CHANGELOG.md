@@ -3,6 +3,7 @@
 ## v3.14.0
 - __New Features and fixes for all Tangerine__
   - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
+  - __Important bugfix for sync issue in poor network situations__: If you currently have an active 3.13 deployment, run the 3.14 update (below) to make sure all data is sync'd to the server. [2399](https://github.com/Tangerine-Community/Tangerine/issues/2399)
   - __Automatic conflict resolution on client__: Basic support for automatic merges of conflicts in EventForms. Documentation for [testing conflicts](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/developer/testing-conflicts.md) [#2272](https://github.com/Tangerine-Community/Tangerine/pull/2272) 
   - __Form version support__: Enables use of previous form versions for form display. [Documentation](https://github.com/Tangerine-Community/Tangerine/blob/release/3.14.0/docs/editor/form-versions.md) [#2365](https://github.com/Tangerine-Community/Tangerine/issues/2365)
   - __User Interface updates__: The 4.19.0 tangy-form lib version features the following fixes:
