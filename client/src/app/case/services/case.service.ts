@@ -527,6 +527,60 @@ class CaseService {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
+  async copyParticipantFromCaseToCase(sourceParticipantId, sourceCaseId, destCaseId) {
+    await this.load(sourceCaseId)
+
+    if (this.case._id === sourceCaseId) {
+      const sourceCase = this.case
+      const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+      if (sourceParticipant !== undefined) {
+        await this.load(destCaseId)
+        this.case.participants.push(sourceParticipant)
+        await this.save()
+
+      }
+    }
+  }
+
+  async moveParticipantFromCaseToCase(sourceParticipantId, sourceCaseId, destCaseId) {
+    await this.load(sourceCaseId)
+
+    if (this.case._id === sourceCaseId) {
+      const sourceCase = this.case
+      const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+      if (sourceParticipant !== undefined) {
+        const sourceParticipantIdx = sourceCase.participants.findIndex(sourceParticipant =>
+          sourceParticipant.id === sourceParticipantId)
+        sourceCase.participants.splice(sourceParticipantIdx)
+        await this.save()
+
+        // if the destination load fails, the participant could be orphaned
+        await this.load(destCaseId)
+        this.case.participants.push(sourceParticipant)
+        await this.save()
+
+      }
+    }
+  }
+
+  async deleteParticipantFromCase(sourceParticipantId, sourceCaseId) {
+    await this.load(sourceCaseId)
+
+    if (this.case._id === sourceCaseId) {
+      const sourceCase = this.case
+      const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+      if (sourceParticipant !== undefined) {
+        const sourceParticipantIdx = sourceCase.participants.findIndex(sourceParticipant =>
+          sourceParticipant.id === sourceParticipantId)
+        sourceCase.participants.splice(sourceParticipantIdx)
+        await this.save()
+      }
+    }
+  }
+
   /*
    * Notification API
    */
