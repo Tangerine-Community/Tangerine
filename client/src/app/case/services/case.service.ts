@@ -527,7 +527,7 @@ class CaseService {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
-  addParticipant(caseParticipant, caseRoleId) {
+  addParticipant(caseParticipant:CaseParticipant) {
     this.case.participants.push(caseParticipant)
     for (let caseEvent of this.case.events) {
       const caseEventDefinition = this
@@ -536,7 +536,7 @@ class CaseService {
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (
-          caseRoleId === eventFormDefinition.forCaseRole && 
+          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -562,7 +562,7 @@ class CaseService {
     return sourceParticipant
   }
 
-  async deleteParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+  async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
 
     await this.load(sourceCaseId)
@@ -580,17 +580,17 @@ class CaseService {
   async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
     const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
     if (caseParticipant !== undefined) {
-      this.addParticipant(caseParticipant, caseParticipant.caseRoleId)
+      this.addParticipant(caseParticipant)
     }
   }
 
   async moveParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
     const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
     if (caseParticipant !== undefined) {
-      this.addParticipant(caseParticipant, caseParticipant.caseRoleId)
+      this.addParticipant(caseParticipant)
 
       // Only delete the participant from the other case after adding it to this case is successful
-      await this.deleteParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+      await this.deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId)
     }
   }
 
