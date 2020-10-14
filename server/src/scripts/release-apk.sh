@@ -94,9 +94,6 @@ sed -i -e "s#APPNAME#$APPNAME#g" $RELEASE_DIRECTORY/cordova-hcp.json
 /tangerine/server/node_modules/cordova-hot-code-push-cli/bin/cordova-hcp build
 echo '{"processing":true,"step":"Compiling APK"}' > $STATUS_FILE
 
-#echo "RELEASE APK: npm install cordova-android"
-#npm install $CORDOVA_ANDROID_DIRECTORY
-
 echo "RELEASE APK: adding Android platform"
 cordova platform add $CORDOVA_ANDROID_DIRECTORY --no-telemetry
 
