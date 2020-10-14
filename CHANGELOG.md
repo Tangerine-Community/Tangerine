@@ -13,7 +13,7 @@
   - __New module for rshiny development__: Adds option to csv module to change delimiter from '.' to '_'[#2314](https://github.com/Tangerine-Community/Tangerine/issues/2314)
   - __Documentation Update__:   Re-organization of some documentation and addition of missing image files. [#2401](https://github.com/Tangerine-Community/Tangerine/issues/2401)
 - __Upgrades in the Developers' Interest__
-  - __Upgraded docker-tangerine-base-image to v3.7.0: Upgrade to Android API_LEVEL 30, Cordova 10, node:14.12.0-stretch. [1890](https://github.com/Tangerine-Community/Tangerine/issues/1890)
+  - __Upgraded docker-tangerine-base-image to v3.7.1__: Upgrade to Android API_LEVEL 30, Cordova 10, node:14.12.0-stretch. [#1890](https://github.com/Tangerine-Community/Tangerine/issues/1890) Caching cordova-android platform to avoid network issues when customizing packageName. [#7](https://github.com/Tangerine-Community/docker-tangerine-base-image/issues/7)
 
 ## v3.13.1
 - Fix: Issues on Editor always ask us to rebase [#2376](https://github.com/Tangerine-Community/Tangerine/issues/2376)
