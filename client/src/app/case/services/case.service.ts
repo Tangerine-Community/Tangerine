@@ -299,6 +299,10 @@ class CaseService {
     return caseEvent
   }
 
+  setEventName(caseEvent:CaseEvent, name:string) {
+    caseEvent.name = name;
+  }
+
   setEventEstimatedDay(eventId, timeInMs: number) {
     const estimatedDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
