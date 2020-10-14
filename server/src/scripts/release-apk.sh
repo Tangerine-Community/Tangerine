@@ -15,6 +15,7 @@ URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www"
 CHCP_URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www/chcp.json"
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
 BUILD_ID=`uuid`
+CORDOVA_ANDROID_DIRECTORY="/opt/cordova-android"
 
 echo "RELEASE APK script started $DATE"
 
@@ -81,9 +82,26 @@ sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
 /tangerine/server/node_modules/cordova-hot-code-push-cli/bin/cordova-hcp build
 echo '{"processing":true,"step":"Compiling APK"}' > $STATUS_FILE
 
+echo "RELEASE APK: removing cordova-android package symlink"
+rm -rf $RELEASE_DIRECTORY/node_modules/cordova-android
 echo "RELEASE APK: removing Android platform"
 cordova platform rm android
-cordova platform add android
+echo "RELEASE APK: adding Android platform"
+#cordova platform add android
+#cordova platform add github:apache/cordova-android
+#cordova platform add $CORDOVA_DIRECTORY/platforms/android --link=$CORDOVA_DIRECTORY/platforms/android
+cordova platform add $CORDOVA_ANDROID_DIRECTORY
+
+#echo "RELEASE APK: Deleting Android platform directory"
+#rm -rf $RELEASE_DIRECTORY/platforms
+#echo "RELEASE APK: Adding default Android platform directory"
+#cp -r $CORDOVA_DIRECTORY/platforms .
+
+#echo "RELEASE APK: Cordova clean"
+#cordova clean
+#
+#echo "RELEASE APK: gradlew clean"
+#gradlew clean
 
 echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android
