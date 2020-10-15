@@ -163,4 +163,15 @@ Proposals for tools to help in managing form versions:
 - start new dir in tangerine dir called `cli` - this would be the first subcommand of a new cli. This is different from the server cli. tangerine-preview is another command that could be integrated into this new cli. Example - `generate-new-form` creates the scaffolding for a new form and could implement/facilitate the revisions feature.
 - Version incrementor - used for releases
 
+## Testing version support
+
+What are the different use-cases that the software must implement to fully support versions? The following list will list each case and the correct source for the form:
+
+- Using the tangerine-preview app and must use the most recent version: formInfo.src
+- Viewing a record created in a legacy group with no formVersionId and no formVersions: formInfo.src
+- viewing a record created in a legacy group with no formVersionId but does have formVersions using the legacyOriginal flag: legacyVersion.src
+- viewing a record created in a legacy group with no formVersionId but does have formVersions without legacyOriginal flag: lawd have mercy! formInfo.src
+- viewing a record created in a new group using formVersionId and has formVersions: formVersion.src
+- viewing a record created in a new group using formVersionId and does not have formVersions     : formInfo.src
+
 
