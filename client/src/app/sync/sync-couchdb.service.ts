@@ -153,11 +153,6 @@ export class SyncCouchdbService {
       await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
     }
 
-    // Now that we've pulled, let's find the last_seq that we can skip the next time we push.
-    // Find the last sequence in the local database and set the sync-push-last_seq variable.
-    const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-    await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-
     const pushSyncOptions = {
       "since": push_last_seq,
       "batch_size": 50,
