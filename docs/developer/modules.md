@@ -5,7 +5,7 @@ Modules provide additional features to Tangerine, such as:
  - data transformation for reporting (via flatFormResponse hook)
 
 Modules:
- - [Class](class.md)
+ - [Class](../editor/project_management/class.md)
 
 Steps to add a module
  - Create an index.js file inside server/src/modules/moduleName using the sample below as a guide.
