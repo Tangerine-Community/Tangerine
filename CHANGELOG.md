@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.14.1
+This is identical to v3.14.0 but was released to fix a problem with tangerine-preview v3.14.0 on npm.
+
 ## v3.14.0
 - __New Features and fixes for all Tangerine__
   - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
@@ -14,6 +17,8 @@
   - __Documentation Update__:   Re-organization of some documentation and addition of missing image files. [#2401](https://github.com/Tangerine-Community/Tangerine/issues/2401)
 - __Upgrades in the Developers' Interest__
   - __Upgraded docker-tangerine-base-image to v3.7.1__: Upgrade to Android API_LEVEL 30, Cordova 10, node:14.12.0-stretch. [#1890](https://github.com/Tangerine-Community/Tangerine/issues/1890) Caching cordova-android platform to avoid network issues when customizing packageName. [#7](https://github.com/Tangerine-Community/docker-tangerine-base-image/issues/7)
+- __Important note for users of tangerine-preview__
+There was a problem with v3.14.0 on npm; therefore, please use tangerine-preview v3.14.1.
 
 ## v3.13.1
 - Fix: Issues on Editor always ask us to rebase [#2376](https://github.com/Tangerine-Community/Tangerine/issues/2376)
