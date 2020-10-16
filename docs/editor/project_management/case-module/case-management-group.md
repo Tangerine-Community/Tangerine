@@ -118,7 +118,7 @@ File: `forms.json`
 ```
 
 ## Configuring two-way sync
-Because you may need to share cases across devices, configuring two-way sync may be necessary. See the [Two-way Sync Documentation](feature-two-way-sync.md) for more details. Note that you sync Form Responses, and it's the IDs of that you'll want to sync in the `"formId"` of the Case Definition in order to sync cases.
+Because you may need to share cases across devices, configuring two-way sync may be necessary. See the [Two-way Sync Documentation](../../system-administrator/sync-protocol-2.md) for more details. Note that you sync Form Responses, and it's the IDs of that you'll want to sync in the `"formId"` of the Case Definition in order to sync cases.
 
 
 ## Configuring the Schedule
