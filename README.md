@@ -22,7 +22,14 @@ A Tangerine Server can either be purchased online at Tangerine Hub or set up on 
 
 Forms in Tangerine are based on the tangy-form suite of Web Components (<https://www.webcomponents.org/element/tangy-form>). Forms can be edited in the online Tangy Editor App on their Tangerine Server using a WYSIWYG interface or for advanced editors, via basic HTML and Javascript code.
 
-There is a pluggable reporting module framework built in currently with options to send outputs to CSV, Elastic Search, and Dat Archives. Dashboards are typically built using the "ELK" stack which is short for a combination of technologies known as Elastic Search, Logstash, and Kibana. 
+Tangerine exposes a pluggable reporting module framework that monitors in-coming data from the Couchdb changes feed and outputs to optional modules. These modules parse each changed doc into flatter, easier-to-consume docs or transform and transfer to other databases. Current modules include: 
+ - 'reporting' - produces flattened docs and consumed by our CSV output process
+ - 'logstash' - transforms docs to support dashboards built using the "[ELK](https://www.elastic.co/elastic-stack)" stack - short for a combination of technologies known as Elastic Search, [Logstash](https://www.elastic.co/logstash), and Kibana
+ - 'synapse' - transforms data closer to what a relational db would expect that uses a REST API to upload data to an Amazon S3 repository using [synapsePythonClient](https://github.com/Sage-Bionetworks/synapsePythonClient)
+ - 'dat' - transforms docs for p2p via the [DatArchive API](https://beakerbrowser.com/docs/apis/dat)
+ - 'rshiny' - produces flattened docs similar to the 'synapse' module using [sofa](https://github.com/ropensci/sofa) to support R reporting
+
+A mysql database module is in-the-works.
 
 ## Supported Devices and Web Browsers
 
