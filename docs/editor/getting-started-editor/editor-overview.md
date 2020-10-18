@@ -10,6 +10,7 @@ Tangerine contains an extremely extensible foundational framework that allows th
 -	Section Editor
 -	Copying Items
 -	[Different Input Types](input-types.md)
+-   [Location list import](../input-types/#location)
 -	[Skip Logic](skip-logic.md)
 -	[Validation](validation.md)
 -	Why custom build forms?
