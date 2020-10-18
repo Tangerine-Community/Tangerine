@@ -1,5 +1,8 @@
 # What's New
 
+## v3.14.1
+This is identical to v3.14.0 but was released to fix a problem with tangerine-preview v3.14.0 on npm.
+
 ## v3.14.0
 ??? note "New Features and fixes for all Tangerine"
   - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
