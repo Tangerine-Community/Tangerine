@@ -2,6 +2,7 @@ import { EventForm } from './event-form.class'
 
 class CaseEvent {
   id?: string
+  name?: string
   caseEventDefinitionId:string
   eventForms: Array<EventForm> = []
   complete?:boolean = false
