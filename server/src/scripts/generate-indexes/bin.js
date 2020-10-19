@@ -47,13 +47,14 @@ async function go() {
       ]
     }
   })
-  console.log('Creating index for field of type, status, and tangerineModifiedOn (for Issues mainly)')
+  console.log('Creating index for field of type, status, tangerineModifiedOn, and events')
   await createIndex({
     index: {
       fields: [
         'type',
         'status',
         'tangerineModifiedOn'
+        // 'events'
       ]
     }
   })

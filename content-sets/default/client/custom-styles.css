@@ -15,6 +15,8 @@ html {
   --accent-color-dark: #cc5500;
   --accent-text-color: #FFF;
   --error-color: #ff0000;
+  --warn-color: #993f0b;
+  --warn-background-color: #f4e688;
   --disabled-color: #BBB;
   --paper-tabs-selection-bar-color: #f26f10;
 }

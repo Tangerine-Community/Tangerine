@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+@import '_tangy-app-variables.scss';
+
+@include mat-core();
+
+
+$tangerine-app-theme: mat-light-theme($tangerine-app-primary, $tangerine-app-accent, $tangerine-app-warn);
+
+
+@include angular-material-theme($tangerine-app-theme);
