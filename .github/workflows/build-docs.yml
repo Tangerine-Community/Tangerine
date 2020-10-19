@@ -21,4 +21,4 @@ jobs:
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REQUIREMENTS: mkdocs-git-revision-date-localized-plugin
+          REQUIREMENTS: 'mkdocs-git-revision-date-localized-plugin'
