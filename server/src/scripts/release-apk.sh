@@ -63,11 +63,11 @@ echo "RELEASE APK: removing Android platform"
 cordova platform rm android --no-telemetry
 
 CUSTOM_SCRIPTS_PATH="$RELEASE_DIRECTORY/www/shell/assets/custom-scripts.js"
+TMP_CUSTOM_SCRIPTS_PATH="$CUSTOM_SCRIPTS_PATH.tmp"
 if [ -f "$CUSTOM_SCRIPTS_PATH" ]; then
   echo "RELEASE APK webpacking CUSTOM_SCRIPTS"
-  webpack $CUSTOM_SCRIPTS_PATH -o "$CUSTOM_SCRIPTS_PATH.tmp"
-  mv "$CUSTOM_SCRIPTS_PATH" $CUSTOM_SCRIPTS_PATH.original 
-  mv "$CUSTOM_SCRIPTS_PATH.tmp" $CUSTOM_SCRIPTS_PATH 
+  webpack $CUSTOM_SCRIPTS_PATH -o $TMP_CUSTOM_SCRIPTS_PATH
+  cp "$TMP_CUSTOM_SCRIPTS_PATH/main.js" $CUSTOM_SCRIPTS_PATH
 fi
 
 # Stash the Build ID in the release.
