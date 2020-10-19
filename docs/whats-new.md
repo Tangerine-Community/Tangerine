@@ -1,5 +1,24 @@
 # What's New
 
+# Changelog
+
+## v3.14.2
+??? note "Bugfix"
+  - Fixes file path issue when bundling custom scripts in APK's.
+
+??? tip "Server upgrade instructions"
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.2
+# Now you are ready to start the server.
+./start.sh v3.14.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.1
+```
+
 ## v3.14.1
 This is identical to v3.14.0 but was released to fix a problem with tangerine-preview v3.14.0 on npm.
 
