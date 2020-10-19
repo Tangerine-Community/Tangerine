@@ -22,6 +22,7 @@
     "reset-all-devices": "./src/scripts/reset-all-devices/bin.js",
     "translations-update": "./src/scripts/translations-update.js",
     "release-dat": "./src/scripts/release-dat.sh",
+    "release-online-survey-app": "./src/scripts/release-online-survey-app.sh",
     "release-apk": "./src/scripts/release-apk.sh",
     "release-pwa": "./src/scripts/release-pwa.sh",
     "generate-ssh-keys": "./src/scripts/generate-ssh-keys.js",

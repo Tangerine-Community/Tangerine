@@ -1,11 +1,9 @@
 # Tangerine Data Collection
 
-- Logging in 
-- Check for Tangerine Updates
-- Deploying Tangerine for Offline Data Collection
-- Data Collection
-- Downloading your data
-- Data Transmission
+- [Deploying Tangerine for Offline Data Collection](deployment.md)
+- [Check for Tangerine Updates](update.md)
+- [Data Collection](data-collector.md)
+- [Data Synchronization](data-sync.md)
 	
 ## Quality Management 
 -	Forms 

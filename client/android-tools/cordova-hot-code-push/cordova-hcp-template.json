@@ -1,7 +1,7 @@
 {
-  "name": "Tangerine",
+  "name": "APPNAME",
   "ios_identifier": "",
-  "android_identifier": "org.rti.Tangerine",
+  "android_identifier": "PACKAGE",
   "update": "start",
   "content_url": "URL",
   "min_native_interface": 1

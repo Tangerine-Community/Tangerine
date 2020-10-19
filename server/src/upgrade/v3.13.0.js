@@ -48,7 +48,6 @@ async function go() {
     } catch (e) {
       console.log(e)
     }
-
   }
   for (let group of groups) {
     let groupId = group._id

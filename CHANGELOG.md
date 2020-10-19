@@ -1,5 +1,45 @@
 # Changelog
 
+## v3.14.1
+This is identical to v3.14.0 but was released to fix a problem with tangerine-preview v3.14.0 on npm.
+
+## v3.14.0
+- __New Features and fixes for all Tangerine__
+  - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
+  - __Important bugfix for sync issue in poor network situations__: If you currently have an active 3.13 deployment, run the 3.14 update on client to make sure all data is sync'd to the server. [#2399](https://github.com/Tangerine-Community/Tangerine/issues/2399)
+  - __Automatic conflict resolution on client__: Basic support for automatic merges of conflicts in EventForms. [#2272](https://github.com/Tangerine-Community/Tangerine/pull/2272) Documentation for [testing conflicts](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/developer/testing-conflicts.md)
+  - __Form version support__: Enables use of previous form versions for form display. [#2365](https://github.com/Tangerine-Community/Tangerine/issues/2365) Support for versioning is not yet implemented in the Editor; however, there is documentation on [how to implement form versions](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/editor/form-versions.md) manually.
+  - __User Interface updates__: The 4.19.0 tangy-form lib version features the following fixes:
+    - Required Field Asterisk (*) does not align with the question text [#2363](https://github.com/Tangerine-Community/Tangerine/issues/2363)
+    - Error Text and Warning Text have the same style - this is confusing for users [#2364](https://github.com/Tangerine-Community/Tangerine/issues/2364)
+  - __Setting packageName in app-config.json causes app to crash__: The docker-tangerine-base-image update to 3.7.0 improves Android and Cordova lib dependencies, and the release-apk code now rebuilds the Android code whenever an APK is built. [#2366](https://github.com/Tangerine-Community/Tangerine/issues/2366)
+  - __New module for rshiny development__: Adds option to csv module to change delimiter from '.' to '_'[#2314](https://github.com/Tangerine-Community/Tangerine/issues/2314)
+  - __Documentation Update__:   Re-organization of some documentation and addition of missing image files. [#2401](https://github.com/Tangerine-Community/Tangerine/issues/2401)
+- __Upgrades in the Developers' Interest__
+  - __Upgraded docker-tangerine-base-image to v3.7.1__: Upgrade to Android API_LEVEL 30, Cordova 10, node:14.12.0-stretch. [#1890](https://github.com/Tangerine-Community/Tangerine/issues/1890) Caching cordova-android platform to avoid network issues when customizing packageName. [#7](https://github.com/Tangerine-Community/docker-tangerine-base-image/issues/7)
+- __Important note for users of tangerine-preview__
+There was a problem with v3.14.0 on npm; therefore, please use tangerine-preview v3.14.1.
+
+## v3.13.1
+- Fix: Issues on Editor always ask us to rebase [#2376](https://github.com/Tangerine-Community/Tangerine/issues/2376)
+- Fix: Issues screen will not load after upgrading from v3.10.0 to v3.13.0 [#2378](https://github.com/Tangerine-Community/Tangerine/issues/2378)
+- Fix: Issues go missing after upgrading to v3.13.0 from v3.12.x [#2377](https://github.com/Tangerine-Community/Tangerine/issues/2377)
+* Please be aware: this release was made in the release/v3.13.1-alt branch and to date has only been built as the v3.13.1-rc-2 image.
+
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.13.1
+# Now you are ready to start the server.
+./start.sh v3.13.1
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.1.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.13.0
+```
 
 ## v3.13.0
 - __New Features and fixes for all Tangerine__
@@ -21,6 +61,16 @@
   - After upgrade, you will no longer find group content directories in `./data/client/content/groups/`, they will be in `./data/groups/`. Inside each group's directory you will also find they have been split into a `client` and `editor` directory. All previous content will now be in the `client` directory while you may place content for the Group's Data Dashboard in the `editor` folder.
  
 __Server upgrade instructions:__
+
+This update changes the path to group content to `/tangerine/groups/${groupId}/client`. If your group is managing content 
+via a Github/cron integration, you will need to change the path to content in its cron job. Change `GROUP-UUID` to your 
+group id in the following command:
+
+```
+cd /home/ubuntu/tangerine/data/groups/GROUP-UUID/client && GIT_SSH_COMMAND='ssh -i /root/.ssh/arc-forms-dev' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/arc-forms-dev' git push origin master
+```
+
+The update:
 
 ```
 # Fetch the updates.

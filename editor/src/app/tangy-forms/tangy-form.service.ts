@@ -1,7 +1,9 @@
 import { UserDatabase } from './../shared/_classes/user-database.class';
 import { HttpClient } from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
+import {FormVersion} from "./classes/form-version.class";
+import {TangyFormsInfoService} from "./tangy-forms-info-service";
+import {FormInfo} from "./classes/form-info.class";
 
 @Injectable()
 export class TangyFormService {
@@ -9,9 +11,10 @@ export class TangyFormService {
   db:any;
   databaseName: String;
   groupId:string
-
+  formsMarkup: Array<any> = []
   constructor(
-    private httpClient:HttpClient
+    private httpClient:HttpClient,
+    private tangyFormsInfoService: TangyFormsInfoService
   ) {
     this.databaseName = 'tangy-forms'
   }
@@ -52,8 +55,28 @@ export class TangyFormService {
     */
   }
 
-  async getFormMarkup(formId) {
-    return await this.httpClient.get(`./assets/${formId}/form.html`, {responseType: 'text'}).toPromise()
+  /**
+   * Gets markup for a form. If displaying a formResponse, populate the revision in order to display the correct form version.
+   * @param formId
+   * @param formVersionId - Uses this value to lookup the correct version to display. It is null if creating a new response.
+   */
+  async getFormMarkup(formId, formVersionId:string) {
+    const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
+    const lookupFormVersionId = (!formVersionId && formInfo.formVersionId) ? formInfo.formVersionId : formVersionId
+    let key = lookupFormVersionId ? formInfo.src + formVersionId : formInfo.src;
+    let formMarkup:any = this.formsMarkup[key]
+    if (!this.formsMarkup[key]) {
+      let src: string;
+      if (formInfo.formVersions) {
+        const formVersion: FormVersion =  formInfo.formVersions.find((version:FormVersion) => version.id === lookupFormVersionId )
+        src = formVersion ? formVersion.src : formInfo.src
+      } else {
+        src = formInfo.src
+      }
+      formMarkup = await this.httpClient.get(src, {responseType: 'text'}).toPromise()
+      this.formsMarkup[key] = formMarkup;
+    }
+    return formMarkup
   }
 
 }

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormInfo } from './classes/form-info.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import {TangyFormsInfoService} from './tangy-forms-info-service';
+import {FormVersion} from "./classes/form-version.class";
 
 
 @Injectable({
@@ -19,17 +20,10 @@ export class TangyFormService {
     private tangyFormsInfoService: TangyFormsInfoService
   ) { }
 
-  async getFormInput(formId, inputVariable) {
+  async getFormInput(formId, inputVariable, revision) {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-    let formMarkup: any = this.formsMarkup[formInfo.src]
-    if (!this.formsMarkup[formInfo.src]) {
-      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[formInfo.src] = formMarkup;
-    }
-    // return formMarkup
-
-    const tangyFormMarkup = await this.getFormMarkup(formId)
-    const variableName = formInfo.src + inputVariable;
+    let key = revision ? formInfo.src + revision : formInfo.src;
+    const variableName = key + inputVariable;
     const formInput: any = this.formInputs[variableName]
     if (!this.formInputs[variableName]) {
       // first populate the array
@@ -45,15 +39,25 @@ export class TangyFormService {
     }
   }
 
-  async getFormMarkup(formId) {
-    const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-    let formMarkup:any = this.formsMarkup[formInfo.src]
-    if (!this.formsMarkup[formInfo.src]) {
-      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[formInfo.src] = formMarkup;
-    }
+  /**
+   * Gets markup for a form. If displaying a formResponse, populate the revision in order to display the correct form version.
+   * @param formId
+   * @param formVersionId - Uses this value to lookup the correct version to display. It is null if 
+   */
+  async getFormMarkup(formId, formVersionId:string = '') {
+    // const lookupFormVersionId = (!formVersionId && formInfo.formVersionId) ? formInfo.formVersionId : formVersionId
+    // let key = lookupFormVersionId ? formInfo.src + formVersionId : formInfo.src;
+    let formMarkup:any
+    // = this.formsMarkup[key]
+    // if (!this.formsMarkup[key]) {
+    let src: string = await this.tangyFormsInfoService.getFormSrc(formId, formVersionId)
+    formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
+      // this.formsMarkup[key] = formMarkup;
+    // }
     return formMarkup
   }
+
+  
 
   async getFormTemplateMarkup(formId:string, formTemplateId:string):Promise<string> {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)

@@ -161,7 +161,7 @@ class CaseService {
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
     const tangyFormContainerEl:any = document.createElement('div')
-    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
+    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId, null)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form')
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
@@ -297,6 +297,10 @@ class CaseService {
       }
     }
     return caseEvent
+  }
+
+  setEventName(caseEvent:CaseEvent, name:string) {
+    caseEvent.name = name;
   }
 
   setEventEstimatedDay(eventId, timeInMs: number) {
@@ -525,6 +529,73 @@ class CaseService {
 
   getParticipantData(participantId:string, key:string) {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
+  }
+
+  addParticipant(caseParticipant:CaseParticipant) {
+    this.case.participants.push(caseParticipant)
+    for (let caseEvent of this.case.events) {
+      const caseEventDefinition = this
+        .caseDefinition
+        .eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (
+          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
+          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
+    this.save()
+  }
+
+  async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    const sourceCase = this.case
+    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+      sourceParticipant.id === sourceParticipantId)
+      
+    await this.load(currCaseId)
+
+    return sourceParticipant
+  }
+
+  async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    const sourceCase = this.case
+    const sourceParticipantIdx = sourceCase.participants.findIndex(sourceParticipant =>
+      sourceParticipant.id === sourceParticipantId)
+    if (sourceParticipantIdx > -1) {
+      sourceCase.participants.splice(sourceParticipantIdx)
+      await this.save()
+    }
+
+    await this.load(currCaseId)
+  }
+
+  async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+    }
+  }
+
+  async moveParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+
+      // Only delete the participant from the other case after adding it to this case is successful
+      await this.deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId)
+    }
   }
 
   /*
@@ -857,12 +928,11 @@ class CaseService {
       caseEvent = this.case.events.find(c => c.caseEventDefinitionId === this.queryCaseEventDefinitionId);
       const eventForm = caseEvent.eventForms.find(d => d.id === c.id);
 
-      const referringCaseEvent: CaseEvent = this.case.events.find((event) => event.id === eventId);
       const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
       const tangyFormContainerEl:any = document.createElement('div');
-      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
+      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId, null);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
       document.body.appendChild(tangyFormContainerEl);
@@ -897,10 +967,6 @@ class CaseService {
       await this.save();
 
       return queryResponseId;
-  }
-
-  getQuestionMarkup(form: string, question: string): Promise<string> {
-    return this.tangyFormService.getFormMarkup(form);
   }
 
   async valueExists(form, variable, value) {
