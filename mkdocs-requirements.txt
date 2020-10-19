@@ -1,0 +1,2 @@
+###### Requirements for mkdocs ######`
+mkdocs-git-revision-date-localized-plugin
