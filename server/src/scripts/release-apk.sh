@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#shopt -s expand_aliases
+#import ../../node_modules/bash-oo-framework/lib/util/tryCatch
+#import /tangerine/server/node_modules/bash-oo-framework/lib/util/tryCatch
+#import ../../node_modules/bash-oo-framework/lib/util/exception # needed only for Exception::PrintException
+#/tangerine/server/src/utils/bash-oo-framework/bootstrap-bash-oo-framework.sh
+#/tangerine/server/src/utils/bash-oo-framework/lib/oo-bootstrap.sh
+#echo "starting import"
+#import util/tryCatch
+#__oo__allowFileReloading=false System::Import util/tryCatch
+#echo "ending import"
+
 GROUP="$1"
 CONTENT_PATH="$2"
 RELEASE_TYPE="$3"
@@ -63,11 +74,22 @@ echo "RELEASE APK: removing Android platform"
 cordova platform rm android --no-telemetry
 
 CUSTOM_SCRIPTS_PATH="$RELEASE_DIRECTORY/www/shell/assets/custom-scripts.js"
+TMP_CUSTOM_SCRIPTS_PATH="$CUSTOM_SCRIPTS_PATH.tmp"
 if [ -f "$CUSTOM_SCRIPTS_PATH" ]; then
+#  try {
   echo "RELEASE APK webpacking CUSTOM_SCRIPTS"
-  webpack $CUSTOM_SCRIPTS_PATH -o "$CUSTOM_SCRIPTS_PATH.tmp"
-  mv "$CUSTOM_SCRIPTS_PATH" $CUSTOM_SCRIPTS_PATH.original 
-  mv "$CUSTOM_SCRIPTS_PATH.tmp" $CUSTOM_SCRIPTS_PATH 
+  webpack $CUSTOM_SCRIPTS_PATH -o $TMP_CUSTOM_SCRIPTS_PATH
+  cp "$TMP_CUSTOM_SCRIPTS_PATH/main.js" $CUSTOM_SCRIPTS_PATH
+  # remove the following error test line
+#  mv $TMP_CUSTOM_SCRIPTS_PATH $CUSTOM_SCRIPTS_PATH 
+#  } catch {
+#    echo "ERROR! "
+#    echo "Caught Exception:$(UI.Color.Red) $__BACKTRACE_COMMAND__ $(UI.Color.Default)"
+#    echo "File: $__BACKTRACE_SOURCE__, Line: $__BACKTRACE_LINE__"
+#
+#    ## printing a caught exception couldn't be simpler, as it's stored in "${__EXCEPTION__[@]}"
+##    Exception::PrintException "${__EXCEPTION__[@]}"
+#  }
 fi
 
 # Stash the Build ID in the release.
