@@ -1,16 +1,15 @@
 <div class="p2p-sync" #p2p>
-  <p>P2P Sync is used for transferring records to other nearby devices when there is not a reliable Internet connection at the facility. If one of the devices has an Internet connection, it can be used to collect all of the records from nearby devices and then transmit all of the records using Online Sync.</p>
-  <h2>Start Discovery</h2>
-  <p>Click the Discovery button on each device you wish to sync; this will make them available for discovery. </p>
+  <p>{{'P2P Sync is used for transferring records to other nearby devices when there is not a reliable Internet connection at the facility. If one of the devices has an Internet connection, it can be used to collect all of the records from nearby devices and then transmit all of the records using Online Sync.'|translate}}</p>
+  <h2>{{'Start Discovery'|translate}}</h2>
+  <p>{{'Click the Discovery button on each device you wish to sync; this will make them available for discovery.'|translate}}</p>
   <p>
-    <button mat-raised-button color="primary" class="bigText" id="startAdvertisingBtn" (click)="startAdvertising()">Discovery</button>
+    <button mat-raised-button color="primary" class="bigText" id="startAdvertisingBtn" (click)="startAdvertising()">{{'Discovery'|translate}}</button>
   </p>
   <div class="bigText" id="localEndpointName"></div>
-  <h2>List of available nearby devices</h2>
-  <div *ngIf="endpoints?.length === 0">No nearby devices.</div>
+  <h2>{{'List of available nearby devices'|translate}}</h2>
+  <div *ngIf="endpoints?.length === 0">{{'No nearby devices.'|translate}}</div>
   <div *ngIf="endpoints?.length > 0">
-    <p>Collect and transfer data to all devices in this list by clicking each device listed below. Proceed through the list. After you have sync'd data to all devices,
-      you must repeat the whole process to ensure data from all devices has been sync'd to all of its peers. Then you may connect your device to the Internet and transmit all of the records using Online Sync. </p>
+    <p>{{'Collect and transfer data to all devices in this list by clicking each device listed below. Proceed through the list. After you have sync'd data to all devices, you must repeat the whole process to ensure data from all devices has been sync'd to all of its peers. Then you may connect your device to the Internet and transmit all of the records using Online Sync.'|translate}}</p>
     <div id="transferProgress"></div>
     <div id="direction"></div>
     <div id="progress"></div>
@@ -22,7 +21,7 @@
   </div>
 
   <p>&nbsp;</p>
-  <h2>Log</h2>
+  <h2>{{'Log'|translate}}</h2>
   <div id="p2p-errors"></div>
   <div id="p2p-results"></div>
 
