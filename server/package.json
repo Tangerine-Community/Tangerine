@@ -22,6 +22,7 @@
     "reset-all-devices": "./src/scripts/reset-all-devices/bin.js",
     "translations-update": "./src/scripts/translations-update.js",
     "release-dat": "./src/scripts/release-dat.sh",
+    "release-online-survey-app": "./src/scripts/release-online-survey-app.sh",
     "release-apk": "./src/scripts/release-apk.sh",
     "release-pwa": "./src/scripts/release-pwa.sh",
     "generate-ssh-keys": "./src/scripts/generate-ssh-keys.js",
@@ -81,7 +82,8 @@
     "rxjs": "^6.3.3",
     "sanitize-filename": "^1.6.1",
     "tangy-log": "^1.0.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.0.0",

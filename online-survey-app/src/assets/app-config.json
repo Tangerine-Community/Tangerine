@@ -1,0 +1,8 @@
+{
+  "formUploadURL": "FORM_UPLOAD_URL",
+  "uploadKey": "UPLOAD_KEY",
+  "groupId":"GROUP_ID",
+  "languageDirection": "ltr",
+  "languageCode": "en",
+  "appName":"APP_NAME"
+}

@@ -79,6 +79,7 @@ import { ConfigureGroupSecurityComponent } from './configure-group-security/conf
 import { BrowserModule } from '@angular/platform-browser';
 import { ExportLocationListComponent } from './export-location-list/export-location-list.component';
 import { GroupDashboardComponent } from './group-dashboard/group-dashboard.component';
+import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
 
 
 
@@ -165,6 +166,7 @@ import { GroupDashboardComponent } from './group-dashboard/group-dashboard.compo
     ConfigureGroupSecurityComponent,
     ExportLocationListComponent,
     GroupDashboardComponent,
+    ReleaseOnlineSurveyComponent,
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })
