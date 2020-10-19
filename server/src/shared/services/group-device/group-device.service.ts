@@ -10,7 +10,6 @@ const DB = require('../../../db')
 const log = require('tangy-log').log
 const fs = require('fs-extra')
 const tangyModules = require('../../../modules/index.js')()
-const uuid = require('uuid')
 
 @Injectable()
 export class GroupDeviceService {
@@ -41,7 +40,7 @@ export class GroupDeviceService {
     const response = await groupDevicesDb.put({
       ...new GroupDevice(),
       ...deviceData,
-      token: uuid.v4()
+      token: UUID()
     })
     return <GroupDevice>await groupDevicesDb.get(response.id)
   }
@@ -81,7 +80,7 @@ export class GroupDeviceService {
         ...originalDevice,
         lastUpdated: undefined,
         version: undefined,
-        token: uuid.v4(),
+        token: UUID(),
         claimed: false
       })
       const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
@@ -135,7 +134,7 @@ export class GroupDeviceService {
       ...device,
       claimed: true,
       registeredOn: Date.now(),
-      token: uuid.v4()
+      token: UUID()
     })
     return <GroupDevice>await groupDevicesDb.get(deviceId)
     
@@ -148,7 +147,7 @@ export class GroupDeviceService {
     const freshDevice = await groupDevicesDb.put({
       ...device,
       claimed: false,
-      token: uuid.v4()
+      token: UUID()
     })
     return freshDevice
   }
