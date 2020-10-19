@@ -53,6 +53,7 @@ import { GroupDeviceSheetComponent } from './group-device-sheet/group-device-she
 import {MatTableModule} from "@angular/material/table";
 import {CommonModule} from "@angular/common";
 import {TranslateModule} from "@ngx-translate/core";
+import { PrintStimuliScreenComponent } from './print-stimuli-screen/print-stimuli-screen.component';
 import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
 
 const groupsRoutes: Routes = [
@@ -117,6 +118,7 @@ const groupsRoutes: Routes = [
     canActivate: [LoginGuard, SuperAdminUserGuard]
   },
   { path: 'groups/:groupId/printFormAsTable/:formId', component: PrintFormAsTableComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/printStimuliScreen/:formId', component: PrintStimuliScreenComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [
