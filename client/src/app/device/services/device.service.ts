@@ -13,6 +13,7 @@ export interface AppInfo {
   groupName:string
   groupId:string
   buildChannel:string
+  tangerineVersion:string
   buildId:string
   assignedLocation:string
 }
@@ -26,6 +27,7 @@ export class DeviceService {
   password:string
   rawBuildChannel:string
   buildId:string
+  tangerineVersion:string
 
   constructor(
     private httpClient:HttpClient,
