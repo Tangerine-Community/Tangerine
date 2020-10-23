@@ -299,8 +299,12 @@ class CaseService {
     return caseEvent
   }
 
-  setEventName(caseEvent:CaseEvent, name:string) {
-    caseEvent.name = name;
+  setEventName(eventId, name:string) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ name } }
+        : event
+    })
   }
 
   setEventEstimatedDay(eventId, timeInMs: number) {
