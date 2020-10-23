@@ -328,5 +328,14 @@ export const updates = [
       await variableService.set('sync-push-last_seq', 0);
       await variableService.set('ran-update-v3.14.0', 'true')
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.0')) return
+      console.log('Updating to v3.15.0...')
+      await window['T'].search.createIndex()
+      await variableService.set('ran-update-v3.15.0', 'true')
+    }
   }
 ]
