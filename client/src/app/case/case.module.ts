@@ -26,6 +26,7 @@ import { EventFormsForParticipantComponent } from './components/event-forms-for-
 import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 import { CustomAppComponent } from './components/custom-app/custom-app.component';
 import { IssuesComponent } from './components/issues/issues.component';
+import './components/find-participant.component'
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
