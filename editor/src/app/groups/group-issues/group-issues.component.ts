@@ -55,6 +55,29 @@ export class GroupIssuesComponent implements OnInit {
       }
     }
   }
+  showConflictsSelector = {
+    "$elemMatch": {
+      "data.conflict": {
+        "$ne": null
+      }
+    }
+  }
+  showMergedOrClosedIssuesSelector = {
+    "type": "issue",
+    "tangerineModifiedOn": {"$gte": 0},
+    "$or": [
+      { "status": IssueStatus.Closed },
+      { "status": IssueStatus.Merged }
+    ]
+  }
+  showOpenIssuesSelector = {
+    "type": "issue",
+    "tangerineModifiedOn": {"$gte": 0},
+    "$or": [
+      { "status": IssueStatus.Closed },
+      { "status": IssueStatus.Merged }
+    ]
+  }
 
   constructor(
     private groupResponsesService:GroupResponsesService,
@@ -71,13 +94,12 @@ export class GroupIssuesComponent implements OnInit {
       }
     ]
     this.groupId = window.location.hash.split('/')[2]
-    this.selector = {
-      "type": "issue",
-      'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
-    }
+    this.selector = this.showClosedIssues.nativeElement.hasAttribute('checked') ? this.showMergedOrClosedIssuesSelector : this.showOpenIssuesSelector
     // this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
     if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
       this.selector["events"] = this.filterConflictsSelector
+    } else {
+      this.selector["events"] = this.showConflictsSelector
     }
     this.query()
   }
@@ -88,21 +110,20 @@ export class GroupIssuesComponent implements OnInit {
       .nativeElement
       .value
     if (!location || location.length === 0) {
-      this.selector = {
-        'type': 'issue',
-        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
-        }
     } else {
       const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
-      this.selector = {
-        'type': 'issue',
-        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
-        [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
-      }
+      // this.selector = {
+      //   'type': 'issue',
+      //   'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
+      //   [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
+      // }
+      this.selector[`location.${lastFilledOutNode.level}`] = lastFilledOutNode.value
     }
     // this.selector = this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
     if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
       this.selector["events"] = this.filterConflictsSelector
+    } else {
+      this.selector["events"] = this.showConflictsSelector
     }
     this.query()
   }
