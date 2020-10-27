@@ -51,7 +51,7 @@ export class SearchService {
           skip
         } 
     )
-    return result.rows.map(row => {
+    const searchResults = result.rows.map(row => {
       const variables = row.doc.items.reduce((variables, item) => {
         return {
           ...variables,
@@ -73,6 +73,12 @@ export class SearchService {
         variables
       }
     })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return searchResults.reduce((uniqueResults, result) => {
+      return uniqueResults.find(x => x.id === result.id)
+        ? uniqueResults
+        : [ ...uniqueResults, result ]
+    }, [])
   }
 
 }
