@@ -37,25 +37,17 @@ async function go() {
         doc.form.id &&
         variablesToIndexByFormId.hasOwnProperty(doc.form.id)
       ) {
-        var allInputsValueByName = doc.items.reduce(function foo(allInputsValueByName, item) {
-          return Object.assign({},
-            allInputsValueByName,
-            item.inputs.reduce(function foo(itemInputsValueByName, input) {
-              var newEntry = {}
-              
-              var value = input.value
-              if (typeof value === 'string') {
-                value = value.toLowerCase()
-              }
-              newEntry[input.name] = value 
-              return Object.assign({},
-                itemInputsValueByName,
-                newEntry
-              )
-            }, {})
-          )
+        var allInputsValueByName = {}
+        doc.items.forEach(function foo(item) {
+          item.inputs.forEach(function foo(input) {
+            var value = input.value
+            if (typeof value === 'string') {
+              value = value.toLowerCase()
+            }
+            allInputsValueByName[input.name] = value
+          }, {})
         }, {})
-        Object.getOwnPropertyNames(variablesToIndexByFormId[doc.form.id]).forEach(function (variableToIndex) {
+        variablesToIndexByFormId[doc.form.id].forEach(function (variableToIndex) {
           if (allInputsValueByName[variableToIndex]) {
             emit(
               allInputsValueByName[variableToIndex], 
