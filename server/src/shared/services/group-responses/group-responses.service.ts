@@ -43,6 +43,54 @@ export class GroupResponsesService {
     const response  = await groupDb.find(query)
     return response.docs
   }
+
+   async search(groupId, phrase:string, limit = 50, skip = 0) {
+    const groupDb = this.getGroupsDb(groupId)
+    const result  = await groupDb.query(
+      'search',
+      phrase
+        ? { 
+          startkey: `${phrase}`.toLocaleLowerCase(),
+          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+          include_docs: true,
+          limit,
+          skip
+        }
+        : {
+          include_docs: true,
+          limit,
+          skip
+        } 
+    )
+    const searchResults = result.rows.map(row => {
+      const variables = row.doc.items.reduce((variables, item) => {
+        return {
+          ...variables,
+          ...item.inputs.reduce((variables, input) => {
+            return {
+              ...variables,
+              [input.name] : input.value
+            }
+          }, {})
+        }
+      }, {})
+      return {
+        _id: row.doc._id,
+        matchesOn: row.value,
+        formId: row.doc.form.id,
+        formType: row.doc.type,
+        lastModified: row.doc.lastModified,
+        doc: row.doc,
+        variables
+      }
+    })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return searchResults.reduce((uniqueResults, result) => {
+      return uniqueResults.find(x => x.id === result.id)
+        ? uniqueResults
+        : [ ...uniqueResults, result ]
+    }, [])
+  }
   
   async create(groupId, responseData:any):Promise<Group> {
     const groupDb = this.getGroupsDb(groupId)
