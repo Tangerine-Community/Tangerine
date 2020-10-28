@@ -4,6 +4,7 @@ import { diff } from './diff';
 import { merge } from './merge';
 import {DIFF_TYPE__EVENT, diffType_Event} from "./diff-type--event";
 import {DIFF_TYPE__EVENT_FORM} from "./diff-type--event-form";
+import * as moment from 'moment'
 
 const caseDefinition:CaseDefinition = {
   id: "test",
@@ -98,6 +99,91 @@ describe('diffType_Event', () => {
       diffs: [],
       caseDefinition
     })
+    expect(diffInfo.diffs.length).toEqual(1)
+    expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT)
+    expect(diffInfo.diffs[0].resolved).toEqual(false)
+    expect(diffInfo.diffs[0].info.where).toEqual('b')
+    expect(diffInfo.diffs[0].info.differences[0]).toEqual('new')
+  })
+  
+  it('should mark "a" doc as canonical', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
+    const tangerineModifiedOn = moment().subtract(10, 'days').valueOf();
+    let canonicalTimestamp = Date.now();
+    const diffInfo = diffType_Event.detect({
+      a:{
+        ...aCopy,
+        canonicalTimestamp: canonicalTimestamp
+      },
+      b:{
+        ...bCopy,
+        tangerineModifiedOn: tangerineModifiedOn,
+        events: [...bCopy.events,
+          {
+            id: 'event2',
+            caseEventDefinitionId: 'event-definition-1',
+            eventForms: [
+              {
+                id: 'event-form-2',
+                "caseEventId": "event2",
+                eventFormDefinitionId: 'event-form-definition-1',
+                formResponseId: 'form-response-2'
+              }
+            ]
+          }
+        ]
+      },
+      diffs: [],
+      caseDefinition
+    })
+    if (diffInfo.a['canonicalTimestamp'] && !diffInfo.b['canonicalTimestamp']) {
+        diffInfo.canonicalTimestampOverrideDoc = 'a'
+    }
+    expect(diffInfo.canonicalTimestampOverrideDoc).toEqual('a')
+    expect(diffInfo.diffs.length).toEqual(1)
+    expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT)
+    expect(diffInfo.diffs[0].resolved).toEqual(false)
+    expect(diffInfo.diffs[0].info.where).toEqual('b')
+    expect(diffInfo.diffs[0].info.differences[0]).toEqual('new')
+  })
+  
+  it('should mark "b" doc as canonical', () => {
+    const aCopy = JSON.parse(JSON.stringify(a))
+    const bCopy = JSON.parse(JSON.stringify(b))
+    const tangerineModifiedOn = moment().subtract(10, 'days').valueOf();
+    let canonicalTimestamp = Date.now();
+    const diffInfo = diffType_Event.detect({
+      a:{
+        ...aCopy,
+        tangerineModifiedOn: tangerineModifiedOn,
+      },
+      b:{
+        ...bCopy,
+        canonicalTimestamp: canonicalTimestamp,
+        events: [...bCopy.events,
+          {
+            id: 'event2',
+            caseEventDefinitionId: 'event-definition-1',
+            eventForms: [
+              {
+                id: 'event-form-2',
+                "caseEventId": "event2",
+                eventFormDefinitionId: 'event-form-definition-1',
+                formResponseId: 'form-response-2'
+              }
+            ]
+          }
+        ]
+      },
+      diffs: [],
+      caseDefinition
+    })
+    // if (diffInfo.a['canonicalTimestamp'] && !diffInfo.b['canonicalTimestamp']) {
+    if (diffInfo.b['canonicalTimestamp'] > diffInfo.a['canonicalTimestamp'] || (diffInfo.b['canonicalTimestamp'] && !diffInfo.a['canonicalTimestamp'])) {
+      diffInfo.canonicalTimestampOverrideDoc = 'b'
+    }
+    expect(diffInfo.canonicalTimestampOverrideDoc).toEqual('b')
     expect(diffInfo.diffs.length).toEqual(1)
     expect(diffInfo.diffs[0].type).toEqual(DIFF_TYPE__EVENT)
     expect(diffInfo.diffs[0].resolved).toEqual(false)

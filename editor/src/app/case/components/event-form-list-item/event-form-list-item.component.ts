@@ -53,11 +53,14 @@ export class EventFormListItemComponent implements OnInit {
   async ngOnInit() {
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
-    const response = await this.formService.getResponse(this.eventForm.formResponseId);
-    this.response = response
+    if (this.eventForm.formResponseId) {
+      const response = await this.formService.getResponse(this.eventForm.formResponseId);
+      this.response = response
+    }
+    
     const getValue = (variableName) => {
-      if (response) {
-        const variablesByName = response.items.reduce((variablesByName, item) => {
+      if (this.response) {
+        const variablesByName = this.response.items.reduce((variablesByName, item) => {
           for (const input of item.inputs) {
             variablesByName[input.name] = input.value;
           }
