@@ -52,7 +52,7 @@ export class ConflictService {
               error: 'Force merge due to canonicalTimestamp override'
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
-            const issue = await this.caseService.createIssue(`Unresolved Conflict on ${a.form.id}`, 'Unable to detect conflict type.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
+            const issue = await this.caseService.createIssue(`Force merge conflict on ${a.form.id}`, 'Force merge due to canonicalTimestamp override.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
             try {
               await userDb.db.remove(diffInfo.a._id, conflictRev)
             } catch (e) {
