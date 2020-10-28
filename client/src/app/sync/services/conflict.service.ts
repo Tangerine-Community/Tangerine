@@ -39,10 +39,30 @@ export class ConflictService {
             caseDefinitions = await this.caseDefinitionsService.load();
           }
           let caseDefinition = <CaseDefinition>caseDefinitions.find(caseDefinition => caseDefinition.id === caseDefinitionId)
-          let diffInfo = diff(a, b, caseDefinition)
+          
           // Override using the winning doc if canonicalTimestamp is available and is newer than this document.
-          if (a['canonicalTimestamp'] && (a['canonicalTimestamp'] > b['tangerineModifiedOn'])) {
-            diffInfo['canonical'] = true
+          // By using diffInfo['canonicalTimestampOverrideDoc'], automerge is disabled.
+          let diffInfo, merged
+          if (b['canonicalTimestamp'] > a['canonicalTimestamp'] || (b['canonicalTimestamp'] && !a['canonicalTimestamp'])) {
+            diffInfo = diff(a, b, caseDefinition)
+            // Turn off automerge using the canonicalTimestampOverrideDoc flag.
+            // Identify which doc is merged in the canonicalTimestampOverrideDoc property
+            diffInfo['canonicalTimestampOverrideDoc'] = 'b'
+            merged = {...b, _rev:a._rev}
+            try {
+              await userDb.put(merged) // create a new rev
+            } catch (e) {
+              console.log("Error: " + e)
+            }
+          }
+          else if (a['canonicalTimestamp'] && !b['canonicalTimestamp']) {
+            //The doc with canonicalTimestamp won already via Couchdb conflict resolution. We turn off automerge.
+            diffInfo = diff(a, b, caseDefinition)
+            diffInfo['canonicalTimestampOverrideDoc'] = 'a'
+            merged = {...a}
+          }
+          
+          if (diffInfo['canonicalTimestampOverrideDoc']) {
             let conflict:Conflict = {
               diffInfo: diffInfo,
               mergeInfo: null,
@@ -52,13 +72,14 @@ export class ConflictService {
               error: 'Force merge due to canonicalTimestamp override'
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
-            const issue = await this.caseService.createIssue(`Force merge conflict on ${a.form.id}`, 'Force merge due to canonicalTimestamp override.', a._id, a.events[0].id, a.events[0].eventForms[0].id, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
+            const issue = await this.caseService.createIssue(`Force merge conflict on ${merged.form.id}`, 'Force merge due to canonicalTimestamp override.', merged._id, merged.events[0].id, merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
             try {
               await userDb.db.remove(diffInfo.a._id, conflictRev)
             } catch (e) {
               console.log("Error: " + e)
             }
           } else {
+            diffInfo = diff(a, b, caseDefinition)
             // Create issue if we have not detected the conflict type...
             if (diffInfo.diffs.length === 0) {
               let conflict:Conflict = {
