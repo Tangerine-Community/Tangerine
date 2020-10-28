@@ -1,5 +1,23 @@
 # Changelog
 
+## v3.14.3
+- __Bugfix__
+  - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
+- __New Features and fixes for all Tangerine__
+  - Reduce number of unnecessary saves in Editor [#2444](https://github.com/Tangerine-Community/Tangerine/issues/2444)
+- __Upgrades in the Developers' Interest__
+  - Removed webpack from the Docker image. Custom apps should build their apps using their own webpack; the APK service will no longer perform that task. 
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.3
+# Now you are ready to start the server.
+./start.sh v3.14.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.2
+```
+  
 ## v3.14.2
 - __Bugfix__
   - Fixes file path issue when bundling custom scripts in APK's.
