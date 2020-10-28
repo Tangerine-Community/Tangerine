@@ -37,6 +37,8 @@ export class GroupSearchComponent implements OnInit {
   //@ViewChild('scanner', {static: true}) scanner: SearchBarcodeComponent
   onSearch$ = new Subject()
   didSearch$ = new Subject()
+  isSearching$ = new Subject()
+  stoppedSearching$ = new Subject()
   searchReady$ = new Subject()
   navigatingTo$ = new Subject()
   searchDocs:Array<any>
@@ -66,7 +68,7 @@ export class GroupSearchComponent implements OnInit {
       .nativeElement
       .addEventListener('keyup', event => {
         const searchString = event.target.value
-        if (searchString.length > 2) {
+        if (searchString.length > 2 || searchString.length === 0) {
           this.onSearch$.next(event.target.value)
         } else {
           this.searchResults.nativeElement.innerHTML = `
@@ -78,10 +80,16 @@ export class GroupSearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
-    this.onSearch('')
+    //this.onSearch('')
   }
 
   async onSearch(searchString) {
+    if (searchString === '') {
+      this.searchResults.nativeElement.innerHTML = ''
+      this.stoppedSearching$.next(true)
+      return 
+    }
+    this.isSearching$.next(true)
     this.searchResults.nativeElement.innerHTML = "Loading..."
     this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, { phrase: searchString }).toPromise()
     this.searchResults.nativeElement.innerHTML = ""
