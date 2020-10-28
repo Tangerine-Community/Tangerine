@@ -602,6 +602,41 @@ class CaseService {
     }
   }
 
+  async searchForParticipant(username:string, phrase:string, limit = 50, skip = 0, unique = true):Promise<Array<any>> {
+    const db = await window['T'].user.getUserDatabase(username)
+    const result = await db.query(
+      'participantSearch',
+      phrase
+        ? { 
+          startkey: `${phrase}`.toLocaleLowerCase(),
+          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+          include_docs: true,
+          limit,
+          skip
+        }
+        : {
+          include_docs: true,
+          limit,
+          skip
+        } 
+    )
+    const searchResults = result.rows.map(row => {
+      return {
+        ...row.value,
+        case: row.doc,
+        participant: row.doc.participants.find(p => p.id === row.value.participantId)
+      }
+    })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return unique
+      ? searchResults.reduce((uniqueResults, result) => {
+        return uniqueResults.find(x => x.participantId === result.participantId)
+          ? uniqueResults
+          : [ ...uniqueResults, result ]
+      }, [])
+      : searchResults
+  }
+
   /*
    * Notification API
    */

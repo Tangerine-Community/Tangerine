@@ -1,3 +1,5 @@
+import { CaseDocs } from './case.docs';
+import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { IssueComponent } from './components/issue/issue.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -24,6 +26,7 @@ import { EventFormsForParticipantComponent } from './components/event-forms-for-
 import { EventFormsForParticipantPageComponent } from './components/event-forms-for-participant-page/event-forms-for-participant-page.component';
 import { CustomAppComponent } from './components/custom-app/custom-app.component';
 import { IssuesComponent } from './components/issues/issues.component';
+import './components/find-participant.component'
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -40,6 +43,7 @@ import { IssuesComponent } from './components/issues/issues.component';
   ],
   providers: [
     CaseDefinitionsService,
+    {provide: DEFAULT_USER_DOCS, useValue:CaseDocs, multi: true},
     CaseService,
     CasesService
   ],
