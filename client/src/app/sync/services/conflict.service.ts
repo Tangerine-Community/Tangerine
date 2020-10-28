@@ -42,9 +42,9 @@ export class ConflictService {
           
           // Override using the winning doc if canonicalTimestamp is available and is newer than this document.
           // By using diffInfo['canonicalTimestampOverrideDoc'], automerge is disabled.
-          let diffInfo, merged
+          let merged
+          let diffInfo = diff(a, b, caseDefinition)
           if (b['canonicalTimestamp'] > a['canonicalTimestamp'] || (b['canonicalTimestamp'] && !a['canonicalTimestamp'])) {
-            diffInfo = diff(a, b, caseDefinition)
             // Turn off automerge using the canonicalTimestampOverrideDoc flag.
             // Identify which doc is merged in the canonicalTimestampOverrideDoc property
             diffInfo['canonicalTimestampOverrideDoc'] = 'b'
@@ -57,7 +57,6 @@ export class ConflictService {
           }
           else if (a['canonicalTimestamp'] && !b['canonicalTimestamp']) {
             //The doc with canonicalTimestamp won already via Couchdb conflict resolution. We turn off automerge.
-            diffInfo = diff(a, b, caseDefinition)
             diffInfo['canonicalTimestampOverrideDoc'] = 'a'
             merged = {...a}
           }
