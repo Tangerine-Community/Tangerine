@@ -26,6 +26,7 @@ async function go() {
       }
       : variablesToIndexByFormId
   }, {})
+
   let map = `function(doc) {
       var variablesToIndexByFormId = ${JSON.stringify(variablesToIndexByFormId)}
       if (
@@ -36,11 +37,34 @@ async function go() {
         doc.form.id &&
         variablesToIndexByFormId.hasOwnProperty(doc.form.id)
       ) {
-        
+        var allInputsValueByName = doc.items.reduce(function foo(allInputsValueByName, item) {
+          return Object.assign({},
+            allInputsValueByName,
+            item.inputs.reduce(function foo(itemInputsValueByName, input) {
+              var newEntry = {}
+              
+              var value = input.value
+              if (typeof value === 'string') {
+                value = value.toLowerCase()
+              }
+              newEntry[input.name] = value 
+              return Object.assign({},
+                itemInputsValueByName,
+                newEntry
+              )
+            }, {})
+          )
+        }, {})
+        Object.getOwnPropertyNames(variablesToIndexByFormId[doc.form.id]).forEach(function (variableToIndex) {
+          if (allInputsValueByName[variableToIndex]) {
+            emit(
+              allInputsValueByName[variableToIndex], 
+              variableToIndex
+            )
+          }
+        })
       }
-      emit(doc._id,true)
     }`
-  //eval(`map = ${map}`)
   const doc = {
     _id: '_design/search',
     views: {
