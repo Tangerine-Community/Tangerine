@@ -87,7 +87,7 @@ export class EventFormComponent implements OnInit {
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
       this.formPlayer.$rendered.subscribe(async () => {
-        if (!this.formResponseId) {
+        if (!this.formResponseId && (this.formPlayer.formResponseId !== '')) {
           this.eventForm.formResponseId = this.formPlayer.formResponseId
           await this.caseService.save()
         }
