@@ -106,7 +106,7 @@ describe('diffType_Event', () => {
     expect(diffInfo.diffs[0].info.differences[0]).toEqual('new')
   })
   
-  fit('should mark "a" doc as canonical', () => {
+  it('should mark "a" doc as canonical', () => {
     const aCopy = JSON.parse(JSON.stringify(a))
     const bCopy = JSON.parse(JSON.stringify(b))
     const tangerineModifiedOn = moment().subtract(10, 'days').valueOf();
@@ -148,7 +148,7 @@ describe('diffType_Event', () => {
     expect(diffInfo.diffs[0].info.differences[0]).toEqual('new')
   })
   
-fit('should mark "b" doc as canonical', () => {
+  it('should mark "b" doc as canonical', () => {
     const aCopy = JSON.parse(JSON.stringify(a))
     const bCopy = JSON.parse(JSON.stringify(b))
     const tangerineModifiedOn = moment().subtract(10, 'days').valueOf();
