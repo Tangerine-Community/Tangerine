@@ -81,6 +81,7 @@ import { ExportLocationListComponent } from './export-location-list/export-locat
 import { GroupDashboardComponent } from './group-dashboard/group-dashboard.component';
 import { PrintStimuliScreenComponent } from './print-stimuli-screen/print-stimuli-screen.component';
 import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
+import { GroupSearchComponent } from './group-search/group-search.component';
 
 
 
@@ -169,7 +170,8 @@ import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-on
     ExportLocationListComponent,
     GroupDashboardComponent,
     PrintStimuliScreenComponent,
-    ReleaseOnlineSurveyComponent
+    ReleaseOnlineSurveyComponent,
+    GroupSearchComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })
