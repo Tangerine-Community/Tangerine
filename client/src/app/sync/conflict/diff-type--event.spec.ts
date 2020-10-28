@@ -138,7 +138,6 @@ describe('diffType_Event', () => {
       caseDefinition
     })
     if (diffInfo.a['canonicalTimestamp'] && (diffInfo.a['canonicalTimestamp'] > diffInfo.b['tangerineModifiedOn'])) {
-      debugger;
       diffInfo.canonical = true
     }
     expect(diffInfo.canonical).toEqual(true)
