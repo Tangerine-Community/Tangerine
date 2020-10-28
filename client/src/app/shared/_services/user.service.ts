@@ -1,5 +1,5 @@
 import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info-service';
-import { createSearchIndex } from 'src/app/shared/_services/search.service';
+import { createSearchIndex } from './create-search-index';
 import {HttpClient} from "@angular/common/http";
 
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
