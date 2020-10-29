@@ -73,10 +73,7 @@ export class GroupIssuesComponent implements OnInit {
   showOpenIssuesSelector = {
     "type": "issue",
     "tangerineModifiedOn": {"$gte": 0},
-    "$or": [
-      { "status": IssueStatus.Closed },
-      { "status": IssueStatus.Merged }
-    ]
+    "status": IssueStatus.Open,
   }
 
   constructor(
@@ -105,6 +102,7 @@ export class GroupIssuesComponent implements OnInit {
   }
 
   onSearchClick() {
+    this.selector = this.showClosedIssues.nativeElement.hasAttribute('checked') ? this.showMergedOrClosedIssuesSelector : this.showOpenIssuesSelector
     const location = this
       .tangyLocationEl
       .nativeElement
@@ -150,9 +148,21 @@ export class GroupIssuesComponent implements OnInit {
     this.issues = await this.groupResponsesService.query(this.groupId, {
       selector: this.selector,
       limit: this.limit,
-      skip: this.skip,
-      sort: [{'tangerineModifiedOn':'desc'}]
+      skip: this.skip
     })
+    this.issues.sort(
+      function(a,b){
+        if (a['tangerineModifiedOn'] < b['tangerineModifiedOn']) {
+          return 1;
+        }
+        if (a['tangerineModifiedOn'] > b['tangerineModifiedOn']) {
+          return -1;
+        }
+        // dates must be equal
+        return 0;
+        
+      }
+    )
     this.loading = false
   }
 
