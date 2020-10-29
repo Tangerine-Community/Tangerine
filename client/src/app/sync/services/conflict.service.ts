@@ -40,28 +40,28 @@ export class ConflictService {
           }
           let caseDefinition = <CaseDefinition>caseDefinitions.find(caseDefinition => caseDefinition.id === caseDefinitionId)
           
-          // Override using the winning doc if canonicalTimestamp is available and is newer than this document.
-          // By using diffInfo['canonicalTimestampOverrideDoc'], automerge is disabled.
+          // Override using the winning doc if canonicalTimestamp is on one of the docs. 
           let merged
           let diffInfo = diff(a, b, caseDefinition)
-          if (b['canonicalTimestamp'] > a['canonicalTimestamp'] || (b['canonicalTimestamp'] && !a['canonicalTimestamp'])) {
-            // Turn off automerge using the canonicalTimestampOverrideDoc flag.
-            // Identify which doc is merged in the canonicalTimestampOverrideDoc property
-            diffInfo['canonicalTimestampOverrideDoc'] = 'b'
-            merged = {...b, _rev:a._rev}
+          if((a['canonicalTimestamp'] && b['canonicalTimestamp']) && (a['canonicalTimestamp'] !== b['canonicalTimestamp'])) {
+          // Turn off automerge using the canonicalTimestampOverrideDoc flag, which identifies which doc is merged
+          // We don't know for sure which doc is the one we want to automerge - sometimes Couchdb picks one we didn't expect to win...    
+          // In some cases, it may be on both, if this flag has already been used before.
+          // In that case, we must compare the canonicalTimestampOverrideDoc
+            diffInfo['canonicalTimestampOverrideDoc'] = (a['canonicalTimestamp'] > b['canonicalTimestamp']) ? 'a' : 'b'
+            merged = (a['canonicalTimestamp'] > b['canonicalTimestamp']) ? {...a, _rev:b._rev} :  {...b, _rev:a._rev}
+          } else if ((a['canonicalTimestamp'] && !b['canonicalTimestamp']) || (b['canonicalTimestamp'] && !a['canonicalTimestamp'])) {
+            diffInfo['canonicalTimestampOverrideDoc'] = a['canonicalTimestamp'] ? 'a' : 'b'
+            merged = a['canonicalTimestamp'] ? {...a} : {...b}
+          }
+          
+          if (diffInfo['canonicalTimestampOverrideDoc']) {
             try {
               await userDb.put(merged) // create a new rev
             } catch (e) {
               console.log("Error: " + e)
             }
-          }
-          else if (a['canonicalTimestamp'] && !b['canonicalTimestamp']) {
-            //The doc with canonicalTimestamp won already via Couchdb conflict resolution. We turn off automerge.
-            diffInfo['canonicalTimestampOverrideDoc'] = 'a'
-            merged = {...a}
-          }
-          
-          if (diffInfo['canonicalTimestampOverrideDoc']) {
+            
             let conflict:Conflict = {
               diffInfo: diffInfo,
               mergeInfo: null,
@@ -72,6 +72,7 @@ export class ConflictService {
             }
             // provide the conflict diff in the issuesMetadata rather than sending the response to be diffed, because the issues differ works on responses instead of cases.
             const issue = await this.caseService.createIssue(`Force merge conflict on ${merged.form.id}`, 'Force merge due to canonicalTimestamp override.', merged._id, merged.events[0].id, merged.events[0].eventForms[0].id, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
+            // We must remove the conflictRev (i.e. the conflict) from the "winning" doc, which is always "a".
             try {
               await userDb.db.remove(diffInfo.a._id, conflictRev)
             } catch (e) {
@@ -129,8 +130,6 @@ export class ConflictService {
               const issue = await this.caseService.createIssue(`Conflict on ${a.form.id}`, '', a._id, null, null, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
             }
           }
-          
-          
         } else {
           // TODO indicate that the merge did happen - and which rev won.
           let conflict:Conflict = {
