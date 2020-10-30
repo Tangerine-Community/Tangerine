@@ -183,7 +183,13 @@ export class IssueComponent implements OnInit {
       });
       this.diffOutput = diffArray
       this.conflictMarkup = conflictTemplate(this.diffOutput, false)
-      let mergedClone = JSON.parse(JSON.stringify(merged))
+      let mergedClone;
+      if (merged) {
+        mergedClone = JSON.parse(JSON.stringify(merged))
+      } else {
+        // If not merged, use the winner, a.
+        mergedClone = JSON.parse(JSON.stringify(a))
+      }
       // remove some noise
       delete mergedClone.form
       let diffMergedArray = []
