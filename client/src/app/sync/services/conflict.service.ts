@@ -11,6 +11,8 @@ import {MergeInfo} from "../classes/merge-info.class";
 import {merge} from "../conflict/merge";
 import {Conflict} from "../../case/classes/conflict.class";
 import {AppContext} from "../../app-context.enum";
+import {Issue, IssueStatus} from "../../case/classes/issue.class";
+import {DiffInfo} from "../classes/diff-info.class";
 
 @Injectable({
   providedIn: 'root'
@@ -131,35 +133,35 @@ export class ConflictService {
             }
           }
         } else {
-          // TODO indicate that the merge did happen - and which rev won.
+          // TODO: move this into its own diff type....
+
+          const diffInfoStub:DiffInfo = {
+            a: currentDoc,
+            b: conflictDoc,
+            caseDefinition: null,
+            diffs: []
+          }
+          
           let conflict:Conflict = {
-            diffInfo: null,
+            diffInfo: diffInfoStub,
             mergeInfo: null,
             type: 'conflict',
             docType: currentDoc.type,
             merged: false,
-            error: 'No diff handler available.'
+            error: 'No diff handler available; proceeding with the merge.'
           }
           // TODO need correct event id and eventFormId from a.
-          const issue = await this.caseService.createIssue(`Unresolved Conflict for ${currentDoc.form.title}`, `type: ${currentDoc.type}; id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
+          const issue = await this.caseService.createIssue(`Auto-resolved Conflict for ${currentDoc.form.title}`, `type: ${currentDoc.type}; id: ${currentDoc._id}`, currentDoc.caseId, currentDoc.eventId , currentDoc.eventFormId, window['userProfile']._id, window['username'], [AppContext.Editor], conflict)
           const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
-          // is this the correct user id? Should we grab it from the conflictDoc or currentDoc?
-          // const userProfile = await this.userService.getUserAccountById(conflictDoc.tangerineModifiedByUserId);
           // remove the conflict
           await userDb.db.remove(currentDoc._id, conflictRev)
-
-          // TODO: move this into its own diff type....
-          let winningDoc, losingDoc
-          if (currentDoc.tangerineModifiedOn > conflictDoc.tangerineModifiedOn) {
-            winningDoc = currentDoc
-            losingDoc = conflictDoc
-          } else {
-            winningDoc = conflictDoc
-            losingDoc = currentDoc
-          }
           // Saving the losingDoc in case it needs to be reverted.
-          await this.caseService.saveProposedChange(losingDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
-          await userDb.put(winningDoc) // create a new rev
+          await this.caseService.saveProposedChange(conflictDoc, caseInstance, issue._id, conflictDoc.tangerineModifiedByUserId, conflictDoc.tangerineModifiedByUserId )
+          await userDb.put(currentDoc) // create a new rev
+          await this.tangyFormService.saveResponse({
+            ...issue,
+            status: IssueStatus.Merged
+          })
           // TODO: if this was a pull, should we check if the remoteDb has a different rev at this point - to avoid another conflict?
           // if the remoteDB is at a different seq id, return false, and then keep pulling, until it returns true, and then push.
           // This particular solution may be too much of an edge case...
