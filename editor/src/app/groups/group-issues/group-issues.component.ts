@@ -40,7 +40,7 @@ export class GroupIssuesComponent implements OnInit {
   loading = false
   status:string = 'Open'
   type:string = 'issue'
-  location:string
+  location:string = '\ufff0'
   @ViewChild('tangyLocation', {static: true}) tangyLocationEl:ElementRef
   @ViewChild('showClosedIssues', {static: true}) showClosedIssues:ElementRef
   @ViewChild('showConflicts', {static: true}) showConflicts:ElementRef
@@ -136,13 +136,13 @@ export class GroupIssuesComponent implements OnInit {
   
   async query() {
     this.loading = true
-    // Example: http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=["Open","\ufff0"]&end_key=["Open"]&descending=true
-    // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=[%22Open%22,false%22\ufff0%22]&end_key=[%22Open%22]&descending=true
-    
+    // Examples:
+    // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=["Open","\ufff0"]&end_key=["Open"]&descending=true
+    // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=[%22Closed%22,%22conflict%22,%22\ufff0%22]&end_key=[%22Closed%22,%22conflict%22]&descending=true
     let queryResults = await this.groupIssuesService.query(this.groupId, {
       fun: "groupIssues",
       include_docs: true,
-      startkey:[this.status,this.type,"\ufff0"],
+      startkey:[this.status,this.type,this.location,"\ufff0"],
       endkey:[this.status,this.type],
       descending:true
     })
