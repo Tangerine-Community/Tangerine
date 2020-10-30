@@ -119,6 +119,7 @@ export class GroupIssuesComponent implements OnInit {
   }
 
   onResetClick() {
+    this.location = null
     this
       .tangyLocationEl
       .nativeElement
