@@ -5,6 +5,7 @@
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
 - __New Features and fixes for all Tangerine__
   - Reduce number of unnecessary saves in Editor [#2444](https://github.com/Tangerine-Community/Tangerine/issues/2444)
+  - Improvements to Issues Listing [#2398](https://github.com/Tangerine-Community/Tangerine/issues/2398)
 - __Upgrades in the Developers' Interest__
   - Removed webpack from the Docker image. Custom apps should build their apps using their own webpack; the APK service will no longer perform that task. 
 ```

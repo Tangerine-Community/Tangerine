@@ -24,7 +24,8 @@
       <div secondary>
         Status: {{issue.status}}
         <span *ngIf="issue.docType === 'case' && issue.events.length > 0 && issue.events[0].data.conflict">Merged: {{issue.events[0].data.conflict.merged}}</span>
-        <span *ngIf="issue.formResponseId">Response id: {{issue.formResponseId | slice:0:8}}</span>
+        <span class="secondarySpacer" *ngIf="issue.formResponseId">Response id: {{issue.formResponseId | slice:0:8}}</span>
+        <span class="secondarySpacer" *ngIf="issue.caseId">Case id: {{issue.caseId | slice:0:8}}</span>
         Device: {{issue.tangerineModifiedByDeviceId | slice:0:8}}
       </div>
     </div>
