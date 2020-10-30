@@ -574,13 +574,9 @@ class CaseService {
     const currCaseId = this.case._id
 
     await this.load(sourceCaseId)
-    const sourceCase = this.case
-    const sourceParticipantIdx = sourceCase.participants.findIndex(sourceParticipant =>
-      sourceParticipant.id === sourceParticipantId)
-    if (sourceParticipantIdx > -1) {
-      sourceCase.participants.splice(sourceParticipantIdx)
-      await this.save()
-    }
+    this.case.participants = this.case.participants.filter(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    await this.save()
 
     await this.load(currCaseId)
   }
