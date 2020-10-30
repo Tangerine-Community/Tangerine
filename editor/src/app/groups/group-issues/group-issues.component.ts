@@ -55,6 +55,26 @@ export class GroupIssuesComponent implements OnInit {
       }
     }
   }
+  showConflictsSelector = {
+    "$elemMatch": {
+      "data.conflict": {
+        "$ne": null
+      }
+    }
+  }
+  showMergedOrClosedIssuesSelector = {
+    "type": "issue",
+    "tangerineModifiedOn": {"$gte": 0},
+    "$or": [
+      { "status": IssueStatus.Closed },
+      { "status": IssueStatus.Merged }
+    ]
+  }
+  showOpenIssuesSelector = {
+    "type": "issue",
+    "tangerineModifiedOn": {"$gte": 0},
+    "status": IssueStatus.Open,
+  }
 
   constructor(
     private groupResponsesService:GroupResponsesService,
@@ -71,38 +91,37 @@ export class GroupIssuesComponent implements OnInit {
       }
     ]
     this.groupId = window.location.hash.split('/')[2]
-    this.selector = {
-      "type": "issue",
-      'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
-    }
+    this.selector = this.showClosedIssues.nativeElement.hasAttribute('checked') ? this.showMergedOrClosedIssuesSelector : this.showOpenIssuesSelector
     // this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
     if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
       this.selector["events"] = this.filterConflictsSelector
+    } else {
+      this.selector["events"] = this.showConflictsSelector
     }
     this.query()
   }
 
   onSearchClick() {
+    this.selector = this.showClosedIssues.nativeElement.hasAttribute('checked') ? this.showMergedOrClosedIssuesSelector : this.showOpenIssuesSelector
     const location = this
       .tangyLocationEl
       .nativeElement
       .value
     if (!location || location.length === 0) {
-      this.selector = {
-        'type': 'issue',
-        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
-        }
     } else {
       const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
-      this.selector = {
-        'type': 'issue',
-        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
-        [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
-      }
+      // this.selector = {
+      //   'type': 'issue',
+      //   'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
+      //   [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
+      // }
+      this.selector[`location.${lastFilledOutNode.level}`] = lastFilledOutNode.value
     }
     // this.selector = this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
     if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
       this.selector["events"] = this.filterConflictsSelector
+    } else {
+      this.selector["events"] = this.showConflictsSelector
     }
     this.query()
   }
@@ -129,9 +148,21 @@ export class GroupIssuesComponent implements OnInit {
     this.issues = await this.groupResponsesService.query(this.groupId, {
       selector: this.selector,
       limit: this.limit,
-      skip: this.skip,
-      sort: [{'tangerineModifiedOn':'desc'}]
+      skip: this.skip
     })
+    this.issues.sort(
+      function(a,b){
+        if (a['tangerineModifiedOn'] < b['tangerineModifiedOn']) {
+          return 1;
+        }
+        if (a['tangerineModifiedOn'] > b['tangerineModifiedOn']) {
+          return -1;
+        }
+        // dates must be equal
+        return 0;
+        
+      }
+    )
     this.loading = false
   }
 

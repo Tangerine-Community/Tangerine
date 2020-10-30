@@ -54,7 +54,6 @@ async function go() {
         'type',
         'status',
         'tangerineModifiedOn'
-        // 'events'
       ]
     }
   })

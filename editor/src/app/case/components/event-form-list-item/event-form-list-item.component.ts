@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
@@ -11,6 +12,7 @@ import { CaseDefinition } from '../../classes/case-definition.class';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseService } from '../../services/case.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
+import { t } from 'tangy-form/util/t.js'
 
 
 
@@ -45,6 +47,7 @@ export class EventFormListItemComponent implements OnInit {
   constructor(
     private formService: TangyFormService,
     private ref: ChangeDetectorRef,
+    private router:Router,
     private caseService: CaseService
   ) {
     ref.detach();
@@ -53,11 +56,14 @@ export class EventFormListItemComponent implements OnInit {
   async ngOnInit() {
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
-    const response = await this.formService.getResponse(this.eventForm.formResponseId);
-    this.response = response
+    if (this.eventForm.formResponseId) {
+      const response = await this.formService.getResponse(this.eventForm.formResponseId);
+      this.response = response
+    }
+    
     const getValue = (variableName) => {
-      if (response) {
-        const variablesByName = response.items.reduce((variablesByName, item) => {
+      if (this.response) {
+        const variablesByName = this.response.items.reduce((variablesByName, item) => {
           for (const input of item.inputs) {
             variablesByName[input.name] = input.value;
           }
@@ -98,5 +104,19 @@ export class EventFormListItemComponent implements OnInit {
       this.formDeleted.emit('formDeleted');
       this.ref.detectChanges();
     }
+  }
+
+  navigateToEventForm() {
+    if (!this.eventForm.formResponseId) {
+      if (!confirm(t('This Event Form has not yet started. Opening it will modify data and may lead to merge conflicts. Are you sure you want to proceed?'))) {
+        return
+      }
+    }
+    if (this.eventForm.formResponseId && !this.response.form.complete) {
+      if (!confirm(t('This Event Form is incomplete. Opening it will modify data and may lead to merge conflicts. Are you sure you want to proceed?'))) {
+        return
+      }
+    }
+    this.router.navigateByUrl(`/case/event/form/${this.eventForm.caseId}}/${this.eventForm.caseEventId}}/${this.eventForm.id}}`)
   }
 }
