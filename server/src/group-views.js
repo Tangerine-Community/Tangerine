@@ -68,10 +68,20 @@ module.exports.responsesByUserProfileShortCode = function(doc) {
 module.exports.groupIssues = function(doc) {
   if (doc.collection === "TangyFormResponse" && doc.type === "issue") {
     doc.events.forEach(function(event) {
+      var lastFilledOutNode;
+      if (doc.location) {
+        for (var property in doc.location) {
+          if (doc.location.hasOwnProperty(property)) {
+            if (doc.location[property]) {
+              lastFilledOutNode = doc.location[property]
+            }
+          }
+        }
+      }
       if (event.data && event.data.conflict) {
-        emit([doc.status,"conflict",doc.location.facility, doc.tangerineModifiedOn])
+        emit([doc.status,"conflict",lastFilledOutNode, doc.tangerineModifiedOn])
       } else {
-        emit([doc.status,"issue",doc.location.facility, doc.tangerineModifiedOn])
+        emit([doc.status,"issue",lastFilledOutNode, doc.tangerineModifiedOn])
       }
     })
   }
