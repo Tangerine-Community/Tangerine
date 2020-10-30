@@ -40,7 +40,7 @@ export class GroupIssuesComponent implements OnInit {
   loading = false
   status:string = 'Open'
   type:string = 'issue'
-  location:string = '\ufff0'
+  location:string
   @ViewChild('tangyLocation', {static: true}) tangyLocationEl:ElementRef
   @ViewChild('showClosedIssues', {static: true}) showClosedIssues:ElementRef
   @ViewChild('showConflicts', {static: true}) showConflicts:ElementRef
@@ -108,6 +108,7 @@ export class GroupIssuesComponent implements OnInit {
     } else {
       const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
       // this.selector[`location.${lastFilledOutNode.level}`] = lastFilledOutNode.value
+      // Stick with the default value for this.location if no value for lastFilledOutNode.
       this.location = lastFilledOutNode.value
     }
     this.status = this.showClosedIssues.nativeElement.hasAttribute('checked') ? 'Closed' : 'Open'
@@ -139,11 +140,14 @@ export class GroupIssuesComponent implements OnInit {
     // Examples:
     // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=["Open","\ufff0"]&end_key=["Open"]&descending=true
     // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=[%22Closed%22,%22conflict%22,%22\ufff0%22]&end_key=[%22Closed%22,%22conflict%22]&descending=true
+    // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=[%22Open%22,%22issue%22,%22Ul4SMJaZ%22,%22\ufff0%22]&end_key=[%22Open%22,%22issue%22,%22Ul4SMJaZ%22]&descending=true
+    const startkeyArray = this.location ? [this.status,this.type,this.location,"\ufff0"] : [this.status,this.type,"\ufff0"]
+    const endKeyArray = this.location ? [this.status,this.type,this.location] : [this.status,this.type]
     let queryResults = await this.groupIssuesService.query(this.groupId, {
       fun: "groupIssues",
       include_docs: true,
-      startkey:[this.status,this.type,this.location,"\ufff0"],
-      endkey:[this.status,this.type],
+      startkey:startkeyArray,
+      endkey:endKeyArray,
       descending:true
     })
     this.issues = queryResults.map(issue => issue.doc)
