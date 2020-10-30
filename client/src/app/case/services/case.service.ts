@@ -546,7 +546,6 @@ class CaseService {
         }
       }
     }
-    this.save()
   }
 
   async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
