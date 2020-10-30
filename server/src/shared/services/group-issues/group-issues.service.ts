@@ -36,7 +36,7 @@ export class GroupIssuesService {
    */
   async query(groupId, options:PouchDbQueryOptions) {
     const groupDb = this.getGroupsDb(groupId)
-    console.log("options for groupId: " + groupId + " : " + JSON.stringify(options))
+    // console.log("options for groupId: " + groupId + " : " + JSON.stringify(options))
     const response  = await groupDb.query(options.fun, options)
     // console.log("response: " + JSON.stringify(response))
     return response.rows
