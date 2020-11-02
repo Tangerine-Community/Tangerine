@@ -7,6 +7,7 @@ import { UserController } from './user/user.controller';
 import { ConfigController } from './config/config.controller';
 import { GroupResponsesController } from './group-responses/group-responses.controller';
 import isAuthenticated = require('../middleware/is-authenticated');
+import {GroupIssuesController} from "./group-issues/group-issues.controller";
 const {permit} = require('../middleware/permitted');
 
 @Module({
@@ -16,7 +17,8 @@ const {permit} = require('../middleware/permitted');
     GroupDevicePublicController,
     GroupDeviceManageController,
     ConfigController,
-    GroupResponsesController
+    GroupResponsesController,
+    GroupIssuesController
   ],
   imports: [SharedModule]
 })
@@ -31,6 +33,9 @@ export class CoreModule implements NestModule {
     consumer
       .apply(isAuthenticated)
       .forRoutes(GroupResponsesController)
+    consumer
+      .apply(isAuthenticated)
+      .forRoutes(GroupIssuesController)
     consumer
       .apply(isAuthenticated)
       .forRoutes(UserController)

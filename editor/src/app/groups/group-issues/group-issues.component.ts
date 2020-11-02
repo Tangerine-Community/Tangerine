@@ -4,9 +4,8 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Router } from '@angular/router';
 import { FormInfo } from './../../tangy-forms/classes/form-info.class';
-import { GroupResponsesService } from './../services/group-responses.service';
+import { GroupIssuesService } from './../services/group-issues.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import * as moment from 'moment'
 
 // @TODO Turn this into a service that gets this info from a hook.
@@ -39,25 +38,23 @@ export class GroupIssuesComponent implements OnInit {
   groupId:string
   issues:Array<Issue>
   loading = false
+  status:string = 'Open'
+  type:string = 'issue'
+  location:string
   @ViewChild('tangyLocation', {static: true}) tangyLocationEl:ElementRef
   @ViewChild('showClosedIssues', {static: true}) showClosedIssues:ElementRef
   @ViewChild('showConflicts', {static: true}) showConflicts:ElementRef
+  @ViewChild('showMerged', {static: true}) showMerged:ElementRef
+  @ViewChild('showOpen', {static: true}) showOpen:ElementRef
 
   // Query params.
   selector:any = {}
-  limit = 10
+  limit = 20
   skip = 0
   moment
-  filterConflictsSelector = {
-    "$elemMatch": {
-      "data.conflict": {
-        "$exists": false
-      }
-    }
-  }
-
+  
   constructor(
-    private groupResponsesService:GroupResponsesService,
+    private groupIssuesService:GroupIssuesService,
     private router: Router
   ) {
     this.moment = moment
@@ -71,14 +68,6 @@ export class GroupIssuesComponent implements OnInit {
       }
     ]
     this.groupId = window.location.hash.split('/')[2]
-    this.selector = {
-      "type": "issue",
-      'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
-    }
-    // this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
-    if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
-      this.selector["events"] = this.filterConflictsSelector
-    }
     this.query()
   }
 
@@ -88,26 +77,21 @@ export class GroupIssuesComponent implements OnInit {
       .nativeElement
       .value
     if (!location || location.length === 0) {
-      this.selector = {
-        'type': 'issue',
-        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open
-        }
     } else {
       const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
-      this.selector = {
-        'type': 'issue',
-        'status': this.showClosedIssues.nativeElement.hasAttribute('checked') ? IssueStatus.Closed : IssueStatus.Open,
-        [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
-      }
+      // this.selector[`location.${lastFilledOutNode.level}`] = lastFilledOutNode.value
+      // Stick with the default value for this.location if no value for lastFilledOutNode.
+      this.location = lastFilledOutNode.value
     }
-    // this.selector = this.showConflicts.nativeElement.hasAttribute('checked') ? this.selector : this.selector["events"] = this.filterConflictsSelector
-    if (!this.showConflicts.nativeElement.hasAttribute('checked')) {
-      this.selector["events"] = this.filterConflictsSelector
-    }
+    this.status = this.showClosedIssues.nativeElement.hasAttribute('checked') ? 'Closed' : 'Open'
+    // Override if merged is checked
+    this.status = this.showMerged.nativeElement.hasAttribute('checked') ? 'Merged' : this.status
+    this.type = this.showConflicts.nativeElement.hasAttribute('checked') ? 'conflict' : 'issue'
     this.query()
   }
 
   onResetClick() {
+    this.location = null
     this
       .tangyLocationEl
       .nativeElement
@@ -123,15 +107,25 @@ export class GroupIssuesComponent implements OnInit {
     this.skip = this.skip - this.limit
     this.query()
   }
-
+  
   async query() {
     this.loading = true
-    this.issues = await this.groupResponsesService.query(this.groupId, {
-      selector: this.selector,
+    // Examples:
+    // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=["Open","\ufff0"]&end_key=["Open"]&descending=true
+    // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=[%22Closed%22,%22conflict%22,%22\ufff0%22]&end_key=[%22Closed%22,%22conflict%22]&descending=true
+    // http://localhost:5984/group-aaaff061-1565-424b-82d7-3eb2cdf11d93/_design/groupIssues/_view/groupIssues?start_key=[%22Open%22,%22issue%22,%22Ul4SMJaZ%22,%22\ufff0%22]&end_key=[%22Open%22,%22issue%22,%22Ul4SMJaZ%22]&descending=true
+    const startkeyArray = this.location ? [this.status,this.type,this.location,"\ufff0"] : [this.status,this.type,"\ufff0"]
+    const endKeyArray = this.location ? [this.status,this.type,this.location] : [this.status,this.type]
+    let queryResults = await this.groupIssuesService.query(this.groupId, {
+      fun: "groupIssues",
+      include_docs: true,
+      startkey:startkeyArray,
+      endkey:endKeyArray,
       limit: this.limit,
       skip: this.skip,
-      sort: [{'tangerineModifiedOn':'desc'}]
+      descending:true
     })
+    this.issues = queryResults.map(issue => issue.doc)
     this.loading = false
   }
 
