@@ -56,14 +56,11 @@ export class EventFormListItemComponent implements OnInit {
   async ngOnInit() {
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
-    if (this.eventForm.formResponseId) {
-      const response = await this.formService.getResponse(this.eventForm.formResponseId);
-      this.response = response
-    }
-    
+    const response = await this.formService.getResponse(this.eventForm.formResponseId);
+    this.response = response
     const getValue = (variableName) => {
-      if (this.response) {
-        const variablesByName = this.response.items.reduce((variablesByName, item) => {
+      if (response) {
+        const variablesByName = response.items.reduce((variablesByName, item) => {
           for (const input of item.inputs) {
             variablesByName[input.name] = input.value;
           }
@@ -117,6 +114,6 @@ export class EventFormListItemComponent implements OnInit {
         return
       }
     }
-    this.router.navigateByUrl(`/case/event/form/${this.eventForm.caseId}}/${this.eventForm.caseEventId}}/${this.eventForm.id}}`)
+    this.router.navigateByUrl(`/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`)
   }
 }
