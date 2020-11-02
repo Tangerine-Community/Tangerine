@@ -59,7 +59,7 @@
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "^6.5.5",
     "rxjs-compat": "^6.5.5",
-    "tangy-form": "^4.19.1",
+    "tangy-form": "^4.20.1",
     "translation-web-component": "0.0.3",
     "tslib": "^1.10.0",
     "underscore": "^1.9.1",

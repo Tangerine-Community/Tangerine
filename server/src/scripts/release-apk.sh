@@ -66,6 +66,7 @@ cordova platform rm android --no-telemetry
 echo $BUILD_ID > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-id 
 echo $RELEASE_TYPE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-channel
 echo $PACKAGE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-package-name
+echo $T_VERSION > $RELEASE_DIRECTORY/www/shell/assets/tangerine-version
 
 # replace the URL property in config.xml
 sed -i -e "s#CHCP_URL#"$CHCP_URL"#g" $RELEASE_DIRECTORY/config.xml

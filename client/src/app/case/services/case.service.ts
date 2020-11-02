@@ -299,6 +299,14 @@ class CaseService {
     return caseEvent
   }
 
+  setEventName(eventId, name:string) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ name } }
+        : event
+    })
+  }
+
   setEventEstimatedDay(eventId, timeInMs: number) {
     const estimatedDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
@@ -546,7 +554,6 @@ class CaseService {
         }
       }
     }
-    this.save()
   }
 
   async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
@@ -566,13 +573,9 @@ class CaseService {
     const currCaseId = this.case._id
 
     await this.load(sourceCaseId)
-    const sourceCase = this.case
-    const sourceParticipantIdx = sourceCase.participants.findIndex(sourceParticipant =>
-      sourceParticipant.id === sourceParticipantId)
-    if (sourceParticipantIdx > -1) {
-      sourceCase.participants.splice(sourceParticipantIdx)
-      await this.save()
-    }
+    this.case.participants = this.case.participants.filter(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    await this.save()
 
     await this.load(currCaseId)
   }
@@ -592,6 +595,41 @@ class CaseService {
       // Only delete the participant from the other case after adding it to this case is successful
       await this.deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId)
     }
+  }
+
+  async searchForParticipant(username:string, phrase:string, limit = 50, skip = 0, unique = true):Promise<Array<any>> {
+    const db = await window['T'].user.getUserDatabase(username)
+    const result = await db.query(
+      'participantSearch',
+      phrase
+        ? { 
+          startkey: `${phrase}`.toLocaleLowerCase(),
+          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+          include_docs: true,
+          limit,
+          skip
+        }
+        : {
+          include_docs: true,
+          limit,
+          skip
+        } 
+    )
+    const searchResults = result.rows.map(row => {
+      return {
+        ...row.value,
+        case: row.doc,
+        participant: row.doc.participants.find(p => p.id === row.value.participantId)
+      }
+    })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return unique
+      ? searchResults.reduce((uniqueResults, result) => {
+        return uniqueResults.find(x => x.participantId === result.participantId)
+          ? uniqueResults
+          : [ ...uniqueResults, result ]
+      }, [])
+      : searchResults
   }
 
   /*

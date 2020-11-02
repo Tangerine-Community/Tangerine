@@ -1,3 +1,4 @@
+import { GroupSearchComponent } from './../group-search/group-search.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Router } from '@angular/router';
@@ -37,8 +38,9 @@ export class GroupCasesComponent implements OnInit {
   groupId:string
   cases:Array<any>
   loading = false
-  @ViewChild('tangyLocation', {static: true}) tangyLocationEl:ElementRef
+  isSearching = false
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
+  @ViewChild('groupSearch', {static: true}) groupSearch: GroupSearchComponent
 
   // Query params.
   selector:any = {}
@@ -65,33 +67,9 @@ export class GroupCasesComponent implements OnInit {
     this.selector = {
       "type": "case"
     }
+    this.groupSearch.isSearching$.subscribe(() => this.isSearching = true) 
+    this.groupSearch.stoppedSearching$.subscribe(() => this.isSearching = false) 
     this.query()
-  }
-
-  onSearchClick() {
-    const location = this
-      .tangyLocationEl
-      .nativeElement
-      .value
-    if (!location || location.length === 0) {
-      this.selector = {
-        'type': 'case'
-      }
-    } else {
-      const lastFilledOutNode = location.reduce((lastFilledOutNode, node) => node.value ? node : lastFilledOutNode)
-      this.selector = {
-        'type': 'case',
-        [`location.${lastFilledOutNode.level}`]: lastFilledOutNode.value
-      }
-    }
-    this.query()
-  }
-
-  onResetClick() {
-    this
-      .tangyLocationEl
-      .nativeElement
-      .value = []
   }
 
   onNextClick() {

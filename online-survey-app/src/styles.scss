@@ -1,0 +1,377 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* This is a suggestion found at https://theinfogrid.com/tech/developers/angular/material-icons-angular-5/ */
+.material-icons {
+  vertical-align: middle;
+}
+
+@import '~material-design-icons-iconfont/dist/material-design-icons.css';
+/* TODO: I'm not sure this is having any affect */
+@import './_tangy-app-variables.scss';
+@import "./tangerine-theme.scss";
+
+html {
+
+  /* Background color of the document */
+  --document-background-color: #FFF;
+  /* Default color for all text. */
+  --primary-text-color: #050505;
+
+  /* Primary color for headings, etc. */
+  --primary-color: #3c5b8d;
+  /* Another primary color to use when an object is close to something with primary color. */
+  --primary-color-dark: #212a3f;
+  /* Text color to use when text overlays on primary color. */
+  --primary-text-color-overlay: #FFF;
+
+  /* Secondary color for used for bringing attention to something */
+  --accent-color: #f26f10;
+  /* Another secondary color to use when an object is close to something with secondary color. */
+  --accent-color-dark: #cc5500;
+  /* Text color to use when text overlays on secondary color. */
+  --accent-text-color: #FFF;
+
+  /* Tangy Form variables */
+  --error-color: #ff0000;
+  --disabled-color: #BBB;
+  --tangy-form-item--background-color: #FFF;
+
+  /* Other component overrides */
+  --paper-tabs-selection-bar-color: #f26f10;
+
+}
+
+
+body {
+  background: var(--document-background-color);
+  color: var(--primary-text-color);
+  margin: 0px;
+  padding: 0px;
+  overscroll-behavior: contain;
+}
+
+.container {
+  margin:15px;
+}
+
+paper-tabs {
+  text-transform: uppercase;
+  background: var(--primary-color-dark);
+  color: var(--primary-text-color-overlay);
+}
+paper-tab a:-webkit-any-link {
+  color: var(--primary-text-color-overlay);
+  text-decoration: none;
+  height: 42%;
+  text-align: center;
+}
+
+paper-button {
+  background: var(--accent-color);
+  color: var(--accent-text-color);
+}
+
+h2.card-header {
+    padding: 16px;
+    margin: 0px;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--paper-card-header-color, #000);
+}
+
+select{
+  font-size: 1.3rem;
+  width: 76%;
+}
+
+button.tangy-froms-margin-left{
+   margin-left:3rem
+}
+
+#icon {
+  display: block;
+}
+
+.tangerine-app-content{
+    /* min-height: 100vh; */
+    @media screen and (max-width: 600px) {
+      margin-top: 56px;
+    }
+    @media screen and (min-width: 600px) {
+      margin-top: 64px;
+    }
+}
+
+mat-toolbar{
+    background-color: var(--primary-color-dark) !important;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.tangy-spacer{
+    flex: 1 1 auto;
+}
+
+.tangy-foreground-primary{
+    color: $tangy-foreground-primary;
+}
+
+.tangy-foreground-secondary {
+  color: var(--accent-color);
+}
+
+.tangy-no-text-decoration{
+    text-decoration: none;
+}
+.tangy-app-name{
+  color: $tangy-app-name;
+  padding-left: 3em;
+}
+.tangy-unstyled-list{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tangy-card-content-container{
+  margin-left: 3%;
+  width: 90%;
+  margin-right:5%;
+  min-height: vh;
+}
+
+.tangy-location-list {
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  font-size: 14px;
+  color: rgba(0,0,0,.87);
+  letter-spacing: 0.05em;
+}
+
+.tangy-location-list-icon{
+  padding-right: 5px;
+  padding-top:3.5px;
+  color: var(--accent-color);
+}
+.menu-tangy-location-list-icon {
+  color: var(--accent-color);
+  position: relative;
+  bottom: 2px;
+  padding-right: 3px;
+}
+
+.search-icon{
+padding-top:0px;
+}
+
+iron-icon {
+  color: var(--primary-color) !important;
+}
+.material-icons.mat-11 { font-size: 11px; }
+.material-icons.mat-14 { font-size: 14px; }
+.material-icons.mat-18 { font-size: 18px; }
+.material-icons.mat-24 { font-size: 24px; }
+.material-icons.mat-36 { font-size: 36px; }
+.material-icons.mat-48 { font-size: 48px; }
+
+
+.tangy-full-width{
+  width: 100%;
+}
+
+.tangy-half-width {
+  width: 50%;
+  margin: 0;
+  padding:0;
+  display: inline-block;
+}
+
+/* Form Stuff*/
+.app-input-icon {
+    font-size: 1.5em;
+  }
+
+.header .title-text {
+  color: var(--primary-color);
+}
+
+div.more {
+  margin-top: 8px;
+}
+
+.matmenu_icon {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.mat-menu-item span {
+  position:relative;
+  bottom:8px;
+  text-align: left;
+  padding: 0;
+}
+
+.cdk-overlay-pane {
+  top: 45px !important;
+}
+
+.mat-focused .mat-form-field-placeholder {
+  color: var(--primary-color) !important;
+  font-size: 18px !important;
+}
+.mat-focused .mat-form-field-placeholder span i {
+  font-size: 21px;
+}
+.mat-form-field-ripple {
+  background-color: var(--primary-color) !important;
+}
+
+.mat-tab-labels {
+  background-color: var(--primary-color);
+  color: var(--primary-text-color-overlay);
+  font-weight: 700;
+}
+.mat-tab-label, .mat-tab-link {
+  color: var(--primary-text-color-overlay) !important;
+  font-weight: 700 !important;
+}
+
+.mat-tab-label-active {
+  background-color: var(--accent-color) !important;
+  opacity: 1.0 !important;
+  color: var(--accent-text-color) !important;
+  font-weight: 700;
+}
+.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: var(--accent-color-dark) !important;
+  height: 5px;
+}
+
+.mat-tab-header {
+  margin-left: -10px;
+}
+
+  form.portrait {
+    width: 20em;
+    margin: 4em auto;
+    padding: 3em 2em 2em 2em;
+    background: #fafafa;
+    border: 1px solid #ebebeb;
+    box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+
+  }
+
+  .group {
+    position: relative;
+    margin-bottom: 45px;
+
+  }
+
+  .corner-ribbon{
+    width: 200px;
+    background: #e43;
+    position: absolute;
+    top: 25px;
+    left: -50px;
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
+
+  /* Custom styles */
+
+  .corner-ribbon.sticky{
+    position: fixed;
+  }
+
+  .corner-ribbon.shadow{
+    box-shadow: 0 0 3px rgba(0,0,0,.3);
+  }
+
+  /* positions */
+  .corner-ribbon.top-right{
+    top: 25px;
+    right: -50px;
+    left: auto;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
+  #error {
+    color :$tangy-foreground-error-message;
+  }
+  #success{
+    color :$tangy-foreground-success-message;
+  }
+
+  .material-icons  {
+    vertical-align: text-bottom;
+  }
+
+  tangy-form > *, tangy-form {
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    --paper-input-container-shared-input-style_-_line-height: 1.2rem;
+  }
+
+  /*
+   * Custom Icon List Item component
+   *
+   * Example:
+
+      <div class="icon-list-item">
+        <mwc-icon slot="item-icon">arrow_forward</mwc-icon>
+        <div>
+          <div>
+            foo
+          </div>
+          <div secondary>
+            bar
+          </div>
+        </div>
+      </div>
+
+   */
+  .icon-list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-family: var(--paper-font-subhead_-_font-family);
+    font-size: var(--paper-font-subhead_-_font-size);
+    font-weight: var(--paper-font-subhead_-_font-weight);
+    line-height: var(--paper-font-subhead_-_line-height);
+    min-height: var(--paper-item-min-height, 48px);
+    padding: 0 16px;
+  }
+  .icon-list-item > mwc-icon {
+    width: 56px;
+  }
+  .icon-list-item > div {
+    min-height: var(--paper-item-body-two-line-min-height, 72px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    flex-basis: 0.0000000001px;
+  }
+  .icon-list-item > div > div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .icon-list-item > div > div + div {
+    font-size: var(--paper-font-body1_-_font-size);
+    font-weight: var(--paper-font-body1_-_font-weight);
+    line-height: var(--paper-font-body1_-_line-height);
+    color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
+  }
+
+  .icon-list-item>mwc-icon{
+    color: var(--primary-color) !important;
+  }
