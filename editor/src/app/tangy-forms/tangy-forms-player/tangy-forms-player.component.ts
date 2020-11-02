@@ -45,7 +45,7 @@ export class TangyFormsPlayerComponent {
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
-    private tangyFormService: TangyFormService,
+    private tangyFormService: TangyFormService
   ) {
     this.window = window
   }

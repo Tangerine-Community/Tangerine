@@ -9,7 +9,7 @@ module.exports.responsesByFormId = function(doc) {
 } 
 
 module.exports.responsesByStartUnixTime = function(doc) {
-  if (doc.collection = "TangyFormResponse") {
+  if (doc.collection === "TangyFormResponse") {
     return emit(doc.startUnixtime, true)
   }
 }
@@ -24,7 +24,7 @@ module.exports.responsesByMonthAndFormId = function(doc) {
 }
 
 module.exports.responsesByUserProfileId = function(doc) {
-  if (doc.collection = "TangyFormResponse") {
+  if (doc.collection === "TangyFormResponse") {
     if (doc.form && doc.form.id === 'user-profile') {
       return emit(doc._id, true)
     }
@@ -42,13 +42,13 @@ module.exports.responsesByUserProfileId = function(doc) {
 }
 
 module.exports.unpaid = function(doc) {
-  if (doc.collection = "TangyFormResponse" && !doc.paid) {
+  if (doc.collection === "TangyFormResponse" && !doc.paid) {
     emit(true, true)
   }
 }
 
 module.exports.responsesByUserProfileShortCode = function(doc) {
-  if (doc.collection = "TangyFormResponse") {
+  if (doc.collection === "TangyFormResponse") {
     if (doc.form && doc.form.id === 'user-profile') {
       return emit(doc._id.substr(doc._id.length-6, doc._id.length), true)
     }
@@ -62,5 +62,27 @@ module.exports.responsesByUserProfileShortCode = function(doc) {
     if (userProfileInput) {
       emit(userProfileInput.value.substr(userProfileInput.value.length-6, userProfileInput.value.length), true)
     }
+  }
+}
+
+module.exports.groupIssues = function(doc) {
+  if (doc.collection === "TangyFormResponse" && doc.type === "issue") {
+    doc.events.forEach(function(event) {
+      var lastFilledOutNode;
+      if (doc.location) {
+        for (var property in doc.location) {
+          if (doc.location.hasOwnProperty(property)) {
+            if (doc.location[property]) {
+              lastFilledOutNode = doc.location[property]
+            }
+          }
+        }
+      }
+      if (event.data && event.data.conflict) {
+        emit([doc.status,"conflict",lastFilledOutNode, doc.tangerineModifiedOn])
+      } else {
+        emit([doc.status,"issue",lastFilledOutNode, doc.tangerineModifiedOn])
+      }
+    })
   }
 }
