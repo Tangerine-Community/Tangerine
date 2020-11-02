@@ -88,12 +88,10 @@ export class CaseComponent implements AfterContentInit {
   }
 
   async onSubmit() {
-    if (confirm("Creating a new event or form can cause conflicts with data on tablets. Are you sure you want to proceed?")) {
-      const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
-      const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
-      await this.caseService.save()
-      this.calculateTemplateData()
-    }
+    const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
+    const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
+    await this.caseService.save()
+    this.calculateTemplateData()
   }
 
 }

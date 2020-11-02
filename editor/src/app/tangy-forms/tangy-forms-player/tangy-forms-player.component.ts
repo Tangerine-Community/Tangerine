@@ -101,15 +101,10 @@ export class TangyFormsPlayerComponent {
       if (formResponse) {
         formEl.response = formResponse
       } else {
-        if (confirm("Clicking this link will create a new record that could cause conflicts with data on tablets. Are you sure you want to proceed?")) {
-          formEl.newResponse()
-          this.formResponseId = formEl.response._id
-          formEl.response.formVersionId = this.formInfo.formVersionId
-          this.throttledSaveResponse(formEl.response)
-        } else {
-          this.skipSaving = true
-          window.location.hash = `#/${['case', window['T'].case.id].join('/')}`
-        }
+        formEl.newResponse()
+        this.formResponseId = formEl.response._id
+        formEl.response.formVersionId = this.formInfo.formVersionId
+        this.throttledSaveResponse(formEl.response)
       }
       this.response = formEl.response
       // Listen up, save in the db.
