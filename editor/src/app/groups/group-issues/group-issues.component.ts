@@ -52,34 +52,7 @@ export class GroupIssuesComponent implements OnInit {
   limit = 20
   skip = 0
   moment
-  filterConflictsSelector = {
-    "$elemMatch": {
-      "data.conflict": {
-        "$exists": false
-      }
-    }
-  }
-  showConflictsSelector = {
-    "$elemMatch": {
-      "data.conflict": {
-        "$ne": null
-      }
-    }
-  }
-  showMergedOrClosedIssuesSelector = {
-    "type": "issue",
-    "tangerineModifiedOn": {"$gte": 0},
-    "$or": [
-      { "status": IssueStatus.Closed },
-      { "status": IssueStatus.Merged }
-    ]
-  }
-  showOpenIssuesSelector = {
-    "type": "issue",
-    "tangerineModifiedOn": {"$gte": 0},
-    "status": IssueStatus.Open,
-  }
-
+  
   constructor(
     private groupIssuesService:GroupIssuesService,
     private router: Router
@@ -99,7 +72,6 @@ export class GroupIssuesComponent implements OnInit {
   }
 
   onSearchClick() {
-    this.selector = this.showClosedIssues.nativeElement.hasAttribute('checked') ? this.showMergedOrClosedIssuesSelector : this.showOpenIssuesSelector
     const location = this
       .tangyLocationEl
       .nativeElement
@@ -149,6 +121,8 @@ export class GroupIssuesComponent implements OnInit {
       include_docs: true,
       startkey:startkeyArray,
       endkey:endKeyArray,
+      limit: this.limit,
+      skip: this.skip,
       descending:true
     })
     this.issues = queryResults.map(issue => issue.doc)
