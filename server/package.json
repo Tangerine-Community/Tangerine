@@ -17,11 +17,13 @@
     "generate-location-level-indexes": "./src/scripts/generate-location-level-indexes/bin.js",
     "generate-indexes": "./src/scripts/generate-indexes/bin.js",
     "push-all-groups-views": "./src/scripts/push-all-groups-views.js",
+    "update-group-search-index": "./src/scripts/update-group-search-index.js",
     "find-missing-records": "./src/scripts/find-missing-records.js",
     "import-archives": "./src/scripts/import-archives/bin.js",
     "reset-all-devices": "./src/scripts/reset-all-devices/bin.js",
     "translations-update": "./src/scripts/translations-update.js",
     "release-dat": "./src/scripts/release-dat.sh",
+    "release-online-survey-app": "./src/scripts/release-online-survey-app.sh",
     "release-apk": "./src/scripts/release-apk.sh",
     "release-pwa": "./src/scripts/release-pwa.sh",
     "generate-ssh-keys": "./src/scripts/generate-ssh-keys.js",
@@ -81,7 +83,8 @@
     "rxjs": "^6.3.3",
     "sanitize-filename": "^1.6.1",
     "tangy-log": "^1.0.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.0.0",

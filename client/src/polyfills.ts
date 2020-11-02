@@ -23,6 +23,7 @@ import * as _ from 'underscore';
 //   <!-- Tangy Elements -->
 import 'tangy-form/tangy-form.js'
 import 'tangy-form/input/tangy-box.js'
+import 'tangy-form/input/tangy-gate.js'
 import 'tangy-form/input/tangy-input.js'
 import 'tangy-form/input/tangy-timed.js'
 import 'tangy-form/input/tangy-untimed-grid.js'
@@ -39,6 +40,7 @@ import 'tangy-form/input/tangy-photo-capture.js';
 import 'tangy-form/input/tangy-qr.js';
 import 'tangy-form/input/tangy-consent.js';
 import 'tangy-form/input/tangy-partial-date.js';
+import 'tangy-form/input/tangy-ethio-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 

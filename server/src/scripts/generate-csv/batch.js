@@ -53,8 +53,14 @@ async function batch() {
       const rows = docs.map(doc => {
         return [ doc._id, ...state.headersKeys.map(header => {
             if (typeof doc[header]!== 'undefined') {
-              return doc[header]
+              // Check to see if variable comes from a section that was disabled.
+              if (`${doc[header.split('.')[1]]}_disabled` === 'true') {
+                return '999'
+              } else {
+                return doc[header]
+              }
             } else {
+              // @TODO Ok to mark as a code like "UNDEFINED"?
               return ""
             }
         })]

@@ -136,7 +136,6 @@ export class AppComponent implements OnInit {
     await this.checkPermissions();
     // Initialize services.
     await this.userService.initialize();
-    await this.searchService.start();
 
     // Get globally exposed config.
     this.appConfig = await this.appConfigService.getAppConfig();

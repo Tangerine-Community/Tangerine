@@ -51,6 +51,7 @@ rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 echo $BUILD_ID > .pwa-temporary/$UUID/app/assets/tangerine-build-id
 echo $RELEASE_TYPE > .pwa-temporary/$UUID/app/assets/tangerine-build-channel
+echo $T_VERSION > .pwa-temporary/$UUID/app/assets/tangerine-version
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/

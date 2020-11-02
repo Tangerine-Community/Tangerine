@@ -295,6 +295,23 @@ export class GroupsService {
       }
     }
   }
+
+  async publishSurvey(groupId, formId, releaseType = 'prod', appName) {
+    try {
+      const response = await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}/${response.body['uploadKey']}`).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+  async unPublishSurvey(groupId, formId) {
+    try {
+      await this.httpClient.put(`/onlineSurvey/unpublish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/unrelease-online-survey-app/${groupId}/${formId}/prod`).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
   generateUUID(separator?: string) {
     if (!separator) {
       separator = '';

@@ -133,6 +133,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     flatFormResponse[`${item.id}_firstOpenTime`]= item.firstOpenTime? item.firstOpenTime:''
+    flatFormResponse[`${item.id}_disabled`] = item.disabled ? 'true' : 'false'
     for (let input of item.inputs) {
       let sanitize = false;
       if (sanitized) {
