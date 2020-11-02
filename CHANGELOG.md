@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.15.0
+
+- __New Features and fixes for all Tangerine__
+  - Editor User searches Cases by keyword [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) - This feature enables searching by any of the variables assigned in searchSettings/variablesToIndex in forms.json. You must run `docker exec tangerine update-group-search-index groupId` (replace groupId with target group id) before this feature may be used and whenever you update `variablesToIndex`.
+  - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419)
+  
 ## v3.14.3
 - __Bugfix__
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
