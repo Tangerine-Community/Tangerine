@@ -303,6 +303,25 @@
           "repeatable": false
         }
       ]
+    },
+    {
+      "id": "event-with-transfer-participant-feature",
+      "name": "An Event demonstrating Participant Transfer",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-participant-transfer",
+          "formId": "transfer-participant",
+          "forCaseRole": "role-1",
+          "name": "A form demonstrating the Participant Transfer feature.",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
     }
   ]
 }
