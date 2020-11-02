@@ -5,9 +5,12 @@
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
 - __New Features and fixes for all Tangerine__
   - Reduce number of unnecessary saves in Editor [#2444](https://github.com/Tangerine-Community/Tangerine/issues/2444)
-  - Improvements to Issues Listing [#2398](https://github.com/Tangerine-Community/Tangerine/issues/2398)
+  - Improvements to Issues Listing [#2398](https://github.com/Tangerine-Community/Tangerine/issues/2398) Please update the group views (noted in the Server upgrade instructions below) in order to use the Issues Listing.
 - __Upgrades in the Developers' Interest__
   - Removed webpack from the Docker image. Custom apps should build their apps using their own webpack; the APK service will no longer perform that task. 
+  
+__Server upgrade instructions:__
+
 ```
 # Fetch the updates.
 cd tangerine
@@ -15,6 +18,8 @@ git fetch origin
 git checkout v3.14.3
 # Now you are ready to start the server.
 ./start.sh v3.14.3
+# Update the views - there is a new view used for Issues.
+docker exec -it tangerine push-all-groups-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.14.2
 ```
