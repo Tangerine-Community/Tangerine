@@ -5,7 +5,24 @@
 - __New Features and fixes for all Tangerine__
   - Editor User searches Cases by keyword [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) - This feature enables searching by any of the variables assigned in searchSettings/variablesToIndex in forms.json. You must run `docker exec tangerine update-group-search-index groupId` (replace groupId with target group id) before this feature may be used and whenever you update `variablesToIndex`.
   - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419). Find Participant UI: [#2439](https://github.com/Tangerine-Community/Tangerine/pull/2439)
-  
+  - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
+ 
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.0
+# Now you are ready to start the server.
+./start.sh v3.15.0
+# Update the views - there is a new view used for Participant Transfers.
+docker exec -it tangerine push-all-groups-views
+# Update a group view to use Search variables:
+docker exec tangerine update-group-search-index groupId
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.3
+```  
 ## v3.14.3
 - __Bugfix__
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
