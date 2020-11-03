@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.14.4
+- __Bugfix__
+  - To fix a problem with app updates, downgraded docker-tangerine-base-image to v3.6.0. This will cause issues w/ p2p sync.
+  
 ## v3.14.3
 - __Bugfix__
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
