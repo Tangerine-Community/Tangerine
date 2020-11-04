@@ -7,12 +7,38 @@ Modules provide additional features to Tangerine, such as:
 Modules:
  - [Class](../editor/project_management/class.md)
 
+
 Steps to add a module
  - Create an index.js file inside server/src/modules/moduleName using the sample below as a guide.
- - Implement any relevant hooks. See the examples for flatFormResponse and groupNew, below.
+ - Implement any relevant hooks. Available hooks:
+   - flatFormResponse
+   - groupNew
+   - declareAppRoutes
+   - clearReportingCache
+   - reportingOutputs
  - Forms that need to be copied over to the client should be placed in server/src/modules/moduleName.
+ 
+## Activating modules
 
-## Sample module index.js
+Add the module name to T_MODULES in config.sh. When a new group is created, the modules listed in T_MODULES will be added to the new group's app-config.json. 
+
+
+```
+T_MODULES="['csv','sync-protocol-2','synapse','case']"
+
+``` 
+
+If you need to add a module to an existing group, modify the modules property in app-config.json/
+
+```
+   "modules" : [
+      "csv"
+   ],
+```
+
+## Example module index.js
+
+This example from the `class` module implements the `flatFormResponse` and `groupNew` hooks:
 
  ```
 const clog = require('tangy-log').clog
@@ -56,4 +82,12 @@ module.exports = {
 }
  ```
 
-This code will be automatically run when the TangyModules (server/src/modules/index.js) is run
+This code will be automatically run when the TangyModules (server/src/modules/index.js) is run.
+
+## Hooks
+
+Example:
+
+```
+const data = await tangyModules.hook('groupNew', {groupName, appConfig})
+``` 

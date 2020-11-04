@@ -1,8 +1,92 @@
 # What's New
 
+# Changelog
+
+## v3.14.3
+??? note "Bugfix"
+  - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
+??? note "New Features and fixes for all Tangerine"
+  - Reduce number of unnecessary saves in Editor [#2444](https://github.com/Tangerine-Community/Tangerine/issues/2444)
+  - Improvements to Issues Listing [#2398](https://github.com/Tangerine-Community/Tangerine/issues/2398) Please update the group views (noted in the Server upgrade instructions below) in order to use the Issues Listing.
+??? note "Upgrades in the Developers' Interest"
+  - Removed webpack from the Docker image. Custom apps should build their apps using their own webpack; the APK service will no longer perform that task. 
+  
+??? tip "Server upgrade instructions:"
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.3
+# Now you are ready to start the server.
+./start.sh v3.14.3
+# Update the views - there is a new view used for Issues.
+docker exec -it tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.2
+```
+
+## v3.14.2
+??? note "Bugfix"
+  - Fixes file path issue when bundling custom scripts in APK's.
+
+??? tip "Server upgrade instructions"
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.2
+# Now you are ready to start the server.
+./start.sh v3.14.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.1
+```
+
+## v3.14.1
+This is identical to v3.14.0 but was released to fix a problem with tangerine-preview v3.14.0 on npm.
+
+## v3.14.0
+??? note "New Features and fixes for all Tangerine"
+  - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
+  - __Important bugfix for sync issue in poor network situations__: If you currently have an active 3.13 deployment, run the 3.14 update on client to make sure all data is sync'd to the server. [#2399](https://github.com/Tangerine-Community/Tangerine/issues/2399)
+  - __Automatic conflict resolution on client__: Basic support for automatic merges of conflicts in EventForms. [#2272](https://github.com/Tangerine-Community/Tangerine/pull/2272) Documentation for [testing conflicts](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/developer/testing-conflicts.md)
+  - __Form version support__: Enables use of previous form versions for form display. [#2365](https://github.com/Tangerine-Community/Tangerine/issues/2365) Support for versioning is not yet implemented in the Editor; however, there is documentation on [how to implement form versions](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/editor/form-versions.md) manually.
+  - __User Interface updates__: The 4.19.0 tangy-form lib version features the following fixes:
+    - Required Field Asterisk (*) does not align with the question text [#2363](https://github.com/Tangerine-Community/Tangerine/issues/2363)
+    - Error Text and Warning Text have the same style - this is confusing for users [#2364](https://github.com/Tangerine-Community/Tangerine/issues/2364)
+  - __Setting packageName in app-config.json causes app to crash__: The docker-tangerine-base-image update to 3.7.0 improves Android and Cordova lib dependencies, and the release-apk code now rebuilds the Android code whenever an APK is built. [#2366](https://github.com/Tangerine-Community/Tangerine/issues/2366)
+  - __New module for rshiny development__: Adds option to csv module to change delimiter from '.' to '_'[#2314](https://github.com/Tangerine-Community/Tangerine/issues/2314)
+  - __Documentation Update__:   Re-organization of some documentation and addition of missing image files. [#2401](https://github.com/Tangerine-Community/Tangerine/issues/2401)
+  
+??? note "Upgrades in the Developers' Interest"
+  - __Upgraded docker-tangerine-base-image to v3.7.1__: Upgrade to Android API_LEVEL 30, Cordova 10, node:14.12.0-stretch. [#1890](https://github.com/Tangerine-Community/Tangerine/issues/1890) Caching cordova-android platform to avoid network issues when customizing packageName. [#7](https://github.com/Tangerine-Community/docker-tangerine-base-image/issues/7)
+
+## v3.13.1
+- Fix: Issues on Editor always ask us to rebase [#2376](https://github.com/Tangerine-Community/Tangerine/issues/2376)
+- Fix: Issues screen will not load after upgrading from v3.10.0 to v3.13.0 [#2378](https://github.com/Tangerine-Community/Tangerine/issues/2378)
+- Fix: Issues go missing after upgrading to v3.13.0 from v3.12.x [#2377](https://github.com/Tangerine-Community/Tangerine/issues/2377)
+* Please be aware: this release was made in the release/v3.13.1-alt branch and to date has only been built as the v3.13.1-rc-2 image.
+
+??? tip "Server upgrade instructions:"
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.13.1
+# Now you are ready to start the server.
+./start.sh v3.13.1
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.1.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.13.0
+```
+
+
 ## v3.13.0
 
-??? note New Features and fixes for all Tangerine
+??? note "New Features and fixes for all Tangerine"
   - __Download Location List as CSV__: You can now download a location list as a CSV. If you prefer editing a Location List via something like Excel, this makes editing an existing location list easier, which can then be imported when done editing in Excel. *Note:* Advise careful use of this export feature until [#2336](https://github.com/Tangerine-Community/Tangerine/issues/2336) is fixed. [#2107](https://github.com/Tangerine-Community/Tangerine/issues/2107)
   - __Duplicate a Section__:When editing a form, you can now easily duplicate an entire section with the "duplicate section" button. [#2109](https://github.com/Tangerine-Community/Tangerine/issues/2109). Warning - this feature does not handle complex objects such as tangy checkbox groups well; be sure to check the code it generates. This issue will be addressed in the next 3.13 point release.
   - __Group Data Dashboard in Editor__: "Dashboard" is now a menu item available in a Group under the Data menu. This link can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
@@ -10,23 +94,23 @@
   - __Automatic conflict resolution__: After a sync pull on client, detects type of conflict and resolves it. View status of merges in the Issues feature. [#1763](https://github.com/Tangerine-Community/Tangerine/issues/1763)
   - __Fix extending session in Editor__ - When prompted to extend session shows up session is not really extended. [#2266](https://github.com/Tangerine-Community/Tangerine/issues/2266)
   
-??? note New Features and Fixes for Case Module
+??? note "New Features and Fixes for Case Module"
 
   - __Client "Issues" feature__: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. This tab can be disabled adding or modifying `"showIssues": false,` to app-config.json. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
   - __Easier searching on Client__: Previously on Client when searching for "Facility 8" you would need to type exactly "Facility 8". Now search is case insensitive and you may type "facility 8" to match against "Facility 8".
   - __T.case.setEventWindow API fix__: Previously when setting an Event window, the end time for the window was mistakenly ignored and set to the start time. This is now fixed. [#2304](https://github.com/Tangerine-Community/Tangerine/issues/2304)
 
-??? note New Features for Sync Protocol 2 Module
+??? note "New Features for Sync Protocol 2 Module"
 
   - __Export device sheets__: When registering Devices, we now offer an option to print "Device Sheets". Device Sheets include the registration codes for a Device and also some human readable metadata. Each row can also be used as a label for each device that can be fastened to a device using affordable clear packing tape. [#2269](https://github.com/Tangerine-Community/Tangerine/issues/2269)
   - __Restore Backup on Android Tablet__: Backups can now be restored. Restore is an option when first opening a freshly installed APK. [#2127](https://github.com/Tangerine-Community/Tangerine/issues/2127)
   - __Better support for working on the same Case on two devices__: When working offline on the same Case on two Devices, after a sync, it may seem like the changes on one Tablet have gone missing for some time until the "database conflicts" are resolved using the CouchDB Futon interface on the server. Starting in v3.13.0 we'll start to employ algorithms for automatically merging to speed up the process of resolving these database conflicts.
   
-!!! info Notes for System Administrators
+!!! info "Notes for System Administrators"
 
   - After upgrade, you will no longer find group content directories in `./data/client/content/groups/`, they will be in `./data/groups/`. Inside each group's directory you will also find they have been split into a `client` and `editor` directory. All previous content will now be in the `client` directory while you may place content for the Group's Data Dashboard in the `editor` folder.
  
-??? tip "__Server Upgrade instructions__"
+??? tip "Server Upgrade instructions"
 
 ```
 # Fetch the updates.
