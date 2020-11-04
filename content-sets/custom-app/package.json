@@ -1,0 +1,15 @@
+{
+  "name": "custom-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "custom-scripts.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack ./client/index.js -o ./client && mv ./client/main.js ./client/custom-scripts.js"
+  },
+  "author": "",
+  "dependencies": {
+    "webpack": "^5.1.3",
+    "webpack-cli": "^4.1.0"
+  },
+  "license": "ISC"
+}

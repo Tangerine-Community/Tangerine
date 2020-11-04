@@ -100,6 +100,8 @@ import * as _ from 'underscore';
 import 'tangy-form-editor/tangy-form-editor.js'
 import '@vaadin/vaadin-upload/vaadin-upload.js'
 
+import '@polymer/paper-radio-button/paper-radio-button.js';
+import '@polymer/paper-radio-group/paper-radio-group.js';
 
 // Fix for the way Angular builds pouchdb https://github.com/pouchdb/pouchdb/issues/7299
 // Also probably fixes other things that try to use node process global.

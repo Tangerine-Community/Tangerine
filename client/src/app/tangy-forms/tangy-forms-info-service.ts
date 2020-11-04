@@ -79,17 +79,26 @@ export class TangyFormsInfoService {
       if (!formInfo.formVersions || formInfo.formVersions && formInfo.formVersions.length === 0) {
         src = formInfo.src
       } else {
-        src = legacyOriginal();
+        src = legacyOriginal()
+        if (!src) {
+          // viewing a record created in a legacy group with no formVersionId but does have formVersions
+          //without legacyOriginal flag
+          src = formInfo.src
+        }
       }
       return src
     }
 
     /**
-     * Form the has versions and one has the legacyOriginal flag.
+     * Form has formVersions and one has the legacyOriginal flag.
      */
     function legacyOriginal(): string {
       const legacyVersion: FormVersion = formInfo.formVersions.find((version: FormVersion) => version.legacyOriginal === true)
-      return legacyVersion.src
+      if (legacyVersion) {
+        return legacyVersion.src
+      } else {
+        return null
+      }
     }
 
     function supportsFormVersions(formVersionId: string): string {

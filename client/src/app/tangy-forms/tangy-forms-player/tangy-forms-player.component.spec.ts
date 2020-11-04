@@ -57,7 +57,7 @@ describe('TangyFormsPlayerComponent', () => {
   // - formVersionId but no formVersions
   // - no formVersionId
   // check if isSandbox.
-  fit('should load response and show correct version', (done) => {
+  it('should load response and show correct version', (done) => {
     // See MockTangyFormsInfoService for the data and template being used.
     component.formId = 'original'
     component.formResponseId = '123'

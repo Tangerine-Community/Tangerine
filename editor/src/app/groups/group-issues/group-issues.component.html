@@ -2,7 +2,13 @@
 <div id="header">
   <tangy-location #tangyLocation></tangy-location>
   <div id="header-buttons">
-    <paper-checkbox #showClosedIssues class="show-closed-issues">show closed issues</paper-checkbox>
+    <paper-checkbox #showConflicts class="show-conflicts">show conflicts</paper-checkbox>
+    <label id="issuesLabel">Issues:</label>
+    <paper-radio-group aria-labelledby="issuesLabel" selected="Open">
+      <paper-radio-button #showOpen class="show-open" name="Open">show open</paper-radio-button>
+      <paper-radio-button #showMerged class="show-merged" name="Merged">show merged</paper-radio-button>
+      <paper-radio-button #showClosedIssues class="show-closed-issues" name="Closed">show closed</paper-radio-button>
+    </paper-radio-group>
     <paper-button id="reset-button" (click)="onResetClick()" [disabled]="loading === true">reset</paper-button>
     <paper-button id="search-button" (click)="onSearchClick()" [disabled]="loading === true">search</paper-button>
   </div>
@@ -18,7 +24,8 @@
       <div secondary>
         Status: {{issue.status}}
         <span *ngIf="issue.docType === 'case' && issue.events.length > 0 && issue.events[0].data.conflict">Merged: {{issue.events[0].data.conflict.merged}}</span>
-        <span *ngIf="issue.formResponseId">Response id: {{issue.formResponseId | slice:0:8}}</span>
+        <span class="secondarySpacer" *ngIf="issue.formResponseId">Response id: {{issue.formResponseId | slice:0:8}}</span>
+        <span class="secondarySpacer" *ngIf="issue.caseId">Case id: {{issue.caseId | slice:0:8}}</span>
         Device: {{issue.tangerineModifiedByDeviceId | slice:0:8}}
       </div>
     </div>

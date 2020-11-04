@@ -148,7 +148,7 @@ RUN_OPTIONS="
   --link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --name $T_CONTAINER_NAME \
   --restart unless-stopped \
-  --env \"NODE_ENV=production\" \
+  --env \"NODE_ENV=development\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_USER1=$T_USER1\" \

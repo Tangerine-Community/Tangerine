@@ -527,6 +527,73 @@ class CaseService {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
+  addParticipant(caseParticipant:CaseParticipant) {
+    this.case.participants.push(caseParticipant)
+    for (let caseEvent of this.case.events) {
+      const caseEventDefinition = this
+        .caseDefinition
+        .eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (
+          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
+          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
+    this.save()
+  }
+
+  async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    const sourceCase = this.case
+    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+      sourceParticipant.id === sourceParticipantId)
+      
+    await this.load(currCaseId)
+
+    return sourceParticipant
+  }
+
+  async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    const sourceCase = this.case
+    const sourceParticipantIdx = sourceCase.participants.findIndex(sourceParticipant =>
+      sourceParticipant.id === sourceParticipantId)
+    if (sourceParticipantIdx > -1) {
+      sourceCase.participants.splice(sourceParticipantIdx)
+      await this.save()
+    }
+
+    await this.load(currCaseId)
+  }
+
+  async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+    }
+  }
+
+  async moveParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+
+      // Only delete the participant from the other case after adding it to this case is successful
+      await this.deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId)
+    }
+  }
+
   /*
    * Notification API
    */

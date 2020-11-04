@@ -1,4 +1,14 @@
-# Testing Conflicts
+# Conflicts
+
+The goal is to follow the [CRDT (conflict-free replicated data type)](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) pattern in resolving conflicts. When the app tries to merge two conflicting records, how should it sync the conflicting values: which value should win? The afore-mentioned Wikipedia page offers some guidance: "As an example, a one-way Boolean event flag is a trivial CRDT: one bit, with a value of true or false. True means some particular event has occurred at least once. False means the event has not occurred. Once set to true, the flag cannot be set back to false. (An event, having occurred, cannot un-occur.) The resolution method is "true wins": when merging a replica where the flag is true (that replica has observed the event), and another one where the flag is false (that replica hasn't observed the event), the resolved result is true — the event has been observed."
+
+We have not yet reached this level of conflict resolution. We have first started with comparing data from Event Forms, detecting some basic conflicts such as missing `formResponseId`, `complete`, or `required` properties or detecting if there is a `new` event form and then merging according to rules specific to each difference. In general, the event form conflicts are resolved by adding the missing property or form. For metadata that are in conflict, the most recent metadata is merged (wins). There is also a check for new events.
+
+Unit tests are available that test the conflicts mentioned above. You can also create scenarios on a tablet. 
+
+# Testing Conflicts on a tablet
+
+## Tips
 
 After each scenario, it is useful to run Sync to make sure that no more docs need to be sync'd:
 ```
