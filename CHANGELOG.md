@@ -16,10 +16,8 @@ git fetch origin
 git checkout v3.15.0
 # Now you are ready to start the server.
 ./start.sh v3.15.0
-# Update the views - there is a new view used for Participant Transfers.
-docker exec -it tangerine push-all-groups-views
-# Update a group view to use Search variables:
-docker exec tangerine update-group-search-index groupId
+# Update the views - there are new views for Searches and Participant Transfers.
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.14.3
 ```  

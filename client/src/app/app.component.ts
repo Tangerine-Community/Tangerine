@@ -286,7 +286,7 @@ export class AppComponent implements OnInit {
           console.log(error.description);
           await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
           this.updateIsRunning = false;
-          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.') + ' Error: ' + error);
         } else {
           console.log('APK update downloaded. Reloading for new code...');
           // No need to set in memory semaphore to false, app will reload.
