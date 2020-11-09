@@ -36,6 +36,18 @@
         }
         if (doc.type === 'case') {
           if (doc.location && typeof doc.location === 'object' && doc.participants && Array.isArray(doc.participants) && doc.participants.length > 0) {
+            // Some groups may use a different data structure for locations.
+            // The commented-out code is for location arrays.
+            // let locationKeys = []
+            // for (var i = 0; i < locationLevels.length; i++) {
+            //   var key = locationLevels[i]
+            //   for (var j = 0; j < doc.location.length; j++) {
+            //     var part = doc.location[j]
+            //     if (part.level === key) {
+            //       locationKeys.push(part.value)
+            //     }
+            //   }
+            // }
             const locationKeys = locationLevels.map(key => doc.location[key])
             for (let participant of doc.participants) {
               if (
@@ -52,7 +64,7 @@
                     {
                       caseId: doc._id,
                       participantId: participant.id,
-                      matchesOn: variableName 
+                      matchesOn: variableName
                     }
                   )
                 }
