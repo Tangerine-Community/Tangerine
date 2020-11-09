@@ -1,3 +1,5 @@
+import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info-service';
+import { createSearchIndex } from './create-search-index';
 import {HttpClient} from "@angular/common/http";
 
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
@@ -43,7 +45,8 @@ export class UserService {
     private deviceService:DeviceService,
     private appConfigService: AppConfigService,
     private http: HttpClient,
-    private variableService:VariableService,
+    private readonly formsInfoService:TangyFormsInfoService,
+    private variableService:VariableService
   ) {
     this.window = window;
   }
@@ -54,6 +57,8 @@ export class UserService {
 
   async installSharedUserDatabase(device) {
     this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
+    const formsInfo = await this.formsInfoService.getFormsInfo()
+    await createSearchIndex(this.sharedUserDatabase, formsInfo)
     await this.installDefaultUserDocs(this.sharedUserDatabase)
     // install any extra views
     try {
@@ -110,6 +115,8 @@ export class UserService {
     const device = await this.getDevice()
     const userDb = new UserDatabase(username, userId, device.key, device._id)
     this.installDefaultUserDocs(userDb)
+    const formsInfo = await this.formsInfoService.getFormsInfo()
+    await createSearchIndex(userDb, formsInfo)
     this.userDatabases.push(userDb)
     return userDb
   }

@@ -1,3 +1,4 @@
+import { CaseDocs } from './../../../case/case.docs';
 import { AppDocs } from './../../../app.docs';
 import { CaseHomeDocs } from './../../../case-home/case-home.docs';
 import { UserService } from "src/app/shared/_services/user.service";
@@ -317,6 +318,31 @@ export const updates = [
       await userDb.put(AppDocs[0])
       await userDb.query('byType')
       await variableService.set('ran-update-v3.13.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      console.log('Updating to v3.14.0...')
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.14.0')) return
+      // Reset sync-push-last_seq
+      await variableService.set('sync-push-last_seq', 0);
+      await variableService.set('ran-update-v3.14.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.0')) return
+      console.log('Updating to v3.15.0...')
+     // Remove old search indexes.
+      const searchDb = new PouchDB(`${userDb.name}-index`)
+      await searchDb.destroy()
+      // Create new search index.
+      await window['T'].search.createIndex()
+      // Create new special search index for Participants in Case docs.
+      await userDb.put(CaseDocs[0])
+      await variableService.set('ran-update-v3.15.0', 'true')
     }
   }
 ]

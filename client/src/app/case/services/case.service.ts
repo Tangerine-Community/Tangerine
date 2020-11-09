@@ -161,7 +161,7 @@ class CaseService {
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
     const tangyFormContainerEl:any = document.createElement('div')
-    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
+    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId, null)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form')
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
@@ -297,6 +297,14 @@ class CaseService {
       }
     }
     return caseEvent
+  }
+
+  setEventName(eventId, name:string) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ name } }
+        : event
+    })
   }
 
   setEventEstimatedDay(eventId, timeInMs: number) {
@@ -525,6 +533,103 @@ class CaseService {
 
   getParticipantData(participantId:string, key:string) {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
+  }
+
+  addParticipant(caseParticipant:CaseParticipant) {
+    this.case.participants.push(caseParticipant)
+    for (let caseEvent of this.case.events) {
+      const caseEventDefinition = this
+        .caseDefinition
+        .eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (
+          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
+          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
+  }
+
+  async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    const sourceCase = this.case
+    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+      sourceParticipant.id === sourceParticipantId)
+      
+    await this.load(currCaseId)
+
+    return sourceParticipant
+  }
+
+  async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    this.case.participants = this.case.participants.filter(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    await this.save()
+
+    await this.load(currCaseId)
+  }
+
+  async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+    }
+  }
+
+  async moveParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+
+      // Only delete the participant from the other case after adding it to this case is successful
+      await this.deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId)
+    }
+  }
+
+  async searchForParticipant(username:string, phrase:string, limit = 50, skip = 0, unique = true):Promise<Array<any>> {
+    const db = await window['T'].user.getUserDatabase(username)
+    const result = await db.query(
+      'participantSearch',
+      phrase
+        ? { 
+          startkey: `${phrase}`.toLocaleLowerCase(),
+          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+          include_docs: true,
+          limit,
+          skip
+        }
+        : {
+          include_docs: true,
+          limit,
+          skip
+        } 
+    )
+    const searchResults = result.rows.map(row => {
+      return {
+        ...row.value,
+        case: row.doc,
+        participant: row.doc.participants.find(p => p.id === row.value.participantId)
+      }
+    })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return unique
+      ? searchResults.reduce((uniqueResults, result) => {
+        return uniqueResults.find(x => x.participantId === result.participantId)
+          ? uniqueResults
+          : [ ...uniqueResults, result ]
+      }, [])
+      : searchResults
   }
 
   /*
@@ -857,12 +962,11 @@ class CaseService {
       caseEvent = this.case.events.find(c => c.caseEventDefinitionId === this.queryCaseEventDefinitionId);
       const eventForm = caseEvent.eventForms.find(d => d.id === c.id);
 
-      const referringCaseEvent: CaseEvent = this.case.events.find((event) => event.id === eventId);
       const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
       const tangyFormContainerEl:any = document.createElement('div');
-      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
+      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId, null);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
       document.body.appendChild(tangyFormContainerEl);
@@ -897,10 +1001,6 @@ class CaseService {
       await this.save();
 
       return queryResponseId;
-  }
-
-  getQuestionMarkup(form: string, question: string): Promise<string> {
-    return this.tangyFormService.getFormMarkup(form);
   }
 
   async valueExists(form, variable, value) {

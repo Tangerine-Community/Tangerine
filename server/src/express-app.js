@@ -43,6 +43,7 @@ const { extendSession, findUserByUsername,
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
+ const {saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
@@ -98,6 +99,7 @@ app.use(compression())
 var isAuthenticated = require('./middleware/is-authenticated.js')
 var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
+var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
 /*
@@ -138,6 +140,13 @@ app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']
 app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
 app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUserGroupPermissionsByGroupName);
 
+/**
+ * Online survey routes
+ */
+
+app.post('/onlineSurvey/publish/:groupId/:formId', isAuthenticated, publishSurvey);
+app.put('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
+app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, saveSurveyResponse);
 /*
  * More API
  */
@@ -231,6 +240,39 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
     const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${releaseType}`
     log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
     log.info(`RELEASING PWA: ${cmd}`)
+    await exec(cmd)
+    res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
+})
+
+app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/:uploadKey/', isAuthenticated, async function (req, res, next) {
+  // @TODO Make sure user is member of group.
+  const groupId = sanitize(req.params.groupId)
+  const formId = sanitize(req.params.formId)
+  const releaseType = sanitize(req.params.releaseType)
+  const appName = sanitize(req.params.appName)
+  const uploadKey = sanitize(req.params.uploadKey)
+
+  try {
+    const cmd = `release-online-survey-app ${groupId} ${formId} ${releaseType} "${appName}" ${uploadKey} `
+    log.info(`RELEASING Online survey app: ${cmd}`)
+    await exec(cmd)
+    res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
+})
+
+app.use('/editor/unrelease-online-survey-app/:groupId/:formId/:releaseType/', isAuthenticated, async function (req, res, next) {
+  // @TODO Make sure user is member of group.
+  const groupId = sanitize(req.params.groupId)
+  const formId = sanitize(req.params.formId)
+  const releaseType = sanitize(req.params.releaseType)
+  try {
+    const cmd = `rm -rf /tangerine/client/releases/${releaseType}/online-survey-apps/${groupId}/${formId}`
+    log.info(`UNRELEASING Online survey app: ${cmd}`)
     await exec(cmd)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {

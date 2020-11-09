@@ -20,6 +20,13 @@ export class GroupResponsesController {
     return await this.groupResponsesService.find(groupId, query)
   }
 
+  @All('search/:groupId')
+  async search(@Param('groupId') groupId, @Body('phrase') phrase) {
+    return await this.groupResponsesService.search(groupId, phrase)
+  }
+
+
+
   @All('index/:groupId')
   async index(@Param('groupId') groupId, @Body('index') index) {
     await this.groupResponsesService.index(groupId, index)

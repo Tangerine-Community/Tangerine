@@ -45,7 +45,7 @@ export class TangyFormsPlayerComponent {
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
-    private service: TangyFormService,
+    private tangyFormService: TangyFormService
   ) {
     this.window = window
   }
@@ -77,7 +77,7 @@ export class TangyFormsPlayerComponent {
     const formResponse = this.response
       ? new TangyFormResponseModel(this.response)
       : this.formResponseId
-        ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
+        ? new TangyFormResponseModel(await this.tangyFormService.getResponse(this.formResponseId))
         : ''
     const response = formResponse
     this.formId = this.formId
@@ -85,12 +85,13 @@ export class TangyFormsPlayerComponent {
       : formResponse['form']['id']
     this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
     this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
+    const formVersionId = formResponse["formVersionId"] ? formResponse["formVersionId"] : this.formInfo.formVersionId
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
       const response = formResponse
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
-      let  formHtml =  await this.tangyFormsInfoService.getFormMarkup(this.formId)
+      let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId)
       // Put the form on the screen.
       const container = this.container.nativeElement
       container.innerHTML = formHtml
@@ -102,6 +103,7 @@ export class TangyFormsPlayerComponent {
       } else {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
+        formEl.response.formVersionId = this.formInfo.formVersionId
         this.throttledSaveResponse(formEl.response)
       }
       this.response = formEl.response
@@ -148,12 +150,12 @@ export class TangyFormsPlayerComponent {
 
   async saveResponse(state) {
     let stateDoc = {}
-    stateDoc = await this.service.getResponse(state._id)
+    stateDoc = await this.tangyFormService.getResponse(state._id)
     if (!stateDoc) {
-      let r = await this.service.saveResponse(state)
-      stateDoc = await this.service.getResponse(state._id)
+      let r = await this.tangyFormService.saveResponse(state)
+      stateDoc = await this.tangyFormService.getResponse(state._id)
     }
-    await this.service.saveResponse({
+    await this.tangyFormService.saveResponse({
       ...state,
       _rev: stateDoc['_rev'],
       location: this.location || state.location,
