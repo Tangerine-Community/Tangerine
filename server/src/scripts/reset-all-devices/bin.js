@@ -8,7 +8,7 @@ if (process.argv[2] === '--help') {
 
 const fs = require('fs-extra')
 const PouchDB = require('pouchdb')
-const { v4: uuid } = require('uuid');
+const {v4: uuid}= require('uuid')
 const groupId = process.argv[2];
 const db = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}-devices`)
 
