@@ -4,7 +4,7 @@
 
 - __New Features and fixes for all Tangerine__
   - Editor User searches Cases by keyword [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) - This feature enables searching by any of the variables assigned in searchSettings/variablesToIndex in forms.json. You must run `docker exec tangerine update-group-search-index groupId` (replace groupId with target group id) before this feature may be used and whenever you update `variablesToIndex`.
-  - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419). Find Participant UI: [#2439](https://github.com/Tangerine-Community/Tangerine/pull/2439)
+  - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419). Find Participant UI: [#2439](https://github.com/Tangerine-Community/Tangerine/pull/2439).
   - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
   - Added error message to Updates error alert. [ccc1864
 ](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
