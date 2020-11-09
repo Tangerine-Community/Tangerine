@@ -172,11 +172,6 @@ export class GroupDevicesComponent implements OnInit {
     })
   }
 
-  async addDevice() {
-    const device = <GroupDevice>await this.groupDevicesService.createDevice(this.groupId)
-    this.editDevice(device._id)
-  }
-
   async resetDevice(deviceId:string) {
     const device = await this.groupDevicesService.resetDevice(this.groupId, deviceId)
     this.update()
@@ -272,4 +267,68 @@ export class GroupDevicesComponent implements OnInit {
 
   }
 
+  async generateDevices() {
+    const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
+    window['dialog'].innerHTML = `
+    <paper-dialog-scrollable>
+      <tangy-form>
+        <tangy-form-item id="edit-device" on-change="
+        ">
+          <tangy-input name="number_of_devices" value="1" label="Number of devices to generate" type="number" required></tangy-input>
+          <tangy-location
+            required
+            name="assigned_location"
+            label="Assign devices which location?"
+            show-levels='${locationList.locationsLevels.join(',')}'
+          >
+          </tangy-location>
+          <tangy-radio-buttons
+            required
+            label="Sync device to location at which level?"
+            name="sync_location__show_levels"
+          >
+            ${locationList.locationsLevels.map(level => `
+              <option value="${level}">${level}</option>
+            `).join('')}
+          </tangy-radio-buttons>
+        </tangy-form-item>
+      </tangy-form>
+    </paper-dialog-scrollable>
+    `
+    window['dialog'].querySelector('tangy-form').addEventListener('submit', async (event) => {
+      const numberOfDevicesToGenerate = parseInt(event.target.inputs.find(input => input.name === 'number_of_devices').value) 
+      const assignedLevels = event.target.inputs.find(input => input.name === 'assigned_location').showLevels.split(',')
+      const assignedLocationNodes = event.target.inputs.find(input => input.name === 'assigned_location').value
+      const syncLevels = event.target.inputs
+        .find(input => input.name === 'sync_location__show_levels')
+        .value
+        .slice(
+          0,
+          event.target.inputs
+            .find(input => input.name === 'sync_location__show_levels')
+            .value
+            .findIndex(option => option.value === 'on')+1
+        )
+        .map(option => option.name)
+      const syncLocationNodes = event.target.inputs.find(input => input.name === 'assigned_location').value
+        .filter(node => syncLevels.includes(node.level))
+      let numberOfDevicesGenerated = 0
+      window['dialog'].innerHTML = `<h1>Generating Devices...</h1>`
+      while (numberOfDevicesGenerated < numberOfDevicesToGenerate) {
+        const device = await this.groupDevicesService.createDevice(this.groupId)
+        device.assignedLocation.value = assignedLocationNodes
+        device.assignedLocation.showLevels = assignedLevels 
+        device.syncLocations[0] = {
+          value: syncLocationNodes,
+          showLevels: syncLevels
+        }
+        await this.groupDevicesService.updateDevice(this.groupId, device)
+        numberOfDevicesGenerated++
+      }
+      this.update()
+      window['dialog'].close()
+    })
+    setTimeout(() => window['dialog'].open(), 450)
+
+  }
 }

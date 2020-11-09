@@ -80,7 +80,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ExportLocationListComponent } from './export-location-list/export-location-list.component';
 import { GroupDashboardComponent } from './group-dashboard/group-dashboard.component';
 import { PrintFormBackupComponent } from './print-form-backup/print-form-backup.component';
-
+import { PrintStimuliScreenComponent } from './print-stimuli-screen/print-stimuli-screen.component';
+import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
+import { GroupSearchComponent } from './group-search/group-search.component';
 
 
 @NgModule({
@@ -167,6 +169,9 @@ import { PrintFormBackupComponent } from './print-form-backup/print-form-backup.
     ExportLocationListComponent,
     GroupDashboardComponent,
     PrintFormBackupComponent,
+    PrintStimuliScreenComponent,
+    ReleaseOnlineSurveyComponent,
+    GroupSearchComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

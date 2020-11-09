@@ -17,6 +17,7 @@ echo "import-archives          (Import client archives from the ./data/archives 
 echo "release-apk              (Release a Group App as an APK)"
 echo "release-pwa              (Release a Group App as a PWA)"
 echo "release-dat              (Release a Group APP as a Dat Archive)"
+echo "release-online-survey-app(Release an online survey app for a group/form)"
 echo "translations-update      (Update translation files in all group content folders using latest)"
 echo "import-v2-assessment     (Migrate an Assessment from a Tangerine v2 server to a Tangerine v3 Form)"
 echo "generate-ssh-keys        (Generates new SSH keys for creating groups from remote and private content sets)"
