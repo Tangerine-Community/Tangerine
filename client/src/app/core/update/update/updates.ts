@@ -340,8 +340,6 @@ export const updates = [
       await searchDb.destroy()
       // Create new search index.
       await window['T'].search.createIndex()
-      // Create new special search index for Participants in Case docs.
-      await userDb.put(CaseDocs[0])
       await variableService.set('ran-update-v3.15.0', 'true')
     }
   }
