@@ -4,9 +4,6 @@ const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const PouchDB = require('pouchdb')
-const fs = require('fs-extra')
-const views = require(`../group-views.js`)
-const dbConnection = require('../db')
 
 async function go() {
   console.log('Prepare all groups for new search using update-group-search-index')
