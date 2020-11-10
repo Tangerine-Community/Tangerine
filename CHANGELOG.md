@@ -8,6 +8,9 @@
   - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
   - Added error message to Updates error alert. [ccc1864
 ](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
+
+- __Important deprecation notice__
+  - The groupName property, once used in app-config.json, is no longer supported in recent releases of Tangerine. The groupId property is used in its place. Groups that use groupName will not be able to sync; they must migrate to groupId. This issue affects groups using sync-protocol-1. [#2447](https://github.com/Tangerine-Community/Tangerine/issues/2447)
  
 __Server upgrade instructions:__
 
