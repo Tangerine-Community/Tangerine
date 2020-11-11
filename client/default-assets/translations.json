@@ -23,10 +23,5 @@
     "label": "Russian",
     "languageCode": "ru",
     "languageDirection": "ltr"
-  },
-  {
-    "label": "Тоҷикӣ́",
-    "languageCode": "tg",
-    "languageDirection": "ltr"
   }
 ]
