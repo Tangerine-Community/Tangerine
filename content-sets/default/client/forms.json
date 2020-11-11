@@ -14,7 +14,7 @@
   {
     "title": "User Profile",
     "src": "./assets/user-profile/form.html",
-    "id": "user-profile"
+    "id": "user-profile",
     "customSyncSettings" : {
        "pull" : false,
        "enabled" : false,
