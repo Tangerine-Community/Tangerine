@@ -1,6 +1,6 @@
 export const createSearchIndex = async (db, formsInfo) => {
   const variablesToIndexByFormId = formsInfo.reduce((variablesToIndexByFormId, formInfo) => {
-    return formInfo.searchSettings.shouldIndex
+    return formInfo.searchSettings?.shouldIndex
       ? {
         ...variablesToIndexByFormId,
         [formInfo.id]: formInfo.searchSettings.variablesToIndex
