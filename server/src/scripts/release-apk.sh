@@ -45,6 +45,12 @@ if [ -d "$RELEASE_DIRECTORY" ]; then
   rm -rf $RELEASE_DIRECTORY
 fi
 
+if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
+  cd "/tangerine/groups/$GROUP/"
+  npm run install-server && npm run build
+  cd /
+fi
+
 # Populate with the Cordova project from $CORDOVA_DIRECTORY
 cp -r $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
 

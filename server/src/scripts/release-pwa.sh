@@ -26,6 +26,12 @@ if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$R
   exit
 fi
 
+if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
+  cd "/tangerine/groups/$GROUP/"
+  npm run install-server && npm run build
+  cd /
+fi
+
 cd /tangerine/client
 
 if [ -z "$T_ORIENTATION" ]
