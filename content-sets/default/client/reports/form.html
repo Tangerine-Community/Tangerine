@@ -289,7 +289,7 @@
       data.values.forEach(
           varName => {
               var date = new Date(varName)
-              var dateValue = date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate()
+              var dateValue = moment().format('YYYY-MM-DD')
               var xIndex = xAxis.indexOf(dateValue)
               if (xIndex != -1) {
                   yAxis[xIndex] = yAxis[xIndex] + 1
