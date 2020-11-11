@@ -40,6 +40,11 @@ fi
 # Mark build status early.
 echo '{"processing":true,"step":"Generating APK configuration files"}' > $STATUS_FILE
 
+if [ -d "$RELEASE_DIRECTORY" ]; then
+  # Clear out the Cordova project in $RELEASE_DIRECTORY
+  rm -rf $RELEASE_DIRECTORY
+fi
+
 if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
   cd "/tangerine/groups/$GROUP/"
   npm run install-server && npm run build
