@@ -322,6 +322,25 @@
           "repeatable": false
         }
       ]
+    },
+    {
+      "id": "event-with-skip-section-feature",
+      "name": "An Event that marks Skipped Inputs inside a Section",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-skip-section",
+          "formId": "skip-section",
+          "forCaseRole": "role-1",
+          "name": "A form that marks Skipped Inputs inside a Section.",
+          "autoPopulate": true,
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "required": false,
+          "repeatable": true
+        }
+      ]
     }
   ]
 }
