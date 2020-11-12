@@ -1,6 +1,17 @@
 
 ## Debugging the Reporting Cache process
 
+Summary of steps:
+1. Turn on reporting modules.
+1. Run develop.sh.
+1. Create a group.
+1. Stop the keep alive for reporting worker.
+1. Generate data.
+1. Run a batch with debugger enabled.
+1. Latch onto debugging session using Chrome inspect.
+
+
+## Instructions
 Configure your project to use the CSV and Logstash modules:
 ```
 T_MODULES="['csv', 'logstash']"
@@ -11,7 +22,7 @@ Start the development environment...
 ./develop.sh
 ```
 
-Create a group called `foo` in the GUI. Then open `./server/src/app.service.ts` and comment out the call to `this.keepAliveReportingWorker()`. 
+Create a group called `foo` in the GUI. Then open `./server/src/app.service.ts` and comment out the call to `this.keepAliveReportingWorker()`. __It's important to do these two things in this order__ otherwise the group could be disconnected from reporting.
 
 "exec" into the container and note how `foo` has been added to the `/reporting-worker-state.json` file.
 
