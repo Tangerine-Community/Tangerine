@@ -15,6 +15,8 @@ import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import {ConflictService} from "./services/conflict.service";
 
+const BATCH_SIZE = 25
+
 export interface LocationQuery {
   level:string
   id:string
@@ -134,7 +136,7 @@ export class SyncCouchdbService {
 
     let pullSyncOptions = {
       "since": pull_last_seq,
-      "batch_size": 50,
+      "batch_size": BATCH_SIZE,
       "batches_limit": 1,
       ...appConfig.couchdbPullUsingDocIds
         ? {
@@ -155,7 +157,7 @@ export class SyncCouchdbService {
 
     const pushSyncOptions = {
       "since": push_last_seq,
-      "batch_size": 50,
+      "batch_size": BATCH_SIZE,
       "batches_limit": 1,
       ...appConfig.couchdbPush4All ? { } : appConfig.couchdbPushUsingDocIds
         ? {
