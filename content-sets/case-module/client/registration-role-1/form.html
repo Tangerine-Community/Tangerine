@@ -58,7 +58,7 @@
     title="Screening"
     on-open="
       if (!getValue('screening_date')) {
-        inputs.screening_date.value = `${new Date().getFullYear()}-${`${new Date().getMonth() + 1}`.length == 1 ? `0${new Date().getMonth() + 1}` : `${new Date().getDate() + 1}`}-${`${new Date().getDate() }`.length == 1 ? `0${new Date().getDate()}` : `${new Date().getDate()}`}`
+        inputs.screening_date.value = moment().format('YYYY-MM-DD')
       }
     "
   >
@@ -76,7 +76,7 @@
     title="Registration"
     on-open="
       if (!inputs.enrollment_date.value) {
-        inputs.enrollment_date.value =  `${new Date().getFullYear()}-${`${new Date().getMonth() + 1}`.length == 1 ? `0${new Date().getMonth() + 1}` : `${new Date().getDate() + 1}`}-${`${new Date().getDate() }`.length == 1 ? `0${new Date().getDate()}` : `${new Date().getDate()}`}`
+        inputs.enrollment_date.value = moment().format('YYYY-MM-DD')
       }
     "
     on-change="
