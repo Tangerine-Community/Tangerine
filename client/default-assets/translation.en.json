@@ -189,5 +189,11 @@
   "no, stop": "No, stop",
   "SEARCH VIEW": "SEARCH VIEW",
    "next" : "Next",
-"back" : "Back"
+"back" : "Back",
+"Start":"Start",
+"Press the Start button below to transfer records to the server.":"Press the Start button below to transfer records to the server.",
+"Online Sync": "Online Sync",
+"Ready": "Ready",
+"Online Sync is used when there is a reliable Internet connection. If you have no Internet connection, use the P2P tab above to transfer records between nearby devices.":"Online Sync is used when there is a reliable Internet connection. If you have no Internet connection, use the P2P tab above to transfer records between nearby devices."
+
 }
