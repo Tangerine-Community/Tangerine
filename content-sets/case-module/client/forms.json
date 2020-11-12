@@ -608,5 +608,32 @@
       "push": true,
       "pull": true
     }
+  },
+  {
+    "id": "skip-section",
+    "src": "./assets/skip-section/form.html",
+    "description": "A form demonstrating the Skip Section feature.",
+    "listed": false,
+    "title": "Skip Section",
+    "icon": "assignment",
+    "type": "form",
+    "searchSettings": {
+      "shouldIndex": false,
+      "primaryTemplate": "",
+      "secondaryTemplate": "",
+      "variablesToIndex": []
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
   }
 ]
