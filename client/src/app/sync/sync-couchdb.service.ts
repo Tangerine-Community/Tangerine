@@ -39,6 +39,8 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 50
+  pullSyncOptions: { batch_size: number; batches_limit: number; since: any };
+  pushSyncOptions: { batch_size: number; batches_limit: number; since: any };
   
   constructor(
     private http: HttpClient,
@@ -135,7 +137,7 @@ export class SyncCouchdbService {
     const startLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
     await this.variableService.set('sync-push-last_seq-start', startLocalSequence)
 
-    let pullSyncOptions = {
+    this.pullSyncOptions = {
       "since": pull_last_seq,
       "batch_size": this.batchSize,
       "batches_limit": 1,
@@ -151,12 +153,12 @@ export class SyncCouchdbService {
           "selector": pullSelector
         }
     }
-    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
+    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, this.pullSyncOptions);
     if (pullReplicationStatus.pullConflicts.length > 0) {
       await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
     }
 
-    const pushSyncOptions = {
+    this.pushSyncOptions = {
       "since": push_last_seq,
       "batch_size": this.batchSize,
       "batches_limit": 1,
@@ -172,7 +174,7 @@ export class SyncCouchdbService {
           "selector": pushSelector
         }
     }
-    let pushReplicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
+    let pushReplicationStatus = await this.push(userDb, remoteDb, this.pushSyncOptions);
     let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
