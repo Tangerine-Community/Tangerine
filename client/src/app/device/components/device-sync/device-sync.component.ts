@@ -45,6 +45,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
       }
     })
     await this.syncService.sync(true)
+    // TODO: instead call the pull
     this.subscription.unsubscribe();
     this.syncInProgress = false
     this.syncIsComplete = true
