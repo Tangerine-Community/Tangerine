@@ -24,8 +24,12 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
 
   async sync() {
     this.syncInProgress = true
+    let initialPending = 0
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
+        if (initialPending === 0 && progress.pending > 0) {
+          initialPending = progress.pending
+        }
         let pendingMessage = '', docsWritten = '', direction = ''
 
         if (typeof progress.direction !== 'undefined') {
@@ -35,7 +39,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           docsWritten = progress.docs_written + ' docs saved; '
         }
         if (typeof progress.pending !== 'undefined') {
-          pendingMessage = progress.pending + ' pending; '
+          let percentComplete = (progress.pending / initialPending) * 100
+          pendingMessage = `${(typeof percentComplete === 'number' ? percentComplete : '...')}%`
         }
         if (typeof progress.docs_written !== 'undefined') {
           docsWritten = progress.docs_written + ' docs saved; '
