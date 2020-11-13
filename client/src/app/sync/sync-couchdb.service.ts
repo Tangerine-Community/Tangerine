@@ -15,7 +15,7 @@ import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import {ConflictService} from "./services/conflict.service";
 
-const BATCH_SIZE = 25
+const BATCH_SIZE = 1
 
 export interface LocationQuery {
   level:string
