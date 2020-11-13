@@ -25,6 +25,7 @@ import { AppConfig } from './shared/_classes/app-config.class';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { SearchService } from './shared/_services/search.service';
 import { Get } from 'tangy-form/helpers.js'
+import {SyncCouchdbService} from "./sync/sync-couchdb.service";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -69,7 +70,8 @@ export class AppComponent implements OnInit {
     private lockBoxService:LockBoxService,
     private dashboardService:DashboardService,
     private variableService:VariableService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private syncCouchdbService:SyncCouchdbService,
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
@@ -82,6 +84,7 @@ export class AppComponent implements OnInit {
       user: userService,
       lockBox: lockBoxService,
       syncing: syncingService,
+      syncCouchdbService: syncCouchdbService,
       sync: syncService,
       appConfig: appConfigService,
       update: updateService,
