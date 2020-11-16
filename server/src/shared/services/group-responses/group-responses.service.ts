@@ -86,7 +86,7 @@ export class GroupResponsesService {
     })
     // Deduplicate the search results since the same case may match on multiple variables.
     return searchResults.reduce((uniqueResults, result) => {
-      return uniqueResults.find(x => x.id === result.id)
+      return uniqueResults.find(x => x._id === result._id)
         ? uniqueResults
         : [ ...uniqueResults, result ]
     }, [])
