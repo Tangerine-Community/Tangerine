@@ -21,5 +21,7 @@
    "languageCode" : "en",
    "languageDirection" : "ltr",
    "hashSecurityQuestionResponse" : false,
-   "groupName" : "example"
+   "groupName" : "example",
+   "couchdbPush4All": false,
+   "couchdbPullUsingDocIds": true
  }
