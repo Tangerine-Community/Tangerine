@@ -13,7 +13,6 @@
   - The groupName property, once used in app-config.json, is no longer supported in recent releases of Tangerine. The groupId property is used in its place. Groups that use groupName will not be able to sync; they must migrate to groupId. This issue affects groups using sync-protocol-1. [#2447](https://github.com/Tangerine-Community/Tangerine/issues/2447)
  
 __Server upgrade instructions:__
-
 ```
 # Fetch the updates.
 cd tangerine
@@ -26,6 +25,12 @@ docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.14.3
 ```  
+
+If using Sync Protocol 2, we recommend updating `app-config.json` settings to the following to avoid crashes of large datasets (related to https://github.com/Tangerine-Community/Tangerine/issues/2486):
+```
+  "couchdbPush4All": false,
+  "couchdbPullUsingDocIds": true
+```
 
 ## v3.14.3
 - __Bugfix__
