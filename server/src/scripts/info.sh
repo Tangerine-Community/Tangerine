@@ -21,6 +21,7 @@ echo "release-online-survey-app(Release an online survey app for a group/form)"
 echo "translations-update      (Update translation files in all group content folders using latest)"
 echo "import-v2-assessment     (Migrate an Assessment from a Tangerine v2 server to a Tangerine v3 Form)"
 echo "generate-ssh-keys        (Generates new SSH keys for creating groups from remote and private content sets)"
+echo "update-group-search-index(Required to run when forms.json search settings change in a group)"
 echo ""
 echo "Add --help option to any command for command specific documentation."
 
