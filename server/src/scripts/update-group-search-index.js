@@ -1,18 +1,9 @@
 #!/usr/bin/env node
 
 const fs = require('fs-extra')
-const { emit } = require('process')
-const DB = require(`../db.js`)
+const DB = require('../db.js')
 
-if (process.argv[2] === '--help') {
-  console.log('Usage:')
-  console.log('       ./bin.js')
-  process.exit()
-}
-
-const GROUP_ID = process.argv[2]
-
-async function go() {
+const updateGroupSearchIndex = async function (GROUP_ID) {
   console.log('')
   console.log(`Updating search index for group ${GROUP_ID}`)
   console.log('')
@@ -57,7 +48,7 @@ async function go() {
         })
       }
     }`
-  const doc = {
+  const updatedSearchDoc = {
     _id: '_design/search',
     views: {
       'search': {
@@ -65,15 +56,38 @@ async function go() {
       }
     }
   }
+  let existingSearchDoc = null
   try {
-    const existingSearchDoc = await db.get('_design/search')
-    doc['_rev'] = existingSearchDoc._rev
-  } catch (e) { }
+    existingSearchDoc = await db.get('_design/search')
+    updatedSearchDoc['_rev'] = existingSearchDoc._rev
+  } 
+  catch (e) {
+    console.error(e)
+  }
   try {
-    await db.put(doc)
-
+    if (!existingSearchDoc || (existingSearchDoc && existingSearchDoc.views.search.map !== updatedSearchDoc.views.search.map)) {
+      await db.put(updatedSearchDoc)
+    }
   } catch (e) {
-    console.log(e)
+    console.error(e)
   }
 }
-go()
+
+/*
+ * CLI support
+ */
+if (process.argv[2] === '--help') {
+  console.log('Usage:')
+  console.log('       ./bin.js')
+  process.exit()
+}
+
+if (process.argv[1].includes('update-group-search-index')) {
+  const GROUP_ID = process.argv[2]
+  updateGroupSearchIndex(GROUP_ID)
+}
+
+/*
+ * Module support
+ */
+module.exports = { updateGroupSearchIndex }
