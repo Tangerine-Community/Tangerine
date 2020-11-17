@@ -7,6 +7,7 @@ APP_NAME="$4"
 UPLOAD_KEY="$5"
 
 FORM_DIRECTORY="/tangerine/groups/$GROUP_ID/client/$FORM_ID"
+LOCATION_LIST_PATH="/tangerine/groups/$GROUP_ID/client/location-list.json"
 
 if [ "$2" = "--help" ] || [ "$GROUP_ID" = "" ] || [ "$FORM_ID" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
@@ -36,6 +37,7 @@ echo $RELEASE_DIRECTORY
 rm -r $RELEASE_DIRECTORY
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
+cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
