@@ -19,7 +19,7 @@ export class TangyFormsPlayerComponent implements OnInit {
     const data = await this.httpClient.get('./assets/form/form.html', {responseType: 'text'}).toPromise();
     this.container.nativeElement.innerHTML = data;
     const tangyForm = this.container.nativeElement.querySelector('tangy-form');
-    tangyForm.addEventListener('submit', async (event) => {
+    tangyForm.addEventListener('after-submit', async (event) => {
       event.preventDefault();
       try {
         if (await this.formsService.uploadFormResponse(event.target.response, formId)){
