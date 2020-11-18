@@ -28,5 +28,6 @@ export class AppConfig {
   couchdbPush4All:boolean
   couchdbPullUsingDocIds:boolean
   couchdbPushUsingDocIds:boolean
+  autoMergeConflicts:boolean
 }
 
