@@ -13,6 +13,7 @@
 - __Important deprecation notice__
   - The groupName property, once used in app-config.json, is no longer supported in recent releases of Tangerine. The groupId property is used in its place. Groups that use groupName will not be able to sync; they must migrate to groupId. This issue affects groups using sync-protocol-1. [#2447](https://github.com/Tangerine-Community/Tangerine/issues/2447)
    - When form responses are unlocked in a Data Issue, the `on-submit` hook no longer runs. If you need logic to run, use the new `on-resubmit` hook.
+   - If using Sync Protocol 2, the "Auto Merge" feature that tries to fix database conflicts is now off by default and database conflicts will not be logged as Issues. If you would like to keep it on, set `"autoMergeConflicts": true` in your group's `client/app-config.json` file. However be aware that turning this on will result in inconsistent results (https://github.com/Tangerine-Community/Tangerine/issues/2484). Monitoring for database conflicts can now be done by monitoring the `syncConflicts` view via CouchDB Fauxton.
    
 __Server upgrade instructions:__
 ```
