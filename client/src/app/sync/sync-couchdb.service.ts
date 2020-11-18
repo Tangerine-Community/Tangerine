@@ -170,7 +170,7 @@ export class SyncCouchdbService {
         }
     }
     let pushReplicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-    let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
+    replicationStatus = {...replicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
   

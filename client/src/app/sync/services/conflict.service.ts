@@ -1,10 +1,11 @@
+import { DiffInfo } from './../classes/diff-info.class';
+import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
 import {CaseService} from "../../case/services/case.service";
 import {CaseDefinitionsService} from "../../case/services/case-definitions.service";
 import {TangyFormService} from "../../tangy-forms/tangy-form.service";
 import {Injectable} from "@angular/core";
 import {ReplicationStatus} from "../classes/replication-status.class";
 import {UserDatabase} from "../../shared/_classes/user-database.class";
-import {CaseDefinition} from "../../case/classes/case-definition.class";
 import {Case} from "../../case/classes/case.class";
 import {diff} from "../conflict/diff";
 import {MergeInfo} from "../classes/merge-info.class";
@@ -12,7 +13,6 @@ import {merge} from "../conflict/merge";
 import {Conflict} from "../../case/classes/conflict.class";
 import {AppContext} from "../../app-context.enum";
 import {Issue, IssueStatus} from "../../case/classes/issue.class";
-import {DiffInfo} from "../classes/diff-info.class";
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,48 @@ export class ConflictService {
     private caseDefinitionsService: CaseDefinitionsService,
     private tangyFormService: TangyFormService
   ) { }
+
+  /*
+   * @TODO This does not work as we'd like. See concerns raised in the following ticket: https://github.com/Tangerine-Community/Tangerine/issues/2492
+   */
+  async dontResolveConflictsButCreateIssues(replicationStatus: ReplicationStatus, userDb: UserDatabase) {
+    let newConflicts: Array<string> = replicationStatus.pullConflicts.filter(pullConflictId => !replicationStatus.initialConflicts.includes(pullConflictId))
+    const caseDefinitions = await this.caseDefinitionsService.load();
+    for (const id of newConflicts) {
+      let currentDoc = await userDb.db.get(id, {conflicts: true})
+      let conflictDoc
+      let conflictRevArray = currentDoc._conflicts
+      if (conflictRevArray) {
+        const conflictRev = conflictRevArray[0]
+        conflictDoc = await userDb.db.get(id, {rev: conflictRev})
+      }
+      let diffInfo:DiffInfo  
+      let caseDefinition:CaseDefinition
+      if (currentDoc.type === 'case') {
+        caseDefinition = <CaseDefinition>caseDefinitions.find(caseDefinition => caseDefinition.id === currentDoc.caseDefinitionId)
+      }
+      diffInfo = diff(currentDoc, conflictDoc, caseDefinition)
+      let conflict:Conflict = {
+        diffInfo: diffInfo,
+        mergeInfo: null,
+        type: 'conflict',
+        docType: currentDoc.type,
+        merged: false,
+        error: ''
+      }
+      const issue = await this.caseService.createIssue(
+        `Conflict detected on ${currentDoc._id}`,
+        '',
+        currentDoc._id,
+        currentDoc .events[0].id,
+        currentDoc.events[0].eventForms[0].id,
+        window['userProfile']._id, window['username'],
+        [AppContext.Editor],
+        conflict
+      )
+    }
+    
+  }
 
   async resolveConflicts(replicationStatus: ReplicationStatus, userDb: UserDatabase, remoteDb = null, direction: string, caseDefinitions:CaseDefinition[]) {
     let conflicts: Array<string> = direction === 'pull' ? replicationStatus.pullConflicts : replicationStatus.pushConflicts
