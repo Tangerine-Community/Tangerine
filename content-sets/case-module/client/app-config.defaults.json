@@ -25,5 +25,6 @@
    "groupName" : "example",
    "barcodeSearchMapFunction": "if ((JSON.parse(data)).participant_id) { return (JSON.parse(data)).participant_id } else { throw 'Incorrect format'} ",
    "couchdbPush4All": false,
-   "couchdbPullUsingDocIds": true
+   "couchdbPullUsingDocIds": true,
+   "autoMergeConflicts": false
  }
