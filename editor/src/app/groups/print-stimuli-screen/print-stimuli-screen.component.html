@@ -8,7 +8,16 @@
       <br><br><br>
     <div>
         <div style="page-break-after: always;" *ngFor="let section of meta?.items">
-          <p style="font-size: 32px;" *ngFor="let input of section.inputs; let index=index">{{input.label}}</p>
+          <div style="font-size: 32px;" *ngFor="let input of section.inputs; let index=index">
+            {{input.label}}
+            <p *ngIf="input.gridItem">{{input.name}}</p>
+            <span *ngIf="input.gridItem"><div *ngFor="let parts of input.gridParts">
+              <span *ngFor="let part of parts">{{part.label +'  '}}</span>
+              <hr/>
+            </div>
+            <br/>
+          </span>
+        </div>
         </div>
       </div>
   </div>
