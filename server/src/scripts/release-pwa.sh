@@ -68,6 +68,8 @@ cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
 mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
 echo $UUID > .pwa-temporary/release-uuid.txt
 
-rm -r $RELEASE_DIRECTORY
+if [ -f "$RELEASE_DIRECTORY"]; then
+  rm -r $RELEASE_DIRECTORY
+fi
 mv .pwa-temporary $RELEASE_DIRECTORY
 echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE"
