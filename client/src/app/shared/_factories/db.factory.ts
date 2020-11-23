@@ -25,7 +25,7 @@ export function DB(name, key = ''):PouchDB {
   }
 
   let pouchDBOptions = <any>{};
-  if (window['isCordovaApp'] && window['sqliteStorageFile']) {
+  if (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption']) {
     pouchDBOptions = {
       adapter: 'cordova-sqlite',
       location: 'default',
