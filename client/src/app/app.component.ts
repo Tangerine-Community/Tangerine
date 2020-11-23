@@ -1,3 +1,4 @@
+import { SyncCouchdbService } from './sync/sync-couchdb.service';
 import { LockBoxService } from './shared/_services/lock-box.service';
 import { ClassFormService } from './class/_services/class-form.service';
 import { DashboardService } from './class/_services/dashboard.service';
@@ -69,6 +70,7 @@ export class AppComponent implements OnInit {
     private lockBoxService:LockBoxService,
     private dashboardService:DashboardService,
     private variableService:VariableService,
+    private syncCouchdbService:SyncCouchdbService,
     private translate: TranslateService
   ) {
     this.window = window;
@@ -82,6 +84,7 @@ export class AppComponent implements OnInit {
       user: userService,
       lockBox: lockBoxService,
       syncing: syncingService,
+      syncCouchdbService: syncCouchdbService, 
       sync: syncService,
       appConfig: appConfigService,
       update: updateService,
