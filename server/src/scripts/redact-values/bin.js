@@ -78,7 +78,14 @@ async function go() {
                 input.value = redactedValue
                 changed = true
               }
-              console.log("type: " + type + " name: " + input.name + " valueOriginal: " + valueOriginal + " redactedValue: " + redactedValue)
+              // try not to overwhelm console with signatures and other huge strings.
+              let consoleValue;
+              if (type === 'string') {
+                consoleValue = valueOriginal.substring(0,20)
+              } else {
+                consoleValue = valueOriginal
+              }
+              console.log("type: " + type + " name: " + input.name + " valueOriginal: " + consoleValue + " redactedValue: " + redactedValue)
             }
           })
         }
@@ -112,6 +119,18 @@ async function go() {
           if (doc.participants) {
             doc.participants.forEach(participant => {
               participant.data = {}
+            })
+          }
+
+          if (doc.events) {
+            doc.events.forEach(event => {
+              let valueOriginal = event.name
+              const len = valueOriginal.length
+              if (len > 0) {
+                const redactedValue = rword.generate(1, {length: len});
+                event.name = redactedValue
+                changed = true
+              }
             })
           }
           

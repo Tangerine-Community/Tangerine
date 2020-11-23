@@ -238,7 +238,7 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   try {
     const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${releaseType}`
-    log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
+    log.info("in release-pwa, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
     log.info(`RELEASING PWA: ${cmd}`)
     await exec(cmd)
     res.send({ statusCode: 200, data: 'ok' })
