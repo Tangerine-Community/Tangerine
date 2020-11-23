@@ -29,12 +29,6 @@ docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
 docker rmi tangerine/tangerine:v3.14.3
 ```  
 
-If using Sync Protocol 2, we recommend updating `app-config.json` settings to the following to avoid crashes of large datasets (related to https://github.com/Tangerine-Community/Tangerine/issues/2486):
-```
-  "couchdbPush4All": false,
-  "couchdbPullUsingDocIds": true
-```
-
 ## v3.14.3
 - __Bugfix__
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
