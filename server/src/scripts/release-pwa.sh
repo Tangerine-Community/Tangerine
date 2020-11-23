@@ -26,14 +26,6 @@ if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$R
   exit
 fi
 
-# @TODO Leave this disabled until the UI components can deal with how long this will take.
-# @TODO When we reenable, don't forget to remove the cp of index.js to custom-scripts.js below.
-# if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
-#  cd "/tangerine/groups/$GROUP/"
-#  npm run install-server && npm run build
-#  cd /
-# fi
-
 cd /tangerine/client
 
 if [ -z "$T_ORIENTATION" ]
@@ -57,13 +49,8 @@ mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 # Install content into PWA.
 rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
-# @TODO Remove this after we reenable the npm process.
-if [ -f ".pwa-temporary/$UUID/app/assets/index.js"]; then
-  cp .pwa-temporary/$UUID/app/assets/index.js .pwa-temporary/$UUID/app/assets/custom-scripts.js
-fi
 echo $BUILD_ID > .pwa-temporary/$UUID/app/assets/tangerine-build-id
 echo $RELEASE_TYPE > .pwa-temporary/$UUID/app/assets/tangerine-build-channel
-echo $T_VERSION > .pwa-temporary/$UUID/app/assets/tangerine-version
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
@@ -74,8 +61,6 @@ cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
 mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
 echo $UUID > .pwa-temporary/release-uuid.txt
 
-if [ -f "$RELEASE_DIRECTORY"]; then
-  rm -r $RELEASE_DIRECTORY
-fi
+rm -r $RELEASE_DIRECTORY
 mv .pwa-temporary $RELEASE_DIRECTORY
 echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE"
