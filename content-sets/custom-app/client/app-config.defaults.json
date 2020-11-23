@@ -23,6 +23,6 @@
    "hashSecurityQuestionResponse" : false,
    "groupName" : "example",
    "couchdbPush4All": false,
-   "couchdbPullUsingDocIds": true,
+   "couchdbPullUsingDocIds": false,
    "autoMergeConflicts": false
  }
