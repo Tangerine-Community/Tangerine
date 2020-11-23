@@ -13,7 +13,18 @@ export class AppInit {
       if (window['isCordovaApp']) {
         debugger;
         document.addEventListener('deviceready', async () => {
-          resolve()
+          function reqListener () {
+            console.log(this.responseText);
+            const appConfig = JSON.parse(this.responseText)
+            if (appConfig.turnOffAppLevelEncryption) {
+              window['turnOffAppLevelEncryption'] = true
+            }
+            resolve()
+          }
+          var oReq = new XMLHttpRequest();
+          oReq.addEventListener("load", reqListener);
+          oReq.open("GET", "./assets/app-config.json");
+          oReq.send();
         })
       } else {
         resolve()
