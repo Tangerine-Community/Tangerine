@@ -157,7 +157,6 @@ export class SyncCouchdbService {
           "selector": pullSelector
         }
     }
-<<<<<<< HEAD
     let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
     if (pullReplicationStatus.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
       await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
@@ -169,14 +168,6 @@ export class SyncCouchdbService {
       return pullReplicationStatus
     }
     const pushSyncOptions = {
-=======
-    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, this.pullSyncOptions);
-    if (pullReplicationStatus.pullConflicts.length > 0) {
-      await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
-    }
-
-    this.pushSyncOptions = {
->>>>>>> origin/release/v3.14.5
       "since": push_last_seq,
       "batch_size": this.batchSize,
       "batches_limit": 1,
