@@ -54,7 +54,12 @@ export class SyncCouchdbService {
    * @param syncDetails
    * @param caseDefinitions - null if not testing.
    */
-  async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails, caseDefinitions:CaseDefinition[] = null): Promise<ReplicationStatus> {
+  async sync(
+    userDb:UserDatabase,
+    syncDetails:SyncCouchdbDetails,
+    caseDefinitions:CaseDefinition[] = null,
+    isFirstSync = false
+  ): Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -129,6 +134,7 @@ export class SyncCouchdbService {
       push_last_seq = 0;
     }
 
+    // @TODO RJ: What is sync-push-last_seq-start used for? 
     const startLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
     await this.variableService.set('sync-push-last_seq-start', startLocalSequence)
 
@@ -152,7 +158,12 @@ export class SyncCouchdbService {
     if (pullReplicationStatus.pullConflicts.length > 0) {
       await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
     }
-
+    // If this is the first sync, skip the push.
+    if (isFirstSync) {
+      const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+      await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+      return pullReplicationStatus
+    }
     const pushSyncOptions = {
       "since": push_last_seq,
       "batch_size": 50,
