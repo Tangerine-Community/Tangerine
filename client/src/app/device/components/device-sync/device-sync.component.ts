@@ -44,7 +44,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
         console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
-    await this.syncService.sync(true)
+    // Pass isFirstSync flag as true in order to skip the push.
+    await this.syncService.sync(true, true)
     this.subscription.unsubscribe();
     this.syncInProgress = false
     this.syncIsComplete = true
