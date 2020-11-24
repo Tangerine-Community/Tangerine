@@ -39,7 +39,8 @@ export class SyncService {
   public readonly syncMessage$: Subject<any> = new Subject();
   replicationStatus: ReplicationStatus
 
-  async sync(useSharedUser = false) {
+  // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
+  async sync(useSharedUser = false, isFirstSync = false) {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
@@ -59,14 +60,23 @@ export class SyncService {
       }
     })
 
-    this.replicationStatus = await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
-      serverUrl: appConfig.serverUrl,
-      groupId: appConfig.groupId,
-      deviceId: device._id,
-      deviceToken: device.token,
-      deviceSyncLocations: device.syncLocations,
-      formInfos
-    })
+    //
+    // @TODO RJ: I'm adding the isFirstSync param, but found caseDefinition parameter is left to null.
+    //       Is this causing issues in this.conflictService.resolveConflicts?
+    //
+    this.replicationStatus = await this.syncCouchdbService.sync(
+      userDb,
+      <SyncCouchdbDetails>{
+        serverUrl: appConfig.serverUrl,
+        groupId: appConfig.groupId,
+        deviceId: device._id,
+        deviceToken: device.token,
+        deviceSyncLocations: device.syncLocations,
+        formInfos
+      },
+      null,
+      isFirstSync
+    )
     console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
 
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
