@@ -66,6 +66,7 @@ export class IssueFormComponent implements OnInit {
         const proposedRevisionEvent = await this.caseService.getProposedChange(this.issue._id)
         let proposedFormResponse = proposedRevisionEvent.response
         await this.caseService.loadInMemory(proposedRevisionEvent.caseInstance)
+        this.caseService.setContext(this.issue.eventId, this.issue.eventFormId)
         this.formPlayer.response = proposedFormResponse
       } else {
         // Create a revision based on the base event.
