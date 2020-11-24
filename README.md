@@ -128,6 +128,10 @@ rm config.sh_backup
 # run every script between your prior version to version you have upgraded to. Also always check the release notes for
 # any special instructions -  for example:
 docker exec -it tangerine /tangerine/upgrades/<version>.sh
+# Upgrade scripts are also found in this location
+docker exec -it tangerine ls /tangerine/server/src/upgrade
+# Run an upgrade script indicated in release instructions.
+docker exec -it tangerine /tangerine/server/src/upgrade/<version>.sh
 # Remove the previous version of tangerine you had installed.
 docker rmi tangerine/tangerine:<previous tag>
 ```

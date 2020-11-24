@@ -86,3 +86,9 @@ module.exports.groupIssues = function(doc) {
     })
   }
 }
+
+module.exports.syncConflicts = function(doc) {
+  if (doc._conflicts) {
+    emit(true)
+  }
+}

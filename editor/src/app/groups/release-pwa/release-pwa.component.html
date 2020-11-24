@@ -1,7 +1,7 @@
 <p *ngIf="!buildPwaIsComplete&&!errorGeneratingPWA">
   {{'Your PWA is building...'|translate}}
 </p>
-<p *ngIf="errorGeneratingPWA">{{'Could Not Generate PWA'|translate}}</p>
+<p *ngIf="errorGeneratingPWA">{{'Release took too long. Please try again.'|translate}}</p>
 <p [hidden]="!buildPwaIsComplete">
   {{'Success! To install, open the install URL listed below on Google Chrome version 72 or greater. To update an existing install, log into the app on the device and click on the "UPDATE" button in the menu. '|translate}}
   <paper-input value="{{pwaUrl}}" type="text" readonly #urlContainer></paper-input>

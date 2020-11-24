@@ -63,7 +63,7 @@ async function processGroup(groupEntry) {
   let totalMarkedPaid = groupEntry.totalMarkedPaid
   let db = new DB(groupEntry.name)
   // Test.
-  const response = await db.query('shared_unpaid', {limit: PAID_BATCH_SIZE, include_docs:true})
+  const response = await db.query('unpaid', {limit: PAID_BATCH_SIZE, include_docs:true})
   const docs = response.rows.map(row => row.doc)
   for (let doc of docs) {
     await db.put(Object.assign({}, doc, {paid: true}))

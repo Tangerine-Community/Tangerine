@@ -32,6 +32,9 @@ export class TangyFormsPlayerComponent {
 
   $rendered = new Subject()
   $submit = new Subject()
+  $afterSubmit = new Subject()
+  $resubmit = new Subject()
+  $afterResubmit = new Subject()
   rendered = false
 
   formInfo:FormInfo
@@ -120,6 +123,27 @@ export class TangyFormsPlayerComponent {
       formEl.addEventListener('submit', (event) => {
         if (this.preventSubmit) event.preventDefault() 
         this.$submit.next(true)
+      })
+      formEl.addEventListener('after-submit', async (event) => {
+        if (this.preventSubmit) event.preventDefault() 
+        while (this.throttledSaveFiring === true) {
+          await sleep(1000)
+        }
+        this.$afterSubmit.next(true)
+      })
+      formEl.addEventListener('resubmit', async (event) => {
+        if (this.preventSubmit) event.preventDefault() 
+        while (this.throttledSaveFiring === true) {
+          await sleep(1000)
+        }
+        this.$resubmit.next(true)
+      })
+      formEl.addEventListener('after-resubmit', async (event) => {
+        if (this.preventSubmit) event.preventDefault() 
+        while (this.throttledSaveFiring === true) {
+          await sleep(1000)
+        }
+        this.$afterResubmit.next(true)
       })
     }
     this.$rendered.next(true)

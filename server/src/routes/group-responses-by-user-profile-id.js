@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
     if (req.params.skip) {
       options.skip = req.params.skip
     }
-    const results = await groupDb.query('shared_responsesByUserProfileId', options);
+    const results = await groupDb.query('responsesByUserProfileId', options);
     const docs = results.rows.map(row => row.doc)
     res.send(docs)
   } catch (error) {

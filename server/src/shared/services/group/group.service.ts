@@ -5,6 +5,8 @@ import PouchDB from 'pouchdb'
 import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from '../user/user.service';
+const insertGroupViews = require('../../../insert-group-views.js')
+
 const DB = require('../../../db')
 const log = require('tangy-log').log
 const fs = require('fs-extra')
@@ -71,6 +73,8 @@ export class GroupService {
 
   // In a Module's constructor, they have the opportunity to use this method to queue views for installation
   // in Group databases.
+  // @WARNING We are not currently using this. All views are in the JS module group-views.js as opposed to Nest Modules 
+  // using this function to register views.
   // Inspired by https://stackoverflow.com/questions/52263603/angular-add-a-multi-provider-from-lazy-feature-module
   registerViews(moduleName, views) {
     this._views[moduleName] = views
@@ -78,7 +82,9 @@ export class GroupService {
 
   // During account creation, this method is to be used.
   async installViews(groupDb) {
+
     log.info(`Installing views for ${groupDb.name}`)
+    insertGroupViews(groupDb.name)
     for (const moduleName in this._views) {
       for (const viewName in this._views[moduleName]) {
         await groupDb.put({
