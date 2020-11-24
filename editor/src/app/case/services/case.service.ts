@@ -810,6 +810,12 @@ class CaseService {
     return diff
   }
 
+  isIssueContext() {
+    return window.location.hash.includes('/issues/')
+      ? true
+      : false
+  }
+
   /*
    * Data Inquiries API
    */
