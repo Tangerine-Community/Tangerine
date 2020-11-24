@@ -127,7 +127,7 @@ export class GroupsService {
       return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {
-        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+        this.errorHandler.handleError(_TRANSLATE('Release took too long. Please try again.'));
       }
     }
   }

@@ -26,12 +26,6 @@ if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$R
   exit
 fi
 
-if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
-  cd "/tangerine/groups/$GROUP/"
-  npm run install-server && npm run build
-  cd /
-fi
-
 cd /tangerine/client
 
 if [ -z "$T_ORIENTATION" ]
@@ -57,7 +51,6 @@ rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 echo $BUILD_ID > .pwa-temporary/$UUID/app/assets/tangerine-build-id
 echo $RELEASE_TYPE > .pwa-temporary/$UUID/app/assets/tangerine-build-channel
-echo $T_VERSION > .pwa-temporary/$UUID/app/assets/tangerine-version
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
