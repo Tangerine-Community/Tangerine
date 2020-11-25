@@ -167,7 +167,7 @@ export class SyncCouchdbService {
       await this.variableService.set('sync-push-last_seq', lastLocalSequence)
       return pullReplicationStatus
     }
-    const pushSyncOptions = {
+    this.pushSyncOptions = {
       "since": push_last_seq,
       "batch_size": this.batchSize,
       "batches_limit": 1,
