@@ -2,6 +2,56 @@
 
 # Changelog
 
+## v3.15.0
+
+- __New Features and fixes__
+  - Editor User searches Cases by keyword [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) - This feature enables searching by any of the variables assigned in searchSettings/variablesToIndex in forms.json. 
+  - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419). Find Participant UI: [#2439](https://github.com/Tangerine-Community/Tangerine/pull/2439).
+  - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
+  - Added error message to Updates error alert. [ccc1864
+](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
+  - New "Release Online Survey" menu on Server allows you to release a single form for data collection online. Note the original "Deploy -> Release" menu item has been moved to "Deploy -> Release Offline App".
+  - Fixed issue where "Tangy Gate" form element could be added in Editor but would not appear on Tablets.
+  - Support for new "<tangy-ethio-date>" element that brings a Partial Date style form element with support for the Ethiopian Calendar.
+  - If using Sync Protocol 2, the first sync when registering a Device is now faster in cases where there is a lot of data already collected. Also the blank User Profile created for the Admin user on a device is no longer uploaded resulting in less noise in the Device Users list.
+
+
+- __Important deprecation notice__
+  - The groupName property, once used in app-config.json, is no longer supported in recent releases of Tangerine. The groupId property is used in its place. Groups that use groupName will not be able to sync; they must migrate to groupId. This issue affects groups using sync-protocol-1. [#2447](https://github.com/Tangerine-Community/Tangerine/issues/2447)
+   - When form responses are unlocked in a Data Issue, the `on-submit` hook no longer runs. If you need logic to run, use the new `on-resubmit` hook.
+   - If using Sync Protocol 2, the "Auto Merge" feature that tries to fix database conflicts is now off by default and database conflicts will not be logged as Issues. If you would like to keep it on, set `"autoMergeConflicts": true` in your group's `client/app-config.json` file. However be aware that turning this on will result in inconsistent results (https://github.com/Tangerine-Community/Tangerine/issues/2484). Monitoring for database conflicts can now be done by monitoring the `syncConflicts` view via CouchDB Fauxton.
+   
+__Server upgrade instructions:__
+```
+git checkout v3.15.0
+# Now you are ready to start the server.
+./start.sh v3.15.0
+# Update the views - there are new views for Searches and Participant Transfers.
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.6
+```  
+
+## v3.14.6
+Changes in v3.14.4 were abandoned, changes in v3.14.5 have been rolled into v3.15.0. The following are changes for v3.14.6.
+
+- Improve first sync performance: On first sync, skip push but set the last push variable to whatever we left on after the first pull.
+- Improve in-form API parity between context of a Case and context of an Issue proposal. Sets case context in more scenarious inside of Issue Form proposals.
+- Prevent form crashes and unintentional logic by adding the new `T.case.isIssueContext()` API for detecting if in the Issue context in a form.
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.6
+# Now you are ready to start the server.
+./start.sh v3.14.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.3
+```
+
 ## v3.14.3
 ??? note "Bugfix"
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
