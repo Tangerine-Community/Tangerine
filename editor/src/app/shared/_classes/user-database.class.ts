@@ -69,9 +69,12 @@ export class UserDatabase {
   }
 
   async remove(doc) {
-    // This is not implemented...
     const token = localStorage.getItem('token');
-    return await axios.delete(`/api/${this.groupId}`, doc)
+    return await axios.post(`/group-responses/delete/${this.groupId}/${doc._id}`, {}, {
+      headers: {
+        authorization: token
+      }
+    })
   }
 
 }

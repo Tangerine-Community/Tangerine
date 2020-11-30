@@ -102,6 +102,11 @@ export class TangyFormService {
     }
   }
 
+  async deleteResponse(response) {
+    let db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
+    await db.remove(response)
+  }
+ 
   async getAllResponses() {
     let db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     return (await db.allDocs({include_docs:true})).rows.map(row => row.doc)
