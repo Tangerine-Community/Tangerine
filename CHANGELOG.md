@@ -17,17 +17,34 @@
    
 __Server upgrade instructions:__
 ```
-# Fetch the updates.
-cd tangerine
-git fetch origin
 git checkout v3.15.0
 # Now you are ready to start the server.
 ./start.sh v3.15.0
 # Update the views - there are new views for Searches and Participant Transfers.
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.14.3
+docker rmi tangerine/tangerine:v3.14.6
 ```  
+
+## v3.14.6
+Changes in v3.14.4 were abandoned, changes in v3.14.5 have been rolled into v3.15.0. The following are changes for v3.14.6.
+
+- Improve first sync performance: On first sync, skip push but set the last push variable to whatever we left on after the first pull.
+- Improve in-form API parity between context of a Case and context of an Issue proposal. Sets case context in more scenarious inside of Issue Form proposals.
+- Prevent form crashes and unintentional logic by adding the new `T.case.isIssueContext()` API for detecting if in the Issue context in a form.
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.6
+# Now you are ready to start the server.
+./start.sh v3.14.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.3
+```
 
 ## v3.14.3
 - __Bugfix__
