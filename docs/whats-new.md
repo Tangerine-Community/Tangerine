@@ -53,6 +53,7 @@ docker rmi tangerine/tangerine:v3.14.3
 ```
 
 ## v3.14.3
+
 ??? note "Bugfix"
   - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
 ??? note "New Features and fixes for all Tangerine"
