@@ -65,6 +65,7 @@
     "express-session": "1.15.6",
     "flat": "^4.0.0",
     "fs-extra": "^4.0.3",
+    "happy-dom": "^1.18.2",
     "json2csv": "^3.11.5",
     "jsonwebtoken": "^8.5.1",
     "junk": "^2.1.0",
@@ -84,6 +85,7 @@
     "rword": "^3.1.2",
     "rxjs": "^6.3.3",
     "sanitize-filename": "^1.6.1",
+    "tangy-form": "^4.21.1",
     "tangy-log": "^1.0.0",
     "underscore": "^1.8.3",
     "uuid": "^8.3.0"
