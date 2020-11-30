@@ -11,7 +11,7 @@ __New Features and Fixes__
 - Added error message to Updates error alert. [ccc1864
 ](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
 - Fixed issue where "Tangy Gate" form element could be added in Editor but would not appear on Tablets.
-- Support for new "<tangy-ethio-date>" element that brings a Partial Date style form element with support for the Ethiopian Calendar.
+- Support for new "tangy-ethio-date" element that brings a Partial Date style form element with support for the Ethiopian Calendar.
 - If using Sync Protocol 2, the first sync when registering a Device is now faster in cases where there is a lot of data already collected. Also the blank User Profile created for the Admin user on a device is no longer uploaded resulting in less noise in the Device Users list.
 
 __Important Deprecation Notices__
