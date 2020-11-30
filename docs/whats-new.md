@@ -78,6 +78,7 @@ docker rmi tangerine/tangerine:v3.14.2
 ```
 
 ## v3.14.2
+
 ??? note "Bugfix"
   - Fixes file path issue when bundling custom scripts in APK's.
 
@@ -98,6 +99,7 @@ docker rmi tangerine/tangerine:v3.14.1
 This is identical to v3.14.0 but was released to fix a problem with tangerine-preview v3.14.0 on npm.
 
 ## v3.14.0
+
 ??? note "New Features and fixes for all Tangerine"
   - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
   - __Important bugfix for sync issue in poor network situations__: If you currently have an active 3.13 deployment, run the 3.14 update on client to make sure all data is sync'd to the server. [#2399](https://github.com/Tangerine-Community/Tangerine/issues/2399)
