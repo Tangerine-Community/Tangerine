@@ -8,6 +8,7 @@
   - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
   - Added error message to Updates error alert. [ccc1864
 ](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
+  - New "Release Online Survey" menu on Server allows you to release a single form for data collection online. Note the original "Deploy -> Release" menu item has been moved to "Deploy -> Release Offline App".
 
 
 - __Important deprecation notice__
