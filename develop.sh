@@ -150,6 +150,8 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH\" \
   --env \"T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH\" \
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
+  --env \"T_NGROK_AUTH_TOKEN=$T_NGROK_AUTH_TOKEN\" \
+  --env \"T_NGROK_SUBDOMAIN=$T_NGROK_SUBDOMAIN\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -175,6 +177,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/id_rsa:/root/.ssh/id_rsa:delegated \
   --volume $(pwd)/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
+  --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
   tangerine/tangerine:local
  "
 

@@ -36,7 +36,7 @@ export class CaseNotificationsComponent implements OnInit {
     this.notifications = [...this.caseService.case.notifications.filter(notification => notification.status === NotificationStatus.Open)]
     this.ready = true
     for (let notification of this.caseService.case.notifications) {
-      if (!notification.persist) {
+      if (!notification.persist && notification.status !== NotificationStatus.Closed) {
         this.caseService.closeNotification(notification.id)
         await this.caseService.save()
       }

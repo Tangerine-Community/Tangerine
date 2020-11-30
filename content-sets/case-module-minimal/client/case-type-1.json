@@ -1,0 +1,58 @@
+{
+  "id": "case-type-1",
+  "formId": "case-type-1-manifest",
+  "name": "Case Type 1",
+  "description": "This is Case Type 1.",
+  "caseRoles": [
+    {
+      "id": "role-1",
+      "label": "Role 1",
+      "templateListItem": "Forms for ${participant.data.first_name} ${participant.data.last_name}, Role 1 Participant, ${participant.data.participant_id}"
+    },
+    {
+      "id": "role-2",
+      "label": "Role 2",
+      "templateListItem": "Forms for ${participant.data.first_name ? `${participant.data.first_name} ${participant.data.last_name}, `:''} Role 2 Participant, ${participant.data.participant_id}"
+    }
+  ],
+  "templateCaseTitle": "${getVariable('participant_id') ? `${getVariable('first_name')} ${getVariable('last_name')}` : '...'}",
+  "templateCaseDescription": "${getVariable('participant_id') ? `Participant ID: ${getVariable('participant_id')}&nbsp;&nbsp;&nbsp;&nbsp; Location: ${getVariable('location')}` : '...'}",
+  "templateCaseEventListItemIcon": "${caseEvent.complete ? 'event_available' : 'event_note'}",
+  "templateCaseEventListItemPrimary": "<span>${T.case.getVariable(`${caseEvent.id}-title`) ? T.case.getVariable(`${caseEvent.id}-title`) : caseEventDefinition.name}</span>",
+  "templateCaseEventListItemSecondary": "${caseEvent.scheduledDay ? `Scheduled: ${moment(caseEvent.scheduledDay, 'YYYY-MM-DD').format('DD/MM/YYYY')}, ` : ''} Status: ${caseEvent.complete ? 'Complete' : 'Incomplete'}",
+  "templateEventFormListItemIcon": "",
+  "templateEventFormListItemPrimary": "<span>${eventForm?.data?.title ? eventForm.data.title : eventFormDefinition.name}</span>",
+  "templateEventFormListItemSecondary": "Status: ${!eventForm.complete ? 'Incomplete' : 'Complete'}",
+  "templateBreadcrumbText": "${caseService.getVariable('participant_id') ? ` ${caseService.getVariable('participant_id')}` :  ` ${caseService.case._id.substring(0,6)}`}",
+  "startFormOnOpen": {
+    "eventId": "event-type-1",
+    "eventFormId": "event-form-definition-rce86e"
+  },
+  "eventDefinitions": [
+    {
+      "id": "event-type-1",
+      "name": "Registration",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-rce86e",
+          "formId": "registration-role-1",
+          "forCaseRole": "",
+          "name": "Registration for Role 1",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-ia3uo8",
+          "formId": "registration-role-2",
+          "forCaseRole": "role-2",
+          "name": "Registration for Role 2",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false 
+        }
+      ]
+    }
+  ]
+}

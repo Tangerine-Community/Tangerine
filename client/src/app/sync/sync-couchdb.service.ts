@@ -36,7 +36,10 @@ export class SyncCouchdbDetails {
 export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
-
+  batchSize = 50
+  pullSyncOptions: { batch_size: number; batches_limit: number; since: any };
+  pushSyncOptions: { batch_size: number; batches_limit: number; since: any };
+  
   constructor(
     private http: HttpClient,
     private variableService: VariableService,
@@ -138,9 +141,9 @@ export class SyncCouchdbService {
     const startLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
     await this.variableService.set('sync-push-last_seq-start', startLocalSequence)
 
-    let pullSyncOptions = {
+    this.pullSyncOptions = {
       "since": pull_last_seq,
-      "batch_size": 50,
+      "batch_size": this.batchSize,
       "batches_limit": 1,
       ...appConfig.couchdbPullUsingDocIds
         ? {
@@ -154,8 +157,8 @@ export class SyncCouchdbService {
           "selector": pullSelector
         }
     }
-    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
-    if (pullReplicationStatus.pullConflicts.length > 0) {
+    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, this.pullSyncOptions);
+    if (pullReplicationStatus.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
       await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
     }
     // If this is the first sync, skip the push.
@@ -164,9 +167,9 @@ export class SyncCouchdbService {
       await this.variableService.set('sync-push-last_seq', lastLocalSequence)
       return pullReplicationStatus
     }
-    const pushSyncOptions = {
+    this.pushSyncOptions = {
       "since": push_last_seq,
-      "batch_size": 50,
+      "batch_size": this.batchSize,
       "batches_limit": 1,
       ...appConfig.couchdbPush4All ? { } : appConfig.couchdbPushUsingDocIds
         ? {
@@ -180,7 +183,7 @@ export class SyncCouchdbService {
           "selector": pushSelector
         }
     }
-    let pushReplicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
+    let pushReplicationStatus = await this.push(userDb, remoteDb, this.pushSyncOptions);
     let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }

@@ -1,3 +1,4 @@
+import { SyncCouchdbService } from './sync/sync-couchdb.service';
 import { LockBoxService } from './shared/_services/lock-box.service';
 import { ClassFormService } from './class/_services/class-form.service';
 import { DashboardService } from './class/_services/dashboard.service';
@@ -69,6 +70,7 @@ export class AppComponent implements OnInit {
     private lockBoxService:LockBoxService,
     private dashboardService:DashboardService,
     private variableService:VariableService,
+    private syncCouchdbService:SyncCouchdbService,
     private translate: TranslateService
   ) {
     this.window = window;
@@ -82,6 +84,7 @@ export class AppComponent implements OnInit {
       user: userService,
       lockBox: lockBoxService,
       syncing: syncingService,
+      syncCouchdbService: syncCouchdbService, 
       sync: syncService,
       appConfig: appConfigService,
       update: updateService,
@@ -136,7 +139,6 @@ export class AppComponent implements OnInit {
     await this.checkPermissions();
     // Initialize services.
     await this.userService.initialize();
-    await this.searchService.start();
 
     // Get globally exposed config.
     this.appConfig = await this.appConfigService.getAppConfig();
@@ -287,7 +289,10 @@ export class AppComponent implements OnInit {
           console.log(error.description);
           await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
           this.updateIsRunning = false;
-          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
+          const code = error.code
+          const description = error.description
+          const errorMessage = "Code: " + code + " Description: " + description
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.') + ' Error: ' + errorMessage);
         } else {
           console.log('APK update downloaded. Reloading for new code...');
           // No need to set in memory semaphore to false, app will reload.
@@ -301,7 +306,10 @@ export class AppComponent implements OnInit {
           console.log('error: ' + JSON.stringify(error));
           await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
           this.updateIsRunning = false;
-          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
+          const code = error.code
+          const description = error.description
+          const errorMessage = "Code: " + code + " Description: " + description
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.')+ ' Error: ' + errorMessage);
         } else {
           console.log('Update has downloaded');
           console.log('Installing update');

@@ -13,7 +13,7 @@
   "centrallyManagedUserProfile": false,
   "languageDirection": "ltr",
   "languageCode": "en",
-  "couchdbPush4All": true,
+  "couchdbPush4All": false,
   "couchdbPullUsingDocIds": false,
-  "couchdbPushUsingDocIds": false
+  "autoMergeConflicts": false
 }

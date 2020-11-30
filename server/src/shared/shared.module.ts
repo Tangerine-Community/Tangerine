@@ -4,7 +4,7 @@ import { Module, HttpService } from '@nestjs/common';
 import { GroupService } from './services/group/group.service';
 import { TangerineConfigService } from './services/tangerine-config/tangerine-config.service';
 import { ClientUserService } from './services/client-user/client-user.service';
-import { SharedQueries } from './shared.queries';
+// import { SharedQueries } from './shared.queries';
 import { UserService } from './services/user/user.service';
 import { DbService } from './services/db/db.service';
 import {GroupIssuesService} from "./services/group-issues/group-issues.service";
@@ -33,6 +33,7 @@ import {GroupIssuesService} from "./services/group-issues/group-issues.service";
 })
 export class SharedModule {
   constructor(private readonly groupService:GroupService) {
-    this.groupService.registerViews('shared', SharedQueries)
+    // @TODO Currently we have views ALL IN ONE PLACE. This would allow us to.
+    // this.groupService.registerViews('shared', SharedQueries)
   }
 }
