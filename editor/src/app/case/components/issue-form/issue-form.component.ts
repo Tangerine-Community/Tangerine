@@ -83,7 +83,7 @@ export class IssueFormComponent implements OnInit {
       this.formPlayer.$rendered.subscribe(async () => {
         if (!params.eventId) this.formPlayer.unlock()
       })
-      this.formPlayer.$submit.subscribe(async () => {
+      this.formPlayer.$afterResubmit.subscribe(async () => {
         setTimeout(async () => {
           const userId = await this.userService.getCurrentUser()
           // @TODO Look up the user's name.

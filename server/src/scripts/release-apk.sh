@@ -45,6 +45,12 @@ if [ -d "$RELEASE_DIRECTORY" ]; then
   rm -rf $RELEASE_DIRECTORY
 fi
 
+if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
+  cd "/tangerine/groups/$GROUP/"
+  npm run install-server && npm run build
+  cd /
+fi
+
 # Populate with the Cordova project from $CORDOVA_DIRECTORY
 cp -r $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
 
@@ -66,6 +72,7 @@ cordova platform rm android --no-telemetry
 echo $BUILD_ID > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-id 
 echo $RELEASE_TYPE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-channel
 echo $PACKAGE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-package-name
+echo $T_VERSION > $RELEASE_DIRECTORY/www/shell/assets/tangerine-version
 
 # replace the URL property in config.xml
 sed -i -e "s#CHCP_URL#"$CHCP_URL"#g" $RELEASE_DIRECTORY/config.xml

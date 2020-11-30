@@ -53,6 +53,9 @@ import { GroupDeviceSheetComponent } from './group-device-sheet/group-device-she
 import {MatTableModule} from "@angular/material/table";
 import {CommonModule} from "@angular/common";
 import {TranslateModule} from "@ngx-translate/core";
+import { PrintFormBackupComponent } from './print-form-backup/print-form-backup.component';
+import { PrintStimuliScreenComponent } from './print-stimuli-screen/print-stimuli-screen.component';
+import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -87,6 +90,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/security/role/:username', component: UpdateUserRoleComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard ]},
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/onlineSurvey', component: ReleaseOnlineSurveyComponent, canActivate: [LoginGuard ]},
   { path: 'groups/:groupId/deploy/device-users/:responseId', component: GroupDeviceUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-sheet', component: GroupDeviceSheetComponent, canActivate: [LoginGuard] },
@@ -115,6 +119,8 @@ const groupsRoutes: Routes = [
     canActivate: [LoginGuard, SuperAdminUserGuard]
   },
   { path: 'groups/:groupId/printFormAsTable/:formId', component: PrintFormAsTableComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/printFormBackup/:formId', component: PrintFormBackupComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/printStimuliScreen/:formId', component: PrintStimuliScreenComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [

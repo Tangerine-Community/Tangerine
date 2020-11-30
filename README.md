@@ -126,9 +126,7 @@ rm config.sh_backup
 ./start.sh <version number>
 # Check for upgrade scripts that need to be run. Note that you can only run scripts that end in .sh and you need to 
 # run every script between your prior version to version you have upgraded to. Also always check the release notes for
-# any special instructions
-docker exec -it tangerine ls /tangerine/upgrades
-# Run an upgrade script indicated in release instructions.
+# any special instructions -  for example:
 docker exec -it tangerine /tangerine/upgrades/<version>.sh
 # Upgrade scripts are also found in this location
 docker exec -it tangerine ls /tangerine/server/src/upgrade

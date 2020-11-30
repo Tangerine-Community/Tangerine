@@ -1,3 +1,8 @@
+.search-results {
+  position: relative;
+  top: -60px;
+}
+
 #paginator {
   padding: 5px;
   margin: 15px;

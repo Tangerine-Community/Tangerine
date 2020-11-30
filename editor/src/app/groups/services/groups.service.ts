@@ -127,7 +127,7 @@ export class GroupsService {
       return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {
-        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+        this.errorHandler.handleError(_TRANSLATE('Release took too long. Please try again.'));
       }
     }
   }
@@ -293,6 +293,23 @@ export class GroupsService {
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
       }
+    }
+  }
+
+  async publishSurvey(groupId, formId, releaseType = 'prod', appName) {
+    try {
+      const response = await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}/${response.body['uploadKey']}`).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+  async unPublishSurvey(groupId, formId) {
+    try {
+      await this.httpClient.put(`/onlineSurvey/unpublish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/unrelease-online-survey-app/${groupId}/${formId}/prod`).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
   generateUUID(separator?: string) {

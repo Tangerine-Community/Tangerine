@@ -133,6 +133,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     flatFormResponse[`${item.id}_firstOpenTime`]= item.firstOpenTime? item.firstOpenTime:''
+    flatFormResponse[`${item.id}_disabled`] = item.disabled ? 'true' : 'false'
     for (let input of item.inputs) {
       let sanitize = false;
       if (sanitized) {
@@ -159,9 +160,12 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value.find(input => input.value == 'on')
+          // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
+          set(input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
+            ? input.value.find(input => input.value == 'on')
               ? input.value.find(input => input.value == 'on').name
               : ''
+            : `${input.value}`
           )
         } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
           set(input, `${formID}.${item.id}.${input.name}`, input.value
@@ -169,13 +173,17 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
               : '0'
           )
         } else if (input.tagName === 'TANGY-CHECKBOXES') {
-          for (let checkboxInput of input.value) {
-            set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
-                ? "1"
-                : "0"
-            )
+          // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
+          if (Array.isArray(input.value)) {
+            for (let checkboxInput of input.value) {
+              set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
+                  ? "1"
+                  : "0"
+              )
+            }
+          } else {
+            set(input, `${formID}.${item.id}.${input.name}`, `${input.value}`) 
           }
-          ;
         } else if (input.tagName === 'TANGY-CHECKBOX') {
           set(input, `${formID}.${item.id}.${input.name}`, input.value
               ? "1"

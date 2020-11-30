@@ -97,3 +97,10 @@ T_REPORTING_MARK_SKIPPED_WITH="SKIPPED"
 # Set to true if you want Tangerine to ignore any settings in Sync Configuration and use Couchdb Sync for replication.
 T_COUCHDB_SYNC_4_ALL="false"
 
+#
+# Development
+#
+
+T_NGROK_AUTH_TOKEN=""
+T_NGROK_SUBDOMAIN=""
+

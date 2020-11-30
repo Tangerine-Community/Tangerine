@@ -1,0 +1,121 @@
+[
+  {
+    "id" : "user-profile",
+    "src" : "./assets/user-profile/form.html",
+    "description" : "User Profile",
+    "listed" : false,
+    "title" : "User Profile",
+    "icon" : "perm_identity",
+    "type" : "user-profile",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id" : "case-type-1-manifest",
+    "src" : "./assets/case-type-1-manifest/form.html",
+    "description" : "This is Case Type 1.",
+    "listed" : true,
+    "title" : "Case Type 1",
+    "icon" : "folder",
+    "type" : "case",
+    "searchSettings" : {
+      "primaryTemplate" : "${searchDoc.variables.status === 'Enrolled' ? `Participant ID: ${searchDoc.variables.participant_id} &nbsp; &nbsp; &nbsp; Enrollment Date: ${(searchDoc.variables.enrollment_date).substring(8,10) + '-' + (searchDoc.variables.enrollment_date).substring(5,7)+ '-' + (searchDoc.variables.enrollment_date).substring(0,4)}` : `Screening ID: ${searchDoc._id.substr(0,6)}  &nbsp; &nbsp; &nbsp; Screening Date: ${searchDoc.variables.screening_date ? searchDoc.variables.screening_date : 'N/A' }` }",
+      "shouldIndex" : true,
+      "secondaryTemplate" : "${searchDoc.variables.status === 'Enrolled' ? `Name: ${searchDoc.variables.first_name} ${searchDoc.variables.last_name}  &nbsp; &nbsp; &nbsp; Location: ${searchDoc.variables.location}  &nbsp; &nbsp; &nbsp; Status: Enrolled &nbsp; &nbsp; &nbsp;` : `Status: Not enrolled  &nbsp; &nbsp; &nbsp;` }",
+      "variablesToIndex" : [
+        "first_name",
+        "last_name",
+        "status",
+        "location",
+        "participant_id",
+        "enrollment_date",
+        "screening_date"
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id" : "registration-role-1",
+    "src" : "./assets/registration-role-1/form.html",
+    "description" : "Registration for Role 1",
+    "listed" : false,
+    "title" : "Role 1 Registration",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
+    "id" : "registration-role-2",
+    "src" : "./assets/registration-role-2/form.html",
+    "description" : "Registration for Role 2",
+    "listed" : false,
+    "title" : "Role 2 Registration",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  }
+]

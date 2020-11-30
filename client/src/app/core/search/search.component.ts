@@ -7,6 +7,7 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Router } from '@angular/router';
 import { SearchBarcodeComponent } from './search-barcode/search-barcode.component';
+import { t } from 'tangy-form/util/t.js'
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -70,7 +71,11 @@ export class SearchComponent implements OnInit {
         if (searchString.length > 2) {
           this.onSearch$.next(event.target.value)
         } else {
-          this.searchResults.nativeElement.innerHTML = 'Enter more than two characters...'
+          this.searchResults.nativeElement.innerHTML = `
+            <span style="padding: 25px">
+              ${t('Enter more than two characters...')}
+            </span>
+          `
         }
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
@@ -83,6 +88,13 @@ export class SearchComponent implements OnInit {
     this.searchDocs = await this.searchService.search(this.username, searchString)
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
+    if (this.searchDocs.length === 0) {
+      searchResultsMarkup = `
+        <span style="padding: 25px">
+          ${t('No results.')}
+        </span>
+      `
+    }
     for (const searchDoc of this.searchDocs) {
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)

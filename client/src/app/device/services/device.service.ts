@@ -13,6 +13,7 @@ export interface AppInfo {
   groupName:string
   groupId:string
   buildChannel:string
+  tangerineVersion:string
   buildId:string
   assignedLocation:string
 }
@@ -26,6 +27,7 @@ export class DeviceService {
   password:string
   rawBuildChannel:string
   buildId:string
+  tangerineVersion:string
 
   constructor(
     private httpClient:HttpClient,
@@ -134,14 +136,25 @@ export class DeviceService {
     const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
       ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
       : 'N/A'
+    const tangerineVersion = await this.getTangerineVersion()
     return <AppInfo>{
       serverUrl: appConfig.serverUrl,
       groupName: appConfig.groupName,
       groupId: appConfig.groupId,
+      tangerineVersion,
       buildChannel,
       buildId,
       deviceId: device._id,
       assignedLocation
+    }
+  }
+
+  async getTangerineVersion() {
+    try {
+      this.tangerineVersion = this.tangerineVersion ? this.tangerineVersion : await this.httpClient.get('./assets/tangerine-version', {responseType: 'text'}).toPromise();
+      return this.tangerineVersion.replace(/\n$/, '');
+    } catch (e) {
+      return 'N/A';
     }
   }
 

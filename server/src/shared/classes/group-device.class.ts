@@ -1,5 +1,5 @@
-const uuidv4 = require('uuid/v4');
 
+const {v4: uuidv4}= require('uuid')
 
 export class GroupDevice {
   _id:string = uuidv4()

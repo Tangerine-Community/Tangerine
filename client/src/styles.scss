@@ -17,6 +17,7 @@ html {
   --document-background-color: #FFF;
   /* Default color for all text. */
   --primary-text-color: #050505;
+  --paper-color: #FFF;
 
   /* Primary color for headings, etc. */
   --primary-color: #3c5b8d;
@@ -359,6 +360,7 @@ div.more {
 
    */
   .icon-list-item {
+    background: var(--paper-color);
     display: flex;
     flex-direction: row;
     align-items: center;
