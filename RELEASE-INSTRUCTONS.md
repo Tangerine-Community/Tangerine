@@ -33,19 +33,8 @@ Once the release candidate (rc) has passed testing, it's time to roll the stable
 0. Merge release branch into master
 0. Migrate changes in `CHANGELOG.md` to `./docs/whats-new.md` in `master`.
 0. Merge master into next
-0. Make release on gh repo. This will create a tag on the GH repo and automatically initiate a build on docker Hub. 
-0. Cancel that build; it would overwrite the one already pushed. 
-0. Copy the last rc Docker image to be named after the stable versions (see below). 
-
-Pull the rc image from Docker Hub, tag with the new version, and push to Docker Hub:
-```shell script
-docker pull tangerine/tangerine:v3.9.0-rc-13
-docker tag tangerine/tangerine:v3.9.0-rc-13 tangerine/tangerine:v3.9.0
-docker push tangerine/tangerine:v3.9.0
-```
-
-We used to trigger a Docker Hub build by tagging the GH repo with the new release tag; however, we've changed our approach. We tag the final rc candidate instead so that we can ensure that the image is identical to the one we tested. We don't want updated dependencies to cause inconsistencies. What we release should be what we tested.
-
-Now publish a `tangerine-preview` release with `rm -rf tangerine && git clone git@github.com:tangerine-community/tangerine && cd tangerine && ./release-preview.sh <tag name>`.
-
-Lastly, announce on Teams we have a new release.
+0. Checkout the release candidate tag and tag that commit with a stable version. ie. `git checkout v3.15.0-rc-21 && git tag v3.15.0 && git push origin v3.15.0`
+0. Cancel the build on Docker Hub then pull the RC image, rename it, and push it. ie. `docker pull tangerine/tangerine:v3.15.0-rc-21 && docker tag tangerine/tangerine:v3.15.0-rc-21 tangerine/tangerine:v3.15.0 && docker push tangerine/tangerine:v3.15.0`
+0. Make release on Github using the same tag pushed up to Github and release notes from CHANGELOG.md.
+0. Publish a `tangerine-preview` release with `rm -rf tangerine && git clone git@github.com:tangerine-community/tangerine && cd tangerine && ./release-preview.sh <tag name>`.
+0. Announce on Teams we have a new release.
