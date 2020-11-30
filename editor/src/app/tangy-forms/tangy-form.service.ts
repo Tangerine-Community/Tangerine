@@ -43,6 +43,10 @@ export class TangyFormService {
     }
   }
 
+  async deleteResponse(response) {
+    await this.db.remove(response)
+  }
+
   async getAllResponses() {
     return []
   }
