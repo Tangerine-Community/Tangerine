@@ -2,13 +2,16 @@
 
 ## v3.15.0
 
-- __New Features and fixes for all Tangerine__
+- __New Features and fixes__
   - Editor User searches Cases by keyword [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) - This feature enables searching by any of the variables assigned in searchSettings/variablesToIndex in forms.json. 
   - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419). Find Participant UI: [#2439](https://github.com/Tangerine-Community/Tangerine/pull/2439).
   - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
   - Added error message to Updates error alert. [ccc1864
 ](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
   - New "Release Online Survey" menu on Server allows you to release a single form for data collection online. Note the original "Deploy -> Release" menu item has been moved to "Deploy -> Release Offline App".
+  - Fixed issue where "Tangy Gate" form element could be added in Editor but would not appear on Tablets.
+  - Support for new "<tangy-ethio-date>" element that brings a Partial Date style form element with support for the Ethiopian Calendar.
+  - If using Sync Protocol 2, the first sync when registering a Device is now faster in cases where there is a lot of data already collected. Also the blank User Profile created for the Admin user on a device is no longer uploaded resulting in less noise in the Device Users list.
 
 
 - __Important deprecation notice__
