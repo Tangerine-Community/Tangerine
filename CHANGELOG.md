@@ -1,5 +1,25 @@
 # Changelog
 
+## v3.15.1
+
+__Fixes__
+
+- Prevent opening of Event Forms on Editor when there is no corresponding Form Response available. 
+- Fix Issue type detection when deciding what is going to be in the 'current' tab. 
+- Update CSV output for signatures to be 'signature captured' and ''.
+- Fix Issues view causing Issue search result to appear once per event such as comment or proposal. 
+ 
+__Server upgrade instructions__
+
+```
+git checkout v3.15.0
+# Now you are ready to start the server.
+./start.sh v3.15.0
+docker exec -it tangerine push-all-groups-views  
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.0
+```  
+
 ## v3.15.0
 
 - __New Features and fixes__
