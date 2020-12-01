@@ -4,7 +4,6 @@ import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {VariableService} from "../../../shared/_services/variable.service";
-import * as jsonpatch from 'fast-json-patch';
 
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
@@ -32,6 +31,7 @@ export class ExportDataComponent implements OnInit {
 
   ngOnInit() {
   }
+  
   async exportAllRecords() {
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
@@ -97,13 +97,5 @@ function downloadData(content, fileName, type) {
   a.click();
 }
 
-async function generatePatchArray(doc1) {
-  const db = await window['T'].user.getUserDatabase()
-  const docWithRevs = await db.db.get('foo',{revs:true})
-  const revisionIds = docWithRevs._revisions.ids
-  // loop through the revisionIds, fetch each one, and compare in-order.
-  // let comparison = jsonpatch.compare(doc1, doc2)
-  // return comparison
-}
 
 
