@@ -189,6 +189,11 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
               ? "1"
               : "0"
           )
+        } else if (input.tagName === 'TANGY-SIGNATURE') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? "signed"
+              : "not signed"
+          )         
         } else if (input.tagName === 'TANGY-TIMED') {
           let hitLastAttempted = false
           for (let toggleInput of input.value) {
