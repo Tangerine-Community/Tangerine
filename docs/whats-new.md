@@ -18,6 +18,7 @@ git checkout v3.15.0
 # Now you are ready to start the server.
 ./start.sh v3.15.0
 docker exec -it tangerine push-all-groups-views  
+docker exec -it tangerine reporting-cache-clear  
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.15.0
 ```
