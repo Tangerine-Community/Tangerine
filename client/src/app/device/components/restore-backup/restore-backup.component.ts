@@ -38,7 +38,8 @@ export class RestoreBackupComponent implements OnInit {
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
       const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
       const len = dbNames.length
-      for (const dbName of dbNames) {
+      for (let index = 0; index < dbNames.length; index++) {
+        const dbName = dbNames[index]
         // copy the database
         console.log(`copying ${dbName} db over to the protected accessible fs`)
         // tslint:disable-next-line:max-line-length
