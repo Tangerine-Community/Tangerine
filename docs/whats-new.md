@@ -8,6 +8,8 @@ __Fixes__
 - Fix Issue type detection when deciding what is going to be in the 'current' tab. 
 - Update CSV output for signatures to be 'signature captured' and ''.
 - Fix Issues view causing Issue search result to appear once per event such as comment or proposal. 
+- Integrate fixes in v3.14.6 including `T.case.isIssueContext()` API, and better API partity between being in an Event Form in a Case and being in an Event Form in an Issue.
+ 
  
 __Server upgrade instructions__
 
