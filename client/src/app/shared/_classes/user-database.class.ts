@@ -123,7 +123,7 @@ export class UserDatabase {
       const currentDoc = await this.db.get(newDoc._id)
       const entry = {
         lastRev: currentDoc._rev,
-        patch: jsonpatch.compare(currentDoc, newDoc).filter(mod => mod.path !== '/history')
+        patch: jsonpatch.compare(currentDoc, newDoc).filter(mod => mod.path.substr(0,8) !== '/history')
       }
       history = currentDoc.history
         ? [ entry, ...currentDoc.history ]
@@ -131,7 +131,7 @@ export class UserDatabase {
     } catch (e) {
       const entry = {
         lastRev: 0,
-        patch: jsonpatch.compare({}, newDoc).filter(mod => mod.path !== '/history')
+        patch: jsonpatch.compare({}, newDoc).filter(mod => mod.path.substr(0,8) !== '/history')
       }
       history = [ entry ]
     }
