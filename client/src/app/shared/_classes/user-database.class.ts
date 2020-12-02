@@ -42,7 +42,7 @@ export class UserDatabase {
   }
 
   async put(doc) {
-    return await this.db.put({
+    const newDoc = {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
@@ -51,14 +51,17 @@ export class UserDatabase {
       deviceId: this.deviceId,
       groupId: this.groupId,
       buildChannel: this.buildChannel,
-      history: await this._calculateHistory(doc),
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
+    }
+    return await this.db.put({
+      ...newDoc,
+      history: await this._calculateHistory(newDoc)
     });
   }
 
   async post(doc) {
-    return await this.db.post({
+    const newDoc = {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
@@ -67,9 +70,12 @@ export class UserDatabase {
       deviceId: this.deviceId,
       groupId: this.groupId,
       buildChannel: this.buildChannel,
-      history: await this._calculateHistory(doc),
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
+    }
+    return await this.db.post({
+      ...newDoc,
+      history: await this._calculateHistory(newDoc)
     });
   }
 
@@ -111,7 +117,7 @@ export class UserDatabase {
       const currentDoc = await this.db.get(newDoc._id)
       const entry = {
         lastRev: currentDoc._rev,
-        patch: jsonpatch.compare(currentDoc, newDoc)
+        patch: jsonpatch.compare(currentDoc, newDoc).filter(mod => mod.path !== '/history')
       }
       history = currentDoc.history
         ? [ entry, ...currentDoc.history ]
@@ -119,7 +125,7 @@ export class UserDatabase {
     } catch (e) {
       const entry = {
         lastRev: 0,
-        patch: jsonpatch.compare({}, newDoc)
+        patch: jsonpatch.compare({}, newDoc).filter(mod => mod.path !== '/history')
       }
       history = [ entry ]
     }
