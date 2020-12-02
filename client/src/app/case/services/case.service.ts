@@ -1171,12 +1171,10 @@ class CaseService {
           const currentDoc = await db.get(docId,{rev:revId})
           const nextRev = nextRevision.rev
           const nextDoc = await db.get(docId,{rev:nextRev})
-          const comparison = jsonpatch.compare(nextDoc, currentDoc)
+          const comparison = jsonpatch.compare(nextDoc, currentDoc).filter(mod => mod.path.substr(0,8) !== '/history')
           const comparisonDoc = {
-            _id: docId,
-            aRev: nextRev,
-            bRev: revId,
-            comparison: comparison
+            lastRev: nextRev,
+            patch: comparison
           }
           comparisons.push(comparisonDoc)
         }
