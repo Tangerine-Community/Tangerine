@@ -14,9 +14,9 @@ export class UserDatabase {
   buildChannel:string;
   groupId:string;
   db: PouchDB;
-  collectHistory:boolean
+  attachHistoryToDocs:boolean
 
-  constructor(username: string, userId: string, key:string = '', deviceId: string, shared = false, buildId = '', buildChannel = '', groupId = '', collectHistory = false) {
+  constructor(username: string, userId: string, key:string = '', deviceId: string, shared = false, buildId = '', buildChannel = '', groupId = '', attachHistoryToDocs = false) {
     this.userId = userId
     this.username = username
     this.name = username
@@ -24,7 +24,7 @@ export class UserDatabase {
     this.buildId = buildId
     this.buildChannel = buildChannel
     this.groupId = groupId 
-    this.collectHistory = collectHistory 
+    this.attachHistoryToDocs = attachHistoryToDocs 
     if (shared) {
       this.db = DB(SHARED_USER_DATABASE_NAME, key)
     } else {
@@ -58,7 +58,7 @@ export class UserDatabase {
     }
     return await this.db.put({
       ...newDoc,
-      ...this.collectHistory
+      ...this.attachHistoryToDocs
         ? { history: await this._calculateHistory(newDoc) }
         : { }
     });
@@ -79,7 +79,7 @@ export class UserDatabase {
     }
     return await this.db.post({
       ...newDoc,
-      ...this.collectHistory
+      ...this.attachHistoryToDocs
         ? { history: await this._calculateHistory(newDoc) }
         : { } 
     });
