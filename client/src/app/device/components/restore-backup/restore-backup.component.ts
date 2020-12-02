@@ -69,8 +69,12 @@ export class RestoreBackupComponent implements OnInit {
           });
         }, (e) => {
           this.success = false
-          console.log("Error: " + e)
-          this.errorMessage += '<p>Error with db: ' + dbName + ' at restoreLocation: ' + restoreLocation + ' Message: ' + JSON.stringify(e) + '</p>'
+          console.log("Error: " + JSON.stringify(e))
+          let codeMessage = ''
+          if (e.code === '1') {
+            codeMessage = ' Not Found Error.'
+          }
+          this.errorMessage += '<p>Error with db: ' + dbName + ' at restoreLocation: ' + restoreLocation + ' Message: ' + JSON.stringify(e) + codeMessage + '</p>'
         });
       }
     }
