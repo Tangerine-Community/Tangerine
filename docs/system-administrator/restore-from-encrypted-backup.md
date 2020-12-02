@@ -39,7 +39,7 @@ git clone https://github.com/sqlcipher/sqlcipher.git
 cd sqlcipher/sqlcipher
 ./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC -I/usr/local/opt/openssl/include/" LDFLAGS="/usr/local/opt/openssl/lib/libcrypto.a"
 ```
-
+ 
 To use the compiled sqlcipher:
 
 ```shell script
@@ -61,4 +61,37 @@ Output:
 attach-seq-store  by-sequence       local-store
 attach-store      document-store    metadata-store
 ```
+
+## Recovering a corrupted database
+
+Open the database:
+
+```shell script
+sqlcipher/sqlcipher ~/Downloads/shared-user-database
+```
+Enter the key:
+
+```sql
+PRAGMA key = '673939d9-1fae-457e-8eea-7e8cd1de08a5';
+```
+
+Run a check on the database. It will probably return something like "database disk image is malformed", which is not terribly useful:
+
+```
+sqlite>PRAGMA integrity_check;
+```
+
+Run the following commands to dump the sql and build a new database (kudos: https://blog.niklasottosson.com/databases/sqlite-check-integrity-and-fix-common-problems/):
+
+```
+sqlite>.output backup.db
+sqlite>.dump
+sqlite>.quit
+
+>sqlite3 database_fixed.db
+sqlite>.read backup.db
+sqlite>.quit
+
+```
+If there were no errors, you should be able to query database_fixed.db. If not, open backup.db in a text editor and rummage through the sql statements.
 
