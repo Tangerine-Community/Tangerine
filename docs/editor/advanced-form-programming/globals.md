@@ -62,3 +62,5 @@ T.case.setVariable(`${eventId}-${variableName}`, variableValue)
 // Get Event Variable.
 const shouldBeValueOfBar = T.case.getVariable(`${eventId}-${variableName}`)
 ```
+
+There is an older document, [Tangerine globals](../../developer/tangerine-globals.md), that describes some of the functions that are now attached to the `T` global.
