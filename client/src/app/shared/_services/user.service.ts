@@ -132,10 +132,10 @@ export class UserService {
     const deviceInfo = await this.deviceService.getAppInfo()
     if (appConfig.syncProtocol === '2') {
       const device = await this.deviceService.getDevice()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId, appConfig.collectHistory)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId, appConfig.attachHistoryToDocs)
     } else {
       const appInfo = await this.deviceService.getAppInfo()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo.buildId, appInfo.buildChannel, appInfo.groupId, appConfig.collectHistory)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo.buildId, appInfo.buildChannel, appInfo.groupId, appConfig.attachHistoryToDocs)
     }
   }
 

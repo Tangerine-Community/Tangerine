@@ -29,6 +29,6 @@ export class AppConfig {
   couchdbPullUsingDocIds:boolean
   couchdbPushUsingDocIds:boolean
   autoMergeConflicts:boolean
-  collectHistory:boolean = false
+  attachHistoryToDocs:boolean = false
 }
 
