@@ -2,6 +2,7 @@ import {_TRANSLATE} from '../translation-marker';
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 import PouchDB from 'pouchdb';
 import { DB } from '../_factories/db.factory';
+import * as jsonpatch from "fast-json-patch";
 
 export class UserDatabase {
 
@@ -50,6 +51,7 @@ export class UserDatabase {
       deviceId: this.deviceId,
       groupId: this.groupId,
       buildChannel: this.buildChannel,
+      history: await this._calculateHistory(doc),
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
     });
@@ -65,6 +67,7 @@ export class UserDatabase {
       deviceId: this.deviceId,
       groupId: this.groupId,
       buildChannel: this.buildChannel,
+      history: await this._calculateHistory(doc),
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
     });
@@ -100,6 +103,27 @@ export class UserDatabase {
 
   compact() {
     return this.db.compact();
+  }
+
+  async _calculateHistory(newDoc) {
+    let history = []
+    try {
+      const currentDoc = await this.db.get(newDoc._id)
+      const entry = {
+        lastRev: currentDoc._rev,
+        patch: jsonpatch.compare(currentDoc, newDoc)
+      }
+      history = currentDoc.history
+        ? [ entry, ...currentDoc.history ]
+        : [ entry ]
+    } catch (e) {
+      const entry = {
+        lastRev: 0,
+        patch: jsonpatch.compare({}, newDoc)
+      }
+      history = [ entry ]
+    }
+    return history 
   }
 
 }
