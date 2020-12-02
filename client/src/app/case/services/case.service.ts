@@ -22,6 +22,7 @@ import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import {Conflict} from "../classes/conflict.class";
+import * as jsonpatch from "fast-json-patch";
 
 @Injectable({
   providedIn: 'root'
@@ -1147,6 +1148,41 @@ class CaseService {
       numberOfCasesCompleted++
       console.log("motherId: " + caseId + " participantId: " + participant_id + " Completed " + numberOfCasesCompleted + " of " + numberOfCases);
     }
+  }
+
+  /**
+   * Loops throough revisions and provides a comparison of each available revision.
+   * @param db
+   * @param docId
+   */
+  async generatePatchArray(db, docId) {
+    const docWithRevs = await db.get(docId,{revs_info:true})
+    const revisions = docWithRevs._revs_info
+    let comparisons = []
+    if (revisions) {
+      // filter out missing
+      const availableRevisions = revisions.filter(rev => rev.status === 'available')
+      // loop through the revisionIds, fetch each one, and compare in-order.
+      for (let index = 0; index < availableRevisions.length; index++) {
+        const revision = availableRevisions[index]
+        const revId = revision.rev
+        const nextRevision = availableRevisions[index+1]
+        if (nextRevision) {
+          const currentDoc = await db.get(docId,{rev:revId})
+          const nextRev = nextRevision.rev
+          const nextDoc = await db.get(docId,{rev:nextRev})
+          const comparison = jsonpatch.compare(nextDoc, currentDoc)
+          const comparisonDoc = {
+            _id: docId,
+            aRev: nextRev,
+            bRev: revId,
+            comparison: comparison
+          }
+          comparisons.push(comparisonDoc)
+        }
+      }
+    }
+    return comparisons
   }
 
 }
