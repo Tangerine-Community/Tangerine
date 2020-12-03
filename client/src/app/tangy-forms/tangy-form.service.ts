@@ -5,6 +5,7 @@ import { FormInfo } from './classes/form-info.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import {TangyFormsInfoService} from './tangy-forms-info-service';
 import {FormVersion} from "./classes/form-version.class";
+import * as jsonpatch from "fast-json-patch";
 
 
 @Injectable({
@@ -118,4 +119,34 @@ export class TangyFormService {
     let r = await db.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true })
     return r.rows.map((row) => row.doc)
   }
+
+  async getDocRevHistory(docId) {
+    let db = (await this.userService.getUserDatabase()).db
+    const docWithRevs = await db.get(docId,{revs_info:true})
+    const revisions = docWithRevs._revs_info
+    let comparisons = []
+    if (revisions) {
+      // filter out missing
+      const availableRevisions = revisions.filter(rev => rev.status === 'available')
+      // loop through the revisionIds, fetch each one, and compare in-order.
+      for (let index = 0; index < availableRevisions.length; index++) {
+        const revision = availableRevisions[index]
+        const revId = revision.rev
+        const nextRevision = availableRevisions[index+1]
+        if (nextRevision) {
+          const currentDoc = await db.get(docId,{rev:revId})
+          const nextRev = nextRevision.rev
+          const nextDoc = await db.get(docId,{rev:nextRev})
+          const comparison = jsonpatch.compare(nextDoc, currentDoc).filter(mod => mod.path.substr(0,8) !== '/history')
+          const comparisonDoc = {
+            lastRev: nextRev,
+            patch: comparison
+          }
+          comparisons.push(comparisonDoc)
+        }
+      }
+    }
+    return comparisons
+  }
+
 }
