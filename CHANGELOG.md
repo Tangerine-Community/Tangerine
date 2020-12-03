@@ -3,7 +3,8 @@
 ## v3.15.2
 
 __Fixes__
-- Rhiny module: Replaces hard-coded underscore separator with the configurable `sep` variable. 
+- Rshiny module: Replaces hard-coded underscore separator with the configurable `sep` variable. 
+- Error when processing CSV's: [2517](https://github.com/Tangerine-Community/Tangerine/issues/2517)
 
 - __Important configuration notice__
 
