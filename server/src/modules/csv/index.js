@@ -320,7 +320,7 @@ function saveFormInfo(flatResponse, db) {
       try {
         await db.put(formDoc)
       } catch(err) {
-        log.error(err)
+        log.error("Error from " + formDoc._id  + " Message: " + err)
         reject(err)
       }
     }
