@@ -1,3 +1,4 @@
+import { AppConfigService } from './../../shared/_services/app-config.service';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
@@ -21,8 +22,6 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
-import * as jsonpatch from "fast-json-patch";
-import axios from 'axios'
 
 @Injectable({
   providedIn: 'root'
@@ -91,6 +90,7 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
@@ -1045,40 +1045,47 @@ class CaseService {
     }
   }
 
-  /**
-   * Loops throough revisions and provides a comparison of each available revision.
-   * @param db
-   * @param docId
-   */
-  async generatePatchArray(groupId, docId) {
-    const token = localStorage.getItem('token');
-    const docWithRevs = (<any>await axios.get(`/db/${groupId}/${docId}?revs_info=true`)).data
-    const revisions = docWithRevs._revs_info
-    let comparisons = []
-    if (revisions) {
-      // filter out missing
-      const availableRevisions = revisions.filter(rev => rev.status === 'available')
-      // loop through the revisionIds, fetch each one, and compare in-order.
-      for (let index = 0; index < availableRevisions.length; index++) {
-        const revision = availableRevisions[index]
-        const revId = revision.rev
-        const nextRevision = availableRevisions[index+1]
-        if (nextRevision) {
-          const currentDoc = (<any>await axios.get(`/db/${groupId}/${docId}?rev=${revId}`)).data
-          const nextRev = nextRevision.rev
-          const nextDoc = (<any>await axios.get(`/db/${groupId}/${docId}?rev=${nextRev}`)).data
-          const comparison = jsonpatch.compare(nextDoc, currentDoc).filter(mod => mod.path.substr(0,8) !== '/history')
-          const comparisonDoc = {
-            lastRev: nextRev,
-            patch: comparison
-          }
-          comparisons.push(comparisonDoc)
-        }
-      }
+  async getCaseHistory(caseId:string = '', historyType = 'DEFAULT') {
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
     }
-    return comparisons
+    caseId = caseId || window.location.hash.split('/')[2]
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(caseId)
+      : (await this.tangyFormService.getResponse(caseId)).history
+    return history 
   }
 
+  async getEventFormHistory(caseId:string = '', caseEventId:string = '', eventFormId:string = '', historyType:HistoryType = HistoryType.DEFAULT) {
+    caseId = caseId || window.location.hash.split('/')[4]
+    caseEventId = caseEventId || window.location.hash.split('/')[5]
+    eventFormId = eventFormId || window.location.hash.split('/')[6]
+    const caseInstance = <Case>await this.tangyFormService.getResponse(caseId)
+    const formResponseId = caseInstance
+      .events.find(event => event.id === caseEventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
+    }
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(formResponseId)
+      : (await this.tangyFormService.getResponse(formResponseId)).history
+    return history
+  }
+
+}
+
+export enum HistoryType {
+  DEFAULT = 'DEFAULT',
+  DB_REVISIONS = 'DB_REVISIONS',
+  DOC_HISTORY = 'DOC_HISTORY',
 }
 
 interface CaseInfo {
