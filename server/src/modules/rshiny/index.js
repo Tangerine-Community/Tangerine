@@ -167,7 +167,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
+          set(input, `${firstIdSegment}${input.name}${sep}${group.level}`, group.value)
           locationKeys.push(group.value)
           try {
             const location = getLocationByKeys(locationKeys, locationList)
@@ -182,7 +182,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         }
       } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
         // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
-        set(input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
+        set(input, `${formID}${sep}${item.id}${sep}${input.name}`, Array.isArray(input.value) 
           ? input.value.find(input => input.value == 'on')
             ? input.value.find(input => input.value == 'on').name
             : ''
@@ -197,13 +197,13 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
         if (Array.isArray(input.value)) {
           for (let checkboxInput of input.value) {
-            set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
+            set(input, `${formID}${sep}${item.id}${sep}${input.name}_${checkboxInput.name}`, checkboxInput.value
                 ? "1"
                 : "0"
             )
           }
         } else {
-          set(input, `${formID}.${item.id}.${input.name}`, `${input.value}`) 
+          set(input, `${formID}${sep}${item.id}${sep}${input.name}`, `${input.value}`) 
         }
       } else if (input.tagName === 'TANGY-CHECKBOX') {
         set(input, `${firstIdSegment}${input.name}`, input.value
