@@ -1,28 +1,39 @@
 # What's New
 
+## v3.15.2
+
+__Fixes__
+- Rshiny module: Replaces hard-coded underscore separator with the configurable `sep` variable.
+- Error when processing CSV's: [2517](https://github.com/Tangerine-Community/Tangerine/issues/2517)
+
+__Important configuration notice for anyone who has installed v3.15.x__
+
+The v3.15.0 release included an update to the Editor Search feature [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) that requires adding a `searchSettings` property to forms.json. In addition to running the upgrade script for v3.15.0; you must also make sure that *all* forms in a group's forms.json have `searchSettings` configured, especially the `shouldIndex` property. Examples are in the [Case Module README](./docs/editor/case-module/README.md#configuring-text-search) "Configuring Text Search" section.
 
 ## v3.15.1
 
 __Fixes__
 
-- Prevent opening of Event Forms on Editor when there is no corresponding Form Response available. 
-- Fix Issue type detection when deciding what is going to be in the 'current' tab. 
+- Prevent opening of Event Forms on Editor when there is no corresponding Form Response available.
+- Fix Issue type detection when deciding what is going to be in the 'current' tab.
 - Update CSV output for signatures to be 'signature captured' and ''.
-- Fix Issues view causing Issue search result to appear once per event such as comment or proposal. 
+- Fix Issues view causing Issue search result to appear once per event such as comment or proposal.
 - Integrate fixes in v3.14.6 including `T.case.isIssueContext()` API, and better API partity between being in an Event Form in a Case and being in an Event Form in an Issue.
- 
- 
+
 __Server upgrade instructions__
 
 ```
-git checkout v3.15.0
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.1
 # Now you are ready to start the server.
-./start.sh v3.15.0
+./start.sh v3.15.1
 docker exec -it tangerine push-all-groups-views  
 docker exec -it tangerine reporting-cache-clear  
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.15.0
-```
+```  
 
 ## v3.15.0
 
@@ -47,6 +58,9 @@ __Important Deprecation Notices__
 __Server Upgrade Instructions__
 
 ```
+# Fetch the updates.
+cd tangerine
+git fetch origin
 git checkout v3.15.0
 # Now you are ready to start the server.
 ./start.sh v3.15.0
@@ -768,7 +782,7 @@ Sync Protocol 2 is a new module that can be enabled on a Tangerine installation 
     and enable [Adjustable letter size for grids](https://github.com/Tangerine-Community/Tangerine/issues/1525)
     - __Case Module__
         - Add the "case" module to `T_MODULES` in `config.sh` and the default landing page for a group will be the cases search page and new "Case Management Editor" tab will appear in groups for creating and editing Case Definitions. [#1517](https://github.com/Tangerine-Community/Tangerine/issues/1517)
-        - Clientside search of Forms for Case Management Groups allows Cases to be found using the device camera to scan a QR code. See `docs/case-management-group.md`.
+        - Clientside search of Forms for Case Management Groups allows Cases to be found using the device camera to scan a QR code. See `docs/editor/case-module/README.md Configuring search`.
         - Add event time and scheduling to Case Mangement Groups [#1518](https://github.com/Tangerine-Community/Tangerine/pull/1518)
         - New layout for Case and Case Event pages.
 
