@@ -1,13 +1,25 @@
 # Changelog
 
 ## v3.15.3
+
+__Fixes__
+
+- Add missing `custom-scripts.js` and `custom-styles.css` files to Editor app.
 - Reduce database merge conflicts by preventing form responses from saving after completed. Prior to this version, on two tablets (or on a tablet and the server) if you opened the same form response and opened an item to inspect, it would cause a save on both tablets resulting in an unnesessary merge conflict.
 - New `T.case.getCaseHistory(caseId)` function for getting the history of save for a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case and run `await T.case.getCaseHistory()` in the console and it will pick up on the context.
 - New `T.case.getEventFormHistory(caseId, caseEventId, eventFormId)` function for getting the history of save for a form response in a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case, a Case Event, then an Event Form and run `await T.case.getEventFormHistory()` in the console and it will pick up on the context.
 - New opt-in `app-config.json` setting `attachHistoryToDocs` for enabling upload all history of Case and Event Form edits on a Tablet up to the Server. Without this setting on, the server only sees the history starting from time of upload. Note this has an impact on upload size of at least doubling it when turned on.
 
-
 ## v3.15.2
+
+__Fixes__
+
+- Rshiny module: Replaces hard-coded underscore separator with the configurable `sep` variable. 
+- Error when processing CSV's: [2517](https://github.com/Tangerine-Community/Tangerine/issues/2517)
+
+__Important configuration notice__
+
+The v3.15.0 release included an update to the Editor Search feature [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) that requires adding a `searchSettings` property to forms.json. In addition to running the upgrade script for v3.15.0; you must also make sure that *all* forms in a group's forms.json have `searchSettings` configured, especially the `shouldIndex` property. Examples are in the [Case Module README](./docs/editor/case-module/README.md#configuring-text-search) "Configuring Text Search" section.
 
 ## v3.15.1
 
@@ -22,9 +34,12 @@ __Fixes__
 __Server upgrade instructions__
 
 ```
-git checkout v3.15.0
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.1
 # Now you are ready to start the server.
-./start.sh v3.15.0
+./start.sh v3.15.1
 docker exec -it tangerine push-all-groups-views  
 docker exec -it tangerine reporting-cache-clear  
 # Remove Tangerine's previous version Docker Image.
@@ -52,6 +67,9 @@ docker rmi tangerine/tangerine:v3.15.0
    
 __Server upgrade instructions:__
 ```
+# Fetch the updates.
+cd tangerine
+git fetch origin
 git checkout v3.15.0
 # Now you are ready to start the server.
 ./start.sh v3.15.0
