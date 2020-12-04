@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.15.2
+
+__Fixes__
+- Rshiny module: Replaces hard-coded underscore separator with the configurable `sep` variable. 
+- Error when processing CSV's: [2517](https://github.com/Tangerine-Community/Tangerine/issues/2517)
+
+- __Important configuration notice__
+
+The v3.15.0 release included an update to the Editor Search feature [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) that requires adding a `searchSettings` property to forms.json. In addition to running the upgrade script for v3.15.0; you must also make sure that *all* forms in a group's forms.json have `searchSettings` configured, especially the `shouldIndex` property. Examples are in the [Case Module README](./docs/editor/case-module/README.md#configuring-text-search) "Configuring Text Search" section.
+
 ## v3.15.1
 
 __Fixes__
