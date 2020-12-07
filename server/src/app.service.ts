@@ -9,6 +9,7 @@ const log = require('tangy-log').log
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+const tangyModules = require('./modules/index.js')()
 
 @Injectable()
 export class AppService {
@@ -36,6 +37,8 @@ export class AppService {
     }
     this.keepAliveReportingWorker()
     this.keepAliveSyncSessionSweeper()
+    await tangyModules.hook('boot', { })
+    
   }
 
   async install() {

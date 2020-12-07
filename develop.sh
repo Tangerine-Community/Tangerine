@@ -60,8 +60,15 @@ fi
 if [ ! -f data/paid-worker-state.json ]; then
   echo '{}' > data/paid-worker-state.json
 fi
-
-
+if [ ! -d data/mysql ]; then
+  mkdir data/mysql
+fi
+if [ ! -d data/mysql/databases ]; then
+  mkdir data/mysql/databases
+fi
+if [ ! -d data/mysql/state ]; then
+  mkdir data/mysql/state
+fi
 #
 # Load config.
 #
@@ -78,6 +85,9 @@ T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS
 docker build -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
+
+[ "$(docker ps | grep $T_MYSQL_CONTAINER_NAME)" ] && docker stop $T_MYSQL_CONTAINER_NAME
+[ "$(docker ps -a | grep $T_MYSQL_CONTAINER_NAME)" ] && docker rm $T_MYSQL_CONTAINER_NAME
 
 if [ ! -d data/couchdb ]; then
   mkdir data/couchdb
@@ -107,6 +117,8 @@ fi
 [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
 
+docker run --name "$T_MYSQL_CONTAINER_NAME" -v "$(pwd)/data/mysql/databases:/var/lib/mysql" -p 3306:3306 -e "MYSQL_ROOT_PASSWORD=$T_MYSQL_PASSWORD" -d mysql:latest
+
 docker run -d \
    -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
    -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
@@ -124,6 +136,7 @@ sleep 10
 
 CMD="docker run -it --name $T_CONTAINER_NAME \
   --link $T_COUCHDB_CONTAINER_NAME:couchdb \
+  --link $T_MYSQL_CONTAINER_NAME:mysql \
   -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
   -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
   -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
@@ -152,6 +165,8 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
   --env \"T_NGROK_AUTH_TOKEN=$T_NGROK_AUTH_TOKEN\" \
   --env \"T_NGROK_SUBDOMAIN=$T_NGROK_SUBDOMAIN\" \
+  --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
+  --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -178,6 +193,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+  --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
   tangerine/tangerine:local
  "
 

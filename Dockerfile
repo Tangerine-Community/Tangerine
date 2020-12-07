@@ -84,13 +84,19 @@ RUN cd /tangerine/client && \
 # Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
 RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
 
+RUN apt-get update && apt-get install -y python3-pip
+
+ADD ./server/src/modules/mysql/install-dependencies.sh /tangerine/server/src/modules/mysql/install-dependencies.sh
+
+RUN cd /tangerine/server/src/modules/mysql && \
+    ./install-dependencies.sh
+
 # Add the rest of server.
 ADD server /tangerine/server
 
 # Link up global commands.
 RUN cd /tangerine/server && \
     npm link
-
 
 
 #
