@@ -409,7 +409,7 @@ def main_job():
     config.set("TANGERINE","LastSequence",last_change_seq)
     # Writing the configuration file to
 
-    with open("data\\setting.ini", 'w') as configfile:
+    with open(sys.argv[3], 'w') as configfile:
         config.write(configfile)
 
     end_time = timeit.default_timer()
