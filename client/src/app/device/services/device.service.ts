@@ -133,9 +133,12 @@ export class DeviceService {
     const device = await this.getDevice()
     const locationList = await this.appConfigService.getLocationList();
     const flatLocationList = Loc.flatten(locationList)
+    const assignedLocationObject = device.assignedLocation.value.map(value=> {
+      const location = flatLocationList.locations.find(node => node.id === value.value)
+      return location ? ` ${value.level}: ${location.label}` : ` ${value.level}: Placeholder-${value.level}`
+    }).join(', ')
     const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
-      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
-      : 'N/A'
+      ? assignedLocationObject : 'N/A'
     const tangerineVersion = await this.getTangerineVersion()
     return <AppInfo>{
       serverUrl: appConfig.serverUrl,
