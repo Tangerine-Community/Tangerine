@@ -24,6 +24,33 @@ Follow the instructions. After the restore process is complete, click the contex
 
 ![Close from task menu](./assets/close-app-completely_sm.jpg)
 
+## Restoring form history
+
+On a tablet, the history of every form response change is saved. An agglomeration of these changes is what is sync'd to the server. It is possible to view all of these changes using the tablet backup. 
+
+After restoring the database, open the app in DevTools and in the javascript console enter the following commands:
+
+```javascript
+const db = await T.user.getUserDatabase()
+// docId is the document _id of the document you are trying to get the history from.
+let docId = 'uuid'
+const diffs = await T.case.generatePatchArray(db.db,docId)
+// get diffs into copy buffer
+copy(diffs)
+```
+
+If there were any conflicts in the doc, they should be in _conflicts.
+
+You may wish to list all issues:
+```javascript
+const issues = (await db.query('byType', {key: 'issue', include_docs: true}))
+.rows
+.map(row => row.doc)
+.filter(issue => issue.resolveOnAppContexts && issue.resolveOnAppContexts.includes('CLIENT'))
+```
+
+
+
 ## Viewing data from an encrypted backup
 
 This is a deep dive - you probably don't need to do this. 
@@ -61,4 +88,37 @@ Output:
 attach-seq-store  by-sequence       local-store
 attach-store      document-store    metadata-store
 ```
+
+## Recovering a corrupted database
+
+Open the database:
+
+```shell script
+sqlcipher/sqlcipher ~/Downloads/shared-user-database
+```
+Enter the key:
+
+```sql
+PRAGMA key = '673939d9-1fae-457e-8eea-7e8cd1de08a5';
+```
+
+Run a check on the database. It will probably return something like "database disk image is malformed", which is not terribly useful:
+
+```
+sqlite>PRAGMA integrity_check;
+```
+
+Run the following commands to dump the sql and build a new database (kudos: https://blog.niklasottosson.com/databases/sqlite-check-integrity-and-fix-common-problems/):
+
+```
+sqlite>.output backup.db
+sqlite>.dump
+sqlite>.quit
+
+>sqlite3 database_fixed.db
+sqlite>.read backup.db
+sqlite>.quit
+
+```
+If there were no errors, you should be able to query database_fixed.db. If not, open backup.db in a text editor and rummage through the sql statements.
 

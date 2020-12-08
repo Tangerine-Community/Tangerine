@@ -135,7 +135,7 @@ export class DeviceService {
     const flatLocationList = Loc.flatten(locationList)
     const assignedLocationObject = device.assignedLocation.value.map(value=> {
       const location = flatLocationList.locations.find(node => node.id === value.value)
-      return location ? ` ${value.level}: ${location.label}` : ` ${value.level}: Placeholder-${value.level}`
+      return location ? ` ${value.level}: ${location.label}` : ` ${value.level}: Placeholder-${value.value}`
     }).join(', ')
     const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
       ? assignedLocationObject : 'N/A'

@@ -19,12 +19,14 @@ export class RestoreBackupComponent implements OnInit {
   }
   statusMessage: string
   errorMessage: string
+  progressMessage: string
   success: boolean
 
   ngOnInit(): void {
     console.log("RestoreBackupComponent init")
     this.statusMessage = ''
     this.errorMessage = ''
+    this.progressMessage = ''
     this.success = false
   }
 
@@ -34,6 +36,7 @@ export class RestoreBackupComponent implements OnInit {
     }
     this.statusMessage = ''
     this.errorMessage = ''
+    this.progressMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
       const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
