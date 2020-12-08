@@ -4,7 +4,7 @@
 
 __Fixes__
 
-- Add missing `custom-scripts.js` and `custom-styles.css` files to Editor app.
+- Add missing `custom-scripts.js` and `custom-styles.css` files to Editor app. We also add `editor` and `client` ID's to the body tag of the two app respectively.
 - Reduce database merge conflicts by preventing form responses from saving after completed. Prior to this version, on two tablets (or on a tablet and the server) if you opened the same form response and opened an item to inspect, it would cause a save on both tablets resulting in an unnesessary merge conflict.
 - New `T.case.getCaseHistory(caseId)` function for getting the history of save for a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case and run `await T.case.getCaseHistory()` in the console and it will pick up on the context.
 - New `T.case.getEventFormHistory(caseId, caseEventId, eventFormId)` function for getting the history of save for a form response in a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case, a Case Event, then an Event Form and run `await T.case.getEventFormHistory()` in the console and it will pick up on the context.
