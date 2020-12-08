@@ -1151,26 +1151,36 @@ class CaseService {
   }
 
   /**
-   * Loops throough revisions and provides a comparison of each available revision.
+   * Loops through revisions and provides a comparison of each available revision.
    * @param db
    * @param docId
    */
   async generatePatchArray(db, docId) {
-    const docWithRevs = await db.get(docId,{revs_info:true})
-    const revisions = docWithRevs._revs_info
-    let comparisons = []
-    if (revisions) {
-      // filter out missing
-      const availableRevisions = revisions.filter(rev => rev.status === 'available')
-      // loop through the revisionIds, fetch each one, and compare in-order.
-      for (let index = 0; index < availableRevisions.length; index++) {
-        const revision = availableRevisions[index]
-        const revId = revision.rev
-        const nextRevision = availableRevisions[index+1]
-        if (nextRevision) {
-          const currentDoc = await db.get(docId,{rev:revId})
-          const nextRev = nextRevision.rev
-          const nextDoc = await db.get(docId,{rev:nextRev})
+    let docWithRevs;
+    try {
+      docWithRevs = await db.get(docId, {revs_info: true})
+    } catch (e) {
+      console.log("Unable to get docId: " + docId + " Error: " + e)
+      return []
+    }
+    if (docWithRevs) {
+      const revisions = docWithRevs._revs_info
+      let comparisons = []
+      if (revisions) {
+        // filter out missing
+        const availableRevisions = revisions.filter(rev => rev.status === 'available')
+        // loop through the revisionIds, fetch each one, and compare in-order.
+        for (let index = 0; index < availableRevisions.length; index++) {
+          const revision = availableRevisions[index]
+          const revId = revision.rev
+          const nextRevision = availableRevisions[index+1]
+          const currentDoc = await db.get(docId,{rev:revId, conflicts:true})
+          let nextDoc = {}
+          let nextRev = 0
+          if (nextRevision) {
+            nextRev = nextRevision.rev
+            nextDoc = await db.get(docId,{rev:nextRev, conflicts:true})
+          }
           const comparison = jsonpatch.compare(nextDoc, currentDoc)
           const comparisonDoc = {
             _id: docId,
@@ -1181,8 +1191,9 @@ class CaseService {
           comparisons.push(comparisonDoc)
         }
       }
+      return comparisons
     }
-    return comparisons
+    
   }
 
 }
