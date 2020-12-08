@@ -24,6 +24,7 @@ T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
 # Mysql
 T_MYSQL_CONTAINER_NAME="mysql"
+T_MYSQL_USER="admin"
 T_MYSQL_PASSWORD="password"
 
 #
