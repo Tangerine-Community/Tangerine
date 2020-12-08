@@ -18,6 +18,7 @@ export const TangyFormsQueries = {
       }
     }.toString()
   },
+  // @TODO These views are for Sync Protocol 1 only. We should move these to another module specific to SP1.
   responsesLockedAndNotUploaded: {
     map: function (doc) {
       if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) {
