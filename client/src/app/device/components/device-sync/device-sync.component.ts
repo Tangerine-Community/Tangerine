@@ -45,7 +45,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
       }
     })
     // Pass isFirstSync flag as true in order to skip the push.
-    await this.syncService.sync(true, true)
+    const replicationStatus = await this.syncService.sync(true, true)
     this.subscription.unsubscribe();
     this.syncInProgress = false
     this.syncIsComplete = true

@@ -73,7 +73,7 @@ export class SyncComponent implements OnInit, OnDestroy {
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending;'
           }
-          this.syncMessage = progress.docs_written + ' docs synced; ' + pendingMessage
+          this.syncMessage = progress.remaining + ' % remaining to sync; ' + pendingMessage
           if (progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
           }

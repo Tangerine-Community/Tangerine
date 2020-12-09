@@ -126,6 +126,15 @@ export class DeviceService {
       .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise()
   }
 
+  async didSyncError(error):Promise<any> {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const device = await this.getDevice()
+    const version = await this.getBuildId()
+    await this
+      .httpClient
+      .get(`${appConfig.serverUrl}group-device-public/did-sync-error/${appConfig.groupId}/${device._id}/${device.token}/${version}/${error}`).toPromise()
+  }
+
   async getAppInfo() {
     const appConfig = await this.appConfigService.getAppConfig()
     const buildId = await this.getBuildId()
