@@ -278,8 +278,7 @@ export class SyncCouchdbService {
 
     const pullSyncBatch = async (syncOptions) => {
       let status = {}
-      const direction = 'pull'
-      userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
+      await userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
         console.log("info.last_seq: " + info.last_seq)
         chunkCompleteStatus = true
         await this.variableService.set('sync-pull-last_seq', info.last_seq)
@@ -330,9 +329,9 @@ export class SyncCouchdbService {
   
       syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
       
-      status = <ReplicationStatus>await new Promise(async (resolve, reject) => {
+      status = <ReplicationStatus>await new Promise((resolve, reject) => {
         try {
-          status = await pullSyncBatch(syncOptions);
+          status = pullSyncBatch(syncOptions);
           resolve(status)
         } catch (e) {
           reject(`Error: ${JSON.stringify(e)}`)
