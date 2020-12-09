@@ -274,86 +274,80 @@ export class SyncCouchdbService {
     })).docs.map(doc => doc._id)
 
     let status;
+    let chunkCompleteStatus = false
+
+    const pullSyncBatch = (syncOptions) => {
+      let status = {}
+      const direction = 'pull'
+      userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
+        console.log("info.last_seq: " + info.last_seq)
+        chunkCompleteStatus = true
+        await this.variableService.set('sync-pull-last_seq', info.last_seq)
+        const conflictsQuery = await userDb.query('sync-conflicts')
+        status = <ReplicationStatus>{
+          pulled: info.docs_written,
+          pullConflicts: conflictsQuery.rows.map(row => row.id),
+          info: info,
+          remaining: syncOptions.remaining
+        }
+        return status
+      }).on('change', async (info) => {
+        await this.variableService.set('sync-pull-last_seq', info.last_seq)
+        const progress = {
+          'docs_read': info.docs_read,
+          'docs_written': info.docs_written,
+          'doc_write_failures': info.doc_write_failures,
+          'pending': info.pending,
+          'direction': 'pull', 
+          'last_seq': info.last_seq,
+          'remaining': syncOptions.remaining
+        }
+        this.syncMessage$.next(progress)
+      }).on('active', function (info) {
+        if (info) {
+          console.log('Pull replication is active. Info: ' + JSON.stringify(info))
+        } else {
+          console.log('Pull replication is active.')
+        }
+      }).on('error', function (errorMessage) {
+        console.log('pullSyncBatch failed. error: ' + errorMessage)
+        chunkCompleteStatus = false
+      });
+    }
+
+    const totalDocIds = docIds.length
     while (docIds.length) {
-      console.log("docIds.length: " + docIds.length)
+      const remaining = docIds.length/totalDocIds * 100
+      console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
       let chunkDocIds = docIds.splice(0, this.chunkSize);
       let syncOptions = {
         "since": pull_last_seq,
         "batch_size": this.batchSize,
         "batches_limit": 1,
-        "doc_ids": chunkDocIds
+        "doc_ids": chunkDocIds,
+        "remaining": remaining
       }
   
       syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
-  
+      
       status = <ReplicationStatus>await new Promise((resolve, reject) => {
-        let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
-        const direction = 'pull'
-        userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
-          await this.variableService.set('sync-pull-last_seq', info.last_seq);
-          const conflictsQuery = await userDb.query('sync-conflicts');
-          resolve(<ReplicationStatus>{
-            pulled: info.docs_written,
-            pullConflicts: conflictsQuery.rows.map(row => row.id)
-          });
-        }).on('change', async (info) => {
-          await this.variableService.set('sync-pull-last_seq', info.last_seq);
-          const progress = {
-            'docs_read': info.docs_read,
-            'docs_written': info.docs_written,
-            'doc_write_failures': info.doc_write_failures,
-            'pending': info.pending,
-            'direction': 'pull'
-          };
-          this.syncMessage$.next(progress);
-        }).on('active', function (info) {
-          if (info) {
-            console.log('Pull replication is active. Info: ' + JSON.stringify(info));
-          } else {
-            console.log('Pull replication is active.');
-          }
-        }).on('checkpoint', (info) => {
-          if (info) {
-            // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
-            let progress;
-            if (info.checkpoint) {
-              checkpointProgress = checkpointProgress + 1
-              progress = {
-                'message': checkpointProgress,
-                'type': 'checkpoint',
-                'direction': direction
-              };
-            } else if (info.diffing) {
-              diffingProgress = diffingProgress + 1
-              progress = {
-                'message': diffingProgress,
-                'type': 'diffing',
-                'direction': direction
-              };
-            } else if (info.startNextBatch) {
-              startBatchProgress = startBatchProgress + 1
-              progress = {
-                'message': startBatchProgress,
-                'type': 'startNextBatch',
-                'direction': direction
-              };
-            } else if (info.pendingBatch) {
-              pendingBatchProgress = pendingBatchProgress + 1
-              progress = {
-                'message': pendingBatchProgress,
-                'type': 'pendingBatch',
-                'direction': direction
-              };
-            }
-            this.syncMessage$.next(progress);
-          } else {
-            console.log(direction + ': Calculating Checkpoints.');
-          }
-        }).on('error', function (errorMessage) {
-          console.log('boo, something went wrong! error: ' + errorMessage);
-          reject(errorMessage);
-        });
+        try {
+          status = pullSyncBatch(syncOptions);
+          resolve(status)
+        } catch (e) {
+          reject(`Error: ${JSON.stringify(e)}`)
+        }
+
       });
+    }
+    if (!chunkCompleteStatus) {
+      // don't se last_seq and prompt to re-run
+      const errorMessage = "incomplete-sync"
+      console.log(errorMessage)
+      status.error = errorMessage
+    } else {
+      // set last_seq
+      await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
     }
     return status;
   }

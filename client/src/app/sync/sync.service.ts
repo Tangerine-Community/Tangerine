@@ -87,7 +87,15 @@ export class SyncService {
       deviceToken: device.token,
       formInfos
     })
-    await this.deviceService.didSync()
+    
+    // TODO: if this.replicationStatus has an error, can we do a put instead to didSync?
+    if (this.replicationStatus.error) {
+      await this.deviceService.didSync()
+    } else {
+      await this.deviceService.didSyncError(this.replicationStatus.error)
+    }
+    
+    return this.replicationStatus
   }
 
 
