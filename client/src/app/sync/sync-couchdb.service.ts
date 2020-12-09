@@ -118,36 +118,31 @@ export class SyncCouchdbService {
       ]
     }
 
-    let docIds = (await remoteDb.find({
+    let docIds = (await userDb.db.find({
       "limit": 987654321,
       "fields": ["_id"],
       "selector": pushSelector
     })).docs.map(doc => doc._id)
 
     let status;
-    while (docIds.length) {
-      console.log("docIds.length: " + docIds.length)
-      let chunkDocIds = docIds.splice(0, this.chunkSize);
-      let syncOptions = {
-        "since": push_last_seq,
-        "batch_size": this.batchSize,
-        "batches_limit": 1,
-        "doc_ids": chunkDocIds
-      }
+    let chunkCompleteStatus = false
 
-      syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
-
-      const status = <ReplicationStatus>await new Promise((resolve, reject) => {
-        let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
+    const pushSyncBatch = (syncOptions) => {
+      return new Promise( (resolve, reject) => {
+        let status = {}
         const direction = 'push'
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
-          await this.variableService.set('sync-push-last_seq', info.last_seq);
+          console.log("info.last_seq: " + info.last_seq)
+          // await this.variableService.set('sync-push-last_seq', info.last_seq);
+          chunkCompleteStatus = true
           // TODO: change to remoteDB and check if it is one of the id's we are concerned about
           // don't want to act on docs we are not concerned w/
           // act upon only docs in our region...
           //const conflictsQuery = await userDb.query('sync-conflicts');
           resolve(<ReplicationStatus>{
-            pushed: info.docs_written
+            pushed: info.docs_written,
+            info: info,
+            remaining: syncOptions.remaining
             //pushConflicts: conflictsQuery.rows.map(row => row.id)
           });
         }).on('change', async (info) => {
@@ -157,7 +152,9 @@ export class SyncCouchdbService {
             'docs_written': info.docs_written,
             'doc_write_failures': info.doc_write_failures,
             'pending': info.pending,
-            'direction': direction
+            'direction': direction,
+            'last_seq': info.last_seq,
+            'remaining': syncOptions.remaining
           };
           this.syncMessage$.next(progress);
         }).on('active', function (info) {
@@ -209,11 +206,48 @@ export class SyncCouchdbService {
           } else {
             console.log(direction + ': Calculating Checkpoints.');
           }
-        }).on('error', function (errorMessage) {
-          console.log('boo, something went wrong! error: ' + errorMessage);
+        }).on('error', function (error) {
+          let errorMessage = "pullSyncBatch failed. error: " + error
+          console.log(errorMessage)
+          chunkCompleteStatus = false
           reject(errorMessage);
         });
-      });
+      })
+    }
+    
+    let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
+    const totalDocIds = docIds.length
+    while (docIds.length) {
+      const remaining = docIds.length/totalDocIds * 100
+      console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
+      let chunkDocIds = docIds.splice(0, this.chunkSize);
+      let syncOptions = {
+        "since": push_last_seq,
+        "batch_size": this.batchSize,
+        "batches_limit": 1,
+        "doc_ids": chunkDocIds,
+        "remaining": remaining
+      }
+
+      syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
+
+      try {
+        status = await pushSyncBatch(syncOptions);
+      } catch (e) {
+        // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
+        chunkCompleteStatus = false
+      }
+    }
+    if (!chunkCompleteStatus) {
+      // don't se last_seq and prompt to re-run
+      const errorMessage = "incomplete-sync"
+      console.log(errorMessage)
+      if (status) {
+        status.error = errorMessage
+      }
+    } else {
+      // set last_seq
+      await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
     }
     return status;
   }
@@ -282,7 +316,7 @@ export class SyncCouchdbService {
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
           chunkCompleteStatus = true
-          await this.variableService.set('sync-pull-last_seq', info.last_seq)
+          // await this.variableService.set('sync-pull-last_seq', info.last_seq)
           const conflictsQuery = await userDb.query('sync-conflicts')
           status = <ReplicationStatus>{
             pulled: info.docs_written,
@@ -340,8 +374,7 @@ export class SyncCouchdbService {
           chunkCompleteStatus = false
           reject(errorMessage)
         });
-      }
-    )
+      })
     }
 
     const totalDocIds = docIds.length
@@ -359,13 +392,12 @@ export class SyncCouchdbService {
   
       syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
       
-        try {
-          status = await pullSyncBatch(syncOptions);
-          // resolve(status)
-        } catch (e) {
-        // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
-          chunkCompleteStatus = false
-        }
+      try {
+        status = await pullSyncBatch(syncOptions);
+      } catch (e) {
+      // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
+        chunkCompleteStatus = false
+      }
     }
     if (!chunkCompleteStatus) {
       // don't se last_seq and prompt to re-run
