@@ -92,11 +92,11 @@ export class SyncService {
       message: window['t']('Sync is complete, contacting server. Please wait...'),
     })
     await this.deviceService.didSync()
-    this.syncMessage$.next({ message: window['t']('Optimizing data. This may take several minutes. Please wait...') })
     if (
       isFirstSync ||
       (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
     ) {
+      this.syncMessage$.next({ message: window['t']('Optimizing data. This may take several minutes. Please wait...') })
       await this.indexViews()
     } 
   }
