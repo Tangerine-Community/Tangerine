@@ -93,7 +93,12 @@ export class SyncService {
     })
     await this.deviceService.didSync()
     this.syncMessage$.next({ message: window['t']('Optimizing data. This may take several minutes. Please wait...') })
-    await this.indexViews()
+    if (
+      isFirstSync ||
+      (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
+    ) {
+      await this.indexViews()
+    } 
   }
 
   // Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
