@@ -276,7 +276,7 @@ export class SyncCouchdbService {
     let status;
     let chunkCompleteStatus = false
 
-    const pullSyncBatch = (syncOptions) => {
+    const pullSyncBatch = async (syncOptions) => {
       let status = {}
       const direction = 'pull'
       userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
@@ -330,9 +330,9 @@ export class SyncCouchdbService {
   
       syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
       
-      status = <ReplicationStatus>await new Promise((resolve, reject) => {
+      status = <ReplicationStatus>await new Promise(async (resolve, reject) => {
         try {
-          status = pullSyncBatch(syncOptions);
+          status = await pullSyncBatch(syncOptions);
           resolve(status)
         } catch (e) {
           reject(`Error: ${JSON.stringify(e)}`)
@@ -344,7 +344,9 @@ export class SyncCouchdbService {
       // don't se last_seq and prompt to re-run
       const errorMessage = "incomplete-sync"
       console.log(errorMessage)
-      status.error = errorMessage
+      if (status) {
+        status.error = errorMessage
+      }
     } else {
       // set last_seq
       await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
