@@ -37,6 +37,7 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 50
+  chunkSize = 200
   pullSyncOptions;
   pushSyncOptions;
   
@@ -116,100 +117,104 @@ export class SyncCouchdbService {
         }
       ]
     }
-    
-    this.pushSyncOptions = {
-      "since": push_last_seq,
-      "batch_size": this.batchSize,
-      "batches_limit": 1,
-      ...appConfig.couchdbPush4All ? { } : appConfig.couchdbPushUsingDocIds
-        ? {
-          "doc_ids": (await userDb.db.find({
-            "limit": 987654321,
-            "fields": ["_id"],
-            "selector":  pushSelector
-          })).docs.map(doc => doc._id)
-        }
-        : {
-          "selector": pushSelector
-        }
-    }
-    const status = <ReplicationStatus>await new Promise((resolve, reject) => {
-      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
-      const direction =  'push'
-      userDb.db['replicate'].to(remoteDb, this.pushSyncOptions).on('complete', async (info) => {
-        await this.variableService.set('sync-push-last_seq', info.last_seq);
-        // TODO: change to remoteDB and check if it is one of the id's we are concerned about
-        // don't want to act on docs we are not concerned w/
-        // act upon only docs in our region...
-        //const conflictsQuery = await userDb.query('sync-conflicts');
-        resolve(<ReplicationStatus>{
-          pushed: info.docs_written
-          //pushConflicts: conflictsQuery.rows.map(row => row.id)
-        });
-      }).on('change', async (info) => {
-        await this.variableService.set('sync-push-last_seq', info.last_seq);
-        const progress = {
-          'docs_read': info.docs_read,
-          'docs_written': info.docs_written,
-          'doc_write_failures': info.doc_write_failures,
-          'pending': info.pending,
-          'direction': direction
-        };
-        this.syncMessage$.next(progress);
-      }).on('active', function (info) {
-        if (info) {
-          console.log('Push replication is active. Info: ' + JSON.stringify(info));
-        } else {
-          console.log('Push replication is active.');
-        }
-      }).on('checkpoint', (info) => {
-        if (info) {
-          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
-          let progress;
-          if (info.checkpoint) {
-            checkpointProgress = checkpointProgress + 1
-            progress = {
-              'message': checkpointProgress,
-              'type': 'checkpoint',
-              'direction': direction
-            };
-          } else if (info.diffing) {
-            diffingProgress = diffingProgress + 1
-            progress = {
-              'message': diffingProgress,
-              'type': 'diffing',
-              'direction': direction
-            };
-          } else if (info.startNextBatch) {
-            startBatchProgress = startBatchProgress + 1
-            progress = {
-              'message': startBatchProgress,
-              'type': 'startNextBatch',
-              'direction': direction
-            };
-          } else if (info.pendingBatch) {
-            pendingBatchProgress = pendingBatchProgress + 1
-            progress = {
-              'message': pendingBatchProgress,
-              'type': 'pendingBatch',
-              'direction': direction
-            };
-          } else {
-            progress = {
-              'message': JSON.stringify(info),
-              'type': 'other',
-              'direction': direction
-            };
-          }
+
+    let docIds = (await remoteDb.find({
+      "limit": 987654321,
+      "fields": ["_id"],
+      "selector": pushSelector
+    })).docs.map(doc => doc._id)
+
+    let status;
+    while (docIds.length) {
+      console.log("docIds.length: " + docIds.length)
+      let chunkDocIds = docIds.splice(0, this.chunkSize);
+      let syncOptions = {
+        "since": push_last_seq,
+        "batch_size": this.batchSize,
+        "batches_limit": 1,
+        "doc_ids": chunkDocIds
+      }
+
+      syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
+
+      const status = <ReplicationStatus>await new Promise((resolve, reject) => {
+        let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
+        const direction = 'push'
+        userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
+          await this.variableService.set('sync-push-last_seq', info.last_seq);
+          // TODO: change to remoteDB and check if it is one of the id's we are concerned about
+          // don't want to act on docs we are not concerned w/
+          // act upon only docs in our region...
+          //const conflictsQuery = await userDb.query('sync-conflicts');
+          resolve(<ReplicationStatus>{
+            pushed: info.docs_written
+            //pushConflicts: conflictsQuery.rows.map(row => row.id)
+          });
+        }).on('change', async (info) => {
+          await this.variableService.set('sync-push-last_seq', info.last_seq);
+          const progress = {
+            'docs_read': info.docs_read,
+            'docs_written': info.docs_written,
+            'doc_write_failures': info.doc_write_failures,
+            'pending': info.pending,
+            'direction': direction
+          };
           this.syncMessage$.next(progress);
-        } else {
-          console.log(direction + ': Calculating Checkpoints.');
-        }
-      }).on('error', function (errorMessage) {
-        console.log('boo, something went wrong! error: ' + errorMessage);
-        reject(errorMessage);
+        }).on('active', function (info) {
+          if (info) {
+            console.log('Push replication is active. Info: ' + JSON.stringify(info));
+          } else {
+            console.log('Push replication is active.');
+          }
+        }).on('checkpoint', (info) => {
+          if (info) {
+            // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+            let progress;
+            if (info.checkpoint) {
+              checkpointProgress = checkpointProgress + 1
+              progress = {
+                'message': checkpointProgress,
+                'type': 'checkpoint',
+                'direction': direction
+              };
+            } else if (info.diffing) {
+              diffingProgress = diffingProgress + 1
+              progress = {
+                'message': diffingProgress,
+                'type': 'diffing',
+                'direction': direction
+              };
+            } else if (info.startNextBatch) {
+              startBatchProgress = startBatchProgress + 1
+              progress = {
+                'message': startBatchProgress,
+                'type': 'startNextBatch',
+                'direction': direction
+              };
+            } else if (info.pendingBatch) {
+              pendingBatchProgress = pendingBatchProgress + 1
+              progress = {
+                'message': pendingBatchProgress,
+                'type': 'pendingBatch',
+                'direction': direction
+              };
+            } else {
+              progress = {
+                'message': JSON.stringify(info),
+                'type': 'other',
+                'direction': direction
+              };
+            }
+            this.syncMessage$.next(progress);
+          } else {
+            console.log(direction + ': Calculating Checkpoints.');
+          }
+        }).on('error', function (errorMessage) {
+          console.log('boo, something went wrong! error: ' + errorMessage);
+          reject(errorMessage);
+        });
       });
-    });
+    }
     return status;
   }
 
@@ -270,7 +275,8 @@ export class SyncCouchdbService {
 
     let status;
     while (docIds.length) {
-      let chunkDocIds = docIds.splice(0, this.batchSize);
+      console.log("docIds.length: " + docIds.length)
+      let chunkDocIds = docIds.splice(0, this.chunkSize);
       let syncOptions = {
         "since": pull_last_seq,
         "batch_size": this.batchSize,
