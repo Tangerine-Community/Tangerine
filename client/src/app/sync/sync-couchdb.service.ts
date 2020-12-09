@@ -276,42 +276,72 @@ export class SyncCouchdbService {
     let status;
     let chunkCompleteStatus = false
 
-    const pullSyncBatch = async (syncOptions) => {
-      let status = {}
-      await userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
-        console.log("info.last_seq: " + info.last_seq)
-        chunkCompleteStatus = true
-        await this.variableService.set('sync-pull-last_seq', info.last_seq)
-        const conflictsQuery = await userDb.query('sync-conflicts')
-        status = <ReplicationStatus>{
-          pulled: info.docs_written,
-          pullConflicts: conflictsQuery.rows.map(row => row.id),
-          info: info,
-          remaining: syncOptions.remaining
-        }
-        return status
-      }).on('change', async (info) => {
-        await this.variableService.set('sync-pull-last_seq', info.last_seq)
-        const progress = {
-          'docs_read': info.docs_read,
-          'docs_written': info.docs_written,
-          'doc_write_failures': info.doc_write_failures,
-          'pending': info.pending,
-          'direction': 'pull', 
-          'last_seq': info.last_seq,
-          'remaining': syncOptions.remaining
-        }
-        this.syncMessage$.next(progress)
-      }).on('active', function (info) {
-        if (info) {
-          console.log('Pull replication is active. Info: ' + JSON.stringify(info))
-        } else {
-          console.log('Pull replication is active.')
-        }
-      }).on('error', function (errorMessage) {
-        console.log('pullSyncBatch failed. error: ' + errorMessage)
-        chunkCompleteStatus = false
-      });
+    const pullSyncBatch = (syncOptions) => {
+      return new Promise( (resolve, reject) => {
+        let status = {}
+        userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
+          console.log("info.last_seq: " + info.last_seq)
+          chunkCompleteStatus = true
+          await this.variableService.set('sync-pull-last_seq', info.last_seq)
+          const conflictsQuery = await userDb.query('sync-conflicts')
+          status = <ReplicationStatus>{
+            pulled: info.docs_written,
+            pullConflicts: conflictsQuery.rows.map(row => row.id),
+            info: info,
+            remaining: syncOptions.remaining
+          }
+          resolve(status)
+        }).on('change', async (info) => {
+          await this.variableService.set('sync-pull-last_seq', info.last_seq)
+          const progress = {
+            'docs_read': info.docs_read,
+            'docs_written': info.docs_written,
+            'doc_write_failures': info.doc_write_failures,
+            'pending': info.pending,
+            'direction': 'pull',
+            'last_seq': info.last_seq,
+            'remaining': syncOptions.remaining
+          }
+          this.syncMessage$.next(progress)
+        }).on('active', function (info) {
+          if (info) {
+            console.log('Pull replication is active. Info: ' + JSON.stringify(info))
+          } else {
+            console.log('Pull replication is active.')
+          }
+        }).on('checkpoint', (info) => {
+          if (info) {
+            // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+            let progress;
+            if (info.checkpoint) {
+              progress = {
+                'type': 'checkpoint'
+              }
+            } else if (info.diffing) {
+              progress = {
+                'type': 'diffing'
+              }
+            } else if (info.startNextBatch) {
+              progress = {
+                'type': 'startNextBatch',
+              }
+            } else if (info.pendingBatch) {
+              progress = {
+                'type': 'pendingBatch',
+              }
+            }
+            this.syncMessage$.next(progress);
+          } else {
+            console.log('Pull: Calculating Checkpoints.');
+          }  
+        }).on('error', function (error) {
+          let errorMessage = "pullSyncBatch failed. error: " + error
+          console.log(errorMessage)
+          chunkCompleteStatus = false
+          reject(errorMessage)
+        });
+      }
+    )
     }
 
     const totalDocIds = docIds.length
@@ -329,15 +359,13 @@ export class SyncCouchdbService {
   
       syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
       
-      status = <ReplicationStatus>await new Promise((resolve, reject) => {
         try {
-          status = pullSyncBatch(syncOptions);
-          resolve(status)
+          status = await pullSyncBatch(syncOptions);
+          // resolve(status)
         } catch (e) {
-          reject(`Error: ${JSON.stringify(e)}`)
+        // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
+          chunkCompleteStatus = false
         }
-
-      });
     }
     if (!chunkCompleteStatus) {
       // don't se last_seq and prompt to re-run
