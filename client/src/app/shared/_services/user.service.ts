@@ -81,7 +81,8 @@ export class UserService {
           await this.sharedUserDatabase.put(doc)
         }
     } catch (e) {
-      console.log("Error: " + JSON.stringify(e))
+      console.warn('./assets/queries.js failed to install. Only worry about this if you are using queries.js.')
+      console.error(e)
     }
     await this.variableService.set('atUpdateIndex', updates.length - 1);
   }
