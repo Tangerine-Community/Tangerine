@@ -270,8 +270,7 @@ export class SyncCouchdbService {
 
     let status;
     while (docIds.length) {
-      let chunkDocIds = []
-      chunkDocIds.push(docIds.splice(0, this.batchSize));
+      let chunkDocIds = docIds.splice(0, this.batchSize);
       let syncOptions = {
         "since": pull_last_seq,
         "batch_size": this.batchSize,
