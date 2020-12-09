@@ -13,10 +13,16 @@ The v3.15.0 release included an update to the Editor Search feature [#2416](http
 __Server upgrade instructions__
 
 ```
-# Check disk for free space. Ensure there is at least 10GB of free space to perform the upgrade.
-df -h
-# Fetch the updates.
 cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
 git fetch origin
 git checkout v3.15.2
 # Now you are ready to start the server.
