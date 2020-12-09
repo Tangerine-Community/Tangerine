@@ -13,6 +13,8 @@ The v3.15.0 release included an update to the Editor Search feature [#2416](http
 __Server upgrade instructions__
 
 ```
+# Check disk for free space. Ensure there is at least 10GB of free space to perform the upgrade.
+df -h
 # Fetch the updates.
 cd tangerine
 git fetch origin
