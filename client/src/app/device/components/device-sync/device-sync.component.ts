@@ -39,7 +39,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
         }
         if (typeof progress.docs_written !== 'undefined') {
           docsWritten = progress.docs_written + ' docs saved; '
-          this.syncMessage =  direction + docsWritten + pendingMessage
+          // this.syncMessage =  direction + docsWritten + pendingMessage
+          this.syncMessage = progress.remaining + ' % remaining to sync; '
         }
         console.log('Sync Progress: ' + JSON.stringify(progress))
       }
