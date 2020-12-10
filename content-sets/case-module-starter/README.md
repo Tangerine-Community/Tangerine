@@ -1,5 +1,11 @@
 # Case Module Starter Content Set
 
+This is a content set that includes the minimum content and configuration for starting a Case module based Content Set for Tangerine. This Content Set includes the following:
+
+1. Minimal content with just one example Case Definition, one Event Definition, and one Event Form Definition.
+2. A README.md that describes how to create your own content from this content set, how to install your content set on a Tangerine server, and how to run preview locally.
+3. A Github [Issue template](https://github.com/Tangerine-Community/Tangerine/blob/master/content-sets/case-module-starter/.github/ISSUE_TEMPLATE) and [Pull Request template](https://github.com/Tangerine-Community/Tangerine/blob/master/content-sets/case-module-starter/.github/PULL_REQUEST_TEMPLATE.md). 
+
 ## Create your own content set
 To start a content set, create repository on Github and then run the following commands replacing `<your repository name>` and `<your git repository's SSH url>`.
 
