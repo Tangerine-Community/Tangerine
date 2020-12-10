@@ -78,6 +78,6 @@ CREATE TABLE `participant` (
 
 
 #with foreign key consraints, the conversion code will not work with foriegn key constranits as other records cannot be deleted at will
-alter table caseevent drop foreign key fk_casevent_case_id;
-alter table eventform drop foreign key fk_eventform_case_id;
-alter table participant drop foreign key fk_participant_case_id;
+#alter table caseevent drop foreign key fk_casevent_case_id;
+#alter table eventform drop foreign key fk_eventform_case_id;
+#alter table participant drop foreign key fk_participant_case_id;
