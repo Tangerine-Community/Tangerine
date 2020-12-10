@@ -3,6 +3,7 @@ import sched
 import cloudant
 import pandas as pd
 import os
+import sys
 import json
 import mysql.connector
 import pymysql
@@ -409,7 +410,8 @@ def main_job():
     config.set("TANGERINE","LastSequence",last_change_seq)
     # Writing the configuration file to
 
-    with open(sys.argv[3], 'w') as configfile:
+    print(sys.argv[1])   
+    with open(sys.argv[1], 'w') as configfile:
         config.write(configfile)
 
     end_time = timeit.default_timer()
@@ -431,7 +433,7 @@ def scheduled_job():
 
 #read in the configuration file
 config = configparser.ConfigParser()
-pathName = os.path.join(os.getcwd(), 'data', 'setting.ini')
+pathName = sys.argv[1]
 print('Config file: ' + pathName)
 config.read(pathName)
 
