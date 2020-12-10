@@ -218,7 +218,7 @@ def convert_response(resp_dict):
         caseEventId = resp_dict.get('caseEventId')
 
         response = resp_dict.get('data')
-        formID = response.get('formId')
+        formID = response.get('formId').replace('-', '_')
         #need to delete ID element from response as it's form ID which is useless but it causes confusion with _ID
         #del response["id"]
 
@@ -284,7 +284,7 @@ def delete_record(tangerline_database,id):
             mysql_connection.commit()
         elif (type.lower() == "response"):
             response = doc_dict.get('data')
-            formID = response.get('formId')
+            formID = response.get('formId').replace('-', '_')
             cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
             mysql_connection.commit()
         else:
