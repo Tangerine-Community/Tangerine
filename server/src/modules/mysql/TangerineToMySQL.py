@@ -58,18 +58,18 @@ def convert_case(resp_dict):
         df = pd.DataFrame([caseData])
         df.rename(columns={'_id': 'CaseID'}, inplace=True)
         #delete the case if it already exists in table so we can add the new one
-        qry = "SELECT * FROM tangerine.case where CaseID='" + caseId+"'"
+        qry = "SELECT * FROM " + mysqlDatabaseName + ".case where CaseID='" + caseId+"'"
         cursor.execute(qry)
         if cursor.rowcount >= 1:
             print("case already exists")
-            cursor.execute("Delete from tangerine.case where CaseID='" + caseId+"'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".case where CaseID='" + caseId+"'")
             mysql_connection.commit()
 
         try:
             # this will fail if there is a new column
             df.to_sql(name='case', con=engine, if_exists='append', index=False)
         except:
-            data = pd.read_sql('SELECT * FROM tangerine.case', engine)
+            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case', engine)
             df2 = pd.concat([data, df])
             df2.to_sql(name='case', con=engine, if_exists='replace', index=False)
 
@@ -119,18 +119,18 @@ def convert_participant(resp_dict):
         df = pd.DataFrame([participantData])
 
         #delete the Participant if it already exists in table so we can add the new one
-        qry = "SELECT * FROM tangerine.participant where ParticipantID='" + participantId+"'"
+        qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
         cursor.execute(qry)
         if cursor.rowcount >= 1:
             print("participant already exists")
-            cursor.execute("Delete from tangerine.participant where ParticipantID='" + participantId+"'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
             mysql_connection.commit()
 
         try:
             # this will fail if there is a new column
             df.to_sql(name='participant', con=engine, if_exists='append', index=False)
         except:
-            data = pd.read_sql('SELECT * FROM tangerine.participant', engine)
+            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.participant', engine)
             df2 = pd.concat([data, df])
             df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
 
@@ -152,18 +152,18 @@ def convert_case_event(resp_dict):
         df.rename(columns={'_id': 'CaseEventID', '_rev': 'dbRevision'}, inplace=True)
 
         #delete the CaseEvent if it already exists in table so we can add the new one
-        qry = "SELECT * FROM tangerine.caseevent where CaseEventID='" + caseEventId+"'"
+        qry = "SELECT * FROM " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'"
         cursor.execute(qry)
         if cursor.rowcount >= 1:
             print("CaseEvent already exists")
-            cursor.execute("Delete from tangerine.caseevent where CaseEventID='" + caseEventId+"'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'")
             mysql_connection.commit()
 
         try:
             # this will fail if there is a new column
             df.to_sql(name='caseevent', con=engine, if_exists='append', index=False)
         except:
-            data = pd.read_sql('SELECT * FROM tangerine.caseevent', engine)
+            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.caseevent', engine)
             df2 = pd.concat([data, df])
             df2.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
 
@@ -186,18 +186,18 @@ def convert_event_form(resp_dict):
         df.rename(columns={'_id': 'EventFormID', '_rev': 'dbRevision'}, inplace=True)
 
         #delete the EventForm if it already exists in table so we can add the new one
-        qry = "SELECT * FROM tangerine.eventform where EventFormID='" + eventFormId+"'"
+        qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
         cursor.execute(qry)
         if cursor.rowcount >= 1:
             print("EventForm already exists")
-            cursor.execute("Delete from tangerine.eventform where EventFormID='" + eventFormId+"'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
             mysql_connection.commit()
 
         try:
             # this will fail if there is a new column
             df.to_sql(name='eventform', con=engine, if_exists='append', index=False)
         except:
-            data = pd.read_sql('SELECT * FROM tangerine.eventform', engine)
+            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
             df2 = pd.concat([data, df])
             df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
 
@@ -247,18 +247,18 @@ def convert_response(resp_dict):
         df.rename(columns={'_id': 'ID', '_rev': 'dbRevision'}, inplace=True)
 
         #delete the ID for the given form table if it already exists in table so we can add the new one
-        qry = "SELECT * FROM tangerine." + formID + " where ID='" + id+"'"
+        qry = "SELECT * FROM " + mysqlDatabaseName + "." + formID + " where ID='" + id+"'"
         cursor.execute(qry)
         if cursor.rowcount >= 1:
             print("Response ID already exists")
-            cursor.execute("Delete from tangerine." + formID+" where ID='" + id+"'")
+            cursor.execute("Delete from " + mysqlDatabaseName + "." + formID+" where ID='" + id+"'")
             mysql_connection.commit()
 
         try:
             # this will fail if there is a new column
             df.to_sql(name=formID, con=engine, if_exists='append', index=False)
         except:
-            data = pd.read_sql('SELECT * FROM tangerine.'+formID, engine)
+            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.'+formID, engine)
             df2 = pd.concat([data, df])
             df2.to_sql(name=formID, con=engine, if_exists='replace', index=False)
 
@@ -269,23 +269,23 @@ def delete_record(tangerline_database,id):
         # for deleted documents, the type element is no longer available
         if (type.lower() == "case"):
             # handle case type
-            cursor.execute("Delete from tangerine.case where CaseID='" + id + "'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".case where CaseID='" + id + "'")
             mysql_connection.commit()
         elif (type.lower() == "participant"):
             # pass
-            cursor.execute("Delete from tangerine.participant where ParticipantID='" + id + "'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + id + "'")
             mysql_connection.commit()
         elif (type.lower() == "event-form"):
             # pass
-            cursor.execute("Delete from tangerine.eventform where EventFormID='" + id + "'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + id + "'")
             mysql_connection.commit()
         elif (type.lower() == "case-event"):
-            cursor.execute("Delete from tangerine.caseevent where CaseEventID='" + id + "'")
+            cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + id + "'")
             mysql_connection.commit()
         elif (type.lower() == "response"):
             response = doc_dict.get('data')
             formID = response.get('formId')
-            cursor.execute("Delete from tangerine." + formID + " where ID='" + id + "'")
+            cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
             mysql_connection.commit()
         else:
             print("Unexpected document type")
