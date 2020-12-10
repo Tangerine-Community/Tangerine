@@ -55,32 +55,41 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
         const {groupName, appConfig} = data
         const groupId = groupName
+        const mysqlDbName = groupId.replace(/-/g,'')
+        console.log(`Creating mysql db ${mysqlDbName}`)
+        await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+        console.log(`Created mysql db ${mysqlDbName}`)
         const mysqlDb = new MysqlDatabase({
           host     : 'mysql',
-          user     : 'root',
+          user     : process.env.T_MYSQL_USER,
           password : process.env.T_MYSQL_PASSWORD,
-          database : groupId
+          database : mysqlDbName 
         })
-        const mysqlDbInitializeCommands = await fs.readFile('/tangerine/server/src/modules/mysql/CreateTables.sql')
-        await mysqlDb.query(`CREATE DATABASE ${groupId}`)
-        await mysqlDb.query(mysqlDbInitializeCommands, groupId)
+        console.log('Running CreateTables.sql')
+        //const mysqlDbInitializeCommands = await fs.readFile('/tangerine/server/src/modules/mysql/CreateTables.sql')
+        //await mysqlDb.query(mysqlDbInitializeCommands, groupId)
+
+        await exec(`mysql -u ${process.env.T_MYSQL_USER} --database="${mysqlDbName}" -h mysql -p"${process.env.T_MYSQL_PASSWORD}" < /tangerine/server/src/modules/mysql/CreateTables.sql`)
+        console.log('Ran CreateTables.sql')
+        console.log('Creating tangerine to mysql state file...')
         const state = `
 [TANGERINE]
-databaseurl = https://couchdb:5984/
-databasename = ${groupId}-synapse
-databaseusername = ${process.env.T_COUCHDB_USER_ADMIN_NAME} 
-databasepassword = ${process.env.T_COUCHDB_USER_ADMIN_PASS} 
-lastsequence = 0
+DatabaseURL = http://couchdb:5984/
+DatabaseName = ${groupId}-synapse
+DatabaseUserName = ${process.env.T_COUCHDB_USER_ADMIN_NAME} 
+DatabasePassword = ${process.env.T_COUCHDB_USER_ADMIN_PASS} 
+LastSequence = 0
 run_interval = 10
 
 [MySQL]
-hostname = mysql 
-databasename = ${groupId} 
-username = root
-password = ${process.env.T_MYSQL_PASSWORD} 
+HostName = mysql 
+DatabaseName = ${mysqlDbName} 
+UserName = ${process.env.T_MYSQL_USER} 
+Password = ${process.env.T_MYSQL_PASSWORD} 
         `
         const pathToStateFile = `/mysql-module-state/${groupId}.ini`
         await fs.writeFile(pathToStateFile, state)
+        console.log('Created tangerine to mysql state file.')
         startTangerineToMySQL(pathToStateFile)
         resolve(data)
       })
