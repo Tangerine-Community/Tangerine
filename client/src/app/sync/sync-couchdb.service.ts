@@ -133,7 +133,6 @@ export class SyncCouchdbService {
         const direction = 'push'
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
-          // await this.variableService.set('sync-push-last_seq', info.last_seq);
           chunkCompleteStatus = true
           // TODO: change to remoteDB and check if it is one of the id's we are concerned about
           // don't want to act on docs we are not concerned w/
@@ -247,7 +246,7 @@ export class SyncCouchdbService {
       }
     } else {
       // set last_seq
-      await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
+      await this.variableService.set('sync-push-last_seq', status.info.last_seq)
     }
     return status;
   }
@@ -314,10 +313,14 @@ export class SyncCouchdbService {
       return new Promise( (resolve, reject) => {
         let status = {}
         const direction = 'pull'
+        const progress = {
+          'direction': 'pull',
+          'remaining': syncOptions.remaining
+        }
+        this.syncMessage$.next(progress)
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
           chunkCompleteStatus = true
-          // await this.variableService.set('sync-pull-last_seq', info.last_seq)
           const conflictsQuery = await userDb.query('sync-conflicts')
           status = <ReplicationStatus>{
             pulled: info.docs_written,
@@ -393,7 +396,7 @@ export class SyncCouchdbService {
     let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
     const totalDocIds = docIds.length
     while (docIds.length) {
-      const remaining = Math.round(docIds.length/totalDocIds * 100)
+      let remaining = Math.round(docIds.length/totalDocIds * 100)
       console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
       let chunkDocIds = docIds.splice(0, this.chunkSize);
       let syncOptions = {
@@ -403,7 +406,11 @@ export class SyncCouchdbService {
         "doc_ids": chunkDocIds,
         "remaining": remaining
       }
-  
+      if (docIds.length === 0) {
+        remaining = 0
+        syncOptions.remaining = 0
+      }
+      
       syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
       
       try {
