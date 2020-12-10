@@ -303,7 +303,7 @@ def main_job():
     global case_event_df_update
 
     #login
-    client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True)
+    client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
     session = client.session()
     tangerline_database = client[dbName]
     print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
@@ -449,7 +449,8 @@ interval = config['TANGERINE']['run_interval']
 print('Database URL:' +dbURL +' Database Name: ' + dbName + ' Username is: ' +dbUserName )
 
 #login
-client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True)
+client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
+
 session = client.session()
 tangerline_database = client[dbName]
 # print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
