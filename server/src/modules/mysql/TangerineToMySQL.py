@@ -305,7 +305,7 @@ def main_job():
     #login
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
     session = client.session()
-    tangerline_database = client[dbName]
+    tangerline_database = client.create_database(dbName)
     print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
 
 
@@ -452,7 +452,7 @@ print('Database URL:' +dbURL +' Database Name: ' + dbName + ' Username is: ' +db
 client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
 
 session = client.session()
-tangerline_database = client[dbName]
+tangerline_database = client.create_database(dbName)
 # print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
 
 
