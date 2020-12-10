@@ -218,7 +218,7 @@ export class SyncCouchdbService {
     let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
     const totalDocIds = docIds.length
     while (docIds.length) {
-      const remaining = docIds.length/totalDocIds * 100
+      const remaining = Math.round(docIds.length/totalDocIds * 100)
       console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
       let chunkDocIds = docIds.splice(0, this.chunkSize);
       let syncOptions = {
@@ -313,6 +313,7 @@ export class SyncCouchdbService {
     const pullSyncBatch = (syncOptions) => {
       return new Promise( (resolve, reject) => {
         let status = {}
+        const direction = 'pull'
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
           chunkCompleteStatus = true
@@ -348,21 +349,33 @@ export class SyncCouchdbService {
             // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
             let progress;
             if (info.checkpoint) {
+              checkpointProgress = checkpointProgress + 1
               progress = {
-                'type': 'checkpoint'
-              }
+                'message': checkpointProgress,
+                'type': 'checkpoint',
+                'direction': direction
+              };
             } else if (info.diffing) {
+              diffingProgress = diffingProgress + 1
               progress = {
-                'type': 'diffing'
-              }
+                'message': diffingProgress,
+                'type': 'diffing',
+                'direction': direction
+              };
             } else if (info.startNextBatch) {
+              startBatchProgress = startBatchProgress + 1
               progress = {
+                'message': startBatchProgress,
                 'type': 'startNextBatch',
-              }
+                'direction': direction
+              };
             } else if (info.pendingBatch) {
+              pendingBatchProgress = pendingBatchProgress + 1
               progress = {
+                'message': pendingBatchProgress,
                 'type': 'pendingBatch',
-              }
+                'direction': direction
+              };
             }
             this.syncMessage$.next(progress);
           } else {
@@ -376,10 +389,11 @@ export class SyncCouchdbService {
         });
       })
     }
-
+    
+    let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
     const totalDocIds = docIds.length
     while (docIds.length) {
-      const remaining = docIds.length/totalDocIds * 100
+      const remaining = Math.round(docIds.length/totalDocIds * 100)
       console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
       let chunkDocIds = docIds.splice(0, this.chunkSize);
       let syncOptions = {
