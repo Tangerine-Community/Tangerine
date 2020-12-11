@@ -57,22 +57,29 @@ def convert_case(resp_dict):
 
         df = pd.DataFrame([caseData])
         df.rename(columns={'_id': 'CaseID'}, inplace=True)
-        #delete the case if it already exists in table so we can add the new one
-        qry = "SELECT * FROM " + mysqlDatabaseName + ".case where CaseID='" + caseId+"'"
-        cursor.execute(qry)
-        if cursor.rowcount >= 1:
-            print("case already exists")
-            cursor.execute("Delete from " + mysqlDatabaseName + ".case where CaseID='" + caseId+"'")
-            mysql_connection.commit()
-
         try:
+            #delete the case if it already exists in table so we can add the new one
+            qry = "SELECT * FROM " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'"
+            cursor.execute(qry)
+            if cursor.rowcount >= 1:
+                print("case_instances already exists")
+                cursor.execute("Delete from " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'")
+                mysql_connection.commit()
             # this will fail if there is a new column
-            df.to_sql(name='case', con=engine, if_exists='append', index=False)
+            df.to_sql(name='case_instances', con=engine, if_exists='append', index=False)
+            mysql_connection.commit()
         except:
-            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case', engine)
-            df2 = pd.concat([data, df])
-            df2.to_sql(name='case', con=engine, if_exists='replace', index=False)
-
+            try:
+                # @TODO RJ: How far will this scale? This loads the entire table into memory. If this turns out to be a performance problem, can we ADD COLUMN?
+                data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case_instances', engine)
+                df2 = pd.concat([data, df])
+                print(df2)
+                df2.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+            except:
+                # @TODO RJ: How far will this scale? This loads the entire table into memory. If this turns out to be a performance problem, can we ADD COLUMN?
+                df.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
 
         # add_column = DDL('ALTER TABLE USERS ADD COLUMN city VARCHAR(60) AFTER email')
         # engine.execute(add_column)
@@ -118,21 +125,27 @@ def convert_participant(resp_dict):
 
         df = pd.DataFrame([participantData])
 
-        #delete the Participant if it already exists in table so we can add the new one
-        qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
-        cursor.execute(qry)
-        if cursor.rowcount >= 1:
-            print("participant already exists")
-            cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
-            mysql_connection.commit()
-
         try:
+            #delete the Participant if it already exists in table so we can add the new one
+            qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
+            cursor.execute(qry)
+            if cursor.rowcount >= 1:
+                print("participant already exists")
+                cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
+                mysql_connection.commit()
             # this will fail if there is a new column
             df.to_sql(name='participant', con=engine, if_exists='append', index=False)
+            mysql_connection.commit()
         except:
-            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.participant', engine)
-            df2 = pd.concat([data, df])
-            df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
+            try:
+                data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.participant', engine)
+                df2 = pd.concat([data, df])
+                df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+            except:
+                df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+ 
 
 
 #convert a Tangeliner case-event  document to MySQL case-event table
@@ -151,22 +164,27 @@ def convert_case_event(resp_dict):
         df = pd.DataFrame([resp_dict])
         df.rename(columns={'_id': 'CaseEventID', '_rev': 'dbRevision'}, inplace=True)
 
-        #delete the CaseEvent if it already exists in table so we can add the new one
-        qry = "SELECT * FROM " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'"
-        cursor.execute(qry)
-        if cursor.rowcount >= 1:
-            print("CaseEvent already exists")
-            cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'")
-            mysql_connection.commit()
-
         try:
+            #delete the CaseEvent if it already exists in table so we can add the new one
+            qry = "SELECT * FROM " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'"
+            cursor.execute(qry)
+            if cursor.rowcount >= 1:
+                print("CaseEvent already exists")
+                cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'")
+                mysql_connection.commit()
             # this will fail if there is a new column
             df.to_sql(name='caseevent', con=engine, if_exists='append', index=False)
+            mysql_connection.commit()
         except:
-            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.caseevent', engine)
-            df2 = pd.concat([data, df])
-            df2.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
-
+            try:
+                data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.caseevent', engine)
+                df2 = pd.concat([data, df])
+                df2.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+            except:
+                df.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+ 
 #convert a Tangeliner event form document to MySQL event_form table
 def convert_event_form(resp_dict):
     global event_form_df_add
@@ -185,21 +203,26 @@ def convert_event_form(resp_dict):
         df = pd.DataFrame([resp_dict])
         df.rename(columns={'_id': 'EventFormID', '_rev': 'dbRevision'}, inplace=True)
 
-        #delete the EventForm if it already exists in table so we can add the new one
-        qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
-        cursor.execute(qry)
-        if cursor.rowcount >= 1:
-            print("EventForm already exists")
-            cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
-            mysql_connection.commit()
-
         try:
+            #delete the EventForm if it already exists in table so we can add the new one
+            qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
+            cursor.execute(qry)
+            if cursor.rowcount >= 1:
+                print("EventForm already exists")
+                cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
+                mysql_connection.commit()
             # this will fail if there is a new column
             df.to_sql(name='eventform', con=engine, if_exists='append', index=False)
+            mysql_connection.commit()
         except:
-            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
-            df2 = pd.concat([data, df])
-            df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
+            try: 
+                data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
+                df2 = pd.concat([data, df], sort=False)
+                df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+            except:
+                df.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
 
 
 #convert a Tangeliner response document to MySQL response tables
@@ -246,21 +269,28 @@ def convert_response(resp_dict):
         df = pd.DataFrame([response])  # wrapping your dictionary in to list, this works for only 1 record
         df.rename(columns={'_id': 'ID', '_rev': 'dbRevision'}, inplace=True)
 
-        #delete the ID for the given form table if it already exists in table so we can add the new one
-        qry = "SELECT * FROM " + mysqlDatabaseName + "." + formID + " where ID='" + id+"'"
-        cursor.execute(qry)
-        if cursor.rowcount >= 1:
-            print("Response ID already exists")
-            cursor.execute("Delete from " + mysqlDatabaseName + "." + formID+" where ID='" + id+"'")
-            mysql_connection.commit()
-
         try:
+            #delete the ID for the given form table if it already exists in table so we can add the new one
+            qry = "SELECT * FROM " + mysqlDatabaseName + "." + formID + " where ID='" + id+"'"
+            cursor.execute(qry)
+            if cursor.rowcount >= 1:
+                print("Response ID already exists")
+                cursor.execute("Delete from " + mysqlDatabaseName + "." + formID+" where ID='" + id+"'")
+                mysql_connection.commit()
+
             # this will fail if there is a new column
             df.to_sql(name=formID, con=engine, if_exists='append', index=False)
+            mysql_connection.commit()
         except:
-            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.'+formID, engine)
-            df2 = pd.concat([data, df])
-            df2.to_sql(name=formID, con=engine, if_exists='replace', index=False)
+            try: 
+                data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.'+formID, engine)
+                df2 = pd.concat([data, df])
+                df2.to_sql(name=formID, con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+            except:
+                df.to_sql(name=formID, con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
+ 
 
 def delete_record(tangerline_database,id):
     with cloudant.document.Document(tangerline_database, document_id=id) as document:
@@ -466,14 +496,19 @@ mysqlPassword = config['MySQL']['Password']
 print('MySQL Connection String:' +mysqlHostName +'  database: ' + mysqlDatabaseName + " username: " + mysqlUserName)
 print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into MySQL')
 
-mysql_connection = mysql.connector.connect(user=mysqlUserName, password=mysqlPassword,
-                              host=mysqlHostName,
-                              database=mysqlDatabaseName)
+#
+# RJ: Commenting this out because it looks like a redundant connection to the MySQL database.
+#
+#mysql_connection = mysql.connector.connect(user=mysqlUserName, password=mysqlPassword,
+#                              host=mysqlHostName,
+#                              database=mysqlDatabaseName)
 
 #api: https://docs.sqlalchemy.org/en/13/core/engines.html
 #dialect+driver://username:password@host:port/database
 #engine = create_engine('mysql+mysqlconnector://[user]:[pass]@[host]:[port]/[schema]', echo=False)
-engine = create_engine('mysql+pymysql://'+mysqlUserName+':'+mysqlPassword+'@'+mysqlHostName+'/'+mysqlDatabaseName, echo=False)
+#engine = create_engine('mysql+pymysql://'+mysqlUserName+':'+mysqlPassword+'@'+mysqlHostName+'/'+mysqlDatabaseName, echo=False)
+mysql_connection_string = 'mysql+pymysql://'+mysqlUserName+':'+mysqlPassword+'@'+mysqlHostName+':3306/'+mysqlDatabaseName
+engine = create_engine(mysql_connection_string)
 mysql_connection = engine.raw_connection()
 cursor = mysql_connection.cursor()
 
