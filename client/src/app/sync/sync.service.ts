@@ -77,8 +77,9 @@ export class SyncService {
       null,
       isFirstSync
     )
-    console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
+    console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
+    // TODO: can we skip this for sync protocol 2?
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
       serverUrl: appConfig.serverUrl,
@@ -87,7 +88,8 @@ export class SyncService {
       deviceToken: device.token,
       formInfos
     })
-    
+    console.log('Finished syncCustomService sync.')
+
     // TODO: if this.replicationStatus has an error, can we do a put instead to didSync?
     if (this.replicationStatus.error) {
       await this.deviceService.didSync()
