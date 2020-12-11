@@ -133,6 +133,11 @@ export class SyncCouchdbService {
       return new Promise( (resolve, reject) => {
         let status = {}
         const direction = 'push'
+        const progress = {
+          'direction': direction,
+          'remaining': syncOptions.remaining
+        }
+        this.syncMessage$.next(progress)
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
           chunkCompleteStatus = true
@@ -143,7 +148,7 @@ export class SyncCouchdbService {
           status = <ReplicationStatus>{
             pushed: info.docs_written,
             info: info,
-            remaining: syncOptions.remaining
+            remaining: syncOptions.remaining,
             //pushConflicts: conflictsQuery.rows.map(row => row.id)
           }
           resolve(status)
@@ -247,13 +252,10 @@ export class SyncCouchdbService {
 
       try {
         status = await pushSyncBatch(syncOptions);
-        console.log("status: " + JSON.stringify(status))
-        this.syncMessage$.next(status)
       } catch (e) {
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         chunkCompleteStatus = false
       }
-      
     }
 
     if (!chunkCompleteStatus) {
@@ -343,7 +345,7 @@ export class SyncCouchdbService {
         let status = {}
         const direction = 'pull'
         const progress = {
-          'direction': 'pull',
+          'direction': direction,
           'remaining': syncOptions.remaining
         }
         this.syncMessage$.next(progress)
