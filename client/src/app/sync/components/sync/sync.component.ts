@@ -61,8 +61,10 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.startNextBatchMessage = progress.message
           } else if (progress.type == 'pendingBatch') {
             this.pendingBatchMessage = progress.message
+          } else if (progress.type == 'indexing') {
+            this.pendingBatchMessage = progress.message
           } else {
-            this.otherMessage = progress.message
+            this.syncMessage = progress.message
           }
 
           if (progress.direction !== '') {

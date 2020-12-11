@@ -29,5 +29,7 @@ export class AppConfig {
   couchdbPullUsingDocIds:boolean
   couchdbPushUsingDocIds:boolean
   autoMergeConflicts:boolean
+  attachHistoryToDocs:boolean = false
+  indexViewsOnlyOnFirstSync:boolean = false
 }
 

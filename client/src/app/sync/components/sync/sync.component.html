@@ -17,7 +17,7 @@
           <mat-progress-bar mode="buffer"></mat-progress-bar>
           <div class="status">{{'Status'|translate}}: {{'In progress'|translate}}</div>
           <div class="status">{{syncMessage}}</div>
-          <div class="status">{{direction}}</div>
+          <div class="status" *ngIf="direction === 'pull' || direction === 'pull'">{{direction}}</div>
           <div class="debugging">
             <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
           </div>
