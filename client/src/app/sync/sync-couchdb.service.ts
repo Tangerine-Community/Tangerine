@@ -37,7 +37,8 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 50
-  chunkSize = 200
+  pushChunkSize = 200
+  pullChunkSize = 200
   pullSyncOptions;
   pushSyncOptions;
   
@@ -83,6 +84,7 @@ export class SyncCouchdbService {
     if (isFirstSync) {
       const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
       await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+      console.log("Setting sync-push-last_seq to " + lastLocalSequence)
       return pullReplicationStatus
     }
     
@@ -118,11 +120,11 @@ export class SyncCouchdbService {
       ]
     }
 
-    let docIds = (await userDb.db.find({
-      "limit": 987654321,
-      "fields": ["_id"],
-      "selector": pushSelector
-    })).docs.map(doc => doc._id)
+    
+
+
+
+    
 
     let status;
     let chunkCompleteStatus = false
@@ -215,16 +217,28 @@ export class SyncCouchdbService {
     }
     
     let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
-    const totalDocIds = docIds.length
-    while (docIds.length) {
-      const remaining = Math.round(docIds.length/totalDocIds * 100)
-      console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
-      let chunkDocIds = docIds.splice(0, this.chunkSize);
+
+    const dbInfo = await userDb.db.info()
+    const docCount = dbInfo.doc_count
+    // number of times that number is divisible by this.pushChunkSize, and then concat the remainder. 
+    let chunks = new Array(Math.floor(docCount / this.pushChunkSize)).fill(this.pushChunkSize).concat(docCount % this.pushChunkSize)
+    let skip = 0;
+    let i=0
+    const totalChunks = chunks.length
+    while (chunks.length > 0) {
+      i++
+      let currentLimit = chunks.shift();
+      const remaining = Math.round(chunks.length/totalChunks * 100)
+      let docIds = (await userDb.db.allDocs({
+        "limit": currentLimit,
+        "fields": ["_id"],
+        "skip": skip
+      })).rows.map(doc => doc._id)
+      skip = currentLimit
+      console.log("i: " + i + " remaining: " + remaining + " docIds len: " + docIds.length + " skip: " + skip)
       let syncOptions = {
         "since": push_last_seq,
-        "batch_size": this.batchSize,
-        "batches_limit": 1,
-        "doc_ids": chunkDocIds,
+        "doc_ids": docIds,
         "remaining": remaining
       }
 
@@ -236,7 +250,9 @@ export class SyncCouchdbService {
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         chunkCompleteStatus = false
       }
+      
     }
+
     if (!chunkCompleteStatus) {
       // don't se last_seq and prompt to re-run
       const errorMessage = "incomplete-sync"
@@ -398,7 +414,7 @@ export class SyncCouchdbService {
     while (docIds.length) {
       let remaining = Math.round(docIds.length/totalDocIds * 100)
       console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
-      let chunkDocIds = docIds.splice(0, this.chunkSize);
+      let chunkDocIds = docIds.splice(0, this.pullChunkSize);
       let syncOptions = {
         "since": pull_last_seq,
         "batch_size": this.batchSize,
