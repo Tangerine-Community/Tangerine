@@ -140,12 +140,13 @@ export class SyncCouchdbService {
           // don't want to act on docs we are not concerned w/
           // act upon only docs in our region...
           //const conflictsQuery = await userDb.query('sync-conflicts');
-          resolve(<ReplicationStatus>{
+          status = <ReplicationStatus>{
             pushed: info.docs_written,
             info: info,
             remaining: syncOptions.remaining
             //pushConflicts: conflictsQuery.rows.map(row => row.id)
-          });
+          }
+          resolve(status)
         }).on('change', async (info) => {
           await this.variableService.set('sync-push-last_seq', info.last_seq);
           const progress = {
@@ -246,6 +247,8 @@ export class SyncCouchdbService {
 
       try {
         status = await pushSyncBatch(syncOptions);
+        console.log("status: " + JSON.stringify(status))
+        this.syncMessage$.next(status)
       } catch (e) {
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         chunkCompleteStatus = false
@@ -315,13 +318,23 @@ export class SyncCouchdbService {
           ]
       ]
     }
-
+    let progress = {
+      'direction': 'pull',
+      'message': 'Querying the remote server.'
+    }
+    this.syncMessage$.next(progress)
     let docIds = (await remoteDb.find({
       "limit": 987654321,
       "fields": ["_id"],
       "selector": pullSelector
     })).docs.map(doc => doc._id)
-
+    
+    progress = {
+      'direction': 'pull',
+      'message': 'Received data from remote server.'
+    }
+    this.syncMessage$.next(progress)
+    
     let status;
     let chunkCompleteStatus = false
 
@@ -431,6 +444,8 @@ export class SyncCouchdbService {
       
       try {
         status = await pullSyncBatch(syncOptions);
+        console.log("status: " + JSON.stringify(status))
+        this.syncMessage$.next(status)
       } catch (e) {
       // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         chunkCompleteStatus = false
