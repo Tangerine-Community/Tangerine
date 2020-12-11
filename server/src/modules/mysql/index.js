@@ -2,7 +2,7 @@ const DB = require('../../db.js')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const fs = require('fs-extra');
-const groups = await groupsList()
+const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 
