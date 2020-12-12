@@ -149,6 +149,7 @@ export class SyncCouchdbService {
             pushed: info.docs_written,
             info: info,
             remaining: syncOptions.remaining,
+            direction: direction
             //pushConflicts: conflictsQuery.rows.map(row => row.id)
           }
           resolve(status)
@@ -357,7 +358,8 @@ export class SyncCouchdbService {
             pulled: info.docs_written,
             pullConflicts: conflictsQuery.rows.map(row => row.id),
             info: info,
-            remaining: syncOptions.remaining
+            remaining: syncOptions.remaining,
+            direction: direction
           }
           resolve(status)
         }).on('change', async (info) => {
