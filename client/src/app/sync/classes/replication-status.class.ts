@@ -7,4 +7,5 @@ export class ReplicationStatus {
   info: any
   error:any
   remaining:any
+  direction:any
 }
