@@ -28,7 +28,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.direction = ''
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
-        let pendingMessage = '', docsWritten = '', direction = ''
+        let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
 
         if (typeof progress.direction !== 'undefined') {
           direction = 'Direction: ' + progress.direction + '; '
@@ -39,10 +39,12 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
         if (typeof progress.pending !== 'undefined') {
           pendingMessage = progress.pending + ' pending; '
         }
+        if (typeof progress.pulled !== 'undefined') {
+          docPulled = progress.pulled + ' docs saved; '
+        }
         if (typeof progress.remaining !== 'undefined') {
-          docsWritten = progress.docs_written + ' docs saved; '
           // this.syncMessage =  direction + docsWritten + pendingMessage
-          this.syncMessage = progress.remaining + ' % remaining to sync; '
+          this.syncMessage = progress.remaining + ' % remaining to sync; ' + docPulled
         }
         if (progress.direction !== '') {
           this.direction = 'Direction: ' + progress.direction

@@ -134,16 +134,11 @@ export class SyncCouchdbService {
         this.syncMessage$.next(progress)
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
-          // TODO: change to remoteDB and check if it is one of the id's we are concerned about
-          // don't want to act on docs we are not concerned w/
-          // act upon only docs in our region...
-          //const conflictsQuery = await userDb.query('sync-conflicts');
           status = <ReplicationStatus>{
             pushed: info.docs_written,
             info: info,
             remaining: syncOptions.remaining,
             direction: direction
-            //pushConflicts: conflictsQuery.rows.map(row => row.id)
           }
           resolve(status)
         }).on('change', async (info) => {
@@ -180,6 +175,7 @@ export class SyncCouchdbService {
     let i=0
     const totalChunks = chunks.length
     let docIds = []
+    let pushed = 0
     while (docIds.length > 0 || i === 0 ) {
       let currentLimit = chunks.shift();
       const remaining = Math.round(chunks.length/totalChunks * 100)
@@ -201,6 +197,10 @@ export class SyncCouchdbService {
 
       try {
         status = await pushSyncBatch(syncOptions);
+        if (status.pushed) {
+          pushed = pushed + status.pushed
+          status.pushed = pushed
+        }
       } catch (e) {
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         batchFailureDetected = true
@@ -338,6 +338,7 @@ export class SyncCouchdbService {
     }
     
     const totalDocIds = docIds.length
+    let pulled = 0
     while (docIds.length) {
       let remaining = Math.round(docIds.length/totalDocIds * 100)
       console.log("docIds.length: " + docIds.length + " remaining: " + remaining)
@@ -358,6 +359,10 @@ export class SyncCouchdbService {
       
       try {
         status = await pullSyncBatch(syncOptions);
+        if (status.pulled) {
+          pulled = pulled + status.pulled
+          status.pulled = pulled
+        }
         console.log("status: " + JSON.stringify(status))
         this.syncMessage$.next(status)
       } catch (e) {
