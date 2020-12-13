@@ -37,8 +37,8 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 50
-  pushChunkSize = 200
-  pullChunkSize = 200
+  pushChunkSize = 400
+  pullChunkSize = 400
   pullSyncOptions;
   pushSyncOptions;
   
@@ -120,12 +120,6 @@ export class SyncCouchdbService {
       ]
     }
 
-    
-
-
-
-    
-
     let status;
     let batchFailureDetected = false
 
@@ -170,49 +164,6 @@ export class SyncCouchdbService {
           } else {
             console.log('Push replication is active.');
           }
-        }).on('checkpoint', (info) => {
-          if (info) {
-            // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
-            let progress;
-            if (info.checkpoint) {
-              checkpointProgress = checkpointProgress + 1
-              progress = {
-                'message': checkpointProgress,
-                'type': 'checkpoint',
-                'direction': direction
-              };
-            } else if (info.diffing) {
-              diffingProgress = diffingProgress + 1
-              progress = {
-                'message': diffingProgress,
-                'type': 'diffing',
-                'direction': direction
-              };
-            } else if (info.startNextBatch) {
-              startBatchProgress = startBatchProgress + 1
-              progress = {
-                'message': startBatchProgress,
-                'type': 'startNextBatch',
-                'direction': direction
-              };
-            } else if (info.pendingBatch) {
-              pendingBatchProgress = pendingBatchProgress + 1
-              progress = {
-                'message': pendingBatchProgress,
-                'type': 'pendingBatch',
-                'direction': direction
-              };
-            } else {
-              progress = {
-                'message': JSON.stringify(info),
-                'type': 'other',
-                'direction': direction
-              };
-            }
-            this.syncMessage$.next(progress);
-          } else {
-            console.log(direction + ': Calculating Checkpoints.');
-          }
         }).on('error', function (error) {
           let errorMessage = "pullSyncBatch failed. error: " + error
           console.log(errorMessage)
@@ -222,8 +173,6 @@ export class SyncCouchdbService {
       })
     }
     
-    let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
-
     const dbInfo = await userDb.db.info()
     const docCount = dbInfo.doc_count
     // number of times that number is divisible by this.pushChunkSize, and then concat the remainder. 
@@ -379,43 +328,6 @@ export class SyncCouchdbService {
           } else {
             console.log('Pull replication is active.')
           }
-        }).on('checkpoint', (info) => {
-          if (info) {
-            // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
-            let progress;
-            if (info.checkpoint) {
-              checkpointProgress = checkpointProgress + 1
-              progress = {
-                'message': checkpointProgress,
-                'type': 'checkpoint',
-                'direction': direction
-              };
-            } else if (info.diffing) {
-              diffingProgress = diffingProgress + 1
-              progress = {
-                'message': diffingProgress,
-                'type': 'diffing',
-                'direction': direction
-              };
-            } else if (info.startNextBatch) {
-              startBatchProgress = startBatchProgress + 1
-              progress = {
-                'message': startBatchProgress,
-                'type': 'startNextBatch',
-                'direction': direction
-              };
-            } else if (info.pendingBatch) {
-              pendingBatchProgress = pendingBatchProgress + 1
-              progress = {
-                'message': pendingBatchProgress,
-                'type': 'pendingBatch',
-                'direction': direction
-              };
-            }
-            this.syncMessage$.next(progress);
-          } else {
-            console.log('Pull: Calculating Checkpoints.');
-          }  
         }).on('error', function (error) {
           let errorMessage = "pullSyncBatch failed. error: " + error
           console.log(errorMessage)
@@ -425,7 +337,6 @@ export class SyncCouchdbService {
       })
     }
     
-    let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
     const totalDocIds = docIds.length
     while (docIds.length) {
       let remaining = Math.round(docIds.length/totalDocIds * 100)
