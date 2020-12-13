@@ -37,8 +37,8 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 50
-  pushChunkSize = 300
-  pullChunkSize = 300
+  pushChunkSize = 200
+  pullChunkSize = 200
   pullSyncOptions;
   pushSyncOptions;
   
@@ -307,7 +307,7 @@ export class SyncCouchdbService {
         }
         this.syncMessage$.next(progress)
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
-          console.log("info.last_seq: " + info.last_seq)
+          // console.log("info.last_seq: " + info.last_seq)
           const conflictsQuery = await userDb.query('sync-conflicts')
           status = <ReplicationStatus>{
             pulled: info.docs_written,
