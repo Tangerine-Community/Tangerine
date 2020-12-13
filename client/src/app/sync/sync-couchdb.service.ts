@@ -200,10 +200,13 @@ export class SyncCouchdbService {
 
       try {
         status = await pushSyncBatch(syncOptions);
-        if (status.pushed) {
+        if (typeof status.pushed !== 'undefined') {
           pushed = pushed + status.pushed
           status.pushed = pushed
+        } else {
+          status.pushed = pushed
         }
+        this.syncMessage$.next(status)
       } catch (e) {
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         batchFailureDetected = true
@@ -365,11 +368,12 @@ export class SyncCouchdbService {
       
       try {
         status = await pullSyncBatch(syncOptions);
-        if (status.pulled) {
+        if (typeof status.pulled !== 'undefined') {
           pulled = pulled + status.pulled
           status.pulled = pulled
+        } else {
+          status.pulled = pulled
         }
-        console.log("status: " + JSON.stringify(status))
         this.syncMessage$.next(status)
       } catch (e) {
       // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
