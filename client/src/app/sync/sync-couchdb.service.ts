@@ -143,6 +143,7 @@ export class SyncCouchdbService {
           resolve(status)
         }).on('change', async (info) => {
           await this.variableService.set('sync-push-last_seq', info.last_seq);
+          const pushed = syncOptions.pushed + info.docs_written
           const progress = {
             'docs_read': info.docs_read,
             'docs_written': info.docs_written,
@@ -150,7 +151,8 @@ export class SyncCouchdbService {
             'pending': info.pending,
             'direction': direction,
             'last_seq': info.last_seq,
-            'remaining': syncOptions.remaining
+            'remaining': syncOptions.remaining,
+            'pushed': pushed
           };
           this.syncMessage$.next(progress);
         }).on('active', function (info) {
@@ -190,7 +192,8 @@ export class SyncCouchdbService {
       let syncOptions = {
         "since": push_last_seq,
         "doc_ids": docIds,
-        "remaining": remaining
+        "remaining": remaining,
+        "pushed": pushed
       }
 
       syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
@@ -312,6 +315,7 @@ export class SyncCouchdbService {
           }
           resolve(status)
         }).on('change', async (info) => {
+          const pulled = syncOptions.pulled + info.docs_written
           const progress = {
             'docs_read': info.docs_read,
             'docs_written': info.docs_written,
@@ -319,7 +323,8 @@ export class SyncCouchdbService {
             'pending': info.pending,
             'direction': 'pull',
             'last_seq': info.last_seq,
-            'remaining': syncOptions.remaining
+            'remaining': syncOptions.remaining,
+            'pulled': pulled
           }
           this.syncMessage$.next(progress)
         }).on('active', function (info) {
@@ -348,7 +353,8 @@ export class SyncCouchdbService {
         "batch_size": this.batchSize,
         "batches_limit": 1,
         "doc_ids": chunkDocIds,
-        "remaining": remaining
+        "remaining": remaining,
+        "pulled": pulled
       }
       if (docIds.length === 0) {
         remaining = 0
