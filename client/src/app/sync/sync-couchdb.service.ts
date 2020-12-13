@@ -239,7 +239,7 @@ export class SyncCouchdbService {
         "limit": this.pushChunkSize,
         "fields": ["_id"],
         "skip": skip
-      })).rows.map(doc => doc._id)
+      })).rows.map(doc => doc.id)
       // skip = currentLimit
       console.log("i: " + i + " remaining: " + remaining + " docIds len: " + docIds.length + " skip: " + skip)
       let syncOptions = {

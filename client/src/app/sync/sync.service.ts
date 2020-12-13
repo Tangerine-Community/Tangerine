@@ -79,7 +79,6 @@ export class SyncService {
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
-    // TODO: can we skip this for sync protocol 2?
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
       serverUrl: appConfig.serverUrl,
