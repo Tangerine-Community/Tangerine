@@ -68,7 +68,7 @@ export class SyncComponent implements OnInit, OnDestroy {
           this.direction = 'Direction: ' + progress.direction
         }
 
-        console.log('Sync Progress: ' + JSON.stringify(progress))
+        // console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
     try {
