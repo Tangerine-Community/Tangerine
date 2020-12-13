@@ -127,7 +127,7 @@ export class SyncCouchdbService {
     
 
     let status;
-    let chunkCompleteStatus = false
+    let batchFailureDetected = false
 
     const pushSyncBatch = (syncOptions) => {
       return new Promise( (resolve, reject) => {
@@ -140,7 +140,6 @@ export class SyncCouchdbService {
         this.syncMessage$.next(progress)
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
-          chunkCompleteStatus = true
           // TODO: change to remoteDB and check if it is one of the id's we are concerned about
           // don't want to act on docs we are not concerned w/
           // act upon only docs in our region...
@@ -217,7 +216,7 @@ export class SyncCouchdbService {
         }).on('error', function (error) {
           let errorMessage = "pullSyncBatch failed. error: " + error
           console.log(errorMessage)
-          chunkCompleteStatus = false
+          batchFailureDetected = true
           reject(errorMessage);
         });
       })
@@ -229,19 +228,19 @@ export class SyncCouchdbService {
     const docCount = dbInfo.doc_count
     // number of times that number is divisible by this.pushChunkSize, and then concat the remainder. 
     let chunks = new Array(Math.floor(docCount / this.pushChunkSize)).fill(this.pushChunkSize).concat(docCount % this.pushChunkSize)
-    let skip = 0;
     let i=0
     const totalChunks = chunks.length
-    while (chunks.length > 0) {
-      i++
+    let docIds = []
+    while (docIds.length > 0 || i === 0 ) {
       let currentLimit = chunks.shift();
       const remaining = Math.round(chunks.length/totalChunks * 100)
-      let docIds = (await userDb.db.allDocs({
-        "limit": currentLimit,
+      const skip = this.pushChunkSize * i
+      docIds = (await userDb.db.allDocs({
+        "limit": this.pushChunkSize,
         "fields": ["_id"],
         "skip": skip
       })).rows.map(doc => doc._id)
-      skip = currentLimit
+      // skip = currentLimit
       console.log("i: " + i + " remaining: " + remaining + " docIds len: " + docIds.length + " skip: " + skip)
       let syncOptions = {
         "since": push_last_seq,
@@ -255,12 +254,14 @@ export class SyncCouchdbService {
         status = await pushSyncBatch(syncOptions);
       } catch (e) {
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
-        chunkCompleteStatus = false
+        batchFailureDetected = true
       }
+      i++
     }
 
-    if (!chunkCompleteStatus) {
-      // don't se last_seq and prompt to re-run
+    if (batchFailureDetected) {
+      // don't set last_seq
+      // TODO: prompt to re-run and create an issue
       const errorMessage = "incomplete-sync"
       console.log(errorMessage)
       if (status) {
@@ -339,7 +340,7 @@ export class SyncCouchdbService {
     this.syncMessage$.next(progress)
     
     let status;
-    let chunkCompleteStatus = false
+    let batchFailureDetected = false
 
     const pullSyncBatch = (syncOptions) => {
       return new Promise( (resolve, reject) => {
@@ -352,7 +353,6 @@ export class SyncCouchdbService {
         this.syncMessage$.next(progress)
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           console.log("info.last_seq: " + info.last_seq)
-          chunkCompleteStatus = true
           const conflictsQuery = await userDb.query('sync-conflicts')
           status = <ReplicationStatus>{
             pulled: info.docs_written,
@@ -363,7 +363,6 @@ export class SyncCouchdbService {
           }
           resolve(status)
         }).on('change', async (info) => {
-          await this.variableService.set('sync-pull-last_seq', info.last_seq)
           const progress = {
             'docs_read': info.docs_read,
             'docs_written': info.docs_written,
@@ -420,7 +419,7 @@ export class SyncCouchdbService {
         }).on('error', function (error) {
           let errorMessage = "pullSyncBatch failed. error: " + error
           console.log(errorMessage)
-          chunkCompleteStatus = false
+          batchFailureDetected = true
           reject(errorMessage)
         });
       })
@@ -452,10 +451,10 @@ export class SyncCouchdbService {
         this.syncMessage$.next(status)
       } catch (e) {
       // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
-        chunkCompleteStatus = false
+        batchFailureDetected = true
       }
     }
-    if (!chunkCompleteStatus) {
+    if (batchFailureDetected) {
       // don't se last_seq and prompt to re-run
       const errorMessage = "incomplete-sync"
       console.log(errorMessage)
