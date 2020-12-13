@@ -54,6 +54,8 @@ export class SyncComponent implements OnInit, OnDestroy {
         let pendingMessage = ''
         if (typeof progress.message !== 'undefined') {
           this.otherMessage = progress.message
+        } else {
+          this.otherMessage = ''
         }
         if (typeof progress.pending !== 'undefined') {
           pendingMessage = progress.pending + ' pending;'
