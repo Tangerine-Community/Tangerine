@@ -37,8 +37,8 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 50
-  pushChunkSize = 400
-  pullChunkSize = 400
+  pushChunkSize = 300
+  pullChunkSize = 300
   pullSyncOptions;
   pushSyncOptions;
   
