@@ -77,7 +77,7 @@ export class SyncService {
       null,
       isFirstSync
     )
-    console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
+    console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
@@ -91,14 +91,21 @@ export class SyncService {
     this.syncMessage$.next({ 
       message: window['t']('Sync is complete, contacting server. Please wait...'),
     })
-    await this.deviceService.didSync()
+     // TODO: if this.replicationStatus has an error, can we do a put instead to didSync?
+    if (this.replicationStatus.error) {
+      await this.deviceService.didSync()
+    } else {
+      await this.deviceService.didSyncError(this.replicationStatus.error)
+    }
+    
     if (
       isFirstSync ||
       (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
     ) {
       this.syncMessage$.next({ message: window['t']('Optimizing data. This may take several minutes. Please wait...') })
       await this.indexViews()
-    } 
+    }
+    return this.replicationStatus
   }
 
   // Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
@@ -128,6 +135,8 @@ export class SyncService {
       this.syncMessage$.next({ message: `${window['t']('Optimizing data. Please wait...')} ${Math.round((i/result.rows.length)*100)}%` })
       i++
     }
+   
+
   }
 
 

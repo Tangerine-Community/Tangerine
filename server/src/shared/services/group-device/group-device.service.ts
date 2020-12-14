@@ -90,14 +90,33 @@ export class GroupDeviceService {
     }
   }
 
-  async didSync(groupId:string, deviceId:string) {
+  async didSync(groupId:string, deviceId:string, version:string) {
     try {
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(deviceId)
       await groupDevicesDb.put({
         ...originalDevice,
         syncedOn: Date.now(),
+        version,
         _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async didSyncError(groupId:string, deviceId:string, version:string, error:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        syncedOn: Date.now(),
+        version,
+        _rev: originalDevice._rev,
+        error: error
       })
       const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
       return freshDevice
