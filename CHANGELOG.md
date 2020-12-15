@@ -1,9 +1,9 @@
 # Changelog
 
-## v3.15.3
+## v3.15.4
 
 __Fixes__
-
+- Sync: Sites with large datasets were crashing; therefore, we implemented a new sync function that syncs batches of documents to the server. PR: [#2532](https://github.com/Tangerine-Community/Tangerine/pull/2532)
 - After a large sync in sync protocol 2, improve overall app performance by indexing database queries. Because this may cause a long sync for projects not using this, you can set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
 - Add missing `custom-scripts.js` and `custom-styles.css` files to Editor app. We also add `editor` and `client` ID's to the body tag of the two app respectively.
 - Reduce database merge conflicts by preventing form responses from saving after completed. Prior to this version, on two tablets (or on a tablet and the server) if you opened the same form response and opened an item to inspect, it would cause a save on both tablets resulting in an unnesessary merge conflict.
@@ -14,6 +14,17 @@ __Fixes__
 __Important configuration notice__
 - Set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
 
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.4
+# Now you are ready to start the server.
+./start.sh v3.15.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.2
 
 ## v3.15.2
 
