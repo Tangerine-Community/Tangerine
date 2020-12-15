@@ -26,7 +26,7 @@ After code freeze, a release branch is made and it's time to start creating some
 6. `rm -rf tangerine && git clone git@github.com:tangerine-community/tangerine && cd tangerine && ./release-preview-rc.sh <tag name>`.
 
 
-# Release a stable version 
+## Release a stable version 
 
 Once the release candidate (rc) has passed testing, it's time to roll the stable release.
 
