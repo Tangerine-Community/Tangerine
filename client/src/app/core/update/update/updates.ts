@@ -342,5 +342,16 @@ export const updates = [
       await window['T'].search.createIndex()
       await variableService.set('ran-update-v3.15.0', 'true')
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.3')) return
+      console.log('Updating to v3.15.3...')
+      // Build search index.
+      await window['T'].search.createIndex()
+      await userDb.query('search', { limit: 1 })
+      await variableService.set('ran-update-v3.15.3', 'true')
+    }
   }
 ]

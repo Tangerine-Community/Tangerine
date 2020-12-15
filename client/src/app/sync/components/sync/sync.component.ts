@@ -53,33 +53,22 @@ export class SyncComponent implements OnInit, OnDestroy {
       next: (progress) => {
         let pendingMessage = ''
         if (typeof progress.message !== 'undefined') {
-          if (progress.type == 'checkpoint') {
-            this.checkpointMessage = progress.message
-          } else if (progress.type == 'diffing') {
-            this.diffMessage = progress.message
-          } else if (progress.type == 'startNextBatch') {
-            this.startNextBatchMessage = progress.message
-          } else if (progress.type == 'pendingBatch') {
-            this.pendingBatchMessage = progress.message
-          } else {
-            this.otherMessage = progress.message
-          }
-
-          if (progress.direction !== '') {
-            this.direction = 'Direction: ' + progress.direction
-          }
-
+          this.otherMessage = progress.message
         } else {
-          if (typeof progress.pending !== 'undefined') {
-            pendingMessage = progress.pending + ' pending;'
-          }
-          this.syncMessage = progress.docs_written + ' docs synced; ' + pendingMessage
-          if (progress.direction !== '') {
-            this.direction = 'Direction: ' + progress.direction
-          }
+          this.otherMessage = ''
+        }
+        if (typeof progress.pending !== 'undefined') {
+          pendingMessage = progress.pending + ' pending;'
+        }
+        if (typeof progress.remaining !== 'undefined') {
+          this.syncMessage = progress.remaining + ' % remaining to sync; ' + pendingMessage
         }
 
-        console.log('Sync Progress: ' + JSON.stringify(progress))
+        if (progress.direction !== '') {
+          this.direction = 'Direction: ' + progress.direction
+        }
+
+        // console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
     try {
