@@ -16,6 +16,7 @@ Prereleases are useful for testing some recently merged code into the next branc
 
 After code freeze, a release branch is made and it's time to start creating some releases for QA. These are technically still "prereleases", just a slightly different intent in that we hope they are stable.
 
+0. Merge master into the release branch in case there have been any other releases that have added code to master.
 0. Complete an entry in `CHANGELOG.md` for the release.
 0. Go to the New Release Page on github (https://github.com/Tangerine-Community/Tangerine/releases/new). 
 1. Set "Target" to the release branch branch.
