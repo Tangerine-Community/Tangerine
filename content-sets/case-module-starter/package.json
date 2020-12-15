@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "install-server": "npm install --no-optional --unsafe-perm",
+    "start-windows": "cd client & npx tangerine-preview | npx webpack ./index.js --no-optimization-minimize -d source-map -w --output-filename custom-scripts.js -o ./",
     "start": "cd client; trap 'kill %1' SIGINT; ../node_modules/.bin/tangerine-preview & ../node_modules/.bin/webpack ./index.js --no-optimization-minimize -d source-map -w --output-filename custom-scripts.js -o ./",
     "build": "./node_modules/.bin/webpack ./client/index.js --no-optimization-minimize -d source-map --output-filename custom-scripts.js -o ./client/",
     "test": "echo \"Error: no test specified\" && exit 1",
