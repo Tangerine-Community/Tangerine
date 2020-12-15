@@ -142,7 +142,6 @@ export class SyncCouchdbService {
           }
           resolve(status)
         }).on('change', async (info) => {
-          await this.variableService.set('sync-push-last_seq', info.last_seq);
           const pushed = syncOptions.pushed + info.docs_written
           const progress = {
             'docs_read': info.docs_read,
