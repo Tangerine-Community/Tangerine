@@ -10,7 +10,7 @@ if (process.argv[2] === '--help') {
 
 const fs = require('fs-extra')
 const PouchDB = require('pouchdb')
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid')
 const random_name = require('node-random-name');
 const numberOfCases = parseInt(process.argv[2])
 const groupId = process.argv[3];
