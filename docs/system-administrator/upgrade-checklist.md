@@ -23,6 +23,8 @@
 * [ ] Release updated APKs and PWAs on the test channel.
 * [ ] Upgrade test tablet and test functionality.
 * [ ] Release updated APKs and PWAs on the live channel.
+* [ ] Note the Build ID of the APK or PWA on the live channel, then in the content repository tag a release with a corresponding Build ID in git. If using Github, use the Releases feature and note the version of Tangerine upgraded to along with any other notes.
+* [ ] Terminate the QA server.
 
 
 
