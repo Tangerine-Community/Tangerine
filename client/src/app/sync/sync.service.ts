@@ -87,16 +87,56 @@ export class SyncService {
       deviceToken: device.token,
       formInfos
     })
-    console.log('Finished syncCustomService sync.')
 
-    // TODO: if this.replicationStatus has an error, can we do a put instead to didSync?
+    this.syncMessage$.next({ 
+      message: window['t']('Sync is complete, contacting server. Please wait...'),
+    })
+     // TODO: if this.replicationStatus has an error, can we do a put instead to didSync?
     if (this.replicationStatus.error) {
       await this.deviceService.didSync()
     } else {
       await this.deviceService.didSyncError(this.replicationStatus.error)
     }
     
+    if (
+      isFirstSync ||
+      (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
+    ) {
+      this.syncMessage$.next({ message: window['t']('Optimizing data. This may take several minutes. Please wait...') })
+      await this.indexViews()
+    }
     return this.replicationStatus
+  }
+
+  // Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
+  async indexViews() {
+    const exclude = [
+      'tangy-form/responsesLockedAndNotUploaded',
+      'tangy-form/responsesUnLockedAndNotUploaded',
+      'tangy-form/responsesLockedAndUploaded',
+      'tangy-form/responsesUnLockedAndUploaded',
+      'tangy-form/responseByUploadDatetime',
+      'responsesUnLockedAndNotUploaded'
+    ]
+    const db = await this.userService.getUserDatabase()
+    const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
+    console.log(`Indexing ${result.rows.length} views.`)
+    let i = 0
+    for (let row of result.rows) {
+      if (row.doc.views) {
+        for (let viewId in row.doc.views) {
+          const viewPath = `${row.doc._id.replace('_design/', '')}/${viewId}`
+          if (!exclude.includes(viewPath)) {
+            console.log(`Indexing: ${viewPath}`)
+            await db.query(viewPath, { limit: 1 })
+          }
+        }
+      }
+      this.syncMessage$.next({ message: `${window['t']('Optimizing data. Please wait...')} ${Math.round((i/result.rows.length)*100)}%` })
+      i++
+    }
+   
+
   }
 
 

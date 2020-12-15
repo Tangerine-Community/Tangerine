@@ -4,6 +4,7 @@ import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {VariableService} from "../../../shared/_services/variable.service";
+
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
 const USERS_DATABASE_NAME = 'users';
@@ -30,6 +31,7 @@ export class ExportDataComponent implements OnInit {
 
   ngOnInit() {
   }
+  
   async exportAllRecords() {
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
@@ -94,3 +96,6 @@ function downloadData(content, fileName, type) {
   a.download = fileName;
   a.click();
 }
+
+
+
