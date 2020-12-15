@@ -52,17 +52,17 @@ async function batch() {
     try {
       const rows = docs.map(doc => {
         return [ doc._id, ...state.headersKeys.map(header => {
-            if (typeof doc[header]!== 'undefined') {
-              // Check to see if variable comes from a section that was disabled.
-              if (`${doc[header.split('.')[1]]}_disabled` === 'true') {
-                return '999'
-              } else {
-                return doc[header]
-              }
+          // Check to see if variable comes from a section that was disabled.
+          if(typeof header === 'string' && header.split('.').length === 3) {
+            const itemId = header.split('.')[1]
+            if (itemId && doc[`${itemId}_disabled`] === 'true') {
+              return process.env.T_REPORTING_MARK_SKIPPED_WITH
             } else {
-              // @TODO Ok to mark as a code like "UNDEFINED"?
-              return ""
+              return doc[header]
             }
+          } else {
+            return doc[header]
+          }
         })]
       })
       const output = `\n${new CSV(rows).encode()}`
