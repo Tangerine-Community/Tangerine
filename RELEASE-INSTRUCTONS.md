@@ -30,6 +30,7 @@ After code freeze, a release branch is made and it's time to start creating some
 
 Once the release candidate (rc) has passed testing, it's time to roll the stable release.
 
+0. Try to merge master into the release branch. If commits are merged, then there may be released code that is missing from the RC that passed QA. Stop this release and tag a new RC for QA. 
 0. Merge release branch into master
 0. Migrate changes in `CHANGELOG.md` to `./docs/whats-new.md` in `master`.
 0. Merge master into next
