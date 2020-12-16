@@ -6,9 +6,8 @@
   </div>
   <div *ngIf="syncIsComplete === true">
     <h2>{{'Sync has completed'|translate}}.</h2>
-    <paper-progress value="100" min="0" max="100"></paper-progress>
-    <div class="status">{{ syncMessage }}</div>
-    <div class="status">{{direction}}</div>
+    <div>{{'Records in the local database'|translate}}: {{dbDocCount}}</div>
+    <br>
     <paper-button (click)="onContinueClick()">{{'next'|translate}}</paper-button>
   </div>
 </div>

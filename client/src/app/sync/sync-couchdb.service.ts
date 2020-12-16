@@ -229,8 +229,14 @@ export class SyncCouchdbService {
   }
 
   async pull(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
+    let status = <ReplicationStatus>{
+      pulled: 0,
+      pullConflicts: [],
+      info: '',
+      remaining: 0,
+      direction: '' 
+    };
     let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
-
     if (typeof pull_last_seq === 'undefined') {
       pull_last_seq = 0;
     }
@@ -293,12 +299,18 @@ export class SyncCouchdbService {
     }
     this.syncMessage$.next(progress)
     
-    let status;
+
     let batchFailureDetected = false
 
-    const pullSyncBatch = (syncOptions) => {
+    const pullSyncBatch = (syncOptions):Promise<ReplicationStatus> => {
       return new Promise( (resolve, reject) => {
-        let status = {}
+        let status = <ReplicationStatus>{
+          pulled: 0,
+          pullConflicts: [],
+          info: '',
+          remaining: 0,
+          direction: '' 
+        }
         const direction = 'pull'
         const progress = {
           'direction': direction,
@@ -386,9 +398,11 @@ export class SyncCouchdbService {
       if (status) {
         status.error = errorMessage
       }
-    } else {
+    } else if (totalDocIds > 0 ) {
       // set last_seq
       await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
+    } else {
+      // TODO: Do we store the most recent seq id we tried to sync but didn't find any matches?
     }
     return status;
   }
