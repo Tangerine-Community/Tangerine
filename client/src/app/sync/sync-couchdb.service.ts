@@ -375,8 +375,10 @@ export class SyncCouchdbService {
         }
         this.syncMessage$.next(status)
       } catch (e) {
+        console.log("Error: " + e)
       // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         batchFailureDetected = true
+        break
       }
     }
     if (batchFailureDetected) {

@@ -6,6 +6,8 @@
         <h2>{{'Online Sync'|translate}}</h2>
         <p>{{'Press the Start button below to transfer records to the server.'|translate}}</p>
 
+        <div class="errorMessage">{{errorMessage}}</div>
+
         <div class="container" *ngIf="status === 'STATUS_INITIAL'">
           <button mat-raised-button color="primary" (click)="sync()">{{'Start'|translate}}</button>
           <mat-progress-bar value="0"></mat-progress-bar>
