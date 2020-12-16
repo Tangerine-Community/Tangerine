@@ -34,7 +34,9 @@ docker rmi tangerine/tangerine:v3.15.4
 ## v3.15.4
 
 __Fixes__
+
 - Sync: Sites with large datasets were crashing; therefore, we implemented a new sync function that syncs batches of documents to the server. PR: [#2532](https://github.com/Tangerine-Community/Tangerine/pull/2532)
+
 
 ## v3.15.3
 
