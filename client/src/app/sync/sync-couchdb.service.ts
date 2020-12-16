@@ -388,9 +388,11 @@ export class SyncCouchdbService {
       if (status) {
         status.error = errorMessage
       }
-    } else {
+    } else if (totalDocIds > 0 ) {
       // set last_seq
       await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
+    } else {
+      // TODO: Do we store the most recent seq id we tried to sync but didn't find any matches?
     }
     return status;
   }
