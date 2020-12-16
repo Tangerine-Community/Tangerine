@@ -4,7 +4,7 @@ if (process.argv[2] === '--help') {
   console.log('Start by populating a case on your tablet. Then export it in dev tools using the copy(caseService.export()).')
   console.log('Place copied output in a case-export.json file in your group\'s content folder, then run this command.')
   console.log('Usage:')
-  console.log('       generate-cases <numberOfCases> <groupId>')
+  console.log('       generate-cases <numberOfCases> <groupId> <registrationFormName>')
   process.exit()
 }
 
@@ -14,6 +14,11 @@ const { v1: uuidv1 } = require('uuid')
 const random_name = require('node-random-name');
 const numberOfCases = parseInt(process.argv[2])
 const groupId = process.argv[3];
+let registrationFormName = process.argv[4];
+if (!registrationFormName) {
+  registrationFormName =  'registration-role-1'
+  console.log("expecting a registration form called " + registrationFormName + ". If the case uses a different name, append it to this command.")
+}
 
 const db = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}`)
 const groupDevicesDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}-devices`)
@@ -21,8 +26,15 @@ const templateDocfilename = './template--doc.js'
 const templateDoc = require(templateDocfilename).doc
 const userProfileTemplateDoc = require('./template-user-profile-doc.js').doc
 const groupPath = '/tangerine/client/content/groups/' + groupId
-const {customGenerators, customSubstitutions} = require(`${groupPath}/custom-generators.js`)
+try {
+  const {customGenerators, customSubstitutions} = require(`${groupPath}/custom-generators.js`)
 
+} catch(e) {
+  customGenerators = {}
+  customSubstitutions = null
+  console.error(e.message);
+  console.error("custom-generators.js not found. No custom work for you!");
+}
 async function setLocation(groupId) {
   // Get a Device to set the location
   const response  = await groupDevicesDb.allDocs({include_docs:true})
@@ -125,7 +137,7 @@ async function go() {
 
     if (customSubstitutions) {
       const caseDocSubs = customSubstitutions.find(doc => doc.type === 'caseDoc')
-      if (caseDocSubs['substitutions']) {
+      if (caseDocSubs && caseDocSubs['substitutions']) {
         for (const substitution of caseDocSubs['substitutions']) {
           console.log(substitution);
           // TODO: finish this...
@@ -134,9 +146,11 @@ async function go() {
     } else {
       caseDoc.items[0].inputs[0].value = subs.participant_id;
       // caseDoc.items[0].inputs[2].value = enrollment_date;
-      caseDoc.items[0].inputs[4].value = subs.firstname;
-      caseDoc.items[0].inputs[5].value = subs.surname;
-      caseDoc.items[0].inputs[6].value = subs.participant_id;
+      if (caseDoc.items[0].inputs.length > 5) {
+        caseDoc.items[0].inputs[4].value = subs.firstname();
+        caseDoc.items[0].inputs[5].value = subs.surname();
+        caseDoc.items[0].inputs[6].value = subs.participant_id;
+      }
       caseDoc.location = location
     }
 
@@ -204,27 +218,46 @@ async function go() {
       }
     } else {
       // modify the demographics form - s01a-participant-information-f254b9
-      const demoDoc = templateDocs.find(doc => doc.form.id === 'mnh_screening_and_enrollment')
+      const demoDoc = templateDocs.find(doc => doc.form.id === registrationFormName)
       if (typeof demoDoc !== 'undefined') {
-        demoDoc.items[0].inputs[1].value = subs.participant_id;
-        demoDoc.items[0].inputs[3].value = subs.date;
+        demoDoc.items[1].inputs[1].value = subs.participant_id;
+        demoDoc.items[1].inputs[2].value = subs.date;
         // "id": "randomization",
         // demoDoc.items[10].inputs[1].value = barcode_data;
         // demoDoc.items[10].inputs[2].value = subs.participant_id;
         // demoDoc.items[10].inputs[7].value = enrollment_date;
         // "id": "participant_information",
-        demoDoc.items[5].inputs[1].value = subs.firstname;
-        demoDoc.items[5].inputs[2].value = subs.surname;
+        if (demoDoc.items[0]) {
+          console.log("Filling out firstname and surname: " + subs.firstname() + subs.surname())
+          demoDoc.items[0].inputs[0].value = subs.firstname();
+          demoDoc.items[0].inputs[1].value = subs.surname();
+        } else {
+          console.log("Unable to substitute the firstname and surname; they are expected to be ar demoDoc.items[0].inputs[0]")
+        }
+        
       }
     }
 
     // Upload the profiles first
     // now upload the others
-    for (let doc of templateDocs) {
+    for (let index = 0; index < templateDocs.length; index++) {
+      const doc = templateDocs[index]
       try {
         delete doc._rev
-        await db.put(doc)
+        let newDoc = await db.put(doc)
         // console.log("doc id: " + doc._id)
+        // Save the doc multiple times to create additional sequences.
+        const timesToSave = Math.ceil(Math.random() * 10)
+        console.log("Saving " + timesToSave + " times")
+        for (let index = 0; index < timesToSave; index++) {
+          newDoc.changeNumber = index
+          try {
+            let changedDoc = await db.put(doc)
+          } catch (e) {
+            debugger
+          }
+        }
+
       } catch (e) {
         debugger
       }
