@@ -44,7 +44,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
         }
         if (typeof progress.remaining !== 'undefined') {
           // this.syncMessage =  direction + docsWritten + pendingMessage
-          this.syncMessage = progress.remaining + ' % remaining to sync; ' + docPulled
+          this.syncMessage = progress.remaining + '% remaining to sync'
         }
         if (progress.direction !== '') {
           this.direction = 'Direction: ' + progress.direction
