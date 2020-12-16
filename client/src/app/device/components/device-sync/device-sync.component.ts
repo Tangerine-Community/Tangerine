@@ -1,3 +1,4 @@
+import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../../sync/sync.service';
 import { Subject } from 'rxjs';
 import {Component, OnDestroy, OnInit} from '@angular/core';
@@ -15,9 +16,11 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   syncMessage: any
   subscription: any
   direction: any
+  dbDocCount:number
   
   constructor(
-    private syncService:SyncService
+    private syncService:SyncService,
+    private userService: UserService
   ) { }
 
   async ngOnInit() {
@@ -44,7 +47,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
         }
         if (typeof progress.remaining !== 'undefined') {
           // this.syncMessage =  direction + docsWritten + pendingMessage
-          this.syncMessage = progress.remaining + ' % remaining to sync; ' + docPulled
+          this.syncMessage = progress.remaining + '% remaining to sync'
         }
         if (progress.direction !== '') {
           this.direction = 'Direction: ' + progress.direction
@@ -56,6 +59,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     const replicationStatus = await this.syncService.sync(true, true)
     this.subscription.unsubscribe();
     this.syncInProgress = false
+    const userDb = await this.userService.getUserDatabase()
+    this.dbDocCount = (await userDb.db.info()).doc_count
     this.syncIsComplete = true
   }
 
