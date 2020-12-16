@@ -6,7 +6,8 @@
   </div>
   <div *ngIf="syncIsComplete === true">
     <h2>{{'Sync has completed'|translate}}.</h2>
-    <div>{{'Records in the database'|translate}}: {{dbDocCount}}</div>
+    <div>{{'Records in the local database'|translate}}: {{dbDocCount}}</div>
+    <br>
     <paper-button (click)="onContinueClick()">{{'next'|translate}}</paper-button>
   </div>
 </div>
