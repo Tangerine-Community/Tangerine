@@ -25,6 +25,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   subscription: any
   show:boolean=false;
   replicationStatus: ReplicationStatus
+  errorMessage: any
 
   constructor(
     private syncService: SyncService,
@@ -38,6 +39,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.startNextBatchMessage = ''
     this.pendingBatchMessage = ''
     this.otherMessage = ''
+    this.errorMessage = ''
   }
 
   async sync() {
@@ -49,6 +51,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.pendingBatchMessage = ''
     this.otherMessage = ''
     this.status = STATUS_IN_PROGRESS
+    this.errorMessage = ''
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         let pendingMessage = ''
@@ -59,6 +62,9 @@ export class SyncComponent implements OnInit, OnDestroy {
         }
         if (typeof progress.pending !== 'undefined') {
           pendingMessage = progress.pending + ' pending;'
+        }
+        if (typeof progress.error !== 'undefined') {
+          this.errorMessage = progress.error
         }
         if (typeof progress.remaining !== 'undefined') {
           this.syncMessage = progress.remaining + ' % remaining to sync; ' + pendingMessage

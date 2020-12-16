@@ -15,6 +15,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   syncMessage: any
   subscription: any
   direction: any
+  errorMessage: any
   
   constructor(
     private syncService:SyncService
@@ -26,6 +27,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   async sync() {
     this.syncInProgress = true
     this.direction = ''
+    this.errorMessage = ''
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
@@ -41,6 +43,9 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
         }
         if (typeof progress.pulled !== 'undefined') {
           docPulled = progress.pulled + ' docs saved; '
+        }
+        if (typeof progress.error !== 'undefined') {
+          this.errorMessage = progress.error
         }
         if (typeof progress.remaining !== 'undefined') {
           // this.syncMessage =  direction + docsWritten + pendingMessage
