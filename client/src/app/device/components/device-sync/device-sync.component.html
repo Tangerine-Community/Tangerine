@@ -9,6 +9,7 @@
     <paper-progress value="100" min="0" max="100"></paper-progress>
     <div class="status">{{ syncMessage }}</div>
     <div class="status">{{direction}}</div>
+    <div>{{'Records in the database'|translate}}: {{dbDocCount}}</div>
     <paper-button (click)="onContinueClick()">{{'next'|translate}}</paper-button>
   </div>
 </div>
