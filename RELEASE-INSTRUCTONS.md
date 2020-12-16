@@ -37,6 +37,6 @@ Once the release candidate (rc) has passed testing, it's time to roll the stable
 0. Merge master into next
 0. Checkout the release candidate tag and tag that commit with a stable version. ie. `git checkout v3.15.0-rc-21 && git tag v3.15.0 && git push origin v3.15.0`
 0. Cancel the build on Docker Hub then pull the RC image, rename it, and push it. ie. `docker pull tangerine/tangerine:v3.15.0-rc-21 && docker tag tangerine/tangerine:v3.15.0-rc-21 tangerine/tangerine:v3.15.0 && docker push tangerine/tangerine:v3.15.0`
-0. Make release on Github using the same tag pushed up to Github and link to the "What's New" page on docs.tangerinecentral.org.
+0. Make release on Github using the same tag pushed up to Github and link to the ["What's New" page on docs.tangerinecentral.org](https://docs.tangerinecentral.org/whats-new/).
 0. Publish a `tangerine-preview` release with `rm -rf tangerine && git clone git@github.com:tangerine-community/tangerine && cd tangerine && ./release-preview.sh <tag name>`.
 0. Announce on Teams we have a new release.
