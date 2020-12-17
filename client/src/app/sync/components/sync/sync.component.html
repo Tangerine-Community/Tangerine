@@ -34,6 +34,7 @@
             <ul>
               <li>{{'Pulled from the server'|translate}}: {{replicationStatus.pulled}}</li>
               <li>{{'Pushed to the server'|translate}}: {{replicationStatus.pushed}}</li>
+              <li>{{'Records in the database'|translate}}: {{dbDocCount}}</li>
             </ul>
           </div>
         </div>
@@ -44,6 +45,7 @@
           <div class="status">{{'Status'|translate}}: {{'Error'|translate}}</div>
           <div class="status">{{syncMessage}}</div>
           <div class="status">{{direction}}</div>
+          <div>{{'Records in the local database'|translate}}: {{dbDocCount}}</div>
         </div>
 
       </div>
