@@ -1,9 +1,42 @@
 # What's New
 
+## v3.15.5
+
+__Fixes__
+
+- In CSV output, if a section on a form is opened and then the later skipped, inputs on that skipped section will appear in CSV output as skipped. However, if the section is never opened, the inputs would show up in the CSV as blank values. This fix ensures that these remaining inputs are marked as skipped in CSV output.
+- Fix sync from breaking when syncing with a group with no data yet.
+- Improve messaging during sync by removing floating change counts and showing the total number of docs in the database after sync.
+
+__Server upgrade instructions__
+
+Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.5
+# Now you are ready to start the server.
+./start.sh v3.15.5
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.4
+```  
+
 ## v3.15.4
 
 __Fixes__
+
 - Sync: Sites with large datasets were crashing; therefore, we implemented a new sync function that syncs batches of documents to the server. PR: [#2532](https://github.com/Tangerine-Community/Tangerine/pull/2532)
+
 
 ## v3.15.3
 

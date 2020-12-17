@@ -1,3 +1,4 @@
+import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../sync.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
@@ -24,11 +25,13 @@ export class SyncComponent implements OnInit, OnDestroy {
   otherMessage: any
   subscription: any
   show:boolean=false;
+  dbDocCount:number
   replicationStatus: ReplicationStatus
   errorMessage: any
 
   constructor(
     private syncService: SyncService,
+    private userService: UserService
   ) { }
 
   async ngOnInit() {
@@ -67,7 +70,7 @@ export class SyncComponent implements OnInit, OnDestroy {
           this.errorMessage = progress.error
         }
         if (typeof progress.remaining !== 'undefined') {
-          this.syncMessage = progress.remaining + ' % remaining to sync; ' + pendingMessage
+          this.syncMessage = progress.remaining + '% remaining to sync '
         }
 
         if (progress.direction !== '') {
@@ -80,12 +83,16 @@ export class SyncComponent implements OnInit, OnDestroy {
     try {
       await this.syncService.sync()
       this.replicationStatus = this.syncService.replicationStatus
+      const userDb = await this.userService.getUserDatabase()
+      this.dbDocCount = (await userDb.db.info()).doc_count
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
     } catch (e) {
       // console.log('Sync Error: ' + JSON.stringify(e, Object.getOwnPropertyNames(e)))
       // console.trace()
       console.log(e)
+      const userDb = await this.userService.getUserDatabase()
+      this.dbDocCount = (await userDb.db.info()).doc_count
       this.status = STATUS_ERROR
       this.syncMessage = this.syncMessage + ' ERROR: ' + JSON.stringify(e.message)
       this.subscription.unsubscribe();
