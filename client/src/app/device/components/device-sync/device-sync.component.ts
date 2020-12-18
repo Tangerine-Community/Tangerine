@@ -17,7 +17,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   subscription: any
   direction: any
   errorMessage: any
+  pullError: any
+  pushError: any
   dbDocCount:number
+  otherMessage: any
   
   constructor(
     private syncService:SyncService,
@@ -31,33 +34,49 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.syncInProgress = true
     this.direction = ''
     this.errorMessage = ''
+    this.otherMessage = ''
+    this.pullError = ''
+    this.pushError = ''
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
-        let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
+        if (progress) {
+          let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
+          if (typeof progress.message !== 'undefined') {
+            this.otherMessage = progress.message
+          } else {
+            this.otherMessage = ''
+          }
 
-        if (typeof progress.direction !== 'undefined') {
-          direction = 'Direction: ' + progress.direction + '; '
+          if (typeof progress.direction !== 'undefined') {
+            direction = 'Direction: ' + progress.direction + '; '
+          }
+          if (typeof progress.docs_written !== 'undefined') {
+            docsWritten = progress.docs_written + ' docs saved; '
+          }
+          if (typeof progress.pending !== 'undefined') {
+            pendingMessage = progress.pending + ' pending; '
+          }
+          if (typeof progress.pulled !== 'undefined') {
+            docPulled = progress.pulled + ' docs saved; '
+          }
+          if (typeof progress.error !== 'undefined') {
+            this.errorMessage = progress.error
+          }
+          if (typeof progress.pullError !== 'undefined') {
+            this.pullError = progress.pullError
+          }
+          if (typeof progress.pushError !== 'undefined') {
+            this.pushError = progress.pushError
+          }
+          if (typeof progress.remaining !== 'undefined') {
+            // this.syncMessage =  direction + docsWritten + pendingMessage
+            this.syncMessage = progress.remaining + '% remaining to sync'
+          }
+          if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
+            this.direction = 'Direction: ' + progress.direction
+          }
+          console.log('Sync Progress: ' + JSON.stringify(progress))
         }
-        if (typeof progress.docs_written !== 'undefined') {
-          docsWritten = progress.docs_written + ' docs saved; '
-        }
-        if (typeof progress.pending !== 'undefined') {
-          pendingMessage = progress.pending + ' pending; '
-        }
-        if (typeof progress.pulled !== 'undefined') {
-          docPulled = progress.pulled + ' docs saved; '
-        }
-        if (typeof progress.error !== 'undefined') {
-          this.errorMessage = progress.error
-        }
-        if (typeof progress.remaining !== 'undefined') {
-          // this.syncMessage =  direction + docsWritten + pendingMessage
-          this.syncMessage = progress.remaining + '% remaining to sync'
-        }
-        if (progress.direction !== '') {
-          this.direction = 'Direction: ' + progress.direction
-        }
-        console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
     // Pass isFirstSync flag as true in order to skip the push.
