@@ -8,4 +8,6 @@ export class ReplicationStatus {
   error:any
   remaining:any
   direction:any
+  pullError: any
+  pushError: any
 }

@@ -25,16 +25,25 @@ const groupDevicesDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}
 const templateDocfilename = './template--doc.js'
 const templateDoc = require(templateDocfilename).doc
 const userProfileTemplateDoc = require('./template-user-profile-doc.js').doc
-const groupPath = '/tangerine/client/content/groups/' + groupId
-try {
-  const {customGenerators, customSubstitutions} = require(`${groupPath}/custom-generators.js`)
+const groupPath = '/tangerine/groups/' + groupId + '/client'
+console.log("groupPath: " + groupPath)
 
+// const {customGenerators, customSubstitutions} = require(`${groupPath}/custom-generators.js`)
+let customGenerators, customSubstitutions
+try {
+  const genny = require(`${groupPath}/custom-generators.js`)
+  console.log("customGenerators: " + JSON.stringify(genny))
+  customGenerators = genny.customGenerators
+  customSubstitutions = genny.customSubstitutions
 } catch(e) {
   customGenerators = {}
   customSubstitutions = null
   console.error(e.message);
   console.error("custom-generators.js not found. No custom work for you!");
 }
+
+
+
 async function setLocation(groupId) {
   // Get a Device to set the location
   const response  = await groupDevicesDb.allDocs({include_docs:true})
@@ -123,7 +132,7 @@ async function go() {
       tangerineModifiedOn: subs.tangerineModifiedOn,
       "participants": [{
         "id": participantUuid,
-        "caseRoleId": "mother-role",
+        "caseRoleId": "role-1",
         "data": {
           "firstname": subs.runOnce.firstname ? subs.runOnce.firstname : subs.firstname(),
           "surname": subs.runOnce.surname ? subs.runOnce.surname : subs.surname(),

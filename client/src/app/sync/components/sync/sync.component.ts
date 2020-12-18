@@ -28,6 +28,8 @@ export class SyncComponent implements OnInit, OnDestroy {
   dbDocCount:number
   replicationStatus: ReplicationStatus
   errorMessage: any
+  pullError: any
+  pushError: any
 
   constructor(
     private syncService: SyncService,
@@ -55,29 +57,39 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.otherMessage = ''
     this.status = STATUS_IN_PROGRESS
     this.errorMessage = ''
+    this.pullError = ''
+    this.pushError = ''
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
-        let pendingMessage = ''
-        if (typeof progress.message !== 'undefined') {
-          this.otherMessage = progress.message
-        } else {
-          this.otherMessage = ''
-        }
-        if (typeof progress.pending !== 'undefined') {
-          pendingMessage = progress.pending + ' pending;'
-        }
-        if (typeof progress.error !== 'undefined') {
-          this.errorMessage = progress.error
-        }
-        if (typeof progress.remaining !== 'undefined') {
-          this.syncMessage = progress.remaining + '% remaining to sync '
-        }
+        if (progress) {
+          let pendingMessage = ''
+          if (typeof progress.message !== 'undefined') {
+            this.otherMessage = progress.message
+          } else {
+            this.otherMessage = ''
+          }
+          if (typeof progress.pending !== 'undefined') {
+            pendingMessage = progress.pending + ' pending;'
+          }
+          if (typeof progress.error !== 'undefined') {
+            this.errorMessage = progress.error
+          }
+          if (typeof progress.pullError !== 'undefined') {
+            this.pullError = progress.pullError
+          }
+          if (typeof progress.pushError !== 'undefined') {
+            this.pushError = progress.pushError
+          }
+          if (typeof progress.remaining !== 'undefined') {
+            this.syncMessage = progress.remaining + '% remaining to sync '
+          }
 
-        if (progress.direction !== '') {
-          this.direction = 'Direction: ' + progress.direction
+          if (progress.direction !== '') {
+            this.direction = 'Direction: ' + progress.direction
+          }
+          // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
-
-        // console.log('Sync Progress: ' + JSON.stringify(progress))
+        
       }
     })
     try {
