@@ -124,7 +124,9 @@ export class DeviceService {
     if (status) {
       await this
         .httpClient
-        .post(`${appConfig.serverUrl}group-device-public/did-sync-status/${appConfig.groupId}/${device._id}/${device.token}/${version}`, status).toPromise()
+        .post(`${appConfig.serverUrl}group-device-public/did-sync-status/${appConfig.groupId}/${device._id}/${device.token}/${version}`, {
+            status: status
+          }).toPromise()
     } else {
       await this
         .httpClient
