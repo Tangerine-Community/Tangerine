@@ -37,6 +37,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.otherMessage = ''
     this.pullError = ''
     this.pushError = ''
+    const lock =  await navigator['wakeLock'].request('screen');
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
@@ -75,7 +76,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
           }
-          console.log('Sync Progress: ' + JSON.stringify(progress))
+          // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
       }
     })
