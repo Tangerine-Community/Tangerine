@@ -59,6 +59,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.errorMessage = ''
     this.pullError = ''
     this.pushError = ''
+    const lock =  await navigator['wakeLock'].request('screen');
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {

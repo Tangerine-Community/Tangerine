@@ -94,7 +94,7 @@ export class SyncService {
      // TODO: if this.replicationStatus has an error, can we do a put instead to didSync?
     if (this.replicationStatus.error) {
       try {
-        await this.deviceService.didSync()
+        await this.deviceService.didSync(this.replicationStatus)
       } catch (e) {
         this.syncMessage$.next({ message: window['t']('Error sending sync status to server: ' + e) })
         console.log("Error: " + e)

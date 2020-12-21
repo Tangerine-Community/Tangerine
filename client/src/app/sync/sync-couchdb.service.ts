@@ -74,13 +74,6 @@ export class SyncCouchdbService {
     }
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
-    // From Form Info, generate the pull and push selectors.
-   
-
-    // @TODO RJ: What is sync-push-last_seq-start used for? 
-    const startLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-    await this.variableService.set('sync-push-last_seq-start', startLocalSequence)
-
     
     let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
     if (pullReplicationStatus.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
@@ -120,7 +113,7 @@ export class SyncCouchdbService {
         }
         this.syncMessage$.next(progress)
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
-          console.log("info.last_seq: " + info.last_seq)
+          // console.log("info.last_seq: " + info.last_seq)
           status = <ReplicationStatus>{
             pushed: info.docs_written,
             info: info,
@@ -209,6 +202,9 @@ export class SyncCouchdbService {
       }
       i++
     }
+
+    status.initialPushLastSeq = push_last_seq
+
 
     if (batchFailureDetected) {
       // don't set last_seq
@@ -398,6 +394,9 @@ export class SyncCouchdbService {
         break
       }
     }
+
+    status.initialPullLastSeq = pull_last_seq
+
     if (batchFailureDetected) {
       // don't se last_seq and prompt to re-run
       // TODO: create an issue
