@@ -319,6 +319,7 @@ export class SyncCouchdbService {
         this.syncMessage$.next(progress)
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
+          await this.variableService.set('sync-pull-last_seq', info.last_seq)
           const conflictsQuery = await userDb.query('sync-conflicts')
           status = <ReplicationStatus>{
             pulled: info.docs_written,
