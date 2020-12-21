@@ -38,7 +38,7 @@ export class GroupDevicePublicController {
       return 'There was an error.'
     }
   }
-
+  
   @All('did-sync-error/:groupId/:deviceId/:token/:version/:error')
   async didSyncError(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version, @Param('error') error) {
     try {
