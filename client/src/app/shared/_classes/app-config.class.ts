@@ -31,5 +31,7 @@ export class AppConfig {
   autoMergeConflicts:boolean
   attachHistoryToDocs:boolean = false
   indexViewsOnlyOnFirstSync:boolean = false
+  pushChunkSize:number
+  pullChunkSize:number
 }
 

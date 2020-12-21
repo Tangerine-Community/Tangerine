@@ -107,6 +107,24 @@ export class GroupDeviceService {
     }
   }
 
+  async didSyncStatus(groupId:string, deviceId:string, version:string, status) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        syncedOn: Date.now(),
+        status: status,
+        version,
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   async didSyncError(groupId:string, deviceId:string, version:string, error:string) {
     try {
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
