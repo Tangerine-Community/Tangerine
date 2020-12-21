@@ -114,7 +114,7 @@ export class GroupDeviceService {
       await groupDevicesDb.put({
         ...originalDevice,
         syncedOn: Date.now(),
-        status: status,
+        replicationStatus: status,
         version,
         _rev: originalDevice._rev
       })
