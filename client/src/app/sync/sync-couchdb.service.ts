@@ -341,12 +341,6 @@ export class SyncCouchdbService {
             'pulled': pulled
           }
           this.syncMessage$.next(progress)
-        }).on('active', function (info) {
-          if (info) {
-            console.log('Pull replication is active. Info: ' + JSON.stringify(info))
-          } else {
-            console.log('Pull replication is active.')
-          }
         }).on('error', function (error) {
           if (!status) {
             // We need to create an empty status to return so that the code that receives the reject can attach the error.
