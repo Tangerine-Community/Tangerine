@@ -60,6 +60,9 @@
               <button mat-menu-item (click)="editDevice(element._id)">
                 <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
               </button>
+              <button mat-menu-item (click)="viewSyncLog(element._id)">
+                <mat-icon>view_list</mat-icon><span>{{'view sync log'|translate}}</span>
+              </button>
               <button mat-menu-item (click)="resetDevice(element._id)">
                 <mat-icon>settings_backup_restore</mat-icon><span>{{'reset'|translate}}</span>
               </button>

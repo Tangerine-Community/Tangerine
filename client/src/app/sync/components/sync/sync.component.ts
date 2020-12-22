@@ -81,7 +81,7 @@ export class SyncComponent implements OnInit, OnDestroy {
           if (typeof progress.pushError !== 'undefined') {
             this.pushError = progress.pushError
           }
-          if (typeof progress.remaining !== 'undefined') {
+          if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             this.syncMessage = progress.remaining + '% remaining to sync '
           }
 
