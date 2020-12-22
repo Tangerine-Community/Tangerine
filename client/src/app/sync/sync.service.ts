@@ -89,7 +89,7 @@ export class SyncService {
     })
 
     this.syncMessage$.next({ 
-      message: window['t']('Sync is complete, sending status to server. Please wait...'),
+      message: window['t']('Sync is complete, sending status to server. Please wait...')
     })
 
     try {
@@ -105,7 +105,10 @@ export class SyncService {
       isFirstSync ||
       (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
     ) {
-      this.syncMessage$.next({ message: window['t']('Optimizing data. This may take several minutes. Please wait...') })
+      this.syncMessage$.next({ 
+        message: window['t']('Optimizing data. This may take several minutes. Please wait...'),
+        remaining: null
+      })
       await this.indexViews()
     }
     return this.replicationStatus

@@ -30,6 +30,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   errorMessage: any
   pullError: any
   pushError: any
+  wakeLock: any
 
   constructor(
     private syncService: SyncService,
@@ -59,7 +60,14 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.errorMessage = ''
     this.pullError = ''
     this.pushError = ''
-    const lock =  await navigator['wakeLock'].request('screen');
+    
+    try {
+      this.wakeLock =  await navigator['wakeLock'].request('screen');
+    } catch (err) {
+      // the wake lock request fails - usually system related, such low as battery
+      console.log(`${err.name}, ${err.message}`);
+    }
+    
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
@@ -81,12 +89,15 @@ export class SyncComponent implements OnInit, OnDestroy {
           if (typeof progress.pushError !== 'undefined') {
             this.pushError = progress.pushError
           }
-          if (typeof progress.remaining !== 'undefined') {
+          if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             this.syncMessage = progress.remaining + '% remaining to sync '
+          } else {
+            this.syncMessage = ''
           }
-
-          if (progress.direction !== '') {
+          if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
+          } else {
+            this.direction = ''
           }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
@@ -116,6 +127,8 @@ export class SyncComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
+    this.wakeLock.release()
+    this.wakeLock = null;
   }
 
   toggle() {
