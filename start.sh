@@ -6,6 +6,7 @@
 
 if [ ! -d data ]; then
   mkdir data
+  IS_INSTALLING="true"
 fi
 if [ ! -d data/csv ]; then
   mkdir data/csv
@@ -68,6 +69,15 @@ if [ -f "./config.sh" ]; then
   source ./config.sh
 else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
+fi
+
+if echo "$T_MODULES" | grep mysql; then
+  ./mysql-start.sh
+  echo "Waiting 60 seconds for myql to start..."
+  sleep 60
+fi
+if [ "$IS_INSTALLING" = "true" ]; then
+  ./mysql-setup.sh
 fi
 
 #
@@ -184,6 +194,18 @@ RUN_OPTIONS="
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
+
+if echo "$T_MODULES" | grep mysql; then
+RUN_OPTIONS="
+  --link $T_MYSQL_CONTAINER_NAME:mysql \
+  --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
+  --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
+  --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
+  --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
+  $RUN_OPTIONS
+"
+fi
+
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
