@@ -73,9 +73,11 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
-./mysql-start.sh
-echo "Waiting 60 seconds for myql to start..."
-sleep 60
+if echo "$T_MODULES" | grep mysql; then
+  ./mysql-start.sh
+  echo "Waiting 60 seconds for myql to start..."
+  sleep 60
+fi
 if [ "$IS_INSTALLING" = "true" ]; then
   ./mysql-setup.sh
 fi
@@ -129,9 +131,7 @@ sleep 10
 # Start Tangerine.
 #
 
-CMD="docker run -it --name $T_CONTAINER_NAME \
-  --link $T_COUCHDB_CONTAINER_NAME:couchdb \
-  --link $T_MYSQL_CONTAINER_NAME:mysql \
+OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
   -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
   -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
@@ -160,9 +160,6 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
   --env \"T_NGROK_AUTH_TOKEN=$T_NGROK_AUTH_TOKEN\" \
   --env \"T_NGROK_SUBDOMAIN=$T_NGROK_SUBDOMAIN\" \
-  --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
-  --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
-  --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -189,8 +186,21 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
-  --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
   tangerine/tangerine:local
  "
 
+if echo "$T_MODULES" | grep mysql; then
+OPTIONS="
+  --link $T_MYSQL_CONTAINER_NAME:mysql \
+  --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
+  --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
+  --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
+  --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
+  $OPTIONS
+"
+fi
+
+CMD="docker run -it --name $T_CONTAINER_NAME \
+  $OPTIONS
+"
  eval ${CMD}
