@@ -7,6 +7,7 @@ tanerine-env-vars.sh
 
 tangerine-preview/app/
 client/src/media_assets/
+online-survey-app/src/assets
 client/src/assets
 data
 .data
