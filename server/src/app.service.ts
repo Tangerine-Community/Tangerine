@@ -4,11 +4,15 @@ const DB = require('./db')
 import { TangerineConfigService } from './shared/services/tangerine-config/tangerine-config.service';
 import { GroupService } from './shared/services/group/group.service';
 import { TangerineConfig } from './shared/classes/tangerine-config';
+import { ModulesDoc } from './shared/classes/modules-doc.class';
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+const tangyModules = require('./modules/index.js')()
+const enableModule = require('./modules/enable-module.js')
+const disableModule = require('./modules/disable-module.js')
 
 @Injectable()
 export class AppService {
@@ -34,8 +38,42 @@ export class AppService {
       await this.install()
       this.installed = true
     }
+    await this.startModules()
     this.keepAliveReportingWorker()
     this.keepAliveSyncSessionSweeper()
+    
+  }
+
+  async startModules() {
+    let actuallyEnabledModules = []
+    let modulesDoc = <ModulesDoc>{
+      _id: 'modules',
+      enabledModules: []
+    }
+    try {
+      modulesDoc = <ModulesDoc>await this.appDb.get('modules')
+      actuallyEnabledModules = modulesDoc.enabledModules
+    } catch (e) {
+      // Do nothing.
+    }
+    const shouldBeEnabledModules = this.config.enabledModules 
+    const intersection = actuallyEnabledModules.filter(moduleName => shouldBeEnabledModules.includes(moduleName))
+    const shouldEnable = shouldBeEnabledModules.filter(moduleName => !intersection.includes(moduleName))
+    const shouldDisable = actuallyEnabledModules.filter(moduleName => !shouldBeEnabledModules.includes(moduleName))
+    if (shouldEnable.length > 0) {
+      log.info(`Enabling modules: ${shouldEnable.join(' ')}`)
+    }
+    for (const moduleName of shouldEnable) {
+      await enableModule(moduleName)
+    }
+    if (shouldDisable.length > 0) {
+      log.info(`Disabling modules: ${shouldDisable.join(' ')}`)
+    }
+    for (const moduleName of shouldDisable) {
+      await disableModule(moduleName)
+    }
+    await this.appDb.put({...modulesDoc, enabledModules: shouldBeEnabledModules})
+    await tangyModules.hook('boot', { })
   }
 
   async install() {
