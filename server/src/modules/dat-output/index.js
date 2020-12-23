@@ -12,6 +12,7 @@ const exec = util.promisify(require('child_process').exec)
 var isAuthenticated = require('../../middleware/is-authenticated.js')
 
 module.exports = {
+  name: 'dat-output',
   hooks: {
     declareAppRoutes: function(data) {
       return new Promise(async (resolve, reject) => {
