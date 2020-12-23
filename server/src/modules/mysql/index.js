@@ -13,6 +13,7 @@ const exec = async function(cmd) {
 */
 
 module.exports = {
+  name: 'mysql',
   hooks: {
     boot: async function(data) {
       const groups = await groupsList()
