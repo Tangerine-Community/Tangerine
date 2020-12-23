@@ -7,6 +7,7 @@ const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 
 module.exports = {
+  name: 'synapse',
   hooks: {
     clearReportingCache: async function(data) {
       const { groupNames } = data
