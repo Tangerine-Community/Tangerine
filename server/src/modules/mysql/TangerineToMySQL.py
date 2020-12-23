@@ -57,6 +57,10 @@ def convert_case(resp_dict):
 
         df = pd.DataFrame([caseData])
         df.rename(columns={'_id': 'CaseID'}, inplace=True)
+        # Try 3 things to insert data...
+        #     1) Insert the data as a new or updated row. If that fails...
+        #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
+        #     3) Then the database doesn't exist! Just insert it.
         try:
             #delete the case if it already exists in table so we can add the new one
             qry = "SELECT * FROM " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'"
@@ -70,14 +74,12 @@ def convert_case(resp_dict):
             mysql_connection.commit()
         except:
             try:
-                # @TODO RJ: How far will this scale? This loads the entire table into memory. If this turns out to be a performance problem, can we ADD COLUMN?
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case_instances', engine)
                 df2 = pd.concat([data, df])
                 print(df2)
                 df2.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
-                # @TODO RJ: How far will this scale? This loads the entire table into memory. If this turns out to be a performance problem, can we ADD COLUMN?
                 df.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
 
@@ -124,7 +126,10 @@ def convert_participant(resp_dict):
                 participantData.update({key: resp_dict.get(key)})
 
         df = pd.DataFrame([participantData])
-
+        # Try 3 things to insert data...
+        #     1) Insert the data as a new or updated row. If that fails...
+        #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
+        #     3) Then the database doesn't exist! Just insert it.
         try:
             #delete the Participant if it already exists in table so we can add the new one
             qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
@@ -163,7 +168,10 @@ def convert_case_event(resp_dict):
         del resp_dict["type"]
         df = pd.DataFrame([resp_dict])
         df.rename(columns={'_id': 'CaseEventID', '_rev': 'dbRevision'}, inplace=True)
-
+        # Try 3 things to insert data...
+        #     1) Insert the data as a new or updated row. If that fails...
+        #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
+        #     3) Then the database doesn't exist! Just insert it.
         try:
             #delete the CaseEvent if it already exists in table so we can add the new one
             qry = "SELECT * FROM " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'"
@@ -202,7 +210,10 @@ def convert_event_form(resp_dict):
         del resp_dict["type"]
         df = pd.DataFrame([resp_dict])
         df.rename(columns={'_id': 'EventFormID', '_rev': 'dbRevision'}, inplace=True)
-
+        # Try 3 things to insert data...
+        #     1) Insert the data as a new or updated row. If that fails...
+        #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
+        #     3) Then the database doesn't exist! Just insert it.
         try:
             #delete the EventForm if it already exists in table so we can add the new one
             qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
@@ -268,7 +279,10 @@ def convert_response(resp_dict):
 
         df = pd.DataFrame([response])  # wrapping your dictionary in to list, this works for only 1 record
         df.rename(columns={'_id': 'ID', '_rev': 'dbRevision'}, inplace=True)
-
+        # Try 3 things to insert data...
+        #     1) Insert the data as a new or updated row. If that fails...
+        #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
+        #     3) Then the database doesn't exist! Just insert it.
         try:
             #delete the ID for the given form table if it already exists in table so we can add the new one
             qry = "SELECT * FROM " + mysqlDatabaseName + "." + formID + " where ID='" + id+"'"
