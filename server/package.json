@@ -6,6 +6,8 @@
   "license": "MIT",
   "bin": {
     "info": "./src/scripts/info.sh",
+    "enable-module": "./src/scripts/enable-module.js",
+    "disable-module": "./src/scripts/disable-module.js",
     "reporting-cache-clear": "./src/scripts/reporting-cache-clear.js",
     "reporting-worker-batch": "./src/scripts/reporting-worker-batch.js",
     "reporting-worker-unpause": "./src/scripts/reporting-worker-unpause.sh",
