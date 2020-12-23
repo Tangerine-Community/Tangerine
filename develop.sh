@@ -77,8 +77,6 @@ if echo "$T_MODULES" | grep mysql; then
   ./mysql-start.sh
   echo "Waiting 60 seconds for myql to start..."
   sleep 60
-fi
-if [ "$IS_INSTALLING" = "true" ]; then
   ./mysql-setup.sh
 fi
 
