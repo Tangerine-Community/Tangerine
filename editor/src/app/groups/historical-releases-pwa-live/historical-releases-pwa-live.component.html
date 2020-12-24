@@ -1,0 +1,26 @@
+<div class="table-container">
+    <table mat-table [dataSource]="groupsData" class="mat-elevation-z8">
+        <ng-container matColumnDef="build">
+          <th mat-header-cell *matHeaderCellDef> Build </th>
+          <td mat-cell *matCellDef="let data"> {{data.build}} </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="buildId">
+          <th mat-header-cell *matHeaderCellDef> Build ID </th>
+          <td mat-cell *matCellDef="let data"> {{data.buildId}} </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="releaseType">
+          <th mat-header-cell *matHeaderCellDef> Release Type </th>
+          <td mat-cell *matCellDef="let data"> {{data.releaseType}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef> Date </th>
+          <td mat-cell *matCellDef="let data"> {{data.date|date:'medium'}} </td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+</div>
