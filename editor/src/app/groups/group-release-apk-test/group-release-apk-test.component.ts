@@ -13,7 +13,9 @@ export class GroupReleaseApkTestComponent implements OnInit {
 
   title = _TRANSLATE('Release Test Android App')
   breadcrumbs:Array<Breadcrumb> = []
- 
+  submitted = false
+  releaseNotes=''
+  versionTag=''
   @ViewChild('releaseApkComponent', {static: true}) releaseApkComponent:ReleaseApkComponent
   groupId:string
 
@@ -32,11 +34,13 @@ export class GroupReleaseApkTestComponent implements OnInit {
         url: 'releases/release-apk-test'
       }
     ]
-    this.route.params.subscribe(async params => {
-      this.releaseApkComponent.groupId = params.groupId
-      this.releaseApkComponent.releaseType = 'qa' 
-      this.releaseApkComponent.releaseAPK()
-    })
   }
-
+  submit() {
+    this.submitted = true
+    this.releaseApkComponent.groupId = this.route.snapshot.paramMap.get('groupId')
+    this.releaseApkComponent.releaseType = 'qa'
+    this.releaseApkComponent.releaseNotes = this.releaseNotes
+    this.releaseApkComponent.versionTag = this.versionTag
+    this.releaseApkComponent.releaseAPK()
+  }
 }

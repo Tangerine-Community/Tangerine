@@ -13,9 +13,10 @@ export class GroupReleasePwaLiveComponent implements OnInit {
 
   title = _TRANSLATE('Release Live Web App')
   breadcrumbs:Array<Breadcrumb> = []
- 
+ versionTag = ''
+ releaseNotes = ''
+ submitted = false
   @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
-  groupId:string
 
   constructor(
     private route:ActivatedRoute
@@ -32,11 +33,13 @@ export class GroupReleasePwaLiveComponent implements OnInit {
         url: 'releases/release-pwa-live'
       }
     ]
-    this.route.params.subscribe(async params => {
-      this.releasePwaComponent.groupId = params.groupId
-      this.releasePwaComponent.releaseType = 'prod' 
-      this.releasePwaComponent.releasePWA()
-    })
   }
-
+  submit() {
+    this.submitted = true
+    this.releasePwaComponent.groupId = this.route.snapshot.paramMap.get('groupId')
+    this.releasePwaComponent.releaseType = 'prod'
+    this.releasePwaComponent.releaseNotes = this.releaseNotes
+    this.releasePwaComponent.versionTag = this.versionTag
+    this.releasePwaComponent.releasePWA()
+  }
 }

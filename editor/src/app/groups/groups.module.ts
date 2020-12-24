@@ -83,6 +83,10 @@ import { PrintFormBackupComponent } from './print-form-backup/print-form-backup.
 import { PrintStimuliScreenComponent } from './print-stimuli-screen/print-stimuli-screen.component';
 import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
 import { GroupSearchComponent } from './group-search/group-search.component';
+import { HistoricalReleasesPwaLiveComponent } from './historical-releases-pwa-live/historical-releases-pwa-live.component';
+import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-test/historical-releases-pwa-test.component';
+import { HistoricalReleasesApkLiveComponent } from './historical-releases-apk-live/historical-releases-apk-live.component';
+import { HistoricalReleasesApkTestComponent } from './historical-releases-apk-test/historical-releases-apk-test.component';
 
 
 @NgModule({
@@ -171,7 +175,11 @@ import { GroupSearchComponent } from './group-search/group-search.component';
     PrintFormBackupComponent,
     PrintStimuliScreenComponent,
     ReleaseOnlineSurveyComponent,
-    GroupSearchComponent
+    GroupSearchComponent,
+    HistoricalReleasesPwaLiveComponent,
+    HistoricalReleasesPwaTestComponent,
+    HistoricalReleasesApkLiveComponent,
+    HistoricalReleasesApkTestComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

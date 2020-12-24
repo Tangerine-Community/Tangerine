@@ -13,9 +13,10 @@ export class GroupReleaseApkLiveComponent implements OnInit {
 
   title = _TRANSLATE('Release Live Android App')
   breadcrumbs:Array<Breadcrumb> = []
- 
+  submitted = false
+  releaseNotes=''
+  versionTag=''
   @ViewChild('releaseApkComponent', {static: true}) releaseApkComponent:ReleaseApkComponent
-  groupId:string
 
   constructor(
     private route:ActivatedRoute
@@ -32,11 +33,14 @@ export class GroupReleaseApkLiveComponent implements OnInit {
         url: 'releases/release-apk-live'
       }
     ]
-    this.route.params.subscribe(async params => {
-      this.releaseApkComponent.groupId = params.groupId
-      this.releaseApkComponent.releaseType = 'prod' 
-      this.releaseApkComponent.releaseAPK()
-    })
   }
 
+  submit() {
+    this.submitted = true
+    this.releaseApkComponent.groupId = this.route.snapshot.paramMap.get('groupId')
+    this.releaseApkComponent.releaseType = 'prod'
+    this.releaseApkComponent.releaseNotes = this.releaseNotes
+    this.releaseApkComponent.versionTag = this.versionTag
+    this.releaseApkComponent.releaseAPK()
+  }
 }
