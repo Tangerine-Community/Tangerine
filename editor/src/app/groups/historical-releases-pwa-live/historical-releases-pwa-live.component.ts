@@ -9,7 +9,7 @@ import { GroupsService } from '../services/groups.service';
 })
 export class HistoricalReleasesPwaLiveComponent implements OnInit {
 
-  displayedColumns = ['buildId', 'build', 'releaseType', 'date'];
+  displayedColumns = ['buildId', 'build', 'releaseType', 'date', 'versionTag', 'releaseNotes'];
   groupsData: [];
 
   constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
