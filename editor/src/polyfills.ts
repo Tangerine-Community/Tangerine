@@ -98,6 +98,8 @@ import * as _ from 'underscore';
 (window as any)._ = _;
 
 import 'tangy-form-editor/tangy-form-editor.js'
+// @TODO Remove this when this element has been added to tangy-form-editor.
+import 'tangy-form/input/tangy-ethio-date.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js'
 
 import '@polymer/paper-radio-button/paper-radio-button.js';

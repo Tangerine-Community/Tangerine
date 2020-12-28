@@ -14,7 +14,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   syncIsComplete = false
   syncMessage: any
   subscription: any
-
+  direction: any
+  
   constructor(
     private syncService:SyncService
   ) { }
@@ -24,9 +25,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
 
   async sync() {
     this.syncInProgress = true
+    this.direction = ''
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
-        let pendingMessage = '', docsWritten = '', direction = ''
+        let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
 
         if (typeof progress.direction !== 'undefined') {
           direction = 'Direction: ' + progress.direction + '; '
@@ -37,15 +39,21 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
         if (typeof progress.pending !== 'undefined') {
           pendingMessage = progress.pending + ' pending; '
         }
-        if (typeof progress.docs_written !== 'undefined') {
-          docsWritten = progress.docs_written + ' docs saved; '
-          this.syncMessage =  direction + docsWritten + pendingMessage
+        if (typeof progress.pulled !== 'undefined') {
+          docPulled = progress.pulled + ' docs saved; '
+        }
+        if (typeof progress.remaining !== 'undefined') {
+          // this.syncMessage =  direction + docsWritten + pendingMessage
+          this.syncMessage = progress.remaining + ' % remaining to sync; ' + docPulled
+        }
+        if (progress.direction !== '') {
+          this.direction = 'Direction: ' + progress.direction
         }
         console.log('Sync Progress: ' + JSON.stringify(progress))
       }
     })
     // Pass isFirstSync flag as true in order to skip the push.
-    await this.syncService.sync(true, true)
+    const replicationStatus = await this.syncService.sync(true, true)
     this.subscription.unsubscribe();
     this.syncInProgress = false
     this.syncIsComplete = true

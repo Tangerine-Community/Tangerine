@@ -22,6 +22,10 @@ T_UPLOAD_TOKEN="password"
 # The database username and password. Please make this extrememly secure.
 T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
+# Mysql
+T_MYSQL_CONTAINER_NAME="mysql"
+T_MYSQL_USER="admin"
+T_MYSQL_PASSWORD="password"
 
 #
 # Optional

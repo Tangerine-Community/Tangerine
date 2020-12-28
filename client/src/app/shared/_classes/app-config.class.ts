@@ -30,5 +30,7 @@ export class AppConfig {
   couchdbPushUsingDocIds:boolean
   autoMergeConflicts:boolean
   useEthiopianCalendar:boolean
+  attachHistoryToDocs:boolean = false
+  indexViewsOnlyOnFirstSync:boolean = false
 }
 

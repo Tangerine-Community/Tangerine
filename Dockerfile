@@ -21,6 +21,12 @@ ENV T_PROTOCOL http
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
 
+# Install mysql integration dependencies.
+RUN apt-get update && apt-get install -y python3-pip
+ADD ./server/src/modules/mysql/install-dependencies.sh /tangerine/server/src/modules/mysql/install-dependencies.sh
+RUN cd /tangerine/server/src/modules/mysql && \
+    ./install-dependencies.sh
+
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
@@ -90,7 +96,6 @@ ADD server /tangerine/server
 # Link up global commands.
 RUN cd /tangerine/server && \
     npm link
-
 
 
 #

@@ -9,13 +9,28 @@ export class GroupDevicePublicController {
     private readonly groupDeviceService: GroupDeviceService
   ) { }
 
-  @All('did-sync/:groupId/:deviceId/:token')
-  async didSync(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
+  @All('did-sync/:groupId/:deviceId/:token/:version')
+  async didSync(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version) {
     try {
       if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
         return 'Token does not match'
       }
-      const device = await this.groupDeviceService.didSync(groupId, deviceId)
+      const device = await this.groupDeviceService.didSync(groupId, deviceId, version)
+      return device
+    } catch (error) {
+      log.error('Error syncing device')
+      console.log(error)
+      return 'There was an error.'
+    }
+  }
+
+  @All('did-sync-error/:groupId/:deviceId/:token/:version/:error')
+  async didSyncError(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version, @Param('error') error) {
+    try {
+      if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
+        return 'Token does not match'
+      }
+      const device = await this.groupDeviceService.didSyncError(groupId, deviceId, version, error)
       return device
     } catch (error) {
       log.error('Error syncing device')
