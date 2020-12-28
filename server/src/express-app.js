@@ -434,10 +434,12 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', function(req
   const deviceId = req.params.deviceId;
   const syncUsername = req.params.syncUsername;
   const syncPassword = req.params.syncPassword;
+  console.log("about to repStream to " + groupId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword)
+
   const url = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}`
-  repStream({
-    url           : url,
-    dbReq   : true
+  return repStream({
+    url     : url,
+    // dbReq   : true
   })(req, res, next);
 });
 
