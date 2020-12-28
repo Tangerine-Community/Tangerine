@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-import {ReplicationStatus} from "../../../../../client/src/app/sync/classes/replication-status.class";
+import {ReplicationStatus} from "../../sync/replication-status.class";
 
 export class GroupDevice {
   _id:string = uuidv4()

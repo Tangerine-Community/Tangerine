@@ -75,16 +75,20 @@ export class SyncCouchdbService {
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
     
-    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
-    if (pullReplicationStatus.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
-      await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
-    }
+    let pullReplicationStatus:ReplicationStatus
+    
     // If this is the first sync, skip the push.
     if (isFirstSync) {
+      pullReplicationStatus = await this.pullAll(userDb, remoteDb, appConfig, syncDetails);
       const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
       await this.variableService.set('sync-push-last_seq', lastLocalSequence)
       console.log("Setting sync-push-last_seq to " + lastLocalSequence)
       return pullReplicationStatus
+    } else {
+      pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+      if (pullReplicationStatus.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
+        await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
+      }
     }
     
     let pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
@@ -431,4 +435,46 @@ export class SyncCouchdbService {
     }
     return status;
   }
+  
+  async pullAll(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
+    let status = <ReplicationStatus>{
+      pulled: 0,
+      pullConflicts: [],
+      info: '',
+      remaining: 0,
+      direction: 'pull' 
+    };
+    
+    let pull_last_seq = 0;
+    
+    
+      
+      try {
+        // status = await pullSyncBatch(syncOptions);
+        const stream = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
+        this.syncMessage$.next(status)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
+
+    status.initialPullLastSeq = pull_last_seq
+
+    // if (batchFailureDetected) {
+    //   // don't se last_seq and prompt to re-run
+    //   // TODO: create an issue
+    //   const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
+    //   const errorMessage = errorMessageDialog + batchError
+    //   console.log(errorMessage)
+    //   if (status) {
+    //     status.pullError = errorMessage
+    //   }
+    //   this.syncMessage$.next(status)
+    // } else if (totalDocIds > 0 ) {
+    //   // set last_seq
+    //   await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
+    // } else {
+    //   // TODO: Do we store the most recent seq id we tried to sync but didn't find any matches?
+    // }
+    return status;
+    }
 }
