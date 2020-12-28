@@ -1,7 +1,6 @@
 /* jshint esversion: 6 */
 
 const util = require('util');
-const exec = util.promisify(require('child_process').exec)
 const http = require('axios');
 const read = require('read-yaml')
 const express = require('express')
@@ -36,6 +35,7 @@ let crypto = require('crypto');
 const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
+const exec = util.promisify(require('child_process').exec)
 const tangyModules = require('./modules/index.js')()
 const { extendSession, findUserByUsername,
    USERS_DB, login, getSitewidePermissionsByUsername,
@@ -48,9 +48,9 @@ log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
 const { getPermissionsList } = require('./permissions-list.js');
-const PACKAGENAME = "org.rti.tangerine"
-const APPNAME = "Tangerine"
+const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
 
+setInterval(commitFilesToVersionControl, 60000)
 module.exports = async function expressAppBootstrap(app) {
 
 // Enforce SSL behind Load Balancers.
@@ -218,77 +218,13 @@ const queueNewGroupMiddleware = function (req, res, next) {
   next()
 }
 
-app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
-  // @TODO Make sure user is member of group.
-  const group = sanitize(req.params.group)
-  const releaseType = sanitize(req.params.releaseType)
-  const config = JSON.parse(await fs.readFile(`/tangerine/groups/${group}/client/app-config.json`, "utf8"));
-  const packageName = config.packageName? config.packageName: PACKAGENAME
-  const appName = config.appName ? config.appName: APPNAME
-  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/groups/${group}/client ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${packageName} "${appName}" 2>&1 | tee -a /apk.log`
-  log.info("in release-apk, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
-  // Do not await. The browser just needs to know the process has started and will monitor the status file.
-  exec(cmd).catch(log.error)
-  res.send({ statusCode: 200, data: 'ok' })
-})
+app.post('/editor/release-apk/:group', isAuthenticated, releaseAPK)
 
-app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function (req, res, next) {
-  // @TODO Make sure user is member of group.
-  const group = sanitize(req.params.group)
-  const releaseType = sanitize(req.params.releaseType)
-  try {
-    const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${releaseType}`
-    log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
-    log.info(`RELEASING PWA: ${cmd}`)
-    await exec(cmd)
-    res.send({ statusCode: 200, data: 'ok' })
-  } catch (error) {
-    res.send({ statusCode: 500, data: error })
-  }
-})
+app.post('/editor/release-pwa/:group/', isAuthenticated, releasePWA)
 
-app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/:uploadKey/', isAuthenticated, async function (req, res, next) {
-  // @TODO Make sure user is member of group.
-  const groupId = sanitize(req.params.groupId)
-  const formId = sanitize(req.params.formId)
-  const releaseType = sanitize(req.params.releaseType)
-  const appName = sanitize(req.params.appName)
-  const uploadKey = sanitize(req.params.uploadKey)
+app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/:uploadKey/', isAuthenticated, releaseOnlineSurveyApp)
 
-  try {
-    const cmd = `release-online-survey-app ${groupId} ${formId} ${releaseType} "${appName}" ${uploadKey} `
-    log.info(`RELEASING Online survey app: ${cmd}`)
-    await exec(cmd)
-    res.send({ statusCode: 200, data: 'ok' })
-  } catch (error) {
-    res.send({ statusCode: 500, data: error })
-  }
-})
-
-app.use('/editor/unrelease-online-survey-app/:groupId/:formId/:releaseType/', isAuthenticated, async function (req, res, next) {
-  // @TODO Make sure user is member of group.
-  const groupId = sanitize(req.params.groupId)
-  const formId = sanitize(req.params.formId)
-  const releaseType = sanitize(req.params.releaseType)
-  try {
-    const cmd = `rm -rf /tangerine/client/releases/${releaseType}/online-survey-apps/${groupId}/${formId}`
-    log.info(`UNRELEASING Online survey app: ${cmd}`)
-    await exec(cmd)
-    res.send({ statusCode: 200, data: 'ok' })
-  } catch (error) {
-    res.send({ statusCode: 500, data: error })
-  }
-})
-
-app.post('/editor/file/save', isAuthenticated, async function (req, res) {
-  const filePath = req.body.filePath
-  const groupId = req.body.groupId
-  const fileContents = req.body.fileContents
-  const actualFilePath = `/tangerine/groups/${groupId}/client/${filePath}`
-  await fs.outputFile(actualFilePath, fileContents)
-  res.send({status: 'ok'})
-  // ok
-})
+app.use('/editor/unrelease-online-survey-app/:groupId/:formId/:releaseType/', isAuthenticated, unreleaseOnlineSurveyApp)
 
 app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.query.filePath
@@ -444,7 +380,7 @@ function allGroups() {
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-const runPaidWorker = require('./paid-worker')
+const runPaidWorker = require('./paid-worker.js')
 async function keepAlivePaidWorker() {
   let state = {}
   while(true) {
