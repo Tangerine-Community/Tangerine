@@ -17,16 +17,8 @@
           <mat-progress-bar mode="buffer"></mat-progress-bar>
           <div class="status">{{'Status'|translate}}: {{'In progress'|translate}}</div>
           <div class="status">{{syncMessage}}</div>
+          <div class="status">{{otherMessage}}</div>
           <div class="status">{{direction}}</div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
-          </div>
-          <div *ngIf="show"  class="debugging">
-            <div class="status">{{'Checkpoints'|translate}}:{{checkpointMessage}}</div>
-            <div class="status">{{'Diffs'|translate}}: {{diffMessage}}</div>
-            <div class="status">{{'Start Next Batch'|translate}}: {{startNextBatchMessage}}</div>
-            <div class="status">{{'Pending Batch'|translate}}: {{pendingBatchMessage}}</div>
-          </div>
         </div>
 
         <div class="container" *ngIf="status === 'STATUS_COMPLETED'">
@@ -34,25 +26,11 @@
           <mat-progress-bar mode="buffer" value="100"></mat-progress-bar>
           <div class="status">{{'Status'|translate}}: {{'Complete'|translate}}</div>
           <div class="status" *ngIf="replicationStatus">
-            <div *ngIf="replicationStatus.pullConflicts?.length > 0">
-              <p class="mat-error">{{'Conflicts detected.'|translate}}</p>
-            </div>
             <ul>
               <li>{{'Pulled from the server'|translate}}: {{replicationStatus.pulled}}</li>
               <li>{{'Pushed to the server'|translate}}: {{replicationStatus.pushed}}</li>
             </ul>
-            
           </div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">{{'Debugging'|translate}}</button>
-          </div>
-          <div *ngIf="show" class="debugging">
-            <div class="status">{{'Checkpoints'|translate}}:{{checkpointMessage}}</div>
-            <div class="status">{{'Diffs'|translate}}: {{diffMessage}}</div>
-            <div class="status">{{'Start Next Batch'|translate}}: {{startNextBatchMessage}}</div>
-            <div class="status">{{'Pending Batch'|translate}}: {{pendingBatchMessage}}</div>
-          </div>
-
         </div>
 
         <div class="container" *ngIf="status === 'STATUS_ERROR'">
@@ -61,15 +39,6 @@
           <div class="status">{{'Status'|translate}}: {{'Error'|translate}}</div>
           <div class="status">{{syncMessage}}</div>
           <div class="status">{{direction}}</div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">{{'Debugging'|translate}}</button>
-          </div>
-          <div *ngIf="show" class="debugging">
-            <div class="status">{{'Checkpoints'|translate}}:{{checkpointMessage}}</div>
-            <div class="status">{{'Diffs'|translate}}: {{diffMessage}}</div>
-            <div class="status">{{'Start Next Batch'|translate}}: {{startNextBatchMessage}}</div>
-            <div class="status">{{'Pending Batch'|translate}}: {{pendingBatchMessage}}</div>
-          </div>
         </div>
 
       </div>

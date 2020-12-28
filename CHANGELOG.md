@@ -1,14 +1,79 @@
 # Changelog
 
+## v3.15.4
+
+__Fixes__
+- Sync: Sites with large datasets were crashing; therefore, we implemented a new sync function that syncs batches of documents to the server. PR: [#2532](https://github.com/Tangerine-Community/Tangerine/pull/2532)
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.4
+# Now you are ready to start the server.
+./start.sh v3.15.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.3
+```
+
+## v3.15.3
+__Fixes__
+- After a large sync in sync protocol 2, improve overall app performance by indexing database queries. Because this may cause a long sync for projects not using this, you can set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
+- Add missing `custom-scripts.js` and `custom-styles.css` files to Editor app. We also add `editor` and `client` ID's to the body tag of the two app respectively.
+- Reduce database merge conflicts by preventing form responses from saving after completed. Prior to this version, on two tablets (or on a tablet and the server) if you opened the same form response and opened an item to inspect, it would cause a save on both tablets resulting in an unnesessary merge conflict.
+- New `T.case.getCaseHistory(caseId)` function for getting the history of save for a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case and run `await T.case.getCaseHistory()` in the console and it will pick up on the context.
+- New `T.case.getEventFormHistory(caseId, caseEventId, eventFormId)` function for getting the history of save for a form response in a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case, a Case Event, then an Event Form and run `await T.case.getEventFormHistory()` in the console and it will pick up on the context.
+- New opt-in `app-config.json` setting `attachHistoryToDocs` for enabling upload all history of Case and Event Form edits on a Tablet up to the Server. Without this setting on, the server only sees the history starting from time of upload. Note this has an impact on upload size of at least doubling it when turned on.
+
+__Important configuration notice__
+- Set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.3
+# Now you are ready to start the server.
+./start.sh v3.15.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.2
+```
+
 ## v3.15.2
 
 __Fixes__
+
 - Rshiny module: Replaces hard-coded underscore separator with the configurable `sep` variable. 
 - Error when processing CSV's: [2517](https://github.com/Tangerine-Community/Tangerine/issues/2517)
 
-- __Important configuration notice__
+__Important configuration notice__
 
 The v3.15.0 release included an update to the Editor Search feature [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) that requires adding a `searchSettings` property to forms.json. In addition to running the upgrade script for v3.15.0; you must also make sure that *all* forms in a group's forms.json have `searchSettings` configured, especially the `shouldIndex` property. Examples are in the [Case Module README](./docs/editor/case-module/README.md#configuring-text-search) "Configuring Text Search" section.
+
+__Server upgrade instructions__
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.2
+# Now you are ready to start the server.
+./start.sh v3.15.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.1
+```  
 
 ## v3.15.1
 
