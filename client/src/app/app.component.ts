@@ -345,7 +345,7 @@ export class AppComponent implements OnInit {
           timestamp: position.timestamp
         };
         localStorage.setItem('gpsQueue', JSON.stringify(x));
-      } else { console.debug(position); }
+      }
     },
       (err) => { },
       options);
