@@ -1,5 +1,35 @@
 # Changelog
 
+## v3.15.6
+
+__New Features and Fixes__
+- New 'wakelock' feature for sync: When using the sync feature, the screen should not go to sleep or dim, enabling the sync process to proceed. This is especially useful during long sync processes. When you navigate to another page once Sync is complete, the wakeLock feature is disabled. 
+- The Devices listing has a new option, "View Sync Log", which enables viewing status of the most recent replication, when available.  
+- Added error messages when internet access drops during a sync. [#2540](https://github.com/Tangerine-Community/Tangerine/issues/2540)
+- Batch size for sync is configurable via `pullSyncOptions` and `pushSyncOptions` variable in a group's app-config.json. Default is 200. If the value is set too high, the application will crash.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.6
+# Now you are ready to start the server.
+./start.sh v3.15.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.5
+```  
+
 ## v3.15.5
 
 __Fixes__
