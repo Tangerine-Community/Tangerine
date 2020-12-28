@@ -48,6 +48,7 @@ log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 var cookieParser = require('cookie-parser');
 const { getPermissionsList } = require('./permissions-list.js');
+var repStream = require('express-pouchdb-replication-stream');
 const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 
@@ -427,6 +428,19 @@ app.post('/permissions/addRoleToGroup/:groupId',
 app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
 app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
+
+app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', function(req, res, next){
+  const groupId = req.params.groupId;
+  const deviceId = req.params.deviceId;
+  const syncUsername = req.params.syncUsername;
+  const syncPassword = req.params.syncPassword;
+  const url = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}`
+  repStream({
+    url           : url,
+    dbReq   : true
+  })(req, res, next);
+});
+
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
