@@ -32,5 +32,7 @@ export class AppConfig {
   useEthiopianCalendar:boolean
   attachHistoryToDocs:boolean = false
   indexViewsOnlyOnFirstSync:boolean = false
+  pushChunkSize:number
+  pullChunkSize:number
 }
 

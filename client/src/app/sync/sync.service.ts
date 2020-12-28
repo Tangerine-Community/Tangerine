@@ -89,20 +89,26 @@ export class SyncService {
     })
 
     this.syncMessage$.next({ 
-      message: window['t']('Sync is complete, contacting server. Please wait...'),
+      message: window['t']('Sync is complete, sending status to server. Please wait...')
     })
-     // TODO: if this.replicationStatus has an error, can we do a put instead to didSync?
-    if (this.replicationStatus.error) {
-      await this.deviceService.didSync()
-    } else {
-      await this.deviceService.didSyncError(this.replicationStatus.error)
+
+    try {
+      const tangerineVersion = await this.deviceService.getTangerineVersion()
+      this.replicationStatus.tangerineVersion = tangerineVersion
+      await this.deviceService.didSync(this.replicationStatus)
+    } catch (e) {
+      this.syncMessage$.next({message: window['t']('Error sending sync status to server: ' + e)})
+      console.log("Error: " + e)
     }
     
     if (
       isFirstSync ||
       (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
     ) {
-      this.syncMessage$.next({ message: window['t']('Optimizing data. This may take several minutes. Please wait...') })
+      this.syncMessage$.next({ 
+        message: window['t']('Optimizing data. This may take several minutes. Please wait...'),
+        remaining: null
+      })
       await this.indexViews()
     }
     return this.replicationStatus
