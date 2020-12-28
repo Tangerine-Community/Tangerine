@@ -22,11 +22,16 @@ export class BulkSyncController {
         const params = tokenUrl.split('/')
         // return `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`
         const baseUrl = params[2]
-        const baseUrlParams = baseUrl.split('a')
-        const syncCredentials = baseUrlParams[0]
+        const baseUrlParams = baseUrl.split('@')
+        // console.log("baseUrlParams: " + baseUrlParams)
+        const syncCredentials = baseUrlParams[0].split(':')
+        console.log("syncCredentials: " + syncCredentials)
         const syncUsername = syncCredentials[0]
         const syncPassword = syncCredentials[1]
-        return await this.bulkSyncService.dump(groupId, deviceId, syncUsername, syncPassword)
+        const dumpFile = await this.bulkSyncService.dump(groupId, deviceId, syncUsername, syncPassword)
+        console.log("look out, here it comes: ")
+        console.log("dumpfile: " + JSON.stringify(dumpFile))
+        return dumpFile
       } else {
         console.log(`Permission Denied: Device ${deviceId} used incorrect token to start sync session.`)
       }
