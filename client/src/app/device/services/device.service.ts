@@ -117,13 +117,22 @@ export class DeviceService {
       .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise()
   }
 
-  async didSync():Promise<any> {
+  async didSync(status):Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.getDevice()
     const version = await this.getBuildId()
-    await this
-      .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise()
+    if (status) {
+      await this
+        .httpClient
+        .post(`${appConfig.serverUrl}group-device-public/did-sync-status/${appConfig.groupId}/${device._id}/${device.token}/${version}`, {
+            status: status
+          }).toPromise()
+    } else {
+      await this
+        .httpClient
+        .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise()
+    }
+    
   }
 
   async didSyncError(error):Promise<any> {
