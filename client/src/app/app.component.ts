@@ -196,7 +196,8 @@ export class AppComponent implements OnInit {
           permissions.ACCESS_FINE_LOCATION,
           permissions.CAMERA,
           permissions.READ_EXTERNAL_STORAGE,
-          permissions.WRITE_EXTERNAL_STORAGE
+          permissions.WRITE_EXTERNAL_STORAGE,
+          permissions.WAKE_LOCK
         ];
 
         window['cordova']['plugins']['permissions'].hasPermission(list, success, error);

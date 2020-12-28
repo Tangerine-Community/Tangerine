@@ -24,6 +24,21 @@ export class GroupDevicePublicController {
     }
   }
 
+  @All('did-sync-status/:groupId/:deviceId/:token/:version')
+  async didSyncStatus(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version, @Body('status') status) {
+    try {
+      if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
+        return 'Token does not match'
+      }
+      const device = await this.groupDeviceService.didSyncStatus(groupId, deviceId, version, status)
+      return device
+    } catch (error) {
+      log.error('Error syncing device')
+      console.log(error)
+      return 'There was an error.'
+    }
+  }
+  
   @All('did-sync-error/:groupId/:deviceId/:token/:version/:error')
   async didSyncError(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version, @Param('error') error) {
     try {
