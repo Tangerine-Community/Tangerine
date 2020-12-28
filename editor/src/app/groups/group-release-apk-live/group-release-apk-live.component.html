@@ -1,2 +1,19 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <app-release-apk #releaseApkComponent></app-release-apk>
+
+<div *ngIf="!submitted">
+    <form #releaseApk="ngForm" class="tangy-full-width">
+        <mat-form-field>
+            <mat-label>{{'Version Tag'|translate}}</mat-label>
+            <input name="versionTag" [(ngModel)]="versionTag" matInput required>
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+            <mat-label>{{'Release Notes'| translate}}</mat-label>
+            <textarea name="releaseNotes" [(ngModel)]="releaseNotes" matInput ></textarea>
+        </mat-form-field>
+        <br>
+        <button [disabled]="releaseApk.invalid" mat-raised-button color="warn" (click)="submit()">{{'Release APK'|translate}}</button>
+    </form>
+    
+</div>
