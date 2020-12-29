@@ -93,22 +93,22 @@ const unreleaseOnlineSurveyApp = async (req, res) => {
 	}
 }
 const commitFilesToVersionControl = async () => {
-	try {
-		const groups = await GROUPS_DB.allDocs({include_docs:false})
-		groups.rows.forEach(async group=>{
+	const groups = await GROUPS_DB.allDocs({include_docs:false})
+	for (let group of groups.rows) {
+		const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
+		try {
 			const groupId = sanitize(group.id);
 			await exec('git config --system user.name "tangerine"')
-			await exec(`cd /tangerine/groups/${groupId} && git init`)
 			const {stdout,stderr} = await exec(`cd /tangerine/groups/${groupId} && git status`)
-			if(!stdout.includes('nothing to commit')){
-				const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
+			if(!stdout.includes('nothing to commit')) {
 				await exec(cmd);
 			}
-		})
-	} catch (error) {
-		log.error(error)
+		}
+		catch (error) {
+			log.error(`Failed to run ${cmd}`)
+			log.error(error)
+		}
 	}
-	
 }
 module.exports ={
 	commitFilesToVersionControl,
