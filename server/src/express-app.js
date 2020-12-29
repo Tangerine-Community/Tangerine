@@ -17,7 +17,10 @@ const unlink = util.promisify(fsc.unlink)
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
+const pouchRepStream = require('pouchdb-replication-stream');
 PouchDB.plugin(require('pouchdb-find'));
+PouchDB.plugin(pouchRepStream.plugin);
+PouchDB.adapter('writableStream', pouchRepStream.adapters.writableStream);
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
@@ -46,9 +49,9 @@ const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, ge
  const {saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
-var cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const { getPermissionsList } = require('./permissions-list.js');
-var repStream = require('express-pouchdb-replication-stream');
+const repStream = require('express-pouchdb-replication-stream');
 const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 
@@ -429,18 +432,60 @@ app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
 app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
 
-app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', function(req, res, next){
+app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async function(req, res, next){
   const groupId = req.params.groupId;
   const deviceId = req.params.deviceId;
   const syncUsername = req.params.syncUsername;
   const syncPassword = req.params.syncPassword;
-  console.log("about to repStream to " + groupId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword)
-
   const url = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}`
-  return repStream({
-    url     : url,
-    // dbReq   : true
-  })(req, res, next);
+  const devicesUrl = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}-devices`
+  console.log("about to repStream to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword + " using devicesUrl: " + devicesUrl)
+  const groupDevicesDb = await new PouchDB(devicesUrl)
+  const device = await groupDevicesDb.get(deviceId)
+  // const device = await groupDevicesDb.allDocs({include_docs:true})
+  // console.log("device: " + JSON.stringify(device))
+  let syncLocation = device.syncLocations[0]
+  let locationSetting = syncLocation.value.slice(-1).pop()
+  let location = {
+    [`${locationSetting.level}`]: locationSetting.value
+  }
+  let locationString = JSON.stringify(location)
+  console.log("location: " + locationString)
+  // const formInfos = await this.tangyFormsInfoService.getFormsInfo()
+  let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+  let ids = forms.map(formInfo => {
+    if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+      return formInfo.id
+    }
+  })
+  // console.log("ids: " + JSON.stringify(ids))
+  const replicationOpts = { filter : (doc,req) => {
+      const locTest =  doc.location[`${locationSetting.level}`] === locationSetting.value
+      const idTest = ids.find(id  => {
+        // console.log("id: " + id + " doc.form.id: " + doc.form.id)
+        if (id === doc.form.id) {
+          return true
+        }
+      })
+      const responseTest = doc.collection === 'TangyFormResponse'
+      console.log("locTest: " + locTest + " idTest: " + idTest + " responseTest: " + responseTest)
+      return locTest && idTest && responseTest
+      // return doc.collection === 'TangyFormResponse';
+    }}
+  // console.log("replicationOpts: " + replicationOpts.filter.toString())
+
+  // stream db to express response
+  const db = new PouchDB(url);
+  const dump =  db.dump(res, replicationOpts)
+    .catch(function(err){
+      // custom error handler
+      if(typeof config.error === 'function'){
+        return config.error(err);
+      }
+      res.status(500).send(err);
+    });
+  // console.log("dump" + dump)
+  return dump
 });
 
 

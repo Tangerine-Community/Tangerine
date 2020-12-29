@@ -15,7 +15,7 @@ export class BulkSyncController {
   ) { }
 
   @Get ('start/:groupId/:deviceId/:deviceToken')
-  async start(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string, @Param('deviceToken') deviceToken:string):Promise<AxiosResponse<any>> {
+  async start(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string, @Param('deviceToken') deviceToken:string) {
     try {
       if (await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, deviceToken)) {
         const tokenUrl = await this.syncSessionService.start(groupId, deviceId)
@@ -29,8 +29,7 @@ export class BulkSyncController {
         const syncUsername = syncCredentials[0]
         const syncPassword = syncCredentials[1]
         const dumpFile = await this.bulkSyncService.dump(groupId, deviceId, syncUsername, syncPassword)
-        console.log("look out, here it comes: ")
-        console.log("dumpfile: " + JSON.stringify(dumpFile))
+        // console.log("look out, here it comes: dumpfile: " + JSON.stringify(dumpFile))
         return dumpFile
       } else {
         console.log(`Permission Denied: Device ${deviceId} used incorrect token to start sync session.`)

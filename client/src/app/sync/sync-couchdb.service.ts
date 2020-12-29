@@ -447,15 +447,16 @@ export class SyncCouchdbService {
     
     let pull_last_seq = 0;
     
-    
-      
-      try {
-        // status = await pullSyncBatch(syncOptions);
-        const stream = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-        this.syncMessage$.next(status)
-      } catch (e) {
-        console.log("Error: " + e)
-      }
+    try {
+      // status = await pullSyncBatch(syncOptions);
+      const payload = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
+      const writeStream = new window['Memorystream'];
+      writeStream.end(payload);
+      userDb.db.load(writeStream)
+      this.syncMessage$.next(status)
+    } catch (e) {
+      console.log("Error: " + e)
+    }
 
     status.initialPullLastSeq = pull_last_seq
 
