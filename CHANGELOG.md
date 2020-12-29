@@ -1,5 +1,37 @@
 # Changelog
 
+## v3.16.0
+
+__New Features and Fixes__
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.0
+# If you are enabling the new mysql module, follow step 1 - 3 from the instructions at `docs/system-administrator/mysql-module.md`.
+# Now you are ready to start the server.
+./start.sh v3.16.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.6
+```  
+
+
 ## v3.15.6
 
 __New Features and Fixes__
