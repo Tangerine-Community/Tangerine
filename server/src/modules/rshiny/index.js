@@ -20,7 +20,7 @@ module.exports = {
       }
       return data
     },
-    reportingOutputs: function(data) {
+    reportingOutputs: async function(data) {
       async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
@@ -78,33 +78,32 @@ module.exports = {
         }
       }
         
-      return new Promise(async (resolve, reject) => {
-        const {doc, sourceDb} = data
-        const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-        // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
-        const groupsDb = await new DB(`groups`);
-        const groupDoc = await groupsDb.get(`${sourceDb.name}`)
-        const exclusions = groupDoc['exclusions']
-        // First generate the full-cream database
-        let rshinyDb
-        try {
-          rshinyDb = await new DB(`${sourceDb.name}-rshiny`);
-        } catch (e) {
-          console.log("Error creating db: " + JSON.stringify(e))
-        }
-        let sanitized = false;
-        await generateDatabase(sourceDb, rshinyDb, doc, locationList, sanitized, exclusions, resolve);
-        
-        // Then create the sanitized version
-        let rshinySanitizedDb
-        try {
-          rshinySanitizedDb = await new DB(`${sourceDb.name}-rshiny-sanitized`);
-        } catch (e) {
-          console.log("Error creating db: " + JSON.stringify(e))
-        }
-        sanitized = true;
-        await generateDatabase(sourceDb, rshinySanitizedDb, doc, locationList, sanitized, exclusions, resolve);
-      })
+      const {doc, sourceDb} = data
+      const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+      // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
+      const groupsDb = await new DB(`groups`);
+      const groupDoc = await groupsDb.get(`${sourceDb.name}`)
+      const exclusions = groupDoc['exclusions']
+      // First generate the full-cream database
+      let rshinyDb
+      try {
+        rshinyDb = await new DB(`${sourceDb.name}-rshiny`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      let sanitized = false;
+      await generateDatabase(sourceDb, rshinyDb, doc, locationList, sanitized, exclusions, resolve);
+      
+      // Then create the sanitized version
+      let rshinySanitizedDb
+      try {
+        rshinySanitizedDb = await new DB(`${sourceDb.name}-rshiny-sanitized`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      sanitized = true;
+      await generateDatabase(sourceDb, rshinySanitizedDb, doc, locationList, sanitized, exclusions, resolve);
+      return (data)
     }
   }
 }
