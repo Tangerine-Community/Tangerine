@@ -51,7 +51,7 @@ log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 const cookieParser = require('cookie-parser');
 const { getPermissionsList } = require('./permissions-list.js');
-const repStream = require('express-pouchdb-replication-stream');
+const {AppContext} = require("../../editor/src/app/app-context.enum");
 const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 
@@ -442,39 +442,54 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
   console.log("about to repStream to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword + " using devicesUrl: " + devicesUrl)
   const groupDevicesDb = await new PouchDB(devicesUrl)
   const device = await groupDevicesDb.get(deviceId)
-  // const device = await groupDevicesDb.allDocs({include_docs:true})
-  // console.log("device: " + JSON.stringify(device))
-  let syncLocation = device.syncLocations[0]
-  let locationSetting = syncLocation.value.slice(-1).pop()
-  let location = {
-    [`${locationSetting.level}`]: locationSetting.value
-  }
-  let locationString = JSON.stringify(location)
-  console.log("location: " + locationString)
-  // const formInfos = await this.tangyFormsInfoService.getFormsInfo()
-  let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
-  let ids = forms.map(formInfo => {
-    if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-      return formInfo.id
-    }
-  })
-  // console.log("ids: " + JSON.stringify(ids))
-  const replicationOpts = { filter : `
-      const locTest =  doc.location["${locationSetting.level}"] === "${locationSetting.value}"
-      const idTest = ${ids}.find(id  => {
-        // console.log("id: " + id + " doc.form.id: " + doc.form.id)
-        if (id === doc.form.id) {
-          return true
-        }
-      })
-      const responseTest = doc.collection === 'TangyFormResponse'
-      console.log("locTest: " + locTest + " idTest: " + idTest + " responseTest: " + responseTest)
-      return locTest && idTest && responseTest
-      // return doc.collection === 'TangyFormResponse';
-    }}
-    `
-  // console.log("replicationOpts: " + replicationOpts.filter.toString())
+  const formInfos = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
 
+  const pullSelector = {
+    "$or": [
+      ...formInfos.reduce(($or, formInfo) => {
+        if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+          $or = [
+            ...$or,
+            ...device.syncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+              ? device.syncLocations.map(locationConfig => {
+                // Get last value, that's the focused sync point.
+                let location = locationConfig.value.slice(-1).pop()
+                return {
+                  "form.id": formInfo.id,
+                  [`location.${location.level}`]: location.value
+                }
+              })
+              : [
+                {
+                  "form.id": formInfo.id
+                }
+              ]
+          ]
+        }
+        return $or
+      }, []),
+      ...device.syncLocations.length > 0
+        ? device.syncLocations.map(locationConfig => {
+          // Get last value, that's the focused sync point.
+          let location = locationConfig.value.slice(-1).pop()
+          return {
+            "type": "issue",
+            [`location.${location.level}`]: location.value,
+            "resolveOnAppContext": AppContext.Client
+          }
+        })
+        : [
+          {
+            "resolveOnAppContext": AppContext.Client,
+            "type": "issue"
+          }
+        ]
+    ]
+  }
+  
+  const replicationOpts = {
+    "selector": pullSelector
+  }
   // stream db to express response
   const db = new PouchDB(url);
   const dump =  db.dump(res, replicationOpts)
