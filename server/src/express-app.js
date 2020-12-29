@@ -459,9 +459,9 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
     }
   })
   // console.log("ids: " + JSON.stringify(ids))
-  const replicationOpts = { filter : (doc,req) => {
-      const locTest =  doc.location[`${locationSetting.level}`] === locationSetting.value
-      const idTest = ids.find(id  => {
+  const replicationOpts = { filter : `
+      const locTest =  doc.location["${locationSetting.level}"] === "${locationSetting.value}"
+      const idTest = ${ids}.find(id  => {
         // console.log("id: " + id + " doc.form.id: " + doc.form.id)
         if (id === doc.form.id) {
           return true
@@ -472,6 +472,7 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
       return locTest && idTest && responseTest
       // return doc.collection === 'TangyFormResponse';
     }}
+    `
   // console.log("replicationOpts: " + replicationOpts.filter.toString())
 
   // stream db to express response
