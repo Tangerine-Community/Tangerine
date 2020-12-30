@@ -70,16 +70,19 @@ def convert_case(resp_dict):
                 cursor.execute("Delete from " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name='case_instances', con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case_instances', engine)
-                df2 = pd.concat([data, df])
+                df2 = pd.concat([data, df], sort=False)
                 print(df2)
+                mysql_connection.commit()
                 df2.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
 
@@ -126,6 +129,7 @@ def convert_participant(resp_dict):
                 participantData.update({key: resp_dict.get(key)})
 
         df = pd.DataFrame([participantData])
+        # RJ: Do we need a df.rename() like we do on other types of data?
         # Try 3 things to insert data...
         #     1) Insert the data as a new or updated row. If that fails...
         #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
@@ -139,17 +143,23 @@ def convert_participant(resp_dict):
                 cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name='participant', con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.participant', engine)
-                df2 = pd.concat([data, df])
+                df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
-                df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
-                mysql_connection.commit()
+                try: 
+                    mysql_connection.commit()
+                    df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
+                    mysql_connection.commit()
+                except:
+                    print("Unable to insert participant:" + participantId)
  
 
 
@@ -181,15 +191,18 @@ def convert_case_event(resp_dict):
                 cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name='caseevent', con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.caseevent', engine)
-                df2 = pd.concat([data, df])
+                df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
  
@@ -223,15 +236,18 @@ def convert_event_form(resp_dict):
                 cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name='eventform', con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try: 
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
                 df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
 
@@ -293,15 +309,18 @@ def convert_response(resp_dict):
                 mysql_connection.commit()
 
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name=formID, con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try: 
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.'+formID, engine)
-                df2 = pd.concat([data, df])
+                df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name=formID, con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name=formID, con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
  
@@ -406,45 +425,47 @@ def main_job():
             cnt2 = cnt2 + 1
             #print(change)
             #change is a dictionary object
-            seq = change.get('seq')
-            id = change.get('id')
-            cng = change.get('changes')
-            #check to see if is a delete change,if it is, just delete the record
-            if change.get('deleted'):
-                #remove the ID from the table, but we don't know which table
-                #delete_record(tangerline_database, id)
-                continue
-            #get the change revision
-            version = cng[0].get('rev')
-            doc = change.get('doc')  #that's a doctionary
-            #print(doc)
-            #need to handle delete changes
-            type = doc.get('type')
-            print("Processing changes, document type: " + type + ", Count: " + str(cnt2))
-            # there are 5 major types: case, participant, case-event, event-form and response
-            if (type.lower() == "case"):
-                # handle case type
-                convert_case(doc)
-            elif (type.lower() == "participant"):
-                # participant is already handled in case, ignore, donothing
-                #pass
-                convert_participant(doc)
-            elif (type.lower() == "event-form"):
-                #pass
-                convert_event_form(doc)
-            # handle case-event, this is skipped
-            elif (type.lower() == "case-event"):
+            if change is not None:
+                seq = change.get('seq')
+                id = change.get('id')
+                cng = change.get('changes')
+                #check to see if is a delete change,if it is, just delete the record
+                if change.get('deleted'):
+                    #remove the ID from the table, but we don't know which table
+                    #delete_record(tangerline_database, id)
+                    continue
+                #get the change revision
+                version = cng[0].get('rev')
+                doc = change.get('doc')  #that's a doctionary
+                #print(doc)
+                #need to handle delete changes
+                type = doc.get('type')
+                id = doc.get('_id')
+                print("Processing changes, document type: " + type + ", Count: " + str(cnt2) + ", ID: " + id)
+                # there are 5 major types: case, participant, case-event, event-form and response
+                if (type.lower() == "case"):
+                    # handle case type
+                    convert_case(doc)
+                elif (type.lower() == "participant"):
+                    # participant is already handled in case, ignore, donothing
+                    #pass
+                    convert_participant(doc)
+                elif (type.lower() == "event-form"):
+                    #pass
+                    convert_event_form(doc)
                 # handle case-event, this is skipped
-                #pass
-                convert_case_event(doc)
-                # convert_document(document)
-            elif (type.lower() == "response"):
-                # handle case-event, this is skipped
-                #pass
-                convert_response(doc)
-                # convert_document(document)
-            else:
-                print("Unexpected document type")
+                elif (type.lower() == "case-event"):
+                    # handle case-event, this is skipped
+                    #pass
+                    convert_case_event(doc)
+                    # convert_document(document)
+                elif (type.lower() == "response"):
+                    # handle case-event, this is skipped
+                    #pass
+                    convert_response(doc)
+                    # convert_document(document)
+                else:
+                    print("Unexpected document type")
         #get the last change sequence
         last_change_seq= get_last_change_seq(tangerline_database)
 
