@@ -10,6 +10,10 @@ export class ReplicationStatus {
   direction:any
   pullError: any
   pushError: any
-  initialPullLastSeq: any;
-  tangerineVersion: any;
+  initialPullLastSeq: any
+  tangerineVersion: any
+  pushStartTime: any
+  pullStartTime: any
+  pushStopTime: any
+  pullStopTime: any
 }
