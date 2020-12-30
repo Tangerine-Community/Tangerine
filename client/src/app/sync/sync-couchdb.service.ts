@@ -228,6 +228,7 @@ export class SyncCouchdbService {
 
     status.pushStartTime = pushStartTime
     status.pushStopTime = pushStopTime
+    status.docCount = docCount
     
     return status;
   }
@@ -235,6 +236,9 @@ export class SyncCouchdbService {
   async pull(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
     const pullStartTime = new Date().toISOString()
     let pullStopTime
+    let dbInfo = await userDb.db.info()
+    const initialDocCount = dbInfo.doc_count
+    
     let status = <ReplicationStatus>{
       pulled: 0,
       pullConflicts: [],
@@ -425,9 +429,13 @@ export class SyncCouchdbService {
     } else {
       // TODO: Do we store the most recent seq id we tried to sync but didn't find any matches?
     }
-
+    dbInfo = await userDb.db.info()
+    const docCount = dbInfo.doc_count
+    
     status.pullStartTime = pullStartTime
     status.pullStopTime = pullStopTime
+    status.initialDocCount = initialDocCount
+    status.docCount = docCount
     
     return status;
   }

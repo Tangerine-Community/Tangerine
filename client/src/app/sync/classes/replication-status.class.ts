@@ -16,4 +16,6 @@ export class ReplicationStatus {
   pullStartTime: any
   pushStopTime: any
   pullStopTime: any
+  initialDocCount: number // before pulling docs from server.
+  docCount: number
 }
