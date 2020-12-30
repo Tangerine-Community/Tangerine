@@ -93,6 +93,9 @@ export class SyncCouchdbService {
   }
   
   async push(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
+    const pushStartTime = new Date().toISOString()
+    let pushStopTime
+
     // Get the sequences we'll be starting with.
     let push_last_seq = await this.variableService.get('sync-push-last_seq')
 
@@ -118,7 +121,8 @@ export class SyncCouchdbService {
             pushed: info.docs_written,
             info: info,
             remaining: syncOptions.remaining,
-            direction: direction
+            direction: direction,
+            pushStartTime: pushStartTime
           }
           resolve(status)
         }).on('change', async (info) => {
@@ -145,7 +149,8 @@ export class SyncCouchdbService {
             // We need to create an empty status to return so that the code that receives the reject can attach the error.
             status = <ReplicationStatus>{
               remaining: syncOptions.remaining,
-              direction: direction
+              direction: direction,
+              pushStartTime: pushStartTime
             }
           }
           let errorMessage = "pushSyncBatch failed. error: " + error
@@ -181,11 +186,11 @@ export class SyncCouchdbService {
         "remaining": remaining,
         "pushed": pushed
       }
-
       syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
 
       try {
         status = await pushSyncBatch(syncOptions);
+        pushStopTime = new Date().toISOString()
         if (typeof status.pushed !== 'undefined') {
           pushed = pushed + status.pushed
           status.pushed = pushed
@@ -194,6 +199,7 @@ export class SyncCouchdbService {
         }
         this.syncMessage$.next(status)
       } catch (e) {
+        pushStopTime = new Date().toISOString()
         console.log("Error: " + e)
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         batchFailureDetected = true
@@ -219,16 +225,23 @@ export class SyncCouchdbService {
       // set last_seq
       await this.variableService.set('sync-push-last_seq', status.info.last_seq)
     }
+
+    status.pushStartTime = pushStartTime
+    status.pushStopTime = pushStopTime
+    
     return status;
   }
 
   async pull(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
+    const pullStartTime = new Date().toISOString()
+    let pullStopTime
     let status = <ReplicationStatus>{
       pulled: 0,
       pullConflicts: [],
       info: '',
       remaining: 0,
-      direction: '' 
+      direction: '',
+      pullStartTime: pullStartTime
     };
     let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
     if (typeof pull_last_seq === 'undefined') {
@@ -292,7 +305,6 @@ export class SyncCouchdbService {
       'message': 'Received data from remote server.'
     }
     this.syncMessage$.next(progress)
-    
 
     let batchFailureDetected = false
     let batchError;
@@ -377,6 +389,7 @@ export class SyncCouchdbService {
       
       try {
         status = await pullSyncBatch(syncOptions);
+        pullStopTime = new Date().toISOString()
         if (typeof status.pulled !== 'undefined') {
           pulled = pulled + status.pulled
           status.pulled = pulled
@@ -385,6 +398,7 @@ export class SyncCouchdbService {
         }
         this.syncMessage$.next(status)
       } catch (e) {
+        pullStopTime = new Date().toISOString()
         console.log("Error: " + e)
       // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         batchFailureDetected = true
@@ -411,6 +425,10 @@ export class SyncCouchdbService {
     } else {
       // TODO: Do we store the most recent seq id we tried to sync but didn't find any matches?
     }
+
+    status.pullStartTime = pullStartTime
+    status.pullStopTime = pullStopTime
+    
     return status;
   }
 }
