@@ -449,13 +449,42 @@ export class SyncCouchdbService {
     
     try {
       // status = await pullSyncBatch(syncOptions);
+      const startInfo = await userDb.db.info()
+      const startCount = startInfo.doc_count
+      status.remaining = 100
+      status.message = `Fetching initial data from server.`
+      this.syncMessage$.next(status)
       const payload = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-      const writeStream = new window['Memorystream'];
-      writeStream.end(payload);
-      userDb.db.load(writeStream)
+      if (payload) {
+        const firstLine = payload.split('\n')[0];
+        const ndjObject = JSON.parse(firstLine)
+        let payloadDocCount
+        if (ndjObject) {
+          payloadDocCount = ndjObject.db_info?.doc_count
+        }
+        status.message = `Importing ${payloadDocCount} docs`
+        this.syncMessage$.next(status)
+        const writeStream = new window['Memorystream'];
+        writeStream.end(payload);
+        await userDb.db.load(writeStream)
+        const endInfo = await userDb.db.info()
+        const endCount = endInfo.doc_count
+        const docsAdded = endCount - startCount
+        status.pulled = docsAdded
+        status.remaining = 0
+        delete status.message
+      } else {
+        status.pulled = 0
+        status.remaining = 0
+        status.message = `Unable to download data from server.`
+      }
       this.syncMessage$.next(status)
     } catch (e) {
-      console.log("Error: " + e)
+      const errorMessageDialog = window['t']('Error downloading data. Error: ')
+      const errorMessage = errorMessageDialog + e
+      console.log(errorMessage)
+      status.pullError = errorMessage
+      this.syncMessage$.next(status)
     }
 
     status.initialPullLastSeq = pull_last_seq
