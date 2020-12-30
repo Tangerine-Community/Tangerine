@@ -152,7 +152,20 @@ async function batch() {
             await changeProcessor(change, db)
             processed++
           } catch (error) {
-            log.error(`Error on change sequence ${change.seq} with id ${change.id} - Error: ${JSON.stringify(error)} ::::: `)
+            let errorMessage = JSON.stringify(error)
+            let errorMessageText = error.message
+
+            // Sometimes JSON.stringify wipes out the error.
+            console.log("typeof error message: " + typeof error.message + " errorMessage: " + errorMessage + " errorMessageText: " + errorMessageText)
+            if (typeof error.message === 'object') {
+              errorMessageText = JSON.stringify(error.message)
+            }
+            if (errorMessage === '{}') {
+              errorMessage = "Error : " +  " message: " + errorMessageText
+            } else {
+              errorMessage = "Error : " +  " message: " + errorMessageText + " errorMessage: " + errorMessage
+            }
+            log.error(`Error on change sequence ${change.seq} with id ${change.id} - Error: ${errorMessage} ::::: `)
           }
         }
         // Even if an error was thrown, continue on with the next sequences.

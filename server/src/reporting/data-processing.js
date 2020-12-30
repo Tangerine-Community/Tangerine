@@ -40,7 +40,7 @@ exports.changeProcessor = (change, sourceDb) => {
       })
       .catch(error => {
         console.log('Error in changeProcessor: ' + JSON.stringify(error))
-        reject(new Error(error))
+        reject(new Error('Error in changeProcessor: ' + JSON.stringify(error)))
       })
   })
 }

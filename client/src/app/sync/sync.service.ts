@@ -77,7 +77,7 @@ export class SyncService {
       null,
       isFirstSync
     )
-    console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
+    console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
@@ -87,7 +87,62 @@ export class SyncService {
       deviceToken: device.token,
       formInfos
     })
-    await this.deviceService.didSync()
+
+    this.syncMessage$.next({ 
+      message: window['t']('Sync is complete, sending status to server. Please wait...')
+    })
+
+    try {
+      const tangerineVersion = await this.deviceService.getTangerineVersion()
+      this.replicationStatus.tangerineVersion = tangerineVersion
+      await this.deviceService.didSync(this.replicationStatus)
+    } catch (e) {
+      this.syncMessage$.next({message: window['t']('Error sending sync status to server: ' + e)})
+      console.log("Error: " + e)
+    }
+    
+    if (
+      isFirstSync ||
+      (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
+    ) {
+      this.syncMessage$.next({ 
+        message: window['t']('Optimizing data. This may take several minutes. Please wait...'),
+        remaining: null
+      })
+      await this.indexViews()
+    }
+    return this.replicationStatus
+  }
+
+  // Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
+  async indexViews() {
+    const exclude = [
+      'tangy-form/responsesLockedAndNotUploaded',
+      'tangy-form/responsesUnLockedAndNotUploaded',
+      'tangy-form/responsesLockedAndUploaded',
+      'tangy-form/responsesUnLockedAndUploaded',
+      'tangy-form/responseByUploadDatetime',
+      'responsesUnLockedAndNotUploaded'
+    ]
+    const db = await this.userService.getUserDatabase()
+    const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
+    console.log(`Indexing ${result.rows.length} views.`)
+    let i = 0
+    for (let row of result.rows) {
+      if (row.doc.views) {
+        for (let viewId in row.doc.views) {
+          const viewPath = `${row.doc._id.replace('_design/', '')}/${viewId}`
+          if (!exclude.includes(viewPath)) {
+            console.log(`Indexing: ${viewPath}`)
+            await db.query(viewPath, { limit: 1 })
+          }
+        }
+      }
+      this.syncMessage$.next({ message: `${window['t']('Optimizing data. Please wait...')} ${Math.round((i/result.rows.length)*100)}%` })
+      i++
+    }
+   
+
   }
 
 

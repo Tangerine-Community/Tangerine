@@ -5,7 +5,7 @@
         <p>{{'Online Sync is used when there is a reliable Internet connection. If you have no Internet connection, use the P2P tab above to transfer records between nearby devices.'|translate}}</p>
         <h2>{{'Online Sync'|translate}}</h2>
         <p>{{'Press the Start button below to transfer records to the server.'|translate}}</p>
-
+        
         <div class="container" *ngIf="status === 'STATUS_INITIAL'">
           <button mat-raised-button color="primary" (click)="sync()">{{'Start'|translate}}</button>
           <mat-progress-bar value="0"></mat-progress-bar>
@@ -17,16 +17,8 @@
           <mat-progress-bar mode="buffer"></mat-progress-bar>
           <div class="status">{{'Status'|translate}}: {{'In progress'|translate}}</div>
           <div class="status">{{syncMessage}}</div>
+          <div class="status">{{otherMessage}}</div>
           <div class="status">{{direction}}</div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
-          </div>
-          <div *ngIf="show"  class="debugging">
-            <div class="status">{{'Checkpoints'|translate}}:{{checkpointMessage}}</div>
-            <div class="status">{{'Diffs'|translate}}: {{diffMessage}}</div>
-            <div class="status">{{'Start Next Batch'|translate}}: {{startNextBatchMessage}}</div>
-            <div class="status">{{'Pending Batch'|translate}}: {{pendingBatchMessage}}</div>
-          </div>
         </div>
 
         <div class="container" *ngIf="status === 'STATUS_COMPLETED'">
@@ -40,19 +32,9 @@
             <ul>
               <li>{{'Pulled from the server'|translate}}: {{replicationStatus.pulled}}</li>
               <li>{{'Pushed to the server'|translate}}: {{replicationStatus.pushed}}</li>
+              <li>{{'Records in the database'|translate}}: {{dbDocCount}}</li>
             </ul>
-            
           </div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">{{'Debugging'|translate}}</button>
-          </div>
-          <div *ngIf="show" class="debugging">
-            <div class="status">{{'Checkpoints'|translate}}:{{checkpointMessage}}</div>
-            <div class="status">{{'Diffs'|translate}}: {{diffMessage}}</div>
-            <div class="status">{{'Start Next Batch'|translate}}: {{startNextBatchMessage}}</div>
-            <div class="status">{{'Pending Batch'|translate}}: {{pendingBatchMessage}}</div>
-          </div>
-
         </div>
 
         <div class="container" *ngIf="status === 'STATUS_ERROR'">
@@ -61,16 +43,12 @@
           <div class="status">{{'Status'|translate}}: {{'Error'|translate}}</div>
           <div class="status">{{syncMessage}}</div>
           <div class="status">{{direction}}</div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">{{'Debugging'|translate}}</button>
-          </div>
-          <div *ngIf="show" class="debugging">
-            <div class="status">{{'Checkpoints'|translate}}:{{checkpointMessage}}</div>
-            <div class="status">{{'Diffs'|translate}}: {{diffMessage}}</div>
-            <div class="status">{{'Start Next Batch'|translate}}: {{startNextBatchMessage}}</div>
-            <div class="status">{{'Pending Batch'|translate}}: {{pendingBatchMessage}}</div>
-          </div>
+          <div><p>{{'Records in the local database'|translate}}: {{dbDocCount}}</p></div>
         </div>
+        
+        <div class="errorMessage" *ngIf="errorMessage">{{errorMessage}}</div>
+        <div class="errorMessage" *ngIf="pullError">Pull Error: {{pullError}}</div>
+        <div class="errorMessage" *ngIf="pushError">Push Error: {{pushError}}</div>
 
       </div>
     </ng-template>

@@ -1,13 +1,177 @@
 # Changelog
 
+## v3.15.6
+
+__New Features and Fixes__
+- New 'wakelock' feature for sync: When using the sync feature, the screen should not go to sleep or dim, enabling the sync process to proceed. This is especially useful during long sync processes. When you navigate to another page once Sync is complete, the wakeLock feature is disabled. 
+- The Devices listing has a new option, "View Sync Log", which enables viewing status of the most recent replication, when available.  
+- Added error messages when internet access drops during a sync. [#2540](https://github.com/Tangerine-Community/Tangerine/issues/2540)
+- Batch size for sync is configurable via `pullSyncOptions` and `pushSyncOptions` variable in a group's app-config.json. Default is 200. If the value is set too high, the application will crash.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.6
+# Now you are ready to start the server.
+./start.sh v3.15.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.5
+```  
+
+## v3.15.5
+
+__Fixes__
+- In CSV output, if a section on a form is opened and then the later skipped, inputs on that skipped section will appear in CSV output as skipped. However, if the section is never opened, the inputs would show up in the CSV as blank values. This fix ensures that these remaining inputs are marked as skipped in CSV output.
+- Fix sync from breaking when syncing with a group with no data yet.
+- Improve messaging during sync by removing floating change counts and showing the total number of docs in the database after sync.
+
+__Server upgrade instructions__
+Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.5
+# Now you are ready to start the server.
+./start.sh v3.15.5
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.4
+```  
+
+
+## v3.15.4
+
+__Fixes__
+- Sync: Sites with large datasets were crashing; therefore, we implemented a new sync function that syncs batches of documents to the server. PR: [#2532](https://github.com/Tangerine-Community/Tangerine/pull/2532)
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.4
+# Now you are ready to start the server.
+./start.sh v3.15.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.3
+```
+
+## v3.15.3
+__Fixes__
+- After a large sync in sync protocol 2, improve overall app performance by indexing database queries. Because this may cause a long sync for projects not using this, you can set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
+- Add missing `custom-scripts.js` and `custom-styles.css` files to Editor app. We also add `editor` and `client` ID's to the body tag of the two app respectively.
+- Reduce database merge conflicts by preventing form responses from saving after completed. Prior to this version, on two tablets (or on a tablet and the server) if you opened the same form response and opened an item to inspect, it would cause a save on both tablets resulting in an unnesessary merge conflict.
+- New `T.case.getCaseHistory(caseId)` function for getting the history of save for a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case and run `await T.case.getCaseHistory()` in the console and it will pick up on the context.
+- New `T.case.getEventFormHistory(caseId, caseEventId, eventFormId)` function for getting the history of save for a form response in a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case, a Case Event, then an Event Form and run `await T.case.getEventFormHistory()` in the console and it will pick up on the context.
+- New opt-in `app-config.json` setting `attachHistoryToDocs` for enabling upload all history of Case and Event Form edits on a Tablet up to the Server. Without this setting on, the server only sees the history starting from time of upload. Note this has an impact on upload size of at least doubling it when turned on.
+
+__Important configuration notice__
+- Set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.3
+# Now you are ready to start the server.
+./start.sh v3.15.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.2
+```
+
+## v3.15.2
+
+__Fixes__
+
+- Rshiny module: Replaces hard-coded underscore separator with the configurable `sep` variable. 
+- Error when processing CSV's: [2517](https://github.com/Tangerine-Community/Tangerine/issues/2517)
+
+__Important configuration notice__
+
+The v3.15.0 release included an update to the Editor Search feature [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) that requires adding a `searchSettings` property to forms.json. In addition to running the upgrade script for v3.15.0; you must also make sure that *all* forms in a group's forms.json have `searchSettings` configured, especially the `shouldIndex` property. Examples are in the [Case Module README](./docs/editor/case-module/README.md#configuring-text-search) "Configuring Text Search" section.
+
+__Server upgrade instructions__
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.2
+# Now you are ready to start the server.
+./start.sh v3.15.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.1
+```  
+
+## v3.15.1
+
+__Fixes__
+
+- Prevent opening of Event Forms on Editor when there is no corresponding Form Response available. 
+- Fix Issue type detection when deciding what is going to be in the 'current' tab. 
+- Update CSV output for signatures to be 'signature captured' and ''.
+- Fix Issues view causing Issue search result to appear once per event such as comment or proposal. 
+- Integrate fixes in v3.14.6 including `T.case.isIssueContext()` API, and better API partity between being in an Event Form in a Case and being in an Event Form in an Issue.
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.1
+# Now you are ready to start the server.
+./start.sh v3.15.1
+docker exec -it tangerine push-all-groups-views  
+docker exec -it tangerine reporting-cache-clear  
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.0
+```  
+
 ## v3.15.0
 
-- __New Features and fixes for all Tangerine__
+- __New Features and fixes__
   - Editor User searches Cases by keyword [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) - This feature enables searching by any of the variables assigned in searchSettings/variablesToIndex in forms.json. 
   - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419). Find Participant UI: [#2439](https://github.com/Tangerine-Community/Tangerine/pull/2439).
   - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
   - Added error message to Updates error alert. [ccc1864
 ](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
+  - New "Release Online Survey" menu on Server allows you to release a single form for data collection online. Note the original "Deploy -> Release" menu item has been moved to "Deploy -> Release Offline App".
+  - Fixed issue where "Tangy Gate" form element could be added in Editor but would not appear on Tablets.
+  - Support for new "<tangy-ethio-date>" element that brings a Partial Date style form element with support for the Ethiopian Calendar.
+  - If using Sync Protocol 2, the first sync when registering a Device is now faster in cases where there is a lot of data already collected. Also the blank User Profile created for the Admin user on a device is no longer uploaded resulting in less noise in the Device Users list.
 
 
 - __Important deprecation notice__
@@ -26,8 +190,28 @@ git checkout v3.15.0
 # Update the views - there are new views for Searches and Participant Transfers.
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.14.3
+docker rmi tangerine/tangerine:v3.14.6
 ```  
+
+## v3.14.6
+Changes in v3.14.4 were abandoned, changes in v3.14.5 have been rolled into v3.15.0. The following are changes for v3.14.6.
+
+- Improve first sync performance: On first sync, skip push but set the last push variable to whatever we left on after the first pull.
+- Improve in-form API parity between context of a Case and context of an Issue proposal. Sets case context in more scenarious inside of Issue Form proposals.
+- Prevent form crashes and unintentional logic by adding the new `T.case.isIssueContext()` API for detecting if in the Issue context in a form.
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.6
+# Now you are ready to start the server.
+./start.sh v3.14.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.3
+```
 
 ## v3.14.3
 - __Bugfix__
