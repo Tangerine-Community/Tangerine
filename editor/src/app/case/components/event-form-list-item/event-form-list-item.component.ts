@@ -104,6 +104,10 @@ export class EventFormListItemComponent implements OnInit {
   }
 
   navigateToEventForm() {
+    // Bail if there is a form response for this event form but the coresponding Form Response is not available.
+    if (!this.response && this.eventForm.formResponseId) {
+      return
+    }
     if (!this.eventForm.formResponseId) {
       if (!confirm(t('This Event Form has not yet started. Opening it will modify data and may lead to merge conflicts. Are you sure you want to proceed?'))) {
         return

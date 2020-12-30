@@ -31,3 +31,10 @@ div {
 .debugging {
   margin: 0em;
 }
+
+.errorMessage {
+  margin-left: 0px;
+  font-size: 20px;
+  font-weight: bold;
+  color: red;
+}

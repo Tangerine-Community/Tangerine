@@ -23,5 +23,6 @@ export class AppConfig {
   p2pSync = 'false'
   passwordPolicy:string
   passwordRecipe:string
+  attachHistoryToDocs:boolean = false
 }
 

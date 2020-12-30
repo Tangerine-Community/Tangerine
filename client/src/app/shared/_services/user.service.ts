@@ -81,7 +81,8 @@ export class UserService {
           await this.sharedUserDatabase.put(doc)
         }
     } catch (e) {
-      console.log("Error: " + JSON.stringify(e))
+      console.warn('./assets/queries.js failed to install. Only worry about this if you are using queries.js.')
+      console.error(e)
     }
     await this.variableService.set('atUpdateIndex', updates.length - 1);
   }
@@ -132,10 +133,10 @@ export class UserService {
     const deviceInfo = await this.deviceService.getAppInfo()
     if (appConfig.syncProtocol === '2') {
       const device = await this.deviceService.getDevice()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId, appConfig.attachHistoryToDocs)
     } else {
       const appInfo = await this.deviceService.getAppInfo()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo.buildId, appInfo.buildChannel, appInfo.groupId)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo.buildId, appInfo.buildChannel, appInfo.groupId, appConfig.attachHistoryToDocs)
     }
   }
 

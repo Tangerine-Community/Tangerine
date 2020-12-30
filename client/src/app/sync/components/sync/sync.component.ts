@@ -1,3 +1,4 @@
+import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../sync.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
@@ -24,10 +25,16 @@ export class SyncComponent implements OnInit, OnDestroy {
   otherMessage: any
   subscription: any
   show:boolean=false;
+  dbDocCount:number
   replicationStatus: ReplicationStatus
+  errorMessage: any
+  pullError: any
+  pushError: any
+  wakeLock: any
 
   constructor(
     private syncService: SyncService,
+    private userService: UserService
   ) { }
 
   async ngOnInit() {
@@ -38,6 +45,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.startNextBatchMessage = ''
     this.pendingBatchMessage = ''
     this.otherMessage = ''
+    this.errorMessage = ''
   }
 
   async sync() {
@@ -49,48 +57,66 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.pendingBatchMessage = ''
     this.otherMessage = ''
     this.status = STATUS_IN_PROGRESS
+    this.errorMessage = ''
+    this.pullError = ''
+    this.pushError = ''
+    
+    try {
+      this.wakeLock =  await navigator['wakeLock'].request('screen');
+    } catch (err) {
+      // the wake lock request fails - usually system related, such low as battery
+      console.log(`${err.name}, ${err.message}`);
+    }
+    
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
-        let pendingMessage = ''
-        if (typeof progress.message !== 'undefined') {
-          if (progress.type == 'checkpoint') {
-            this.checkpointMessage = progress.message
-          } else if (progress.type == 'diffing') {
-            this.diffMessage = progress.message
-          } else if (progress.type == 'startNextBatch') {
-            this.startNextBatchMessage = progress.message
-          } else if (progress.type == 'pendingBatch') {
-            this.pendingBatchMessage = progress.message
-          } else {
+        if (progress) {
+          let pendingMessage = ''
+          if (typeof progress.message !== 'undefined') {
             this.otherMessage = progress.message
+          } else {
+            this.otherMessage = ''
           }
-
-          if (progress.direction !== '') {
-            this.direction = 'Direction: ' + progress.direction
-          }
-
-        } else {
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending;'
           }
-          this.syncMessage = progress.docs_written + ' docs synced; ' + pendingMessage
-          if (progress.direction !== '') {
-            this.direction = 'Direction: ' + progress.direction
+          if (typeof progress.error !== 'undefined') {
+            this.errorMessage = progress.error
           }
+          if (typeof progress.pullError !== 'undefined') {
+            this.pullError = progress.pullError
+          }
+          if (typeof progress.pushError !== 'undefined') {
+            this.pushError = progress.pushError
+          }
+          if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
+            this.syncMessage = progress.remaining + '% remaining to sync '
+          } else {
+            this.syncMessage = ''
+          }
+          if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
+            this.direction = 'Direction: ' + progress.direction
+          } else {
+            this.direction = ''
+          }
+          // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
-
-        console.log('Sync Progress: ' + JSON.stringify(progress))
+        
       }
     })
     try {
       await this.syncService.sync()
       this.replicationStatus = this.syncService.replicationStatus
+      const userDb = await this.userService.getUserDatabase()
+      this.dbDocCount = (await userDb.db.info()).doc_count
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
     } catch (e) {
       // console.log('Sync Error: ' + JSON.stringify(e, Object.getOwnPropertyNames(e)))
       // console.trace()
       console.log(e)
+      const userDb = await this.userService.getUserDatabase()
+      this.dbDocCount = (await userDb.db.info()).doc_count
       this.status = STATUS_ERROR
       this.syncMessage = this.syncMessage + ' ERROR: ' + JSON.stringify(e.message)
       this.subscription.unsubscribe();
@@ -101,6 +127,8 @@ export class SyncComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
+    this.wakeLock.release()
+    this.wakeLock = null;
   }
 
   toggle() {

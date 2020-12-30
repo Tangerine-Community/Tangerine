@@ -4,6 +4,8 @@ import {Injectable} from '@angular/core';
 import {FormVersion} from "./classes/form-version.class";
 import {TangyFormsInfoService} from "./tangy-forms-info-service";
 import {FormInfo} from "./classes/form-info.class";
+import axios from 'axios'
+import * as jsonpatch from "fast-json-patch";
 
 @Injectable()
 export class TangyFormService {
@@ -77,6 +79,36 @@ export class TangyFormService {
       this.formsMarkup[key] = formMarkup;
     }
     return formMarkup
+  }
+
+  async getDocRevHistory(docId) {
+    const groupId = window.location.pathname.split('/')[2]
+    const token = localStorage.getItem('token');
+    const docWithRevs = (<any>await axios.get(`/db/${groupId}/${docId}?revs_info=true`)).data
+    const revisions = docWithRevs._revs_info
+    let comparisons = []
+    if (revisions) {
+      // filter out missing
+      const availableRevisions = revisions.filter(rev => rev.status === 'available')
+      // loop through the revisionIds, fetch each one, and compare in-order.
+      for (let index = 0; index < availableRevisions.length; index++) {
+        const revision = availableRevisions[index]
+        const revId = revision.rev
+        const nextRevision = availableRevisions[index+1]
+        if (nextRevision) {
+          const currentDoc = (<any>await axios.get(`/db/${groupId}/${docId}?rev=${revId}`)).data
+          const nextRev = nextRevision.rev
+          const nextDoc = (<any>await axios.get(`/db/${groupId}/${docId}?rev=${nextRev}`)).data
+          const comparison = jsonpatch.compare(nextDoc, currentDoc).filter(mod => mod.path.substr(0,8) !== '/history')
+          const comparisonDoc = {
+            lastRev: nextRev,
+            patch: comparison
+          }
+          comparisons.push(comparisonDoc)
+        }
+      }
+    }
+    return comparisons
   }
 
 }

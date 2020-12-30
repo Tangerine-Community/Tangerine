@@ -38,23 +38,22 @@ export class RestoreBackupComponent implements OnInit {
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
       const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
       const len = dbNames.length
-      for (const dbName of dbNames) {
+      let copiedDbs = []
+      for (let index = 0; index < dbNames.length; index++) {
+        const dbName = dbNames[index]
         // copy the database
-        console.log(`copying ${dbName} db over to the protected accessible fs`)
-        // tslint:disable-next-line:max-line-length
         const restoreLocation = cordova.file.externalRootDirectory + 'Download/restore/' + dbName;
         this.window.resolveLocalFileSystemURL(restoreLocation, (fileEntry) => {
           const databasesLocation = cordova.file.applicationStorageDirectory + 'databases/';
           this.window.resolveLocalFileSystemURL(databasesLocation, (directory) => {
             fileEntry.copyTo(directory, dbName, () => {
               this.success = true
-              console.log('DB Copied!');
+              console.log(`${dbName} copied!`);
               // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.applicationStorageDirectory}/databases/${dbName}`);
               this.statusMessage += `<p>File stored at ${directory.fullPath}${dbName}</p>`
-              if (dbNames[len - 1] === dbName) {
-                if (this.success) {
-                  this.statusMessage += `<p>Please exit the app and restart.</p>`
-                }
+              copiedDbs.push(dbName)
+              if (copiedDbs.length === len) {
+                this.statusMessage += `<p>Please exit the app and restart.</p>`
               }
               },
               function(e) {

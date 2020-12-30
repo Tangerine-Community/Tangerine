@@ -91,33 +91,59 @@ Variables available:
 ### Debugging Case Definition Templates
 ![debug case templates](debug-case-templates.png)
 
-## Configuring search
+## Configuring forms.json
+
 The case references a Form in the `formId` property of the Case Definition. Make sure there is a form with that corresponding Form ID listed in `forms.json` with additional configuration for search.
 
 File: `forms.json`
 ```json
 [
   {
-     "id" : "case-definition-1-manifest",
-     "type" : "case",
-     "title" : "Case Definition 1 Manifest",
-     "description" : "Description...",
-     "listed" : true,
-     "src" : "./assets/case-definition-1-manifest/form.html",
-     "searchSettings" : {
-        "primaryTemplate" : "Participant ID: ${searchDoc.variables.participant_id}",
-        "shouldIndex" : true,
-        "secondaryTemplate" : "Enrollment Date: ${searchDoc.variables.enrollment_date}, Case ID: ${searchDoc._id}",
-        "variablesToIndex" : [
-           "participant_id",
-           "enrollment_date"
-        ]
-     }
+    "id" : "case-definition-1-manifest",
+    "type" : "case",
+    "title" : "Case Definition 1 Manifest",
+    "description" : "Description...",
+    "listed" : true,
+    "src" : "./assets/case-definition-1-manifest/form.html",
+    "searchSettings" : {
+      "primaryTemplate" : "${searchDoc.variables.status === 'Enrolled' ? `Participant ID: ${searchDoc.variables.participant_id} &nbsp; &nbsp; &nbsp; Enrollment Date: ${(searchDoc.variables.enrollment_date).substring(8,10) + '-' + (searchDoc.variables.enrollment_date).substring(5,7)+ '-' + (searchDoc.variables.enrollment_date).substring(0,4)}` : `Screening ID: ${searchDoc._id.substr(0,6)}  &nbsp; &nbsp; &nbsp; Screening Date: ${searchDoc.variables.screening_date ? searchDoc.variables.screening_date : 'N/A' }` }",
+      "shouldIndex" : true,
+      "secondaryTemplate" : "${searchDoc.variables.status === 'Enrolled' ? `Name: ${searchDoc.variables.first_name} ${searchDoc.variables.last_name}  &nbsp; &nbsp; &nbsp; Location: ${searchDoc.variables.location}  &nbsp; &nbsp; &nbsp; Status: Enrolled &nbsp; &nbsp; &nbsp;` : `Status: Not enrolled  &nbsp; &nbsp; &nbsp;` }",
+      "variablesToIndex" : [
+        "first_name",
+        "last_name",
+        "status",
+        "location",
+        "participant_id",
+        "enrollment_date",
+        "screening_date"
+      ]
+    },
   }
 ]
 ```
 
-The variables you list in `variablesToIndex` will now be available for searching on with the Tablet level search.  To configure the QR code search on Tablets, in your `app-config.json`, there is a `"barcodeSearchMapFunction"` property. This is a map function for receiving the value of the Search Scan for you to parse out and return the value that should be used for search. A `data` variable is passed in for you to parse, and the return value is what ends up in the search bar as a text search.
+The properties in forms.json often change; check the [Content Sets](../../../content-sets) for current examples.
+
+### Configuring Text Search
+
+The variables listed in `variablesToIndex` will be available for searching on with the Tablet level search as well as in Editor. You also must set `"shouldIndex" : true`. 
+
+All forms that should *not* be searched must also have the `searchSettings` configured. Here is an example that must be implemented:
+
+```json
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+```
+
+### Configuring QR code search
+
+To configure the QR code search on Tablets, in your `app-config.json`, there is a `"barcodeSearchMapFunction"` property. This is a map function for receiving the value of the Search Scan for you to parse out and return the value that should be used for search. A `data` variable is passed in for you to parse, and the return value is what ends up in the search bar as a text search.
 
 Example:
 ```

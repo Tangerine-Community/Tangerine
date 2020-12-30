@@ -2,6 +2,7 @@ import {_TRANSLATE} from '../translation-marker';
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 import PouchDB from 'pouchdb';
 import { DB } from '../_factories/db.factory';
+import * as jsonpatch from "fast-json-patch";
 
 export class UserDatabase {
 
@@ -13,8 +14,9 @@ export class UserDatabase {
   buildChannel:string;
   groupId:string;
   db: PouchDB;
+  attachHistoryToDocs:boolean
 
-  constructor(username: string, userId: string, key:string = '', deviceId: string, shared = false, buildId = '', buildChannel = '', groupId = '') {
+  constructor(username: string, userId: string, key:string = '', deviceId: string, shared = false, buildId = '', buildChannel = '', groupId = '', attachHistoryToDocs = false) {
     this.userId = userId
     this.username = username
     this.name = username
@@ -22,6 +24,7 @@ export class UserDatabase {
     this.buildId = buildId
     this.buildChannel = buildChannel
     this.groupId = groupId 
+    this.attachHistoryToDocs = attachHistoryToDocs 
     if (shared) {
       this.db = DB(SHARED_USER_DATABASE_NAME, key)
     } else {
@@ -41,7 +44,7 @@ export class UserDatabase {
   }
 
   async put(doc) {
-    return await this.db.put({
+    const newDoc = {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
@@ -52,11 +55,17 @@ export class UserDatabase {
       buildChannel: this.buildChannel,
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
+    }
+    return await this.db.put({
+      ...newDoc,
+      ...this.attachHistoryToDocs
+        ? { history: await this._calculateHistory(newDoc) }
+        : { }
     });
   }
 
   async post(doc) {
-    return await this.db.post({
+    const newDoc = {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
@@ -67,6 +76,12 @@ export class UserDatabase {
       buildChannel: this.buildChannel,
       // Backwards compatibility for sync protocol 1. 
       lastModified: Date.now()
+    }
+    return await this.db.post({
+      ...newDoc,
+      ...this.attachHistoryToDocs
+        ? { history: await this._calculateHistory(newDoc) }
+        : { } 
     });
   }
 
@@ -100,6 +115,27 @@ export class UserDatabase {
 
   compact() {
     return this.db.compact();
+  }
+
+  async _calculateHistory(newDoc) {
+    let history = []
+    try {
+      const currentDoc = await this.db.get(newDoc._id)
+      const entry = {
+        lastRev: currentDoc._rev,
+        patch: jsonpatch.compare(currentDoc, newDoc).filter(mod => mod.path.substr(0,8) !== '/history')
+      }
+      history = currentDoc.history
+        ? [ entry, ...currentDoc.history ]
+        : [ entry ]
+    } catch (e) {
+      const entry = {
+        lastRev: 0,
+        patch: jsonpatch.compare({}, newDoc).filter(mod => mod.path.substr(0,8) !== '/history')
+      }
+      history = [ entry ]
+    }
+    return history 
   }
 
 }

@@ -172,6 +172,25 @@ export class GroupDevicesComponent implements OnInit {
     })
   }
 
+  async viewSyncLog(deviceId:string) {
+    const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
+    if (device.replicationStatus) {
+      window['dialog'].innerHTML = `
+    <paper-dialog-scrollable>
+      ${JSON.stringify(device.replicationStatus)}
+    </paper-dialog-scrollable>
+    `
+    } else {
+      window['dialog'].innerHTML = `
+    <paper-dialog-scrollable>
+      Replication status not available.
+    </paper-dialog-scrollable>
+    `
+    }
+    
+    setTimeout(() => window['dialog'].open(), 450)
+  }
+
   async resetDevice(deviceId:string) {
     const device = await this.groupDevicesService.resetDevice(this.groupId, deviceId)
     this.update()

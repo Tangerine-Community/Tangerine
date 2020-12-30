@@ -1,3 +1,4 @@
+import { AppConfigService } from './../../shared/_services/app-config.service';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
@@ -89,6 +90,7 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
@@ -810,6 +812,12 @@ class CaseService {
     return diff
   }
 
+  isIssueContext() {
+    return window.location.hash.includes('/issues/')
+      ? true
+      : false
+  }
+
   /*
    * Data Inquiries API
    */
@@ -1037,6 +1045,47 @@ class CaseService {
     }
   }
 
+  async getCaseHistory(caseId:string = '', historyType = 'DEFAULT') {
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
+    }
+    caseId = caseId || window.location.hash.split('/')[2]
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(caseId)
+      : (await this.tangyFormService.getResponse(caseId)).history
+    return history 
+  }
+
+  async getEventFormHistory(caseId:string = '', caseEventId:string = '', eventFormId:string = '', historyType:HistoryType = HistoryType.DEFAULT) {
+    caseId = caseId || window.location.hash.split('/')[4]
+    caseEventId = caseEventId || window.location.hash.split('/')[5]
+    eventFormId = eventFormId || window.location.hash.split('/')[6]
+    const caseInstance = <Case>await this.tangyFormService.getResponse(caseId)
+    const formResponseId = caseInstance
+      .events.find(event => event.id === caseEventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
+    }
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(formResponseId)
+      : (await this.tangyFormService.getResponse(formResponseId)).history
+    return history
+  }
+
+}
+
+export enum HistoryType {
+  DEFAULT = 'DEFAULT',
+  DB_REVISIONS = 'DB_REVISIONS',
+  DOC_HISTORY = 'DOC_HISTORY',
 }
 
 interface CaseInfo {

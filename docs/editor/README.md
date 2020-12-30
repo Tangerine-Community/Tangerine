@@ -8,5 +8,5 @@
 ## Case Module
   - [Case Management Data Model](case-module/case-data-model.md)
   - [Case Module Cookbook](case-module/case-module-cookbook.md)
-  - [Configuring Case functionality](case-module/case-management-group.md)
+  - [Configuring Case functionality](../editor/case-module/README.md)
   - [Custom Case Reports](case-module/custom-case-reports.md)
