@@ -5,6 +5,8 @@ const fs = require('fs-extra');
 const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
+const fsCore = require('fs');
+const readFile = util.promisify(fsCore.readFile);
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
@@ -39,107 +41,116 @@ module.exports = {
       const pathToStateFile = `/mysql-module-state/${groupId}.ini`
       startTangerineToMySQL(pathToStateFile)
       return data
-    }
-  },
-  clearReportingCache: async function(data) {
-    const { groupNames } = data
-    for (let groupName of groupNames) {
-      console.log(`removing db ${groupName}-mysql`)
-      let db = new DB(`${groupName}-mysql`)
-      await db.destroy()
-      db = new DB(`${groupName}-mysql-sanitized`)
-      await db.destroy()
-    }
-    return data
-  },
-  reportingOutputs: async function(data) {
-    async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
-      if (exclusions && exclusions.includes(doc.form.id)) {
-        // skip!
-      } else {
-        if (doc.form.id === 'user-profile') {
-          await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized, resolve);
+    },
+    clearReportingCache: async function(data) {
+      const { groupNames } = data
+      for (let groupName of groupNames) {
+        await removeGroupForMySQL(groupName)
+        await initializeGroupForMySQL(groupName)
+        console.log(`removing db ${groupName}-mysql`)
+        let db = new DB(`${groupName}-mysql`)
+        await db.destroy()
+        db = new DB(`${groupName}-mysql-sanitized`)
+        await db.destroy()
+      }
+      return data
+    },
+    reportingOutputs: async function(data) {
+      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions) {
+        if (exclusions && exclusions.includes(doc.form.id)) {
+          // skip!
         } else {
-          if (doc.type === 'case') {
-            // output case
-            await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
-            let numInf = getItemValue(doc, 'numinf')
-            let participant_id = getItemValue(doc, 'participant_id')
+          if (doc.form.id === 'user-profile') {
+            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized);
+          } else {
+            if (doc.type === 'case') {
+              // output case
+              await saveFlatResponse(doc, locationList, targetDb, sanitized);
+              let numInf = getItemValue(doc, 'numinf')
+              let participant_id = getItemValue(doc, 'participant_id')
 
-            // output participants
-            for (const participant of doc.participants) {
-              await pushResponse({
-                ...participant,
-                _id: participant.id,
-                caseId: doc._id,
-                numInf: participant.participant_id === participant_id ? numInf : '',
-                type: "participant"
-              }, targetDb);
-            }
-          
-            // output case-events
-            for (const event of doc.events) {
-              // output event-forms
-              if (event['eventForms']) {
-                for (const eventForm of event['eventForms']) {
-                  // for (let index = 0; index < event['eventForms'].length; index++) {
-                  // const eventForm = event['eventForms'][index]
-                  try {
-                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
-                  } catch (e) {
-                    if (e.status !== 404) {
-                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+              // output participants
+              for (const participant of doc.participants) {
+                await pushResponse({
+                  ...participant,
+                  _id: participant.id,
+                  caseId: doc._id,
+                  numInf: participant.participant_id === participant_id ? numInf : '',
+                  type: "participant"
+                }, targetDb);
+              }
+            
+              // output case-events
+              for (const event of doc.events) {
+                // output event-forms
+                if (event['eventForms']) {
+                  for (const eventForm of event['eventForms']) {
+                    // for (let index = 0; index < event['eventForms'].length; index++) {
+                    // const eventForm = event['eventForms'][index]
+                    try {
+                      await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                    } catch (e) {
+                      if (e.status !== 404) {
+                        console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                      }
                     }
                   }
+                } else {
+                  console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
                 }
-              } else {
-                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
+                // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+                const eventClone = Object.assign({}, event);
+                // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
+                // since we are already serializing each event-form and have the parent caseEventId on each one.
+                delete eventClone.eventForms
+                await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
               }
-              // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
-              // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
-              const eventClone = Object.assign({}, event);
-              // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
-              // since we are already serializing each event-form and have the parent caseEventId on each one.
-              delete eventClone.eventForms
-              await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
+            } else {
+              await saveFlatResponse(doc, locationList, targetDb, sanitized);
             }
-          } else {
-            await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
           }
         }
       }
-    }
+        
+      const {doc, sourceDb} = data
+      const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+      // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
+      const groupsDb = await new DB(`groups`);
+      const groupDoc = await groupsDb.get(`${sourceDb.name}`)
+      const exclusions = groupDoc['exclusions']
+      // First generate the full-cream database
+      let mysqlDb
+      try {
+        mysqlDb = await new DB(`${sourceDb.name}-mysql`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      let sanitized = false;
+      await generateDatabase(sourceDb, mysqlDb, doc, locationList, sanitized, exclusions);
       
-    const {doc, sourceDb} = data
-    const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-    // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
-    const groupsDb = await new DB(`groups`);
-    const groupDoc = await groupsDb.get(`${sourceDb.name}`)
-    const exclusions = groupDoc['exclusions']
-    // First generate the full-cream database
-    let mysqlDb
-    try {
-      mysqlDb = await new DB(`${sourceDb.name}-mysql`);
-    } catch (e) {
-      console.log("Error creating db: " + JSON.stringify(e))
+      // Then create the sanitized version
+      let mysqlSanitizedDb
+      try {
+        mysqlSanitizedDb = await new DB(`${sourceDb.name}-mysql-sanitized`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      sanitized = true;
+      await generateDatabase(sourceDb, mysqlSanitizedDb, doc, locationList, sanitized, exclusions);
+      return data
     }
-    let sanitized = false;
-    await generateDatabase(sourceDb, mysqlDb, doc, locationList, sanitized, exclusions, resolve);
-    
-    // Then create the sanitized version
-    let mysqlSanitizedDb
-    try {
-      mysqlSanitizedDb = await new DB(`${sourceDb.name}-mysql-sanitized`);
-    } catch (e) {
-      console.log("Error creating db: " + JSON.stringify(e))
-    }
-    sanitized = true;
-    await generateDatabase(sourceDb, mysqlSanitizedDb, doc, locationList, sanitized, exclusions, resolve);
-    return data
   }
-
 }
 
+async function removeGroupForMySQL(groupId) {
+  const mysqlDbName = groupId.replace(/-/g,'')
+  await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "DROP DATABASE ${mysqlDbName};"`)
+  const pathToStateFile = `/mysql-module-state/${groupId}.ini`
+  await fs.unlink(pathToStateFile)
+  console.log(`Removed state file and database for ${groupId}`)
+ 
+}
 async function initializeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
   console.log(`Creating mysql db ${mysqlDbName}`)
@@ -267,12 +278,12 @@ function pushResponse(doc, db) {
   return new Promise((resolve, reject) => {
     // If there is any objects/arrays in the doc's data object, stringify them.
     if (doc.data && typeof doc.data === 'object') {
-      doc.data = Object.entries(doc.data).map((acc, [key, value]) => {
+      doc.data = Object.keys(doc.data).reduce((acc, key) => {
         return {
           ...acc,
-          [key]: typeof value === 'object'
-            ? JSON.stringify(value)
-            : value
+          [key]: typeof doc.data[key] === 'object'
+            ? JSON.stringify(doc.data[key])
+            : doc.data[key] 
         }
       }, {})
     }
@@ -297,15 +308,15 @@ function pushResponse(doc, db) {
   })
 }
 
-async function saveFlatResponse(doc, locationList, targetDb, sanitized, resolve) {
+async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
   let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
   // If there are any objects/arrays in the flatResponse, stringify them.
-  flatResponse = Object.entries(flatResponse).map((acc, [key, value]) => {
+  flatResponse = Object.keys(flatResponse).reduce((acc, key) => {
     return {
       ...acc,
-      [key]: typeof value === 'object'
-        ? JSON.stringify(value)
-        : value
+      [key]: typeof flatResponse[key] === 'object'
+        ? JSON.stringify(flatResponse[key])
+        : flatResponse[key]
     }
   }, {})
   // make sure the top-level properties of doc are copied.
@@ -314,7 +325,6 @@ async function saveFlatResponse(doc, locationList, targetDb, sanitized, resolve)
   await pushResponse({...topDoc,
     data: flatResponse
   }, targetDb);
-  resolve('done!')
 }
 
 function getLocationByKeys(keys, locationList) {
@@ -325,3 +335,20 @@ function getLocationByKeys(keys, locationList) {
   }
   return currentLevel
 }
+
+// From: https://stackoverflow.com/a/61602592
+const flatten = (obj, roots = [], sep = '.') => Object
+  // find props of given object
+  .keys(obj)
+  // return an object by iterating props
+  .reduce((memo, prop) => Object.assign(
+    // create a new object
+    {},
+    // include previously returned object
+    memo,
+    Object.prototype.toString.call(obj[prop]) === '[object Object]'
+      // keep working if value is an object
+      ? flatten(obj[prop], roots.concat([prop]))
+      // include current prop and value and prefix prop with the roots
+      : {[roots.concat([prop]).join(sep)]: obj[prop]}
+  ), {})
