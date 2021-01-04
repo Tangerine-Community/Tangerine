@@ -98,15 +98,10 @@ const commitFilesToVersionControl = async () => {
 		const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
 		try {
 			const groupId = sanitize(group.id);
-			await exec('git config --system user.name "tangerine"')
-			const {stdout,stderr} = await exec(`cd /tangerine/groups/${groupId} && git status`)
-			if(!stdout.includes('nothing to commit')) {
-				await exec(cmd);
-			}
+			await exec(cmd);
 		}
 		catch (error) {
-			log.error(`Failed to run ${cmd}`)
-			log.error(error)
+			// Do nothing. If it failed it's probably because there was nothing to commit.
 		}
 	}
 }
