@@ -154,14 +154,9 @@ def convert_participant(resp_dict):
                 df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
-                try: 
-                    mysql_connection.commit()
-                    df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
-                    mysql_connection.commit()
-                except:
-                    print("Unable to insert participant:" + participantId)
- 
-
+                mysql_connection.commit()
+                df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
+                mysql_connection.commit()
 
 #convert a Tangeliner case-event  document to MySQL case-event table
 def convert_case_event(resp_dict):
