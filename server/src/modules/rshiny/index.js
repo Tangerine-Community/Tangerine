@@ -21,16 +21,16 @@ module.exports = {
       return data
     },
     reportingOutputs: async function(data) {
-      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
+      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions) {
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
         } else {
           if (doc.form.id === 'user-profile') {
-            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized, resolve);
+            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized);
           } else {
             if (doc.type === 'case') {
               // output case
-              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
+              await saveFlatResponse(doc, locationList, targetDb, sanitized);
               let numInf = getItemValue(doc, 'numinf')
               let participant_id = getItemValue(doc, 'participant_id')
 
@@ -72,7 +72,7 @@ module.exports = {
                 await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
               }
             } else {
-              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
+              await saveFlatResponse(doc, locationList, targetDb, sanitized);
             }
           }
         }
@@ -92,7 +92,7 @@ module.exports = {
         console.log("Error creating db: " + JSON.stringify(e))
       }
       let sanitized = false;
-      await generateDatabase(sourceDb, rshinyDb, doc, locationList, sanitized, exclusions, resolve);
+      await generateDatabase(sourceDb, rshinyDb, doc, locationList, sanitized, exclusions);
       
       // Then create the sanitized version
       let rshinySanitizedDb
@@ -102,8 +102,8 @@ module.exports = {
         console.log("Error creating db: " + JSON.stringify(e))
       }
       sanitized = true;
-      await generateDatabase(sourceDb, rshinySanitizedDb, doc, locationList, sanitized, exclusions, resolve);
-      return (data)
+      await generateDatabase(sourceDb, rshinySanitizedDb, doc, locationList, sanitized, exclusions);
+      return data
     }
   }
 }
@@ -255,7 +255,7 @@ function pushResponse(doc, db) {
   })
 }
 
-async function saveFlatResponse(doc, locationList, targetDb, sanitized, resolve) {
+async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
   let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
   // make sure the top-level properties of doc are copied.
   const topDoc = {}
@@ -263,7 +263,6 @@ async function saveFlatResponse(doc, locationList, targetDb, sanitized, resolve)
   await pushResponse({...topDoc,
     data: flatResponse
   }, targetDb);
-  resolve('done!')
 }
 
 function getLocationByKeys(keys, locationList) {
