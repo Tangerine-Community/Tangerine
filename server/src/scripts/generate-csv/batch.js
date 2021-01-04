@@ -58,10 +58,18 @@ async function batch() {
             if (itemId && doc[`${itemId}_disabled`] === 'true') {
               return process.env.T_REPORTING_MARK_SKIPPED_WITH
             } else {
-              return doc[header]
+              if (doc[header] === undefined) {
+                return process.env.T_REPORTING_MARK_SKIPPED_WITH
+              } else {
+                return doc[header]
+              }
             }
           } else {
-            return doc[header]
+            if (doc[header] === undefined) {
+              return process.env.T_REPORTING_MARK_SKIPPED_WITH
+            } else {
+              return doc[header]
+            }
           }
         })]
       })
