@@ -265,6 +265,17 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
 
 function pushResponse(doc, db) {
   return new Promise((resolve, reject) => {
+    // If there is any objects/arrays in the doc's data object, stringify them.
+    if (doc.data && typeof doc.data === 'object') {
+      doc.data = Object.entries(doc.data).map((acc, [key, value]) => {
+        return {
+          ...acc,
+          [key]: typeof value === 'object'
+            ? JSON.stringify(value)
+            : value
+        }
+      }, {})
+    }
     db.get(doc._id)
       .then(oldDoc => {
         // Overrite the _rev property with the _rev in the db and save again.
@@ -288,6 +299,15 @@ function pushResponse(doc, db) {
 
 async function saveFlatResponse(doc, locationList, targetDb, sanitized, resolve) {
   let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
+  // If there are any objects/arrays in the flatResponse, stringify them.
+  flatResponse = Object.entries(flatResponse).map((acc, [key, value]) => {
+    return {
+      ...acc,
+      [key]: typeof value === 'object'
+        ? JSON.stringify(value)
+        : value
+    }
+  }, {})
   // make sure the top-level properties of doc are copied.
   const topDoc = {}
   Object.entries(doc).forEach(([key, value]) => value === Object(value) ? null : topDoc[key] = value);
