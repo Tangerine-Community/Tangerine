@@ -21,16 +21,7 @@ def log(message):
     print(message)
     sys.stdout.flush()
 
-#the last_seq of the changes is not returned until the ietration is completed
-def get_last_change_seq(db):
-    changes = db.changes(descending=False, since=0)
-    for change in changes:
-        #do nothing
-        pass
-    return changes.last_seq
-
-
-#convert a Tangeliner case  document to MySQL case record in case table
+#convert a Tangerine case  document to MySQL case record in case table
 def convert_case(resp_dict):
     global case_synID
     global case_eTag
@@ -88,11 +79,7 @@ def convert_case(resp_dict):
                 df.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
 
-        # add_column = DDL('ALTER TABLE USERS ADD COLUMN city VARCHAR(60) AFTER email')
-        # engine.execute(add_column)
-
-
-#convert a Tangeliner participant  document to MySQL participant table
+#convert a Tangerine participant  document to MySQL participant table
 def convert_participant(resp_dict):
     global participant_df_add
     global participant_df_update
@@ -159,7 +146,7 @@ def convert_participant(resp_dict):
                 df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
 
-#convert a Tangeliner case-event  document to MySQL case-event table
+#convert a Tangerine case-event  document to MySQL case-event table
 def convert_case_event(resp_dict):
     global case_event_df_add
     global case_event_df_update
@@ -201,7 +188,7 @@ def convert_case_event(resp_dict):
                 df.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
  
-#convert a Tangeliner event form document to MySQL event_form table
+#convert a Tangerine event form document to MySQL event_form table
 def convert_event_form(resp_dict):
     global event_form_df_add
     global event_form_df_update
@@ -246,7 +233,7 @@ def convert_event_form(resp_dict):
                 mysql_connection.commit()
 
 
-#convert a Tangeliner response document to MySQL response tables
+#convert a Tangerine response document to MySQL response tables
 def convert_response(resp_dict):
     global response_tables
     type = resp_dict.get('type')
@@ -363,96 +350,68 @@ def main_job():
     global event_form_df_update
     global case_event_df_add
     global case_event_df_update
-
-    #login
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
     session = client.session()
     tangerine_database = client.create_database(dbName)
-
-    #login to MySQL
     mysql_database = mysql.connector.connect(user=mysqlUserName, password=mysqlPassword,
                                   host=mysqlHostName,
                                   database=mysqlDatabaseName)
-
     cursor = mysql_database.cursor()
-
     start_time = timeit.default_timer()
-    log('Started converting documents from Tangerine to MySQL')
-    # Iterate over a "normal" _changes feed
     changes = tangerine_database.changes(include_docs=True,descending=False,  since=lastSequence)
     cnt2 = 0
     for change in changes:
         cnt2 = cnt2 + 1
-        #change is a dictionary object
         if change is not None:
             seq = change.get('seq')
             id = change.get('id')
             cng = change.get('changes')
-            #check to see if is a delete change,if it is, just delete the record
+            # Check to see if is a delete change,if it is, just delete the record.
             if change.get('deleted'):
-                #remove the ID from the table, but we don't know which table
+                # Remove the ID from the table, but we don't know which table.
+                # @TODO
                 #delete_record(tangerine_database, id)
                 continue
-            #get the change revision
             version = cng[0].get('rev')
-            doc = change.get('doc')  #that's a doctionary
-            #need to handle delete changes
+            doc = change.get('doc')
             type = doc.get('type')
             id = doc.get('_id')
             log("Processing changes, document type: " + type + ", Count: " + str(cnt2) + ", ID: " + id)
-            # there are 5 major types: case, participant, case-event, event-form and response
+            # There are 5 major types: case, participant, case-event, event-form and response
             if (type.lower() == "case"):
-                # handle case type
                 convert_case(doc)
             elif (type.lower() == "participant"):
-                # participant is already handled in case, ignore, donothing
-                #pass
                 convert_participant(doc)
             elif (type.lower() == "event-form"):
-                #pass
                 convert_event_form(doc)
-            # handle case-event, this is skipped
             elif (type.lower() == "case-event"):
-                # handle case-event, this is skipped
-                #pass
                 convert_case_event(doc)
-                # convert_document(document)
             elif (type.lower() == "response"):
-                # handle case-event, this is skipped
-                #pass
                 convert_response(doc)
-                # convert_document(document)
             else:
                 log("Unexpected document type")
         lastSequence = change.get('seq')
 
-    #write the last sequence number back to the INI file, tlast sequence number won't work if descending is set to true
+    # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
     config.set("TANGERINE","LastSequence",lastSequence)
-    # Writing the configuration file to
-
     with open(sys.argv[1], 'w') as configfile:
         config.write(configfile)
-
+    # Finish.
     end_time = timeit.default_timer()
     totalTime = end_time - start_time
-    log('Finished converting documents from Tangeline to MySQL. Total Time: ' + str(totalTime))
-    #logout and disconnect
+    if (cnt2 > 0):
+        log('Finished converting documents from Tangeline to MySQL. Total Time: ' + str(totalTime))
     client.disconnect()
-    #need to keep the connection open, or rewirte how it is connected, some issues ...
-    #mysql_connection.close()
 
-#run the scheduler
+# Run the scheduler.
 def scheduled_job():
     main_job()
     s.enter(60*int(interval), 1, scheduled_job)
 
-
-#read in the configuration file
+# Read in the configuration file.
 config = configparser.ConfigParser()
 pathName = sys.argv[1]
 config.read(pathName)
-
-#get all sections
 config.sections()
 dbURL = config['TANGERINE']['DatabaseURL']
 dbName = config['TANGERINE']['DatabaseName']
@@ -465,46 +424,24 @@ if (reportingDelayInMinutes == 0):
 else:
     interval = reportingDelayInMinutes
 
-#login
+# Connection to CouchDB.
 client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
-
 session = client.session()
 tangerine_database = client.create_database(dbName)
 
-#connection to MySQL database
+# Connection to MySQL database.
 mysqlHostName = config['MySQL']['HostName']
 mysqlDatabaseName = config['MySQL']['DatabaseName']
 mysqlUserName = config['MySQL']['UserName']
 mysqlPassword = config['MySQL']['Password']
 
 
-#
-# RJ: Commenting this out because it looks like a redundant connection to the MySQL database.
-#
-#mysql_connection = mysql.connector.connect(user=mysqlUserName, password=mysqlPassword,
-#                              host=mysqlHostName,
-#                              database=mysqlDatabaseName)
-
-#api: https://docs.sqlalchemy.org/en/13/core/engines.html
-#dialect+driver://username:password@host:port/database
-#engine = create_engine('mysql+mysqlconnector://[user]:[pass]@[host]:[port]/[schema]', echo=False)
-#engine = create_engine('mysql+pymysql://'+mysqlUserName+':'+mysqlPassword+'@'+mysqlHostName+'/'+mysqlDatabaseName, echo=False)
+# API: https://docs.sqlalchemy.org/en/13/core/engines.html
 mysql_connection_string = 'mysql+pymysql://'+mysqlUserName+':'+mysqlPassword+'@'+mysqlHostName+':3306/'+mysqlDatabaseName
 engine = create_engine(mysql_connection_string)
 mysql_connection = engine.raw_connection()
 cursor = mysql_connection.cursor()
-
-#main_job()
-
+# Delay 1 minute before starting the first run, then every interval minutes after the completions of the previous run before starting the next run
 s = sched.scheduler(time.time, time.sleep)
-#delay 1 minute before starting the first run, then every interval minutes after the completions of the proveious run before starting the next run
 s.enter(1, 1, scheduled_job)
 s.run()
-
-
-#Logout from MySQL
-#mysql_connection.close()
-
-# Disconnect from the couchdb server
-#client.disconnect()
-

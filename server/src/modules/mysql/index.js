@@ -152,6 +152,7 @@ async function removeGroupForMySQL(groupId) {
   console.log(`Removed state file and database for ${groupId}`)
  
 }
+
 async function initializeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
   console.log(`Creating mysql db ${mysqlDbName}`)
