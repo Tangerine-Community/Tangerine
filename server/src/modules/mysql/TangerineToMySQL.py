@@ -459,7 +459,11 @@ dbName = config['TANGERINE']['DatabaseName']
 dbUserName = config['TANGERINE']['DatabaseUserName']
 dbPassword = config['TANGERINE']['DatabasePassword']
 lastSequence = config['TANGERINE']['LastSequence']
-interval = config['TANGERINE']['run_interval']
+reportingDelayInMinutes = round((int(os.getenv('T_REPORTING_DELAY')) / 1000) / 60)
+if (reportingDelayInMinutes == 0):
+    interval = 1
+else:
+    interval = reportingDelayInMinutes
 
 #login
 client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)

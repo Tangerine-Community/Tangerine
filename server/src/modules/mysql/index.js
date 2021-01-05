@@ -164,7 +164,6 @@ DatabaseName = ${groupId}-mysql
 DatabaseUserName = ${process.env.T_COUCHDB_USER_ADMIN_NAME} 
 DatabasePassword = ${process.env.T_COUCHDB_USER_ADMIN_PASS} 
 LastSequence = 0
-run_interval = 1
 
 [MySQL]
 HostName = mysql 
