@@ -364,6 +364,7 @@ def main_job():
         cnt2 = cnt2 + 1
         if change is not None:
             seq = change.get('seq')
+            lastSequence = seq 
             id = change.get('id')
             cng = change.get('changes')
             # Check to see if is a delete change,if it is, just delete the record.
@@ -389,8 +390,7 @@ def main_job():
             elif (type.lower() == "response"):
                 convert_response(doc)
             else:
-                log("Unexpected document type")
-        lastSequence = change.get('seq')
+                log("Unexpected document type: " + id)
 
     # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
     config.set("TANGERINE","LastSequence",lastSequence)
