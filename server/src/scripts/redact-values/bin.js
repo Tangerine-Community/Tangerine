@@ -1,21 +1,48 @@
 #!/usr/bin/env node
 
 // import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
-
-const { rword } = require('rword');
+// import { HappyDOMContext } from '@happy-dom/server-rendering';
+import pkg from 'rword';
+const { rword } = pkg;
 rword.load('big')
-const DB = require(`../../db.js`)
-const TARGETNAME = 'redacted2'
-const {promisify} = require('util');
-const fs = require('fs');
+// const DB = require(`../../db.js`)
+import DB from '../../db.js'
+const TARGETNAME = 'redacted'
+// const {promisify} = require('util');
+import promisifyPkg from 'util'
+const {promisify} = promisifyPkg
+// const fs = require('fs');
+import fs from 'fs';
 const readFile = promisify(fs.readFile);
 // const jsdom = require("jsdom");
 // const { JSDOM } = jsdom;
-const AsyncWindow = require('happy-dom').AsyncWindow ;
-const VM = require('vm');
+// const AsyncWindow = require('happy-dom').AsyncWindow ;
+import AsyncWindowPkg  from 'happy-dom' ;
+const {AsyncWindow} = AsyncWindowPkg
+// const HappyDOMContext = require('@happy-dom/server-rendering').HappyDOMContext ;
+// import { HappyDOMContext } from '@happy-dom/server-rendering';
+import HappyDOMContextPkg from '@happy-dom/server-rendering';
+const { HappyDOMContext } = HappyDOMContextPkg;
+// const VM = require('vm');
+import VM from 'vm';
+import { Script } from 'vm';
+import FS from 'fs';
 const window = VM.createContext(new AsyncWindow());
 const document = window.document;
-
+// const TANGY_FORM_SCRIPT = FS.readFileSync(`/tangerine/client/node_modules/tangy-form/tangy-form.js`).toString();
+// const TANGY_FORM_SCRIPT = FS.readFileSync(`./elements/tangy-form.js`).toString();
+const TANGY_FORM_SCRIPT = FS.readFileSync(`/tangerine/server/src/scripts/redact-values/elements/tangy-form.js`).toString();
+const tangyForm = new VM.Script(TANGY_FORM_SCRIPT);
+// const TANGY_FORM_ITEM_SCRIPT = FS.readFileSync(`/tangerine/client/node_modules/tangy-form/tangy-form-item.js`).toString();
+const TANGY_FORM_ITEM_SCRIPT = FS.readFileSync(`/tangerine/server/src/scripts/redact-values/elements/tangy-form-item.js`).toString();
+const tangyFormItem = new VM.Script(TANGY_FORM_ITEM_SCRIPT);
+// const TANGY_INPUT_SCRIPT = FS.readFileSync(`/tangerine/client/node_modules/tangy-form/input/tangy-input.js`).toString();
+const TANGY_INPUT_SCRIPT = FS.readFileSync(`/tangerine/server/src/scripts/redact-values/elements/tangy-input.js`).toString();
+const tangyInput = new VM.Script(TANGY_INPUT_SCRIPT);
+// console.log("TANGY_FORM_SCRIPT: " + TANGY_FORM_SCRIPT)
+let context = null;
+let forms;
+let contentPath;
 if (process.argv[2] === '--help') {
   console.log('Usage:')
   console.log('       ./bin.js <dbName>')
@@ -31,14 +58,51 @@ async function go() {
   // First generate the full-cream database
   let targetDb
   try {
+    console.log(`Creating ${sourceDb.name}-${TARGETNAME}`)
     targetDb = await new DB(`${sourceDb.name}-${TARGETNAME}`);
   } catch (e) {
     console.log("Error creating db: " + JSON.stringify(e))
   }
   const startTime = new Date().toISOString()
+  console.log("startTime: " + startTime)
+  
+//   const script = new VM.Script(`
+//     const element = document.createElement('div');
+//     const myContainer = document.querySelector('.myContainer');
+//     element.innerHTML = 'Test';
+//     myContainer.appendChild(element);
+// `);
+//
+//   window.location.href = 'http://localhost:8080';
+//   window.whenAsyncComplete().then(() => {
+//     const myContainer = document.querySelector('.myContainer div');
+//
+//     // Will output "Test"
+//     console.log(myContainer.innerHTML);
+//   });
+//
+//   document.write(`
+//     <html>
+//         <head>
+//              <title>Test page</title>
+//         </head>
+//         <body>
+//              <div class="myContainer">
+//                   <!–– Content will be added here -->
+//              </div>
+//         </body>
+//     </html>
+// `);
+//
+//   script.runInContext(window);
+//   // console.log("result: " + result);
+  
+  
   let processed = 0
   try {
     // const allDocs = await sourceDb.get(`_all_docs`)
+    contentPath = `/tangerine/groups/${sourceDb.name}/client`
+    forms = JSON.parse(await readFile(`${contentPath}/forms.json`))
     const changes = await sourceDb.changes({ since: 0, include_docs: false })
     if (changes.results.length > 0) {
       for (let change of changes.results) {
@@ -51,6 +115,8 @@ async function go() {
       }
     }
     // prodDbs[groupName] = docs
+    const endtime = new Date().toISOString()
+    console.log("endtime: " + endtime)
   } catch (err) {
     console.log("error: " + err)
   }
@@ -209,6 +275,7 @@ const changeProcessor = (change, sourceDb, targetDb) => {
         switch (doc.collection) {
           case 'TangyFormResponse':
               resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
+              context = new HappyDOMContext();
               processDoc({doc, sourceDb, targetDb})
                 .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
                 .catch(error => { reject(error) })
@@ -231,9 +298,8 @@ const processDoc = (data) => {
     } else {
       // Always create a new doc
       // let formHtml =  await this.tangyFormService.getFormMarkup(this.formId, null)
-      const contentPath = `/tangerine/groups/${sourceDb.name}/client`
-      const forms = JSON.parse(await readFile(`${contentPath}/forms.json`))
-      console.log("doc.formId: " + doc.form.id)
+      
+      console.log("doc.id: " + doc._id + " doc.formId: " + doc.form.id + " doc.type: " + doc.type)
       const formInfo = forms.find(formInfo => formInfo.id === doc.form.id)
       const formInfoSrc = formInfo.src;
       const src = formInfoSrc.replace('./assets','')
@@ -250,9 +316,10 @@ const processDoc = (data) => {
             <title>tangy-form</title>
             <script src="/tangerine/editor/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
             <script src="/tangerine/editor/node_modules/redux/dist/redux.min.js"></script>
-            <script type="module" src="/tangerine/client/node_modules/tangy-form/tangy-form.js"></script>
-            <script type="module" src="/tangerine/client/node_modules/tangy-form/tangy-form-item.js"></script>
-            <script type="module" src="/tangerine/client/node_modules/tangy-form/input/tangy-input.js"></script>
+<!--            <script type="module" src="/tangerine/client/node_modules/tangy-form/tangy-form.js"></script>-->
+            <script type="module" src="./elements/tangy-form.js"></script>
+<!--            <script type="module" src="/tangerine/client/node_modules/tangy-form/tangy-form-item.js"></script>-->
+<!--            <script type="module" src="/tangerine/client/node_modules/tangy-form/input/tangy-input.js"></script>-->
             </head>
         <body>
         <div id="container">
@@ -263,64 +330,96 @@ const processDoc = (data) => {
       </html>
       `
       
-      // const options = {
-      //   resources: "usable",
-      //   runScripts: "dangerously",
-      //   pretendToBeVisual: true,
-      //   includeNodeLocations: true
-      // }
-      // const formEl = new JSDOM(formHtml, options);
       const content = htmlHeader + formHtml + htmlFooter
-      // console.log("content: " + content)
 
-      // const dom = new JSDOM(content, options);
-      document.body.innerHTML = content
-      // console.log(dom.window.document.querySelector("#content").innerHTML); // "Hello world"
+      // window.whenAsyncComplete().then(() => {
+      //   const context = new HappyDOMContext();
 
-      // let initialResponse = new TangyFormResponseModel()
-      // const props = {};
-      // Object.keys(this.constructor.properties).forEach(p => props[p] = this[p]);
-      //
-      // initialResponse.form = this.getProps()
-      // this.querySelectorAll('tangy-form-item').forEach((item) => {
-      //   initialResponse.items.push(item.getProps())
-      // })
-      // this.response = initialResponse
-      
-      // console.log("formEL: " + JSON.stringify(dom))
-      // console.log("tangy-form: " +  dom.window.document.querySelector("tangy-form").innerHTML)
-      
-      // console.log("tangy-form: " +  JSON.stringify(formEl))
-
-      window.whenAsyncComplete().then(() => {
-        // const myContainer = document.querySelector('.myContainer div');
-        //
-        // // Will output "Test"
-        // console.log(myContainer.innerHTML);
-        // const container = document.querySelector('#container')
-        // console.log("container: " +  container)
-
-        const formEl = document.querySelector('tangy-form')
-        // console.log("formEl: " +  formEl)
-        console.log("formEl tagName: " +  formEl.tagName)
-        // console.log("formEl.constructor.properties: " +  formEl.constructor.properties)
-        // const meta = formEl.getMeta()
-        // formEl.newResponse()
-        // const items = formEl.querySelectorAll('tangy-form-item')
-        // console.log("items: " +  items)
-        let initialResponse = new TangyFormResponseModel()
-        const props = {};
-        // Object.keys(this.constructor.properties).forEach(p => props[p] = this[p]);
-        // Object.keys(formEl.constructor.properties).forEach(p => props[p] = formEl[p]);
-
-        initialResponse.form = props
-        formEl.querySelectorAll('tangy-form-item').forEach((item) => {
-          // initialResponse.items.push(item.getProps())
-          console.log("item: " + item)
-        })
-        formEl.response = initialResponse
+        // const tangyForm = new VM.Script(TANGY_FORM_SCRIPT);
+        // const tangyFormItem = new VM.Script(TANGY_FORM_ITEM_SCRIPT);
+        // const tangyInput = new VM.Script(TANGY_INPUT_SCRIPT);
+        // const result = await context.render({
+        //   html: content,
+        //   evaluateScripts: true,
+        //   scripts: [tangyForm, tangyFormItem, tangyInput],
+        //   url: 'http://localhost:8080',
+        //   customElements: {
+        //     openShadowRoots: true,
+        //     extractCSS: true,
+        //     scopeCSS: true,
+        //     addCSSToHead: true
+        //   }
+        // });
         
+    //     const result = context.render({
+    //       url: 'http://localhost:8080',
+    //       evaluateScripts: true,
+    //       html: `
+    //     <html>
+    //         <head>
+    //             <title>Test page</title>
+    //         </head>
+    //         <body>
+    //             <div class="myContainer">
+    //                 <!–– Content will be added here -->
+    //             </div>
+    //         </body>
+    //     </html>
+    // `,
+    //       scripts: [
+    //         new Script(`
+    //         const element = document.createElement('div');
+    //         const myContainer = document.querySelector('.myContainer');
+    //         element.innerHTML = 'Test';
+    //         myContainer.appendChild(element);
+    //     `)
+    //       ],
+    //       customElements: {
+    //         openShadowRoots: true,
+    //         extractCSS: true,
+    //         scopeCSS: true,
+    //         addCSSToHead: true
+    //       }
+    //     });
+    //
+    //     console.log("result: " + JSON.stringify(result))
+    //   })
+
+//       const script = new VM.Script(`
+//     // element = document.createElement('div');
+//     // myContainer = document.querySelector('.myContainer');
+//     // myContainer = document.querySelector('tangy-form');
+//     // element.innerHTML = 'Test';
+//     // myContainer.appendChild(element);
+// `);
+//       const script = new VM.Script(TANGY_FORM_SCRIPT);
+//
+//       window.location.href = 'http://localhost:8080';
+//       window.whenAsyncComplete().then(() => {
+//         // const myContainer = document.querySelector('tangy-form div');
+//         const myContainer = document.querySelector('tangy-form');
+//
+//         // Will output "Test"
+//         console.log(myContainer.innerHTML);
+//       });
+//
+//       document.write(content);
+//
+//       script.runInContext(window);
+      // console.log("result: " + result);
+
+      const result = await context.render({
+        html: content,
+        scripts: [tangyForm, tangyFormItem, tangyInput],
+        url: 'http://localhost:8080',
+        customElements: {
+          openShadowRoots: true,
+          extractCSS: true,
+          scopeCSS: true,
+          addCSSToHead: true
+        }
       });
+      
       
       // formEl.newResponse()
       // const newDoc = formEl.response
