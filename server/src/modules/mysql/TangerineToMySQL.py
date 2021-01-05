@@ -70,7 +70,6 @@ def convert_case(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                log("case_instances already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -81,7 +80,6 @@ def convert_case(resp_dict):
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case_instances', engine)
                 df2 = pd.concat([data, df], sort=False)
-                log(df2)
                 mysql_connection.commit()
                 df2.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
@@ -143,7 +141,6 @@ def convert_participant(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                log("participant already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -186,7 +183,6 @@ def convert_case_event(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                log("CaseEvent already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -231,7 +227,6 @@ def convert_event_form(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                log("EventForm already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -309,7 +304,6 @@ def convert_response(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + "." + formID + " where ID='" + id+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                log("Response ID already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + "." + formID+" where ID='" + id+"'")
                 mysql_connection.commit()
 
@@ -330,8 +324,8 @@ def convert_response(resp_dict):
                 mysql_connection.commit()
  
 
-def delete_record(tangerline_database,id):
-    with cloudant.document.Document(tangerline_database, document_id=id) as document:
+def delete_record(tangerine_database,id):
+    with cloudant.document.Document(tangerine_database, document_id=id) as document:
         doc_dict = json.loads(document.json())
         type = doc_dict.get('type')
         # for deleted documents, the type element is no longer available
@@ -373,9 +367,7 @@ def main_job():
     #login
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
     session = client.session()
-    tangerline_database = client.create_database(dbName)
-    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
-
+    tangerine_database = client.create_database(dbName)
 
     #login to MySQL
     mysql_database = mysql.connector.connect(user=mysqlUserName, password=mysqlPassword,
@@ -384,16 +376,13 @@ def main_job():
 
     cursor = mysql_database.cursor()
 
-
     start_time = timeit.default_timer()
-    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + ': Started converting documents from Tangeline to MySQL')
-    #if sequence number is 0, then we are starting with a new database so let's do initial data converaison from Tanger couchDB to MySQL
+    log('Started converting documents from Tangerine to MySQL')
     # Iterate over a "normal" _changes feed
-    changes = tangerline_database.changes(include_docs=True,descending=False,  since=lastSequence)
+    changes = tangerine_database.changes(include_docs=True,descending=False,  since=lastSequence)
     cnt2 = 0
     for change in changes:
         cnt2 = cnt2 + 1
-        #log(change)
         #change is a dictionary object
         if change is not None:
             seq = change.get('seq')
@@ -402,12 +391,11 @@ def main_job():
             #check to see if is a delete change,if it is, just delete the record
             if change.get('deleted'):
                 #remove the ID from the table, but we don't know which table
-                #delete_record(tangerline_database, id)
+                #delete_record(tangerine_database, id)
                 continue
             #get the change revision
             version = cng[0].get('rev')
             doc = change.get('doc')  #that's a doctionary
-            #log(doc)
             #need to handle delete changes
             type = doc.get('type')
             id = doc.get('_id')
@@ -442,24 +430,19 @@ def main_job():
     config.set("TANGERINE","LastSequence",lastSequence)
     # Writing the configuration file to
 
-    log(sys.argv[1])   
     with open(sys.argv[1], 'w') as configfile:
         config.write(configfile)
 
     end_time = timeit.default_timer()
-    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Finished converting documents from Tangeline to MySQL')
     totalTime = end_time - start_time
-    log('Total Time: ' + str(totalTime))
+    log('Finished converting documents from Tangeline to MySQL. Total Time: ' + str(totalTime))
     #logout and disconnect
     client.disconnect()
-    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from Tangerline database')
     #need to keep the connection open, or rewirte how it is connected, some issues ...
     #mysql_connection.close()
-    #log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from MySQL database')
 
 #run the scheduler
 def scheduled_job():
-    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + " Starting job ... ")
     main_job()
     s.enter(60*int(interval), 1, scheduled_job)
 
@@ -467,7 +450,6 @@ def scheduled_job():
 #read in the configuration file
 config = configparser.ConfigParser()
 pathName = sys.argv[1]
-log('Config file: ' + pathName)
 config.read(pathName)
 
 #get all sections
@@ -479,15 +461,11 @@ dbPassword = config['TANGERINE']['DatabasePassword']
 lastSequence = config['TANGERINE']['LastSequence']
 interval = config['TANGERINE']['run_interval']
 
-log('Database URL:' +dbURL +' Database Name: ' + dbName + ' Username is: ' +dbUserName )
-
 #login
 client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
 
 session = client.session()
-tangerline_database = client.create_database(dbName)
-# log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
-
+tangerine_database = client.create_database(dbName)
 
 #connection to MySQL database
 mysqlHostName = config['MySQL']['HostName']
@@ -495,9 +473,6 @@ mysqlDatabaseName = config['MySQL']['DatabaseName']
 mysqlUserName = config['MySQL']['UserName']
 mysqlPassword = config['MySQL']['Password']
 
-
-log('MySQL Connection String:' +mysqlHostName +'  database: ' + mysqlDatabaseName + " username: " + mysqlUserName)
-log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into MySQL')
 
 #
 # RJ: Commenting this out because it looks like a redundant connection to the MySQL database.
