@@ -17,6 +17,10 @@ from sqlalchemy import DDL
 from cloudant.result import Result, ResultByKey
 from itertools import islice
 
+def log(message):
+    print(message)
+    sys.stdout.flush()
+
 #the last_seq of the changes is not returned until the ietration is completed
 def get_last_change_seq(db):
     changes = db.changes(descending=False, since=0)
@@ -66,7 +70,7 @@ def convert_case(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("case_instances already exists")
+                log("case_instances already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -77,7 +81,7 @@ def convert_case(resp_dict):
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case_instances', engine)
                 df2 = pd.concat([data, df], sort=False)
-                print(df2)
+                log(df2)
                 mysql_connection.commit()
                 df2.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
@@ -139,7 +143,7 @@ def convert_participant(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("participant already exists")
+                log("participant already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -182,7 +186,7 @@ def convert_case_event(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("CaseEvent already exists")
+                log("CaseEvent already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -227,7 +231,7 @@ def convert_event_form(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("EventForm already exists")
+                log("EventForm already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -263,7 +267,13 @@ def convert_response(resp_dict):
         caseEventId = resp_dict.get('caseEventId')
 
         response = resp_dict.get('data')
-        formID = response.get('formId').replace('-', '_')
+        formID = response.get('formId')
+        # Make formID safe for SQL table naming and protect against empty formId.
+        # RJ: Why would formId be blank? Is that ok?
+        if isinstance(formID,str):
+            formID = formID.replace('-', '_')
+        else:
+            return
         #need to delete ID element from response as it's form ID which is useless but it causes confusion with _ID
         #del response["id"]
 
@@ -299,7 +309,7 @@ def convert_response(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + "." + formID + " where ID='" + id+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("Response ID already exists")
+                log("Response ID already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + "." + formID+" where ID='" + id+"'")
                 mysql_connection.commit()
 
@@ -346,7 +356,7 @@ def delete_record(tangerline_database,id):
             cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
             mysql_connection.commit()
         else:
-            print("Unexpected document type")
+            log("Unexpected document type")
 
 
 def main_job():
@@ -364,7 +374,7 @@ def main_job():
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
     session = client.session()
     tangerline_database = client.create_database(dbName)
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
+    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
 
 
     #login to MySQL
@@ -376,117 +386,80 @@ def main_job():
 
 
     start_time = timeit.default_timer()
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + ': Started converting documents from Tangeline to MySQL')
+    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + ': Started converting documents from Tangeline to MySQL')
     #if sequence number is 0, then we are starting with a new database so let's do initial data converaison from Tanger couchDB to MySQL
-    if lastSequence == '0':
-        #changes = tangerline_database.changes(descending=False, since=0)
-        #changes.last_seq is None
-        last_change_seq= get_last_change_seq(tangerline_database)
-        cnt = 0
-        for document in tangerline_database:
-            cnt = cnt + 1
-            resp_dict = json.loads(document.json())
-            type = resp_dict.get('type')
-            print("Processing document type: " + type + ", Count: " + str(cnt))
-            #there are 5 major types: case, participant, case-event, event-form and response
+    # Iterate over a "normal" _changes feed
+    changes = tangerline_database.changes(include_docs=True,descending=False,  since=lastSequence)
+    cnt2 = 0
+    for change in changes:
+        cnt2 = cnt2 + 1
+        #log(change)
+        #change is a dictionary object
+        if change is not None:
+            seq = change.get('seq')
+            id = change.get('id')
+            cng = change.get('changes')
+            #check to see if is a delete change,if it is, just delete the record
+            if change.get('deleted'):
+                #remove the ID from the table, but we don't know which table
+                #delete_record(tangerline_database, id)
+                continue
+            #get the change revision
+            version = cng[0].get('rev')
+            doc = change.get('doc')  #that's a doctionary
+            #log(doc)
+            #need to handle delete changes
+            type = doc.get('type')
+            id = doc.get('_id')
+            log("Processing changes, document type: " + type + ", Count: " + str(cnt2) + ", ID: " + id)
+            # there are 5 major types: case, participant, case-event, event-form and response
             if (type.lower() == "case"):
-                #handle case type
-                convert_case(document)
+                # handle case type
+                convert_case(doc)
             elif (type.lower() == "participant"):
+                # participant is already handled in case, ignore, donothing
                 #pass
-                convert_participant(document)
+                convert_participant(doc)
             elif (type.lower() == "event-form"):
                 #pass
-                convert_event_form(document)
+                convert_event_form(doc)
             # handle case-event, this is skipped
             elif (type.lower() == "case-event"):
-                convert_case_event(document)
-                #convert_document(document)
-            elif (type.lower() == "response"):
-                #pass
-                convert_response(document)
-                #convert_document(document)
-            else:
-                print("Unexpected document type")
-                #do nothing
-
-        #get the last change sequence as from now on we will only deal with the changes
-        last_change_seq= get_last_change_seq(tangerline_database)
-    else:
-        # Iterate over a "normal" _changes feed
-        changes = tangerline_database.changes(include_docs=True,descending=False,  since=lastSequence)
-        cnt2 = 0
-        for change in changes:
-            cnt2 = cnt2 + 1
-            #print(change)
-            #change is a dictionary object
-            if change is not None:
-                seq = change.get('seq')
-                id = change.get('id')
-                cng = change.get('changes')
-                #check to see if is a delete change,if it is, just delete the record
-                if change.get('deleted'):
-                    #remove the ID from the table, but we don't know which table
-                    #delete_record(tangerline_database, id)
-                    continue
-                #get the change revision
-                version = cng[0].get('rev')
-                doc = change.get('doc')  #that's a doctionary
-                #print(doc)
-                #need to handle delete changes
-                type = doc.get('type')
-                id = doc.get('_id')
-                print("Processing changes, document type: " + type + ", Count: " + str(cnt2) + ", ID: " + id)
-                # there are 5 major types: case, participant, case-event, event-form and response
-                if (type.lower() == "case"):
-                    # handle case type
-                    convert_case(doc)
-                elif (type.lower() == "participant"):
-                    # participant is already handled in case, ignore, donothing
-                    #pass
-                    convert_participant(doc)
-                elif (type.lower() == "event-form"):
-                    #pass
-                    convert_event_form(doc)
                 # handle case-event, this is skipped
-                elif (type.lower() == "case-event"):
-                    # handle case-event, this is skipped
-                    #pass
-                    convert_case_event(doc)
-                    # convert_document(document)
-                elif (type.lower() == "response"):
-                    # handle case-event, this is skipped
-                    #pass
-                    convert_response(doc)
-                    # convert_document(document)
-                else:
-                    print("Unexpected document type")
-        #get the last change sequence
-        last_change_seq= get_last_change_seq(tangerline_database)
+                #pass
+                convert_case_event(doc)
+                # convert_document(document)
+            elif (type.lower() == "response"):
+                # handle case-event, this is skipped
+                #pass
+                convert_response(doc)
+                # convert_document(document)
+            else:
+                log("Unexpected document type")
+        lastSequence = change.get('seq')
 
-
-    lastSequence = last_change_seq
     #write the last sequence number back to the INI file, tlast sequence number won't work if descending is set to true
-    config.set("TANGERINE","LastSequence",last_change_seq)
+    config.set("TANGERINE","LastSequence",lastSequence)
     # Writing the configuration file to
 
-    print(sys.argv[1])   
+    log(sys.argv[1])   
     with open(sys.argv[1], 'w') as configfile:
         config.write(configfile)
 
     end_time = timeit.default_timer()
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Finished converting documents from Tangeline to MySQL')
-    print('Total Time: ', end_time - start_time)
+    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Finished converting documents from Tangeline to MySQL')
+    totalTime = end_time - start_time
+    log('Total Time: ' + str(totalTime))
     #logout and disconnect
     client.disconnect()
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from Tangerline database')
+    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from Tangerline database')
     #need to keep the connection open, or rewirte how it is connected, some issues ...
     #mysql_connection.close()
-    #print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from MySQL database')
+    #log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from MySQL database')
 
 #run the scheduler
 def scheduled_job():
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + " Starting job ... ")
+    log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + " Starting job ... ")
     main_job()
     s.enter(60*int(interval), 1, scheduled_job)
 
@@ -494,7 +467,7 @@ def scheduled_job():
 #read in the configuration file
 config = configparser.ConfigParser()
 pathName = sys.argv[1]
-print('Config file: ' + pathName)
+log('Config file: ' + pathName)
 config.read(pathName)
 
 #get all sections
@@ -506,14 +479,14 @@ dbPassword = config['TANGERINE']['DatabasePassword']
 lastSequence = config['TANGERINE']['LastSequence']
 interval = config['TANGERINE']['run_interval']
 
-print('Database URL:' +dbURL +' Database Name: ' + dbName + ' Username is: ' +dbUserName )
+log('Database URL:' +dbURL +' Database Name: ' + dbName + ' Username is: ' +dbUserName )
 
 #login
 client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
 
 session = client.session()
 tangerline_database = client.create_database(dbName)
-# print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
+# log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
 
 
 #connection to MySQL database
@@ -523,8 +496,8 @@ mysqlUserName = config['MySQL']['UserName']
 mysqlPassword = config['MySQL']['Password']
 
 
-print('MySQL Connection String:' +mysqlHostName +'  database: ' + mysqlDatabaseName + " username: " + mysqlUserName)
-print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into MySQL')
+log('MySQL Connection String:' +mysqlHostName +'  database: ' + mysqlDatabaseName + " username: " + mysqlUserName)
+log(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into MySQL')
 
 #
 # RJ: Commenting this out because it looks like a redundant connection to the MySQL database.
