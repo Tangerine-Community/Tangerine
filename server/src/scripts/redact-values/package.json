@@ -1,0 +1,15 @@
+{
+  "name": "redact-values",
+  "version": "1.0.0",
+  "description": "Replace all user-input values in inputs with random values.",
+  "main": "bin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@polymer/polymer": "^3.4.1"
+  },
+  "type": "module"
+}
