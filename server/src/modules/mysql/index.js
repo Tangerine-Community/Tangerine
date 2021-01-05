@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
+const { spawn } = require('child_process');
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
 
@@ -178,7 +179,18 @@ Password = ${process.env.T_MYSQL_PASSWORD}
 
 async function startTangerineToMySQL(pathToStateFile) {
   try {
-    await exec(`python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile} >> ${pathToStateFile}.log.txt 2>&1`)
+    const cmd = `python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile}`
+    const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile])
+    script.stdout.on('data', (data) => {
+      log.info(`${cmd} -- ${data}`)
+    })
+    script.stderr.on('data', (data) => {
+      log.error(`${cmd} -- ${data}`)
+    });
+    script.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+    });
+    log.info(`Running: ${cmd}`)
   } catch(e) {
     console.error(e)
   }
@@ -276,12 +288,12 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
 
 function pushResponse(doc, db) {
   return new Promise((resolve, reject) => {
-    // If there is any objects/arrays in the doc's data object, stringify them.
+    // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
     if (doc.data && typeof doc.data === 'object') {
       doc.data = Object.keys(doc.data).reduce((acc, key) => {
         return {
           ...acc,
-          [key]: typeof doc.data[key] === 'object'
+          [key.toLowerCase()]: typeof doc.data[key] === 'object'
             ? JSON.stringify(doc.data[key])
             : doc.data[key] 
         }
@@ -310,11 +322,11 @@ function pushResponse(doc, db) {
 
 async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
   let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
-  // If there are any objects/arrays in the flatResponse, stringify them.
+  // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
   flatResponse = Object.keys(flatResponse).reduce((acc, key) => {
     return {
       ...acc,
-      [key]: typeof flatResponse[key] === 'object'
+      [key.toLowerCase()]: typeof flatResponse[key] === 'object'
         ? JSON.stringify(flatResponse[key])
         : flatResponse[key]
     }
