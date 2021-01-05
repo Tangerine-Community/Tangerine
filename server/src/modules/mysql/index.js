@@ -178,7 +178,7 @@ Password = ${process.env.T_MYSQL_PASSWORD}
 
 async function startTangerineToMySQL(pathToStateFile) {
   try {
-    await exec(`python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile}`)
+    await exec(`python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile} >> ${pathToStateFile}.log.txt 2>&1`)
   } catch(e) {
     console.error(e)
   }
