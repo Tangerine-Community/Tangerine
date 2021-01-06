@@ -120,6 +120,15 @@ module.exports.eventForms = function(doc) {
     }
   }
 }
+module.exports.participants = function(doc) {
+  if (doc.type === 'case') {
+    if (doc.participants && doc.participants.length > 0) {
+      doc.participants.forEach(function (participant) {
+        emit(participant.id, true)
+      })
+    }
+  }
+}
 
 // Is this still useful?
 module.exports.issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId = function (doc) {
