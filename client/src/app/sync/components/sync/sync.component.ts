@@ -71,7 +71,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
-          let pendingMessage = ''
+          let pendingMessage = '', docPulled = ''
           if (typeof progress.message !== 'undefined') {
             this.otherMessage = progress.message
           } else {
@@ -79,6 +79,9 @@ export class SyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending;'
+          }
+          if (typeof progress.pulled !== 'undefined') {
+            docPulled = progress.pulled + ' docs saved; '
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
@@ -90,7 +93,7 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.pushError = progress.pushError
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
-            this.syncMessage = progress.remaining + '% remaining to sync '
+            this.syncMessage = docPulled + progress.remaining + '% remaining to sync '
           } else {
             this.syncMessage = ''
           }
@@ -127,8 +130,10 @@ export class SyncComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
   }
 
   toggle() {

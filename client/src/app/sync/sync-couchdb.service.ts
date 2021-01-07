@@ -37,6 +37,7 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 200
+  writeBatchSize = 50
   pushChunkSize = 200
   pullChunkSize = 200
   pullSyncOptions;
@@ -353,6 +354,8 @@ export class SyncCouchdbService {
     }
     
     const totalDocIds = docIds.length
+    // Overridding pullChunkSize since pouchdb now supports write_batch_size
+    this.pullChunkSize = totalDocIds
     let pulled = 0
     while (docIds.length) {
       // let remaining = totalDocIds > this.pullChunkSize ? Math.round(docIds.length/totalDocIds * 100) : 1
@@ -362,6 +365,7 @@ export class SyncCouchdbService {
       let syncOptions = {
         "since": pull_last_seq,
         "batch_size": this.batchSize,
+        "write_batch_size": this.writeBatchSize,
         "batches_limit": 1,
         "doc_ids": chunkDocIds,
         "remaining": remaining,
