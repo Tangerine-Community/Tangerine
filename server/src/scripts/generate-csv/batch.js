@@ -59,17 +59,17 @@ async function batch() {
               return process.env.T_REPORTING_MARK_SKIPPED_WITH
             } else {
               if (doc[header] === undefined) {
-                return process.env.T_REPORTING_MARK_SKIPPED_WITH
+                  return process.env.T_REPORTING_MARK_UNDEFINED_WITH
               } else {
-                return doc[header]
+                  return doc[header]
               }
             }
           } else {
             if (doc[header] === undefined) {
-              return process.env.T_REPORTING_MARK_SKIPPED_WITH
+              return process.env.T_REPORTING_MARK_UNDEFINED_WITH
             } else {
-              return doc[header]
-            }
+                return doc[header]
+            }          
           }
         })]
       })
