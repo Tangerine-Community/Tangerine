@@ -73,7 +73,7 @@ async function batch() {
           }
         })]
       })
-      const output = `\n${new CSV(rows).encode()}`
+      const output = `\n${rows.map(row => new CSV([row]).encode()).join('\n')}`
       await appendFile(state.outputPath, output)
       state.skip = state.skip + state.batchSize
     } catch(err) {
