@@ -1,5 +1,32 @@
 # Changelog
 
+## v3.15.7
+
+__New Features and Fixes__
+- CSV bugfix
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout 3.15.7
+# Now you are ready to start the server.
+./start.sh v3.15.7
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.6
+```
+
 ## v3.15.6
 
 __New Features and Fixes__
