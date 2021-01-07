@@ -3,8 +3,8 @@
 ## v3.15.7
 
 __New Features and Fixes__
-- Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly.
-- Adds a server config that allows the user to control the string used for variables that are `undefined`.
+- Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly. PR:[#2558](https://github.com/Tangerine-Community/Tangerine/pull/2558)
+- Adds a server config that allows the user to control the string used for variables that are `undefined`: `T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"`
 - The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
 
 __Server upgrade instructions__
