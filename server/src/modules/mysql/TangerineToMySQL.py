@@ -249,13 +249,14 @@ def convert_response(resp_dict):
         caseEventId = resp_dict.get('caseEventId')
 
         response = resp_dict.get('data')
-        formID = response.get('formId')
+        formID = response.get('formid')
         # Make formID safe for SQL table naming and protect against empty formId.
         # RJ: Why would formId be blank? Is that ok?
         if isinstance(formID,str):
             formID = formID.replace('-', '_')
         else:
             return
+
         #need to delete ID element from response as it's form ID which is useless but it causes confusion with _ID
         #del response["id"]
 
@@ -267,18 +268,18 @@ def convert_response(resp_dict):
         # make sure id is in the dictionary, otherwise add it
         if '_id' not in response:
             response.update({'_id': id})
-        if 'caseId' not in response:
-            response.update({'caseId': caseId})
-        if 'participantId' not in response:
-            response.update({'participantId': participantId})
-        if 'eventId' not in response:
-            response.update({'eventId': eventId})
-        if 'eventFormId' not in response:
-            response.update({'eventFormId': eventFormId})
-        if 'caseEventId' not in response:
-            response.update({'caseEventId': caseEventId})
-        if 'startDatetime' not in response:
-            response.update({'startDatetime': startDatetime})
+        if 'caseid' not in response:
+            response.update({'caseid': caseId})
+        if 'participantid' not in response:
+            response.update({'participantid': participantId})
+        if 'eventid' not in response:
+            response.update({'eventid': eventId})
+        if 'eventformid' not in response:
+            response.update({'eventformid': eventFormId})
+        if 'caseeventid' not in response:
+            response.update({'caseeventid': caseEventId})
+        if 'startdatetime' not in response:
+            response.update({'startdatetime': startDatetime})
 
         df = pd.DataFrame([response])  # wrapping your dictionary in to list, this works for only 1 record
         df.rename(columns={'_id': 'ID', '_rev': 'dbRevision'}, inplace=True)
@@ -376,21 +377,22 @@ def main_job():
             version = cng[0].get('rev')
             doc = change.get('doc')
             type = doc.get('type')
-            id = doc.get('_id')
-            log("Processing changes, document type: " + type + ", Count: " + str(cnt2) + ", ID: " + id)
-            # There are 5 major types: case, participant, case-event, event-form and response
-            if (type.lower() == "case"):
-                convert_case(doc)
-            elif (type.lower() == "participant"):
-                convert_participant(doc)
-            elif (type.lower() == "event-form"):
-                convert_event_form(doc)
-            elif (type.lower() == "case-event"):
-                convert_case_event(doc)
-            elif (type.lower() == "response"):
-                convert_response(doc)
-            else:
-                log("Unexpected document type: " + id)
+            if type is not None:
+                id = doc.get('_id')
+                log("Processing Seq: " + lastSequence + ", ID: " + id)
+                # There are 5 major types: case, participant, case-event, event-form and response
+                if (type.lower() == "case"):
+                    convert_case(doc)
+                elif (type.lower() == "participant"):
+                    convert_participant(doc)
+                elif (type.lower() == "event-form"):
+                    convert_event_form(doc)
+                elif (type.lower() == "case-event"):
+                    convert_case_event(doc)
+                elif (type.lower() == "response"):
+                    convert_response(doc)
+                else:
+                    log("Unexpected document type: " + id)
 
     # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
     config.set("TANGERINE","LastSequence",lastSequence)
@@ -400,7 +402,7 @@ def main_job():
     end_time = timeit.default_timer()
     totalTime = end_time - start_time
     if (cnt2 > 0):
-        log('Finished converting documents from Tangeline to MySQL. Total Time: ' + str(totalTime))
+        log('Finished converting documents from Tangerine to MySQL. Total Time: ' + str(totalTime))
     client.disconnect()
 
 # Run the scheduler.
