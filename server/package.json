@@ -31,6 +31,7 @@
     "generate-ssh-keys": "./src/scripts/generate-ssh-keys.js",
     "import-v2-assessment": "./src/scripts/import-v2-assessment.js",
     "redact-values": "./src/scripts/redact-values/bin.js"
+    "mysql-report": "./src/scripts/mysql-report.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
