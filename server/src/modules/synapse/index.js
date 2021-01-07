@@ -146,10 +146,14 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   };
   function set(input, key, value) {
     flatFormResponse[key] = input.skipped
-      ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-      : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-        ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : value
+        ? process.env.T_REPORTING_MARK_SKIPPED_WITH
+        : 
+        input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
+        : 
+        value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
+            : value
   }
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
