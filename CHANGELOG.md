@@ -3,7 +3,9 @@
 ## v3.15.7
 
 __New Features and Fixes__
-- CSV bugfix
+- Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly.
+- Adds a server config that allows the user to control the string used for variables that are `undefined`.
+- The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
