@@ -79,7 +79,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             // this.syncMessage =  direction + docsWritten + pendingMessage
-            this.syncMessage = progress.remaining + '% remaining to sync'
+            this.syncMessage = docPulled + progress.remaining + '% remaining to sync'
           } else {
             this.syncMessage = ''
           }
@@ -95,8 +95,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     // Pass isFirstSync flag as true in order to skip the push.
     const replicationStatus = await this.syncService.sync(true, true)
     this.subscription.unsubscribe();
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
     // if (!this.wakeLock) {
     //   console.log("wakeLock is destroyed.")
     // }
@@ -114,8 +116,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
   }
 
 }
