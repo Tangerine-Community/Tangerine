@@ -35,7 +35,6 @@ class Database {
     }
 }
 
-
 const groupId = process.argv[2] 
 const mysqlDatabaseName = groupId.replace(/-/g, '')
 const db = new Database({
@@ -45,69 +44,69 @@ const db = new Database({
   database : mysqlDatabaseName 
 })
 const caseDataDefinitions = [
-	{
-		name: "Cases",
-		mysqlTable: 'case_instances',
-		couchdbView: 'cases'
-	},
-	{
-		name: "Case Events",
-		mysqlTable: 'caseevent',
-		couchdbView: 'caseEvents'
-	},
-	{
-		name: "Event Forms",
-		mysqlTable: 'eventform',
-		couchdbView: 'eventForms'
-	},
-	{
-		name: "Participants",
-		mysqlTable: 'participant',
-		couchdbView: 'participants'
-	}
+  {
+    name: "Cases",
+    mysqlTable: 'case_instances',
+    couchdbView: 'cases'
+  },
+  {
+    name: "Case Events",
+    mysqlTable: 'caseevent',
+    couchdbView: 'caseEvents'
+  },
+  {
+    name: "Event Forms",
+    mysqlTable: 'eventform',
+    couchdbView: 'eventForms'
+  },
+  {
+    name: "Participants",
+    mysqlTable: 'participant',
+    couchdbView: 'participants'
+  }
 ]
+const results = {
+  caseData: [],
+  formData: []
+}
 
 async function go() {
-	console.log('')
-	console.log('')
-	console.log('___ Case Data ___')
-	console.log('')
-	console.log('')
-	for (const caseDataDefinition of caseDataDefinitions) {
-		let mysqlCount = 0
-		try {
-			const result = await db.query(`select count(*) from ${caseDataDefinition.mysqlTable}`)
-			mysqlCount = result[0]['count(*)']
-		} catch (e) {
-			// Table doesn't exist yet.
-		}
-		const response = await axios.get(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}/_design/${caseDataDefinition.couchdbView}/_view/${caseDataDefinition.couchdbView}`)
-		const couchdbCount = response.data.rows.length
-		console.log(`${caseDataDefinition.name}: ${mysqlCount} / ${couchdbCount}`)
-	}
-	console.log('')
-	console.log('')
-	console.log('___ Form Data ___')
-	console.log('')
-	console.log('')
-	const forms = await fs.readJSON(`/tangerine/groups/${groupId}/client/forms.json`)
-	for (const form of forms) {
-		const tableName = form.id.replace(/-/g, '_')
-		let mysqlCount = 0
-		try {
-			const result = await db.query(`select count(*) from ${tableName}`)
-			mysqlCount = result[0]['count(*)']
-		} catch (e) {
-			// Table doesn't exist yet.
-		}
-		const response = await axios.get(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}/_design/responsesByFormId/_view/responsesByFormId?keys=["${form.id}"]`)
-		const couchdbCount = response.data.rows.length
-		console.log(`${form.title} (${form.id}): ${mysqlCount} / ${couchdbCount}`)
-	}
-	console.log('')
-	console.log('')
-	console.log('*Reporting as (number of records in MySQL) / (number of records in CouchDB)')
-	console.log('')
-	process.exit()
+  for (const caseDataDefinition of caseDataDefinitions) {
+    let mysqlCount = 0
+    try {
+      const result = await db.query(`select count(*) from ${caseDataDefinition.mysqlTable}`)
+      mysqlCount = result[0]['count(*)']
+    } catch (e) {
+      // Table doesn't exist yet.
+    }
+    const response = await axios.get(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}/_design/${caseDataDefinition.couchdbView}/_view/${caseDataDefinition.couchdbView}`)
+    const couchdbCount = response.data.rows.length
+    results.caseData.push({
+      type: caseDataDefinition.name,
+      mysqlCount,
+      couchdbCount
+    })
+  }
+  const forms = await fs.readJSON(`/tangerine/groups/${groupId}/client/forms.json`)
+  for (const form of forms) {
+    const tableName = form.id.replace(/-/g, '_')
+    let mysqlCount = 0
+    try {
+      const result = await db.query(`select count(*) from ${tableName}`)
+      mysqlCount = result[0]['count(*)']
+    } catch (e) {
+      // Table doesn't exist yet.
+    }
+    const response = await axios.get(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}/_design/responsesByFormId/_view/responsesByFormId?keys=["${form.id}"]`)
+    const couchdbCount = response.data.rows.length
+    results.formData.push({
+      formTitle: form.title,
+      formId: form.id,
+      mysqlCount,
+      couchdbCount
+    })
+  }
+  process.stdout.write(JSON.stringify(results))
+  process.exit()
 }
 go()
