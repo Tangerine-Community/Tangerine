@@ -65,9 +65,6 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending; '
           }
-          if (typeof progress.pulled !== 'undefined') {
-            docPulled = progress.pulled + ' docs saved; '
-          }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
           }
@@ -79,9 +76,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             // this.syncMessage =  direction + docsWritten + pendingMessage
-            this.syncMessage = docPulled + progress.remaining + '% remaining to sync'
-          } else {
-            this.syncMessage = ''
+            this.syncMessage = progress.remaining + '% remaining to sync; '
+          }
+          if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
+            this.syncMessage = this.syncMessage + progress.pulled + ' docs saved. '
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction

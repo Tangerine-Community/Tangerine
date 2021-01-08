@@ -12,4 +12,5 @@ export class ReplicationStatus {
   pushError: any
   initialPullLastSeq: any;
   tangerineVersion: any;
+  message: string;
 }
