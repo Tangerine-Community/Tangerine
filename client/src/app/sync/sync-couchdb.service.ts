@@ -197,7 +197,8 @@ export class SyncCouchdbService {
       let syncOptions = {
         "doc_ids": docIdsToPush,
         "remaining": 100,
-        "pushed": pushed
+        "pushed": pushed,
+        "checkpoint": 'source'
       }
 
       syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
@@ -391,7 +392,8 @@ export class SyncCouchdbService {
         "batches_limit": 1,
         "doc_ids": chunkDocIds,
         "remaining": remaining,
-        "pulled": pulled
+        "pulled": pulled,
+        "checkpoint": 'source'
       }
       // if totalDocIds < this.pullChunkSize, we still want remaining to be 100% at the start of its processing.
       if (totalDocIds > this.pullChunkSize && docIds.length === 0) {
