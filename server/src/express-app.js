@@ -17,7 +17,10 @@ const unlink = util.promisify(fsc.unlink)
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
+const pouchRepStream = require('pouchdb-replication-stream');
 PouchDB.plugin(require('pouchdb-find'));
+PouchDB.plugin(pouchRepStream.plugin);
+PouchDB.adapter('writableStream', pouchRepStream.adapters.writableStream);
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
@@ -46,8 +49,9 @@ const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, ge
  const {saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
-var cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const { getPermissionsList } = require('./permissions-list.js');
+const {AppContext} = require("../../editor/src/app/app-context.enum");
 const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 
@@ -427,6 +431,79 @@ app.post('/permissions/addRoleToGroup/:groupId',
 app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
 app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
+
+app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async function(req, res, next){
+  const groupId = req.params.groupId;
+  const deviceId = req.params.deviceId;
+  const syncUsername = req.params.syncUsername;
+  const syncPassword = req.params.syncPassword;
+  const url = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}`
+  const devicesUrl = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}-devices`
+  console.log("about to repStream to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword + " using devicesUrl: " + devicesUrl)
+  const groupDevicesDb = await new PouchDB(devicesUrl)
+  const device = await groupDevicesDb.get(deviceId)
+  const formInfos = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+
+  const pullSelector = {
+    "$or": [
+      ...formInfos.reduce(($or, formInfo) => {
+        if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+          $or = [
+            ...$or,
+            ...device.syncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+              ? device.syncLocations.map(locationConfig => {
+                // Get last value, that's the focused sync point.
+                let location = locationConfig.value.slice(-1).pop()
+                return {
+                  "form.id": formInfo.id,
+                  [`location.${location.level}`]: location.value
+                }
+              })
+              : [
+                {
+                  "form.id": formInfo.id
+                }
+              ]
+          ]
+        }
+        return $or
+      }, []),
+      ...device.syncLocations.length > 0
+        ? device.syncLocations.map(locationConfig => {
+          // Get last value, that's the focused sync point.
+          let location = locationConfig.value.slice(-1).pop()
+          return {
+            "type": "issue",
+            [`location.${location.level}`]: location.value,
+            "resolveOnAppContext": AppContext.Client
+          }
+        })
+        : [
+          {
+            "resolveOnAppContext": AppContext.Client,
+            "type": "issue"
+          }
+        ]
+    ]
+  }
+  
+  const replicationOpts = {
+    "selector": pullSelector
+  }
+  // stream db to express response
+  const db = new PouchDB(url);
+  const dump =  db.dump(res, replicationOpts)
+    .catch(function(err){
+      // custom error handler
+      if(typeof config.error === 'function'){
+        return config.error(err);
+      }
+      res.status(500).send(err);
+    });
+  // console.log("dump" + dump)
+  return dump
+});
+
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
