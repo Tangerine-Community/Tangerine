@@ -113,17 +113,20 @@ export class SyncCouchdbService {
           'remaining': syncOptions.remaining
         }
         this.syncMessage$.next(progress)
+        const docIdsLength = syncOptions.doc_ids.length
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
+          const remaining = Math.round(info.docs_written/docIdsLength * 100)
           status = <ReplicationStatus>{
             pushed: info.docs_written,
             info: info,
-            remaining: syncOptions.remaining,
+            remaining: remaining,
             direction: direction
           }
           resolve(status)
         }).on('change', async (info) => {
           const pushed = syncOptions.pushed + info.docs_written
+          const remaining = Math.round(pushed/docIdsLength * 100)
           const progress = {
             'docs_read': info.docs_read,
             'docs_written': info.docs_written,
@@ -131,7 +134,7 @@ export class SyncCouchdbService {
             'pending': info.pending,
             'direction': direction,
             'last_seq': info.last_seq,
-            'remaining': syncOptions.remaining,
+            'remaining': remaining,
             'pushed': pushed
           };
           this.syncMessage$.next(progress);
@@ -157,29 +160,39 @@ export class SyncCouchdbService {
       })
     }
     
-    const dbInfo = await userDb.db.info()
-    const docCount = dbInfo.doc_count
+    let docIdsToPush = []
+    const changes = await userDb.db.changes({ since:push_last_seq, include_docs: false })
+    if (changes.results.length > 0) {
+      for (let change of changes.results) {
+        if (!change.id.startsWith('_design')) {
+          docIdsToPush.push(change.id)
+        }
+      }
+    }
+    
+    // const dbInfo = await userDb.db.info()
+    // const docCount = dbInfo.doc_count
     // number of times that number is divisible by this.pushChunkSize, and then concat the remainder. 
-    let chunks = new Array(Math.floor(docCount / this.pushChunkSize)).fill(this.pushChunkSize).concat(docCount % this.pushChunkSize)
-    let i=0
-    const totalChunks = chunks.length
+    // let chunks = new Array(Math.floor(docCount / this.pushChunkSize)).fill(this.pushChunkSize).concat(docCount % this.pushChunkSize)
+    // let i=0
+    // const totalChunks = chunks.length
     let docIds = []
     let pushed = 0
-    while (docIds.length > 0 || i === 0 ) {
-      let currentLimit = chunks.shift();
-      const remaining = Math.round(chunks.length/totalChunks * 100)
-      const skip = this.pushChunkSize * i
-      docIds = (await userDb.db.allDocs({
-        "limit": this.pushChunkSize,
-        "fields": ["_id"],
-        "skip": skip
-      })).rows.map(doc => doc.id)
-      // skip = currentLimit
-      console.log("i: " + i + " remaining: " + remaining + " docIds len: " + docIds.length + " skip: " + skip)
+    // while (docIds.length > 0 || i === 0 ) {
+    //   let currentLimit = chunks.shift();
+      // const remaining = Math.round(chunks.length/totalChunks * 100)
+      // const skip = this.pushChunkSize * i
+      // docIds = (await userDb.db.allDocs({
+      //   "limit": this.pushChunkSize,
+      //   "fields": ["_id"],
+      //   "skip": skip
+      // })).rows.map(doc => doc.id)
+      // // skip = currentLimit
+      // console.log("i: " + i + " remaining: " + remaining + " docIds len: " + docIds.length + " skip: " + skip)
+    if (docIdsToPush.length > 0) {
       let syncOptions = {
-        "since": push_last_seq,
-        "doc_ids": docIds,
-        "remaining": remaining,
+        "doc_ids": docIdsToPush,
+        "remaining": 100,
         "pushed": pushed
       }
 
@@ -199,26 +212,31 @@ export class SyncCouchdbService {
         // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
         batchFailureDetected = true
         batchError = e
-        break
       }
-      i++
-    }
+      
+      status.initialPushLastSeq = push_last_seq
 
-    status.initialPushLastSeq = push_last_seq
-    
-    if (batchFailureDetected) {
-      // don't set last_seq
-      // TODO: create an issue
-      const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
-      const errorMessage = errorMessageDialog + batchError
-      console.log(errorMessage)
-      if (status) {
-        status.pushError = errorMessage
+      if (batchFailureDetected) {
+        // don't set last_seq
+        // TODO: create an issue
+        const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
+        const errorMessage = errorMessageDialog + batchError
+        console.log(errorMessage)
+        if (status) {
+          status.pushError = errorMessage
+        }
+        this.syncMessage$.next(status)
+      } else {
+        // set last_seq
+        await this.variableService.set('sync-push-last_seq', status.info.last_seq)
       }
-      this.syncMessage$.next(status)
     } else {
-      // set last_seq
-      await this.variableService.set('sync-push-last_seq', status.info.last_seq)
+      status = <ReplicationStatus>{
+        pushed: 0,
+        info: '',
+        remaining: 0,
+        direction: 'push'
+      };
     }
     return status;
   }
@@ -229,7 +247,7 @@ export class SyncCouchdbService {
       pullConflicts: [],
       info: '',
       remaining: 0,
-      direction: '' 
+      direction: 'pull' 
     };
     let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
     if (typeof pull_last_seq === 'undefined') {
