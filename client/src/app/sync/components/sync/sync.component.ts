@@ -30,6 +30,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   errorMessage: any
   pullError: any
   pushError: any
+  wakeLock: any
 
   constructor(
     private syncService: SyncService,
@@ -59,11 +60,18 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.errorMessage = ''
     this.pullError = ''
     this.pushError = ''
-    const lock =  await navigator['wakeLock'].request('screen');
+    
+    try {
+      this.wakeLock =  await navigator['wakeLock'].request('screen');
+    } catch (err) {
+      // the wake lock request fails - usually system related, such low as battery
+      console.log(`${err.name}, ${err.message}`);
+    }
+    
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
-          let pendingMessage = ''
+          let pendingMessage = '', docPulled = ''
           if (typeof progress.message !== 'undefined') {
             this.otherMessage = progress.message
           } else {
@@ -71,6 +79,9 @@ export class SyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending;'
+          }
+          if (typeof progress.pulled !== 'undefined') {
+            docPulled = progress.pulled + ' docs saved; '
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
@@ -82,11 +93,14 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.pushError = progress.pushError
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
-            this.syncMessage = progress.remaining + '% remaining to sync '
+            this.syncMessage = docPulled + progress.remaining + '% remaining to sync '
+          } else {
+            this.syncMessage = ''
           }
-
-          if (progress.direction !== '') {
+          if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
+          } else {
+            this.direction = ''
           }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
@@ -115,6 +129,10 @@ export class SyncComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
+    }
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
     }
   }
 

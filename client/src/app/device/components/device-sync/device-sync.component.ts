@@ -21,6 +21,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   pushError: any
   dbDocCount:number
   otherMessage: any
+  wakeLock: any
   
   constructor(
     private syncService:SyncService,
@@ -37,7 +38,14 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.otherMessage = ''
     this.pullError = ''
     this.pushError = ''
-    const lock =  await navigator['wakeLock'].request('screen');
+    
+    try {
+      this.wakeLock =  await navigator['wakeLock'].request('screen');
+    } catch (err) {
+      // the wake lock request fails - usually system related, such low as battery
+      console.log(`${err.name}, ${err.message}`);
+    }
+    
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
@@ -66,7 +74,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           if (typeof progress.pushError !== 'undefined') {
             this.pushError = progress.pushError
           }
-          if (typeof progress.remaining !== 'undefined') {
+          if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             // this.syncMessage =  direction + docsWritten + pendingMessage
             this.syncMessage = progress.remaining + '% remaining to sync; '
           }
@@ -75,6 +83,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
+          } else {
+            this.direction = ''
           }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
@@ -83,6 +93,13 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     // Pass isFirstSync flag as true in order to skip the push.
     const replicationStatus = await this.syncService.sync(true, true)
     this.subscription.unsubscribe();
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
+    // if (!this.wakeLock) {
+    //   console.log("wakeLock is destroyed.")
+    // }
     this.syncInProgress = false
     const userDb = await this.userService.getUserDatabase()
     this.dbDocCount = (await userDb.db.info()).doc_count
@@ -96,6 +113,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
     }
   }
 
