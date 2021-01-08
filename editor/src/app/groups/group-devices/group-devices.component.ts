@@ -174,11 +174,20 @@ export class GroupDevicesComponent implements OnInit {
 
   async viewSyncLog(deviceId:string) {
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
-    window['dialog'].innerHTML = `
+    if (device.replicationStatus) {
+      window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
       ${JSON.stringify(device.replicationStatus)}
     </paper-dialog-scrollable>
     `
+    } else {
+      window['dialog'].innerHTML = `
+    <paper-dialog-scrollable>
+      Replication status not available.
+    </paper-dialog-scrollable>
+    `
+    }
+    
     setTimeout(() => window['dialog'].open(), 450)
   }
 

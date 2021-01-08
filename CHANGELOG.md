@@ -2,9 +2,11 @@
 
 ## v3.15.6
 
-__Fixes__
+__New Features and Fixes__
+- New 'wakelock' feature for sync: When using the sync feature, the screen should not go to sleep or dim, enabling the sync process to proceed. This is especially useful during long sync processes. When you navigate to another page once Sync is complete, the wakeLock feature is disabled. 
+- The Devices listing has a new option, "View Sync Log", which enables viewing status of the most recent replication, when available.  
 - Added error messages when internet access drops during a sync. [#2540](https://github.com/Tangerine-Community/Tangerine/issues/2540)
-- Added wakelock support, which is implemented on the sync feature so that it blocks the screen lock so that long syncs may be unattended.
+- Batch size for sync is configurable via `pullSyncOptions` and `pushSyncOptions` variable in a group's app-config.json. Default is 200. If the value is set too high, the application will crash.
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
