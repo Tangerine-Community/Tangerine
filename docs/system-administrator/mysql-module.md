@@ -41,7 +41,7 @@ The most basic way to access MySQL would be to use the MySQL CLI.
 
 ```
 docker exec -it tangerine bash
-mysql -u"$T_MYSQL_USER" -p"$T_MYSQL_PASSWORD"
+mysql -u"$T_MYSQL_USER" -p"$T_MYSQL_PASSWORD" -hmysql
 ```
 
 On the mysql command line, list the available databases using `show databases;`. Note how the database names are similar to the Group ID's these correspond with except with dashes removed. For example, if the group ID was `group-abc-123`, the corresponding MySQL database would be `groupabc123`. To select a database, type `use <database ID>;` then `show tables;` to list out the available tables.
