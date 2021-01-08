@@ -58,14 +58,22 @@ async function batch() {
             if (itemId && doc[`${itemId}_disabled`] === 'true') {
               return process.env.T_REPORTING_MARK_SKIPPED_WITH
             } else {
-              return doc[header]
+              if (doc[header] === undefined) {
+                  return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+              } else {
+                  return doc[header]
+              }
             }
           } else {
-            return doc[header]
+            if (doc[header] === undefined) {
+              return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+            } else {
+                return doc[header]
+            }          
           }
         })]
       })
-      const output = `\n${new CSV(rows).encode()}`
+      const output = `\n${rows.map(row => new CSV([row]).encode()).join('\n')}`
       await appendFile(state.outputPath, output)
       state.skip = state.skip + state.batchSize
     } catch(err) {
