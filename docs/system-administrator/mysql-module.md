@@ -40,7 +40,7 @@ docker exec tangerine mysql-report
 The most basic way to access MySQL would be to use the MySQL CLI. 
 
 ```
-docker exec -it tangerine bash
+docker exec -it mysql bash
 mysql -u"$T_MYSQL_USER" -p"$T_MYSQL_PASSWORD" -hmysql
 ```
 
