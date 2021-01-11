@@ -22,12 +22,14 @@ docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd 
 # Fetch the updates.
 git fetch origin
 git checkout v3.16.0
-# If you are enabling the new mysql module, follow the instructions at `docs/system-administrator/mysql-module.md` and skip the next step because you will do that following the mysql-module instructions.
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# Then return here before starting tangerine
 # Now you are ready to start the server.
 ./start.sh v3.16.0
 docker exec tangerine push-all-group-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.15.6
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
 ```  
 
 ## v3.15.7
