@@ -293,9 +293,13 @@ function pushResponse(doc, db) {
       doc.data = Object.keys(doc.data).reduce((acc, key) => {
         return {
           ...acc,
-          [key.toLowerCase()]: typeof doc.data[key] === 'object'
-            ? JSON.stringify(doc.data[key])
-            : doc.data[key] 
+          ...key === ''
+            ? {}
+            : {
+                [key.toLowerCase()]: typeof doc.data[key] === 'object'
+                  ? JSON.stringify(doc.data[key])
+                  : doc.data[key]
+              }
         }
       }, {})
     }
@@ -326,9 +330,13 @@ async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
   flatResponse = Object.keys(flatResponse).reduce((acc, key) => {
     return {
       ...acc,
-      [key.toLowerCase()]: typeof flatResponse[key] === 'object'
-        ? JSON.stringify(flatResponse[key])
-        : flatResponse[key]
+      ...key === ''
+        ? {}
+        : {
+            [key.toLowerCase()]: typeof flatResponse[key] === 'object'
+              ? JSON.stringify(flatResponse[key])
+              : flatResponse[key]
+          }
     }
   }, {})
   // make sure the top-level properties of doc are copied.
