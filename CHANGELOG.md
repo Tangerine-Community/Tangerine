@@ -25,6 +25,7 @@ git checkout v3.16.0
 # If you are enabling the new mysql module, follow the instructions at `docs/system-administrator/mysql-module.md` and skip the next step because you will do that following the mysql-module instructions.
 # Now you are ready to start the server.
 ./start.sh v3.16.0
+docker exec tangerine push-all-group-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.15.6
 ```  
