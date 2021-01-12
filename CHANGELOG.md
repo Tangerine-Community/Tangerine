@@ -7,8 +7,14 @@ __New Features and Fixes__
 - Adds a server config that allows the user to control the string used for variables that are `undefined`: `T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"`
 - The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
 
+
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+Please add the below line into your config.sh to preserve current behavior (as a workaround for #2564)
+```
+T_REPORTING_MARK_UNDEFINED_WITH=""
+```
 
 ```
 cd tangerine
