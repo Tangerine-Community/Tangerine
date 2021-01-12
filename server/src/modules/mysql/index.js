@@ -61,55 +61,51 @@ module.exports = {
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
         } else {
-          if (doc.form.id === 'user-profile') {
-            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized);
-          } else {
-            if (doc.type === 'case') {
-              // output case
-              await saveFlatResponse(doc, locationList, targetDb, sanitized);
-              let numInf = getItemValue(doc, 'numinf')
-              let participant_id = getItemValue(doc, 'participant_id')
+          if (doc.type === 'case') {
+            // output case
+            await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            let numInf = getItemValue(doc, 'numinf')
+            let participant_id = getItemValue(doc, 'participant_id')
 
-              // output participants
-              for (const participant of doc.participants) {
-                await pushResponse({
-                  ...participant,
-                  _id: participant.id,
-                  caseId: doc._id,
-                  numInf: participant.participant_id === participant_id ? numInf : '',
-                  type: "participant"
-                }, targetDb);
-              }
-            
-              // output case-events
-              for (const event of doc.events) {
-                // output event-forms
-                if (event['eventForms']) {
-                  for (const eventForm of event['eventForms']) {
-                    // for (let index = 0; index < event['eventForms'].length; index++) {
-                    // const eventForm = event['eventForms'][index]
-                    try {
-                      await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
-                    } catch (e) {
-                      if (e.status !== 404) {
-                        console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
-                      }
+            // output participants
+            for (const participant of doc.participants) {
+              await pushResponse({
+                ...participant,
+                _id: participant.id,
+                caseId: doc._id,
+                numInf: participant.participant_id === participant_id ? numInf : '',
+                type: "participant"
+              }, targetDb);
+            }
+          
+            // output case-events
+            for (const event of doc.events) {
+              // output event-forms
+              if (event['eventForms']) {
+                for (const eventForm of event['eventForms']) {
+                  // for (let index = 0; index < event['eventForms'].length; index++) {
+                  // const eventForm = event['eventForms'][index]
+                  try {
+                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                  } catch (e) {
+                    if (e.status !== 404) {
+                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
                     }
                   }
-                } else {
-                  console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
                 }
-                // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
-                // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
-                const eventClone = Object.assign({}, event);
-                // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
-                // since we are already serializing each event-form and have the parent caseEventId on each one.
-                delete eventClone.eventForms
-                await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
+              } else {
+                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
               }
-            } else {
-              await saveFlatResponse(doc, locationList, targetDb, sanitized);
+              // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
+              // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+              const eventClone = Object.assign({}, event);
+              // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
+              // since we are already serializing each event-form and have the parent caseEventId on each one.
+              delete eventClone.eventForms
+              await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
             }
+          } else {
+            await saveFlatResponse(doc, locationList, targetDb, sanitized);
           }
         }
       }
