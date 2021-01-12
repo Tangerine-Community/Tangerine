@@ -38,6 +38,7 @@ export class SyncCouchdbService {
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 200
   writeBatchSize = 50
+  streamBatchSize = 25
   pushChunkSize = 200
   pullChunkSize = 200
   pullSyncOptions;
@@ -258,48 +259,7 @@ export class SyncCouchdbService {
     if (typeof pull_last_seq === 'undefined') {
       pull_last_seq = 0;
     }
-    const pullSelector = {
-      "$or": [
-        ...syncDetails.formInfos.reduce(($or, formInfo) => {
-          if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-            $or = [
-              ...$or,
-              ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                  // Get last value, that's the focused sync point.
-                  let location = locationConfig.value.slice(-1).pop()
-                  return {
-                    "form.id": formInfo.id,
-                    [`location.${location.level}`]: location.value
-                  }
-                })
-                : [
-                  {
-                    "form.id": formInfo.id
-                  }
-                ]
-            ]
-          }
-          return $or
-        }, []),
-        ...syncDetails.deviceSyncLocations.length > 0
-          ? syncDetails.deviceSyncLocations.map(locationConfig => {
-            // Get last value, that's the focused sync point.
-            let location = locationConfig.value.slice(-1).pop()
-            return {
-              "type": "issue",
-              [`location.${location.level}`]: location.value,
-              "resolveOnAppContext": AppContext.Client
-            }
-          })
-          : [
-            {
-              "resolveOnAppContext": AppContext.Client,
-              "type": "issue"
-            }
-          ]
-      ]
-    }
+    const pullSelector = this.getPullSelector(syncDetails);
     let progress = {
       'direction': 'pull',
       'message': 'Querying the remote server.'
@@ -441,7 +401,53 @@ export class SyncCouchdbService {
     }
     return status;
   }
-  
+
+  private getPullSelector(syncDetails) {
+    const pullSelector = {
+      "$or": [
+        ...syncDetails.formInfos.reduce(($or, formInfo) => {
+          if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+            $or = [
+              ...$or,
+              ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                  // Get last value, that's the focused sync point.
+                  let location = locationConfig.value.slice(-1).pop()
+                  return {
+                    "form.id": formInfo.id,
+                    [`location.${location.level}`]: location.value
+                  }
+                })
+                : [
+                  {
+                    "form.id": formInfo.id
+                  }
+                ]
+            ]
+          }
+          return $or
+        }, []),
+        ...syncDetails.deviceSyncLocations.length > 0
+          ? syncDetails.deviceSyncLocations.map(locationConfig => {
+            // Get last value, that's the focused sync point.
+            let location = locationConfig.value.slice(-1).pop()
+            return {
+              "type": "issue",
+              [`location.${location.level}`]: location.value,
+              "resolveOnAppContext": AppContext.Client
+            }
+          })
+          : [
+            {
+              "resolveOnAppContext": AppContext.Client,
+              "type": "issue"
+            }
+          ]
+      ]
+    }
+    return pullSelector;
+  }
+
   async pullAll(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
@@ -472,7 +478,11 @@ export class SyncCouchdbService {
         this.syncMessage$.next(status)
         const writeStream = new window['Memorystream'];
         writeStream.end(payload);
-        await userDb.db.load(writeStream)
+        console.log(`Proxy: ${remoteDb.name}`)
+        // const pullSelector = this.getPullSelector(syncDetails);
+        // await userDb.db.load(writeStream)
+        // await userDb.db.load(writeStream, {proxy: `${remoteDb.name}`, selector: pullSelector})
+        await userDb.db.load(writeStream, {batch_size: this.streamBatchSize})
         const endInfo = await userDb.db.info()
         const endCount = endInfo.doc_count
         const docsAdded = endCount - startCount
