@@ -28,7 +28,7 @@ docker stop tangerine couchdb
 cp -r data ../data-backup-$(date "+%F-%T")
 # Fetch the updates.
 git fetch origin
-git checkout 3.15.7
+git checkout v3.15.7
 # Now you are ready to start the server.
 ./start.sh v3.15.7
 # Remove Tangerine's previous version Docker Image.
