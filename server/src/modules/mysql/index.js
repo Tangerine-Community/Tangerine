@@ -262,6 +262,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
+      } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
+        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
