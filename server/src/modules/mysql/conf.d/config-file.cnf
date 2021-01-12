@@ -1,3 +1,2 @@
 [mysqld]
-innodb_file_per_table=1
-innodb_page_size=64k
+default-storage-engine=myisam
