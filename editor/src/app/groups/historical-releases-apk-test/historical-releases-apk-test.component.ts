@@ -11,11 +11,13 @@ export class HistoricalReleasesApkTestComponent implements OnInit {
 
   displayedColumns = ['buildId', 'build', 'releaseType', 'date', 'versionTag', 'releaseNotes'];
   groupsData: [];
+  groupId;
 
   constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
-    const result = await this.groupsService.getGroupInfo(this.route.snapshot.paramMap.get('groupId'));
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
+    const result = await this.groupsService.getGroupInfo(this.groupId);
     this.groupsData = result.releases.filter(e => e.releaseType === 'qa' && e.build === 'APK');
   }
 }
