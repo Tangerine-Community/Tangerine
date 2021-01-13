@@ -1,5 +1,5 @@
 import { LocationConfig } from './../device/classes/device.class';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import { ReplicationStatus } from './classes/replication-status.class';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { UserDatabase } from './../shared/_classes/user-database.class';
@@ -466,15 +466,22 @@ export class SyncCouchdbService {
       status.remaining = 100
       status.message = `Fetching initial data from server.`
       this.syncMessage$.next(status)
-      const payload = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-      if (payload) {
-        const firstLine = payload.split('\n')[0];
-        const ndjObject = JSON.parse(firstLine)
-        let payloadDocCount
-        if (ndjObject) {
-          payloadDocCount = ndjObject.db_info?.doc_count
-        }
-        status.message = `Importing ${payloadDocCount} docs`
+      const response:HttpResponse<any> = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {observe: 'response', responseType:'text'}).toPromise()
+      if (response) {
+        const contentLength = response.headers.get('content-length')
+        // kudos: https://stackoverflow.com/a/18650828
+        function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
+        const responseSize = formatBytes(contentLength)
+        const payload = response.body
+        // This can crash on large payloads
+        // const firstLine = payload.split('\n')[0];
+        // const ndjObject = JSON.parse(firstLine)
+        // let payloadDocCount
+        // if (ndjObject) {
+        //   payloadDocCount = ndjObject.db_info?.doc_count
+        // }
+        // status.message = `Importing ${payloadDocCount} docs`
+        status.message = `Importing ${responseSize} data`
         this.syncMessage$.next(status)
         const writeStream = new window['Memorystream'];
         writeStream.end(payload);
