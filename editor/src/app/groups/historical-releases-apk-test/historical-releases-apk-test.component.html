@@ -7,7 +7,7 @@
     
       <ng-container matColumnDef="buildId">
         <th mat-header-cell *matHeaderCellDef> {{'Build ID'|translate}} </th>
-        <td mat-cell *matCellDef="let data"> {{data.buildId}} </td>
+        <td mat-cell *matCellDef="let data"> <a [href]="'/releases/qa/apks/archive/'+groupId+'/'+data.buildId+'.apk'" [download]="data.buildId+'.apk'">{{data.buildId}} </a></td>
       </ng-container>
       <ng-container matColumnDef="versionTag">
         <th mat-header-cell *matHeaderCellDef> {{'Version Tag'|translate}} </th>
