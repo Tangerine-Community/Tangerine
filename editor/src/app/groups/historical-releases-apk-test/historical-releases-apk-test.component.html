@@ -1,4 +1,8 @@
 <div class="table-container">
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Dec 7, 3.10-beta" #input>
+  </mat-form-field>
   <table mat-table [dataSource]="groupsData" class="mat-elevation-z8">
       <ng-container matColumnDef="build">
         <th mat-header-cell *matHeaderCellDef> {{'Build'|translate}} </th>
@@ -31,4 +35,5 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
 </div>
