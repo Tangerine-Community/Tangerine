@@ -127,8 +127,10 @@ export class SyncComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
   }
 
   toggle() {
