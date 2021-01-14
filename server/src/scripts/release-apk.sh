@@ -105,7 +105,9 @@ cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.ap
 # Create Group's archive directory
 mkdir -p "$ARCHIVE_DIRECTORY"
 # Copy APK to group's archive directory
-cp "$RELEASE_DIRECTORY/$GROUP.apk" "$ARCHIVE_DIRECTORY/$BUILD_ID.apk"
+if [ $T_ARCHIVE_APKS_TO_DISK == true ]; then 
+  cp "$RELEASE_DIRECTORY/$GROUP.apk" "$ARCHIVE_DIRECTORY/$BUILD_ID.apk"
+fi
 
 echo '{"processing":false,"step":"APK ready"}' > $STATUS_FILE
 echo 
