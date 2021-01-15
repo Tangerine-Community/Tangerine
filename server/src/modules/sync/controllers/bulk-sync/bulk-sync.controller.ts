@@ -28,7 +28,12 @@ export class BulkSyncController {
         console.log("syncCredentials: " + syncCredentials)
         const syncUsername = syncCredentials[0]
         const syncPassword = syncCredentials[1]
-        const dumpFile = await this.bulkSyncService.dump(groupId, deviceId, syncUsername, syncPassword)
+        let dumpFile
+        try {
+          dumpFile = await this.bulkSyncService.dump(groupId, deviceId, syncUsername, syncPassword)
+        } catch (e) {
+          console.log("Error: " + e)
+        }
         // console.log("look out, here it comes: dumpfile: " + JSON.stringify(dumpFile))
         return dumpFile
       } else {
