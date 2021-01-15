@@ -199,7 +199,7 @@ export class SyncCouchdbService {
         "doc_ids": docIdsToPush,
         "remaining": 100,
         "pushed": pushed,
-        "checkpoint": 'source'
+        "checkpoint": 'target'
       }
 
       syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
@@ -353,7 +353,7 @@ export class SyncCouchdbService {
         "doc_ids": chunkDocIds,
         "remaining": remaining,
         "pulled": pulled,
-        "checkpoint": 'source'
+        "checkpoint": 'target'
       }
       // if totalDocIds < this.pullChunkSize, we still want remaining to be 100% at the start of its processing.
       if (totalDocIds > this.pullChunkSize && docIds.length === 0) {
@@ -466,47 +466,50 @@ export class SyncCouchdbService {
       status.remaining = 100
       status.message = `Fetching initial data from server.`
       this.syncMessage$.next(status)
-      this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {observe: 'response', responseType:'text'}).subscribe(async resp => {
-        if (resp.status === 200) {
-          const contentLength = resp.body.length
-          // kudos: https://stackoverflow.com/a/18650828
-          function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
-          const responseSize = formatBytes(contentLength)
-          const payload = resp.body
-          // This can crash on large payloads
-          // const firstLine = payload.split('\n')[0];
-          // const ndjObject = JSON.parse(firstLine)
-          // let payloadDocCount
-          // if (ndjObject) {
-          //   payloadDocCount = ndjObject.db_info?.doc_count
-          // }
-          // status.message = `Importing ${payloadDocCount} docs`
-          status.message = `Importing ${responseSize} data`
-          this.syncMessage$.next(status)
-          const writeStream = new window['Memorystream'];
-          writeStream.end(payload);
-          console.log(`Proxy: ${remoteDb.name}`)
-          // const pullSelector = this.getPullSelector(syncDetails);
-          // await userDb.db.load(writeStream)
-          // await userDb.db.load(writeStream, {proxy: `${remoteDb.name}`, selector: pullSelector})
-          await userDb.db.load(writeStream, {batch_size: this.streamBatchSize})
-          const endInfo = await userDb.db.info()
-          const endCount = endInfo.doc_count
-          const docsAdded = endCount - startCount
-          status.pulled = docsAdded
-          status.remaining = 0
-          delete status.message
-        } else {
-          status.pulled = 0
-          status.remaining = 0
-          status.message = `Unable to download data from server.`
-        }
+      const data = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {observe: 'response', responseType:'text'}).toPromise();
+      if (data.status === 200) {
+        const contentLength = data.body.length
+        // kudos: https://stackoverflow.com/a/18650828
+        function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
+        const responseSize = formatBytes(contentLength)
+        const payload = data.body
+        // This can crash on large payloads
+        // const firstLine = payload.split('\n')[0];
+        // const ndjObject = JSON.parse(firstLine)
+        // let payloadDocCount
+        // if (ndjObject) {
+        //   payloadDocCount = ndjObject.db_info?.doc_count
+        // }
+        // status.message = `Importing ${payloadDocCount} docs`
+        status.message = `Importing ${responseSize} data`
         this.syncMessage$.next(status)
-      })
-      
+        const writeStream = new window['Memorystream'];
+        writeStream.end(payload);
+        console.log(`Proxy: ${remoteDb.name}`)
+        // const pullSelector = this.getPullSelector(syncDetails);
+        // await userDb.db.load(writeStream)
+        // await userDb.db.load(writeStream, {proxy: `${remoteDb.name}`, selector: pullSelector})
+        await userDb.db.load(writeStream, {batch_size: this.streamBatchSize})
+        const endInfo = await userDb.db.info()
+        const endCount = endInfo.doc_count
+        const docsAdded = endCount - startCount
+        status.pulled = docsAdded
+        status.remaining = 0
+        delete status.message
+      } else {
+        status.pulled = 0
+        status.remaining = 0
+        status.message = `Unable to download data from server.`
+      }
+      this.syncMessage$.next(status)
     } catch (e) {
       const errorMessageDialog = window['t']('Error downloading data. Error: ')
-      const errorMessage = errorMessageDialog + e
+      let errorMessage
+      if (typeof e === 'object') {
+        errorMessage = errorMessageDialog + e.statusText + " " + e.message
+      } else {
+        errorMessage = errorMessageDialog + e
+      }
       console.log(errorMessage)
       status.pullError = errorMessage
       this.syncMessage$.next(status)

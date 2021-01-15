@@ -50,6 +50,7 @@ const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, ge
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 const cookieParser = require('cookie-parser');
+const MemoryStream = require("memorystream");
 const { getPermissionsList } = require('./permissions-list.js');
 const {AppContext} = require("../../editor/src/app/app-context.enum");
 const PACKAGENAME = "org.rti.tangerine"
@@ -492,16 +493,72 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
   }
   // stream db to express response
   const db = new PouchDB(url);
-  const dump =  db.dump(res, replicationOpts)
-    .catch(function(err){
-      // custom error handler
-      if(typeof config.error === 'function'){
-        return config.error(err);
-      }
-      res.status(500).send(err);
+  let dbDumpFile = `/tangerine/groups/${groupId}/client/${deviceId}-dbDumpFile`
+  
+  if (await fs.pathExists(dbDumpFile)) {
+    // const readStream = fs.createReadStream(dbDumpFile);
+    // // This will wait until we know the readable stream is actually valid before piping
+    // readStream.on('open', function () {
+    //   console.log("Found the dbDumpFile")
+    //   // This just pipes the read stream to the response object (which goes to the client)
+    //   readStream.pipe(res);
+    // });
+    // // This catches any errors that happen while creating the readable stream (usually invalid names)
+    // readStream.on('error', function(err) {
+    //   res.send({ statusCode: 500, data: "Error sending dbDumpFile: " + err })
+    //   // res.end(err);
+    // });
+
+    // const stream = fs.createReadStream(dbDumpFile)
+    // // res.type('text/html').send(stream)
+    // res.send(stream)
+    console.log("Found the dbDumpFile")
+    fs.createReadStream(dbDumpFile).pipe(res);
+  } else {
+    console.log("dbDumpFile not created; generating. __dirname: " + __dirname)
+    // dbDumpFile = path.join(__dirname,'/../../groups/group-b1adf7e0-9f93-47ec-988c-1e4af596c721/client/d2cbbcae-7f44-408c-90ca-0280b58dac02-dbDumpFile')
+    // dbDumpFile = 'd2cbbcae-7f44-408c-90ca-0280b58dac02-dbDumpFile'
+    
+    // dbDumpFile = `/tangerine/groups/${groupId}/client/${deviceId}-dbDumpFile`
+    // fs.existsSync(dbDumpFile) || fs.mkdirSync(dbDumpFile);
+    // await fs.ensureDir(dbDumpFile).catch(function(err){
+    //   console.log("Path exists: " + err)
+    // });
+    let writeStream = fsc.createWriteStream(dbDumpFile)
+    
+    // const dump = await db.dump(writeStream, replicationOpts)
+    //   .catch(function(err){
+    //     // res.status(500).send(err);
+    //     res.send({ statusCode: 500, data: "Error dumping database to file: " + err })
+    //   });
+    // console.log("Finished the dbDumpFile")
+    // return dump
+    console.log("Now dumping to the writeStream")
+    // res.pipe(await db.dump(writeStream, replicationOpts));
+    let dumpedString;
+    const stream = new MemoryStream()
+    stream.on('data', function (chunk) {
+      dumpedString += chunk.toString();
+      writeStream.write(chunk);
     });
-  // console.log("dump" + dump)
-  return dump
+    dumpedString = await new Promise((resolve, reject) => {
+      db.dump(stream, replicationOpts).then(() => {
+        console.log('Dump from db complete!')
+        writeStream.end()
+        resolve(dumpedString);
+          // return dumpedString;
+          })
+        .catch(function(err){
+          // res.status(500).send(err);
+          res.send({ statusCode: 500, data: "Error dumping database to file: " + err })
+          reject("Error dumping database to file: " + err)
+        });
+    })
+    console.log('dumpedString from db complete!')
+    res.send(dumpedString)
+    // res.send({status: 'ok'})
+    return dumpedString
+  }
 });
 
 
