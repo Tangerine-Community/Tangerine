@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.17.0
+
+__New Features and Fixes__
+- Fix print form as table for some forms. (https://github.com/Tangerine-Community/Tangerine/pull/2568)
+
 ## v3.16.0
 
 __Server upgrade instructions__
