@@ -509,12 +509,12 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
     let dbDumpFilePath = `${dbDumpFileDir}/${sanitize(locationIdentifier)}-dbDumpFile`
     try {
       await fs.ensureDir(dbDumpFileDir)
-      console.log('Created ' + dbDumpFilePath)
     } catch (err) {
       console.error(err)
     }
-
-    if (! await fs.pathExists(dbDumpFilePath)) {
+    
+    const exists = await fs.pathExists(dbDumpFilePath)
+    if (! exists) {
       console.log("dbDumpFilePath not created; generating.")
       let writeStream = fsc.createWriteStream(dbDumpFilePath)
       console.log("Now dumping to the writeStream")
@@ -534,13 +534,14 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
         })
           .catch(function(err){
             // res.status(500).send(err);
+            console.trace()
             res.send({ statusCode: 500, data: "Error dumping database to file: " + err })
             reject("Error dumping database to file: " + err)
           });
       })
       console.log('dumpedString from db complete!')
     }
-    console.log("Found the dbDumpFilePath")
+    console.log("Transferring the dbDumpFile to deviceId: " + deviceId)
     fs.createReadStream(dbDumpFilePath).pipe(res);
   }
 
