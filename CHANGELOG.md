@@ -1,5 +1,40 @@
 # Changelog
 
+## v3.15.7
+
+__New Features and Fixes__
+- Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly. PR:[#2558](https://github.com/Tangerine-Community/Tangerine/pull/2558)
+- Adds a server config that allows the user to control the string used for variables that are `undefined`: `T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"`
+- The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
+
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+Please add the below line into your config.sh to preserve current behavior (as a workaround for #2564)
+```
+T_REPORTING_MARK_UNDEFINED_WITH=""
+```
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.7
+# Now you are ready to start the server.
+./start.sh v3.15.7
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.6
+```
+
 ## v3.15.6
 
 __New Features and Fixes__
