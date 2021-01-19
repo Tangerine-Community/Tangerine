@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.15.8
+- New Sync code.
+
 ## v3.15.7
 
 __New Features and Fixes__
