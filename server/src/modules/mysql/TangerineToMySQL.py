@@ -17,16 +17,11 @@ from sqlalchemy import DDL
 from cloudant.result import Result, ResultByKey
 from itertools import islice
 
-#the last_seq of the changes is not returned until the ietration is completed
-def get_last_change_seq(db):
-    changes = db.changes(descending=False, since=0)
-    for change in changes:
-        #do nothing
-        pass
-    return changes.last_seq
+def log(message):
+    print(message)
+    sys.stdout.flush()
 
-
-#convert a Tangeliner case  document to MySQL case record in case table
+#convert a Tangerine case  document to MySQL case record in case table
 def convert_case(resp_dict):
     global case_synID
     global case_eTag
@@ -66,28 +61,25 @@ def convert_case(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("case_instances already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".case_instances where CaseID='" + caseId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name='case_instances', con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.case_instances', engine)
-                df2 = pd.concat([data, df])
-                print(df2)
+                df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name='case_instances', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
 
-        # add_column = DDL('ALTER TABLE USERS ADD COLUMN city VARCHAR(60) AFTER email')
-        # engine.execute(add_column)
-
-
-#convert a Tangeliner participant  document to MySQL participant table
+#convert a Tangerine participant  document to MySQL participant table
 def convert_participant(resp_dict):
     global participant_df_add
     global participant_df_update
@@ -126,6 +118,7 @@ def convert_participant(resp_dict):
                 participantData.update({key: resp_dict.get(key)})
 
         df = pd.DataFrame([participantData])
+        # RJ: Do we need a df.rename() like we do on other types of data?
         # Try 3 things to insert data...
         #     1) Insert the data as a new or updated row. If that fails...
         #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
@@ -135,25 +128,25 @@ def convert_participant(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("participant already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name='participant', con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.participant', engine)
-                df2 = pd.concat([data, df])
+                df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
- 
 
-
-#convert a Tangeliner case-event  document to MySQL case-event table
+#convert a Tangerine case-event  document to MySQL case-event table
 def convert_case_event(resp_dict):
     global case_event_df_add
     global case_event_df_update
@@ -177,66 +170,66 @@ def convert_case_event(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("CaseEvent already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + caseEventId+"'")
                 mysql_connection.commit()
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name='caseevent', con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try:
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.caseevent', engine)
-                df2 = pd.concat([data, df])
+                df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name='caseevent', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
  
-#convert a Tangeliner event form document to MySQL event_form table
+#convert a Tangerine event form document to MySQL event_form table
 def convert_event_form(resp_dict):
-    global event_form_df_add
-    global event_form_df_update
-    global event_form_df_old
-    global event_form_synID
-    global event_form_eTag
-
-    type = resp_dict.get('type')
-    # there are 4 major types: case, participant, case-event, event-form
-    if (type.lower() == "event-form"):
-        # handle case-event, this is skipped
-        eventFormId = resp_dict.get('_id')
-        del resp_dict["id"]
-        del resp_dict["type"]
-        df = pd.DataFrame([resp_dict])
-        df.rename(columns={'_id': 'EventFormID', '_rev': 'dbRevision'}, inplace=True)
-        # Try 3 things to insert data...
-        #     1) Insert the data as a new or updated row. If that fails...
-        #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
-        #     3) Then the database doesn't exist! Just insert it.
-        try:
-            #delete the EventForm if it already exists in table so we can add the new one
-            qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
-            cursor.execute(qry)
-            if cursor.rowcount >= 1:
-                print("EventForm already exists")
-                cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
-                mysql_connection.commit()
-            # this will fail if there is a new column
-            df.to_sql(name='eventform', con=engine, if_exists='append', index=False)
+    eventFormId = resp_dict.get('_id')
+    log(eventFormId)
+    data = resp_dict.get('data')
+    type = resp_dict.get('return')
+    del resp_dict["id"]
+    del resp_dict["type"]
+    if resp_dict.get("data"):
+        del resp_dict["data"]
+        resp_dict.update(data)
+    df = pd.DataFrame([resp_dict])
+    df.rename(columns={'_id': 'EventFormID', '_rev': 'dbRevision'}, inplace=True)
+    # Try 3 things to insert data...
+    #     1) Insert the data as a new or updated row. If that fails...
+    #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
+    #     3) Then the database doesn't exist! Just insert it.
+    try:
+        #delete the EventForm if it already exists in table so we can add the new one
+        qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
+        cursor.execute(qry)
+        if cursor.rowcount >= 1:
+            cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
+            mysql_connection.commit()
+        # this will fail if there is a new column
+        mysql_connection.commit()
+        df.to_sql(name='eventform', con=engine, if_exists='append', index=False)
+        mysql_connection.commit()
+    except:
+        try: 
+            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
+            df2 = pd.concat([data, df], sort=False)
+            mysql_connection.commit()
+            df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
             mysql_connection.commit()
         except:
-            try: 
-                data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
-                df2 = pd.concat([data, df], sort=False)
-                df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
-                mysql_connection.commit()
-            except:
-                df.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
-                mysql_connection.commit()
+            mysql_connection.commit()
+            df.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
+            mysql_connection.commit()
 
 
-#convert a Tangeliner response document to MySQL response tables
+#convert a Tangerine response document to MySQL response tables
 def convert_response(resp_dict):
     global response_tables
     type = resp_dict.get('type')
@@ -252,7 +245,14 @@ def convert_response(resp_dict):
         caseEventId = resp_dict.get('caseEventId')
 
         response = resp_dict.get('data')
-        formID = response.get('formId').replace('-', '_')
+        formID = response.get('formid')
+        # Make formID safe for SQL table naming and protect against empty formId.
+        # RJ: Why would formId be blank? Is that ok?
+        if isinstance(formID,str):
+            formID = formID.replace('-', '_')
+        else:
+            return
+
         #need to delete ID element from response as it's form ID which is useless but it causes confusion with _ID
         #del response["id"]
 
@@ -264,18 +264,18 @@ def convert_response(resp_dict):
         # make sure id is in the dictionary, otherwise add it
         if '_id' not in response:
             response.update({'_id': id})
-        if 'caseId' not in response:
-            response.update({'caseId': caseId})
-        if 'participantId' not in response:
-            response.update({'participantId': participantId})
-        if 'eventId' not in response:
-            response.update({'eventId': eventId})
-        if 'eventFormId' not in response:
-            response.update({'eventFormId': eventFormId})
-        if 'caseEventId' not in response:
-            response.update({'caseEventId': caseEventId})
-        if 'startDatetime' not in response:
-            response.update({'startDatetime': startDatetime})
+        if 'caseid' not in response:
+            response.update({'caseid': caseId})
+        if 'participantid' not in response:
+            response.update({'participantid': participantId})
+        if 'eventid' not in response:
+            response.update({'eventid': eventId})
+        if 'eventformid' not in response:
+            response.update({'eventformid': eventFormId})
+        if 'caseeventid' not in response:
+            response.update({'caseeventid': caseEventId})
+        if 'startdatetime' not in response:
+            response.update({'startdatetime': startDatetime})
 
         df = pd.DataFrame([response])  # wrapping your dictionary in to list, this works for only 1 record
         df.rename(columns={'_id': 'ID', '_rev': 'dbRevision'}, inplace=True)
@@ -288,26 +288,28 @@ def convert_response(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + "." + formID + " where ID='" + id+"'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                print("Response ID already exists")
                 cursor.execute("Delete from " + mysqlDatabaseName + "." + formID+" where ID='" + id+"'")
                 mysql_connection.commit()
 
             # this will fail if there is a new column
+            mysql_connection.commit()
             df.to_sql(name=formID, con=engine, if_exists='append', index=False)
             mysql_connection.commit()
         except:
             try: 
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.'+formID, engine)
-                df2 = pd.concat([data, df])
+                df2 = pd.concat([data, df], sort=False)
+                mysql_connection.commit()
                 df2.to_sql(name=formID, con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                mysql_connection.commit()
                 df.to_sql(name=formID, con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
  
 
-def delete_record(tangerline_database,id):
-    with cloudant.document.Document(tangerline_database, document_id=id) as document:
+def delete_record(tangerine_database,id):
+    with cloudant.document.Document(tangerine_database, document_id=id) as document:
         doc_dict = json.loads(document.json())
         type = doc_dict.get('type')
         # for deleted documents, the type element is no longer available
@@ -332,7 +334,7 @@ def delete_record(tangerline_database,id):
             cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
             mysql_connection.commit()
         else:
-            print("Unexpected document type")
+            log("Unexpected document type")
 
 
 def main_job():
@@ -345,198 +347,99 @@ def main_job():
     global event_form_df_update
     global case_event_df_add
     global case_event_df_update
-
-    #login
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
     session = client.session()
-    tangerline_database = client.create_database(dbName)
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
-
-
-    #login to MySQL
+    tangerine_database = client.create_database(dbName)
     mysql_database = mysql.connector.connect(user=mysqlUserName, password=mysqlPassword,
                                   host=mysqlHostName,
                                   database=mysqlDatabaseName)
-
     cursor = mysql_database.cursor()
-
-
     start_time = timeit.default_timer()
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + ': Started converting documents from Tangeline to MySQL')
-    #if sequence number is 0, then we are starting with a new database so let's do initial data converaison from Tanger couchDB to MySQL
-    if lastSequence == '0':
-        #changes = tangerline_database.changes(descending=False, since=0)
-        #changes.last_seq is None
-        last_change_seq= get_last_change_seq(tangerline_database)
-        cnt = 0
-        for document in tangerline_database:
-            cnt = cnt + 1
-            resp_dict = json.loads(document.json())
-            type = resp_dict.get('type')
-            print("Processing document type: " + type + ", Count: " + str(cnt))
-            #there are 5 major types: case, participant, case-event, event-form and response
-            if (type.lower() == "case"):
-                #handle case type
-                convert_case(document)
-            elif (type.lower() == "participant"):
-                #pass
-                convert_participant(document)
-            elif (type.lower() == "event-form"):
-                #pass
-                convert_event_form(document)
-            # handle case-event, this is skipped
-            elif (type.lower() == "case-event"):
-                convert_case_event(document)
-                #convert_document(document)
-            elif (type.lower() == "response"):
-                #pass
-                convert_response(document)
-                #convert_document(document)
-            else:
-                print("Unexpected document type")
-                #do nothing
-
-        #get the last change sequence as from now on we will only deal with the changes
-        last_change_seq= get_last_change_seq(tangerline_database)
-    else:
-        # Iterate over a "normal" _changes feed
-        changes = tangerline_database.changes(include_docs=True,descending=False,  since=lastSequence)
-        cnt2 = 0
-        for change in changes:
-            cnt2 = cnt2 + 1
-            #print(change)
-            #change is a dictionary object
+    changes = tangerine_database.changes(include_docs=True,descending=False,  since=lastSequence)
+    cnt2 = 0
+    for change in changes:
+        cnt2 = cnt2 + 1
+        if change is not None:
             seq = change.get('seq')
+            lastSequence = seq 
             id = change.get('id')
             cng = change.get('changes')
-            #check to see if is a delete change,if it is, just delete the record
+            # Check to see if is a delete change,if it is, just delete the record.
             if change.get('deleted'):
-                #remove the ID from the table, but we don't know which table
-                #delete_record(tangerline_database, id)
+                # Remove the ID from the table, but we don't know which table.
+                # @TODO
+                #delete_record(tangerine_database, id)
                 continue
-            #get the change revision
             version = cng[0].get('rev')
-            doc = change.get('doc')  #that's a doctionary
-            #print(doc)
-            #need to handle delete changes
+            doc = change.get('doc')
             type = doc.get('type')
-            print("Processing changes, document type: " + type + ", Count: " + str(cnt2))
-            # there are 5 major types: case, participant, case-event, event-form and response
-            if (type.lower() == "case"):
-                # handle case type
-                convert_case(doc)
-            elif (type.lower() == "participant"):
-                # participant is already handled in case, ignore, donothing
-                #pass
-                convert_participant(doc)
-            elif (type.lower() == "event-form"):
-                #pass
-                convert_event_form(doc)
-            # handle case-event, this is skipped
-            elif (type.lower() == "case-event"):
-                # handle case-event, this is skipped
-                #pass
-                convert_case_event(doc)
-                # convert_document(document)
-            elif (type.lower() == "response"):
-                # handle case-event, this is skipped
-                #pass
-                convert_response(doc)
-                # convert_document(document)
-            else:
-                print("Unexpected document type")
-        #get the last change sequence
-        last_change_seq= get_last_change_seq(tangerline_database)
+            if type is not None:
+                id = doc.get('_id')
+                log("Processing Seq: " + lastSequence + ", ID: " + id)
+                # There are 5 major types: case, participant, case-event, event-form and response
+                if (type.lower() == "case"):
+                    convert_case(doc)
+                elif (type.lower() == "participant"):
+                    convert_participant(doc)
+                elif (type.lower() == "event-form"):
+                    convert_event_form(doc)
+                elif (type.lower() == "case-event"):
+                    convert_case_event(doc)
+                elif (type.lower() == "response"):
+                    convert_response(doc)
+                else:
+                    log("Unexpected document type: " + id)
 
-
-    lastSequence = last_change_seq
-    #write the last sequence number back to the INI file, tlast sequence number won't work if descending is set to true
-    config.set("TANGERINE","LastSequence",last_change_seq)
-    # Writing the configuration file to
-
-    print(sys.argv[1])   
+    # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
+    config.set("TANGERINE","LastSequence",lastSequence)
     with open(sys.argv[1], 'w') as configfile:
         config.write(configfile)
-
+    # Finish.
     end_time = timeit.default_timer()
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Finished converting documents from Tangeline to MySQL')
-    print('Total Time: ', end_time - start_time)
-    #logout and disconnect
+    totalTime = end_time - start_time
+    if (cnt2 > 0):
+        log('Finished converting documents from Tangerine to MySQL. Total Time: ' + str(totalTime))
     client.disconnect()
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from Tangerline database')
-    #need to keep the connection open, or rewirte how it is connected, some issues ...
-    #mysql_connection.close()
-    #print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") +': Disconnected from MySQL database')
 
-#run the scheduler
+# Run the scheduler.
 def scheduled_job():
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + " Starting job ... ")
     main_job()
     s.enter(60*int(interval), 1, scheduled_job)
 
-
-#read in the configuration file
+# Read in the configuration file.
 config = configparser.ConfigParser()
 pathName = sys.argv[1]
-print('Config file: ' + pathName)
 config.read(pathName)
-
-#get all sections
 config.sections()
 dbURL = config['TANGERINE']['DatabaseURL']
 dbName = config['TANGERINE']['DatabaseName']
 dbUserName = config['TANGERINE']['DatabaseUserName']
 dbPassword = config['TANGERINE']['DatabasePassword']
 lastSequence = config['TANGERINE']['LastSequence']
-interval = config['TANGERINE']['run_interval']
+reportingDelayInMinutes = round((int(os.getenv('T_REPORTING_DELAY')) / 1000) / 60)
+if (reportingDelayInMinutes == 0):
+    interval = 1
+else:
+    interval = reportingDelayInMinutes
 
-print('Database URL:' +dbURL +' Database Name: ' + dbName + ' Username is: ' +dbUserName )
-
-#login
+# Connection to CouchDB.
 client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, use_basic_auth=True)
-
 session = client.session()
-tangerline_database = client.create_database(dbName)
-# print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into Tangerine database')
+tangerine_database = client.create_database(dbName)
 
-
-#connection to MySQL database
+# Connection to MySQL database.
 mysqlHostName = config['MySQL']['HostName']
 mysqlDatabaseName = config['MySQL']['DatabaseName']
 mysqlUserName = config['MySQL']['UserName']
 mysqlPassword = config['MySQL']['Password']
 
 
-print('MySQL Connection String:' +mysqlHostName +'  database: ' + mysqlDatabaseName + " username: " + mysqlUserName)
-print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+': Logged into MySQL')
-
-#
-# RJ: Commenting this out because it looks like a redundant connection to the MySQL database.
-#
-#mysql_connection = mysql.connector.connect(user=mysqlUserName, password=mysqlPassword,
-#                              host=mysqlHostName,
-#                              database=mysqlDatabaseName)
-
-#api: https://docs.sqlalchemy.org/en/13/core/engines.html
-#dialect+driver://username:password@host:port/database
-#engine = create_engine('mysql+mysqlconnector://[user]:[pass]@[host]:[port]/[schema]', echo=False)
-#engine = create_engine('mysql+pymysql://'+mysqlUserName+':'+mysqlPassword+'@'+mysqlHostName+'/'+mysqlDatabaseName, echo=False)
+# API: https://docs.sqlalchemy.org/en/13/core/engines.html
 mysql_connection_string = 'mysql+pymysql://'+mysqlUserName+':'+mysqlPassword+'@'+mysqlHostName+':3306/'+mysqlDatabaseName
 engine = create_engine(mysql_connection_string)
 mysql_connection = engine.raw_connection()
 cursor = mysql_connection.cursor()
-
-#main_job()
-
+# Delay 1 minute before starting the first run, then every interval minutes after the completions of the previous run before starting the next run
 s = sched.scheduler(time.time, time.sleep)
-#delay 1 minute before starting the first run, then every interval minutes after the completions of the proveious run before starting the next run
 s.enter(1, 1, scheduled_job)
 s.run()
-
-
-#Logout from MySQL
-#mysql_connection.close()
-
-# Disconnect from the couchdb server
-#client.disconnect()
-
