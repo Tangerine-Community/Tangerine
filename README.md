@@ -157,6 +157,8 @@ We use a tool called `tangerine-preview` to do local content development. Note t
 ## App Development
 
 ### Develop for Editor and Server 
+Docker and git is required for local development. For Mac, download and install [Docker for Desktop](https://www.docker.com/products/docker-desktop). For Windows you will also use Docker for Desktop, but we suggest using the instructions [here](https://docs.docker.com/docker-for-windows/wsl/) which will also point you towards documentation for installing WSL2 on Windows.
+
 ```
 git clone git@github.com:tangerine-community/tangerine
 cd tangerine
