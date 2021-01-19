@@ -474,19 +474,24 @@ export class SyncCouchdbService {
         function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
         const responseSize = formatBytes(contentLength)
         const payload = data.body
-        // This can crash on large payloads
-        const firstLine = payload.split('\n')[0];
-        const ndjObject = JSON.parse(firstLine)
-        let payloadDocCount
         let pullLastSeq
-        if (ndjObject) {
-          payloadDocCount = ndjObject.db_info?.doc_count;
-          pullLastSeq = ndjObject.db_info?.update_seq
+        let index = payload.indexOf("\n");
+        if (index !== -1) {
+          const firstLine = payload.substring(0, index);
+          const ndjObject = JSON.parse(firstLine)
+          let payloadDocCount
+          if (ndjObject) {
+            payloadDocCount = ndjObject.db_info?.doc_count;
+            pullLastSeq = ndjObject.db_info?.update_seq;
+          }
+          status.message = `Importing ${payloadDocCount} docs`
+        } else {
+          status.message = `Importing ${responseSize} data`
         }
-        status.message = `Importing ${payloadDocCount} docs`
-        status.message = `Importing ${responseSize} data`
+        
         this.syncMessage$.next(status)
         const writeStream = new window['Memorystream'];
+        // TODO: This will crash on large payloads. Split this up.
         writeStream.end(payload);
         // const pullSelector = this.getPullSelector(syncDetails);
         // await userDb.db.load(writeStream)
@@ -496,7 +501,9 @@ export class SyncCouchdbService {
         const endCount = endInfo.doc_count
         const docsAdded = endCount - startCount
         const pushLastSeq = endInfo.update_seq
-        await this.variableService.set('sync-pull-last_seq', pullLastSeq)
+        if (pullLastSeq) {
+          await this.variableService.set('sync-pull-last_seq', pullLastSeq)
+        }
         await this.variableService.set('sync-push-last_seq', pushLastSeq)
         console.log("Setting sync-pull-last_seq: " + pullLastSeq + " and sync-push-last_seq: " + pushLastSeq)
         status.pulled = docsAdded
