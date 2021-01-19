@@ -1,7 +1,7 @@
 # Changelog
 
 ## v3.15.8
-- New Sync code.
+- New Sync code provides the initial device load as a single operation, pushes only changed docs, and should greatly reduce network traffic. It stores the initial device load on the filesystem based on the locations. Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load.
 
 ## v3.15.7
 
