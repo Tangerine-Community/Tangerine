@@ -475,18 +475,19 @@ export class SyncCouchdbService {
         const responseSize = formatBytes(contentLength)
         const payload = data.body
         // This can crash on large payloads
-        // const firstLine = payload.split('\n')[0];
-        // const ndjObject = JSON.parse(firstLine)
-        // let payloadDocCount
-        // if (ndjObject) {
-        //   payloadDocCount = ndjObject.db_info?.doc_count
-        // }
-        // status.message = `Importing ${payloadDocCount} docs`
+        const firstLine = payload.split('\n')[0];
+        const ndjObject = JSON.parse(firstLine)
+        let payloadDocCount
+        let pullLastSeq
+        if (ndjObject) {
+          payloadDocCount = ndjObject.db_info?.doc_count;
+          pullLastSeq = ndjObject.db_info?.update_seq
+        }
+        status.message = `Importing ${payloadDocCount} docs`
         status.message = `Importing ${responseSize} data`
         this.syncMessage$.next(status)
         const writeStream = new window['Memorystream'];
         writeStream.end(payload);
-        console.log(`Proxy: ${remoteDb.name}`)
         // const pullSelector = this.getPullSelector(syncDetails);
         // await userDb.db.load(writeStream)
         // await userDb.db.load(writeStream, {proxy: `${remoteDb.name}`, selector: pullSelector})
@@ -494,6 +495,10 @@ export class SyncCouchdbService {
         const endInfo = await userDb.db.info()
         const endCount = endInfo.doc_count
         const docsAdded = endCount - startCount
+        const pushLastSeq = endInfo.update_seq
+        await this.variableService.set('sync-pull-last_seq', pullLastSeq)
+        await this.variableService.set('sync-push-last_seq', pushLastSeq)
+        console.log("Setting sync-pull-last_seq: " + pullLastSeq + " and sync-push-last_seq: " + pushLastSeq)
         status.pulled = docsAdded
         status.remaining = 0
         delete status.message
