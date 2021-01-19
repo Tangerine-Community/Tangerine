@@ -5,13 +5,27 @@ const dbConnection = require('./db')
 
 module.exports = async function insertGroupViews(databaseName) {
   let groupDb = new dbConnection(databaseName)
+  let designDoc = {}
   for (let prop in views) {
     const view = views[prop]
-    designDoc = {
-      _id: `_design/${prop}`,
-      views: {
-        [prop]: {
-          map: view.toString()
+    // Views may just be a map function, else they are an object with a map and a reduce.
+    if (typeof view === 'function') {
+      designDoc = {
+        _id: `_design/${prop}`,
+        views: {
+          [prop]: {
+            map: view.toString()
+          }
+        }
+      }
+    } else {
+      designDoc = {
+        _id: `_design/${prop}`,
+        views: {
+          [prop]: {
+            map: view.map.toString(),
+            reduce: view.reduce.toString()
+          }
         }
       }
     }
