@@ -1,7 +1,29 @@
 # Changelog
 
 ## v3.15.8
-- New Sync code provides the initial device load as a single operation, pushes only changed docs, and should greatly reduce network traffic. It stores the initial device load on the filesystem based on the locations. Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load.
+- New Sync code provides the initial device load as a single operation, pushes only changed docs, and should greatly reduce network traffic. It stores the initial device load on the filesystem based on the locations. Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load. [2560](https://github.com/Tangerine-Community/Tangerine/issues/2560)
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.8
+# Now you are ready to start the server.
+./start.sh v3.15.8
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.7
+```
 
 ## v3.15.7
 
