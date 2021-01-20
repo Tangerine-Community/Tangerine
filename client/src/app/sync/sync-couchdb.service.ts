@@ -39,8 +39,6 @@ export class SyncCouchdbService {
   batchSize = 200
   writeBatchSize = 50
   streamBatchSize = 25
-  pushChunkSize = 200
-  pullChunkSize = 200
   pullSyncOptions;
   pushSyncOptions;
   
@@ -68,11 +66,13 @@ export class SyncCouchdbService {
     isFirstSync = false
   ): Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.pushChunkSize) {
-      this.pushChunkSize = appConfig.pushChunkSize
+    if (appConfig.batchSize) {
+      this.batchSize = appConfig.batchSize
+      console.log("this.batchSize: " + this.batchSize)
     }
-    if (appConfig.pullChunkSize) {
-      this.pullChunkSize = appConfig.pullChunkSize
+    if (appConfig.writeBatchSize) {
+      this.writeBatchSize = appConfig.writeBatchSize
+      console.log("this.writeBatchSize: " + this.writeBatchSize)
     }
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -81,10 +81,14 @@ export class SyncCouchdbService {
     
     // If this is the first sync, skip the push.
     if (isFirstSync) {
-      pullReplicationStatus = await this.pullAll(userDb, remoteDb, appConfig, syncDetails);
-      const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-      await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-      console.log("Setting sync-push-last_seq to " + lastLocalSequence)
+      if (appConfig.useCachedDbDumps) {
+        pullReplicationStatus = await this.pullAll(userDb, remoteDb, appConfig, syncDetails);
+        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
+      } else {
+        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+      }
       return pullReplicationStatus
     } else {
       pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
@@ -174,26 +178,8 @@ export class SyncCouchdbService {
         }
       }
     }
-    
-    // const dbInfo = await userDb.db.info()
-    // const docCount = dbInfo.doc_count
-    // number of times that number is divisible by this.pushChunkSize, and then concat the remainder. 
-    // let chunks = new Array(Math.floor(docCount / this.pushChunkSize)).fill(this.pushChunkSize).concat(docCount % this.pushChunkSize)
-    // let i=0
-    // const totalChunks = chunks.length
-    let docIds = []
+
     let pushed = 0
-    // while (docIds.length > 0 || i === 0 ) {
-    //   let currentLimit = chunks.shift();
-      // const remaining = Math.round(chunks.length/totalChunks * 100)
-      // const skip = this.pushChunkSize * i
-      // docIds = (await userDb.db.allDocs({
-      //   "limit": this.pushChunkSize,
-      //   "fields": ["_id"],
-      //   "skip": skip
-      // })).rows.map(doc => doc.id)
-      // // skip = currentLimit
-      // console.log("i: " + i + " remaining: " + remaining + " docIds len: " + docIds.length + " skip: " + skip)
     if (docIdsToPush.length > 0) {
       let syncOptions = {
         "since":push_last_seq,
@@ -277,10 +263,9 @@ export class SyncCouchdbService {
       'message': 'Received data from remote server.'
     }
     this.syncMessage$.next(progress)
-    
-
     let batchFailureDetected = false
     let batchError;
+
 
     const pullSyncBatch = (syncOptions):Promise<ReplicationStatus> => {
       return new Promise( (resolve, reject) => {
@@ -288,13 +273,11 @@ export class SyncCouchdbService {
           pulled: 0,
           pullConflicts: [],
           info: '',
-          remaining: 0,
           direction: '' 
         }
         const direction = 'pull'
         const progress = {
-          'direction': direction,
-          'remaining': syncOptions.remaining
+          'direction': direction
         }
         this.syncMessage$.next(progress)
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
@@ -304,7 +287,6 @@ export class SyncCouchdbService {
             pulled: info.docs_written,
             pullConflicts: conflictsQuery.rows.map(row => row.id),
             info: info,
-            remaining: syncOptions.remaining,
             direction: direction
           }
           resolve(status)
@@ -317,7 +299,6 @@ export class SyncCouchdbService {
             'pending': info.pending,
             'direction': 'pull',
             'last_seq': info.last_seq,
-            'remaining': syncOptions.remaining,
             'pulled': pulled
           }
           this.syncMessage$.next(progress)
@@ -325,7 +306,6 @@ export class SyncCouchdbService {
           if (!status) {
             // We need to create an empty status to return so that the code that receives the reject can attach the error.
             status = <ReplicationStatus>{
-              remaining: syncOptions.remaining,
               direction: direction
             }
           }
@@ -337,50 +317,43 @@ export class SyncCouchdbService {
       })
     }
     
-    const totalDocIds = docIds.length
-    // Overridding pullChunkSize since pouchdb now supports write_batch_size
-    this.pullChunkSize = totalDocIds
+    const totalDocIdLength = docIds.length
     let pulled = 0
-    while (docIds.length) {
-      // let remaining = totalDocIds > this.pullChunkSize ? Math.round(docIds.length/totalDocIds * 100) : 1
-      let remaining = Math.round(docIds.length/totalDocIds * 100)
-      console.log("docIds.length: " + docIds.length + " / totalDocIds: " + totalDocIds + " * 100 = remaining: " + remaining)
-      let chunkDocIds = docIds.splice(0, this.pullChunkSize);
-      let syncOptions = {
-        "since": pull_last_seq,
-        "batch_size": this.batchSize,
-        "write_batch_size": this.writeBatchSize,
-        "batches_limit": 1,
-        "doc_ids": chunkDocIds,
-        "remaining": remaining,
-        "pulled": pulled,
-        "checkpoint": 'false'
-      }
-      // if totalDocIds < this.pullChunkSize, we still want remaining to be 100% at the start of its processing.
-      if (totalDocIds > this.pullChunkSize && docIds.length === 0) {
-        remaining = 0
-        syncOptions.remaining = 0
-      }
-      
-      syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
-      
-      try {
-        status = await pullSyncBatch(syncOptions);
-        if (typeof status.pulled !== 'undefined') {
-          pulled = pulled + status.pulled
-          status.pulled = pulled
-        } else {
-          status.pulled = pulled
-        }
-        this.syncMessage$.next(status)
-      } catch (e) {
-        console.log("Error: " + e)
-      // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
-        batchFailureDetected = true
-        batchError = e
-        break
-      }
+    // while (docIds.length) {
+    /**
+     * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet. 
+     * From the pouchdb API doc:      
+     * "Number of batches to process at a time. Defaults to 10. This (along wtih batch_size) controls how many docs 
+     * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
+     */
+    let syncOptions = {
+      "since": pull_last_seq,
+      "batch_size": this.batchSize,
+      "write_batch_size": this.writeBatchSize,
+      "batches_limit": 1,
+      "doc_ids": docIds,
+      "pulled": pulled,
+      "checkpoint": 'false'
     }
+    
+    syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
+    
+    try {
+      status = await pullSyncBatch(syncOptions);
+      if (typeof status.pulled !== 'undefined') {
+        pulled = pulled + status.pulled
+        status.pulled = pulled
+      } else {
+        status.pulled = pulled
+      }
+      this.syncMessage$.next(status)
+    } catch (e) {
+      console.log("Error: " + e)
+    // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
+      batchFailureDetected = true
+      batchError = e
+    }
+    // }
 
     status.initialPullLastSeq = pull_last_seq
 
@@ -394,7 +367,7 @@ export class SyncCouchdbService {
         status.pullError = errorMessage
       }
       this.syncMessage$.next(status)
-    } else if (totalDocIds > 0 ) {
+    } else if (totalDocIdLength > 0 ) {
       // set last_seq
       await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
     } else {
