@@ -433,14 +433,14 @@ app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
 app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
 
-app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async function(req, res, next){
+app.use('/api/generateDbDump/:groupId/:deviceId/:syncUsername/:syncPassword', async function(req, res, next){
   const groupId = req.params.groupId;
   const deviceId = req.params.deviceId;
   const syncUsername = req.params.syncUsername;
   const syncPassword = req.params.syncPassword;
   const url = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}`
   const devicesUrl = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}-devices`
-  console.log("about to repStream to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword + " using devicesUrl: " + devicesUrl)
+  console.log("about to generateDbDump to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword + " using devicesUrl: " + devicesUrl)
   const groupDevicesDb = await new PouchDB(devicesUrl)
   const device = await groupDevicesDb.get(deviceId)
   const formInfos = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
@@ -507,6 +507,7 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
     // locations: [{"location.region":"B7BzlR6h"}]
     const locationIdentifier = `${location.level}_${location.value}`
     let dbDumpFilePath = `${dbDumpFileDir}/${sanitize(locationIdentifier)}-dbDumpFile`
+    let metadataFilePath = `${dbDumpFileDir}/${sanitize(locationIdentifier)}-metadata`
     try {
       await fs.ensureDir(dbDumpFileDir)
     } catch (err) {
@@ -516,36 +517,85 @@ app.use('/api/sync/:groupId/:deviceId/:syncUsername/:syncPassword', async functi
     const exists = await fs.pathExists(dbDumpFilePath)
     if (! exists) {
       console.log("dbDumpFilePath not created; generating.")
-      let writeStream = fsc.createWriteStream(dbDumpFilePath)
-      console.log("Now dumping to the writeStream")
-      // res.pipe(await db.dump(writeStream, replicationOpts));
-      let dumpedString;
       const stream = new MemoryStream()
+      let dbDumpFileWriteStream = fsc.createWriteStream(dbDumpFilePath)
+      // const dbDumpFileReadStream = fs.createReadStream(dbDumpFilePath)
+      let metadataWriteStream = fsc.createWriteStream(metadataFilePath)
+      // dbDumpFileReadStream.pipe(dbDumpFileWriteStream)
+      console.log("Now dumping to the writeStream")
+      let i = 0
       stream.on('data', function (chunk) {
-        dumpedString += chunk.toString();
-        writeStream.write(chunk);
+        // chunks.push(chunk)
+        console.log("on dbDumpFileReadStream")
+        dbDumpFileWriteStream.write(chunk.toString());
+        if (i === 0) {
+          try {
+            const firstChunk = chunk.toString();
+            const ndjObject = JSON.parse(firstChunk)
+            console.log("firstChunk: " + firstChunk)
+            let payloadDocCount, pullLastSeq
+            if (ndjObject) {
+              payloadDocCount = ndjObject.db_info?.doc_count;
+              pullLastSeq = ndjObject.db_info?.update_seq;
+              const responseObject = {
+                "payloadDocCount": payloadDocCount,
+                "pullLastSeq": pullLastSeq,
+                "locationIdentifier": sanitize(locationIdentifier)
+              }
+              metadataWriteStream.write(JSON.stringify(responseObject));
+            }
+            
+          } catch (e) {
+            console.log("firstChunk ERROR: " + e)
+          }
+        }
+        i++
+        // writeStream.write(chunk);
       });
-      dumpedString = await new Promise((resolve, reject) => {
-        db.dump(stream, replicationOpts).then(() => {
-          console.log('Dump from db complete!')
-          writeStream.end()
-          resolve(dumpedString);
-          // return dumpedString;
-        })
-          .catch(function(err){
-            // res.status(500).send(err);
-            console.trace()
-            res.send({ statusCode: 500, data: "Error dumping database to file: " + err })
-            reject("Error dumping database to file: " + err)
-          });
-      })
+      // await db.dump(dbDumpFileWriteStream, replicationOpts).then(async () => {
+      await db.dump(stream, replicationOpts).then(async () => {
+        console.log('Dump from db complete!')
+        console.log('Sleep for 2 seconds')
+        await sleep(2000);
+        // const dbDumpFileReadStream = fs.createReadStream(dbDumpFilePath)
+        metadataWriteStream.end()
+        dbDumpFileWriteStream.end()
+        
+        // try {
+        //   await fs.writeJson(dbDumpFilePath, responseObject)
+        // } catch (e) {
+        //   console.error(e)
+        // }
+        // resolve("ok");
+      }).catch(function(err){
+        // res.status(500).send(err);
+        console.trace()
+        res.send({ statusCode: 500, data: "Error dumping database to file: " + err })
+        reject("Error dumping database to file: " + err)
+      });
+      
+      // res.pipe();
+      
+      
       console.log('dumpedString from db complete!')
     }
-    console.log("Transferring the dbDumpFile to deviceId: " + deviceId)
-    fs.createReadStream(dbDumpFilePath).pipe(res);
+    console.log('sending metadata')
+    fs.createReadStream(metadataFilePath).pipe(res);
   }
+});
 
-
+app.use('/api/getDbDump/:groupId/:locationIdentifier', async function(req, res, next){
+  const groupId = req.params.groupId;
+  const locationIdentifier = req.params.locationIdentifier;
+  let dbDumpFileDir = `/tangerine/groups/${groupId}/client/dbDumpFiles`
+  let dbDumpFilePath = `${dbDumpFileDir}/${locationIdentifier}-dbDumpFile`
+  const exists = await fs.pathExists(dbDumpFilePath)
+  if (exists) {
+    console.log("Transferring the dbDumpFile to deviceId: " + locationIdentifier)
+    fs.createReadStream(dbDumpFilePath).pipe(res);
+  } else {
+    res.send({ statusCode: 404, data: "DB dump file not found. "})
+  }
 });
 
 
