@@ -469,46 +469,58 @@ export class SyncCouchdbService {
       this.syncMessage$.next(status)
       const data = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {observe: 'response', responseType:'text'}).toPromise();
       if (data.status === 200) {
-        const contentLength = data.body.length
-        // kudos: https://stackoverflow.com/a/18650828
-        function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
-        const responseSize = formatBytes(contentLength)
-        const payload = data.body
-        let pullLastSeq
-        let index = payload.indexOf("\n");
-        if (index !== -1) {
-          const firstLine = payload.substring(0, index);
-          const ndjObject = JSON.parse(firstLine)
-          let payloadDocCount
-          if (ndjObject) {
-            payloadDocCount = ndjObject.db_info?.doc_count;
-            pullLastSeq = ndjObject.db_info?.update_seq;
+        const response = data.body
+        // let pullLastSeq
+        // let index = payload.indexOf("\n");
+        // if (index !== -1) {
+        //   const firstLine = payload.substring(0, index);
+        //   const ndjObject = JSON.parse(firstLine)
+        //   let payloadDocCount
+        //   if (ndjObject) {
+        //     payloadDocCount = ndjObject.db_info?.doc_count;
+        //     pullLastSeq = ndjObject.db_info?.update_seq;
+        //   }
+        //   status.message = `Importing ${payloadDocCount} docs`
+        // } else {
+        //   status.message = `Importing ${responseSize} data`
+        // }
+        const responseObject = JSON.parse(response)
+        const payloadDocCount = responseObject.payloadDocCount
+        const pullLastSeq = responseObject.pullLastSeq
+        const locationIdentifier = responseObject.locationIdentifier
+        // const payload = responseObject.dbDump
+        status.message = `Importing ${payloadDocCount} docs`
+        this.syncMessage$.next(status)
+
+        const dbDump = await this.http.get(`${syncDetails.serverUrl}bulk-sync/getDbDump/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}/${locationIdentifier}`, {observe: 'response', responseType:'text'}).toPromise();
+        if (dbDump.status === 200) {
+          const contentLength = dbDump.body.length
+          // kudos: https://stackoverflow.com/a/18650828
+          function formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
+          const responseSize = formatBytes(contentLength)
+          const payload = dbDump.body
+          const writeStream = new window['Memorystream'];
+          // TODO: This will crash on large payloads. Split this up.
+          writeStream.end(payload);
+          // const pullSelector = this.getPullSelector(syncDetails);
+          // await userDb.db.load(writeStream)
+          // await userDb.db.load(writeStream, {proxy: `${remoteDb.name}`, selector: pullSelector})
+          await userDb.db.load(writeStream, {batch_size: this.streamBatchSize})
+          const endInfo = await userDb.db.info()
+          const endCount = endInfo.doc_count
+          const docsAdded = endCount - startCount
+          const pushLastSeq = endInfo.update_seq
+          if (pullLastSeq) {
+            await this.variableService.set('sync-pull-last_seq', pullLastSeq)
           }
-          status.message = `Importing ${payloadDocCount} docs`
-        } else {
-          status.message = `Importing ${responseSize} data`
+          await this.variableService.set('sync-push-last_seq', pushLastSeq)
+          console.log("Setting sync-pull-last_seq: " + pullLastSeq + " and sync-push-last_seq: " + pushLastSeq)
+          status.pulled = docsAdded
+          status.remaining = 0
+          delete status.message
         }
         
-        this.syncMessage$.next(status)
-        const writeStream = new window['Memorystream'];
-        // TODO: This will crash on large payloads. Split this up.
-        writeStream.end(payload);
-        // const pullSelector = this.getPullSelector(syncDetails);
-        // await userDb.db.load(writeStream)
-        // await userDb.db.load(writeStream, {proxy: `${remoteDb.name}`, selector: pullSelector})
-        await userDb.db.load(writeStream, {batch_size: this.streamBatchSize})
-        const endInfo = await userDb.db.info()
-        const endCount = endInfo.doc_count
-        const docsAdded = endCount - startCount
-        const pushLastSeq = endInfo.update_seq
-        if (pullLastSeq) {
-          await this.variableService.set('sync-pull-last_seq', pullLastSeq)
-        }
-        await this.variableService.set('sync-push-last_seq', pushLastSeq)
-        console.log("Setting sync-pull-last_seq: " + pullLastSeq + " and sync-push-last_seq: " + pushLastSeq)
-        status.pulled = docsAdded
-        status.remaining = 0
-        delete status.message
+        
       } else {
         status.pulled = 0
         status.remaining = 0
