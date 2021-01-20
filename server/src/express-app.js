@@ -519,9 +519,7 @@ app.use('/api/generateDbDump/:groupId/:deviceId/:syncUsername/:syncPassword', as
       console.log("dbDumpFilePath not created; generating.")
       const stream = new MemoryStream()
       let dbDumpFileWriteStream = fsc.createWriteStream(dbDumpFilePath)
-      // const dbDumpFileReadStream = fs.createReadStream(dbDumpFilePath)
       let metadataWriteStream = fsc.createWriteStream(metadataFilePath)
-      // dbDumpFileReadStream.pipe(dbDumpFileWriteStream)
       console.log("Now dumping to the writeStream")
       let i = 0
       stream.on('data', function (chunk) {
@@ -560,23 +558,12 @@ app.use('/api/generateDbDump/:groupId/:deviceId/:syncUsername/:syncPassword', as
         // const dbDumpFileReadStream = fs.createReadStream(dbDumpFilePath)
         metadataWriteStream.end()
         dbDumpFileWriteStream.end()
-        
-        // try {
-        //   await fs.writeJson(dbDumpFilePath, responseObject)
-        // } catch (e) {
-        //   console.error(e)
-        // }
-        // resolve("ok");
       }).catch(function(err){
         // res.status(500).send(err);
         console.trace()
         res.send({ statusCode: 500, data: "Error dumping database to file: " + err })
         reject("Error dumping database to file: " + err)
       });
-      
-      // res.pipe();
-      
-      
       console.log('dumpedString from db complete!')
     }
     console.log('sending metadata')

@@ -470,20 +470,6 @@ export class SyncCouchdbService {
       const data = await this.http.get(`${syncDetails.serverUrl}bulk-sync/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {observe: 'response', responseType:'text'}).toPromise();
       if (data.status === 200) {
         const response = data.body
-        // let pullLastSeq
-        // let index = payload.indexOf("\n");
-        // if (index !== -1) {
-        //   const firstLine = payload.substring(0, index);
-        //   const ndjObject = JSON.parse(firstLine)
-        //   let payloadDocCount
-        //   if (ndjObject) {
-        //     payloadDocCount = ndjObject.db_info?.doc_count;
-        //     pullLastSeq = ndjObject.db_info?.update_seq;
-        //   }
-        //   status.message = `Importing ${payloadDocCount} docs`
-        // } else {
-        //   status.message = `Importing ${responseSize} data`
-        // }
         const responseObject = JSON.parse(response)
         const payloadDocCount = responseObject.payloadDocCount
         const pullLastSeq = responseObject.pullLastSeq
@@ -502,9 +488,6 @@ export class SyncCouchdbService {
           const writeStream = new window['Memorystream'];
           // TODO: This will crash on large payloads. Split this up.
           writeStream.end(payload);
-          // const pullSelector = this.getPullSelector(syncDetails);
-          // await userDb.db.load(writeStream)
-          // await userDb.db.load(writeStream, {proxy: `${remoteDb.name}`, selector: pullSelector})
           await userDb.db.load(writeStream, {batch_size: this.streamBatchSize})
           const endInfo = await userDb.db.info()
           const endCount = endInfo.doc_count
@@ -519,8 +502,6 @@ export class SyncCouchdbService {
           status.remaining = 0
           delete status.message
         }
-        
-        
       } else {
         status.pulled = 0
         status.remaining = 0
