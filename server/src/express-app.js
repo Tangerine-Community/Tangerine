@@ -578,7 +578,7 @@ app.use('/api/getDbDump/:groupId/:locationIdentifier', async function(req, res, 
   let dbDumpFilePath = `${dbDumpFileDir}/${locationIdentifier}-dbDumpFile`
   const exists = await fs.pathExists(dbDumpFilePath)
   if (exists) {
-    console.log("Transferring the dbDumpFile to deviceId: " + locationIdentifier)
+    console.log("Transferring the dbDumpFile to locationIdentifier: " + locationIdentifier)
     fs.createReadStream(dbDumpFilePath).pipe(res);
   } else {
     res.send({ statusCode: 404, data: "DB dump file not found. "})

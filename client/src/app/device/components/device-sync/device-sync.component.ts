@@ -38,6 +38,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.otherMessage = ''
     this.pullError = ''
     this.pushError = ''
+    this.syncMessage = ''
     
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
@@ -49,7 +50,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
-          let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
+          let pendingMessage = '', docsWritten = '', direction = '', docPulled = '', syncMessage = ''
+          this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
             this.otherMessage = progress.message
           } else {
@@ -63,7 +65,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
             docsWritten = progress.docs_written + ' docs saved; '
           }
           if (typeof progress.pending !== 'undefined') {
-            pendingMessage = progress.pending + ' pending; '
+            pendingMessage = progress.pending + ' docs pending; '
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
@@ -79,7 +81,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
             this.syncMessage = progress.remaining + '% remaining to sync; '
           }
           if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
-            this.syncMessage = this.syncMessage + progress.pulled + ' docs saved. '
+            this.syncMessage = this.syncMessage + pendingMessage + progress.pulled + ' docs saved. '
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction

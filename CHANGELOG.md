@@ -1,7 +1,13 @@
 # Changelog
 
 ## v3.15.8
-- New Sync code provides the initial device load as a single operation, pushes only changed docs, and should greatly reduce network traffic. It stores the initial device load on the filesystem based on the locations. Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load. [2560](https://github.com/Tangerine-Community/Tangerine/issues/2560)
+- New Sync code supports three new options to configure sync operations which should improve data transfer speed:
+
+  - batchSize: Number of docs to pull from the server per batch. Increasing this setting will decrease the number of network requests to the server when doing a sync pull. Default: 200
+  - writeBatchSize: How many docs to write to the database at a time. If the database crashes, decreasing this option could be helpful. Default: 50
+    useCachedDbDumps: Enables caching of the group database to a file for a single download to the client upon initial device setup. This is an experimental feature therefore it is not enabled by default. Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load. [2560](https://github.com/Tangerine-Community/Tangerine/issues/2560)
+- Disable the v3.15.0 update from groups that use sync-protocol 1. 
+- Added `2021` to the report year.
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
