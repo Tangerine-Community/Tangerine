@@ -1,6 +1,6 @@
 # Form Versions
 
-Here's an example of how forms.json looks with support for form revisions:
+Here's an example of how forms.json looks with support for form versions:
 
 ```json
 {
