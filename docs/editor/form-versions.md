@@ -25,7 +25,7 @@ Here's an example of how forms.json looks with support for form revisions:
 }
 ```
 
-### Creating a new form using the new revisions support
+### Creating a new Form Version
 
 Create a form in editor or manually. Note that editor does not currently add any formVersions data to the form-info object:
 
@@ -39,7 +39,7 @@ Create a form in editor or manually. Note that editor does not currently add any
 
 ### Making the first release:
 
-1. Add the revision properties (kinda like tagging) so that formResponses can save the revisionId.
+1. Add the Version properties (kinda like tagging) so that formResponses can save the versionId.
 2. Copy the current draft.html to ${formVersionId}.html - 1.html in this case. (Could be a uuid.html)
 3. Update formVersionId to the point to the formVersion id you just created.
 
