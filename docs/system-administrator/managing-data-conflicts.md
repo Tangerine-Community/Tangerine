@@ -9,10 +9,9 @@ To manage Data Conflicts you will need to know the IP Address of your server and
 1. Click "Options", check "Reduce" and then set "Group Level" of 2. 
 
 
-## Monitor how many active Database Conflicts by Document ID
-1. Go to `<serverIpAddress>:5984/_utils/#database/group-479f455e-b1bd-481b-8bd7-0d985a07431c/_design/shared_conflicts/_view/shared_conflicts`
-1. Click wrench for view on left hand column, make sure "Reduce: Count" is enabled on the view.
-1. Click "Options", check "Reduce" and then set "Group Level" of 1. 
+## Monitor active Database Conflicts in CouchDB
+
+Go to `<serverIpAddress>:5984/_utils/#database/group-479f455e-b1bd-481b-8bd7-0d985a07431c/_design/shared_conflicts/_view/shared_conflicts`. To resolve a conflict, click on the row to open the Doc in conflict. Then click the "Conflicts" tab to resolve the Conflict.
 
 ## Viewing the history of Documents in the database
 Sometimes it helps to look back at the history of a Case. When a Case is open in Tangerine Editor, you can run the following in the Chrome Devtools Console.
