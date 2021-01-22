@@ -8,6 +8,27 @@ To manage Data Conflicts you will need to know the IP Address of your server and
 1. Click wrench for view on left hand column, make sure "Reduce: Count" is enabled on the view.
 1. Click "Options", check "Reduce" and then set "Group Level" of 2. 
 
+### Get a list of all conflict issues in a group
+
+`<serverIpAddress>/<groupId>/_design/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId/_view/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId?reduce=false`
+
+### Check a single document for conflicts
+
+#### Get a list of all conflict issues for a document
+
+If you know the document id for a case, you can get a list of its conflict issues.
+
+In the following example, the first parameter in the key is set to 'case' to signify that it is a case document (`type:'case'); however, in the future conflicts may also be `type:'response'.
+
+Replace `<docId>` and enter the following into your browser:
+
+`<serverIpAddress>/<groupId>/_design/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId/_view/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId?reduce=false&key=["case","<docId>"]`
+
+#### Get the number of conflicts in a document
+
+If you know the document id for a case, replace `<docId>` and enter the following into your browser:
+
+`<serverIpAddress>/<groupId>/_design/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId/_view/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId?reduce=true&group_level=2&key=["case","<docId>"]`
 
 ## Monitor active Database Conflicts in CouchDB
 
