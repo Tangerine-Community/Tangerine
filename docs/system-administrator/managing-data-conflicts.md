@@ -32,7 +32,11 @@ If you know the document id for a case, replace `<docId>` and enter the followin
 
 ## Monitor active Database Conflicts in CouchDB
 
-Go to `<serverIpAddress>:5984/_utils/#database/<groupId>/_design/shared_conflicts/_view/shared_conflicts`. To resolve a conflict, click on the row to open the Doc in conflict. Then click the "Conflicts" tab to resolve the Conflict.
+Go to `<serverIpAddress>:5984/_utils/#database/<groupId>/_design/shared_conflicts/_view/shared_conflicts`. 
+
+To view the number of conflicts per document, click the table tab. 
+
+To resolve a conflict, click on the row to open the Doc in conflict. Then click the "Conflicts" tab to resolve the Conflict.
 
 ## Viewing the history of Documents in the database
 Sometimes it helps to look back at the history of a Case. When a Case is open in Tangerine Editor, you can run the following in the Chrome Devtools Console.
@@ -45,6 +49,7 @@ To look at the full picture that CouchDB server is aware of, use the following U
 
 ```
 <serverIpAddress>:5984/<groupId>/<docId>?revs_info=true
+
 ```
 You will find the response contains a `_revs_info` property with an array of revisions. If a revisions has `"status"` of `"unavailable"`, then that revision is on the Device it came from. You can find out which Device likely has that revision by finding the next available revision, getting the doc at that revision, and inspecting the `modifiedByDeviceId` property. This is the version of the doc that was uploaded to the server. 
 
