@@ -38,7 +38,7 @@ export class CaseEventScheduleComponent implements OnInit {
   didSearch$ = new Subject()
 
   weekInView:DateTime = DateTime.local()
-  datePicked:string = DateTime.local().toFormat(FORMAT_YEAR_MONTH_DAY)
+  datePicked:DateTime = DateTime.local()
   useEthiopianCalendar:Boolean
 
   // Start with week mode.
@@ -72,21 +72,22 @@ export class CaseEventScheduleComponent implements OnInit {
   }
 
   async onWeekChange(event) {
-    this.weekInView = event.target.weekInView
+    this.weekInView = DateTime.fromSeconds(parseInt(event.target.weekUnixValue))
+    this.datePicked = DateTime.fromSeconds(parseInt(event.target.weekUnixValue))
     this.render(await this.calculateEvents())
   }
 
   async onDayPick(event) {
-    this.datePicked = event.target.datePicked
+    this.datePicked = DateTime.fromSeconds(parseInt(event.target.dateUnixValue))
     this.render(await this.calculateEvents())
   }
 
   async calculateEvents() {
     let startDate = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_DAILY
-      ? this.datePicked
+      ? this.datePicked.toFormat(FORMAT_YEAR_MONTH_DAY)
       : this.weekInView.toFormat(FORMAT_YEAR_MONTH_DAY)
     let endDate = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_DAILY
-      ? this.datePicked 
+      ? this.datePicked.toFormat(FORMAT_YEAR_MONTH_DAY)
       : this.weekInView.plus({ days: 6 }).toFormat(FORMAT_YEAR_MONTH_DAY)
     let excludeEstimates = false
     const events = <Array<any>>await this.casesService.getEventsByDate(startDate, endDate, excludeEstimates)
@@ -113,13 +114,17 @@ export class CaseEventScheduleComponent implements OnInit {
       // Build up caseEventInfo to push into caseEventInfos.
       const caseEventInfo = <CaseEventInfo>{}
       // Determine a date this event will rest on.
-      const date = caseEventInstance.occurredOnDay || caseEventInstance.scheduledDay || caseEventInstance.estimatedDay || caseEventInstance.windowStartDay
+      const dateString = caseEventInstance.occurredOnDay || caseEventInstance.scheduledDay || caseEventInstance.estimatedDay || caseEventInstance.windowStartDay
       // If this is a day of the week we have not seen, then attach a date label to this entry in the list.
-      if (daysOfWeekSeen.indexOf(date) === -1) {
-        daysOfWeekSeen.push(date)
-        caseEventInfo.dateLabel = DateTime.fromISO(date).toFormat('ccc')
+      if (daysOfWeekSeen.indexOf(dateString) === -1) {
+        daysOfWeekSeen.push(dateString)
+        let date = DateTime.fromISO(dateString)
+        if (this.useEthiopianCalendar) {
+          date = date.reconfigure({ outputCalendar: 'ethiopic' })
+        }
+        caseEventInfo.dateLabel = date.toFormat('LLL')
         caseEventInfo.dateNumber = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
-          ? DateTime.fromISO(date).toFormat('D')
+          ? date.toFormat('dd')
           : ``
       }
       // Determine the link to use when opening this event.
