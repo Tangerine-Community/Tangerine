@@ -60,6 +60,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.errorMessage = ''
     this.pullError = ''
     this.pushError = ''
+    this.syncMessage = ''
     
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
@@ -72,6 +73,7 @@ export class SyncComponent implements OnInit, OnDestroy {
       next: (progress) => {
         if (progress) {
           let pendingMessage = '', docPulled = ''
+          this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
             this.otherMessage = progress.message
           } else {
@@ -96,6 +98,9 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.syncMessage = docPulled + progress.remaining + '% remaining to sync '
           } else {
             this.syncMessage = ''
+          }
+          if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
+            this.syncMessage = this.syncMessage + pendingMessage + progress.pulled + ' docs saved. '
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction

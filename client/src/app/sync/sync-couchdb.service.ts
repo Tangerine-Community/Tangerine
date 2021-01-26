@@ -83,15 +83,23 @@ export class SyncCouchdbService {
     if (isFirstSync) {
       if (appConfig.useCachedDbDumps) {
         pullReplicationStatus = await this.pullAll(userDb, remoteDb, appConfig, syncDetails);
-        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
       } else {
-        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+        try {
+          pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+        } catch (e) {
+          console.log("Error with pull: " + e)
+        }
       }
+      const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+      await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+      console.log("Setting sync-push-last_seq to " + lastLocalSequence)
       return pullReplicationStatus
     } else {
-      pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+      try {
+        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+      } catch (e) {
+        console.log("Error with pull: " + e)
+      }
       if (pullReplicationStatus.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
         await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
       }
@@ -109,6 +117,13 @@ export class SyncCouchdbService {
     if (typeof push_last_seq === 'undefined') {
       push_last_seq = 0;
     }
+
+    let progress = {
+      'direction': 'push',
+      'message': 'About to push any new data to the server.'
+    }
+    
+    this.syncMessage$.next(progress)
 
     let status;
     let batchFailureDetected = false
@@ -277,43 +292,48 @@ export class SyncCouchdbService {
         }
         const direction = 'pull'
         const progress = {
-          'direction': direction
+          'direction': direction,
+          'message': syncOptions.doc_ids.length + " docs to be checked."
         }
         this.syncMessage$.next(progress)
-        userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
-          // console.log("info.last_seq: " + info.last_seq)
-          const conflictsQuery = await userDb.query('sync-conflicts')
-          status = <ReplicationStatus>{
-            pulled: info.docs_written,
-            pullConflicts: conflictsQuery.rows.map(row => row.id),
-            info: info,
-            direction: direction
-          }
-          resolve(status)
-        }).on('change', async (info) => {
-          const pulled = syncOptions.pulled + info.docs_written
-          const progress = {
-            'docs_read': info.docs_read,
-            'docs_written': info.docs_written,
-            'doc_write_failures': info.doc_write_failures,
-            'pending': info.pending,
-            'direction': 'pull',
-            'last_seq': info.last_seq,
-            'pulled': pulled
-          }
-          this.syncMessage$.next(progress)
-        }).on('error', function (error) {
-          if (!status) {
-            // We need to create an empty status to return so that the code that receives the reject can attach the error.
+        try {
+          userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
+            // console.log("info.last_seq: " + info.last_seq)
+            const conflictsQuery = await userDb.query('sync-conflicts')
             status = <ReplicationStatus>{
+              pulled: info.docs_written,
+              pullConflicts: conflictsQuery.rows.map(row => row.id),
+              info: info,
               direction: direction
             }
-          }
-          let errorMessage = "pullSyncBatch failed. error: " + error
-          console.log(errorMessage)
-          batchFailureDetected = true
-          reject(errorMessage)
-        });
+            resolve(status)
+          }).on('change', async (info) => {
+            const pulled = syncOptions.pulled + info.docs_written
+            const progress = {
+              'docs_read': info.docs_read,
+              'docs_written': info.docs_written,
+              'doc_write_failures': info.doc_write_failures,
+              'pending': info.pending,
+              'direction': 'pull',
+              'last_seq': info.last_seq,
+              'pulled': pulled
+            }
+            this.syncMessage$.next(progress)
+          }).on('error', function (error) {
+            if (!status) {
+              // We need to create an empty status to return so that the code that receives the reject can attach the error.
+              status = <ReplicationStatus>{
+                direction: direction
+              }
+            }
+            let errorMessage = "pullSyncBatch failed. error: " + error
+            console.log(errorMessage)
+            batchFailureDetected = true
+            reject(errorMessage)
+          });
+        } catch (e) {
+          console.log("Error replicating: " + e)
+        }
       })
     }
     
