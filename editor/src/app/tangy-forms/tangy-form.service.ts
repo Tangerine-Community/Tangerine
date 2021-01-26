@@ -81,6 +81,28 @@ export class TangyFormService {
     return formMarkup
   }
 
+  async getDocConflictDiffs(docId) {
+    const groupId = window.location.pathname.split('/')[2]
+    const token = localStorage.getItem('token');
+    const currentDoc = (<any>await axios.get(`/db/${groupId}/${docId}`)).data
+    const docWithConflictRevs = (<any>await axios.get(`/db/${groupId}/${docId}?conflicts=true`)).data
+    const conflictRevisions = docWithConflictRevs._conflicts
+    let diffs = []
+    if (conflictRevisions) {
+      for (const conflictRevision of conflictRevisions) {
+        const conflictRevisionDoc = (<any>await axios.get(`/db/${groupId}/${docId}?rev=${conflictRevision}`)).data
+        const comparison = jsonpatch.compare(conflictRevisionDoc, currentDoc).filter(mod => mod.path.substr(0,8) !== '/history')
+        const comparisonDoc = {
+          currentRevision: currentDoc._rev,
+          conflictRevision,
+          patch: comparison
+        }
+        diffs.push(comparisonDoc)
+      }
+    }
+    return diffs 
+  }
+
   async getDocRevHistory(docId) {
     const groupId = window.location.pathname.split('/')[2]
     const token = localStorage.getItem('token');
