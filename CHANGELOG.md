@@ -8,6 +8,7 @@
   - useCachedDbDumps: Enables caching of the group database to a file for a single download to the client upon initial device setup. This is an experimental feature therefore it is not enabled by default. Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load. [2560](https://github.com/Tangerine-Community/Tangerine/issues/2560)
 - Disable the v3.15.0 update from groups that use sync-protocol 1. 
 - Added `2021` to the report year.
+- Added simple network statistics to the device replicationStatus, which is posted after every sync.
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
