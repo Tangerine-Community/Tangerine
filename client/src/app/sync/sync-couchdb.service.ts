@@ -201,7 +201,7 @@ export class SyncCouchdbService {
         "doc_ids": docIdsToPush,
         "remaining": 100,
         "pushed": pushed,
-        "checkpoint": false
+        "checkpoint": 'source'
       }
 
       syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
@@ -353,7 +353,7 @@ export class SyncCouchdbService {
       "batches_limit": 1,
       "doc_ids": docIds,
       "pulled": pulled,
-      "checkpoint": false
+      "checkpoint": 'source'
     }
     
     syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
