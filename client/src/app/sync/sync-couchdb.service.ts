@@ -293,7 +293,7 @@ export class SyncCouchdbService {
         const direction = 'pull'
         const progress = {
           'direction': direction,
-          'message': syncOptions.doc_ids.length + " docs to be checked."
+          'message': syncOptions.doc_ids.length + " docs to be checked on the server for updates."
         }
         this.syncMessage$.next(progress)
         try {
