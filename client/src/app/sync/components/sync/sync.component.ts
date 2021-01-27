@@ -102,6 +102,9 @@ export class SyncComponent implements OnInit, OnDestroy {
           if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
             this.syncMessage = this.syncMessage + pendingMessage + progress.pulled + ' docs saved. '
           }
+          if (typeof progress.pushed !== 'undefined' && progress.pushed !== '') {
+            this.syncMessage = this.syncMessage + pendingMessage + progress.pushed + ' docs uploaded. '
+          }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
           } else {
