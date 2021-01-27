@@ -1,7 +1,7 @@
 # Changelog
 
 ## v3.15.8
-- New Sync code supports three new options to configure sync operations which should improve data transfer speed:
+- New Sync code reduces the number of network requests by disabling server checkpoints. It also supports three new app-config.json options to configure sync parameters that adjust data download size, how much data is written to the local database each batch, and initial data download:
 
   - batchSize: Number of docs to pull from the server per batch. Increasing this setting will decrease the number of network requests to the server when doing a sync pull. Default: 200
   - writeBatchSize: How many docs to write to the database at a time. If the database crashes, decreasing this option could be helpful. Default: 50
