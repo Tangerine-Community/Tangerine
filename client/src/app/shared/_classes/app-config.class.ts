@@ -30,6 +30,7 @@ export class AppConfig {
   couchdbPushUsingDocIds:boolean
   autoMergeConflicts:boolean
   attachHistoryToDocs:boolean = false
+  keepGpsActive:boolean
   indexViewsOnlyOnFirstSync:boolean = false
   pushChunkSize:number
   pullChunkSize:number
