@@ -8,7 +8,7 @@ New Sync code reduces the number of network requests by disabling server checkpo
   - writeBatchSize: How many docs to write to the database at a time. If the database crashes, decreasing this option could be helpful. Default: 50
   - useCachedDbDumps: Enables caching of the group database to a file for a single download to the client upon initial device setup. This is an experimental feature therefore it is not enabled by default. (Some server code is also currently disabled.) Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load. [2560](https://github.com/Tangerine-Community/Tangerine/issues/2560)
 
-__Other fixes__
+__Other Fixes__
 
 - Disable the v3.15.0 update from groups that use sync-protocol 1. 
 - Added `2021` to the report year.
