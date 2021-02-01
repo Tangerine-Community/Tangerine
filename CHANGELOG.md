@@ -5,6 +5,7 @@
 - Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
 - Deactivate App.checkStorageUsage if using Sync Protocol 2. This was not compatible and should not run.
 - Allow projects to disable GPS warming to save on battery with `disableGpsWarming` in `app-config.json`.
+- Add missing import of `editor/custom-scripts.js` when using editor so Data Dashboards can have imported JS files.
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
