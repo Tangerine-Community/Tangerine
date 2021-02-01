@@ -88,12 +88,17 @@ nano config.sh
 ./start.sh <version tag>
 ```
 
-__Step 6__: Keep Tangerine alive and Ubuntu up to date with cron
+__Step 6__: Keep Tangerine alive, clear CSV downloads, and Ubuntu up to date with cron
 
-To reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. Also it's important to update Ubuntu every week to stay current with security fixes. Enter crontab for root with `sudo su && crontab -e` and add the following lines. 
+The following crontab entries keep Tangerine and your server healthy and alive. Enter crontab for root with `sudo su && crontab -e` and add the following lines. 
 ```
+# Clear CSV download folder every week on Saturday. Adjust this command according to the location of your tangerine directory.
+0 0 * * SAT sudo rm /home/ubuntu/tangerine/data/csv/*
+# Update ubuntu every week on Saturday.
 0 0 * * SAT sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo reboot
+# Restart Tangerine to clear in memory caches.
 0 0 * * * docker stop tangerine && docker start tangerine
+# Ensure tangerine and couchdb start if the machine is rebooted.
 @reboot docker start couchdb && sleep 10 && docker start tangerine
 ```
 

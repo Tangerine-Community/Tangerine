@@ -161,9 +161,13 @@ export class AppComponent implements OnInit {
     });
 
     // Keep GPS chip warm.
-    setInterval(this.getGeolocationPosition, 5000);
-    this.checkStorageUsage();
-    setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    if (this.appConfig.keepGpsActive) {
+      setInterval(this.getGeolocationPosition, 5000);
+    }
+    if (this.appConfig.syncProtocol !== '2') {
+      this.checkStorageUsage();
+      setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    }
     this.ready = true;
 
     // Lastly, navigate to update page if an update is running.
