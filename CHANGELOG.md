@@ -1,5 +1,34 @@
 # Changelog
 
+## v3.15.9
+- Pin date-carousel version to avoid bug in date-carousel v5.1.0
+- Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
+- Deactivate App.checkStorageUsage if using Sync Protocol 2. This was not compatible and should not run.
+- Allow projects to disable GPS warming to save on battery with `disableGpsWarming` in `app-config.json`.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.9
+# Now you are ready to start the server.
+./start.sh v3.15.9
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.8
+```
+
+
 ## v3.15.8
 - New Sync code reduces the number of network requests by disabling server checkpoints. It also supports three new app-config.json options to configure sync parameters that adjust data download size, how much data is written to the local database each batch, and initial data download:
 
