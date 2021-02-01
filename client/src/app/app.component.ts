@@ -161,7 +161,7 @@ export class AppComponent implements OnInit {
     });
 
     // Keep GPS chip warm.
-    if (this.appConfig.keepGpsActive) {
+    if (!this.appConfig.disableGpsWarming) {
       setInterval(this.getGeolocationPosition, 5000);
     }
     if (this.appConfig.syncProtocol !== '2') {
