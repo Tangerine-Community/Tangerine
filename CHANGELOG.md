@@ -1,6 +1,8 @@
 # Changelog
 
 ## v3.15.9
+
+__fixes__
 - Pin date-carousel version to avoid bug in date-carousel v5.1.0
 - Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
 - Deactivate App.checkStorageUsage if using Sync Protocol 2. This was not compatible and should not run.
