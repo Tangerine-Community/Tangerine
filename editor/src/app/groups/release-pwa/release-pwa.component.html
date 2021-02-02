@@ -1,4 +1,4 @@
-<p *ngIf="!buildPwaIsComplete&&!errorGeneratingPWA">
+<p *ngIf="!buildPwaIsComplete&&!errorGeneratingPWA&&versionTag">
   {{'Your PWA is building...'|translate}}
 </p>
 <p *ngIf="errorGeneratingPWA">{{'Release took too long. Please try again.'|translate}}</p>

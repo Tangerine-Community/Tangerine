@@ -7,6 +7,7 @@ const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 
 module.exports = {
+  name: 'synapse',
   hooks: {
     clearReportingCache: async function(data) {
       const { groupNames } = data
@@ -19,7 +20,7 @@ module.exports = {
       }
       return data
     },
-    reportingOutputs: function(data) {
+    reportingOutputs: async function(data) {
       async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
@@ -77,33 +78,32 @@ module.exports = {
         }
       }
         
-      return new Promise(async (resolve, reject) => {
-        const {doc, sourceDb} = data
-        const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-        // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
-        const groupsDb = await new DB(`groups`);
-        const groupDoc = await groupsDb.get(`${sourceDb.name}`)
-        const exclusions = groupDoc['exclusions']
-        // First generate the full-cream database
-        let synapseDb
-        try {
-          synapseDb = await new DB(`${sourceDb.name}-synapse`);
-        } catch (e) {
-          console.log("Error creating db: " + JSON.stringify(e))
-        }
-        let sanitized = false;
-        await generateDatabase(sourceDb, synapseDb, doc, locationList, sanitized, exclusions, resolve);
-        
-        // Then create the sanitized version
-        let synapseSanitizedDb
-        try {
-          synapseSanitizedDb = await new DB(`${sourceDb.name}-synapse-sanitized`);
-        } catch (e) {
-          console.log("Error creating db: " + JSON.stringify(e))
-        }
-        sanitized = true;
-        await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, resolve);
-      })
+      const {doc, sourceDb} = data
+      const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+      // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
+      const groupsDb = await new DB(`groups`);
+      const groupDoc = await groupsDb.get(`${sourceDb.name}`)
+      const exclusions = groupDoc['exclusions']
+      // First generate the full-cream database
+      let synapseDb
+      try {
+        synapseDb = await new DB(`${sourceDb.name}-synapse`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      let sanitized = false;
+      await generateDatabase(sourceDb, synapseDb, doc, locationList, sanitized, exclusions, resolve);
+      
+      // Then create the sanitized version
+      let synapseSanitizedDb
+      try {
+        synapseSanitizedDb = await new DB(`${sourceDb.name}-synapse-sanitized`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      sanitized = true;
+      await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, resolve);
+      return data
     }
   }
 }

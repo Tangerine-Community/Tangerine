@@ -56,6 +56,10 @@ import {TranslateModule} from "@ngx-translate/core";
 import { PrintFormBackupComponent } from './print-form-backup/print-form-backup.component';
 import { PrintStimuliScreenComponent } from './print-stimuli-screen/print-stimuli-screen.component';
 import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
+import { HistoricalReleasesApkTestComponent } from './historical-releases-apk-test/historical-releases-apk-test.component';
+import { HistoricalReleasesApkLiveComponent } from './historical-releases-apk-live/historical-releases-apk-live.component';
+import { HistoricalReleasesPwaLiveComponent } from './historical-releases-pwa-live/historical-releases-pwa-live.component';
+import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-test/historical-releases-pwa-test.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -99,6 +103,10 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy/releases/release-pwa-live', component: GroupReleasePwaLiveComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-apk-test', component: GroupReleaseApkTestComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases/release-apk-live', component: GroupReleaseApkLiveComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/historical-releases-apk-test', component: HistoricalReleasesApkTestComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/historical-releases-apk-live', component: HistoricalReleasesApkLiveComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/historical-releases-pwa-test', component: HistoricalReleasesPwaTestComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/historical-releases-pwa-live', component: HistoricalReleasesPwaLiveComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/add-user', component: AddUserToAGroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
