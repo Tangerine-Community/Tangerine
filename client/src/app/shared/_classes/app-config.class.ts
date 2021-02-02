@@ -31,6 +31,7 @@ export class AppConfig {
   autoMergeConflicts:boolean
   useEthiopianCalendar:boolean
   attachHistoryToDocs:boolean = false
+  disableGpsWarming:boolean
   indexViewsOnlyOnFirstSync:boolean = false
   batchSize:number
   writeBatchSize:number
