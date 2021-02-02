@@ -10,7 +10,7 @@
 # tangerine on that new server with the desired settings, then migrate uploaded data to a your new server installation.
 #
 
-# Domain name of the Tangerine installation.
+# Domain name of the Tangerine installation. If doing local development without ngrok, use 127.0.0.1, not localhost.
 T_HOST_NAME='example.com'
 # Set to HTTPS for redirecting any requests to https. However you will need to put a reverse proxy with SSL in front.
 T_PROTOCOL="http"
@@ -22,6 +22,10 @@ T_UPLOAD_TOKEN="password"
 # The database username and password. Please make this extrememly secure.
 T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
+# Mysql
+T_MYSQL_CONTAINER_NAME="mysql"
+T_MYSQL_USER="admin"
+T_MYSQL_PASSWORD="password"
 
 #
 # Optional

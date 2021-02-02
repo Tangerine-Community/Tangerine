@@ -8,14 +8,15 @@ T_HOST_NAME="$5"
 PACKAGE="$6"
 APPNAME="$7"
 APPNAME_REPLACE="<name>${7}"
+BUILD_ID="$8"
 CORDOVA_DIRECTORY="/tangerine/client/builds/apk"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP"
 STATUS_FILE="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP.json"
 URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www"
 CHCP_URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www/chcp.json"
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
-BUILD_ID=`uuid`
 CORDOVA_ANDROID_DIRECTORY="/opt/cordova-android"
+ARCHIVE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/archive/$GROUP"
 
 echo "RELEASE APK script started $DATE"
 
@@ -101,6 +102,10 @@ cordova build --no-telemetry android
 
 # Copy the apk to the $RELEASE_DIRECTORY
 cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$GROUP.apk
+# Create Group's archive directory
+mkdir -p "$ARCHIVE_DIRECTORY"
+# Copy APK to group's archive directory
+cp "$RELEASE_DIRECTORY/$GROUP.apk" "$ARCHIVE_DIRECTORY/$BUILD_ID.apk"
 
 echo '{"processing":false,"step":"APK ready"}' > $STATUS_FILE
 echo 

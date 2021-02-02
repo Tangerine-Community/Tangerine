@@ -15,7 +15,9 @@ export class GroupReleasePwaTestComponent implements OnInit {
   breadcrumbs:Array<Breadcrumb> = []
  
   @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
-  groupId:string
+  submitted = false
+  versionTag = ''
+  releaseNotes = ''
 
   constructor(
     private route:ActivatedRoute
@@ -32,11 +34,13 @@ export class GroupReleasePwaTestComponent implements OnInit {
         url: 'releases/release-pwa-test'
       }
     ]
-    this.route.params.subscribe(async params => {
-      this.releasePwaComponent.groupId = params.groupId
-      this.releasePwaComponent.releaseType = 'qa' 
-      this.releasePwaComponent.releasePWA()
-    })
   }
-
+  submit() {
+    this.submitted = true
+    this.releasePwaComponent.groupId = this.route.snapshot.paramMap.get('groupId')
+    this.releasePwaComponent.releaseType = 'qa'
+    this.releasePwaComponent.releaseNotes = this.releaseNotes
+    this.releasePwaComponent.versionTag = this.versionTag
+    this.releasePwaComponent.releasePWA()
+  }
 }
