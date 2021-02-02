@@ -90,3 +90,59 @@ module.exports.syncConflicts = function(doc) {
     emit(true)
   }
 }
+
+module.exports.cases = function(doc) {
+  if (doc.type === 'case') {
+    emit(doc._id, true)
+  }
+}
+
+module.exports.caseEvents = function(doc) {
+  if (doc.type === 'case') {
+    if (doc.events && doc.events.length > 0) {
+      doc.events.forEach(function (caseEvent) {
+        emit(caseEvent.id, true)
+      })
+    }
+  }
+}
+
+module.exports.eventForms = function(doc) {
+  if (doc.type === 'case') {
+    if (doc.events && doc.events.length > 0) {
+      doc.events.forEach(function (caseEvent) {
+        if (caseEvent.eventForms && caseEvent.eventForms.length > 0) {
+          caseEvent.eventForms.forEach(function(eventForm) {
+            emit(eventForm.id, true)
+          })
+        }
+      })
+    }
+  }
+}
+module.exports.participants = function(doc) {
+  if (doc.type === 'case') {
+    if (doc.participants && doc.participants.length > 0) {
+      doc.participants.forEach(function (participant) {
+        emit(participant.id, true)
+      })
+    }
+  }
+}
+
+// Is this still useful?
+module.exports.issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId = function (doc) {
+  if (doc.events && doc.events[0] && doc.events[0].data && doc.events[0].data.conflict && doc.events[0].data.conflict.diffInfo) {
+    emit([doc.events[0].data.conflict.diffInfo.a.type, doc.events[0].data.conflict.diffInfo.a._id], true)
+  }
+}
+
+// I think this is the useful one.
+module.exports.issuesOfTypeConflictByConflictingDocId = {
+  map: function (doc) {
+    if (doc.events && doc.events[0] && doc.events[0].data && doc.events[0].data.conflict && doc.events[0].data.conflict.diffInfo) {
+      emit(doc.events[0].data.conflict.diffInfo.a._id, doc._id)
+    }
+  },
+  reduce: '_count'
+} 
