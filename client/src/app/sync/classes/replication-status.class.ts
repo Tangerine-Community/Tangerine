@@ -12,4 +12,8 @@ export class ReplicationStatus {
   pushError: any
   initialPullLastSeq: any;
   tangerineVersion: any;
+  message: string;
+  effectiveConnectionType: string;
+  networkDownlinkSpeed: string;
+  networkDownlinkMax: string;
 }

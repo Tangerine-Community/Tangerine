@@ -60,6 +60,11 @@ Start the reporting-worker-batch.js batch process manually and check for errors
 In Chrome, go to `chrome://inspect`, click `Configure...`, and add `127.0.0.1:9228` as an entry in "Target discovery settings".
 
 //@TODO OUTDATED but still relevant
+
+## Here is a Youtube demo on debugging: 
+
+https://www.youtube.com/watch?v=AToUBoApw8E&feature=youtu.be
+
 Now manually trigger a batch. After the command finishes, verify the batch by checking `http://localhost:5984/_utils/#database/foo-reporting/_all_docs`.
 ```
 node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)
