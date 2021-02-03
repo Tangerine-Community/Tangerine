@@ -2,7 +2,11 @@
 
 ## v3.16.0
 
-__fixes__
+__New Features__
+- Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
+- Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
+
+__Fixes__
 - Pin date-carousel version to avoid bug in date-carousel v5.1.0
 - Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
 - Deactivate App.checkStorageUsage if using Sync Protocol 2. This was not compatible and should not run.
@@ -30,10 +34,11 @@ docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd 
 git fetch origin
 git checkout v3.16.0
 # If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
 # Then return here before starting tangerine
 # Now you are ready to start the server.
 ./start.sh v3.16.0
-docker exec tangerine push-all-group-views
+docker exec tangerine push-all-groups-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.15.6
 # If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
