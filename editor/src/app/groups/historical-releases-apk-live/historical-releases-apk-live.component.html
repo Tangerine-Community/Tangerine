@@ -1,4 +1,8 @@
 <div class="table-container">
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Dec 7, 3.10-beta" #input>
+  </mat-form-field>
     <table mat-table [dataSource]="groupsData" class="mat-elevation-z8">
         <ng-container matColumnDef="build">
           <th mat-header-cell *matHeaderCellDef> {{'Build'|translate}} </th>
@@ -6,8 +10,8 @@
         </ng-container>
       
         <ng-container matColumnDef="buildId">
-          <th mat-header-cell *matHeaderCellDef> {{'Build ID'|translate}} </th>
-          <td mat-cell *matCellDef="let data"> {{data.buildId}} </td>
+          <th mat-header-cell *matHeaderCellDef>{{'Build ID'|translate}} </th>
+          <td mat-cell *matCellDef="let data"> <a [href]="'/releases/prod/apks/archive/'+groupId+'/'+data.buildId+'.apk'" [download]="data.buildId+'.apk'">{{data.buildId}} </a></td>
         </ng-container>
         <ng-container matColumnDef="versionTag">
           <th mat-header-cell *matHeaderCellDef> {{'Version Tag'|translate}} </th>
@@ -31,4 +35,5 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
 </div>

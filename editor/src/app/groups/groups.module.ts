@@ -87,6 +87,7 @@ import { HistoricalReleasesPwaLiveComponent } from './historical-releases-pwa-li
 import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-test/historical-releases-pwa-test.component';
 import { HistoricalReleasesApkLiveComponent } from './historical-releases-apk-live/historical-releases-apk-live.component';
 import { HistoricalReleasesApkTestComponent } from './historical-releases-apk-test/historical-releases-apk-test.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -119,6 +120,7 @@ import { HistoricalReleasesApkTestComponent } from './historical-releases-apk-te
     SharedModule,
     NgTangyFormEditorModule,
     MatCheckboxModule,
+    MatPaginatorModule
   ],
   declarations: [
     LocationListEditorComponent,
