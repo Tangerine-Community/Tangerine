@@ -190,47 +190,43 @@ def convert_case_event(resp_dict):
  
 #convert a Tangerine event form document to MySQL event_form table
 def convert_event_form(resp_dict):
-    global event_form_df_add
-    global event_form_df_update
-    global event_form_df_old
-    global event_form_synID
-    global event_form_eTag
-
-    type = resp_dict.get('type')
-    # there are 4 major types: case, participant, case-event, event-form
-    if (type.lower() == "event-form"):
-        # handle case-event, this is skipped
-        eventFormId = resp_dict.get('_id')
-        del resp_dict["id"]
-        del resp_dict["type"]
-        df = pd.DataFrame([resp_dict])
-        df.rename(columns={'_id': 'EventFormID', '_rev': 'dbRevision'}, inplace=True)
-        # Try 3 things to insert data...
-        #     1) Insert the data as a new or updated row. If that fails...
-        #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
-        #     3) Then the database doesn't exist! Just insert it.
-        try:
-            #delete the EventForm if it already exists in table so we can add the new one
-            qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
-            cursor.execute(qry)
-            if cursor.rowcount >= 1:
-                cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
-                mysql_connection.commit()
-            # this will fail if there is a new column
+    eventFormId = resp_dict.get('_id')
+    log(eventFormId)
+    data = resp_dict.get('data')
+    type = resp_dict.get('return')
+    del resp_dict["id"]
+    del resp_dict["type"]
+    if resp_dict.get("data"):
+        del resp_dict["data"]
+        resp_dict.update(data)
+    df = pd.DataFrame([resp_dict])
+    df.rename(columns={'_id': 'EventFormID', '_rev': 'dbRevision'}, inplace=True)
+    # Try 3 things to insert data...
+    #     1) Insert the data as a new or updated row. If that fails...
+    #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
+    #     3) Then the database doesn't exist! Just insert it.
+    try:
+        #delete the EventForm if it already exists in table so we can add the new one
+        qry = "SELECT * FROM " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'"
+        cursor.execute(qry)
+        if cursor.rowcount >= 1:
+            cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + eventFormId+"'")
             mysql_connection.commit()
-            df.to_sql(name='eventform', con=engine, if_exists='append', index=False)
+        # this will fail if there is a new column
+        mysql_connection.commit()
+        df.to_sql(name='eventform', con=engine, if_exists='append', index=False)
+        mysql_connection.commit()
+    except:
+        try: 
+            data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
+            df2 = pd.concat([data, df], sort=False)
+            mysql_connection.commit()
+            df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
             mysql_connection.commit()
         except:
-            try: 
-                data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.eventform', engine)
-                df2 = pd.concat([data, df], sort=False)
-                mysql_connection.commit()
-                df2.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
-                mysql_connection.commit()
-            except:
-                mysql_connection.commit()
-                df.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
-                mysql_connection.commit()
+            mysql_connection.commit()
+            df.to_sql(name='eventform', con=engine, if_exists='replace', index=False)
+            mysql_connection.commit()
 
 
 #convert a Tangerine response document to MySQL response tables

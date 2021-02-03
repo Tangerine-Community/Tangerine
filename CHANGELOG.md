@@ -2,6 +2,17 @@
 
 ## v3.16.0
 
+__New Features__
+- Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
+- Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
+
+__Fixes__
+- Pin date-carousel version to avoid bug in date-carousel v5.1.0
+- Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
+- Deactivate App.checkStorageUsage if using Sync Protocol 2. This was not compatible and should not run.
+- Allow projects to disable GPS warming to save on battery with `disableGpsWarming` in `app-config.json`.
+- Add missing import of `editor/custom-scripts.js` when using editor so Data Dashboards can have imported JS files.
+
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
 
@@ -23,20 +34,27 @@ docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd 
 git fetch origin
 git checkout v3.16.0
 # If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
 # Then return here before starting tangerine
 # Now you are ready to start the server.
 ./start.sh v3.16.0
-docker exec tangerine push-all-group-views
+docker exec tangerine push-all-groups-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.15.6
 # If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
 ```  
 
-## v3.15.7
-__New Features and Fixes__
-- Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly. PR:[#2558](https://github.com/Tangerine-Community/Tangerine/pull/2558)
-- Adds a server config that allows the user to control the string used for variables that are `undefined`: `T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"`
-- The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
+## v3.15.8
+- New Sync code reduces the number of network requests by disabling server checkpoints. It also supports three new app-config.json options to configure sync parameters that adjust data download size, how much data is written to the local database each batch, and initial data download:
+  - batchSize: Number of docs to pull from the server per batch. Increasing this setting will decrease the number of network requests to the server when doing a sync pull. Default: 200
+  - writeBatchSize: How many docs to write to the database at a time. If the database crashes, decreasing this option could be helpful. Default: 50
+  - useCachedDbDumps: Enables caching of the group database to a file for a single download to the client upon initial device setup. This is an experimental feature therefore it is not enabled by default. (Some server code is also currently disabled.) Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load. [2560](https://github.com/Tangerine-Community/Tangerine/issues/2560)
+- Disable the v3.15.0 update from groups that use sync-protocol 1. 
+- Added `2021` to the report year.
+- Added simple network statistics to the device replicationStatus, which is posted after every sync.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -50,7 +68,41 @@ docker stop tangerine couchdb
 cp -r data ../data-backup-$(date "+%F-%T")
 # Fetch the updates.
 git fetch origin
-git checkout 3.15.7
+git checkout v3.15.8
+# Now you are ready to start the server.
+./start.sh v3.15.8
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.7
+```
+
+## v3.15.7
+__New Features and Fixes__
+- Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly. PR:[#2558](https://github.com/Tangerine-Community/Tangerine/pull/2558)
+- Adds a server config that allows the user to control the string used for variables that are `undefined`: `T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"`
+- The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
+
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+Please add the below line into your config.sh to preserve current behavior (as a workaround for #2564)
+```
+T_REPORTING_MARK_UNDEFINED_WITH=""
+```
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.7
 # Now you are ready to start the server.
 ./start.sh v3.15.7
 # Remove Tangerine's previous version Docker Image.
