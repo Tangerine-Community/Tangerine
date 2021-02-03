@@ -7,7 +7,8 @@ __New Features__
 - Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
 
 __Fixes__
-- Pin date-carousel version to avoid bug in date-carousel v5.1.0
+- Updated tangy-form-editor to v7.6.4, which improves functionality of `duplicate entire section`. PR: [#173](https://github.com/Tangerine-Community/tangy-form-editor/pull/173)
+- Updates the Schedule View to use date-carousel 5.2.0 which provides unix timestamps instead of date strings. [#2589](https://github.com/Tangerine-Community/Tangerine/pull/2589)
 - Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
 - Deactivate App.checkStorageUsage if using Sync Protocol 2. This was not compatible and should not run.
 - Allow projects to disable GPS warming to save on battery with `disableGpsWarming` in `app-config.json`.
