@@ -110,4 +110,9 @@ In the following example we change the color of text depending on a user's selec
 
 ![dynamically-change-text-color](./dynamically-change-text-color.gif)
 
+## Use skip-if to reference variable inside tangy-inputs-group
+In the following example a `skip-if` refers to an other variable local to the group itself is in. The trick is using backticks around the variable name (not quotes) you are referencing and prepending the variable name you are referencing with `${context.split('.')[0]}.${context.split('.')[1]}.`.  
 
+[Run example](https://skip-if-inside-tangy-inputs-groups.glitch.me/) - [Open Editor](https://skip-if-inside-tangy-inputs-groups.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-if-inside-tangy-inputs-groups)
+
+![skip-if-inside-tangy-inputs-groups](./skip-if-inside-tangy-inputs-groups.gif)
