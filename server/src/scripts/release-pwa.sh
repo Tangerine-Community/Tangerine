@@ -64,8 +64,10 @@ mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
 echo $UUID > .pwa-temporary/release-uuid.txt
 
 rm -r $RELEASE_DIRECTORY
-mkdir -p $ARCHIVE_DIRECTORY
-cp -r .pwa-temporary $ARCHIVE_DIRECTORY
+if [ $T_ARCHIVE_PWAS_TO_DISK == true ]; then 
+  mkdir -p $ARCHIVE_DIRECTORY
+  cp -r .pwa-temporary $ARCHIVE_DIRECTORY
+fi
 mv .pwa-temporary $RELEASE_DIRECTORY
 
 

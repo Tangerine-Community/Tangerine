@@ -95,9 +95,9 @@ const unreleaseOnlineSurveyApp = async (req, res) => {
 const commitFilesToVersionControl = async () => {
 	const groups = await GROUPS_DB.allDocs({include_docs:false})
 	for (let group of groups.rows) {
-		const groupId = sanitize(group.id);
-		const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
 		try {
+			const groupId = sanitize(group.id);
+			const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
 			await exec(cmd);
 		}
 		catch (error) {

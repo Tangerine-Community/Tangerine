@@ -104,6 +104,11 @@ T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"
 # Set to true if you want Tangerine to ignore any settings in Sync Configuration and use Couchdb Sync for replication.
 T_COUCHDB_SYNC_4_ALL="false"
 
+# Set to false if you would not want to archive APKs to Disk when creating a release
+T_ARCHIVE_APKS_TO_DISK="true"
+# Set to false if you would not want to archive PWAs to Disk when creating a release
+T_ARCHIVE_PWAS_TO_DISK="true"
+
 #
 # Development
 #
