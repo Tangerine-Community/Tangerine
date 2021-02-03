@@ -95,6 +95,13 @@ export class SyncService {
     try {
       const tangerineVersion = await this.deviceService.getTangerineVersion()
       this.replicationStatus.tangerineVersion = tangerineVersion
+      const connection = navigator['connection']
+      const effectiveType = connection.effectiveType;
+      const downlink = connection.downlink;
+      const downlinkMax = connection.downlinkMax;
+      this.replicationStatus.effectiveConnectionType = effectiveType
+      this.replicationStatus.networkDownlinkSpeed = downlink
+      this.replicationStatus.networkDownlinkMax = downlinkMax
       await this.deviceService.didSync(this.replicationStatus)
     } catch (e) {
       this.syncMessage$.next({message: window['t']('Error sending sync status to server: ' + e)})
