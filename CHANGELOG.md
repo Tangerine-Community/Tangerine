@@ -8,6 +8,7 @@ __New Features__
   Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
 
 __Fixes__
+- Changes to the sync code should improve sync stability and speed.
 - Updated tangy-form-editor to v7.6.4, which improves functionality of `duplicate entire section`. PR: [#173](https://github.com/Tangerine-Community/tangy-form-editor/pull/173)
 - Updates the Schedule View to use date-carousel 5.2.0 which provides unix timestamps instead of date strings. [#2589](https://github.com/Tangerine-Community/Tangerine/pull/2589)
 - Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
