@@ -3,6 +3,7 @@ import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.com
 import { ActivatedRoute } from '@angular/router';
 import { ReleaseApkComponent } from './../release-apk/release-apk.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import moment from "moment";
 
 @Component({
   selector: 'app-group-release-apk-test',
@@ -34,8 +35,12 @@ export class GroupReleaseApkTestComponent implements OnInit {
         url: 'releases/release-apk-test'
       }
     ]
+    this.versionTag = moment().format('YYYY-MM-DD-HH-mm-ss')
   }
   submit() {
+    if (this.versionTag === '') {
+      this.versionTag = moment().format('YYYY-MM-DD-HH-mm-ss')
+    }
     this.submitted = true
     this.releaseApkComponent.groupId = this.route.snapshot.paramMap.get('groupId')
     this.releaseApkComponent.releaseType = 'qa'

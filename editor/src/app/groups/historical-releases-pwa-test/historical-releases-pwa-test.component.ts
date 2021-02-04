@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 import { BuildInfo } from '../build-info';
 import { GroupsService } from '../services/groups.service';
+import {Breadcrumb} from "../../shared/_components/breadcrumb/breadcrumb.component";
+import {_TRANSLATE} from "../../shared/_services/translation-marker";
 
 @Component({
   selector: 'app-historical-releases-pwa-test',
@@ -12,7 +14,9 @@ import { GroupsService } from '../services/groups.service';
 })
 export class HistoricalReleasesPwaTestComponent implements OnInit {
 
-  displayedColumns = ['buildId', 'build', 'releaseType', 'date', 'versionTag', 'releaseNotes'];
+  title = _TRANSLATE('PWA Test Archives')
+  breadcrumbs:Array<Breadcrumb> = []
+  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date', 'buildId', 'releaseNotes'];
   groupsData;
   groupId;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -20,6 +24,16 @@ export class HistoricalReleasesPwaTestComponent implements OnInit {
   constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Releases'),
+        url: 'releases'
+      },
+      <Breadcrumb>{
+        label: _TRANSLATE('PWA Test Archives'),
+        url: 'releases/historical-releases-pwa-test'
+      }
+    ]
     this.groupId = this.route.snapshot.paramMap.get('groupId');
     const result = await this.groupsService.getGroupInfo(this.groupId);
     this.groupsData = new MatTableDataSource<BuildInfo>(result.releases.

@@ -30,6 +30,7 @@ export class ReleaseApkComponent implements OnInit {
     STATUS_WAIT: 'STATUS_WAIT'
   }
   status: any
+  filepath = ''
 
   constructor(
     private groupsService: GroupsService
@@ -50,6 +51,7 @@ export class ReleaseApkComponent implements OnInit {
         statusMessage = await this.groupsService.apkIsBuilding(this.groupId, this.releaseType)
         if (typeof statusMessage !== 'undefined') {
           processing = statusMessage['processing']
+          this.filepath = statusMessage['filepath']
           this.step = statusMessage['step']
         }
         this.status = this.code.STATUS_BUILDING
