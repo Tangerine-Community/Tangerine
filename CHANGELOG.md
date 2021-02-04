@@ -3,8 +3,9 @@
 ## v3.16.0
 
 __New Features__
-- Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
 - Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
+- *Beta Release* Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Warning: This should not yet be deployed on a production server; the code for this feature is still in development. We recommend creating a separate server for the Tangerine/MySQL installation and replicate data from the production server to the Tangerine server that would provide the MySQL service.
+  Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
 
 __Fixes__
 - Updated tangy-form-editor to v7.6.4, which improves functionality of `duplicate entire section`. PR: [#173](https://github.com/Tangerine-Community/tangy-form-editor/pull/173)
