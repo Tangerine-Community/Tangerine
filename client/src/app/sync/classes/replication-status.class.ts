@@ -10,7 +10,10 @@ export class ReplicationStatus {
   direction:any
   pullError: any
   pushError: any
+  initialPushLastSeq: any;  // used for the 'since' property when initiating a replication
   initialPullLastSeq: any;
+  currentPushLastSeq: any;  // status.info.last_seq after sync is concluded.
+  currentPullLastSeq: any;
   tangerineVersion: any;
   message: string;
   effectiveConnectionType: string;

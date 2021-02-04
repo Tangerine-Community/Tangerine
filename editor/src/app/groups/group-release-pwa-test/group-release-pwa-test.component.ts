@@ -14,11 +14,11 @@ export class GroupReleasePwaTestComponent implements OnInit {
 
   title = _TRANSLATE('Release Test Web App')
   breadcrumbs:Array<Breadcrumb> = []
- 
-  @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
   submitted = false
   versionTag = ''
   releaseNotes = ''
+  releaseType = "PWA"
+  @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
 
   constructor(
     private route:ActivatedRoute

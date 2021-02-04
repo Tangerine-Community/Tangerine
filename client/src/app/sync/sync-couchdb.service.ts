@@ -125,7 +125,13 @@ export class SyncCouchdbService {
     
     this.syncMessage$.next(progress)
 
-    let status;
+    let status = <ReplicationStatus>{
+      pushed: 0,
+      info: '',
+      remaining: 0,
+      direction: 'push'
+    };
+    
     let batchFailureDetected = false
     let batchError;
 
@@ -137,20 +143,18 @@ export class SyncCouchdbService {
           'remaining': syncOptions.remaining
         }
         this.syncMessage$.next(progress)
-        const docIdsLength = syncOptions.doc_ids.length
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
-          const remaining = Math.round(info.docs_written/docIdsLength * 100)
+          // const remaining = Math.round(info.docs_written/docIdsLength * 100)
           status = <ReplicationStatus>{
             pushed: info.docs_written,
             info: info,
-            remaining: remaining,
             direction: direction
           }
           resolve(status)
         }).on('change', async (info) => {
           const pushed = syncOptions.pushed + info.docs_written
-          const remaining = Math.round(pushed/docIdsLength * 100)
+          // const remaining = Math.round(pushed/docIdsLength * 100)
           const progress = {
             'docs_read': info.docs_read,
             'docs_written': info.docs_written,
@@ -158,7 +162,6 @@ export class SyncCouchdbService {
             'pending': info.pending,
             'direction': direction,
             'last_seq': info.last_seq,
-            'remaining': remaining,
             'pushed': pushed
           };
           this.syncMessage$.next(progress);
@@ -183,22 +186,12 @@ export class SyncCouchdbService {
         });
       })
     }
-    
-    let docIdsToPush = []
-    const changes = await userDb.db.changes({ since:push_last_seq, include_docs: false })
-    if (changes.results.length > 0) {
-      for (let change of changes.results) {
-        if (!change.id.startsWith('_design')) {
-          docIdsToPush.push(change.id)
-        }
-      }
-    }
 
     let pushed = 0
-    if (docIdsToPush.length > 0) {
       let syncOptions = {
         "since":push_last_seq,
-        "doc_ids": docIdsToPush,
+        "batch_size": this.batchSize,
+        "batches_limit": 1,
         "remaining": 100,
         "pushed": pushed,
         "checkpoint": 'source'
@@ -207,7 +200,7 @@ export class SyncCouchdbService {
       syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
 
       try {
-        status = await pushSyncBatch(syncOptions);
+        status = <ReplicationStatus>await pushSyncBatch(syncOptions);
         if (typeof status.pushed !== 'undefined') {
           pushed = pushed + status.pushed
           status.pushed = pushed
@@ -223,6 +216,7 @@ export class SyncCouchdbService {
       }
       
       status.initialPushLastSeq = push_last_seq
+      status.currentPushLastSeq = status.info.last_seq
 
       if (batchFailureDetected) {
         // don't set last_seq
@@ -238,14 +232,6 @@ export class SyncCouchdbService {
         // set last_seq
         await this.variableService.set('sync-push-last_seq', status.info.last_seq)
       }
-    } else {
-      status = <ReplicationStatus>{
-        pushed: 0,
-        info: '',
-        remaining: 0,
-        direction: 'push'
-      };
-    }
     return status;
   }
 
@@ -376,6 +362,7 @@ export class SyncCouchdbService {
     // }
 
     status.initialPullLastSeq = pull_last_seq
+    status.currentPushLastSeq = status.info.last_seq
 
     if (batchFailureDetected) {
       // don't se last_seq and prompt to re-run
