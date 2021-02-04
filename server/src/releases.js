@@ -31,7 +31,7 @@ const releaseAPK =async (req, res) => {
 		const config = JSON.parse(await fs.readFile(`/tangerine/groups/${group}/client/app-config.json`, "utf8"));
 		const packageName = config.packageName? config.packageName: PACKAGENAME
 		const appName = config.appName ? config.appName: APPNAME
-		const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${sanitize(packageName)} "${sanitize(appName)}" ${sanitize(buildId)} 2>&1 | tee -a /apk.log`
+		const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${sanitize(packageName)} "${sanitize(appName)}" ${sanitize(buildId)} ${sanitize(versionTag)} 2>&1 | tee -a /apk.log`
 			log.info("in release-apk, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
             // Do not await. The browser just needs to know the process has started and will monitor the status file.
             exec(cmd).catch(log.error)

@@ -3,6 +3,7 @@ import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.com
 import { ActivatedRoute } from '@angular/router';
 import { ReleasePwaComponent } from './../release-pwa/release-pwa.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import moment from "moment";
 
 @Component({
   selector: 'app-group-release-pwa-live',
@@ -33,8 +34,12 @@ export class GroupReleasePwaLiveComponent implements OnInit {
         url: 'releases/release-pwa-live'
       }
     ]
+    this.versionTag = moment().format('YYYY-MM-DD-HH-mm-ss')
   }
   submit() {
+    if (this.versionTag === '') {
+      this.versionTag = moment().format('YYYY-MM-DD-HH-mm-ss')
+    }
     this.submitted = true
     this.releasePwaComponent.groupId = this.route.snapshot.paramMap.get('groupId')
     this.releasePwaComponent.releaseType = 'prod'
