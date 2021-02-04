@@ -17,8 +17,9 @@ export class GroupReleaseApkTestComponent implements OnInit {
   submitted = false
   releaseNotes=''
   versionTag=''
-  @ViewChild('releaseApkComponent', {static: true}) releaseApkComponent:ReleaseApkComponent
   groupId:string
+  releaseType = "APK"
+  @ViewChild('releaseApkComponent', {static: true}) releaseApkComponent:ReleaseApkComponent
 
   constructor(
     private route:ActivatedRoute

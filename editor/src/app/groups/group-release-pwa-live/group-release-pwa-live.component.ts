@@ -13,12 +13,14 @@ import moment from "moment";
 export class GroupReleasePwaLiveComponent implements OnInit {
 
   title = _TRANSLATE('Release Live Web App')
-  breadcrumbs:Array<Breadcrumb> = []
- versionTag = ''
- releaseNotes = ''
- submitted = false
+  breadcrumbs: Array<Breadcrumb> = []
+  versionTag = ''
+  releaseNotes = ''
+  submitted = false
+  releaseType = "PWA"
+  
   @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
-
+  
   constructor(
     private route:ActivatedRoute
   ) { }
