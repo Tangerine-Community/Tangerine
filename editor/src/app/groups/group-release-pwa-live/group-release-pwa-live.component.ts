@@ -7,8 +7,8 @@ import moment from "moment";
 
 @Component({
   selector: 'app-group-release-pwa-live',
-  templateUrl: './group-release-pwa-live.component.html',
-  styleUrls: ['./group-release-pwa-live.component.css']
+  templateUrl: '../group-release-common/group-release.component.html',
+  styleUrls: ['../group-release-common/group-release.component.css']
 })
 export class GroupReleasePwaLiveComponent implements OnInit {
 
@@ -18,9 +18,9 @@ export class GroupReleasePwaLiveComponent implements OnInit {
   releaseNotes = ''
   submitted = false
   releaseType = "PWA"
-  
-  @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
-  
+  isPWA = true
+  @ViewChild('releasePwaComponent', {static: false}) releasePwaComponent:ReleasePwaComponent
+
   constructor(
     private route:ActivatedRoute
   ) { }
