@@ -1,25 +1,21 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<ng-template *ngIf="releaseType == 'APK'; else elseBlock">
-  <app-release-apk #releaseApkComponent></app-release-apk>
-</ng-template>
-<ng-template #elseBlock>
-  <app-release-pwa #releasePwaComponent></app-release-pwa>
-</ng-template>
+<app-release-apk #releaseApkComponent *ngIf="isAPK"></app-release-apk>
+<app-release-pwa #releasePwaComponent *ngIf="isPWA"></app-release-pwa>
 
-  <div *ngIf="!submitted">
-    <form #generateRelease="ngForm" class="tangy-full-width">
-      <p class="release-explanation">{{'The Version Tag and Release Notes fields are useful for identifying a release. The Version Tag, which is currently set to the current date and time, may be changed if you need a special identifier for the release. Important: The Version Tag must be unique for each release. The Release Notes are optional but could include information about a release such as "deployment in Kampala, 90 tablets."'|translate}}</p>
-        <mat-form-field>
-            <mat-label>{{'Version Tag'|translate}}</mat-label>
-            <input name="versionTag" [(ngModel)]="versionTag" matInput required>
-        </mat-form-field>
-        <br/>
-        <mat-form-field>
-            <mat-label>{{'Release Notes'| translate}}</mat-label>
-            <textarea name="releaseNotes" [(ngModel)]="releaseNotes" matInput ></textarea>
-        </mat-form-field>
-        <br>
-        <button [disabled]="generateRelease.invalid" mat-raised-button color="warn" (click)="submit()">{{'Release ' + releaseType |translate}}</button>
-    </form>
+<div *ngIf="!submitted">
+  <form #generateRelease="ngForm" class="tangy-full-width">
+    <p class="release-explanation">{{'The Version Tag and Release Notes fields are useful for identifying a release. The Version Tag, which is currently set to the current date and time, may be changed if you need a special identifier for the release. Important: The Version Tag must be unique for each release. The Release Notes are optional but could include information about a release such as "deployment in Kampala, 90 tablets."'|translate}}</p>
+      <mat-form-field>
+          <mat-label>{{'Version Tag'|translate}}</mat-label>
+          <input name="versionTag" [(ngModel)]="versionTag" matInput required>
+      </mat-form-field>
+      <br/>
+      <mat-form-field>
+          <mat-label>{{'Release Notes'| translate}}</mat-label>
+          <textarea name="releaseNotes" [(ngModel)]="releaseNotes" matInput ></textarea>
+      </mat-form-field>
+      <br>
+      <button [disabled]="generateRelease.invalid" mat-raised-button color="warn" (click)="submit()">{{'Release ' + releaseType |translate}}</button>
+  </form>
     
 </div>

@@ -7,8 +7,8 @@ import moment from "moment";
 
 @Component({
   selector: 'app-group-release-pwa-test',
-  templateUrl: './group-release-pwa-test.component.html',
-  styleUrls: ['./group-release-pwa-test.component.css']
+  templateUrl: '../group-release-common/group-release.component.html',
+  styleUrls: ['../group-release-common/group-release.component.css']
 })
 export class GroupReleasePwaTestComponent implements OnInit {
 
@@ -18,7 +18,8 @@ export class GroupReleasePwaTestComponent implements OnInit {
   versionTag = ''
   releaseNotes = ''
   releaseType = "PWA"
-  @ViewChild('releasePwaComponent', {static: true})releasePwaComponent:ReleasePwaComponent
+  isPWA = true
+  @ViewChild('releasePwaComponent', {static: false})releasePwaComponent:ReleasePwaComponent
 
   constructor(
     private route:ActivatedRoute
