@@ -48,7 +48,7 @@ const releasePWA = async (req, res)=>{
 	try {
 		const group = sanitize(req.params.group)
 		const {releaseType, versionTag, releaseNotes, buildId} = req.body;
-		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)}`
+		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)} ${sanitize(versionTag)}`
 		log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
 		log.info(`RELEASING PWA: ${cmd}`)
         await exec(cmd)

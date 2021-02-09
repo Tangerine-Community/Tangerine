@@ -20,6 +20,7 @@ export class GroupReleaseApkTestComponent implements OnInit {
   groupId:string
   releaseType;
   isAPK = true
+  isPWA = false
   @ViewChild('releaseApkComponent', {static: false}) releaseApkComponent: ReleaseApkComponent;
   
   constructor(

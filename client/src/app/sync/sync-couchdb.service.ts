@@ -100,7 +100,7 @@ export class SyncCouchdbService {
       } catch (e) {
         console.log("Error with pull: " + e)
       }
-      if (pullReplicationStatus.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
+      if (pullReplicationStatus?.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
         await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
       }
     }

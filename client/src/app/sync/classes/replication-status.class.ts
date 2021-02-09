@@ -1,3 +1,5 @@
+import {AppInfo} from "../../device/services/device.service";
+
 export class ReplicationStatus {
   pulled:number
   pushed:number
@@ -19,4 +21,5 @@ export class ReplicationStatus {
   effectiveConnectionType: string;
   networkDownlinkSpeed: string;
   networkDownlinkMax: string;
+  deviceInfo: AppInfo
 }

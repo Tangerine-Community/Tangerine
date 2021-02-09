@@ -19,6 +19,7 @@ export class GroupReleasePwaTestComponent implements OnInit {
   releaseNotes = ''
   releaseType = "PWA"
   isPWA = true
+  isAPK = false
   @ViewChild('releasePwaComponent', {static: false})releasePwaComponent:ReleasePwaComponent
 
   constructor(

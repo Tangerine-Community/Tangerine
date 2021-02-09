@@ -13,11 +13,11 @@
         <td mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </td>
       </ng-container>
       <ng-container matColumnDef="assigned-location">
-        <th mat-header-cell *matHeaderCellDef> Assigned Location </th>
+        <th class="w-170" mat-header-cell *matHeaderCellDef> Assigned Location </th>
         <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.assignedLocation"></div></td>
       </ng-container>
       <ng-container matColumnDef="sync-location">
-        <th mat-header-cell *matHeaderCellDef> Sync Settings </th>
+        <th class="w-170" mat-header-cell *matHeaderCellDef> Sync Settings </th>
         <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.syncLocations"></div></td>
       </ng-container>
       <ng-container matColumnDef="claimed">
@@ -27,24 +27,52 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="registeredOn">
-        <th mat-header-cell *matHeaderCellDef> Registered on </th>
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Registered on </th>
         <td mat-cell *matCellDef="let element"> {{element.registeredOn}} </td>
       </ng-container>
       <ng-container matColumnDef="syncedOn">
-        <th mat-header-cell *matHeaderCellDef> Synced on </th>
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Synced on </th>
         <td mat-cell *matCellDef="let element"> {{element.syncedOn}} </td>
       </ng-container>
       <ng-container matColumnDef="updatedOn">
-        <th mat-header-cell *matHeaderCellDef> Updated on </th>
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Updated on </th>
         <td mat-cell *matCellDef="let element"> {{element.updatedOn}} </td>
       </ng-container>
       <ng-container matColumnDef="version">
-        <th mat-header-cell *matHeaderCellDef> Version </th>
-        <td mat-cell *matCellDef="let element"> {{element.version}} </td>
+        <th mat-header-cell *matHeaderCellDef> Build ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.version.substring(0,7)}} </td>
       </ng-container>
+      <ng-container matColumnDef="tagVersion">
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Tag Version </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.replicationStatus?.deviceInfo?.versionTag}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tangerineVersion">
+        <th mat-header-cell *matHeaderCellDef> Tangerine Version </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.replicationStatus?.deviceInfo?.tangerineVersion}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="network">
+        <th mat-header-cell *matHeaderCellDef> Network Statistics </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.replicationStatus?.effectiveConnectionType">
+            <div>Network Type: {{element.replicationStatus?.effectiveConnectionType}}</div>
+          </ng-template>
+          <ng-template [ngIf]="element.duration">
+            <div>Duration: {{element.duration}}</div>
+          </ng-template>
 
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="errorMessage">
+        <th mat-header-cell *matHeaderCellDef> Errors </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.replicationStatus?.info?.errors?.length > 0"><div>{{element.replicationStatus?.info.errors | json}}</div></ng-template>
+        </td>
+      </ng-container>
       
-
       <!-- Star Column -->
       <ng-container matColumnDef="star" stickyEnd>
         <th mat-header-cell *matHeaderCellDef> </th>

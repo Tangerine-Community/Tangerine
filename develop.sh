@@ -80,6 +80,20 @@ if echo "$T_MODULES" | grep mysql; then
   ./mysql-setup.sh
 fi
 
+# Set t_TAG to current branch and the hash for the current commit in Git
+if [ "$1" = "" ]; then
+  if [ "$T_TAG" = "" ]; then
+#    T_TAG=$(git describe --tags --abbrev=0)
+    T_TAG=$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)
+  else
+    T_TAG="$T_TAG"
+  fi
+else
+  T_TAG="$1"
+fi
+
+echo "Setting T_TAG to: $T_TAG"
+
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
 
 docker build -t tangerine/tangerine:local .
