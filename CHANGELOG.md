@@ -3,9 +3,10 @@
 ## v3.16.0
 
 __New Features__
-- Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
+- Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. If your site is configured for archives (which is the default), you may download previous Android releases. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
 - *Beta Release* Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Warning: This should not yet be deployed on a production server; the code for this feature is still in development. We recommend creating a separate server for the Tangerine/MySQL installation and replicate data from the production server to the Tangerine server that would provide the MySQL service.
   Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
+- Devices listing offers more information about the sync process, including version, errors, and sync duration.   
 
 __Fixes__
 - Changes to the sync code should improve sync stability and speed.
