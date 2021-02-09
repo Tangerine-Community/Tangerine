@@ -7,7 +7,7 @@
       ">
         <div class="card-content">
           <p>
-            {{'Use this for offline deployments or those with many forms and assets.'|translate}}
+            {{'Use this for offline deployments or those with many forms and assets. If your site is configured for archives, you may download previous Android releases.'|translate}}
           </p>
           <mat-list>
             <mat-list-item class="tangy-location-list">
@@ -15,7 +15,7 @@
                 <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
               </span>
               <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-test">
-                 ({{'Archives'|translate}})
+                 <iron-icon icon="archive"></iron-icon> {{'Download Test Releases'|translate}}
               </span>
             </mat-list-item>
             <mat-list-item class="tangy-location-list">
@@ -23,7 +23,7 @@
                 <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
               </span>
               <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-live">
-                ({{'Archives'|translate}})
+                <iron-icon icon="archive"></iron-icon> {{'Download Live Releases'|translate}}
               </span>
             </mat-list-item>
           </mat-list>
@@ -36,7 +36,7 @@
       ">
         <div class="card-content">
           <p>
-            {{'Use this for smaller deployments where tablets have solid internet connectivity.'|translate}}
+            {{'Use this for smaller deployments where tablets have solid internet connectivity. If your site is configured for archives, you may view previous web releases.'|translate}}
           </p>
           <mat-list>
             <mat-list-item class="tangy-location-list">
@@ -44,7 +44,7 @@
                 <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
               </span>
               <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-test">
-                 ({{'Archives'|translate}})
+                 <iron-icon icon="list"></iron-icon> {{'View Test Releases'|translate}}
               </span>
             </mat-list-item>
             <mat-list-item class="tangy-location-list">
@@ -52,7 +52,7 @@
                 <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
               </span>
               <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-live">
-                 ({{'Archives'|translate}})
+                 <iron-icon icon="list"></iron-icon> {{'View Live Releases'|translate}}
               </span>
             </mat-list-item>
           </mat-list>

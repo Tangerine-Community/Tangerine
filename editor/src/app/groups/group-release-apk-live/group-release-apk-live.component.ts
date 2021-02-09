@@ -19,6 +19,7 @@ export class GroupReleaseApkLiveComponent implements OnInit {
   versionTag=''
   releaseType;
   isAPK = true
+  isPWA = false
   @ViewChild('releaseApkComponent', {static: false}) releaseApkComponent: ReleaseApkComponent;
 
   constructor(

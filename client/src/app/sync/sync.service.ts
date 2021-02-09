@@ -93,8 +93,8 @@ export class SyncService {
     })
 
     try {
-      const tangerineVersion = await this.deviceService.getTangerineVersion()
-      this.replicationStatus.tangerineVersion = tangerineVersion
+      const deviceInfo = await this.deviceService.getAppInfo()
+      this.replicationStatus.deviceInfo = deviceInfo
       const connection = navigator['connection']
       const effectiveType = connection.effectiveType;
       const downlink = connection.downlink;

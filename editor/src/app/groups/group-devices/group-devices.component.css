@@ -25,4 +25,25 @@ td.mat-column-star {
 
 th, td {
   padding: 5px !important;
+  vertical-align: top;
+}
+
+.w-75{
+  width: 75px;
+}
+
+.w-100{
+  width: 100px;
+}
+
+.w-120{
+  width: 120px;
+}
+
+.w-125{
+  width: 125px;
+}
+
+.w-170{
+  width: 170px;
 }

@@ -37,7 +37,7 @@ export class HistoricalReleasesApkTestComponent implements OnInit {
     this.groupId = this.route.snapshot.paramMap.get('groupId');
     const result = await this.groupsService.getGroupInfo(this.groupId);
     this.groupsData = new MatTableDataSource<BuildInfo>(result.releases.
-      filter(e => e.releaseType === 'qa' && e.build === 'APK').map( e => ({...e, dateString: new Date(e.date)})));
+      filter(e => e.releaseType === 'qa' && e.build === 'APK').map( e => ({...e, dateString: new Date(e.date)})).sort((a, b) => b.date - a.date));
     this.groupsData.paginator = this.paginator;
   }
 

@@ -31,6 +31,7 @@ interface DeviceInfo {
   assignedLocation:string
   syncLocations:string
   token:string
+  duration:string
 }
 
 interface UserField {
@@ -57,7 +58,7 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
+  devicesDisplayedColumns = ['id', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'errorMessage', 'network', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
@@ -165,12 +166,14 @@ export class GroupDevicesComponent implements OnInit {
         syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
         updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
         assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
+        duration: device.replicationStatus?.info ? moment.utc(moment.duration(moment(device.replicationStatus?.info?.end_time).diff(moment(device.replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : '',
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         }).join('; ')
       }
     })
   }
+
 
   async viewSyncLog(deviceId:string) {
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
