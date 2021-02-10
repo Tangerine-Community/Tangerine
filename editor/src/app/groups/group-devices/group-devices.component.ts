@@ -160,13 +160,22 @@ export class GroupDevicesComponent implements OnInit {
           }, true)
       })
       .map(device => {
+        let replicationStatus
+        // TODO - remove this deprecated persisted code/property
+        if (device.replicationStatus) {
+          replicationStatus = device.replicationStatus
+        }
+        if (device.replicationStatuses?.length > 0) {
+          replicationStatus = device.replicationStatuses[device.replicationStatuses.length - 1]
+          device.replicationStatus = replicationStatus
+        }
       return <DeviceInfo>{
         ...device,
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
         syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
         updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
         assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
-        duration: device.replicationStatus?.info ? moment.utc(moment.duration(moment(device.replicationStatus?.info?.end_time).diff(moment(device.replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : '',
+        duration: replicationStatus?.info ? moment.utc(moment.duration(moment(replicationStatus?.info?.end_time).diff(moment(replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : '',
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         }).join('; ')
@@ -181,6 +190,16 @@ export class GroupDevicesComponent implements OnInit {
       window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
       ${JSON.stringify(device.replicationStatus)}
+    </paper-dialog-scrollable>
+    `
+    } else if (device.replicationStatuses) {
+      let output = '';
+      device.replicationStatuses.forEach(status => {
+        output = output + "<p>" + JSON.stringify(status) + "</p>"
+      })
+      window['dialog'].innerHTML = `
+    <paper-dialog-scrollable>
+      ${output}
     </paper-dialog-scrollable>
     `
     } else {

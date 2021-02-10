@@ -9,7 +9,10 @@ __New Features__
 - Devices listing offers more information about the sync process, including version, errors, and sync duration.   
 
 __Fixes__
-- Changes to the sync code should improve sync stability and speed.
+- Changes to the sync code should improve sync stability and speed. [#2592](https://github.com/Tangerine-Community/Tangerine/issues/2592) You may configure certain sync properties:
+  - initialBatchSize = (default: 1000) Number of documents downloaded in the first sync when setting up a device.
+  - batchSize (default: 200) - Number of documents downloaded upon each subsequent sync.
+  - writeBatchSize = (default: 50) - Number of documents written to the tablet during each sync batch.
 - Updated tangy-form-editor to v7.6.4, which improves functionality of `duplicate entire section`. PR: [#173](https://github.com/Tangerine-Community/tangy-form-editor/pull/173)
 - Updates the Schedule View to use date-carousel 5.2.0 which provides unix timestamps instead of date strings. [#2589](https://github.com/Tangerine-Community/Tangerine/pull/2589)
 - Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
