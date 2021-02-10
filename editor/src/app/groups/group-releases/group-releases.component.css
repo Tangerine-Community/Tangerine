@@ -10,3 +10,7 @@ a:hover, a:active, a:visited {
 .link {
   cursor: pointer;
 }
+
+.archives {
+  margin-left: 30px;
+}

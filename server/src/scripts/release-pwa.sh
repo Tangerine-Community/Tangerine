@@ -6,7 +6,8 @@ RELEASE_TYPE="$3"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/$GROUP"
 BUILD_ID="$4"
 UUID="$4"
-ARCHIVE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/archive/$GROUP/$BUILD_ID"
+VERSION_TAG="$5"
+ARCHIVE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/archive/$GROUP/$BUILD_ID-$VERSION_TAG"
 
 echo "RELEASE_DIRECTORY: $RELEASE_DIRECTORY"
 
@@ -53,6 +54,8 @@ rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 echo $BUILD_ID > .pwa-temporary/$UUID/app/assets/tangerine-build-id
 echo $RELEASE_TYPE > .pwa-temporary/$UUID/app/assets/tangerine-build-channel
+echo $VERSION_TAG > .pwa-temporary/$UUID/app/assets/tangerine-version-tag 
+echo $T_VERSION > .pwa-temporary/$UUID/app/assets/tangerine-version
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
@@ -64,9 +67,11 @@ mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
 echo $UUID > .pwa-temporary/release-uuid.txt
 
 rm -r $RELEASE_DIRECTORY
-mkdir -p $ARCHIVE_DIRECTORY
-cp -r .pwa-temporary $ARCHIVE_DIRECTORY
+if [ $T_ARCHIVE_PWAS_TO_DISK == true ]; then 
+  mkdir -p $ARCHIVE_DIRECTORY
+  cp -r .pwa-temporary $ARCHIVE_DIRECTORY
+fi
 mv .pwa-temporary $RELEASE_DIRECTORY
 
 
-echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE"
+echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE, versionTag of $VERSION_TAG"
