@@ -114,7 +114,7 @@ export class CaseEventScheduleComponent implements OnInit {
       const deviceInfo = await this.deviceService.getDevice()
       const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]
       const caseIdsThatMatchDeviceAssignedLocation = cases
-        .filter(caseInstance => caseInstance.location[lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
+        .filter(caseInstance => caseInstance['location'][lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
         .map(caseInstance => caseInstance._id)
       caseEvents = caseEvents.filter(caseEvent => caseIdsThatMatchDeviceAssignedLocation.includes(caseEvent.caseId))
     }
