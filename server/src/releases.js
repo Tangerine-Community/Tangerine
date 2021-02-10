@@ -31,7 +31,7 @@ const releaseAPK =async (req, res) => {
 		const config = JSON.parse(await fs.readFile(`/tangerine/groups/${group}/client/app-config.json`, "utf8"));
 		const packageName = config.packageName? config.packageName: PACKAGENAME
 		const appName = config.appName ? config.appName: APPNAME
-		const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${sanitize(packageName)} "${sanitize(appName)}" ${sanitize(buildId)} 2>&1 | tee -a /apk.log`
+		const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} ${sanitize(packageName)} "${sanitize(appName)}" ${sanitize(buildId)} ${sanitize(versionTag)} 2>&1 | tee -a /apk.log`
 			log.info("in release-apk, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
             // Do not await. The browser just needs to know the process has started and will monitor the status file.
             exec(cmd).catch(log.error)
@@ -48,7 +48,7 @@ const releasePWA = async (req, res)=>{
 	try {
 		const group = sanitize(req.params.group)
 		const {releaseType, versionTag, releaseNotes, buildId} = req.body;
-		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)}`
+		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)} ${sanitize(versionTag)}`
 		log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
 		log.info(`RELEASING PWA: ${cmd}`)
         await exec(cmd)
@@ -95,9 +95,9 @@ const unreleaseOnlineSurveyApp = async (req, res) => {
 const commitFilesToVersionControl = async () => {
 	const groups = await GROUPS_DB.allDocs({include_docs:false})
 	for (let group of groups.rows) {
-		const groupId = sanitize(group.id);
-		const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
 		try {
+			const groupId = sanitize(group.id);
+			const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
 			await exec(cmd);
 		}
 		catch (error) {

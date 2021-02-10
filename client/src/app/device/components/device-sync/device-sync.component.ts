@@ -38,6 +38,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.otherMessage = ''
     this.pullError = ''
     this.pushError = ''
+    this.syncMessage = ''
     
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
@@ -49,7 +50,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
-          let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
+          let pendingMessage = '', docsWritten = '', direction = '', docPulled = '', syncMessage = ''
+          this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
             this.otherMessage = progress.message
           } else {
@@ -63,10 +65,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
             docsWritten = progress.docs_written + ' docs saved; '
           }
           if (typeof progress.pending !== 'undefined') {
-            pendingMessage = progress.pending + ' pending; '
-          }
-          if (typeof progress.pulled !== 'undefined') {
-            docPulled = progress.pulled + ' docs saved; '
+            pendingMessage = progress.pending + ' docs pending; '
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
@@ -79,9 +78,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             // this.syncMessage =  direction + docsWritten + pendingMessage
-            this.syncMessage = progress.remaining + '% remaining to sync'
-          } else {
-            this.syncMessage = ''
+            this.syncMessage = progress.remaining + '% remaining to sync; '
+          }
+          if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
+            this.syncMessage = this.syncMessage + pendingMessage + progress.pulled + ' docs saved. '
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
@@ -95,8 +95,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     // Pass isFirstSync flag as true in order to skip the push.
     const replicationStatus = await this.syncService.sync(true, true)
     this.subscription.unsubscribe();
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
     // if (!this.wakeLock) {
     //   console.log("wakeLock is destroyed.")
     // }
@@ -114,8 +116,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
   }
 
 }

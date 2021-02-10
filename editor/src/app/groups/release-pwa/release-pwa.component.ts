@@ -21,6 +21,8 @@ export class ReleasePwaComponent implements OnInit {
   versionTag = '';
   errorGeneratingPWA;
   pwaUrl;
+  filepath = ''
+  
   constructor(
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,

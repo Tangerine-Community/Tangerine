@@ -60,6 +60,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.errorMessage = ''
     this.pullError = ''
     this.pushError = ''
+    this.syncMessage = ''
     
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
@@ -71,7 +72,8 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
-          let pendingMessage = ''
+          let pendingMessage = '', docPulled = ''
+          this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
             this.otherMessage = progress.message
           } else {
@@ -79,6 +81,9 @@ export class SyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending;'
+          }
+          if (typeof progress.pulled !== 'undefined') {
+            docPulled = progress.pulled + ' docs saved; '
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
@@ -90,9 +95,15 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.pushError = progress.pushError
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
-            this.syncMessage = progress.remaining + '% remaining to sync '
+            this.syncMessage = docPulled + progress.remaining + '% remaining to sync '
           } else {
             this.syncMessage = ''
+          }
+          if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
+            this.syncMessage = this.syncMessage + pendingMessage + progress.pulled + ' docs saved. '
+          }
+          if (typeof progress.pushed !== 'undefined' && progress.pushed !== '') {
+            this.syncMessage = this.syncMessage + pendingMessage + progress.pushed + ' docs uploaded. '
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
