@@ -40,7 +40,7 @@
       </ng-container>
       <ng-container matColumnDef="version">
         <th mat-header-cell *matHeaderCellDef> Build ID </th>
-        <td mat-cell *matCellDef="let element"> {{element.version.substring(0,7)}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.version?.substring(0,7)}} </td>
       </ng-container>
       <ng-container matColumnDef="tagVersion">
         <th class="w-100" mat-header-cell *matHeaderCellDef> Tag Version </th>
@@ -70,6 +70,8 @@
         <th mat-header-cell *matHeaderCellDef> Errors </th>
         <td mat-cell *matCellDef="let element">
           <ng-template [ngIf]="element.replicationStatus?.info?.errors?.length > 0"><div>{{element.replicationStatus?.info.errors | json}}</div></ng-template>
+          <ng-template [ngIf]="element.replicationStatus?.pullError"><div>Pull error: {{element.replicationStatus?.pullError}}</div></ng-template>
+          <ng-template [ngIf]="element.replicationStatus?.pushError"><div>Push error: {{element.replicationStatus?.pushError}}</div></ng-template>
         </td>
       </ng-container>
       

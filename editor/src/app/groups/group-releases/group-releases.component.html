@@ -1,6 +1,10 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <table class="release-table">
   <tr>
+    <td colspan = "2" class="instructions">
+      {{'Choose a release platform for your Tangerine deployment: Android or Web. Generate a series of "Test" releases for testing with a small group until you have confirmed that the application is working as specified. When you are ready, generate a "Live" release for full deployment.'|translate}}</td>
+  </tr>
+  <tr>
     <td style="padding-right: 15px;">
       <paper-card heading="
         Android Installation
@@ -9,24 +13,31 @@
           <p>
             {{'Use this for offline deployments or those with many forms and assets. If your site is configured for archives, you may download previous Android releases.'|translate}}
           </p>
-          <mat-list>
-            <mat-list-item class="tangy-location-list">
-              <span class="tangy-foreground-secondary link" routerLink="release-apk-test">
-                <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
-              </span>
-              <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-test">
+          <table>
+            <tr>
+              <th>Release Type</th>
+              <th>Generate</th>
+              <th>List</th>
+            </tr>
+            <tr>
+              <td>Test</td>
+              <td class="tangy-foreground-secondary link" routerLink="release-apk-test">
+                <iron-icon icon="assignment-late"></iron-icon> {{'Generate Test Release'|translate}}
+              </td>
+              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-test">
                  <iron-icon icon="archive"></iron-icon> {{'Download Test Releases'|translate}}
-              </span>
-            </mat-list-item>
-            <mat-list-item class="tangy-location-list">
-              <span class="tangy-foreground-secondary link" routerLink="release-apk-live">
-                <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
-              </span>
-              <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-live">
+              </td>
+            </tr>
+            <tr>
+              <td>Live</td>
+              <td class="tangy-foreground-secondary link" routerLink="release-apk-live">
+                <iron-icon icon="assignment-turned-in"></iron-icon> {{'Generate Live Release'|translate}}
+              </td>
+              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-live">
                 <iron-icon icon="archive"></iron-icon> {{'Download Live Releases'|translate}}
-              </span>
-            </mat-list-item>
-          </mat-list>
+              </td>
+            </tr>
+          </table>
         </div>
       </paper-card>
     </td>
@@ -38,24 +49,31 @@
           <p>
             {{'Use this for smaller deployments where tablets have solid internet connectivity. If your site is configured for archives, you may view previous web releases.'|translate}}
           </p>
-          <mat-list>
-            <mat-list-item class="tangy-location-list">
-              <span class="tangy-foreground-secondary link" routerLink="release-pwa-test">
-                <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
-              </span>
-              <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-test">
+          <table>
+            <tr>
+              <th>Release Type</th>
+              <th>Generate</th>
+              <th>List</th>
+            </tr>
+            <tr>
+              <td>Test</td>
+              <td class="tangy-foreground-secondary link" routerLink="release-pwa-test">
+                <iron-icon icon="assignment-late"></iron-icon> {{'Generate Test Release'|translate}}
+              </td>
+              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-test">
                  <iron-icon icon="list"></iron-icon> {{'View Test Releases'|translate}}
-              </span>
-            </mat-list-item>
-            <mat-list-item class="tangy-location-list">
-              <span class="tangy-foreground-secondary link" routerLink="release-pwa-live">
-                <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
-              </span>
-              <span class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-live">
+              </td>
+            </tr>
+            <tr>
+              <td>Live</td>
+              <td class="tangy-foreground-secondary link" routerLink="release-pwa-live">
+                <iron-icon icon="assignment-turned-in"></iron-icon> {{'Generate Live Release'|translate}}
+              </td>
+              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-live">
                  <iron-icon icon="list"></iron-icon> {{'View Live Releases'|translate}}
-              </span>
-            </mat-list-item>
-          </mat-list>
+              </td>
+            </tr>
+          </table>
         </div>
       </paper-card>
     </td>
