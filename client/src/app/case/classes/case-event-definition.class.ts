@@ -1,10 +1,19 @@
 import { EventFormDefinition } from './event-form-definition.class'
 
+
+interface CaseEventAccess {
+  create:Array<string>
+  read:Array<string>
+  update:Array<string>
+  delete:Array<string>
+}
+
 class CaseEventDefinition {
 
   id:string
   name:string
   eventFormDefinitions:Array<EventFormDefinition> = []
+  access:CaseEventAccess
   repeatable?:boolean = false
   required?:boolean = false
   templateListItemIcon?:string
@@ -21,4 +30,4 @@ class CaseEventDefinition {
 
 }
 
-export { CaseEventDefinition }
+export { CaseEventDefinition, CaseEventAccess }
