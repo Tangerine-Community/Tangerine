@@ -1,7 +1,7 @@
-<tangy-form id="user-profile" title="User Profile">
+<tangy-form id="user-profile">
   <tangy-form-item id="item1" title="User Profile"
     on-open="
-      if (window.isEditorContext) {
+      if (window.isEditorContext || window.isPreviewContext) {
         inputs.role.removeAttribute('disabled')
       } else {
         inputs.role.setAttribute('disabled', '')
