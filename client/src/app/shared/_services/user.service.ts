@@ -219,6 +219,36 @@ export class UserService {
   async createAdmin(password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
     // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+    userProfile.items = [
+      {
+        id: 'item1',
+        inputs: [
+          {
+            name: 'role',
+            value: 'admin'
+          },
+          {
+            name: 'first_name',
+            value: 'Admin of Device'
+          },
+          {
+            name: 'last_name',
+            value: `Device ID: ${lockBoxContents.device._id}`
+          },
+          {
+            name: 'location',
+            value: Object
+              .getOwnPropertyNames(lockBoxContents.device.assignedLocation)
+              .map(propName => { 
+                return { 
+                  level: propName,
+                  value: lockBoxContents.device.assignedLocation[propName]
+                }
+              })
+          }
+        ]
+      }
+    ]
     const userAccount = new UserAccount({
       _id: 'admin',
       password: this.hashValue(password),
@@ -257,7 +287,22 @@ export class UserService {
       const userLockBoxContents = <LockBoxContents>{...adminLockBox.contents}
       await this.lockBoxService.fillLockBox(userSignup.username, userSignup.password, userLockBoxContents)
       const device = adminLockBox.contents.device
-      const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+      const userProfile = new TangyFormResponseModel({
+        form:{
+          id:'user-profile'
+        },
+        items: [
+          {
+            id: 'item1',
+            inputs: [
+              {
+                name: 'role',
+                value: 'dataCollector'
+              }
+            ]
+          }
+        ]
+      })
       userAccount = new UserAccount({
         _id: userSignup.username,
         password: this.hashValue(userSignup.password),
