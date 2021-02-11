@@ -272,6 +272,14 @@ export class UserService {
     }
   }
 
+  async getRole(username = '') {
+    const userProfile = await this.getUserProfile(username)
+    const roleInput = userProfile.items[0].inputs.find(input => input.name === 'role')
+    return roleInput
+      ? roleInput.value
+      : undefined 
+  }
+
   async create(userSignup:UserSignup):Promise<UserAccount> {
     let userAccount:UserAccount
     if (this.config.syncProtocol === '2') {
