@@ -1,37 +1,19 @@
 <tangy-form id="user-profile" title="User Profile">
-  <tangy-form-item id="item-1" title="User Profile">
-    <template>
-      <tangy-input 
-        error-message="required" 
-        type="text" 
-        name="first_name" 
-        required 
-        label="First name">
-      </tangy-input>
-      <tangy-input 
-        error-message="required" 
-        type="text" 
-        name="last_name" 
-        required 
-        label="Last name">
-      </tangy-input>
-      <tangy-radio-buttons label="Gender" name="gender" required>
-        <option value="female">Female</option>
-        <option value="male">Male</option>
-      </tangy-radio-buttons>
-      <tangy-input 
-        error-message="required" 
-        type="number" 
-        name="phone" 
-        required 
-        label="Phone number">
-      </tangy-input>
-      <tangy-location
-        error-message="required" 
-        name="location" 
-        required 
-        label="Location">
-      </tangy-location>
-    </template>
+  <tangy-form-item id="item1" title="User Profile"
+    on-open="
+      if (window.isEditorContext) {
+        inputs.role.removeAttribute('disabled')
+      } else {
+        inputs.role.setAttribute('disabled', '')
+      }
+    "
+  >
+    <tangy-input name="first_name" type="text" label="First name" required></tangy-input>
+    <tangy-input name="last_name" type="text" label="Last name" required></tangy-input>
+    <tangy-select name="role" label="Role" disabled>
+      <option value="dataCollector">Data Collector</option>
+      <option value="admin">Admin</option>
+    </tangy-select>
+    <tangy-location name="location" label="Assigned location" show-level="region,district,facility"></tangy-location>
   </tangy-form-item>
 </tangy-form>
