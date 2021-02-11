@@ -105,7 +105,9 @@ export class AppComponent implements OnInit {
   }
   
   async ngOnInit() {
-
+    this.window.isPreviewContext = window.location.hostname === 'localhost'
+      ? true
+      : false
     this.installed = await this.variableService.get('installed') && await this.variableService.get('languageCode')
       ? true
       : false;
