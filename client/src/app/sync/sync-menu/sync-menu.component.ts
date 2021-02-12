@@ -10,7 +10,6 @@ export class SyncMenuComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log("SyncMenuComponent")
   }
 
 }
