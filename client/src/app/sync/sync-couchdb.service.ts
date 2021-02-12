@@ -42,6 +42,7 @@ export class SyncCouchdbService {
   streamBatchSize = 25
   pullSyncOptions;
   pushSyncOptions;
+  fullSync: boolean;
   
   constructor(
     private http: HttpClient,
@@ -64,7 +65,8 @@ export class SyncCouchdbService {
     userDb:UserDatabase,
     syncDetails:SyncCouchdbDetails,
     caseDefinitions:CaseDefinition[] = null,
-    isFirstSync = false
+    isFirstSync = false,
+    fullSync:boolean
   ): Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.batchSize) {
@@ -78,6 +80,11 @@ export class SyncCouchdbService {
     if (appConfig.writeBatchSize) {
       this.writeBatchSize = appConfig.writeBatchSize
       console.log("this.writeBatchSize: " + this.writeBatchSize)
+    }
+    let batchSize = this.batchSize
+    if (fullSync) {
+      this.fullSync = fullSync
+      batchSize = this.initialBatchSize
     }
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -101,7 +108,7 @@ export class SyncCouchdbService {
       return pullReplicationStatus
     } else {
       try {
-        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, this.batchSize);
+        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
       } catch (e) {
         console.log("Error with pull: " + e)
       }
@@ -252,17 +259,15 @@ export class SyncCouchdbService {
     if (typeof pull_last_seq === 'undefined') {
       pull_last_seq = 0;
     }
+    if (this.fullSync) {
+      pull_last_seq = 0;
+    }
     const pullSelector = this.getPullSelector(syncDetails);
     let progress = {
       'direction': 'pull',
       'message': 'Querying the remote server.'
     }
     this.syncMessage$.next(progress)
-    // let docIds = (await remoteDb.find({
-    //   "limit": 987654321,
-    //   "fields": ["_id"],
-    //   "selector": pullSelector
-    // })).docs.map(doc => doc._id)
     
     progress = {
       'direction': 'pull',
@@ -368,6 +373,7 @@ export class SyncCouchdbService {
 
     status.initialPullLastSeq = pull_last_seq
     status.currentPushLastSeq = status.info.last_seq
+    status.batchSize = batchSize
 
     if (batchFailureDetected) {
       // don't se last_seq and prompt to re-run

@@ -34,6 +34,10 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
       <span>{{'Settings'|translate}}</span>
     </button>
+    <button *ngIf="isAdmin " routerLink="/admin-configuration" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">backup</mat-icon>
+      <span>{{'Admin Configuration'|translate}}</span>
+    </button>
     <button *ngIf="isLoggedIn" routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync'|translate}}</span>

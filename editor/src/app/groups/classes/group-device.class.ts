@@ -12,8 +12,9 @@ export class GroupDevice {
   version:string
   assignedLocation: LocationInfo = new LocationInfo()
   syncLocations: Array<LocationInfo> = []
-  replicationStatus: ReplicationStatus; // deprecated - migrate to replicationStatuses
-  replicationStatuses: Array<ReplicationStatus>;
+  replicationStatus: ReplicationStatus // deprecated - migrate to replicationStatuses
+  replicationStatuses: Array<ReplicationStatus>
+  description:string
 }
 
 class LocationInfo {

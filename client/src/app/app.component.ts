@@ -41,6 +41,7 @@ export class AppComponent implements OnInit {
   window:any;
   installed = false
   isLoggedIn = false
+  isAdmin = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
@@ -155,9 +156,13 @@ export class AppComponent implements OnInit {
     this.isLoggedIn = this.userService.isLoggedIn();
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
       this.isLoggedIn = true;
+      if (window['username'] === 'admin') {
+        this.isAdmin = true;
+      }
     });
     this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
       this.isLoggedIn = false;
+      this.isAdmin = false;
     });
 
     // Keep GPS chip warm.
