@@ -12,6 +12,10 @@
         <th mat-header-cell *matHeaderCellDef> ID </th>
         <td mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </td>
       </ng-container>
+      <ng-container matColumnDef="description">
+        <th class="w-170" mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.description"></div></td>
+      </ng-container>
       <ng-container matColumnDef="assigned-location">
         <th class="w-170" mat-header-cell *matHeaderCellDef> Assigned Location </th>
         <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.assignedLocation"></div></td>
@@ -40,7 +44,7 @@
       </ng-container>
       <ng-container matColumnDef="version">
         <th mat-header-cell *matHeaderCellDef> Build ID </th>
-        <td mat-cell *matCellDef="let element"> {{element.version?.substring(0,7)}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.version?.substring(0,8)}} </td>
       </ng-container>
       <ng-container matColumnDef="tagVersion">
         <th class="w-100" mat-header-cell *matHeaderCellDef> Tag Version </th>
@@ -52,6 +56,12 @@
         <th mat-header-cell *matHeaderCellDef> Tangerine Version </th>
         <td mat-cell *matCellDef="let element">
           {{element.replicationStatus?.deviceInfo?.tangerineVersion}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="dbDocCount">
+        <th mat-header-cell *matHeaderCellDef> Docs on Tablet </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.replicationStatus?.dbDocCount}}
         </td>
       </ng-container>
       <ng-container matColumnDef="network">

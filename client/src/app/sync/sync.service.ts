@@ -40,7 +40,7 @@ export class SyncService {
   replicationStatus: ReplicationStatus
 
   // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
-  async sync(useSharedUser = false, isFirstSync = false) {
+  async sync(useSharedUser = false, isFirstSync = false, fullSync = false):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
@@ -75,7 +75,8 @@ export class SyncService {
         formInfos
       },
       null,
-      isFirstSync
+      isFirstSync,
+      fullSync
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
@@ -95,6 +96,9 @@ export class SyncService {
     try {
       const deviceInfo = await this.deviceService.getAppInfo()
       this.replicationStatus.deviceInfo = deviceInfo
+      const userDb = await this.userService.getUserDatabase()
+      const dbDocCount = (await userDb.db.info()).doc_count
+      this.replicationStatus.dbDocCount = dbDocCount
       const connection = navigator['connection']
       const effectiveType = connection.effectiveType;
       const downlink = connection.downlink;
