@@ -3,7 +3,15 @@
 ## v3.16.0
 
 __New Features__
+
+- Warning about data sync: If you have implementations that have multiple tablets syncing from the same location, some docs may not be on all tablets due to issues with earlier versions of sync. This release resolves that particular issue; however, you may wish to ensure that all tablets share the same data. We have implemented several ways to rectify and understand potential data inconsistencies across tablets in the field:
+  - After updating the server to 3.16.0 *and* after updated and syncing the clients, the Device dashboard will now display the number of docs on each tablet. Depending on the Configure/Sync settings, the document counts may be close, but not exactly the same, since not all forms may be synced to the tablets. At the very least, this data point will help you identify any large inconsistencies.  Remember - only after updating *and syncing* the tablets, will this new "Docs on Tablet" data be populated with data in the Devices listing. Making a note of the document counts per tablet willl get establish a baseline.
+  - Next step would be to run the new "Force Full Sync" feature, which is implemented in two ways: 
+    - If you add the new `forceFullSync:true` setting in the group's app-config.json, the client will perform a full sync upon the next update. Since this takes time and Internet bandwidth, you may wish to notify users before enabling this feature.
+    - When logging in as "admin" user on the client tablet, a new menu item called "Admin Configuration" will be visible below the "Settings" item. This new item enables manual operation of the "Force Full Sync" feature. It is labeled "Pull all docs from the server" in the user interface.
+  - You may adjust the settings for how many documents "Force Full Sync" downloads at a time by adjusting the `initialBatchSize` property in app-config.json. The default is 1000 documents per batch. This setting is also used when performing the initial load of documents on a tablet.
 - Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. If your site is configured for archives (which is the default), you may download previous Android releases. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
+- A "Description" field has been added to the Devices listing to faciliate identification of devices or groups of devices.   
 - *Beta Release* Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Warning: This should not yet be deployed on a production server; the code for this feature is still in development. We recommend creating a separate server for the Tangerine/MySQL installation and replicate data from the production server to the Tangerine server that would provide the MySQL service.
   Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
 - Devices listing offers more information about the sync process, including version, errors, and sync duration.
@@ -23,8 +31,6 @@ __Fixes__
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
 
-__Client upgrade instructions__
-If you would like the client to do a full sync during this upgrade, add `forceFullSync:true` to the group's app-config.json.
 
 ```
 cd tangerine
