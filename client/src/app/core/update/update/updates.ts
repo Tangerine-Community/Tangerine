@@ -5,6 +5,8 @@ import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
 import {TangyFormsDocs} from '../../../tangy-forms/tangy-forms.docs';
 import {VariableService} from "../../../shared/_services/variable.service";
+import {SyncService} from "../../../sync/sync.service";
+import {_TRANSLATE} from "../../../shared/translation-marker";
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 const bcrypt = window['dcodeIO'].bcrypt
 
@@ -352,6 +354,23 @@ export const updates = [
       await window['T'].search.createIndex()
       await userDb.query('search', { limit: 1 })
       await variableService.set('ran-update-v3.15.3', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    message: 'Performing full sync. This will take a little while.',
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService, syncService:SyncService, status) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.0')) return
+      console.log('Updating to v3.16.0...')
+      // Check if this instance is configured for this update
+      if (appConfig.forceFullSync) {
+        console.log('Performing full sync. This will take a little while.')
+        const fullSync = true
+        const replicationStatus = await syncService.sync(false, false, fullSync)
+        console.log('Completed sync.')
+        status.next(_TRANSLATE(`Done with sync.`))
+      }
+      await variableService.set('ran-update-v3.16.0', 'true')
     }
   }
 ]
