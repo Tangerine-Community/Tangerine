@@ -24,4 +24,5 @@ export class ReplicationStatus {
   deviceInfo: AppInfo
   dbDocCount: any;
   batchSize: any;
+  localDocsForLocation: any;
 }
