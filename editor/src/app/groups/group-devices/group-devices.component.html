@@ -59,9 +59,15 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="dbDocCount">
-        <th mat-header-cell *matHeaderCellDef> Docs on Tablet </th>
+        <th mat-header-cell *matHeaderCellDef> All Docs on Tablet </th>
         <td mat-cell *matCellDef="let element">
           {{element.replicationStatus?.dbDocCount}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="localDocsForLocation">
+        <th mat-header-cell *matHeaderCellDef> Docs on Tablet for Location </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.replicationStatus?.localDocsForLocation}}
         </td>
       </ng-container>
       <ng-container matColumnDef="network">
