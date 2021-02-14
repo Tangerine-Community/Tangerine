@@ -369,16 +369,7 @@ export class SyncCouchdbService {
       batchFailureDetected = true
       batchError = e
     }
-    // }
-
-    const localDocsForLocation = await userDb.db.find({
-      selector:pullSelector,
-      fields:"type"
-    })
     
-    if (localDocsForLocation.docs) {
-      status.localDocsForLocation = localDocsForLocation.docs.length
-    }
     status.initialPullLastSeq = pull_last_seq
     status.currentPushLastSeq = status.info.last_seq
     status.batchSize = batchSize
@@ -540,4 +531,6 @@ export class SyncCouchdbService {
     // }
     return status;
     }
+    
+    
 }

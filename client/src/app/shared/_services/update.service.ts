@@ -31,6 +31,8 @@ export class UpdateService {
     await this.setCurrentUpdateIndex(updates.length - 1)
   }
 
+  sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+
   /*
    * Sync Protocol 1
    */
@@ -99,9 +101,8 @@ export class UpdateService {
           requiresViewsRefresh = true;
         }
         if (updates[atUpdateIndex+1].message) {
-          setTimeout(function(){
-            this.status$.next(_TRANSLATE(`${updates[atUpdateIndex+1].message}`))
-          },2000);
+          this.status$.next(_TRANSLATE(`${updates[atUpdateIndex+1].message}`))
+          await this.sleep(1000)
         }
         await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService, this.syncService, this.status$);
         totalUpdatesApplied++;
@@ -138,6 +139,10 @@ export class UpdateService {
       while (atUpdateIndex < finalUpdateIndex) {
         this.status$.next(_TRANSLATE(`Applying Update: ${atUpdateIndex+1}`))
         if (updates[atUpdateIndex+1].requiresViewsUpdate) requiresViewsRefresh = true;
+        if (updates[atUpdateIndex+1].message) {
+          this.status$.next(_TRANSLATE(`${updates[atUpdateIndex+1].message}`))
+          await this.sleep(1000)
+        }
         await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService, this.syncService, this.status$);
         atUpdateIndex++;
         await this.setCurrentUpdateIndex(atUpdateIndex)

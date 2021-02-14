@@ -7,6 +7,15 @@
   </a>
 </div>
 <div class="table-container">
+  <div class="table-legend">
+    <p>Scroll to the right to see additional fields. Some of the information in this table are reported from the most recent tablet sync. Detailed information about some of these fields:</p>
+    <ul>
+      <li>All Docs on Tablet: All records on the tablet.</li>
+      <li>Form Responses on Tablet for Location: This is a subset of "All Docs on Tablet." All tablets in the same location should have the same number of form responses if they are up-to-date on sync.</li>
+      <li>Network Statistics: This value is an estimated value reported from the client app's browser instance; it is not the result of a network query at the time of sync. Consider it as a general indicator of network quality. </li>
+    </ul>
+  </div>
+
     <table mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> ID </th>
@@ -65,7 +74,7 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="localDocsForLocation">
-        <th mat-header-cell *matHeaderCellDef> Docs on Tablet for Location </th>
+        <th mat-header-cell *matHeaderCellDef> Form Responses on Tablet for Location </th>
         <td mat-cell *matCellDef="let element">
           {{element.replicationStatus?.localDocsForLocation}}
         </td>

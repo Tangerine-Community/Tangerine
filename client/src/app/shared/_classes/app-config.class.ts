@@ -37,5 +37,7 @@ export class AppConfig {
   initialBatchSize:number
   writeBatchSize:number
   useCachedDbDumps:boolean
+  calculateLocalDocsForLocation:boolean;
+  findSelectorLimit: number;
 }
 
