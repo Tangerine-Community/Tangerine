@@ -358,18 +358,26 @@ export const updates = [
   },
   {
     requiresViewsUpdate: false,
-    message: 'Performing full sync. This will take a little while.',
+    message: 'Checking if this tablet needs a full sync.',
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService, syncService:SyncService, status) => {
+      const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.0')) return
       console.log('Updating to v3.16.0...')
       // Check if this instance is configured for this update
       if (appConfig.forceFullSync) {
         console.log('Performing full sync. This will take a little while.')
+        status.next(_TRANSLATE(`Performing full sync. This will take a little while.`))
         const fullSync = true
         const replicationStatus = await syncService.sync(false, false, fullSync)
         console.log('Completed sync.')
-        status.next(_TRANSLATE(`Done with sync.`))
+        status.next(_TRANSLATE(`Done with the full sync.`))
+        await sleep(1000)
       }
+      console.log("Adding find-docs-by-form-id-pageable index")
+      status.next(_TRANSLATE(`Adding a new index for sync. This may take a few moments to index.`))
+      await sleep(1000)
+      await window['T'].sync.createSyncIndexes(userDb)
+      
       await variableService.set('ran-update-v3.16.0', 'true')
     }
   }
