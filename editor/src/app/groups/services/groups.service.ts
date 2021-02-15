@@ -5,7 +5,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
-
+import { v4 as UUID } from 'uuid';
 @Injectable()
 export class GroupsService {
   constructor(
@@ -121,9 +121,10 @@ export class GroupsService {
     }
   }
 
-  async releasePWA(groupName: string, releaseType: string) {
+  async releasePWA(groupName: string, releaseType: string, versionTag: string, releaseNotes: string) {
     try {
-      const result = await this.httpClient.get(`/editor/release-pwa/${groupName}/${releaseType}`).toPromise();
+      const result = await this.httpClient.post(`/editor/release-pwa/${groupName}`,
+      {releaseType, versionTag, releaseNotes, buildId: UUID()}).toPromise();
       return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {
@@ -155,9 +156,10 @@ export class GroupsService {
     }
   }
 
-  async releaseAPK(groupName: string, releaseType: string) {
+  async releaseAPK(groupName: string, releaseType: string, versionTag: string, releaseNotes: string) {
     try {
-      const result = await this.httpClient.get(`/editor/release-apk/${groupName}/${releaseType}`).toPromise();
+      const result = await this.httpClient.post(`/editor/release-apk/${groupName}`,
+      {releaseType, versionTag, releaseNotes, buildId: UUID()}).toPromise();
       return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {

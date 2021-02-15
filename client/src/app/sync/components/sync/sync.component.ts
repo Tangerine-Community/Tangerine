@@ -1,6 +1,6 @@
 import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../sync.service';
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
@@ -31,6 +31,8 @@ export class SyncComponent implements OnInit, OnDestroy {
   pullError: any
   pushError: any
   wakeLock: any
+
+  @Input() fullSync: boolean;
 
   constructor(
     private syncService: SyncService,
@@ -116,10 +118,8 @@ export class SyncComponent implements OnInit, OnDestroy {
       }
     })
     try {
-      await this.syncService.sync()
-      this.replicationStatus = this.syncService.replicationStatus
-      const userDb = await this.userService.getUserDatabase()
-      this.dbDocCount = (await userDb.db.info()).doc_count
+      this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
+      this.dbDocCount = this.replicationStatus.dbDocCount
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
     } catch (e) {
