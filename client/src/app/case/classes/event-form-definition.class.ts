@@ -23,3 +23,17 @@ export class EventFormDefinition {
   constructor() {
   }
 }
+
+export enum EventFormAccessOperation {
+  CREATE = 'CREATE',
+  READ = 'READ',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE'
+}
+
+export interface EventFormAccess {
+  create:Array<string>
+  read:Array<string>
+  update:Array<string>
+  delete:Array<string>
+}
