@@ -16,6 +16,7 @@ export interface AppInfo {
   tangerineVersion:string
   buildId:string
   assignedLocation:string
+  versionTag:string
 }
 
 @Injectable({
@@ -28,6 +29,7 @@ export class DeviceService {
   rawBuildChannel:string
   buildId:string
   tangerineVersion:string
+  versionTag:string
 
   constructor(
     private httpClient:HttpClient,
@@ -122,6 +124,7 @@ export class DeviceService {
     const device = await this.getDevice()
     const version = await this.getBuildId()
     if (status) {
+      console.log("Sending sync status.")
       await this
         .httpClient
         .post(`${appConfig.serverUrl}group-device-public/did-sync-status/${appConfig.groupId}/${device._id}/${device.token}/${version}`, {
@@ -155,6 +158,7 @@ export class DeviceService {
       ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
       : 'N/A'
     const tangerineVersion = await this.getTangerineVersion()
+    const versionTag = await this.getVersionTag()
     return <AppInfo>{
       serverUrl: appConfig.serverUrl,
       groupName: appConfig.groupName,
@@ -163,7 +167,8 @@ export class DeviceService {
       buildChannel,
       buildId,
       deviceId: device._id,
-      assignedLocation
+      assignedLocation,
+      versionTag
     }
   }
 
@@ -193,6 +198,15 @@ export class DeviceService {
         : this.rawBuildChannel.includes('qa')
           ? 'test'
           : 'unknown'
+    } catch (e) {
+      return 'N/A'
+    }
+  }
+
+  async getVersionTag() {
+    try {
+      this.versionTag = this.versionTag ? this.versionTag : await this.httpClient.get('./assets/tangerine-version-tag', {responseType: 'text'}).toPromise()
+      return this.versionTag.replace(/\n$/, '');
     } catch (e) {
       return 'N/A'
     }

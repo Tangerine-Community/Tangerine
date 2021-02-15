@@ -29,6 +29,7 @@ async function insertGroupReportingViews(groupName) {
 }
 
 module.exports = {
+  name: 'csv',
   hooks: {
     clearReportingCache: async function(data) {
       const { groupNames } = data

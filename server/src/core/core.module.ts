@@ -1,3 +1,4 @@
+import { ModuleController } from './tangerine-modules-support/tangerine-modules-support.controller';
 import { GroupDevicePublicController } from './group-device/group-device-public.controller';
 import { GroupDeviceManageController } from './group-device/group-device-manage.controller';
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
@@ -27,6 +28,9 @@ export class CoreModule implements NestModule {
     consumer
       .apply(isAuthenticated)
       .forRoutes(ConfigController)
+    consumer
+      .apply(isAuthenticated)
+      .forRoutes(ModuleController)
     consumer
       .apply(isAuthenticated)
       .forRoutes(GroupController)
