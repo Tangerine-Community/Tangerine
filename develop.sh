@@ -8,6 +8,7 @@ set -e
 
 if [ ! -d data ]; then
   mkdir data
+IS_INSTALLING="true"
 fi
 if [ ! -d data/csv ]; then
   mkdir data/csv
@@ -61,7 +62,6 @@ if [ ! -f data/paid-worker-state.json ]; then
   echo '{}' > data/paid-worker-state.json
 fi
 
-
 #
 # Load config.
 #
@@ -72,6 +72,27 @@ if [ -f "./config.sh" ]; then
 else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
+
+if echo "$T_MODULES" | grep mysql; then
+  ./mysql-start.sh
+  echo "Waiting 60 seconds for myql to start..."
+  sleep 60
+  ./mysql-setup.sh
+fi
+
+# Set t_TAG to current branch and the hash for the current commit in Git
+if [ "$1" = "" ]; then
+  if [ "$T_TAG" = "" ]; then
+#    T_TAG=$(git describe --tags --abbrev=0)
+    T_TAG=$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)
+  else
+    T_TAG="$T_TAG"
+  fi
+else
+  T_TAG="$1"
+fi
+
+echo "Setting T_TAG to: $T_TAG"
 
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
 
@@ -122,8 +143,7 @@ sleep 10
 # Start Tangerine.
 #
 
-CMD="docker run -it --name $T_CONTAINER_NAME \
-  --link $T_COUCHDB_CONTAINER_NAME:couchdb \
+OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
   -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
   -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
@@ -153,6 +173,8 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
   --env \"T_NGROK_AUTH_TOKEN=$T_NGROK_AUTH_TOKEN\" \
   --env \"T_NGROK_SUBDOMAIN=$T_NGROK_SUBDOMAIN\" \
+  --env \"T_ARCHIVE_APKS_TO_DISK=$T_ARCHIVE_APKS_TO_DISK\" \
+  --env \"T_ARCHIVE_PWAS_TO_DISK=$T_ARCHIVE_PWAS_TO_DISK\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -182,4 +204,18 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   tangerine/tangerine:local
  "
 
+if echo "$T_MODULES" | grep mysql; then
+OPTIONS="
+  --link $T_MYSQL_CONTAINER_NAME:mysql \
+  --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
+  --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
+  --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
+  --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
+  $OPTIONS
+"
+fi
+
+CMD="docker run -it --name $T_CONTAINER_NAME \
+  $OPTIONS
+"
  eval ${CMD}

@@ -213,6 +213,7 @@ git fetch origin
 git checkout v3.15.0
 # Now you are ready to start the server.
 ./start.sh v3.15.0
+docker exec -it tangerine reporting-cache-clear
 # Update the views - there are new views for Searches and Participant Transfers.
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
 # Remove Tangerine's previous version Docker Image.
