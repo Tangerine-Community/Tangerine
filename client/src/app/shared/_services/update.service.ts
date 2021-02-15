@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { updates } from '../../core/update/update/updates';
 import {HttpClient} from "@angular/common/http";
 import {UserDatabase} from "../_classes/user-database.class";
+import {SyncService} from "../../sync/sync.service";
 
 const VAR_CURRENT_UPDATE_INDEX = 'VAR_CURRENT_UPDATE_INDEX'
 export const VAR_UPDATE_IS_RUNNING = 'VAR_UPDATE_IS_RUNNING'
@@ -22,12 +23,15 @@ export class UpdateService {
     private userService:UserService,
     private variableService:VariableService,
     private appConfigService:AppConfigService,
-    private http: HttpClient
+    private http: HttpClient,
+    private syncService: SyncService,
   ) { }
 
   async install() {
     await this.setCurrentUpdateIndex(updates.length - 1)
   }
+
+  sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
   /*
    * Sync Protocol 1
@@ -96,7 +100,11 @@ export class UpdateService {
         if (updates[atUpdateIndex+1].requiresViewsUpdate) {
           requiresViewsRefresh = true;
         }
-        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService);
+        if (updates[atUpdateIndex+1].message) {
+          this.status$.next(_TRANSLATE(`${updates[atUpdateIndex+1].message}`))
+          await this.sleep(1000)
+        }
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService, this.syncService, this.status$);
         totalUpdatesApplied++;
         atUpdateIndex++;
         if (requiresViewsRefresh) {
@@ -131,7 +139,11 @@ export class UpdateService {
       while (atUpdateIndex < finalUpdateIndex) {
         this.status$.next(_TRANSLATE(`Applying Update: ${atUpdateIndex+1}`))
         if (updates[atUpdateIndex+1].requiresViewsUpdate) requiresViewsRefresh = true;
-        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService);
+        if (updates[atUpdateIndex+1].message) {
+          this.status$.next(_TRANSLATE(`${updates[atUpdateIndex+1].message}`))
+          await this.sleep(1000)
+        }
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService, this.syncService, this.status$);
         atUpdateIndex++;
         await this.setCurrentUpdateIndex(atUpdateIndex)
       }

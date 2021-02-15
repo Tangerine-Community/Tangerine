@@ -111,10 +111,19 @@ export class GroupDeviceService {
     try {
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(deviceId)
+      // TODO remove this migration
+      if (!originalDevice.replicationStatuses) {
+        originalDevice.replicationStatuses = []
+      }
+      if (originalDevice.replicationStatus) {
+        originalDevice.replicationStatuses.push(originalDevice.replicationStatus)
+        delete originalDevice.replicationStatus
+      }
+      originalDevice.replicationStatuses.push(status)
+
       await groupDevicesDb.put({
         ...originalDevice,
         syncedOn: Date.now(),
-        replicationStatus: status,
         version,
         _rev: originalDevice._rev
       })

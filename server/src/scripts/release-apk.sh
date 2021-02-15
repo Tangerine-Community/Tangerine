@@ -8,14 +8,16 @@ T_HOST_NAME="$5"
 PACKAGE="$6"
 APPNAME="$7"
 APPNAME_REPLACE="<name>${7}"
+BUILD_ID="$8"
+VERSION_TAG="$9"
 CORDOVA_DIRECTORY="/tangerine/client/builds/apk"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP"
 STATUS_FILE="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP.json"
 URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www"
 CHCP_URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www/chcp.json"
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
-BUILD_ID=`uuid`
 CORDOVA_ANDROID_DIRECTORY="/opt/cordova-android"
+ARCHIVE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/archive/$GROUP"
 
 echo "RELEASE APK script started $DATE"
 
@@ -70,6 +72,7 @@ cordova platform rm android --no-telemetry
 
 # Stash the Build ID in the release.
 echo $BUILD_ID > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-id 
+echo $VERSION_TAG > $RELEASE_DIRECTORY/www/shell/assets/tangerine-version-tag 
 echo $RELEASE_TYPE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-channel
 echo $PACKAGE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-package-name
 echo $T_VERSION > $RELEASE_DIRECTORY/www/shell/assets/tangerine-version
@@ -101,7 +104,16 @@ cordova build --no-telemetry android
 
 # Copy the apk to the $RELEASE_DIRECTORY
 cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$GROUP.apk
+# Create Group's archive directory
+mkdir -p "$ARCHIVE_DIRECTORY"
+# Copy APK to group's archive directory
+if [ $T_ARCHIVE_APKS_TO_DISK == true ]; then 
+  cp "$RELEASE_DIRECTORY/$GROUP.apk" "$ARCHIVE_DIRECTORY/$GROUP-$VERSION_TAG.apk"
+  echo "{\"processing\":false,\"step\":\"APK ready\",\"filepath\":\"archive/$GROUP/$GROUP-$VERSION_TAG.apk\"}" > $STATUS_FILE
+  echo "Released apk for $GROUP at $RELEASE_DIRECTORY/$GROUP-$VERSION_TAG.apk on $DATE with Build ID of $BUILD_ID and release type of $RELEASE_TYPE"
+else
+  echo "{\"processing\":false,\"step\":\"APK ready\",\"filepath\":\"$GROUP/$GROUP.apk\"}" > $STATUS_FILE
+  echo "Released apk for $GROUP at $ARCHIVE_DIRECTORY on $DATE with Build ID of $BUILD_ID and release type of $RELEASE_TYPE"
+fi
 
-echo '{"processing":false,"step":"APK ready"}' > $STATUS_FILE
 echo 
-echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE with Build ID of $BUILD_ID and release type of $RELEASE_TYPE"

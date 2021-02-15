@@ -8,6 +8,9 @@
   /* This is key for scrolling the table as opposed to the table pushing layout out. */
   overflow: auto;
 }
+.table-legend {
+  margin: 1em;
+}
 
 table {
   /* Setting min-width here is the key to when the sticky column engages. */
@@ -25,4 +28,25 @@ td.mat-column-star {
 
 th, td {
   padding: 5px !important;
+  vertical-align: top;
+}
+
+.w-75{
+  width: 75px;
+}
+
+.w-100{
+  width: 100px;
+}
+
+.w-120{
+  width: 120px;
+}
+
+.w-125{
+  width: 125px;
+}
+
+.w-170{
+  width: 170px;
 }

@@ -29,10 +29,15 @@ export class AppConfig {
   couchdbPullUsingDocIds:boolean
   couchdbPushUsingDocIds:boolean
   autoMergeConflicts:boolean
+  useEthiopianCalendar:boolean
   attachHistoryToDocs:boolean = false
+  disableGpsWarming:boolean
   indexViewsOnlyOnFirstSync:boolean = false
   batchSize:number
+  initialBatchSize:number
   writeBatchSize:number
   useCachedDbDumps:boolean
+  calculateLocalDocsForLocation:boolean;
+  findSelectorLimit: number;
 }
 

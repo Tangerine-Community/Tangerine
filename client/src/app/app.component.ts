@@ -41,6 +41,7 @@ export class AppComponent implements OnInit {
   window:any;
   installed = false
   isLoggedIn = false
+  isAdmin = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
@@ -155,15 +156,23 @@ export class AppComponent implements OnInit {
     this.isLoggedIn = this.userService.isLoggedIn();
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
       this.isLoggedIn = true;
+      if (window['username'] === 'admin') {
+        this.isAdmin = true;
+      }
     });
     this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
       this.isLoggedIn = false;
+      this.isAdmin = false;
     });
 
     // Keep GPS chip warm.
-    setInterval(this.getGeolocationPosition, 5000);
-    this.checkStorageUsage();
-    setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    if (!this.appConfig.disableGpsWarming) {
+      setInterval(this.getGeolocationPosition, 5000);
+    }
+    if (this.appConfig.syncProtocol !== '2') {
+      this.checkStorageUsage();
+      setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    }
     this.ready = true;
 
     // Lastly, navigate to update page if an update is running.
@@ -346,7 +355,7 @@ export class AppComponent implements OnInit {
           timestamp: position.timestamp
         };
         localStorage.setItem('gpsQueue', JSON.stringify(x));
-      } else { console.log(position); }
+      }
     },
       (err) => { },
       options);
