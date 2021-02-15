@@ -37,10 +37,12 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   batchSize = 200
+  initialBatchSize = 1000
   writeBatchSize = 50
   streamBatchSize = 25
   pullSyncOptions;
   pushSyncOptions;
+  fullSync: boolean;
   
   constructor(
     private http: HttpClient,
@@ -63,16 +65,26 @@ export class SyncCouchdbService {
     userDb:UserDatabase,
     syncDetails:SyncCouchdbDetails,
     caseDefinitions:CaseDefinition[] = null,
-    isFirstSync = false
+    isFirstSync = false,
+    fullSync:boolean
   ): Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.batchSize) {
       this.batchSize = appConfig.batchSize
       console.log("this.batchSize: " + this.batchSize)
     }
+    if (appConfig.initialBatchSize) {
+      this.initialBatchSize = appConfig.initialBatchSize
+      console.log("this.initialBatchSize: " + this.initialBatchSize)
+    }
     if (appConfig.writeBatchSize) {
       this.writeBatchSize = appConfig.writeBatchSize
       console.log("this.writeBatchSize: " + this.writeBatchSize)
+    }
+    let batchSize = this.batchSize
+    if (fullSync) {
+      this.fullSync = fullSync
+      batchSize = this.initialBatchSize
     }
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -85,7 +97,7 @@ export class SyncCouchdbService {
         pullReplicationStatus = await this.pullAll(userDb, remoteDb, appConfig, syncDetails);
       } else {
         try {
-          pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+          pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, this.initialBatchSize);
         } catch (e) {
           console.log("Error with pull: " + e)
         }
@@ -96,7 +108,7 @@ export class SyncCouchdbService {
       return pullReplicationStatus
     } else {
       try {
-        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails);
+        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
       } catch (e) {
         console.log("Error with pull: " + e)
       }
@@ -235,7 +247,7 @@ export class SyncCouchdbService {
     return status;
   }
 
-  async pull(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
+  async pull(userDb, remoteDb, appConfig, syncDetails, batchSize): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
       pullConflicts: [],
@@ -247,17 +259,15 @@ export class SyncCouchdbService {
     if (typeof pull_last_seq === 'undefined') {
       pull_last_seq = 0;
     }
+    if (this.fullSync) {
+      pull_last_seq = 0;
+    }
     const pullSelector = this.getPullSelector(syncDetails);
     let progress = {
       'direction': 'pull',
       'message': 'Querying the remote server.'
     }
     this.syncMessage$.next(progress)
-    let docIds = (await remoteDb.find({
-      "limit": 987654321,
-      "fields": ["_id"],
-      "selector": pullSelector
-    })).docs.map(doc => doc._id)
     
     progress = {
       'direction': 'pull',
@@ -266,8 +276,7 @@ export class SyncCouchdbService {
     this.syncMessage$.next(progress)
     let batchFailureDetected = false
     let batchError;
-
-
+    
     const pullSyncBatch = (syncOptions):Promise<ReplicationStatus> => {
       return new Promise( (resolve, reject) => {
         let status = <ReplicationStatus>{
@@ -279,7 +288,7 @@ export class SyncCouchdbService {
         const direction = 'pull'
         const progress = {
           'direction': direction,
-          'message': syncOptions.doc_ids.length + " docs to be checked on the server for updates."
+          'message': "Checking the server for updates."
         }
         this.syncMessage$.next(progress)
         try {
@@ -304,6 +313,7 @@ export class SyncCouchdbService {
               'last_seq': info.last_seq,
               'pulled': pulled
             }
+            await this.variableService.set('sync-pull-last_seq', info.last_seq)
             this.syncMessage$.next(progress)
           }).on('error', function (error) {
             if (!status) {
@@ -323,7 +333,7 @@ export class SyncCouchdbService {
       })
     }
     
-    const totalDocIdLength = docIds.length
+    // const totalDocIdLength = docIds.length
     let pulled = 0
     // while (docIds.length) {
     /**
@@ -334,12 +344,12 @@ export class SyncCouchdbService {
      */
     let syncOptions = {
       "since": pull_last_seq,
-      "batch_size": this.batchSize,
+      "batch_size": batchSize,
       "write_batch_size": this.writeBatchSize,
       "batches_limit": 1,
-      "doc_ids": docIds,
       "pulled": pulled,
-      "checkpoint": 'source'
+      "selector": pullSelector,
+      "checkpoint": 'target'
     }
     
     syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
@@ -359,10 +369,10 @@ export class SyncCouchdbService {
       batchFailureDetected = true
       batchError = e
     }
-    // }
-
+    
     status.initialPullLastSeq = pull_last_seq
     status.currentPushLastSeq = status.info.last_seq
+    status.batchSize = batchSize
 
     if (batchFailureDetected) {
       // don't se last_seq and prompt to re-run
@@ -374,11 +384,11 @@ export class SyncCouchdbService {
         status.pullError = errorMessage
       }
       this.syncMessage$.next(status)
-    } else if (totalDocIdLength > 0 ) {
-      // set last_seq
-      await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
     } else {
-      // TODO: Do we store the most recent seq id we tried to sync but didn't find any matches?
+      if (status?.info?.last_seq ) {
+        // set last_seq
+        await this.variableService.set('sync-pull-last_seq', status.info.last_seq)
+      }
     }
     return status;
   }
@@ -521,4 +531,6 @@ export class SyncCouchdbService {
     // }
     return status;
     }
+    
+    
 }

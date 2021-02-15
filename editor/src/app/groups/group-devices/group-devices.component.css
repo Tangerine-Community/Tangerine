@@ -8,6 +8,9 @@
   /* This is key for scrolling the table as opposed to the table pushing layout out. */
   overflow: auto;
 }
+.table-legend {
+  margin: 1em;
+}
 
 table {
   /* Setting min-width here is the key to when the sticky column engages. */

@@ -22,4 +22,7 @@ export class ReplicationStatus {
   networkDownlinkSpeed: string;
   networkDownlinkMax: string;
   deviceInfo: AppInfo
+  dbDocCount: any;
+  batchSize: any;
+  localDocsForLocation: any;
 }

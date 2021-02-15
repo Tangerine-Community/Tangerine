@@ -21,5 +21,8 @@ export class ReplicationStatus {
   effectiveConnectionType: string;
   networkDownlinkSpeed: string;
   networkDownlinkMax: string;
-  deviceInfo: AppInfo
+  deviceInfo: AppInfo;
+  dbDocCount: any;
+  batchSize: any;
+  localDocsForLocation: any;
 }
