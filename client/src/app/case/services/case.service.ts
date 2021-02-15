@@ -1,5 +1,6 @@
+import { UserService } from 'src/app/shared/_services/user.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
-import { EventFormDefinition } from './../classes/event-form-definition.class';
+import { EventFormDefinition, EventFormAccessOperation } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
@@ -103,6 +104,7 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
@@ -261,6 +263,23 @@ class CaseService {
       ? this.case.items[0].inputs.find(input => input.name === variableName).value
       : undefined
   }
+
+  /*
+   * Role Access API
+   */
+  async hasEventFormAccess(operation:EventFormAccessOperation, caseEventDefinitionId:string, eventFormDefinitionId:string) {
+    const deviceUserRole = await this.userService.getRole()
+    // @TODO Write this. But let's refactor to make it so users can have multiple roles.
+    return true
+  }
+
+  async hasCaseEventAccess(operation:EventFormAccessOperation, caseEventDefinitionId:string) {
+    const deviceUserRole = await this.userService.getRole()
+    // @TODO Write this. But let's refactor to make it so users can have multiple roles. Then implement this helper in the CaseComponent Class.
+    return true
+  }
+
+
 
   /*
    * Case Event API

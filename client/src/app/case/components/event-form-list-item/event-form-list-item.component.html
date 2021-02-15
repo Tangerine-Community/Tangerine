@@ -1,6 +1,6 @@
 
 
-<div *ngIf="this.response || (!this.response && !eventForm.formResponseId)" class="icon-list-item {{eventForm.required ? 'required' : ''}}" >
+<div *ngIf="(this.response || (!this.response && !eventForm.formResponseId)) && !this.hasAccess" class="icon-list-item {{eventForm.required ? 'required' : ''}}" >
 	<mwc-icon routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}" [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
 	<div routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
@@ -11,7 +11,7 @@
 		<paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
 	</span>
 </div>
-<div *ngIf="!this.response && eventForm.formResponseId" class="no-response icon-list-item {{eventForm.required ? 'required' : ''}}" >
+<div *ngIf="(!this.response && eventForm.formResponseId) || this.hasAccess" class="disabled icon-list-item {{eventForm.required ? 'required' : ''}}" >
 	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
 	<div>
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>

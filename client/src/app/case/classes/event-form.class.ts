@@ -3,7 +3,6 @@ class EventForm {
   eventFormDefinitionId:string;
   formResponseId?:string;
   participantId?:string
-  access:EventFormAccess
   complete?:boolean = false
   required?:boolean = false
   caseId?:string;
@@ -19,13 +18,6 @@ class EventForm {
   constructor() {
 
   }
-}
-
-interface EventFormAccess {
-  create:Array<string>
-  read:Array<string>
-  update:Array<string>
-  delete:Array<string>
 }
 
 export { EventForm }
