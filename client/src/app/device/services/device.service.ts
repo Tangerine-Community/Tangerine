@@ -124,6 +124,7 @@ export class DeviceService {
     const device = await this.getDevice()
     const version = await this.getBuildId()
     if (status) {
+      console.log("Sending sync status.")
       await this
         .httpClient
         .post(`${appConfig.serverUrl}group-device-public/did-sync-status/${appConfig.groupId}/${device._id}/${device.token}/${version}`, {

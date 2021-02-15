@@ -14,3 +14,27 @@ a:hover, a:active, a:visited {
 .archives {
   margin-left: 30px;
 }
+
+.card-content td, th {
+  font-size: 16px;
+  padding: 8px;
+  vertical-align: top;
+  border: 1px solid #ddd;
+}
+
+.card-content th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #3c5b8d;
+  color: white;
+}
+
+.card-content table {
+  border-collapse: collapse;
+}
+
+.instructions {
+  padding: 1em;
+  font-size: 18px;
+}

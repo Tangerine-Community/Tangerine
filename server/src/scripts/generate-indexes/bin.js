@@ -65,6 +65,16 @@ async function go() {
       ]
     }
   })
+  console.log('Creating index for field of form.id and lastModified that is pageable')
+  await createIndex({
+    index: {
+      fields: [
+        'lastModified',
+        'form.id'
+      ],
+      ddoc: 'find-docs-by-form-id-pageable',
+    }
+  })
   let indexDidIndex = true
   try {
     // Trigger the index to be indexed.
@@ -85,6 +95,15 @@ async function go() {
         'type': '',
         'status': ''
       },
+      limit: 1
+    })
+    await db.find({
+      selector: {
+        type: '',
+        "lastModified":  {"$gt": 0},
+        "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
+      },
+      use_index: 'find-docs-by-form-id',
       limit: 1
     })
   } catch (e) {

@@ -34,7 +34,10 @@ export class AppConfig {
   disableGpsWarming:boolean
   indexViewsOnlyOnFirstSync:boolean = false
   batchSize:number
+  initialBatchSize:number
   writeBatchSize:number
   useCachedDbDumps:boolean
+  calculateLocalDocsForLocation:boolean;
+  findSelectorLimit: number;
 }
 

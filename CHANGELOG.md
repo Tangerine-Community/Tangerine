@@ -8,13 +8,28 @@ __New Features and Fixes__
 ## v3.16.0
 
 __New Features__
+
+- Warning about data sync: If you have implementations that have multiple tablets syncing from the same location, some docs may not be on all tablets due to issues with earlier versions of sync. This release resolves that particular issue and provides ways to ensure that all tablets share the same data. We have implemented several ways to rectify and understand potential data inconsistencies across tablets in the field:
+  - After updating the server to 3.16.0 *and* after updating and syncing the clients, the Device dashboard will now display the number of docs on each tablet ("All Docs on Tablet") and the number of docs according to the device's Location configuration ("Form Responses on Tablet for Location"). 
+    - Depending on the Configure/Sync settings, the "All Docs on Tablet" count may be close, but not exactly the same, since not all forms may be synced to the tablets.
+    - The "Form Responses on Tablet for Location" count should be the same for all tablets that share the same location configuration. Please note that "Form Responses on Tablet for Location" count needs to be activated by adding `"calculateLocalDocsForLocation": true` to app-config.json; also note that it has not been widely tested and may be unstable. (If you activate this feature, you may also add `"findSelectorLimit"` to modify how many batches are used to calculate this value. Default is 200. Lower is safer but slower.) 
+      
+    These data points may help in identifying data  inconsistencies. Remember - only after updating *and syncing* the tablets, will these new doc counts be populated with data in the Devices listing. Making a note of the document counts per tablet will help establish a baseline.
+  - Next step would be to run the new "Force Full Sync" feature, which is implemented in two ways: 
+    - If you add the new `"forceFullSync" : true` setting in the group's app-config.json, the client will perform a full sync upon the next update. Since this takes time and Internet bandwidth, you may wish to notify users before enabling this feature.
+    - When logging in as "admin" user on the client tablet, a new menu item called "Admin Configuration" will be visible below the "Settings" item. This new item enables manual operation of the "Force Full Sync" feature. It is labeled "Pull all docs from the server" in the user interface.
+  - You may adjust the settings for how many documents "Force Full Sync" downloads at a time by adjusting the `initialBatchSize` property in app-config.json. The default is 1000 documents per batch. This setting is also used when performing the initial load of documents on a tablet.
 - Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. If your site is configured for archives (which is the default), you may download previous Android releases. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
+- A "Description" field has been added to the Devices listing to faciliate identification of devices or groups of devices.   
 - *Beta Release* Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Warning: This should not yet be deployed on a production server; the code for this feature is still in development. We recommend creating a separate server for the Tangerine/MySQL installation and replicate data from the production server to the Tangerine server that would provide the MySQL service.
   Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
-- Devices listing offers more information about the sync process, including version, errors, and sync duration.   
+- Devices listing offers more information about the sync process, including version, errors, and sync duration.
 
 __Fixes__
-- Changes to the sync code should improve sync stability and speed.
+- Changes to the sync code should improve sync stability and speed. [#2592](https://github.com/Tangerine-Community/Tangerine/issues/2592) You may configure certain sync properties:
+  - initialBatchSize = (default: 1000) Number of documents downloaded in the first sync when setting up a device.
+  - batchSize (default: 200) - Number of documents downloaded upon each subsequent sync.
+  - writeBatchSize = (default: 50) - Number of documents written to the tablet during each sync batch.
 - Updated tangy-form-editor to v7.6.4, which improves functionality of `duplicate entire section`. PR: [#173](https://github.com/Tangerine-Community/tangy-form-editor/pull/173)
 - Updates the Schedule View to use date-carousel 5.2.0 which provides unix timestamps instead of date strings. [#2589](https://github.com/Tangerine-Community/Tangerine/pull/2589)
 - Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
@@ -24,6 +39,7 @@ __Fixes__
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
 
 ```
 cd tangerine

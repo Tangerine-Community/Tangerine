@@ -58,7 +58,7 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'errorMessage', 'network', 'star']
+  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'network', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
@@ -160,27 +160,49 @@ export class GroupDevicesComponent implements OnInit {
           }, true)
       })
       .map(device => {
+        let replicationStatus
+        // TODO - remove this deprecated persisted code/property
+        if (device.replicationStatus) {
+          replicationStatus = device.replicationStatus
+        }
+        if (device.replicationStatuses?.length > 0) {
+          replicationStatus = device.replicationStatuses[device.replicationStatuses.length - 1]
+          device.replicationStatus = replicationStatus
+        }
       return <DeviceInfo>{
         ...device,
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
         syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
         updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
         assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
-        duration: device.replicationStatus?.info ? moment.utc(moment.duration(moment(device.replicationStatus?.info?.end_time).diff(moment(device.replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : '',
+        duration: replicationStatus?.info ? moment.utc(moment.duration(moment(replicationStatus?.info?.end_time).diff(moment(replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : '',
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         }).join('; ')
       }
     })
   }
-
-
+  
   async viewSyncLog(deviceId:string) {
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
     if (device.replicationStatus) {
       window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
       ${JSON.stringify(device.replicationStatus)}
+    </paper-dialog-scrollable>
+    `
+    } else if (device.replicationStatuses) {
+      const replicationStatusesSorted = device.replicationStatuses.slice().sort((a, b) => moment(b.info.end_time).unix() - moment(a.info.end_time).unix())
+      let output = '<h2>Sync Log</h2>\n<p>Sorted by sync end_time</p><style>.syncLog td {\n' +
+        '  vertical-align: top;\n  display: inline-block; margin-bottom: 5px;\n' +
+        '}</style><table class="syncLog">';
+      replicationStatusesSorted.forEach(status => {
+        output = output + "<tr><td><strong>" + moment(status.info.end_time).format("YYYY-MM-DD HH:mm:SS") + "</strong></td></tr><tr><td><pre>" + JSON.stringify(status, null, 2) + "</pre></td></tr>"
+      })
+      output = output + "</table>"
+      window['dialog'].innerHTML = `
+    <paper-dialog-scrollable>
+      ${output}
     </paper-dialog-scrollable>
     `
     } else {
@@ -270,6 +292,7 @@ export class GroupDevicesComponent implements OnInit {
             ` : ''}
           >
           </tangy-location>
+          <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
         </tangy-form-item>
       </tangy-form>
     </paper-dialog-scrollable>
@@ -281,6 +304,8 @@ export class GroupDevicesComponent implements OnInit {
         value: event.target.inputs.find(input => input.name === 'sync_location').value,
         showLevels: event.target.inputs.find(input => input.name === 'sync_location').showLevels.split(',')
       }
+      device.description = event.target.inputs.find(input => input.name === 'description').value
+
       await this.groupDevicesService.updateDevice(this.groupId, device)
       this.update()
       window['dialog'].close()
@@ -313,6 +338,7 @@ export class GroupDevicesComponent implements OnInit {
               <option value="${level}">${level}</option>
             `).join('')}
           </tangy-radio-buttons>
+          <tangy-input name="description" label="Device description"></tangy-input>
         </tangy-form-item>
       </tangy-form>
     </paper-dialog-scrollable>
@@ -334,6 +360,7 @@ export class GroupDevicesComponent implements OnInit {
         .map(option => option.name)
       const syncLocationNodes = event.target.inputs.find(input => input.name === 'assigned_location').value
         .filter(node => syncLevels.includes(node.level))
+      const description = event.target.inputs.find(input => input.name === 'description').value
       let numberOfDevicesGenerated = 0
       window['dialog'].innerHTML = `<h1>Generating Devices...</h1>`
       while (numberOfDevicesGenerated < numberOfDevicesToGenerate) {
@@ -344,6 +371,7 @@ export class GroupDevicesComponent implements OnInit {
           value: syncLocationNodes,
           showLevels: syncLevels
         }
+        device.description = description
         await this.groupDevicesService.updateDevice(this.groupId, device)
         numberOfDevicesGenerated++
       }

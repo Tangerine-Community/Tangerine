@@ -7,10 +7,23 @@
   </a>
 </div>
 <div class="table-container">
+  <div class="table-legend">
+    <p>Scroll to the right to see additional fields. Some of the information in this table are reported from the most recent tablet sync. Detailed information about some of these fields:</p>
+    <ul>
+      <li>All Docs on Tablet: All records on the tablet.</li>
+      <li>Form Responses on Tablet for Location: This is a subset of "All Docs on Tablet." All tablets in the same location should have the same number of form responses if they are up-to-date on sync.</li>
+      <li>Network Statistics: This value is an estimated value reported from the client app's browser instance; it is not the result of a network query at the time of sync. Consider it as a general indicator of network quality. </li>
+    </ul>
+  </div>
+
     <table mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> ID </th>
         <td mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th class="w-170" mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.description"></div></td>
       </ng-container>
       <ng-container matColumnDef="assigned-location">
         <th class="w-170" mat-header-cell *matHeaderCellDef> Assigned Location </th>
@@ -40,7 +53,7 @@
       </ng-container>
       <ng-container matColumnDef="version">
         <th mat-header-cell *matHeaderCellDef> Build ID </th>
-        <td mat-cell *matCellDef="let element"> {{element.version.substring(0,7)}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.version?.substring(0,8)}} </td>
       </ng-container>
       <ng-container matColumnDef="tagVersion">
         <th class="w-100" mat-header-cell *matHeaderCellDef> Tag Version </th>
@@ -52,6 +65,18 @@
         <th mat-header-cell *matHeaderCellDef> Tangerine Version </th>
         <td mat-cell *matCellDef="let element">
           {{element.replicationStatus?.deviceInfo?.tangerineVersion}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="dbDocCount">
+        <th mat-header-cell *matHeaderCellDef> All Docs on Tablet </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.replicationStatus?.dbDocCount}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="localDocsForLocation">
+        <th mat-header-cell *matHeaderCellDef> Form Responses on Tablet for Location </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.replicationStatus?.localDocsForLocation}}
         </td>
       </ng-container>
       <ng-container matColumnDef="network">
@@ -70,6 +95,8 @@
         <th mat-header-cell *matHeaderCellDef> Errors </th>
         <td mat-cell *matCellDef="let element">
           <ng-template [ngIf]="element.replicationStatus?.info?.errors?.length > 0"><div>{{element.replicationStatus?.info.errors | json}}</div></ng-template>
+          <ng-template [ngIf]="element.replicationStatus?.pullError"><div>Pull error: {{element.replicationStatus?.pullError}}</div></ng-template>
+          <ng-template [ngIf]="element.replicationStatus?.pushError"><div>Push error: {{element.replicationStatus?.pushError}}</div></ng-template>
         </td>
       </ng-container>
       
