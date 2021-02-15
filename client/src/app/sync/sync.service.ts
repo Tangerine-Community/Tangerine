@@ -99,9 +99,15 @@ export class SyncService {
         console.log("this.findSelectorLimit: " + this.findSelectorLimit)
       }
       
-      // Setup Mango query for paging through almost allDocs.
+      // Setup Mango query for paging through almost all Docs.
       if (! await this.variableService.get('inserted-find-docs-by-form-id-pageable-view')) {
+        this.syncMessage$.next({
+          message: window['t']('Creating index for location sync stats. Please wait...')
+        })
         await this.createSyncIndexes(userDb)
+        this.syncMessage$.next({
+          message: window['t']('Done! Completed indexing for location sync stats. Please wait...')
+        })
         await this.variableService.set('inserted-find-docs-by-form-id-pageable-view', 'true')
       }
 
