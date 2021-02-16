@@ -373,10 +373,12 @@ export const updates = [
         status.next(_TRANSLATE(`Done with the full sync.`))
         await sleep(1000)
       }
-      console.log("Adding find-docs-by-form-id-pageable index")
-      status.next(_TRANSLATE(`Adding a new index for sync. This may take a few moments to index.`))
-      await sleep(1000)
-      await window['T'].sync.createSyncIndexes(userDb)
+      if (appConfig.calculateLocalDocsForLocation) {
+        console.log("Adding find-docs-by-form-id-pageable index")
+        status.next(_TRANSLATE(`Adding a new index for sync. This may take a few moments to index.`))
+        await sleep(1000)
+        await window['T'].sync.createSyncIndexes(userDb)
+      }
       
       await variableService.set('ran-update-v3.16.0', 'true')
     }
