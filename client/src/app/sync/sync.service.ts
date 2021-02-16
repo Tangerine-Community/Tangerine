@@ -13,6 +13,7 @@ import {CaseService} from "../case/services/case.service";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import {VariableService} from "../shared/_services/variable.service";
+import * as moment from 'moment'
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
@@ -41,6 +42,8 @@ export class SyncService {
   public readonly syncMessage$: Subject<any> = new Subject();
   replicationStatus: ReplicationStatus
   findSelectorLimit = 200
+  syncCouchdbServiceStartTime:string
+  syncCouchdbServiceEndime:string
 
   // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
   async sync(useSharedUser = false, isFirstSync = false, fullSync = false):Promise<ReplicationStatus> {
@@ -62,6 +65,8 @@ export class SyncService {
         // console.log('Sync svc: ' + JSON.stringify(message))
       }
     })
+
+    this.syncCouchdbServiceStartTime = new Date().toISOString()
 
     //
     // @TODO RJ: I'm adding the isFirstSync param, but found caseDefinition parameter is left to null.
@@ -91,91 +96,23 @@ export class SyncService {
       deviceToken: device.token,
       formInfos
     })
-    
+
+    this.syncCouchdbServiceEndime = new Date().toISOString()
+
     if (appConfig.calculateLocalDocsForLocation) {
-
-      if (appConfig.findSelectorLimit) {
-        this.findSelectorLimit = appConfig.findSelectorLimit
-        console.log("this.findSelectorLimit: " + this.findSelectorLimit)
-      }
-      
-      // Setup Mango query for paging through almost all Docs.
-      if (! await this.variableService.get('inserted-find-docs-by-form-id-pageable-view')) {
-        this.syncMessage$.next({
-          message: window['t']('Creating index for location sync stats. Please wait...')
-        })
-        await this.createSyncIndexes(userDb)
-        this.syncMessage$.next({
-          message: window['t']('Done! Completed indexing for location sync stats. Please wait...')
-        })
-        await this.variableService.set('inserted-find-docs-by-form-id-pageable-view', 'true')
-      }
-
-    this.syncMessage$.next({ 
-      message: window['t']('Sync is complete; calculating sync statistics. Please wait...')
-    })
-
-    function makeFindSelector(lastModified) {
-
-      return {
-        "lastModified": {"$gt": lastModified},
-        // "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
-        "form.id": {
-          "$in": [
-            ...formInfos.reduce(($or, formInfo) => {
-              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-                $or = [
-                  ...$or,
-                  ...[
-                    formInfo.id
-                  ]
-                ]
-              }
-              return $or
-            }, [])
-          ]
-        }
-      }
+      let localDocsForLocation = await this.calculateLocalDocsForLocation(appConfig, userDb, formInfos);
+      this.replicationStatus.localDocsForLocation = localDocsForLocation
     }
+    const start = moment(this.syncCouchdbServiceStartTime)
+    const end = moment(this.syncCouchdbServiceEndime)
+    const diff = end.diff(start)
+    const duration = moment.duration(diff).as('milliseconds')
+    // const durationUTC = moment.utc(duration).format('HH:mm:ss')
 
-    let findSelector = makeFindSelector(0)
-    let options = {
-      selector:findSelector,
-      sort: ['lastModified'],
-      limit : this.findSelectorLimit
-    }
-    let localDocsForLocation = 0
-    let remaining = true
-    while(remaining === true) {
-      try {
-        await userDb.db.find(options, function (err, response) {
-          if (err) {
-            console.log("Error getting localDocsForLocation: " + err)
-          }
-          if (response && response.docs.length > 0) {
-            const lastModified = response.docs[response.docs.length - 1].lastModified;
-            // options["startkey"] = lastModified
-            findSelector = makeFindSelector(lastModified)
-            options = {
-              selector: findSelector,
-              sort: ['lastModified'],
-              limit: 50
-            }
-            options["skip"] = 1;
-            localDocsForLocation = localDocsForLocation + response.docs.length
-          } else {
-            remaining = false
-          }
-        })
-      } catch (e) {
-        console.log("Error getting localDocsForLocation: " + e)
-      }
-    }
-    
-    this.replicationStatus.localDocsForLocation = localDocsForLocation
-      
-    }
     try {
+      this.replicationStatus.syncCouchdbServiceStartTime = this.syncCouchdbServiceStartTime
+      this.replicationStatus.syncCouchdbServiceEndime = this.syncCouchdbServiceEndime
+      this.replicationStatus.syncCouchdbServiceDuration = duration
       const deviceInfo = await this.deviceService.getAppInfo()
       this.replicationStatus.deviceInfo = deviceInfo
       const userDb = await this.userService.getUserDatabase()
@@ -212,7 +149,88 @@ export class SyncService {
     return this.replicationStatus
   }
 
-  // Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
+  private async calculateLocalDocsForLocation(appConfig: AppConfig, userDb: UserDatabase, formInfos: Array<FormInfo>) {
+    if (appConfig.findSelectorLimit) {
+      this.findSelectorLimit = appConfig.findSelectorLimit
+      console.log("this.findSelectorLimit: " + this.findSelectorLimit)
+    }
+
+    // Setup Mango query for paging through almost all Docs.
+    if (!await this.variableService.get('inserted-find-docs-by-form-id-pageable-view')) {
+      this.syncMessage$.next({
+        message: window['t']('Creating index for location sync stats. Please wait...')
+      })
+      await this.createSyncIndexes(userDb)
+      this.syncMessage$.next({
+        message: window['t']('Done! Completed indexing for location sync stats. Please wait...')
+      })
+      await this.variableService.set('inserted-find-docs-by-form-id-pageable-view', 'true')
+    }
+
+    this.syncMessage$.next({
+      message: window['t']('Sync is complete; calculating sync statistics. Please wait...')
+    })
+
+    function makeFindSelector(lastModified) {
+
+      return {
+        "lastModified": {"$gt": lastModified},
+        // "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
+        "form.id": {
+          "$in": [
+            ...formInfos.reduce(($or, formInfo) => {
+              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+                $or = [
+                  ...$or,
+                  ...[
+                    formInfo.id
+                  ]
+                ]
+              }
+              return $or
+            }, [])
+          ]
+        }
+      }
+    }
+
+    let findSelector = makeFindSelector(0)
+    let options = {
+      selector: findSelector,
+      sort: ['lastModified'],
+      limit: this.findSelectorLimit
+    }
+    let localDocsForLocation = 0
+    let remaining = true
+    while (remaining === true) {
+      try {
+        await userDb.db.find(options, function (err, response) {
+          if (err) {
+            console.log("Error getting localDocsForLocation: " + err)
+          }
+          if (response && response.docs.length > 0) {
+            const lastModified = response.docs[response.docs.length - 1].lastModified;
+            // options["startkey"] = lastModified
+            findSelector = makeFindSelector(lastModified)
+            options = {
+              selector: findSelector,
+              sort: ['lastModified'],
+              limit: 50
+            }
+            options["skip"] = 1;
+            localDocsForLocation = localDocsForLocation + response.docs.length
+          } else {
+            remaining = false
+          }
+        })
+      } catch (e) {
+        console.log("Error getting localDocsForLocation: " + e)
+      }
+    }
+    return localDocsForLocation;
+  }
+
+// Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
   async indexViews() {
     const exclude = [
       'tangy-form/responsesLockedAndNotUploaded',
