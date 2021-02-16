@@ -13,6 +13,7 @@ import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import { Loc } from 'tangy-form/util/loc.js';
 import * as qrcode from 'qrcode-generator-es6';
 import * as moment from 'moment'
+import * as XLSX from "xlsx";
 
 
 interface LocationNode {
@@ -63,6 +64,7 @@ export class GroupDevicesComponent implements OnInit {
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
   @ViewChild('locationEl', {static: true}) locationEl: ElementRef;
+  private isExporting: boolean;
 
   constructor(
     private menuService:MenuService,
@@ -169,13 +171,27 @@ export class GroupDevicesComponent implements OnInit {
           replicationStatus = device.replicationStatuses[device.replicationStatuses.length - 1]
           device.replicationStatus = replicationStatus
         }
+        // const durationUTC = moment.utc(duration).format('HH:mm:ss')
+
+        let duration = replicationStatus?.duration ? moment.utc(replicationStatus?.duration).format('HH:mm:ss') :
+          replicationStatus?.info ? moment.utc(moment.duration(moment(replicationStatus?.info?.end_time).diff(moment(replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : ''
+        const versionTag = replicationStatus?.deviceInfo?.versionTag
+        const tangerineVersion = replicationStatus?.deviceInfo?.tangerineVersion
+        const dbDocCount = replicationStatus?.dbDocCount
+        const localDocsForLocation = replicationStatus?.localDocsForLocation
+        const effectiveConnectionType = replicationStatus?.effectiveConnectionType
       return <DeviceInfo>{
         ...device,
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
         syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
         updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
         assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
-        duration: replicationStatus?.info ? moment.utc(moment.duration(moment(replicationStatus?.info?.end_time).diff(moment(replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : '',
+        duration: duration,
+        versionTag: versionTag,
+        tangerineVersion: tangerineVersion,
+        dbDocCount: dbDocCount,
+        localDocsForLocation: localDocsForLocation,
+        effectiveConnectionType: effectiveConnectionType,
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         }).join('; ')
@@ -380,5 +396,14 @@ export class GroupDevicesComponent implements OnInit {
     })
     setTimeout(() => window['dialog'].open(), 450)
 
+  }
+
+  async export() {
+    this.isExporting = true;
+    const worksheet = XLSX.utils.json_to_sheet(this.deviceInfos);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'devices');
+    XLSX.writeFile(workbook, 'devices.xlsx');
+    this.isExporting = false;
   }
 }
