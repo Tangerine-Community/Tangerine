@@ -64,7 +64,7 @@ export class GroupDevicesComponent implements OnInit {
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
   @ViewChild('locationEl', {static: true}) locationEl: ElementRef;
-  private isExporting: boolean;
+  isExporting: boolean;
 
   constructor(
     private menuService:MenuService,
