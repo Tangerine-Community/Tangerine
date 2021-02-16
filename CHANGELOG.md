@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.16.1
+
+__Fixes__
+- Fixes editor form creation issue [#2605](https://github.com/Tangerine-Community/Tangerine/issues/2605) and form copy issue [#2604](https://github.com/Tangerine-Community/Tangerine/issues/2604)
+- Adds check for calculateLocalDocsForLocation before running update to index an index it depends upon.
+
 ## v3.16.0
 
 __New Features__
