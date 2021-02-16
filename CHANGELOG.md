@@ -3,8 +3,9 @@
 ## v3.16.1
 
 __Fixes__
-- Fixes editor form creation issue [#2605](https://github.com/Tangerine-Community/Tangerine/issues/2605) and form copy issue [#2604](https://github.com/Tangerine-Community/Tangerine/issues/2604)
+- Fixes Editor form creation issue [#2605](https://github.com/Tangerine-Community/Tangerine/issues/2605) and form copy issue [#2604](https://github.com/Tangerine-Community/Tangerine/issues/2604)
 - Adds check for calculateLocalDocsForLocation before running update to index an index it depends upon.
+- Improves sync stats and add "Export Device List" feature PR: [#2610](https://github.com/Tangerine-Community/Tangerine/pull/2610)
 
 ## v3.16.0
 
