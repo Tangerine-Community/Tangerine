@@ -1,5 +1,49 @@
 # What's New
 
+## v3.16.1
+
+__New Features__
+
+- Improves sync stats and add "Export Device List" feature PR: [#2610](https://github.com/Tangerine-Community/Tangerine/pull/2610)
+
+__Fixes__
+- Fixes Editor form creation issue [#2605](https://github.com/Tangerine-Community/Tangerine/issues/2605) and form copy issue [#2604](https://github.com/Tangerine-Community/Tangerine/issues/2604)
+- Adds check for calculateLocalDocsForLocation before running update to index an index it depends upon.
+- Update tangy-form to 4.21.3, tangy-form-editor to 7.6.5 to fix dynamically set level tangy location not resuming correctly [#202](https://github.com/Tangerine-Community/tangy-form/pull/202)
+
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.1
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.1
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.0
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```  
+
+
 ## v3.16.0
 
 __New Features__
