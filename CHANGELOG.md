@@ -6,6 +6,7 @@ __Fixes__
 - Fixes Editor form creation issue [#2605](https://github.com/Tangerine-Community/Tangerine/issues/2605) and form copy issue [#2604](https://github.com/Tangerine-Community/Tangerine/issues/2604)
 - Adds check for calculateLocalDocsForLocation before running update to index an index it depends upon.
 - Improves sync stats and add "Export Device List" feature PR: [#2610](https://github.com/Tangerine-Community/Tangerine/pull/2610)
+- Update tangy-form to 4.21.3, tangy-form-editor to 7.6.5 to fix dynamically set level tangy location not resuming correctly [#202](https://github.com/Tangerine-Community/tangy-form/pull/202)
 
 ## v3.16.0
 
