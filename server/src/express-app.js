@@ -233,6 +233,16 @@ app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appNam
 
 app.use('/editor/unrelease-online-survey-app/:groupId/:formId/:releaseType/', isAuthenticated, unreleaseOnlineSurveyApp)
 
+app.post('/editor/file/save', isAuthenticated, async function (req, res) {
+  const filePath = req.body.filePath
+  const groupId = req.body.groupId
+  const fileContents = req.body.fileContents
+  const actualFilePath = `/tangerine/groups/${groupId}/client/${filePath}`
+  await fs.outputFile(actualFilePath, fileContents)
+  res.send({status: 'ok'})
+  // ok
+})
+  
 app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.query.filePath
   const groupId = req.query.groupId
