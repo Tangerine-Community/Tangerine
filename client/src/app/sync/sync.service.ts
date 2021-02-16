@@ -14,6 +14,8 @@ import {CaseDefinitionsService} from "../case/services/case-definitions.service"
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import {VariableService} from "../shared/_services/variable.service";
 import * as moment from 'moment'
+import {AppConfig} from "../shared/_classes/app-config.class";
+import {FormInfo} from "../tangy-forms/classes/form-info.class";
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
