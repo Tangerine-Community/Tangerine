@@ -25,4 +25,7 @@ export class ReplicationStatus {
   dbDocCount: any;
   batchSize: any;
   localDocsForLocation: any;
+  syncCouchdbServiceStartTime: string;
+  syncCouchdbServiceEndime: string;
+  syncCouchdbServiceDuration: number;
 }

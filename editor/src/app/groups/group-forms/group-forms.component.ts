@@ -59,12 +59,12 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
         url: 'forms'
       }
     ]
-    this.route.params.subscribe(async params => {
-      this.groupId = params.groupId;
-      this.group = await this.groupsService.getGroupInfo(this.groupId);
-      this.groupLabel = this.group.label;
-      this.formsJsonURL = `./forms.json`;
-    });
+
+    this.groupId = window.location.hash.split('/')[2]
+    this.group = await this.groupsService.getGroupInfo(this.groupId)
+    this.groupLabel = this.group.label;
+    this.formsJsonURL = `./forms.json`;
+
     try {
       await this.getForms();
       this.groupUrl = `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;
