@@ -254,17 +254,20 @@ export class SyncService {
         name: 'find-docs-by-form-id-pageable'
       }
     })
-    await userDb.db.find({
-      selector: {
-        type: '',
-        "lastModified":  {"$gt": 0},
-        "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
-      },
-      use_index: 'find-docs-by-form-id-pageable',
-      limit: 1
-    })
+    console.log("Created index for find-docs-by-form-id-pageable")
+    try {
+      const result = await userDb.db.find({
+        selector: {
+          type: '',
+          "lastModified": {"$gt": 0},
+          "form.id": {"$in": ["user-profile"]}
+        },
+        use_index: 'find-docs-by-form-id-pageable',
+        limit: 0
+      })
+      console.log("Completed indexing")
+    } catch (e) {
+      console.log("Error: " + e)
+    }
   }
-
-
-
 }
