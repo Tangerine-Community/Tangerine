@@ -65,16 +65,6 @@ async function go() {
       ]
     }
   })
-  console.log('Creating index for field of form.id and lastModified that is pageable')
-  await createIndex({
-    index: {
-      fields: [
-        'lastModified',
-        'form.id'
-      ],
-      ddoc: 'find-docs-by-form-id-pageable',
-    }
-  })
   let indexDidIndex = true
   try {
     // Trigger the index to be indexed.
