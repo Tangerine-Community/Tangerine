@@ -33,10 +33,10 @@ There are two different modes of sync:
   - Database optimization: After this initial sync, database indexes are created an optimized, which takes a little while. These indexes are critical to the app's performance.
   
 - Routine sync: After a short period of data collection, the user executes an Online sync. This sync has 4 stages:
- - Pull: Pull any new or updated documents from the server. 
- - Push: Pushes any documents created on the tablet
- - Status uploaded: Status of this sync process is uploaded.
- - Database optimization: Indexes are updated. 
+  - Pull: Pull any new or updated documents from the server. 
+  - Push: Pushes any documents created on the tablet
+  - Status uploaded: Status of this sync process is uploaded.
+  - Database optimization: Indexes are updated. 
 
 ## Sync settings in app-config.json
 
