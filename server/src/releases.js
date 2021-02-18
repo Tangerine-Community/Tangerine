@@ -23,7 +23,7 @@ const saveReleaseInfo = async(groupId, build,releaseType, buildId,versionTag, re
 		console.error(error);
 	}
 }
-const releaseAPK =async (req, res) => {
+const releaseAPK =async (req, res, next) => {
 	// @TODO Make sure user is member of group.
 	try {
 		const group = sanitize(req.params.group)
@@ -39,7 +39,8 @@ const releaseAPK =async (req, res) => {
             res.send({ statusCode: 200, data: 'ok', buildId})
 	} catch (error) {
 		console.log({error})
-		res.send({ statusCode: 500, data: error })
+    next(error)
+		// res.send({ statusCode: 500, data: errorMessage })
 	}
 }
 

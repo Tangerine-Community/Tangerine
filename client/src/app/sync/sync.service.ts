@@ -180,16 +180,16 @@ export class SyncService {
         // "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
         "form.id": {
           "$in": [
-            ...formInfos.reduce(($or, formInfo) => {
+            ...formInfos.reduce(($formIds, formInfo) => {
               if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-                $or = [
-                  ...$or,
+                $formIds = [
+                  ...$formIds,
                   ...[
                     formInfo.id
                   ]
                 ]
               }
-              return $or
+              return $formIds
             }, [])
           ]
         }
