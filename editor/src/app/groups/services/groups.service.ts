@@ -162,8 +162,14 @@ export class GroupsService {
       {releaseType, versionTag, releaseNotes, buildId: UUID()}).toPromise();
       return result;
     } catch (error) {
+      console.log("error: " + error)
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+      if (typeof error.error) {
+        const errorMessage = 'Error generating APK: ' + error.error.message
+        this.errorHandler.handleError(_TRANSLATE(errorMessage));
+        throw new Error(errorMessage)
       }
     }
   }

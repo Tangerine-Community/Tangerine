@@ -1,8 +1,9 @@
 table.mat-table {
-    width: 100%;
+  width: 100%;
 }
 
 mat-form-field {
-    margin-top: 3%;
-    width: 95%;
+  margin-top: 3%;
+  margin-left: 1em;
+  width: 95%;
 }
