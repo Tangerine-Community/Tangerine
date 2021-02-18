@@ -15,7 +15,7 @@ import {Breadcrumb} from "../../shared/_components/breadcrumb/breadcrumb.compone
 export class HistoricalReleasesApkLiveComponent implements OnInit {
   title = _TRANSLATE('APK Live Archives')
   breadcrumbs:Array<Breadcrumb> = []
-  displayedColumns = [ 'versionTag','build', 'releaseType', 'date', 'buildId', 'releaseNotes'];
+  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date', 'buildId', 'tangerineVersion', 'releaseNotes'];
   groupsData;
   groupId;
   @ViewChild(MatPaginator) paginator: MatPaginator;
