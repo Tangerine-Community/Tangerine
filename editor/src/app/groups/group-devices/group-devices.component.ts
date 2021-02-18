@@ -173,7 +173,7 @@ export class GroupDevicesComponent implements OnInit {
         }
         // const durationUTC = moment.utc(duration).format('HH:mm:ss')
 
-        let duration = replicationStatus?.duration ? moment.utc(replicationStatus?.duration).format('HH:mm:ss') :
+        let duration = replicationStatus?.syncCouchdbServiceDuration ? moment.utc(replicationStatus?.syncCouchdbServiceDuration).format('HH:mm:ss') :
           replicationStatus?.info ? moment.utc(moment.duration(moment(replicationStatus?.info?.end_time).diff(moment(replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : ''
         const versionTag = replicationStatus?.deviceInfo?.versionTag
         const tangerineVersion = replicationStatus?.deviceInfo?.tangerineVersion
@@ -257,17 +257,27 @@ export class GroupDevicesComponent implements OnInit {
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
     window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
-      <tangy-form>
-        <tangy-form-item id="edit-device" on-change="
-          const selectedSLshowLevels = inputs.sync_location__show_levels.value.slice(0, inputs.sync_location__show_levels.value.findIndex(option => option.value === 'on')+1).map(option => option.name).join(',')
-          inputs.sync_location.setAttribute('show-levels',selectedSLshowLevels)
-        ">
-          <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
-          <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
-          <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
-          <tangy-location
-            ${device.claimed ? `disabled` : ''}
-            required
+    <h2>Device Settings</h2>
+    <style>
+    .device-settings-list {
+      vertical-align: top;
+      font-size: larger;
+      font-weight: bold ;
+    }
+    .device-settings-list-element {
+      vertical-align: top;
+      padding-top: 40px;
+    }
+    table {
+        margin-left: 1em;
+    }
+    </style>
+    <table>
+    <tr><td class="device-settings-list">ID</td><td>${device._id}</td></tr>
+    <tr><td class="device-settings-list">Token</td><td>${device.token}</td></tr>
+    <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
+    <tr><td class="device-settings-list"><div class="device-settings-list-element">Assigned Location:</div></td><td><tangy-location
+            disabled
             name="assigned_location"
             label="Assign device to location at which location?"
             show-levels='${locationList.locationsLevels.join(',')}'
@@ -275,20 +285,19 @@ export class GroupDevicesComponent implements OnInit {
               value='${JSON.stringify(device.assignedLocation.value)}'
             ` : ''}
           >
-          </tangy-location>
-          <tangy-radio-buttons
-            ${device.claimed ? `disabled` : ''}
-            required
+          </tangy-location></td></tr>
+     <tr><td class="device-settings-list"><div class="device-settings-list-element">Sync Location:</div></td><td><tangy-radio-buttons
+            disabled
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
               value='${
-                JSON.stringify(
-                  locationList.locationsLevels.map(level => {
-                    return {
-                      name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
-                    }
-                  })
-                )
-              }'
+      JSON.stringify(
+        locationList.locationsLevels.map(level => {
+          return {
+            name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
+          }
+        })
+      )
+    }'
             ` : ''}
             label="Sync device to location at which level?"
             name="sync_location__show_levels"
@@ -297,9 +306,9 @@ export class GroupDevicesComponent implements OnInit {
               <option value="${level}">${level}</option>
             `).join('')}
           </tangy-radio-buttons>
+
           <tangy-location
-            ${device.claimed ? `disabled` : ''}
-            required
+            disabled
             name="sync_location"
             label="Sync device to which location?"
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
@@ -307,21 +316,18 @@ export class GroupDevicesComponent implements OnInit {
               value='${JSON.stringify(device.syncLocations[0].value)}'
             ` : ''}
           >
-          </tangy-location>
+          </tangy-location></td></tr>
+</table>
+<h2>Edit Device Description:</h2>
+      <tangy-form>
+        <tangy-form-item id="edit-device" on-change="">
           <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
         </tangy-form-item>
       </tangy-form>
     </paper-dialog-scrollable>
     `
     window['dialog'].querySelector('tangy-form').addEventListener('submit', async (event) => {
-      device.assignedLocation.value = event.target.inputs.find(input => input.name === 'assigned_location').value
-      device.assignedLocation.showLevels = event.target.inputs.find(input => input.name === 'assigned_location').showLevels.split(',')
-      device.syncLocations[0] = {
-        value: event.target.inputs.find(input => input.name === 'sync_location').value,
-        showLevels: event.target.inputs.find(input => input.name === 'sync_location').showLevels.split(',')
-      }
       device.description = event.target.inputs.find(input => input.name === 'description').value
-
       await this.groupDevicesService.updateDevice(this.groupId, device)
       this.update()
       window['dialog'].close()
