@@ -7,7 +7,7 @@ __New Features__
 - Enables filtering of Case Event Schedule by Device's Assigned Location PR: [#2591](https://github.com/Tangerine-Community/Tangerine/pull/2591)
 
 __Fixes__
-- Enables editing of device description. Commit: [#9771d93](https://github.com/Tangerine-Community/Tangerine/commit/9771d936842a5d826e45c539a8d67c86d3664b40)
+- Enables editing of device description. Commit: [#2613](https://github.com/Tangerine-Community/Tangerine/issues/2613)
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
