@@ -1,3 +1,4 @@
+import { DeviceService } from './../../../device/services/device.service';
 import { TangyFormResponse } from './../../../tangy-forms/tangy-form-response.class';
 import { FormInfo } from './../../../tangy-forms/classes/form-info.class';
 import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
@@ -54,6 +55,7 @@ export class CaseEventScheduleComponent implements OnInit {
     private userService:UserService,
     private formsInfoService:TangyFormsInfoService,
     private caseService:CaseService,
+    private deviceService:DeviceService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -98,6 +100,7 @@ export class CaseEventScheduleComponent implements OnInit {
   async render(caseEvents:Array<CaseEvent>) {
     // Get an array of unique cases found related to the events.
     const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
+    const appConfig = await this.appConfigService.getAppConfig()
     const cases:Array<TangyFormResponse> = []
     const uniqueCaseIds = caseEvents.reduce((uniqueCaseIds, caseEventInstance) => {
       return uniqueCaseIds.indexOf(caseEventInstance.caseId) === -1
@@ -106,6 +109,14 @@ export class CaseEventScheduleComponent implements OnInit {
     }, [])
     for (const caseId of uniqueCaseIds) {
       cases.push(await userDb.get(caseId))
+    }
+    if (appConfig.filterCaseEventScheduleByDeviceAssignedLocation) {
+      const deviceInfo = await this.deviceService.getDevice()
+      const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]
+      const caseIdsThatMatchDeviceAssignedLocation = cases
+        .filter(caseInstance => caseInstance['location'][lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
+        .map(caseInstance => caseInstance._id)
+      caseEvents = caseEvents.filter(caseEvent => caseIdsThatMatchDeviceAssignedLocation.includes(caseEvent.caseId))
     }
     // Keept track of days of week seen. When we detect a new day, add a dateLabel and dateNumber.
     let daysOfWeekSeen = []
