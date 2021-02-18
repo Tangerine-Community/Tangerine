@@ -257,15 +257,12 @@ export class GroupDevicesComponent implements OnInit {
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
     window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
-      <tangy-form>
-        <tangy-form-item id="edit-device" on-change="
-          const selectedSLshowLevels = inputs.sync_location__show_levels.value.slice(0, inputs.sync_location__show_levels.value.findIndex(option => option.value === 'on')+1).map(option => option.name).join(',')
-          inputs.sync_location.setAttribute('show-levels',selectedSLshowLevels)
-        ">
-          <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
-          <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
-          <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
-          <tangy-location
+    <h2>Device Settings</h2>
+    <table class="device-settings">
+    <tr><td>ID</td><td>${device._id}</td></tr>
+    <tr><td>Token</td><td>${device.token}</td></tr>
+    <tr><td>Claimed</td><td><tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox></td></tr>
+    <tr><td>Assigned Location: </td><td><tangy-location
             ${device.claimed ? `disabled` : ''}
             required
             name="assigned_location"
@@ -275,20 +272,20 @@ export class GroupDevicesComponent implements OnInit {
               value='${JSON.stringify(device.assignedLocation.value)}'
             ` : ''}
           >
-          </tangy-location>
-          <tangy-radio-buttons
+          </tangy-location></td></tr>
+     <tr><td>Sync Location: </td><td><tangy-radio-buttons
             ${device.claimed ? `disabled` : ''}
             required
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
               value='${
-                JSON.stringify(
-                  locationList.locationsLevels.map(level => {
-                    return {
-                      name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
-                    }
-                  })
-                )
-              }'
+      JSON.stringify(
+        locationList.locationsLevels.map(level => {
+          return {
+            name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
+          }
+        })
+      )
+    }'
             ` : ''}
             label="Sync device to location at which level?"
             name="sync_location__show_levels"
@@ -297,6 +294,7 @@ export class GroupDevicesComponent implements OnInit {
               <option value="${level}">${level}</option>
             `).join('')}
           </tangy-radio-buttons>
+
           <tangy-location
             ${device.claimed ? `disabled` : ''}
             required
@@ -307,21 +305,18 @@ export class GroupDevicesComponent implements OnInit {
               value='${JSON.stringify(device.syncLocations[0].value)}'
             ` : ''}
           >
-          </tangy-location>
+          </tangy-location></td></tr>
+</table>
+<p>You may change the Description:</p>
+      <tangy-form>
+        <tangy-form-item id="edit-device" on-change="">
           <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
         </tangy-form-item>
       </tangy-form>
     </paper-dialog-scrollable>
     `
     window['dialog'].querySelector('tangy-form').addEventListener('submit', async (event) => {
-      device.assignedLocation.value = event.target.inputs.find(input => input.name === 'assigned_location').value
-      device.assignedLocation.showLevels = event.target.inputs.find(input => input.name === 'assigned_location').showLevels.split(',')
-      device.syncLocations[0] = {
-        value: event.target.inputs.find(input => input.name === 'sync_location').value,
-        showLevels: event.target.inputs.find(input => input.name === 'sync_location').showLevels.split(',')
-      }
       device.description = event.target.inputs.find(input => input.name === 'description').value
-
       await this.groupDevicesService.updateDevice(this.groupId, device)
       this.update()
       window['dialog'].close()
