@@ -16,7 +16,7 @@ export class HistoricalReleasesPwaLiveComponent implements OnInit {
   
   title = _TRANSLATE('PWA Live Archives')
   breadcrumbs:Array<Breadcrumb> = []
-  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date','buildId', 'releaseNotes'];
+  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date', 'buildId', 'tangerineVersion', 'releaseNotes'];
   groupsData;
   groupId;
   @ViewChild(MatPaginator) paginator: MatPaginator;
