@@ -55,6 +55,8 @@ th, td {
 .w-170{
   width: 170px;
 }
-.device-settings td {
+.device-settings-list {
   vertical-align: top;
+  font-size: larger;
+  font-weight: bold ;
 }

@@ -258,13 +258,26 @@ export class GroupDevicesComponent implements OnInit {
     window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
     <h2>Device Settings</h2>
-    <table class="device-settings">
-    <tr><td>ID</td><td>${device._id}</td></tr>
-    <tr><td>Token</td><td>${device.token}</td></tr>
-    <tr><td>Claimed</td><td><tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox></td></tr>
-    <tr><td>Assigned Location: </td><td><tangy-location
-            ${device.claimed ? `disabled` : ''}
-            required
+    <style>
+    .device-settings-list {
+      vertical-align: top;
+      font-size: larger;
+      font-weight: bold ;
+    }
+    .device-settings-list-element {
+      vertical-align: top;
+      padding-top: 40px;
+    }
+    table {
+        margin-left: 1em;
+    }
+    </style>
+    <table>
+    <tr><td class="device-settings-list">ID</td><td>${device._id}</td></tr>
+    <tr><td class="device-settings-list">Token</td><td>${device.token}</td></tr>
+    <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
+    <tr><td class="device-settings-list"><div class="device-settings-list-element">Assigned Location:</div></td><td><tangy-location
+            disabled
             name="assigned_location"
             label="Assign device to location at which location?"
             show-levels='${locationList.locationsLevels.join(',')}'
@@ -273,9 +286,8 @@ export class GroupDevicesComponent implements OnInit {
             ` : ''}
           >
           </tangy-location></td></tr>
-     <tr><td>Sync Location: </td><td><tangy-radio-buttons
-            ${device.claimed ? `disabled` : ''}
-            required
+     <tr><td class="device-settings-list"><div class="device-settings-list-element">Sync Location:</div></td><td><tangy-radio-buttons
+            disabled
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
               value='${
       JSON.stringify(
@@ -296,8 +308,7 @@ export class GroupDevicesComponent implements OnInit {
           </tangy-radio-buttons>
 
           <tangy-location
-            ${device.claimed ? `disabled` : ''}
-            required
+            disabled
             name="sync_location"
             label="Sync device to which location?"
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
@@ -307,7 +318,7 @@ export class GroupDevicesComponent implements OnInit {
           >
           </tangy-location></td></tr>
 </table>
-<p>You may change the Description:</p>
+<h2>Edit Device Description:</h2>
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="">
           <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
