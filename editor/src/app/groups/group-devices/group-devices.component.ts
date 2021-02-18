@@ -173,7 +173,7 @@ export class GroupDevicesComponent implements OnInit {
         }
         // const durationUTC = moment.utc(duration).format('HH:mm:ss')
 
-        let duration = replicationStatus?.duration ? moment.utc(replicationStatus?.duration).format('HH:mm:ss') :
+        let duration = replicationStatus?.syncCouchdbServiceDuration ? moment.utc(replicationStatus?.syncCouchdbServiceDuration).format('HH:mm:ss') :
           replicationStatus?.info ? moment.utc(moment.duration(moment(replicationStatus?.info?.end_time).diff(moment(replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : ''
         const versionTag = replicationStatus?.deviceInfo?.versionTag
         const tangerineVersion = replicationStatus?.deviceInfo?.tangerineVersion
