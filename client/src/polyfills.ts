@@ -16,6 +16,8 @@ import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 (window as any).unsafeCSS = unsafeCSS;
 (window as any).unsafeHTML = unsafeHTML;
 
+import { v4 as UUID } from 'uuid';
+(window as any).uuid = UUID;
 
 import * as _ from 'underscore';
 (window as any)._ = _;
