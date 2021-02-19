@@ -141,6 +141,185 @@
       ]
     },
     {
+      "id": "admin-create-read",
+      "name": "Admin can create and read, Data Collector has no permission",
+      "permissions": {
+        "create": ["admin"],
+        "read": ["admin"]
+      },
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+         {
+          "id": "event-form-definition-abxo39",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Test form",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        }        
+      ]
+    },
+    {
+      "id": "admin-create-read--dataCollector-read",
+      "name": "Admin can create and read, Data Collector can read.",
+      "permissions": {
+        "create": ["admin"],
+        "read": ["dataCollector", "admin"]
+      },
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-abxo39",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Test form",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        } 
+      ]
+    },
+    {
+      "id": "admin-create--dataCollector-read",
+      "name": "Admin can create, Data Collector can read.",
+      "permissions": {
+        "create": ["admin"],
+        "read": ["dataCollector"]
+      },
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-abxo39",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Test form",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        } 
+      ]
+    },
+    {
+      "id": "no-one-create--everyone-read",
+      "name": "No one can create, everyone can read.",
+      "permissions": {
+        "create": []
+      },
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-abxo39",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Test form",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": false
+        } 
+      ]
+    },
+    {
+      "id": "event-with-device-user-role-based-access-to-event-forms",
+      "name": "Event with DeviceUser Role based access to EventForm(s)",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+         {
+          "id": "admin-create-read-update-delete--data-collector-none",
+          "name": "Admin can create, read, update, and delete. Data Collector has no permission.",
+          "permissions": {
+            "create": ["admin"],
+            "read": ["admin"],
+            "update": ["admin"],
+            "delete": ["admin"]
+          },
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "autoPopulate": false,
+          "required": true,
+          "repeatable": true 
+        },
+        {
+          "id": "admin-create-read-update-delete--data-collector-update",
+          "name": "Admin can create, read, update, and delete. Data Collector can update.",
+          "permissions": {
+            "create": ["admin"],
+            "read": ["admin"],
+            "update": ["admin", "dataCollector"],
+            "delete": ["admin"]
+          },
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "autoPopulate": false,
+          "required": true,
+          "repeatable": true 
+        },
+        {
+          "id": "no-one-create--everyone-read-update-delete",
+          "name": "No one can create. Everyone can read, update, and delete.",
+          "permissions": {
+            "create": []
+          },
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "autoPopulate": false,
+          "required": true,
+          "repeatable": true 
+        },
+        {
+          "id": "everyone-create-read-update--admin-delete",
+          "name": "Everyone can create, read, and update. Admin can delete.",
+          "permissions": {
+            "delete": ["admin"]
+          },
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "allowDeleteIfFormNotCompleted": true,
+          "allowDeleteIfFormNotStarted": true,
+          "autoPopulate": false,
+          "required": true,
+          "repeatable": true 
+        }
+      ]
+    },
+    {
+      "id": "another-event-with-role-2-forms",
+      "name": "Another event with role 2 forms",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-abxo39",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Example of an Event Form that DOES NOT auto-populate when a participant is added or the event is created.",
+          "autoPopulate": false,
+          "required": false,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-aieb38",
+          "formId": "test-form",
+          "forCaseRole": "role-2",
+          "name": "Example of an Event Form that DOES auto-populate when a participant is added or the event is created.",
+          "autoPopulate": true,
+          "required": false,
+          "repeatable": false
+        }
+      ]
+    },
+    {
       "id": "change-location-of-case",
       "name": "Change location of case",
       "repeatable": true,
