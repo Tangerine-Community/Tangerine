@@ -21,6 +21,8 @@ import { LockBoxContents } from '../_classes/lock-box-contents.class';
 import { DB } from '../_factories/db.factory';
 import {VariableService} from "./variable.service";
 
+export type UserRole = string
+
 @Injectable()
 export class UserService {
 
@@ -30,6 +32,8 @@ export class UserService {
   config: AppConfig
   _currentUser = ''
   _initialized = false
+  profile:TangyFormResponseModel
+  roles:Array<string>
   sharedUserDatabase;
   public userLoggedIn$:Subject<UserAccount> = new Subject()
   public userLoggedOut$:Subject<UserAccount> = new Subject()
@@ -53,6 +57,9 @@ export class UserService {
 
   async initialize() {
     this.config = await this.appConfigService.getAppConfig()
+    if (this.isLoggedIn()) {
+      await this.setCurrentUser(this.getCurrentUser())
+    }
   }
 
   async installSharedUserDatabase(device) {
@@ -224,8 +231,8 @@ export class UserService {
         id: 'item1',
         inputs: [
           {
-            name: 'role',
-            value: 'admin'
+            name: 'roles',
+            value: [{name: 'admin', value: 'on'}]
           },
           {
             name: 'first_name',
@@ -272,12 +279,15 @@ export class UserService {
     }
   }
 
-  async getRole(username = '') {
-    const userProfile = await this.getUserProfile(username)
-    const roleInput = userProfile.items[0].inputs.find(input => input.name === 'role')
-    return roleInput
-      ? roleInput.value
-      : undefined 
+  getRoles(username = ''):Array<UserRole> {
+    const rolesInput = this.profile.items[0].inputs.find(input => input.name === 'roles')
+    return rolesInput
+      ? rolesInput.value.reduce((roles, option) => {
+          return option.value === 'on'
+            ? [...roles, option.name]
+            : roles
+        }, [])
+      : [] 
   }
 
   async create(userSignup:UserSignup):Promise<UserAccount> {
@@ -461,11 +471,12 @@ export class UserService {
         await this.lockBoxService.openLockBox(username, password)
       }
       const userAccount = await this.getUserAccount(username)
-      this.setCurrentUser(userAccount.username)
+      await this.setCurrentUser(userAccount.username)
       // Make globals available for form developers.
       window['userDb'] = await this.getUserDatabase(username)
       window['username'] = this.getCurrentUser()
       window['userProfile'] = await this.getUserProfile()
+      window['userRoles'] = this.getRoles()
       window['userId'] = window['userProfile']._id
       this.userLoggedIn$.next(userAccount)
       return true
@@ -541,7 +552,7 @@ export class UserService {
       : this._currentUser
   }
 
-  setCurrentUser(username):string {
+  async setCurrentUser(username):Promise<string> {
     // Note: Unless developing locally, we store user session information in memory so we don't for example put the
     // contents of the lockbox in an unencrypted form on disk in localStorage/etc. Putting currentUser in memory
     // guarantees that if we reload the user will be logged out as opposed to being logged in but not having access
@@ -552,6 +563,8 @@ export class UserService {
       this._currentUser = username
     }
     window['currentUser'] = username
+    this.profile = await this.getUserProfile()
+    this.roles = this.getRoles()
     return username
   }
 
