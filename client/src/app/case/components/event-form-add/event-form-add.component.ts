@@ -1,4 +1,4 @@
-import { EventFormAccessOperation, EventFormDefinition } from './../../classes/event-form-definition.class';
+import { EventFormDefinition, EventFormOperation } from './../../classes/event-form-definition.class';
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
@@ -88,7 +88,7 @@ export class EventFormAddComponent implements AfterContentInit {
       }, [])
     const availableEventFormDefinitions = []
     for (const eventFormDefinition of availableEventFormDefinitionsForParticipant) {
-      if (await this.caseService.hasEventFormAccess(EventFormAccessOperation.CREATE, this.caseEvent.caseEventDefinitionId, eventFormDefinition)) {
+      if (await this.caseService.hasEventFormPermission(EventFormOperation.CREATE, eventFormDefinition)) {
         availableEventFormDefinitions.push(eventFormDefinition)
       }
     }
