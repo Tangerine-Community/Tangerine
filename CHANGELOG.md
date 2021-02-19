@@ -3,7 +3,45 @@
 ## v3.17.0
 
 __New Features and Fixes__
+- Device User Role access to Case Events and Event Forms [#2598](https://github.com/Tangerine-Community/Tangerine/pull/2598)
+  - [Getting started with using Device User Roles](https://youtu.be/ntL-i8MVpew)
+  - [Demo: Device User role based access to Event Forms](https://youtu.be/T0GfYHw6t6k)
+  - [Demo: Device user role based permissions for Case Events](https://www.youtube.com/watch?v=5okk6XrrfaA&feature=youtu.be)
+- Deactivate Case Participant API [#2594](https://github.com/Tangerine-Community/Tangerine/pull/2594)
+  - [Demo: https://youtu.be/Ulh-yCqfbFA](https://youtu.be/Ulh-yCqfbFA)
 - Fix print form as table for some forms. (https://github.com/Tangerine-Community/Tangerine/pull/2568)
+- Update the group icon on server [#2355](https://github.com/Tangerine-Community/Tangerine/pull/2355)
+- Data Collector with a single click opens all pages of a completed form response [#2596](https://github.com/Tangerine-Community/Tangerine/issues/2596)
+- Add window.uuid() API [#2595](https://github.com/Tangerine-Community/Tangerine/pull/2595)
+
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.0
+./start.sh v3.17.0
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.2
+```  
+
+
 
 ## v3.16.2
 
