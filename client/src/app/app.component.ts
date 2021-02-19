@@ -140,6 +140,7 @@ export class AppComponent implements OnInit {
 
     await this.checkPermissions();
     // Initialize services.
+    await this.deviceService.initialize()
     await this.userService.initialize();
 
     // Get globally exposed config.
