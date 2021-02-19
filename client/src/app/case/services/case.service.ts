@@ -25,6 +25,10 @@ import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import {Conflict} from "../classes/conflict.class";
 import * as jsonpatch from "fast-json-patch";
 
+function hasDifferences(a, b) {
+  // @TODO
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -203,7 +207,21 @@ class CaseService {
   }
 
   async load(id:string) {
-    await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
+    const caseData = await this.tangyFormService.getResponse(id)
+    if (!caseData.events) {
+      caseData.events = await this.db.query('caseEventsByCaseId', { keys: [ id ], include_docs: true })
+        .rows.map(row => row.doc)
+      caseData.participants = await this.db.query('participantsByCaseId', { keys: [ id ], include_docs: true })
+        .rows.map(row => row.doc)
+      for (const caseEvent of caseData.events) {
+        caseEvent.eventForms = await this.db.query('eventFormsByCaseEventId', { keys: [ caseEvent.id ], include_docs: true })
+          .rows.map(row => row.doc)
+      }
+      this._initialCaseData = JSON.parse(JSON.stringify(caseData))
+    } else {
+      this._initialCaseData = {}
+    }
+    await this.setCase(new Case(caseData))
     this._shouldSave = true 
   }
 
@@ -240,10 +258,50 @@ class CaseService {
       .toPromise()
   }
 
+  flattenCaseToDocs(caseInstance) {
+    const docs = []
+    const caseData = JSON.parse(JSON.stringify(caseInstance))
+    for (let caseEvent of caseData.events) {
+      for (let eventForm of caseEvent.eventForms) {
+        docs.push({
+          caseEventId: caseEvent.id,
+          ...eventForm
+        })
+      }
+      delete caseEvent.eventForms
+      docs.push(caseEvent)
+    }
+    delete caseData.events
+    docs.push(caseData)
+    return docs
+  }
+
   async save() {
     if (this._shouldSave) {
-      await this.tangyFormService.saveResponse(this.case)
-      await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+      if (this._initialCaseData._id) {
+        const docsInInitialCase = this.flattenCase(this._initialCaseData)
+        const docsInCurrentCase = this.flattenCase(this.case)
+        const docsToDelete = docsInInitialCase
+          .filter(docInInitialCase => !docsInCurrentCase.map(doc => doc.id).includes(docInInitialCase.id)) 
+        const docsToCreate = docsInCurrentCase
+          .filter(docInCurrentCase => !docsInInitialCase.map(doc => doc.id).includes(docInCurrentCase.id)) 
+        const docsToUpdate = docsInCurrentCase
+          .filter(docInCurrentCase => docsInInitialCase.map(doc => doc.id).includes(docInCurrentCase.id)) 
+          .filter(doc => hasDifferences(docsInInitialCase.find(d => d.id === doc.id), docsInCurrentCase.find(d => d.id === doc.id)))
+        for (let doc of docsToDelete) {
+          this.db.delete(doc)
+        }
+        for (let doc of docsToCreate) {
+          this.db.put(doc)
+        }
+         for (let doc of docsToUpdate) {
+          this.db.put(doc)
+        }
+        this.load(this.case._id)
+      } else {
+        await this.tangyFormService.saveResponse(this.case)
+        await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+      }
     }
   }
 
