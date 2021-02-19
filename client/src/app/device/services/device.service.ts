@@ -30,6 +30,7 @@ export class DeviceService {
   buildId:string
   tangerineVersion:string
   versionTag:string
+  appInfo:AppInfo
 
   constructor(
     private httpClient:HttpClient,
@@ -41,6 +42,31 @@ export class DeviceService {
 
   async install() {
     // ?
+  }
+
+  async initialize() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const buildId = window.location.hostname !== 'localhost' ? await this.getBuildId() : 'localhost'
+    const buildChannel = window.location.hostname !== 'localhost' ? await this.getBuildChannel() : 'localhost'
+    const device = await this.getDevice()
+    const locationList = await this.appConfigService.getLocationList();
+    const flatLocationList = Loc.flatten(locationList)
+    const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
+      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
+      : 'N/A'
+    const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
+    const versionTag = window.location.hostname !== 'localhost' ? await this.getVersionTag() : 'localhost'
+    this.appInfo = <AppInfo>{
+      serverUrl: appConfig.serverUrl,
+      groupName: appConfig.groupName,
+      groupId: appConfig.groupId,
+      tangerineVersion,
+      buildChannel,
+      buildId,
+      deviceId: device._id,
+      assignedLocation,
+      versionTag
+    }
   }
 
   async getRemoteDeviceInfo(id, token):Promise<Device> {
@@ -146,29 +172,8 @@ export class DeviceService {
       .get(`${appConfig.serverUrl}group-device-public/did-sync-error/${appConfig.groupId}/${device._id}/${device.token}/${version}/${error}`).toPromise()
   }
 
-  async getAppInfo() {
-    const appConfig = await this.appConfigService.getAppConfig()
-    const buildId = await this.getBuildId()
-    const buildChannel = await this.getBuildChannel()
-    const device = await this.getDevice()
-    const locationList = await this.appConfigService.getLocationList();
-    const flatLocationList = Loc.flatten(locationList)
-    const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
-      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
-      : 'N/A'
-    const tangerineVersion = await this.getTangerineVersion()
-    const versionTag = await this.getVersionTag()
-    return <AppInfo>{
-      serverUrl: appConfig.serverUrl,
-      groupName: appConfig.groupName,
-      groupId: appConfig.groupId,
-      tangerineVersion,
-      buildChannel,
-      buildId,
-      deviceId: device._id,
-      assignedLocation,
-      versionTag
-    }
+  getAppInfo() {
+    return this.appInfo
   }
 
   async getTangerineVersion() {
