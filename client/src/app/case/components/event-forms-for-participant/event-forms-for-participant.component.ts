@@ -121,9 +121,11 @@ export class EventFormsForParticipantComponent implements OnInit {
       renderedListItem,
       newFormLink: `/case/event/form-add/${this.caseService.case._id}/${this.caseEvent.id}/${participant.id}`,
       caseEventHasEventFormsForParticipantsRole: this.caseEventDefinition.eventFormDefinitions.some(eventDef => eventDef.forCaseRole === participant.caseRoleId),
-      eventFormsParticipantCanCreate: this.eventFormsParticipantCanCreate(participant.id),
+      eventFormsParticipantCanCreate: participant.inactive
+        ? []
+        : this.eventFormsParticipantCanCreate(participant.id),
       eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
-        return eventForm.participantId === participant.id
+        return eventForm.participantId === participant.id && (!participant.inactive || eventForm.formResponseId)
           ? [...eventFormInfos, <EventFormInfo>{
             eventForm,
             eventFormDefinition: this
