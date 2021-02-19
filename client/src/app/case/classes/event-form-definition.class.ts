@@ -1,8 +1,11 @@
+import { UserRole } from "src/app/shared/_services/user.service"
+
 export class EventFormDefinition {
 
   id:string
   formId:string
   name:string
+  permissions:EventFormPermissions
   // @TODO: roles[string]
   forCaseRole?:string = ''
   // Wether or not multiple EventForm Instances can be created in the same EventForm for the same Participant.
@@ -24,16 +27,16 @@ export class EventFormDefinition {
   }
 }
 
-export enum EventFormAccessOperation {
-  CREATE = 'CREATE',
-  READ = 'READ',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE'
+export enum EventFormOperation {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete'
 }
 
-export interface EventFormAccess {
-  create:Array<string>
-  read:Array<string>
-  update:Array<string>
-  delete:Array<string>
+export interface EventFormPermissions {
+  [EventFormOperation.CREATE]:Array<UserRole>
+  [EventFormOperation.READ]:Array<UserRole>
+  [EventFormOperation.UPDATE]:Array<UserRole>
+  [EventFormOperation.DELETE]:Array<UserRole>
 }

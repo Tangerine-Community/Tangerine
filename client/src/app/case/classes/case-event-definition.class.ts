@@ -1,19 +1,13 @@
+import { UserRole } from 'src/app/shared/_services/user.service'
 import { EventFormDefinition } from './event-form-definition.class'
 
-
-interface CaseEventAccess {
-  create:Array<string>
-  read:Array<string>
-  update:Array<string>
-  delete:Array<string>
-}
 
 class CaseEventDefinition {
 
   id:string
   name:string
   eventFormDefinitions:Array<EventFormDefinition> = []
-  access:CaseEventAccess
+  permissions:CaseEventPermissions
   repeatable?:boolean = false
   required?:boolean = false
   templateListItemIcon?:string
@@ -30,4 +24,18 @@ class CaseEventDefinition {
 
 }
 
-export { CaseEventDefinition, CaseEventAccess }
+export enum CaseEventOperation {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete'
+}
+
+export interface CaseEventPermissions {
+  [CaseEventOperation.CREATE]:Array<UserRole>
+  [CaseEventOperation.READ]:Array<UserRole>
+  [CaseEventOperation.UPDATE]:Array<UserRole>
+  [CaseEventOperation.DELETE]:Array<UserRole>
+}
+
+export { CaseEventDefinition }

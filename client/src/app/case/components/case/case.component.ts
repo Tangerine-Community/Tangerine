@@ -1,3 +1,4 @@
+import { CaseEventOperation } from './../../classes/case-event-definition.class';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -19,11 +20,13 @@ class CaseEventInfo {
 export class CaseComponent implements AfterContentInit {
 
   private ready = false
-  userRole:string
+  userRoles:Array<string>
   templateTitle = ''
   templateDescription = ''
   caseEventsInfo:Array<CaseEventInfo>
   creatableCaseEventsInfo:Array<CaseEventInfo>
+  readableCaseEventsInfo:Array<CaseEventInfo>
+  unreadableCaseEventsInfo:Array<CaseEventInfo>
   selectedNewEventType = ''
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
@@ -41,7 +44,7 @@ export class CaseComponent implements AfterContentInit {
   }
 
   async ngAfterContentInit() {
-    this.userRole = await this.userService.getRole()
+    this.userRoles = await this.userService.getRoles()
     const caseId = window.location.hash.split('/')[2]
     // if (!this.caseService.case || caseId !== this.caseService.case._id) {
     await this.caseService.load(caseId)
@@ -70,33 +73,24 @@ export class CaseComponent implements AfterContentInit {
       .caseService
       .caseDefinition
       .eventDefinitions
-      .filter(eventDefinition => {
-        return (
-          eventDefinition.access &&
-          eventDefinition.access.read &&
-          this.userRole && 
-          !eventDefinition.access.read.includes(this.userRole)
-        )
-          ? false
-          : true
-      })
       .map(caseEventDefinition => {
         return {
           caseEventDefinition,
           caseEvents: this.caseService.case.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
         }
       })
+    this.readableCaseEventsInfo = this.caseEventsInfo.filter(caseEventInfo => {
+      return this.caseService.hasCaseEventPermission(CaseEventOperation.READ, caseEventInfo.caseEventDefinition)
+    })
+    this.unreadableCaseEventsInfo = this.caseEventsInfo.filter(caseEventInfo => {
+      return !this.caseService.hasCaseEventPermission(CaseEventOperation.READ, caseEventInfo.caseEventDefinition)
+    })
     this.creatableCaseEventsInfo = this.caseEventsInfo
       .filter(caseEventInfo => {
         return (
           (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0) &&
           undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id) &&
-          (
-            !this.userRole ||
-            !caseEventInfo.caseEventDefinition.access ||
-            !caseEventInfo.caseEventDefinition.access.create ||
-            caseEventInfo.caseEventDefinition.access.create.includes(this.userRole)
-          )
+          this.caseService.hasCaseEventPermission(CaseEventOperation.CREATE, caseEventInfo.caseEventDefinition)
         )
           ? true
           : false

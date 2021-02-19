@@ -1,6 +1,7 @@
+import { CaseEventOperation, CaseEventPermissions } from './../classes/case-event-definition.class';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
-import { EventFormDefinition, EventFormAccessOperation } from './../classes/event-form-definition.class';
+import { EventFormDefinition, EventFormOperation } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
@@ -267,16 +268,28 @@ class CaseService {
   /*
    * Role Access API
    */
-  async hasEventFormAccess(operation:EventFormAccessOperation, caseEventDefinitionId:string, eventFormDefinitionId:string) {
-    const deviceUserRole = await this.userService.getRole()
-    // @TODO Write this. But let's refactor to make it so users can have multiple roles.
-    return true
+  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition) {
+    if (
+        !eventFormDefinition.permissions ||
+        !eventFormDefinition.permissions[operation] ||
+        eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+    ) {
+      return true
+    } else {
+      return false
+    }
   }
 
-  async hasCaseEventAccess(operation:EventFormAccessOperation, caseEventDefinitionId:string) {
-    const deviceUserRole = await this.userService.getRole()
-    // @TODO Write this. But let's refactor to make it so users can have multiple roles. Then implement this helper in the CaseComponent Class.
-    return true
+  hasCaseEventPermission(operation:CaseEventOperation, eventDefinition:CaseEventDefinition) {
+    if (
+        !eventDefinition.permissions ||
+        !eventDefinition.permissions[operation] ||
+        eventDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+    ) {
+      return true
+    } else {
+      return false
+    }
   }
 
 

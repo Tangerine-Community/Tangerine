@@ -7,7 +7,7 @@ import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
-import { EventFormAccessOperation, EventFormDefinition } from '../../classes/event-form-definition.class';
+import { EventFormDefinition, EventFormOperation } from '../../classes/event-form-definition.class';
 import { EventForm } from '../../classes/event-form.class';
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -64,16 +64,16 @@ export class EventFormListItemComponent implements OnInit {
       this.canOpen = false
     } else if (!this.eventForm.complete) {
       // The Event Form has not been completed so opening would be an UPDATE operation.
-      this.canOpen = await this.caseService.hasEventFormAccess(EventFormAccessOperation.UPDATE, this.caseEvent.caseEventDefinitionId, this.eventForm.eventFormDefinitionId)
+      this.canOpen = await this.caseService.hasEventFormPermission(EventFormOperation.UPDATE, this.eventFormDefinition)
     } else if (this.eventForm.complete) {
       // The Event Form has been completed so opening would be a READ operation.
-      this.canOpen = await this.caseService.hasEventFormAccess(EventFormAccessOperation.READ, this.caseEvent.caseEventDefinitionId, this.eventForm.eventFormDefinitionId)
+      this.canOpen = await this.caseService.hasEventFormPermission(EventFormOperation.READ, this.eventFormDefinition)
     }
     this.canUserDeleteForms = (
         (this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete) ||
         (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId)
       )  &&
-      await this.caseService.hasEventFormAccess(EventFormAccessOperation.DELETE, this.caseEvent.caseEventDefinitionId, this.eventForm.eventFormDefinitionId)
+      await this.caseService.hasEventFormPermission(EventFormOperation.DELETE, this.eventFormDefinition)
     const getValue = (variableName) => {
       if (response) {
         const variablesByName = response.items.reduce((variablesByName, item) => {
