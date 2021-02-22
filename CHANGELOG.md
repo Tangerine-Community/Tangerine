@@ -10,6 +10,8 @@ __Fixes__
 - Enables editing of device description. Commit: [#2613](https://github.com/Tangerine-Community/Tangerine/issues/2613)
 
 __Server upgrade instructions__
+If you want to enable filtered Case Event Schedule by Device's Assigned Location, add `filterCaseEventScheduleByDeviceAssignedLocation` to your groups' `app-config.json` set to a value of `true`.
+
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
 
 ```
