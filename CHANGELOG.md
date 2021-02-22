@@ -9,9 +9,10 @@ __New Features and Fixes__
   - [Demo: Device user role based permissions for Case Events](https://www.youtube.com/watch?v=5okk6XrrfaA&feature=youtu.be)
 - Deactivate Case Participant API [#2594](https://github.com/Tangerine-Community/Tangerine/pull/2594)
   - [Demo: https://youtu.be/Ulh-yCqfbFA](https://youtu.be/Ulh-yCqfbFA)
+- Data Collector with a single click opens all pages of a completed form response [#2596](https://github.com/Tangerine-Community/Tangerine/issues/2596)
+- `skip()` and `unskip()` functions are now available in `tangy-form` level `on-change` logic for skipping and unskipping sections, not inputs.
 - Fix print form as table for some forms. (https://github.com/Tangerine-Community/Tangerine/pull/2568)
 - Update the group icon on server [#2355](https://github.com/Tangerine-Community/Tangerine/pull/2355)
-- Data Collector with a single click opens all pages of a completed form response [#2596](https://github.com/Tangerine-Community/Tangerine/issues/2596)
 - Add window.uuid() API [#2595](https://github.com/Tangerine-Community/Tangerine/pull/2595)
 
 
