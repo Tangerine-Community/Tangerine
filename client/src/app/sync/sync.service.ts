@@ -184,7 +184,6 @@ export class SyncService {
             message: window['t']('Built an index for the form id count. Thanks for waiting!')
           })
         }
-        console.log("r: " + JSON.stringify(r))
         const count = r.rows.length
         formStats = count
       } catch (e) {
