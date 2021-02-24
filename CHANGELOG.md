@@ -9,6 +9,9 @@ __New Features__
 - Added "Push all docs to the server" feature to the Admin Configuration menu item.
 - Added Operating System and Browser Version to Device listing.
 
+__Fixes__
+- Data collected after first registering and after updates fails to upload. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+
 __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
