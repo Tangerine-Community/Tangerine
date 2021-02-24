@@ -14,7 +14,7 @@ import { Loc } from 'tangy-form/util/loc.js';
 import * as qrcode from 'qrcode-generator-es6';
 import * as moment from 'moment'
 import * as XLSX from "xlsx";
-
+import { UAParser } from 'ua-parser-js';
 
 interface LocationNode {
   level:string
@@ -59,7 +59,7 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'network', 'star']
+  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'network', 'os', 'browserVersion', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
@@ -171,6 +171,16 @@ export class GroupDevicesComponent implements OnInit {
           replicationStatus = device.replicationStatuses[device.replicationStatuses.length - 1]
           device.replicationStatus = replicationStatus
         }
+        let errorFlag = false
+        if (replicationStatus?.info?.errors?.length > 0) {
+          errorFlag = true
+        }
+        if (replicationStatus?.pullError) {
+          errorFlag = true
+        }
+        if (replicationStatus?.pushError) {
+          errorFlag = true
+        }
         // const durationUTC = moment.utc(duration).format('HH:mm:ss')
 
         let duration = replicationStatus?.syncCouchdbServiceDuration ? moment.utc(replicationStatus?.syncCouchdbServiceDuration).format('HH:mm:ss') :
@@ -180,6 +190,8 @@ export class GroupDevicesComponent implements OnInit {
         const dbDocCount = replicationStatus?.dbDocCount
         const localDocsForLocation = replicationStatus?.localDocsForLocation
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
+        const parser = new UAParser();
+        parser.setUA(replicationStatus?.userAgent)
       return <DeviceInfo>{
         ...device,
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
@@ -192,6 +204,12 @@ export class GroupDevicesComponent implements OnInit {
         dbDocCount: dbDocCount,
         localDocsForLocation: localDocsForLocation,
         effectiveConnectionType: effectiveConnectionType,
+        errorFlag: errorFlag,
+        
+        os: replicationStatus?.userAgent ? parser?.getOS() : null,
+        osName: replicationStatus?.userAgent ? parser?.getOS()?.name : null,
+        osVersion: replicationStatus?.userAgent ? parser?.getOS()?.version : null,
+        browserVersion: replicationStatus?.userAgent ? parser?.getBrowser().version : null,
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         }).join('; ')
