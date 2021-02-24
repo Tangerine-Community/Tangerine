@@ -211,7 +211,14 @@ export class SyncCouchdbService {
         "batches_limit": 1,
         "remaining": 100,
         "pushed": pushed,
-        "checkpoint": 'source'
+        "checkpoint": 'source',
+        "selector": {
+          "$not": {
+            "_id": {
+              "$regex": "^_design"
+            }
+          }
+        }
       }
 
       syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
