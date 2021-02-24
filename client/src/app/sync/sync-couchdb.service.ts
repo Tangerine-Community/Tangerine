@@ -161,7 +161,6 @@ export class SyncCouchdbService {
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
           // const remaining = Math.round(info.docs_written/docIdsLength * 100)
-          // TODO: do we need to check for errors inside the info? This happens when there is a conflict when replicating - like on the _design doc.
           // Does it push all docs in the batch even if there is an error?
           status = <ReplicationStatus>{
             pushed: info.docs_written,
