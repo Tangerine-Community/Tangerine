@@ -348,12 +348,12 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.3')) return
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.4')) return
       console.log('Updating to v3.15.3...')
       // Build search index.
       await window['T'].search.createIndex()
       await userDb.query('search', { limit: 1 })
-      await variableService.set('ran-update-v3.15.3', 'true')
+      await variableService.set('ran-update-v3.15.4', 'true')
     }
   },
   {
@@ -367,20 +367,26 @@ export const updates = [
       if (appConfig.forceFullSync) {
         console.log('Performing full sync. This will take a little while.')
         status.next(_TRANSLATE(`Performing full sync. This will take a little while.`))
-        const fullSync = true
+        const fullSync = 'pull'
         const replicationStatus = await syncService.sync(false, false, fullSync)
         console.log('Completed sync.')
         status.next(_TRANSLATE(`Done with the full sync.`))
         await sleep(1000)
       }
-      if (appConfig.calculateLocalDocsForLocation) {
-        console.log("Adding find-docs-by-form-id-pageable index")
-        status.next(_TRANSLATE(`Adding a new index for sync. This may take a few moments to index.`))
-        await sleep(1000)
-        await window['T'].sync.createSyncIndexes(userDb)
-      }
       
       await variableService.set('ran-update-v3.16.0', 'true')
     }
-  }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.3')) return
+      console.log('Updating to v3.16.3...')
+      // Install SyncForm index.
+      await window['T'].sync.createSyncFormIndex()
+      // Let this be handled in the next sync optimization.
+      // await userDb.query('sync-formids', { limit: 0 })
+      await variableService.set('ran-update-v3.16.3', 'true')
+    }
+  },
 ]

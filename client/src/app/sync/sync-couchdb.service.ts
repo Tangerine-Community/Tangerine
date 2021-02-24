@@ -42,7 +42,7 @@ export class SyncCouchdbService {
   streamBatchSize = 25
   pullSyncOptions;
   pushSyncOptions;
-  fullSync: boolean;
+  fullSync: string;
   
   constructor(
     private http: HttpClient,
@@ -66,7 +66,7 @@ export class SyncCouchdbService {
     syncDetails:SyncCouchdbDetails,
     caseDefinitions:CaseDefinition[] = null,
     isFirstSync = false,
-    fullSync:boolean
+    fullSync:string
   ): Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.batchSize) {
@@ -129,6 +129,9 @@ export class SyncCouchdbService {
     if (typeof push_last_seq === 'undefined') {
       push_last_seq = 0;
     }
+    if (this.fullSync && this.fullSync === 'push') {
+      push_last_seq = 0;
+    }
 
     let progress = {
       'direction': 'push',
@@ -158,6 +161,8 @@ export class SyncCouchdbService {
         userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
           // const remaining = Math.round(info.docs_written/docIdsLength * 100)
+          // TODO: do we need to check for errors inside the info? This happens when there is a conflict when replicating - like on the _design doc.
+          // Does it push all docs in the batch even if there is an error?
           status = <ReplicationStatus>{
             pushed: info.docs_written,
             info: info,
@@ -259,7 +264,7 @@ export class SyncCouchdbService {
     if (typeof pull_last_seq === 'undefined') {
       pull_last_seq = 0;
     }
-    if (this.fullSync) {
+    if (this.fullSync && this.fullSync === 'pull') {
       pull_last_seq = 0;
     }
     const pullSelector = this.getPullSelector(syncDetails);

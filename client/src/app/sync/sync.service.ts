@@ -16,6 +16,8 @@ import {VariableService} from "../shared/_services/variable.service";
 import * as moment from 'moment'
 import {AppConfig} from "../shared/_classes/app-config.class";
 import {FormInfo} from "../tangy-forms/classes/form-info.class";
+import {createSearchIndex} from "../shared/_services/create-search-index";
+import { createSyncFormIndex } from './create-sync-form-index';
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
@@ -48,7 +50,7 @@ export class SyncService {
   syncCouchdbServiceEndime:string
 
   // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
-  async sync(useSharedUser = false, isFirstSync = false, fullSync = false):Promise<ReplicationStatus> {
+  async sync(useSharedUser = false, isFirstSync = false, fullSync:string):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
@@ -102,8 +104,8 @@ export class SyncService {
     this.syncCouchdbServiceEndime = new Date().toISOString()
 
     if (appConfig.calculateLocalDocsForLocation) {
-      let localDocsForLocation = await this.calculateLocalDocsForLocation(appConfig, userDb, formInfos);
-      this.replicationStatus.localDocsForLocation = localDocsForLocation
+      let formStats = await this.calculateLocalDocsForLocation(appConfig, userDb, formInfos);
+      this.replicationStatus.localDocsForLocation = formStats
     }
     const start = moment(this.syncCouchdbServiceStartTime)
     const end = moment(this.syncCouchdbServiceEndime)
@@ -112,6 +114,8 @@ export class SyncService {
     // const durationUTC = moment.utc(duration).format('HH:mm:ss')
 
     try {
+      // reset pullConflicts - we don't want to send these stats.
+      this.replicationStatus.pullConflicts = []
       this.replicationStatus.syncCouchdbServiceStartTime = this.syncCouchdbServiceStartTime
       this.replicationStatus.syncCouchdbServiceEndime = this.syncCouchdbServiceEndime
       this.replicationStatus.syncCouchdbServiceDuration = duration
@@ -127,6 +131,8 @@ export class SyncService {
       this.replicationStatus.effectiveConnectionType = effectiveType
       this.replicationStatus.networkDownlinkSpeed = downlink
       this.replicationStatus.networkDownlinkMax = downlinkMax
+      const userAgent = navigator['userAgent']
+      this.replicationStatus.userAgent = userAgent
 
       this.syncMessage$.next({
         message: window['t']('Sending sync status to server. Please wait...')
@@ -152,84 +158,39 @@ export class SyncService {
   }
 
   private async calculateLocalDocsForLocation(appConfig: AppConfig, userDb: UserDatabase, formInfos: Array<FormInfo>) {
-    if (appConfig.findSelectorLimit) {
-      this.findSelectorLimit = appConfig.findSelectorLimit
-      console.log("this.findSelectorLimit: " + this.findSelectorLimit)
-    }
-
-    // Setup Mango query for paging through almost all Docs.
-    if (!await this.variableService.get('inserted-find-docs-by-form-id-pageable-view')) {
-      this.syncMessage$.next({
-        message: window['t']('Creating index for location sync stats. Please wait...')
-      })
-      await this.createSyncIndexes(userDb)
-      this.syncMessage$.next({
-        message: window['t']('Done! Completed indexing for location sync stats. Please wait...')
-      })
-      await this.variableService.set('inserted-find-docs-by-form-id-pageable-view', 'true')
-    }
-
+    
     this.syncMessage$.next({
       message: window['t']('Sync is complete; calculating sync statistics. Please wait...')
     })
+    
+    let formStats
 
-    function makeFindSelector(lastModified) {
-
-      return {
-        "lastModified": {"$gt": lastModified},
-        // "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
-        "form.id": {
-          "$in": [
-            ...formInfos.reduce(($formIds, formInfo) => {
-              if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-                $formIds = [
-                  ...$formIds,
-                  ...[
-                    formInfo.id
-                  ]
-                ]
-              }
-              return $formIds
-            }, [])
-          ]
-        }
-      }
-    }
-
-    let findSelector = makeFindSelector(0)
-    let options = {
-      selector: findSelector,
-      sort: ['lastModified'],
-      limit: this.findSelectorLimit
-    }
-    let localDocsForLocation = 0
-    let remaining = true
-    while (remaining === true) {
       try {
-        await userDb.db.find(options, function (err, response) {
-          if (err) {
-            console.log("Error getting localDocsForLocation: " + err)
-          }
-          if (response && response.docs.length > 0) {
-            const lastModified = response.docs[response.docs.length - 1].lastModified;
-            // options["startkey"] = lastModified
-            findSelector = makeFindSelector(lastModified)
-            options = {
-              selector: findSelector,
-              sort: ['lastModified'],
-              limit: 50
-            }
-            options["skip"] = 1;
-            localDocsForLocation = localDocsForLocation + response.docs.length
-          } else {
-            remaining = false
-          }
-        })
+        if (!await this.variableService.get('first-index-for-sync-formids')) {
+          this.syncMessage$.next({
+            message: window['t']('Need to build an index for the form id count. Please wait...')
+          })
+        }
+        if (!await this.variableService.get('ran-update-v3.16.3')) {
+          console.log('Adding _design/sync-formids view')
+          await this.createSyncFormIndex()
+          await this.variableService.set('ran-update-v3.16.3', 'true')
+        }
+        
+        const r = await userDb.query('sync-formids')
+        if (!await this.variableService.get('first-index-for-sync-formids')) {
+          await this.variableService.set('first-index-for-sync-formids', 'true')
+          this.syncMessage$.next({
+            message: window['t']('Built an index for the form id count. Thanks for waiting!')
+          })
+        }
+        console.log("r: " + JSON.stringify(r))
+        const count = r.rows.length
+        formStats = count
       } catch (e) {
-        console.log("Error getting localDocsForLocation: " + e)
+        console.log("Error getting formStats: " + e)
       }
-    }
-    return localDocsForLocation;
+    return formStats;
   }
 
 // Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
@@ -262,32 +223,16 @@ export class SyncService {
     }
   }
 
-  async createSyncIndexes(userDb) {
-    console.log('Creating index for field of form.id and lastModified that is pageable')
-    await userDb.db.createIndex({
-      index: {
-        fields: [
-          'lastModified',
-          'form.id'
-        ],
-        ddoc: 'find-docs-by-form-id-pageable',
-        name: 'find-docs-by-form-id-pageable'
-      }
-    })
-    console.log("Created index for find-docs-by-form-id-pageable")
-    try {
-      const result = await userDb.db.find({
-        selector: {
-          type: '',
-          "lastModified": {"$gt": 0},
-          "form.id": {"$in": ["user-profile"]}
-        },
-        use_index: 'find-docs-by-form-id-pageable',
-        limit: 0
-      })
-      console.log("Completed indexing")
-    } catch (e) {
-      console.log("Error: " + e)
+  async createSyncFormIndex(username:string = '') {
+    let db
+    if (!username) {
+      db = await this.userService.getUserDatabase()
+    } else {
+      db = await this.userService.getUserDatabase(username)
     }
+    // const formsInfo = await this.formsInfoService.getFormsInfo()
+    const formsInfo = await this.tangyFormsInfoService.getFormsInfo()
+    await createSyncFormIndex(db, formsInfo)
   }
+  
 }
