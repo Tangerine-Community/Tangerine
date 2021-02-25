@@ -60,3 +60,20 @@ th, td {
   font-size: larger;
   font-weight: bold ;
 }
+.hide {
+  display: none;
+}
+
+.errorFlag:hover + .hide {
+  display: block;
+  color: red;
+  width: 200px;
+}
+
+.red-icon {
+  color: red;
+}
+/* Note: If you're using an SVG icon, you should make the class target the `<svg>` element */
+.red-icon svg {
+  fill: red;
+}

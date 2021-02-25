@@ -16,6 +16,42 @@ __New Features and Fixes__
 
 
 __Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.0
+./start.sh v3.17.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.3
+```
+
+## v3.16.3
+
+__New Features__
+
+- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3. After upgrading to v3.16.3, run the new "Push all docs to the server" feature available from the Admin Configuration menu item. This feature resets push sync to the beginning, ensuring that all docs are pushed. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded.
+
+- Added "Push all docs to the server" feature to the Admin Configuration menu item.
+- Added Operating System and Browser Version to Device listing.
+
+__Fixes__
+- Data collected after first registering and after updates fails to upload. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+
+__Server upgrade instructions__
+
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
 
 ```
@@ -34,14 +70,17 @@ docker start tangerine
 docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
 # Fetch the updates.
 git fetch origin
-git checkout v3.17.0
-./start.sh v3.17.0
+git checkout v3.16.3
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.3
 docker exec tangerine push-all-groups-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.16.2
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
 ```  
-
-
 
 ## v3.16.2
 
@@ -53,6 +92,9 @@ __Fixes__
 - Enables editing of device description. Commit: [#2613](https://github.com/Tangerine-Community/Tangerine/issues/2613)
 
 __Server upgrade instructions__
+
+If you want to enable filtered Case Event Schedule by Device's Assigned Location, add `filterCaseEventScheduleByDeviceAssignedLocation` to your groups' `app-config.json` set to a value of `true`.
+
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
 
 ```

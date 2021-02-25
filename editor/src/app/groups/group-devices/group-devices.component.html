@@ -93,12 +93,31 @@
           </ng-template>
         </td>
       </ng-container>
+      <ng-container matColumnDef="os">
+        <th mat-header-cell *matHeaderCellDef> Operating system </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.os">
+            <div>{{element.os.name}} {{element.os.version}}</div>
+          </ng-template>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="browserVersion">
+        <th mat-header-cell *matHeaderCellDef> Browser Version </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.browserVersion">
+            <div>{{element.browserVersion}}</div>
+          </ng-template>
+        </td>
+      </ng-container>
       <ng-container matColumnDef="errorMessage">
         <th mat-header-cell *matHeaderCellDef> Errors </th>
         <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.errorFlag"><div class="errorFlag"><mat-icon class="material-icons red-icon">error</mat-icon></div></ng-template>
+          <div class="hide">
           <ng-template [ngIf]="element.replicationStatus?.info?.errors?.length > 0"><div>{{element.replicationStatus?.info.errors | json}}</div></ng-template>
           <ng-template [ngIf]="element.replicationStatus?.pullError"><div>Pull error: {{element.replicationStatus?.pullError}}</div></ng-template>
           <ng-template [ngIf]="element.replicationStatus?.pushError"><div>Push error: {{element.replicationStatus?.pushError}}</div></ng-template>
+          </div>
         </td>
       </ng-container>
       
