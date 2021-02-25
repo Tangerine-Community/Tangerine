@@ -106,7 +106,9 @@ export class AppComponent implements OnInit {
   }
   
   async ngOnInit() {
-
+    this.window.isPreviewContext = window.location.hostname === 'localhost'
+      ? true
+      : false
     this.installed = await this.variableService.get('installed') && await this.variableService.get('languageCode')
       ? true
       : false;
@@ -139,6 +141,7 @@ export class AppComponent implements OnInit {
 
     await this.checkPermissions();
     // Initialize services.
+    await this.deviceService.initialize()
     await this.userService.initialize();
 
     // Get globally exposed config.
