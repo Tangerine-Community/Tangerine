@@ -32,7 +32,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   pushError: any
   wakeLock: any
 
-  @Input() fullSync: boolean;
+  @Input() fullSync: string;
 
   constructor(
     private syncService: SyncService,

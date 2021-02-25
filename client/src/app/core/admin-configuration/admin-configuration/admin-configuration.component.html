@@ -1,6 +1,20 @@
-<div>
-  <h2>Pull all docs from the server.</h2>
+<mat-card>
+  <div class="mat-card-header-text">
+    Pull all docs from the server.
+  </div>
+  <mat-card-content class="card-content">
   <p>Please note that this will take longer than the usual sync.</p>
-  <app-sync fullSync="true"></app-sync> 
-</div>
+  <app-sync fullSync="pull"></app-sync> 
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <div class="mat-card-header-text">
+  Push all docs to the server.
+  </div>
+  <mat-card-content class="card-content">
+  <p>Please note that this will take longer than the usual sync.</p>
+  <app-sync fullSync="push"></app-sync> 
+  </mat-card-content>
+</mat-card>
 
