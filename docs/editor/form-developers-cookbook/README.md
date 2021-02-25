@@ -124,8 +124,8 @@ In the following example a `valid-if` refers to an other variable local to the g
 
 ![skip-if-inside-tangy-inputs-groups](./valid-if-inside-tangy-inputs-groups.gif)
 
-## Use valid-if to reference variable inside tangy-inputs-group
-In the following example we empower the Data Collector to select which Location Level at which they will provide their answer.
+## Dynamic Location Level
+In the following example we empower the Data Collector to select which Location Level at which they will provide their answer. This example can also be used in a more advanced way to base the level of location required for entry given some other set of inputs.
 
 [Run example](https://dynamic-location-levels.glitch.me/) - [Open Editor](https://dynamic-location-levels.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/dynamic-location-levels)
 
