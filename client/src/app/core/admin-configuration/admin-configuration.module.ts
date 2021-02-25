@@ -6,15 +6,17 @@ import { AdminConfigurationComponent } from './admin-configuration/admin-configu
 import {SharedModule} from "../../shared/shared.module";
 import {HttpClientModule} from "@angular/common/http";
 import {SyncModule} from "../../sync/sync.module";
+import {MatCardModule} from "@angular/material/card";
 
 
 @NgModule({
-  imports: [
-    CommonModule,
-    AdminConfigurationRoutingModule,
-    SharedModule,
-    SyncModule
-  ],
+    imports: [
+        CommonModule,
+        AdminConfigurationRoutingModule,
+        SharedModule,
+        SyncModule,
+        MatCardModule
+    ],
   declarations: [AdminConfigurationComponent],
   providers: [HttpClientModule],
 
