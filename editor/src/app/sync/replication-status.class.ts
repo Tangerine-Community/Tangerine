@@ -29,4 +29,10 @@ export class ReplicationStatus {
   syncCouchdbServiceEndime: string;
   syncCouchdbServiceDuration: number;
   userAgent: string;
+  localDocsCount: number;
+  remoteDocsCount: number;
+  idsToSyncCount: number;
+  compareDocsStartTime: string;
+  compareDocsEndTime: string;
+  compareSyncDuration: number;
 }

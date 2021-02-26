@@ -51,7 +51,7 @@ export class SyncService {
   syncCouchdbServiceStartTime:string
   syncCouchdbServiceEndime:string
   compareDocsStartTime: string;
-  compareLimit: number = 1000;
+  compareLimit: number = 200;
   batchSize: number = 200
   
   // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
@@ -124,20 +124,7 @@ export class SyncService {
       this.replicationStatus.syncCouchdbServiceStartTime = this.syncCouchdbServiceStartTime
       this.replicationStatus.syncCouchdbServiceEndime = this.syncCouchdbServiceEndime
       this.replicationStatus.syncCouchdbServiceDuration = duration
-      const deviceInfo = await this.deviceService.getAppInfo()
-      this.replicationStatus.deviceInfo = deviceInfo
-      const userDb = await this.userService.getUserDatabase()
-      const dbDocCount = (await userDb.db.info()).doc_count
-      this.replicationStatus.dbDocCount = dbDocCount
-      const connection = navigator['connection']
-      const effectiveType = connection.effectiveType;
-      const downlink = connection.downlink;
-      const downlinkMax = connection.downlinkMax;
-      this.replicationStatus.effectiveConnectionType = effectiveType
-      this.replicationStatus.networkDownlinkSpeed = downlink
-      this.replicationStatus.networkDownlinkMax = downlinkMax
-      const userAgent = navigator['userAgent']
-      this.replicationStatus.userAgent = userAgent
+      await this.addDeviceSyncMetadata();
 
       this.syncMessage$.next({
         message: window['t']('Sending sync status to server. Please wait...')
@@ -160,6 +147,23 @@ export class SyncService {
       await this.indexViews()
     }
     return this.replicationStatus
+  }
+
+  private async addDeviceSyncMetadata() {
+    const deviceInfo = await this.deviceService.getAppInfo()
+    this.replicationStatus.deviceInfo = deviceInfo
+    const userDb = await this.userService.getUserDatabase()
+    const dbDocCount = (await userDb.db.info()).doc_count
+    this.replicationStatus.dbDocCount = dbDocCount
+    const connection = navigator['connection']
+    const effectiveType = connection.effectiveType;
+    const downlink = connection.downlink;
+    const downlinkMax = connection.downlinkMax;
+    this.replicationStatus.effectiveConnectionType = effectiveType
+    this.replicationStatus.networkDownlinkSpeed = downlink
+    this.replicationStatus.networkDownlinkMax = downlinkMax
+    const userAgent = navigator['userAgent']
+    this.replicationStatus.userAgent = userAgent
   }
 
   async calculateLocalDocsForLocation(appConfig: AppConfig, userDb: UserDatabase, formInfos: Array<FormInfo>) {
@@ -254,6 +258,10 @@ export class SyncService {
       this.batchSize = appConfig.batchSize
       console.log("this.batchSize: " + this.batchSize)
     }
+    if (appConfig.compareLimit) {
+      this.compareLimit = appConfig.compareLimit
+      console.log("this.compareLimit: " + this.compareLimit)
+    }
     const device = await this.deviceService.getDevice()
     let userDb: UserDatabase = await this.userService.getUserDatabase()
 
@@ -270,11 +278,11 @@ export class SyncService {
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType: 'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
     const options = {limit: this.compareLimit}
-    const localDocs = await this.pageThroughAlldocs(userDb.db, options);
-    const remoteDocs = await this.pageThroughAlldocs(remoteDb, options);
+    const localDocs = await this.pageThroughAlldocs(userDb.db, options, "local device");
+    const remoteDocs = await this.pageThroughAlldocs(remoteDb, options, "server");
     console.log("localDocs: " + localDocs.length + " remoteDocs: " + remoteDocs.length)
     this.syncMessage$.next({
-      message: window['t']("Docs in local tablet: " + localDocs.length + " Docs on server: " + remoteDocs.length)
+      message: window['t']("Now calculating documents to sync to the server. Docs in local tablet: " + localDocs.length + " Docs on server: " + remoteDocs.length)
     })
     let i=0, idsToSync = []
     localDocs.forEach(localDoc => {
@@ -318,11 +326,46 @@ export class SyncService {
       } catch (e) {
         console.log("Error: " + e)
       }
+    } else {
+      status.pushed = 0
+      this.syncMessage$.next({
+        message: window['t']("There are no docs to sync. ")
+      })
     }
+
+    this.replicationStatus = status
+    
+    try {
+      this.replicationStatus.compareDocsStartTime = this.compareDocsStartTime
+      if (appConfig.calculateLocalDocsForLocation) {
+        const formInfos = await this.tangyFormsInfoService.getFormsInfo()
+        let formStats = await this.calculateLocalDocsForLocation(appConfig, userDb, formInfos);
+        this.replicationStatus.localDocsForLocation = formStats
+      }
+      this.replicationStatus.compareDocsEndTime = new Date().toISOString()
+      const start = moment(this.replicationStatus.compareDocsStartTime)
+      const end = moment(this.replicationStatus.compareDocsEndTime)
+      const diff = end.diff(start)
+      const duration = moment.duration(diff).as('milliseconds')
+      this.replicationStatus.localDocsCount = localDocs.length
+      this.replicationStatus.remoteDocsCount = remoteDocs.length
+      this.replicationStatus.idsToSyncCount = idsToSync.length
+      this.replicationStatus.compareSyncDuration = duration
+      await this.addDeviceSyncMetadata()
+      
+      this.syncMessage$.next({
+        message: window['t']('Sending sync status to server. Please wait...')
+      })
+      await this.deviceService.didSync(status)
+    } catch (e) {
+      this.syncMessage$.next({message: window['t']('Error sending sync status to server: ' + e)})
+      console.log("Error: " + e)
+    }
+    
     return status
   }
 
-  async pageThroughAlldocs(database: PouchDB, options) {
+  async pageThroughAlldocs(database: PouchDB, options, dbName) {
     let allDocs = []
     let remaining = true
     let total_rows = 0
@@ -340,13 +383,14 @@ export class SyncService {
             // Remove the last item (to be used as startkey) and add to the allDocs array
             allDocs.push(...response.rows.splice(0, response.rows.length-1))
             if (response.rows.length === 1 && startkey === options.startkey) {
-              allDocs.push(response.rows[response.rows.length - 1])
+              allDocs.push(response.rows[0])
               remaining = false
             } else {
               options.startkey = startkey
             }
+            const message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
             this.syncMessage$.next({
-              message: window['t']('Collected ' + allDocs.length + ' out of ' + total_rows + ' docs for comparison.')
+              message: window['t'](message)
             })
           } else {
             remaining = false
