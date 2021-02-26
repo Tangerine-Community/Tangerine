@@ -282,7 +282,7 @@ export class SyncService {
       if (!remoteDocs.some(e => e.id === localDoc.id)) {
         // TODO: Do we need to exclude the profile doc?
         if (!localDoc.id.includes('_design')) {
-          idsToSync.push(localDoc)
+          idsToSync.push(localDoc.id)
         }
       }
       i++
