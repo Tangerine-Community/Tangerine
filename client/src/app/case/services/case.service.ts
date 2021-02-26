@@ -1210,16 +1210,15 @@ class CaseService {
             // Replace originalId with newId in both the reference to the FormResponse doc and the FormResponse doc itself.
             eventForm.formResponseId = newId
             const formResponse = templateDocs.find(doc => doc._id === originalId)
-            if (!formResponse) {
-              debugger
-            }
-            formResponse._id = newId
-            formResponse.location = location
-            formResponse['caseEventId'] = caseEventId
-            formResponse['caseId'] = caseId
-            formResponse['eventFormId'] = eventForm.id
-            if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
-              formResponse['participantId'] = participantUuid
+            if (formResponse) {
+              formResponse._id = newId
+              formResponse.location = location
+              formResponse['caseEventId'] = caseEventId
+              formResponse['caseId'] = caseId
+              formResponse['eventFormId'] = eventForm.id
+              if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
+                formResponse['participantId'] = participantUuid
+              }
             }
           }
         }
