@@ -18,6 +18,8 @@ import {AppConfig} from "../shared/_classes/app-config.class";
 import {FormInfo} from "../tangy-forms/classes/form-info.class";
 import {createSearchIndex} from "../shared/_services/create-search-index";
 import { createSyncFormIndex } from './create-sync-form-index';
+import PouchDB from 'pouchdb'
+
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
@@ -48,7 +50,10 @@ export class SyncService {
   findSelectorLimit = 200
   syncCouchdbServiceStartTime:string
   syncCouchdbServiceEndime:string
-
+  compareDocsStartTime: string;
+  compareLimit: number = 1000;
+  batchSize: number = 200
+  
   // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
   async sync(useSharedUser = false, isFirstSync = false, fullSync:string):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
@@ -157,7 +162,7 @@ export class SyncService {
     return this.replicationStatus
   }
 
-  private async calculateLocalDocsForLocation(appConfig: AppConfig, userDb: UserDatabase, formInfos: Array<FormInfo>) {
+  async calculateLocalDocsForLocation(appConfig: AppConfig, userDb: UserDatabase, formInfos: Array<FormInfo>) {
     
     this.syncMessage$.next({
       message: window['t']('Sync is complete; calculating sync statistics. Please wait...')
@@ -232,6 +237,127 @@ export class SyncService {
     // const formsInfo = await this.formsInfoService.getFormsInfo()
     const formsInfo = await this.tangyFormsInfoService.getFormsInfo()
     await createSyncFormIndex(db, formsInfo)
+  }
+  
+  async compareDocs():Promise<ReplicationStatus> {
+    
+    let status = <ReplicationStatus>{
+      pulled: 0,
+      pullConflicts: [],
+      info: '',
+      remaining: 0,
+      direction: ''
+    }
+    
+    const appConfig = await this.appConfigService.getAppConfig()
+    if (appConfig.batchSize) {
+      this.batchSize = appConfig.batchSize
+      console.log("this.batchSize: " + this.batchSize)
+    }
+    const device = await this.deviceService.getDevice()
+    let userDb: UserDatabase = await this.userService.getUserDatabase()
+
+    this.compareDocsStartTime = new Date().toISOString()
+
+    const syncDetails: SyncCouchdbDetails = <SyncCouchdbDetails>{
+      serverUrl: appConfig.serverUrl,
+      groupId: appConfig.groupId,
+      deviceId: device._id,
+      deviceToken: device.token,
+      deviceSyncLocations: device.syncLocations
+    }
+
+    const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType: 'text'}).toPromise()
+    const remoteDb = new PouchDB(syncSessionUrl)
+    const options = {limit: this.compareLimit}
+    const localDocs = await this.pageThroughAlldocs(userDb.db, options);
+    const remoteDocs = await this.pageThroughAlldocs(remoteDb, options);
+    console.log("localDocs: " + localDocs.length + " remoteDocs: " + remoteDocs.length)
+    this.syncMessage$.next({
+      message: window['t']("Docs in local tablet: " + localDocs.length + " Docs on server: " + remoteDocs.length)
+    })
+    let i=0, idsToSync = []
+    localDocs.forEach(localDoc => {
+      // if we really wanted to, we could also check localDoc.value.rev
+      if (!remoteDocs.some(e => e.id === localDoc.id)) {
+        // TODO: Do we need to exclude the profile doc?
+        if (!localDoc.id.includes('_design')) {
+          idsToSync.push(localDoc)
+        }
+      }
+      i++
+      if (i % 50 == 0) {
+        this.syncMessage$.next({
+          message: window['t']("Compared " + i + " local docs out of: " + localDocs.length)
+        })
+      }
+    })
+    if (idsToSync.length > 0) {
+      this.syncMessage$.next({
+        message: window['t']("There are  " + idsToSync.length + " docs to sync. ")
+      })
+
+      let pushed = 0
+      let syncOptions = {
+        "batch_size": this.batchSize,
+        "batches_limit": 1,
+        "remaining": 100,
+        "pushed": pushed,
+        "doc_ids": idsToSync
+      }
+
+      try {
+        status = <ReplicationStatus>await this.syncCouchdbService.pushSyncBatch(userDb, remoteDb, syncOptions);
+        if (typeof status.pushed !== 'undefined') {
+          pushed = pushed + status.pushed
+          status.pushed = pushed
+        } else {
+          status.pushed = pushed
+        }
+        this.syncMessage$.next(status)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
+    }
+    return status
+  }
+
+  async pageThroughAlldocs(database: PouchDB, options) {
+    let allDocs = []
+    let remaining = true
+    let total_rows = 0
+    // Reset startkey if it was set in previous function call.
+    delete options.startkey
+    while (remaining === true) {
+      try {
+        await database.allDocs(options, (err, response) => {
+          if (err) {
+            console.log("Error getting allDocs: " + err)
+          }
+          total_rows = response.total_rows
+          if (response && response.rows.length > 0) {
+            const startkey = response.rows[response.rows.length - 1].id
+            // Remove the last item (to be used as startkey) and add to the allDocs array
+            allDocs.push(...response.rows.splice(0, response.rows.length-1))
+            if (response.rows.length === 1 && startkey === options.startkey) {
+              allDocs.push(response.rows[response.rows.length - 1])
+              remaining = false
+            } else {
+              options.startkey = startkey
+            }
+            this.syncMessage$.next({
+              message: window['t']('Collected ' + allDocs.length + ' out of ' + total_rows + ' docs for comparison.')
+            })
+          } else {
+            remaining = false
+          }
+        })
+      } catch (e) {
+        console.log("Error getting allDocs: " + e)
+      }
+    }
+    console.log("total_rows: " + total_rows)
+    return allDocs;
   }
   
 }
