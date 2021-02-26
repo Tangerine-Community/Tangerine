@@ -31,6 +31,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   pullError: any
   pushError: any
   wakeLock: any
+  runComparison: boolean;
 
   @Input() fullSync: string;
 
@@ -118,7 +119,12 @@ export class SyncComponent implements OnInit, OnDestroy {
       }
     })
     try {
-      this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
+
+      if (this.runComparison) {
+        this.replicationStatus = await this.syncService.compareDocs()
+      } else {
+        this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
+      }
       this.dbDocCount = this.replicationStatus.dbDocCount
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
@@ -146,6 +152,10 @@ export class SyncComponent implements OnInit, OnDestroy {
 
   toggle() {
     this.show = !this.show
+  }
+
+  async enableComparison(checked) {
+    this.runComparison = true
   }
 
 }
