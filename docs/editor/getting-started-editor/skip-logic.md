@@ -134,21 +134,21 @@ Showing a question based on the number of attempted items on a grid
 If you'd like to hide a question when the number of attempted items on a particular grid is over a certain threshold you can make use of the 'numberOfItemsAttempted(input)' function. If your grid variable is 'letter_sound' and the question you want to skip is 'Q_1' then in the question Q_1 I can insert the below skip logic(under Show If) to show it only when the number of attempted items on the grid is greater than 10
 
     :::javascript
-    numberOfItemsAttempted(inputs?.letter_sound > 10
+    numberOfItemsAttempted(inputs.letter_sound > 10)
 
 Showing a question based on the number of correct items of a grid
 
 Sometimes it may be the case where you want to show a question only if there are a certain N items on the grid answered correctly. In those cases, we make use of the 'numberOfCorrectItems(input)' function. If your grid variable is 'letter_sound' and the question you want to skip is 'Q_1' then in the question Q_1 I can insert the below skip logic(under Show If) to show this question only when the number of correct items on the grid is greater than 0
 
     :::javascript
-    numberOfCorrectItems(inputs?.letter_sound) > 0
+    numberOfCorrectItems(inputs.letter_sound) > 0
 
 Show a question only if the grid did not auto stop
 
 If you have set the autostop value of a grid with variable name 'letter_sound' and you want to show a question only when the grid did not discontinue due to a triggered auto stop, then you can insert the below logic into the question's Show If field:
 
     :::javascript
-    inputs?.letter_sound?.gridAutoStopped
+    typeof inputs.letter_sound != 'undefined' && inputs.letter_sound.gridAutoStopped
 
 The use of the '!' gives us the opposite of the result returned by the function. If the grid stopped the result will be true. When we use the '!' in front of the function, it means that, when the grid did not stop we want a positive answer hence show the question.
 
@@ -157,7 +157,7 @@ Show a question based on the words per minute read on a grid
 It may happen that you need to show a question only to advanced students. In those cases, we make use of the function 'itemsPerMinute(input)' This function returns the number of items per minute read by the student. We can use it, just as before, in the Show If input field of a question, like so:
 
     :::javascript
-    itemsPerMinute(inputs?.letter_sound) > 35
+    itemsPerMinute(inputs.letter_sound) > 35
 
 This call will force a question to be displayed only when the rate of reading was higher than 35 workds per minute.
 
