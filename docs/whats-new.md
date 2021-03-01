@@ -1,4 +1,4 @@
-# Changelog
+# What's new
 
 ## v3.17.0
 
