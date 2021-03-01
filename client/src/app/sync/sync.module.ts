@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SyncMenuComponent } from './sync-menu/sync-menu.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -31,15 +32,16 @@ import { SyncMenuComponent } from './sync-menu/sync-menu.component';
     SyncCouchdbService
 
   ],
-  imports: [
-    CommonModule,
-    TranslateModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressBarModule,
-    MatButtonModule,
-    MatTabsModule,
-    MatChipsModule,
-  ]
+    imports: [
+        CommonModule,
+        TranslateModule,
+        MatIconModule,
+        MatCardModule,
+        MatProgressBarModule,
+        MatButtonModule,
+        MatTabsModule,
+        MatChipsModule,
+        MatCheckboxModule,
+    ]
 })
 export class SyncModule { }

@@ -1,5 +1,58 @@
 # Changelog
 
+## v3.17.0
+
+__New Features and Fixes__
+- Device User Role access to Case Events and Event Forms [#2598](https://github.com/Tangerine-Community/Tangerine/pull/2598)
+  - [Getting started with using Device User Roles](https://youtu.be/ntL-i8MVpew)
+  - [Demo: Device User role based access to Event Forms](https://youtu.be/T0GfYHw6t6k)
+  - [Demo: Device user role based permissions for Case Events](https://www.youtube.com/watch?v=5okk6XrrfaA&feature=youtu.be)
+- Deactivate Case Participant API [#2594](https://github.com/Tangerine-Community/Tangerine/pull/2594)
+  - [Demo: https://youtu.be/Ulh-yCqfbFA](https://youtu.be/Ulh-yCqfbFA)
+- Data Collector with a single click opens all pages of a completed form response [#2596](https://github.com/Tangerine-Community/Tangerine/issues/2596)
+- `skip()` and `unskip()` functions are now available in `tangy-form` level `on-change` logic for skipping and unskipping sections, not inputs.
+- Fix print form as table for some forms. (https://github.com/Tangerine-Community/Tangerine/pull/2568)
+- Update the group icon on server [#2355](https://github.com/Tangerine-Community/Tangerine/pull/2355)
+- Add window.uuid() API [#2595](https://github.com/Tangerine-Community/Tangerine/pull/2595)
+
+## v3.16.4
+
+__New Features__
+
+- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3 or v3.16.4. After upgrading to v3.16.4, go to the Online Sync feature. The new 'Comparison' checkbox enables the Sync feature to compare all document id's on the local device with the server and uploads any missing documents. You may also run the new "Push all docs to the server" feature available from the Admin Configuration menu item. This feature resets push sync to the beginning, ensuring that all docs are pushed. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders.
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.4
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.3
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.3
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```
+
 ## v3.16.3
 
 __New Features__
@@ -128,8 +181,7 @@ docker exec tangerine push-all-groups-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.16.0
 # If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
-```  
-
+```
 
 ## v3.16.0
 
@@ -231,7 +283,6 @@ __New Features and Fixes__
 - Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly. PR:[#2558](https://github.com/Tangerine-Community/Tangerine/pull/2558)
 - Adds a server config that allows the user to control the string used for variables that are `undefined`: `T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"`
 - The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
-
 
 __Server upgrade instructions__
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
