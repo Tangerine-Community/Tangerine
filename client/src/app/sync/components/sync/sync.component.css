@@ -20,8 +20,8 @@ mat-card {
 /*  margin-left: 1em;*/
 /*}*/
 .mat-progress-bar {
-  margin-top: 1em;
-  width: 50%
+  margin-top: 1.5em;
+  width: 60%
 }
 
 div {
@@ -37,4 +37,7 @@ div {
   font-size: 20px;
   font-weight: bold;
   color: red;
+}
+mat-checkbox {
+  margin-right: 2em;
 }

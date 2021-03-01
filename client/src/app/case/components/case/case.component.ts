@@ -1,3 +1,5 @@
+import { CaseEventOperation } from './../../classes/case-event-definition.class';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
@@ -18,10 +20,13 @@ class CaseEventInfo {
 export class CaseComponent implements AfterContentInit {
 
   private ready = false
+  userRoles:Array<string>
   templateTitle = ''
   templateDescription = ''
   caseEventsInfo:Array<CaseEventInfo>
   creatableCaseEventsInfo:Array<CaseEventInfo>
+  readableCaseEventsInfo:Array<CaseEventInfo>
+  unreadableCaseEventsInfo:Array<CaseEventInfo>
   selectedNewEventType = ''
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
@@ -29,6 +34,7 @@ export class CaseComponent implements AfterContentInit {
 
   constructor(
     private route: ActivatedRoute,
+    private userService:UserService,
     caseService: CaseService,
     private ref: ChangeDetectorRef
   ) {
@@ -38,6 +44,7 @@ export class CaseComponent implements AfterContentInit {
   }
 
   async ngAfterContentInit() {
+    this.userRoles = await this.userService.getRoles()
     const caseId = window.location.hash.split('/')[2]
     // if (!this.caseService.case || caseId !== this.caseService.case._id) {
     await this.caseService.load(caseId)
@@ -72,10 +79,21 @@ export class CaseComponent implements AfterContentInit {
           caseEvents: this.caseService.case.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
         }
       })
+    this.readableCaseEventsInfo = this.caseEventsInfo.filter(caseEventInfo => {
+      return this.caseService.hasCaseEventPermission(CaseEventOperation.READ, caseEventInfo.caseEventDefinition)
+    })
+    this.unreadableCaseEventsInfo = this.caseEventsInfo.filter(caseEventInfo => {
+      return !this.caseService.hasCaseEventPermission(CaseEventOperation.READ, caseEventInfo.caseEventDefinition)
+    })
     this.creatableCaseEventsInfo = this.caseEventsInfo
       .filter(caseEventInfo => {
-        return (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0)
-          && undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id)
+        return (
+          (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0) &&
+          undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id) &&
+          this.caseService.hasCaseEventPermission(CaseEventOperation.CREATE, caseEventInfo.caseEventDefinition)
+        )
+          ? true
+          : false
       })
 
     this.selectedNewEventType = ''

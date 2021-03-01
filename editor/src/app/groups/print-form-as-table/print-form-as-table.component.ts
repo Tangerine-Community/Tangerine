@@ -28,11 +28,8 @@ export class PrintFormAsTableComponent implements OnInit {
     const myForm = forms.find(e => e['id'] === formId);
     const formHtml = await this.http.get(`/editor/${groupId}/content/${myForm.id}/form.html`, { responseType: 'text' }).toPromise();
     const container = this.container.nativeElement;
-    const appConfig = await this.appConfigService.getAppConfig(groupId);
-    const appConfigCategories = appConfig.categories;
-    const categories = JSON.stringify(appConfigCategories);
     container.innerHTML = `
-    <tangy-form-editor style="margin:15px; display:none;" categories ='${categories}' print>${formHtml}</tangy-form-editor>
+      ${formHtml}
     `;
     this.meta = (container.querySelector('tangy-form')).getMeta();
   }

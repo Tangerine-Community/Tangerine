@@ -121,6 +121,51 @@ export class SyncCouchdbService {
     let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
+
+   pushSyncBatch = (userDb, remoteDb, syncOptions) => {
+    return new Promise( (resolve, reject) => {
+      const direction = 'push'
+      const progress = {
+        'direction': direction,
+        'remaining': syncOptions.remaining
+      }
+      this.syncMessage$.next(progress)
+      userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
+        // console.log("info.last_seq: " + info.last_seq)
+        // const remaining = Math.round(info.docs_written/docIdsLength * 100)
+        // Does it push all docs in the batch even if there is an error?
+        const status = <ReplicationStatus>{
+          pushed: info.docs_written,
+          info: info,
+          direction: direction
+        }
+        resolve(status)
+      }).on('change', async (info) => {
+        const pushed = syncOptions.pushed + info.docs_written
+        // const remaining = Math.round(pushed/docIdsLength * 100)
+        const progress = {
+          'docs_read': info.docs_read,
+          'docs_written': info.docs_written,
+          'doc_write_failures': info.doc_write_failures,
+          'pending': info.pending,
+          'direction': direction,
+          'last_seq': info.last_seq,
+          'pushed': pushed
+        };
+        this.syncMessage$.next(progress);
+      }).on('active', function (info) {
+        if (info) {
+          console.log('Push replication is active. Info: ' + JSON.stringify(info));
+        } else {
+          console.log('Push replication is active.');
+        }
+      }).on('error', function (error) {
+        let errorMessage = "pushSyncBatch failed. error: " + error
+        console.log(errorMessage)
+        reject(errorMessage);
+      });
+    })
+  }
   
   async push(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
     // Get the sequences we'll be starting with.
@@ -149,112 +194,58 @@ export class SyncCouchdbService {
     
     let batchFailureDetected = false
     let batchError;
-
-    const pushSyncBatch = (syncOptions) => {
-      return new Promise( (resolve, reject) => {
-        const direction = 'push'
-        const progress = {
-          'direction': direction,
-          'remaining': syncOptions.remaining
+    let pushed = 0
+    let syncOptions = {
+      "since":push_last_seq,
+      "batch_size": this.batchSize,
+      "batches_limit": 1,
+      "remaining": 100,
+      "pushed": pushed,
+      "checkpoint": 'source',
+      "selector": {
+        "$not": {
+          "_id": {
+            "$regex": "^_design"
+          }
         }
-        this.syncMessage$.next(progress)
-        userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
-          // console.log("info.last_seq: " + info.last_seq)
-          // const remaining = Math.round(info.docs_written/docIdsLength * 100)
-          // Does it push all docs in the batch even if there is an error?
-          status = <ReplicationStatus>{
-            pushed: info.docs_written,
-            info: info,
-            direction: direction
-          }
-          resolve(status)
-        }).on('change', async (info) => {
-          const pushed = syncOptions.pushed + info.docs_written
-          // const remaining = Math.round(pushed/docIdsLength * 100)
-          const progress = {
-            'docs_read': info.docs_read,
-            'docs_written': info.docs_written,
-            'doc_write_failures': info.doc_write_failures,
-            'pending': info.pending,
-            'direction': direction,
-            'last_seq': info.last_seq,
-            'pushed': pushed
-          };
-          this.syncMessage$.next(progress);
-        }).on('active', function (info) {
-          if (info) {
-            console.log('Push replication is active. Info: ' + JSON.stringify(info));
-          } else {
-            console.log('Push replication is active.');
-          }
-        }).on('error', function (error) {
-          if (!status) {
-            // We need to create an empty status to return so that the code that receives the reject can attach the error.
-            status = <ReplicationStatus>{
-              remaining: syncOptions.remaining,
-              direction: direction
-            }
-          }
-          let errorMessage = "pushSyncBatch failed. error: " + error
-          console.log(errorMessage)
-          batchFailureDetected = true
-          reject(errorMessage);
-        });
-      })
+      }
     }
 
-    let pushed = 0
-      let syncOptions = {
-        "since":push_last_seq,
-        "batch_size": this.batchSize,
-        "batches_limit": 1,
-        "remaining": 100,
-        "pushed": pushed,
-        "checkpoint": 'source',
-        "selector": {
-          "$not": {
-            "_id": {
-              "$regex": "^_design"
-            }
-          }
-        }
-      }
+    syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
 
-      syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
-
-      try {
-        status = <ReplicationStatus>await pushSyncBatch(syncOptions);
-        if (typeof status.pushed !== 'undefined') {
-          pushed = pushed + status.pushed
-          status.pushed = pushed
-        } else {
-          status.pushed = pushed
-        }
-        this.syncMessage$.next(status)
-      } catch (e) {
-        console.log("Error: " + e)
-        // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
-        batchFailureDetected = true
-        batchError = e
-      }
-      
-      status.initialPushLastSeq = push_last_seq
-      status.currentPushLastSeq = status.info.last_seq
-
-      if (batchFailureDetected) {
-        // don't set last_seq
-        // TODO: create an issue
-        const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
-        const errorMessage = errorMessageDialog + batchError
-        console.log(errorMessage)
-        if (status) {
-          status.pushError = errorMessage
-        }
-        this.syncMessage$.next(status)
+    try {
+      status = <ReplicationStatus>await this.pushSyncBatch(userDb, remoteDb, syncOptions);
+      if (typeof status.pushed !== 'undefined') {
+        pushed = pushed + status.pushed
+        status.pushed = pushed
       } else {
-        // set last_seq
-        await this.variableService.set('sync-push-last_seq', status.info.last_seq)
+        status.pushed = pushed
       }
+      this.syncMessage$.next(status)
+    } catch (e) {
+      console.log("Error: " + e)
+      // TODO: we may want to retry this batch again, test for internet access and log as needed - create a sync issue
+      batchFailureDetected = true
+      batchError = e
+    }
+    
+    status.initialPushLastSeq = push_last_seq
+    status.currentPushLastSeq = status.info.last_seq
+
+    if (batchFailureDetected) {
+      // don't set last_seq
+      // TODO: create an issue
+      const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
+      const errorMessage = errorMessageDialog + batchError
+      console.log(errorMessage)
+      if (status) {
+        status.pushError = errorMessage
+      }
+      this.syncMessage$.next(status)
+    } else {
+      // set last_seq
+      await this.variableService.set('sync-push-last_seq', status.info.last_seq)
+    }
     return status;
   }
 
