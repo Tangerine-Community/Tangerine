@@ -2,6 +2,8 @@
 
 ## Enabling MySQL module
 
+Important! If __reenabling__ the mysql module, remove the mysql folder: `rm -r data/mysql`
+
 ### Step 1
 Ensure the variables from the `MySQL` section in config.defaults.sh are in your customized `config.sh` file. 
 
@@ -45,4 +47,3 @@ mysql -u"$T_MYSQL_USER" -p"$T_MYSQL_PASSWORD" -hmysql
 ```
 
 On the mysql command line, list the available databases using `show databases;`. Note how the database names are similar to the Group ID's these correspond with except with dashes removed. For example, if the group ID was `group-abc-123`, the corresponding MySQL database would be `groupabc123`. To select a database, type `use <database ID>;` then `show tables;` to list out the available tables.
-
