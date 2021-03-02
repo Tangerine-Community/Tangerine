@@ -258,16 +258,21 @@ async function go() {
         // Save the doc multiple times to create additional sequences.
         const timesToSave = Math.ceil(Math.random() * 10)
         console.log("Saving " + timesToSave + " times")
+        let newRev;
         for (let index = 0; index < timesToSave; index++) {
           newDoc.changeNumber = index
           try {
-            let changedDoc = await db.put(doc)
+            if (newRev) {
+              newDoc._rev = newRev
+            }
+            let changedDoc = await db.put(newDoc)
+            newRev = changedDoc._rev
           } catch (e) {
             debugger
           }
         }
-
       } catch (e) {
+        console.log("Error: " + e)
         debugger
       }
     }

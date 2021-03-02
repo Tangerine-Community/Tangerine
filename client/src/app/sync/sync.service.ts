@@ -50,8 +50,8 @@ export class SyncService {
   findSelectorLimit = 200
   syncCouchdbServiceStartTime:string
   syncCouchdbServiceEndime:string
-  compareDocsStartTime: string;
-  compareLimit: number = 200;
+  compareDocsStartTime: string
+  compareLimit: number = 150
   batchSize: number = 200
   
   // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
