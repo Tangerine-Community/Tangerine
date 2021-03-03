@@ -35,4 +35,6 @@ export class ReplicationStatus {
   compareDocsStartTime: string;
   compareDocsEndTime: string;
   compareSyncDuration: number;
+  fullSync: string;
+  compareDocsDirection: string;
 }

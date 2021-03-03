@@ -2,7 +2,7 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { DeviceService } from './../device/services/device.service';
 import { SyncCustomService, SyncCustomDetails } from './sync-custom.service';
-import { SyncCouchdbService, SyncCouchdbDetails } from './sync-couchdb.service';
+import {SyncCouchdbService, SyncCouchdbDetails, LocationQuery} from './sync-couchdb.service';
 import { UserDatabase } from 'src/app/shared/_classes/user-database.class';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClient } from '@angular/common/http';
@@ -53,6 +53,7 @@ export class SyncService {
   compareDocsStartTime: string
   compareLimit: number = 150
   batchSize: number = 200
+  writeBatchSize: number = 50
   
   // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
   async sync(useSharedUser = false, isFirstSync = false, fullSync:string):Promise<ReplicationStatus> {
@@ -106,6 +107,13 @@ export class SyncService {
       formInfos
     })
 
+    /**
+     * Calculating Sync stats
+     */
+    
+    if (fullSync) {
+      this.replicationStatus.fullSync = fullSync
+    } 
     this.syncCouchdbServiceEndime = new Date().toISOString()
 
     if (appConfig.calculateLocalDocsForLocation) {
@@ -243,7 +251,7 @@ export class SyncService {
     await createSyncFormIndex(db, formsInfo)
   }
   
-  async compareDocs():Promise<ReplicationStatus> {
+  async compareDocs(direction: string):Promise<ReplicationStatus> {
     
     let status = <ReplicationStatus>{
       pulled: 0,
@@ -258,6 +266,10 @@ export class SyncService {
       this.batchSize = appConfig.batchSize
       console.log("this.batchSize: " + this.batchSize)
     }
+    if (appConfig.writeBatchSize) {
+      this.writeBatchSize = appConfig.writeBatchSize
+      console.log("this.writeBatchSize: " + this.writeBatchSize)
+    }
     if (appConfig.compareLimit) {
       this.compareLimit = appConfig.compareLimit
       console.log("this.compareLimit: " + this.compareLimit)
@@ -267,36 +279,68 @@ export class SyncService {
 
     this.compareDocsStartTime = new Date().toISOString()
 
+    const formInfos = await this.tangyFormsInfoService.getFormsInfo()
+    
     const syncDetails: SyncCouchdbDetails = <SyncCouchdbDetails>{
       serverUrl: appConfig.serverUrl,
       groupId: appConfig.groupId,
       deviceId: device._id,
       deviceToken: device.token,
-      deviceSyncLocations: device.syncLocations
+      formInfos:formInfos,
+      deviceSyncLocations: device.syncLocations,
     }
 
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType: 'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
-    const options = {limit: this.compareLimit}
-    const localDocs = await this.pageThroughAlldocs(userDb.db, options, "local device");
-    const remoteDocs = await this.pageThroughAlldocs(remoteDb, options, "server");
+    const pushOptions = {limit: this.compareLimit}
+    const localDocs = await this.pageThroughAlldocs(userDb.db, pushOptions, "local device");
+    const pullSelector = this.syncCouchdbService.getPullSelector(syncDetails);
+    const pullOptions = {
+      limit: this.compareLimit,
+      selector: pullSelector,
+      fields: ["_id"]
+    }
+    const remoteDocs = await this.pageThroughAlldocs(remoteDb, pullOptions, "server");
+    // remove the initial user-profile - is not uploaded to server
+    const userProfiles = await this.tangyFormService.getResponsesByFormId('user-profile')
+    const initialProfile = userProfiles.find(profile => Object.keys(profile.location).length === 0)
+    if (initialProfile) {
+      // const index = localDocs.indexOf(initialProfile._id);
+      const index = localDocs.findIndex(doc => doc.id == initialProfile._id)
+      if (index > -1) {
+        localDocs.splice(index, 1);
+      }
+    }
     console.log("localDocs: " + localDocs.length + " remoteDocs: " + remoteDocs.length)
     this.syncMessage$.next({
-      message: window['t']("Now calculating documents to sync to the server. Docs in local tablet: " + localDocs.length + " Docs on server: " + remoteDocs.length)
+      message: window['t']("Direction: " + direction + ". Now calculating documents to sync with the server. Docs in local tablet: " + localDocs.length + " Docs on server: " + remoteDocs.length)
     })
-    let i=0, idsToSync = []
-    localDocs.forEach(localDoc => {
-      // if we really wanted to, we could also check localDoc.value.rev
-      if (!remoteDocs.some(e => e.id === localDoc.id)) {
-        // TODO: Do we need to exclude the profile doc?
-        if (!localDoc.id.includes('_design')) {
-          idsToSync.push(localDoc.id)
+    let i=0, idsToSync = [], sourceDocs, targetDocs, sourceDocIdentifier, targetDocIdentifier, replicationFunction, syncOptions
+    if (direction === 'push') {
+      sourceDocs = localDocs
+      sourceDocIdentifier = 'id'
+      targetDocs = remoteDocs
+      targetDocIdentifier = '_id'
+      replicationFunction = this.syncCouchdbService.pushSyncBatch
+    } else if (direction === 'pull'){
+      sourceDocs = remoteDocs
+      sourceDocIdentifier = '_id'
+      targetDocs = localDocs
+      targetDocIdentifier = 'id'
+      replicationFunction = this.syncCouchdbService.pullSyncBatch
+    }
+    sourceDocs.forEach(sourceDoc => {
+      // if we really wanted to, we could add _rev to the fields provided by the remote mango query 
+      // and then compare to localDoc.value.rev
+      if (!targetDocs.some(targetDoc => targetDoc[targetDocIdentifier] === sourceDoc[sourceDocIdentifier])) {
+        if (!sourceDoc[sourceDocIdentifier].includes('_design')) {
+          idsToSync.push(sourceDoc[sourceDocIdentifier])
         }
       }
       i++
       if (i % 50 == 0) {
         this.syncMessage$.next({
-          message: window['t']("Compared " + i + " local docs out of: " + localDocs.length)
+          message: window['t']("Compared " + i + " docs out of: " + localDocs.length)
         })
       }
     })
@@ -305,22 +349,40 @@ export class SyncService {
         message: window['t']("There are  " + idsToSync.length + " docs to sync. ")
       })
 
-      let pushed = 0
-      let syncOptions = {
+      let pushed = 0, pulled = 0
+      let pushSyncOptions = {
         "batch_size": this.batchSize,
         "batches_limit": 1,
         "remaining": 100,
         "pushed": pushed,
         "doc_ids": idsToSync
       }
+      let pullSyncOptions = {
+        "batch_size": this.batchSize,
+        "write_batch_size": this.writeBatchSize,
+        "batches_limit": 1,
+        "pulled": pulled,
+        "doc_ids": idsToSync
+      }
+      if (direction === 'push') {
+        syncOptions = pushSyncOptions
+      } else {
+        syncOptions = pullSyncOptions
+      }
 
       try {
-        status = <ReplicationStatus>await this.syncCouchdbService.pushSyncBatch(userDb, remoteDb, syncOptions);
+        status = <ReplicationStatus>await replicationFunction(userDb, remoteDb, syncOptions);
         if (typeof status.pushed !== 'undefined') {
           pushed = pushed + status.pushed
           status.pushed = pushed
         } else {
           status.pushed = pushed
+        }
+        if (typeof status.pulled !== 'undefined') {
+          pulled = pulled + status.pulled
+          status.pulled = pulled
+        } else {
+          status.pulled = pulled
         }
         this.syncMessage$.next(status)
       } catch (e) {
@@ -337,6 +399,7 @@ export class SyncService {
     
     try {
       this.replicationStatus.compareDocsStartTime = this.compareDocsStartTime
+      this.replicationStatus.compareDocsDirection = direction
       if (appConfig.calculateLocalDocsForLocation) {
         const formInfos = await this.tangyFormsInfoService.getFormsInfo()
         let formStats = await this.calculateLocalDocsForLocation(appConfig, userDb, formInfos);
@@ -371,24 +434,44 @@ export class SyncService {
     let total_rows = 0
     // Reset startkey if it was set in previous function call.
     delete options.startkey
+    let queryFunction = "allDocs"
+    let responseArrayName = "rows"
+    let pagerKeyName = "startkey"
+    if (options.selector) {
+      queryFunction = "find"
+      responseArrayName = "docs"
+      pagerKeyName = "bookmark"
+    }
     while (remaining === true) {
       try {
-        await database.allDocs(options, (err, response) => {
+        await database[queryFunction](options, (err, response) => {
           if (err) {
             console.log("Error getting allDocs: " + err)
           }
-          total_rows = response.total_rows
-          if (response && response.rows.length > 0) {
-            const startkey = response.rows[response.rows.length - 1].id
-            // Remove the last item (to be used as startkey) and add to the allDocs array
-            allDocs.push(...response.rows.splice(0, response.rows.length-1))
-            if (response.rows.length === 1 && startkey === options.startkey) {
-              allDocs.push(response.rows[0])
-              remaining = false
+          if (response && response[responseArrayName].length > 0) {
+            if (options.selector) {
+              const pagerKey = response[pagerKeyName]
+              allDocs.push(...response[responseArrayName])
+              options[pagerKeyName] = pagerKey
             } else {
-              options.startkey = startkey
+              total_rows = response.total_rows
+              const responseLength = response[responseArrayName].length
+              const pagerKey = response[responseArrayName][responseLength - 1].id
+              // Remove the last item (to be used as pagerKey) and add to the allDocs array
+              allDocs.push(...response[responseArrayName].splice(0, responseLength - 1))
+              if (responseLength === 1 && pagerKey === options[pagerKeyName]) {
+                allDocs.push(response[responseArrayName][0])
+                remaining = false
+              } else {
+                options[pagerKeyName] = pagerKey
+              }
             }
-            const message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
+            
+            let message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
+            if (options.selector) {
+              message = 'Collected ' + allDocs.length + ' docs from the ' + dbName + ' for comparison.';
+            }
+            
             this.syncMessage$.next({
               message: window['t'](message)
             })

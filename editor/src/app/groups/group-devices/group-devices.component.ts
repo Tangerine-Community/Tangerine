@@ -194,7 +194,7 @@ export class GroupDevicesComponent implements OnInit {
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
         const parser = new UAParser();
         parser.setUA(replicationStatus?.userAgent)
-        const comparisonSyncMessage = replicationStatus?.idsToSyncCount + ' docs pushed to server'
+        const comparisonSyncMessage = replicationStatus?.idsToSyncCount + ' docs synced - ' + replicationStatus?.compareDocsDirection
       return <DeviceInfo>{
         ...device,
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
