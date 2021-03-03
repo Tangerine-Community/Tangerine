@@ -78,7 +78,7 @@ module.exports = {
         }
       }
         
-      const {doc, sourceDb} = data
+      const {doc, sourceDb, sequence} = data
       const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
       // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
       const groupsDb = await new DB(`groups`);

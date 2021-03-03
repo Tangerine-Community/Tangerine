@@ -20,7 +20,7 @@ module.exports = {
     },
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
-        const {doc, sourceDb} = data
+        const {doc, sourceDb, sequence} = data
         const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
         let flatResponse = await generateFlatResponse(doc, locationList);
 
