@@ -46,19 +46,11 @@ export class TangyFormService {
    * @param formVersionId - Uses this value to lookup the correct version to display. It is null if 
    */
   async getFormMarkup(formId, formVersionId:string = '') {
-    // const lookupFormVersionId = (!formVersionId && formInfo.formVersionId) ? formInfo.formVersionId : formVersionId
-    // let key = lookupFormVersionId ? formInfo.src + formVersionId : formInfo.src;
     let formMarkup:any
-    // = this.formsMarkup[key]
-    // if (!this.formsMarkup[key]) {
     let src: string = await this.tangyFormsInfoService.getFormSrc(formId, formVersionId)
     formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
-      // this.formsMarkup[key] = formMarkup;
-    // }
     return formMarkup
   }
-
-  
 
   async getFormTemplateMarkup(formId:string, formTemplateId:string):Promise<string> {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
