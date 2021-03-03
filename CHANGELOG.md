@@ -1,5 +1,35 @@
 # Changelog
 
+## v3.17.1
+- Add support for Form Versions when it hasn't been used before by defaulting the first entry in formVersions when a form version isn't defined on a Form Response.
+- Fix issue causing Device Admin user log in to fail.
+- Restore missing `sectionDisable` function in skip logic for forms. 
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders.
+docker start couchdb
+docker start tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.1
+./start.sh v3.17.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.0
+```
+
 ## v3.17.0
 
 __New Features and Fixes__
@@ -14,6 +44,31 @@ __New Features and Fixes__
 - Fix print form as table for some forms. (https://github.com/Tangerine-Community/Tangerine/pull/2568)
 - Update the group icon on server [#2355](https://github.com/Tangerine-Community/Tangerine/pull/2355)
 - Add window.uuid() API [#2595](https://github.com/Tangerine-Community/Tangerine/pull/2595)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders.
+docker start couchdb
+docker start tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.0
+./start.sh v3.17.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.4
+```
 
 ## v3.16.4
 
