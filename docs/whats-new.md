@@ -33,6 +33,7 @@ docker rmi tangerine/tangerine:v3.17.0
 ## v3.17.0
 
 __New Features and Fixes__
+
 - Device User Role access to Case Events and Event Forms [#2598](https://github.com/Tangerine-Community/Tangerine/pull/2598)
   - [Getting started with using Device User Roles](https://youtu.be/ntL-i8MVpew)
   - [Demo: Device User role based access to Event Forms](https://youtu.be/T0GfYHw6t6k)
