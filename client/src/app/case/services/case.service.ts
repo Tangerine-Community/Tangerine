@@ -1272,16 +1272,16 @@ class CaseService {
             // Replace originalId with newId in both the reference to the FormResponse doc and the FormResponse doc itself.
             eventForm.formResponseId = newId
             const formResponse = templateDocs.find(doc => doc._id === originalId)
-            if (!formResponse) {
-              debugger
-            }
-            formResponse._id = newId
-            formResponse.location = location
-            formResponse['caseEventId'] = caseEventId
-            formResponse['caseId'] = caseId
-            formResponse['eventFormId'] = eventForm.id
-            if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
-              formResponse['participantId'] = participantUuid
+            if (formResponse) {
+              console.log("Changing _id from " + formResponse._id + " to " + newId)
+              formResponse._id = newId
+              formResponse.location = location
+              formResponse['caseEventId'] = caseEventId
+              formResponse['caseId'] = caseId
+              formResponse['eventFormId'] = eventForm.id
+              if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
+                formResponse['participantId'] = participantUuid
+              }
             }
           }
         }
@@ -1320,8 +1320,10 @@ class CaseService {
         // modify the demographics form - s01a-participant-information-f254b9
         const demoDoc = templateDocs.find(doc => doc.form.id === registrationFormName)
         if (typeof demoDoc !== 'undefined') {
-          demoDoc.items[1].inputs[1].value = subs['participant_id'];
-          demoDoc.items[1].inputs[2].value = subs['date'];
+          if (demoDoc.items[1] && demoDoc.items[1].inputs.length > 2) {
+            demoDoc.items[1].inputs[1].value = subs['participant_id'];
+            demoDoc.items[1].inputs[2].value = subs['date'];
+          }
           // "id": "randomization",
           // demoDoc.items[10].inputs[1].value = barcode_data;
           // demoDoc.items[10].inputs[2].value = subs.participant_id;
@@ -1332,24 +1334,42 @@ class CaseService {
             demoDoc.items[0].inputs[0].value = subs['firstname']();
             demoDoc.items[0].inputs[1].value = subs['surname']();
           } else {
-            console.log("Unable to substitute the firstname and surname; they are expected to be ar demoDoc.items[0].inputs[0]")
-          }
-
-        }
-      }
-
-      for (let doc of templateDocs) {
-        // @ts-ignore
-        // sometimes doc is false...
-        if (doc !== false) {
-          try {
-            delete doc._rev
-            await this.tangyFormService.saveResponse(doc)
-          } catch (e) {
-            console.log('Error: ' + e)
+            console.log("Unable to substitute the firstname and surname; they are expected to be at demoDoc.items[0].inputs[0]")
           }
         }
       }
+
+      for (let index = 0; index < templateDocs.length; index++) {
+        const doc = templateDocs[index]
+        try {
+          delete doc._rev
+          let newDoc = await this.tangyFormService.saveResponse(doc)
+          // console.log("doc id: " + doc._id)
+          // Save the doc multiple times to create additional sequences.
+          const timesToSave = Math.ceil(Math.random() * 10)
+          console.log("Saving " + timesToSave + " times")
+          let newRev;
+          for (let index = 0; index < timesToSave; index++) {
+            newDoc.changeNumber = index
+            if (newRev) {
+              newDoc._rev = newRev
+            }
+            try {
+              let changedDoc = await this.tangyFormService.saveResponse(newDoc)
+              newRev = changedDoc._rev
+            } catch (e) {
+              console.log("Error: " + e)
+              debugger
+            }
+          }
+        } catch (e) {
+          console.log("Error: " + e)
+          debugger
+        }
+      }
+      
+      
+      
       numberOfCasesCompleted++
       console.log("motherId: " + caseId + " participantId: " + participant_id + " Completed " + numberOfCasesCompleted + " of " + numberOfCases);
     }
