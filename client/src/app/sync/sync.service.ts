@@ -250,7 +250,14 @@ export class SyncService {
     const formsInfo = await this.tangyFormsInfoService.getFormsInfo()
     await createSyncFormIndex(db, formsInfo)
   }
-  
+
+  /**
+   * Downloads doc id's from local and remote, compares them and creates an array of doc_ids.
+   * Replicates to target using those doc_ids.
+   * Sends replicationstatus
+   * Indexes views.
+   * @param direction
+   */
   async compareDocs(direction: string):Promise<ReplicationStatus> {
     
     let status = <ReplicationStatus>{
@@ -384,6 +391,9 @@ export class SyncService {
         } else {
           status.pulled = pulled
         }
+        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
         this.syncMessage$.next(status)
       } catch (e) {
         console.log("Error: " + e)
@@ -423,6 +433,14 @@ export class SyncService {
     } catch (e) {
       this.syncMessage$.next({message: window['t']('Error sending sync status to server: ' + e)})
       console.log("Error: " + e)
+    }
+
+    if (!appConfig.indexViewsOnlyOnFirstSync) {
+      this.syncMessage$.next({
+        message: window['t']('Optimizing data. This may take several minutes. Please wait...'),
+        remaining: null
+      })
+      await this.indexViews()
     }
     
     return status

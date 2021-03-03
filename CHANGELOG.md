@@ -80,7 +80,7 @@ __New Features__
    - compareLimit (default: 150) - Document id's must be collected from both the tablet and server in order to calculate what documents need to be sync'd to the server. This setting limits the number of docs queried in each batch. 
    - batchSize (default: 200) - Number of docs per batch when pushing documents to the server. This same configuration setting is used for normal sync, so please take care when making changes to it.
   
-  This new "Comparison" options is very new and may have rough edges. In our experience, if the app crashes while using it, re-open the app and try again; chances are that it will work. If it consistently fails, lower the value for app-config.json's compareLimit property. 
+  This new "Comparison" option is very new and may have rough edges. In our experience, if the app crashes while using it, re-open the app and try again; chances are that it will work. If it consistently fails, lower the value for app-config.json's compareLimit property. 
 
 __Server upgrade instructions__
 

@@ -94,7 +94,7 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.otherMessage = ''
           }
           if (typeof progress.pending !== 'undefined') {
-            pendingMessage = progress.pending + ' pending;'
+            pendingMessage = progress.pending + ' pending; '
           }
           if (typeof progress.pulled !== 'undefined') {
             docPulled = progress.pulled + ' docs saved; '
@@ -130,10 +130,19 @@ export class SyncComponent implements OnInit, OnDestroy {
       }
     })
     try {
-
       if (this.runComparison) {
+        if (this.runComparison === 'pull') {
+          this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."
+          // force a sync to make sure all docs have been pushed. 
+          this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
+        }
         this.replicationStatus = await this.syncService.compareDocs(this.runComparison)
       } else {
+        if (this.fullSync === 'pull') {
+          this.otherMessage = "Forcing a sync before the Rewind Sync to make sure that all docs have been uploaded from the tablet."
+          // force a sync to make sure all docs have been pushed. 
+          this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
+        }
         this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
       }
       this.dbDocCount = this.replicationStatus.dbDocCount
