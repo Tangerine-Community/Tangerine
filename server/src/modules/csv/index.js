@@ -45,7 +45,7 @@ module.exports = {
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
         try {
-          const {doc, sourceDb} = data
+          const {doc, sourceDb, sequence} = data
           if (doc.type !== 'issue') {
             // TODO: Can't this be cached?
             const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))

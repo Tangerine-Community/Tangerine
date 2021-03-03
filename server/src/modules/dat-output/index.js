@@ -46,7 +46,7 @@ module.exports = {
     },
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
-          const {flatResponse, doc, sourceDb} = data
+          const {flatResponse, doc, sourceDb, sequence} = data
           try {
             await mkdir('/dat-output')
           } catch (e) { }
