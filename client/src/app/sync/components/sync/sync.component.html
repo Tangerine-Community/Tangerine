@@ -57,12 +57,17 @@
         Advanced Options
       </mat-panel-title>
     </mat-expansion-panel-header>
+    
     <p>{{'Please note that these options should not be done routinely. Choose one of the following options and then ' +
-    'click the "Start" button above. To cancel your selection, click it again.' | translate}}</p>
+    'click the "Start" button above. To cancel your selection, click it again. If the Sync direction is "Pull", ' +
+    'the app will first do a normal Sync to make sure all local docs have been pushed to the server.' | translate }}</p>
     
     <h3>Comparison Sync</h3>
     
-    <p>{{'If you wish to compare all local records to the server, press the "Comparison" checkbox and then "Start". Any local documents not on the device will be synced to the server. Please note that the comparison takes much longer than the typical sync.'|translate}}</p>
+    <p>{{'Comparison Sync compares the document ids between the local device and the server. Press the appropriate Sync ' +
+    'Direction button and then the "Start" button (above). ' +
+    'The "Push" button will sync any local documents missing from the server. The "Pull" button will sync any missing server ' +
+    'docs to the local device. Please note that Comparison Sync takes much longer than the typical sync.'|translate}}</p>
     <div>
       <mat-radio-group [name]="compareDirection" aria-label="Select an option" aria-labelledby="compare-radio-group-label" [disabled]="comparisonDisabled">
         <label id="compare-radio-group-label">Sync Direction:</label>
@@ -74,7 +79,7 @@
     
     <h3>Rewind Sync</h3>
     
-    <p>{{'Rewind sync will reset the sync "placeholder" and start from the beginning, checking every document. It is more thorough than Comparison Sync and takes much longer than the typical sync.'|translate}}</p>
+    <p>{{'Rewind sync will reset the sync "placeholder" and start from the beginning, checking replication data for each document. It is more thorough than Comparison Sync and takes much longer than the typical sync.'|translate}}</p>
     <div>
       <mat-radio-group [name]="rewindDirection" aria-label="Select an option" aria-labelledby="sync-radio-group-label" [disabled]="rewindDisabled">
         <label id="sync-radio-group-label">Sync Direction:</label>
