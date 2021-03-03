@@ -1,6 +1,6 @@
 import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../sync.service';
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
@@ -31,13 +31,23 @@ export class SyncComponent implements OnInit, OnDestroy {
   pullError: any
   pushError: any
   wakeLock: any
-  runComparison: boolean;
+  runComparison: string;
+  pushSyncButton: boolean;
+  pullSyncButton: boolean;
+  comparisonDisabled = false;
+  rewindDisabled = false;
 
   @Input() fullSync: string;
+  rewindDirection: string
+  compareDirection: string
+  pushCompareButton: boolean;
+  pullCompareButton: boolean;
+  currentCheckedValue: boolean = null
 
   constructor(
     private syncService: SyncService,
-    private userService: UserService
+    private userService: UserService,
+    private ren: Renderer2
   ) { }
 
   async ngOnInit() {
@@ -49,6 +59,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.pendingBatchMessage = ''
     this.otherMessage = ''
     this.errorMessage = ''
+    this.runComparison = null
   }
 
   async sync() {
@@ -121,7 +132,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     try {
 
       if (this.runComparison) {
-        this.replicationStatus = await this.syncService.compareDocs()
+        this.replicationStatus = await this.syncService.compareDocs(this.runComparison)
       } else {
         this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
       }
@@ -154,8 +165,52 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.show = !this.show
   }
 
-  async enableComparison(checked) {
-    this.runComparison = true
+  enableComparison(direction) {
+    if (direction) {
+      this.rewindDisabled = true
+      this.runComparison = direction
+    } else {
+      this.rewindDisabled = false
+      this.runComparison = null
+    }
+  }
+
+  enableRewind(event) {
+    let selected = event.value;
+    this.comparisonDisabled = true
+    selected ? this.fullSync = selected : this.fullSync = null
+  }
+
+  reset() {
+      this.runComparison = null
+      this.fullSync = null
+      // this.pushSyncButton = null
+      // this.pullSyncButton = null
+      this.rewindDirection = ''
+      this.compareDirection = ''
+      this.comparisonDisabled = false
+      // this.pushCompareButton = null
+      // this.pullCompareButton = null
+      this.rewindDisabled = false
+  }
+
+  checkState(el, direction, action) {
+    setTimeout(() => {
+      if (this.currentCheckedValue && this.currentCheckedValue === el.value) {
+        el.checked = false;
+        this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-focused');
+        this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-program-focused');
+        this.currentCheckedValue = null;
+        this.reset()
+      } else {
+        this.currentCheckedValue = el.value
+        if (action === 'compare') {
+          this.enableComparison(direction)
+        } else if (action === 'sync') {
+          this.enableRewind(direction)
+        }
+      }
+    })
   }
 
 }

@@ -249,6 +249,61 @@ export class SyncCouchdbService {
     return status;
   }
 
+  pullSyncBatch = (userDb, remoteDb, syncOptions):Promise<ReplicationStatus> => {
+    return new Promise( (resolve, reject) => {
+      let status = <ReplicationStatus>{
+        pulled: 0,
+        pullConflicts: [],
+        info: '',
+        direction: ''
+      }
+      const direction = 'pull'
+      const progress = {
+        'direction': direction,
+        'message': "Checking the server for updates."
+      }
+      this.syncMessage$.next(progress)
+      try {
+        userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
+          // console.log("info.last_seq: " + info.last_seq)
+          const conflictsQuery = await userDb.query('sync-conflicts')
+          status = <ReplicationStatus>{
+            pulled: info.docs_written,
+            pullConflicts: conflictsQuery.rows.map(row => row.id),
+            info: info,
+            direction: direction
+          }
+          resolve(status)
+        }).on('change', async (info) => {
+          const pulled = syncOptions.pulled + info.docs_written
+          const progress = {
+            'docs_read': info.docs_read,
+            'docs_written': info.docs_written,
+            'doc_write_failures': info.doc_write_failures,
+            'pending': info.pending,
+            'direction': 'pull',
+            'last_seq': info.last_seq,
+            'pulled': pulled
+          }
+          await this.variableService.set('sync-pull-last_seq', info.last_seq)
+          this.syncMessage$.next(progress)
+        }).on('error', function (error) {
+          if (!status) {
+            // We need to create an empty status to return so that the code that receives the reject can attach the error.
+            status = <ReplicationStatus>{
+              direction: direction
+            }
+          }
+          let errorMessage = "pullSyncBatch failed. error: " + error
+          console.log(errorMessage)
+          reject(errorMessage)
+        });
+      } catch (e) {
+        console.log("Error replicating: " + e)
+      }
+    })
+  }
+
   async pull(userDb, remoteDb, appConfig, syncDetails, batchSize): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
@@ -279,61 +334,7 @@ export class SyncCouchdbService {
     let batchFailureDetected = false
     let batchError;
     
-    const pullSyncBatch = (syncOptions):Promise<ReplicationStatus> => {
-      return new Promise( (resolve, reject) => {
-        let status = <ReplicationStatus>{
-          pulled: 0,
-          pullConflicts: [],
-          info: '',
-          direction: '' 
-        }
-        const direction = 'pull'
-        const progress = {
-          'direction': direction,
-          'message': "Checking the server for updates."
-        }
-        this.syncMessage$.next(progress)
-        try {
-          userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
-            // console.log("info.last_seq: " + info.last_seq)
-            const conflictsQuery = await userDb.query('sync-conflicts')
-            status = <ReplicationStatus>{
-              pulled: info.docs_written,
-              pullConflicts: conflictsQuery.rows.map(row => row.id),
-              info: info,
-              direction: direction
-            }
-            resolve(status)
-          }).on('change', async (info) => {
-            const pulled = syncOptions.pulled + info.docs_written
-            const progress = {
-              'docs_read': info.docs_read,
-              'docs_written': info.docs_written,
-              'doc_write_failures': info.doc_write_failures,
-              'pending': info.pending,
-              'direction': 'pull',
-              'last_seq': info.last_seq,
-              'pulled': pulled
-            }
-            await this.variableService.set('sync-pull-last_seq', info.last_seq)
-            this.syncMessage$.next(progress)
-          }).on('error', function (error) {
-            if (!status) {
-              // We need to create an empty status to return so that the code that receives the reject can attach the error.
-              status = <ReplicationStatus>{
-                direction: direction
-              }
-            }
-            let errorMessage = "pullSyncBatch failed. error: " + error
-            console.log(errorMessage)
-            batchFailureDetected = true
-            reject(errorMessage)
-          });
-        } catch (e) {
-          console.log("Error replicating: " + e)
-        }
-      })
-    }
+    
     
     // const totalDocIdLength = docIds.length
     let pulled = 0
@@ -357,7 +358,7 @@ export class SyncCouchdbService {
     syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
     
     try {
-      status = await pullSyncBatch(syncOptions);
+      status = <ReplicationStatus>await this.pullSyncBatch(userDb, remoteDb, syncOptions);
       if (typeof status.pulled !== 'undefined') {
         pulled = pulled + status.pulled
         status.pulled = pulled
@@ -395,7 +396,7 @@ export class SyncCouchdbService {
     return status;
   }
 
-  private getPullSelector(syncDetails) {
+  getPullSelector(syncDetails) {
     const pullSelector = {
       "$or": [
         ...syncDetails.formInfos.reduce(($or, formInfo) => {
