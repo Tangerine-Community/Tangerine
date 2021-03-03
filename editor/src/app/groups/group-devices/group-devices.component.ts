@@ -185,6 +185,8 @@ export class GroupDevicesComponent implements OnInit {
 
         let duration = replicationStatus?.syncCouchdbServiceDuration ? moment.utc(replicationStatus?.syncCouchdbServiceDuration).format('HH:mm:ss') :
           replicationStatus?.info ? moment.utc(moment.duration(moment(replicationStatus?.info?.end_time).diff(moment(replicationStatus?.info?.start_time))).as('milliseconds')).format('HH:mm:ss') : ''
+        // if it is a compareSync instead of a normal syncCouchdbService sync.
+        duration = replicationStatus?.compareSyncDuration ? moment.utc(replicationStatus?.compareSyncDuration).format('HH:mm:ss') : duration
         const versionTag = replicationStatus?.deviceInfo?.versionTag
         const tangerineVersion = replicationStatus?.deviceInfo?.tangerineVersion
         const dbDocCount = replicationStatus?.dbDocCount
@@ -192,6 +194,7 @@ export class GroupDevicesComponent implements OnInit {
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
         const parser = new UAParser();
         parser.setUA(replicationStatus?.userAgent)
+        const comparisonSyncMessage = replicationStatus?.idsToSyncCount + ' docs synced - ' + replicationStatus?.compareDocsDirection
       return <DeviceInfo>{
         ...device,
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
@@ -205,14 +208,14 @@ export class GroupDevicesComponent implements OnInit {
         localDocsForLocation: localDocsForLocation,
         effectiveConnectionType: effectiveConnectionType,
         errorFlag: errorFlag,
-        
         os: replicationStatus?.userAgent ? parser?.getOS() : null,
         osName: replicationStatus?.userAgent ? parser?.getOS()?.name : null,
         osVersion: replicationStatus?.userAgent ? parser?.getOS()?.version : null,
         browserVersion: replicationStatus?.userAgent ? parser?.getBrowser().version : null,
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
-        }).join('; ')
+        }).join('; '),
+        comparisonSync: replicationStatus?.compareDocsStartTime ? comparisonSyncMessage : null
       }
     })
   }

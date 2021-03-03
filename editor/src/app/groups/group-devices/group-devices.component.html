@@ -91,6 +91,9 @@
           <ng-template [ngIf]="element.duration">
             <div>Duration: {{element.duration}}</div>
           </ng-template>
+          <ng-template [ngIf]="element.comparisonSync">
+            <div>Comparison Sync: {{element.comparisonSync}}</div>
+          </ng-template>
         </td>
       </ng-container>
       <ng-container matColumnDef="os">
