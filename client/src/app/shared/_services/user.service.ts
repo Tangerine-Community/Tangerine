@@ -280,14 +280,18 @@ export class UserService {
   }
 
   getRoles(username = ''):Array<UserRole> {
-    const rolesInput = this.profile.items[0].inputs.find(input => input.name === 'roles')
-    return rolesInput
-      ? rolesInput.value.reduce((roles, option) => {
-          return option.value === 'on'
-            ? [...roles, option.name]
-            : roles
-        }, [])
-      : [] 
+    if (this.profile.items[0] && this.profile.items[0].inputs) {
+      const rolesInput = this.profile.items[0].inputs.find(input => input.name === 'roles')
+      return rolesInput
+        ? rolesInput.value.reduce((roles, option) => {
+            return option.value === 'on'
+              ? [...roles, option.name]
+              : roles
+          }, [])
+        : [] 
+    } else {
+      return []
+    }
   }
 
   async create(userSignup:UserSignup):Promise<UserAccount> {
