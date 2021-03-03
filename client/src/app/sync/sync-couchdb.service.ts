@@ -112,6 +112,11 @@ export class SyncCouchdbService {
       } catch (e) {
         console.log("Error with pull: " + e)
       }
+      if (this.fullSync === 'pull') {
+        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
+      }
       if (pullReplicationStatus?.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
         await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
       }
