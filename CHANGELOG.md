@@ -4,9 +4,9 @@
 
 __New Features__
 
-- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3 or v3.16.4. After upgrading to v3.16.4, go to the Online Sync feature. The new 'Comparison' checkbox enables the Sync feature to compare all document id's on the local device with the server and uploads any missing documents. You may also run the new "Push all docs to the server" feature available from the Admin Configuration menu item. This feature resets push sync to the beginning, ensuring that all docs are pushed. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3 or v3.16.4. After upgrading to v3.16.4, go to the Online Sync feature and click the new 'Advanced Options' panel. There are two new options for sync - Comparison Sync and Rewind Sync. Comparison sync enables the Sync feature to compare all document id's on the local device with the server and uploads any missing documents. Rewind Sync resets the sync "placeholder" to the beginning, ensuring that all docs are synced. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded.  It is more thorough than Comparison Sync. Both of the features are for special cases and should not be used routinely. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
 
-  There are two settings that can be configured for the comparison sync:
+  There are two settings that can be configured for Comparison sync:
    - compareLimit (default: 150) - Document id's must be collected from both the tablet and server in order to calculate what documents need to be sync'd to the server. This setting limits the number of docs queried in each batch. 
    - batchSize (default: 200) - Number of docs per batch when pushing documents to the server. This same configuration setting is used for normal sync, so please take care when making changes to it.
   
