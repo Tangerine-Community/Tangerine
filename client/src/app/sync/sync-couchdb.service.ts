@@ -84,7 +84,9 @@ export class SyncCouchdbService {
     let batchSize = this.batchSize
     if (fullSync) {
       this.fullSync = fullSync
-      batchSize = this.initialBatchSize
+      if (fullSync === 'pull') {
+        batchSize = this.initialBatchSize
+      }
     }
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -111,6 +113,11 @@ export class SyncCouchdbService {
         pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
       } catch (e) {
         console.log("Error with pull: " + e)
+      }
+      if (this.fullSync === 'pull') {
+        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
+        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
+        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
       }
       if (pullReplicationStatus?.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
         await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
@@ -139,6 +146,8 @@ export class SyncCouchdbService {
           info: info,
           direction: direction
         }
+        // TODO: Should we always resolve or if there is an errors property in the info doc should we reject?
+        // If that is the case - we may need to make sure the sync-pull-last-seq is not set.
         resolve(status)
       }).on('change', async (info) => {
         const pushed = syncOptions.pushed + info.docs_written
@@ -249,6 +258,63 @@ export class SyncCouchdbService {
     return status;
   }
 
+  pullSyncBatch = (userDb, remoteDb, syncOptions):Promise<ReplicationStatus> => {
+    return new Promise( (resolve, reject) => {
+      let status = <ReplicationStatus>{
+        pulled: 0,
+        pullConflicts: [],
+        info: '',
+        direction: ''
+      }
+      const direction = 'pull'
+      const progress = {
+        'direction': direction,
+        'message': "Checking the server for updates."
+      }
+      this.syncMessage$.next(progress)
+      try {
+        userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
+          // console.log("info.last_seq: " + info.last_seq)
+          const conflictsQuery = await userDb.query('sync-conflicts')
+          status = <ReplicationStatus>{
+            pulled: info.docs_written,
+            pullConflicts: conflictsQuery.rows.map(row => row.id),
+            info: info,
+            direction: direction
+          }
+          // TODO: Should we always resolve or if there is an errors property in the info doc should we reject?
+          // If that is the case - we may need to make sure the sync-pull-last-seq is not set.
+          resolve(status)
+        }).on('change', async (info) => {
+          const pulled = syncOptions.pulled + info.docs_written
+          const progress = {
+            'docs_read': info.docs_read,
+            'docs_written': info.docs_written,
+            'doc_write_failures': info.doc_write_failures,
+            'pending': info.pending,
+            'direction': 'pull',
+            'last_seq': info.last_seq,
+            'pulled': pulled
+          }
+          await this.variableService.set('sync-pull-last_seq', info.last_seq)
+          this.syncMessage$.next(progress)
+        }).on('error', function (error) {
+          if (!status) {
+            // We need to create an empty status to return so that the code that receives the reject can attach the error.
+            status = <ReplicationStatus>{
+              direction: direction
+            }
+          }
+          let errorMessage = "pullSyncBatch failed. error: " + error
+          console.log(errorMessage)
+          reject(errorMessage)
+        });
+      } catch (e) {
+        console.log("Error replicating: " + e)
+      }
+    })
+  }
+
   async pull(userDb, remoteDb, appConfig, syncDetails, batchSize): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
@@ -278,66 +344,8 @@ export class SyncCouchdbService {
     this.syncMessage$.next(progress)
     let batchFailureDetected = false
     let batchError;
-    
-    const pullSyncBatch = (syncOptions):Promise<ReplicationStatus> => {
-      return new Promise( (resolve, reject) => {
-        let status = <ReplicationStatus>{
-          pulled: 0,
-          pullConflicts: [],
-          info: '',
-          direction: '' 
-        }
-        const direction = 'pull'
-        const progress = {
-          'direction': direction,
-          'message': "Checking the server for updates."
-        }
-        this.syncMessage$.next(progress)
-        try {
-          userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
-            // console.log("info.last_seq: " + info.last_seq)
-            const conflictsQuery = await userDb.query('sync-conflicts')
-            status = <ReplicationStatus>{
-              pulled: info.docs_written,
-              pullConflicts: conflictsQuery.rows.map(row => row.id),
-              info: info,
-              direction: direction
-            }
-            resolve(status)
-          }).on('change', async (info) => {
-            const pulled = syncOptions.pulled + info.docs_written
-            const progress = {
-              'docs_read': info.docs_read,
-              'docs_written': info.docs_written,
-              'doc_write_failures': info.doc_write_failures,
-              'pending': info.pending,
-              'direction': 'pull',
-              'last_seq': info.last_seq,
-              'pulled': pulled
-            }
-            await this.variableService.set('sync-pull-last_seq', info.last_seq)
-            this.syncMessage$.next(progress)
-          }).on('error', function (error) {
-            if (!status) {
-              // We need to create an empty status to return so that the code that receives the reject can attach the error.
-              status = <ReplicationStatus>{
-                direction: direction
-              }
-            }
-            let errorMessage = "pullSyncBatch failed. error: " + error
-            console.log(errorMessage)
-            batchFailureDetected = true
-            reject(errorMessage)
-          });
-        } catch (e) {
-          console.log("Error replicating: " + e)
-        }
-      })
-    }
-    
-    // const totalDocIdLength = docIds.length
     let pulled = 0
-    // while (docIds.length) {
+    
     /**
      * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet. 
      * From the pouchdb API doc:      
@@ -357,7 +365,7 @@ export class SyncCouchdbService {
     syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
     
     try {
-      status = await pullSyncBatch(syncOptions);
+      status = <ReplicationStatus>await this.pullSyncBatch(userDb, remoteDb, syncOptions);
       if (typeof status.pulled !== 'undefined') {
         pulled = pulled + status.pulled
         status.pulled = pulled
@@ -377,7 +385,7 @@ export class SyncCouchdbService {
     status.batchSize = batchSize
 
     if (batchFailureDetected) {
-      // don't se last_seq and prompt to re-run
+      // don't set last_seq and prompt to re-run
       // TODO: create an issue
       const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
       const errorMessage = errorMessageDialog + batchError
@@ -395,7 +403,7 @@ export class SyncCouchdbService {
     return status;
   }
 
-  private getPullSelector(syncDetails) {
+  getPullSelector(syncDetails) {
     const pullSelector = {
       "$or": [
         ...syncDetails.formInfos.reduce(($or, formInfo) => {
