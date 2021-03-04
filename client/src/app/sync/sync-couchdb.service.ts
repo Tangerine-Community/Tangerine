@@ -84,7 +84,9 @@ export class SyncCouchdbService {
     let batchSize = this.batchSize
     if (fullSync) {
       this.fullSync = fullSync
-      batchSize = this.initialBatchSize
+      if (fullSync === 'pull') {
+        batchSize = this.initialBatchSize
+      }
     }
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
@@ -144,6 +146,8 @@ export class SyncCouchdbService {
           info: info,
           direction: direction
         }
+        // TODO: Should we always resolve or if there is an errors property in the info doc should we reject?
+        // If that is the case - we may need to make sure the sync-pull-last-seq is not set.
         resolve(status)
       }).on('change', async (info) => {
         const pushed = syncOptions.pushed + info.docs_written
@@ -278,6 +282,8 @@ export class SyncCouchdbService {
             info: info,
             direction: direction
           }
+          // TODO: Should we always resolve or if there is an errors property in the info doc should we reject?
+          // If that is the case - we may need to make sure the sync-pull-last-seq is not set.
           resolve(status)
         }).on('change', async (info) => {
           const pulled = syncOptions.pulled + info.docs_written
@@ -338,12 +344,8 @@ export class SyncCouchdbService {
     this.syncMessage$.next(progress)
     let batchFailureDetected = false
     let batchError;
-    
-    
-    
-    // const totalDocIdLength = docIds.length
     let pulled = 0
-    // while (docIds.length) {
+    
     /**
      * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet. 
      * From the pouchdb API doc:      
@@ -383,7 +385,7 @@ export class SyncCouchdbService {
     status.batchSize = batchSize
 
     if (batchFailureDetected) {
-      // don't se last_seq and prompt to re-run
+      // don't set last_seq and prompt to re-run
       // TODO: create an issue
       const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
       const errorMessage = errorMessageDialog + batchError

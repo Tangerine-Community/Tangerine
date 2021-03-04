@@ -300,14 +300,14 @@ export class SyncService {
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType: 'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
     const pushOptions = {limit: this.compareLimit}
-    const localDocs = await this.pageThroughAlldocs(userDb.db, pushOptions, "local device");
+    const localDocs = await this.pageThroughAlldocsOrSelector(userDb.db, pushOptions, "local device");
     const pullSelector = this.syncCouchdbService.getPullSelector(syncDetails);
     const pullOptions = {
       limit: this.compareLimit,
       selector: pullSelector,
       fields: ["_id"]
     }
-    const remoteDocs = await this.pageThroughAlldocs(remoteDb, pullOptions, "server");
+    const remoteDocs = await this.pageThroughAlldocsOrSelector(remoteDb, pullOptions, "server");
     // remove the initial user-profile - is not uploaded to server
     const userProfiles = await this.tangyFormService.getResponsesByFormId('user-profile')
     const initialProfile = userProfiles.find(profile => Object.keys(profile.location).length === 0)
@@ -391,6 +391,7 @@ export class SyncService {
         } else {
           status.pulled = pulled
         }
+        // We must set sync-push-last_seq now so that replication doesn't have to go through a bunch of sequences that we just pulled down.
         const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
         await this.variableService.set('sync-push-last_seq', lastLocalSequence)
         console.log("Setting sync-push-last_seq to " + lastLocalSequence)
@@ -407,6 +408,7 @@ export class SyncService {
 
     this.replicationStatus = status
     
+    // Prepare replicationstatus report for the server.
     try {
       this.replicationStatus.compareDocsStartTime = this.compareDocsStartTime
       this.replicationStatus.compareDocsDirection = direction
@@ -446,7 +448,15 @@ export class SyncService {
     return status
   }
 
-  async pageThroughAlldocs(database: PouchDB, options, dbName) {
+  /**
+   * Returns an array of docs using either an allDocs or find query. 
+   * Using the alternate startkey pagination method: https://docs.couchdb.org/en/latest/ddocs/views/pagination.html#paging-alternate-method
+   * 
+   * @param database
+   * @param options
+   * @param dbName
+   */
+  async pageThroughAlldocsOrSelector(database: PouchDB, options, dbName) {
     let allDocs = []
     let remaining = true
     let total_rows = 0
@@ -462,41 +472,36 @@ export class SyncService {
     }
     while (remaining === true) {
       try {
-        await database[queryFunction](options, (err, response) => {
-          if (err) {
-            console.log("Error getting allDocs: " + err)
-          }
-          if (response && response[responseArrayName].length > 0) {
-            if (options.selector) {
-              const pagerKey = response[pagerKeyName]
-              allDocs.push(...response[responseArrayName])
-              options[pagerKeyName] = pagerKey
-            } else {
-              total_rows = response.total_rows
-              const responseLength = response[responseArrayName].length
-              const pagerKey = response[responseArrayName][responseLength - 1].id
-              // Remove the last item (to be used as pagerKey) and add to the allDocs array
-              allDocs.push(...response[responseArrayName].splice(0, responseLength - 1))
-              if (responseLength === 1 && pagerKey === options[pagerKeyName]) {
-                allDocs.push(response[responseArrayName][0])
-                remaining = false
-              } else {
-                options[pagerKeyName] = pagerKey
-              }
-            }
-            
-            let message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
-            if (options.selector) {
-              message = 'Collected ' + allDocs.length + ' docs from the ' + dbName + ' for comparison.';
-            }
-            
-            this.syncMessage$.next({
-              message: window['t'](message)
-            })
+        const response = await database[queryFunction](options)
+        if (response && response[responseArrayName].length > 0) {
+          if (options.selector) {
+            const pagerKey = response[pagerKeyName]
+            allDocs.push(...response[responseArrayName])
+            options[pagerKeyName] = pagerKey
           } else {
-            remaining = false
+            total_rows = response.total_rows
+            const responseLength = response[responseArrayName].length
+            const pagerKey = response[responseArrayName][responseLength - 1].id
+            // Remove the last item (to be used as pagerKey) and add to the allDocs array
+            allDocs.push(...response[responseArrayName].splice(0, responseLength - 1))
+            if (responseLength === 1 && pagerKey === options[pagerKeyName]) {
+              allDocs.push(response[responseArrayName][0])
+              remaining = false
+            } else {
+              options[pagerKeyName] = pagerKey
+            }
           }
-        })
+          
+          let message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
+          if (options.selector) {
+            message = 'Collected ' + allDocs.length + ' docs from the ' + dbName + ' for comparison.';
+          }
+          this.syncMessage$.next({
+            message: window['t'](message)
+          })
+        } else {
+          remaining = false
+        }
       } catch (e) {
         console.log("Error getting allDocs: " + e)
       }
