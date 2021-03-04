@@ -30,6 +30,7 @@ export class EventFormComponent implements OnInit {
   eventFormRedirectBackButtonText = ''
 
   loaded = false
+  readyForDataEntry = false
 
   window:any
 
@@ -98,8 +99,11 @@ export class EventFormComponent implements OnInit {
           this.eventForm.formResponseId = this.formPlayer.formResponseId
           await this.caseService.save()
         }
+        this.readyForDataEntry = true
+        this.ref.detectChanges()
       })
       this.formPlayer.$submit.subscribe(async () => {
+        // @TODO This timeout may not be need now that we are not displaying form until `this.readyForDataEntry = true`.
         setTimeout(async () => {
           this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
           await this.caseService.save()
@@ -110,6 +114,7 @@ export class EventFormComponent implements OnInit {
             const formInfo = this.formPlayer.formInfo
             await this.caseService.createIssue(`Discrepancy on ${formInfo.title}`, '', this.caseService.case._id, this.caseEvent.id, this.eventForm.id, window['userProfile']._id, window['username'], null)
           }
+          // @TODO This redirect may not be need now that we are not displaying form until `this.readyForDataEntry = true`.
           // @TODO Why do we have to redirect back to the case event page to avoid a database conflict error when redirecting
           // to another event form???
           window.location.hash = `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
