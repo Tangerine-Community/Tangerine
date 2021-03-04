@@ -32,16 +32,10 @@ export class SyncComponent implements OnInit, OnDestroy {
   pushError: any
   wakeLock: any
   runComparison: string;
-  pushSyncButton: boolean;
-  pullSyncButton: boolean;
   comparisonDisabled = false;
   rewindDisabled = false;
 
   @Input() fullSync: string;
-  rewindDirection: string
-  compareDirection: string
-  pushCompareButton: boolean;
-  pullCompareButton: boolean;
   currentCheckedValue: boolean = null
 
   constructor(
@@ -130,21 +124,30 @@ export class SyncComponent implements OnInit, OnDestroy {
       }
     })
     try {
-      if (this.runComparison) {
-        if (this.runComparison === 'pull') {
-          this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."
-          // force a sync to make sure all docs have been pushed. 
-          this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
-        }
-        this.replicationStatus = await this.syncService.compareDocs(this.runComparison)
-      } else {
-        if (this.fullSync === 'pull') {
-          this.otherMessage = "Forcing a sync before the Rewind Sync to make sure that all docs have been uploaded from the tablet."
-          // force a sync to make sure all docs have been pushed. 
-          this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
-        }
-        this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
+      if (!this.runComparison && !this.fullSync) {
+        // Normal Sync
+        this.replicationStatus = await this.syncService.sync(false, false, null)
+      } else if (this.runComparison === 'pull') {
+        // Pull comparison
+        this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."
+        // force a sync to make sure all docs have been pushed. 
+        this.replicationStatus = await this.syncService.sync(false, false, null)
+        this.replicationStatus = await this.syncService.compareDocs('pull')
+      } else if (this.runComparison === 'push') {
+        // Push comparison
+        this.replicationStatus = await this.syncService.compareDocs('push')
+      } else if (this.fullSync === 'pull') {
+        // Pull Rewind Full Sync
+        this.otherMessage = "Forcing a sync before the Rewind Sync to make sure that all docs have been uploaded from the tablet."
+        // force a sync to make sure all docs have been pushed. 
+        this.replicationStatus = await this.syncService.sync(false, false, null)
+        // Rewind sync is activated when you provide the 'fullSync' variable - push or pull:
+        this.replicationStatus = await this.syncService.sync(false, false, 'pull')
+      } else if (this.fullSync === 'push') {
+        // Push Rewind Full Sync
+        this.replicationStatus = await this.syncService.sync(false, false, 'push')
       }
+      
       this.dbDocCount = this.replicationStatus.dbDocCount
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
@@ -175,48 +178,40 @@ export class SyncComponent implements OnInit, OnDestroy {
   }
 
   enableComparison(direction) {
-    if (direction) {
-      this.rewindDisabled = true
-      this.runComparison = direction
-    } else {
-      this.rewindDisabled = false
-      this.runComparison = null
-    }
+    this.rewindDisabled = true
+    this.runComparison = direction
+    this.fullSync = null
   }
 
-  enableRewind(event) {
-    let selected = event.value;
+  enableRewind(direction) {
     this.comparisonDisabled = true
-    selected ? this.fullSync = selected : this.fullSync = null
+    this.fullSync = direction
+    this.runComparison = null
   }
 
   reset() {
-      this.runComparison = null
-      this.fullSync = null
-      // this.pushSyncButton = null
-      // this.pullSyncButton = null
-      this.rewindDirection = ''
-      this.compareDirection = ''
-      this.comparisonDisabled = false
-      // this.pushCompareButton = null
-      // this.pullCompareButton = null
-      this.rewindDisabled = false
+    this.runComparison = null
+    this.fullSync = null
+    this.comparisonDisabled = false
+    this.rewindDisabled = false
   }
 
   checkState(el, direction, action) {
     setTimeout(() => {
-      if (this.currentCheckedValue && this.currentCheckedValue === el.value) {
-        el.checked = false;
-        this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-focused');
-        this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-program-focused');
-        this.currentCheckedValue = null;
-        this.reset()
-      } else {
-        this.currentCheckedValue = el.value
-        if (action === 'compare') {
-          this.enableComparison(direction)
-        } else if (action === 'sync') {
-          this.enableRewind(direction)
+      if (!el.disabled) {
+        if (this.currentCheckedValue && this.currentCheckedValue === el.value) {
+          el.checked = false;
+          this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-focused');
+          this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-program-focused');
+          this.currentCheckedValue = null;
+          this.reset()
+        } else {
+          this.currentCheckedValue = el.value
+          if (action === 'compare') {
+            this.enableComparison(direction)
+          } else if (action === 'rewind') {
+            this.enableRewind(direction)
+          }
         }
       }
     })
