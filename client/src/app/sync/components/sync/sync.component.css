@@ -20,8 +20,8 @@ mat-card {
 /*  margin-left: 1em;*/
 /*}*/
 .mat-progress-bar {
-  margin-top: 1.5em;
-  width: 60%
+  margin-top: 1em;
+  width: 50%
 }
 
 div {
@@ -40,4 +40,13 @@ div {
 }
 mat-checkbox {
   margin-right: 2em;
+}
+mat-expansion-panel {
+  width: 600px
+}
+mat-radio-button {
+  padding-left: 1em;
+}
+.mat-raised-button {
+  margin-left: 1em;
 }
