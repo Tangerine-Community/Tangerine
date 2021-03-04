@@ -1,6 +1,6 @@
 import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../sync.service';
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
@@ -31,13 +31,17 @@ export class SyncComponent implements OnInit, OnDestroy {
   pullError: any
   pushError: any
   wakeLock: any
-  runComparison: boolean;
+  runComparison: string;
+  comparisonDisabled = false;
+  rewindDisabled = false;
 
   @Input() fullSync: string;
+  currentCheckedValue: boolean = null
 
   constructor(
     private syncService: SyncService,
-    private userService: UserService
+    private userService: UserService,
+    private ren: Renderer2
   ) { }
 
   async ngOnInit() {
@@ -49,6 +53,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.pendingBatchMessage = ''
     this.otherMessage = ''
     this.errorMessage = ''
+    this.runComparison = null
   }
 
   async sync() {
@@ -83,7 +88,7 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.otherMessage = ''
           }
           if (typeof progress.pending !== 'undefined') {
-            pendingMessage = progress.pending + ' pending;'
+            pendingMessage = progress.pending + ' pending; '
           }
           if (typeof progress.pulled !== 'undefined') {
             docPulled = progress.pulled + ' docs saved; '
@@ -119,12 +124,30 @@ export class SyncComponent implements OnInit, OnDestroy {
       }
     })
     try {
-
-      if (this.runComparison) {
-        this.replicationStatus = await this.syncService.compareDocs()
-      } else {
-        this.replicationStatus = await this.syncService.sync(false, false, this.fullSync)
+      if (!this.runComparison && !this.fullSync) {
+        // Normal Sync
+        this.replicationStatus = await this.syncService.sync(false, false, null)
+      } else if (this.runComparison === 'pull') {
+        // Pull comparison
+        this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."
+        // force a sync to make sure all docs have been pushed. 
+        this.replicationStatus = await this.syncService.sync(false, false, null)
+        this.replicationStatus = await this.syncService.compareDocs('pull')
+      } else if (this.runComparison === 'push') {
+        // Push comparison
+        this.replicationStatus = await this.syncService.compareDocs('push')
+      } else if (this.fullSync === 'pull') {
+        // Pull Rewind Full Sync
+        this.otherMessage = "Forcing a sync before the Rewind Sync to make sure that all docs have been uploaded from the tablet."
+        // force a sync to make sure all docs have been pushed. 
+        this.replicationStatus = await this.syncService.sync(false, false, null)
+        // Rewind sync is activated when you provide the 'fullSync' variable - push or pull:
+        this.replicationStatus = await this.syncService.sync(false, false, 'pull')
+      } else if (this.fullSync === 'push') {
+        // Push Rewind Full Sync
+        this.replicationStatus = await this.syncService.sync(false, false, 'push')
       }
+      
       this.dbDocCount = this.replicationStatus.dbDocCount
       this.status = STATUS_COMPLETED
       this.subscription.unsubscribe();
@@ -154,8 +177,44 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.show = !this.show
   }
 
-  async enableComparison(checked) {
-    this.runComparison = true
+  enableComparison(direction) {
+    this.rewindDisabled = true
+    this.runComparison = direction
+    this.fullSync = null
+  }
+
+  enableRewind(direction) {
+    this.comparisonDisabled = true
+    this.fullSync = direction
+    this.runComparison = null
+  }
+
+  reset() {
+    this.runComparison = null
+    this.fullSync = null
+    this.comparisonDisabled = false
+    this.rewindDisabled = false
+  }
+
+  checkState(el, direction, action) {
+    setTimeout(() => {
+      if (!el.disabled) {
+        if (this.currentCheckedValue && this.currentCheckedValue === el.value) {
+          el.checked = false;
+          this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-focused');
+          this.ren.removeClass(el['_elementRef'].nativeElement, 'cdk-program-focused');
+          this.currentCheckedValue = null;
+          this.reset()
+        } else {
+          this.currentCheckedValue = el.value
+          if (action === 'compare') {
+            this.enableComparison(direction)
+          } else if (action === 'rewind') {
+            this.enableRewind(direction)
+          }
+        }
+      }
+    })
   }
 
 }
