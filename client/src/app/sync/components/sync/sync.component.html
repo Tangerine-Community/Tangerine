@@ -69,7 +69,7 @@
     'The "Push" button will sync any local documents missing from the server. The "Pull" button will sync any missing server ' +
     'docs to the local device. Please note that Comparison Sync takes much longer than the typical sync.'|translate}}</p>
     <div>
-      <mat-radio-group [name]="compareDirection" aria-label="Select an option" aria-labelledby="compare-radio-group-label" [disabled]="comparisonDisabled">
+      <mat-radio-group aria-label="Select an option" aria-labelledby="compare-radio-group-label" [disabled]="comparisonDisabled">
         <label id="compare-radio-group-label">Sync Direction:</label>
         <mat-radio-button #pushButtonC value="push" (click)="checkState(pushButtonC, 'push', 'compare')">Push</mat-radio-button>
         <mat-radio-button #pullButtonC value="pull" (click)="checkState(pullButtonC, 'pull', 'compare')">Pull</mat-radio-button>
@@ -81,10 +81,10 @@
     
     <p>{{'Rewind sync will reset the sync "placeholder" and start from the beginning, checking replication data for each document. It is more thorough than Comparison Sync and takes much longer than the typical sync.'|translate}}</p>
     <div>
-      <mat-radio-group [name]="rewindDirection" aria-label="Select an option" aria-labelledby="sync-radio-group-label" [disabled]="rewindDisabled">
+      <mat-radio-group aria-label="Select an option" aria-labelledby="sync-radio-group-label" [disabled]="rewindDisabled">
         <label id="sync-radio-group-label">Sync Direction:</label>
-        <mat-radio-button #pullButtonS value="pull" (click)="checkState(pullButtonS, 'pull', 'sync')" [checked]="pushSyncButton">Push</mat-radio-button>
-        <mat-radio-button #pushButtonS value="push" (click)="checkState(pushButtonS, 'push', 'sync')" [checked]="pullSyncButton">Pull</mat-radio-button>
+        <mat-radio-button #pushButtonS value="push" (click)="checkState(pushButtonS, 'push', 'rewind')">Push</mat-radio-button>
+        <mat-radio-button #pullButtonS value="pull" (click)="checkState(pullButtonS, 'pull', 'rewind')">Pull</mat-radio-button>
       </mat-radio-group>
     </div>
     
