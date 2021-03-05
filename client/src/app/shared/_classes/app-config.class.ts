@@ -40,5 +40,6 @@ export class AppConfig {
   useCachedDbDumps:boolean
   calculateLocalDocsForLocation:boolean;
   findSelectorLimit: number;
+  compareLimit: number;
 }
 
