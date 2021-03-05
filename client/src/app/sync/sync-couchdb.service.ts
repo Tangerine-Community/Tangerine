@@ -68,63 +68,27 @@ export class SyncCouchdbService {
     isFirstSync = false,
     fullSync:string
   ): Promise<ReplicationStatus> {
+    // Prepare config.
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.batchSize) {
-      this.batchSize = appConfig.batchSize
-      console.log("this.batchSize: " + this.batchSize)
-    }
-    if (appConfig.initialBatchSize) {
-      this.initialBatchSize = appConfig.initialBatchSize
-      console.log("this.initialBatchSize: " + this.initialBatchSize)
-    }
-    if (appConfig.writeBatchSize) {
-      this.writeBatchSize = appConfig.writeBatchSize
-      console.log("this.writeBatchSize: " + this.writeBatchSize)
-    }
-    let batchSize = this.batchSize
-    if (fullSync) {
-      this.fullSync = fullSync
-      if (fullSync === 'pull') {
-        batchSize = this.initialBatchSize
-      }
-    }
+    this.batchSize = appConfig.batchSize || this.batchSize
+    this.initialBatchSize = appConfig.initialBatchSize || this.initialBatchSize
+    this.writeBatchSize = appConfig.writeBatchSize || this.writeBatchSize
+    let batchSize = fullSync === 'pull' 
+      ? this.initialBatchSize
+      : this.batchSize
+    // Create sync session and instantiate remote database connection.
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
-    
-    let pullReplicationStatus:ReplicationStatus
-    
-    // If this is the first sync, skip the push.
-    if (isFirstSync) {
-      if (appConfig.useCachedDbDumps) {
-        pullReplicationStatus = await this.pullAll(userDb, remoteDb, appConfig, syncDetails);
-      } else {
-        try {
-          pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, this.initialBatchSize);
-        } catch (e) {
-          console.log("Error with pull: " + e)
-        }
-      }
-      const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-      await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-      console.log("Setting sync-push-last_seq to " + lastLocalSequence)
-      return pullReplicationStatus
-    } else {
-      try {
-        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
-      } catch (e) {
-        console.log("Error with pull: " + e)
-      }
-      if (this.fullSync === 'pull') {
-        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
-      }
-      if (pullReplicationStatus?.pullConflicts.length > 0 && appConfig.autoMergeConflicts) {
-        await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
-      }
-    }
-    
-    let pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
+    // Push.
+    const pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
+    const localSequenceAfterPush = (await userDb.changes({descending: true, limit: 1})).last_seq
+    await this.variableService.set('sync-push-last_seq', localSequenceAfterPush)
+    // Pull.
+    const pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
+    // Whatever we pulled, we don't need to push so set last push sequence again.
+    const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
+    await this.variableService.set('sync-push-last_seq', localSequenceAfterPull)
+    // All done.
     let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
