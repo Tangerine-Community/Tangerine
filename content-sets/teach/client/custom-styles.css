@@ -1,0 +1,48 @@
+/*
+ * Custom Styles
+ */
+
+/*
+ * Theme override example:
+
+html {
+  --document-background-color: #FAFAFA;
+  --primary-color-dark: #212a3f;
+  --primary-text-color-overlay: #FFF;
+  --primary-text-color: #050505;
+  --primary-color: #3c5b8d;
+  --accent-color: #f26f10;
+  --accent-color-dark: #cc5500;
+  --accent-text-color: #FFF;
+  --error-color: #ff0000;
+  --warn-color: #993f0b;
+  --warn-background-color: #f4e688;
+  --disabled-color: #BBB;
+  --paper-tabs-selection-bar-color: #f26f10;
+}
+
+/* */
+
+/*
+ * Dark Theme override example:
+
+ @media (prefers-color-scheme: dark) {
+  html {
+    --document-background-color: #050505 !important;
+    --primary-color-dark: #212a3f !important;
+    --primary-text-color-overlay: #FFF !important;
+    --paper-color: #000 !important;
+    --primary-text-color: #fafafa !important;
+    --primary-color: #3c5b8d !important;
+    --accent-color: #0d90ef !important;
+    --accent-color-dark: #33aaff !important;
+    --accent-text-color: #FFF !important;
+    --error-color: #00ffff !important;
+    --disabled-color: #444444 !important;
+    --paper-tabs-selection-bar-color: #0d90ef !important;
+    --tangy-form-item--background-color: #000 !important;
+  }
+}
+
+/* */
+

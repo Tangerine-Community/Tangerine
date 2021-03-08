@@ -41,8 +41,17 @@ async function go(state) {
   try {
     console.log(`dbName: ${state.dbName}`)
     const db = new DB(`${state.dbName}`)
+    const groupId = state.dbName.replace('-reporting', '')
+    const groupsDb = new DB(`groups`)
+    let groupConfigurationDoc
+    try {
+      groupConfigurationDoc = await groupsDb.get(groupId)
+    } catch (err) {
+      console.log('Error: ' + JSON.stringify(err))
+      
+    }
     // Create the headers.
-      let headersDoc = {} 
+    let headersDoc = {} 
     try {
       headersDoc = await db.get(state.formId)
     } catch (err) {
@@ -54,6 +63,7 @@ async function go(state) {
     state.headers = headersDoc.columnHeaders.map(header => header.header)
     state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
     state.headers.unshift('_id')
+    state.groupConfigurationDoc = groupConfigurationDoc
     const headersRow = new CSV([state.headers]).encode()
     await writeFile(state.outputPath, headersRow, 'utf-8')
     // Create initial state for batches.

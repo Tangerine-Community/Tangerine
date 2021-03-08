@@ -1,0 +1,38 @@
+<tangy-form has-summary linear-mode hide-closed-items id="class-registration" on-change="" >
+    <tangy-form-item id="class-registration" title="Class Registration" hide-back-button hide-next-button on-open="">
+        <template>
+            <tangy-input
+                    name="school_name"
+                    label="School name"
+                    type="text"
+                    error-message="This is required."
+                    required>
+            </tangy-input>
+
+            <tangy-input
+                    name="school_year"
+                    label="School year"
+                    type="text"
+                    error-message="This is required."
+                    required>
+            </tangy-input>
+
+            <tangy-input
+                    name="grade"
+                    label="Grade"
+                    type="text"
+                    error-message="This is required."
+                    required>
+            </tangy-input>
+
+            <tangy-checkboxes-dynamic
+                    name="curriculum"
+                    label="Curriculum"
+                    options-list-source="./assets/forms.json"
+                    options-list-excludes="class-registration,student-registration,user-profile"
+                    options-list-properties="id,title"
+                    options-list-exclude-by="id">
+            </tangy-checkboxes-dynamic>
+        </template>
+    </tangy-form-item>
+</tangy-form>

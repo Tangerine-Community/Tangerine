@@ -1,0 +1,19 @@
+{
+  "syncProtocol": "1",
+  "columnsOnVisitsTab": [],
+  "securityQuestionText": "What is your year of birth?",
+  "hideProfile": false,
+  "registrationRequiresServerUser": false,
+  "listUsernamesOnLoginScreen": true,
+  "serverUrl": "http://localhost/",
+  "uploadUnlockedFormReponses": true,
+  "groupName": "",
+  "uploadToken": "password",
+  "homeUrl": "dashboard",
+  "centrallyManagedUserProfile": false,
+  "languageDirection": "ltr",
+  "languageCode": "en",
+  "couchdbPush4All": false,
+  "couchdbPullUsingDocIds": false,
+  "autoMergeConflicts": false
+}
