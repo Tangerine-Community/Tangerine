@@ -29,7 +29,7 @@ export class AppInit {
         let isInstalled
         const tangerineVariablesDb = DB('tangerine-variables')
         try {
-          tangerineVariablesDb.get('installed')
+          await tangerineVariablesDb.get('installed')
           isInstalled = true
         } catch(e) {
           isInstalled = false
