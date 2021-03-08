@@ -136,7 +136,6 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
             ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
             : value
-    // flatFormResponse[key] = value
   }
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
