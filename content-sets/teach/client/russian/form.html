@@ -1,0 +1,383 @@
+
+<tangy-form id="russian" title="Grade 1 Russian March Pilot" category="null"
+            on-open=" "
+            exit-clicks=""
+            on-change=" "
+            on-submit="  "
+>
+
+  <tangy-form-item id="item_11fbeffd-70a4-4433-b306-2295f1ba1fce"
+                   title="Чтение знакомых слов"
+
+                   on-open="
+
+            "
+                   on-change="
+
+
+     var questions = ['fam_word1','fam_word2','fam_word3','fam_word4','fam_word5','fam_word6','fam_word7','fam_word8','fam_word9','fam_word10','fam_word11','fam_word12','fam_word13','fam_word14','fam_word15','fam_word16','fam_word17','fam_word18','fam_word19','fam_word20'];
+            var score = 0
+            var j = 0
+            function findObjectByKey(array, key, value) {
+                for (var i = 0; i < array.length; i++) {   if (array[i] == key) {return array[i];}
+            } return null;
+            }
+           function sumScore(input) {
+          var s = 0
+          for (var i = 0; i < input.length; i++) {
+                if (typeof input !== 'string')
+                    if (isNaN(input))
+                    	s +=1; else  s += parseInt(input[i]);
+                else
+                    if (isNaN(input))  s = 1; else s = parseInt(input);  }
+          return s;
+        }
+            for (var input in inputs) {
+                var a = findObjectByKey(questions, input)
+                if (a != null){score += sumScore(getValue(input))}
+            }
+            score = score
+            inputs['item_11fbeffd-70a4-4433-b306-2295f1ba1fce_score'].value = score.toString()
+
+            "
+                   category="
+
+            "
+  >
+    <template>
+
+
+      <tangy-box name="Intro_fam_word" required="" class="" style=""><b>Описание</b><br>
+        Тест представляет собой таблицу, в которой приведены 20 простых знакомых учащимся слов, состоящих из одного или двух слогов. Тест проводится индивидуально с каждым учащимся; одна и та же таблица может быть использована многократно, так как учащиеся не делают в ней никаких пометок.<br><br>
+        <b>Как проводить оценку?</b><br>
+        Сядьте напротив учащегося, дайте учащемуся таблицу со словами и объясните цель и способ работы:
+        «Здесь написаны слова, которые тебе нужно прочитать. Читай не торопясь.
+        Важно, чтобы ты прочитала(а) слова правильно, не обязательно читать очень быстро.
+        Я не буду тебе ставить оценку за это, мне просто нужно посмотреть, как ты умеешь читать».<br><br>
+        Пока учащийся читает, отмечайте слова, прочитанные учащимся неправильно.
+        Под каждым словом в таблице указан тип буквосочетания и вариант (ы) прочтения.
+        Второй из предложенных вариантов не является абсолютно правильным вариантом прочтения, но допустимым с точки зрения навыка декодирования для 1 класса.
+        Таким образом, Вы можете пронаблюдать, имеется ли какая-либо закономерность в ошибках учащегося, определить, какие именно слоги и сочетания букв даются учащемуся с трудом.<br><br>
+        При проведении оценки воздержитесь  от каких-либо визуальных или вербальных оценок чтения: кивания, качания головой, произнесения слов «молодец», «ага», «неправильно» и т. п., так как это может в значительной мере повлиять на эмоциональное состояние учащегося и результаты тестирования.
+        <br><br>
+        <b>Примечание</b> <br>
+        навык соединения букв в слова предполагает, что учащийся распознаёт слово полностью и произносит его так, как оно звучит в речи. Если учащийся произносит его так, как оно пишется, учитель отмечает слово как неправильно произнесённое. Например, слово «хлеб» в устной речи звучит как [хлеп].
+        Если учащийся в слове «хлеб» произносит последний звук как [б], а не как [п], значит, он/а владеет навыком декодирования, но не вполне владеет навыком распознавания слова из данного сочетания букв.
+        Это означает, что учащемуся будет трудно читать и понимать целые предложения; перед тем как приступить к чтению текстов, ему/ей нужно довести навык декодирования до автоматизма.<br><br>
+        <b>Стимульный материал (для учащегося)</b><br>
+        таблица с 20 словами см. Модуль 2, стр.28 //Время читать. Модули 1-3. Руководство для учителей начальных классов. – Б.: Триада Принт, 2020. – 296 с.  </tangy-box>
+
+      <tangy-radio-buttons name="fam_word1" required="" question-number="" label="1. свет" hint-text=" [св'эт] закрытый слог, 2 согласные рядом" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word2" required="" question-number="" label="2. шар" hint-text="[шар] простой закрытый слог" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word3" required="" question-number="" label="3. горка" hint-text="[го́рка] закрытый + открытый слоги" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word4" required="" question-number="" label="4. пчела" hint-text=" [пч'ила́] 2 глухие согласные, гласная после глухой" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word5" required="" question-number="" label="5. друг" hint-text="[друк] оглушение звонкой согласной" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word6" required="" question-number="" label="6. коза" hint-text="[коза́] открытые слоги, безударная гласная" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word7" required="" question-number="" label="7. хруст" hint-text="[хру́ст] 2 пары сдвоенных согласных" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word8" required="" question-number="" label="8. соль" hint-text="[сол'] мягкая согласная" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word9" required="" question-number="" label="9. шея" hint-text="[шэ́й'а] гласная после шипящей согласной, йотированная гласная после гласной" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word10" required="" question-number="" label="10. река" hint-text="[р'эка́] открытые слоги, безударная гласная" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word11" required="" question-number="" label="11. один" hint-text="[од'и́н] слог из одной буквы, безударная гласная" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word12" required="" question-number="" label="12. только" hint-text="[то́л'ко] закрытый + открытый слоги, мягкая согласная" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word13" required="" question-number="" label="13. вдруг" hint-text="[вдру́г] 3 согласные подряд, оглушение звонкой согласной" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word14" required="" question-number="" label="14. семья" hint-text="[с'эм'й'а́] безударная гласная, мягкий знак перед гласной" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word15" required="" question-number="" label="15. красный" hint-text="[кра́сный] сдвоенные согласные, 2 закрытых слога" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word16" required="" question-number="" label="16. очень" hint-text="[о́ч'эн'] безударная гласная, мягкая согласная" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word17" required="" question-number="" label="17. шёпот" hint-text="[шо́пот] гласная после твердой согласной" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word18" required="" question-number="" label="18. снег" hint-text="[с'н'эг]  сдвоенные согласные, оглушение звонкой согласной" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word19" required="" question-number="" label="19. окно" hint-text="[окно́] безударная гласная, открытые слоги" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-radio-buttons name="fam_word20" required="" question-number="" label="20. флажок" hint-text="[флажо́к] сдвоенные согласные, закрытый слог" error-text="" warn-text="" class="" style="">
+
+        <option value="0">Неверно / нет ответа</option>
+
+        <option value="1">Верный</option>
+
+      </tangy-radio-buttons>
+
+      <tangy-box name="fam_word_score" required="" hidden="" class="" style=""><tangy-input type="text" name="item_11fbeffd-70a4-4433-b306-2295f1ba1fce_score" incomplete="" min="" max="" question-number="" error-text="" allowed-pattern="" warn-text="" discrepancy-text=""> </tangy-input></tangy-box>
+
+
+    </template>
+  </tangy-form-item>
+
+  <tangy-form-item id="section_2df6879146b0430baf1491e233cb0f70"
+                   title="Беглость чтения"
+
+
+
+
+
+
+                   incorrect-threshold="undefined"
+                   on-open="
+
+
+
+            "
+                   on-change="
+
+
+			inputs['section_2df6879146b0430baf1491e233cb0f70_score'].value = Number.parseFloat(numberOfCorrectItems(inputs.oral_read)/inputs.oral_read.value.length).toFixed(2);
+			  debugger
+
+            "
+                   category="
+
+            "
+  >
+    <template>
+
+
+      <tangy-box name="intro_oral_read" required="" class="" style=""><b>Описание</b><br>
+        Для оценивания беглости чтения используется текст, соответствующий уровню развития навыков чтения данного возраста, одинаково интересный мальчикам и девочкам. Текст для 1-2 класса не должен содержать незнакомые слова.
+        Текст для 3-4 класса может содержать несколько незнакомых слов.
+        Тест оценивает следующие компоненты беглого чтения: правильность чтения, скорость (темп) чтения, выразительность чтения, внимание к знакам препинания при чтении.<br><br>
+        <b>Как проводится оценивание беглости чтения?</b>
+        <ul>
+          <li>Оценивание проводится индивидуально.</li>
+          <li>Перед тем как приступить к оцениванию, сообщите учащемуся цель оценивания и то, как будут использованы полученные результаты. Проводя формативное оценивание, важно дать учащемуся понять, что чтение не повлияет на школьные отметки и нужно лишь для того, чтобы выявить трудности, с которыми сталкивается учащийся при обучении чтению, и помочь ему преодолеть эти трудности.</li>
+          <li>После того как учащийся приступил к чтению текста, не стоит его прерывать или каким-либо образом комментировать процесс чтения. Нельзя помогать учащемуся, произнося вместо него слова, которые он не может прочесть; нельзя демонстрировать оценку и невербальными способами: одобрительно или неодобрительно качать головой.
+          </li><li>Отмечайте слова, прочитанные учащимся неправильно.</li>
+          <li>Если учащийся не завершил чтение текста, а время, выделенное на прочтение, уже истекло, не нужно его останавливать. Следует отметить слово, до которого дочитал учащийся в отведённое ему время, и дать ему дочитать текст до конца. Иначе у учащегося останется чувство плохо выполненного задания, что повлияет на дальнейшую мотивацию в обучении чтению. Этого не рекомендуется делать лишь в тех случаях, когда учащийся испытывает большие трудности с прочтением текста, а сам процесс чтения вызывает у него дискомфорт.</li>
+          <li>После того как учащийся закончил читать текст, поделитесь  с ним полученным результатом и обсудите, каким образом этот результат можно улучшить (дайте обратную связь).</li>
+        </ul>
+        <br>
+        <b>Стимульный материал (для учащегося)</b><br>
+        текст см. Модуль 4, стр.14//Время читать. Модули 4-5. Руководство для учителей начальных классов. – Б.: Триада Принт, 2020. – 216 с.
+      </tangy-box>
+
+      <tangy-timed hint-text="" columns="5" name="oral_read" required="" error-text="" warn-text="" class="" style="" duration="60" auto-stop="5" show-labels="" option-font-size="0.7">
+
+        <option value="1">Учитель</option>
+
+        <option value="2">дал</option>
+
+        <option value="3">ученикам</option>
+
+        <option value="4">задание</option>
+
+        <option value="5">приготовить</option>
+
+        <option value="6">рассказ</option>
+
+        <option value="7">о</option>
+
+        <option value="8">своём</option>
+
+        <option value="9">любимом</option>
+
+        <option value="10">животном.</option>
+
+        <option value="11">Айдана</option>
+
+        <option value="12">рассказала</option>
+
+        <option value="13">о</option>
+
+        <option value="14">своём</option>
+
+        <option value="15">котёнке</option>
+
+        <option value="16">по</option>
+
+        <option value="17">имени</option>
+
+        <option value="18">Шустрик.</option>
+
+        <option value="19">Санжар</option>
+
+        <option value="20">рассказал</option>
+
+        <option value="21">о</option>
+
+        <option value="22">лошади,</option>
+
+        <option value="23">которую</option>
+
+        <option value="24">он</option>
+
+        <option value="25">видел</option>
+
+        <option value="26">летом</option>
+
+        <option value="27">в</option>
+
+        <option value="28">селе.</option>
+
+        <option value="29">Максим</option>
+
+        <option value="30">рассказал</option>
+
+        <option value="31">о</option>
+
+        <option value="32">тиграх.</option>
+
+        <option value="33">Он</option>
+
+        <option value="34">видел</option>
+
+        <option value="35">их</option>
+
+        <option value="36">в</option>
+
+        <option value="37">зоопарке.</option>
+
+        <option value="38">Малика</option>
+
+        <option value="39">рассказала</option>
+
+        <option value="40">о</option>
+
+        <option value="41">слонах.</option>
+
+        <option value="42">Учитель</option>
+
+        <option value="43">похвалил</option>
+
+        <option value="44">ребят.</option>
+
+      </tangy-timed>
+
+      <tangy-box name="score_oral_read" hidden="" class="" style="">
+        <tangy-input type="text" name="section_2df6879146b0430baf1491e233cb0f70_score" incomplete="" min="" max="" question-number="" error-text="" allowed-pattern="" warn-text="" discrepancy-text=""> </tangy-input>
+
+      </tangy-box>
+
+
+    </template>
+  </tangy-form-item>
+
+</tangy-form>
