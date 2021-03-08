@@ -1,6 +1,19 @@
 import { Injectable }  from '@angular/core';
-import axios from 'axios'
 import { DB } from './shared/_factories/db.factory';
+
+function getAppConfig() {
+  return new Promise((resolve, reject) => {
+    function reqListener () {
+      console.log(this.responseText);
+      const appConfig = JSON.parse(this.responseText)
+      resolve(appConfig)
+    }
+    var oReq = new XMLHttpRequest();
+    oReq.addEventListener("load", reqListener);
+    oReq.open("GET", "./assets/app-config.json");
+    oReq.send();
+  })
+}
 
 @Injectable()
 export class AppInit {
@@ -22,11 +35,11 @@ export class AppInit {
           isInstalled = false
         }
         // Check in app-config.json if we should turn off encryption.
-        const appConfig = await axios.get("./assets/app-config.json");
+        const appConfig = await getAppConfig();
         // If the app is not installed and app config says we should turn off encryption, then set localStorage flag of turnOffEncryption.
         // Note that checking if installed prevents app upgrading to an app-config.json that says turnOffAppLevelEncryption of doing so
         // because that would appear to result in data loss.
-        if (isInstalled === false && appConfig.data.turnOffAppLevelEncryption) {
+        if (isInstalled === false && appConfig['turnOffAppLevelEncryption']) {
           localStorage.setItem('turnOffAppLevelEncryption', 'yes')
         }
         // If localStorage flag of turnOffAppLevelEncryption is set, then set window level variable to let the db.factory.ts DB function know.
