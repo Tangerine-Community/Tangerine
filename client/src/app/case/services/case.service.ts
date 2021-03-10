@@ -1,5 +1,7 @@
+import { CaseEventOperation, CaseEventPermissions } from './../classes/case-event-definition.class';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
-import { EventFormDefinition } from './../classes/event-form-definition.class';
+import { EventFormDefinition, EventFormOperation } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
@@ -103,6 +105,7 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
@@ -261,6 +264,35 @@ class CaseService {
       ? this.case.items[0].inputs.find(input => input.name === variableName).value
       : undefined
   }
+
+  /*
+   * Role Access API
+   */
+  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition) {
+    if (
+        !eventFormDefinition.permissions ||
+        !eventFormDefinition.permissions[operation] ||
+        eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  hasCaseEventPermission(operation:CaseEventOperation, eventDefinition:CaseEventDefinition) {
+    if (
+        !eventDefinition.permissions ||
+        !eventDefinition.permissions[operation] ||
+        eventDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+
 
   /*
    * Case Event API
@@ -506,6 +538,7 @@ class CaseService {
     const caseParticipant = <CaseParticipant>{
       id,
       caseRoleId,
+      inactive: false,
       data
     }
     this.case.participants.push(caseParticipant)
@@ -558,6 +591,35 @@ class CaseService {
       }
     }
   }
+
+  async activateParticipant(participantId:string) {
+    this.case = {
+      ...this.case,
+      participants: this.case.participants.map(participant => {
+        return participant.id === participantId
+          ? {
+            ...participant,
+            inactive: false 
+          }
+          : participant
+      })
+    }
+  }
+
+  deactivateParticipant(participantId:string) {
+    this.case = {
+      ...this.case,
+      participants: this.case.participants.map(participant => {
+        return participant.id === participantId
+          ? {
+            ...participant,
+            inactive: true 
+          }
+          : participant
+      })
+    }
+  }
+
 
   async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
@@ -1396,18 +1458,18 @@ export const markQualifyingEventsAsComplete = ({caseInstance, caseDefinition}:Ca
                   eventFormDefinition.required === true &&
                   !event.eventForms.some(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
                 ) ||
-                // 2. Is required and at least one Event Form instance is not complete.
+                // 2. Is required and at least one Event Form instance is not complete, but ignore Event Forms for inactive Participants.
                 (
                   eventFormDefinition.required === true &&
                   event.eventForms
-                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id && (!eventForm.participantId || !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive))
                     .some(eventForm => !eventForm.complete)
                 ) ||
-                // 3. Is not required and has at least one Event Form instance that is both incomplete and required.
+                // 3. Is not required and has at least one Event Form instance that is both incomplete and required, but ignore Event Forms for inactive Participants.
                 (
                   eventFormDefinition.required === false &&
                   event.eventForms
-                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id && !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive)
                     .some(eventForm => !eventForm.complete && eventForm.required)
                 )
             })
