@@ -61,8 +61,9 @@ async function go(state) {
     //  Run batches.
     while (state.complete === false) {
       console.log(`Run batch at skip of ${state.skip} at statePath: ${state.statePath}`)
-      await exec(`./batch.js '${state.statePath}'`)
-      state = JSON.parse(await readFile(state.statePath))
+      const statePath = state.statePath.replace(/'/g, "\\'")
+      await exec(`./batch.js '${statePath}'`)
+      state = JSON.parse(await readFile(statePath))
       await sleep(state.sleepTimeBetweenBatches)
     }
     process.exit()
