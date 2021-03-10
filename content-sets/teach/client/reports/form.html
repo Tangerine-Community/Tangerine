@@ -1,0 +1,717 @@
+<tangy-form id="reports" title="On Device Report" category="null" on-open="
+        " exit-clicks="" on-change="
+        " on-submit="
+        ">
+  <tangy-form-item id="item-100" title="Raw Data Dashboard" on-open="
+  var formsList;
+  let xhr = new XMLHttpRequest();
+  xhr.open('GET', './assets/forms.json');
+  // request state change event
+  xhr.onreadystatechange = function() {
+      // request completed?
+      if (xhr.readyState !== 4) return;
+      //status 0 is for apk on devices
+      if (xhr.status === 200 || xhr.status === 0) {
+  
+          formsList = JSON.parse(xhr.responseText);
+          for (let r of formsList) {
+              if ((typeof r.archived == 'undefined' || r.archived == false) && r.id != 'reports' && r.id != 'user-profile') {
+                  var option = document.createElement('option');
+                  option.text = r.title
+                  option.value = r.id
+                  inputs.form.insertBefore(option, inputs.form.children.item(0))
+              }
+          }
+      } else {
+          // request error
+          formsList = JSON.parse(xhr.responseText);
+      }
+  };
+  
+  // start request
+  xhr.send();
+  
+            " on-change="
+  var doc = ''
+  var tangyFormEl = ''
+  var locationList
+  var siteList = {}
+  
+  function loadFormMeta() {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', './assets/' + getValue('form') + '/form.html')
+          // request state change event
+      xhr.onreadystatechange = function() {
+          // request completed?
+          if (xhr.readyState !== 4) return;
+          //status 0 is for apk on devices
+          if (xhr.status === 200 || xhr.status === 0) {
+              var result = xhr.responseText;
+              if (doc == '')
+                  doc = new DOMParser().parseFromString(result, 'text/html');
+              doc = doc.body.querySelector('tangy-form').querySelectorAll('tangy-form-item')
+                  //let containerEl = document.createElement('div')
+                  // containerEl.innerHTML = result
+                  // tangyFormEl = containerEl.querySelector('tangy-form')
+          } else {
+              // request error
+              var result = JSON.parse(xhr.responseText);
+          }
+      };
+  
+      // start request
+      xhr.send();
+  
+  
+  }
+  
+  function loadLocationList() {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', './assets/location-list.json');
+      // request state change event
+      xhr.onreadystatechange = function() {
+          // request completed?
+          if (xhr.readyState !== 4) return;
+  
+          if (xhr.status === 200) {
+  
+              locationList = JSON.parse(xhr.responseText);
+          } else {
+              // request error
+              locationList = JSON.parse(xhr.responseText);
+          }
+      };
+  
+      // start request
+      xhr.send();
+      xhr.onload = function() {
+          processLocationList(0, locationList.locations)
+  
+      }
+  
+  }
+  
+  //process a location list dynamically to get the last level
+  function processLocationList(currLevel, locations) {
+      for (const level of Object.keys(locations)) {
+          if (currLevel < locationList.locationsLevels.length - 1) {
+              processLocationList(currLevel + 1, locations[level]['children']);
+          } else {
+  
+              if (!siteList.hasOwnProperty(level)) {
+                  siteList[level] = locations[level]['label']
+              }
+          }
+      }
+  
+  }
+  
+  function findFormObject(name) {
+      var obj = {}
+      if (doc != '')
+          doc.forEach(x => {
+              var t = x.children[0].content.querySelector(`[name*=\'${name}\']`)
+              if (t != null) {
+                  obj = t
+                  return false
+              }
+          })
+      return obj
+  }
+  
+  function printNumber(data, title, id) {
+      var trace1 = {
+          type: 'indicator',
+          mode: 'number',
+          gauge: {
+              shape: 'bullet'
+          },
+          value: data,
+          title: {
+              text: id
+          },
+          name: id,
+          id: id
+      };
+      var layout = {
+          title: title,
+          showlegend: true
+      }
+      addChart([trace1], layout)
+  }
+  
+  function addChart(data, layout, config) {
+      let element = document.querySelector('#show_feedback')
+      var div = document.createElement('div');
+      div.id = data[0].id
+      element.appendChild(div)
+      var conf = {
+          displayModeBar: false,
+          responsive: true
+      }
+      Plotly.newPlot(div, data, layout, conf);
+      Plotly.redraw(div)
+  }
+  
+  //Fill in the variable menu with options
+  function addVarOptions(data) {
+      inputs.var.innerHTML = '';
+      data.forEach(x => {
+          var option = document.createElement('option');
+          option.text = x
+          option.value = x
+          inputs.var.insertBefore(option, inputs.var.children.item(0))
+      })
+  }
+  
+  function addDivText(varName, text, refresh, width = '70%') {
+      let element = document.querySelector('#show_feedback')
+      if (refresh)
+          element.innerHTML = '';
+      var div = document.createElement('div');
+      div.id = 'header' + varName
+      div.style.width = width
+      div.innerHTML += text;
+      element.appendChild(div)
+  }
+  
+  //Format the header text so it looks better
+  function getMatCard(label, type, total) {
+      return `<figure class='mat-figure'><mat-card ><mat-card-header class='mat-card-header'> <i  class='material-icons tangy-foreground-secondary info'>info</i><mat-card-title  style='margin-top: 4px;margin-right: -250px;' class='mat-card-title'><a >${label}</a></mat-card-title></mat-card-header><mat-card-content> <mat-card-subtitle  class='mat-card-subtitle'>TYPE: <b>${type}</b><br> Number of uploads containing this field: <b> ${total}</b> </mat-card-subtitle></mat-card-content> </mat-card></figure>`
+  }
+  
+  //Make sure each variable has a values array
+  function populateData(result) {
+      var allVariables = {}
+      result.forEach(function(d) {
+          var xValue = d.doc
+  
+          if (typeof allVariables['startDatetime'] == 'undefined') {
+              allVariables['startDatetime'] = {
+                  name: 'startDatetime',
+                  tagName: 'TANGY-INPUT',
+                  values: [xValue.startDatetime]
+              }
+          } else {
+              var variable = allVariables['startDatetime']
+              variable.values.push(xValue.startDatetime)
+              allVariables['startDatetime'] = variable
+          }
+          return xValue.items.forEach(
+              function(y) {
+                  y.inputs.forEach(
+                      function(z) {
+                          if (z.name != '' && z.tagName != 'TANGY-BOX' && z.tagName != 'DIV' && z.hidden != 'true' &&
+                              z.tagName != 'TANGY-TEMPLATE' && z.tagName != 'TANGY-SIGNATURE') {
+                              //create type for all elements
+                              var type = typeof z.type == 'undefined' ?
+                                  (z.tagName == 'TANGY-TIMED' ? 'grid' :
+                                      (z.tagName == 'TANGY-CHECKBOXES' ? 'multiple' :
+                                          (z.tagName == 'TANGY-RADIO-BUTTONS' ? 'single' :
+                                              (z.tagName == 'TANGY-SELECT' ? 'single' :
+                                                  (z.tagName == 'TANGY-CHECKBOX' ? 'toggle' :
+                                                      (z.tagName == 'TANGY-GPS' ? 'gps' :
+                                                          (z.tagName == 'TANGY-CONSENT' ? 'consent' :
+                                                              (z.tagName == 'TANGY-LOCATION' ? 'location' :
+                                                                  (z.tagName == 'TANGY-QR' ? 'QR' :
+                                                                      (z.tagName == 'TANGY-PARTIAL-DATE' ? 'Date' :
+                                                                          (z.tagName == 'TANGY-UNTIMED-GRID' ? 'untimed' : 
+                                                                            (z.tagName == 'TANGY-TOGGLE' ? 'toggle' : 'unknown'))))))))))
+                                      )) : z.type
+                                  //process the name and value labels
+                              var obj = findFormObject(z.name)
+                              if ((type == 'single' || type == 'multiple') && typeof obj.children != 'undefined') {
+                                  if (typeof z.value == 'object')
+                                      z.value.forEach(x => {
+                                          if (Object.values(obj.children).filter(a => a.value == x.name).length != 0)
+                                              x.name = Object.values(obj.children).filter(a => a.value == x.name)[0].text
+                                      })
+                                  else {
+                                      if (Object.values(obj.children).filter(a => a.value == x.name).length != 0)
+                                          z.value = Object.values(obj.children).filter(a => a.value == z.value)[0].text
+                                  }
+                              }
+                              if (typeof allVariables[z.name] == 'undefined') {
+                                  var label
+                                  if (typeof obj.getAttribute == 'undefined') label = 'No label'
+                                  else label = obj.getAttribute('label')
+                                  allVariables[z.name] = {
+                                      name: z.name,
+                                      tagName: z.tagName,
+                                      type: type,
+                                      values: [z.value],
+                                      label: label
+                                  }
+                                  if (z.tagName == 'TANGY-TIMED') {
+                                      allVariables[z.name].duration = [z.duration]
+                                      allVariables[z.name].timeRemaining = [z.timeRemaining]
+                                      allVariables[z.name].incorrect = [parseInt(z.value.filter(x => x.value == 'on').length)]
+                                      var lastItem = z.value.filter(x => x.highlighted == true)
+                                      if (lastItem.length != 0)
+                                          allVariables[z.name].wpm = [(parseInt(z.value.filter(x => x.highlighted == true)[0].name) + 1 - parseInt(allVariables[z.name].incorrect)) / ((z.duration - z.timeRemaining) / 60)]
+                                      else
+                                          allVariables[z.name].wpm = [0]
+                                  }
+                                  if (z.tagName == 'TANGY-UNTIMED-GRID') {
+                                      debugger
+                                      allVariables[z.name].incorrect = [parseInt(z.value.filter(x => x.value == 'on').length)]
+                                      allVariables[z.name].correct = [parseInt(z.value.length) - parseInt(z.value.filter(x => x.value == 'on').length)]
+                                  }
+                              } else {
+                                  var variable = allVariables[z.name]
+                                  variable.values.push(z.value)
+                                  allVariables[z.name] = variable
+                                  if (z.tagName == 'TANGY-TIMED') {
+                                      allVariables[z.name].duration.push(z.duration)
+                                      allVariables[z.name].timeRemaining.push(z.timeRemaining)
+                                      allVariables[z.name].incorrect.push(parseInt(z.value.filter(x => x.value == 'on').length))
+                                      var lastItem = z.value.filter(x => x.highlighted == true)
+                                      if (lastItem.length != 0)
+                                          allVariables[z.name].wpm.push((parseInt(z.value.filter(x => x.highlighted == true)[0].name) + 1 - parseInt(allVariables[z.name].incorrect)) / ((z.duration - z.timeRemaining) / 60))
+                                  }
+                                  if (z.tagName == 'TANGY-UNTIMED-GRID') {
+                                      allVariables[z.name].incorrect.push(parseInt(z.value.filter(x => x.value == 'on').length))
+                                      allVariables[z.name].correct.push(parseInt(z.value.length) - parseInt(z.value.filter(x => x.value == 'on').length))
+                                  }
+                              }
+                          }
+                      })
+              }) //for each
+      })
+      return (allVariables)
+  } //function
+
+  //only used for the startDateTime scatter plot
+  function processData(data) {
+      //build array by day
+      let xAxis = []
+      let yAxis = []
+      data.values.forEach(
+          varName => {
+              var date = new Date(varName)
+              var dateValue = moment().format('YYYY-MM-DD')
+              var xIndex = xAxis.indexOf(dateValue)
+              if (xIndex != -1) {
+                  yAxis[xIndex] = yAxis[xIndex] + 1
+              } else {
+                  xAxis.push(dateValue)
+                  yAxis.push(1)
+              }
+          }
+      )
+      return [xAxis, yAxis]
+  }
+  
+  //Process a single variable based on type
+  function processSingle(data, tagName) {
+      //build array by day
+      let xAxis = []
+      let yAxis = []
+      let zAxis = []
+      let wAxis = []
+      data.values.forEach(
+          varName => {
+              var valArray = []
+              if (tagName == 'TANGY-RADIO-BUTTONS') {
+                  var values = varName.filter(function(x) {
+                      return x.value == 'on'
+                  })
+                  for (let val of values) {
+                      valArray.push(val.name)
+                  }
+              } else if (tagName == 'TANGY-CHECKBOXES') {
+                  var values = varName.filter(function(x) {
+                      return x.value == 'on'
+                  })
+                  for (let val of values) {
+                      valArray.push(val.name)
+                  }
+              } else if (tagName == 'TANGY-INPUT') {
+                  if (varName != '')
+                      valArray.push(varName)
+              } else if (tagName == 'TANGY-LOCATION') {
+                  if (varName != '')
+                      valArray.push(siteList[varName[locationList.locationsLevels.length - 1].value])
+              } else if (tagName == 'TANGY-GPS' && typeof varName.longitude != 'undefined') {
+                  xAxis.push(varName.longitude)
+                  yAxis.push(varName.latitude)
+                      //mapTitles.push('Title')
+              } else if (tagName == 'TANGY-TIMED') {
+                  var sum = data.wpm.reduce((a, b) => a + b, 0);
+                  var avg = (sum / data.wpm.length) || 0;
+                  yAxis = data.duration
+                  xAxis = data.wpm
+                  zAxis = data.timeRemaining
+                  wAxis.push(avg)
+              } else if (tagName == 'TANGY-UNTIMED-GRID') {
+                  var sum = data.correct.reduce((a, b) => a + b, 0);
+                  var avg = (sum / data.correct.length) || 0;
+                  xAxis = data.correct
+                  yAxis = data.incorrect
+                  wAxis.push(avg)
+              } else {
+                  valArray.push(varName)
+              }
+              //add counts for this value
+              for (let val of valArray) {
+                  var xIndex = xAxis.indexOf(val)
+                  if (xIndex != -1) {
+                      yAxis[xIndex] = yAxis[xIndex] + 1
+                  } else {
+                      xAxis.push(val)
+                      yAxis.push(1)
+                  }
+              } //for valArray
+          }
+      )
+      return [xAxis, yAxis, zAxis, wAxis]
+  }
+  
+  //Prints a gauge with WPM or Correct responses for untimed grids
+  function printGrid(data, title, id, type) {
+      var trace1 = [{
+          value: data[3][0],
+          title: {
+              text: 'Avarage wpm '
+          },
+          type: 'indicator',
+          mode: 'gauge+number',
+          gauge: {
+              axis: {
+                  range: [null, 80]
+              }
+          },
+          id: id,
+          eleType: type
+      }];
+      var layout = {
+          title: title,
+          showlegend: true,
+          autosize: true
+      };
+      addChart(trace1, layout)
+  } //function
+
+  //Print a scatter plot
+  function printScatter(data, title, id, type) {
+      var trace1 = {
+          x: data[0],
+          y: data[1],
+          mode: 'markers',
+          type: 'scatter',
+          name: title,
+          id: id,
+          eleType: type,
+          marker: {
+              size: 12
+          }
+      };
+      var layout = {
+          title: title,
+          showlegend: true
+      }
+      addChart([trace1], layout)
+  } //function
+
+  //Print bar chart
+  function printBar(data, title, color, id, type) {
+      var trace1 = {
+          x: data[0],
+          y: data[1],
+          type: 'bar',
+          marker: {
+              color: color,
+              line: {
+                  width: 2.5
+              }
+          },
+          name: id,
+          id: id,
+          eleType: type
+      };
+      //
+      var layout = {
+          title: title,
+          showlegend: true
+      }
+      addChart([trace1], layout)
+  }
+  
+  //Print a table
+  function printTable(data, title, id, type) {
+      var trace1 = {
+          type: 'table',
+          header: {
+              values: [
+                  ['<b>Value</b>'],
+                  ['<b>Frequency</b>']
+              ],
+              align: 'center',
+              line: {
+                  width: 1,
+                  color: 'black'
+              },
+              fill: {
+                  color: 'grey'
+              },
+              font: {
+                  family: 'Arial',
+                  size: 12,
+                  color: 'white'
+              }
+          },
+          cells: {
+              values: data,
+              align: 'center',
+              line: {
+                  color: 'black',
+                  width: 1
+              },
+              font: {
+                  family: 'Arial',
+                  size: 11,
+                  color: ['black']
+              }
+          },
+          name: id,
+          id: id,
+          eleType: type
+      }
+      var layout = {
+          title: title,
+          showlegend: true
+      }
+      addChart([trace1], layout)
+  }
+  
+  function printPie(data, title, id, type) {
+      var trace1 = {
+          labels: data[0],
+          values: data[1],
+          type: 'pie',
+          marker: {
+              color: '#C8A2C8',
+              line: {
+                  width: 2.5
+              }
+          },
+          name: id,
+          id: id,
+          eleType: type
+      };
+      var layout = {
+          title: title,
+          showlegend: true
+      }
+      addChart([trace1], layout)
+  }
+  
+  function printMap(data, title, id, type) {
+      var trace1 = [{
+          type: 'scattermapbox',
+          lat: data[1],
+          lon: data[0],
+          mode: 'markers',
+          marker: {
+              size: 15
+          },
+          text: [title],
+          id: id,
+          eleType: type
+      }]
+      var lat = Math.max.apply(Math, data[1]);
+      var lon = Math.min.apply(Math, data[0]);
+      var layout = {
+          autosize: true,
+          hovermode: 'closest',
+          mapbox: {
+              bearing: 0,
+              center: {
+                  lat: lat,
+                  lon: lon
+              },
+              pitch: 0,
+              zoom: 7
+          }
+      }
+      addChart(trace1, layout)
+  }
+  
+  //main call
+  function makeReport() {
+      Plotly.setPlotConfig({
+          mapboxAccessToken: 'pk.eyJ1IjoibGFjaGtvIiwiYSI6ImNqZDYyZTM5bjF3OGcycW53a203M2tnd2QifQ.2cHvc7TfYyLBsZaQqPMF7A'
+      })
+      if (getValue('form') != '' && getValue('month') != '' && getValue('year') != '') {
+          addDivText('Loading', 'Loading results, please wait', true, '100%')
+          if (getValue('single') != 'on')
+              inputHide('single')
+          var group = window.location.pathname.split('/')
+          group = group[group.length - 2]
+          const sqlDb = userService.getUserDatabase()
+          sqlDb.then((db) => {
+                  var startDate = new Date(`01-${getValue('month')}-${getValue('year')}`)
+                  var endDate = new Date(startDate)
+                  endDate.setMonth(endDate.getMonth() + 1)
+                  var startKey = `${getValue('form')}-${startDate.getTime()}`
+                  var endKey = `${getValue('form')}-${endDate.getTime()})`
+                  db.query(`tangy-form/responsesByFormIdAndStartDatetime`, {
+                          startkey: startKey,
+                          endkey: endKey,
+                          include_docs: true
+                      })
+                      .then(loadFormMeta())
+                      .then(loadLocationList())
+                      .then(json => {
+                          //filter on selected form
+                          var rows = json.rows
+                          if (rows.length != 0) {
+                              var unprocessed = populateData(rows)
+                              var formName = ''
+  
+                              inputs.total.value = unprocessed['startDatetime'].values.length
+                                  //clear the screen
+                              addDivText('Loading', '', true, '100%')
+                              printNumber(unprocessed['startDatetime'].values.length, '', 'Total submissions this period')
+                                  //single variable disabled for now
+                                  //if (getValue('form') != '' && getValue('single') == 'on')
+                                  //addVarOptions(Object.keys(unprocessed))
+  
+                              var data = processData(unprocessed['startDatetime'])
+  
+  
+                              addDivText('Date and Time', getMatCard('startDatetime', 'Date', unprocessed['startDatetime'].values.length))
+                              printScatter(data, 'Date', 'Date', 'date')
+  
+                              if (getValue('single') == 'on' && getValue('var') != '') {
+                                  var temp = {}
+  
+                                  temp[getValue('var')] = Object.entries(unprocessed).filter(x => x[0] == getValue('var'))[0][1]
+                                  unprocessed = temp
+                              }
+  
+                              Object.values(unprocessed).forEach(y => {
+                                  if (y.type == 'gps') {
+                                      var d = processSingle(y, y.tagName)
+  
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, d[0].length))
+                                      printMap(d, '', y.name, y.type)
+                                  }
+  
+  
+                                  if (y.type == 'grid') {
+  
+                                      var d = processSingle(y, y.tagName)
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, d[0].length))
+                                      printGrid(d, 'Results for ' + y.name, y.name, y.type)
+                                      printBar([d[0]], 'WPM ' + y.name, '#ff7f0e', y.name, y.type)
+                                  }
+                                  if (y.type == 'untimed') {
+                                      var d = processSingle(y, y.tagName)
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, d[0].length))
+                                      printGrid(d, 'Correct results for ' + y.name, y.name, y.type)
+                                      printBar([d[0]], ' Correct ' + y.name, '#ff7f0e', y.name, y.type)
+                                  }
+                                  if (y.type == 'single' || y.type == 'consent') {
+  
+                                      var d = processSingle(y, y.tagName)
+                                      var sum = d[1].reduce((a, b) => a + b, 0);
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, sum))
+                                      printPie([d[0], d[1]], '', y.name, y.type)
+                                  }
+  
+  
+                                  if (y.type == 'text' || y.type == 'QR') {
+                                      var d = processSingle(y, y.tagName, y.name)
+                                      var sum = d[1].reduce((a, b) => a + b, 0);
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, sum))
+                                      printTable([d[0], d[1]], '', y.type)
+                                  }
+                                  if (y.type == 'number') {
+                                      var d = processSingle(y, y.tagName, y.name)
+                                      var sum = d[1].reduce((a, b) => a + b, 0);
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, sum))
+                                      printBar(d, '', y.type)
+                                  }
+  
+                                  if (y.type == 'location') {
+  
+                                      var d = processSingle(y, y.tagName, y.name)
+                                      if (d[0].includes(undefined))
+                                          d[0][d[0].indexOf(undefined)] = 'Not selected'
+                                      var sum = d[1].reduce((a, b) => a + b, 0);
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, sum))
+                                      printBar(d, '', '#ff7f0e', y.name, y.type)
+                                  }
+  
+  
+                                  var d = processSingle(y, y.tagName, y.name)
+                                  if (y.name != 'startDatetime' && y.name != 'userProfileId' && y.type != '' && y.type != 'text' && y.type != 'number' && y.type != 'date' && y.type != 'time' && y.type != 'grid' && y.type != 'single' && y.type != 'gps' && y.type != 'consent' && y.type != 'location' && y.type != 'QR' && y.type != 'untimed') {
+                                      var sum = d[1].reduce((a, b) => a + b, 0);
+                                      addDivText(y.name, getMatCard(y.label == null ? y.name : y.label, y.type, sum))
+                                      printBar(d, '', '#ff7f0e', y.name, y.type)
+                                  }
+  
+                              })
+                          } else {
+                              addDivText('No Results', `There are no results uploaded for the selected month/year`, true)
+                          }
+                      })
+              }) //fetch
+      }
+  }
+  //artificially delay rendering so that plotly has loaded correctly
+  setTimeout(makeReport, 500)
+              
+            " category="
+            ">
+    <template>
+      <tangy-box name="" class="" style="">
+        Please select the reporting month, year and form.
+       
+        <tangy-select name="month" class="" style="" required="" question-number="" label="Month" error-text=""
+        hint-text="" option-select-label="----" secondary-label="">
+        <option value="Jan">Jan</option>
+        <option value="Feb">Feb</option>
+        <option value="Mar">Mar</option>
+        <option value="Apr">Apr</option>
+        <option value="May">May</option>
+        <option value="Jun">Jun</option>
+        <option value="Jul">Jul</option>
+        <option value="Aug">Aug</option>
+        <option value="Sep">Sep</option>
+        <option value="Oct">Oct</option>
+        <option value="Nov">Nov</option>
+        <option value="Dec">Dec</option>
+      </tangy-select>
+   
+      <tangy-select name="year" class="" style="" required="" question-number="" label="Year" error-text=""
+        hint-text="" option-select-label="----" secondary-label="">
+        <option value="2018">2018</option>
+        <option value="2019">2019</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+      </tangy-select>
+    
+      <tangy-select name="form" class="" style="" required="" question-number="" label="Select Form"
+        error-text="" hint-text="" option-select-label="----" secondary-label="">
+      </tangy-select>
+              
+      </tangy-box>
+      <tangy-input name="total" class="" style="" hidden="" question-number="" label="" error-text="" hint-text=""
+        type="number" inner-label="" allowed-pattern=""></tangy-input>
+      <tangy-checkbox name="single" class="" style="" hidden="" question-number=""
+        label="If you wish to report on a single variable click here" error-text="" hint-text=""></tangy-checkbox>
+      <tangy-select name="var" class="" style="" tangy-if="getValue('single') == 'on'" required="" question-number=""
+        label="Select the variable you want for the report" error-text="" hint-text="">
+      </tangy-select>
+      <tangy-box name="" class="" style="">
+        <div id="show_feedback">
+        </div>
+      </tangy-box>
+      <tangy-box name="" class="" style="">
+        <tangy-complete-button hidden="" name=""></tangy-complete-button>
+      </tangy-box>
+    </template>
+  </tangy-form-item>
+</tangy-form>
