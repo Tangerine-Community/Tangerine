@@ -17,14 +17,14 @@
             <tr>
               <th>Release Type</th>
               <th>Generate</th>
-              <th>List</th>
+              <th *ngIf="T_ARCHIVE_APKS_TO_DISK">List</th>
             </tr>
             <tr>
               <td>Test</td>
               <td class="tangy-foreground-secondary link" routerLink="release-apk-test">
                 <iron-icon icon="assignment-late"></iron-icon> {{'Generate Test Release'|translate}}
               </td>
-              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-test">
+              <td *ngIf="T_ARCHIVE_APKS_TO_DISK" class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-test">
                  <iron-icon icon="archive"></iron-icon> {{'Download Test Releases'|translate}}
               </td>
             </tr>
@@ -33,7 +33,7 @@
               <td class="tangy-foreground-secondary link" routerLink="release-apk-live">
                 <iron-icon icon="assignment-turned-in"></iron-icon> {{'Generate Live Release'|translate}}
               </td>
-              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-live">
+              <td *ngIf="T_ARCHIVE_APKS_TO_DISK" class="tangy-foreground-secondary link archives" routerLink="historical-releases-apk-live">
                 <iron-icon icon="archive"></iron-icon> {{'Download Live Releases'|translate}}
               </td>
             </tr>
@@ -53,14 +53,14 @@
             <tr>
               <th>Release Type</th>
               <th>Generate</th>
-              <th>List</th>
+              <th *ngIf="T_ARCHIVE_PWAS_TO_DISK">List</th>
             </tr>
             <tr>
               <td>Test</td>
               <td class="tangy-foreground-secondary link" routerLink="release-pwa-test">
                 <iron-icon icon="assignment-late"></iron-icon> {{'Generate Test Release'|translate}}
               </td>
-              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-test">
+              <td *ngIf="T_ARCHIVE_PWAS_TO_DISK" class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-test">
                  <iron-icon icon="list"></iron-icon> {{'View Test Releases'|translate}}
               </td>
             </tr>
@@ -69,7 +69,7 @@
               <td class="tangy-foreground-secondary link" routerLink="release-pwa-live">
                 <iron-icon icon="assignment-turned-in"></iron-icon> {{'Generate Live Release'|translate}}
               </td>
-              <td class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-live">
+              <td *ngIf="T_ARCHIVE_PWAS_TO_DISK" class="tangy-foreground-secondary link archives" routerLink="historical-releases-pwa-live">
                  <iron-icon icon="list"></iron-icon> {{'View Live Releases'|translate}}
               </td>
             </tr>
