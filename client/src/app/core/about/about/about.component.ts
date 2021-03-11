@@ -16,7 +16,11 @@ export class AboutComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.info = this.deviceService.getAppInfo()
+    const info = this.deviceService.getAppInfo()
+    this.info = {
+      ...info,
+      deviceId: info.deviceId.substr(0,6)
+    }
     this.ready = true
   }
 
