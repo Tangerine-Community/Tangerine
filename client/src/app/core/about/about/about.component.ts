@@ -16,7 +16,7 @@ export class AboutComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.info = await this.deviceService.getAppInfo()
+    this.info = this.deviceService.getAppInfo()
     this.ready = true
   }
 
