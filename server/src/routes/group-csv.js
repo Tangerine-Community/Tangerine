@@ -41,11 +41,11 @@ module.exports = async function (req, res) {
     replacement: '_'
   }
   const groupFormname = sanitize(groupLabel + '-' + title, options)
-  const fileName = `${groupFormname}${sanitizedExtension}-${Date.now()}.csv`
-  let outputPath = `/csv/${fileName}`
+  const fileName = `${groupFormname}${sanitizedExtension}-${Date.now()}.csv`.replace(/'/g, "\\'")
+  let outputPath = sanitize(`/csv/${fileName.replace(/['"]/g, "_")}`)
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   // console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
-  
+    
   const sleepTimeBetweenBatches = 0
   let cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${dbName} ${formId} "${outputPath}" ${batchSize} ${sleepTimeBetweenBatches}`
   if (req.params.year && req.params.month) {
