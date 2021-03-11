@@ -42,7 +42,7 @@ module.exports = async function (req, res) {
   }
   const groupFormname = sanitize(groupLabel + '-' + title, options)
   const fileName = `${groupFormname}${sanitizedExtension}-${Date.now()}.csv`.replace(/'/g, "\\'")
-  let outputPath = sanitize(`/csv/${fileName.replace(/['"]/g, "_")}`)
+  let outputPath = sanitize(`/csv/${fileName.replace(/['",]/g, "_")}`)
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   // console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
     
