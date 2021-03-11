@@ -1,10 +1,8 @@
 # Changelog
 
 ## v3.17.2
-- Fix race condition causing breaking of one page Event Forms entered too quickly.
 - Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
-- Fix race condition data conflict on EventFormComponent. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
-- Incorporate new advanced sync options for doing Rewind or Comparison push/pull. 
+- Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
 
 __Server upgrade instructions__
 
