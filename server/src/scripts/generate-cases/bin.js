@@ -71,16 +71,9 @@ async function go() {
     const caseId = uuidv1()
     caseDoc._id = caseId
     // note that participant_id and participantUuid are different!
-    const participant_id = Math.round(Math.random() * 1000000)
+    // const participant_id = Math.round(Math.random() * 1000000)
     const participantUuid = uuidv1()
-
-    let barcode_data = {
-      "participant_id": participant_id,
-      "treatment_assignment": "Experiment",
-      "bin-mother": "A",
-      "bin-infant": "B",
-      "sub-studies": {"S1": true, "S2": false, "S3": false, "S4": true}
-    }
+    
     let tangerineModifiedOn = new Date();
     // tangerineModifiedOn is set to numberOfCasesCompleted days before today, and its time is set based upon numberOfCasesCompleted.
     tangerineModifiedOn.setDate(tangerineModifiedOn.getDate() - numberOfCasesCompleted);
@@ -101,12 +94,13 @@ async function go() {
     
     subs.firstname = () => random_name({first: true, gender: "female"})
     subs.surname = () => random_name({last: true})
+    subs.participant_id = () => String(Math.round(Math.random() * 1000000))
     subs.tangerineModifiedOn = tangerineModifiedOn
     subs.day = day
     subs.month = month
     subs.year = year
     subs.date = date
-    subs.participant_id = participant_id
+    // subs.participant_id = participant_id
     subs.participantUuid = participantUuid
     
     let allSubs = {...subs, ...customGenerators}
@@ -142,23 +136,59 @@ async function go() {
     }
     // console.log("motherId: " + caseId + " participantId: " + participant_id + " surname: " + subs.surname);
     console.log("caseMother: " + JSON.stringify(caseMother));
+    
+    // let barcode_data = {
+    //   "participant_id": subs.runOnce.participant_id,
+    //   "treatment_assignment": "Experiment",
+    //   "bin-mother": "A",
+    //   "bin-infant": "B",
+    //   "sub-studies": {"S1": true, "S2": false, "S3": false, "S4": true}
+    // }
+    //
+    // console.log("barcode_data: " + JSON.stringify(barcode_data))
+    
     Object.assign(caseDoc, caseMother);
 
     if (customSubstitutions) {
       const caseDocSubs = customSubstitutions.find(doc => doc.type === 'caseDoc')
-      if (caseDocSubs && caseDocSubs['substitutions']) {
-        for (const substitution of caseDocSubs['substitutions']) {
-          console.log(substitution);
-          // TODO: finish this...
+      // if (caseDocSubs && caseDocSubs['substitutions']) {
+      //   for (const substitution of caseDocSubs['substitutions']) {
+      //     console.log("substitution: " + substitution);
+      //     // TODO: finish this...
+      //   }
+      // }
+      let inputs = []
+      caseDoc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+      if (caseDocSubs['substitutions']) {
+        for (const [inputName, functionDefinition] of Object.entries(caseDocSubs['substitutions'])) {
+          let foundInput = inputs.find(input => {
+            if (input.name === inputName) {
+              return input
+            }
+          })
+          if (foundInput) {
+            let functionName = functionDefinition.functionName
+            if (functionDefinition.runOnce) {
+              let val =   allSubs.runOnce[functionDefinition.functionName]
+              console.log("allSubs.runOnce: " + JSON.stringify(allSubs.runOnce))
+              // console.log("Assigned function name using runOnce value: " + functionDefinition.functionName + " to value: " + val)
+              foundInput['value'] = val
+            } else {
+              let val =  allSubs[functionName]()
+              console.log("Assigned function name use live generated value: " + functionName + " to value: " + val)
+              foundInput['value'] = val
+            }
+          }
         }
       }
     } else {
-      caseDoc.items[0].inputs[0].value = subs.participant_id;
+      caseDoc.items[0].inputs[0].value = subs.runOnce.participant_id;
       // caseDoc.items[0].inputs[2].value = enrollment_date;
-      if (caseDoc.items[0].inputs.length > 5) {
-        caseDoc.items[0].inputs[4].value = subs.firstname();
-        caseDoc.items[0].inputs[5].value = subs.surname();
-        caseDoc.items[0].inputs[6].value = subs.participant_id;
+      if (caseDoc.items[0].inputs.length > 4) {
+        console.log("Processing inputs: " + JSON.stringify(caseDoc.items[0].inputs))
+        caseDoc.items[0].inputs[1].value = subs.runOnce.participant_id;
+        caseDoc.items[0].inputs[2].value = subs.firstname();
+        caseDoc.items[0].inputs[3].value = subs.surname();
       }
       caseDoc.location = location
     }
@@ -229,7 +259,7 @@ async function go() {
       // modify the demographics form - s01a-participant-information-f254b9
       const demoDoc = templateDocs.find(doc => doc.form.id === registrationFormName)
       if (typeof demoDoc !== 'undefined') {
-        demoDoc.items[1].inputs[1].value = subs.participant_id;
+        demoDoc.items[1].inputs[1].value = subs.runOnce.participant_id;
         demoDoc.items[1].inputs[2].value = subs.date;
         // "id": "randomization",
         // demoDoc.items[10].inputs[1].value = barcode_data;
@@ -249,6 +279,7 @@ async function go() {
 
     // Upload the profiles first
     // now upload the others
+    let docsSaved = 0
     for (let index = 0; index < templateDocs.length; index++) {
       const doc = templateDocs[index]
       try {
@@ -257,7 +288,7 @@ async function go() {
         // console.log("doc id: " + doc._id)
         // Save the doc multiple times to create additional sequences.
         const timesToSave = Math.ceil(Math.random() * 10)
-        console.log("Saving " + timesToSave + " times")
+        // console.log("Saving " + timesToSave + " times")
         let newRev;
         for (let index = 0; index < timesToSave; index++) {
           newDoc.changeNumber = index
@@ -271,11 +302,13 @@ async function go() {
             debugger
           }
         }
+        docsSaved = index
       } catch (e) {
         console.log("Error: " + e)
         debugger
       }
     }
+    console.log("participant_id: " + subs.runOnce.participant_id + " docs saved: " + docsSaved)
     numberOfCasesCompleted++
   }
 }
