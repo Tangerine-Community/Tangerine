@@ -4,6 +4,7 @@
 - Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
 - Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
 - Fix bug causing Device ID to not show up on About page on Devices.
+- When syncing, push before pull to avoid having to analyze changes pulled down for push.
 
 __Server upgrade instructions__
 
