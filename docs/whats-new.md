@@ -71,11 +71,60 @@ git checkout v3.17.0
 docker rmi tangerine/tangerine:v3.16.4
 ```
 
+## v3.16.5
+
+__Fixes__
+- T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
+- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635)
+
+__Developer Interest__
+- There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
+  - "homeUrl": "dashboard"
+  - "uploadUnlockedFormReponses": true
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.5
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.5
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.4
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```  
+
 ## v3.16.4
 
 __New Features__
 
-- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3 or v3.16.4. After upgrading to v3.16.4, go to the Online Sync feature. The new 'Comparison' checkbox enables the Sync feature to compare all document id's on the local device with the server and uploads any missing documents. You may also run the new "Push all docs to the server" feature available from the Admin Configuration menu item. This feature resets push sync to the beginning, ensuring that all docs are pushed. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3 or v3.16.4. After upgrading to v3.16.4, go to the Online Sync feature and click the new 'Advanced Options' panel. There are two new options for sync - Comparison Sync and Rewind Sync. Comparison sync enables the Sync feature to compare all document id's on the local device with the server and uploads any missing documents. Rewind Sync resets the sync "placeholder" to the beginning, ensuring that all docs are synced. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded.  It is more thorough than Comparison Sync. Both of the features are for special cases and should not be used routinely. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+
+  There are two settings that can be configured for Comparison sync:
+  - compareLimit (default: 150) - Document id's must be collected from both the tablet and server in order to calculate what documents need to be sync'd to the server. This setting limits the number of docs queried in each batch.
+  - batchSize (default: 200) - Number of docs per batch when pushing documents to the server. This same configuration setting is used for normal sync, so please take care when making changes to it.
+
+  This new "Comparison" option is very new and may have rough edges. In our experience, if the app crashes while using it, re-open the app and try again; chances are that it will work. If it consistently fails, lower the value for app-config.json's compareLimit property.
 
 __Server upgrade instructions__
 
