@@ -476,6 +476,7 @@ export class UserService {
       }
       const userAccount = await this.getUserAccount(username)
       await this.setCurrentUser(userAccount.username)
+      await this.deviceService.initialize()
       // Make globals available for form developers.
       window['userDb'] = await this.getUserDatabase(username)
       window['username'] = this.getCurrentUser()
