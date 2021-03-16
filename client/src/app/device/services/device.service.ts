@@ -11,6 +11,7 @@ const bcrypt = window['dcodeIO'].bcrypt
 export interface AppInfo {
   serverUrl:string
   groupName:string
+  deviceId:string
   groupId:string
   buildChannel:string
   tangerineVersion:string
