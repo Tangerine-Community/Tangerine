@@ -5,6 +5,7 @@
 - Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
 - Fix bug causing Device ID to not show up on About page on Devices.
 - When syncing, push before pull to avoid having to analyze changes pulled down for push.
+- Fix download links for archived APKs on Live channel.
 
 __Server upgrade instructions__
 
