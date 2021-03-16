@@ -1,3 +1,4 @@
+import { SyncDirection } from './sync-direction.enum';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { DeviceService } from './../device/services/device.service';
@@ -55,18 +56,11 @@ export class SyncService {
   batchSize: number = 200
   writeBatchSize: number = 50
   
-  // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
-  async sync(useSharedUser = false, isFirstSync = false, fullSync:string):Promise<ReplicationStatus> {
+  async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
-    let userDb:UserDatabase
-    if (useSharedUser) {
-      const device = await this.deviceService.getDevice()
-      userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
-    } else {
-      userDb = await this.userService.getUserDatabase()
-    }
+    const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
 
     this.syncCouchdbService.syncMessage$.subscribe({
       next: (progress) => {
@@ -97,15 +91,6 @@ export class SyncService {
       fullSync
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
-
-    await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
-      appConfig: appConfig,
-      serverUrl: appConfig.serverUrl,
-      groupId: appConfig.groupId,
-      deviceId: device._id,
-      deviceToken: device.token,
-      formInfos
-    })
 
     /**
      * Calculating Sync stats
