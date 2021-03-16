@@ -81,12 +81,15 @@ export class SyncCouchdbService {
     const remoteDb = new PouchDB(syncSessionUrl)
 
     // Push.
-    const pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
-    if (!pushReplicationStatus.pushError) {
-      await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
-    } else {
-      // Bail so we don't end up pulling and having to try to push those pulled changes!
-      return 
+    let pushReplicationStatus
+    if (!isFirstSync) {
+      pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
+      if (!pushReplicationStatus.pushError) {
+        await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
+      } else {
+        // Bail so we don't end up pulling and having to try to push those pulled changes!
+        return 
+      }
     }
 
     // Pull.
