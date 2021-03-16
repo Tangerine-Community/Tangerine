@@ -62,6 +62,7 @@ docker rmi tangerine/tangerine:v3.17.0
 ## v3.17.0
 
 __New Features and Fixes__
+
 - Device User Role access to Case Events and Event Forms [#2598](https://github.com/Tangerine-Community/Tangerine/pull/2598)
   - [Getting started with using Device User Roles](https://youtu.be/ntL-i8MVpew)
   - [Demo: Device User role based access to Event Forms](https://youtu.be/T0GfYHw6t6k)
@@ -102,13 +103,16 @@ docker rmi tangerine/tangerine:v3.16.4
 ## v3.16.5
 
 __Fixes__
+
 - T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
 - Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
 
 __Developer Interest__
-- There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
-  - "homeUrl": "dashboard"
-  - "uploadUnlockedFormReponses": true
+
+There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
+
+- "homeUrl": "dashboard"
+- "uploadUnlockedFormReponses": true
 
 __Server upgrade instructions__
 
