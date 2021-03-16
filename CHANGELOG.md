@@ -1,5 +1,34 @@
 # Changelog
 
+## v3.17.2
+- Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
+- Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
+- Fix bug causing Device ID to not show up on About page on Devices.
+- When syncing, push before pull to avoid having to analyze changes pulled down for push.
+- Fix download links for archived APKs on Live channel.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.2
+./start.sh v3.17.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.1
+```
+
 ## v3.17.1
 - Add support for Form Versions when it hasn't been used before by defaulting the first entry in formVersions when a form version isn't defined on a Form Response.
 - Fix issue causing Device Admin user log in to fail.
@@ -33,6 +62,7 @@ docker rmi tangerine/tangerine:v3.17.0
 ## v3.17.0
 
 __New Features and Fixes__
+
 - Device User Role access to Case Events and Event Forms [#2598](https://github.com/Tangerine-Community/Tangerine/pull/2598)
   - [Getting started with using Device User Roles](https://youtu.be/ntL-i8MVpew)
   - [Demo: Device User role based access to Event Forms](https://youtu.be/T0GfYHw6t6k)
@@ -73,13 +103,16 @@ docker rmi tangerine/tangerine:v3.16.4
 ## v3.16.5
 
 __Fixes__
+
 - T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
 - Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
 
 __Developer Interest__
-- There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
-  - "homeUrl": "dashboard"
-  - "uploadUnlockedFormReponses": true
+
+There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
+
+- "homeUrl": "dashboard"
+- "uploadUnlockedFormReponses": true
 
 __Server upgrade instructions__
 

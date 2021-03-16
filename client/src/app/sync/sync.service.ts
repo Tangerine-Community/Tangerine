@@ -328,13 +328,13 @@ export class SyncService {
       sourceDocIdentifier = 'id'
       targetDocs = remoteDocs
       targetDocIdentifier = '_id'
-      replicationFunction = this.syncCouchdbService.pushSyncBatch
+      replicationFunction = this.syncCouchdbService._push
     } else if (direction === 'pull'){
       sourceDocs = remoteDocs
       sourceDocIdentifier = '_id'
       targetDocs = localDocs
       targetDocIdentifier = 'id'
-      replicationFunction = this.syncCouchdbService.pullSyncBatch
+      replicationFunction = this.syncCouchdbService._pull
     }
     sourceDocs.forEach(sourceDoc => {
       // if we really wanted to, we could add _rev to the fields provided by the remote mango query 

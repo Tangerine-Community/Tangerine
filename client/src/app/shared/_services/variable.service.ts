@@ -56,13 +56,14 @@ export class VariableService {
         console.log("error: " + JSON.stringify(error))
       }
     }
-    this.db.put({
-      ...variable,
-      value
-    }, function(err, response) {
-      if (err) { return console.log(err); }
-      // handle response
-    });
+    try {
+      await this.db.put({
+        ...variable,
+        value
+      })
+    } catch (err) {
+      console.error(err)
+    }
   }
 
 }
