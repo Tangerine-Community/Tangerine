@@ -2,6 +2,7 @@ import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../sync.service';
 import {Component, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
+import { SyncDirection } from '../../sync-direction.enum';
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
 const STATUS_IN_PROGRESS = 'STATUS_IN_PROGRESS'
@@ -126,12 +127,12 @@ export class SyncComponent implements OnInit, OnDestroy {
     try {
       if (!this.runComparison && !this.fullSync) {
         // Normal Sync
-        this.replicationStatus = await this.syncService.sync(false, false, null)
+        this.replicationStatus = await this.syncService.sync(false, null)
       } else if (this.runComparison === 'pull') {
         // Pull comparison
         this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."
         // force a sync to make sure all docs have been pushed. 
-        this.replicationStatus = await this.syncService.sync(false, false, null)
+        this.replicationStatus = await this.syncService.sync(false, null)
         this.replicationStatus = await this.syncService.compareDocs('pull')
       } else if (this.runComparison === 'push') {
         // Push comparison
@@ -140,12 +141,12 @@ export class SyncComponent implements OnInit, OnDestroy {
         // Pull Rewind Full Sync
         this.otherMessage = "Forcing a sync before the Rewind Sync to make sure that all docs have been uploaded from the tablet."
         // force a sync to make sure all docs have been pushed. 
-        this.replicationStatus = await this.syncService.sync(false, false, null)
+        this.replicationStatus = await this.syncService.sync(false, null)
         // Rewind sync is activated when you provide the 'fullSync' variable - push or pull:
-        this.replicationStatus = await this.syncService.sync(false, false, 'pull')
+        this.replicationStatus = await this.syncService.sync(false, SyncDirection.pull)
       } else if (this.fullSync === 'push') {
         // Push Rewind Full Sync
-        this.replicationStatus = await this.syncService.sync(false, false, 'push')
+        this.replicationStatus = await this.syncService.sync(false, SyncDirection.push)
       }
       
       this.dbDocCount = this.replicationStatus.dbDocCount

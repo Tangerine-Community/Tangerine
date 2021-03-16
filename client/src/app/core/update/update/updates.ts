@@ -1,3 +1,4 @@
+import { SyncDirection } from './../../../sync/sync-direction.enum';
 import { CaseDocs } from './../../../case/case.docs';
 import { AppDocs } from './../../../app.docs';
 import { CaseHomeDocs } from './../../../case-home/case-home.docs';
@@ -367,8 +368,7 @@ export const updates = [
       if (appConfig.forceFullSync) {
         console.log('Performing full sync. This will take a little while.')
         status.next(_TRANSLATE(`Performing full sync. This will take a little while.`))
-        const fullSync = 'pull'
-        const replicationStatus = await syncService.sync(false, false, fullSync)
+        const replicationStatus = await syncService.sync(false, SyncDirection.pull)
         console.log('Completed sync.')
         status.next(_TRANSLATE(`Done with the full sync.`))
         await sleep(1000)
