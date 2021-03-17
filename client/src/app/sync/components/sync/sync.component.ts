@@ -17,6 +17,7 @@ const STATUS_ERROR = 'STATUS_ERROR'
 export class SyncComponent implements OnInit, OnDestroy {
 
   isSyncing = false
+  cancelling = false
   status = STATUS_INITIAL
   syncMessage: any
   direction: any
@@ -56,6 +57,11 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.otherMessage = ''
     this.errorMessage = ''
     this.runComparison = null
+    this.syncService.onCancelled$.subscribe({
+      next: () => {
+        this.cancelling = false
+      }
+    })
   }
 
   async sync() {
@@ -168,6 +174,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
+    this.cancelling = true
     this.syncService.cancel()
   }
 
