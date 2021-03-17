@@ -1,6 +1,7 @@
 # Changelog
 
 ## v3.17.3
+- Automatically retry after failed sync. (https://github.com/Tangerine-Community/Tangerine/pull/2663)
 
 ## v3.17.2
 - Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
