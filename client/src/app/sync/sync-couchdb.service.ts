@@ -1,3 +1,4 @@
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { LocationConfig } from './../device/classes/device.class';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import { ReplicationStatus } from './classes/replication-status.class';
@@ -96,8 +97,19 @@ export class SyncCouchdbService {
       : this.batchSize
     let replicationStatus:ReplicationStatus
     // Create sync session and instantiate remote database connection.
-    const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-    const remoteDb = new PouchDB(syncSessionUrl)
+    let syncSessionUrl
+    let remoteDb
+    try {
+      syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
+      remoteDb = new PouchDB(syncSessionUrl)
+    } catch (e) {
+      replicationStatus = {
+        ...replicationStatus,
+        pushError: `${_TRANSLATE('Please retry sync. Are you connected to the Internet?')}`
+      }
+      this.syncMessage$.next(replicationStatus)
+      return replicationStatus
+    }
 
     if (this.cancelling) {
       this.finishCancelling(replicationStatus)
@@ -135,7 +147,6 @@ export class SyncCouchdbService {
           await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
           hadPullSuccess = true
         } else {
-          console.warn(`sync-pull-last_seq not set because there was no status.info.last_seq`)
           await sleep(retryDelay)
         }
       } catch (e) {
@@ -274,7 +285,7 @@ export class SyncCouchdbService {
     status.currentPushLastSeq = status.info.last_seq
 
     if (failureDetected) {
-      const errorMessageDialog = window['t']('Please re-run the Sync process - it was terminated due to an error. Error: ')
+      const errorMessageDialog = window['t']('Error: ')
       const errorMessage = errorMessageDialog + status.pushError
       status.error = errorMessage
       console.error(status)

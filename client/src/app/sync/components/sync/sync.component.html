@@ -14,7 +14,7 @@
   <div class="container" *ngIf="status === 'STATUS_IN_PROGRESS'">
     <div>
       <button mat-raised-button color="primary" disabled>{{'Start'|translate}}</button>
-      <button mat-raised-button color="primary" (click)="cancel()">{{'Cancel'|translate}}</button>
+      <button mat-raised-button color="primary" (click)="cancel()" [attr.disabled]="cancelling ? true : null">{{'Cancel'|translate}}</button>
     </div>
     <mat-progress-bar mode="buffer"></mat-progress-bar>
     <div class="status">{{'Status'|translate}}: {{'In progress'|translate}}</div>
