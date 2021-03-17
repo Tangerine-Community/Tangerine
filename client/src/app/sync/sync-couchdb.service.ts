@@ -39,6 +39,9 @@ export class SyncCouchdbDetails {
 export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
+  public readonly onCancelled$: Subject<any> = new Subject();
+  cancelling = false
+  syncing = false 
   batchSize = 200
   initialBatchSize = 1000
   writeBatchSize = 50
@@ -56,6 +59,18 @@ export class SyncCouchdbService {
     private tangyFormService: TangyFormService,
     private conflictService: ConflictService
   ) { }
+
+  cancel() {
+    this.cancelling = true
+  }
+
+  finishCancelling(replicationStatus:ReplicationStatus) {
+    this.cancelling = false
+    this.onCancelled$.next({
+      ...replicationStatus,
+      cancelled: true
+    })
+  }
 
   /**
    * Note that if you run this with no forms configured to CouchDB sync,
@@ -79,15 +94,21 @@ export class SyncCouchdbService {
     let batchSize = fullSync === SyncDirection.pull 
       ? this.initialBatchSize
       : this.batchSize
+    let replicationStatus:ReplicationStatus
     // Create sync session and instantiate remote database connection.
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
+
+    if (this.cancelling) {
+      this.finishCancelling(replicationStatus)
+      return replicationStatus
+    }
 
     // Push.
     let pushReplicationStatus
     let hadPushSuccess = false
     if (!isFirstSync) {
-      while (!hadPushSuccess) {
+      while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
           hadPushSuccess = true
@@ -96,12 +117,18 @@ export class SyncCouchdbService {
           await sleep(retryDelay)
         }
       }
+      replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+    }
+
+    if (this.cancelling) {
+      this.finishCancelling(replicationStatus)
+      return replicationStatus
     }
 
     // Pull.
     let pullReplicationStatus
     let hadPullSuccess = false
-    while (!hadPullSuccess) {
+    while (!hadPullSuccess && !this.cancelling) {
       try {
         pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
         if (!pullReplicationStatus.pullError) {
@@ -119,13 +146,17 @@ export class SyncCouchdbService {
         await sleep(retryDelay)
       }
     }
+    replicationStatus = {...replicationStatus, ...pullReplicationStatus}
 
     // Whatever we pulled, even if there was an error, we don't need to push so set last push sequence again.
     const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
     await this.variableService.set('sync-push-last_seq', localSequenceAfterPull)
 
+    if (this.cancelling) {
+      this.finishCancelling(replicationStatus)
+    }
+
     // All done.
-    let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
     return replicationStatus
   }
 

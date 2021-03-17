@@ -16,6 +16,7 @@ const STATUS_ERROR = 'STATUS_ERROR'
 })
 export class SyncComponent implements OnInit, OnDestroy {
 
+  isSyncing = false
   status = STATUS_INITIAL
   syncMessage: any
   direction: any
@@ -58,6 +59,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   }
 
   async sync() {
+    this.isSyncing = true
     this.syncMessage = ''
     this.direction = ''
     this.checkpointMessage = ''
@@ -162,9 +164,17 @@ export class SyncComponent implements OnInit, OnDestroy {
       this.syncMessage = this.syncMessage + ' ERROR: ' + JSON.stringify(e.message)
       this.subscription.unsubscribe();
     }
+    this.isSyncing = false
+  }
+
+  cancel() {
+    this.syncService.cancel()
   }
 
   ngOnDestroy(): void {
+    if (this.isSyncing) {
+      this.syncService.cancel()
+    }
     if (this.subscription) {
       this.subscription.unsubscribe()
     }

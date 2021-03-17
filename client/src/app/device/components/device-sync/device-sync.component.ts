@@ -113,6 +113,9 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.syncInProgress) {
+      this.syncService.cancel()
+    }
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

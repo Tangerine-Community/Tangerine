@@ -47,6 +47,7 @@ export class SyncService {
 
   syncMessage: any = {};
   public readonly syncMessage$: Subject<any> = new Subject();
+  public readonly onCancelled$: Subject<any> = new Subject();
   replicationStatus: ReplicationStatus
   findSelectorLimit = 200
   syncCouchdbServiceStartTime:string
@@ -55,6 +56,10 @@ export class SyncService {
   compareLimit: number = 150
   batchSize: number = 200
   writeBatchSize: number = 50
+
+  cancel() {
+    this.syncCouchdbService.cancel()
+  }
   
   async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
@@ -63,19 +68,19 @@ export class SyncService {
     const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
 
     this.syncCouchdbService.syncMessage$.subscribe({
-      next: (progress) => {
-        // this.syncMessage =  message.docs_written + ' docs saved.'
-        this.syncMessage$.next(progress)
-        // console.log('Sync svc: ' + JSON.stringify(message))
+      next: (replicationStatus) => {
+        this.syncMessage$.next(replicationStatus)
+      }
+    })
+
+    this.syncCouchdbService.onCancelled$.subscribe({
+      next: (replicationStatus) => {
+        this.onCancelled$.next(replicationStatus)
       }
     })
 
     this.syncCouchdbServiceStartTime = new Date().toISOString()
 
-    //
-    // @TODO RJ: I'm adding the isFirstSync param, but found caseDefinition parameter is left to null.
-    //       Is this causing issues in this.conflictService.resolveConflicts?
-    //
     this.replicationStatus = await this.syncCouchdbService.sync(
       userDb,
       <SyncCouchdbDetails>{
