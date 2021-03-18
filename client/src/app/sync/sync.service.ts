@@ -1,3 +1,4 @@
+import { SyncDirection } from './sync-direction.enum';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { DeviceService } from './../device/services/device.service';
@@ -46,6 +47,7 @@ export class SyncService {
 
   syncMessage: any = {};
   public readonly syncMessage$: Subject<any> = new Subject();
+  public readonly onCancelled$: Subject<any> = new Subject();
   replicationStatus: ReplicationStatus
   findSelectorLimit = 200
   syncCouchdbServiceStartTime:string
@@ -54,34 +56,31 @@ export class SyncService {
   compareLimit: number = 150
   batchSize: number = 200
   writeBatchSize: number = 50
+
+  cancel() {
+    this.syncCouchdbService.cancel()
+  }
   
-  // @TODO RJ: useSharedUser parameter may be cruft. Remove it? Is it used for testing? It is used in the first sync but probably not necessary.
-  async sync(useSharedUser = false, isFirstSync = false, fullSync:string):Promise<ReplicationStatus> {
+  async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
-    let userDb:UserDatabase
-    if (useSharedUser) {
-      const device = await this.deviceService.getDevice()
-      userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
-    } else {
-      userDb = await this.userService.getUserDatabase()
-    }
+    const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
 
     this.syncCouchdbService.syncMessage$.subscribe({
-      next: (progress) => {
-        // this.syncMessage =  message.docs_written + ' docs saved.'
-        this.syncMessage$.next(progress)
-        // console.log('Sync svc: ' + JSON.stringify(message))
+      next: (replicationStatus) => {
+        this.syncMessage$.next(replicationStatus)
+      }
+    })
+
+    this.syncCouchdbService.onCancelled$.subscribe({
+      next: (replicationStatus) => {
+        this.onCancelled$.next(replicationStatus)
       }
     })
 
     this.syncCouchdbServiceStartTime = new Date().toISOString()
 
-    //
-    // @TODO RJ: I'm adding the isFirstSync param, but found caseDefinition parameter is left to null.
-    //       Is this causing issues in this.conflictService.resolveConflicts?
-    //
     this.replicationStatus = await this.syncCouchdbService.sync(
       userDb,
       <SyncCouchdbDetails>{
@@ -97,15 +96,6 @@ export class SyncService {
       fullSync
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
-
-    await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
-      appConfig: appConfig,
-      serverUrl: appConfig.serverUrl,
-      groupId: appConfig.groupId,
-      deviceId: device._id,
-      deviceToken: device.token,
-      formInfos
-    })
 
     /**
      * Calculating Sync stats
@@ -328,13 +318,13 @@ export class SyncService {
       sourceDocIdentifier = 'id'
       targetDocs = remoteDocs
       targetDocIdentifier = '_id'
-      replicationFunction = this.syncCouchdbService.pushSyncBatch
+      replicationFunction = this.syncCouchdbService._push
     } else if (direction === 'pull'){
       sourceDocs = remoteDocs
       sourceDocIdentifier = '_id'
       targetDocs = localDocs
       targetDocIdentifier = 'id'
-      replicationFunction = this.syncCouchdbService.pullSyncBatch
+      replicationFunction = this.syncCouchdbService._pull
     }
     sourceDocs.forEach(sourceDoc => {
       // if we really wanted to, we could add _rev to the fields provided by the remote mango query 
