@@ -1,10 +1,14 @@
 # Changelog
 
+## v3.17.3
+- Automatically retry after failed sync. (https://github.com/Tangerine-Community/Tangerine/pull/2663)
+
 ## v3.17.2
-- Fix race condition causing breaking of one page Event Forms entered too quickly.
 - Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
-- Fix race condition data conflict on EventFormComponent. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
-- Incorporate new advanced sync options for doing Rewind or Comparison push/pull. 
+- Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
+- Fix bug causing Device ID to not show up on About page on Devices.
+- When syncing, push before pull to avoid having to analyze changes pulled down for push.
+- Fix download links for archived APKs on Live channel.
 
 __Server upgrade instructions__
 
@@ -61,6 +65,7 @@ docker rmi tangerine/tangerine:v3.17.0
 ## v3.17.0
 
 __New Features and Fixes__
+
 - Device User Role access to Case Events and Event Forms [#2598](https://github.com/Tangerine-Community/Tangerine/pull/2598)
   - [Getting started with using Device User Roles](https://youtu.be/ntL-i8MVpew)
   - [Demo: Device User role based access to Event Forms](https://youtu.be/T0GfYHw6t6k)
@@ -101,13 +106,16 @@ docker rmi tangerine/tangerine:v3.16.4
 ## v3.16.5
 
 __Fixes__
+
 - T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
-- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635)
+- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
 
 __Developer Interest__
-- There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
-  - "homeUrl": "dashboard"
-  - "uploadUnlockedFormReponses": true
+
+There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
+
+- "homeUrl": "dashboard"
+- "uploadUnlockedFormReponses": true
 
 __Server upgrade instructions__
 

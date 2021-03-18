@@ -8,6 +8,7 @@ import { EventForm } from '../../classes/event-form.class';
 import { CaseEvent } from '../../classes/case-event.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
   selector: 'app-event-form',
@@ -29,8 +30,9 @@ export class EventFormComponent implements OnInit {
   eventFormRedirectUrl = ''
   eventFormRedirectBackButtonText = ''
 
+  isWrappingUp = false
+  isSaving = false
   loaded = false
-  readyForDataEntry = false
 
   window:any
 
@@ -92,19 +94,26 @@ export class EventFormComponent implements OnInit {
         this.formPlayer.location = this.caseService.case.location
       })
 
-      // After render of the player, it will have created a new form response if one was not assigned.
-      // Make sure to save that new form response ID into the EventForm.
-      this.formPlayer.$rendered.subscribe(async () => {
-        if (!this.formResponseId) {
+      this.formPlayer.$saved.subscribe(async () => {
+        if (this.isWrappingUp) return
+        if (!this.formResponseId && this.formPlayer.response && this.formPlayer.response.items && this.formPlayer.response.items[0] && this.formPlayer.response.items[0].inputs && this.formPlayer.response.items[0].inputs.length > 0) {
           this.eventForm.formResponseId = this.formPlayer.formResponseId
+          this.isSaving = true
           await this.caseService.save()
+          this.isSaving = false
         }
-        this.readyForDataEntry = true
-        this.ref.detectChanges()
       })
+      
       this.formPlayer.$submit.subscribe(async () => {
-        // @TODO This timeout may not be need now that we are not displaying form until `this.readyForDataEntry = true`.
+        this.isWrappingUp = true
         setTimeout(async () => {
+          while (this.isSaving) {
+            sleep(1000)
+          }
+          // If this was a one page form, the form response ID may not have been linked yet.
+          if (!this.eventForm.formResponseId) {
+            this.eventForm.formResponseId = this.formPlayer.formResponseId
+          }
           this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
           await this.caseService.save()
           const tangyFormResponseModel = new TangyFormResponseModel(this.formPlayer.response)

@@ -1,6 +1,7 @@
 import {AppInfo} from "../../device/services/device.service";
 
 export class ReplicationStatus {
+  cancelled = false
   pulled:number
   pushed:number
   forcePushed:number

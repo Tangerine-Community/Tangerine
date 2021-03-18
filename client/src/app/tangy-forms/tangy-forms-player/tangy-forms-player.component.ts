@@ -35,6 +35,7 @@ export class TangyFormsPlayerComponent {
   $afterSubmit = new Subject()
   $resubmit = new Subject()
   $afterResubmit = new Subject()
+  $saved = new Subject()
   rendered = false
 
   formInfo:FormInfo
@@ -209,6 +210,7 @@ export class TangyFormsPlayerComponent {
       })
     }
     this.response = state
+    this.$saved.next(state)
   }
 
   print() {

@@ -18,7 +18,7 @@
     <ng-container matColumnDef="versionTag">
       <th mat-header-cell *matHeaderCellDef> {{'Version Tag'|translate}} </th>
       <td mat-cell *matCellDef="let data"><a 
-        [href]="'/releases/prod/apks/archive/'+groupId+'/'+data.buildId+'.apk'"
+        [href]="'/releases/prod/apks/archive/'+groupId+'/'+groupId+'-'+data.versionTag+'.apk'"
         [download]="groupId+'-'+data.versionTag+'.apk'">{{data.versionTag}}</a></td>
     </ng-container>
 

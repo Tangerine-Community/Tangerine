@@ -1,9 +1,38 @@
-# What's new
+# What's new 
+
+## v3.17.2
+- Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
+- Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
+- Fix bug causing Device ID to not show up on About page on Devices.
+- When syncing, push before pull to avoid having to analyze changes pulled down for push.
+- Fix download links for archived APKs on Live channel.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.2
+./start.sh v3.17.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.1
+```
 
 ## v3.17.1
 - Add support for Form Versions when it hasn't been used before by defaulting the first entry in formVersions when a form version isn't defined on a Form Response.
 - Fix issue causing Device Admin user log in to fail.
-- Restore missing `sectionDisable` function in skip logic for forms. 
+- Restore missing `sectionDisable` function in skip logic for forms.
 
 __Server upgrade instructions__
 
@@ -74,13 +103,16 @@ docker rmi tangerine/tangerine:v3.16.4
 ## v3.16.5
 
 __Fixes__
+
 - T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
-- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635)
+- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
 
 __Developer Interest__
-- There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
-  - "homeUrl": "dashboard"
-  - "uploadUnlockedFormReponses": true
+
+There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
+
+- "homeUrl": "dashboard"
+- "uploadUnlockedFormReponses": true
 
 __Server upgrade instructions__
 
@@ -121,10 +153,10 @@ __New Features__
 - Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3 or v3.16.4. After upgrading to v3.16.4, go to the Online Sync feature and click the new 'Advanced Options' panel. There are two new options for sync - Comparison Sync and Rewind Sync. Comparison sync enables the Sync feature to compare all document id's on the local device with the server and uploads any missing documents. Rewind Sync resets the sync "placeholder" to the beginning, ensuring that all docs are synced. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded.  It is more thorough than Comparison Sync. Both of the features are for special cases and should not be used routinely. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
 
   There are two settings that can be configured for Comparison sync:
-  - compareLimit (default: 150) - Document id's must be collected from both the tablet and server in order to calculate what documents need to be sync'd to the server. This setting limits the number of docs queried in each batch.
-  - batchSize (default: 200) - Number of docs per batch when pushing documents to the server. This same configuration setting is used for normal sync, so please take care when making changes to it.
-
-  This new "Comparison" option is very new and may have rough edges. In our experience, if the app crashes while using it, re-open the app and try again; chances are that it will work. If it consistently fails, lower the value for app-config.json's compareLimit property.
+   - compareLimit (default: 150) - Document id's must be collected from both the tablet and server in order to calculate what documents need to be sync'd to the server. This setting limits the number of docs queried in each batch. 
+   - batchSize (default: 200) - Number of docs per batch when pushing documents to the server. This same configuration setting is used for normal sync, so please take care when making changes to it.
+  
+  This new "Comparison" option is very new and may have rough edges. In our experience, if the app crashes while using it, re-open the app and try again; chances are that it will work. If it consistently fails, lower the value for app-config.json's compareLimit property. 
 
 __Server upgrade instructions__
 
@@ -156,6 +188,7 @@ docker exec tangerine push-all-groups-views
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.16.3
 # If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+
 ```
 
 ## v3.16.3
