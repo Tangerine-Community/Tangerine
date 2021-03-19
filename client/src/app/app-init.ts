@@ -1,5 +1,6 @@
 import { Injectable }  from '@angular/core';
 import { DB } from './shared/_factories/db.factory';
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 function getAppConfig() {
   return new Promise((resolve, reject) => {
@@ -25,6 +26,9 @@ export class AppInit {
       debugger
       console.log("AppInitService.init() called");
       if (window['isCordovaApp']) {
+        while (!window['sqliteStorageFile']) {
+          await sleep(1000)
+        }
         // Check if App is installed using SQLite.
         let isInstalledOnSqlite
         // This will connect to SQLite by default until we set window.turnOffAppLevelEncryption.
