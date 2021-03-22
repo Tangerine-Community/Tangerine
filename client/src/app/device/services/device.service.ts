@@ -1,3 +1,4 @@
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { VariableService } from './../../shared/_services/variable.service';
 import { LockBoxService } from './../../shared/_services/lock-box.service';
 import { Loc } from 'tangy-form/util/loc.js';
@@ -9,6 +10,7 @@ import {AppConfig} from '../../shared/_classes/app-config.class';
 const bcrypt = window['dcodeIO'].bcrypt
 
 export interface AppInfo {
+  encryptionLevel:string
   serverUrl:string
   groupName:string
   deviceId:string
@@ -52,6 +54,9 @@ export class DeviceService {
     const device = await this.getDevice()
     const locationList = await this.appConfigService.getLocationList();
     const flatLocationList = Loc.flatten(locationList)
+    const encryptionLevel = (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption'])
+      ? _TRANSLATE('in-app')
+      : 'OS'
     const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
       ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
       : 'N/A'
@@ -61,6 +66,7 @@ export class DeviceService {
       serverUrl: appConfig.serverUrl,
       groupName: appConfig.groupName,
       groupId: appConfig.groupId,
+      encryptionLevel,
       tangerineVersion,
       buildChannel,
       buildId,
