@@ -27,6 +27,7 @@ git checkout v3.17.3
 docker rmi tangerine/tangerine:v3.17.2
 ```
 
+
 ## v3.17.2
 - Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
 - Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
