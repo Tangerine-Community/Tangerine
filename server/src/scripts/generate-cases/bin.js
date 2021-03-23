@@ -22,9 +22,6 @@ if (!registrationFormName) {
 
 const db = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}`)
 const groupDevicesDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/${groupId}-devices`)
-const templateDocfilename = './template--doc.js'
-const templateDoc = require(templateDocfilename).doc
-const userProfileTemplateDoc = require('./template-user-profile-doc.js').doc
 const groupPath = '/tangerine/groups/' + groupId + '/client'
 console.log("groupPath: " + groupPath)
 
@@ -32,7 +29,7 @@ console.log("groupPath: " + groupPath)
 let customGenerators, customSubstitutions
 try {
   const genny = require(`${groupPath}/custom-generators.js`)
-  console.log("customGenerators: " + JSON.stringify(genny))
+  // console.log("customGenerators: " + JSON.stringify(genny))
   customGenerators = genny.customGenerators
   customSubstitutions = genny.customSubstitutions
 } catch(e) {
@@ -42,14 +39,14 @@ try {
   console.error("custom-generators.js not found. No custom work for you!");
 }
 
-
-
 async function setLocation(groupId) {
   // Get a Device to set the location
+
   const response  = await groupDevicesDb.allDocs({include_docs:true})
   const devices = response
       .rows
       .map(row => row.doc)
+
   if (devices.length > 0) {
     let device = devices[0]
     let syncLocation = device.syncLocations[0]
@@ -73,13 +70,12 @@ async function go() {
     // note that participant_id and participantUuid are different!
     // const participant_id = Math.round(Math.random() * 1000000)
     const participantUuid = uuidv1()
-    
     let tangerineModifiedOn = new Date();
     // tangerineModifiedOn is set to numberOfCasesCompleted days before today, and its time is set based upon numberOfCasesCompleted.
     tangerineModifiedOn.setDate(tangerineModifiedOn.getDate() - numberOfCasesCompleted);
     tangerineModifiedOn.setTime(tangerineModifiedOn.getTime() - (numberOfCases - numberOfCasesCompleted))
     const location = await setLocation(groupId);
-    console.log("location: " + JSON.stringify(location));
+    // console.log("location: " + JSON.stringify(location));
     if (!location) {
       throw new Error('No location! You need to create at least one Device Registration so that the generated docs will sync.')
     }
@@ -170,7 +166,7 @@ async function go() {
             let functionName = functionDefinition.functionName
             if (functionDefinition.runOnce) {
               let val =   allSubs.runOnce[functionDefinition.functionName]
-              console.log("allSubs.runOnce: " + JSON.stringify(allSubs.runOnce))
+              // console.log("allSubs.runOnce: " + JSON.stringify(allSubs.runOnce))
               // console.log("Assigned function name using runOnce value: " + functionDefinition.functionName + " to value: " + val)
               foundInput['value'] = val
             } else {
@@ -285,31 +281,42 @@ async function go() {
       try {
         delete doc._rev
         let newDoc = await db.put(doc)
-        // console.log("doc id: " + doc._id)
+        // console.log("Saved the doc _rev: " + doc._rev + " newDoc.rev: " + newDoc.rev)
+        // console.log("newDoc: " + JSON.stringify(newDoc))
+        // newDoc._id = doc._id
+        // newDoc._rev = doc._rev
+        doc._rev = newDoc.rev
+        // console.log("doc id: " + doc._id + " newDoc.id: " + newDoc.id)
         // Save the doc multiple times to create additional sequences.
-        const timesToSave = Math.ceil(Math.random() * 10)
-        // console.log("Saving " + timesToSave + " times")
+        const timesToSave = Math.ceil(Math.random() * 50)
+        // const timesToSave = 30
+        console.log("Saving " + doc._id + " " + timesToSave + " times")
         let newRev;
         for (let index = 0; index < timesToSave; index++) {
-          newDoc.changeNumber = index
+          doc.changeNumber = index + 1
+          // console.log("newDoc.changeNumber: " + newDoc.changeNumber)
           try {
             if (newRev) {
-              newDoc._rev = newRev
+              doc._rev = newRev
+              // console.log("newRev: " + newRev)
             }
-            let changedDoc = await db.put(newDoc)
-            newRev = changedDoc._rev
+            let changedDoc = await db.put(doc)
+            // newRev = changedDoc._rev
+            newRev = changedDoc.rev
+            // console.log("changedDoc._rev: " + changedDoc._rev +  " changedDoc.rev: " + changedDoc.rev + " newDoc.rev: " + newDoc.rev)
           } catch (e) {
+            console.log("Error: " + JSON.stringify(e))
             debugger
           }
         }
         docsSaved = index
       } catch (e) {
-        console.log("Error: " + e)
+        console.log("Error: " + JSON.stringify(e))
         debugger
       }
     }
-    console.log("participant_id: " + subs.runOnce.participant_id + " docs saved: " + docsSaved)
     numberOfCasesCompleted++
+    console.log("participant_id: " + subs.runOnce.participant_id + " docs saved: " + docsSaved + "; Cases Generated: " + numberOfCasesCompleted + " of " + numberOfCases)
   }
 }
 
