@@ -30,7 +30,25 @@ const yes_no = function() {
 
 const substitutions = [
     {
-        "type": "caseDoc"
+        "type": "caseDoc",
+        "substitutions": {
+            "first_name": {
+                "functionName": "firstname",
+                "runOnce":"perCase"
+            },
+            "last_name": {
+                "functionName": "surname",
+                "runOnce":"perCase"
+            },
+            "participant_id": {
+                "functionName": "participant_id",
+                "runOnce":"perCase"
+            },
+            "consent": {
+                "functionName": "yes_no",
+                "runOnce": false
+            }
+        }
     },
     {
         "type": "demoDoc",
@@ -42,6 +60,10 @@ const substitutions = [
             },
             "last_name": {
                 "functionName": "surname",
+                "runOnce":"perCase"
+            },
+            "participant_id": {
+                "functionName": "participant_id",
                 "runOnce":"perCase"
             },
             "consent": {
