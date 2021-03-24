@@ -94,51 +94,64 @@ class ActiveConflicts extends LitElement {
           padding: 5px;
           border: solid 1px #CCC;
         }
+        paper-button {
+          background-color: var(--mdc-theme-secondary); 
+          color: white;
+        }
         juicy-ace-editor {
           width: 750px;
+          height: 750px;
+          margin-bottom: 15px;
+        }
+        .diffs-container, .ids-container {
+          overflow: scroll;
           height: 750px;
         }
       </style>
       <div id="container">
-        <h2>Docs with Active Conflicts</h2>
         ${!this.ready ? html`
           Loading active conflicts... 
         `: ``}
         <table>
           <tr>
             <td valign="top">
+              <h2>Docs with Active Conflicts</h2>
               ${this.list.length > 0 ? html`
-                <table class="matches">
-                  <tr class="header">
-                    <td> Doc ID </td>
-                    <td> Number of active conflicts </td>
-                  </tr>
-                  ${this.list.map(item => html`
-                    <tr @click="${() => { this.loadDoc(item._id) }}">
-                      <td>${item._id}</td> 
-                      <td>${item.numberOfConflicts}</td>
+                <div class="ids-container"> 
+                  <table class="matches">
+                    <tr class="header">
+                      <td> Doc ID </td>
+                      <td> Number of active conflicts </td>
                     </tr>
-                  `)}
-                </table>
+                    ${this.list.map(item => html`
+                      <tr @click="${() => { this.loadDoc(item._id) }}">
+                        <td>${item._id}</td> 
+                        <td>${item.numberOfConflicts}</td>
+                      </tr>
+                    `)}
+                  </table>
+                </div>
               `: ``}
             </td>
             <td class="selection" valign="top">
               ${this.selection.id ? html`
-                <h2 class="title">${this.selection.conflicts.length} Conflict Diff${this.selection.conflicts.length > 1 ? `s`:``} for ${this.selection.id}</h2>
-								<paper-button @click="${() => this.archiveConflictRevisions()}">ARCHIVE CONFLICT REVISIONS</paper-button>
+                <h2>Conflict Diffs</h2>
+                <p>${this.selection.conflicts.length} Conflict Diff${this.selection.conflicts.length > 1 ? `s`:``} for ${this.selection.id}</p>
               `: ``}
-              ${this.selection.conflicts.map(conflict => html`
-                <h3>${conflict.rev}</h3>
-                ${unsafeHTML(Jsondiffpatch.formatters.html.format(conflict.diff, this.selection.doc))}
-              `)}
+              <div class="diffs-container">
+                ${this.selection.conflicts.map(conflict => html`
+                  <h3>${conflict.rev}</h3>
+                  ${unsafeHTML(Jsondiffpatch.formatters.html.format(conflict.diff, this.selection.doc))}
+                `)}
+              </div>
             </td>
             <td valign="top">
               ${this.selection.doc ? html`
-                <h2>Current Document</h2>
-                <juicy-ace-editor mode="ace/mode/json" .value="${this.selection.JSON}">
-                  ${this.selection.JSON}
-                </juicy-ace-editor>
-                <paper-button @click="${() => this.saveDoc() }">SAVE</paper-button>
+                <h2>Merge</h2>
+                <juicy-ace-editor mode="ace/mode/json" .value="${this.selection.JSON}"></juicy-ace-editor>
+                <paper-textarea id="merge-comment" label="Merge comment"></paper-textarea>
+                <paper-button @click="${() => this.saveDoc() }">MERGE CHANGES</paper-button>
+								<paper-button @click="${() => this.archiveConflictRevisions()}">ARCHIVE CONFLICT REVISIONS</paper-button>
               `: ``}
 
               
@@ -173,7 +186,20 @@ class ActiveConflicts extends LitElement {
       return
     }
     try {
-      const response = axios.put(`/db/${groupId}/${docToSave._id}`, docToSave)
+      const response = await axios.put(`/db/${groupId}/${docToSave._id}`, docToSave)
+      const mergedDoc = (await axios.get(`/db/${groupId}/${docToSave._id}`)).data
+      try {
+        await axios.put(`/db/${groupId}-merge-log`)
+      } catch (e) { }
+      await axios.post(`/db/${groupId}-merge-log/`, {
+        docId: docToSave._id,
+        mergedDoc,
+        originalDoc: this.selection.doc,
+        activeConflictRevs: this.selection.conflicts.map(conflict => conflict.rev), 
+        timestamp: new Date().toISOString(),
+        comment: this.shadowRoot.querySelector('#merge-comment').value,
+        user: await T.user.getCurrentUser()
+      })
     } catch (e) {
       alert('Error saving')
       console.error(e)
