@@ -1,5 +1,6 @@
 import './archived-conflicts.js'
 import './active-conflicts.js'
+import './merge-log.js'
 import './search-active-conflicts.js'
 import { LitElement, html } from 'lit-element'
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
@@ -78,8 +79,9 @@ class CustomApp extends LitElement {
           <h1>Data Conflicts</h1>
           <ul>
             <li @click="${() => this.open('active-conflicts')}">Active Conflicts</li>
-            <li @click="${() => this.open('active-conflicts')}">Search Active Conflicts</li>
             <li @click="${() => this.open('archived-conflicts')}">Archived Conflicts</li>
+            <li @click="${() => this.open('merge-log')}">Merge Log</li>
+            <li @click="${() => this.open('search-active-conflicts')}">Search Active Conflicts</li>
           </ul>
         `: ``}
         ${this.route !== '' ? html`
@@ -90,6 +92,9 @@ class CustomApp extends LitElement {
         `: ``}
         ${this.route === 'active-conflicts' ? html`
           <active-conflicts></active-conflicts>
+        `: ``}
+        ${this.route === 'merge-log' ? html`
+          <merge-log></merge-log>
         `: ``}
         ${this.route === 'search-active-conflicts' ? html`
           <search-active-conflicts></search-active-conflicts>
