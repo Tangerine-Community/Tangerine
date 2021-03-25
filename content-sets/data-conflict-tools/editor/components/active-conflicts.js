@@ -1,5 +1,6 @@
 import { sharedStyles } from './shared-styles.js'
-import axios from 'axios'
+import { LitElement, html } from 'lit-element'
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import * as Jsondiffpatch from 'jsondiffpatch'
 import PouchDB from 'pouchdb'
 var jsondiffpatch = Jsondiffpatch.create({});
@@ -24,8 +25,6 @@ async function archiveConflicts(dbPath, docId) {
   }
 }
 
-import { LitElement, html } from 'lit-element'
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 class ActiveConflicts extends LitElement {
 
   static get styles() {
@@ -36,6 +35,7 @@ class ActiveConflicts extends LitElement {
 
   static get properties(){
     return {
+      dbPath: { type: String },
       selection: { type: Object },
       ready: { type: Boolean },
       list: { type: Array }
@@ -50,6 +50,10 @@ class ActiveConflicts extends LitElement {
     this.conflictInfos = []
     this.matches = []
     this.selection = { conflicts:[] }
+    // Fall back to a tangerine specific path for the database.
+    this.dbPath = this.dbPath || `${window.location.protocol}` + '//' + `${window.location.host}/db/${window.location.pathname.split('/')[2]}`
+    this.db = new PouchDB(this.dbPath)
+    this.logDb = new PouchDB(`${this.dbPath}-log`)
   }
 
   async connectedCallback() {
@@ -59,9 +63,10 @@ class ActiveConflicts extends LitElement {
 
   async loadList() {
     this.ready = false
-    const groupId = window.location.pathname.split('/')[2]
-    const result = await axios.get(`/db/${groupId}/_design/conflicts/_view/conflicts`)
-    this.list = result.data.rows.map(row => {
+    this.selection = { conflicts: []}
+    this.list = []
+    const result = await this.db.query(`conflicts`)
+    this.list = result.rows.map(row => {
       return { 
         _id: row.key, 
         numberOfConflicts: row.value
@@ -103,121 +108,150 @@ class ActiveConflicts extends LitElement {
           height: 750px;
           margin-bottom: 15px;
         }
-        .diffs-container, .ids-container {
-          overflow: scroll;
-          height: 750px;
+        .selected {
+          background: yellow;
         }
+        .panes {
+
+        }
+        .pane {
+          height: 750px;
+          overflow: scroll;
+        }
+        .pane-container {
+					border: solid 1px #CCC;
+					border-radius: 5px;
+					padding: 5px 15px;
+					background: #FFF;
+        }
+				.no-border {
+					border: none;
+				}
       </style>
       <div id="container">
         ${!this.ready ? html`
-          Loading active conflicts... 
-        `: ``}
-        <table>
-          <tr>
-            <td valign="top">
-              <h2>Docs with Active Conflicts</h2>
-              ${this.list.length > 0 ? html`
-                <div class="ids-container"> 
-                  <table class="matches">
-                    <tr class="header">
-                      <td> Doc ID </td>
-                      <td> Number of active conflicts </td>
-                    </tr>
-                    ${this.list.map(item => html`
-                      <tr @click="${() => { this.loadDoc(item._id) }}">
-                        <td>${item._id}</td> 
-                        <td>${item.numberOfConflicts}</td>
+          Loading... 
+        `: html`
+          <table>
+            <tr>
+              <td class="pane-container" valign="top">
+                <h2>Conflicts</h2>
+                <p>${this.list.length} Documents with Conflict${this.list.length > 1 ? `s`:``}</p>
+                ${this.list.length > 0 ? html`
+                  <div class="pane"> 
+                    <table class="matches">
+                      <tr class="header">
+                        <td class="no-border"> </td>
+                        <td> Doc ID </td>
+                        <td> Number of active conflicts </td>
                       </tr>
-                    `)}
-                  </table>
+                      ${this.list.map(item => html`
+                        <tr class="${this.selection && this.selection.id && this.selection.id === item._id ? `selected` : ``}" @click="${() => { this.loadDoc(item._id) }}">
+													<td class="no-border">
+														${this.selection && this.selection.id && this.selection.id === item._id ? html`
+															<input type="radio" checked></input>
+														` : html`
+															<input type="radio"></input>
+														`}
+													</td>
+                          <td>${item._id}</td> 
+                          <td>${item.numberOfConflicts}</td>
+                        </tr>
+                      `)}
+                    </table>
+                  </div>
+                `: ``}
+              </td>
+              <td class="pane-container" valign="top">
+								<h2>Diffs</h2>
+                ${this.selection.id ? html`
+                  <p>${this.selection.conflicts.length} Conflict Diff${this.selection.conflicts.length > 1 ? `s`:``} for ${this.selection.id}</p>
+                `: html`
+									Select a document to the left to view its conflict diffs.
+								`}
+                <div class="pane">
+                  ${this.selection.conflicts.map(conflict => html`
+                    <h3>${conflict.rev}</h3>
+                    ${unsafeHTML(Jsondiffpatch.formatters.html.format(conflict.diff, this.selection.doc))}
+                  `)}
                 </div>
-              `: ``}
-            </td>
-            <td class="selection" valign="top">
-              ${this.selection.id ? html`
-                <h2>Conflict Diffs</h2>
-                <p>${this.selection.conflicts.length} Conflict Diff${this.selection.conflicts.length > 1 ? `s`:``} for ${this.selection.id}</p>
-              `: ``}
-              <div class="diffs-container">
-                ${this.selection.conflicts.map(conflict => html`
-                  <h3>${conflict.rev}</h3>
-                  ${unsafeHTML(Jsondiffpatch.formatters.html.format(conflict.diff, this.selection.doc))}
-                `)}
-              </div>
-            </td>
-            <td valign="top">
-              ${this.selection.doc ? html`
-                <h2>Merge</h2>
-                <juicy-ace-editor mode="ace/mode/json" .value="${this.selection.JSON}"></juicy-ace-editor>
-                <paper-textarea id="merge-comment" label="Merge comment"></paper-textarea>
-                <paper-button @click="${() => this.saveDoc() }">MERGE CHANGES</paper-button>
-								<paper-button @click="${() => this.archiveConflictRevisions()}">ARCHIVE CONFLICT REVISIONS</paper-button>
-              `: ``}
-
-              
-
-            </td>
+              </td>
+              <td class="pane-container" valign="top">
+								<h2>Merge and/or Archive Conflicts</h2>
+                ${this.selection.doc ? html`
+                  <juicy-ace-editor mode="ace/mode/json" .value="${this.selection.JSON}"></juicy-ace-editor>
+                  <paper-textarea id="comment" label="Comment"></paper-textarea>
+                  <paper-button @click="${() => this.onSubmit(true, false) }">MERGE</paper-button>
+                  <paper-button @click="${() => this.onSubmit(false, true)}">ARCHIVE CONFLICTS</paper-button>
+                  <paper-button @click="${() => this.onSubmit(true, true) }">MERGE AND ARCHIVE CONFLICTS</paper-button>
+                `: ``}
+              </td>
+            </tr>
           </table>
-        </div>
+        `}
+      </div>
     `
   }
 
-  async archiveConflictRevisions() {
-    const groupId = window.location.pathname.split('/')[2]
-    const dbPath = `${window.location.protocol}` + '//' + `${window.location.host}/db/${groupId}`
+  async onSubmit(shouldMerge = false, shouldArchive = false) {
     const docId = this.selection.id
-    const confirmation = confirm(`Are you sure you want to archive conflict revisions for ${docId}?`)
-    if (!confirmation) return
-    this.selection = { conflicts: []}
-    this.list = []
-    this.ready = false
-    await archiveConflicts(dbPath, docId)
-    alert('Conflicts archived.')
-    this.loadList()
-  }
-
-  async saveDoc() {
-    const groupId = window.location.pathname.split('/')[2]
-    let docToSave
+    const action = shouldMerge && shouldArchive
+        ? 'MERGE-AND-ARCHIVE'
+        : shouldMerge
+          ? 'MERGE'
+          : shouldArchive
+            ? 'ARCHIVE'
+            : 'NONE'
+    const comment = this.shadowRoot.querySelector('#comment').value
+    let mergedDoc
     try {
-      docToSave = JSON.parse(this.shadowRoot.querySelector('juicy-ace-editor').value)
+      mergedDoc = JSON.parse(this.shadowRoot.querySelector('juicy-ace-editor').value)
     } catch(e) {
-      alert('Invalid JSON. Doc not saved.')
+      alert(`Invalid JSON. Aborting action: ${action}`)
       return
     }
-    try {
-      const response = await axios.put(`/db/${groupId}/${docToSave._id}`, docToSave)
-      const mergedDoc = (await axios.get(`/db/${groupId}/${docToSave._id}`)).data
-      try {
-        await axios.put(`/db/${groupId}-merge-log`)
-      } catch (e) { }
-      await axios.post(`/db/${groupId}-merge-log/`, {
-        docId: docToSave._id,
-        mergedDoc,
-        originalDoc: this.selection.doc,
-        activeConflictRevs: this.selection.conflicts.map(conflict => conflict.rev), 
-        timestamp: new Date().toISOString(),
-        comment: this.shadowRoot.querySelector('#merge-comment').value,
-        user: await T.user.getCurrentUser()
-      })
-    } catch (e) {
-      alert('Error saving')
-      console.error(e)
-      return
+    // Confirm.
+    const confirmation = confirm(`Are you sure you want to ${shouldMerge ? `merge changes` : ''}${shouldMerge && shouldArchive ? ' and ' : ''}${shouldArchive ? 'archive conflict revisions':''} for ${docId}?`)
+    if (!confirmation) return
+    this.ready = false
+    // Merge.
+    if (shouldMerge) {
+      await this.db.put(mergedDoc)
+      mergedDoc = await this.db.get(mergedDoc._id) 
     }
-    await this.loadDoc(docToSave._id)
-    alert('Saved successfully.')
+    // Archive.
+    if (shouldArchive) {
+      await archiveConflicts(this.dbPath, docId)
+    }
+    // Log.
+    await this.logDb.post({
+      action,
+      docId,
+      mergedDoc,
+      originalDoc: this.selection.doc,
+      activeConflictRevs: this.selection.conflicts.map(conflict => conflict.rev), 
+      timestamp: new Date().toISOString(),
+      comment,
+      user: await T.user.getCurrentUser()
+    })
+    // Reload UI.
+    if (shouldArchive) {
+      this.loadList()
+    } else {
+      await this.loadDoc(mergedDoc._id)
+    }
+    this.ready = true
   }
 
   async loadDoc(docId) {
-    const groupId = window.location.pathname.split('/')[2]
-    const currentDoc = (await axios.get(`/db/${groupId}/${docId}?conflicts=true`)).data
+    this.ready = false
+    const currentDoc = await this.db.get(docId, {conflicts: true})
     const conflictRevisionIds = [...currentDoc._conflicts] 
     delete currentDoc._conflicts
     let conflicts = []
     if (conflictRevisionIds) {
       for (const conflictRevisionId of conflictRevisionIds) {
-        const conflictRevisionDoc = (await axios.get(`/db/${groupId}/${docId}?rev=${conflictRevisionId}`)).data
+        const conflictRevisionDoc = await this.db.get(docId, {rev: conflictRevisionId})
         const comparison = jsondiffpatch.diff(currentDoc, conflictRevisionDoc)
         const conflict = {
           doc: conflictRevisionDoc,
@@ -234,6 +268,7 @@ class ActiveConflicts extends LitElement {
       JSON: JSON.stringify(currentDoc, null, 2),
       conflicts 
     }
+    this.ready = true
   }
 
 }

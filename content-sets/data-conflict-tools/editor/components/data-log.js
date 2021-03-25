@@ -6,7 +6,7 @@ var jsondiffpatch = Jsondiffpatch.create({});
 
 import { LitElement, html } from 'lit-element'
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-class MergeLog extends LitElement {
+class DataLog extends LitElement {
 
   static get styles() {
     return [
@@ -27,7 +27,6 @@ class MergeLog extends LitElement {
     this.loadCount = 0
     this.searchString = '' 
     this.ready = false
-    this.conflictInfos = []
     this.matches = []
     this.selection = { diff: undefined }
   }
@@ -35,7 +34,7 @@ class MergeLog extends LitElement {
   async connectedCallback() {
     super.connectedCallback()
     const groupId = window.location.pathname.split('/')[2]
-    const result = await axios.get(`/db/${groupId}-merge-log/_all_docs?include_docs=true`)
+    const result = await axios.get(`/db/${groupId}-log/_all_docs?include_docs=true`)
     this.list = result.data.rows
       .map(row => row.doc)
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
@@ -69,18 +68,19 @@ class MergeLog extends LitElement {
       </style>
       <div id="container">
         ${!this.ready ? html`
-          Loading merge log... 
+          Loading log... 
         `: ``}
         <table>
           <tr>
             <td valign="top">
-              <h2>Merge Log</h2>
+              <h2>Data Log</h2>
               ${this.list.length > 0 ? html`
                 <table class="matches">
                   <tr class="header">
                     <td> Timestamp </td>
-                    <td> Merge ID </td>
+                    <td> Log ID </td>
                     <td> Doc ID </td>
+                    <td> Action </td>
                     <td> Merged Rev </td>
                     <td> Original Rev </td>
                     <td> Active Conflict Revs </td>
@@ -92,7 +92,8 @@ class MergeLog extends LitElement {
                       <td>${item.timestamp}</td> 
                       <td>${item._id}</td> 
                       <td>${item.docId}</td> 
-                      <td>${item.mergedDoc._rev}</td>
+                      <td>${item.action}</td> 
+                      <td>${item.action === 'MERGE-AND-ARCHIVE' || item.action === 'MERGE' ? item.mergedDoc._rev : ''}</td>
                       <td>${item.originalDoc._rev}</td>
                       <td>${item.activeConflictRevs.join(', ')}</td>
                       <td><pre>${item.comment}</pre></td>
@@ -104,7 +105,7 @@ class MergeLog extends LitElement {
             </td>
             <td class="diff">
               ${this.selection.diff ? html`
-                <h2>Diff for Merge ${this.selection._id}</h2>
+                <h2>Diff for Conflict ${this.selection._id}</h2>
                 ${unsafeHTML(Jsondiffpatch.formatters.html.format(this.selection.diff, this.selection.originalDoc))}
               ` : ``}
             </td>
@@ -122,4 +123,4 @@ class MergeLog extends LitElement {
 
 }
 
-customElements.define('merge-log', MergeLog);
+customElements.define('data-log', DataLog);
