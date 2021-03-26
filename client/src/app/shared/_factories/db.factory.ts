@@ -35,6 +35,10 @@ export function DB(name, key = ''):PouchDB {
       pouchDBOptions.key = key
     }
   }
+  // Adding changes_batch_size here so it can be accessed by PWA for testing.
+  if (window['changes_batch_size'] && name === 'shared-user-database') {
+    pouchDBOptions.changes_batch_size = window['changes_batch_size']
+  }
   let pouch;
 
   try {

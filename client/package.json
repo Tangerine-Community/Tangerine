@@ -54,7 +54,7 @@
     "ngx-cookie-service": "^2.1.0",
     "pako": "^1.0.6",
     "plotly.js-dist": "^1.39.3",
-    "pouchdb": "github:chrisekelley/pouchdb#build_1660",
+    "pouchdb": "github:chrisekelley/pouchdb#build_29063",
     "pouchdb-adapter-cordova-sqlite": "^2.0.7",
     "pouchdb-debug": "^7.2.1",
     "pouchdb-find": "^7.1.1",

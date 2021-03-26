@@ -213,6 +213,9 @@ export class SyncService {
     const db = await this.userService.getUserDatabase()
     const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
     console.log(`Indexing ${result.rows.length} views.`)
+    db.db.on('indexing', async (progress) => {
+      this.syncMessage$.next({ indexing: (progress) })
+    })
     let i = 0
     for (let row of result.rows) {
       if (row.doc.views) {
