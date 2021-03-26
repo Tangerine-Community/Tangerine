@@ -14,6 +14,7 @@ const { v1: uuidv1 } = require('uuid')
 const random_name = require('node-random-name');
 const numberOfCases = parseInt(process.argv[2])
 const groupId = process.argv[3];
+const number_of_sequences = 10
 let registrationFormName = process.argv[4];
 if (!registrationFormName) {
   registrationFormName =  'registration-role-1'
@@ -288,7 +289,7 @@ async function go() {
         doc._rev = newDoc.rev
         // console.log("doc id: " + doc._id + " newDoc.id: " + newDoc.id)
         // Save the doc multiple times to create additional sequences.
-        const timesToSave = Math.ceil(Math.random() * 50)
+        const timesToSave = Math.ceil(Math.random() * number_of_sequences)
         // const timesToSave = 30
         console.log("Saving " + doc._id + " " + timesToSave + " times")
         let newRev;

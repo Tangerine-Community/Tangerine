@@ -21,6 +21,18 @@
     <div class="status">{{syncMessage}}</div>
     <div class="status">{{otherMessage}}</div>
     <div class="status">{{direction}}</div>
+    <div class="debugging">
+      <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
+    </div>
+    <div *ngIf="show" class="debugging">
+      <div class="status">Checkpoints:{{checkpointMessage}}</div>
+      <div class="status">Diffs: {{diffMessage}}</div>
+      <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
+      <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
+      <div class="status">Indexing View: {{indexing?.view}}</div>
+      <div class="status">Indexing Doc Count: {{indexing?.countIndexedDocs}}</div>
+      <div class="status">Indexing Sequence Number: {{indexing?.last_seq}}</div>
+    </div>
   </div>
 
   <div class="container" *ngIf="status === 'STATUS_COMPLETED'">
