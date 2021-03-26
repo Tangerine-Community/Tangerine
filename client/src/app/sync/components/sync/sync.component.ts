@@ -37,6 +37,8 @@ export class SyncComponent implements OnInit, OnDestroy {
   runComparison: string;
   comparisonDisabled = false;
   rewindDisabled = false;
+  indexing: any
+  indexingMessage: string
 
   @Input() fullSync: string;
   currentCheckedValue: boolean = null
@@ -57,6 +59,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.otherMessage = ''
     this.errorMessage = ''
     this.runComparison = null
+    this.indexingMessage = ''
     this.syncService.onCancelled$.subscribe({
       next: () => {
         this.cancelling = false
@@ -78,6 +81,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.pullError = ''
     this.pushError = ''
     this.syncMessage = ''
+    this.indexingMessage = ''
     
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
@@ -92,10 +96,26 @@ export class SyncComponent implements OnInit, OnDestroy {
           let pendingMessage = '', docPulled = ''
           this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
-            this.otherMessage = progress.message
+            // this.otherMessage = progress.message
+            if (progress.type == 'checkpoint') {
+              this.checkpointMessage = progress.message
+            } else if (progress.type == 'diffing') {
+              this.diffMessage = progress.message
+            } else if (progress.type == 'startNextBatch') {
+              this.startNextBatchMessage = progress.message
+            } else if (progress.type == 'pendingBatch') {
+              this.pendingBatchMessage = progress.message
+            } else {
+              this.otherMessage = progress.message
+            }
+
+            if (progress.direction !== '') {
+              this.direction = 'Direction: ' + progress.direction
+            }
           } else {
             this.otherMessage = ''
           }
+          
           if (typeof progress.pending !== 'undefined') {
             pendingMessage = progress.pending + ' pending; '
           }
@@ -126,6 +146,12 @@ export class SyncComponent implements OnInit, OnDestroy {
             this.direction = 'Direction: ' + progress.direction
           } else {
             this.direction = ''
+          }
+          if (progress.indexing) {
+            this.indexing = progress.indexing
+            this.indexingMessage = 'Indexing ' + progress.indexing.view
+          } else {
+            this.indexingMessage = ''
           }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }

@@ -55,9 +55,17 @@ export class AppInit {
           if (localStorage.getItem('turnOffAppLevelEncryption') === 'yes') {
             window['turnOffAppLevelEncryption'] = true
           }
+          if (appConfig['changes_batch_size']) {
+            window['changes_batch_size'] = appConfig['changes_batch_size']
+          }
           resolve()
         })
-      } else { 
+      } else {
+        // Enabling this setting for testing with a PWA.
+        const appConfig = await getAppConfig();
+        if (appConfig['changes_batch_size']) {
+          window['changes_batch_size'] = appConfig['changes_batch_size']
+        }
         resolve()
       }
     })
