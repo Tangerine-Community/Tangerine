@@ -1,60 +1,43 @@
 # Managing Data Conflicts 
-When using Sync Protocol 2 we can sync data down to Devices. Because of this it is possible for two Devices to edit the same data between syncs. This causes a "Data Conflict". When a Device is syncing and a conflict is detected, the Tangerine software will try to resolve that conflict by merging the two versions. When Tangerine does this, it creates a "Conflict Issue" which stores the two versions and the merged version for safe keeping (in Issue this is refered to as A, B, and Merged). These are important to review in the Issue queue to ensure that the merge is satisfactory. Sometimes a merge will not be possible and the data will be left in a Conflict state according to CouchDB's definition of Conflict. 
+When using Sync Protocol 2 we can sync data down to Devices. Because of this it is possible for two Devices to edit the same data between syncs. This causes a "Data Conflict". When a Device is syncing and a conflict is detected. 
 
-To manage Data Conflicts you will need to know the IP Address of your server and CouchDB Admin credentials found in `config.sh`.
+To manage Data Conflicts you will need to know the IP Address of your server and have the CouchDB Admin credentials found in `config.sh`.
 
-## Monitor how many Conflict Issues there are by Document ID
-1. Go to `<serverIpAddress>:5984/_utils/#/database/<groupId>/_design/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId/_view/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId`
-1. Click wrench for view on left hand column, make sure "Reduce: Count" is enabled on the view.
-1. Click "Options", check "Reduce" and then set "Group Level" of 2. 
+## Step 1: Find Documents with Conflicts
 
-### Get a list of all conflict issues in a group
+Go to `<serverIpAddress>:5984/_utils/#database/<groupId>/_design/shared_conflicts/_view/shared_conflicts`.  This is a list of Documents with conflicts. Click the first one in the list which will open the Document with conflicts. Note this doc has link in the second bar from the top on the right with label of "Conflicts".
 
-`<serverIpAddress>/<groupId>/_design/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId/_view/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId?reduce=false`
+## Step 2: Merge Conflict Revisions contents into Doc
+With the Document open, in Fauxton, copy the URL and open another window with the same URL side by side. On the window on the left, click the "Conflicts" link in the top right of that window. Note the "Conflicting Revisions" drop down in the Conflicts Browser. These Conflicting Revisions are the contents of Documents that were the "losing revision" when in a conflict. Selecting a "Conflict Rev" in the Conlict Revisions dropdown will result in the difference between the Conflicting Revision's contents and the current revision's contents. JSON highlighted in green belongs to the Conflict Rev. 
 
-### Check a single document for conflicts
+Cycle through each of the Conflict Revs migrating JSON highlighted in green over to the current Document edit view in your browser on the right. When all contents in the Conflict Revs have been migrated (AKA "merged") into the current Document, save the current doc with the changes and proceed to the next step.
 
-#### Get a list of all conflict issues for a document
+## Step 3: Archive Conflict Revisions
 
-If you know the document id for a case, you can get a list of its conflict issues.
+Use the `pouchdb-couchdb-archive-conflicts` CLI tool to archive the conflicts in the Document. This will result in removing the Document for the conlist list in step 1 and save a copy of each conflict revision into ``<serverIpAddress>:5984/_utils/#database/<groupId>-conflict-revs/`.
 
-In the following example, the first parameter in the key is set to 'case' to signify that it is a case document (`type:'case'); however, in the future conflicts may also be `type:'response'.
-
-Replace `<docId>` and enter the following into your browser:
-
-`<serverIpAddress>/<groupId>/_design/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId/_view/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId?reduce=false&key=["case","<docId>"]`
-
-#### Get the number of conflicts in a document
-
-If you know the document id for a case, replace `<docId>` and enter the following into your browser:
-
-`<serverIpAddress>/<groupId>/_design/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId/_view/issuesOfTypeConflictByConflictingDocTypeAndConflictingDocId?reduce=true&group_level=2&key=["case","<docId>"]`
-
-## Monitor active Database Conflicts in CouchDB
-
-Go to `<serverIpAddress>:5984/_utils/#database/<groupId>/_design/shared_conflicts/_view/shared_conflicts`. 
-
-To view the number of conflicts per document, click the table tab. 
-
-To resolve a conflict, click on the row to open the Doc in conflict. Then click the "Conflicts" tab to resolve the Conflict.
-
-## Viewing the history of Documents in the database
-Sometimes it helps to look back at the history of a Case. When a Case is open in Tangerine Editor, you can run the following in the Chrome Devtools Console.
-
+Install the tool. Requires Node.js (https://nodejs.org/).
 ```
-await T.case.getCaseHistory()
+npm install -g pouchdb-couchdb-archive-conflicts
 ```
 
-To look at the full picture that CouchDB server is aware of, use the following URL structure...
 
 ```
-<serverIpAddress>:5984/<groupId>/<docId>?revs_info=true
-
-```
-You will find the response contains a `_revs_info` property with an array of revisions. If a revisions has `"status"` of `"unavailable"`, then that revision is on the Device it came from. You can find out which Device likely has that revision by finding the next available revision, getting the doc at that revision, and inspecting the `modifiedByDeviceId` property. This is the version of the doc that was uploaded to the server. 
-
-```
-<serverIpAddress>:5984/<groupId>/<docId>?rev=<revId>
+archive-conflicts http://<username>:<password>@<serverIp>:5984/<groupId> <docId> 
 ```
 
+Now return to Step 1 and pick the next Document in the list.
+
+
+## Reviewing Archived Conflict Revisions
+
+To review a Documents archived conflict revisions, add a `byConflictDocId` view to the database.
+
+```
+function (doc) {
+  emit(doc.conflictDocId, doc.conflictRevId);
+}
+```
+
+When viewing this view you can then click "Options" and enter the follwing under "By Keys" `["<docId>"]`.
 
