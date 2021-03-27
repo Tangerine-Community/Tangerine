@@ -193,15 +193,41 @@ export class GroupDevicesComponent implements OnInit {
         const dbDocCount = replicationStatus?.dbDocCount
         const localDocsForLocation = replicationStatus?.localDocsForLocation
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
-        const parser = new UAParser();
-        parser.setUA(replicationStatus?.userAgent)
+        let os, osName, osVersion, browserVersion
+        // There are some old clients that may not have replicationStatus; parser.setUA crashes if you send it null.
+        if (replicationStatus) {
+          const parser = new UAParser();
+          parser.setUA(replicationStatus?.userAgent)
+          os = parser?.getOS()
+          osName = parser?.getOS()?.name
+          osVersion = parser?.getOS()?.version
+          browserVersion = parser?.getBrowser().version
+        }
+        // Sometimes the locations change, and the location on the tab no longer shows up on the list
+        let assignedLocation, syncLocations
+        try {
+          assignedLocation = device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
+        } catch (e) {
+          assignedLocation = "Location lookup error with " + JSON.stringify(device.assignedLocation.value)
+          console.log("Cannot coerce assignedLocation for " + JSON.stringify(device.assignedLocation.value))
+        }
+        try {
+          syncLocations = device.syncLocations.map(syncLocation => {
+            return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
+          }).join('; ')
+        } catch (e) {
+          syncLocations = "syncLocations lookup error with " + JSON.stringify(device.assignedLocation.value)
+          console.log("Cannot coerce syncLocations for " + JSON.stringify(device.syncLocations))
+        }
+        
+        
         const comparisonSyncMessage = replicationStatus?.idsToSyncCount + ' docs synced - ' + replicationStatus?.compareDocsDirection
       return <DeviceInfo>{
         ...device,
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
         syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
         updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
-        assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
+        assignedLocation: device.assignedLocation.value ? assignedLocation : '',
         duration: duration,
         versionTag: versionTag,
         tangerineVersion: tangerineVersion,
@@ -210,13 +236,11 @@ export class GroupDevicesComponent implements OnInit {
         localDocsForLocation: localDocsForLocation,
         effectiveConnectionType: effectiveConnectionType,
         errorFlag: errorFlag,
-        os: replicationStatus?.userAgent ? parser?.getOS() : null,
-        osName: replicationStatus?.userAgent ? parser?.getOS()?.name : null,
-        osVersion: replicationStatus?.userAgent ? parser?.getOS()?.version : null,
-        browserVersion: replicationStatus?.userAgent ? parser?.getBrowser().version : null,
-        syncLocations: device.syncLocations.map(syncLocation => {
-          return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
-        }).join('; '),
+        os: replicationStatus?.userAgent ? os : null,
+        osName: replicationStatus?.userAgent ? osName : null,
+        osVersion: replicationStatus?.userAgent ? osVersion : null,
+        browserVersion: replicationStatus?.userAgent ? browserVersion : null,
+        syncLocations: syncLocations,
         comparisonSync: replicationStatus?.compareDocsStartTime ? comparisonSyncMessage : null
       }
     })
