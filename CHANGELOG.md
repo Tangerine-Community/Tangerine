@@ -2,6 +2,8 @@
 
 ## v3.17.4
 - Enables support for appConfig['changes_batch_size'], which may help sites that experience crashes when syncing or indexing documents.
+- Removed selector from push sync - was causing a crash on large databases. Using a filter instead in the push syncOptions 
+  to exclude '_design' docs from being pushed from the client.
 
 __Server upgrade instructions__
 
