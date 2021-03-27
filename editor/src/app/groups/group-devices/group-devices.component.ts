@@ -59,7 +59,7 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'network', 'os', 'browserVersion', 'star']
+  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'encryptionLevel', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'network', 'os', 'browserVersion', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
@@ -189,6 +189,7 @@ export class GroupDevicesComponent implements OnInit {
         duration = replicationStatus?.compareSyncDuration ? moment.utc(replicationStatus?.compareSyncDuration).format('HH:mm:ss') : duration
         const versionTag = replicationStatus?.deviceInfo?.versionTag
         const tangerineVersion = replicationStatus?.deviceInfo?.tangerineVersion
+        const encryptionLevel = replicationStatus?.deviceInfo?.encryptionLevel
         const dbDocCount = replicationStatus?.dbDocCount
         const localDocsForLocation = replicationStatus?.localDocsForLocation
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
@@ -204,6 +205,7 @@ export class GroupDevicesComponent implements OnInit {
         duration: duration,
         versionTag: versionTag,
         tangerineVersion: tangerineVersion,
+        encryptionLevel: encryptionLevel,
         dbDocCount: dbDocCount,
         localDocsForLocation: localDocsForLocation,
         effectiveConnectionType: effectiveConnectionType,

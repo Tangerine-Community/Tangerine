@@ -80,8 +80,8 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.errorMessage = ''
     this.pullError = ''
     this.pushError = ''
-    this.syncMessage = ''
     this.indexingMessage = ''
+    this.indexing = null
     
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
@@ -94,7 +94,7 @@ export class SyncComponent implements OnInit, OnDestroy {
       next: (progress) => {
         if (progress) {
           let pendingMessage = '', docPulled = ''
-          this.syncMessage = ''
+          // this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
             // this.otherMessage = progress.message
             if (progress.type == 'checkpoint') {
@@ -108,7 +108,6 @@ export class SyncComponent implements OnInit, OnDestroy {
             } else {
               this.otherMessage = progress.message
             }
-
             if (progress.direction !== '') {
               this.direction = 'Direction: ' + progress.direction
             }
@@ -134,13 +133,13 @@ export class SyncComponent implements OnInit, OnDestroy {
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             this.syncMessage = docPulled + progress.remaining + '% remaining to sync '
           } else {
-            this.syncMessage = ''
+            // this.syncMessage = ''
           }
           if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
-            this.syncMessage = this.syncMessage + pendingMessage + progress.pulled + ' docs saved. '
+            this.syncMessage = pendingMessage + progress.pulled + ' docs saved. '
           }
           if (typeof progress.pushed !== 'undefined' && progress.pushed !== '') {
-            this.syncMessage = this.syncMessage + pendingMessage + progress.pushed + ' docs uploaded. '
+            this.syncMessage = pendingMessage + progress.pushed + ' docs uploaded. '
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
@@ -155,7 +154,6 @@ export class SyncComponent implements OnInit, OnDestroy {
           }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
-        
       }
     })
     try {

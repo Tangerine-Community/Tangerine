@@ -4,6 +4,9 @@
 - Enables support for appConfig['changes_batch_size'], which may help sites that experience crashes when syncing or indexing documents.
 - Removed selector from push sync - was causing a crash on large databases. Using a filter instead in the push syncOptions 
   to exclude '_design' docs from being pushed from the client.
+- Adds "Encryption Level" column to the Devices Listing, which shows if the device is running 'OS' encryption or 'in-app' encryption.
+  - 'OS' encryption: Encryption provided by the device operating system; typically this is File-based (Android 10) or Full-disk encryption (Android 5 - 9).
+  - 'in-app' encryption: Database is encrypted by Tangerine.
 
 __Server upgrade instructions__
 

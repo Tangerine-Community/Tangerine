@@ -16,13 +16,20 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   syncMessage: any
   subscription: any
   direction: any
+  checkpointMessage: any
+  diffMessage: any
+  startNextBatchMessage: any
+  pendingBatchMessage: any
   errorMessage: any
   pullError: any
   pushError: any
   dbDocCount:number
   otherMessage: any
   wakeLock: any
-  
+  indexing: any
+  indexingMessage: string
+  show:boolean=false;
+
   constructor(
     private syncService:SyncService,
     private userService: UserService
@@ -34,12 +41,17 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   async sync() {
     this.syncInProgress = true
     this.direction = ''
+    this.checkpointMessage = ''
+    this.diffMessage = ''
+    this.startNextBatchMessage = ''
+    this.pendingBatchMessage = ''
     this.errorMessage = ''
     this.otherMessage = ''
     this.pullError = ''
     this.pushError = ''
     this.syncMessage = ''
-    
+    this.indexingMessage = ''
+
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
     } catch (err) {
@@ -53,7 +65,17 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           let pendingMessage = '', docsWritten = '', direction = '', docPulled = '', syncMessage = ''
           this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
-            this.otherMessage = progress.message
+            if (progress.type == 'checkpoint') {
+              this.checkpointMessage = progress.message
+            } else if (progress.type == 'diffing') {
+              this.diffMessage = progress.message
+            } else if (progress.type == 'startNextBatch') {
+              this.startNextBatchMessage = progress.message
+            } else if (progress.type == 'pendingBatch') {
+              this.pendingBatchMessage = progress.message
+            } else {
+              this.otherMessage = progress.message
+            }
           } else {
             this.otherMessage = ''
           }
@@ -88,6 +110,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           } else {
             this.direction = ''
           }
+          if (progress.indexing) {
+            this.indexing = progress.indexing
+            this.indexingMessage = 'Indexing ' + progress.indexing.view + ' Doc Count: ' + progress.indexing.countIndexedDocs
+          }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
       }
@@ -110,6 +136,10 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
 
   onContinueClick() {
     this.done$.next(true)
+  }
+
+  toggle() {
+    this.show = !this.show
   }
 
   ngOnDestroy(): void {

@@ -9,6 +9,18 @@
     </div>
     <mat-progress-bar value="0"></mat-progress-bar>
     <div class="status">{{'Status'|translate}}: {{'Ready'|translate}}</div>
+    <div class="debugging">
+      <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
+    </div>
+    <div *ngIf="show" class="debugging">
+      <div class="status">Checkpoints:{{checkpointMessage}}</div>
+      <div class="status">Diffs: {{diffMessage}}</div>
+      <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
+      <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
+      <div class="status">Indexing View: {{indexing?.view}}</div>
+      <div class="status">Indexing Doc Count: {{indexing?.countIndexedDocs}}</div>
+      <div class="status">Indexing Sequence Number: {{indexing?.last_seq}}</div>
+    </div>
   </div>
 
   <div class="container" *ngIf="status === 'STATUS_IN_PROGRESS'">
@@ -17,10 +29,10 @@
       <button mat-raised-button color="primary" (click)="cancel()" [attr.disabled]="cancelling ? true : null">{{'Cancel'|translate}}</button>
     </div>
     <mat-progress-bar mode="buffer"></mat-progress-bar>
-    <div class="status">{{'Status'|translate}}: {{'In progress'|translate}}</div>
+    <div class="status">{{'Status'|translate}}: {{'In progress'|translate}} <span *ngIf="direction">&nbsp;&nbsp;&nbsp;{{direction}}</span>
+    </div>
     <div class="status">{{syncMessage}}</div>
     <div class="status">{{otherMessage}}</div>
-    <div class="status">{{direction}}</div>
     <div class="debugging">
       <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
     </div>
@@ -48,6 +60,18 @@
         <li>{{'Pushed to the server'|translate}}: {{replicationStatus.pushed}}</li>
         <li>{{'Records in the database'|translate}}: {{dbDocCount}}</li>
       </ul>
+    </div>
+    <div class="debugging">
+      <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
+    </div>
+    <div *ngIf="show" class="debugging">
+      <div class="status">Checkpoints:{{checkpointMessage}}</div>
+      <div class="status">Diffs: {{diffMessage}}</div>
+      <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
+      <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
+      <div class="status">Indexing View: {{indexing?.view}}</div>
+      <div class="status">Indexing Doc Count: {{indexing?.countIndexedDocs}}</div>
+      <div class="status">Indexing Sequence Number: {{indexing?.last_seq}}</div>
     </div>
   </div>
 

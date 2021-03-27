@@ -70,6 +70,12 @@
           {{element.tangerineVersion}}
         </td>
       </ng-container>
+      <ng-container matColumnDef="encryptionLevel">
+        <th mat-header-cell *matHeaderCellDef> Encryption Level </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.encryptionLevel}}
+        </td>
+      </ng-container>
       <ng-container matColumnDef="dbDocCount">
         <th mat-header-cell *matHeaderCellDef> All Docs on Tablet </th>
         <td mat-cell *matCellDef="let element">
