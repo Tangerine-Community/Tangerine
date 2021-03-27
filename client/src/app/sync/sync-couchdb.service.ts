@@ -298,12 +298,8 @@ export class SyncCouchdbService {
       "remaining": 100,
       "pushed": pushed,
       "checkpoint": 'source',
-      "selector": {
-        "$not": {
-          "_id": {
-            "$regex": "^_design"
-          }
-        }
+       "filter": function (doc) {
+        return doc._id.substr(0,7) !== '_design';
       }
     }
 
