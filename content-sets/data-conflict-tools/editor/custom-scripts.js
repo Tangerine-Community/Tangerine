@@ -13,23 +13,22 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_styles_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./shared-styles.js */ "./components/shared-styles.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jsondiffpatch */ "./node_modules/jsondiffpatch/dist/jsondiffpatch.umd.js");
-/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var pouchdb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! pouchdb */ "./node_modules/pouchdb/lib/index-browser.es.js");
-/* harmony import */ var lit_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
-/* harmony import */ var lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! lit-html/directives/unsafe-html */ "./node_modules/lit-html/directives/unsafe-html.js");
+/* harmony import */ var lit_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
+/* harmony import */ var lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lit-html/directives/unsafe-html */ "./node_modules/lit-html/directives/unsafe-html.js");
+/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jsondiffpatch */ "./node_modules/jsondiffpatch/dist/jsondiffpatch.umd.js");
+/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jsondiffpatch__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var pouchdb__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! pouchdb */ "./node_modules/pouchdb/lib/index-browser.es.js");
 
 
 
 
-var jsondiffpatch = jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__.create({});
+
+var jsondiffpatch = jsondiffpatch__WEBPACK_IMPORTED_MODULE_3__.create({});
 
 async function archiveConflicts(dbPath, docId) {
   try {
-    const dbSource = new pouchdb__WEBPACK_IMPORTED_MODULE_3__.default(dbPath)
-    const dbConflictRevs = new pouchdb__WEBPACK_IMPORTED_MODULE_3__.default(`${dbPath}-conflict-revs`)
+    const dbSource = new pouchdb__WEBPACK_IMPORTED_MODULE_4__.default(dbPath)
+    const dbConflictRevs = new pouchdb__WEBPACK_IMPORTED_MODULE_4__.default(`${dbPath}-conflict-revs`)
     const doc = await dbSource.get(docId, {conflicts: true})
     for (let conflictRev of doc._conflicts) {
       const conflictRevDoc = await dbSource.get(docId, {rev: conflictRev})
@@ -46,9 +45,7 @@ async function archiveConflicts(dbPath, docId) {
   }
 }
 
-
-
-class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElement {
+class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_1__.LitElement {
 
   static get styles() {
     return [
@@ -58,6 +55,7 @@ class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElemen
 
   static get properties(){
     return {
+      dbPath: { type: String },
       selection: { type: Object },
       ready: { type: Boolean },
       list: { type: Array }
@@ -72,6 +70,10 @@ class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElemen
     this.conflictInfos = []
     this.matches = []
     this.selection = { conflicts:[] }
+    // Fall back to a tangerine specific path for the database.
+    this.dbPath = this.dbPath || `${window.location.protocol}` + '//' + `${window.location.host}/db/${window.location.pathname.split('/')[2]}`
+    this.db = new pouchdb__WEBPACK_IMPORTED_MODULE_4__.default(this.dbPath)
+    this.logDb = new pouchdb__WEBPACK_IMPORTED_MODULE_4__.default(`${this.dbPath}-log`)
   }
 
   async connectedCallback() {
@@ -81,9 +83,10 @@ class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElemen
 
   async loadList() {
     this.ready = false
-    const groupId = window.location.pathname.split('/')[2]
-    const result = await axios__WEBPACK_IMPORTED_MODULE_1___default().get(`/db/${groupId}/_design/conflicts/_view/conflicts`)
-    this.list = result.data.rows.map(row => {
+    this.selection = { conflicts: []}
+    this.list = []
+    const result = await this.db.query(`conflicts`)
+    this.list = result.rows.map(row => {
       return { 
         _id: row.key, 
         numberOfConflicts: row.value
@@ -93,7 +96,7 @@ class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElemen
   }
 
   render() {
-    return lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
+    return lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
       <style>
         #container {
           margin: 15px;
@@ -116,104 +119,159 @@ class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElemen
           padding: 5px;
           border: solid 1px #CCC;
         }
+        paper-button {
+          background-color: var(--mdc-theme-secondary); 
+          color: white;
+        }
         juicy-ace-editor {
           width: 750px;
           height: 750px;
+          margin-bottom: 15px;
         }
+        .selected {
+          background: yellow;
+        }
+        .panes {
+
+        }
+        .pane {
+          height: 750px;
+          overflow: scroll;
+        }
+        .pane-container {
+					border: solid 1px #CCC;
+					border-radius: 5px;
+					padding: 5px 15px;
+					background: #FFF;
+        }
+				.no-border {
+					border: none;
+				}
       </style>
       <div id="container">
-        <h2>Docs with Active Conflicts</h2>
-        ${!this.ready ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
-          Loading active conflicts... 
-        `: ``}
-        <table>
-          <tr>
-            <td valign="top">
-              ${this.list.length > 0 ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
-                <table class="matches">
-                  <tr class="header">
-                    <td> Doc ID </td>
-                    <td> Number of active conflicts </td>
-                  </tr>
-                  ${this.list.map(item => lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
-                    <tr @click="${() => { this.loadDoc(item._id) }}">
-                      <td>${item._id}</td> 
-                      <td>${item.numberOfConflicts}</td>
-                    </tr>
+        ${!this.ready ? lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+          Loading... 
+        `: lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+          <table>
+            <tr>
+              <td class="pane-container" valign="top">
+                <h2>Conflicts</h2>
+                <p>${this.list.length} Documents with Conflict${this.list.length > 1 ? `s`:``}</p>
+                ${this.list.length > 0 ? lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+                  <div class="pane"> 
+                    <table class="matches">
+                      <tr class="header">
+                        <td class="no-border"> </td>
+                        <td> Doc ID </td>
+                        <td> Number of active conflicts </td>
+                      </tr>
+                      ${this.list.map(item => lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+                        <tr class="${this.selection && this.selection.id && this.selection.id === item._id ? `selected` : ``}" @click="${() => { this.loadDoc(item._id) }}">
+													<td class="no-border">
+														${this.selection && this.selection.id && this.selection.id === item._id ? lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+															<input type="radio" checked></input>
+														` : lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+															<input type="radio"></input>
+														`}
+													</td>
+                          <td>${item._id}</td> 
+                          <td>${item.numberOfConflicts}</td>
+                        </tr>
+                      `)}
+                    </table>
+                  </div>
+                `: ``}
+              </td>
+              <td class="pane-container" valign="top">
+								<h2>Diffs</h2>
+                ${this.selection.id ? lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+                  <p>${this.selection.conflicts.length} Conflict Diff${this.selection.conflicts.length > 1 ? `s`:``} for ${this.selection.id}</p>
+                `: lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+									Select a document to the left to view its conflict diffs.
+								`}
+                <div class="pane">
+                  ${this.selection.conflicts.map(conflict => lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+                    <h3>${conflict.rev}</h3>
+                    ${(0,lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_2__.unsafeHTML)(jsondiffpatch__WEBPACK_IMPORTED_MODULE_3__.formatters.html.format(conflict.diff, this.selection.doc))}
                   `)}
-                </table>
-              `: ``}
-            </td>
-            <td class="selection" valign="top">
-              ${this.selection.id ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
-                <h2 class="title">${this.selection.conflicts.length} Conflict Diff${this.selection.conflicts.length > 1 ? `s`:``} for ${this.selection.id}</h2>
-								<paper-button @click="${() => this.archiveConflictRevisions()}">ARCHIVE CONFLICT REVISIONS</paper-button>
-              `: ``}
-              ${this.selection.conflicts.map(conflict => lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
-                <h3>${conflict.rev}</h3>
-                ${(0,lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_5__.unsafeHTML)(jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__.formatters.html.format(conflict.diff, this.selection.doc))}
-              `)}
-            </td>
-            <td valign="top">
-              ${this.selection.doc ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
-                <h2>Current Document</h2>
-                <juicy-ace-editor mode="ace/mode/json" .value="${this.selection.JSON}">
-                  ${this.selection.JSON}
-                </juicy-ace-editor>
-                <paper-button @click="${() => this.saveDoc() }">SAVE</paper-button>
-              `: ``}
-
-              
-
-            </td>
+                </div>
+              </td>
+              <td class="pane-container" valign="top">
+								<h2>Merge and/or Archive Conflicts</h2>
+                ${this.selection.doc ? lit_element__WEBPACK_IMPORTED_MODULE_1__.html`
+                  <juicy-ace-editor mode="ace/mode/json" .value="${this.selection.JSON}"></juicy-ace-editor>
+                  <paper-textarea id="comment" label="Comment"></paper-textarea>
+                  <paper-button @click="${() => this.onSubmit(true, false) }">MERGE</paper-button>
+                  <paper-button @click="${() => this.onSubmit(false, true)}">ARCHIVE CONFLICTS</paper-button>
+                  <paper-button @click="${() => this.onSubmit(true, true) }">MERGE AND ARCHIVE CONFLICTS</paper-button>
+                `: ``}
+              </td>
+            </tr>
           </table>
-        </div>
+        `}
+      </div>
     `
   }
 
-  async archiveConflictRevisions() {
-    const groupId = window.location.pathname.split('/')[2]
-    const dbPath = `${window.location.protocol}` + '//' + `${window.location.host}/db/${groupId}`
+  async onSubmit(shouldMerge = false, shouldArchive = false) {
     const docId = this.selection.id
-    const confirmation = confirm(`Are you sure you want to archive conflict revisions for ${docId}?`)
-    if (!confirmation) return
-    this.selection = { conflicts: []}
-    this.list = []
-    this.ready = false
-    await archiveConflicts(dbPath, docId)
-    alert('Conflicts archived.')
-    this.loadList()
-  }
-
-  async saveDoc() {
-    const groupId = window.location.pathname.split('/')[2]
-    let docToSave
+    const action = shouldMerge && shouldArchive
+        ? 'MERGE-AND-ARCHIVE'
+        : shouldMerge
+          ? 'MERGE'
+          : shouldArchive
+            ? 'ARCHIVE'
+            : 'NONE'
+    const comment = this.shadowRoot.querySelector('#comment').value
+    let mergedDoc
     try {
-      docToSave = JSON.parse(this.shadowRoot.querySelector('juicy-ace-editor').value)
+      mergedDoc = JSON.parse(this.shadowRoot.querySelector('juicy-ace-editor').value)
     } catch(e) {
-      alert('Invalid JSON. Doc not saved.')
+      alert(`Invalid JSON. Aborting action: ${action}`)
       return
     }
-    try {
-      const response = axios__WEBPACK_IMPORTED_MODULE_1___default().put(`/db/${groupId}/${docToSave._id}`, docToSave)
-    } catch (e) {
-      alert('Error saving')
-      console.error(e)
-      return
+    // Confirm.
+    const confirmation = confirm(`Are you sure you want to ${shouldMerge ? `merge changes` : ''}${shouldMerge && shouldArchive ? ' and ' : ''}${shouldArchive ? 'archive conflict revisions':''} for ${docId}?`)
+    if (!confirmation) return
+    this.ready = false
+    // Merge.
+    if (shouldMerge) {
+      await this.db.put(mergedDoc)
+      mergedDoc = await this.db.get(mergedDoc._id) 
     }
-    await this.loadDoc(docToSave._id)
-    alert('Saved successfully.')
+    // Archive.
+    if (shouldArchive) {
+      await archiveConflicts(this.dbPath, docId)
+    }
+    // Log.
+    await this.logDb.post({
+      action,
+      docId,
+      mergedDoc,
+      originalDoc: this.selection.doc,
+      activeConflictRevs: this.selection.conflicts.map(conflict => conflict.rev), 
+      timestamp: new Date().toISOString(),
+      comment,
+      user: await T.user.getCurrentUser()
+    })
+    // Reload UI.
+    if (shouldArchive) {
+      this.loadList()
+    } else {
+      await this.loadDoc(mergedDoc._id)
+    }
+    this.ready = true
   }
 
   async loadDoc(docId) {
-    const groupId = window.location.pathname.split('/')[2]
-    const currentDoc = (await axios__WEBPACK_IMPORTED_MODULE_1___default().get(`/db/${groupId}/${docId}?conflicts=true`)).data
+    this.ready = false
+    const currentDoc = await this.db.get(docId, {conflicts: true})
     const conflictRevisionIds = [...currentDoc._conflicts] 
     delete currentDoc._conflicts
     let conflicts = []
     if (conflictRevisionIds) {
       for (const conflictRevisionId of conflictRevisionIds) {
-        const conflictRevisionDoc = (await axios__WEBPACK_IMPORTED_MODULE_1___default().get(`/db/${groupId}/${docId}?rev=${conflictRevisionId}`)).data
+        const conflictRevisionDoc = await this.db.get(docId, {rev: conflictRevisionId})
         const comparison = jsondiffpatch.diff(currentDoc, conflictRevisionDoc)
         const conflict = {
           doc: conflictRevisionDoc,
@@ -230,6 +288,7 @@ class ActiveConflicts extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElemen
       JSON: JSON.stringify(currentDoc, null, 2),
       conflicts 
     }
+    this.ready = true
   }
 
 }
@@ -418,16 +477,18 @@ customElements.define('archived-conflicts', ArchivedConflicts);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _archived_conflicts_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./archived-conflicts.js */ "./components/archived-conflicts.js");
 /* harmony import */ var _active_conflicts_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./active-conflicts.js */ "./components/active-conflicts.js");
-/* harmony import */ var _search_active_conflicts_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./search-active-conflicts.js */ "./components/search-active-conflicts.js");
-/* harmony import */ var lit_element__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
-/* harmony import */ var lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lit-html/directives/unsafe-html */ "./node_modules/lit-html/directives/unsafe-html.js");
+/* harmony import */ var _data_log_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data-log.js */ "./components/data-log.js");
+/* harmony import */ var _search_active_conflicts_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./search-active-conflicts.js */ "./components/search-active-conflicts.js");
+/* harmony import */ var lit_element__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
+/* harmony import */ var lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! lit-html/directives/unsafe-html */ "./node_modules/lit-html/directives/unsafe-html.js");
 
 
 
 
 
 
-class CustomApp extends lit_element__WEBPACK_IMPORTED_MODULE_3__.LitElement {
+
+class CustomApp extends lit_element__WEBPACK_IMPORTED_MODULE_4__.LitElement {
 
   static get properties() {
     return { 
@@ -467,7 +528,7 @@ class CustomApp extends lit_element__WEBPACK_IMPORTED_MODULE_3__.LitElement {
   }
 
   render() {
-    return lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+    return lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
 
       <style type="text/css">
       	/**
@@ -495,26 +556,30 @@ class CustomApp extends lit_element__WEBPACK_IMPORTED_MODULE_3__.LitElement {
           z-index: 98765456789876545678;
         }
       </style>
-      ${!this.ready ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`Loading...`:``}
-      ${this.ready ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
-        ${this.route === '' ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
-          <h1>Data Conflicts</h1>
+      ${!this.ready ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`Loading...`:``}
+      ${this.ready ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
+        ${this.route === '' ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
+          <h1 style="margin-left: 15px;">Data Tools</h1>
           <ul>
-            <li @click="${() => this.open('active-conflicts')}">Active Conflicts</li>
-            <li @click="${() => this.open('active-conflicts')}">Search Active Conflicts</li>
-            <li @click="${() => this.open('archived-conflicts')}">Archived Conflicts</li>
+            <li @click="${() => this.go('active-conflicts')}">Active Conflicts</li>
+            <li @click="${() => this.go('archived-conflicts')}">Archived Conflicts</li>
+            <li @click="${() => this.go('data-log')}">Data Log</li>
+            <li @click="${() => this.go('search-active-conflicts')}">Search Active Conflicts</li>
           </ul>
         `: ``}
-        ${this.route !== '' ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+        ${this.route !== '' ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
           <paper-button @click="${() => App.go('')}">< BACK</paper-button> 
         `: ``}
-        ${this.route === 'archived-conflicts' ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+        ${this.route === 'archived-conflicts' ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
           <archived-conflicts></archived-conflicts>
         `: ``}
-        ${this.route === 'active-conflicts' ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+        ${this.route === 'active-conflicts' ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
           <active-conflicts></active-conflicts>
         `: ``}
-        ${this.route === 'search-active-conflicts' ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+        ${this.route === 'data-log' ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
+          <data-log></data-log>
+        `: ``}
+        ${this.route === 'search-active-conflicts' ? lit_element__WEBPACK_IMPORTED_MODULE_4__.html`
           <search-active-conflicts></search-active-conflicts>
         `: ``}
       `: ``}
@@ -528,6 +593,154 @@ class CustomApp extends lit_element__WEBPACK_IMPORTED_MODULE_3__.LitElement {
 }
 
 customElements.define('custom-app', CustomApp)
+
+
+/***/ }),
+
+/***/ "./components/data-log.js":
+/*!********************************!*\
+  !*** ./components/data-log.js ***!
+  \********************************/
+/*! namespace exports */
+/*! exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_styles_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./shared-styles.js */ "./components/shared-styles.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jsondiffpatch */ "./node_modules/jsondiffpatch/dist/jsondiffpatch.umd.js");
+/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var lit_element__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
+/* harmony import */ var lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lit-html/directives/unsafe-html */ "./node_modules/lit-html/directives/unsafe-html.js");
+
+
+
+var jsondiffpatch = jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__.create({});
+
+
+
+
+class DataLog extends lit_element__WEBPACK_IMPORTED_MODULE_3__.LitElement {
+
+  static get styles() {
+    return [
+      _shared_styles_js__WEBPACK_IMPORTED_MODULE_0__.sharedStyles
+    ]
+  }
+
+  static get properties(){
+    return {
+      selection: { type: Object },
+      ready: { type: Boolean },
+      list: { type: Array }
+    };
+  }
+
+  constructor() {
+    super()
+    this.loadCount = 0
+    this.searchString = '' 
+    this.ready = false
+    this.matches = []
+    this.selection = { diff: undefined }
+  }
+
+  async connectedCallback() {
+    super.connectedCallback()
+    const groupId = window.location.pathname.split('/')[2]
+    const result = await axios__WEBPACK_IMPORTED_MODULE_1___default().get(`/db/${groupId}-log/_all_docs?include_docs=true`)
+    this.list = result.data.rows
+      .map(row => row.doc)
+      .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+    this.ready = true
+  }
+
+  render() {
+    return lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+      <style>
+        #container {
+          margin: 15px;
+          padding: 15px;
+        }
+        .selection {
+          padding: 0px 15px;
+        }
+        .title {
+          margin: 15px 0px 5px;
+        }
+        .no-matches {
+          width: 300px
+        }
+        tr.header td {
+         font-weight: bold;
+        }
+        table.matches td {
+          text-align: right;
+          padding: 5px;
+          border: solid 1px #CCC;
+        }
+      </style>
+      <div id="container">
+        ${!this.ready ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+          Loading log... 
+        `: ``}
+        <table>
+          <tr>
+            <td valign="top">
+              <h2>Data Log</h2>
+              ${this.list.length > 0 ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+                <table class="matches">
+                  <tr class="header">
+                    <td> Timestamp </td>
+                    <td> Log ID </td>
+                    <td> Doc ID </td>
+                    <td> Action </td>
+                    <td> Merged Rev </td>
+                    <td> Original Rev </td>
+                    <td> Active Conflict Revs </td>
+                    <td> Comment </td>
+                    <td> User </td>
+                  </tr>
+                  ${this.list.map(item => lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+                    <tr @click="${() => { this.loadItem(item) }}">
+                      <td>${item.timestamp}</td> 
+                      <td>${item._id}</td> 
+                      <td>${item.docId}</td> 
+                      <td>${item.action}</td> 
+                      <td>${item.action === 'MERGE-AND-ARCHIVE' || item.action === 'MERGE' ? item.mergedDoc._rev : ''}</td>
+                      <td>${item.originalDoc._rev}</td>
+                      <td>${item.activeConflictRevs.join(', ')}</td>
+                      <td><pre>${item.comment}</pre></td>
+                      <td>${item.user}</td>
+                    </tr>
+                  `)}
+                </table>
+              `: ``}
+            </td>
+            <td class="diff">
+              ${this.selection.diff ? lit_element__WEBPACK_IMPORTED_MODULE_3__.html`
+                <h2>Diff for Conflict ${this.selection._id}</h2>
+                ${(0,lit_html_directives_unsafe_html__WEBPACK_IMPORTED_MODULE_4__.unsafeHTML)(jsondiffpatch__WEBPACK_IMPORTED_MODULE_2__.formatters.html.format(this.selection.diff, this.selection.originalDoc))}
+              ` : ``}
+            </td>
+          </table>
+        </div>
+    `
+  }
+
+  async loadItem(item) {
+    this.selection = {
+      ...item,
+      diff: jsondiffpatch.diff(item.originalDoc, item.mergedDoc)
+    }
+  }
+
+}
+
+customElements.define('data-log', DataLog);
 
 
 /***/ }),
@@ -1223,6 +1436,7 @@ __webpack_require__.r(__webpack_exports__);
   \*****************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 3:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -1268,6 +1482,7 @@ module.exports = __webpack_require__(/*! ./lib/axios */ "./node_modules/axios/li
   \************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 12:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1460,6 +1675,7 @@ module.exports = function xhrAdapter(config) {
   \*****************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 53:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1529,6 +1745,7 @@ module.exports.default = axios;
   \*************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 19:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -1561,6 +1778,7 @@ module.exports = Cancel;
   \******************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 57:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1631,6 +1849,7 @@ module.exports = CancelToken;
   \***************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 3:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -1649,6 +1868,7 @@ module.exports = function isCancel(value) {
   \**********************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 95:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1757,6 +1977,7 @@ module.exports = Axios;
   \***********************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 52:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1822,6 +2043,7 @@ module.exports = InterceptorManager;
   \******************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 15:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1855,6 +2077,7 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
   \****************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 15:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1886,6 +2109,7 @@ module.exports = function createError(message, config, code, request, response) 
   \********************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 23:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1978,6 +2202,7 @@ module.exports = function dispatchRequest(config) {
   \*****************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 13:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -2033,6 +2258,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   \****************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 13:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2133,6 +2359,7 @@ module.exports = function mergeConfig(config1, config2) {
   \***********************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 12:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2171,6 +2398,7 @@ module.exports = function settle(resolve, reject, response) {
   \******************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 13:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2204,6 +2432,7 @@ module.exports = function transformData(data, headers, fns) {
   \********************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 98:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2315,6 +2544,7 @@ module.exports = defaults;
   \************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 3:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -2339,6 +2569,7 @@ module.exports = function bind(fn, thisArg) {
   \****************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 22:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2422,6 +2653,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   \*******************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 10:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -2449,6 +2681,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
   \***************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2515,6 +2748,7 @@ module.exports = (
   \*********************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 9:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -2542,6 +2776,7 @@ module.exports = function isAbsoluteURL(url) {
   \********************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 9:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -2566,6 +2801,7 @@ module.exports = function isAxiosError(payload) {
   \***********************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2647,6 +2883,7 @@ module.exports = (
   \***************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2672,6 +2909,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   \********************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 27:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -2738,6 +2976,7 @@ module.exports = function parseHeaders(headers) {
   \**************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 23:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -2778,6 +3017,7 @@ module.exports = function spread(callback) {
   \*****************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 328:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3142,6 +3382,7 @@ module.exports = {
   \***************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 56:0-14 */
 /***/ ((module) => {
 
 "use strict";
@@ -3631,6 +3872,7 @@ function once(emitter, name) {
   \*********************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 84:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3901,6 +4143,8 @@ exports.install = function (t) {
   \***************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 3:2-16 */
+/*! CommonJS bailout: module.exports is used directly at 18:2-16 */
 /***/ ((module) => {
 
 if (typeof Object.create === 'function') {
@@ -3952,6 +4196,8 @@ if (typeof Object.create === 'function') {
   \**************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: __webpack_exports__, top-level-this-exports, __webpack_require__ */
+/*! CommonJS bailout: this is used directly at 5:2-6 */
+/*! CommonJS bailout: exports is used directly at 2:72-79 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 (function (global, factory) {
@@ -22884,6 +23130,7 @@ PouchDB.plugin(IDBPouch)
   \*********************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 4:8-22 */
 /***/ ((module) => {
 
 (function (factory) {
