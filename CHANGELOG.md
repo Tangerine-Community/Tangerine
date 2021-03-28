@@ -1,7 +1,12 @@
 # Changelog
 
 ## v3.17.4
-- Enables support for appConfig['changes_batch_size'], which may help sites that experience crashes when syncing or indexing documents.
+- Enables support for reducing the number of documents processed in the changed feed when syncing using the 'changes_batch_size' property in app-config.json. This new setting will help sites that experience crashes when syncing or indexing documents. Using this setting *will* slow sync times. Default is 50. During recent tests, the following settings have been successful in syncing a location with over 12,700 docs that was experiencing crashes:
+  - "batchSize": 50
+  - "writeBatchSize": 50
+  - "changes_batch_size": 20
+  
+  Please do note that these particular settings do make sync very slow - especially for initial device sync. 
 - Removed selector from push sync - was causing a crash on large databases. Using a filter instead in the push syncOptions 
   to exclude '_design' docs from being pushed from the client.
 - Adds "Encryption Level" column to the Devices Listing, which shows if the device is running 'OS' encryption or 'in-app' encryption.
