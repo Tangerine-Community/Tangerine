@@ -1,5 +1,40 @@
 # Changelog
 
+## v3.17.4
+- Enables support for reducing the number of documents processed in the changed feed when syncing using the 'changes_batch_size' property in app-config.json. This new setting will help sites that experience crashes when syncing or indexing documents. Using this setting *will* slow sync times. Default is 50. During recent tests, the following settings have been successful in syncing a location with over 12,700 docs that was experiencing crashes:
+  - "batchSize": 50
+  - "writeBatchSize": 50
+  - "changes_batch_size": 20
+  
+  Please do note that these particular settings do make sync very slow - especially for initial device sync. 
+- Removed selector from push sync - was causing a crash on large databases. Using a filter instead in the push syncOptions 
+  to exclude '_design' docs from being pushed from the client.
+- Adds "Encryption Level" column to the Devices Listing, which shows if the device is running 'OS' encryption or 'in-app' encryption.
+  - 'OS' encryption: Encryption provided by the device operating system; typically this is File-based (Android 10) or Full-disk encryption (Android 5 - 9).
+  - 'in-app' encryption: Database is encrypted by Tangerine.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.4
+./start.sh v3.17.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.3
+```
+
 ## v3.17.3
 - Automatically retry after failed sync. (https://github.com/Tangerine-Community/Tangerine/pull/2663)
 - Do not associate form response with Event Form if only opened and no data entered.

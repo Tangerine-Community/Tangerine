@@ -7,14 +7,28 @@
     <div class="errorMessage" *ngIf="pushError">Push Error: {{pushError}}</div>
     <div>{{ syncMessage }}</div>
     <div class="status">{{otherMessage}}</div>
+    <div class="status">{{indexingMessage}}</div>
   </div>
   <div *ngIf="syncIsComplete === true">
     <h2>{{'Sync has completed'|translate}}.</h2>
     <div class="errorMessage" *ngIf="errorMessage">{{errorMessage}}</div>
     <div class="errorMessage" *ngIf="pullError">Pull Error: {{pullError}}</div>
     <div class="errorMessage" *ngIf="pushError">Push Error: {{pushError}}</div>
+    <div class="status">{{indexingMessage}}</div>
     <div><p>{{'Records in the local database'|translate}}: {{dbDocCount}}</p></div>
     <br>
     <paper-button (click)="onContinueClick()">{{'next'|translate}}</paper-button>
+  </div>
+  <div class="debugging">
+    <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
+  </div>
+  <div *ngIf="show" class="debugging">
+    <div class="status">Checkpoints:{{checkpointMessage}}</div>
+    <div class="status">Diffs: {{diffMessage}}</div>
+    <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
+    <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
+    <div class="status">Indexing View: {{indexing?.view}}</div>
+    <div class="status">Indexing Doc Count: {{indexing?.countIndexedDocs}}</div>
+    <div class="status">Indexing Sequence Number: {{indexing?.last_seq}}</div>
   </div>
 </div>
