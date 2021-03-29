@@ -173,6 +173,7 @@ export class SyncCouchdbService {
 
   _push (userDb, remoteDb, syncOptions) {
     return new Promise( (resolve, reject) => {
+      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction = 'push'
       const progress = {
         'direction': direction,
@@ -203,6 +204,49 @@ export class SyncCouchdbService {
           'pushed': pushed
         };
         this.syncMessage$.next(progress);
+      }).on('checkpoint', (info) => {
+        if (info) {
+          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          let progress;
+          if (info.checkpoint) {
+            checkpointProgress = checkpointProgress + 1
+            progress = {
+              'message': checkpointProgress,
+              'type': 'checkpoint',
+              'direction': direction
+            };
+          } else if (info.diffing) {
+            diffingProgress = diffingProgress + 1
+            progress = {
+              'message': diffingProgress,
+              'type': 'diffing',
+              'direction': direction
+            };
+          } else if (info.startNextBatch) {
+            startBatchProgress = startBatchProgress + 1
+            progress = {
+              'message': startBatchProgress,
+              'type': 'startNextBatch',
+              'direction': direction
+            };
+          } else if (info.pendingBatch) {
+            pendingBatchProgress = pendingBatchProgress + 1
+            progress = {
+              'message': pendingBatchProgress,
+              'type': 'pendingBatch',
+              'direction': direction
+            };
+          } else {
+            progress = {
+              'message': JSON.stringify(info),
+              'type': 'other',
+              'direction': direction
+            };
+          }
+          this.syncMessage$.next(progress);
+        } else {
+          console.log(direction + ': Calculating Checkpoints.');
+        }
       }).on('active', function (info) {
         if (info) {
           console.log('Push replication is active. Info: ' + JSON.stringify(info));
@@ -250,15 +294,12 @@ export class SyncCouchdbService {
       "since":push_last_seq,
       "batch_size": this.batchSize,
       "batches_limit": 1,
+      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null,
       "remaining": 100,
       "pushed": pushed,
       "checkpoint": 'source',
-      "selector": {
-        "$not": {
-          "_id": {
-            "$regex": "^_design"
-          }
-        }
+       "filter": function (doc) {
+        return doc._id.substr(0,7) !== '_design';
       }
     }
 
@@ -297,6 +338,7 @@ export class SyncCouchdbService {
 
   _pull(userDb, remoteDb, syncOptions):Promise<ReplicationStatus> {
     return new Promise( (resolve, reject) => {
+      let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       let status = <ReplicationStatus>{
         pulled: 0,
         pullConflicts: [],
@@ -335,6 +377,43 @@ export class SyncCouchdbService {
           }
           await this.variableService.set('sync-pull-last_seq', info.last_seq)
           this.syncMessage$.next(progress)
+        }).on('checkpoint', (info) => {
+          if (info) {
+            // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+            let progress;
+            if (info.checkpoint) {
+              checkpointProgress = checkpointProgress + 1
+              progress = {
+                'message': checkpointProgress,
+                'type': 'checkpoint',
+                'direction': direction
+              };
+            } else if (info.diffing) {
+              diffingProgress = diffingProgress + 1
+              progress = {
+                'message': diffingProgress,
+                'type': 'diffing',
+                'direction': direction
+              };
+            } else if (info.startNextBatch) {
+              startBatchProgress = startBatchProgress + 1
+              progress = {
+                'message': startBatchProgress,
+                'type': 'startNextBatch',
+                'direction': direction
+              };
+            } else if (info.pendingBatch) {
+              pendingBatchProgress = pendingBatchProgress + 1
+              progress = {
+                'message': pendingBatchProgress,
+                'type': 'pendingBatch',
+                'direction': direction
+              };
+            }
+            this.syncMessage$.next(progress);
+          } else {
+            console.log(direction + ': Calculating Checkpoints.');
+          }
         }).on('error', function (error) {
           reject(error)
         });
@@ -383,7 +462,8 @@ export class SyncCouchdbService {
       "batches_limit": 1,
       "pulled": pulled,
       "selector": pullSelector,
-      "checkpoint": 'target'
+      "checkpoint": 'target',
+      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null
     }
     
     syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
