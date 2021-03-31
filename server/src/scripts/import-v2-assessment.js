@@ -39,9 +39,9 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
   })
 
   const template = `
-    <tangy-form id="${assessment._id}" title="${assessment.name}">
+    <tangy-form id="form_${assessment._id}" title="${assessment.name}">
       ${assessment.subtests.map(subtest => `
-        <tangy-form-item id="${subtest._id}" title="${subtest.name.replace(/["']/g, "`")}"
+        <tangy-form-item id="section_${subtest._id}" title="${subtest.name.replace(/["']/g, "`")}"
           on-open="
 	       ${subtest.prototype ===
       'datetime' ? `inputs.date_start.value = new Date().toISOString().split('T')[0]
