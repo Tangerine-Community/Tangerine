@@ -1,5 +1,31 @@
 # What's new 
 
+## v3.17.5
+- Bumps tangy-form to 4.23.3, editor to 4.23.3. Issue: [2620](https://github.com/Tangerine-Community/Tangerine/issues/2620)
+- Update date carousel to 5.2.1 with fix for clicking the today button. PR: [#2677](https://github.com/Tangerine-Community/Tangerine/pull/2677)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.5
+./start.sh v3.17.5
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.4
+```
+
 ## v3.17.4
 - Enables support for reducing the number of documents processed in the changed feed when syncing using the 'changes_batch_size' property in app-config.json. This new setting will help sites that experience crashes when syncing or indexing documents. Using this setting *will* slow sync times. Default is 50. During recent tests, the following settings have been successful in syncing a location with over 12,700 docs that was experiencing crashes:
   - "batchSize": 50
