@@ -192,8 +192,15 @@ export class GroupDevicesComponent implements OnInit {
         const dbDocCount = replicationStatus?.dbDocCount
         const localDocsForLocation = replicationStatus?.localDocsForLocation
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
-        const parser = new UAParser();
-        parser.setUA(replicationStatus?.userAgent)
+        let os, osName, osVersion, browserVersion
+        if (replicationStatus?.userAgent) {
+          const parser = new UAParser();
+          parser.setUA(replicationStatus?.userAgent)
+          os = parser?.getOS()
+          osName = parser?.getOS()?.name
+          osVersion = parser?.getOS()?.version
+          browserVersion = parser?.getBrowser().version
+        }
         const comparisonSyncMessage = replicationStatus?.idsToSyncCount + ' docs synced - ' + replicationStatus?.compareDocsDirection
       return <DeviceInfo>{
         ...device,
@@ -208,10 +215,10 @@ export class GroupDevicesComponent implements OnInit {
         localDocsForLocation: localDocsForLocation,
         effectiveConnectionType: effectiveConnectionType,
         errorFlag: errorFlag,
-        os: replicationStatus?.userAgent ? parser?.getOS() : null,
-        osName: replicationStatus?.userAgent ? parser?.getOS()?.name : null,
-        osVersion: replicationStatus?.userAgent ? parser?.getOS()?.version : null,
-        browserVersion: replicationStatus?.userAgent ? parser?.getBrowser().version : null,
+        os: replicationStatus?.userAgent ? os : null,
+        osName: replicationStatus?.userAgent ? osName : null,
+        osVersion: replicationStatus?.userAgent ? osVersion : null,
+        browserVersion: replicationStatus?.userAgent ? browserVersion : null,
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         }).join('; '),
