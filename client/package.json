@@ -38,7 +38,7 @@
     "@ts-stack/markdown": "^1.2.0",
     "@types/luxon": "^1.25.0",
     "@webcomponents/webcomponentsjs": "^2.2.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "core-js": "^2.5.4",
     "crypto-js": "^3.1.9-1",
