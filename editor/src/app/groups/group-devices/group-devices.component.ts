@@ -195,7 +195,7 @@ export class GroupDevicesComponent implements OnInit {
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
         let os, osName, osVersion, browserVersion
         // There are some old clients that may not have replicationStatus; parser.setUA crashes if you send it null.
-        if (replicationStatus) {
+        if (replicationStatus?.userAgent) {
           const parser = new UAParser();
           parser.setUA(replicationStatus?.userAgent)
           os = parser?.getOS()

@@ -5,7 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { GroupsService } from '../services/groups.service';
-import * as snakeCase from 'just-snake-case';
+// import * as snakeCase from 'just-snake-case';
+import snakeCase from '@queso/snake-case'
 @Component({
   selector: 'app-manage-location-list-metadata',
   templateUrl: './manage-location-list-metadata.component.html',
