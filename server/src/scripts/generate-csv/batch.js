@@ -47,10 +47,9 @@ async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
   console.log("state.skip: " + state.skip)
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
-  console.log("docs: " + JSON.stringify(docs))
+  // console.log("docs: " + JSON.stringify(docs))
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
   console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
-  debugger;
   if (docs.length === 0) {
     state.complete = true
   } else {
