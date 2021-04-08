@@ -1,5 +1,18 @@
 # Changelog
 
+## v3.18.0
+
+- Initialize `git` in content repository before running `git` commands [#2667](https://github.com/Tangerine-Community/Tangerine/pull/2667)
+- Only show the links to historical releases when T_ARCHIVE_PWAS_TO_DISK and T_ARCHIVE_APKS_TO_DISK in the config.sh are set to true [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
+- Fix form breaking when form name has single quote [#2489](https://github.com/Tangerine-Community/Tangerine/issues/2489)
+- Add print options to archived forms [#1987](https://github.com/Tangerine-Community/Tangerine/issues/1987)
+- Fix Grid having negative values [#2294](https://github.com/Tangerine-Community/Tangerine/issues/2294)
+- Add Cycle sequences [1603](https://github.com/Tangerine-Community/Tangerine/issues/1603)
+- Allow HTML markup in option labels [2453](https://github.com/Tangerine-Community/Tangerine/issues/2453)
+- Reset grid values when grid is restarted [#](https://github.com/Tangerine-Community/Tangerine/issues/2559)
+- Mark last attempted automatically when grid is auto-stopped [#2467](https://github.com/Tangerine-Community/Tangerine/issues/2467)
+- For projects using the Case Reporting screen but don't have anything in reports.js but do have markup in reports.html, avoid crash due to empty file [#2657](https://github.com/Tangerine-Community/Tangerine/issues/2657)
+
 ## v3.17.7
 - fix CSV generation issue: [#2681](https://github.com/Tangerine-Community/Tangerine/issues/2681)
 
