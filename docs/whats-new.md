@@ -1,5 +1,30 @@
 # What's new 
 
+## v3.17.7
+- fix CSV generation issue: [#2681](https://github.com/Tangerine-Community/Tangerine/issues/2681)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.7
+./start.sh v3.17.7
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.6
+```
+
 ## v3.17.6
 - fix issue w/ empty replicationStatus?.userAgent
 - Switched from just-snake-case to @queso/snake-case - better Typescript compatability.
