@@ -98,7 +98,7 @@ const commitFilesToVersionControl = async () => {
 	for (let group of groups.rows) {
 		try {
 			const groupId = sanitize(group.id);
-			const cmd = `cd /tangerine/groups/${groupId} && git add -A && git commit -m 'auto-commit' `
+			const cmd = `cd /tangerine/groups/${groupId} && git init && git add -A && git commit -m 'auto-commit' `
 			await exec(cmd);
 		}
 		catch (error) {
