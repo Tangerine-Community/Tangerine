@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v3.7.3-rc-4
+FROM tangerine/docker-tangerine-base-image:v3.7.3
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
