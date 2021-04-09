@@ -92,7 +92,7 @@ export class SyncCouchdbService {
     this.batchSize = appConfig.batchSize || this.batchSize
     this.initialBatchSize = appConfig.initialBatchSize || this.initialBatchSize
     this.writeBatchSize = appConfig.writeBatchSize || this.writeBatchSize
-    let batchSize = fullSync === SyncDirection.pull 
+    let batchSize = (isFirstSync || fullSync === SyncDirection.pull)
       ? this.initialBatchSize
       : this.batchSize
     let replicationStatus:ReplicationStatus
