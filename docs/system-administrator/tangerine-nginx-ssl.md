@@ -123,7 +123,7 @@ Exit the docker container and add the below entry to the root's crontab
 Add this like to cron (crontab -e)
 ```
 crontab -e
-0 8 * * * docker exec -it certbot renew --post-hook "service nginx reload"
+0 8 * * * docker exec -it nginx certbot renew --post-hook "service nginx reload"
 ```
 
 
