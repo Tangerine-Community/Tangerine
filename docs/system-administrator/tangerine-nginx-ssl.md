@@ -26,7 +26,6 @@ docker exec -it nginx bash
  apt-get update
  apt-get install certbot python-certbot-nginx
  apt-get install vim
- apt-get install cron
 ```
 
 Now execute and follow the promtps for cerbot. It will fail but that's ok
@@ -44,7 +43,7 @@ server {
     listen       80;
     listen  [::]:80;
     server_name  _;
-    client_max_body_size 100M;
+    client_max_body_size 0;
     #charset koi8-r;
     #access_log  /var/log/nginx/host.access.log  main;
 
@@ -74,6 +73,7 @@ server {
 
 server {
 server_name DOMAIN.ORG
+client_max_body_size 0;
 ;
 
         location / {
@@ -119,9 +119,11 @@ Reload the config
 service nginx reload
 ```
 
+Exit the docker container and add the below entry to the root's crontab
 Add this like to cron (crontab -e)
 ```
-0 8 * * * certbot renew --post-hook "service nginx reload"
+crontab -e
+0 8 * * * docker exec -it certbot renew --post-hook "service nginx reload"
 ```
 
 
