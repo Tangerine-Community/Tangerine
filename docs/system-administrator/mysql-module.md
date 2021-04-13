@@ -4,6 +4,8 @@
 
 Important! If __reenabling__ the mysql module, remove the mysql folder: `rm -r data/mysql`
 
+Note: Upgrading an older version of Tangerine may require running `docker exec tangerine push-all-groups-views` after to enable indexes used for mysql
+
 ### Step 1
 Ensure the variables from the `MySQL` section in config.defaults.sh are in your customized `config.sh` file. 
 
