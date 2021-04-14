@@ -416,7 +416,7 @@ def main_job():
 
 
 #read in the configuration file
-config = configparser.ConfigParser()
+config = configparser.ConfigParser(interpolation=None)
 pathName = os.path.join(os.getcwd(), 'data', 'setting2.ini')
 print('Config file: ' + pathName)
 config.read(pathName)
