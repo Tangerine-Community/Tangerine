@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Install global node dependencies
+RUN npm config set unsafe-perm true
 RUN npm install -g nodemon uuid
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
