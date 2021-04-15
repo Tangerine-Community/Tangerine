@@ -407,7 +407,7 @@ def scheduled_job():
     s.enter(60*int(interval), 1, scheduled_job)
 
 # Read in the configuration file.
-config = configparser.ConfigParser()
+config = configparser.ConfigParser(interpolation=None)
 pathName = sys.argv[1]
 config.read(pathName)
 config.sections()
