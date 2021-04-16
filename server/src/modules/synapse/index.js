@@ -154,6 +154,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
             : value
   }
+  // const contentPath = `/tangerine/groups/${sourceDb.name}/client/${formResponse.form.id}/form.json`
+  // const formDefinition = JSON.parse(await readFile(`${contentPath}`))
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
       let sanitize = false;
