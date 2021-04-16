@@ -23,7 +23,6 @@ export class AppInit {
 
   Init() {
     return new Promise<void>(async (resolve, reject) => {
-      debugger
       console.log("AppInitService.init() called");
       if (window['isCordovaApp']) {
         document.addEventListener('deviceready', async () => {
