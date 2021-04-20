@@ -154,14 +154,32 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
             : value
   }
-  // const contentPath = `/tangerine/groups/${sourceDb.name}/client/${formResponse.form.id}/form.json`
-  // const formDefinition = JSON.parse(await readFile(`${contentPath}`))
+  let formDefinition;
+  try {
+    const contentPath = `/tangerine/groups/${sourceDb.name}/client/${formResponse.form.id}/form.json`
+    formDefinition = JSON.parse(await readFile(`${contentPath}`))
+    console.log("Using formDefinition")
+  } catch (e) {
+    // no formDefinition available; use stored version.
+  }
   for (let item of formResponse.items) {
+    let formDefItem
+    if (formDefinition) {
+      formDefItem = formDefinition.items.find(currentItem => currentItem.id === item.id)
+    }
     for (let input of item.inputs) {
+      let formDefInput
+      if (formDefItem) {
+        formDefInput = formDefItem.inputEls.find(currentInput => currentInput.name === input.name)
+      }
       let sanitize = false;
       if (sanitized) {
-        if (input.identifier) {
+        if (formDefInput && formDefInput.identifier) {
           sanitize = true
+        } else {
+          if (input.identifier) {
+            sanitize = true
+          }
         }
       }
       if (!sanitize) {

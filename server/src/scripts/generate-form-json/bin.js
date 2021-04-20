@@ -20,29 +20,10 @@ const {Window, XMLParser} = pkg;
 // const window = new Window();
 // const document = window.document;
 
-let window, document
-import serverRendering from '@happy-dom/server-rendering';
-
-const {HappyDOMContext} = serverRendering;
-// import VM from 'vm';
-// import { Script } from 'vm';
 import * as VM from 'vm';
 import {TangyForm} from './mock-data/tangy-form/tangy-form.js';
 import {TangyFormItem} from './mock-data/tangy-form/tangy-form-item.js';
 import {TangyInput} from './mock-data/tangy-form/tangy-input.js';
-// import pkg from './mock-data/tangy-form/tangy-form.js';
-// const {TangyForm} = pkg;
-
-// __dirname = path.resolve();
-import {fileURLToPath} from 'url';
-import {dirname} from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const URL = 'https://localhost:8080/this/is/a/path';
-const SCRIPT = fs.readFileSync(`${__dirname}/mock-data/HappyDOMContextScript.js`).toString();
-const tangy_form_file = fs.readFileSync(`${__dirname}/mock-data/tangy-form/tangy-form.js`).toString();
-const tangy_form_item_file = fs.readFileSync(`${__dirname}/mock-data/tangy-form/tangy-form-item.js`).toString();
 
 const baseTemplate = `
     <html>
@@ -66,12 +47,8 @@ if (params.groupId) {
   // return true
 }
 
-
-let context = null;
-// const contentPath = `/tangerine/groups/${params.groupId}/client/${formResponse.form.id}/form.json`
 const contentPath = `/tangerine/groups/${params.groupId}/client`
 // const contentPath = `/Users/ckelley/Documents/GitHub/Tangerine-Community/Tangerine/data/groups/${params.groupId}/client`
-// const forms = JSON.parse(await readFile(`${contentPath}/forms.json`))
 const formsPath = `${contentPath}/forms.json`
 let forms;
 try {
@@ -85,42 +62,27 @@ try {
 for (let index = 0; index < forms.length; index++) {
   const form = forms[index]
   const formId = form['id']
+  // Use src instead of id, because id is not consistent...
+  //     "src": "./assets/mnh01_screening_and_enrollment/form.html",
+  const formHtmlPath = form['src'].replace('./assets/', '')
+  const formDir = formHtmlPath.replace('/form.html','')
   // if (formId === 'skip-section') {
-    const formPath = `${contentPath}/${formId}/form.html`
-    console.log("Processing " + formId + " at " + formPath)
+  //   const formPath = `${contentPath}/${formId}/form.html`
+    const formPath = `${contentPath}/${formHtmlPath}`
+    console.log("Processing " + formHtmlPath + " at " + formPath)
 
     try {
       const formHtml = fs.readFileSync(formPath, 'utf8')
-
-      // context = new HappyDOMContext();
-      // const TangyForm = new VM.Script(tangy_form_file);
-      // const TangyFormItem = new VM.Script(tangy_form_item_file);
-      // const inspectorScript = new VM.Script(inspector);
-
-      // window = new Window();
       const window = VM.createContext(new Window());
-      // customElements = new CustomElementRegistry();
-
       let customElements = new window['CustomElementRegistry']()
-      // console.log("customElements: " + customElements)
       customElements.define('tangy-form', TangyForm);
       customElements.define('tangy-form-item', TangyFormItem);
       customElements.define('tangy-input', TangyInput);
       const document = window.document;
       document.write(baseTemplate)
-      // TangyForm.runInContext(window);
-      // TangyFormItem.runInContext(window);
-      // inspectorScript.runInContext(window);
-
-      // window.customElements.define('tangy-form', TangyForm);
-      // window.customElements.define('tangy-form-item', TangyFormItem);
-//     document = window.document;
       const body = document.querySelector('body');
       body.innerHTML = baseTemplate
-      const initialBodySize = body.innerHTML.length
-      // console.log("initialBodySize: " + initialBodySize)
       const container = body.querySelector('.container');
-      // document.body.innerHTML = HappyDOMContextHTML
       container.innerHTML = formHtml
       const items = document.querySelectorAll('tangy-form-item')
       let i;
@@ -130,49 +92,41 @@ for (let index = 0; index < forms.length; index++) {
       }
       console.log("number of items: " + items.length)
       for (i = 0; i < items.length; ++i) {
-        console.log("item " + [i] + ": " + items[i]);
+        // console.log("item " + [i] + ": " + items[i]);
         let item = items[i]
         let itemDefinition = {
           id: item['id'],
           inputEls: []
         }
-        console.log("childNodes : " + item.childNodes)
+        // console.log("childNodes : " + item.childNodes)
         const template = item.querySelector('template')
         // console.log("template : " + template + " type: " + typeof template)
         let inputEls = []
         if (template) {
-          console.log("template inner: " + template.content)
-          console.log("template inner children: " + template.content.children)
+          // console.log("template inner: " + template.content)
+          // console.log("template inner children: " + template.content.children)
           // const root = await XMLParser.parse(window.document, template.content.toString());
           // console.log("template root: " + root.childNodes)
           inputEls = [...template.content.querySelectorAll('[name]')]
         } else {
-          console.log("normal itemEls ")
+          // console.log("normal itemEls ")
           inputEls = [...item.querySelectorAll('[name]')]
         }
 
-        console.log("number of item els: " + inputEls.length)
-//       let inputElsWithoutIdentifiers = [...item.querySelectorAll('[name]')]
-//         .filter(element => !element.hasAttribute('identifier'))
-// console.log("inputEls without identifiers: " + inputElsWithoutIdentifiers);
-// inputElsWithoutIdentifiers.forEach(input => {
+        // console.log("number of item els: " + inputEls.length)
         let j=0
         for (j = 0; j < inputEls.length; ++j) {
           let input = inputEls[j]
-          console.log("input:  " + input)
+          // console.log("input:  " + input)
           if (typeof input !== 'undefined') {
-            console.log("typeof input: " + typeof input)
+            // console.log("typeof input: " + typeof input)
             const root = await XMLParser.parse(window.document, input.toString());
-//           const parser = new DOMParser();
-//           const dom = parser.parseFromString(input, "application/xml");
-//           console.log("dom:  " + dom)
-
             const name = root.childNodes[0].getAttribute('name')
             const label = root.childNodes[0].getAttribute('label')
             const identifier = root.childNodes[0].getAttribute('identifier')
             const required = root.childNodes[0].getAttribute('required')
             const tagName = root.childNodes[0].tagName
-            console.log("input name:  " + name)
+            // console.log("input name:  " + name)
             let inputDefinition = {
               name: name,
               label: label,
@@ -185,14 +139,13 @@ for (let index = 0; index < forms.length; index++) {
         }
         formDefinition.items.push(itemDefinition)
       }
-      console.log('formDefinition: ' + JSON.stringify(formDefinition, null, 2))
-      const formJsonPath = `${contentPath}/${formId}/form.json`
+      // console.log('formDefinition: ' + JSON.stringify(formDefinition, null, 2))
+      const formJsonPath = `${contentPath}/${formDir}/form.json`
       console.log('writing json to formJsonPath: ' + formJsonPath)
       fs.writeFileSync(formJsonPath, JSON.stringify(formDefinition, null, 2));
     } catch (err) {
       console.error(err)
     }
-    
   }
 
 // }
