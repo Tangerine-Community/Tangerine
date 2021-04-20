@@ -22,6 +22,8 @@ class CaseDefinition {
   templateScheduleListItemIcon?:string
   templateScheduleListItemPrimary?:string
   templateScheduleListItemSecondary?:string
+  onCaseOpen?:string
+  onCaseClose?:string
   constructor(init:any) {
     Object.assign(this, init);
     /*
