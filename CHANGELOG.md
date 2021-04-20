@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.17.9
+- Created `generate-form-json` script that generates the form json for a group from its form.html file. Usage:
+  `docker exec tangerine generate-form-json group-uuid`
+  The script loops through a group's forms.json and creates a form.json file in each form directory, next to its forms.html.
+  Before using this script, run `npm install`.
+
 ## v3.17.8
 - Fix use of initial batch size [#2685](https://github.com/Tangerine-Community/Tangerine/pull/2685)
 

@@ -13,7 +13,10 @@ import fs from 'fs';
 // import {Window,XMLParser} from 'happy-dom';
 // import Window from 'happy-dom' ;
 // const {Window} = pkg
-import {Window, XMLParser} from 'happy-dom';
+
+// import {Window, XMLParser} from 'happy-dom';
+import pkg from 'happy-dom';
+const {Window, XMLParser} = pkg;
 // const window = new Window();
 // const document = window.document;
 
