@@ -1,36 +1,12 @@
 # Changelog
 
-## v3.17.9
+## v3.17.8
+- Fix use of initial batch size [#2685](https://github.com/Tangerine-Community/Tangerine/pull/2685)
 - Created `generate-form-json` script that generates the form json for a group from its form.html file. Usage:
   `docker exec tangerine generate-form-json group-uuid`
   The script loops through a group's forms.json and creates a form.json file in each form directory, next to its forms.html.
   Before using this script, run `npm install`.
-
-__Server upgrade instructions__
-
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
-
-```
-cd tangerine
-# Check the size of the data folder.
-du -sh data
-# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
-df -h
-# Turn off tangerine and database.
-docker stop tangerine couchdb
-# Create a backup of the data folder.
-cp -r data ../data-backup-$(date "+%F-%T")
-# Fetch the updates.
-git fetch origin
-git checkout v3.17.9
-./start.sh v3.17.9
-# Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.17.8
-```
-
-## v3.17.8
-- Fix use of initial batch size [#2685](https://github.com/Tangerine-Community/Tangerine/pull/2685)
-
+  
 __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
