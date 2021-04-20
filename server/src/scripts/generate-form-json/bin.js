@@ -66,7 +66,7 @@ for (let index = 0; index < forms.length; index++) {
   //     "src": "./assets/mnh01_screening_and_enrollment/form.html",
   const formHtmlPath = form['src'].replace('./assets/', '')
   const formDir = formHtmlPath.replace('/form.html','')
-  // if (formId === 'skip-section') {
+  // if (formId === 'mnh_screening_and_enrollment_v2') {
   //   const formPath = `${contentPath}/${formId}/form.html`
     const formPath = `${contentPath}/${formHtmlPath}`
     console.log("Processing " + formHtmlPath + " at " + formPath)
@@ -123,7 +123,11 @@ for (let index = 0; index < forms.length; index++) {
             const root = await XMLParser.parse(window.document, input.toString());
             const name = root.childNodes[0].getAttribute('name')
             const label = root.childNodes[0].getAttribute('label')
-            const identifier = root.childNodes[0].getAttribute('identifier')
+            // const identifier = root.childNodes[0].getAttribute('identifier')
+            const identifier = root.childNodes[0].getAttribute('identifier') === "" ? true : false
+            if (identifier === true) {
+              console.log("field: " + name + " identifier: " + identifier )
+            }
             const required = root.childNodes[0].getAttribute('required')
             const tagName = root.childNodes[0].tagName
             // console.log("input name:  " + name)
@@ -147,5 +151,4 @@ for (let index = 0; index < forms.length; index++) {
       console.error(err)
     }
   }
-
 // }
