@@ -1,4 +1,4 @@
-/* eslint-disable */
+ /* eslint-disable */
 // import { Window } from 'happy-dom';
 import pkg from 'happy-dom';
 const { Window } = pkg;
