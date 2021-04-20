@@ -6,6 +6,21 @@
   `docker exec tangerine generate-form-json group-uuid`
   The script loops through a group's forms.json and creates a form.json file in each form directory, next to its forms.html.
   Before using this script, run `npm install`.
+- The synapse module now uses the json from `generate-form-json` to exclude PII. Also, the synapse module takes substitution and pii fields to accommodate schema changes and pii fields not identified in forms. Place these properties in the groups Couchdb:
+  
+  ```json
+  "substitutions": {
+    "mnh_screening_and_enrollment_v2": "mnh01_screening_and_enrollment"
+  },
+  "pii": [
+    "firstname",
+    "middlename",
+    "surname",
+    "mother_dob"
+  ]
+  
+
+```
   
 __Server upgrade instructions__
 
