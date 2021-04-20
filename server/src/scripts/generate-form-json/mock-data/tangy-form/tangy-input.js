@@ -1,6 +1,9 @@
-/* eslint-disable */
+ /* eslint-disable */
+// import { Window } from 'happy-dom';
+import pkg from 'happy-dom';
+const { Window } = pkg;
 
-class TangyInput extends HTMLElement {
+export class TangyInput extends new Window().HTMLElement {
   static get observedAttributes() {
     return ['name', 'private','label','type','disabled','hidden','skipped','incomplete','value','identifier'];
   }
@@ -31,4 +34,4 @@ class TangyInput extends HTMLElement {
   }
 }
 
-customElements.define('tangy-input', CustomElement);
+// customElements.define('tangy-input', TangyInput);

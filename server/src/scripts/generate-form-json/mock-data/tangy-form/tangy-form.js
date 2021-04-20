@@ -1,6 +1,9 @@
 /* eslint-disable */
+// import { Window } from 'happy-dom';
+import pkg from 'happy-dom';
+const { Window } = pkg;
 
-class TangyForm extends HTMLElement {
+export class TangyForm extends new Window().HTMLElement {
   static get observedAttributes() {
     return ['title', 'key2'];
   }
@@ -27,4 +30,4 @@ class TangyForm extends HTMLElement {
   }
 }
 
-customElements.define('tangy-form', CustomElement);
+// customElements.define('tangy-form', TangyForm);
