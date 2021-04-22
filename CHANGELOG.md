@@ -2,6 +2,7 @@
 
 ## v3.18.0
 
+### New Features and Buffixes
 - Initialize `git` in content repository before running `git` commands [#2667](https://github.com/Tangerine-Community/Tangerine/pull/2667)
 - Only show the links to historical releases when T_ARCHIVE_PWAS_TO_DISK and T_ARCHIVE_APKS_TO_DISK in the config.sh are set to true [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
 - Fix form breaking when form name has single quote [#2489](https://github.com/Tangerine-Community/Tangerine/issues/2489)
@@ -12,6 +13,10 @@
 - Reset grid values when grid is restarted [#](https://github.com/Tangerine-Community/Tangerine/issues/2559)
 - Mark last attempted automatically when grid is auto-stopped [#2467](https://github.com/Tangerine-Community/Tangerine/issues/2467)
 - For projects using the Case Reporting screen but don't have anything in reports.js but do have markup in reports.html, avoid crash due to empty file [#2657](https://github.com/Tangerine-Community/Tangerine/issues/2657)
+- V2 import script fixes [#2675](https://github.com/Tangerine-Community/Tangerine/pull/2675)
+- Teach-specific strings in Russian for default content-set [#2676](https://github.com/Tangerine-Community/Tangerine/pull/2676)
+- Sort by lastModified in the client case search [#2692](https://github.com/Tangerine-Community/Tangerine/pull/2692)
+- Fix to allow for running on m1 Macs #2631 [#2631](https://github.com/Tangerine-Community/Tangerine/pull/2631) Thanks @fmoko and @evansdianga!
 
 
 ```
