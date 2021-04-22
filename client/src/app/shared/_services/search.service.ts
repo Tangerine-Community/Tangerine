@@ -75,15 +75,11 @@ export class SearchService {
       }
     })
     // Deduplicate the search results since the same case may match on multiple variables.
-    let uniqueResults = searchResults.reduce((uniqueResults, result) => {
+    return searchResults.reduce((uniqueResults, result) => {
       return uniqueResults.find(x => x._id === result._id)
         ? uniqueResults
         : [ ...uniqueResults, result ]
     }, [])
-
-    return uniqueResults.sort(function (a, b) {
-        return b.lastModified - a.lastModified;
-      })
   }
 
 }
