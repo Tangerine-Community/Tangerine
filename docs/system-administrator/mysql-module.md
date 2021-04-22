@@ -25,6 +25,8 @@ Run the start script to load in new configuration. Do this even if your server i
 ./start.sh <version>
 ```
 
+Note: Upgrading an older version of Tangerine may require running `docker exec tangerine push-all-groups-views` after to enable indexes used for mysql
+
 ### Step 5
 Clear reporting cache to start generating a MySQL database for each group.
 
