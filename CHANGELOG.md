@@ -17,6 +17,8 @@
 - Teach-specific strings in Russian for default content-set [#2676](https://github.com/Tangerine-Community/Tangerine/pull/2676)
 - Sort by lastModified in the client case search [#2692](https://github.com/Tangerine-Community/Tangerine/pull/2692)
 - Fix to allow for running on m1 Macs #2631 [#2631](https://github.com/Tangerine-Community/Tangerine/pull/2631) Thanks @fmoko and @evansdianga!
+- Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
+- Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2696](https://github.com/Tangerine-Community/Tangerine/pull/2696/files)
 
 
 ```
