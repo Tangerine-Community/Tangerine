@@ -1,0 +1,17 @@
+{
+  "name": "generate-form-json",
+  "version": "1.0.0",
+  "description": "Generate form.json from form.html.",
+  "main": "bin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@happy-dom/server-rendering": "^2.13.0",
+    "@polymer/polymer": "^3.4.1",
+    "tangy-form": "^4.24.0"
+  },
+  "type": "module"
+}
