@@ -606,7 +606,7 @@ class CaseService {
     }
   }
 
-  deactivateParticipant(participantId:string) {
+  async deactivateParticipant(participantId:string) {
     this.case = {
       ...this.case,
       participants: this.case.participants.map(participant => {
