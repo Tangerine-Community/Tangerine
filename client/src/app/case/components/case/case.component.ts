@@ -1,6 +1,6 @@
 import { CaseEventOperation } from './../../classes/case-event-definition.class';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterContentInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -17,7 +17,7 @@ class CaseEventInfo {
   templateUrl: './case.component.html',
   styleUrls: ['./case.component.css']
 })
-export class CaseComponent implements AfterContentInit {
+export class CaseComponent implements AfterContentInit, OnDestroy {
 
   private ready = false
   userRoles:Array<string>
@@ -42,7 +42,6 @@ export class CaseComponent implements AfterContentInit {
     this.window = window
     this.caseService = caseService
   }
-
   async ngAfterContentInit() {
     this.userRoles = await this.userService.getRoles()
     const caseId = window.location.hash.split('/')[2]
@@ -52,6 +51,7 @@ export class CaseComponent implements AfterContentInit {
     // }
     this.caseService.setContext()
     this.window.caseService = this.caseService
+    this.onCaseOpen()
     this.calculateTemplateData()
     this.ready = true
   }
@@ -105,7 +105,13 @@ export class CaseComponent implements AfterContentInit {
     this.caseService.openCaseConfirmed = true
     this.ref.detectChanges()
   }
+  onCaseOpen(){
+    eval(this.caseService.caseDefinition.onCaseOpen)
+  }
 
+  ngOnDestroy(){
+    eval(this.caseService.caseDefinition.onCaseClose)
+  }
   async onSubmit() {
     if (this.selectedNewEventType !== '') {
       const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
