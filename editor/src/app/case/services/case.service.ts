@@ -270,8 +270,8 @@ class CaseService {
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (
-          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+        if (eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)
+          &&
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -489,8 +489,8 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (
-          caseRoleId === eventFormDefinition.forCaseRole && 
+        if (eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseRoleId)
+          &&
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)

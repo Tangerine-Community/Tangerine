@@ -1,7 +1,7 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -15,7 +15,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   templateUrl: './event-form.component.html',
   styleUrls: ['./event-form.component.css']
 })
-export class EventFormComponent implements OnInit {
+export class EventFormComponent implements OnInit, OnDestroy {
 
   caseEvent: CaseEvent
   caseEventDefinition: CaseEventDefinition
@@ -76,7 +76,7 @@ export class EventFormComponent implements OnInit {
         .eventFormDefinitions
         .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
       this.formId = this.eventFormDefinition.formId
-
+      this.onEventOpen()
       this.formResponseId = this.eventForm.formResponseId || ''
       this.formPlayer.formId = this.formId
       this.formPlayer.formResponseId = this.formResponseId
@@ -89,11 +89,9 @@ export class EventFormComponent implements OnInit {
         participantId: this.eventForm.participantId
       }
       this.formPlayer.render()
-
       this.caseService.onChangeLocation$.subscribe(location => {
         this.formPlayer.location = this.caseService.case.location
       })
-
       this.formPlayer.$submit.subscribe(async () => {
         this.isWrappingUp = true
         setTimeout(async () => {
@@ -127,6 +125,13 @@ export class EventFormComponent implements OnInit {
     })
   }
   
+  onEventOpen(){
+    eval(this.eventFormDefinition.onEventOpen)
+  }
+
+  ngOnDestroy(){
+    eval(this.eventFormDefinition.onEventClose)
+  }
   eventFormRedirect() {
     window.location.hash = window['eventFormRedirect']
     // Reset the event form redirect so it doesn't become permanent.
