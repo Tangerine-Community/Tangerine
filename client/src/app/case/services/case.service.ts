@@ -206,6 +206,9 @@ class CaseService {
   }
 
   async load(id:string) {
+    while (this._isSaving || this._saveIsDraining) {
+
+    }
     await this.setCase(new Case(await this.tangyFormService.getResponse(id)))
     this._shouldSave = true 
   }
@@ -245,8 +248,18 @@ class CaseService {
 
   async save() {
     if (this._shouldSave) {
+      if (this._isSaving && !this._savingIsQueued) {
+        while(this._isSaving) {
+          sleep(100)
+        }
+      } else if (this._isSaving && this._savingIsQueued) {
+        return
+      }
+      this._savingIsQueued = true
+      this._isSaving = true
       await this.tangyFormService.saveResponse(this.case)
-      await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+      const caseDoc = await this.tangyFormService.getResponse(this.case)
+      this._case._rev = caseDoc._rev
     }
   }
 
