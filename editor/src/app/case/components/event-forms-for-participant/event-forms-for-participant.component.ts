@@ -89,7 +89,7 @@ export class EventFormsForParticipantComponent implements OnInit {
   eventFormsParticipantCanCreate(participantId) {
     const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
     return this.caseEventDefinition.eventFormDefinitions
-      .filter(eventFormDefinition => eventFormDefinition.forCaseRole === participant.caseRoleId)
+      .filter(eventFormDefinition => eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(participant.caseRoleId))
       .reduce((availableEventFormDefinitions, eventFormDefinition) => {
         const eventFormDefinitionHasForm = this.caseEvent.eventForms
           .filter(eventForm => eventForm.participantId === participantId)
@@ -120,7 +120,7 @@ export class EventFormsForParticipantComponent implements OnInit {
       id,
       renderedListItem,
       newFormLink: `/case/event/form-add/${this.caseService.case._id}/${this.caseEvent.id}/${participant.id}`,
-      caseEventHasEventFormsForParticipantsRole: this.caseEventDefinition.eventFormDefinitions.some(eventDef => eventDef.forCaseRole === participant.caseRoleId),
+      caseEventHasEventFormsForParticipantsRole: this.caseEventDefinition.eventFormDefinitions.some(eventDef => eventDef.forCaseRole.split(',').map(e=>e.trim()).includes(participant.caseRoleId)),
       eventFormsParticipantCanCreate: this.eventFormsParticipantCanCreate(participant.id),
       eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
         return eventForm.participantId === participant.id
