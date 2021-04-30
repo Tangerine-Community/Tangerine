@@ -6,7 +6,12 @@ export class EventFormDefinition {
   formId:string
   name:string
   permissions:EventFormPermissions
-  // @TODO: roles[string]
+  /**
+   * `forCaseRole` is a comma separated list of valid case roles
+   * 1. empty role ""
+   * 2. single role "role" 
+   * 3. multiple roles "role1, role2,role3"
+   */
   forCaseRole?:string = ''
   // Wether or not multiple EventForm Instances can be created in the same EventForm for the same Participant.
   repeatable?: boolean = false
@@ -22,6 +27,9 @@ export class EventFormDefinition {
   // @TODO... These are strings? Shouldn't they be boolean? Also what's their default? 
   allowDeleteIfFormNotCompleted?:string
   allowDeleteIfFormNotStarted?:string
+
+  onEventOpen?:string
+  onEventClose?:string
 
   constructor() {
   }
