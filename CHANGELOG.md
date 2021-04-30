@@ -1,5 +1,32 @@
 # Changelog
 
+## v3.17.9
+- Prevent failed calls to `T.case.save()` in forms by avoiding any saves to a case when a form is active. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2704/), [Issue](https://github.com/Tangerine-Community/Tangerine/issues/2700)
+- Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/) - Cherry-picked commit [3e4938a0a80c57](https://github.com/Tangerine-Community/Tangerine/pull/2694/commits/3e4938a0a80c57c66aa8f4b0eda32b84c85ebe99) only.
+- Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2702](https://github.com/Tangerine-Community/Tangerine/pull/2702)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.9
+./start.sh v3.17.9
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.8
+```
+
 ## v3.17.8
 - Fix use of initial batch size [#2685](https://github.com/Tangerine-Community/Tangerine/pull/2685)
 - Created `generate-form-json` script that generates the form json for a group from its form.html file. Usage:
@@ -10,7 +37,8 @@
   
    Place these properties in the groups Couchdb:
   
-  ```json
+```json
+
   "substitutions": {
     "mnh_screening_and_enrollment_v2": "mnh01_screening_and_enrollment"
   },

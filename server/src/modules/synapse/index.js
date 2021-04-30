@@ -218,6 +218,9 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
+      } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
+        let selectedOption = input.value.find(option => !!option.value) 
+        set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
