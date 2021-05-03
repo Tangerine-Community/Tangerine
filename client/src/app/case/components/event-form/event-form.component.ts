@@ -1,3 +1,4 @@
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
@@ -25,6 +26,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   formId:string
   templateId:string
   formResponseId:string
+  allowCreationOfIssues:boolean
 
   hasEventFormRedirect = false
   eventFormRedirectUrl = ''
@@ -44,6 +46,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private hostElementRef: ElementRef,
     private router: Router,
+    private appConfigService:AppConfigService,
     private caseService: CaseService,
     private ref: ChangeDetectorRef
   ) {
@@ -120,9 +123,15 @@ export class EventFormComponent implements OnInit, OnDestroy {
           }
         }, 500)
       })
+      const appConfig = await this.appConfigService.getAppConfig()
+      this.allowCreationOfIssues = appConfig.allowCreationOfIssues
       this.loaded = true
       this.ref.detectChanges()
     })
+  }
+
+  createIssue() {
+    this.router.navigate(['new-issue', this.caseService.case._id, this.caseEvent.id, this.eventForm.id])
   }
   
   onEventOpen(){

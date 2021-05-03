@@ -41,5 +41,6 @@ export class AppConfig {
   calculateLocalDocsForLocation:boolean;
   findSelectorLimit: number;
   compareLimit: number;
+  allowCreationOfIssues:boolean
 }
 
