@@ -1,161 +1,145 @@
 # Form Versions
 
-Here's an example of how forms.json looks with support for form versions:
+Throughout the lifetime of a form, many versions of a form may be deployed. When reviewing form responses collected on a past version of a form, it's important to open that form response using the version of the form it was collected on. When filling out a form response, it helps to think of the form response as a clear plastic sheet that you are writing on over the paper copy of the form. If the questions on that underlying physical form are removed, moved, or new questions are added, the clear plastic sheet you filled out previous form responses on no longer overlays correctly on the updated paper copy of that form.  The consequence of not using Form Versions on a form that changes over time is that when reviewing past data, if 1a question was removed in a future version of a form, it will appear that data collected in the past are now missing that data. There are other scenarios where a form version should be created which we will cover in later sections, but first a simple example.
 
+## Example
+
+### First Release
+
+`forms.json`:
 ```json
-{
-"id" : "form-1",
-"title" : "Form 1",
-"src" : "./assets/form-1/draft.html",
-"formVersionId": "3",
-"formVersions": [
+[
   {
-    "id": "1",
-    "src" : "./assets/form-1/1.html"
-  },
-  {
-    "id": "2",
-    "src" : "./assets/form-1/2.html"
-  },
-  {
-    "id": "3",
-    "src" : "./assets/form-1/3.html"
+    "id" : "form-x",
+    "title" : "Form X",
+    "src" : "./assets/form-x/form.html",
   }
 ]
-}
 ```
 
-### Creating a new Form Version
+`./assets/form-x/form.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+  <tangy-input label="Question B" name="b"></tangy-input>
+</tangy-form>
+```
 
-Create a form in editor or manually. Note that editor does not currently add any formVersions data to the form-info object:
+### Second Release
 
 ```json
 {
-"id" : "form-1",
-"title" : "Form 1",
-"src" : "./assets/form-1/draft.html"
+  "id" : "form-x",
+  "title" : "Form X",
+  "src" : "./assets/form-x/form.html",
+  "formVersionId": "2",
+  "formVersions": [
+    {
+      "id": "1",
+      "src" : "./assets/form-x/1.html"
+    },
+    {
+      "id": "2",
+      "src" : "./assets/form-x/2.html"
+    }
+  ]
 }
 ```
 
-### Making the first release:
+`./assets/form-x/form.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+</tangy-form>
+```
 
-1. Add the Version properties (kinda like tagging) so that formResponses can save the versionId.
-2. Copy the current draft.html to ${formVersionId}.html - 1.html in this case. (Could be a uuid.html)
-3. Update formVersionId to the point to the formVersion id you just created.
+`./assets/form-x/1.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+  <tangy-input label="Question B" name="b"></tangy-input>
+</tangy-form>
+```
+
+`./assets/form-x/2.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+</tangy-form>
+```
+
+### Third Release
 
 ```json
 {
-"id" : "form-1",
-"title" : "Form 1",
-"src" : "./assets/form-1/draft.html",
-"formVersionId": "2",
-"formVersions": [
-  {
-    "id": "1",
-    "src" : "./assets/form-1/1.html"
-  },
-  {
-    "id": "2",
-    "src" : "./assets/form-1/2.html"
-  }
-]
+  "id" : "form-x",
+  "title" : "Form X",
+  "src" : "./assets/form-x/form.html",
+  "formVersionId": "3",
+  "formVersions": [
+    {
+      "id": "1",
+      "src" : "./assets/form-x/1.html"
+    },
+    {
+      "id": "2",
+      "src" : "./assets/form-x/2.html"
+    },
+    {
+      "id": "3",
+      "src" : "./assets/form-x/3.html"
+    }
+  ]
 }
 ```
 
-### What is draft.html?
-
-The file draft.html, which is called form.html in legacy versions of Tangerine, is used in editing forms. This is the "current working file" - the draft version of a form. As soon as there is a formVersions list - which is created the first time the app is released for testing or production - the app will use the path to the revision file, renamed to ${formVersionId}.html, for data entry.
-
-### What is formVersionId?
-
-The `formVersionId` is the id property for each formVersion. It changes whenever a new version the form is released for testing or production. The formVersionId also corresponds to the id in its related formVersion in the formVersions array. It signifies the version of the form that was used when creating new formResponses for that release of Tangerine and is saved with the formResponse as formVersionId. 
-
-### Client data entry using this new version of Tangerine
-
-During data entry on client, each formResponse will save the formVersionId as `formResponse.formVersionId`. 
-
-### Making the second release:
-
-1. At this point, add to the revisions array with a new revision object with a unique src and id properties. The name of the src html file could be the same as the id.
-2. Copy the current draft.html to the src path of the new revision object. 
-3. Update formVersionId to the point to the formVersion id you just created so that formResponses can save the formVersionId.
-
-
-```json
-{
-"id" : "form-1",
-"title" : "Form 1",
-"src" : "./assets/form-1/draft.html",
-"formVersionId": "2",
-"formVersions": [
-  {
-    "id": "1",
-    "src" : "./assets/form-1/1.html"
-  },
-{
-    "id": "2",
-    "src" : "./assets/form-1/2.html"
-  }
-]
-}
+`./assets/form-x/form.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+  <tangy-input label="Question C" name="c"></tangy-input>
+</tangy-form>
 ```
 
-### Creating a new form - starting fresh in editor or with legacy projects
-
-```json
-{
-"id" : "form-1",
-"title" : "Form 1",
-"src" : "./assets/form-1/draft.html"
-}
+`./assets/form-x/1.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+  <tangy-input label="Question B" name="b"></tangy-input>
+</tangy-form>
 ```
 
-Old formResponses do not have the formVersionId defined. If missing:
-- if no versions listed, use the formInfo.src
-- If formVersions are listed, which one to choose? They may not be sequential. Select the revision marked "legacyOriginal":
-
-```json
-{
-"id" : "form-1",
-"title" : "Form 1",
-"src" : "./assets/form-1/draft.html",
-"formVersionId": "1",
-"formVersions": [
-  {
-    "id": "1",
-    "src" : "./assets/form-1/1.html",
-    "legacyOriginal": true
-  }
-]
-}
+`./assets/form-x/2.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+</tangy-form>
 ```
 
-If you have a new project that uses revisions from the start - all formResponses would have the formVersionId property - there is no need to use the legacyOriginal property. 
- 
-Adding a revision:
-Copy the current draft.html to 1.html. Could be a uuid.html
-Use the current revisionId as the id for this revision.
-
-```json
-{
-"id" : "form-1",
-"title" : "Form 1",
-"src" : "./assets/form-1/draft.html",
-"revisionId": "2",
-"revisions": [
-  {
-    "id": "1",
-    "src" : "./assets/form-1/1.html"
-  },
-{
-    "id": "2",
-    "src" : "./assets/form-1/2.html"
-  }
-]
-}
+`./assets/form-x/3.html`:
+```html
+<tangy-form id="form-x" title="Form X">
+  <tangy-input label="Question A" name="a"></tangy-input>
+  <tangy-input label="Question C" name="c"></tangy-input>
+</tangy-form>
 ```
 
-## Tooling
+## When should I create a new Form Version?
+
+Situations when a new Form Version should be created include:
+
+1. New question
+2. Removed question
+3. Options for a question added or removed.
+4. New page
+5. Removed page
+6. Reordered pages
+
+Situations when a new Form Version can be skipped:
+1. Label of a question has changed.
+2. Variable marked as required.
+
+## Future Tooling proposals
 
 Proposals for tools to help in managing form versions:
 
@@ -163,7 +147,7 @@ Proposals for tools to help in managing form versions:
 - start new dir in tangerine dir called `cli` - this would be the first subcommand of a new cli. This is different from the server cli. tangerine-preview is another command that could be integrated into this new cli. Example - `generate-new-form` creates the scaffolding for a new form and could implement/facilitate the revisions feature.
 - Version incrementor - used for releases
 
-## Testing version support
+Proposed Testing version support:
 
 What are the different use-cases that the software must implement to fully support versions? The following list will list each case and the correct source for the form:
 

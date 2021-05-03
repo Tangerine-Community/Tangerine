@@ -89,20 +89,9 @@ export class EventFormComponent implements OnInit, OnDestroy {
         participantId: this.eventForm.participantId
       }
       this.formPlayer.render()
-
       this.caseService.onChangeLocation$.subscribe(location => {
         this.formPlayer.location = this.caseService.case.location
       })
-      this.formPlayer.$saved.subscribe(async () => {
-        if (this.isWrappingUp) return
-        if (!this.formResponseId && this.formPlayer.response && this.formPlayer.response.items && this.formPlayer.response.items[0] && this.formPlayer.response.items[0].inputs && this.formPlayer.response.items[0].inputs.length > 0) {
-          this.eventForm.formResponseId = this.formPlayer.formResponseId
-          this.isSaving = true
-          await this.caseService.save()
-          this.isSaving = false
-        }
-      })
-      
       this.formPlayer.$submit.subscribe(async () => {
         this.isWrappingUp = true
         setTimeout(async () => {
