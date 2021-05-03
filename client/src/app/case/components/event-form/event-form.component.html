@@ -4,6 +4,7 @@
     [caseEventId]="caseEvent.id"
     [eventFormId]="eventForm.id"
 ></app-case-breadcrumb>
+<paper-button *ngIf="loaded && allowCreationOfIssues" class="new-issue-button" (click)="createIssue()"><mwc-icon>playlist_add</mwc-icon> new issue</paper-button>
 <div 
     class="event-form-redirect-back-button"
     *ngIf="hasEventFormRedirect"
