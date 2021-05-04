@@ -319,7 +319,7 @@ docker rmi tangerine/tangerine:v3.16.4
 __Fixes__
 
 - T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
-- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
+- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](https://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
 
 __Developer Interest__
 
