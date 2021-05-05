@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.17.10
+- Fixes issues with trailing whitespace in variable names for mysql output
+- Creates work-around for deployments that are unable to use custom-scripts. [Issue #2711](https://github.com/Tangerine-Community/Tangerine/issues/2711) [PR #2712](https://github.com/Tangerine-Community/Tangerine/pull/2712) 
+
 ## v3.17.9
 - Prevent failed calls to `T.case.save()` in forms by avoiding any saves to a case when a form is active. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2704/), [Issue](https://github.com/Tangerine-Community/Tangerine/issues/2700)
 - Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/) - Cherry-picked commit [3e4938a0a80c57](https://github.com/Tangerine-Community/Tangerine/pull/2694/commits/3e4938a0a80c57c66aa8f4b0eda32b84c85ebe99) only.
