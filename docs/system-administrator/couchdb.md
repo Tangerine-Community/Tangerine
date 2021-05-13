@@ -14,6 +14,8 @@ rm -r data/couchdb/local.d
 vim config.sh
 # update the cached password in the reporting worker configuration.
 vim data/reporting-worker-state.json
+# If using the mysql module, update the passwords in each group's mysql state file.
+vim data/mysql/state/<groupId>.ini
 # start.sh will rebuild the couchdb and tangerine containers which will update the password in all necessary places.
 ./start.sh <version>
 ```
