@@ -6,10 +6,14 @@ If there has been a security update to CouchDB 2.x, all you must do is rerun the
 ## Change password
 
 ```bash
+# Shutdown tangerine and couchdb
+docker stop tangerine couchdb
 # Remove the docker files that cached the password for CouchDB.
 rm -r data/couchdb/local.d
 # Update the T_COUCHDB_USER_ADMIN_PASS variable.
 vim config.sh
+# update the cached password in the reporting worker configuration.
+vim data/reporting-worker-state.json
 # start.sh will rebuild the couchdb and tangerine containers which will update the password in all necessary places.
 ./start.sh <version>
 ```
