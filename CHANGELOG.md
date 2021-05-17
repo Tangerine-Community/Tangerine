@@ -1,8 +1,5 @@
 # Changelog
 
-<<<<<<< HEAD
-   
-
 ## v3.17.10
 - Remove trailing whitespace from variables for mysql outputs to avoid illegal column names.
 - Add response-variable-value API with support for returning jpeg and png base64 values as files.
