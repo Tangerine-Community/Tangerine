@@ -255,12 +255,12 @@ export class GroupDevicesComponent implements OnInit {
     </paper-dialog-scrollable>
     `
     } else if (device.replicationStatuses) {
-      const replicationStatusesSorted = device.replicationStatuses.slice().sort((a, b) => moment(b.info.end_time).unix() - moment(a.info.end_time).unix())
+      const replicationStatusesSorted = device.replicationStatuses.slice().sort((a, b) => moment(b.info?.end_time).unix() - moment(a.info?.end_time).unix())
       let output = '<h2>Sync Log</h2>\n<p>Sorted by sync end_time</p><style>.syncLog td {\n' +
         '  vertical-align: top;\n  display: inline-block; margin-bottom: 5px;\n' +
         '}</style><table class="syncLog">';
       replicationStatusesSorted.forEach(status => {
-        output = output + "<tr><td><strong>" + moment(status.info.end_time).format("YYYY-MM-DD HH:mm:SS") + "</strong></td></tr><tr><td><pre>" + JSON.stringify(status, null, 2) + "</pre></td></tr>"
+        output = output + "<tr><td><strong>" + moment(status.info?.end_time).format("YYYY-MM-DD HH:mm:SS") + "</strong></td></tr><tr><td><pre>" + JSON.stringify(status, null, 2) + "</pre></td></tr>"
       })
       output = output + "</table>"
       window['dialog'].innerHTML = `
