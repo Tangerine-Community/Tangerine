@@ -1,11 +1,13 @@
 # Changelog
 
+<<<<<<< HEAD
    
 
 ## v3.17.10
 - Remove trailing whitespace from variables for mysql outputs to avoid illegal column names.
 - Add response-variable-value API with support for returning jpeg and png base64 values as files.
 - Refactor TANGY-SIGNATURE and TANGY-PHOTO-CAPTURE output in CSVs to be URLs of the image files.
+- Creates work-around for deployments that are unable to use custom-scripts. [Issue #2711](https://github.com/Tangerine-Community/Tangerine/issues/2711) [PR #2712](https://github.com/Tangerine-Community/Tangerine/pull/2712) 
 
 __Server upgrade instructions__
 
@@ -28,8 +30,6 @@ git checkout v3.17.10
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.17.9
 ```
-
-
 
 ## v3.17.9
 - Prevent failed calls to `T.case.save()` in forms by avoiding any saves to a case when a form is active. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2704/), [Issue](https://github.com/Tangerine-Community/Tangerine/issues/2700)
