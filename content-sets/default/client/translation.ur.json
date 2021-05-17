@@ -1,0 +1,131 @@
+{
+	"Unable to check for update. Make sure you are connected to the Internet and try again.":"اپ ڈیٹس کی چیکنگ( جانچ پڑتال )کرتے ہوئےخرابی کا پیغام ",
+	"+ Add User to Group":"صارفین کے کی فہرست میں ایک صارف کا اضافہ کریں",
+	"+ Create a New Form":"گروپ میں ایک نیا فارم بنائیں",
+	"+ Create a New Group":"ٹینجارائن میں ایک نیا گروپ بنائیں",
+	"+ Create a New User":"ایک نیا ٹینجارائن یوزر بنائیں جسے گروپ میں شامل کیا جا سکتا ہو",
+	"Accuracy":"جی پی ایس ریڈنگ کی درستگی",
+	"Accuracy Level":"جی پی ایس ریڈنگ کی درستگی",
+	"Add New User":"نئے صارف کا اضافہ کریں",
+	"Add User to Group":" گروپ میں ایک نئےصارف  کا اضافہ  کریں",
+	"An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`":"اپ ڈیٹ شامل کرنے سے قبل اس کا تصدیقی پیغام",
+	"Applying Updates...":"کسی اپ ڈیٹ کا اطلاق کرتے ہوئے  ",
+	"Are you sure you want to start a form response?":"ایک نیا فارم شروع کرتے ہوئے",
+	"There is unsaved data. Are you sure you would like to exit the form?":"کوئی فارم چھوڑتے ہوئے تصدیق کرنا کیوں کہ ڈیٹا محفوظ نہیں کیا گیا ہے",
+	"The form is not yet complete. Are you sure you would like to exit the form?":"کوئی فارم چھوڑتے ہوئے تصدیق کرنا کیوں کہ ڈیٹا محفوظ نہیں کیا گیا ہے",
+	"The app will now check for an application update and attempt to download. Please stay connected to the Internet during this process. Tap OK to proceed.":"ہدایات کہ ایپ  اپ ڈیٹ کو چیک کرےگی",
+	"Case":"کیس کا فولڈر جس میں تمام فارم  رکھے گئے ہیں",
+	"Check for Update":"ایپ کی اپ ڈیٹس کو چیک کرنے  کا لنک",
+	"Checking For Updates...":"اپ ڈیٹس کو چیک کرتے وقت    کاپیغام",
+	"Choose which case type":"جب کام شروع کریں تو صحیح کیس کے اقسام کو منتخب کریں ",
+	"Click a Picture":"اسکرین پر آنےوالی تصویر پر کلک کریں",
+	"Click the play button to get started.":"فریم ورک پر کام شروع کرنے کے لیے پلے بٹن دبائیں ",
+	"Click to Download":"CSV فائل ڈاؤن لوڈ کرنے کے لئے یہاں  بٹن دبائیں",
+	"Close":"فل اسکرین موڈ کو بند کر دیں",
+	"Confirm New Password":"پاس ورڈ کو تبدیل کرتے ہوئے نئے پاس ورڈ کی  تصدیق کریں",
+	"Confirm Password":"اسکرین پر پاس ورڈ کی تصدیق کریں",
+	"Could Not Contact Server.":"نتائج کو سنک کرتے وقت کا مسئلہ/ خرابی",
+	"Could Not Create User":"صارف بناتے وقت کا مسئلہ /خرابی",
+	"Could Not Generate APK":"APK کی تیاری  کے دوران مسئلہ /خرابی",
+	"Could Not Generate PWA":"ویپ براوزر ایپ /پورٹل ڈسپلے پروگرام  کی تیاری کے دوران مسئلہ /خرابی",
+	"Could Not Load List Of Forms":"فارم کے صفحہ کی فہرست پر مسئلہ /خرابی",
+	"Complete":"فارم کی مکمل درجہ بندی  ",
+	"Create Form":"نیا فارم بنائیں",
+	"Docs Not Uploaded":"نتائج   کو سرور پرمنتقل نہیں کیا گیا ",
+	"Docs Uploaded":"نتائج   کو سرور پرمنتقل  کیا گیا ",
+	"Download CSV":"فارم کے لیے سی ایس وی فائل ڈاون لوڈ کریں",
+	"Download your APK":"  اے پی کے فائل ڈاون لوڈ کریں",
+	"EXPORT DATA FOR ALL USERS":"ٹیبلیٹ پر موجود معلومات کو تمام صارفین کے لیے ایکسپورٹ کریں/بھیجے",
+	"Edit Item":"صفحہ پر موجودہ شے کو  درست کریں ",
+	"Email":" ان پٹ ٹائپ کو ای میل کریں",
+	"Enter your response to above question here":"مطلوبہ معیاری پیغام  کے سوالات پوچھیں کہ وہ مکمل ہوچکے ہیں",
+	"Error Downloading File":"",
+	"Event":"کسی کیس    کی کیفیت ",
+	
+	"Export Data":"ٹیبلیٹ سے ڈیٹا ایکسپورٹ کرنے کا لنک",
+	"File Stored At":"وہ جگہ جہاں ایکسپورٹ فائل رکھی کی جاتی ہے",
+	
+	"Form":"فارم",
+	"Form Id":"فارم آئی ڈی ",
+	
+	"Generate APK/PWA":"اے پی کے لنک بنائیں",
+	"Generating CSV":"سی ایس وی فائل بناتے  وقت پیغام کی درجہ بندی",
+	"Group":"سرور پر گروپ بنائیں",
+	"Group Created Succesfully":"گروپ بنانے کے بعد  کا پیغام ",
+	
+	"LAST ATTEMPTED":"فریم ورک پر آخری کیاگیا کام/فہرست پر آخری کیاگیا کام",
+	
+	"Last Successful Sync Timestamp":"آخری بار جب ٹیبلٹ سنک کیا گیا",
+	"Last attempted cannot be before an item marked.":"گرڈ پر نشان زد کیےآخری آئٹم کے لیے ایرر میسج( خرابی کا پیغام) کسی نا درست آئٹم سےپہلے نہیں ہوسکتا ",
+	"Latitude":"جی پی ایس ریڈنگ کا پھیلاو",
+	"latitude":"جی پی ایس ریڈنگ کا پھیلاو",
+	"Loading":"میسج لوڈ ہو رہا ہے",
+	
+	"Longitude":"جی پی ایس ریڈنگ کی لمبائی",
+	"longitude":"جی پی ایس ریڈنگ کی لمبائی",
+	
+	"Meters":"جی پی ایس درستگی کے لیے میٹر",
+	"My Forms":"ٹیبلیٹ پر مائی فارمز کا لنک",
+	"new case":"نئے کیس کا لنک",
+	
+	"No Data for":"کسی فارم کے لیے ڈیٹا کی عدم موجودگی کا ایرر(یا خرابی)",
+	"No Forms Currently Defined":"",
+	"No Update":"کوئی اپ ڈیٹ نہ ہونےکی صورت میں میسج کا اسٹیٹس",
+	"Observations":"جانچ پڑتال /مشاہدہ کا لنک",
+	
+	"Percentage Complete":"صفحہ کی درجہ بندی کو سنک کریں",
+	
+	"Pick a":"لوکیشن لسٹ میں آئٹم جو ایک لیول سے پہلے شامل کیا گیا ہے",
+	"Please enter a valid email address":"ای میل ایڈریس کے لیے ایرر میسج(غلطی کا پیغام)",
+	
+	"Release APK to Production":"نئی پروڈکشن اے پی کے شائع کریں ",
+	"Release APK to QA":"نئی ٹیسٹنگ اے پی کے شائع کریں ",
+	"Release PWA to Production":"نئی پروڈکشن پی ڈبلیو اے شائع کریں ",
+	"Release PWA to QA":"نئی ٹیسٹنگ پی ڈبلیو اے شائع کریں ",
+	"Reports":"ٹیبلیٹ پر رپورٹس کے لنک",
+	
+	"START":"گرڈز پر اسٹارٹ کا بٹن",
+	"STOP":"گرڈز پر اسٹاپ کا بٹن",
+	"SYNC DATA FOR ALL USERS":"تمام صارفین کےلیے معلومات کو منظم/درست  کریں ",
+	"Save":"ترتیب کو محفوظ کریں ",
+	
+	"Select one or more":"ڈیفالٹ چیک باکس گروپ میسج",
+	"Select only one":"ڈیفالٹ ریڈیو بٹن گروپ میسج",
+	
+	"submit":"فارم جمع کرائیں",
+	"Summary":"خلاصہ ",
+	
+	"Sync":"سنک پیج ",
+	
+	"Sync Unsuccessful. Please Retry":"  مطابقت داری /تواقت میں خرابی کا پیغام",
+	
+	"Tap any boxes that were incorrect during the test.":"اِن کریکٹ(نادرست) آئٹمز کو ہٹانےکے لیے گرڈ ان پٹ میسج کا استعمال",
+	"Tap items to mark them incorrect.":"اِن کریکٹ(نادرست )آئٹمز کو ہٹانےکے لیے گرڈ ان پٹ میسج کا استعمال",
+	"Tap the item last attempted.":"لاسٹ(آخری) آئٹم کو ہٹانےکے لیے گرڈ ان پٹ میسج کا استعمال",
+	
+	"Tips":"جی پی ایس کے لیے ٹِپز( اشاراتی)میسج",
+	
+	"Try moving outside with a clear view of the sky":"جی پی ایس ہیلپ ٹیکسٹ",
+	"Try standing away from trees or buildings":"جی پی ایس ہیلپ ٹیکسٹ",
+	"Try standing next to a window":"جی پی ایس ہیلپ ٹیکسٹ",
+	
+	"Update is Running. Please Wait ...":"کچھ اپ ڈیٹ کرتے ہوئے اسٹیٹس",
+	"User Added to Group Successfully":"ٹینجارائن گروپ میں صارف کو شامل کیا گیا",
+	"User Created Succesfully":"صارف کامیابی سے بن گیا ",
+	"User Removed from Group Successfully":"یوزر(صارف)کو گروپ سے نکال دیا گیا",
+	
+	"Username Available":" صارف کے اندراج کے لیے صارف کا نام موجود ہے ",
+	"Username Unavailable":"صارف کا نام اس اندراج کے لیے موجود نہیں ہے ",
+	
+	"Visits":"ٹیبلیٹ پر لنک",
+	
+	"Your APK is building...":"اے پی کے بلڈنگ کا اسٹیٹس میسج",
+	"Your PWA is building...":"ویپ براوزر بلڈنگ کا اسٹیٹس میسج",
+	
+	"✓ Yay! You are up to date.":"کامیاب اپ ڈیٹ کے بعد",
+	"yes, continue":"ہاں ،رضامندی کے لیے تیار ہے ",
+	"no, stop":"رضامندی کے لیے کوئی جواب نہیں ",
+	
+	"next":"اگلے صفحہ پر جانے کے لیے بٹن  دبائیں",
+	"back":"پچھلے صفحہ پر جانے کے لیے بٹن دبائیں"
+	}

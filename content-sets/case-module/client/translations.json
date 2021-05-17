@@ -1,5 +1,15 @@
 [
   {
+    "label": "Amharic",
+    "languageCode": "am",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Bengali",
+    "languageCode": "bn",
+    "languageDirection": "ltr"
+  },
+  {
     "label": "English",
     "languageCode": "en",
     "languageDirection": "ltr"
@@ -8,5 +18,41 @@
     "label": "French",
     "languageCode": "fr",
     "languageDirection": "ltr"
+  },
+  {
+    "label": "Hindi",
+    "languageCode": "hi",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Jordanian",
+    "languageCode": "JO_ar",
+    "languageDirection": "rtl"
+  },
+  {
+    "label": "Khmer",
+    "languageCode": "KH_km",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Russian",
+    "languageCode": "ru",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Swahili",
+    "languageCode": "sw",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Тоҷикӣ́",
+    "languageCode": "tg",
+    "languageDirection": "ltr"
+  },
+
+  {
+    "label": "Urdu",
+    "languageCode": "ur",
+    "languageDirection": "rtl"
   }
 ]
