@@ -87,7 +87,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
             docsWritten = progress.docs_written + ' docs saved; '
           }
           if (typeof progress.pending !== 'undefined') {
-            pendingMessage = progress.pending + ' docs pending; '
+            pendingMessage = progress.pending + ' changes pending; '
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
