@@ -1,6 +1,8 @@
 # Changelog
 
 ## v3.17.10
+- Skip optimizing sync-queue, sync-conflicts, and tangy-form views after Sync Protocol 2 sync completes.
+- Using `T.case.load()` in a form? This release fixes a bug where EventForm.formResponseId would be not set when submitting forms in cases where a form has loaded a different case and then the save case back again thus detaching the memory reference being previously set.
 - Remove trailing whitespace from variables for mysql outputs to avoid illegal column names.
 - Add response-variable-value API with support for returning jpeg and png base64 values as files.
 - Refactor TANGY-SIGNATURE and TANGY-PHOTO-CAPTURE output in CSVs to be URLs of the image files.
