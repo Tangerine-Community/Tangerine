@@ -29,7 +29,7 @@ exports.changeProcessor = (change, sourceDb) => {
             if (process.env.T_PAID_ALLOWANCE !== 'unlimited' && !doc.paid) {
               resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
             } else {
-              processFormResponse(doc, sourceDb)
+              processFormResponse(doc, sourceDb, change.seq)
                 .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
                 .catch(error => { reject(error) })
             }
@@ -53,9 +53,9 @@ exports.changeProcessor = (change, sourceDb) => {
  * @returns {object} - saved document
  */
 
-const processFormResponse = async (doc, sourceDb) => {
+const processFormResponse = async (doc, sourceDb, sequence) => {
   try {
-    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb})
+    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence})
   } catch (error) {
     console.error(error)
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)

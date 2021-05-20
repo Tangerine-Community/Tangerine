@@ -110,4 +110,23 @@ In the following example we change the color of text depending on a user's selec
 
 ![dynamically-change-text-color](./dynamically-change-text-color.gif)
 
+## Use skip-if to reference variable inside tangy-inputs-group
+In the following example a `skip-if` refers to an other variable local to the group itself is in. The trick is using backticks around the variable name (not quotes) you are referencing and prepending the variable name you are referencing with `${context.split('.')[0]}.${context.split('.')[1]}.`.  
 
+[Run example](https://skip-if-inside-tangy-inputs-groups.glitch.me/) - [Open Editor](https://skip-if-inside-tangy-inputs-groups.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-if-inside-tangy-inputs-groups)
+
+![skip-if-inside-tangy-inputs-groups](./skip-if-inside-tangy-inputs-groups.gif)
+
+## Use valid-if to reference variable inside tangy-inputs-group
+In the following example a `valid-if` refers to an other variable local to the group itself is in. The trick is using backticks around the variable name (not quotes) you are referencing and prepending the variable name you are referencing with `${input.name.split('.')[0]}.${input.name.split('.')[1]}.`.  Watch out for the gotcha of not using `input.name` instead of `context` like we do in a `skip-if`.
+
+[Run example](https://valid-if-inside-tangy-inputs-groups.glitch.me/) - [Open Editor](https://valid-if-inside-tangy-inputs-groups.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-if-inside-tangy-inputs-groups)
+
+![skip-if-inside-tangy-inputs-groups](./valid-if-inside-tangy-inputs-groups.gif)
+
+## Dynamic Location Level
+In the following example we empower the Data Collector to select which Location Level at which they will provide their answer. This example can also be used in a more advanced way to base the level of location required for entry given some other set of inputs.
+
+[Run example](https://dynamic-location-levels.glitch.me/) - [Open Editor](https://dynamic-location-levels.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/dynamic-location-levels)
+
+![dynamic-location-levels](./dynamic-location-levels.gif)

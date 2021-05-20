@@ -28,4 +28,11 @@ export class TangyFormsInfoService {
     return formTemplateMarkup
   }
 
+  async getFormSrc(formId, formVersionId:string = '') {
+    const formInfo = await this.getFormInfo(formId)
+    return formVersionId 
+      ? formInfo.formVersions.find(formVersion => formVersion.id === formVersionId).src
+      : formInfo.src
+  }
+
 }

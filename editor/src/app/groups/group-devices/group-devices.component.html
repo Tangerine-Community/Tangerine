@@ -6,18 +6,34 @@
     </button>
   </a>
 </div>
+<div class="device-list-btn">
+  <button mat-raised-button color="warn" (click)="export()" [disabled]="isExporting">{{'Export Device List'|translate}}</button>
+</div>
 <div class="table-container">
+  <div class="table-legend">
+    <p>Scroll to the right to see additional fields. Some of the information in this table are reported from the most recent tablet sync. Detailed information about some of these fields:</p>
+    <ul>
+      <li>All Docs on Tablet: All records on the tablet.</li>
+      <li>Form Responses on Tablet for Location: This is a subset of "All Docs on Tablet." All tablets in the same location should have the same number of form responses if they are up-to-date on sync.</li>
+      <li>Network Statistics: This value is an estimated value reported from the client app's browser instance; it is not the result of a network query at the time of sync. Consider it as a general indicator of network quality. </li>
+    </ul>
+  </div>
+
     <table mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> ID </th>
         <td mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </td>
       </ng-container>
+      <ng-container matColumnDef="description">
+        <th class="w-170" mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.description"></div></td>
+      </ng-container>
       <ng-container matColumnDef="assigned-location">
-        <th mat-header-cell *matHeaderCellDef> Assigned Location </th>
+        <th class="w-170" mat-header-cell *matHeaderCellDef> Assigned Location </th>
         <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.assignedLocation"></div></td>
       </ng-container>
       <ng-container matColumnDef="sync-location">
-        <th mat-header-cell *matHeaderCellDef> Sync Settings </th>
+        <th class="w-170" mat-header-cell *matHeaderCellDef> Sync Settings </th>
         <td mat-cell *matCellDef="let element"><div class="location-cell" [innerHTML]="element.syncLocations"></div></td>
       </ng-container>
       <ng-container matColumnDef="claimed">
@@ -27,24 +43,93 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="registeredOn">
-        <th mat-header-cell *matHeaderCellDef> Registered on </th>
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Registered on </th>
         <td mat-cell *matCellDef="let element"> {{element.registeredOn}} </td>
       </ng-container>
       <ng-container matColumnDef="syncedOn">
-        <th mat-header-cell *matHeaderCellDef> Synced on </th>
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Synced on </th>
         <td mat-cell *matCellDef="let element"> {{element.syncedOn}} </td>
       </ng-container>
       <ng-container matColumnDef="updatedOn">
-        <th mat-header-cell *matHeaderCellDef> Updated on </th>
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Updated on </th>
         <td mat-cell *matCellDef="let element"> {{element.updatedOn}} </td>
       </ng-container>
       <ng-container matColumnDef="version">
-        <th mat-header-cell *matHeaderCellDef> Version </th>
-        <td mat-cell *matCellDef="let element"> {{element.version}} </td>
+        <th mat-header-cell *matHeaderCellDef> Build ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.version?.substring(0,8)}} </td>
       </ng-container>
-
+      <ng-container matColumnDef="tagVersion">
+        <th class="w-100" mat-header-cell *matHeaderCellDef> Tag Version </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.versionTag}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="tangerineVersion">
+        <th mat-header-cell *matHeaderCellDef> Tangerine Version </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.tangerineVersion}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="encryptionLevel">
+        <th mat-header-cell *matHeaderCellDef> Encryption Level </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.encryptionLevel}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="dbDocCount">
+        <th mat-header-cell *matHeaderCellDef> All Docs on Tablet </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.dbDocCount}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="localDocsForLocation">
+        <th mat-header-cell *matHeaderCellDef> Form Responses on Tablet for Location </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.localDocsForLocation}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="network">
+        <th mat-header-cell *matHeaderCellDef> Network Statistics </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.effectiveConnectionType">
+            <div>Network Type: {{element.effectiveConnectionType}}</div>
+          </ng-template>
+          <ng-template [ngIf]="element.duration">
+            <div>Duration: {{element.duration}}</div>
+          </ng-template>
+          <ng-template [ngIf]="element.comparisonSync">
+            <div>Comparison Sync: {{element.comparisonSync}}</div>
+          </ng-template>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="os">
+        <th mat-header-cell *matHeaderCellDef> Operating system </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.os">
+            <div>{{element.os.name}} {{element.os.version}}</div>
+          </ng-template>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="browserVersion">
+        <th mat-header-cell *matHeaderCellDef> Browser Version </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.browserVersion">
+            <div>{{element.browserVersion}}</div>
+          </ng-template>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="errorMessage">
+        <th mat-header-cell *matHeaderCellDef> Errors </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-template [ngIf]="element.errorFlag"><div class="errorFlag"><mat-icon class="material-icons red-icon">error</mat-icon></div></ng-template>
+          <div class="hide">
+          <ng-template [ngIf]="element.replicationStatus?.info?.errors?.length > 0"><div>{{element.replicationStatus?.info.errors | json}}</div></ng-template>
+          <ng-template [ngIf]="element.replicationStatus?.pullError"><div>Pull error: {{element.replicationStatus?.pullError}}</div></ng-template>
+          <ng-template [ngIf]="element.replicationStatus?.pushError"><div>Push error: {{element.replicationStatus?.pushError}}</div></ng-template>
+          </div>
+        </td>
+      </ng-container>
       
-
       <!-- Star Column -->
       <ng-container matColumnDef="star" stickyEnd>
         <th mat-header-cell *matHeaderCellDef> </th>

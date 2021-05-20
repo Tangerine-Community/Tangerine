@@ -16,13 +16,20 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   syncMessage: any
   subscription: any
   direction: any
+  checkpointMessage: any
+  diffMessage: any
+  startNextBatchMessage: any
+  pendingBatchMessage: any
   errorMessage: any
   pullError: any
   pushError: any
   dbDocCount:number
   otherMessage: any
   wakeLock: any
-  
+  indexing: any
+  indexingMessage: string
+  show:boolean=false;
+
   constructor(
     private syncService:SyncService,
     private userService: UserService
@@ -34,11 +41,17 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
   async sync() {
     this.syncInProgress = true
     this.direction = ''
+    this.checkpointMessage = ''
+    this.diffMessage = ''
+    this.startNextBatchMessage = ''
+    this.pendingBatchMessage = ''
     this.errorMessage = ''
     this.otherMessage = ''
     this.pullError = ''
     this.pushError = ''
-    
+    this.syncMessage = ''
+    this.indexingMessage = ''
+
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
     } catch (err) {
@@ -49,9 +62,20 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
-          let pendingMessage = '', docsWritten = '', direction = '', docPulled = ''
+          let pendingMessage = '', docsWritten = '', direction = '', docPulled = '', syncMessage = ''
+          this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
-            this.otherMessage = progress.message
+            if (progress.type == 'checkpoint') {
+              this.checkpointMessage = progress.message
+            } else if (progress.type == 'diffing') {
+              this.diffMessage = progress.message
+            } else if (progress.type == 'startNextBatch') {
+              this.startNextBatchMessage = progress.message
+            } else if (progress.type == 'pendingBatch') {
+              this.pendingBatchMessage = progress.message
+            } else {
+              this.otherMessage = progress.message
+            }
           } else {
             this.otherMessage = ''
           }
@@ -63,10 +87,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
             docsWritten = progress.docs_written + ' docs saved; '
           }
           if (typeof progress.pending !== 'undefined') {
-            pendingMessage = progress.pending + ' pending; '
-          }
-          if (typeof progress.pulled !== 'undefined') {
-            docPulled = progress.pulled + ' docs saved; '
+            pendingMessage = progress.pending + ' docs pending; '
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
@@ -79,24 +100,31 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             // this.syncMessage =  direction + docsWritten + pendingMessage
-            this.syncMessage = progress.remaining + '% remaining to sync'
-          } else {
-            this.syncMessage = ''
+            this.syncMessage = progress.remaining + '% remaining to sync; '
+          }
+          if (typeof progress.pulled !== 'undefined' && progress.pulled !== '') {
+            this.syncMessage = this.syncMessage + pendingMessage + progress.pulled + ' docs saved. '
           }
           if (typeof progress.direction !== 'undefined' && progress.direction !== '') {
             this.direction = 'Direction: ' + progress.direction
           } else {
             this.direction = ''
           }
+          if (progress.indexing) {
+            this.indexing = progress.indexing
+            this.indexingMessage = 'Indexing ' + progress.indexing.view + ' Doc Count: ' + progress.indexing.countIndexedDocs
+          }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }
       }
     })
     // Pass isFirstSync flag as true in order to skip the push.
-    const replicationStatus = await this.syncService.sync(true, true)
+    const replicationStatus = await this.syncService.sync(true)
     this.subscription.unsubscribe();
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
     // if (!this.wakeLock) {
     //   console.log("wakeLock is destroyed.")
     // }
@@ -110,12 +138,21 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.done$.next(true)
   }
 
+  toggle() {
+    this.show = !this.show
+  }
+
   ngOnDestroy(): void {
+    if (this.syncInProgress) {
+      this.syncService.cancel()
+    }
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    this.wakeLock.release()
-    this.wakeLock = null;
+    if (this.wakeLock) {
+      this.wakeLock.release()
+      this.wakeLock = null;
+    }
   }
 
 }

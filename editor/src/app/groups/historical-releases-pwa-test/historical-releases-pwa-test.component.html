@@ -1,0 +1,47 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div class="table-container">
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Dec 7, 3.10-beta" #input>
+  </mat-form-field>
+  <table mat-table [dataSource]="groupsData" class="mat-elevation-z8">
+    <ng-container matColumnDef="build">
+      <th mat-header-cell *matHeaderCellDef> Build</th>
+      <td mat-cell *matCellDef="let data"> {{data.build}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="buildId">
+      <th mat-header-cell *matHeaderCellDef> {{'Build ID'|translate}} </th>
+      <td mat-cell *matCellDef="let data"> {{data.buildId.substr(0, 6)}} </td>
+    </ng-container>
+    <ng-container matColumnDef="versionTag">
+      <th mat-header-cell *matHeaderCellDef> {{'Version Tag'|translate}} </th>
+      <td mat-cell *matCellDef="let data"> {{data.versionTag}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="releaseType">
+      <th mat-header-cell *matHeaderCellDef>{{' Release Type'|translate}} </th>
+      <td mat-cell *matCellDef="let data"> {{data.releaseType}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef> {{'Date'|translate}} </th>
+      <td mat-cell *matCellDef="let data"> {{data.date|date:'medium'}} </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="tangerineVersion">
+      <th mat-header-cell *matHeaderCellDef> {{'Tangerine Version'|translate}} </th>
+      <td mat-cell *matCellDef="let data"> {{data.tangerineVersion}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="releaseNotes">
+      <th mat-header-cell *matHeaderCellDef> {{'Release Notes'|translate}} </th>
+      <td mat-cell *matCellDef="let data"> {{data.releaseNotes}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+</div>

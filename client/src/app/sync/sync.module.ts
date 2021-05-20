@@ -14,11 +14,16 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { SyncMenuComponent } from './sync-menu/sync-menu.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatExpansionModule} from "@angular/material/expansion";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {MatRadioModule} from "@angular/material/radio";
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  exports: [SyncComponent, PeersComponent],
-  declarations: [SyncComponent, PeersComponent],
+  exports: [SyncComponent, PeersComponent, SyncMenuComponent],
+  declarations: [SyncComponent, PeersComponent, SyncMenuComponent],
   providers: [
     {
       provide: DEFAULT_USER_DOCS,
@@ -39,6 +44,10 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatButtonModule,
     MatTabsModule,
     MatChipsModule,
+    MatCheckboxModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatRadioModule,
   ]
 })
 export class SyncModule { }
