@@ -30,4 +30,6 @@ async function go() {
   
 }
 
-go()
+if (process.env['T_MODULES'].includes('sync-protocol-2')) {
+  go()
+}

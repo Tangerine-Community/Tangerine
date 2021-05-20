@@ -29,9 +29,17 @@ export class AppConfig {
   couchdbPullUsingDocIds:boolean
   couchdbPushUsingDocIds:boolean
   autoMergeConflicts:boolean
+  useEthiopianCalendar:boolean
   attachHistoryToDocs:boolean = false
+  filterCaseEventScheduleByDeviceAssignedLocation:boolean = false
+  disableGpsWarming:boolean
   indexViewsOnlyOnFirstSync:boolean = false
-  pushChunkSize:number
-  pullChunkSize:number
+  batchSize:number
+  initialBatchSize:number
+  writeBatchSize:number
+  useCachedDbDumps:boolean
+  calculateLocalDocsForLocation:boolean;
+  findSelectorLimit: number;
+  compareLimit: number;
 }
 

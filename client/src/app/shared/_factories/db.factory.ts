@@ -25,7 +25,7 @@ export function DB(name, key = ''):PouchDB {
   }
 
   let pouchDBOptions = <any>{};
-  if (window['isCordovaApp'] && window['sqliteStorageFile']) {
+  if (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption']) {
     pouchDBOptions = {
       adapter: 'cordova-sqlite',
       location: 'default',
@@ -34,6 +34,10 @@ export function DB(name, key = ''):PouchDB {
     if (key) {
       pouchDBOptions.key = key
     }
+  }
+  // Adding changes_batch_size here so it can be accessed by PWA for testing.
+  if (window['changes_batch_size'] && name === 'shared-user-database') {
+    pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
   let pouch;
 

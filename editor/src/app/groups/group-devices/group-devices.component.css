@@ -3,10 +3,18 @@
   top: 135px;
   right: 20px; 
 }
+.device-list-btn {
+  position: absolute;
+  top: 135px;
+  right: 200px; 
+}
 .table-container {
   max-width: 100%;
   /* This is key for scrolling the table as opposed to the table pushing layout out. */
   overflow: auto;
+}
+.table-legend {
+  margin: 1em;
 }
 
 table {
@@ -25,4 +33,47 @@ td.mat-column-star {
 
 th, td {
   padding: 5px !important;
+  vertical-align: top;
+}
+
+.w-75{
+  width: 75px;
+}
+
+.w-100{
+  width: 100px;
+}
+
+.w-120{
+  width: 120px;
+}
+
+.w-125{
+  width: 125px;
+}
+
+.w-170{
+  width: 170px;
+}
+.device-settings-list {
+  vertical-align: top;
+  font-size: larger;
+  font-weight: bold ;
+}
+.hide {
+  display: none;
+}
+
+.errorFlag:hover + .hide {
+  display: block;
+  color: red;
+  width: 200px;
+}
+
+.red-icon {
+  color: red;
+}
+/* Note: If you're using an SVG icon, you should make the class target the `<svg>` element */
+.red-icon svg {
+  fill: red;
 }

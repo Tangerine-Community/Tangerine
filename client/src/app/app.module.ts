@@ -33,6 +33,7 @@ import { AboutModule } from './core/about/about.module';
 import { SearchModule } from './core/search/search.module';
 import { NewFormResponseModule } from './core/new-form-response/new-form-response.module';
 import {AppInit} from './app-init';
+import {AdminConfigurationModule} from "./core/admin-configuration/admin-configuration.module";
 export { AppComponent }
 
 export function initializeApp1(appInit: AppInit) {
@@ -67,7 +68,9 @@ export function initializeApp1(appInit: AppInit) {
     AboutModule,
     UpdateModule,
     SyncRecordsModule,
+    AdminConfigurationModule,
     ExportDataModule,
+    // Make sure any new modules with route are placed above AppRoutingModule.
     AppRoutingModule,
     SharedModule
   ],

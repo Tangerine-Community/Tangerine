@@ -35,6 +35,7 @@ export class TangyFormsPlayerComponent {
   $afterSubmit = new Subject()
   $resubmit = new Subject()
   $afterResubmit = new Subject()
+  $saved = new Subject()
   rendered = false
 
   formInfo:FormInfo
@@ -82,7 +83,6 @@ export class TangyFormsPlayerComponent {
       : this.formResponseId
         ? new TangyFormResponseModel(await this.tangyFormService.getResponse(this.formResponseId))
         : ''
-    
     // happens during testing
     if (!this.response && this.formResponseId) {
       this.response = await this.tangyFormService.getResponse(this.formResponseId)
@@ -92,11 +92,30 @@ export class TangyFormsPlayerComponent {
       : formResponse['form']['id']
     this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
     this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
-    const formVersionId = formResponse["formVersionId"] ? formResponse["formVersionId"] : this.formInfo.formVersionId
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
+      let formVersionId
+      if (window.location.hostname === 'localhost') {
+        // We are in preview mode, use FormInfo.src for markup.
+        formVersionId = '' 
+      } else if (!this.formInfo.formVersions) {
+        // No form versions defined, use FormInfo.src for markup.
+        formVersionId = '' 
+      } else if (this.formInfo.formVersions && !formResponse) {
+        // We have form versions defined and we are creating a new form response. Let's use the version set for use in FormInfo.formVersionId.
+        formVersionId = this.formInfo.formVersionId
+      } else if (formResponse["formVersionId"]) {
+        // We are resuming a Form Response with the version set. Use that.
+        formVersionId = formResponse["formVersionId"]
+      } else if (!formResponse["formVersionId"]) {
+        // We are resuming a Form Response that has never heard of form versions. Use the FIRST form version listed.
+        // This is useful for projects that did not start with using Form Versions. To get started, create two Form Versions
+        // where the first form version is for Form Responses before Form Versions, and the second version is the new version
+        // for all new form responses.
+        formVersionId = this.formInfo.formVersions[0].id 
+      }
       let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId)
       // Put the form on the screen.
       const container = this.container.nativeElement
@@ -114,7 +133,7 @@ export class TangyFormsPlayerComponent {
       }
       this.response = formEl.response
       // Listen up, save in the db.
-      if (!this.skipSaving) {
+      if (!this.skipSaving && !this.response.complete) {
         formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
@@ -191,6 +210,7 @@ export class TangyFormsPlayerComponent {
       })
     }
     this.response = state
+    this.$saved.next(state)
   }
 
   print() {

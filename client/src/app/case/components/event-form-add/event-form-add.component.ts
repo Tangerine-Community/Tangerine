@@ -1,4 +1,4 @@
-import { EventFormDefinition } from './../../classes/event-form-definition.class';
+import { EventFormDefinition, EventFormOperation } from './../../classes/event-form-definition.class';
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
@@ -67,15 +67,15 @@ export class EventFormAddComponent implements AfterContentInit {
           }
         })
       this.selectedParticipant = params.participantId
-      this.calculateAvailableEventFormDefinitionsForParticipant(params.participantId)
+      await this.calculateAvailableEventFormDefinitions(params.participantId)
       this.loaded = true
     })
   }
 
-  calculateAvailableEventFormDefinitionsForParticipant(participantId) {
+  async calculateAvailableEventFormDefinitions(participantId) {
     const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
-    this.availableEventFormDefinitions = this.caseEventDefinition.eventFormDefinitions
-      .filter(eventFormDefinition => eventFormDefinition.forCaseRole === participant.caseRoleId)
+    const availableEventFormDefinitionsForParticipant = this.caseEventDefinition.eventFormDefinitions
+      .filter(eventFormDefinition => eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(participant.caseRoleId))
       .reduce((availableEventFormDefinitions, eventFormDefinition) => {
         const eventFormDefinitionHasForm = this.caseEvent.eventForms
           .filter(eventForm => eventForm.participantId === participantId)
@@ -86,6 +86,13 @@ export class EventFormAddComponent implements AfterContentInit {
           ? [...availableEventFormDefinitions, eventFormDefinition]
           : availableEventFormDefinitions
       }, [])
+    const availableEventFormDefinitions = []
+    for (const eventFormDefinition of availableEventFormDefinitionsForParticipant) {
+      if (await this.caseService.hasEventFormPermission(EventFormOperation.CREATE, eventFormDefinition)) {
+        availableEventFormDefinitions.push(eventFormDefinition)
+      }
+    }
+    this.availableEventFormDefinitions = availableEventFormDefinitions
   }
 
   onFormSelect(formId) {

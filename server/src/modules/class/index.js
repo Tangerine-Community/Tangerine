@@ -2,6 +2,7 @@ const clog = require('tangy-log').clog
 const fs = require('fs-extra')
 
 module.exports = {
+  name: 'class',
   hooks: {
     csv_flatFormReponse: function(data) {
       return new Promise((resolve, reject) => {

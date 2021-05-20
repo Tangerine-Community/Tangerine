@@ -87,6 +87,15 @@ async function go() {
       },
       limit: 1
     })
+    await db.find({
+      selector: {
+        type: '',
+        "lastModified":  {"$gt": 0},
+        "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
+      },
+      use_index: 'find-docs-by-form-id',
+      limit: 1
+    })
   } catch (e) {
     // This will likely timeout, no problem.
     indexDidIndex = false

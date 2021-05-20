@@ -15,10 +15,14 @@ export class ReleasePwaComponent implements OnInit {
   @ViewChild('urlContainer', {static: true}) urlContainer: ElementRef;
   buildPwaIsComplete = false;
   copySuccess = false;
-  @Input() groupId = ''
-  @Input() releaseType = '';
+  groupId = '';
+  releaseType = '';
+  releaseNotes = '';
+  versionTag = '';
   errorGeneratingPWA;
-  pwaUrl
+  pwaUrl;
+  filepath = ''
+  
   constructor(
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
@@ -30,7 +34,7 @@ export class ReleasePwaComponent implements OnInit {
 
   async releasePWA() {
     try {
-      const result: any = await this.groupsService.releasePWA(this.groupId, this.releaseType);
+      const result: any = await this.groupsService.releasePWA(this.groupId, this.releaseType, this.versionTag, this.releaseNotes);
       this.pwaUrl = `${this.windowRef.nativeWindow.location.origin}/releases/${this.releaseType}/pwas/${this.groupId}`
       this.buildPwaIsComplete = result.statusCode === 200;
     } catch (error) {

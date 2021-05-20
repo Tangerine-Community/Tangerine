@@ -1,0 +1,12 @@
+div {
+  margin: 1em;
+}
+mat-card {
+  margin-top: 1em;
+}
+
+.mat-card-header-text {
+  margin: 1em 0;
+  font-size: 24px;
+  font-weight: 400;
+}

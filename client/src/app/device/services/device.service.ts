@@ -1,3 +1,4 @@
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { VariableService } from './../../shared/_services/variable.service';
 import { LockBoxService } from './../../shared/_services/lock-box.service';
 import { Loc } from 'tangy-form/util/loc.js';
@@ -9,13 +10,16 @@ import {AppConfig} from '../../shared/_classes/app-config.class';
 const bcrypt = window['dcodeIO'].bcrypt
 
 export interface AppInfo {
+  encryptionLevel:string
   serverUrl:string
   groupName:string
+  deviceId:string
   groupId:string
   buildChannel:string
   tangerineVersion:string
   buildId:string
   assignedLocation:string
+  versionTag:string
 }
 
 @Injectable({
@@ -28,6 +32,8 @@ export class DeviceService {
   rawBuildChannel:string
   buildId:string
   tangerineVersion:string
+  versionTag:string
+  appInfo:AppInfo
 
   constructor(
     private httpClient:HttpClient,
@@ -39,6 +45,35 @@ export class DeviceService {
 
   async install() {
     // ?
+  }
+
+  async initialize() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const buildId = window.location.hostname !== 'localhost' ? await this.getBuildId() : 'localhost'
+    const buildChannel = window.location.hostname !== 'localhost' ? await this.getBuildChannel() : 'localhost'
+    const device = await this.getDevice()
+    const locationList = await this.appConfigService.getLocationList();
+    const flatLocationList = Loc.flatten(locationList)
+    const encryptionLevel = (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption'])
+      ? _TRANSLATE('in-app')
+      : 'OS'
+    const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
+      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
+      : 'N/A'
+    const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
+    const versionTag = window.location.hostname !== 'localhost' ? await this.getVersionTag() : 'localhost'
+    this.appInfo = <AppInfo>{
+      serverUrl: appConfig.serverUrl,
+      groupName: appConfig.groupName,
+      groupId: appConfig.groupId,
+      encryptionLevel,
+      tangerineVersion,
+      buildChannel,
+      buildId,
+      deviceId: device._id,
+      assignedLocation,
+      versionTag
+    }
   }
 
   async getRemoteDeviceInfo(id, token):Promise<Device> {
@@ -122,6 +157,7 @@ export class DeviceService {
     const device = await this.getDevice()
     const version = await this.getBuildId()
     if (status) {
+      console.log("Sending sync status.")
       await this
         .httpClient
         .post(`${appConfig.serverUrl}group-device-public/did-sync-status/${appConfig.groupId}/${device._id}/${device.token}/${version}`, {
@@ -144,27 +180,8 @@ export class DeviceService {
       .get(`${appConfig.serverUrl}group-device-public/did-sync-error/${appConfig.groupId}/${device._id}/${device.token}/${version}/${error}`).toPromise()
   }
 
-  async getAppInfo() {
-    const appConfig = await this.appConfigService.getAppConfig()
-    const buildId = await this.getBuildId()
-    const buildChannel = await this.getBuildChannel()
-    const device = await this.getDevice()
-    const locationList = await this.appConfigService.getLocationList();
-    const flatLocationList = Loc.flatten(locationList)
-    const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
-      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
-      : 'N/A'
-    const tangerineVersion = await this.getTangerineVersion()
-    return <AppInfo>{
-      serverUrl: appConfig.serverUrl,
-      groupName: appConfig.groupName,
-      groupId: appConfig.groupId,
-      tangerineVersion,
-      buildChannel,
-      buildId,
-      deviceId: device._id,
-      assignedLocation
-    }
+  getAppInfo() {
+    return this.appInfo
   }
 
   async getTangerineVersion() {
@@ -193,6 +210,15 @@ export class DeviceService {
         : this.rawBuildChannel.includes('qa')
           ? 'test'
           : 'unknown'
+    } catch (e) {
+      return 'N/A'
+    }
+  }
+
+  async getVersionTag() {
+    try {
+      this.versionTag = this.versionTag ? this.versionTag : await this.httpClient.get('./assets/tangerine-version-tag', {responseType: 'text'}).toPromise()
+      return this.versionTag.replace(/\n$/, '');
     } catch (e) {
       return 'N/A'
     }
