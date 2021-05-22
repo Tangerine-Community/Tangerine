@@ -2,6 +2,7 @@
 import PouchDB from 'pouchdb';
 // @ts-ignore
 // import * as PouchDBFind from 'pouchdb-find';
+import CryptoPouch from 'crypto-pouch';
 import * as cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import * as PouchDBUpsert from 'pouchdb-upsert';
 import debugPouch from 'pouchdb-debug';
@@ -9,6 +10,7 @@ PouchDB.plugin(debugPouch);
 import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
 PouchDB.plugin(PouchDBUpsert);
+PouchDB.plugin(CryptoPouch);
 PouchDB.plugin(cordovaSqlitePlugin);
 PouchDB.plugin(window['PouchReplicationStream'].plugin);
 PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
@@ -27,7 +29,7 @@ export function DB(name, key = ''):PouchDB {
   let pouchDBOptions = <any>{};
   if (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption']) {
     pouchDBOptions = {
-      adapter: 'cordova-sqlite',
+      view_adapter: 'cordova-sqlite',
       location: 'default',
       androidDatabaseImplementation: 2
     };
@@ -43,11 +45,10 @@ export function DB(name, key = ''):PouchDB {
 
   try {
     pouch = new PouchDB(name, pouchDBOptions);
+    pouch.crypto("example password horse battery etc") // FIXME obviously don't do this ever
     return pouch
   } catch (e) {
     console.log("Database error: " + e);
     console.trace();
   }
 }
-
-
