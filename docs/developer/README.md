@@ -1,5 +1,6 @@
 # Developer Guide Contents
 
+- [Bullet points for Tangerine Development](development-bullet-points.md)
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
 
