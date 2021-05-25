@@ -337,6 +337,9 @@ export class UserService {
       await userDb.put(userProfile)
     } else {
       const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+      userProfile.items.push({id: 'item1',
+        inputs: []
+      })
       userAccount = new UserAccount({
         _id: userSignup.username,
         username: userSignup.username,
