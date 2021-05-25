@@ -27,8 +27,8 @@
 - Mark last attempted automatically when grid is auto-stopped [#2467](https://github.com/Tangerine-Community/Tangerine/issues/2467)
 
 ### New Documentation
-- [Deleting Records](deletion-strategy.md)
-- [Bullet points for Tangerine Development](development-bullet-points.md)
+- [Deleting Records](./docs/developer/deletion-strategy.md)
+- [Bullet points for Tangerine Development](./docs/developer/development-bullet-points.md)
 
 __Server upgrade instructions__
 
