@@ -44,6 +44,14 @@ export class UpdateComponent implements AfterContentInit {
     this.updateService.status$.subscribe({next: message => {
       this.message = message
     }})
+    
+    const customUpdates = await this.updateService.getCustomUpdates()
+    
+    if (customUpdates && customUpdates.beforeUpdates) {
+      // TODO: support pre-flight and progress of update
+      await this.updateService.runCustomUpdatesBefore(customUpdates)
+    }
+
 
     /*
      * SP1
@@ -87,7 +95,12 @@ export class UpdateComponent implements AfterContentInit {
       await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
       await this.deviceService.didUpdate()
       this.message = _TRANSLATE('✓ Yay! You are up to date.')
-    } 
+    }
+    
+    if (customUpdates && customUpdates.afterUpdates) {
+      // TODO: support pre-flight and progress of update
+      await this.updateService.runCustomUpdatesAfter(customUpdates)
+    }
 
     /*
      * Show the button to proceed.
