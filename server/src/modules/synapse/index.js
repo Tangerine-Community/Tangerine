@@ -106,14 +106,12 @@ module.exports = {
         }
       }
         
-      const {doc, sourceDb} = data
+      const { doc, sourceDb, reportingConfig } = data
       const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
       // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
-      const groupsDb = await new DB(`groups`);
-      const groupDoc = await groupsDb.get(`${sourceDb.name}`)
-      const exclusions = groupDoc['exclusions']
-      const substitutions = groupDoc['substitutions']
-      const pii = groupDoc['pii']
+      const exclusions = reportingConfig['exclusions']
+      const substitutions = reportingConfig['substitutions']
+      const pii = reportingConfig['pii']
       // First generate the full-cream database
       let synapseDb
       try {
