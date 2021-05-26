@@ -45,11 +45,12 @@ export class UpdateComponent implements AfterContentInit {
       this.message = message
     }})
     
-    const customUpdates = await this.updateService.getCustomUpdates()
+    const beforeCustomUpdates = await this.updateService.getBeforeCustomUpdates()
+    const afterCustomUpdates = await this.updateService.getAfterCustomUpdates()
     
-    if (customUpdates && customUpdates.beforeUpdates) {
+    if (beforeCustomUpdates) {
       // TODO: support pre-flight and progress of update
-      await this.updateService.runCustomUpdatesBefore(customUpdates)
+      await this.updateService.runCustomUpdatesBefore(beforeCustomUpdates)
     }
 
 
@@ -97,9 +98,9 @@ export class UpdateComponent implements AfterContentInit {
       this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
     
-    if (customUpdates && customUpdates.afterUpdates) {
+    if (afterCustomUpdates) {
       // TODO: support pre-flight and progress of update
-      await this.updateService.runCustomUpdatesAfter(customUpdates)
+      await this.updateService.runCustomUpdatesAfter(afterCustomUpdates)
     }
 
     /*
