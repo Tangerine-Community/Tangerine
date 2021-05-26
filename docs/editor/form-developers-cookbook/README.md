@@ -136,5 +136,5 @@ Sometimes in a form the logic calls for running some code that is asynchronous s
 
 [Run example](https://tangy-gate-example.glitch.me/) - [Open Editor](https://tangy-gate-example.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/tangy-gate-example)
 
-![dynamic-location-levels](./dynamic-location-levels.gif)
+![dynamic-location-levels](./tangy-gate-example.gif)
 
