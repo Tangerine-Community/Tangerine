@@ -2,13 +2,15 @@
 ## Debugging the Reporting Cache process
 
 Summary of steps:
-1. Turn on reporting modules.
+1. Turn on reporting modules in `config.sh`.
 1. Run develop.sh.
 1. Create a group.
-1. Stop the keep alive for reporting worker.
 1. Generate data.
-1. Run a batch with debugger enabled.
-1. Latch onto debugging session using Chrome inspect.
+1. Stop the keep alive for reporting worker by commenting out `this.keepAliveReportingWorker()` in `server/src/app.service.ts`.
+1. Enter the container on command line with `docker exec -it tangerine bash`.
+1. Clear reporting cache with command `reporting-cache-clear`.
+1. Run a batch with debugger enabled by running command `node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)`.
+1. Latch onto debugging session using Chrome inspect. You may need to click "configure" and add `localhost:9228` to "Target discovery settings".
 
 
 ## Instructions
@@ -53,15 +55,13 @@ and then run reporting-cache-clear again.
 Start the reporting-worker-batch.js batch process manually and check for errors
 
 ```shell script
-/tangerine/server/src/scripts/reporting-worker-batch.js
+node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)
 ```
 
 
 In Chrome, go to `chrome://inspect`, click `Configure...`, and add `127.0.0.1:9228` as an entry in "Target discovery settings".
 
-//@TODO OUTDATED but still relevant
-
-## Here is a Youtube demo on debugging: 
+## Debugging Demo 
 
 https://www.youtube.com/watch?v=AToUBoApw8E&feature=youtu.be
 
