@@ -210,5 +210,20 @@ export class UpdateService {
   async setCurrentUpdateIndex(index) {
     await this.variableService.set(VAR_CURRENT_UPDATE_INDEX, index)
   }
+  
+  async getCustomUpdates() {
+    const customUpdates =<any> await this.http.get('./assets/custom-updates.js').toPromise()
+    return customUpdates
+  }
+  
+  async runCustomUpdatesBefore(customUpdates) {
+    // TODO capture output of scriipt and pass up to the component
+    eval(customUpdates.beforeUpdates)
+  }
+  
+  async runCustomUpdatesAfter(customUpdates) {
+    // TODO capture output of scriipt and pass up to the component
+    eval(customUpdates.afterUpdates)
+  }
 
 }
