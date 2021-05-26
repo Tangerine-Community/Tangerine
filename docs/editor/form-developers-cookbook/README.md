@@ -130,3 +130,11 @@ In the following example we empower the Data Collector to select which Location 
 [Run example](https://dynamic-location-levels.glitch.me/) - [Open Editor](https://dynamic-location-levels.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/dynamic-location-levels)
 
 ![dynamic-location-levels](./dynamic-location-levels.gif)
+
+## Prevent user from proceeding during asynchronous logic
+Sometimes in a form the logic calls for running some code that is asynchronous such as database saves and HTTP calls. As this logic runs, we would like to prevent the user from proceeding in the form. This is a job for a `<tangy-gate>`. Tangy Gate is an input that by default will not allow a user to proceed in a form. The gate can only be "opened" by some form logic that set's that Tangy Gate's variable name's value to `true`. This gives your logic in your forms an opportunity to run asynchronously, blocking the user from proceeding, then when async code is done your code sets the the gate to open.
+
+[Run example](https://tangy-gate-example.glitch.me/) - [Open Editor](https://tangy-gate-example.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/tangy-gate-example)
+
+![dynamic-location-levels](./dynamic-location-levels.gif)
+
