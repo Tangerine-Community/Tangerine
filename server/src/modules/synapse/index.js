@@ -36,8 +36,20 @@ module.exports = {
 
               // output participants
               for (const participant of doc.participants) {
+                let sanitizedData = {}
+                if (participant.data) {
+                  sanitizedData = Object.keys(participant.data).reduce((sanitizedData, variableName) => {
+                    if (!pii.includes(variableName)) {
+                      sanitizedData[variableName] = participant.data[variableName]
+                    }
+                    return sanitizedData
+                  }, {})
+                } else {
+                  eventForm.data = {}
+                }
                 await pushResponse({
                   ...participant,
+                  data: sanitized ? sanitizedData : participant.data,
                   _id: participant.id,
                   caseId: doc._id,
                   numInf: participant.participant_id === participant_id ? numInf : '',
@@ -52,8 +64,24 @@ module.exports = {
                   for (const eventForm of event['eventForms']) {
                     // for (let index = 0; index < event['eventForms'].length; index++) {
                     // const eventForm = event['eventForms'][index]
+                    let sanitizedData = {}
+                    if (eventForm.data) {
+                      sanitizedData = Object.keys(eventForm.data).reduce((sanitizedData, variableName) => {
+                        if (!pii.includes(variableName)) {
+                          sanitizedData[variableName] = eventForm.data[variableName]
+                        }
+                        return sanitizedData
+                      }, {})
+                    } else {
+                      eventForm.data = {}
+                    }
                     try {
-                      await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                      await pushResponse({
+                        ...eventForm,
+                        data: sanitized ? sanitizedData : eventForm.data,
+                        type: "event-form",
+                        _id: eventForm.id
+                      }, targetDb);
                     } catch (e) {
                       if (e.status !== 404) {
                         console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
