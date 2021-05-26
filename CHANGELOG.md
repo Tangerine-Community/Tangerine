@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.17.11
+- Added support for custom update scripts for each group. Add either a before-custom-updates.js or after-custom-updates.js to the root of your content depending on when you wish the script to run. Script needs to return a Promise. See Issue [2741](https://github.com/Tangerine-Community/Tangerine/issues/2741) for script example. PR: [#2742](https://github.com/Tangerine-Community/Tangerine/pull/2742)
+
 ## v3.17.10
 - Skip optimizing sync-queue, sync-conflicts, and tangy-form views after Sync Protocol 2 sync completes.
 - Using `T.case.load()` in a form? This release fixes a bug where EventForm.formResponseId would be not set when submitting forms in cases where a form has loaded a different case and then the save case back again thus detaching the memory reference being previously set.
