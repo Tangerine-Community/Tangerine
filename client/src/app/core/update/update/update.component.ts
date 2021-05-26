@@ -44,9 +44,15 @@ export class UpdateComponent implements AfterContentInit {
     this.updateService.status$.subscribe({next: message => {
       this.message = message
     }})
-    
-    const beforeCustomUpdates = await this.updateService.getBeforeCustomUpdates()
-    const afterCustomUpdates = await this.updateService.getAfterCustomUpdates()
+    let beforeCustomUpdates, afterCustomUpdates
+    try {
+      beforeCustomUpdates = await this.updateService.getBeforeCustomUpdates()
+    } catch (e) {
+    }
+    try {
+      afterCustomUpdates = await this.updateService.getAfterCustomUpdates()
+    } catch (e) {
+    }
     
     if (beforeCustomUpdates) {
       // TODO: support pre-flight and progress of update
