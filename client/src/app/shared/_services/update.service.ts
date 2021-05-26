@@ -211,19 +211,28 @@ export class UpdateService {
     await this.variableService.set(VAR_CURRENT_UPDATE_INDEX, index)
   }
   
-  async getCustomUpdates() {
-    const customUpdates =<any> await this.http.get('./assets/custom-updates.js').toPromise()
+  async getBeforeCustomUpdates() {
+    const customUpdates =<any> await this.http.get('./assets/before-custom-updates.js', {responseType: 'text'}).toPromise()
+    return customUpdates
+  }
+  
+  async getAfterCustomUpdates() {
+    const customUpdates =<any> await this.http.get('./assets/after-custom-updates.js', {responseType: 'text'}).toPromise()
     return customUpdates
   }
   
   async runCustomUpdatesBefore(customUpdates) {
-    // TODO capture output of scriipt and pass up to the component
-    eval(customUpdates.beforeUpdates)
+    this.status$.next(_TRANSLATE(`Applying Custom Update before Main Updates. `))
+    // TODO capture output of script and pass up to the component
+    eval(customUpdates)
+    this.status$.next(_TRANSLATE(`Finished Custom Update before Main Updates. `))
   }
   
   async runCustomUpdatesAfter(customUpdates) {
-    // TODO capture output of scriipt and pass up to the component
-    eval(customUpdates.afterUpdates)
+    this.status$.next(_TRANSLATE(`Applying Custom Update after Main Updates. `))
+    // TODO capture output of script and pass up to the component
+    eval(customUpdates)
+    this.status$.next(_TRANSLATE(`Finished Custom Update after Main Updates. `))
   }
 
 }
