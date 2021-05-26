@@ -50,7 +50,11 @@ export class UpdateComponent implements AfterContentInit {
     
     if (beforeCustomUpdates) {
       // TODO: support pre-flight and progress of update
-      await this.updateService.runCustomUpdatesBefore(beforeCustomUpdates)
+      try {
+        await this.updateService.runCustomUpdatesBefore(beforeCustomUpdates)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
     }
 
 
@@ -100,7 +104,11 @@ export class UpdateComponent implements AfterContentInit {
     
     if (afterCustomUpdates) {
       // TODO: support pre-flight and progress of update
-      await this.updateService.runCustomUpdatesAfter(afterCustomUpdates)
+      try {
+        await this.updateService.runCustomUpdatesAfter(afterCustomUpdates)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
     }
 
     /*
