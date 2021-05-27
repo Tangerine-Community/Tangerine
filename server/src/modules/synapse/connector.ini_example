@@ -1,0 +1,12 @@
+[TANGERINE]
+databaseurl = http://localhost:5984/
+databasename = some-group-id--synapse-sanitized
+databaseusername = admin
+databasepassword = test
+lastsequence = 0
+run_interval = 10
+
+[SYNAPSE]
+username = user@email.org
+apikey = api-key-from-synapse
+projectname = synapse-project-id
