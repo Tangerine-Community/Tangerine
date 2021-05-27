@@ -2,6 +2,7 @@
 
 ## v3.17.11
 - Added support for custom update scripts for each group. Add either a before-custom-updates.js or after-custom-updates.js to the root of your content depending on when you wish the script to run. Script needs to return a Promise. See Issue [2741](https://github.com/Tangerine-Community/Tangerine/issues/2741) for script example. PR: [#2742](https://github.com/Tangerine-Community/Tangerine/pull/2742)
+- Add support for filtering PII variables on Case Participant data and Event Form data in Synapse caches. List the variable names in your group's content folder `reporting-config.json`. For example: `{ "pii": ["foo_variable"] }`. This config was previously stored in the groups database.
 
 ## v3.17.10
 - Skip optimizing sync-queue, sync-conflicts, and tangy-form views after Sync Protocol 2 sync completes.
