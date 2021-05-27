@@ -34,7 +34,7 @@ export async function extractPiiVariables(groupId) {
       pii: []
     }
     try {
-      currentReportingConfig = await fs.readJson(reportingConfigPath)
+      const currentReportingConfig = await fs.readJson(reportingConfigPath)
       reportingConfig = {
         ...reportingConfig,
         ...currentReportingConfig
