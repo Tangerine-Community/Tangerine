@@ -2,6 +2,7 @@
 ## Debugging the Reporting Cache process
 
 Summary of steps:
+
 1. Turn on reporting modules in `config.sh`.
 1. Run develop.sh.
 1. Create a group.
