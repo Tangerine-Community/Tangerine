@@ -130,7 +130,3 @@ s.run()
 
 #Logout from Synapse
 syn.logout()
-
-# Disconnect from the couchdb  server
-#client.disconnect()
-
