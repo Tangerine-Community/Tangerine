@@ -17,6 +17,8 @@ from cloudant.client import CouchDB
 from cloudant.result import Result, ResultByKey
 from itertools import islice
 
+from synapse_span_table.synapse_span_table import flexsert_span_table_record
+
 #cloudant API documentation: https: https://python-cloudant.readthedocs.io/en/latest/client.html
 #synapse Python API documentation:  https://python-docs.synapse.org/build/html/index.html
 

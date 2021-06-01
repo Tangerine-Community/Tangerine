@@ -4,6 +4,8 @@
 # Start container.
 #
 
+docker build -t tangerine/python-tangerine-synapse-connector:local .
+
 T_CONTAINER_NAME="python-tangerine-synapse-connector"
 
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
@@ -14,7 +16,7 @@ RUN_OPTIONS="
   --volume $(pwd)/connector.ini:/data/connector.ini:delegated \
   --volume $(pwd)/TangerineConnector.py:/TangerineConnector.py:delegated
 "
-CMD="docker run -d $RUN_OPTIONS tangerine/python-tangerine-synapse-connector"
+CMD="docker run -d $RUN_OPTIONS tangerine/python-tangerine-synapse-connector:local"
 
 echo "$CMD"
 eval ${CMD}

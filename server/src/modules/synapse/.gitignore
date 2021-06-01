@@ -1,3 +1,4 @@
 connector.ini
 *.swp
 .idea
+synapse_span_table
