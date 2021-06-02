@@ -58,6 +58,7 @@ def main_job():
     changes = tangerine_database.changes(feed='continuous',include_docs=True,descending=False,since=lastSequence)
     for change in changes:
         try:
+            start_time = timeit.default_timer()
             seq = change.get('seq')
             if seq :
                 log('Processing sequence:' + seq)
@@ -74,13 +75,15 @@ def main_job():
             else:
                 log("Unexpected document type")
             update_state(seq)
+            end_time = timeit.default_timer()
+            log('Processed change in ' + str(int(end_time - start_time)) + ' seconds')
         except synapseclient.core.exceptions.SynapseHTTPError as e:
             # probably not our fault -- save the data
             print('SynapseHTTPError %s' % e)
         except :
             log('Something went wrong.')
 
-log('Loading configuration fronm connector.ini')
+log('Loading configuration from connector.ini')
 config = configparser.ConfigParser()
 try:
     config.read(os.path.join(os.getcwd(), 'data', 'connector.ini'))
