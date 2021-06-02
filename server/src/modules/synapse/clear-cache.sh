@@ -17,8 +17,8 @@ RUN_OPTIONS="
   --volume $(pwd)/clear-cache.py:/clear-cache.py \
   --entrypoint=\"\"
 "
-echo "Run python cache-clear.py"
-CMD="docker run -it $RUN_OPTIONS tangerine/python-tangerine-synapse-connector:local bash"
+# --entrypoint=\"/usr/local/bin/python /clear-cache.py\"
+CMD="docker run -it $RUN_OPTIONS tangerine/python-tangerine-synapse-connector:local python /clear-cache.py"
 
 echo "$CMD"
 eval ${CMD}
