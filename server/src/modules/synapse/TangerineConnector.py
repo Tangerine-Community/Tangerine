@@ -22,7 +22,7 @@ from synapse_span_table.synapse_span_table import flexsert_span_table_record, in
 MAX_NUMBER_OF_COLUMNS=20
 
 def log(msg) :
-    print("{} - {}").format(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), msg)
+    print("{} - {}".format(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), msg))
 
 def save_entity(doc):
     type = doc.get('type')
