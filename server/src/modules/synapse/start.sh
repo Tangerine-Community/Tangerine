@@ -15,8 +15,7 @@ RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
   --link couchdb:couchdb \
   --restart on-failure \
-  --volume $(pwd)/connector.ini:/data/connector.ini:delegated \
-  --volume $(pwd)/TangerineConnector.py:/TangerineConnector.py:delegated
+  --volume $(pwd)/connector.ini:/data/connector.ini:delegated
 "
 CMD="docker run -d $RUN_OPTIONS tangerine/python-tangerine-synapse-connector:local"
 
