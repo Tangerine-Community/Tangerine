@@ -12,6 +12,6 @@ RUN apt-get update && apt-get install -y vim
 RUN git clone https://github.com/ICTatRTI/synapse-span-table.git synapse_span_table
 
 #Add the connector Python script files
-ADD TangerineConnector.py /
+ADD SynapseConnector.py /
 
-ENTRYPOINT [ "python", "/TangerineConnector.py" ]
+ENTRYPOINT [ "python", "/SynapseConnector.py" ]
