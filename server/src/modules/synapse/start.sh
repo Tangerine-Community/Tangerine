@@ -14,6 +14,7 @@ T_CONTAINER_NAME="python-tangerine-synapse-connector"
 RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
   --link couchdb:couchdb \
+  --restart on-failure \
   --volume $(pwd)/connector.ini:/data/connector.ini:delegated \
   --volume $(pwd)/TangerineConnector.py:/TangerineConnector.py:delegated
 "
