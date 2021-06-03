@@ -19,7 +19,7 @@ from cloudant.result import Result, ResultByKey
 from itertools import islice
 
 from synapse_span_table.synapse_span_table import SynapseSpanTable
-MAX_NUMBER_OF_COLUMNS=20
+MAX_NUMBER_OF_COLUMNS=100
 MAX_STRING_LEN=200
 
 
