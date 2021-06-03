@@ -18,13 +18,15 @@ from cloudant.client import CouchDB
 from cloudant.result import Result, ResultByKey
 from itertools import islice
 
-from synapse_span_table.synapse_span_table import flexsert_span_table_record, install_span_table
+from synapse_span_table.synapse_span_table import SynapseSpanTable
 MAX_NUMBER_OF_COLUMNS=20
+MAX_STRING_LEN=200
 
 def log(msg) :
     print("{} - {}".format(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), msg))
 
 def save_entity(doc):
+    global synapse_span_table
     type = doc.get('type')
     data = {}
     if (isinstance(doc.get('data'), dict)) :
@@ -37,9 +39,11 @@ def save_entity(doc):
     for key in data.keys():
         cleanData[key.strip()] = data[key]
     data = cleanData
-    flexsert_span_table_record(syn, synProjectName, type, data, MAX_NUMBER_OF_COLUMNS)
+    synapse_span_table.flexsert_span_table_record(syn, synProjectName, type, data, MAX_NUMBER_OF_COLUMNS)
 
 def save_response(doc):
+    global synapse_span_table
+
     id = doc.get('_id')
     data = doc.get('data')
     data['id'] = id
@@ -48,7 +52,7 @@ def save_response(doc):
         cleanData[key.strip()] = data[key]
     data = cleanData
     formID = data.get('formId')
-    flexsert_span_table_record(syn, synProjectName, formID, data, MAX_NUMBER_OF_COLUMNS)
+    synapse_span_table.flexsert_span_table_record(syn, synProjectName, formID, data, MAX_NUMBER_OF_COLUMNS)
 
 def update_state(last_change_seq):
     config.set("TANGERINE","lastsequence",last_change_seq)
@@ -128,6 +132,6 @@ apiKey= config['SYNAPSE']['apiKey']
 syn.login(email=synUserName, apiKey=apiKey)
 project = syn.get(synProjectName)
 log('Installing Synapse Span Table')
-install_span_table(syn, synProjectName)
+synapse_span_table = SynapseSpanTable(syn, synProjectName, maxStringLength=MAX_STRING_LEN)
 log ('Starting with last sequence of ' + lastSequence)
 main_job(lastSequence)
