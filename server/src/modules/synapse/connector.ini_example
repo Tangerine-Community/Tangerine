@@ -1,10 +1,9 @@
 [TANGERINE]
-DatabaseURL = http://localhost:5984/
-DatabaseName = some-group-id--synapse-sanitized
-DatabaseUserName = admin
-DatabasePassword = test
-LastSequence = 0
-run_interval = 10
+databaseurl = http://localhost:5984/
+databasename = some-group-id--synapse-sanitized
+databaseusername = admin
+databasepassword = test
+lastsequence = 0
 
 [SYNAPSE]
 username = user@email.org
