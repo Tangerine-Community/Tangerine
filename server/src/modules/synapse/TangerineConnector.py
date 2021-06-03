@@ -55,11 +55,22 @@ def update_state(last_change_seq):
     with open(os.path.join(os.getcwd(), 'data', 'connector.ini'), 'w') as configfile:
         config.write(configfile)
 
-def main_job():
-    client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
-    session = client.session()
-    tangerine_database = client[dbName]
-    log('Logged into Tangerine database')
+def process_doc(doc) :
+    type = doc.get('type')
+    log("Processing type: " + type + ", id: " + id)
+    if (type.lower() == "response"):
+        save_response(doc)
+    elif type is not None :
+        save_entity(doc)
+    else:
+        log("Unexpected document type")
+ 
+def process_all_docs(tangerine_database) :
+    for documentInfo in tangerine_database :
+        doc = json.loads(documentInfo.json())
+        process_doc(doc)
+
+def process_changes(tangerine_database) :
     changes = tangerine_database.changes(feed='continuous',include_docs=True,descending=False,since=lastSequence)
     for change in changes:
         start_time = timeit.default_timer()
@@ -70,17 +81,24 @@ def main_job():
         if change.get('deleted'):
             continue
         doc = change.get('doc')
-        type = doc.get('type')
-        log("Processing type: " + type + ", id: " + id)
-        if (type.lower() == "response"):
-            save_response(doc)
-        elif type is not None :
-            save_entity(doc)
-        else:
-            log("Unexpected document type")
+        process_doc(doc)
         update_state(seq)
         end_time = timeit.default_timer()
         log('Processed change in ' + str(int(end_time - start_time)) + ' seconds')
+
+def main_job():
+    client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
+    session = client.session()
+    tangerine_database = client[dbName]
+    log('Logged into Tangerine database')
+    if lastSequence is '0':
+        lastSequence = get_last_change_seq()
+        log('Processing all docs with a stashed lastSequence of ' + lastSequence + '.')
+        process_all_docs(tangerine_database)
+        log('Successfully processed all docs. Saving state with lastSequence of ' + lastSequence + '.')
+        update_state(lastSequence)
+    log('Processing changes with lastSequence of ' + lastSequence + '.')
+    process_changes(tangerine_database)
 
 log('Loading configuration from connector.ini')
 config = configparser.ConfigParser()
