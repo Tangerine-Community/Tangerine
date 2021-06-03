@@ -56,6 +56,7 @@ def update_state(last_change_seq):
         config.write(configfile)
 
 def process_doc(doc) :
+    id = doc.get('_id')
     type = doc.get('type')
     log("Processing type: " + type + ", id: " + id)
     if (type.lower() == "response"):
@@ -69,6 +70,13 @@ def process_all_docs(tangerine_database) :
     for documentInfo in tangerine_database :
         doc = json.loads(documentInfo.json())
         process_doc(doc)
+
+def get_last_change_seq(db):
+    changes = db.changes(descending=False, since=0, limit=50)
+    for change in changes:
+        #do nothing
+        pass
+    return changes.last_seq
 
 def process_changes(tangerine_database) :
     changes = tangerine_database.changes(feed='continuous',include_docs=True,descending=False,since=lastSequence)
@@ -86,13 +94,13 @@ def process_changes(tangerine_database) :
         end_time = timeit.default_timer()
         log('Processed change in ' + str(int(end_time - start_time)) + ' seconds')
 
-def main_job():
+def main_job(lastSequence):
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
     session = client.session()
     tangerine_database = client[dbName]
     log('Logged into Tangerine database')
-    if lastSequence is '0':
-        lastSequence = get_last_change_seq()
+    if lastSequence == '0':
+        lastSequence = get_last_change_seq(tangerine_database)
         log('Processing all docs with a stashed lastSequence of ' + lastSequence + '.')
         process_all_docs(tangerine_database)
         log('Successfully processed all docs. Saving state with lastSequence of ' + lastSequence + '.')
@@ -122,4 +130,4 @@ project = syn.get(synProjectName)
 log('Installing Synapse Span Table')
 install_span_table(syn, synProjectName)
 log ('Starting with last sequence of ' + lastSequence)
-main_job()
+main_job(lastSequence)
