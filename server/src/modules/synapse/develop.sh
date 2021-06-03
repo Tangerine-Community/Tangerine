@@ -16,6 +16,7 @@ RUN_OPTIONS="
   --link couchdb:couchdb \
   --volume $(pwd)/connector.ini:/data/connector.ini:delegated \
   --volume $(pwd)/SynapseConnector.py:/SynapseConnector.py:delegated \
+  --volume $(pwd)/synapse_span_table:/synapse_span_table:delegated \
   --entrypoint=\"\"
 "
 CMD="docker run -it $RUN_OPTIONS tangerine/python-tangerine-synapse-connector:local bash"
