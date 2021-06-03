@@ -60,6 +60,7 @@ def update_state(last_change_seq):
         config.write(configfile)
 
 def process_doc(doc) :
+    start_time = timeit.default_timer()
     id = doc.get('_id')
     type = doc.get('type')
     log("Processing type: " + type + ", id: " + id)
@@ -69,6 +70,8 @@ def process_doc(doc) :
         save_entity(doc)
     else:
         log("Unexpected document type")
+    end_time = timeit.default_timer()
+    log('Processed doc in ' + str(int(end_time - start_time)) + ' seconds')
  
 def process_all_docs(tangerine_database) :
     for documentInfo in tangerine_database :
@@ -85,7 +88,6 @@ def get_last_change_seq(db):
 def process_changes(tangerine_database) :
     changes = tangerine_database.changes(feed='continuous',include_docs=True,descending=False,since=lastSequence)
     for change in changes:
-        start_time = timeit.default_timer()
         seq = change.get('seq')
         if seq :
             log('Processing sequence:' + seq)
@@ -95,8 +97,6 @@ def process_changes(tangerine_database) :
         doc = change.get('doc')
         process_doc(doc)
         update_state(seq)
-        end_time = timeit.default_timer()
-        log('Processed change in ' + str(int(end_time - start_time)) + ' seconds')
 
 def main_job(lastSequence):
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
