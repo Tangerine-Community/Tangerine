@@ -19,13 +19,10 @@ from cloudant.result import Result, ResultByKey
 from itertools import islice
 
 from synapse_span_table.synapse_span_table import flexsert_span_table_record, install_span_table
-MAX_NUMBER_OF_COLUMNS=20
+MAX_NUMBER_OF_COLUMNS=25
 
-import logging
-logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 def log(msg) :
-    #logging.info(msg) # Loging not flushing immediately.
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+ " - " + msg)
+    print("{} - {}").format(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), msg)
 
 def save_entity(doc):
     type = doc.get('type')
