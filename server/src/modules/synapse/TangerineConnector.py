@@ -19,7 +19,7 @@ from cloudant.result import Result, ResultByKey
 from itertools import islice
 
 from synapse_span_table.synapse_span_table import flexsert_span_table_record, install_span_table
-MAX_NUMBER_OF_COLUMNS=25
+MAX_NUMBER_OF_COLUMNS=20
 
 def log(msg) :
     print("{} - {}").format(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), msg)
