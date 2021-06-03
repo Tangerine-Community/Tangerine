@@ -98,7 +98,7 @@ def all_docs_mode(tangerine_database) :
         save_doc(doc)
 
 def changes_feed_mode(tangerine_database, lastSequence) :
-    changes = tangerine_database.changes(feed='continuous',include_docs=True,descending=False,since=lastSequence)
+    changes = tangerine_database.infinite_changes(include_docs=True, since=lastSequence)
     for change in changes:
         seq = change.get('seq')
         if seq :
