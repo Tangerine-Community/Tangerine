@@ -22,8 +22,29 @@ from synapse_span_table.synapse_span_table import SynapseSpanTable
 MAX_NUMBER_OF_COLUMNS=20
 MAX_STRING_LEN=200
 
+
+#
+# Helper functions
+# 
+
 def log(msg) :
     print("{} - {}".format(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), msg))
+
+def get_last_change_seq(db):
+    changes = db.changes(descending=False, since=0, limit=50)
+    for change in changes:
+        #do nothing
+        pass
+    return changes.last_seq
+
+def update_state(last_change_seq):
+    config.set("TANGERINE","lastsequence",last_change_seq)
+    with open(os.path.join(os.getcwd(), 'data', 'connector.ini'), 'w') as configfile:
+        config.write(configfile)
+
+#
+# Save functions
+#
 
 def save_entity(doc):
     global synapse_span_table
@@ -39,11 +60,10 @@ def save_entity(doc):
     for key in data.keys():
         cleanData[key.strip()] = data[key]
     data = cleanData
-    synapse_span_table.flexsert_span_table_record(syn, synProjectName, type, data, MAX_NUMBER_OF_COLUMNS)
+    synapse_span_table.flexsert_span_table_record(type, data, MAX_NUMBER_OF_COLUMNS)
 
 def save_response(doc):
     global synapse_span_table
-
     id = doc.get('_id')
     data = doc.get('data')
     data['id'] = id
@@ -52,14 +72,9 @@ def save_response(doc):
         cleanData[key.strip()] = data[key]
     data = cleanData
     formID = data.get('formId')
-    synapse_span_table.flexsert_span_table_record(syn, synProjectName, formID, data, MAX_NUMBER_OF_COLUMNS)
+    synapse_span_table.flexsert_span_table_record(formID, data, MAX_NUMBER_OF_COLUMNS)
 
-def update_state(last_change_seq):
-    config.set("TANGERINE","lastsequence",last_change_seq)
-    with open(os.path.join(os.getcwd(), 'data', 'connector.ini'), 'w') as configfile:
-        config.write(configfile)
-
-def process_doc(doc) :
+def save_doc(doc) :
     start_time = timeit.default_timer()
     id = doc.get('_id')
     type = doc.get('type')
@@ -72,20 +87,17 @@ def process_doc(doc) :
         log("Unexpected document type")
     end_time = timeit.default_timer()
     log('Processed doc in ' + str(int(end_time - start_time)) + ' seconds')
- 
-def process_all_docs(tangerine_database) :
+
+#
+# Mode functions
+#
+
+def all_docs_mode(tangerine_database) :
     for documentInfo in tangerine_database :
         doc = json.loads(documentInfo.json())
-        process_doc(doc)
+        save_doc(doc)
 
-def get_last_change_seq(db):
-    changes = db.changes(descending=False, since=0, limit=50)
-    for change in changes:
-        #do nothing
-        pass
-    return changes.last_seq
-
-def process_changes(tangerine_database) :
+def changes_feed_mode(tangerine_database, lastSequence) :
     changes = tangerine_database.changes(feed='continuous',include_docs=True,descending=False,since=lastSequence)
     for change in changes:
         seq = change.get('seq')
@@ -95,8 +107,12 @@ def process_changes(tangerine_database) :
         if change.get('deleted'):
             continue
         doc = change.get('doc')
-        process_doc(doc)
+        save_doc(doc)
         update_state(seq)
+
+#
+# Main job
+#
 
 def main_job(lastSequence):
     client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
@@ -106,11 +122,15 @@ def main_job(lastSequence):
     if lastSequence == '0':
         lastSequence = get_last_change_seq(tangerine_database)
         log('Processing all docs with a stashed lastSequence of ' + lastSequence + '.')
-        process_all_docs(tangerine_database)
+        all_docs_mode(tangerine_database)
         log('Successfully processed all docs. Saving state with lastSequence of ' + lastSequence + '.')
         update_state(lastSequence)
     log('Processing changes with lastSequence of ' + lastSequence + '.')
-    process_changes(tangerine_database)
+    changes_feed_mode(tangerine_database, lastSequence)
+
+#
+# Startup
+#
 
 log('Loading configuration from connector.ini')
 config = configparser.ConfigParser()
