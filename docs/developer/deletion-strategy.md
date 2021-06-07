@@ -60,3 +60,45 @@ http://localhost:5984/group-2627a0a7-852a-4f51-9d5d-b7ae53130976/6c27f5c8-6e08-4
 Potential steps:
 - Use the _changes example above to get a list of deleted docs on the server.
 - Process the results and use the pouchdb remove function on each doc/rev.
+
+## Restoring deleted documents
+
+Get the revs for the deleted doc:
+
+```shell
+curl -H 'Accept: application/json' 'http://server:5984/group-b30f9a83-8346-4d51-98d6-6222512b26b2-devices/6013f414-6401-4903-b0f9-fb862779cc3f?revs=true&open_revs=all'
+```
+
+Command returns:
+
+
+```json
+{
+  "_id": "6013f414-6401-4903-b0f9-fb862779cc3f",
+  "_rev": "4-46fb2d064595bb6b2068b20450f2a3f9",
+  "_deleted": true,
+  "_revisions": {
+    "start": 4,
+    "ids": [
+      "46fb2d064595bb6b2068b20450f2a3f9",
+      "59e68396a5b632f62e3ab3930dda3d45",
+      "09463546fcf1177408821fccada40269",
+      "e3af953eab52ed5f3d56c9f57fdeb2f9"
+    ]
+  }
+}
+```
+
+Get the previous rev id by subtracting 1 from the _revisions.start property and appending the value of the second element in the _revisions.id array:
+
+Result should be `3-59e68396a5b632f62e3ab3930dda3d45`
+
+Now query the server for that _rev:
+
+http://server/group-b30f9a83-8346-4d51-98d6-6222512b26b2-devices/6013f414-6401-4903-b0f9-fb862779cc3f?rev=3-59e68396a5b632f62e3ab3930dda3d45
+
+To overwrite the old deleted entry you have to post or put back the document with the correct id and the latest revision number (not the pre delete revision number, but the revision number the document has now it has been deleted).
+
+An easier way to do this is to use the COPY command:
+
+curl -X COPY "server:5984/group-b30f9a83-8346-4d51-98d6-6222512b26b2-devices/6013f414-6401-4903-b0f9-fb862779cc3f?rev=3-59e68396a5b632f62e3ab3930dda3d45" -H "Destination: 6013f414-6401-4903-b0f9-fb862779cc3f"
