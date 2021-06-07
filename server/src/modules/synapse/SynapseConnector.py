@@ -19,10 +19,10 @@ from cloudant.result import Result, ResultByKey
 from itertools import islice
 
 from synapse_span_table.synapse_span_table import SynapseSpanTable
-MAX_NUMBER_OF_COLUMNS=100
+MAX_NUMBER_OF_COLUMNS=152
 MAX_STRING_LEN=50
 QUEUE_DOCS=True
-DOC_FLUSH_COUNT=50
+DOC_FLUSH_COUNT=25
 TABLE_PREFIX=''
 
 #
@@ -178,7 +178,7 @@ syn = synapseclient.Synapse()
 synProjectName= config['SYNAPSE']['ProjectName']
 synUserName= config['SYNAPSE']['UserName']
 apiKey= config['SYNAPSE']['apiKey']
-TABLE_PREFIX = config['SYNAPSE'['tablePrefix']]
+TABLE_PREFIX = config['SYNAPSE']['tablePrefix']
 syn.login(email=synUserName, apiKey=apiKey)
 project = syn.get(synProjectName)
 log('Installing Synapse Span Table')
