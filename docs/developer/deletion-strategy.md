@@ -4,7 +4,7 @@
 
 Our goal is to have deletions on the client to follow deletions on the server. Sadly, this is not possible yet. For now, we will focus on deleting data on the server.
 
-## Deleting a record in Tangerine
+## Deleting a record in Tangerine manually
 
 Open the document in Fauxton. Click the "Delete" button on the right hand side of the header to delete. This will create a bare-bones document that includes the _deleted" flag. By default, deleted docs are not included in replication; however, there is a way to query them (see below).
 
@@ -63,6 +63,15 @@ Potential steps:
 
 ## Restoring deleted documents
 
+### Using couchdb-wedge
+Using the `restore-deleted-doc` command from couchdb-wedge, we can give it a URL, db, and docId to restore.
+
+```
+npm install -g couchdb-wedge
+wedge restore-deleted-doc --url http://username:password@source-server.com:5984 --db my-db --docId 1234
+```
+
+### Using curl
 Get the revs for the deleted doc:
 
 ```shell
