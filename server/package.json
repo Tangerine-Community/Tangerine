@@ -13,6 +13,7 @@
     "reporting-worker-unpause": "./src/scripts/reporting-worker-unpause.sh",
     "reporting-worker-pause": "./src/scripts/reporting-worker-pause.sh",
     "create-group": "./src/scripts/create-group/bin.js",
+    "create-group-content": "./src/scripts/create-group-content/bin.js",
     "generate-csv": "./src/scripts/generate-csv/bin.js",
     "generate-uploads": "./src/scripts/generate-uploads/bin.js",
     "generate-cases": "./src/scripts/generate-cases/bin.js",
