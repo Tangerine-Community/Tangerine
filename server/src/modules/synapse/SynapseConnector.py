@@ -21,8 +21,9 @@ from itertools import islice
 from synapse_span_table.synapse_span_table import SynapseSpanTable
 MAX_NUMBER_OF_COLUMNS=152
 MAX_STRING_LEN=50
-QUEUE_DOCS=True
-DOC_FLUSH_COUNT=25
+QUEUE_DOCS=False
+DOC_FETCH_COUNT=100
+DOC_FLUSH_COUNT=500000
 TABLE_PREFIX=''
 
 #
@@ -33,16 +34,28 @@ def log(msg):
     print("{} - {}".format(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), msg))
 
 def get_last_change_seq(db):
-    changes = db.changes(descending=False, since=0, limit=50)
+    last_seq = 0
+    changes = db.changes(descending=True)
     for change in changes:
-        #do nothing
-        pass
-    return changes.last_seq
+        last_seq = change['seq']
+        changes.stop()
+    return last_seq
 
 def update_state(last_change_seq):
     config.set("TANGERINE","lastsequence",last_change_seq)
     with open(os.path.join(os.getcwd(), 'data', 'connector.ini'), 'w') as configfile:
         config.write(configfile)
+
+def update_doc_state(skip):
+    config.set("TANGERINE", "skip", str(skip))
+    with open(os.path.join(os.getcwd(), 'data', 'connector.ini'), 'w') as configfile:
+        config.write(configfile)
+
+def get_doc_state():
+    try:
+        return int(config.get("TANGERINE", "skip"))
+    except configparser.NoOptionError:
+        return 0
 
 #
 # Save functions
@@ -73,7 +86,7 @@ def save_entity(doc):
     if QUEUE_DOCS:
         synapse_span_table.queue_span_table_record(tableName, data)
     else:
-        synapse_span_table.flexsert_span_table_record(tableName, data, MAX_NUMBER_OF_COLUMNS)
+        synapse_span_table.flexsert_span_table_record(tableName, data)
 
 def save_response(doc):
     global synapse_span_table
@@ -85,48 +98,86 @@ def save_response(doc):
         cleanData[key.strip()] = data[key]
     data = cleanData
     formID = data.get('formId')
+
+    if formID == 'mnh_neonatal_vaccination':
+        return
+    
     tableName = TABLE_PREFIX + formID
     if QUEUE_DOCS:
         synapse_span_table.queue_span_table_record(tableName, data)
     else:
-        synapse_span_table.flexsert_span_table_record(tableName, data, MAX_NUMBER_OF_COLUMNS)
+        synapse_span_table.flexsert_span_table_record(tableName, data)
 
 def save_doc(doc):
-    start_time = timeit.default_timer()
     id = doc.get('_id')
-    type = doc.get('type')
-    log("Processing type: " + type + ", id: " + id)
-    if (type.lower() == "response"):
-        save_response(doc)
-    elif type is not None:
-        save_entity(doc)
+    doc_type = doc.get('type')
+    if doc_type is not None:
+        # log("Processing type: " + doc_type + ", id: " + id)
+        if (doc_type.lower() == "response"):
+            save_response(doc)
+        else:
+            save_entity(doc)
     else:
         log("Unexpected document type")
-    end_time = timeit.default_timer()
-    log('Processed doc in ' + str(int(end_time - start_time)) + ' seconds')
 
 #
 # Mode functions
 #
 
-def all_docs_mode(tangerine_database):
-    QUEUE_DOCS = True
-    cnt = 0
+class CouchDBConnectError(Exception):
+    pass
+
+def couchdb_connect():
     try:
-        for documentInfo in tangerine_database:
-            doc = json.loads(documentInfo.json())
-            save_doc(doc)
-            cnt = cnt + 1
-            if cnt % DOC_FLUSH_COUNT == 0:
-                log('Flushing docs')
-                start_time = timeit.default_timer()
-                synapse_span_table.flush_span_tables()
-                end_time = timeit.default_timer()
-                log('Flushed docs in ' + str(int(end_time - start_time)) + ' seconds')
-    except requests.HTTPError as exception:
-        log('HTTPError while parsing all docs: %s' % exception)
+        client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
+        session = client.session()
+        return client[dbName]
+    except:
+        raise CouchDBConnectError
+
+def all_docs_mode():
+    global QUEUE_DOCS
+    QUEUE_DOCS = True
+
+    complete = False
+    try:
+        while not complete:
+            tangerine_database = couchdb_connect()
+            skip = get_doc_state()
+
+            start_time = timeit.default_timer()
+            docs = tangerine_database.all_docs(include_docs=True, skip=skip, limit=DOC_FETCH_COUNT)
+            rows = docs.get('rows', [])
+            log('Queuing docs %d to %d' % (skip, skip + len(rows)))
+            for row in rows:
+                doc_id = row.get('id')
+                doc = row.get('doc')
+                save_doc(doc)
+            end_time = timeit.default_timer()
+            log('Queued %d docs in %d seconds' % (len(rows), int(end_time - start_time)))
+
+            if len(rows) < DOC_FETCH_COUNT:
+                complete = True
+                break
+
+            skip = skip + len(rows)
+            update_doc_state(skip)
+
+    except CouchDBConnectError:
+        pass
+    finally:
+        log(str('Flushing remaining docs'))
+        start_time = timeit.default_timer()
+        synapse_span_table.flush_span_tables()
+        end_time = timeit.default_timer()
+        log('Flushed docs in ' + str(int(end_time - start_time)) + ' seconds')
+
+    return complete
+
 
 def changes_feed_mode(tangerine_database, lastSequence):
+    global QUEUE_DOCS 
+    QUEUE_DOCS = False
     changes = tangerine_database.infinite_changes(include_docs=True, since=lastSequence)
     for change in changes:
         seq = change.get('seq')
@@ -149,11 +200,12 @@ def main_job(lastSequence):
     tangerine_database = client[dbName]
     log('Logged into Tangerine database')
     if lastSequence == '0':
-        log('Processing all docs with a stashed lastSequence of ' + lastSequence + '.')
-        lastSequence = get_last_change_seq(tangerine_database)
-        all_docs_mode(tangerine_database)
-        log('Successfully processed all docs. Saving state with lastSequence of ' + lastSequence + '.')
-        update_state(lastSequence)
+        log('Processing all docs.')
+        if all_docs_mode():
+            log('Successfully processed all docs.')
+            lastSequence = get_last_change_seq(tangerine_database)
+            log('Saving state with lastSequence of ' + lastSequence + '.')
+            update_state(lastSequence)
     log('Processing changes with lastSequence of ' + lastSequence + '.')
     changes_feed_mode(tangerine_database, lastSequence)
 
@@ -182,6 +234,8 @@ TABLE_PREFIX = config['SYNAPSE']['tablePrefix']
 syn.login(email=synUserName, apiKey=apiKey)
 project = syn.get(synProjectName)
 log('Installing Synapse Span Table')
-synapse_span_table = SynapseSpanTable(syn, synProjectName, maxStringLength=MAX_STRING_LEN)
+synapse_span_table = SynapseSpanTable(syn, synProjectName, 
+                                      columnLimit=MAX_NUMBER_OF_COLUMNS, 
+                                      maxStringLength=MAX_STRING_LEN)
 log ('Starting with last sequence of ' + lastSequence)
 main_job(lastSequence)
