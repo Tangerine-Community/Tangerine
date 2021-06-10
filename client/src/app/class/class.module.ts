@@ -64,3 +64,4 @@ import {UserService} from '../shared/_services/user.service';
   }]
 })
 export class ClassModule { }
+
