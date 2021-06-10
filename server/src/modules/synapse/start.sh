@@ -4,7 +4,8 @@
 # Start container.
 #
 
-docker build -t tangerine/python-tangerine-synapse-connector:local .
+# add --no-cache so the synapse_span_table library is cloned and fetched each run
+docker build --no-cache -t tangerine/python-tangerine-synapse-connector:local .
 
 T_CONTAINER_NAME="python-tangerine-synapse-connector"
 
