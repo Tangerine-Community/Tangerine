@@ -172,17 +172,18 @@ export class DashboardService {
 
       // usingScorefield can be useful to determine if we need to manually calculate the score.
       if (form) {
-        usingScorefield = item.inputs.find(input => input.name === form['id'] + '_score');
+        usingScorefield = item.inputs.find(input => input && input.name === form['id'] + '_score');
       }
 
       // populate value, score, max, and totalMax
 
       item.inputs.forEach(input => {
         // inputs = [...inputs, ...input.value]
-          const data = {};
+        const data = {};
+        let value;
+        let max: number = null;
+        if (input) {
           const valueField = input.value;
-          let value;
-          let max: number = null;
           if (input.tagName === 'TANGY-INPUT') {
             if (typeof input.max !== 'undefined' && input.max !== '') {
               max = parseFloat(input.max);
@@ -191,7 +192,7 @@ export class DashboardService {
                 totalMax = totalMax + max;
               }
             }
-          } else  if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+          } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
             valueField.forEach(option => {
               const optionValue = parseFloat(option.name);
               if (option.value !== '') {
@@ -200,14 +201,14 @@ export class DashboardService {
               if (optionValue > max) {
                 max = optionValue;
               }
-              totalMax =  totalMax + max;
+              totalMax = totalMax + max;
             });
-          } else  if (input.tagName === 'TANGY-CHECKBOX') {
+          } else if (input.tagName === 'TANGY-CHECKBOX') {
             if (input.value !== '') {
               value = 1;
             }
             ++totalMax;
-          } else  if (input.tagName === 'TANGY-CHECKBOXES') {
+          } else if (input.tagName === 'TANGY-CHECKBOXES') {
             valueField.forEach(option => {
               const optionValue = parseFloat(option.name);
               if (option.value !== '') {
@@ -218,9 +219,9 @@ export class DashboardService {
               }
               totalMax = totalMax + max;
             });
-          } else  if (input.tagName === 'TANGY-BOX') {
+          } else if (input.tagName === 'TANGY-BOX') {
             // ignore
-          } else  if (input.tagName.includes('WIDGET')) {
+          } else if (input.tagName.includes('WIDGET')) {
             // ignore
           } else {
             if (input.value !== '') {
@@ -229,10 +230,10 @@ export class DashboardService {
             totalMax = ++totalMax;
           }
           data[input.name] = value;
-
-          data['score'] = score;
-          data['max'] = max;
-          answeredQuestions.push(data);
+        }
+        data['score'] = score;
+        data['max'] = max;
+        answeredQuestions.push(data);
       });
 
       if (usingScorefield) {

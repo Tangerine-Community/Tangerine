@@ -7,6 +7,7 @@ import {ClassFormService} from '../_services/class-form.service';
 import {ClassUtils} from '../class-utils.js';
 import {DashboardService} from '../_services/dashboard.service';
 import {_TRANSLATE} from '../../shared/translation-marker';
+import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds));
 
@@ -27,6 +28,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
   classUtils: ClassUtils;
   viewRecord = false;
   @ViewChild('container', {static: true}) container: ElementRef;
+  curriculumFormsList: any[];
 
   constructor(
     private route: ActivatedRoute,
@@ -39,6 +41,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
   ) { }
 
   async ngAfterContentInit() {
+
     this.route.queryParams.subscribe(async params => {
       this.classUtils = new ClassUtils();
       this.responseId = params['responseId'];
@@ -51,53 +54,59 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
         // this is student reg or class reg.
         this.formId = this.curriculum;
       }
-      const appConfig = await this.appConfigService.getAppConfig();
-      const userDbName = await this.userService.getUserDatabase();
+      // const appConfig = await this.appConfigService.getAppConfig();
+      // const userDbName = await this.userService.getUserDatabase();
       let formResponse;
       if (typeof this.studentId !== 'undefined') {
         if (typeof this.responseId === 'undefined') {
           // This is either a new subtest or from a stale dashboard, so check using the curriculum and student id
           const responses = await this.classFormService.getResponsesByStudentId(this.studentId);
           for (const response of responses as any[] ) {
-            const resp = this.getInputValues(response.doc);
+            // const resp = this.getInputValues(response.doc);
             const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
             const respCurrId = response.doc.form.id;
             if (respClassId === this.classId && respCurrId === this.curriculum) {
-              formResponse = response.doc;
+              formResponse = new TangyFormResponseModel(response.doc);
             }
           }
         } else {
-          formResponse = await this.classFormService.getResponse(this.responseId);
+          formResponse = new TangyFormResponseModel(await this.classFormService.getResponse(this.responseId));
         }
       }
 
       // enable the requested subform to be viewed
       const container = this.container.nativeElement;
       const formHtml = await this.http.get('./assets/' + this.curriculum + '/form.html', {responseType: 'text'}).toPromise();
-      const curriculumFormsList = await this.classUtils.createCurriculumFormsList(formHtml);
+      this.curriculumFormsList = await this.classUtils.createCurriculumFormsList(formHtml);
       container.innerHTML = formHtml;
       // let formItems = container.querySelectorAll('tangy-form-item')
-      const itemsToDisable = [];
-      // disable all tangy-form-items except for the one you want to view.
-      for (const el of curriculumFormsList) {
-        if (el['id'] !== this.formId) {
-          itemsToDisable.push(el['id']);
-          container.querySelector('#' + el['id']).disabled = true;
-        }
-      }
-      if (typeof formResponse !== 'undefined') {
-        formResponse.items = formResponse.items.map(item => {
-          if (itemsToDisable.includes(item.id)) {
-            return Object.assign({}, item, {disabled: true});
-          } else {
-            return Object.assign({}, item, {disabled: false});
-          }
-        });
-      }
-
+      
       const formEl = container.querySelector('tangy-form');
+      
+      // add next events
+      formEl.querySelectorAll('tangy-form-item').forEach((el) => {
+        // if (el['id'] !== this.formId) {
+        //   // container.querySelector('#' + el['id']).disabled = true;
+        //   // el.setAttribute('disabled', true)
+        //   return Object.assign({}, el, {disabled: true});
+        // } else {
+        //   return Object.assign({}, el, {disabled: false});
+        // }
+      })
+
+      // formEl.addEventListener('FORM_RESPONSE_COMPLETE', async (event) => {
+      //   await this.saveClassResponse(event, formEl, formResponse);
+      // })
+
+      formEl.addEventListener('ITEM_NEXT', async (event) => {
+        await this.saveClassResponse(event, formEl, formResponse);
+      })
+      
       // Put a response in the store by issuing the FORM_OPEN action.
       if (formResponse) {
+        let updatedItems = this.updateFormItems(formEl, formResponse);
+        formResponse.items = updatedItems
+        this.disableFormItems(formResponse);
         formEl.response = formResponse;
         if (this.viewRecord) {
           formEl.enableItemReadOnly();
@@ -106,26 +115,145 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       } else {
         // formEl.store.dispatch({ type: 'FORM_OPEN', response: {} })
         formEl.newResponse();
+        const response = formEl.response;
+        this.disableFormItems(response);
       }
 
-      formEl.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const response = formEl.response;
-        if (!formResponse) {
-          if (response.form.id !== 'student-registration' && response.form.id !== 'class-registration') {
-            const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
-            const srValues = this.getInputValues(studentRegistrationDoc);
-            srValues['id'] = this.studentId;
-            response.metadata = {'studentRegistrationDoc': srValues};
-          }
+      // formEl.addEventListener('submit', async (event) => {
+      //   // event.preventDefault() - this prevents locking of form
+      //   event.preventDefault(); 
+      //   const response = formEl.response;
+      //   if (!formResponse) {
+      //     if (response.form.id !== 'student-registration' && response.form.id !== 'class-registration') {
+      //       const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
+      //       const srValues = this.getInputValues(studentRegistrationDoc);
+      //       srValues['id'] = this.studentId;
+      //       response.metadata = {'studentRegistrationDoc': srValues};
+      //     }
+      //   // } else {
+      //   //   let updatedItems = this.updateFormItems(formEl, formResponse);
+      //   //   response.items = updatedItems
+      //   }
+      //   this.throttledSaveResponse(response);
+      //   this.router.navigate(['dashboard']);
+      // });
+    });
+  }
+  
+  async saveClassResponse(event, formEl, formResponse) {
+    // event.preventDefault() - this prevents locking of form
+    event.preventDefault();
+    const response = formEl.response;
+    // TODO: check that all form-items are complete.
+    // TODO can we use unlock() somehow to unlock incomplete form-items?
+    // try formEl.unlock()
+    if (!formResponse) {
+      if (response.form.id !== 'student-registration' && response.form.id !== 'class-registration') {
+        const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
+        const srValues = this.getInputValues(studentRegistrationDoc);
+        srValues['id'] = this.studentId;
+        response.metadata = {'studentRegistrationDoc': srValues};
+      }
+      // } else {
+      //   let updatedItems = this.updateFormItems(formEl, formResponse);
+      //   response.items = updatedItems
+    }
+    // loop through response and unset the iputs disabled property
+    // props.inputs = response.items.inputs.map(input => {
+    //   if (input.tagName === 'TANGY-TIMED') {
+    //     return Object.assign({}, input, {disabled: true, mode: 'TANGY_TIMED_MODE_DISABLED'})
+    //   } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
+    //     return Object.assign({}, input, {disabled: true, mode: 'TANGY_UNTIMED_GRID_MODE_DISABLED'})
+    //   } else {
+    //     return Object.assign({}, input, {disabled: true})
+    //   }
+    // })
+    await this.throttledSaveResponse(response);
+    await this.router.navigate(['dashboard']);
+  }
+
+  private  disableFormItems(response) {
+    response.items = response.items.map(item => {
+      // Filter out empty inputs.
+      const modifiedInputs = item.inputs.filter(input => {
+        if (input) {
+          return input
         }
-        this.throttledSaveResponse(response);
-        this.router.navigate(['dashboard']);
-      });
+      })
+      item.inputs = modifiedInputs
+      const itemsToDisable = [];
+      // disable all tangy-form-items except for the one you want to view.
+      for (const el of this.curriculumFormsList) {
+        if (el['id'] !== this.formId) {
+          itemsToDisable.push(el['id']);
+          // container.querySelector('#' + el['id']).disabled = true;
+        }
+      }
+      // if (itemsToDisable.includes(item.id)) {
+      //   return Object.assign({}, item, {disabled: true});
+      // } else {
+      //   return Object.assign({}, item, {disabled: false});
+      // }
     });
   }
 
-  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
+  /**
+   * Compare current items in formResponse with potentially updated items in formHtml
+   * @param formEl
+   * @param formResponse
+   * @private
+   */
+  private updateFormItems(formEl, formResponse) {
+    let formItems = []
+    // const tangyFormItems = formEl.querySelectorAll('tangy-form-item')
+    for (let formItem of this.curriculumFormsList) {
+      // formItems.push(formItem.getProps())
+      formItems.push(formItem)
+    }
+    // updatedItems only contains updated items. No support for re-named items.
+    let updatedItems = []
+    for (let formItem of formItems) {
+      let foundResponseItem
+      if (formResponse) {
+        foundResponseItem = formResponse.items.find(responseItem => {
+          if (responseItem.id === formItem.id) {
+            return responseItem
+          }
+        })
+      }
+      if (foundResponseItem) {
+        // copy all responseItem inputs to the formItem's inputs
+        // First copy all foundResponseItem.inputs whose id's match formItem.inputs
+        const foundResponseInputs = foundResponseItem.inputs
+        // const formItemInputs = formItem.inputs
+        const formItemInputs = formItem.children
+        const combinedInputs = formItemInputs.map((formInput) => {
+          const foundResponseInput = foundResponseInputs.find(responseInput => responseInput.name === formInput.name)
+          if (foundResponseInput) {
+            return foundResponseInput
+          } else {
+            return formInput
+          }
+        });
+        // Next, add any foundResponseItem.inputs that are missing from combinedInputs
+        let missingInputs = []
+        formItemInputs.forEach((formInput) => {
+          const foundFormItemInput = combinedInputs.find(combinedInput => combinedInput.name === formInput.name)
+          if (!foundFormItemInput) {
+            missingInputs.push(formInput) 
+          }
+        });
+        const mergedInputs = [...combinedInputs, ...missingInputs]
+        foundResponseItem.inputs = mergedInputs
+        updatedItems.push(foundResponseItem)
+      } else {
+        updatedItems.push(formItem)
+      }
+    }
+    return updatedItems;
+  }
+
+// Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
   // Everything else in between we can ignore.
   async throttledSaveResponse(response) {
     // If already loaded, return.
@@ -160,6 +288,9 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     newStateDoc.items = newStateDoc.items.map(item => {
       return item;
     });
+    //unset any complete flag
+    // TODO: Make sure that there is at least one incomplete form-item.
+    delete(newStateDoc.complete)
     await this.classFormService.saveResponse(newStateDoc);
   }
 
@@ -167,9 +298,10 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     const inputs = doc.items.reduce((acc, item) => [...acc, ...item.inputs], []);
     const obj = {};
     for (const el of inputs) {
-      const attrs = inputs.attributes;
       for (let i = inputs.length - 1; i >= 0; i--) {
-        obj[inputs[i].name] = inputs[i].value;
+        if (typeof inputs[i] !== 'undefined') {
+          obj[inputs[i].name] = inputs[i].value;
+        }
       }
     }
     return obj;
