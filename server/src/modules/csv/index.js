@@ -46,11 +46,12 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
         try {
           const {doc, sourceDb} = data
+          const groupId = sourceDb.name
           if (doc.type !== 'issue') {
             // TODO: Can't this be cached?
             const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
   
-            let flatResponse = await generateFlatResponse(doc, locationList, false);
+            let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
             // Process the flatResponse
             // @TODO Rename `-reporting` to `-csv`.
             let REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
@@ -66,7 +67,7 @@ module.exports = {
             await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
   
             // Repeat the flattening in order to deliver sanitized (non-PII) output
-            flatResponse = await generateFlatResponse(doc, locationList, true);
+            flatResponse = await generateFlatResponse(doc, locationList, true, groupId);
             // Process the flatResponse
             // @TODO Rename `-reporting` to `-csv`.
             REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
@@ -103,7 +104,7 @@ module.exports = {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList, sanitized) {
+const generateFlatResponse = async function (formResponse, locationList, sanitized, groupId) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
@@ -198,7 +199,12 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
           )
         } else if (input.tagName === 'TANGY-SIGNATURE') {
           set(input, `${formID}.${item.id}.${input.name}`, input.value
-              ? "signature captured"
+              ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
+              : ""
+          )         
+        } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
         } else if (input.tagName === 'TANGY-TIMED') {
@@ -381,7 +387,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
           // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
           try {
             let userProfileDocOriginal = await sourceDb.get(userProfileId)
-            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false);
+            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false, sourceDb.name);
           } catch (e) {
             console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
           }
