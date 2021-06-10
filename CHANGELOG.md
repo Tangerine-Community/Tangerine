@@ -1,5 +1,32 @@
 # Changelog
 
+## v3.17.11
+- Added support for custom update scripts for each group. Add either a before-custom-updates.js or after-custom-updates.js to the root of your content depending on when you wish the script to run. Script needs to return a Promise. See Issue [2741](https://github.com/Tangerine-Community/Tangerine/issues/2741) for script example. PR: [#2742](https://github.com/Tangerine-Community/Tangerine/pull/2742)
+- Add support for filtering PII variables on Case Participant data and Event Form data in Synapse caches. List the variable names in your group's content folder `reporting-config.json`. For example: `{ "pii": ["foo_variable"] }`. This config was previously stored in the groups database.
+- Fixed bug that prevented rewind sync from working.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.11
+./start.sh v3.17.11
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.10
+```
+
 ## v3.17.10
 - Skip optimizing sync-queue, sync-conflicts, and tangy-form views after Sync Protocol 2 sync completes.
 - Using `T.case.load()` in a form? This release fixes a bug where EventForm.formResponseId would be not set when submitting forms in cases where a form has loaded a different case and then the save case back again thus detaching the memory reference being previously set.

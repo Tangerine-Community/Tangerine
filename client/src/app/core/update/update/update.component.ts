@@ -44,6 +44,25 @@ export class UpdateComponent implements AfterContentInit {
     this.updateService.status$.subscribe({next: message => {
       this.message = message
     }})
+    let beforeCustomUpdates, afterCustomUpdates
+    try {
+      beforeCustomUpdates = await this.updateService.getBeforeCustomUpdates()
+    } catch (e) {
+    }
+    try {
+      afterCustomUpdates = await this.updateService.getAfterCustomUpdates()
+    } catch (e) {
+    }
+    
+    if (beforeCustomUpdates) {
+      // TODO: support pre-flight and progress of update
+      try {
+        await this.updateService.runCustomUpdatesBefore(beforeCustomUpdates)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
+    }
+
 
     /*
      * SP1
@@ -87,7 +106,16 @@ export class UpdateComponent implements AfterContentInit {
       await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
       await this.deviceService.didUpdate()
       this.message = _TRANSLATE('✓ Yay! You are up to date.')
-    } 
+    }
+    
+    if (afterCustomUpdates) {
+      // TODO: support pre-flight and progress of update
+      try {
+        await this.updateService.runCustomUpdatesAfter(afterCustomUpdates)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
+    }
 
     /*
      * Show the button to proceed.
