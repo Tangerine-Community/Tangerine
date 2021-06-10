@@ -210,5 +210,30 @@ export class UpdateService {
   async setCurrentUpdateIndex(index) {
     await this.variableService.set(VAR_CURRENT_UPDATE_INDEX, index)
   }
-
+  
+  async getBeforeCustomUpdates() {
+    const customUpdates =<any> await this.http.get('./assets/before-custom-updates.js', {responseType: 'text'}).toPromise()
+    return customUpdates
+  }
+  
+  async getAfterCustomUpdates() {
+    const customUpdates =<any> await this.http.get('./assets/after-custom-updates.js', {responseType: 'text'}).toPromise()
+    return customUpdates
+  }
+  
+  async runCustomUpdatesBefore(customUpdates) {
+    this.status$.next(_TRANSLATE(`Applying Custom Update before Main Updates. `))
+    // TODO capture output of script and pass up to the component
+    await eval("(async () => {" + customUpdates + "})()")
+    this.status$.next(_TRANSLATE(`Finished Custom Update before Main Updates. `))
+  }
+  
+  async runCustomUpdatesAfter(customUpdates) {
+    this.status$.next(_TRANSLATE(`Applying Custom Update after Main Updates. `))
+    // TODO capture output of script and pass up to the component
+    eval(`(() => {${customUpdates}})()`).then(function() {
+      this.status$.next(_TRANSLATE(`Finished Custom Update after Main Updates. `))
+      console.log("done");
+    });
+  }
 }
