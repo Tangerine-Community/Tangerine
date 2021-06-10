@@ -87,6 +87,8 @@ export class SyncCouchdbService {
     isFirstSync = false,
     fullSync?:SyncDirection
   ): Promise<ReplicationStatus> {
+    // set fullSync
+    this.fullSync = fullSync
     // Prepare config.
     const appConfig = await this.appConfigService.getAppConfig()
     this.batchSize = appConfig.batchSize || this.batchSize
