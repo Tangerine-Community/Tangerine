@@ -60,7 +60,7 @@ export class SyncService {
   cancel() {
     this.syncCouchdbService.cancel()
   }
-  
+
   async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
@@ -81,6 +81,7 @@ export class SyncService {
 
     this.syncCouchdbServiceStartTime = new Date().toISOString()
 
+    console.time('*** time syncCouchdbService')
     this.replicationStatus = await this.syncCouchdbService.sync(
       userDb,
       <SyncCouchdbDetails>{
@@ -96,14 +97,15 @@ export class SyncService {
       fullSync
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
+    console.timeEnd('*** time syncCouchdbService')
 
     /**
      * Calculating Sync stats
      */
-    
+
     if (fullSync) {
       this.replicationStatus.fullSync = fullSync
-    } 
+    }
     this.syncCouchdbServiceEndime = new Date().toISOString()
 
     if (appConfig.calculateLocalDocsForLocation) {
@@ -127,18 +129,18 @@ export class SyncService {
       this.syncMessage$.next({
         message: window['t']('Sending sync status to server. Please wait...')
       })
-      
+
       await this.deviceService.didSync(this.replicationStatus)
     } catch (e) {
       this.syncMessage$.next({message: window['t']('Error sending sync status to server: ' + e)})
       console.log("Error: " + e)
     }
-    
+
     if (
       isFirstSync ||
       (!isFirstSync && !appConfig.indexViewsOnlyOnFirstSync)
     ) {
-      this.syncMessage$.next({ 
+      this.syncMessage$.next({
         message: window['t']('Optimizing data. This may take several minutes. Please wait...'),
         remaining: null
       })
@@ -165,11 +167,11 @@ export class SyncService {
   }
 
   async calculateLocalDocsForLocation(appConfig: AppConfig, userDb: UserDatabase, formInfos: Array<FormInfo>) {
-    
+
     this.syncMessage$.next({
       message: window['t']('Sync is complete; calculating sync statistics. Please wait...')
     })
-    
+
     let formStats
 
       try {
@@ -183,7 +185,7 @@ export class SyncService {
           await this.createSyncFormIndex()
           await this.variableService.set('ran-update-v3.16.3', 'true')
         }
-        
+
         const r = await userDb.query('sync-formids')
         if (!await this.variableService.get('first-index-for-sync-formids')) {
           await this.variableService.set('first-index-for-sync-formids', 'true')
@@ -215,7 +217,7 @@ export class SyncService {
     ]
     const db = await this.userService.getUserDatabase()
     console.time('*** time db.allDocs _design/')
-    const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
+    const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true})
     console.timeEnd('*** time db.allDocs _design/')
 
     console.log(`Indexing ${result.rows.length} views.`)
@@ -225,18 +227,18 @@ export class SyncService {
       this.syncMessage$.next({ indexing: (progress) })
     })
     console.timeEnd('*** time indexing progress')
-    
+
     let i = 0
     for (let row of result.rows) {
       if (row.doc.views) {
-        console.time('*** time indexing viewpath')
         for (let viewId in row.doc.views) {
           const viewPath = `${row.doc._id.replace('_design/', '')}/${viewId}`
           if (!exclude.includes(viewPath)) {
             console.log(`Indexing: ${viewPath}`)
+            console.time(`*** time indexing viewpath: ${viewPath}`)
             await db.query(viewPath, { limit: 1 })
+            console.timeEnd(`*** time indexing viewpath: ${viewPath}`)
           }
-        console.timeEnd('*** time indexing viewpath')
         }
       }
       this.syncMessage$.next({ message: `${window['t']('Optimizing data. Please wait...')} ${Math.round((i/result.rows.length)*100)}%` })
@@ -264,7 +266,7 @@ export class SyncService {
    * @param direction
    */
   async compareDocs(direction: string):Promise<ReplicationStatus> {
-    
+
     let status = <ReplicationStatus>{
       pulled: 0,
       pullConflicts: [],
@@ -272,7 +274,7 @@ export class SyncService {
       remaining: 0,
       direction: ''
     }
-    
+
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.batchSize) {
       this.batchSize = appConfig.batchSize
@@ -292,7 +294,7 @@ export class SyncService {
     this.compareDocsStartTime = new Date().toISOString()
 
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
-    
+
     const syncDetails: SyncCouchdbDetails = <SyncCouchdbDetails>{
       serverUrl: appConfig.serverUrl,
       groupId: appConfig.groupId,
@@ -342,7 +344,7 @@ export class SyncService {
       replicationFunction = this.syncCouchdbService._pull
     }
     sourceDocs.forEach(sourceDoc => {
-      // if we really wanted to, we could add _rev to the fields provided by the remote mango query 
+      // if we really wanted to, we could add _rev to the fields provided by the remote mango query
       // and then compare to localDoc.value.rev
       if (!targetDocs.some(targetDoc => targetDoc[targetDocIdentifier] === sourceDoc[sourceDocIdentifier])) {
         if (!sourceDoc[sourceDocIdentifier].includes('_design')) {
@@ -412,7 +414,7 @@ export class SyncService {
     }
 
     this.replicationStatus = status
-    
+
     // Prepare replicationstatus report for the server.
     try {
       this.replicationStatus.compareDocsStartTime = this.compareDocsStartTime
@@ -432,7 +434,7 @@ export class SyncService {
       this.replicationStatus.idsToSyncCount = idsToSync.length
       this.replicationStatus.compareSyncDuration = duration
       await this.addDeviceSyncMetadata()
-      
+
       this.syncMessage$.next({
         message: window['t']('Sending sync status to server. Please wait...')
       })
@@ -449,14 +451,14 @@ export class SyncService {
       })
       await this.indexViews()
     }
-    
+
     return status
   }
 
   /**
-   * Returns an array of docs using either an allDocs or find query. 
+   * Returns an array of docs using either an allDocs or find query.
    * Using the alternate startkey pagination method: https://docs.couchdb.org/en/latest/ddocs/views/pagination.html#paging-alternate-method
-   * 
+   *
    * @param database
    * @param options
    * @param dbName
@@ -496,7 +498,7 @@ export class SyncService {
               options[pagerKeyName] = pagerKey
             }
           }
-          
+
           let message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
           if (options.selector) {
             message = 'Collected ' + allDocs.length + ' docs from the ' + dbName + ' for comparison.';
@@ -514,5 +516,5 @@ export class SyncService {
     console.log("total_rows: " + total_rows)
     return allDocs;
   }
-  
+
 }
