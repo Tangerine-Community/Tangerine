@@ -3,6 +3,7 @@
 - [Bullet points for Tangerine Development](development-bullet-points.md)
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
+- [tangerine-dev-tutorial-notes.md](tangerine-dev-tutorial-notes.md)
 
 ## Application design
 - [Bootstrapping Tangerine](bootstrapping-tangerine.md)

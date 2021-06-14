@@ -228,7 +228,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     complete: formResponse.complete
   };
   function set(input, key, value) {
-    flatFormResponse[key] = input.skipped
+    flatFormResponse[key.trim()] = input.skipped
       ? process.env.T_REPORTING_MARK_SKIPPED_WITH
       : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
         ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
