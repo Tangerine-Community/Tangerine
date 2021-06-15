@@ -122,6 +122,7 @@ export class SyncCouchdbService {
     let pushReplicationStatus
     let hadPushSuccess = false
     if (!isFirstSync) {
+      // retry push whiie not cancelling
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
@@ -189,7 +190,15 @@ export class SyncCouchdbService {
           direction: direction
         }
         if (info.errors && info.errors.length > 0) {
-          status.pushError = info.errors.join('; ')
+          if (typeof info.errors === 'string') {
+            status.pushError = info.errors
+          } else if (Array.isArray(info.errors)) {
+            status.pushError = info.errors.join('; ')
+          } else {
+            // Unsure if there are any other possible datatypes.
+            // Could it be a binary??? 
+            status.pushError = info.errors
+          }
           reject(status)
         } else {
           resolve(status)
