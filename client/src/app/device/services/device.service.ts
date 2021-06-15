@@ -7,6 +7,8 @@ import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {AppConfig} from '../../shared/_classes/app-config.class';
+import {ReplicationStatus} from "../../sync/classes/replication-status.class";
+import {UserService} from "../../shared/_services/user.service";
 const bcrypt = window['dcodeIO'].bcrypt
 
 export interface AppInfo {
@@ -139,7 +141,7 @@ export class DeviceService {
     }
   }
 
-  async didUpdate(deviceId = '', deviceToken = ''):Promise<any> {
+  async didUpdate(deviceId = '', deviceToken = '', status:ReplicationStatus):Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
     const version = await this.getBuildId()
     if (!deviceId || !deviceToken) {
@@ -147,9 +149,17 @@ export class DeviceService {
       deviceId = device._id
       deviceToken = device.token
     }
+    
+    // await this
+    //   .httpClient
+    //   .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise()
+    console.log("Sending sync status with update.")
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise()
+      .post(`${appConfig.serverUrl}group-device-public/did-update-status/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`, {
+        status: status
+      }).toPromise()
+    
   }
 
   async didSync(status):Promise<any> {

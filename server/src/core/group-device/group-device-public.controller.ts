@@ -69,6 +69,21 @@ export class GroupDevicePublicController {
     }
   }
 
+  @All('did-update-status/:groupId/:deviceId/:token/:version')
+  async didUpdateStatus(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version, @Body('status') status) {
+    try {
+      if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
+        return 'Token does not match'
+      }
+      const device = await this.groupDeviceService.didUpdateStatus(groupId, deviceId, version, status)
+      return device
+    } catch (error) {
+      log.error('Error updating device')
+      console.log(error)
+      return 'There was an error.'
+    }
+  }
+
   @All('read/:groupId/:deviceId/:token')
   async read(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
     try {

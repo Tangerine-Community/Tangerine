@@ -10,6 +10,7 @@ import { LanguagesService } from './../../../shared/_services/languages.service'
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 import { LockBoxContents } from 'src/app/shared/_classes/lock-box-contents.class';
+import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
 
 const STEP_LANGUAGE_SELECT = 'STEP_LANGUAGE_SELECT'
 const STEP_DEVICE_PASSWORD = 'STEP_DEVICE_PASSWORD'
@@ -70,7 +71,25 @@ export class DeviceSetupComponent implements OnInit {
         const device = await this.deviceService.register(deviceDoc._id, deviceDoc.token)
         // Note that device.token has been reset so important to use the device record
         // that register returned.
-        await this.deviceService.didUpdate(device._id, device.token)
+        let replicationStatus:ReplicationStatus = <ReplicationStatus>{
+          info: ''
+        };
+        // await this.syncService.addDeviceSyncMetadata();
+        const deviceInfo = await this.deviceService.getAppInfo()
+        replicationStatus.deviceInfo = deviceInfo
+        const userDb = await this.userService.getUserDatabase()
+        const dbDocCount = (await userDb.db.info()).doc_count
+        replicationStatus.dbDocCount = dbDocCount
+        const connection = navigator['connection']
+        const effectiveType = connection.effectiveType;
+        const downlink = connection.downlink;
+        const downlinkMax = connection.downlinkMax;
+        replicationStatus.effectiveConnectionType = effectiveType
+        replicationStatus.networkDownlinkSpeed = downlink
+        replicationStatus.networkDownlinkMax = downlinkMax
+        const userAgent = navigator['userAgent']
+        replicationStatus.userAgent = userAgent
+        await this.deviceService.didUpdate(device._id, device.token, replicationStatus)
         await this.userService.installSharedUserDatabase(device)
         await this.userService.createAdmin(password, <LockBoxContents>{
           device
