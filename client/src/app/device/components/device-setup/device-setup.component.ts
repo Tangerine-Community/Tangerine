@@ -89,6 +89,7 @@ export class DeviceSetupComponent implements OnInit {
         replicationStatus.networkDownlinkMax = downlinkMax
         const userAgent = navigator['userAgent']
         replicationStatus.userAgent = userAgent
+        replicationStatus.message = "device setup"
         await this.deviceService.didUpdate(device._id, device.token, replicationStatus)
         await this.userService.installSharedUserDatabase(device)
         await this.userService.createAdmin(password, <LockBoxContents>{
