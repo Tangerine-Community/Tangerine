@@ -124,6 +124,7 @@ export class UpdateComponent implements AfterContentInit {
       replicationStatus.networkDownlinkMax = downlinkMax
       const userAgent = navigator['userAgent']
       replicationStatus.userAgent = userAgent
+      replicationStatus.message = "update"
 
       const device = await this.deviceService.getDevice()
       const deviceId = device._id
