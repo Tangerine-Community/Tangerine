@@ -100,7 +100,16 @@ export class EventFormComponent implements OnInit, OnDestroy {
           }
           // If this was a one page form, the form response ID may not have been linked yet.
           if (!this.eventForm.formResponseId) {
-            this.eventForm.formResponseId = this.formPlayer.formResponseId
+            // Note that this.eventForm is a memory reference that may be now disconnected from caseService's loaded case due to loading a different
+            // case and then the current case back again. This is why we need to be careful to set the relationship directly into the case in memory.
+            this
+              .caseService
+              .case
+              .events
+              .find(caseEvent => caseEvent.id === this.caseEvent.id)
+              .eventForms
+              .find(eventForm => eventForm.id === this.eventForm.id)
+              .formResponseId = this.formPlayer.formResponseId
           }
           this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
           await this.caseService.save()

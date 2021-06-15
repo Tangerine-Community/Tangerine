@@ -169,6 +169,7 @@ app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
 app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
+app.get('/app/:groupId/response-variable-value/:responseId/:variableName', isAuthenticated, require('./routes/group-response-variable-value.js'))
 app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))
 app.get('/api/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
 // Support for API working with group pathed cookie :). We should do this for others because our group cookies can't access /api/.

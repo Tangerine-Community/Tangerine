@@ -1,5 +1,62 @@
 # What's new 
 
+## v3.17.11
+- Added support for custom update scripts for each group. Add either a before-custom-updates.js or after-custom-updates.js to the root of your content depending on when you wish the script to run. Script needs to return a Promise. See Issue [2741](https://github.com/Tangerine-Community/Tangerine/issues/2741) for script example. PR: [#2742](https://github.com/Tangerine-Community/Tangerine/pull/2742)
+- Add support for filtering PII variables on Case Participant data and Event Form data in Synapse caches. List the variable names in your group's content folder `reporting-config.json`. For example: `{ "pii": ["foo_variable"] }`. This config was previously stored in the groups database.
+- Fixed bug that prevented rewind sync from working.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.11
+./start.sh v3.17.11
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.10
+```
+
+## v3.17.10
+- Skip optimizing sync-queue, sync-conflicts, and tangy-form views after Sync Protocol 2 sync completes.
+- Using `T.case.load()` in a form? This release fixes a bug where EventForm.formResponseId would be not set when submitting forms in cases where a form has loaded a different case and then the save case back again thus detaching the memory reference being previously set.
+- Remove trailing whitespace from variables for mysql outputs to avoid illegal column names.
+- Add response-variable-value API with support for returning jpeg and png base64 values as files.
+- Refactor TANGY-SIGNATURE and TANGY-PHOTO-CAPTURE output in CSVs to be URLs of the image files.
+- Creates work-around for deployments that are unable to use custom-scripts. [Issue #2711](https://github.com/Tangerine-Community/Tangerine/issues/2711) [PR #2712](https://github.com/Tangerine-Community/Tangerine/pull/2712) 
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.10
+./start.sh v3.17.10
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.9
+```
+
 ## v3.17.9
 - Prevent failed calls to `T.case.save()` in forms by avoiding any saves to a case when a form is active. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2704/), [Issue](https://github.com/Tangerine-Community/Tangerine/issues/2700)
 - Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/) - Cherry-picked commit [3e4938a0a80c57](https://github.com/Tangerine-Community/Tangerine/pull/2694/commits/3e4938a0a80c57c66aa8f4b0eda32b84c85ebe99) only.
@@ -33,12 +90,12 @@ docker rmi tangerine/tangerine:v3.17.8
   `docker exec tangerine generate-form-json group-uuid`
   The script loops through a group's forms.json and creates a form.json file in each form directory, next to its forms.html.
   Before using this script, run `npm install`. Issue: [#2686](https://github.com/Tangerine-Community/Tangerine/issues/2686)
-- The synapse module now uses the json from `generate-form-json` to exclude PII. Also, the synapse module takes substitution and pii fields to accommodate schema changes and pii fields not identified in forms. PR: [#2697](https://github.com/Tangerine-Community/Tangerine/pull/2697/)
-
-  Place these properties in the groups Couchdb:
+- The synapse module now uses the json from `generate-form-json` to exclude PII. Also, the synapse module takes substitution and pii fields to accommodate schema changes and pii fields not identified in forms. PR: [#2697](https://github.com/Tangerine-Community/Tangerine/pull/2697/) 
+  
+   Place these properties in the groups Couchdb:
   
 ```json
-  
+
   "substitutions": {
     "mnh_screening_and_enrollment_v2": "mnh01_screening_and_enrollment"
   },
@@ -48,6 +105,7 @@ docker rmi tangerine/tangerine:v3.17.8
     "surname",
     "mother_dob"
   ]
+  
 
 ```
   
@@ -97,6 +155,7 @@ git checkout v3.17.7
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.17.6
 ```
+
 
 ## v3.17.6
 - fix issue w/ empty replicationStatus?.userAgent
@@ -155,9 +214,9 @@ docker rmi tangerine/tangerine:v3.17.4
   - "batchSize": 50
   - "writeBatchSize": 50
   - "changes_batch_size": 20
-
-  Please do note that these particular settings do make sync very slow - especially for initial device sync.
-- Removed selector from push sync - was causing a crash on large databases. Using a filter instead in the push syncOptions
+  
+  Please do note that these particular settings do make sync very slow - especially for initial device sync. 
+- Removed selector from push sync - was causing a crash on large databases. Using a filter instead in the push syncOptions 
   to exclude '_design' docs from being pushed from the client.
 - Adds "Encryption Level" column to the Devices Listing, which shows if the device is running 'OS' encryption or 'in-app' encryption.
   - 'OS' encryption: Encryption provided by the device operating system; typically this is File-based (Android 10) or Full-disk encryption (Android 5 - 9).
@@ -211,7 +270,6 @@ git checkout v3.17.3
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.17.2
 ```
-
 
 ## v3.17.2
 - Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
@@ -318,7 +376,7 @@ docker rmi tangerine/tangerine:v3.16.4
 __Fixes__
 
 - T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
-- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](hhttps://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
+- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](https://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
 
 __Developer Interest__
 
