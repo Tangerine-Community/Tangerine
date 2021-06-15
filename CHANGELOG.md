@@ -12,6 +12,7 @@
 - Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
 - Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2696](https://github.com/Tangerine-Community/Tangerine/pull/2696/files)
 - Teach-specific strings in Russian for default content-set [#2676](https://github.com/Tangerine-Community/Tangerine/pull/2676)
+- Uploads status such as app version when updating the app [#2756](https://github.com/Tangerine-Community/Tangerine/issues/2756)
 
 ### Bugfixes
 - Initialize `git` in content repository before running `git` commands [#2667](https://github.com/Tangerine-Community/Tangerine/pull/2667)
