@@ -41,6 +41,13 @@ docker exec tangerine mysql-report <groupId>
 ```
 
 ### Step 6
+In the reboot instruction in crontab that to starts Tangerine on reboot, add mysql container to the containers that start before tangerine and increase the sleep command to 60 seconds. Failure to implement this will result in tangerine failing to start on reboot.
+
+```
+@reboot docker start couchdb mysql && sleep 60 && docker start tangerine
+```
+
+### Step 7
 The most basic way to access MySQL would be to use the MySQL CLI. 
 
 ```
