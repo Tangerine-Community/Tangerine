@@ -77,9 +77,6 @@ export class DeviceSetupComponent implements OnInit {
         // await this.syncService.addDeviceSyncMetadata();
         const deviceInfo = await this.deviceService.getAppInfo()
         replicationStatus.deviceInfo = deviceInfo
-        const userDb = await this.userService.getUserDatabase()
-        const dbDocCount = (await userDb.db.info()).doc_count
-        replicationStatus.dbDocCount = dbDocCount
         const connection = navigator['connection']
         const effectiveType = connection.effectiveType;
         const downlink = connection.downlink;

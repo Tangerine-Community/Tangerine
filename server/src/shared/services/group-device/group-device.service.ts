@@ -173,6 +173,9 @@ export class GroupDeviceService {
     try {
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(deviceId)
+      if (!originalDevice.replicationStatuses) {
+        originalDevice.replicationStatuses = []
+      }
       originalDevice.replicationStatuses.push(status)
       await groupDevicesDb.put({
         ...originalDevice,
