@@ -2,6 +2,7 @@
 
 if (process.argv[2] === '--help') {
   console.log('Set group content after test data replication.')
+  console.log('A local content set is any directory found in the /tangerine/content-sets/ directory.')
   console.log('Usage:')
   console.log('       create-group-content <group-id> <groupName>')
   console.log('')
@@ -26,6 +27,10 @@ async function createGroupContent() {
 
   // Get the contents into the temporary group path.
   await exec(`cp -r ${contentSet} ${tmpGroupPath}`)
+
+  // @TODO Create a symlink to the old group client directory until all the other APIs are updated and we have
+  // a proper upgrade script to migrate group directories.
+  await exec(`ln -s ${groupPath}/client /tangerine/client/content/groups/${groupId}`)
 
   // Detect if content-set v1 or content-set v2.
   let contentSetVersion
