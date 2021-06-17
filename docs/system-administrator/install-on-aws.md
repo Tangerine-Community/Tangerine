@@ -101,6 +101,17 @@ With Docker logs being sent to AWS CloudWatch, you can configure an alarm to det
     - Metric value: 1
     - Default value: 0
     - Unit: _leave blank_
+- Navigate to your log group and click the "Metric filter" tab, click the checkbox in your Metric's box, then click "Create alarm" button.
+- Fill out the form:
+    - Metric name: heartbeat
+    - Statistic: Sum
+    - Period: 15 minutes
+    - Threshold type: Static
+    - Whenever heartbeat is...: Lower
+    - than...: 1
+    -  Additional configuration
+      - Datapoints to alarm: 1 out of 1
+      - Missing data treatment: Treat missing data as bad (breaching the threshold)
 - Fill out "Notification" form as follows:
     - Alarm state trigger: In alarm
     - Select an SNS topic: Create new topic
