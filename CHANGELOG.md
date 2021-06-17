@@ -1,11 +1,64 @@
 # Changelog
 
+## v3.18.0
+
+### New Features
+- Enable configurable image capture in client [#2695](https://github.com/Tangerine-Community/Tangerine/issues/2695) 
+  - Makes image capture work with a max size attribute - PR: [#218](https://github.com/Tangerine-Community/tangy-form/pull/218)
+  - Add photo capture widget [#203](https://github.com/Tangerine-Community/tangy-form-editor/pull/203)
+- Serve base64 image data as image files [#2706](https://github.com/Tangerine-Community/Tangerine/issues/2706) PR: [#2725](https://github.com/Tangerine-Community/Tangerine/pull/2725)
+- Add Cycle sequences [1603](https://github.com/Tangerine-Community/Tangerine/issues/1603)
+- Sort by lastModified in the client case search [#2692](https://github.com/Tangerine-Community/Tangerine/pull/2692)
+- Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
+- Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2696](https://github.com/Tangerine-Community/Tangerine/pull/2696/files)
+- Teach-specific strings in Russian for default content-set [#2676](https://github.com/Tangerine-Community/Tangerine/pull/2676)
+- Uploads status such as app version when updating the app [#2756](https://github.com/Tangerine-Community/Tangerine/issues/2756)
+
+### Bugfixes
+- Initialize `git` in content repository before running `git` commands [#2667](https://github.com/Tangerine-Community/Tangerine/pull/2667)
+- Only show the links to historical releases when T_ARCHIVE_PWAS_TO_DISK and T_ARCHIVE_APKS_TO_DISK in the config.sh are set to true [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
+- Fix form breaking when form name has single quote [#2489](https://github.com/Tangerine-Community/Tangerine/issues/2489)
+- Add print options to archived forms [#1987](https://github.com/Tangerine-Community/Tangerine/issues/1987)
+- Fix Grid having negative values [#2294](https://github.com/Tangerine-Community/Tangerine/issues/2294)
+- Fix to allow for running on m1 Macs #2631 [#2631](https://github.com/Tangerine-Community/Tangerine/pull/2631) Thanks @fmoko and @evansdianga!
+- For projects using the Case Reporting screen but don't have anything in reports.js but do have markup in reports.html, avoid crash due to empty file [#2657](https://github.com/Tangerine-Community/Tangerine/issues/2657)
+- V2 import script fixes [#2675](https://github.com/Tangerine-Community/Tangerine/pull/2675)
+- Allow HTML markup in option labels [2453](https://github.com/Tangerine-Community/Tangerine/issues/2453)
+- Reset grid values when grid is restarted [#](https://github.com/Tangerine-Community/Tangerine/issues/2559)
+- Mark last attempted automatically when grid is auto-stopped [#2467](https://github.com/Tangerine-Community/Tangerine/issues/2467)
+
+### New Documentation
+- [Deleting Records](./docs/developer/deletion-strategy.md)
+- [Bullet points for Tangerine Development](./docs/developer/development-bullet-points.md)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.18.0
+./start.sh v3.18.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.11
+```
+
 ## v3.17.11
 - Added support for custom update scripts for each group. Add either a before-custom-updates.js or after-custom-updates.js to the root of your content depending on when you wish the script to run. Script needs to return a Promise. See Issue [2741](https://github.com/Tangerine-Community/Tangerine/issues/2741) for script example. PR: [#2742](https://github.com/Tangerine-Community/Tangerine/pull/2742)
 - Add support for filtering PII variables on Case Participant data and Event Form data in Synapse caches. List the variable names in your group's content folder `reporting-config.json`. For example: `{ "pii": ["foo_variable"] }`. This config was previously stored in the groups database.
 - Fixed bug that prevented rewind sync from working.
-
-__Server upgrade instructions__
+  
+  __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
 
@@ -58,6 +111,8 @@ docker rmi tangerine/tangerine:v3.17.9
 ```
 
 ## v3.17.9
+
+### New Features and Buffixes
 - Prevent failed calls to `T.case.save()` in forms by avoiding any saves to a case when a form is active. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2704/), [Issue](https://github.com/Tangerine-Community/Tangerine/issues/2700)
 - Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/) - Cherry-picked commit [3e4938a0a80c57](https://github.com/Tangerine-Community/Tangerine/pull/2694/commits/3e4938a0a80c57c66aa8f4b0eda32b84c85ebe99) only.
 - Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2702](https://github.com/Tangerine-Community/Tangerine/pull/2702)
@@ -130,6 +185,7 @@ git checkout v3.17.8
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.17.7
 ```
+
 
 ## v3.17.7
 - fix CSV generation issue: [#2681](https://github.com/Tangerine-Community/Tangerine/issues/2681)
