@@ -25,12 +25,18 @@ cp -r dev builds/pwa/release-uuid/app
 
 ## Potential workflow after updating a lib
 
-Make a modification of an typescript file when you need to update a lib. First try adding a console.log(“k-pop”) in a relevant file such as sync.component.ts, update your lib, then run the `./node_modules/.bin/ng build --watch --poll 100 --base-href ./ --output-path ./dev ` .
+In this workflow, you're testing changes to a library such as tangy-form. Make these changes inside the container in the node_modules directory for your library. 
 
-Look in the relevant file in dev to see if the lib got rebuilt. If you made an update to tangy-form, check polyfills.js. Are you looking at the correct file path? See if main.js was updated as well as polyfills.js and vendor,js. 
+Run `./node_modules/.bin/ng build --base-href ./ --output-path ./dev  ` inside the client dir in the container. It will rebuild all of the libs.
+
+(Note that each time you run the `ng build` script above it removes the dev directory before building. This may cause problems when you try to list files in that directory. Do a `cd .. & cd dev & ls -ls` and all will be good.)
 
 Next, run the script in the "Copy files" section to copy these generated build files to the correct location.
 
-If this part of the chain is working, then check the output of the file copy process.
+If this part of the chain is working, then check the output of the file copy process. 
 
-The release-apk.sh scriipt shows the steps when building an APK.
+If all is good, release a new APK from the Tangerine UI.
+
+## Tips
+
+The release-apk.sh script shows the steps when building an APK.
