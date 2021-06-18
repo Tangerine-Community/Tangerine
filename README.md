@@ -184,6 +184,8 @@ T_HOST_NAME='123random.ngrok.io'
 T_PROTOCOL="https"
 ```
 
+The [Bullet points for Tangerine Development](./docs/developer/development-bullet-points.md) document has an example of how to get started with Tangerine development.
+
 ### Develop for Client 
 Prereqs include node and `npm install -g @angular/cli`. 
 ```
