@@ -17,16 +17,34 @@ const caseDefinition:CaseDefinition = {
     {
       id: 'event-definition-1',
       name: 'Event 1',
+      "permissions": {
+        "create": ["admin"],
+        "read": ["admin"],
+        "update": ["admin"],
+        "delete": ["admin"]
+      },
       eventFormDefinitions: [
         {
           id: 'event-form-definition-1',
           name: 'Event Form 1',
-          formId: 'form-1'
+          formId: 'form-1',
+          "permissions": {
+            "create": ["admin"],
+            "read": ["admin"],
+            "update": ["admin"],
+            "delete": ["admin"]
+          }
         },
         {
           id: 'event-form-definition-2',
           name: 'Event Form 2',
-          formId: 'form-2'
+          formId: 'form-2',
+          "permissions": {
+            "create": ["admin"],
+            "read": ["admin"],
+            "update": ["admin"],
+            "delete": ["admin"]
+          }
         }
       ]
     }
