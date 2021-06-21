@@ -56,3 +56,10 @@ mysql -u"$T_MYSQL_USER" -p"$T_MYSQL_PASSWORD" -hmysql
 ```
 
 On the mysql command line, list the available databases using `show databases;`. Note how the database names are similar to the Group ID's these correspond with except with dashes removed. For example, if the group ID was `group-abc-123`, the corresponding MySQL database would be `groupabc123`. To select a database, type `use <database ID>;` then `show tables;` to list out the available tables.
+
+### Step 8
+
+To set up remote encrypted connections to mysql, two options:
+
+1. SSH: For each person using MySQL, they will need SSH access to the server. When granted, they may use tunneling of mysql port 3306 over SSH to access mysql at `127.0.0.1:3306`.  For example, to set up an SSH port forwarding on Mac or Linux, run `ssh -L 3306:your-server:3306 your-server`
+2. TLS: In the `tangerine/data/mysql/databases` folder you will find files `ca.pem`, `client-cert.pem`, and `client-key.pem`. Distribute those files to your MySQL users so they may connnect to your server's IP addres port 3306 using these certificates. For example, `mysql  -u admin -p"you-mysql-password" --ssl-ca=ca.pem --ssl-cert=client-cert.pem --ssl-key=client-key.pem`.
