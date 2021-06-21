@@ -59,7 +59,8 @@ On the mysql command line, list the available databases using `show databases;`.
 
 ### Step 8
 
-To set up remote encrypted connections to mysql, two options:
+To set up remote encrypted connections to mysql, three options:
 
-1. SSH: For each person using MySQL, they will need SSH access to the server. When granted, they may use tunneling of mysql port 3306 over SSH to access mysql at `127.0.0.1:3306`.  For example, to set up an SSH port forwarding on Mac or Linux, run `ssh -L 3306:your-server:3306 your-server`.
-2. TLS: In the `tangerine/data/mysql/databases` folder you will find files `ca.pem`, `client-cert.pem`, and `client-key.pem`. Distribute those files to your MySQL users so they may connnect to your server's IP addres port 3306 using these certificates. For example, `mysql  -u admin -p"you-mysql-password" --ssl-ca=ca.pem --ssl-cert=client-cert.pem --ssl-key=client-key.pem`.
+1. __TLS__: In the `tangerine/data/mysql/databases` folder you will find files `ca.pem`, `client-cert.pem`, and `client-key.pem`. Distribute those files to your MySQL users so they may connnect to your server's IP addres port 3306 using these certificates. For example, `mysql  -u admin -p"you-mysql-password" --ssl-ca=ca.pem --ssl-cert=client-cert.pem --ssl-key=client-key.pem`.
+2. __SSH__: For each person using MySQL, they will need SSH access to the server. When granted, they may use tunneling of mysql port 3306 over SSH to access mysql at `127.0.0.1:3306`.  For example, to set up an SSH port forwarding on Mac or Linux, run `ssh -L 3306:your-server:3306 your-server`.
+3. __VPN__: If you connect to MySQL via the IP address of the server, using a VPN will ensure that communication with MySQL is encrypted. Note however that the traffic will be visible to those also on your VPN so make sure it's a trusted VPN only used by those who have permission to access the data.
