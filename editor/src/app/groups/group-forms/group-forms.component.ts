@@ -7,7 +7,7 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import uuidv4 from 'uuid/v4';
+import {v4 as uuidv4} from 'uuid';;
 import { WindowRef } from 'src/app/core/window-ref.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -59,12 +59,12 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
         url: 'forms'
       }
     ]
-    this.route.params.subscribe(async params => {
-      this.groupId = params.groupId;
-      this.group = await this.groupsService.getGroupInfo(this.groupId);
-      this.groupLabel = this.group.label;
-      this.formsJsonURL = `./forms.json`;
-    });
+
+    this.groupId = window.location.hash.split('/')[2]
+    this.group = await this.groupsService.getGroupInfo(this.groupId)
+    this.groupLabel = this.group.label;
+    this.formsJsonURL = `./forms.json`;
+
     try {
       await this.getForms();
       this.groupUrl = `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;

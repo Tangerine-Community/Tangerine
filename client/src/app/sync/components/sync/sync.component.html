@@ -1,88 +1,137 @@
-<mat-tab-group animationDuration="0ms">
-  <mat-tab label="{{'Online Sync'|translate}}">
-    <ng-template matTabContent>
-      <div>
-        <p>Online Sync is used when there is a reliable Internet connection. If you have no Internet connection, use the P2P tab above to transfer records between nearby devices.</p>
-        <h2>Online Sync</h2>
-        <p>Press the Start button below to transfer records to the server.</p>
+<div>
+  <h2>{{'Sync to server'|translate}}</h2>
+  <p>{{'Press the Start button below to transfer records to the server.'|translate}}</p>
 
-        <div class="container" *ngIf="status === 'STATUS_INITIAL'">
-          <button mat-raised-button color="primary" (click)="sync()">Start</button>
-          <mat-progress-bar value="0"></mat-progress-bar>
-          <div class="status">Status: Ready</div>
-        </div>
+  <div class="container" *ngIf="status === 'STATUS_INITIAL'">
+    <div>
+      <button mat-raised-button color="primary" (click)="sync()">{{'Start'|translate}}</button>
+      <button mat-raised-button color="primary" disabled>{{'Cancel'|translate}}</button>
+    </div>
+    <mat-progress-bar value="0"></mat-progress-bar>
+    <div class="status">{{'Status'|translate}}: {{'Ready'|translate}}</div>
+    <div class="debugging">
+      <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
+    </div>
+    <div *ngIf="show" class="debugging">
+      <div class="status">Checkpoints:{{checkpointMessage}}</div>
+      <div class="status">Diffs: {{diffMessage}}</div>
+      <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
+      <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
+      <div class="status">Indexing View: {{indexing?.view}}</div>
+      <div class="status">Indexing Doc Count: {{indexing?.countIndexedDocs}}</div>
+      <div class="status">Indexing Sequence Number: {{indexing?.last_seq}}</div>
+    </div>
+  </div>
 
-        <div class="container" *ngIf="status === 'STATUS_IN_PROGRESS'">
-          <button mat-raised-button color="primary" disabled>Start</button>
-          <mat-progress-bar mode="buffer"></mat-progress-bar>
-          <div class="status">Status: In progress</div>
-          <div class="status">{{syncMessage}}</div>
-          <div class="status">{{direction}}</div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
-          </div>
-          <div *ngIf="show"  class="debugging">
-            <div class="status">Checkpoints:{{checkpointMessage}}</div>
-            <div class="status">Diffs: {{diffMessage}}</div>
-            <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
-            <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
-          </div>
-        </div>
+  <div class="container" *ngIf="status === 'STATUS_IN_PROGRESS'">
+    <div>
+      <button mat-raised-button color="primary" disabled>{{'Start'|translate}}</button>
+      <button mat-raised-button color="primary" (click)="cancel()" [attr.disabled]="cancelling ? true : null">{{'Cancel'|translate}}</button>
+    </div>
+    <mat-progress-bar mode="buffer"></mat-progress-bar>
+    <div class="status">{{'Status'|translate}}: {{'In progress'|translate}} <span *ngIf="direction">&nbsp;&nbsp;&nbsp;{{direction}}</span>
+    </div>
+    <div class="status">{{syncMessage}}</div>
+    <div class="status">{{otherMessage}}</div>
+    <div class="debugging">
+      <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
+    </div>
+    <div *ngIf="show" class="debugging">
+      <div class="status">Checkpoints:{{checkpointMessage}}</div>
+      <div class="status">Diffs: {{diffMessage}}</div>
+      <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
+      <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
+      <div class="status">Indexing View: {{indexing?.view}}</div>
+      <div class="status">Indexing Doc Count: {{indexing?.countIndexedDocs}}</div>
+      <div class="status">Indexing Sequence Number: {{indexing?.last_seq}}</div>
+    </div>
+  </div>
 
-        <div class="container" *ngIf="status === 'STATUS_COMPLETED'">
-          <button mat-raised-button color="primary" (click)="sync()">Start</button>
-          <mat-progress-bar mode="buffer" value="100"></mat-progress-bar>
-          <div class="status">Status: Complete</div>
-          <div class="status" *ngIf="replicationStatus">
-            <div *ngIf="replicationStatus.pullConflicts?.length > 0">
-              <p class="mat-error">Conflicts detected.</p>
-            </div>
-            <ul>
-              <li>Pulled from the server: {{replicationStatus.pulled}}</li>
-              <li>Pushed to the server: {{replicationStatus.pushed}}</li>
-            </ul>
-            
-          </div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
-          </div>
-          <div *ngIf="show" class="debugging">
-            <div class="status">Checkpoints:{{checkpointMessage}}</div>
-            <div class="status">Diffs: {{diffMessage}}</div>
-            <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
-            <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
-          </div>
+  <div class="container" *ngIf="status === 'STATUS_COMPLETED'">
+    <div>
+      <button mat-raised-button color="primary" (click)="sync()">{{'Start'|translate}}</button>
+      <button mat-raised-button color="primary" disabled>{{'Cancel'|translate}}</button>
+    </div>
+    <mat-progress-bar mode="buffer" value="100"></mat-progress-bar>
+    <div class="status">{{'Status'|translate}}: {{'Complete'|translate}}</div>
+    <div class="status" *ngIf="replicationStatus">
+      <ul>
+        <li>{{'Pulled from the server'|translate}}: {{replicationStatus.pulled}}</li>
+        <li>{{'Pushed to the server'|translate}}: {{replicationStatus.pushed}}</li>
+        <li>{{'Records in the database'|translate}}: {{dbDocCount}}</li>
+      </ul>
+    </div>
+    <div class="debugging">
+      <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
+    </div>
+    <div *ngIf="show" class="debugging">
+      <div class="status">Checkpoints:{{checkpointMessage}}</div>
+      <div class="status">Diffs: {{diffMessage}}</div>
+      <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
+      <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
+      <div class="status">Indexing View: {{indexing?.view}}</div>
+      <div class="status">Indexing Doc Count: {{indexing?.countIndexedDocs}}</div>
+      <div class="status">Indexing Sequence Number: {{indexing?.last_seq}}</div>
+    </div>
+  </div>
 
-        </div>
+  <div class="container" *ngIf="status === 'STATUS_ERROR'">
+    <div>
+      <button mat-raised-button color="primary" (click)="sync()">{{'Start'|translate}}</button>
+      <button mat-raised-button color="primary" (click)="cancel()">{{'Cancel'|translate}}</button>
+    </div>
+    <mat-progress-bar mode="buffer" color="warn"></mat-progress-bar>
+    <div class="status">{{'Status'|translate}}: {{'Error'|translate}}</div>
+    <div class="status">{{syncMessage}}</div>
+    <div class="status">{{direction}}</div>
+    <div><p>{{'Records in the local database'|translate}}: {{dbDocCount}}</p></div>
+  </div>
 
-        <div class="container" *ngIf="status === 'STATUS_ERROR'">
-          <button mat-raised-button color="primary" (click)="sync()">Start</button>
-          <mat-progress-bar mode="buffer" color="warn"></mat-progress-bar>
-          <div class="status">Status: Error</div>
-          <div class="status">{{syncMessage}}</div>
-          <div class="status">{{direction}}</div>
-          <div class="debugging">
-            <button mat-raised-button color="warn" (click)="toggle()">Debugging</button>
-          </div>
-          <div *ngIf="show" class="debugging">
-            <div class="status">Checkpoints:{{checkpointMessage}}</div>
-            <div class="status">Diffs: {{diffMessage}}</div>
-            <div class="status">Start Next Batch: {{startNextBatchMessage}}</div>
-            <div class="status">Pending Batch: {{pendingBatchMessage}}</div>
-          </div>
-        </div>
+  <div class="errorMessage" *ngIf="errorMessage">{{errorMessage}}</div>
+  <div class="errorMessage" *ngIf="pullError">Pull Error: {{pullError}}</div>
+  <div class="errorMessage" *ngIf="pushError">Push Error: {{pushError}}</div>
 
-      </div>
-    </ng-template>
-  </mat-tab>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Advanced Options
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    
+    <p>{{'Please note that these options should not be done routinely. Choose one of the following options and then ' +
+    'click the "Start" button above. To cancel your selection, click it again. If the Sync direction is "Pull", ' +
+    'the app will first do a normal Sync to make sure all local docs have been pushed to the server.' | translate }}</p>
+    
+    <h3>Comparison Sync</h3>
+    
+    <p>{{'Comparison Sync compares the document ids between the local device and the server. Press the appropriate Sync ' +
+    'Direction button and then the "Start" button (above). ' +
+    'The "Push" button will sync any local documents missing from the server. The "Pull" button will sync any missing server ' +
+    'docs to the local device. Please note that Comparison Sync takes much longer than the typical sync.'|translate}}</p>
+    <div>
+      <mat-radio-group aria-label="Select an option" aria-labelledby="compare-radio-group-label" [disabled]="comparisonDisabled">
+        <label id="compare-radio-group-label">Sync Direction:</label>
+        <mat-radio-button #pushButtonC value="push" (click)="checkState(pushButtonC, 'push', 'compare')">Push</mat-radio-button>
+        <mat-radio-button #pullButtonC value="pull" (click)="checkState(pullButtonC, 'pull', 'compare')">Pull</mat-radio-button>
+      </mat-radio-group>
+      <br/>
+    </div>
+    
+    <h3>Rewind Sync</h3>
+    
+    <p>{{'Rewind sync will reset the sync "placeholder" and start from the beginning, checking replication data for each document. It is more thorough than Comparison Sync and takes much longer than the typical sync.'|translate}}</p>
+    <div>
+      <mat-radio-group aria-label="Select an option" aria-labelledby="sync-radio-group-label" [disabled]="rewindDisabled">
+        <label id="sync-radio-group-label">Sync Direction:</label>
+        <mat-radio-button #pushButtonS value="push" (click)="checkState(pushButtonS, 'push', 'rewind')">Push</mat-radio-button>
+        <mat-radio-button #pullButtonS value="pull" (click)="checkState(pullButtonS, 'pull', 'rewind')">Pull</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    
+  </mat-expansion-panel>
+  
+</div>
 
-  <mat-tab label="{{'P2P Sync'|translate}}">
-    <ng-template matTabContent>
-      <app-peers></app-peers>
-    </ng-template>
-  </mat-tab>
-
-</mat-tab-group>
 
 
 

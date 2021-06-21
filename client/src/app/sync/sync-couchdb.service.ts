@@ -1,5 +1,6 @@
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { LocationConfig } from './../device/classes/device.class';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import { ReplicationStatus } from './classes/replication-status.class';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { UserDatabase } from './../shared/_classes/user-database.class';
@@ -14,6 +15,9 @@ import {CaseDefinitionsService} from "../case/services/case-definitions.service"
 import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import {ConflictService} from "./services/conflict.service";
+import { SyncDirection } from './sync-direction.enum';
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+const retryDelay = 5*1000
 
 export interface LocationQuery {
   level:string
@@ -36,7 +40,17 @@ export class SyncCouchdbDetails {
 export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
-
+  public readonly onCancelled$: Subject<any> = new Subject();
+  cancelling = false
+  syncing = false 
+  batchSize = 200
+  initialBatchSize = 1000
+  writeBatchSize = 50
+  streamBatchSize = 25
+  pullSyncOptions;
+  pushSyncOptions;
+  fullSync: string;
+  
   constructor(
     private http: HttpClient,
     private variableService: VariableService,
@@ -47,6 +61,18 @@ export class SyncCouchdbService {
     private conflictService: ConflictService
   ) { }
 
+  cancel() {
+    this.cancelling = true
+  }
+
+  finishCancelling(replicationStatus:ReplicationStatus) {
+    this.cancelling = false
+    this.onCancelled$.next({
+      ...replicationStatus,
+      cancelled: true
+    })
+  }
+
   /**
    * Note that if you run this with no forms configured to CouchDB sync,
    * that will result in no filter query and everything will be synced. Use carefully.
@@ -54,161 +80,132 @@ export class SyncCouchdbService {
    * @param syncDetails
    * @param caseDefinitions - null if not testing.
    */
-  async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails, caseDefinitions:CaseDefinition[] = null): Promise<ReplicationStatus> {
+  async sync(
+    userDb:UserDatabase,
+    syncDetails:SyncCouchdbDetails,
+    caseDefinitions:CaseDefinition[] = null,
+    isFirstSync = false,
+    fullSync?:SyncDirection
+  ): Promise<ReplicationStatus> {
+    // set fullSync
+    this.fullSync = fullSync
+    // Prepare config.
     const appConfig = await this.appConfigService.getAppConfig()
-    const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-    const remoteDb = new PouchDB(syncSessionUrl)
-    // From Form Info, generate the pull and push selectors.
-    const pullSelector = {
-      "$or" : [
-        ...syncDetails.formInfos.reduce(($or, formInfo) => {
-          if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-            $or = [
-              ...$or,
-              ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                  // Get last value, that's the focused sync point.
-                  let location = locationConfig.value.slice(-1).pop()
-                  return {
-                    "form.id": formInfo.id,
-                    [`location.${location.level}`]: location.value
-                  }
-                })
-                : [
-                  {
-                    "form.id": formInfo.id
-                  }
-                ]
-            ]
-          }
-          return $or
-        }, []),
-        ...syncDetails.deviceSyncLocations.length > 0
-          ? syncDetails.deviceSyncLocations.map(locationConfig => {
-            // Get last value, that's the focused sync point.
-            let location = locationConfig.value.slice(-1).pop()
-            return {
-              "type": "issue",
-              [`location.${location.level}`]: location.value,
-              "resolveOnAppContext": AppContext.Client
-            }
-          })
-          : [
-            {
-              "resolveOnAppContext": AppContext.Client,
-              "type": "issue"
-            }
-          ]
-      ]
-    }
-    const pushSelector = {
-      "$or" : [
-        ...syncDetails.formInfos.reduce(($or, formInfo) => {
-          if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.push) {
-            $or = [
-              ...$or,
-              {
-                "form.id": formInfo.id
-              }
-            ]
-          }
-          return $or
-        }, []),
-        {
-          "type": "issue"
-        }
-      ]
-    }
-    // Get the sequences we'll be starting with.
-    let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
-    let push_last_seq = await this.variableService.get('sync-push-last_seq')
-    if (typeof pull_last_seq === 'undefined') {
-      pull_last_seq = 0;
-    }
-    if (typeof push_last_seq === 'undefined') {
-      push_last_seq = 0;
+    this.batchSize = appConfig.batchSize || this.batchSize
+    this.initialBatchSize = appConfig.initialBatchSize || this.initialBatchSize
+    this.writeBatchSize = appConfig.writeBatchSize || this.writeBatchSize
+    let batchSize = (isFirstSync || fullSync === SyncDirection.pull)
+      ? this.initialBatchSize
+      : this.batchSize
+    let replicationStatus:ReplicationStatus
+    // Create sync session and instantiate remote database connection.
+    let syncSessionUrl
+    let remoteDb
+    try {
+      syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
+      remoteDb = new PouchDB(syncSessionUrl)
+    } catch (e) {
+      replicationStatus = {
+        ...replicationStatus,
+        pushError: `${_TRANSLATE('Please retry sync. Are you connected to the Internet?')}`
+      }
+      this.syncMessage$.next(replicationStatus)
+      return replicationStatus
     }
 
-    const startLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-    await this.variableService.set('sync-push-last_seq-start', startLocalSequence)
-
-    let pullSyncOptions = {
-      "since": pull_last_seq,
-      "batch_size": 50,
-      "batches_limit": 1,
-      ...appConfig.couchdbPullUsingDocIds
-        ? {
-          "doc_ids": (await remoteDb.find({
-            "limit": 987654321,
-            "fields": ["_id"],
-            "selector":  pullSelector
-          })).docs.map(doc => doc._id)
-        }
-        : {
-          "selector": pullSelector
-        }
-    }
-    let pullReplicationStatus:ReplicationStatus = await this.pull(userDb, remoteDb, pullSyncOptions);
-    if (pullReplicationStatus.pullConflicts.length > 0) {
-      await this.conflictService.resolveConflicts(pullReplicationStatus, userDb, remoteDb, 'pull', caseDefinitions);
+    if (this.cancelling) {
+      this.finishCancelling(replicationStatus)
+      return replicationStatus
     }
 
-    // Now that we've pulled, let's find the last_seq that we can skip the next time we push.
-    // Find the last sequence in the local database and set the sync-push-last_seq variable.
-    const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-    await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-
-    const pushSyncOptions = {
-      "since": push_last_seq,
-      "batch_size": 50,
-      "batches_limit": 1,
-      ...appConfig.couchdbPush4All ? { } : appConfig.couchdbPushUsingDocIds
-        ? {
-          "doc_ids": (await userDb.db.find({
-            "limit": 987654321,
-            "fields": ["_id"],
-            "selector":  pushSelector
-          })).docs.map(doc => doc._id)
+    // Push.
+    let pushReplicationStatus
+    let hadPushSuccess = false
+    if (!isFirstSync) {
+      while (!hadPushSuccess && !this.cancelling) {
+        pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
+        if (!pushReplicationStatus.pushError) {
+          hadPushSuccess = true
+          await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
+        } else {
+          await sleep(retryDelay)
         }
-        : {
-          "selector": pushSelector
-        }
+      }
+      replicationStatus = {...replicationStatus, ...pushReplicationStatus}
     }
-    let pushReplicationStatus = await this.push(userDb, remoteDb, pushSyncOptions);
-    let replicationStatus = {...pullReplicationStatus, ...pushReplicationStatus}
+
+    if (this.cancelling) {
+      this.finishCancelling(replicationStatus)
+      return replicationStatus
+    }
+
+    // Pull.
+    let pullReplicationStatus
+    let hadPullSuccess = false
+    while (!hadPullSuccess && !this.cancelling) {
+      try {
+        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
+        if (!pullReplicationStatus.pullError) {
+          await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
+          hadPullSuccess = true
+        } else {
+          await sleep(retryDelay)
+        }
+      } catch (e) {
+        // Theoretically this.pull shouldn't ever throw an error, but just in case make sure we set that last push sequence.
+        const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
+        await this.variableService.set('sync-push-last_seq', localSequenceAfterPull)
+        console.error(e)
+        await sleep(retryDelay)
+      }
+    }
+    replicationStatus = {...replicationStatus, ...pullReplicationStatus}
+
+    // Whatever we pulled, even if there was an error, we don't need to push so set last push sequence again.
+    const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
+    await this.variableService.set('sync-push-last_seq', localSequenceAfterPull)
+
+    if (this.cancelling) {
+      this.finishCancelling(replicationStatus)
+    }
+
+    // All done.
     return replicationStatus
   }
-  
-  async push(userDb, remoteDb, pouchSyncOptions): Promise<ReplicationStatus> {
-    const status = <ReplicationStatus>await new Promise((resolve, reject) => {
+
+  _push (userDb, remoteDb, syncOptions) {
+    return new Promise( (resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
-      const direction =  'push'
-      userDb.db['replicate'].to(remoteDb, pouchSyncOptions).on('complete', async (info) => {
-        await this.variableService.set('sync-push-last_seq', info.last_seq);
-        // TODO: change to remoteDB and check if it is one of the id's we are concerned about
-        // don't want to act on docs we are not concerned w/
-        // act upon only docs in our region...
-        //const conflictsQuery = await userDb.query('sync-conflicts');
-        resolve(<ReplicationStatus>{
-          pushed: info.docs_written
-          //pushConflicts: conflictsQuery.rows.map(row => row.id)
-        });
+      const direction = 'push'
+      const progress = {
+        'direction': direction,
+        'remaining': syncOptions.remaining
+      }
+      this.syncMessage$.next(progress)
+      userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
+        const status = <ReplicationStatus>{
+          pushed: info.docs_written,
+          info: info,
+          direction: direction
+        }
+        if (info.errors && info.errors.length > 0) {
+          status.pushError = info.errors.join('; ')
+          reject(status)
+        } else {
+          resolve(status)
+        }
       }).on('change', async (info) => {
-        await this.variableService.set('sync-push-last_seq', info.last_seq);
+        const pushed = syncOptions.pushed + info.docs_written
         const progress = {
           'docs_read': info.docs_read,
           'docs_written': info.docs_written,
           'doc_write_failures': info.doc_write_failures,
           'pending': info.pending,
-          'direction': direction
+          'direction': direction,
+          'last_seq': info.last_seq,
+          'pushed': pushed
         };
         this.syncMessage$.next(progress);
-      }).on('active', function (info) {
-        if (info) {
-          console.log('Push replication is active. Info: ' + JSON.stringify(info));
-        } else {
-          console.log('Push replication is active.');
-        }
       }).on('checkpoint', (info) => {
         if (info) {
           // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
@@ -252,83 +249,297 @@ export class SyncCouchdbService {
         } else {
           console.log(direction + ': Calculating Checkpoints.');
         }
-      }).on('error', function (errorMessage) {
-        console.log('boo, something went wrong! error: ' + errorMessage);
-        reject(errorMessage);
+      }).on('active', function (info) {
+        if (info) {
+          console.log('Push replication is active. Info: ' + JSON.stringify(info));
+        } else {
+          console.log('Push replication is active.');
+        }
+      }).on('error', function (error) {
+        console.error(error)
+        const status = <ReplicationStatus>{
+          pushError: "_push failed. error: " + error
+        }
+        reject(status);
       });
-    });
+    })
+  }
+  
+  async push(userDb, remoteDb, appConfig, syncDetails): Promise<ReplicationStatus> {
+    // Get the sequences we'll be starting with.
+    let push_last_seq = await this.variableService.get('sync-push-last_seq')
+
+    if (typeof push_last_seq === 'undefined') {
+      push_last_seq = 0;
+    }
+    if (this.fullSync && this.fullSync === 'push') {
+      push_last_seq = 0;
+    }
+
+    let progress = {
+      'direction': 'push',
+      'message': 'About to push any new data to the server.'
+    }
+    
+    this.syncMessage$.next(progress)
+
+    let status = <ReplicationStatus>{
+      pushed: 0,
+      info: '',
+      remaining: 0,
+      direction: 'push'
+    };
+    
+    let failureDetected = false
+    let pushed = 0
+    let syncOptions = {
+      "since":push_last_seq,
+      "batch_size": this.batchSize,
+      "batches_limit": 1,
+      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null,
+      "remaining": 100,
+      "pushed": pushed,
+      "checkpoint": 'source',
+       "filter": function (doc) {
+        return doc._id.substr(0,7) !== '_design';
+      }
+    }
+
+    syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
+
+    try {
+      status = <ReplicationStatus>await this._push(userDb, remoteDb, syncOptions);
+      if (typeof status.pushed !== 'undefined') {
+        pushed = pushed + status.pushed
+        status.pushed = pushed
+      } else {
+        status.pushed = pushed
+      }
+      this.syncMessage$.next(status)
+    } catch (statusWithError) {
+      status = {
+        ...status,
+        ...statusWithError
+      }
+      failureDetected = true
+    }
+    
+    status.initialPushLastSeq = push_last_seq
+    status.currentPushLastSeq = status.info.last_seq
+
+    if (failureDetected) {
+      const errorMessageDialog = window['t']('Error: ')
+      const errorMessage = errorMessageDialog + status.pushError
+      status.error = errorMessage
+      console.error(status)
+      this.syncMessage$.next(status)
+    } else {
+    }
     return status;
   }
 
-  async pull(userDb, remoteDb, pouchSyncOptions): Promise<ReplicationStatus> {
-    const status = <ReplicationStatus>await new Promise((resolve, reject) => {
+  _pull(userDb, remoteDb, syncOptions):Promise<ReplicationStatus> {
+    return new Promise( (resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
-      const direction =  'pull'
-      userDb.db['replicate'].from(remoteDb, pouchSyncOptions).on('complete', async (info) => {
-        await this.variableService.set('sync-pull-last_seq', info.last_seq);
-        const conflictsQuery = await userDb.query('sync-conflicts');
-        resolve(<ReplicationStatus>{
-          pulled: info.docs_written,
-          pullConflicts: conflictsQuery.rows.map(row => row.id)
-        });
-      }).on('change', async (info) => {
-        await this.variableService.set('sync-pull-last_seq', info.last_seq);
-        const progress = {
-          'docs_read': info.docs_read,
-          'docs_written': info.docs_written,
-          'doc_write_failures': info.doc_write_failures,
-          'pending': info.pending,
-          'direction': 'pull'
-        };
-        this.syncMessage$.next(progress);
-      }).on('active', function (info) {
-        if (info) {
-          console.log('Pull replication is active. Info: ' + JSON.stringify(info));
-        } else {
-          console.log('Pull replication is active.');
-        }
-      }).on('checkpoint', (info) => {
-        if (info) {
-          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
-          let progress;
-          if (info.checkpoint) {
-            checkpointProgress = checkpointProgress + 1
-            progress = {
-              'message': checkpointProgress,
-              'type': 'checkpoint',
-              'direction': direction
-            };
-          } else if (info.diffing) {
-            diffingProgress = diffingProgress + 1
-            progress = {
-              'message': diffingProgress,
-              'type': 'diffing',
-              'direction': direction
-            };
-          } else if (info.startNextBatch) {
-            startBatchProgress = startBatchProgress + 1
-            progress = {
-              'message': startBatchProgress,
-              'type': 'startNextBatch',
-              'direction': direction
-            };
-          } else if (info.pendingBatch) {
-            pendingBatchProgress = pendingBatchProgress + 1
-            progress = {
-              'message': pendingBatchProgress,
-              'type': 'pendingBatch',
-              'direction': direction
-            };
+      let status = <ReplicationStatus>{
+        pulled: 0,
+        pullConflicts: [],
+        info: '',
+        direction: ''
+      }
+      const direction = 'pull'
+      const progress = {
+        'direction': direction,
+        'message': "Checking the server for updates."
+      }
+      this.syncMessage$.next(progress)
+      try {
+        userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
+          // console.log("info.last_seq: " + info.last_seq)
+          const conflictsQuery = await userDb.query('sync-conflicts')
+          status = <ReplicationStatus>{
+            pulled: info.docs_written,
+            pullConflicts: conflictsQuery.rows.map(row => row.id),
+            info: info,
+            direction: direction
           }
-          this.syncMessage$.next(progress);
-        } else {
-          console.log(direction + ': Calculating Checkpoints.');
-        }
-      }).on('error', function (errorMessage) {
-        console.log('boo, something went wrong! error: ' + errorMessage);
-        reject(errorMessage);
-      });
-    });
+          // TODO: Should we always resolve or if there is an errors property in the info doc should we reject?
+          // If that is the case - we may need to make sure the sync-pull-last-seq is not set.
+          resolve(status)
+        }).on('change', async (info) => {
+          const pulled = syncOptions.pulled + info.docs_written
+          const progress = {
+            'docs_read': info.docs_read,
+            'docs_written': info.docs_written,
+            'doc_write_failures': info.doc_write_failures,
+            'pending': info.pending,
+            'direction': 'pull',
+            'last_seq': info.last_seq,
+            'pulled': pulled
+          }
+          await this.variableService.set('sync-pull-last_seq', info.last_seq)
+          this.syncMessage$.next(progress)
+        }).on('checkpoint', (info) => {
+          if (info) {
+            // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+            let progress;
+            if (info.checkpoint) {
+              checkpointProgress = checkpointProgress + 1
+              progress = {
+                'message': checkpointProgress,
+                'type': 'checkpoint',
+                'direction': direction
+              };
+            } else if (info.diffing) {
+              diffingProgress = diffingProgress + 1
+              progress = {
+                'message': diffingProgress,
+                'type': 'diffing',
+                'direction': direction
+              };
+            } else if (info.startNextBatch) {
+              startBatchProgress = startBatchProgress + 1
+              progress = {
+                'message': startBatchProgress,
+                'type': 'startNextBatch',
+                'direction': direction
+              };
+            } else if (info.pendingBatch) {
+              pendingBatchProgress = pendingBatchProgress + 1
+              progress = {
+                'message': pendingBatchProgress,
+                'type': 'pendingBatch',
+                'direction': direction
+              };
+            }
+            this.syncMessage$.next(progress);
+          } else {
+            console.log(direction + ': Calculating Checkpoints.');
+          }
+        }).on('error', function (error) {
+          reject(error)
+        });
+      } catch (e) {
+        console.log("Error replicating: " + e)
+      }
+    })
+  }
+
+  async pull(userDb, remoteDb, appConfig, syncDetails, batchSize): Promise<ReplicationStatus> {
+    let status = <ReplicationStatus>{
+      pulled: 0,
+      pullError: '',
+      pullConflicts: [],
+      info: '',
+      remaining: 0,
+      direction: 'pull' 
+    };
+    let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
+    if (typeof pull_last_seq === 'undefined') {
+      pull_last_seq = 0;
+    }
+    if (this.fullSync && this.fullSync === 'pull') {
+      pull_last_seq = 0;
+    }
+    const pullSelector = this.getPullSelector(syncDetails);
+    let progress = {
+      'direction': 'pull',
+      'message': 'Received data from remote server.'
+    }
+    this.syncMessage$.next(progress)
+    let failureDetected = false
+    let error;
+    let pulled = 0
+    
+    /**
+     * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet. 
+     * From the pouchdb API doc:      
+     * "Number of batches to process at a time. Defaults to 10. This (along wtih batch_size) controls how many docs 
+     * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
+     */
+    let syncOptions = {
+      "since": pull_last_seq,
+      "batch_size": batchSize,
+      "write_batch_size": this.writeBatchSize,
+      "batches_limit": 1,
+      "pulled": pulled,
+      "selector": pullSelector,
+      "checkpoint": 'target',
+      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null
+    }
+    
+    syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
+    
+    try {
+      status = <ReplicationStatus>await this._pull(userDb, remoteDb, syncOptions);
+      if (typeof status.pulled !== 'undefined') {
+        pulled = pulled + status.pulled
+        status.pulled = pulled
+      } else {
+        status.pulled = pulled
+      }
+      this.syncMessage$.next(status)
+    } catch (e) {
+      console.log("Error: " + e)
+      failureDetected = true
+      error = e
+    }
+    
+    status.initialPullLastSeq = pull_last_seq
+    status.currentPushLastSeq = status.info.last_seq
+    status.batchSize = batchSize
+
+    if (failureDetected) {
+      status.pullError = `${error.message || error}. ${window['t']('Trying again')}.`
+      this.syncMessage$.next(status)
+    }
     return status;
   }
+
+  getPullSelector(syncDetails) {
+    const pullSelector = {
+      "$or": [
+        ...syncDetails.formInfos.reduce(($or, formInfo) => {
+          if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
+            $or = [
+              ...$or,
+              ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                  // Get last value, that's the focused sync point.
+                  let location = locationConfig.value.slice(-1).pop()
+                  return {
+                    "form.id": formInfo.id,
+                    [`location.${location.level}`]: location.value
+                  }
+                })
+                : [
+                  {
+                    "form.id": formInfo.id
+                  }
+                ]
+            ]
+          }
+          return $or
+        }, []),
+        ...syncDetails.deviceSyncLocations.length > 0
+          ? syncDetails.deviceSyncLocations.map(locationConfig => {
+            // Get last value, that's the focused sync point.
+            let location = locationConfig.value.slice(-1).pop()
+            return {
+              "type": "issue",
+              [`location.${location.level}`]: location.value,
+              "resolveOnAppContext": AppContext.Client
+            }
+          })
+          : [
+            {
+              "resolveOnAppContext": AppContext.Client,
+              "type": "issue"
+            }
+          ]
+      ]
+    }
+    return pullSelector;
+  }
+    
 }

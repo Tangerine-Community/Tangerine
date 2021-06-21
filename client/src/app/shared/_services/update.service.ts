@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { updates } from '../../core/update/update/updates';
 import {HttpClient} from "@angular/common/http";
 import {UserDatabase} from "../_classes/user-database.class";
+import {SyncService} from "../../sync/sync.service";
 
 const VAR_CURRENT_UPDATE_INDEX = 'VAR_CURRENT_UPDATE_INDEX'
 export const VAR_UPDATE_IS_RUNNING = 'VAR_UPDATE_IS_RUNNING'
@@ -22,12 +23,15 @@ export class UpdateService {
     private userService:UserService,
     private variableService:VariableService,
     private appConfigService:AppConfigService,
-    private http: HttpClient
+    private http: HttpClient,
+    private syncService: SyncService,
   ) { }
 
   async install() {
     await this.setCurrentUpdateIndex(updates.length - 1)
   }
+
+  sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
   /*
    * Sync Protocol 1
@@ -61,11 +65,13 @@ export class UpdateService {
     // Use try in case this is an old account where info doc was not created.
     try {
       const infoDoc = await userDb.get('info');
-      atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex')
+      atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc['atUpdateIndex'] : 0
       await this.variableService.set('atUpdateIndex', atUpdateIndex);
+      console.log("migrateInfodoc atUpdateIndex migrated from infoDoc: " + atUpdateIndex)
     } catch (e) {
       await this.variableService.set('atUpdateIndex', 0);
       atUpdateIndex = 0;
+      console.log("migrateInfodoc atUpdateIndex set to: " + atUpdateIndex)
     }
     return atUpdateIndex;
   }
@@ -94,7 +100,11 @@ export class UpdateService {
         if (updates[atUpdateIndex+1].requiresViewsUpdate) {
           requiresViewsRefresh = true;
         }
-        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService);
+        if (updates[atUpdateIndex+1].message) {
+          this.status$.next(_TRANSLATE(`${updates[atUpdateIndex+1].message}`))
+          await this.sleep(1000)
+        }
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService, this.syncService, this.status$);
         totalUpdatesApplied++;
         atUpdateIndex++;
         if (requiresViewsRefresh) {
@@ -129,7 +139,11 @@ export class UpdateService {
       while (atUpdateIndex < finalUpdateIndex) {
         this.status$.next(_TRANSLATE(`Applying Update: ${atUpdateIndex+1}`))
         if (updates[atUpdateIndex+1].requiresViewsUpdate) requiresViewsRefresh = true;
-        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService);
+        if (updates[atUpdateIndex+1].message) {
+          this.status$.next(_TRANSLATE(`${updates[atUpdateIndex+1].message}`))
+          await this.sleep(1000)
+        }
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService, this.variableService, this.syncService, this.status$);
         atUpdateIndex++;
         await this.setCurrentUpdateIndex(atUpdateIndex)
       }
@@ -196,5 +210,30 @@ export class UpdateService {
   async setCurrentUpdateIndex(index) {
     await this.variableService.set(VAR_CURRENT_UPDATE_INDEX, index)
   }
-
+  
+  async getBeforeCustomUpdates() {
+    const customUpdates =<any> await this.http.get('./assets/before-custom-updates.js', {responseType: 'text'}).toPromise()
+    return customUpdates
+  }
+  
+  async getAfterCustomUpdates() {
+    const customUpdates =<any> await this.http.get('./assets/after-custom-updates.js', {responseType: 'text'}).toPromise()
+    return customUpdates
+  }
+  
+  async runCustomUpdatesBefore(customUpdates) {
+    this.status$.next(_TRANSLATE(`Applying Custom Update before Main Updates. `))
+    // TODO capture output of script and pass up to the component
+    await eval("(async () => {" + customUpdates + "})()")
+    this.status$.next(_TRANSLATE(`Finished Custom Update before Main Updates. `))
+  }
+  
+  async runCustomUpdatesAfter(customUpdates) {
+    this.status$.next(_TRANSLATE(`Applying Custom Update after Main Updates. `))
+    // TODO capture output of script and pass up to the component
+    eval(`(() => {${customUpdates}})()`).then(function() {
+      this.status$.next(_TRANSLATE(`Finished Custom Update after Main Updates. `))
+      console.log("done");
+    });
+  }
 }

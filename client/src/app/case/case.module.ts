@@ -1,4 +1,6 @@
 import { NewIssueComponent } from './components/new-issue/new-issue.component';
+import { CaseDocs } from './case.docs';
+import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { IssueComponent } from './components/issue/issue.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -41,6 +43,7 @@ import { IssuesComponent } from './components/issues/issues.component';
   ],
   providers: [
     CaseDefinitionsService,
+    {provide: DEFAULT_USER_DOCS, useValue:CaseDocs, multi: true},
     CaseService,
     CasesService
   ],

@@ -1,9 +1,13 @@
+import { SyncDirection } from './../../../sync/sync-direction.enum';
+import { CaseDocs } from './../../../case/case.docs';
 import { AppDocs } from './../../../app.docs';
 import { CaseHomeDocs } from './../../../case-home/case-home.docs';
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
 import {TangyFormsDocs} from '../../../tangy-forms/tangy-forms.docs';
 import {VariableService} from "../../../shared/_services/variable.service";
+import {SyncService} from "../../../sync/sync.service";
+import {_TRANSLATE} from "../../../shared/translation-marker";
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 const bcrypt = window['dcodeIO'].bcrypt
 
@@ -270,6 +274,11 @@ export const updates = [
       // syncProtocol uses a single shared db for all users. Update only once.
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.0')) return
       console.log('Updating to v3.9.0...')
+      try {
+        const view = await userDb.get('_design/responsesUnLockedAndNotUploaded')
+        TangyFormsDocs[0]['_rev'] = view._rev
+      } catch (e) {
+      }
       await userDb.put(TangyFormsDocs[0])
       await userDb.query('responsesUnLockedAndNotUploaded')
       await variableService.set('ran-update-v3.9.0', 'true')
@@ -280,6 +289,11 @@ export const updates = [
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.1')) return
       console.log('Updating to v3.9.1...')
+      try {
+        const view = await userDb.get('_design/case-events-by-all-days')
+        CaseHomeDocs[0]['_rev'] = view._rev
+      } catch (e) {
+      }
       await userDb.put(CaseHomeDocs[0])
       await userDb.query('case-events-by-all-days')
       await variableService.set('ran-update-v3.9.1', 'true')
@@ -299,9 +313,79 @@ export const updates = [
       console.log('Updating to v3.13.0...')
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.13.0')) return
       // Set up and index new byType query.
+      try {
+        const view = await userDb.get('_design/byType')
+        AppDocs[0]['_rev'] = view._rev
+      } catch (e) {
+      }
       await userDb.put(AppDocs[0])
       await userDb.query('byType')
       await variableService.set('ran-update-v3.13.0', 'true')
     }
-  }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      console.log('Updating to v3.14.0...')
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.14.0')) return
+      // Reset sync-push-last_seq
+      await variableService.set('sync-push-last_seq', 0);
+      await variableService.set('ran-update-v3.14.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.0')) return
+      console.log('Updating to v3.15.0...')
+     // Remove old search indexes.
+      const searchDb = new PouchDB(`${userDb.name}-index`)
+      await searchDb.destroy()
+      // Create new search index.
+      await window['T'].search.createIndex()
+      await variableService.set('ran-update-v3.15.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.3')) return
+      console.log('Updating to v3.15.3...')
+      // Build search index.
+      await window['T'].search.createIndex()
+      await userDb.query('search', { limit: 1 })
+      await variableService.set('ran-update-v3.15.3', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    message: 'Checking if this tablet needs a full sync.',
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService, syncService:SyncService, status) => {
+      const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.0')) return
+      console.log('Updating to v3.16.0...')
+      // Check if this instance is configured for this update
+      if (appConfig.forceFullSync) {
+        console.log('Performing full sync. This will take a little while.')
+        status.next(_TRANSLATE(`Performing full sync. This will take a little while.`))
+        const replicationStatus = await syncService.sync(false, SyncDirection.pull)
+        console.log('Completed sync.')
+        status.next(_TRANSLATE(`Done with the full sync.`))
+        await sleep(1000)
+      }
+      
+      await variableService.set('ran-update-v3.16.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.3')) return
+      console.log('Updating to v3.16.3...')
+      // Install SyncForm index.
+      await window['T'].sync.createSyncFormIndex()
+      // We will create the index in the next sync if appConfig.calculateLocalDocsForLocation is true.
+      await variableService.set('ran-update-v3.16.3', 'true')
+    }
+  },
 ]

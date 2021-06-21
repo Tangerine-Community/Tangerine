@@ -1,5 +1,5 @@
 <div class="form-cards"
-    *ngIf="participantInfo.caseEventHasEventFormsForParticipantsRole"
+    *ngIf="participantInfo.caseEventHasEventFormsForParticipantsRole && ((participantInfo.eventFormsParticipantCanCreate && participantInfo.eventFormsParticipantCanCreate.length > 0) || participantInfo.eventFormInfos.length > 0)"
 >
   <h2 [innerHTML]="participantInfo.renderedListItem|unsanitizeHtml"></h2>
   <div 

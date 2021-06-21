@@ -6,6 +6,7 @@
 
 if [ ! -d data ]; then
   mkdir data
+  IS_INSTALLING="true"
 fi
 if [ ! -d data/csv ]; then
   mkdir data/csv
@@ -68,6 +69,13 @@ if [ -f "./config.sh" ]; then
   source ./config.sh
 else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
+fi
+
+if echo "$T_MODULES" | grep mysql; then
+  ./mysql-start.sh
+  echo "Waiting 60 seconds for myql to start..."
+  sleep 60
+  ./mysql-setup.sh
 fi
 
 #
@@ -148,7 +156,7 @@ RUN_OPTIONS="
   --link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --name $T_CONTAINER_NAME \
   --restart unless-stopped \
-  --env \"NODE_ENV=production\" \
+  --env \"NODE_ENV=development\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_USER1=$T_USER1\" \
@@ -156,6 +164,8 @@ RUN_OPTIONS="
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN\" \
   --env \"T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT\" \
+  --env \"T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME\" \
+  --env \"T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS\" \
   --env \"T_USER1_MANAGED_SERVER_USERS=$T_USER1_MANAGED_SERVER_USERS\" \
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
@@ -170,7 +180,10 @@ RUN_OPTIONS="
   --env \"T_ORIENTATION=$T_ORIENTATION\" \
   --env \"T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH\" \
   --env \"T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH\" \
+  --env \"T_REPORTING_MARK_UNDEFINED_WITH=$T_REPORTING_MARK_UNDEFINED_WITH\" \
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
+  --env \"T_ARCHIVE_APKS_TO_DISK=$T_ARCHIVE_APKS_TO_DISK\" \
+  --env \"T_ARCHIVE_PWAS_TO_DISK=$T_ARCHIVE_PWAS_TO_DISK\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
@@ -184,6 +197,18 @@ RUN_OPTIONS="
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
+
+if echo "$T_MODULES" | grep mysql; then
+RUN_OPTIONS="
+  --link $T_MYSQL_CONTAINER_NAME:mysql \
+  --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
+  --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
+  --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
+  --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
+  $RUN_OPTIONS
+"
+fi
+
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"

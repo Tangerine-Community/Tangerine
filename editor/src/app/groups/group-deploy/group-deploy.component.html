@@ -29,8 +29,20 @@
         <i class="material-icons tangy-foreground-secondary group-avatar">system_update</i>
       </div>
       <mat-card-title>
-          <a>{{'Releases'|translate}}</a>
+          <a>{{'Release Offline App'|translate}}</a>
       </mat-card-title>
       <mat-card-subtitle>{{'Release updates to devices.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-card *appHasAllPermissions="let i;group:groupId; permissions:['can_access_releases']" class="is-link mat-elevation-z3" routerLink="onlineSurvey">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <i class="material-icons tangy-foreground-secondary group-avatar">system_update</i>
+      </div>
+      <mat-card-title>
+          <a>{{'Release Online Survey'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Release forms as online Surveys.'|translate}}</mat-card-subtitle>
   </mat-card-header>
 </mat-card>

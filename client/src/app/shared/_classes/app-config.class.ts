@@ -19,6 +19,7 @@ export class AppConfig {
   barcodeSearchMapFunction:string
   showQueries:boolean
   showCaseReports:boolean
+  showIssues:boolean
   groupId:string
   groupName:string
   p2pSync = 'false'
@@ -27,5 +28,18 @@ export class AppConfig {
   couchdbPush4All:boolean
   couchdbPullUsingDocIds:boolean
   couchdbPushUsingDocIds:boolean
+  autoMergeConflicts:boolean
+  useEthiopianCalendar:boolean
+  attachHistoryToDocs:boolean = false
+  filterCaseEventScheduleByDeviceAssignedLocation:boolean = false
+  disableGpsWarming:boolean
+  indexViewsOnlyOnFirstSync:boolean = false
+  batchSize:number
+  initialBatchSize:number
+  writeBatchSize:number
+  useCachedDbDumps:boolean
+  calculateLocalDocsForLocation:boolean;
+  findSelectorLimit: number;
+  compareLimit: number;
 }
 

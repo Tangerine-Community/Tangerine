@@ -43,6 +43,7 @@ export class UserProfileComponent implements AfterContentInit {
       if (!userAccount.initialProfileComplete) {
         await this.userService.saveUserAccount(<UserAccount>{ ...userAccount, initialProfileComplete:true })
       }
+      await this.userService.setCurrentUser(this.userService.getCurrentUser())
       this.router.navigate([this.returnUrl]);
     })
     try {

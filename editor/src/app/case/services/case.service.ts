@@ -1,3 +1,4 @@
+import { AppConfigService } from './../../shared/_services/app-config.service';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
@@ -89,6 +90,7 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
@@ -149,7 +151,7 @@ class CaseService {
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
     const tangyFormContainerEl:any = document.createElement('div')
-    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
+    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId, null)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form')
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
@@ -268,8 +270,8 @@ class CaseService {
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (
-          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+        if (eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)
+          &&
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -487,8 +489,8 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (
-          caseRoleId === eventFormDefinition.forCaseRole && 
+        if (eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseRoleId)
+          &&
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -750,16 +752,12 @@ class CaseService {
 
   async canMergeProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    const event = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
-    // const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
+    const eventBase = [...issue.events]
+      .reverse()
+      .find(event => event.type === IssueEventType.Rebase || event.type === IssueEventType.Open)
+    const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
-    let currentResponse
-    if (issue.docType === 'response') {
-      currentResponse = await this.tangyFormService.getResponse(issue.formResponseId)
-    } else if (issue.docType === 'case') {
-      currentResponse = currentCaseInstance
-    }
-    return currentResponse._rev === event.data.response._rev && currentCaseInstance._rev === event.data.caseInstance._rev ? true : false
+    return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
   }
 
   async issueDiff(issueId) {
@@ -814,6 +812,12 @@ class CaseService {
     return diff
   }
 
+  isIssueContext() {
+    return window.location.hash.includes('/issues/')
+      ? true
+      : false
+  }
+
   /*
    * Data Inquiries API
    */
@@ -863,7 +867,7 @@ class CaseService {
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
       const tangyFormContainerEl:any = document.createElement('div');
-      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
+      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId, null);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
       document.body.appendChild(tangyFormContainerEl);
@@ -899,10 +903,6 @@ class CaseService {
       await this.save();
 
       return queryResponseId;
-  }
-
-  getQuestionMarkup(form: string, question: string): Promise<string> {
-    return this.tangyFormService.getFormMarkup(form);
   }
 
   async valueExists(form, variable, value) {
@@ -1045,6 +1045,47 @@ class CaseService {
     }
   }
 
+  async getCaseHistory(caseId:string = '', historyType = 'DEFAULT') {
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
+    }
+    caseId = caseId || window.location.hash.split('/')[2]
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(caseId)
+      : (await this.tangyFormService.getResponse(caseId)).history
+    return history 
+  }
+
+  async getEventFormHistory(caseId:string = '', caseEventId:string = '', eventFormId:string = '', historyType:HistoryType = HistoryType.DEFAULT) {
+    caseId = caseId || window.location.hash.split('/')[4]
+    caseEventId = caseEventId || window.location.hash.split('/')[5]
+    eventFormId = eventFormId || window.location.hash.split('/')[6]
+    const caseInstance = <Case>await this.tangyFormService.getResponse(caseId)
+    const formResponseId = caseInstance
+      .events.find(event => event.id === caseEventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
+    }
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(formResponseId)
+      : (await this.tangyFormService.getResponse(formResponseId)).history
+    return history
+  }
+
+}
+
+export enum HistoryType {
+  DEFAULT = 'DEFAULT',
+  DB_REVISIONS = 'DB_REVISIONS',
+  DOC_HISTORY = 'DOC_HISTORY',
 }
 
 interface CaseInfo {

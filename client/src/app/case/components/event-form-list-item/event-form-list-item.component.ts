@@ -1,3 +1,5 @@
+import { EventFormsForParticipantComponent } from './../event-forms-for-participant/event-forms-for-participant.component';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
@@ -5,7 +7,7 @@ import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
-import { EventFormDefinition } from '../../classes/event-form-definition.class';
+import { EventFormDefinition, EventFormOperation } from '../../classes/event-form-definition.class';
 import { EventForm } from '../../classes/event-form.class';
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
@@ -28,6 +30,7 @@ export class EventFormListItemComponent implements OnInit {
   @Input() eventFormDefinition: EventFormDefinition;
   @Input() eventForm: EventForm;
   @Output() formDeleted = new EventEmitter();
+  canOpen:Boolean
 
   defaultTemplateListItemIcon = `\${eventForm.complete ? 'assignment_turned_in' : 'assignment'}`;
   defaultTemplateListItemPrimary = `
@@ -46,16 +49,31 @@ export class EventFormListItemComponent implements OnInit {
   constructor(
     private formService: TangyFormService,
     private ref: ChangeDetectorRef,
+    private userService:UserService,
     private caseService: CaseService
   ) {
     ref.detach();
   }
 
   async ngOnInit() {
-    this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
-    || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
     const response = await this.formService.getResponse(this.eventForm.formResponseId);
     this.response = response
+    // Figure out if user can open this EventForm.
+    if (this.eventForm.formResponseId && !this.response) {
+      // There is a form response for this Event Form, but it's not on this device.
+      this.canOpen = false
+    } else if (!this.eventForm.complete) {
+      // The Event Form has not been completed so opening would be an UPDATE operation.
+      this.canOpen = await this.caseService.hasEventFormPermission(EventFormOperation.UPDATE, this.eventFormDefinition)
+    } else if (this.eventForm.complete) {
+      // The Event Form has been completed so opening would be a READ operation.
+      this.canOpen = await this.caseService.hasEventFormPermission(EventFormOperation.READ, this.eventFormDefinition)
+    }
+    this.canUserDeleteForms = (
+        (this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete) ||
+        (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId)
+      )  &&
+      await this.caseService.hasEventFormPermission(EventFormOperation.DELETE, this.eventFormDefinition)
     const getValue = (variableName) => {
       if (response) {
         const variablesByName = response.items.reduce((variablesByName, item) => {

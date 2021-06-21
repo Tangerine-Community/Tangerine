@@ -4,7 +4,12 @@
     <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">{{'Week View'|translate}}</option>
     <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">{{'Day View'|translate}}</option>
   </select>
-  <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)" #dateCarousel></date-carousel>
+  <span [hidden]="useEthiopianCalendar">
+    <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
+  </span>
+  <span [hidden]="!useEthiopianCalendar">
+    <date-carousel useEthiopianCalendar (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
+  </span>
 </div>
 <div class="event-info" *ngFor="let caseEventInfo of caseEventInfos" routerLink="{{caseEventInfo.openLink}}">
   <div *ngIf="caseEventInfo.dateNumber" class="new-date"> 

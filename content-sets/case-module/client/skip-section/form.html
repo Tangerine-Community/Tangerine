@@ -1,0 +1,61 @@
+<tangy-form id="skip-section" title="Mark Skipped Inputs inside a Section" on-open=""
+            on-change="
+if (getValue('pre_1').includes('1')){
+sectionEnable('item-500')
+} else {
+sectionDisable('item-500')
+}
+      "
+            on-submit=""
+>
+  <tangy-form-item id="item-200"
+                   title="Pre Observation"
+                   on-open=""
+                   on-change=""
+                   category=""
+  >
+    <template>
+      <p><strong>For this demo, choose P1 and click Next to reveal the Literacy 1, Primary 1, Day 1&3 section.
+        If you don't choose P1, that section will be skipped.
+      </strong></p>
+
+      <tangy-radio-buttons id="pre_1" name="pre_1" label="What class are you observing?" required="true" incomplete="">
+        <option value="1">P1</option>
+        <option value="2">P2</option>
+      </tangy-radio-buttons>
+      <tangy-radio-buttons id="pre_2" name="pre_2" label="Lesson/learning area to be observed" incomplete="">
+        <option value="1">Literacy 1</option>
+        <option value="2">Literacy 2</option>
+      </tangy-radio-buttons>
+    </template>
+  </tangy-form-item>
+  <tangy-form-item id="item-500"
+                   title="Literacy 1, Primary 1, Day 1&3"
+                   on-open=""
+                   on-change=""
+                   category=""
+  >
+    <template>
+      <tangy-radio-buttons id="P1L1D12A" name="P1L1D12A" value="" label="2.a) Does the teacher say the name and sound of letter(s) being taught " required="">
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </tangy-radio-buttons>
+      <tangy-radio-buttons id="P1L1D12B" name="P1L1D12B" value="" label="2.b) Does the teacher quack like a duck? " required="">
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </tangy-radio-buttons>
+    </template>
+  </tangy-form-item>
+  <tangy-form-item id="item4"
+                   title="Conclude"
+                   on-open=""
+                   on-change=""
+                   category=""
+  >
+    <template>
+      <tangy-box name="conclusion_message">
+        Thank you for your time. This form may now be submitted.
+      </tangy-box>
+    </template>
+  </tangy-form-item>
+</tangy-form>

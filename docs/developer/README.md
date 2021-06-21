@@ -1,7 +1,9 @@
 # Developer Guide Contents
 
+- [Bullet points for Tangerine Development](development-bullet-points.md)
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
+- [tangerine-dev-tutorial-notes.md](tangerine-dev-tutorial-notes.md)
 
 ## Application design
 - [Bootstrapping Tangerine](bootstrapping-tangerine.md)
@@ -17,9 +19,12 @@
 
 ## Managing Deployments
 - [Upgrades](upgrades.md)
+- [Installing Multiple Tangerine apps on the same tablet](install-multiple-apks-config.md)
+- [Deleting Records](deletion-strategy.md)
 
-## Load Testing
+## Testing
 - [Load Testing](load-testing.md)
+- [Testing conflicts](testing-conflicts.md)
 
 ## Developing Cordova Plugins
 - [cordova-plugin-development.md](cordova-plugin-development.md)

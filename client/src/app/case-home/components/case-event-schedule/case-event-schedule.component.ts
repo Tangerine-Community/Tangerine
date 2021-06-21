@@ -1,3 +1,4 @@
+import { DeviceService } from './../../../device/services/device.service';
 import { TangyFormResponse } from './../../../tangy-forms/tangy-form-response.class';
 import { FormInfo } from './../../../tangy-forms/classes/form-info.class';
 import { CaseDefinition } from 'src/app/case/classes/case-definition.class';
@@ -9,14 +10,15 @@ import { UserService } from './../../../shared/_services/user.service';
 import { CasesService } from './../../../case/services/cases.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Subject } from 'rxjs';
-import * as moment from 'moment'
+import { DateTime } from 'luxon';
 import { CaseEvent } from 'src/app/case/classes/case-event.class';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 export const CASE_EVENT_SCHEDULE_LIST_MODE_DAILY = 'CASE_EVENT_SCHEDULE_LIST_MODE_DAILY'
 export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'
 
 //import { FORMAT_YEAR_WEEK, FORMAT_YEAR_MONTH_DAY } from 'date-carousel/date-carousel.js'
-const FORMAT_YEAR_WEEK = 'YYYY-w'
-const FORMAT_YEAR_MONTH_DAY = 'YYYY-MM-DD'
+const FORMAT_YEAR_WEEK = 'yyyy-c'
+const FORMAT_YEAR_MONTH_DAY = 'yyyy-LL-dd'
 
 class CaseEventInfo {
   dateNumber = ''
@@ -36,8 +38,9 @@ export class CaseEventScheduleComponent implements OnInit {
 
   didSearch$ = new Subject()
 
-  weekInView:string = moment().format(FORMAT_YEAR_WEEK)
-  datePicked:string = moment().format(FORMAT_YEAR_MONTH_DAY)
+  weekInView:DateTime = DateTime.local()
+  datePicked:DateTime = DateTime.local()
+  useEthiopianCalendar:Boolean
 
   // Start with week mode.
   mode = CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
@@ -47,16 +50,21 @@ export class CaseEventScheduleComponent implements OnInit {
   formsInfo:Array<FormInfo>
 
   constructor(
+    private appConfigService:AppConfigService,
     private casesService:CasesService,
     private userService:UserService,
     private formsInfoService:TangyFormsInfoService,
     private caseService:CaseService,
+    private deviceService:DeviceService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
   }
 
   async ngOnInit() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.useEthiopianCalendar = appConfig.useEthiopianCalendar
+    this.ref.detectChanges()
     this.render(await this.calculateEvents())
   }
 
@@ -66,22 +74,24 @@ export class CaseEventScheduleComponent implements OnInit {
   }
 
   async onWeekChange(event) {
-    this.weekInView = event.target.weekInView
+    this.weekInView = DateTime.fromSeconds(parseInt(event.target.weekUnixValue))
+    this.datePicked = DateTime.fromSeconds(parseInt(event.target.weekUnixValue))
     this.render(await this.calculateEvents())
   }
 
   async onDayPick(event) {
-    this.datePicked = event.target.datePicked
+    this.datePicked = DateTime.fromSeconds(parseInt(event.target.dateUnixValue))
+    this.weekInView = DateTime.fromSeconds(parseInt(event.target.weekUnixValue))
     this.render(await this.calculateEvents())
   }
 
   async calculateEvents() {
     let startDate = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_DAILY
-      ? this.datePicked
-      : moment(this.weekInView, FORMAT_YEAR_WEEK).format(FORMAT_YEAR_MONTH_DAY)
+      ? this.datePicked.toFormat(FORMAT_YEAR_MONTH_DAY)
+      : this.weekInView.toFormat(FORMAT_YEAR_MONTH_DAY)
     let endDate = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_DAILY
-      ? this.datePicked 
-      : moment(this.weekInView, FORMAT_YEAR_WEEK).add(6, 'days').format(FORMAT_YEAR_MONTH_DAY)
+      ? this.datePicked.toFormat(FORMAT_YEAR_MONTH_DAY)
+      : this.weekInView.plus({ days: 6 }).toFormat(FORMAT_YEAR_MONTH_DAY)
     let excludeEstimates = false
     const events = <Array<any>>await this.casesService.getEventsByDate(startDate, endDate, excludeEstimates)
     return events
@@ -90,6 +100,7 @@ export class CaseEventScheduleComponent implements OnInit {
   async render(caseEvents:Array<CaseEvent>) {
     // Get an array of unique cases found related to the events.
     const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
+    const appConfig = await this.appConfigService.getAppConfig()
     const cases:Array<TangyFormResponse> = []
     const uniqueCaseIds = caseEvents.reduce((uniqueCaseIds, caseEventInstance) => {
       return uniqueCaseIds.indexOf(caseEventInstance.caseId) === -1
@@ -99,6 +110,14 @@ export class CaseEventScheduleComponent implements OnInit {
     for (const caseId of uniqueCaseIds) {
       cases.push(await userDb.get(caseId))
     }
+    if (appConfig.filterCaseEventScheduleByDeviceAssignedLocation) {
+      const deviceInfo = await this.deviceService.getDevice()
+      const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]
+      const caseIdsThatMatchDeviceAssignedLocation = cases
+        .filter(caseInstance => caseInstance['location'][lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
+        .map(caseInstance => caseInstance._id)
+      caseEvents = caseEvents.filter(caseEvent => caseIdsThatMatchDeviceAssignedLocation.includes(caseEvent.caseId))
+    }
     // Keept track of days of week seen. When we detect a new day, add a dateLabel and dateNumber.
     let daysOfWeekSeen = []
     // Iterate over the caseEvents collecting their infos for templating.
@@ -107,13 +126,17 @@ export class CaseEventScheduleComponent implements OnInit {
       // Build up caseEventInfo to push into caseEventInfos.
       const caseEventInfo = <CaseEventInfo>{}
       // Determine a date this event will rest on.
-      const date = caseEventInstance.occurredOnDay || caseEventInstance.scheduledDay || caseEventInstance.estimatedDay || caseEventInstance.windowStartDay
+      const dateString = caseEventInstance.occurredOnDay || caseEventInstance.scheduledDay || caseEventInstance.estimatedDay || caseEventInstance.windowStartDay
       // If this is a day of the week we have not seen, then attach a date label to this entry in the list.
-      if (daysOfWeekSeen.indexOf(date) === -1) {
-        daysOfWeekSeen.push(date)
-        caseEventInfo.dateLabel = moment(date).format('ddd')
+      if (daysOfWeekSeen.indexOf(dateString) === -1) {
+        daysOfWeekSeen.push(dateString)
+        let date = DateTime.fromISO(dateString)
+        if (this.useEthiopianCalendar) {
+          date = date.reconfigure({ outputCalendar: 'ethiopic' })
+        }
+        caseEventInfo.dateLabel = date.toFormat('LLL')
         caseEventInfo.dateNumber = this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
-          ? moment(date).format('D') 
+          ? date.toFormat('dd')
           : ``
       }
       // Determine the link to use when opening this event.

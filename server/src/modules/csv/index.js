@@ -29,6 +29,7 @@ async function insertGroupReportingViews(groupName) {
 }
 
 module.exports = {
+  name: 'csv',
   hooks: {
     clearReportingCache: async function(data) {
       const { groupNames } = data
@@ -45,36 +46,39 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
         try {
           const {doc, sourceDb} = data
-          // TODO: Can't this be cached?
-          const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-
-          let flatResponse = await generateFlatResponse(doc, locationList, false);
-          // Process the flatResponse
-          // @TODO Rename `-reporting` to `-csv`.
-          let REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
-          let processedResult = flatResponse;
-          // Don't add user-profile to the user-profile
-          if (processedResult.formId !== 'user-profile') {
-            processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+          const groupId = sourceDb.name
+          if (doc.type !== 'issue') {
+            // TODO: Can't this be cached?
+            const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+  
+            let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
+            // Process the flatResponse
+            // @TODO Rename `-reporting` to `-csv`.
+            let REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+            let processedResult = flatResponse;
+            // Don't add user-profile to the user-profile
+            if (processedResult.formId !== 'user-profile') {
+              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+            }
+            // @TODO Ensure design docs are in the database.
+            await saveFormInfo(processedResult, REPORTING_DB);
+            await saveFlatFormResponse(processedResult, REPORTING_DB);
+            // Index the view now.
+            await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+  
+            // Repeat the flattening in order to deliver sanitized (non-PII) output
+            flatResponse = await generateFlatResponse(doc, locationList, true, groupId);
+            // Process the flatResponse
+            // @TODO Rename `-reporting` to `-csv`.
+            REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
+            processedResult = flatResponse
+            // Don't add user-profile to the sanitized db
+            // @TODO Ensure design docs are in the database.
+            await saveFormInfo(processedResult, REPORTING_DB);
+            await saveFlatFormResponse(processedResult, REPORTING_DB);
+            // Index the view now.
+            await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           }
-          // @TODO Ensure design docs are in the database.
-          await saveFormInfo(processedResult, REPORTING_DB);
-          await saveFlatFormResponse(processedResult, REPORTING_DB);
-          // Index the view now.
-          await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
-
-          // Repeat the flattening in order to deliver sanitized (non-PII) output
-          flatResponse = await generateFlatResponse(doc, locationList, true);
-          // Process the flatResponse
-          // @TODO Rename `-reporting` to `-csv`.
-          REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
-          processedResult = flatResponse
-          // Don't add user-profile to the sanitized db
-          // @TODO Ensure design docs are in the database.
-          await saveFormInfo(processedResult, REPORTING_DB);
-          await saveFlatFormResponse(processedResult, REPORTING_DB);
-          // Index the view now.
-          await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           resolve(data)
         } catch(e) {
           reject(e)
@@ -100,7 +104,7 @@ module.exports = {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList, sanitized) {
+const generateFlatResponse = async function (formResponse, locationList, sanitized, groupId) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
@@ -126,13 +130,18 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   function set(input, key, value) {
     flatFormResponse[key] = input.skipped
         ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-        : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH
+        : 
+        input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
+        : 
+        value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
             : value
   }
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     flatFormResponse[`${item.id}_firstOpenTime`]= item.firstOpenTime? item.firstOpenTime:''
+    flatFormResponse[`${item.id}_disabled`] = item.disabled ? 'true' : 'false'
     for (let input of item.inputs) {
       let sanitize = false;
       if (sanitized) {
@@ -159,9 +168,12 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value.find(input => input.value == 'on')
+          // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
+          set(input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
+            ? input.value.find(input => input.value == 'on')
               ? input.value.find(input => input.value == 'on').name
               : ''
+            : `${input.value}`
           )
         } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
           set(input, `${formID}.${item.id}.${input.name}`, input.value
@@ -169,18 +181,32 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
               : '0'
           )
         } else if (input.tagName === 'TANGY-CHECKBOXES') {
-          for (let checkboxInput of input.value) {
-            set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
-                ? "1"
-                : "0"
-            )
+          // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
+          if (Array.isArray(input.value)) {
+            for (let checkboxInput of input.value) {
+              set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
+                  ? "1"
+                  : "0"
+              )
+            }
+          } else {
+            set(input, `${formID}.${item.id}.${input.name}`, `${input.value}`) 
           }
-          ;
         } else if (input.tagName === 'TANGY-CHECKBOX') {
           set(input, `${formID}.${item.id}.${input.name}`, input.value
               ? "1"
               : "0"
           )
+        } else if (input.tagName === 'TANGY-SIGNATURE') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
+              : ""
+          )         
+        } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
+              : ""
+          )         
         } else if (input.tagName === 'TANGY-TIMED') {
           let hitLastAttempted = false
           for (let toggleInput of input.value) {
@@ -312,7 +338,7 @@ function saveFormInfo(flatResponse, db) {
       try {
         await db.put(formDoc)
       } catch(err) {
-        log.error(err)
+        log.error("Error processing columnHeaders in " + db.name + " flatResponse: " + JSON.stringify(flatResponse) + " formDoc: " + JSON.stringify(formDoc) + " Error: " + err)
         reject(err)
       }
     }
@@ -350,62 +376,70 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
         userProfileId = doc[userProfileIdKey]
       }
-      console.log("CSV generation - userProfileId: " + userProfileId)
-      // Get the user profile.
+      console.log("CSV generation for doc _id: " + doc._id + "; adding userProfile to doc with userProfileId: " + userProfileId + " ")
       let userProfileDoc;
-      try {
-        userProfileDoc = await reportingDb.get(userProfileId)
-      } catch (e) {
-        console.log("Error: CSV reportingDb userProfileId: " + userProfileId + " doc id: " + doc._id + " Error: " + JSON.stringify(e))
-        // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
+      if (userProfileId !== 'Editor') {
+        // Get the user profile.
         try {
-          let userProfileDocOriginal = await sourceDb.get(userProfileId)
-          userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false);
+          userProfileDoc = await reportingDb.get(userProfileId)
         } catch (e) {
-          console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
+          // console.log("Info: CSV reportingDb " + reportingDb.name + " does not yet have userProfileId: " + userProfileId + " doc id: " + doc._id + " Error: " + JSON.stringify(e))
+          // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
+          try {
+            let userProfileDocOriginal = await sourceDb.get(userProfileId)
+            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false, sourceDb.name);
+          } catch (e) {
+            console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
+          }
         }
-      }
 
-      // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
-      let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
-        let docNamespaced;
-        let keyArray = key.split('.')
-        // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
-        if (keyArray[0] === 'user-profile') {
-          docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
-        } else {
-          docNamespaced = Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })
-        }
-        return docNamespaced
-      }, {}))
-      // Remove some unnecessary properties
-      delete docWithProfile['user-profile._rev']
-      delete docWithProfile['user-profile.formId']
-      delete docWithProfile['user-profile.startUnixtime']
-      delete docWithProfile['user-profile.endUnixtime']
-      delete docWithProfile['user-profile.lastSaveUnixtime']
-      delete docWithProfile['user-profile.buildId']
-      delete docWithProfile['user-profile.buildChannel']
-      delete docWithProfile['user-profile.deviceId']
-      delete docWithProfile['user-profile.groupId']
-      delete docWithProfile['user-profile.complete']
-      delete docWithProfile['user-profile.item1_firstOpenTime']
-      delete docWithProfile['user-profile.item1.location.region_id']
-      delete docWithProfile['user-profile.item1.location.region_level']
-      delete docWithProfile['user-profile.item1.location.region_parent']
-      delete docWithProfile['user-profile.item1.location.region_descendantsCount']
-      delete docWithProfile['user-profile.item1.location.district_id']
-      delete docWithProfile['user-profile.item1.location.district_level']
-      delete docWithProfile['user-profile.item1.location.district_parent']
-      delete docWithProfile['user-profile.item1.location.district_descendantsCount']
-      delete docWithProfile['user-profile.item1.location.facility_id']
-      delete docWithProfile['user-profile.item1.location.facility_level']
-      delete docWithProfile['user-profile.item1.location.facility_parent']
-      delete docWithProfile['user-profile.item1.location.facility_descendantsCount']
+        // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
+        let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
+          let docNamespaced;
+          let keyArray = key.split('.')
+          // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+          if (keyArray[0] === 'user-profile') {
+            docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
+          } else {
+            docNamespaced = Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })
+          }
+          return docNamespaced
+        }, {}))
+        // Remove some unnecessary properties
+        delete docWithProfile['user-profile._rev']
+        delete docWithProfile['user-profile.formId']
+        delete docWithProfile['user-profile.startUnixtime']
+        delete docWithProfile['user-profile.endUnixtime']
+        delete docWithProfile['user-profile.lastSaveUnixtime']
+        delete docWithProfile['user-profile.buildId']
+        delete docWithProfile['user-profile.buildChannel']
+        delete docWithProfile['user-profile.deviceId']
+        delete docWithProfile['user-profile.groupId']
+        delete docWithProfile['user-profile.complete']
+        delete docWithProfile['user-profile.item1_firstOpenTime']
+        delete docWithProfile['user-profile.item1.location.region_id']
+        delete docWithProfile['user-profile.item1.location.region_level']
+        delete docWithProfile['user-profile.item1.location.region_parent']
+        delete docWithProfile['user-profile.item1.location.region_descendantsCount']
+        delete docWithProfile['user-profile.item1.location.district_id']
+        delete docWithProfile['user-profile.item1.location.district_level']
+        delete docWithProfile['user-profile.item1.location.district_parent']
+        delete docWithProfile['user-profile.item1.location.district_descendantsCount']
+        delete docWithProfile['user-profile.item1.location.facility_id']
+        delete docWithProfile['user-profile.item1.location.facility_level']
+        delete docWithProfile['user-profile.item1.location.facility_parent']
+        delete docWithProfile['user-profile.item1.location.facility_descendantsCount']
+
+        return docWithProfile
+      } else {
+        // No user profile for editor
+        console.log("Returning doc instead of docWithProfile since this is Editor.")
+        return doc
+      }
       
-      return docWithProfile
     } catch (error) {
       // There must not be a user profile yet doc uploaded yet.
+      console.log("Returning doc instead of docWithProfile because user profile not uploaded yet.")
       return doc
     }
 }

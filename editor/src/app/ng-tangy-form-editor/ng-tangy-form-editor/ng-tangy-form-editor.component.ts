@@ -46,7 +46,9 @@ export class NgTangyFormEditorComponent implements OnInit {
     this.groupId = pathArray[2];
     let groupName = this.groupId;
     this.groupName = groupName;
-    let formHtml = await this.http.get(`/editor/${this.groupId}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
+    let formJson = <any>await this.http.get(`./assets/forms.json`).toPromise()
+    const formSrc = formJson.find(formInfo => formInfo.id === this.formId).src
+    let formHtml = await this.http.get(formSrc, {responseType: 'text'}).toPromise()
 
     const serverConfig = await this.serverConfigService.getServerConfig()
     const appConfig = await this.appConfigService.getAppConfig(groupName);

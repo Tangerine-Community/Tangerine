@@ -32,6 +32,9 @@ export class TangyFormsPlayerComponent {
 
   $rendered = new Subject()
   $submit = new Subject()
+  $afterSubmit = new Subject()
+  $resubmit = new Subject()
+  $afterResubmit = new Subject()
   rendered = false
 
   formInfo:FormInfo
@@ -45,7 +48,7 @@ export class TangyFormsPlayerComponent {
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
-    private service: TangyFormService,
+    private tangyFormService: TangyFormService
   ) {
     this.window = window
   }
@@ -77,7 +80,7 @@ export class TangyFormsPlayerComponent {
     const formResponse = this.response
       ? new TangyFormResponseModel(this.response)
       : this.formResponseId
-        ? new TangyFormResponseModel(await this.service.getResponse(this.formResponseId))
+        ? new TangyFormResponseModel(await this.tangyFormService.getResponse(this.formResponseId))
         : ''
     const response = formResponse
     this.formId = this.formId
@@ -90,7 +93,27 @@ export class TangyFormsPlayerComponent {
       const response = formResponse
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
-      let  formHtml =  await this.tangyFormsInfoService.getFormMarkup(this.formId)
+      let formVersionId
+      if (window.location.hostname === 'localhost') {
+        // We are in preview mode, use FormInfo.src for markup.
+        formVersionId = '' 
+      } else if (!this.formInfo.formVersions) {
+        // No form versions defined, use FormInfo.src for markup.
+        formVersionId = '' 
+      } else if (this.formInfo.formVersions && !formResponse) {
+        // We have form versions defined and we are creating a new form response. Let's use the version set for use in FormInfo.formVersionId.
+        formVersionId = this.formInfo.formVersionId
+      } else if (formResponse["formVersionId"]) {
+        // We are resuming a Form Response with the version set. Use that.
+        formVersionId = formResponse["formVersionId"]
+      } else if (!formResponse["formVersionId"]) {
+        // We are resuming a Form Response that has never heard of form versions. Use the FIRST form version listed.
+        // This is useful for projects that did not start with using Form Versions. To get started, create two Form Versions
+        // where the first form version is for Form Responses before Form Versions, and the second version is the new version
+        // for all new form responses.
+        formVersionId = this.formInfo.formVersions[0].id 
+      }
+      let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId)
       // Put the form on the screen.
       const container = this.container.nativeElement
       container.innerHTML = formHtml
@@ -102,11 +125,12 @@ export class TangyFormsPlayerComponent {
       } else {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
+        formEl.response.formVersionId = this.formInfo.formVersionId
         this.throttledSaveResponse(formEl.response)
       }
       this.response = formEl.response
       // Listen up, save in the db.
-      if (!this.skipSaving) {
+      if (!this.skipSaving && !this.response.complete) {
         formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
@@ -118,6 +142,27 @@ export class TangyFormsPlayerComponent {
           await sleep(1000)
         }
         this.$submit.next(true)
+      })
+      formEl.addEventListener('after-submit', async (event) => {
+        if (this.preventSubmit) event.preventDefault() 
+        while (this.throttledSaveFiring === true) {
+          await sleep(1000)
+        }
+        this.$afterSubmit.next(true)
+      })
+      formEl.addEventListener('resubmit', async (event) => {
+        if (this.preventSubmit) event.preventDefault() 
+        while (this.throttledSaveFiring === true) {
+          await sleep(1000)
+        }
+        this.$resubmit.next(true)
+      })
+      formEl.addEventListener('after-resubmit', async (event) => {
+        if (this.preventSubmit) event.preventDefault() 
+        while (this.throttledSaveFiring === true) {
+          await sleep(1000)
+        }
+        this.$afterResubmit.next(true)
       })
     }
     this.$rendered.next(true)
@@ -148,17 +193,22 @@ export class TangyFormsPlayerComponent {
 
   async saveResponse(state) {
     let stateDoc = {}
-    stateDoc = await this.service.getResponse(state._id)
-    if (!stateDoc) {
-      let r = await this.service.saveResponse(state)
-      stateDoc = await this.service.getResponse(state._id)
+    stateDoc = await this.tangyFormService.getResponse(state._id)
+    if (stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary) {
+      // Since what is in the database is complete, and it's still complete, and it doesn't have 
+      // a summary where they might add some input, don't save! They are probably reviewing data.
+    } else {
+      if (!stateDoc) {
+        let r = await this.tangyFormService.saveResponse(state)
+        stateDoc = await this.tangyFormService.getResponse(state._id)
+      }
+      await this.tangyFormService.saveResponse({
+        ...state,
+        _rev: stateDoc['_rev'],
+        location: this.location || state.location,
+        ...this.metadata
+      })
     }
-    await this.service.saveResponse({
-      ...state,
-      _rev: stateDoc['_rev'],
-      location: this.location || state.location,
-      ...this.metadata
-    })
     this.response = state
   }
 

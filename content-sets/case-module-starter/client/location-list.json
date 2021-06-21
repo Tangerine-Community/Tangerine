@@ -1,0 +1,128 @@
+{
+  "locationsLevels": [
+    "region",
+    "district",
+    "facility"
+  ],
+  "locations": {
+    "B7BzlR6h": {
+      "label": "Region 1",
+      "id": "B7BzlR6h",
+      "children": {
+        "rrCuQT12": {
+          "label": "District A",
+          "id": "rrCuQT12",
+          "children": {
+            "RJghrv5d": {
+              "label": "Facility 1",
+              "id": "RJghrv5d",
+              "level": "facility",
+              "parent": "rrCuQT12",
+              "children": {},
+              "descendantsCount": 0
+            },
+            "K0xhy1Su": {
+              "label": "Facility 2",
+              "id": "K0xhy1Su",
+              "level": "facility",
+              "parent": "rrCuQT12",
+              "children": {},
+              "descendantsCount": 0
+            }
+          },
+          "level": "district",
+          "parent": "B7BzlR6h",
+          "descendantsCount": 2
+        },
+        "Iiauxebz": {
+          "label": "District B",
+          "id": "Iiauxebz",
+          "level": "district",
+          "parent": "B7BzlR6h",
+          "children": {
+            "cGhjwNAw": {
+              "label": "Facility 3",
+              "id": "cGhjwNAw",
+              "level": "facility",
+              "parent": "Iiauxebz",
+              "children": {},
+              "descendantsCount": 0
+            },
+            "LBwCju2s": {
+              "label": "Facility 4",
+              "id": "LBwCju2s",
+              "level": "facility",
+              "parent": "Iiauxebz",
+              "children": {},
+              "descendantsCount": 0
+            }
+          },
+          "descendantsCount": 2
+        }
+      },
+      "level": "region",
+      "parent": "root",
+      "descendantsCount": 4
+    },
+    "PtT6D5K9": {
+      "label": "Region 2",
+      "id": "PtT6D5K9",
+      "children": {
+        "aUYNtVMz": {
+          "label": "District C",
+          "id": "aUYNtVMz",
+          "level": "district",
+          "parent": "PtT6D5K9",
+          "children": {
+            "Ul4SMJaZ": {
+              "label": "Facility 6",
+              "id": "Ul4SMJaZ",
+              "level": "facility",
+              "parent": "aUYNtVMz",
+              "children": {},
+              "descendantsCount": 0
+            },
+            "K2TazTAY": {
+              "label": "Facility 5",
+              "id": "K2TazTAY",
+              "level": "facility",
+              "parent": "aUYNtVMz",
+              "children": {},
+              "descendantsCount": 0
+            }
+          },
+          "descendantsCount": 2
+        },
+        "oH943Uu2": {
+          "label": "District D",
+          "id": "oH943Uu2",
+          "level": "district",
+          "parent": "PtT6D5K9",
+          "children": {
+            "gsoOZ3td": {
+              "label": "Facility 8",
+              "id": "gsoOZ3td",
+              "level": "facility",
+              "parent": "oH943Uu2",
+              "children": {},
+              "descendantsCount": 0
+            },
+            "9bpot1DO": {
+              "label": "Facility 7",
+              "id": "9bpot1DO",
+              "level": "facility",
+              "parent": "oH943Uu2",
+              "children": {},
+              "descendantsCount": 0
+            }
+          },
+          "descendantsCount": 2
+        }
+      },
+      "level": "region",
+      "parent": "root",
+      "descendantsCount": 4
+    }
+  },
+  "metadata": {}
+}

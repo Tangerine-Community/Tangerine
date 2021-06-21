@@ -1,6 +1,20 @@
 
 ## Debugging the Reporting Cache process
 
+Summary of steps:
+
+1. Turn on reporting modules in `config.sh`.
+1. Run develop.sh.
+1. Create a group.
+1. Generate data.
+1. Stop the keep alive for reporting worker by commenting out `this.keepAliveReportingWorker()` in `server/src/app.service.ts`.
+1. Enter the container on command line with `docker exec -it tangerine bash`.
+1. Clear reporting cache with command `reporting-cache-clear`.
+1. Run a batch with debugger enabled by running command `node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)`.
+1. Latch onto debugging session using Chrome inspect. You may need to click "configure" and add `localhost:9228` to "Target discovery settings".
+
+
+## Instructions
 Configure your project to use the CSV and Logstash modules:
 ```
 T_MODULES="['csv', 'logstash']"
@@ -11,7 +25,7 @@ Start the development environment...
 ./develop.sh
 ```
 
-Create a group called `foo` in the GUI. Then open `./server/src/app.service.ts` and comment out the call to `this.keepAliveReportingWorker()`. 
+Create a group called `foo` in the GUI. Then open `./server/src/app.service.ts` and comment out the call to `this.keepAliveReportingWorker()`. __It's important to do these two things in this order__ otherwise the group could be disconnected from reporting.
 
 "exec" into the container and note how `foo` has been added to the `/reporting-worker-state.json` file.
 
@@ -42,13 +56,16 @@ and then run reporting-cache-clear again.
 Start the reporting-worker-batch.js batch process manually and check for errors
 
 ```shell script
-/tangerine/server/src/scripts/reporting-worker-batch.js
+node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)
 ```
 
 
 In Chrome, go to `chrome://inspect`, click `Configure...`, and add `127.0.0.1:9228` as an entry in "Target discovery settings".
 
-//@TODO OUTDATED but still relevant
+## Debugging Demo 
+
+https://www.youtube.com/watch?v=AToUBoApw8E&feature=youtu.be
+
 Now manually trigger a batch. After the command finishes, verify the batch by checking `http://localhost:5984/_utils/#database/foo-reporting/_all_docs`.
 ```
 node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)

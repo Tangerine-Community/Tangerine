@@ -4,5 +4,4 @@ arrange:
     - case-module
     - editor-guide.md 
     - class.md
-    - feature-two-way-sync.md
     

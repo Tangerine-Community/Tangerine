@@ -22,7 +22,14 @@ A Tangerine Server can either be purchased online at Tangerine Hub or set up on 
 
 Forms in Tangerine are based on the tangy-form suite of Web Components (<https://www.webcomponents.org/element/tangy-form>). Forms can be edited in the online Tangy Editor App on their Tangerine Server using a WYSIWYG interface or for advanced editors, via basic HTML and Javascript code.
 
-There is a pluggable reporting module framework built in currently with options to send outputs to CSV, Elastic Search, and Dat Archives. Dashboards are typically built using the "ELK" stack which is short for a combination of technologies known as Elastic Search, Logstash, and Kibana. 
+Tangerine exposes a pluggable reporting module framework that monitors in-coming data from the Couchdb changes feed and outputs to optional modules. These modules parse each changed doc into flatter, easier-to-consume docs or transform and transfer to other databases. Current modules include: 
+ - 'reporting' - produces flattened docs and consumed by our CSV output process
+ - 'logstash' - transforms docs to support dashboards built using the "[ELK](https://www.elastic.co/elastic-stack)" stack - short for a combination of technologies known as Elastic Search, [Logstash](https://www.elastic.co/logstash), and Kibana
+ - 'synapse' - transforms data closer to what a relational db would expect that uses a REST API to upload data to an Amazon S3 repository using [synapsePythonClient](https://github.com/Sage-Bionetworks/synapsePythonClient)
+ - 'dat' - transforms docs for p2p via the [DatArchive API](https://beakerbrowser.com/docs/apis/dat)
+ - 'rshiny' - produces flattened docs similar to the 'synapse' module using [sofa](https://github.com/ropensci/sofa) to support R reporting
+
+A mysql database module is in-the-works.
 
 ## Supported Devices and Web Browsers
 
@@ -59,8 +66,11 @@ Then restart the daemon with `sudo service docker restart`.
 
 __Step 4__: Configure SSL
 
-To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. Note that in order to publish Tangerine for data collection using the Web App method (PWA), SSL is required. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/system-administrator/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
-Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
+To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. Note that in order to publish Tangerine for data collection using the Web App method (PWA), SSL is required. Here are three ways of setting up an SSL enabled Reverse Proxy:
+- At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/system-administrator/install-on-aws.md).  
+- If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
+Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network. 
+- You may also [install an nginx Docker container using Certbot](docs/system-administrator/tangerine-nginx-ssl.md).
 
 __Step 5__: Install Tangerine
 
@@ -78,12 +88,17 @@ nano config.sh
 ./start.sh <version tag>
 ```
 
-__Step 6__: Keep Tangerine alive and Ubuntu up to date with cron
+__Step 6__: Keep Tangerine alive, clear CSV downloads, and Ubuntu up to date with cron
 
-To reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. Also it's important to update Ubuntu every week to stay current with security fixes. Enter crontab for root with `sudo su && crontab -e` and add the following lines. 
+The following crontab entries keep Tangerine and your server healthy and alive. Enter crontab for root with `sudo su && crontab -e` and add the following lines. 
 ```
+# Clear CSV download folder every week on Saturday. Adjust this command according to the location of your tangerine directory.
+0 0 * * SAT sudo rm /home/ubuntu/tangerine/data/csv/*
+# Update ubuntu every week on Saturday.
 0 0 * * SAT sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo reboot
+# Restart Tangerine to clear in memory caches.
 0 0 * * * docker stop tangerine && docker start tangerine
+# Ensure tangerine and couchdb start if the machine is rebooted.
 @reboot docker start couchdb && sleep 10 && docker start tangerine
 ```
 
@@ -119,10 +134,12 @@ rm config.sh_backup
 ./start.sh <version number>
 # Check for upgrade scripts that need to be run. Note that you can only run scripts that end in .sh and you need to 
 # run every script between your prior version to version you have upgraded to. Also always check the release notes for
-# any special instructions
-docker exec -it tangerine ls /tangerine/upgrades
-# Run an upgrade script indicated in release instructions.
+# any special instructions -  for example:
 docker exec -it tangerine /tangerine/upgrades/<version>.sh
+# Upgrade scripts are also found in this location
+docker exec -it tangerine ls /tangerine/server/src/upgrade
+# Run an upgrade script indicated in release instructions.
+docker exec -it tangerine /tangerine/server/src/upgrade/<version>.sh
 # Remove the previous version of tangerine you had installed.
 docker rmi tangerine/tangerine:<previous tag>
 ```
@@ -143,39 +160,13 @@ cd tangerine
 For the app on the tablet, wether you are using the Android Installation method or the Web Browser installation method, the update process is the same. After server upgrades or content changes, return to the "Releases" tab in the online Editor and click "Test Release". When that completes, fetch your designated test tablet. Ensure you have an Internet connection on your designated test tablet, open the app, log in, and from the top right menu select "Check for Update". Follow the prompts to update. If the updates are satisfactory, return to your "Releases" tab online and click "Live Release". Proceed to update your Tablets with the "Live Release" app.
 
 ## Local Content Development
-Install [nodejs](https://nodejs.org/en/) and [git](https://git-scm.com/) on your local machine. Then run the following commands.
-```
-git clone https://github.com/tangerine-community/tangerine
-cd tangerine
-git checkout <most recent release version, ie. v3.0.0-rc5>
-cd client/
-npm install
-npm start
-```
-Then open <http://localhost:4200> in your web browser. The content is found in the `tangerine/client/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
-
-If the process has stopped, you can restart by running...
-
-```
-cd tangerine/client/
-npm start
-```
-
-To update to a new version of tangerine, run...
-
-```
-cd tangerine
-git fetch
-git checkout <new version listed in the releases tab on github>
-cd client/
-rm -r node_modules
-npm install
-npm start
-```
+We use a tool called `tangerine-preview` to do local content development. Note this is content development via code as opposed to the Editor GUI interface. To read more about the process, see our docs site on [local content development](https://docs.tangerinecentral.org/editor/advanced-form-programming/local-content-development/).
 
 ## App Development
 
 ### Develop for Editor and Server 
+Docker and git is required for local development. For Mac, download and install [Docker for Desktop](https://www.docker.com/products/docker-desktop). For Windows you will also use Docker for Desktop, but we suggest using the instructions [here](https://docs.docker.com/docker-for-windows/wsl/) which will also point you towards documentation for installing WSL2 on Windows.
+
 ```
 git clone git@github.com:tangerine-community/tangerine
 cd tangerine
@@ -184,6 +175,16 @@ cp config.defaults.sh config.sh
 ```
 
 Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
+
+__Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox publicly accessible at a URL. Tangerine Developers have had good luck using [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL that NGROK gives you. It can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
+
+Example config.sh when using ngrok:
+```
+T_HOST_NAME='123random.ngrok.io'
+T_PROTOCOL="https"
+```
+
+The [Bullet points for Tangerine Development](./docs/developer/development-bullet-points.md) document has an example of how to get started with Tangerine development.
 
 ### Develop for Client 
 Prereqs include node and `npm install -g @angular/cli`. 
@@ -197,7 +198,7 @@ npm start
 
 View the app at <http://localhost:4200>.
 
-If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
+__Optional__: If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
 
 ```
 rm -r node_modules/tangy-form
@@ -205,12 +206,7 @@ ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
-If you are developing PWA's and want to test locally, or if you are testing APK's and want to update the content easily while doing local development (because the APK's basically act as a container for the PWA's), use [ngrok](https://ngrok.com/) to create an https tunnel to your local code. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh.
 
-```
-T_HOST_NAME='123random.ngrok.io'
-T_PROTOCOL="https"
-```
 
 ## Deprecated Version of Tangerine
 

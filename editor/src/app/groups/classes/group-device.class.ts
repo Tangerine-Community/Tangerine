@@ -1,4 +1,5 @@
-import uuidv4 from 'uuid/v4';
+import {v4 as uuidv4} from 'uuid';
+import {ReplicationStatus} from "../../sync/replication-status.class";
 
 export class GroupDevice {
   _id:string = uuidv4()
@@ -11,6 +12,9 @@ export class GroupDevice {
   version:string
   assignedLocation: LocationInfo = new LocationInfo()
   syncLocations: Array<LocationInfo> = []
+  replicationStatus: ReplicationStatus // deprecated - migrate to replicationStatuses
+  replicationStatuses: Array<ReplicationStatus>
+  description:string
 }
 
 class LocationInfo {

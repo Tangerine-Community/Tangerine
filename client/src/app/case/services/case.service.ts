@@ -1,4 +1,7 @@
-import { EventFormDefinition } from './../classes/event-form-definition.class';
+import { CaseEventOperation, CaseEventPermissions } from './../classes/case-event-definition.class';
+import { UserService } from 'src/app/shared/_services/user.service';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
+import { EventFormDefinition, EventFormOperation } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
 import { Issue, IssueStatus, IssueEvent, IssueEventType } from './../classes/issue.class';
@@ -22,6 +25,7 @@ import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import {Conflict} from "../classes/conflict.class";
+import * as jsonpatch from "fast-json-patch";
 
 @Injectable({
   providedIn: 'root'
@@ -101,6 +105,8 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private userService:UserService,
+    private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
@@ -161,7 +167,7 @@ class CaseService {
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
     const tangyFormContainerEl:any = document.createElement('div')
-    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
+    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId, null)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form')
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
@@ -260,6 +266,35 @@ class CaseService {
   }
 
   /*
+   * Role Access API
+   */
+  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition) {
+    if (
+        !eventFormDefinition.permissions ||
+        !eventFormDefinition.permissions[operation] ||
+        eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  hasCaseEventPermission(operation:CaseEventOperation, eventDefinition:CaseEventDefinition) {
+    if (
+        !eventDefinition.permissions ||
+        !eventDefinition.permissions[operation] ||
+        eventDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+
+
+  /*
    * Case Event API
    */
 
@@ -286,7 +321,7 @@ class CaseService {
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (
-          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)&& 
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -297,6 +332,14 @@ class CaseService {
       }
     }
     return caseEvent
+  }
+
+  setEventName(eventId, name:string) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ name } }
+        : event
+    })
   }
 
   setEventEstimatedDay(eventId, timeInMs: number) {
@@ -495,6 +538,7 @@ class CaseService {
     const caseParticipant = <CaseParticipant>{
       id,
       caseRoleId,
+      inactive: false,
       data
     }
     this.case.participants.push(caseParticipant)
@@ -505,7 +549,8 @@ class CaseService {
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (
-          caseRoleId === eventFormDefinition.forCaseRole && 
+          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseRoleId)
+          && 
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -525,6 +570,133 @@ class CaseService {
 
   getParticipantData(participantId:string, key:string) {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
+  }
+
+  addParticipant(caseParticipant:CaseParticipant) {
+    this.case.participants.push(caseParticipant)
+    for (let caseEvent of this.case.events) {
+      const caseEventDefinition = this
+        .caseDefinition
+        .eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (
+          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)
+          && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
+          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
+  }
+
+  async activateParticipant(participantId:string) {
+    this.case = {
+      ...this.case,
+      participants: this.case.participants.map(participant => {
+        return participant.id === participantId
+          ? {
+            ...participant,
+            inactive: false 
+          }
+          : participant
+      })
+    }
+  }
+
+  deactivateParticipant(participantId:string) {
+    this.case = {
+      ...this.case,
+      participants: this.case.participants.map(participant => {
+        return participant.id === participantId
+          ? {
+            ...participant,
+            inactive: true 
+          }
+          : participant
+      })
+    }
+  }
+
+
+  async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    const sourceCase = this.case
+    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+      sourceParticipant.id === sourceParticipantId)
+      
+    await this.load(currCaseId)
+
+    return sourceParticipant
+  }
+
+  async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    this.case.participants = this.case.participants.filter(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    await this.save()
+
+    await this.load(currCaseId)
+  }
+
+  async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+    }
+  }
+
+  async moveParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+
+      // Only delete the participant from the other case after adding it to this case is successful
+      await this.deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId)
+    }
+  }
+
+  async searchForParticipant(username:string, phrase:string, limit = 50, skip = 0, unique = true):Promise<Array<any>> {
+    const db = await window['T'].user.getUserDatabase(username)
+    const result = await db.query(
+      'participantSearch',
+      phrase
+        ? { 
+          startkey: `${phrase}`.toLocaleLowerCase(),
+          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+          include_docs: true,
+          limit,
+          skip
+        }
+        : {
+          include_docs: true,
+          limit,
+          skip
+        } 
+    )
+    const searchResults = result.rows.map(row => {
+      return {
+        ...row.value,
+        case: row.doc,
+        participant: row.doc.participants.find(p => p.id === row.value.participantId)
+      }
+    })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return unique
+      ? searchResults.reduce((uniqueResults, result) => {
+        return uniqueResults.find(x => x.participantId === result.participantId)
+          ? uniqueResults
+          : [ ...uniqueResults, result ]
+      }, [])
+      : searchResults
   }
 
   /*
@@ -816,6 +988,12 @@ class CaseService {
     return diff
   }
 
+  isIssueContext() {
+    return window.location.hash.includes('/issues/')
+      ? true
+      : false
+  }
+
   /*
    * Data Inquiries API
    */
@@ -859,12 +1037,11 @@ class CaseService {
       caseEvent = this.case.events.find(c => c.caseEventDefinitionId === this.queryCaseEventDefinitionId);
       const eventForm = caseEvent.eventForms.find(d => d.id === c.id);
 
-      const referringCaseEvent: CaseEvent = this.case.events.find((event) => event.id === eventId);
       const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
       const tangyFormContainerEl:any = document.createElement('div');
-      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
+      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId, null);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
       document.body.appendChild(tangyFormContainerEl);
@@ -899,10 +1076,6 @@ class CaseService {
       await this.save();
 
       return queryResponseId;
-  }
-
-  getQuestionMarkup(form: string, question: string): Promise<string> {
-    return this.tangyFormService.getFormMarkup(form);
   }
 
   async valueExists(form, variable, value) {
@@ -946,7 +1119,36 @@ class CaseService {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  async generateCases(numberOfCases) {
+  async setLocation() {
+    // Get a Device to set the location
+    const device = await this.deviceService.getDevice()
+    if (device) {
+      let syncLocation = device.syncLocations[0]
+      let locationSetting = syncLocation.value.slice(-1).pop()
+      let location = {
+        [`${locationSetting.level}`]: locationSetting.value
+      }
+      return location
+    }
+  }
+
+  async generateCases(numberOfCases, registrationFormName) {
+    let customGenerators, customSubstitutions
+    // try {
+    //   const genny = require(`${groupPath}/custom-generators.js`)
+    //   console.log("customGenerators: " + JSON.stringify(genny))
+    //   customGenerators = genny.customGenerators
+    //   customSubstitutions = genny.customSubstitutions
+    // } catch(e) {
+    //   customGenerators = {}
+    //   customSubstitutions = null
+    //   console.error(e.message);
+    //   console.error("custom-generators.js not found. No custom work for you!");
+    // }
+    if (!registrationFormName) {
+      registrationFormName =  'registration-role-1'
+      console.log("expecting a registration form called " + registrationFormName + ". If the case uses a different name, append it to this command.")
+    }
     let numberOfCasesCompleted = 0
     let firstnames = ['Mary', 'Jennifer', 'Lisa', 'Sandra	','Michelle',
     'Patricia', 'Maria','Nancy','Donna','Laura', 'Linda','Susan','Karen',
@@ -962,46 +1164,111 @@ class CaseService {
       // Change the case's ID.
       const caseId = UUID()
       caseDoc._id = caseId
+     
+      // note that participant_id and participantUuid are different!
       const participant_id = Math.round(Math.random() * 1000000)
-      // let firstname = "Helen" + Math.round(Math.random() * 100)
-      // let surname = "Smith" + Math.round(Math.random() * 100)
-      const firstname = firstnames[this.getRandomInt(0, firstnames.length + 1)]
-      const surname = surnames[this.getRandomInt(0, surnames.length + 1)]
-      let barcode_data =  { "participant_id": participant_id, "treatment_assignment": "Experiment", "bin-mother": "A", "bin-infant": "B", "sub-studies": { "S1": true, "S2": false, "S3": false, "S4": true } }
+      const participantUuid = UUID()
+
+      let barcode_data = {
+        "participant_id": participant_id,
+        "treatment_assignment": "Experiment",
+        "bin-mother": "A",
+        "bin-infant": "B",
+        "sub-studies": {"S1": true, "S2": false, "S3": false, "S4": true}
+      }
       let tangerineModifiedOn = new Date();
       // tangerineModifiedOn is set to numberOfCasesCompleted days before today, and its time is set based upon numberOfCasesCompleted.
-      tangerineModifiedOn.setDate( tangerineModifiedOn.getDate() - numberOfCasesCompleted );
-      tangerineModifiedOn.setTime( tangerineModifiedOn.getTime() - ( numberOfCases - numberOfCasesCompleted ) )
+      tangerineModifiedOn.setDate(tangerineModifiedOn.getDate() - numberOfCasesCompleted);
+      tangerineModifiedOn.setTime(tangerineModifiedOn.getTime() - (numberOfCases - numberOfCasesCompleted))
+      const location = await this.setLocation();
+      console.log("location: " + JSON.stringify(location));
+      if (!location) {
+        throw new Error('No location! You need to create at least one Device Registration so that the generated docs will sync.')
+      }
       const day = String(tangerineModifiedOn.getDate()).padStart(2, '0');
       const month = String(tangerineModifiedOn.getMonth() + 1).padStart(2, '0');
       const year = tangerineModifiedOn.getFullYear();
-      const screening_date = year + '-' + month + '-' + day;
-      const enrollment_date = screening_date;
+      const date = year + '-' + month + '-' + day;
+
+      let subs = {
+        "runOnce": {}
+      }
+
+      subs['firstname'] = () => firstnames[this.getRandomInt(0, firstnames.length + 1)]
+      subs['surname'] = () => surnames[this.getRandomInt(0, surnames.length + 1)]
+      subs['tangerineModifiedOn'] = tangerineModifiedOn
+      subs['day'] = day
+      subs['month'] = month
+      subs['year'] = year
+      subs['date'] = date
+      subs['participant_id'] = participant_id
+      subs['participantUuid'] = participantUuid
+
+      let allSubs = {...subs, ...customGenerators}
+
+      if (customSubstitutions) {
+        // assign any customSubstitutions where runOnce is set.
+        for (const docTypeDefinition in customSubstitutions) {
+          // console.log(`docTypeDefinition: ${docTypeDefinition}: ${JSON.stringify(customSubstitutions[docTypeDefinition])}`);
+          if (customSubstitutions[docTypeDefinition]['substitutions']) {
+            const substitutions = customSubstitutions[docTypeDefinition]['substitutions']
+            for (const functionDefinition in substitutions) {
+              // console.log(`functionDefinition: ${functionDefinition}: ${JSON.stringify(substitutions[functionDefinition])}`);
+              if (substitutions[functionDefinition].runOnce) {
+                subs.runOnce[substitutions[functionDefinition].functionName] = allSubs[substitutions[functionDefinition].functionName]()
+              }
+            }
+          }
+        }
+      }
+
       let caseMother = {
         _id: caseId,
-        tangerineModifiedOn: tangerineModifiedOn,
+        tangerineModifiedOn: subs['tangerineModifiedOn'],
         "participants": [{
-          "id": participant_id,
-          "caseRoleId": "mother-role",
+          "id": participantUuid,
+          "caseRoleId": "role-1",
           "data": {
-            "firstname": firstname,
-            "surname": surname,
-            "participant_id": participant_id
+            "firstname": subs.runOnce['firstname'] ? subs.runOnce['firstname'] : subs['firstname'](),
+            "surname": subs.runOnce['surname'] ? subs.runOnce['surname'] : subs['surname'](),
+            "participant_id": subs.runOnce['participant_id'] ? subs.runOnce['participant_id'] : subs['participant_id']
           }
         }],
       }
-      const doc = Object.assign({}, caseDoc, caseMother);
-      caseDoc.items[0].inputs[6].value = participant_id;
-      // caseDoc.items[0].inputs[2].value = enrollment_date;
-      caseDoc.items[0].inputs[4].value = firstname;
-      caseDoc.items[0].inputs[5].value = surname;
+      // console.log("motherId: " + caseId + " participantId: " + participant_id + " surname: " + subs.surname);
+      console.log("caseMother: " + JSON.stringify(caseMother));
+      Object.assign(caseDoc, caseMother);
+
+      if (customSubstitutions) {
+        const caseDocSubs = customSubstitutions.find(doc => doc.type === 'caseDoc')
+        if (caseDocSubs && caseDocSubs['substitutions']) {
+          for (const substitution of caseDocSubs['substitutions']) {
+            console.log(substitution);
+            // TODO: finish this...
+          }
+        }
+      } else {
+        caseDoc.items[0].inputs[0].value = subs['participant_id'];
+        // caseDoc.items[0].inputs[2].value = enrollment_date;
+        if (caseDoc.items[0].inputs.length > 3) {
+          caseDoc.items[0].inputs[1].value = subs['participant_id'];
+          caseDoc.items[0].inputs[2].value = subs['firstname']();
+          caseDoc.items[0].inputs[3].value = subs['surname']();
+        }
+        caseDoc.location = location
+      }
+
       for (let caseEvent of caseDoc['events']) {
         const caseEventId = UUID()
         caseEvent.id = caseEventId
+        caseEvent.caseId = caseId
         for (let eventForm of caseEvent.eventForms) {
           eventForm.id = UUID()
           eventForm.caseId = caseId
           eventForm.caseEventId = caseEventId
+          if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
+            eventForm.participantId = participantUuid
+          }
           // Some eventForms might not have a corresponding form response.
           if (eventForm.formResponseId) {
             const originalId = `${eventForm.formResponseId}`
@@ -1009,42 +1276,150 @@ class CaseService {
             // Replace originalId with newId in both the reference to the FormResponse doc and the FormResponse doc itself.
             eventForm.formResponseId = newId
             const formResponse = templateDocs.find(doc => doc._id === originalId)
-            if (typeof formResponse !== 'undefined') {
+            if (formResponse) {
+              console.log("Changing _id from " + formResponse._id + " to " + newId)
               formResponse._id = newId
+              formResponse.location = location
+              formResponse['caseEventId'] = caseEventId
+              formResponse['caseId'] = caseId
+              formResponse['eventFormId'] = eventForm.id
+              if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
+                formResponse['participantId'] = participantUuid
+              }
             }
           }
         }
       }
-      // modify the demographics form - s01a-participant-information-f254b9
-      const demoDoc = templateDocs.find(doc => doc.form.id === 'mnh_screening_and_enrollment')
-      if (demoDoc) {
-        demoDoc.items[0].inputs[3].value = screening_date;
-        // "id": "randomization",
-        // demoDoc.items[10].inputs[1].value = barcode_data;
-        demoDoc.items[10].inputs[2].value = participant_id;
-        demoDoc.items[10].inputs[7].value = enrollment_date;
-        // "id": "participant_information",
-        demoDoc.items[5].inputs[1].value = firstname;
-        demoDoc.items[5].inputs[2].value = surname;
-      }
+      caseDoc.location = await this.setLocation.call(this);
 
-      for (let doc of templateDocs) {
-        // @ts-ignore
-        // sometimes doc is false...
-        if (doc !== false) {
-          try {
-            delete doc._rev
-            await this.tangyFormService.saveResponse(doc)
-          } catch (e) {
-            console.log('Error: ' + e)
+      if (customSubstitutions) {
+        const demoDocSubs = customSubstitutions.find(doc => doc.type === 'demoDoc')
+        const demoDoc = templateDocs.find(doc => doc.form.id === demoDocSubs.formId)
+        let inputs = []
+        demoDoc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+
+        if (demoDocSubs['substitutions']) {
+          for (const [inputName, functionDefinition] of Object.entries(demoDocSubs['substitutions'])) {
+            let foundInput = inputs.find(input => {
+              if (input.name === inputName) {
+                return input
+              }
+            })
+            if (foundInput) {
+              let functionName = functionDefinition['functionName']
+              if (functionDefinition['runOnce']) {
+                let val =   allSubs.runOnce[functionDefinition['functionName']]
+                // console.log("allSubs.runOnce: " + JSON.stringify(allSubs.runOnce))
+                // console.log("Assigned function name using runOnce value: " + functionDefinition.functionName + " to value: " + val)
+                foundInput['value'] = val
+              } else {
+                let val =  allSubs[functionName]()
+                // console.log("Assigned function name use live generated value: " + functionName + " to value: " + val)
+                foundInput['value'] = val
+              }
+            }
+          }
+        }
+      } else {
+        // modify the demographics form - s01a-participant-information-f254b9
+        const demoDoc = templateDocs.find(doc => doc.form.id === registrationFormName)
+        if (typeof demoDoc !== 'undefined') {
+          if (demoDoc.items[1] && demoDoc.items[1].inputs.length > 2) {
+            demoDoc.items[1].inputs[1].value = subs['participant_id'];
+            demoDoc.items[1].inputs[2].value = subs['date'];
+          }
+          // "id": "randomization",
+          // demoDoc.items[10].inputs[1].value = barcode_data;
+          // demoDoc.items[10].inputs[2].value = subs.participant_id;
+          // demoDoc.items[10].inputs[7].value = enrollment_date;
+          // "id": "participant_information",
+          if (demoDoc.items[0]) {
+            console.log("Filling out firstname and surname: " + subs['firstname']() + ' ' + subs['surname']())
+            demoDoc.items[0].inputs[0].value = subs['firstname']();
+            demoDoc.items[0].inputs[1].value = subs['surname']();
+          } else {
+            console.log("Unable to substitute the firstname and surname; they are expected to be at demoDoc.items[0].inputs[0]")
           }
         }
       }
+
+      for (let index = 0; index < templateDocs.length; index++) {
+        const doc = templateDocs[index]
+        try {
+          delete doc._rev
+          let newDoc = await this.tangyFormService.saveResponse(doc)
+          // console.log("doc id: " + doc._id)
+          // Save the doc multiple times to create additional sequences.
+          const timesToSave = Math.ceil(Math.random() * 10)
+          console.log("Saving " + timesToSave + " times")
+          let newRev;
+          for (let index = 0; index < timesToSave; index++) {
+            newDoc.changeNumber = index
+            if (newRev) {
+              newDoc._rev = newRev
+            }
+            try {
+              let changedDoc = await this.tangyFormService.saveResponse(newDoc)
+              newRev = changedDoc._rev
+            } catch (e) {
+              console.log("Error: " + e)
+              debugger
+            }
+          }
+        } catch (e) {
+          console.log("Error: " + e)
+          debugger
+        }
+      }
+      
+      
+      
       numberOfCasesCompleted++
       console.log("motherId: " + caseId + " participantId: " + participant_id + " Completed " + numberOfCasesCompleted + " of " + numberOfCases);
     }
   }
 
+  async getCaseHistory(caseId:string = '', historyType = 'DEFAULT') {
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
+    }
+    caseId = caseId || window.location.hash.split('/')[2]
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(caseId)
+      : (await this.tangyFormService.getResponse(caseId)).history
+    return history 
+  }
+
+  async getEventFormHistory(caseId:string = '', caseEventId:string = '', eventFormId:string = '', historyType:HistoryType = HistoryType.DEFAULT) {
+    caseId = caseId || window.location.hash.split('/')[4]
+    caseEventId = caseEventId || window.location.hash.split('/')[5]
+    eventFormId = eventFormId || window.location.hash.split('/')[6]
+    const caseInstance = <Case>await this.tangyFormService.getResponse(caseId)
+    const formResponseId = caseInstance
+      .events.find(event => event.id === caseEventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
+    if (historyType === HistoryType.DEFAULT) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      historyType = appConfig.attachHistoryToDocs
+        ? HistoryType.DOC_HISTORY 
+        : HistoryType.DB_REVISIONS
+    }
+    const history = historyType === HistoryType.DB_REVISIONS 
+      ? await this.tangyFormService.getDocRevHistory(formResponseId)
+      : (await this.tangyFormService.getResponse(formResponseId)).history
+    return history
+  }
+
+}
+
+export enum HistoryType {
+  DEFAULT = 'DEFAULT',
+  DB_REVISIONS = 'DB_REVISIONS',
+  DOC_HISTORY = 'DOC_HISTORY',
 }
 
 interface CaseInfo {
@@ -1087,18 +1462,18 @@ export const markQualifyingEventsAsComplete = ({caseInstance, caseDefinition}:Ca
                   eventFormDefinition.required === true &&
                   !event.eventForms.some(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
                 ) ||
-                // 2. Is required and at least one Event Form instance is not complete.
+                // 2. Is required and at least one Event Form instance is not complete, but ignore Event Forms for inactive Participants.
                 (
                   eventFormDefinition.required === true &&
                   event.eventForms
-                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id && (!eventForm.participantId || !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive))
                     .some(eventForm => !eventForm.complete)
                 ) ||
-                // 3. Is not required and has at least one Event Form instance that is both incomplete and required.
+                // 3. Is not required and has at least one Event Form instance that is both incomplete and required, but ignore Event Forms for inactive Participants.
                 (
                   eventFormDefinition.required === false &&
                   event.eventForms
-                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
+                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id && !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive)
                     .some(eventForm => !eventForm.complete && eventForm.required)
                 )
             })

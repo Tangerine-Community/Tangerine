@@ -1,6 +1,7 @@
 import { FormInfo } from './classes/form-info.class';
 import { Inject, Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {FormVersion} from "./classes/form-version.class";
 
 @Injectable({
   providedIn: 'root'
@@ -21,21 +22,22 @@ export class TangyFormsInfoService {
     return (await this.getFormsInfo()).find(formInfo => formInfo.id === id)
   }
 
-  async getFormMarkup(formId) {
-    const formInfo = await this.getFormInfo(formId)
-    let formMarkup:any = this.formsMarkup[formInfo.src]
-    if (!this.formsMarkup[formInfo.src]) {
-      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[formInfo.src] = formMarkup;
-    }
-    return formMarkup
-  }
-
   async getFormTemplateMarkup(formId:string, formTemplateId:string):Promise<string> {
     const formInfo = await this.getFormInfo(formId)
     const formTemplate = formInfo.templates.find(formTemplate => formTemplate.id === formTemplateId)
     const formTemplateMarkup = await this.http.get(formTemplate.src, { responseType: 'text' }).toPromise()
     return formTemplateMarkup
+  }
+  
+  getFoo() {
+    return "foo"
+  }
+
+  async getFormSrc(formId, formVersionId:string = '') {
+    const formInfo = await this.getFormInfo(formId)
+    return formVersionId 
+      ? formInfo.formVersions.find(formVersion => formVersion.id === formVersionId).src
+      : formInfo.src
   }
 
 }

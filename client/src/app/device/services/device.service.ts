@@ -1,3 +1,4 @@
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { VariableService } from './../../shared/_services/variable.service';
 import { LockBoxService } from './../../shared/_services/lock-box.service';
 import { Loc } from 'tangy-form/util/loc.js';
@@ -6,15 +7,21 @@ import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {AppConfig} from '../../shared/_classes/app-config.class';
+import {ReplicationStatus} from "../../sync/classes/replication-status.class";
+import {UserService} from "../../shared/_services/user.service";
 const bcrypt = window['dcodeIO'].bcrypt
 
 export interface AppInfo {
+  encryptionLevel:string
   serverUrl:string
   groupName:string
+  deviceId:string
   groupId:string
   buildChannel:string
+  tangerineVersion:string
   buildId:string
   assignedLocation:string
+  versionTag:string
 }
 
 @Injectable({
@@ -26,6 +33,9 @@ export class DeviceService {
   password:string
   rawBuildChannel:string
   buildId:string
+  tangerineVersion:string
+  versionTag:string
+  appInfo:AppInfo
 
   constructor(
     private httpClient:HttpClient,
@@ -37,6 +47,35 @@ export class DeviceService {
 
   async install() {
     // ?
+  }
+
+  async initialize() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const buildId = window.location.hostname !== 'localhost' ? await this.getBuildId() : 'localhost'
+    const buildChannel = window.location.hostname !== 'localhost' ? await this.getBuildChannel() : 'localhost'
+    const device = await this.getDevice()
+    const locationList = await this.appConfigService.getLocationList();
+    const flatLocationList = Loc.flatten(locationList)
+    const encryptionLevel = (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption'])
+      ? _TRANSLATE('in-app')
+      : 'OS'
+    const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
+      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
+      : 'N/A'
+    const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
+    const versionTag = window.location.hostname !== 'localhost' ? await this.getVersionTag() : 'localhost'
+    this.appInfo = <AppInfo>{
+      serverUrl: appConfig.serverUrl,
+      groupName: appConfig.groupName,
+      groupId: appConfig.groupId,
+      encryptionLevel,
+      tangerineVersion,
+      buildChannel,
+      buildId,
+      deviceId: device._id,
+      assignedLocation,
+      versionTag
+    }
   }
 
   async getRemoteDeviceInfo(id, token):Promise<Device> {
@@ -102,7 +141,7 @@ export class DeviceService {
     }
   }
 
-  async didUpdate(deviceId = '', deviceToken = ''):Promise<any> {
+  async didUpdate(deviceId = '', deviceToken = '', status:ReplicationStatus):Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
     const version = await this.getBuildId()
     if (!deviceId || !deviceToken) {
@@ -110,38 +149,57 @@ export class DeviceService {
       deviceId = device._id
       deviceToken = device.token
     }
+    
+    // await this
+    //   .httpClient
+    //   .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise()
+    console.log("Sending sync status with update.")
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise()
+      .post(`${appConfig.serverUrl}group-device-public/did-update-status/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`, {
+        status: status
+      }).toPromise()
+    
   }
 
-  async didSync():Promise<any> {
+  async didSync(status):Promise<any> {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const device = await this.getDevice()
+    const version = await this.getBuildId()
+    if (status) {
+      console.log("Sending sync status.")
+      await this
+        .httpClient
+        .post(`${appConfig.serverUrl}group-device-public/did-sync-status/${appConfig.groupId}/${device._id}/${device.token}/${version}`, {
+            status: status
+          }).toPromise()
+    } else {
+      await this
+        .httpClient
+        .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise()
+    }
+    
+  }
+
+  async didSyncError(error):Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.getDevice()
     const version = await this.getBuildId()
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise()
+      .get(`${appConfig.serverUrl}group-device-public/did-sync-error/${appConfig.groupId}/${device._id}/${device.token}/${version}/${error}`).toPromise()
   }
 
-  async getAppInfo() {
-    const appConfig = await this.appConfigService.getAppConfig()
-    const buildId = await this.getBuildId()
-    const buildChannel = await this.getBuildChannel()
-    const device = await this.getDevice()
-    const locationList = await this.appConfigService.getLocationList();
-    const flatLocationList = Loc.flatten(locationList)
-    const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
-      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
-      : 'N/A'
-    return <AppInfo>{
-      serverUrl: appConfig.serverUrl,
-      groupName: appConfig.groupName,
-      groupId: appConfig.groupId,
-      buildChannel,
-      buildId,
-      deviceId: device._id,
-      assignedLocation
+  getAppInfo() {
+    return this.appInfo
+  }
+
+  async getTangerineVersion() {
+    try {
+      this.tangerineVersion = this.tangerineVersion ? this.tangerineVersion : await this.httpClient.get('./assets/tangerine-version', {responseType: 'text'}).toPromise();
+      return this.tangerineVersion.replace(/\n$/, '');
+    } catch (e) {
+      return 'N/A';
     }
   }
 
@@ -162,6 +220,15 @@ export class DeviceService {
         : this.rawBuildChannel.includes('qa')
           ? 'test'
           : 'unknown'
+    } catch (e) {
+      return 'N/A'
+    }
+  }
+
+  async getVersionTag() {
+    try {
+      this.versionTag = this.versionTag ? this.versionTag : await this.httpClient.get('./assets/tangerine-version-tag', {responseType: 'text'}).toPromise()
+      return this.versionTag.replace(/\n$/, '');
     } catch (e) {
       return 'N/A'
     }

@@ -1,3 +1,4 @@
+import { SyncCouchdbService } from './sync/sync-couchdb.service';
 import { LockBoxService } from './shared/_services/lock-box.service';
 import { ClassFormService } from './class/_services/class-form.service';
 import { DashboardService } from './class/_services/dashboard.service';
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit {
   window:any;
   installed = false
   isLoggedIn = false
+  isAdmin = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
@@ -69,6 +71,7 @@ export class AppComponent implements OnInit {
     private lockBoxService:LockBoxService,
     private dashboardService:DashboardService,
     private variableService:VariableService,
+    private syncCouchdbService:SyncCouchdbService,
     private translate: TranslateService
   ) {
     this.window = window;
@@ -82,6 +85,7 @@ export class AppComponent implements OnInit {
       user: userService,
       lockBox: lockBoxService,
       syncing: syncingService,
+      syncCouchdbService: syncCouchdbService, 
       sync: syncService,
       appConfig: appConfigService,
       update: updateService,
@@ -102,7 +106,9 @@ export class AppComponent implements OnInit {
   }
   
   async ngOnInit() {
-
+    this.window.isPreviewContext = window.location.hostname === 'localhost'
+      ? true
+      : false
     this.installed = await this.variableService.get('installed') && await this.variableService.get('languageCode')
       ? true
       : false;
@@ -135,8 +141,8 @@ export class AppComponent implements OnInit {
 
     await this.checkPermissions();
     // Initialize services.
+    await this.deviceService.initialize()
     await this.userService.initialize();
-    await this.searchService.start();
 
     // Get globally exposed config.
     this.appConfig = await this.appConfigService.getAppConfig();
@@ -153,15 +159,23 @@ export class AppComponent implements OnInit {
     this.isLoggedIn = this.userService.isLoggedIn();
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
       this.isLoggedIn = true;
+      if (window['username'] === 'admin') {
+        this.isAdmin = true;
+      }
     });
     this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
       this.isLoggedIn = false;
+      this.isAdmin = false;
     });
 
     // Keep GPS chip warm.
-    setInterval(this.getGeolocationPosition, 5000);
-    this.checkStorageUsage();
-    setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    if (!this.appConfig.disableGpsWarming) {
+      setInterval(this.getGeolocationPosition, 5000);
+    }
+    if (this.appConfig.syncProtocol !== '2') {
+      this.checkStorageUsage();
+      setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    }
     this.ready = true;
 
     // Lastly, navigate to update page if an update is running.
@@ -186,7 +200,7 @@ export class AppComponent implements OnInit {
   }
 
   async checkPermissions() {
-    if (this.window.isCordovaApp) {
+    if (this.window.isCordovaApp && window['cordova']['plugins']) {
       const permissions = window['cordova']['plugins']['permissions'];
       if (typeof permissions !== 'undefined') {
         const list = [
@@ -194,7 +208,8 @@ export class AppComponent implements OnInit {
           permissions.ACCESS_FINE_LOCATION,
           permissions.CAMERA,
           permissions.READ_EXTERNAL_STORAGE,
-          permissions.WRITE_EXTERNAL_STORAGE
+          permissions.WRITE_EXTERNAL_STORAGE,
+          permissions.WAKE_LOCK
         ];
 
         window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
@@ -287,7 +302,10 @@ export class AppComponent implements OnInit {
           console.log(error.description);
           await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
           this.updateIsRunning = false;
-          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
+          const code = error.code
+          const description = error.description
+          const errorMessage = "Code: " + code + " Description: " + description
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.') + ' Error: ' + errorMessage);
         } else {
           console.log('APK update downloaded. Reloading for new code...');
           // No need to set in memory semaphore to false, app will reload.
@@ -301,7 +319,10 @@ export class AppComponent implements OnInit {
           console.log('error: ' + JSON.stringify(error));
           await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
           this.updateIsRunning = false;
-          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
+          const code = error.code
+          const description = error.description
+          const errorMessage = "Code: " + code + " Description: " + description
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.')+ ' Error: ' + errorMessage);
         } else {
           console.log('Update has downloaded');
           console.log('Installing update');
@@ -337,7 +358,7 @@ export class AppComponent implements OnInit {
           timestamp: position.timestamp
         };
         localStorage.setItem('gpsQueue', JSON.stringify(x));
-      } else { console.log(position); }
+      }
     },
       (err) => { },
       options);

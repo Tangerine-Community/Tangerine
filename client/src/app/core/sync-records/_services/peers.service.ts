@@ -18,6 +18,7 @@ export class PeersService {
   currentEndpoint: Endpoint;
   peer: Endpoint;
   endpoints: Endpoint[];
+  pushing: boolean
 
   constructor(
     private userService: UserService,
@@ -36,7 +37,7 @@ export class PeersService {
     const userDatabaseName = userDatabase.db.name;
     const username = userDatabaseName.replace('_pouchdb', '');
     console.log('userDatabaseName: ' + userDatabaseName + ' username: ' + username);
-    return userDatabase.db;
+    return userDatabase;
   }
 
   sleep(milliseconds) {
@@ -67,7 +68,14 @@ export class PeersService {
   }
 
   startAdvertising(endpoints: Endpoint[]) {
-    //   const message: Message = <Message>await new Promise((resolve, reject) => {
+    // Clear out the direction and progress
+    const directionMessage: Message = new Message('direction', '', null, null, null, null)
+    const directionEvent = new CustomEvent('direction', {detail: directionMessage});
+    this.el.dispatchEvent(directionEvent);
+    const progressMessage: Message = new Message('progress', '', null, null, null, null)
+    const event = new CustomEvent('direction', {detail: progressMessage});
+    this.el.dispatchEvent(event);
+
     if (this.window.isCordovaApp) {
       window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, this.successAdvertising, this.errorAdvertising);
     }
@@ -88,6 +96,7 @@ export class PeersService {
         const event = new CustomEvent('log', {detail: message});
         this.el.dispatchEvent(event);
       } else if (response['messageType'] === 'progress') {
+        response['pushing'] = this.pushing
         const event = new CustomEvent('progress', {detail: response});
         this.el.dispatchEvent(event);
       } else if (response['messageType'] === 'localEndpointName') {
@@ -123,13 +132,13 @@ export class PeersService {
         const event = new CustomEvent('endpoints', {detail: message});
         this.el.dispatchEvent(event);
       } else if (response['messageType'] === 'payload') {
+        const directionMessage:Message = new Message('direction', 'Receiving data', null, null, null, null)
+        const event = new CustomEvent('direction', {detail: directionMessage});
+        this.el.dispatchEvent(event);
         // load the data sent from the peer and then send your own.
         // TODO: JSONObject is available if we need it.
         const msg = <Message>response.object;
         const payload = msg.payloadData;
-        // const payload = msg.object;
-        // const databaseDump = atob(base64dump);
-        // const databaseDump = await (new Response(blob)).text();
         const writeStream = new window['Memorystream'];
         writeStream.end(payload);
         const tempDb = new PouchDB('tempDb');
@@ -137,7 +146,7 @@ export class PeersService {
         try {
         await tempDb.load(writeStream)
         // replicate received database to the local db
-        const localDb = this.localDatabase;
+        const localDb = this.localDatabase.db;
         console.log('Replicating data to PouchDB: ' + localDb.name);
         // TODO: Probably don't need the .on since we've already got an await.
         // TODO: This could possible have created two stacks, and commands could happen out of order.
@@ -149,13 +158,16 @@ export class PeersService {
               pullConflicts: conflictsQuery.rows.map(row => row.id)
             }
             if (pullReplicationStatus.pullConflicts.length > 0) {
-              await this.conflictService.resolveConflicts(pullReplicationStatus, localDb, null, 'pull', null);
+              await this.conflictService.resolveConflicts(pullReplicationStatus, this.localDatabase, null, 'pull', null);
             }
             const repliMessage  = 'Data downloaded to tablet.'
             console.log(repliMessage);
             message = new Message('done', repliMessage, null, null, this.peer.id, null);
             const event = new CustomEvent('progress', {detail: message});
             this.el.dispatchEvent(event);
+            const directionMessage:Message = new Message('direction', '', null, null, null, null)
+            const directionEvent = new CustomEvent('direction', {detail: directionMessage});
+            this.el.dispatchEvent(directionEvent);
         }).on('error', function (err) {
           console.log('error in replication: ' + err);
         });
@@ -172,15 +184,11 @@ export class PeersService {
           const event = new CustomEvent('done', {detail: message});
           this.el.dispatchEvent(event);
         } else {
-          const dumpedString = await this.dumpData(this.localDatabase)
+          const dumpedString = await this.dumpData(this.localDatabase.db)
           let pushDataMessage: Message;
           try {
             const pluginMessage = 'Pushing local db to master.';
             console.log(pluginMessage);
-            // const base64dumpPeer = btoa(dumpedString);
-            // const blob = new Blob([JSON.stringify(dumpedString, null, 2)], {type : 'application/json'});
-            // const blob = new Blob([dumpedString], {type : 'application/json'});
-            // const upload: Message = new Message('payload', pluginMessage, blob, null, null);
             const upload: Message = new Message('payload', pluginMessage, null, null, null, null);
             pushDataMessage = await this.pushData(upload, dumpedString);
             if (typeof pushDataMessage !== 'undefined') {
@@ -211,9 +219,10 @@ export class PeersService {
   async connectToEndpoint(endpointStr) {
     const ep = endpointStr.split('~');
     const endpoint = new Endpoint(ep[0], ep[1], 'Pending')
+    this.peer = endpoint
     this.currentEndpoint = endpoint;
     this.isMaster = true;
-    const dumpedString = await this.dumpData(this.localDatabase)
+    const dumpedString = await this.dumpData(this.localDatabase.db)
     if (this.window.isCordovaApp) {
     const result: Message = await new Promise((resolve, reject) => {
       let message: Message;
@@ -235,15 +244,7 @@ export class PeersService {
             const objData = response['object'];
             const endpointName = Object.values(objData)[0];
             console.log('pushing data to endpoint: ' + JSON.stringify(response['object']) + ' endpointId: ' + endpointName);
-            // const db = await this.getDatabase();
-            // const base64dump = btoa(dumpedString);
-            // const blob = new Blob([dumpedString], {type : 'application/json'});
-            // const payload: Message = new Message('payload', 'Data from master', blob, null, null);
             const message: Message = new Message('payload', 'Data from master', null, null, null, null);
-            // const aUTF16CodeUnits = new Uint16Array(myString.length);
-            // Array.prototype.forEach.call(aUTF16CodeUnits, function (el, idx, arr) { arr[idx] = myString.charCodeAt(idx); });
-            // var sUTF16Base64 = base64EncArr(new Uint8Array(aUTF16CodeUnits.buffer));
-            // const payload = JSON.parse(dumpedString);
             const result = await this.pushData(message, dumpedString);
           }
         }, (error) => {
@@ -279,13 +280,18 @@ export class PeersService {
         resolve(<string>dumpedString);
         // return dumpedString;
       });
-      // dumpedString = await db.dump(stream);
+      // dumpedString = await db.dump(stream);const event = new CustomEvent('progress', {detail: response});
+      //         this.el.dispatchEvent(event);
     })
     return dumpedString;
   }
 
   async pushData(message: Message, payload: string) {
     if (this.window.isCordovaApp) {
+      this.pushing = true
+      const directionMessage:Message = new Message('direction', 'Sending data', null, null, null, null)
+      let directionEvent = new CustomEvent('direction', {detail: directionMessage});
+      this.el.dispatchEvent(directionEvent);
       const result: Message = await window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(message, payload, async (message) => {
         // console.log('TangyP2P: Data transferred from peer to master.' );
         if (typeof message !== 'undefined') {
@@ -300,18 +306,14 @@ export class PeersService {
           if (message.messageType === 'payloadReceived') {
             const messageStr = message.message;
             console.log('payloadReceived: ' + messageStr);
-            // document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
-            // document.querySelector('#transferProgress').innerHTML += messageStr + '<br/>';
+            const directionMessage:Message = new Message('direction', '', null, null, null, null)
+            directionEvent = new CustomEvent('direction', {detail: directionMessage});
+            this.el.dispatchEvent(directionEvent);
+            this.pushing = false
             let endpointId;
             if (typeof this.currentEndpoint !== 'undefined' ) {
               endpointId = this.currentEndpoint.id;
               console.log('this.currentEndpoint: ' + endpointId);
-            // } else if (typeof message.originName !== 'undefined' && message.originName !== null) {
-            //   const origin = this.endpoints.find(endpoint => endpoint.endpointName === message.originName);
-            //   if (typeof origin !== 'undefined') {
-            //     endpointId = origin.id;
-            //     console.log('origin.id: ' + endpointId);
-            //   }
             } else if (typeof this.peer !== 'undefined') {
               endpointId = this.peer.id;
               console.log('this.peer.id: ' + endpointId);
@@ -326,9 +328,6 @@ export class PeersService {
             await this.successAdvertising(message);
           } else if (message.messageType === 'progress') {
             console.log('Received progress message in pushData')
-            // const messageStr = message.message;
-            // const object = message.object;
-            // message = new Message('progress', messageStr, object, null, null, null);
             await this.successAdvertising(message);
           } else if (message.messageType === 'error') {
             console.log('error from plugin transferData during pushData: ');

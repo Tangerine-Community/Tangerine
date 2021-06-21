@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { FormInfo } from './classes/form-info.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import {TangyFormsInfoService} from './tangy-forms-info-service';
+import {FormVersion} from "./classes/form-version.class";
+import * as jsonpatch from "fast-json-patch";
 
 
 @Injectable({
@@ -19,17 +21,10 @@ export class TangyFormService {
     private tangyFormsInfoService: TangyFormsInfoService
   ) { }
 
-  async getFormInput(formId, inputVariable) {
+  async getFormInput(formId, inputVariable, revision) {
     const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-    let formMarkup: any = this.formsMarkup[formInfo.src]
-    if (!this.formsMarkup[formInfo.src]) {
-      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[formInfo.src] = formMarkup;
-    }
-    // return formMarkup
-
-    const tangyFormMarkup = await this.getFormMarkup(formId)
-    const variableName = formInfo.src + inputVariable;
+    let key = revision ? formInfo.src + revision : formInfo.src;
+    const variableName = key + inputVariable;
     const formInput: any = this.formInputs[variableName]
     if (!this.formInputs[variableName]) {
       // first populate the array
@@ -45,13 +40,15 @@ export class TangyFormService {
     }
   }
 
-  async getFormMarkup(formId) {
-    const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-    let formMarkup:any = this.formsMarkup[formInfo.src]
-    if (!this.formsMarkup[formInfo.src]) {
-      formMarkup = await this.http.get(formInfo.src, {responseType: 'text'}).toPromise()
-      this.formsMarkup[formInfo.src] = formMarkup;
-    }
+  /**
+   * Gets markup for a form. If displaying a formResponse, populate the revision in order to display the correct form version.
+   * @param formId
+   * @param formVersionId - Uses this value to lookup the correct version to display. It is null if 
+   */
+  async getFormMarkup(formId, formVersionId:string = '') {
+    let formMarkup:any
+    let src: string = await this.tangyFormsInfoService.getFormSrc(formId, formVersionId)
+    formMarkup = await this.http.get(src, {responseType: 'text'}).toPromise()
     return formMarkup
   }
 
@@ -114,4 +111,34 @@ export class TangyFormService {
     let r = await db.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true })
     return r.rows.map((row) => row.doc)
   }
+
+  async getDocRevHistory(docId) {
+    let db = (await this.userService.getUserDatabase()).db
+    const docWithRevs = await db.get(docId,{revs_info:true})
+    const revisions = docWithRevs._revs_info
+    let comparisons = []
+    if (revisions) {
+      // filter out missing
+      const availableRevisions = revisions.filter(rev => rev.status === 'available')
+      // loop through the revisionIds, fetch each one, and compare in-order.
+      for (let index = 0; index < availableRevisions.length; index++) {
+        const revision = availableRevisions[index]
+        const revId = revision.rev
+        const nextRevision = availableRevisions[index+1]
+        if (nextRevision) {
+          const currentDoc = await db.get(docId,{rev:revId})
+          const nextRev = nextRevision.rev
+          const nextDoc = await db.get(docId,{rev:nextRev})
+          const comparison = jsonpatch.compare(nextDoc, currentDoc).filter(mod => mod.path.substr(0,8) !== '/history')
+          const comparisonDoc = {
+            lastRev: nextRev,
+            patch: comparison
+          }
+          comparisons.push(comparisonDoc)
+        }
+      }
+    }
+    return comparisons
+  }
+
 }
