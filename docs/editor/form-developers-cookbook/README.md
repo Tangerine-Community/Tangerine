@@ -103,4 +103,38 @@ In the following example we display content in a set of tabs.
 
 ![tangy-form-tabs](./tangy-form-tabs.gif)
 
+## Dynamic Changing of Text Color 
+In the following example we change the color of text depending on a user's selection.  
+
+[Run example](https://dynamically-change-text-color.glitch.me/) - [Open Editor](https://dynamically-change-text-color.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/dynamically-change-text-color)
+
+![dynamically-change-text-color](./dynamically-change-text-color.gif)
+
+## Use skip-if to reference variable inside tangy-inputs-group
+In the following example a `skip-if` refers to an other variable local to the group itself is in. The trick is using backticks around the variable name (not quotes) you are referencing and prepending the variable name you are referencing with `${context.split('.')[0]}.${context.split('.')[1]}.`.  
+
+[Run example](https://skip-if-inside-tangy-inputs-groups.glitch.me/) - [Open Editor](https://skip-if-inside-tangy-inputs-groups.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-if-inside-tangy-inputs-groups)
+
+![skip-if-inside-tangy-inputs-groups](./skip-if-inside-tangy-inputs-groups.gif)
+
+## Use valid-if to reference variable inside tangy-inputs-group
+In the following example a `valid-if` refers to an other variable local to the group itself is in. The trick is using backticks around the variable name (not quotes) you are referencing and prepending the variable name you are referencing with `${input.name.split('.')[0]}.${input.name.split('.')[1]}.`.  Watch out for the gotcha of not using `input.name` instead of `context` like we do in a `skip-if`.
+
+[Run example](https://valid-if-inside-tangy-inputs-groups.glitch.me/) - [Open Editor](https://valid-if-inside-tangy-inputs-groups.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-if-inside-tangy-inputs-groups)
+
+![skip-if-inside-tangy-inputs-groups](./valid-if-inside-tangy-inputs-groups.gif)
+
+## Dynamic Location Level
+In the following example we empower the Data Collector to select which Location Level at which they will provide their answer. This example can also be used in a more advanced way to base the level of location required for entry given some other set of inputs.
+
+[Run example](https://dynamic-location-levels.glitch.me/) - [Open Editor](https://dynamic-location-levels.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/dynamic-location-levels)
+
+![dynamic-location-levels](./dynamic-location-levels.gif)
+
+## Prevent user from proceeding during asynchronous logic
+Sometimes in a form the logic calls for running some code that is asynchronous such as database saves and HTTP calls. As this logic runs, we would like to prevent the user from proceeding in the form. This is a job for a `<tangy-gate>`. Tangy Gate is an input that by default will not allow a user to proceed in a form. The gate can only be "opened" by some form logic that set's that Tangy Gate's variable name's value to `true`. This gives your logic in your forms an opportunity to run asynchronously, blocking the user from proceeding, then when async code is done your code sets the the gate to open.
+
+[Run example](https://tangy-gate-example.glitch.me/) - [Open Editor](https://tangy-gate-example.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/tangy-gate-example)
+
+![dynamic-location-levels](./tangy-gate-example.gif)
 

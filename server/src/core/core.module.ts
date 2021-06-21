@@ -1,3 +1,4 @@
+import { ModuleController } from './tangerine-modules-support/tangerine-modules-support.controller';
 import { GroupDevicePublicController } from './group-device/group-device-public.controller';
 import { GroupDeviceManageController } from './group-device/group-device-manage.controller';
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
@@ -7,6 +8,7 @@ import { UserController } from './user/user.controller';
 import { ConfigController } from './config/config.controller';
 import { GroupResponsesController } from './group-responses/group-responses.controller';
 import isAuthenticated = require('../middleware/is-authenticated');
+import {GroupIssuesController} from "./group-issues/group-issues.controller";
 const {permit} = require('../middleware/permitted');
 
 @Module({
@@ -16,7 +18,8 @@ const {permit} = require('../middleware/permitted');
     GroupDevicePublicController,
     GroupDeviceManageController,
     ConfigController,
-    GroupResponsesController
+    GroupResponsesController,
+    GroupIssuesController
   ],
   imports: [SharedModule]
 })
@@ -27,10 +30,16 @@ export class CoreModule implements NestModule {
       .forRoutes(ConfigController)
     consumer
       .apply(isAuthenticated)
+      .forRoutes(ModuleController)
+    consumer
+      .apply(isAuthenticated)
       .forRoutes(GroupController)
     consumer
       .apply(isAuthenticated)
       .forRoutes(GroupResponsesController)
+    consumer
+      .apply(isAuthenticated)
+      .forRoutes(GroupIssuesController)
     consumer
       .apply(isAuthenticated)
       .forRoutes(UserController)

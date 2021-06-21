@@ -14,10 +14,21 @@
 <app-case-notifications></app-case-notifications>
 <div class="wrapper">
   <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
-  <div *ngFor="let eventInfo of caseEventsInfo">
+  <div *ngFor="let eventInfo of readableCaseEventsInfo">
     <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
       [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
       [case]="caseService.case" routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
+    </app-case-event-list-item>
+  </div>
+  <div *ngFor="let eventInfo of unreadableCaseEventsInfo">
+    <app-case-event-list-item
+      *ngFor="let caseEvent of eventInfo.caseEvents" 
+      disabled
+      [caseEvent]="caseEvent"
+      [caseDefinition]="caseService.caseDefinition"
+      [caseEventDefinition]="eventInfo.caseEventDefinition"
+      [case]="caseService.case"
+    >
     </app-case-event-list-item>
   </div>
   <div class="icon-list-item event new-event">

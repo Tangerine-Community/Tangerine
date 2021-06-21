@@ -8,3 +8,15 @@ paper-progress {
 .status {
   margin-bottom: 1em;
 }
+
+.errorMessage {
+  margin-left: 0px;
+  font-size: 20px;
+  font-weight: bold;
+  color: red;
+}
+.debugging {
+  text-align: left;
+  padding-left: 1em;
+  padding-top: 1em;
+}

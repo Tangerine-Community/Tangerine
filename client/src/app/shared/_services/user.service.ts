@@ -1,3 +1,5 @@
+import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info-service';
+import { createSearchIndex } from './create-search-index';
 import {HttpClient} from "@angular/common/http";
 
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
@@ -19,6 +21,8 @@ import { LockBoxContents } from '../_classes/lock-box-contents.class';
 import { DB } from '../_factories/db.factory';
 import {VariableService} from "./variable.service";
 
+export type UserRole = string
+
 @Injectable()
 export class UserService {
 
@@ -28,6 +32,8 @@ export class UserService {
   config: AppConfig
   _currentUser = ''
   _initialized = false
+  profile:TangyFormResponseModel
+  roles:Array<string>
   sharedUserDatabase;
   public userLoggedIn$:Subject<UserAccount> = new Subject()
   public userLoggedOut$:Subject<UserAccount> = new Subject()
@@ -43,17 +49,23 @@ export class UserService {
     private deviceService:DeviceService,
     private appConfigService: AppConfigService,
     private http: HttpClient,
-    private variableService:VariableService,
+    private readonly formsInfoService:TangyFormsInfoService,
+    private variableService:VariableService
   ) {
     this.window = window;
   }
 
   async initialize() {
     this.config = await this.appConfigService.getAppConfig()
+    if (this.isLoggedIn()) {
+      await this.setCurrentUser(this.getCurrentUser())
+    }
   }
 
   async installSharedUserDatabase(device) {
     this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
+    const formsInfo = await this.formsInfoService.getFormsInfo()
+    await createSearchIndex(this.sharedUserDatabase, formsInfo)
     await this.installDefaultUserDocs(this.sharedUserDatabase)
     // install any extra views
     try {
@@ -76,7 +88,8 @@ export class UserService {
           await this.sharedUserDatabase.put(doc)
         }
     } catch (e) {
-      console.log("Error: " + JSON.stringify(e))
+      console.warn('./assets/queries.js failed to install. Only worry about this if you are using queries.js.')
+      console.error(e)
     }
     await this.variableService.set('atUpdateIndex', updates.length - 1);
   }
@@ -110,6 +123,8 @@ export class UserService {
     const device = await this.getDevice()
     const userDb = new UserDatabase(username, userId, device.key, device._id)
     this.installDefaultUserDocs(userDb)
+    const formsInfo = await this.formsInfoService.getFormsInfo()
+    await createSearchIndex(userDb, formsInfo)
     this.userDatabases.push(userDb)
     return userDb
   }
@@ -125,10 +140,10 @@ export class UserService {
     const deviceInfo = await this.deviceService.getAppInfo()
     if (appConfig.syncProtocol === '2') {
       const device = await this.deviceService.getDevice()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId, appConfig.attachHistoryToDocs)
     } else {
       const appInfo = await this.deviceService.getAppInfo()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo.buildId, appInfo.buildChannel, appInfo.groupId)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo.buildId, appInfo.buildChannel, appInfo.groupId, appConfig.attachHistoryToDocs)
     }
   }
 
@@ -211,6 +226,36 @@ export class UserService {
   async createAdmin(password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
     // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+    userProfile.items = [
+      {
+        id: 'item1',
+        inputs: [
+          {
+            name: 'roles',
+            value: [{name: 'admin', value: 'on'}]
+          },
+          {
+            name: 'first_name',
+            value: 'Admin of Device'
+          },
+          {
+            name: 'last_name',
+            value: `Device ID: ${lockBoxContents.device._id}`
+          },
+          {
+            name: 'location',
+            value: Object
+              .getOwnPropertyNames(lockBoxContents.device.assignedLocation)
+              .map(propName => { 
+                return { 
+                  level: propName,
+                  value: lockBoxContents.device.assignedLocation[propName]
+                }
+              })
+          }
+        ]
+      }
+    ]
     const userAccount = new UserAccount({
       _id: 'admin',
       password: this.hashValue(password),
@@ -234,6 +279,21 @@ export class UserService {
     }
   }
 
+  getRoles(username = ''):Array<UserRole> {
+    if (this.profile.items[0] && this.profile.items[0].inputs) {
+      const rolesInput = this.profile.items[0].inputs.find(input => input.name === 'roles')
+      return rolesInput
+        ? rolesInput.value.reduce((roles, option) => {
+            return option.value === 'on'
+              ? [...roles, option.name]
+              : roles
+          }, [])
+        : [] 
+    } else {
+      return []
+    }
+  }
+
   async create(userSignup:UserSignup):Promise<UserAccount> {
     let userAccount:UserAccount
     if (this.config.syncProtocol === '2') {
@@ -249,7 +309,22 @@ export class UserService {
       const userLockBoxContents = <LockBoxContents>{...adminLockBox.contents}
       await this.lockBoxService.fillLockBox(userSignup.username, userSignup.password, userLockBoxContents)
       const device = adminLockBox.contents.device
-      const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+      const userProfile = new TangyFormResponseModel({
+        form:{
+          id:'user-profile'
+        },
+        items: [
+          {
+            id: 'item1',
+            inputs: [
+              {
+                name: 'role',
+                value: 'dataCollector'
+              }
+            ]
+          }
+        ]
+      })
       userAccount = new UserAccount({
         _id: userSignup.username,
         password: this.hashValue(userSignup.password),
@@ -262,6 +337,9 @@ export class UserService {
       await userDb.put(userProfile)
     } else {
       const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+      userProfile.items.push({id: 'item1',
+        inputs: []
+      })
       userAccount = new UserAccount({
         _id: userSignup.username,
         username: userSignup.username,
@@ -400,11 +478,13 @@ export class UserService {
         await this.lockBoxService.openLockBox(username, password)
       }
       const userAccount = await this.getUserAccount(username)
-      this.setCurrentUser(userAccount.username)
+      await this.setCurrentUser(userAccount.username)
+      await this.deviceService.initialize()
       // Make globals available for form developers.
       window['userDb'] = await this.getUserDatabase(username)
       window['username'] = this.getCurrentUser()
       window['userProfile'] = await this.getUserProfile()
+      window['userRoles'] = this.getRoles()
       window['userId'] = window['userProfile']._id
       this.userLoggedIn$.next(userAccount)
       return true
@@ -480,7 +560,7 @@ export class UserService {
       : this._currentUser
   }
 
-  setCurrentUser(username):string {
+  async setCurrentUser(username):Promise<string> {
     // Note: Unless developing locally, we store user session information in memory so we don't for example put the
     // contents of the lockbox in an unencrypted form on disk in localStorage/etc. Putting currentUser in memory
     // guarantees that if we reload the user will be logged out as opposed to being logged in but not having access
@@ -491,6 +571,8 @@ export class UserService {
       this._currentUser = username
     }
     window['currentUser'] = username
+    this.profile = await this.getUserProfile()
+    this.roles = this.getRoles()
     return username
   }
 

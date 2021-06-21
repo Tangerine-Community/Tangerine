@@ -1,0 +1,28 @@
+{
+   "syncProtocol": "2",
+   "p2pSync": "true",
+   "homeUrl" : "custom-app",
+   "serverUrl" : "http://localhost/",
+   "modules" : [
+      "csv"
+   ],
+   "showQueries" : true,
+   "uploadUnlockedFormReponses" : false,
+   "securityQuestionText" : "What is your year of birth?",
+   "hideProfile" : true,
+   "groupId" : "example",
+   "direction" : "undefined",
+   "columnsOnVisitsTab" : [],
+   "showCaseReports": true,
+   "listUsernamesOnLoginScreen" : true,
+   "securityPolicy" : [
+      "password"
+   ],
+   "languageCode" : "en",
+   "languageDirection" : "ltr",
+   "hashSecurityQuestionResponse" : false,
+   "groupName" : "example",
+   "couchdbPush4All": false,
+   "couchdbPullUsingDocIds": false,
+   "autoMergeConflicts": false
+ }

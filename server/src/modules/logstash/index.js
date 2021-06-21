@@ -7,6 +7,7 @@ const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 
 module.exports = {
+  name: 'logstash',
   hooks: {
     clearReportingCache: async function(data) {
       const { groupNames } = data
@@ -101,10 +102,14 @@ const generateFlatResponse = async function (formResponse, locationList) {
   };
   function set(input, key, value) {
     flatFormResponse[key] = input.skipped
-      ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-      : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-        ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : value
+        ? process.env.T_REPORTING_MARK_SKIPPED_WITH
+        : 
+        input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
+        : 
+        value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
+            : value
   }
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {

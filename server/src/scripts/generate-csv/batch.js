@@ -8,7 +8,7 @@ if (!process.argv[2]) {
 
 const util = require('util');
 const axios = require('axios')
-const fs = require('fs')
+const fs = require('fs-extra')
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const appendFile = util.promisify(fs.appendFile);
@@ -16,7 +16,8 @@ const CSV = require('comma-separated-values')
 const dbDefaults = require('../../db-defaults.js')
 
 const params = {
-  statePath: process.argv[2]
+  statePath: process.argv[2],
+  groupConfigurationDoc: process.argv[3]
 }
 
 function getData(dbName, formId, skip, batchSize, year, month) {
@@ -44,7 +45,11 @@ function getData(dbName, formId, skip, batchSize, year, month) {
 async function batch() {
   console.log("in batch.")
   const state = JSON.parse(await readFile(params.statePath))
+  console.log("state.skip: " + state.skip)
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
+  // console.log("docs: " + JSON.stringify(docs))
+  let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
+  console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
   if (docs.length === 0) {
     state.complete = true
   } else {
@@ -52,14 +57,32 @@ async function batch() {
     try {
       const rows = docs.map(doc => {
         return [ doc._id, ...state.headersKeys.map(header => {
-            if (typeof doc[header]!== 'undefined') {
-              return doc[header]
+          // Check to see if variable comes from a section that was disabled.
+          if(typeof header === 'string' && header.split('.').length === 3) {
+            const itemId = header.split('.')[1]
+            if (itemId && doc[`${itemId}_disabled`] === 'true') {
+              if (outputDisabledFieldsToCSV) {
+                return doc[header]
+              } else {
+                return process.env.T_REPORTING_MARK_SKIPPED_WITH
+              }
             } else {
-              return ""
+              if (doc[header] === undefined) {
+                  return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+              } else {
+                  return doc[header]
+              }
             }
+          } else {
+            if (doc[header] === undefined) {
+              return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+            } else {
+                return doc[header]
+            }          
+          }
         })]
       })
-      const output = `\n${new CSV(rows).encode()}`
+      const output = `\n${rows.map(row => new CSV([row]).encode()).join('\n')}`
       await appendFile(state.outputPath, output)
       state.skip = state.skip + state.batchSize
     } catch(err) {

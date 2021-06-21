@@ -16,6 +16,7 @@ import { Marked } from '@ts-stack/markdown';
 import {Conflict} from "../../classes/conflict.class";
 import { conflictTemplate } from './conflict-template';
 import { diffString, diff } from 'json-diff';
+import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.component";
 
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
@@ -74,7 +75,8 @@ export class IssueComponent implements OnInit {
   private merged: any;
   mergedMarkup: string;
   diffMergedMarkup: string;
-
+  breadcrumbs:Array<Breadcrumb> = []
+  title = 'Issue'
   constructor(
     private caseService:CaseService,
     private userService:UserService,
@@ -83,10 +85,21 @@ export class IssueComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
+    
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
+      this.title = this.issue.label
+      this.breadcrumbs = [
+        <Breadcrumb>{
+          label: _TRANSLATE('Issues'),
+          url: 'issues'
+        },
+        <Breadcrumb>{
+          label: _TRANSLATE(this.title),
+          url: `issues/${this.issue._id}`
+        }
+      ]
       await this.caseService.load(this.issue.caseId)
       await this.update()
       this.ready = true
@@ -115,11 +128,14 @@ export class IssueComponent implements OnInit {
         `
       }
     })
-
-    if (this.issue.docType === 'response') {
-      await this.showProposedChange();
-    } else {
+    // Determine Issue Type to enter different Issue Modes.
+    // Sniff the issue to see if it an Issue of type Event Form or an Issue of type Database Conflict.
+    // Conflicts that don't have diffInfo have a proposed change already - automerge does not handle formResponses.
+    // @TODO There is more work to be done here so that we can cleanly detect what type of issue we have.
+    if (this.issue.events[0] && this.issue.events[0]['data'] && this.issue.events[0]['data'].conflict && this.issue.events[0]['data'].conflict.diffInfo) {
       await this.showConflictResolutionOptions()
+    } else {
+      await this.showProposedChange();
     }
   }
 
@@ -130,10 +146,10 @@ export class IssueComponent implements OnInit {
     this.proposedFormResponseContainer.response = proposedChange.response
     this.proposedFormResponseContainer.render()
     let currentFormResponse;
-    if (this.issue.docType === 'response') {
-      currentFormResponse = await this.tangyFormService.getResponse(this.issue.formResponseId)
-    } else {
+    if (this.issue.events[0].data && this.issue.events[0].data.conflict) {
       currentFormResponse = await this.tangyFormService.getResponse(this.issue.caseId)
+    } else {
+      currentFormResponse = await this.tangyFormService.getResponse(this.issue.formResponseId)
     }
     this.currentFormResponseContainer.response = currentFormResponse
     this.currentFormResponseContainer.render()
@@ -181,7 +197,13 @@ export class IssueComponent implements OnInit {
       });
       this.diffOutput = diffArray
       this.conflictMarkup = conflictTemplate(this.diffOutput, false)
-      let mergedClone = JSON.parse(JSON.stringify(merged))
+      let mergedClone;
+      if (merged) {
+        mergedClone = JSON.parse(JSON.stringify(merged))
+      } else {
+        // If not merged, use the winner, a.
+        mergedClone = JSON.parse(JSON.stringify(a))
+      }
       // remove some noise
       delete mergedClone.form
       let diffMergedArray = []

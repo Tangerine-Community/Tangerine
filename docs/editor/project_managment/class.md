@@ -1,5 +1,9 @@
 # Class module
 
+## Setup
+
+Add `class` to the `T_MODULES` property in config.sh. Create a new group via editor; this takes advantage of the class module which sets important class-related properties and file. If you /must/ use the `create-group` command, change `homeUrl` to `dashboard` and set `uploadUnlockedFormReponses =  true`. 
+
 ## Feedback
 
 Feedback for each form item (subtask) can be entered using the Settings editor.

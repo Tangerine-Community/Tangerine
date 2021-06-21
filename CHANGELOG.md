@@ -1,16 +1,1087 @@
 # Changelog
 
+## v3.18.0
+
+### New Features
+- Enable configurable image capture in client [#2695](https://github.com/Tangerine-Community/Tangerine/issues/2695) 
+  - Makes image capture work with a max size attribute - PR: [#218](https://github.com/Tangerine-Community/tangy-form/pull/218)
+  - Add photo capture widget [#203](https://github.com/Tangerine-Community/tangy-form-editor/pull/203)
+- Serve base64 image data as image files [#2706](https://github.com/Tangerine-Community/Tangerine/issues/2706) PR: [#2725](https://github.com/Tangerine-Community/Tangerine/pull/2725)
+- Add Cycle sequences [1603](https://github.com/Tangerine-Community/Tangerine/issues/1603)
+- Sort by lastModified in the client case search [#2692](https://github.com/Tangerine-Community/Tangerine/pull/2692)
+- Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
+- Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2696](https://github.com/Tangerine-Community/Tangerine/pull/2696/files)
+- Teach-specific strings in Russian for default content-set [#2676](https://github.com/Tangerine-Community/Tangerine/pull/2676)
+- Uploads status such as app version when updating the app [#2756](https://github.com/Tangerine-Community/Tangerine/issues/2756)
+
+### Bugfixes
+- Initialize `git` in content repository before running `git` commands [#2667](https://github.com/Tangerine-Community/Tangerine/pull/2667)
+- Only show the links to historical releases when T_ARCHIVE_PWAS_TO_DISK and T_ARCHIVE_APKS_TO_DISK in the config.sh are set to true [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
+- Fix form breaking when form name has single quote [#2489](https://github.com/Tangerine-Community/Tangerine/issues/2489)
+- Add print options to archived forms [#1987](https://github.com/Tangerine-Community/Tangerine/issues/1987)
+- Fix Grid having negative values [#2294](https://github.com/Tangerine-Community/Tangerine/issues/2294)
+- Fix to allow for running on m1 Macs #2631 [#2631](https://github.com/Tangerine-Community/Tangerine/pull/2631) Thanks @fmoko and @evansdianga!
+- For projects using the Case Reporting screen but don't have anything in reports.js but do have markup in reports.html, avoid crash due to empty file [#2657](https://github.com/Tangerine-Community/Tangerine/issues/2657)
+- V2 import script fixes [#2675](https://github.com/Tangerine-Community/Tangerine/pull/2675)
+- Allow HTML markup in option labels [2453](https://github.com/Tangerine-Community/Tangerine/issues/2453)
+- Reset grid values when grid is restarted [#](https://github.com/Tangerine-Community/Tangerine/issues/2559)
+- Mark last attempted automatically when grid is auto-stopped [#2467](https://github.com/Tangerine-Community/Tangerine/issues/2467)
+
+### New Documentation
+- [Deleting Records](./docs/developer/deletion-strategy.md)
+- [Bullet points for Tangerine Development](./docs/developer/development-bullet-points.md)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.18.0
+./start.sh v3.18.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.11
+```
+
+## v3.17.11
+- Added support for custom update scripts for each group. Add either a before-custom-updates.js or after-custom-updates.js to the root of your content depending on when you wish the script to run. Script needs to return a Promise. See Issue [2741](https://github.com/Tangerine-Community/Tangerine/issues/2741) for script example. PR: [#2742](https://github.com/Tangerine-Community/Tangerine/pull/2742)
+- Add support for filtering PII variables on Case Participant data and Event Form data in Synapse caches. List the variable names in your group's content folder `reporting-config.json`. For example: `{ "pii": ["foo_variable"] }`. This config was previously stored in the groups database.
+- Fixed bug that prevented rewind sync from working.
+  
+  __Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.11
+./start.sh v3.17.11
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.10
+```
+
+## v3.17.10
+- Skip optimizing sync-queue, sync-conflicts, and tangy-form views after Sync Protocol 2 sync completes.
+- Using `T.case.load()` in a form? This release fixes a bug where EventForm.formResponseId would be not set when submitting forms in cases where a form has loaded a different case and then the save case back again thus detaching the memory reference being previously set.
+- Remove trailing whitespace from variables for mysql outputs to avoid illegal column names.
+- Add response-variable-value API with support for returning jpeg and png base64 values as files.
+- Refactor TANGY-SIGNATURE and TANGY-PHOTO-CAPTURE output in CSVs to be URLs of the image files.
+- Creates work-around for deployments that are unable to use custom-scripts. [Issue #2711](https://github.com/Tangerine-Community/Tangerine/issues/2711) [PR #2712](https://github.com/Tangerine-Community/Tangerine/pull/2712) 
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.10
+./start.sh v3.17.10
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.9
+```
+
+## v3.17.9
+
+### New Features and Buffixes
+- Prevent failed calls to `T.case.save()` in forms by avoiding any saves to a case when a form is active. [PR](https://github.com/Tangerine-Community/Tangerine/pull/2704/), [Issue](https://github.com/Tangerine-Community/Tangerine/issues/2700)
+- Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/) - Cherry-picked commit [3e4938a0a80c57](https://github.com/Tangerine-Community/Tangerine/pull/2694/commits/3e4938a0a80c57c66aa8f4b0eda32b84c85ebe99) only.
+- Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2702](https://github.com/Tangerine-Community/Tangerine/pull/2702)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.9
+./start.sh v3.17.9
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.8
+```
+
+## v3.17.8
+- Fix use of initial batch size [#2685](https://github.com/Tangerine-Community/Tangerine/pull/2685)
+- Created `generate-form-json` script that generates the form json for a group from its form.html file. Usage:
+  `docker exec tangerine generate-form-json group-uuid`
+  The script loops through a group's forms.json and creates a form.json file in each form directory, next to its forms.html.
+  Before using this script, run `npm install`. Issue: [#2686](https://github.com/Tangerine-Community/Tangerine/issues/2686)
+- The synapse module now uses the json from `generate-form-json` to exclude PII. Also, the synapse module takes substitution and pii fields to accommodate schema changes and pii fields not identified in forms. PR: [#2697](https://github.com/Tangerine-Community/Tangerine/pull/2697/) 
+  
+   Place these properties in the groups Couchdb:
+  
+```json
+
+  "substitutions": {
+    "mnh_screening_and_enrollment_v2": "mnh01_screening_and_enrollment"
+  },
+  "pii": [
+    "firstname",
+    "middlename",
+    "surname",
+    "mother_dob"
+  ]
+  
+
+```
+  
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.8
+./start.sh v3.17.8
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.7
+```
+
+
+## v3.17.7
+- fix CSV generation issue: [#2681](https://github.com/Tangerine-Community/Tangerine/issues/2681)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.7
+./start.sh v3.17.7
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.6
+```
+
+
+## v3.17.6
+- fix issue w/ empty replicationStatus?.userAgent
+- Switched from just-snake-case to @queso/snake-case - better Typescript compatability.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.6
+./start.sh v3.17.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.5
+```
+
+## v3.17.5
+- Bumps tangy-form to 4.23.3, editor to 4.23.3. Issue: [2620](https://github.com/Tangerine-Community/Tangerine/issues/2620)
+- Update date carousel to 5.2.1 with fix for clicking the today button. PR: [#2677](https://github.com/Tangerine-Community/Tangerine/pull/2677)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.5
+./start.sh v3.17.5
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.4
+```
+
+## v3.17.4
+- Enables support for reducing the number of documents processed in the changed feed when syncing using the 'changes_batch_size' property in app-config.json. This new setting will help sites that experience crashes when syncing or indexing documents. Using this setting *will* slow sync times. Default is 50. During recent tests, the following settings have been successful in syncing a location with over 12,700 docs that was experiencing crashes:
+  - "batchSize": 50
+  - "writeBatchSize": 50
+  - "changes_batch_size": 20
+  
+  Please do note that these particular settings do make sync very slow - especially for initial device sync. 
+- Removed selector from push sync - was causing a crash on large databases. Using a filter instead in the push syncOptions 
+  to exclude '_design' docs from being pushed from the client.
+- Adds "Encryption Level" column to the Devices Listing, which shows if the device is running 'OS' encryption or 'in-app' encryption.
+  - 'OS' encryption: Encryption provided by the device operating system; typically this is File-based (Android 10) or Full-disk encryption (Android 5 - 9).
+  - 'in-app' encryption: Database is encrypted by Tangerine.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.4
+./start.sh v3.17.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.3
+```
+
+## v3.17.3
+- Automatically retry after failed sync. (https://github.com/Tangerine-Community/Tangerine/pull/2663)
+- Do not associate form response with Event Form if only opened and no data entered.
+- Fix issue causing Android Tablets using OS level encryption to spontaneously start using in-app encryption.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.3
+./start.sh v3.17.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.2
+```
+
+## v3.17.2
+- Add support for depending on Android Disk encryption as opposed to App Level encryption. Set `turnOffAppLevelEncryption` to `true` in `client/app-config.json`. Note that enabling this will not turn off App Level encryption for devices already installed, only new installations.
+- Fix race condition data conflict on EventFormComponent that is triggered when opening and submitting a form quickly. Prevent data entry until Case is loaded to avoid conflicting Case save of a fast submit. 
+- Fix bug causing Device ID to not show up on About page on Devices.
+- When syncing, push before pull to avoid having to analyze changes pulled down for push.
+- Fix download links for archived APKs on Live channel.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.2
+./start.sh v3.17.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.1
+```
+
+## v3.17.1
+- Add support for Form Versions when it hasn't been used before by defaulting the first entry in formVersions when a form version isn't defined on a Form Response.
+- Fix issue causing Device Admin user log in to fail.
+- Restore missing `sectionDisable` function in skip logic for forms.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders.
+docker start couchdb
+docker start tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.1
+./start.sh v3.17.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.17.0
+```
+
+## v3.17.0
+
+__New Features and Fixes__
+
+- Device User Role access to Case Events and Event Forms [#2598](https://github.com/Tangerine-Community/Tangerine/pull/2598)
+  - [Getting started with using Device User Roles](https://youtu.be/ntL-i8MVpew)
+  - [Demo: Device User role based access to Event Forms](https://youtu.be/T0GfYHw6t6k)
+  - [Demo: Device user role based permissions for Case Events](https://www.youtube.com/watch?v=5okk6XrrfaA&feature=youtu.be)
+- Deactivate Case Participant API [#2594](https://github.com/Tangerine-Community/Tangerine/pull/2594)
+  - [Demo: https://youtu.be/Ulh-yCqfbFA](https://youtu.be/Ulh-yCqfbFA)
+- Data Collector with a single click opens all pages of a completed form response [#2596](https://github.com/Tangerine-Community/Tangerine/issues/2596)
+- `skip()` and `unskip()` functions are now available in `tangy-form` level `on-change` logic for skipping and unskipping sections, not inputs.
+- Fix print form as table for some forms. (https://github.com/Tangerine-Community/Tangerine/pull/2568)
+- Update the group icon on server [#2355](https://github.com/Tangerine-Community/Tangerine/pull/2355)
+- Add window.uuid() API [#2595](https://github.com/Tangerine-Community/Tangerine/pull/2595)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders.
+docker start couchdb
+docker start tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.17.0
+./start.sh v3.17.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.4
+```
+
+## v3.16.5
+
+__Fixes__
+
+- T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK setting have no effect. Issue: [#2608](https://github.com/Tangerine-Community/Tangerine/issues/2608)
+- Bug in CSV rendering for Tangerine Teach. Issue: [#2635](https://github.com/Tangerine-Community/Tangerine/issues/2635) new setting outputDisabledFieldsToCSV in groups doc
+
+__Developer Interest__
+
+There is now a content set for developing projects with the Class module enabled in content-sets/teach. Sets the following properties in app-config.json:
+
+- "homeUrl": "dashboard"
+- "uploadUnlockedFormReponses": true
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.5
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.5
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.4
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```  
+
+## v3.16.4
+
+__New Features__
+
+- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3 or v3.16.4. After upgrading to v3.16.4, go to the Online Sync feature and click the new 'Advanced Options' panel. There are two new options for sync - Comparison Sync and Rewind Sync. Comparison sync enables the Sync feature to compare all document id's on the local device with the server and uploads any missing documents. Rewind Sync resets the sync "placeholder" to the beginning, ensuring that all docs are synced. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded.  It is more thorough than Comparison Sync. Both of the features are for special cases and should not be used routinely. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+
+  There are two settings that can be configured for Comparison sync:
+   - compareLimit (default: 150) - Document id's must be collected from both the tablet and server in order to calculate what documents need to be sync'd to the server. This setting limits the number of docs queried in each batch. 
+   - batchSize (default: 200) - Number of docs per batch when pushing documents to the server. This same configuration setting is used for normal sync, so please take care when making changes to it.
+  
+  This new "Comparison" option is very new and may have rough edges. In our experience, if the app crashes while using it, re-open the app and try again; chances are that it will work. If it consistently fails, lower the value for app-config.json's compareLimit property. 
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders.
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.4
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.3
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.3
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+
+```
+
+## v3.16.3
+
+__New Features__
+
+- Warning about data sync: Any site that upgraded to v3.16.2 is at risk of having records stay on the tablet unless they upgrade to v3.16.3. After upgrading to v3.16.3, run the new "Push all docs to the server" feature available from the Admin Configuration menu item. This feature resets push sync to the beginning, ensuring that all docs are pushed. It doesn't actually re-upload all docs; it instead checks that all docs have been uploaded.
+
+- Added "Push all docs to the server" feature to the Admin Configuration menu item.
+- Added Operating System and Browser Version to Device listing.
+
+__Fixes__
+- Data collected after first registering and after updates fails to upload. Issue: [#2623](https://github.com/Tangerine-Community/Tangerine/issues/2623)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.3
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.3
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.2
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```  
+
+## v3.16.2
+
+__New Features__
+
+- Enables filtering of Case Event Schedule by Device's Assigned Location PR: [#2591](https://github.com/Tangerine-Community/Tangerine/pull/2591)
+
+__Fixes__
+- Enables editing of device description. Commit: [#2613](https://github.com/Tangerine-Community/Tangerine/issues/2613)
+
+__Server upgrade instructions__
+
+If you want to enable filtered Case Event Schedule by Device's Assigned Location, add `filterCaseEventScheduleByDeviceAssignedLocation` to your groups' `app-config.json` set to a value of `true`.
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.2
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.2
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.1
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```  
+
+## v3.16.1
+
+__New Features__
+
+- Improves sync stats and add "Export Device List" feature PR: [#2610](https://github.com/Tangerine-Community/Tangerine/pull/2610)
+
+__Fixes__
+- Fixes Editor form creation issue [#2605](https://github.com/Tangerine-Community/Tangerine/issues/2605) and form copy issue [#2604](https://github.com/Tangerine-Community/Tangerine/issues/2604)
+- Adds check for calculateLocalDocsForLocation before running update to index an index it depends upon.
+- Update tangy-form to 4.21.3, tangy-form-editor to 7.6.5 to fix dynamically set level tangy location not resuming correctly [#202](https://github.com/Tangerine-Community/tangy-form/pull/202)
+
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.1
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.1
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.16.0
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```
+
+## v3.16.0
+
+__New Features__
+
+- Warning about data sync: If you have implementations that have multiple tablets syncing from the same location, some docs may not be on all tablets due to issues with earlier versions of sync. This release resolves that particular issue and provides ways to ensure that all tablets share the same data. We have implemented several ways to rectify and understand potential data inconsistencies across tablets in the field:
+  - After updating the server to 3.16.0 *and* after updating and syncing the clients, the Device dashboard will now display the number of docs on each tablet ("All Docs on Tablet") and the number of docs according to the device's Location configuration ("Form Responses on Tablet for Location"). 
+    - Depending on the Configure/Sync settings, the "All Docs on Tablet" count may be close, but not exactly the same, since not all forms may be synced to the tablets.
+    - The "Form Responses on Tablet for Location" count should be the same for all tablets that share the same location configuration. Please note that "Form Responses on Tablet for Location" count needs to be activated by adding `"calculateLocalDocsForLocation": true` to app-config.json; also note that it has not been widely tested and may be unstable. (If you activate this feature, you may also add `"findSelectorLimit"` to modify how many batches are used to calculate this value. Default is 200. Lower is safer but slower.) 
+      
+    These data points may help in identifying data  inconsistencies. Remember - only after updating *and syncing* the tablets, will these new doc counts be populated with data in the Devices listing. Making a note of the document counts per tablet will help establish a baseline.
+  - Next step would be to run the new "Force Full Sync" feature, which is implemented in two ways: 
+    - If you add the new `"forceFullSync" : true` setting in the group's app-config.json, the client will perform a full sync upon the next update. Since this takes time and Internet bandwidth, you may wish to notify users before enabling this feature.
+    - When logging in as "admin" user on the client tablet, a new menu item called "Admin Configuration" will be visible below the "Settings" item. This new item enables manual operation of the "Force Full Sync" feature. It is labeled "Pull all docs from the server" in the user interface.
+  - You may adjust the settings for how many documents "Force Full Sync" downloads at a time by adjusting the `initialBatchSize` property in app-config.json. The default is 1000 documents per batch. This setting is also used when performing the initial load of documents on a tablet.
+- Tangerine Release Archives: Every Tangerine APK or PWA release is saved and tagged. If your site is configured for archives (which is the default), you may download previous Android releases. PR: [#2567](https://github.com/Tangerine-Community/Tangerine/pull/2567)
+- A "Description" field has been added to the Devices listing to faciliate identification of devices or groups of devices.   
+- *Beta Release* Mysql module: Data sync'd to Tangerine can be output to a MySQL database. Warning: This should not yet be deployed on a production server; the code for this feature is still in development. We recommend creating a separate server for the Tangerine/MySQL installation and replicate data from the production server to the Tangerine server that would provide the MySQL service.
+  Docs: `docs/system-administrator/mysql-module.md` PR: [#2531](https://github.com/Tangerine-Community/Tangerine/pull/2531)
+- Devices listing offers more information about the sync process, including version, errors, and sync duration.
+
+__Fixes__
+- Changes to the sync code should improve sync stability and speed. [#2592](https://github.com/Tangerine-Community/Tangerine/issues/2592) You may configure certain sync properties:
+  - initialBatchSize = (default: 1000) Number of documents downloaded in the first sync when setting up a device.
+  - batchSize (default: 200) - Number of documents downloaded upon each subsequent sync.
+  - writeBatchSize = (default: 50) - Number of documents written to the tablet during each sync batch.
+- Updated tangy-form-editor to v7.6.4, which improves functionality of `duplicate entire section`. PR: [#173](https://github.com/Tangerine-Community/tangy-form-editor/pull/173)
+- Updates the Schedule View to use date-carousel 5.2.0 which provides unix timestamps instead of date strings. [#2589](https://github.com/Tangerine-Community/Tangerine/pull/2589)
+- Upgrade tangy-form to fix issue causing `on-open` of first items to not run when proposing changes in an Issue.
+- Deactivate App.checkStorageUsage if using Sync Protocol 2. This was not compatible and should not run.
+- Allow projects to disable GPS warming to save on battery with `disableGpsWarming` in `app-config.json`.
+- Add missing import of `editor/custom-scripts.js` when using editor so Data Dashboards can have imported JS files.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Ensure git is initialized in all group folders. 
+docker start couchdb
+docker start tangerine
+docker exec tangerine sh -c "cd /tangerine/groups && ls -q | xargs -i sh -c 'cd {} && git init && cd ..'"
+# Fetch the updates.
+git fetch origin
+git checkout v3.16.0
+# If you are enabling the new mysql module, follow the instructions in `docs/system-administrator/mysql-module.md` to update the config.sh file (steps 1 through 3)
+# If you do not wish APK and PWA archives to be saved, set T_ARCHIVE_APKS_TO_DISK and/or T_ARCHIVE_PWAS_TO_DISK to false.
+# Then return here before starting tangerine
+# Now you are ready to start the server.
+./start.sh v3.16.0
+docker exec tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.6
+# If setting up mysql return to step 5 in `docs/system-administrator/mysql-module.md`
+```  
+
+## v3.15.8
+- New Sync code reduces the number of network requests by disabling server checkpoints. It also supports three new app-config.json options to configure sync parameters that adjust data download size, how much data is written to the local database each batch, and initial data download:
+  - batchSize: Number of docs to pull from the server per batch. Increasing this setting will decrease the number of network requests to the server when doing a sync pull. Default: 200
+  - writeBatchSize: How many docs to write to the database at a time. If the database crashes, decreasing this option could be helpful. Default: 50
+  - useCachedDbDumps: Enables caching of the group database to a file for a single download to the client upon initial device setup. This is an experimental feature therefore it is not enabled by default. (Some server code is also currently disabled.) Those files are stored at data/groups/groupName/client/dbDumpFiles. At this point, you must delete the dbDumpFiles if you wish to update the data in the initial device load. [2560](https://github.com/Tangerine-Community/Tangerine/issues/2560)
+- Disable the v3.15.0 update from groups that use sync-protocol 1. 
+- Added `2021` to the report year.
+- Added simple network statistics to the device replicationStatus, which is posted after every sync.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.8
+# Now you are ready to start the server.
+./start.sh v3.15.8
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.7
+```
+
+## v3.15.7
+__New Features and Fixes__
+- Fixes a bug in the CSV generation code that caused sections of rows in the CSV to output improperly. PR:[#2558](https://github.com/Tangerine-Community/Tangerine/pull/2558)
+- Adds a server config that allows the user to control the string used for variables that are `undefined`: `T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"`
+- The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+Please add the below line into your config.sh to preserve current behavior (as a workaround for #2564)
+```
+T_REPORTING_MARK_UNDEFINED_WITH=""
+```
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.7
+# Now you are ready to start the server.
+./start.sh v3.15.7
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.6
+```
+
+## v3.15.6
+
+__New Features and Fixes__
+- New 'wakelock' feature for sync: When using the sync feature, the screen should not go to sleep or dim, enabling the sync process to proceed. This is especially useful during long sync processes. When you navigate to another page once Sync is complete, the wakeLock feature is disabled. 
+- The Devices listing has a new option, "View Sync Log", which enables viewing status of the most recent replication, when available.  
+- Added error messages when internet access drops during a sync. [#2540](https://github.com/Tangerine-Community/Tangerine/issues/2540)
+- Batch size for sync is configurable via `pullSyncOptions` and `pushSyncOptions` variable in a group's app-config.json. Default is 200. If the value is set too high, the application will crash.
+
+__Server upgrade instructions__
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.6
+# Now you are ready to start the server.
+./start.sh v3.15.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.5
+```  
+
+## v3.15.5
+
+__Fixes__
+- In CSV output, if a section on a form is opened and then the later skipped, inputs on that skipped section will appear in CSV output as skipped. However, if the section is never opened, the inputs would show up in the CSV as blank values. This fix ensures that these remaining inputs are marked as skipped in CSV output.
+- Fix sync from breaking when syncing with a group with no data yet.
+- Improve messaging during sync by removing floating change counts and showing the total number of docs in the database after sync.
+
+__Server upgrade instructions__
+Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.5
+# Now you are ready to start the server.
+./start.sh v3.15.5
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.4
+```  
+
+
+## v3.15.4
+
+__Fixes__
+- Sync: Sites with large datasets were crashing; therefore, we implemented a new sync function that syncs batches of documents to the server. PR: [#2532](https://github.com/Tangerine-Community/Tangerine/pull/2532)
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.4
+# Now you are ready to start the server.
+./start.sh v3.15.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.3
+```
+
+## v3.15.3
+__Fixes__
+- After a large sync in sync protocol 2, improve overall app performance by indexing database queries. Because this may cause a long sync for projects not using this, you can set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
+- Add missing `custom-scripts.js` and `custom-styles.css` files to Editor app. We also add `editor` and `client` ID's to the body tag of the two app respectively.
+- Reduce database merge conflicts by preventing form responses from saving after completed. Prior to this version, on two tablets (or on a tablet and the server) if you opened the same form response and opened an item to inspect, it would cause a save on both tablets resulting in an unnesessary merge conflict.
+- New `T.case.getCaseHistory(caseId)` function for getting the history of save for a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case and run `await T.case.getCaseHistory()` in the console and it will pick up on the context.
+- New `T.case.getEventFormHistory(caseId, caseEventId, eventFormId)` function for getting the history of save for a form response in a Case. Returns an array of JSON patches in RFC6902 format.  Open a Case, a Case Event, then an Event Form and run `await T.case.getEventFormHistory()` in the console and it will pick up on the context.
+- New opt-in `app-config.json` setting `attachHistoryToDocs` for enabling upload all history of Case and Event Form edits on a Tablet up to the Server. Without this setting on, the server only sees the history starting from time of upload. Note this has an impact on upload size of at least doubling it when turned on.
+
+__Important configuration notice__
+- Set `indexViewsOnlyOnFirstSync` in `app-config.json` to `true` if you want to allow existing tables to avoid this long sync to catch up on views.
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.3
+# Now you are ready to start the server.
+./start.sh v3.15.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.2
+```
+
+## v3.15.2
+
+__Fixes__
+
+- Rshiny module: Replaces hard-coded underscore separator with the configurable `sep` variable. 
+- Error when processing CSV's: [2517](https://github.com/Tangerine-Community/Tangerine/issues/2517)
+
+__Important configuration notice__
+
+The v3.15.0 release included an update to the Editor Search feature [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) that requires adding a `searchSettings` property to forms.json. In addition to running the upgrade script for v3.15.0; you must also make sure that *all* forms in a group's forms.json have `searchSettings` configured, especially the `shouldIndex` property. Examples are in the [Case Module README](./docs/editor/case-module/README.md#configuring-text-search) "Configuring Text Search" section.
+
+__Server upgrade instructions__
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.15.2
+# Now you are ready to start the server.
+./start.sh v3.15.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.1
+```  
+
+## v3.15.1
+
+__Fixes__
+
+- Prevent opening of Event Forms on Editor when there is no corresponding Form Response available. 
+- Fix Issue type detection when deciding what is going to be in the 'current' tab. 
+- Update CSV output for signatures to be 'signature captured' and ''.
+- Fix Issues view causing Issue search result to appear once per event such as comment or proposal. 
+- Integrate fixes in v3.14.6 including `T.case.isIssueContext()` API, and better API partity between being in an Event Form in a Case and being in an Event Form in an Issue.
+
+__Server upgrade instructions__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.1
+# Now you are ready to start the server.
+./start.sh v3.15.1
+docker exec -it tangerine push-all-groups-views  
+docker exec -it tangerine reporting-cache-clear  
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.15.0
+```  
+
+## v3.15.0
+
+- __New Features and fixes__
+  - Editor User searches Cases by keyword [#2416](https://github.com/Tangerine-Community/Tangerine/issues/2416) - This feature enables searching by any of the variables assigned in searchSettings/variablesToIndex in forms.json. 
+  - Transfer Participant between Cases [#2419](https://github.com/Tangerine-Community/Tangerine/issues/2419). Find Participant UI: [#2439](https://github.com/Tangerine-Community/Tangerine/pull/2439).
+  - Update to [Content Set 2.1](https://github.com/Tangerine-Community/Tangerine/blob/release/v3.15.0/docs/editor/content-sets.md) adds a package.json and build step to pin lib versions and add a build step for custom-scripts.
+  - Added error message to Updates error alert. [ccc1864
+](https://github.com/Tangerine-Community/Tangerine/commit/ccc186425bcdce0d596da34781ca36a3cf6dfbc2)
+  - New "Release Online Survey" menu on Server allows you to release a single form for data collection online. Note the original "Deploy -> Release" menu item has been moved to "Deploy -> Release Offline App".
+  - Fixed issue where "Tangy Gate" form element could be added in Editor but would not appear on Tablets.
+  - Support for new "<tangy-ethio-date>" element that brings a Partial Date style form element with support for the Ethiopian Calendar.
+  - If using Sync Protocol 2, the first sync when registering a Device is now faster in cases where there is a lot of data already collected. Also the blank User Profile created for the Admin user on a device is no longer uploaded resulting in less noise in the Device Users list.
+
+
+- __Important deprecation notice__
+  - The groupName property, once used in app-config.json, is no longer supported in recent releases of Tangerine. The groupId property is used in its place. Groups that use groupName will not be able to sync; they must migrate to groupId. This issue affects groups using sync-protocol-1. [#2447](https://github.com/Tangerine-Community/Tangerine/issues/2447)
+   - When form responses are unlocked in a Data Issue, the `on-submit` hook no longer runs. If you need logic to run, use the new `on-resubmit` hook.
+   - If using Sync Protocol 2, the "Auto Merge" feature that tries to fix database conflicts is now off by default and database conflicts will not be logged as Issues. If you would like to keep it on, set `"autoMergeConflicts": true` in your group's `client/app-config.json` file. However be aware that turning this on will result in inconsistent results (https://github.com/Tangerine-Community/Tangerine/issues/2484). Monitoring for database conflicts can now be done by monitoring the `syncConflicts` view via CouchDB Fauxton.
+   
+__Server upgrade instructions:__
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.15.0
+# Now you are ready to start the server.
+./start.sh v3.15.0
+# Update the views - there are new views for Searches and Participant Transfers.
+docker exec -it tangerine reporting-cache-clear 
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.15.0.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.6
+```  
+
+## v3.14.6
+Changes in v3.14.4 were abandoned, changes in v3.14.5 have been rolled into v3.15.0. The following are changes for v3.14.6.
+
+- Improve first sync performance: On first sync, skip push but set the last push variable to whatever we left on after the first pull.
+- Improve in-form API parity between context of a Case and context of an Issue proposal. Sets case context in more scenarious inside of Issue Form proposals.
+- Prevent form crashes and unintentional logic by adding the new `T.case.isIssueContext()` API for detecting if in the Issue context in a form.
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.6
+# Now you are ready to start the server.
+./start.sh v3.14.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.3
+```
+
+## v3.14.3
+- __Bugfix__
+  - Auto-merged conflicts overwrite "canonical" change made on Editor server [#2441](https://github.com/Tangerine-Community/Tangerine/issues/2441) - Prevents tablets from overwriting documents from Editor in special cases. After modifying the case record, add canonicalTimestamp to the document: `"canonicalTimestamp":1603854576785`
+- __New Features and fixes for all Tangerine__
+  - Reduce number of unnecessary saves in Editor [#2444](https://github.com/Tangerine-Community/Tangerine/issues/2444)
+  - Improvements to Issues Listing [#2398](https://github.com/Tangerine-Community/Tangerine/issues/2398) Please update the group views (noted in the Server upgrade instructions below) in order to use the Issues Listing.
+- __Upgrades in the Developers' Interest__
+  - Removed webpack from the Docker image. Custom apps should build their apps using their own webpack; the APK service will no longer perform that task. 
+  
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.3
+# Now you are ready to start the server.
+./start.sh v3.14.3
+# Update the views - there is a new view used for Issues.
+docker exec -it tangerine push-all-groups-views
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.2
+```
+  
+## v3.14.2
+- __Bugfix__
+  - Fixes file path issue when bundling custom scripts in APK's.
+
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.14.2
+# Now you are ready to start the server.
+./start.sh v3.14.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.14.1
+```
+
+## v3.14.1
+This is identical to v3.14.0 but was released to fix a problem with tangerine-preview v3.14.0 on npm.
+
+## v3.14.0
+- __New Features and fixes for all Tangerine__
+  - __Usability Improvement for Device Registration__: Added "Number of devices to generate" field to Device Registration. Submitting a single form to add multiple devices to a group should simplify large deployments. [#2402](https://github.com/Tangerine-Community/Tangerine/issues/2402)
+  - __Important bugfix for sync issue in poor network situations__: If you currently have an active 3.13 deployment, run the 3.14 update on client to make sure all data is sync'd to the server. [#2399](https://github.com/Tangerine-Community/Tangerine/issues/2399)
+  - __Automatic conflict resolution on client__: Basic support for automatic merges of conflicts in EventForms. [#2272](https://github.com/Tangerine-Community/Tangerine/pull/2272) Documentation for [testing conflicts](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/developer/testing-conflicts.md)
+  - __Form version support__: Enables use of previous form versions for form display. [#2365](https://github.com/Tangerine-Community/Tangerine/issues/2365) Support for versioning is not yet implemented in the Editor; however, there is documentation on [how to implement form versions](https://github.com/Tangerine-Community/Tangerine/blob/master/docs/editor/form-versions.md) manually.
+  - __User Interface updates__: The 4.19.0 tangy-form lib version features the following fixes:
+    - Required Field Asterisk (*) does not align with the question text [#2363](https://github.com/Tangerine-Community/Tangerine/issues/2363)
+    - Error Text and Warning Text have the same style - this is confusing for users [#2364](https://github.com/Tangerine-Community/Tangerine/issues/2364)
+  - __Setting packageName in app-config.json causes app to crash__: The docker-tangerine-base-image update to 3.7.0 improves Android and Cordova lib dependencies, and the release-apk code now rebuilds the Android code whenever an APK is built. [#2366](https://github.com/Tangerine-Community/Tangerine/issues/2366)
+  - __New module for rshiny development__: Adds option to csv module to change delimiter from '.' to '_'[#2314](https://github.com/Tangerine-Community/Tangerine/issues/2314)
+  - __Documentation Update__:   Re-organization of some documentation and addition of missing image files. [#2401](https://github.com/Tangerine-Community/Tangerine/issues/2401)
+- __Upgrades in the Developers' Interest__
+  - __Upgraded docker-tangerine-base-image to v3.7.1__: Upgrade to Android API_LEVEL 30, Cordova 10, node:14.12.0-stretch. [#1890](https://github.com/Tangerine-Community/Tangerine/issues/1890) Caching cordova-android platform to avoid network issues when customizing packageName. [#7](https://github.com/Tangerine-Community/docker-tangerine-base-image/issues/7)
+- __Important note for users of tangerine-preview__
+There was a problem with v3.14.0 on npm; therefore, please use tangerine-preview v3.14.1.
+
+## v3.13.1
+- Fix: Issues on Editor always ask us to rebase [#2376](https://github.com/Tangerine-Community/Tangerine/issues/2376)
+- Fix: Issues screen will not load after upgrading from v3.10.0 to v3.13.0 [#2378](https://github.com/Tangerine-Community/Tangerine/issues/2378)
+- Fix: Issues go missing after upgrading to v3.13.0 from v3.12.x [#2377](https://github.com/Tangerine-Community/Tangerine/issues/2377)
+* Please be aware: this release was made in the release/v3.13.1-alt branch and to date has only been built as the v3.13.1-rc-2 image.
+
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.13.1
+# Now you are ready to start the server.
+./start.sh v3.13.1
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.1.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.13.0
+```
 
 ## v3.13.0
 - __New Features and fixes for all Tangerine__
-  - __Download Location List as CSV__: You can now download a location list as a CSV. If you prefer editing a Location List via something like Excel, this makes editing an existing location list easier, which can then be imported when done editing in Excel. [#2107](https://github.com/Tangerine-Community/Tangerine/issues/2107)
-  - __Duplicate a Section__:When editing a form, you can now easily duplicate an entire section with the "duplicate section" button. [#2109](https://github.com/Tangerine-Community/Tangerine/issues/2109)
+  - __Download Location List as CSV__: You can now download a location list as a CSV. If you prefer editing a Location List via something like Excel, this makes editing an existing location list easier, which can then be imported when done editing in Excel. *Note:* Advise careful use of this export feature until [#2336](https://github.com/Tangerine-Community/Tangerine/issues/2336) is fixed. [#2107](https://github.com/Tangerine-Community/Tangerine/issues/2107)
+  - __Duplicate a Section__:When editing a form, you can now easily duplicate an entire section with the "duplicate section" button. [#2109](https://github.com/Tangerine-Community/Tangerine/issues/2109). Warning - this feature does not handle complex objects such as tangy checkbox groups well; be sure to check the code it generates. This issue will be addressed in the next 3.13 point release.
   - __Group Data Dashboard in Editor__: "Dashboard" is now a menu item available in a Group under the Data menu. This link can be enabled by group role (disabled by default). When on the Dashboard page, it displays a customizable dashboard for that specific group. Customizing Dashboards currently requires HTML and Javascript knowledge but in the future we may build a configurator for Dashboards.
   - __More Menu Permissions in Editor__:Add additional Editor permissions to completely cover menu level access in a group
   - __Automatic conflict resolution__: After a sync pull on client, detects type of conflict and resolves it. View status of merges in the Issues feature. [#1763](https://github.com/Tangerine-Community/Tangerine/issues/1763)
   - __Fix extending session in Editor__ - When prompted to extend session shows up session is not really extended. [#2266](https://github.com/Tangerine-Community/Tangerine/issues/2266)
 - __New Features and Fixes for Case Module__
-  - __Client "Issues" feature__: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
+  - __Client "Issues" feature__: "Issues" previously could only be viewed using Editor. With this release, Issues can now be accessed from Client in a Case module enabled Group via the top level "Issues" tab. This tab can be disabled adding or modifying `"showIssues": false,` to app-config.json. Note that only issues created targeting the "CLIENT" context (See CaseService API documentation) will show up in the Client "Issues" tab.
   - __Easier searching on Client__: Previously on Client when searching for "Facility 8" you would need to type exactly "Facility 8". Now search is case insensitive and you may type "facility 8" to match against "Facility 8".
   - __T.case.setEventWindow API fix__: Previously when setting an Event window, the end time for the window was mistakenly ignored and set to the start time. This is now fixed. [#2304](https://github.com/Tangerine-Community/Tangerine/issues/2304)
 - __New Features for Sync Protocol 2 Module__
@@ -22,6 +1093,16 @@
  
 __Server upgrade instructions:__
 
+This update changes the path to group content to `/tangerine/groups/${groupId}/client`. If your group is managing content 
+via a Github/cron integration, you will need to change the path to content in its cron job. Change `GROUP-UUID` to your 
+group id in the following command:
+
+```
+cd /home/ubuntu/tangerine/data/groups/GROUP-UUID/client && GIT_SSH_COMMAND='ssh -i /root/.ssh/arc-forms-dev' git pull origin master && git add . && git commit -m 'auto-commit' && GIT_SSH_COMMAND='ssh -i /root/.ssh/arc-forms-dev' git push origin master
+```
+
+The update:
+
 ```
 # Fetch the updates.
 cd tangerine
@@ -31,6 +1112,7 @@ git checkout v3.13.0
 ./start.sh v3.13.0
 # Run upgrade
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.13.0.js
+# Add or modify `"showIssues": false,` to the group's app-config.json if you do not want to display the Issues tab in client.
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.12.0
 ```
@@ -118,6 +1200,24 @@ If you are upgrading an Android device that was installed with Tangerine v3.8.0 
   - Data Collector views custom report [#2143](https://github.com/Tangerine-Community/Tangerine/issues/2143) [docs](https://docs.tangerinecentral.org/editor/case-module/custom-case-reports.md)
 - Developer notes
   - Group permissions [#2187](https://github.com/Tangerine-Community/Tangerine/pull/2187)
+
+__Server upgrade instructions:__
+
+```
+# Fetch the updates.
+cd tangerine
+git fetch origin
+git checkout v3.11.0
+# Now you are ready to start the server.
+./start.sh v3.11.0
+# Run upgrade
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.11.0.js
+```
+Note that after running the upgrade script, your reporting caches may take some time to finish rebuilding.
+
+__Android upgrade instructions:__
+If your groups are using Sync Protocol 2 module, an APK reinstall is required. Release the APK and reinstall on all Android Devices. If your groups are not using Sync Protocol 2, you may upgrade Android tablets over the air using the usual release process.
+
 
 ## v3.10.0
 - New Features in all Tangerine

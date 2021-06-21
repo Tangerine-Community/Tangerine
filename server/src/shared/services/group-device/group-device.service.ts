@@ -10,7 +10,6 @@ const DB = require('../../../db')
 const log = require('tangy-log').log
 const fs = require('fs-extra')
 const tangyModules = require('../../../modules/index.js')()
-const uuid = require('uuid')
 
 @Injectable()
 export class GroupDeviceService {
@@ -41,7 +40,7 @@ export class GroupDeviceService {
     const response = await groupDevicesDb.put({
       ...new GroupDevice(),
       ...deviceData,
-      token: uuid.v4()
+      token: UUID()
     })
     return <GroupDevice>await groupDevicesDb.get(response.id)
   }
@@ -81,7 +80,7 @@ export class GroupDeviceService {
         ...originalDevice,
         lastUpdated: undefined,
         version: undefined,
-        token: uuid.v4(),
+        token: UUID(),
         claimed: false
       })
       const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
@@ -91,14 +90,60 @@ export class GroupDeviceService {
     }
   }
 
-  async didSync(groupId:string, deviceId:string) {
+  async didSync(groupId:string, deviceId:string, version:string) {
     try {
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(deviceId)
       await groupDevicesDb.put({
         ...originalDevice,
         syncedOn: Date.now(),
+        version,
         _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async didSyncStatus(groupId:string, deviceId:string, version:string, status) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      // TODO remove this migration
+      if (!originalDevice.replicationStatuses) {
+        originalDevice.replicationStatuses = []
+      }
+      if (originalDevice.replicationStatus) {
+        originalDevice.replicationStatuses.push(originalDevice.replicationStatus)
+        delete originalDevice.replicationStatus
+      }
+      originalDevice.replicationStatuses.push(status)
+
+      await groupDevicesDb.put({
+        ...originalDevice,
+        syncedOn: Date.now(),
+        version,
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async didSyncError(groupId:string, deviceId:string, version:string, error:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        syncedOn: Date.now(),
+        version,
+        _rev: originalDevice._rev,
+        error: error
       })
       const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
       return freshDevice
@@ -124,6 +169,27 @@ export class GroupDeviceService {
     }
   }
 
+  async didUpdateStatus(groupId:string, deviceId:string, version:string, status) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      if (!originalDevice.replicationStatuses) {
+        originalDevice.replicationStatuses = []
+      }
+      originalDevice.replicationStatuses.push(status)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        updatedOn: Date.now(),
+        version,
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   async register(groupId, deviceId) {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     const device = <GroupDevice>await groupDevicesDb.get(deviceId)
@@ -135,7 +201,7 @@ export class GroupDeviceService {
       ...device,
       claimed: true,
       registeredOn: Date.now(),
-      token: uuid.v4()
+      token: UUID()
     })
     return <GroupDevice>await groupDevicesDb.get(deviceId)
     
@@ -148,7 +214,7 @@ export class GroupDeviceService {
     const freshDevice = await groupDevicesDb.put({
       ...device,
       claimed: false,
-      token: uuid.v4()
+      token: UUID()
     })
     return freshDevice
   }

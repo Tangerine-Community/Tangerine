@@ -59,14 +59,7 @@ export class PeersComponent implements OnInit, AfterContentInit {
         logEl.innerHTML = logEl.innerHTML +  '<p>' + message.message + '</p>\n';
       }
     );
-    // startAdvertisingBtnEl.addEventListener('progress', e => {
-    //     console.log('progress message: ' + JSON.stringify(e.detail));
-    //     const message: Message = e.detail;
-    //     const el = document.querySelector('#progress');
-    //     el.innerHTML = '<p>' + message.message + '</p>\n';
-    //     document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-    //   }
-    // );
+
     startAdvertisingBtnEl.addEventListener('localEndpointName', e => {
         console.log('localEndpointName: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
@@ -99,8 +92,23 @@ export class PeersComponent implements OnInit, AfterContentInit {
           const progressObj = message.object;
           const bytesTransferred = progressObj['bytesTransferred'];
           const totalBytes = progressObj['totalBytes'];
+          // TODO: originName is not the peer. Need the peer. originName is Master.
           const originName = progressObj['originName'];
-          const progressMessage = bytesTransferred + '/' + totalBytes + ' transferred from ' + originName;
+          const endpointId = progressObj['endpointId'];
+          let progressMessage = bytesTransferred + '/' + totalBytes + ' transferred';
+
+          let directionString = ''
+          if (!this.peersService.pushing) {
+            document.querySelector('#direction').innerHTML = 'Receiving data' + '<br/>';
+            directionString = 'from'
+          } else {
+            document.querySelector('#direction').innerHTML = 'Sending data' + '<br/>';
+            directionString = 'to'
+          }
+          if (this.peersService.peer && this.peersService.peer.id && this.peersService.peer.id === endpointId) {
+            const endpointName = this.peersService.peer.endpointName;
+            progressMessage = bytesTransferred + '/' + totalBytes + ' transferred ' + directionString + ' ' + endpointName;
+          }
           document.querySelector('#progress').innerHTML =  '<p>' + progressMessage + '</p>\n';
         }
         // document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
@@ -114,6 +122,12 @@ export class PeersComponent implements OnInit, AfterContentInit {
         });
         document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
         document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
+      }
+    );
+    startAdvertisingBtnEl.addEventListener('direction', e => {
+        console.log('Direction: ' + JSON.stringify(e.detail));
+        const message: Message = e.detail;
+        document.querySelector('#direction').innerHTML = message.message + '<br/>';
       }
     );
     startAdvertisingBtnEl.addEventListener('error', e => {

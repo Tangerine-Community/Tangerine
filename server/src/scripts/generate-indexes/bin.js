@@ -47,7 +47,7 @@ async function go() {
       ]
     }
   })
-  console.log('Creating index for field of type, status, and tangerineModifiedOn (for Issues mainly)')
+  console.log('Creating index for field of type, status, tangerineModifiedOn, and events')
   await createIndex({
     index: {
       fields: [
@@ -85,6 +85,15 @@ async function go() {
         'type': '',
         'status': ''
       },
+      limit: 1
+    })
+    await db.find({
+      selector: {
+        type: '',
+        "lastModified":  {"$gt": 0},
+        "form.id": {"$in": ["user-profile", "case-type-1-manifest", "registration-role-1"]}
+      },
+      use_index: 'find-docs-by-form-id',
       limit: 1
     })
   } catch (e) {

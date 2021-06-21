@@ -58,6 +58,7 @@ export class IssueFormComponent implements OnInit {
         let formResponseRevision = this.issue.events.find(event => event.id === params.eventId).data.response
         caseInstance = this.issue.events.find(event => event.id === params.eventId).data.caseInstance
         await this.caseService.loadInMemory(caseInstance)
+        this.caseService.setContext(this.issue.eventId, this.issue.eventFormId)
         this.formResponseId = formResponseRevision._id
         this.formPlayer.response = formResponseRevision
       }
@@ -66,11 +67,13 @@ export class IssueFormComponent implements OnInit {
         const proposedRevisionEvent = await this.caseService.getProposedChange(this.issue._id)
         let proposedFormResponse = proposedRevisionEvent.response
         await this.caseService.loadInMemory(proposedRevisionEvent.caseInstance)
+        this.caseService.setContext(this.issue.eventId, this.issue.eventFormId)
         this.formPlayer.response = proposedFormResponse
       } else {
         // Create a revision based on the base event.
         const baseEvent = [...this.issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
-        this.caseService.loadInMemory(baseEvent.data.caseInstance)
+        await this.caseService.loadInMemory(baseEvent.data.caseInstance)
+        this.caseService.setContext(this.issue.eventId, this.issue.eventFormId)
         this.formPlayer.response = baseEvent.data.response
       }
       this.formPlayer.render()
@@ -80,7 +83,7 @@ export class IssueFormComponent implements OnInit {
       this.formPlayer.$rendered.subscribe(async () => {
         if (!params.eventId) this.formPlayer.unlock()
       })
-      this.formPlayer.$submit.subscribe(async () => {
+      this.formPlayer.$afterResubmit.subscribe(async () => {
         setTimeout(async () => {
           const userId = await this.userService.getCurrentUser()
           // @TODO Look up the user's name.

@@ -1,0 +1,30 @@
+{
+   "syncProtocol": "2",
+   "p2pSync": "true",
+   "homeUrl" : "case-home",
+   "serverUrl" : "http://localhost/",
+   "modules" : [
+      "csv"
+   ],
+   "showQueries" : true,
+   "showIssues": true,
+   "uploadUnlockedFormReponses" : false,
+   "securityQuestionText" : "What is your year of birth?",
+   "hideProfile" : true,
+   "groupId" : "example",
+   "direction" : "undefined",
+   "columnsOnVisitsTab" : [],
+   "showCaseReports": true,
+   "listUsernamesOnLoginScreen" : true,
+   "securityPolicy" : [
+      "password"
+   ],
+   "languageCode" : "en",
+   "languageDirection" : "ltr",
+   "hashSecurityQuestionResponse" : false,
+   "groupName" : "example",
+   "barcodeSearchMapFunction": "if ((JSON.parse(data)).participant_id) { return (JSON.parse(data)).participant_id } else { throw 'Incorrect format'} ",
+   "couchdbPush4All": false,
+   "couchdbPullUsingDocIds": false,
+   "autoMergeConflicts": false
+ }

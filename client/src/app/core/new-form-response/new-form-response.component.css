@@ -150,7 +150,6 @@ button[type="submit"] {
 	color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
 }
 .form {
-  background: #fff;
   border-bottom: 1px solid #ccc;
 }
 

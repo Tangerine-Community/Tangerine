@@ -11,6 +11,7 @@ export class CaseHomeComponent implements OnInit {
 
   showQueries = true;
   showCaseReports = false
+  showIssues = false
   openQueriesCount = 0;
 
   constructor(
@@ -23,6 +24,8 @@ export class CaseHomeComponent implements OnInit {
     const config = await this.appConfig.getAppConfig();
     this.showQueries = config.showQueries;
     this.showCaseReports = config.showCaseReports
+    this.showIssues = config.showIssues
+    // TODO: replace showQueries with showIssues
     if (this.showQueries) {
       this.openQueriesCount = await this.caseService.getOpenQueriesCount();
      }

@@ -14,7 +14,7 @@ tangy-location {
   margin-bottom: -120px;
   margin-top: -30px;
   margin-right: -20px;
-  --primary-text-color: #fff;
+  --primary-text-color: #bbb;
 }
 
 .loading, .no-issues-found {
@@ -53,4 +53,12 @@ tangy-location {
 
 #search-button {
   margin-right: 16px;
+}
+
+.show-conflicts {
+  margin-right: 1em;
+}
+
+.secondarySpacer {
+  margin-left: 0.5em;
 }

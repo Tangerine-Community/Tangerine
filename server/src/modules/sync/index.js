@@ -5,6 +5,7 @@ const axios = require('axios')
 const PouchDB = require('pouchdb')
 
 module.exports = {
+  name: 'sync',
   hooks: {
     groupNew: async function(data) {
       const {groupName, appConfig} = data

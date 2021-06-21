@@ -79,7 +79,15 @@ import { ConfigureGroupSecurityComponent } from './configure-group-security/conf
 import { BrowserModule } from '@angular/platform-browser';
 import { ExportLocationListComponent } from './export-location-list/export-location-list.component';
 import { GroupDashboardComponent } from './group-dashboard/group-dashboard.component';
-
+import { PrintFormBackupComponent } from './print-form-backup/print-form-backup.component';
+import { PrintStimuliScreenComponent } from './print-stimuli-screen/print-stimuli-screen.component';
+import { ReleaseOnlineSurveyComponent } from './release-online-survey/release-online-survey.component';
+import { GroupSearchComponent } from './group-search/group-search.component';
+import { HistoricalReleasesPwaLiveComponent } from './historical-releases-pwa-live/historical-releases-pwa-live.component';
+import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-test/historical-releases-pwa-test.component';
+import { HistoricalReleasesApkLiveComponent } from './historical-releases-apk-live/historical-releases-apk-live.component';
+import { HistoricalReleasesApkTestComponent } from './historical-releases-apk-test/historical-releases-apk-test.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -112,6 +120,7 @@ import { GroupDashboardComponent } from './group-dashboard/group-dashboard.compo
     SharedModule,
     NgTangyFormEditorModule,
     MatCheckboxModule,
+    MatPaginatorModule
   ],
   declarations: [
     LocationListEditorComponent,
@@ -165,6 +174,14 @@ import { GroupDashboardComponent } from './group-dashboard/group-dashboard.compo
     ConfigureGroupSecurityComponent,
     ExportLocationListComponent,
     GroupDashboardComponent,
+    PrintFormBackupComponent,
+    PrintStimuliScreenComponent,
+    ReleaseOnlineSurveyComponent,
+    GroupSearchComponent,
+    HistoricalReleasesPwaLiveComponent,
+    HistoricalReleasesPwaTestComponent,
+    HistoricalReleasesApkLiveComponent,
+    HistoricalReleasesApkTestComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

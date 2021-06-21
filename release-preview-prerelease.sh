@@ -4,7 +4,7 @@ if [ ! $1 ]; then
 fi
 VERSION=$1
 
-echo "Building beta from next branch for $VERSION"
+echo "Building prerelease from next branch for $VERSION"
 # Get the software.
 git clone git@github.com:tangerine-community/tangerine tmp
 cd tmp 

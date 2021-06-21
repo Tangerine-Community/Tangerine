@@ -7,6 +7,7 @@ const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 
 module.exports = {
+  name: 'synapse',
   hooks: {
     clearReportingCache: async function(data) {
       const { groupNames } = data
@@ -19,24 +20,36 @@ module.exports = {
       }
       return data
     },
-    reportingOutputs: function(data) {
-      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, resolve) {
+    reportingOutputs: async function(data) {
+      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, substitutions, pii) {
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
         } else {
           if (doc.form.id === 'user-profile') {
-            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized, resolve);
+            await saveFlatResponse({...doc, type: "user-profile"}, locationList, targetDb, sanitized, substitutions, pii);
           } else {
             if (doc.type === 'case') {
               // output case
-              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, substitutions, pii);
               let numInf = getItemValue(doc, 'numinf')
               let participant_id = getItemValue(doc, 'participant_id')
 
               // output participants
               for (const participant of doc.participants) {
+                let sanitizedData = {}
+                if (participant.data) {
+                  sanitizedData = Object.keys(participant.data).reduce((sanitizedData, variableName) => {
+                    if (!pii.includes(variableName)) {
+                      sanitizedData[variableName] = participant.data[variableName]
+                    }
+                    return sanitizedData
+                  }, {})
+                } else {
+                  eventForm.data = {}
+                }
                 await pushResponse({
                   ...participant,
+                  data: sanitized ? sanitizedData : participant.data,
                   _id: participant.id,
                   caseId: doc._id,
                   numInf: participant.participant_id === participant_id ? numInf : '',
@@ -51,8 +64,24 @@ module.exports = {
                   for (const eventForm of event['eventForms']) {
                     // for (let index = 0; index < event['eventForms'].length; index++) {
                     // const eventForm = event['eventForms'][index]
+                    let sanitizedData = {}
+                    if (eventForm.data) {
+                      sanitizedData = Object.keys(eventForm.data).reduce((sanitizedData, variableName) => {
+                        if (!pii.includes(variableName)) {
+                          sanitizedData[variableName] = eventForm.data[variableName]
+                        }
+                        return sanitizedData
+                      }, {})
+                    } else {
+                      eventForm.data = {}
+                    }
                     try {
-                      await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                      await pushResponse({
+                        ...eventForm,
+                        data: sanitized ? sanitizedData : eventForm.data,
+                        type: "event-form",
+                        _id: eventForm.id
+                      }, targetDb);
                     } catch (e) {
                       if (e.status !== 404) {
                         console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
@@ -71,39 +100,38 @@ module.exports = {
                 await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
               }
             } else {
-              await saveFlatResponse(doc, locationList, targetDb, sanitized, resolve);
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, substitutions, pii);
             }
           }
         }
       }
         
-      return new Promise(async (resolve, reject) => {
-        const {doc, sourceDb} = data
-        const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-        // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
-        const groupsDb = await new DB(`groups`);
-        const groupDoc = await groupsDb.get(`${sourceDb.name}`)
-        const exclusions = groupDoc['exclusions']
-        // First generate the full-cream database
-        let synapseDb
-        try {
-          synapseDb = await new DB(`${sourceDb.name}-synapse`);
-        } catch (e) {
-          console.log("Error creating db: " + JSON.stringify(e))
-        }
-        let sanitized = false;
-        await generateDatabase(sourceDb, synapseDb, doc, locationList, sanitized, exclusions, resolve);
-        
-        // Then create the sanitized version
-        let synapseSanitizedDb
-        try {
-          synapseSanitizedDb = await new DB(`${sourceDb.name}-synapse-sanitized`);
-        } catch (e) {
-          console.log("Error creating db: " + JSON.stringify(e))
-        }
-        sanitized = true;
-        await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, resolve);
-      })
+      const { doc, sourceDb, reportingConfig } = data
+      const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+      // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
+      const exclusions = reportingConfig['exclusions']
+      const substitutions = reportingConfig['substitutions']
+      const pii = reportingConfig['pii']
+      // First generate the full-cream database
+      let synapseDb
+      try {
+        synapseDb = await new DB(`${sourceDb.name}-synapse`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      let sanitized = false;
+      await generateDatabase(sourceDb, synapseDb, doc, locationList, sanitized, exclusions, substitutions, pii);
+      
+      // Then create the sanitized version
+      let synapseSanitizedDb
+      try {
+        synapseSanitizedDb = await new DB(`${sourceDb.name}-synapse-sanitized`);
+      } catch (e) {
+        console.log("Error creating db: " + JSON.stringify(e))
+      }
+      sanitized = true;
+      await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, substitutions, pii);
+      return data
     }
   }
 }
@@ -128,7 +156,7 @@ const getItemValue = (doc, variableName) => {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList, sanitized) {
+const generateFlatResponse = async function (formResponse, locationList, sanitized, substitutions, pii) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
@@ -145,16 +173,54 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   };
   function set(input, key, value) {
     flatFormResponse[key] = input.skipped
-      ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-      : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-        ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : value
+        ? process.env.T_REPORTING_MARK_SKIPPED_WITH
+        : 
+        input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
+        : 
+        value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
+            ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
+            : value
+  }
+  
+  let formDefinition;
+  try {
+    const contentPath = `/tangerine/groups/${formResponse.groupId}/client/${formResponse.form.id}/form.json`
+    formDefinition = JSON.parse(await readFile(`${contentPath}`))
+    console.log("Using formDefinition")
+  } catch (e) {
+    // no formDefinition available; use stored version.
+    console.log("No formDefinition for " + formResponse.form.id)
+    console.log("substitutions: " + JSON.stringify(substitutions))
+      if (substitutions && substitutions[formResponse.form.id]) {
+        const substituteFormId = substitutions[formResponse.form.id]
+        console.log("substitution: " + substituteFormId)
+        const contentPath = `/tangerine/groups/${formResponse.groupId}/client/${substituteFormId}/form.json`
+        formDefinition = JSON.parse(await readFile(`${contentPath}`))
+        console.log("Now using formDefinition!")
+      } else {
+        
+      }
   }
   for (let item of formResponse.items) {
+    let formDefItem
+    if (formDefinition) {
+      formDefItem = formDefinition.items.find(currentItem => currentItem.id === item.id)
+    }
     for (let input of item.inputs) {
+      let formDefInput
+      if (formDefItem) {
+        formDefInput = formDefItem.inputEls.find(currentInput => currentInput.name === input.name)
+      }
       let sanitize = false;
       if (sanitized) {
-        if (input.identifier) {
+        // console.log("pii: " + pii)
+        if (formDefInput && formDefInput.identifier) {
+          sanitize = true
+        } else if (pii.includes(input.name)) {
+          console.log("YES: pii in : " + input.name)
+          sanitize = true
+        } else if (input.identifier) {
           sanitize = true
         }
       }
@@ -178,6 +244,9 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
+      } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
+        let selectedOption = input.value.find(option => !!option.value) 
+        set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
@@ -221,15 +290,14 @@ function pushResponse(doc, db) {
   })
 }
 
-async function saveFlatResponse(doc, locationList, targetDb, sanitized, resolve) {
-  let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
+async function saveFlatResponse(doc, locationList, targetDb, sanitized, substitutions, pii) {
+  let flatResponse = await generateFlatResponse(doc, locationList, sanitized, substitutions, pii);
   // make sure the top-level properties of doc are copied.
   const topDoc = {}
   Object.entries(doc).forEach(([key, value]) => value === Object(value) ? null : topDoc[key] = value);
   await pushResponse({...topDoc,
     data: flatResponse
   }, targetDb);
-  resolve('done!')
 }
 
 function getLocationByKeys(keys, locationList) {

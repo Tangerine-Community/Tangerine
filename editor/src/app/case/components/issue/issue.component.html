@@ -1,5 +1,5 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <div *ngIf="ready" class="header">
-  <h1>{{issue.label}}</h1>
   <div class="header-actions">
     <paper-button *ngIf="issue.merged && !isOpen" class="status status-merged"><mwc-icon>call_merge</mwc-icon>merged</paper-button>
     <paper-button *ngIf="!issue.merged && !isOpen" class="status status-closed"><mwc-icon>check</mwc-icon>closed</paper-button>

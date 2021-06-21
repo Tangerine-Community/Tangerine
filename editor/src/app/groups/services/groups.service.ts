@@ -5,7 +5,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
-
+import { v4 as UUID } from 'uuid';
 @Injectable()
 export class GroupsService {
   constructor(
@@ -121,13 +121,14 @@ export class GroupsService {
     }
   }
 
-  async releasePWA(groupName: string, releaseType: string) {
+  async releasePWA(groupName: string, releaseType: string, versionTag: string, releaseNotes: string) {
     try {
-      const result = await this.httpClient.get(`/editor/release-pwa/${groupName}/${releaseType}`).toPromise();
+      const result = await this.httpClient.post(`/editor/release-pwa/${groupName}`,
+      {releaseType, versionTag, releaseNotes, buildId: UUID()}).toPromise();
       return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {
-        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+        this.errorHandler.handleError(_TRANSLATE('Release took too long. Please try again.'));
       }
     }
   }
@@ -155,13 +156,20 @@ export class GroupsService {
     }
   }
 
-  async releaseAPK(groupName: string, releaseType: string) {
+  async releaseAPK(groupName: string, releaseType: string, versionTag: string, releaseNotes: string) {
     try {
-      const result = await this.httpClient.get(`/editor/release-apk/${groupName}/${releaseType}`).toPromise();
+      const result = await this.httpClient.post(`/editor/release-apk/${groupName}`,
+      {releaseType, versionTag, releaseNotes, buildId: UUID()}).toPromise();
       return result;
     } catch (error) {
+      console.log("error: " + error)
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+      if (typeof error.error) {
+        const errorMessage = 'Error generating APK: ' + error.error.message
+        this.errorHandler.handleError(_TRANSLATE(errorMessage));
+        throw new Error(errorMessage)
       }
     }
   }
@@ -293,6 +301,23 @@ export class GroupsService {
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
       }
+    }
+  }
+
+  async publishSurvey(groupId, formId, releaseType = 'prod', appName) {
+    try {
+      const response = await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}/${response.body['uploadKey']}`).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+  async unPublishSurvey(groupId, formId) {
+    try {
+      await this.httpClient.put(`/onlineSurvey/unpublish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
+      await this.httpClient.get(`/editor/unrelease-online-survey-app/${groupId}/${formId}/prod`).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
   generateUUID(separator?: string) {

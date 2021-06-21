@@ -1,0 +1,19 @@
+<mat-tab-group>
+    <mat-tab label="{{'My Surveys'}}">
+      <mat-card class="tangy-card-content-container">
+        <mat-list role="list">
+          <mat-list-item role="listitem" class="tangy-location-list">
+            <span class="tangy-foreground-primary">{{'Select Survey Name'}}</span>
+          </mat-list-item>
+          <mat-list-item role="listitem" class="tangy-location-list" *ngFor="let form of formsList">
+            <a class="tangy-foreground-primary" routerLink="/tangy-forms/new/{{form.id}}">
+              <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
+            </a>
+            <span [innerHTML]="form.title"></span>
+          </mat-list-item>
+        </mat-list>
+  
+        <p *ngIf="formsList?.length<1" class="mat-h3">{{'No Forms Currently Defined'}}</p>
+      </mat-card>
+  
+    </mat-tab>

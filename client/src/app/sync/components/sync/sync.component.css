@@ -31,3 +31,22 @@ div {
 .debugging {
   margin: 0em;
 }
+
+.errorMessage {
+  margin-left: 0px;
+  font-size: 20px;
+  font-weight: bold;
+  color: red;
+}
+mat-checkbox {
+  margin-right: 2em;
+}
+mat-expansion-panel {
+  width: 600px
+}
+mat-radio-button {
+  padding-left: 1em;
+}
+.mat-raised-button {
+  margin-left: 1em;
+}
