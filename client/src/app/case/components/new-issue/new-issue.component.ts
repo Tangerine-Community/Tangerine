@@ -46,7 +46,7 @@ export class NewIssueComponent implements OnInit {
       const formResponse = await this.formService.getResponse(eventForm.formResponseId)
       eval(`this.renderedTemplateIssueTitle = this.caseService.caseDefinition.templateIssueTitle ? \`${this.caseService.caseDefinition.templateIssueTitle}\` : \`${this.defaultTemplateIssueTitle}\``)
       eval(`this.renderedTemplateIssueDescription = this.caseService.caseDefinition.templateIssueDescription ? \`${this.caseService.caseDefinition.templateIssueDescription}\` : \`${this.defaultTemplateIssueDescription}\``)
-      if (window.location.hash.split('/').includes('template')) {
+      if (window.location.hash.split('/').includes('use-templates')) {
         await this.saveIssueAndRedirect(this.renderedTemplateIssueTitle, this.renderedTemplateIssueDescription, caseId, eventId, eventFormId, userId, userName)
       } else {
         this.container.nativeElement.innerHTML = `
