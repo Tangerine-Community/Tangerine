@@ -47,16 +47,18 @@ export class NewIssueComponent implements OnInit {
       eval(`this.renderedTemplateIssueTitle = this.caseService.caseDefinition.templateIssueTitle ? \`${this.caseService.caseDefinition.templateIssueTitle}\` : \`${this.defaultTemplateIssueTitle}\``)
       eval(`this.renderedTemplateIssueDescription = this.caseService.caseDefinition.templateIssueDescription ? \`${this.caseService.caseDefinition.templateIssueDescription}\` : \`${this.defaultTemplateIssueDescription}\``)
       if (window.location.hash.split('/').includes('use-templates')) {
-        await this.saveIssueAndRedirect(this.renderedTemplateIssueTitle, this.renderedTemplateIssueDescription, caseId, eventId, eventFormId, userId, userName, groupId, [AppContext.Editor])
+        await this.saveIssueAndRedirect(this.renderedTemplateIssueTitle, this.renderedTemplateIssueDescription, caseId, eventId, eventFormId, userId, userName, groupId, false, '')
       } else {
         this.container.nativeElement.innerHTML = `
           <tangy-form id="form" #form>
             <tangy-form-item id="new-issue" title="New Issue">
               <tangy-input name="title" label="Title" inner-label=" " value="${this.renderedTemplateIssueTitle}" required></tangy-input>
               <tangy-input name="description" label="Description" inner-label=" " value="${this.renderedTemplateIssueDescription}"></tangy-input>
-              <tangy-checkboxes name="context" label="Context" required>
-                <option value="EDITOR">Server</option>
-                <option value="CLIENT">Device</option>
+              <tangy-radio-buttons name="send_to" label="Send to...">
+                <option value="all_devices">All devices</option>
+                <option value="device_by_id">Device by ID</option>
+              </tangy-radio-buttons>
+              <tangy-input name="device_id" label="Device ID" inner-label=" " show-if="getValue('send_to') === 'device_by_id'"></tangy-input>
             </tangy-form-item>
           </tangy-form>
         `
@@ -65,19 +67,18 @@ export class NewIssueComponent implements OnInit {
           const response = new TangyFormResponseModel(event.target.response)
           const title = response.inputsByName.title.value
           const description = response.inputsByName.description.value
-          const contexts = response.inputsByName.context.value.reduce((contexts, option) => {
-            return option.value === 'on'
-              ? [ ...contexts, option.name ]
-              : contexts
-          }, [])
-          await this.saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId, contexts)
+          const sendToAllDevices = response.inputsByName.send_to.value.find(option => option.name === 'all_devices').value === 'on'
+            ? true 
+            : false
+          const sendToDeviceById = response.inputsByName.device_id.value
+          await this.saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId, sendToAllDevices, sendToDeviceById)
         })
       }
     })
   }
 
-  async saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId, context) {
-    const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, context)
+  async saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId, sendToAllDevices, sendToDeviceById) {
+    const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, sendToAllDevices, sendToDeviceById)
     this.router.navigate(['groups', groupId, 'data', 'issues', issue._id])
   }
 
