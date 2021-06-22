@@ -43,11 +43,7 @@ export class NewIssueComponent implements OnInit {
         const title = response.inputsByName.title.value
         const description = response.inputsByName.description.value
         const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, [AppContext.Editor, AppContext.Client])
-        this.router.navigate(['issue', issue._id])
-        
-
-
-
+        this.router.navigate(['issue', issue._id, 'form-revision'])
       })
 
 
