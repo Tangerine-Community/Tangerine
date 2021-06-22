@@ -99,7 +99,7 @@ const routes: Routes = [
   { path: 'issue/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'issue/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
   {
-    path: 'new-issue/:caseId/:eventId/:eventFormId/template',
+    path: 'new-issue/:caseId/:eventId/:eventFormId/use-templates',
     component: NewIssueComponent,
     canActivate: [LoginGuard]
   },
