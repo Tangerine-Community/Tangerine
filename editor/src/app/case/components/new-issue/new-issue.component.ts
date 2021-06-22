@@ -47,13 +47,16 @@ export class NewIssueComponent implements OnInit {
       eval(`this.renderedTemplateIssueTitle = this.caseService.caseDefinition.templateIssueTitle ? \`${this.caseService.caseDefinition.templateIssueTitle}\` : \`${this.defaultTemplateIssueTitle}\``)
       eval(`this.renderedTemplateIssueDescription = this.caseService.caseDefinition.templateIssueDescription ? \`${this.caseService.caseDefinition.templateIssueDescription}\` : \`${this.defaultTemplateIssueDescription}\``)
       if (window.location.hash.split('/').includes('use-templates')) {
-        await this.saveIssueAndRedirect(this.renderedTemplateIssueTitle, this.renderedTemplateIssueDescription, caseId, eventId, eventFormId, userId, userName, groupId)
+        await this.saveIssueAndRedirect(this.renderedTemplateIssueTitle, this.renderedTemplateIssueDescription, caseId, eventId, eventFormId, userId, userName, groupId, [AppContext.Editor])
       } else {
         this.container.nativeElement.innerHTML = `
           <tangy-form id="form" #form>
             <tangy-form-item id="new-issue" title="New Issue">
-              <tangy-input name="title" label="Title" inner-label=" " value="${this.renderedTemplateIssueTitle}"></tangy-input>
+              <tangy-input name="title" label="Title" inner-label=" " value="${this.renderedTemplateIssueTitle}" required></tangy-input>
               <tangy-input name="description" label="Description" inner-label=" " value="${this.renderedTemplateIssueDescription}"></tangy-input>
+              <tangy-checkboxes name="context" label="Context" required>
+                <option value="EDITOR">Server</option>
+                <option value="CLIENT">Device</option>
             </tangy-form-item>
           </tangy-form>
         `
@@ -62,14 +65,19 @@ export class NewIssueComponent implements OnInit {
           const response = new TangyFormResponseModel(event.target.response)
           const title = response.inputsByName.title.value
           const description = response.inputsByName.description.value
-          await this.saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId)
+          const contexts = response.inputsByName.context.value.reduce((contexts, option) => {
+            return option.value === 'on'
+              ? [ ...contexts, option.name ]
+              : contexts
+          }, [])
+          await this.saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId, contexts)
         })
       }
     })
   }
 
-  async saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId) {
-    const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, [AppContext.Editor])
+  async saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId, context) {
+    const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, context)
     this.router.navigate(['groups', groupId, 'data', 'issues', issue._id])
   }
 

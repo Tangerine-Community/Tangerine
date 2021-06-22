@@ -56,7 +56,8 @@ class Issue extends TangyFormResponseModel {
   type:string = 'issue'
   createdOn:number
   createdAppContext:AppContext
-  resolveOnAppContext:AppContext
+  resolveOnClientContext:Boolean
+  resolveOnEditorContext:Boolean
   docType:string
 
   constructor(data?:any) {
