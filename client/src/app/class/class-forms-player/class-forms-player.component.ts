@@ -189,7 +189,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
           const archiveResult = await this.classFormService.saveResponse(response.doc);
           console.log('archiveResult: ' + archiveResult);
         }
-        const result = await this.dashboardService.archiveStudentRegistration(studentId);
+        const result = await this.dashboardService.archiveDoc(studentId);
       } catch (e) {
         console.log('Error deleting student: ' + e);
         return false;
