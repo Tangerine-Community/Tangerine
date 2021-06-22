@@ -32,7 +32,8 @@ export interface StudentResponse {
 export class DashboardComponent implements OnInit {
 
   cookieVersion = '1';
-  classes; students;
+  classes; students; 
+  enabledClasses; // filter out classes that have the 'archive' property.
   currentClassId; currentClassIndex;
   currentItemId; curriculumId;
   selectedClass; selectedCurriculum;
@@ -85,12 +86,18 @@ export class DashboardComponent implements OnInit {
     (<any>window).Tangy = {};
     await this.classFormService.initialize();
     this.classes = await this.getMyClasses();
+    const enabledClasses = this.classes.map(klass => {
+      if (!klass.doc.archive) {
+        return klass
+      }
+    });
+    this.enabledClasses = enabledClasses.filter(item => item);
     this.classUtils = new ClassUtils();
     await this.initDashboard(null, null, null, null);
   }
 
   async initDashboard(classIndex: number, currentClassId, curriculumId, resetCookies) {
-    if (typeof this.classes !== 'undefined' && this.classes.length > 0) {
+    if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
       let currentClass, currentItemId = '';
       if (resetCookies) {
         this.cookieService.set('classIndex', classIndex.toString());
@@ -116,7 +123,7 @@ export class DashboardComponent implements OnInit {
         this.cookieService.set('classIndex', this.currentClassIndex);
       }
 
-      currentClass = this.classes[this.currentClassIndex];
+      currentClass = this.enabledClasses[this.currentClassIndex];
       this.selectedClass = currentClass;
 
       if (currentClassId && currentClassId !== '') {
@@ -207,7 +214,7 @@ export class DashboardComponent implements OnInit {
 
     this.formList = [];
     let currentClassId;
-    const currentClass = this.classes[this.currentClassIndex];
+    const currentClass = this.enabledClasses[this.currentClassIndex];
     if (typeof currentClass !== 'undefined') {
       currentClassId = currentClass.id;
     }
@@ -222,7 +229,7 @@ export class DashboardComponent implements OnInit {
     }
 
     this.selectedCurriculum = this.currArray.find(x => x.name === curriculumId);
-    this.selectedClass = this.classes[this.currentClassIndex];
+    this.selectedClass = this.enabledClasses[this.currentClassIndex];
   }
 
   async selectSubTask(itemId, classId, curriculumId) {
@@ -282,7 +289,7 @@ export class DashboardComponent implements OnInit {
 
   // Triggered by dropdown selection in UI.
   async populateCurriculum (classIndex, curriculumId) {
-    const currentClass = this.classes[classIndex];
+    const currentClass = this.enabledClasses[classIndex];
     const currentClassId = currentClass.id;
     await this.initDashboard(classIndex, currentClassId, curriculumId, true);
   }
@@ -364,7 +371,7 @@ export class DashboardComponent implements OnInit {
           const archiveResult = await this.classFormService.saveResponse(response.doc);
           console.log('archiveResult: ' + archiveResult);
         }
-        const result = await this.dashboardService.archiveStudentRegistration(studentId);
+        const result = await this.dashboardService.archiveDoc(studentId);
         console.log('result: ' + result);
       } catch (e) {
         console.log('Error deleting student: ' + e);
@@ -418,7 +425,7 @@ export class DashboardComponent implements OnInit {
 
       this.formList = [];
       let currentClassId;
-      const currentClass = this.classes[this.currentClassIndex];
+      const currentClass = this.enabledClasses[this.currentClassIndex];
       if (typeof currentClass !== 'undefined') {
         currentClassId = currentClass.id;
       }
@@ -443,9 +450,9 @@ export class DashboardComponent implements OnInit {
 
   async getMyClasses() {
     try {
-      this.classes = await this.dashboardService.getMyClasses();
+      const classes = await this.dashboardService.getMyClasses();
       // console.log("this.classes:" + JSON.stringify(this.classes))
-      return this.classes;
+      return classes;
     } catch (error) {
       console.error(error);
     }

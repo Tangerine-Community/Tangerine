@@ -31,6 +31,8 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { TaskReportComponent } from './reports/task-report/task-report.component';
 import {ClassFormService} from './_services/class-form.service';
 import {UserService} from '../shared/_services/user.service';
+import { ClassConfigComponent } from './class-config/class-config.component';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @NgModule({
   imports: [
@@ -50,9 +52,10 @@ import {UserService} from '../shared/_services/user.service';
     MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatSlideToggleModule
   ],
-  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent],
+  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent],
   providers: [UserService, ClassFormService, DashboardService, CookieService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
