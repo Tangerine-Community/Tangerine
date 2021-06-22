@@ -95,7 +95,7 @@ export class DashboardService {
    * Acts like a delete but archives instead so that it will get sync'd.
    * @param id
    */
-  async archiveStudentRegistration(id) {
+  async archiveDoc(id) {
     try {
       this.db = await this.getUserDB();
       const doc = await this.db.get(id);
@@ -105,9 +105,26 @@ export class DashboardService {
       const result = await this.db.put(doc);
       return result;
     } catch (e) {
-      console.log('Error deleting student: ' + e);
+      console.log('Error deleting document: ' + e);
     }
+  }
 
+  /**
+   * Removed 'archived' property from document.
+   * @param id
+   */
+  async enableDoc(id) {
+    try {
+      this.db = await this.getUserDB();
+      const doc = await this.db.get(id);
+      delete doc.archive
+      const lastModified = Date.now();
+      doc.lastModified = lastModified;
+      const result = await this.db.put(doc);
+      return result;
+    } catch (e) {
+      console.log('Error enabling document: ' + e);
+    }
   }
 
   /**
