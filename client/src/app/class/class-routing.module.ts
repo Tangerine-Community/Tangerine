@@ -8,6 +8,7 @@ import {StudentSubtestReportComponent} from "./reports/student-subtest-report/st
 import {StudentGroupingReportComponent} from "./reports/student-grouping-report/student-grouping-report.component";
 import {StudentProgressTableComponent} from "./reports/student-progress-table/student-progress-table.component";
 import {TaskReportComponent} from "./reports/task-report/task-report.component";
+import {ClassConfigComponent} from "./class-config/class-config.component";
 
 const appRoutes = [
   {
@@ -38,6 +39,11 @@ const appRoutes = [
   {
     path: 'reports/taskReport/:classId',
     component: TaskReportComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'class-config',
+    component: ClassConfigComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   }
 ];

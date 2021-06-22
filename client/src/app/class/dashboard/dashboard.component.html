@@ -11,8 +11,13 @@
             [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
       {{'Add Student'|translate}}
     </button>
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-config/']"
+            [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
+      <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>
+    </button>
   </span>
-  <span dir="rtl" *ngFor="let class of classes; let classIndex=index" class="class-dashboard-curr-button-spacer">
+  <span dir="rtl" *ngFor="let class of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">
       <button mat-stroked-button color="primary" [matMenuTriggerFor]="catMenu" class="mat-button"
               attr.data-classId = "{{class.id}}">
         {{class.doc.items[0].inputs[2].value}}
