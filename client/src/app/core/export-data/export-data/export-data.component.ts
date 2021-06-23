@@ -34,7 +34,7 @@ export class ExportDataComponent implements OnInit {
   
   async exportAllRecords() {
     const appConfig = await this.appConfigService.getAppConfig()
-    if (window['isCordovaApp'] && !appConfig['turnOffAppLevelEncryption'] && appConfig.syncProtocol === '2') {
+    if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
       const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
       for (const dbName of dbNames) {
         // copy the database
