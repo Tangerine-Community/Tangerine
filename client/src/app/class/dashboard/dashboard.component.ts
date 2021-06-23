@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit {
         return klass
       }
     });
-    this.enabledClasses = enabledClasses.filter(item => item);
+    this.enabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
     let classMenu = []
     for (const classDoc of this.enabledClasses) {
       let klass = {
@@ -129,6 +129,8 @@ export class DashboardComponent implements OnInit {
         currentItemId = await this.variableService.get('class-currentItemId');
         currentClassId = await this.variableService.get('class-currentClassId');
         curriculumId = await this.variableService.get('class-curriculumId');
+      } else {
+        this.currentClassIndex = classIndex
       }
       await this.variableService.set('class-classIndex', this.currentClassIndex);
 
