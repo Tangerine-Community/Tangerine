@@ -9,7 +9,12 @@ A Device Users' Role can be used restrict access to specific Case Events, Event 
 To retrict access to an input on a form by role, use the `T.user.getRoles()` function to get the roles of the currently logged in user.
 
 ```html
-<tangy-input name="example" label="Example" show-if="T.user.getRoles().includes('admin')"></tangy-input>
+<tangy-input
+  name="example"
+  label="Example"
+  show-if="T.user.getRoles().includes('admin')"
+>
+</tangy-input>
 ```
 
 
