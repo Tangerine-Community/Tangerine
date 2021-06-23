@@ -3,7 +3,7 @@ import {DashboardService} from "../_services/dashboard.service";
 import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service";
 import {_TRANSLATE} from "../../../../../editor/src/app/shared/_services/translation-marker";
 import {ClassFormService} from "../_services/class-form.service";
-import {CookieService} from "ngx-cookie-service";
+import {VariableService} from "../../shared/_services/variable.service";
 
 @Component({
   selector: 'app-class-config',
@@ -17,7 +17,7 @@ export class ClassConfigComponent implements OnInit {
     private dashboardService: DashboardService,
     private tangyFormsInfoService: TangyFormsInfoService,
     private classFormService: ClassFormService,
-    private cookieService: CookieService
+    private variableService: VariableService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -27,13 +27,7 @@ export class ClassConfigComponent implements OnInit {
     console.log("Got classes")
   }
 
-  async toggleClass(formId) {
-    console.log("Toggling: " + formId)
-    this.cookieService.deleteAll();
-    await this.toggleDoc(formId)
-  }
-
-  async toggleDoc(id: string) {
+  async toggleClass(id) {
     try {
       const doc = await this.classFormService.getResponse(id)
       const archived = doc.archive
@@ -45,6 +39,10 @@ export class ClassConfigComponent implements OnInit {
     } catch (error) {
       console.log(_TRANSLATE('Could not Toggle Form. Error: ' + error));
     }
-
+      await this.variableService.set('class-classIndex', null);
+      await this.variableService.set('class-currentClassId', null);
+      await this.variableService.set('class-curriculumId', null);
+      await this.variableService.set('class-currentItemId', null);
   }
+  
 }

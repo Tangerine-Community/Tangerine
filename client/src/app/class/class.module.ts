@@ -26,7 +26,6 @@ import { StudentSubtestReportComponent } from './reports/student-subtest-report/
 import { StudentGroupingReportComponent } from './reports/student-grouping-report/student-grouping-report.component';
 import {PageNotFoundComponent} from "./page-not-found.component";
 import { StudentProgressTableComponent } from './reports/student-progress-table/student-progress-table.component';
-import { CookieService } from "ngx-cookie-service";
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { TaskReportComponent } from './reports/task-report/task-report.component';
 import {ClassFormService} from './_services/class-form.service';
@@ -56,7 +55,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
     MatSlideToggleModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent],
-  providers: [UserService, ClassFormService, DashboardService, CookieService,  {
+  providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
       const service = new MatPaginationIntlService();
