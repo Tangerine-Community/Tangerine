@@ -7,11 +7,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import {ClassFormService} from '../_services/class-form.service';
 import {Router} from '@angular/router';
 import {_TRANSLATE} from '../../shared/translation-marker';
-import {CookieService} from 'ngx-cookie-service';
 import {ClassUtils} from '../class-utils';
 import {ClassGroupingReport} from '../reports/student-grouping-report/class-grouping-report';
 import {TangyFormService} from '../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
+import {VariableService} from "../../shared/_services/variable.service";
 
 export interface StudentResult {
   id: string;
@@ -31,7 +31,7 @@ export interface StudentResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  cookieVersion = '1';
+  
   classes; students; 
   enabledClasses; // filter out classes that have the 'archive' property.
   currentClassId; currentClassIndex;
@@ -76,10 +76,10 @@ export class DashboardComponent implements OnInit {
     private dashboardService: DashboardService,
     private userService: UserService,
     private router: Router,
-    private cookieService: CookieService,
     private classFormService: ClassFormService,
     private tangyFormService: TangyFormService,
-    private tangyFormsInfoService: TangyFormsInfoService
+    private tangyFormsInfoService: TangyFormsInfoService,
+    private variableService: VariableService
   ) { }
 
   async ngOnInit() {
@@ -92,45 +92,60 @@ export class DashboardComponent implements OnInit {
       }
     });
     this.enabledClasses = enabledClasses.filter(item => item);
+    let classMenu = []
+    for (const classDoc of this.enabledClasses) {
+      let klass = {
+        id: classDoc.id,
+        name: classDoc.doc.items[0].inputs[2].value,
+        curriculum: []
+      }
+      let curriculumInput = classDoc.doc.items[0].inputs[3].value
+      // find the options that are set to 'on'
+      this.currArray = await this.populateCurrentCurriculums(classDoc);
+      klass.curriculum = this.currArray
+      classMenu.push(klass)
+    }
     this.classUtils = new ClassUtils();
     await this.initDashboard(null, null, null, null);
   }
 
-  async initDashboard(classIndex: number, currentClassId, curriculumId, resetCookies) {
+  async initDashboard(classIndex: number, currentClassId, curriculumId, resetVars) {
     if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
       let currentClass, currentItemId = '';
-      if (resetCookies) {
-        this.cookieService.set('classIndex', classIndex.toString());
-        this.cookieService.set('currentClassId', currentClassId);
-        this.cookieService.set('curriculumId', curriculumId);
+      if (resetVars) {
+        await this.variableService.set('class-classIndex', classIndex.toString());
+        await this.variableService.set('class-currentClassId', currentClassId);
+        await this.variableService.set('class-curriculumId', curriculumId);
       }
+      this.currentClassIndex = 0;
       if (classIndex === null) {
-        const cookieVersion = this.cookieService.get('cookieVersion');
-        if (isNaN(parseInt(cookieVersion)) || cookieVersion !== this.cookieVersion) {
-          this.cookieService.deleteAll();
-          this.cookieService.set('cookieVersion', this.cookieVersion);
-        } else {
-          classIndex = parseInt(this.cookieService.get('classIndex'));
-          currentItemId = this.cookieService.get('currentItemId');
-          currentClassId = this.cookieService.get('currentClassId');
-          curriculumId = this.cookieService.get('curriculumId');
+        let classClassIndex = await this.variableService.get('class-classIndex')
+        if (classClassIndex !== null) {
+          classIndex = parseInt(classClassIndex)
+          if (!Number.isNaN(classIndex)) {
+            this.currentClassIndex = classIndex;
+          }
         }
+        currentItemId = await this.variableService.get('class-currentItemId');
+        currentClassId = await this.variableService.get('class-currentClassId');
+        curriculumId = await this.variableService.get('class-curriculumId');
       }
-      if (classIndex !== null) {
-        this.currentClassIndex = classIndex;
-      } else {
-        this.currentClassIndex = 0;
-        this.cookieService.set('classIndex', this.currentClassIndex);
-      }
+      await this.variableService.set('class-classIndex', this.currentClassIndex);
 
       currentClass = this.enabledClasses[this.currentClassIndex];
-      this.selectedClass = currentClass;
+      if (typeof currentClass === 'undefined') {
+        // Maybe a class has been removed
+        this.currentClassIndex = 0
+        currentClass = this.enabledClasses[this.currentClassIndex];
+      } else {
+        this.selectedClass = currentClass;
+      }
 
       if (currentClassId && currentClassId !== '') {
         this.currentClassId = currentClassId;
       } else {
         this.currentClassId = currentClass.id;
-        this.cookieService.set('currentClassId', this.currentClassId);
+        await this.variableService.set('class-currentClassId', this.currentClassId);
       }
       if (currentItemId && currentItemId !== '') {
         this.currentItemId = currentItemId;
@@ -139,16 +154,16 @@ export class DashboardComponent implements OnInit {
       }
 
       this.currArray = await this.populateCurrentCurriculums(currentClass);
-      if (curriculumId === null || curriculumId === '') {
+      if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
         const curriculum = this.currArray[0];
         curriculumId = curriculum.name;
       }
       this.curriculumId = curriculumId;
-      this.cookieService.set('curriculumId', curriculumId);
+      await this.variableService.set('class-curriculumId', curriculumId);
       this.curriculum = this.currArray.find(x => x.name === curriculumId);
       await this.populateFormsMetadata(curriculumId);
 
-      if (currentItemId === '') {
+      if (!currentItemId || currentItemId === '') {
         const initialForm = this.curriculumFormsList[0];
         this.currentItemId = initialForm.id;
       }
@@ -234,7 +249,7 @@ export class DashboardComponent implements OnInit {
 
   async selectSubTask(itemId, classId, curriculumId) {
     // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
-    this.cookieService.set( 'currentItemId', itemId );
+    await this.variableService.set( 'class-currentItemId', itemId );
 
     // this.currentClassId = this.selectedClass.id;
     this.students = await this.getMyStudents(classId);
