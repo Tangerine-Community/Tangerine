@@ -130,7 +130,6 @@ class CouchDBConnectError(Exception):
 def couchdb_connect():
     try:
         client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
-        session = client.session()
         return client[dbName]
     except:
         raise CouchDBConnectError
@@ -158,6 +157,8 @@ def all_docs_mode():
 
             if len(rows) < DOC_FETCH_COUNT:
                 complete = True
+                skip = skip + len(rows)
+                update_doc_state(skip)
                 break
 
             skip = skip + len(rows)
@@ -175,9 +176,10 @@ def all_docs_mode():
     return complete
 
 
-def changes_feed_mode(tangerine_database, lastSequence):
+def changes_feed_mode(lastSequence):
     global QUEUE_DOCS 
     QUEUE_DOCS = False
+    tangerine_database = couchdb_connect()
     changes = tangerine_database.infinite_changes(include_docs=True, since=lastSequence)
     for change in changes:
         seq = change.get('seq')
@@ -195,19 +197,17 @@ def changes_feed_mode(tangerine_database, lastSequence):
 #
 
 def main_job(lastSequence):
-    client = CouchDB(dbUserName, dbPassword, url=dbURL, connect=True, timeout=500)
-    session = client.session()
-    tangerine_database = client[dbName]
-    log('Logged into Tangerine database')
     if lastSequence == '0':
         log('Processing all docs.')
         if all_docs_mode():
             log('Successfully processed all docs.')
-            lastSequence = get_last_change_seq(tangerine_database)
+            db = couchdb_connect()
+            lastSequence = get_last_change_seq(db)
             log('Saving state with lastSequence of ' + lastSequence + '.')
             update_state(lastSequence)
     log('Processing changes with lastSequence of ' + lastSequence + '.')
-    changes_feed_mode(tangerine_database, lastSequence)
+    log('Logged into Tangerine database')
+    changes_feed_mode(lastSequence)
 
 #
 # Startup
