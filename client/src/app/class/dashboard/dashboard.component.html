@@ -12,8 +12,7 @@
       {{'Add Student'|translate}}
     </button>
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-config/']"
-            [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
+            [routerLink]="['/class-config/']">
       <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>
     </button>
   </span>
@@ -24,7 +23,7 @@
       </button>
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
-          <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value; let curriculumIndex=index;">
+          <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">
             <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>
           </span>
         </ng-template>
