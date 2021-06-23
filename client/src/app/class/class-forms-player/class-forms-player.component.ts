@@ -7,6 +7,7 @@ import {ClassFormService} from '../_services/class-form.service';
 import {ClassUtils} from '../class-utils.js';
 import {DashboardService} from '../_services/dashboard.service';
 import {_TRANSLATE} from '../../shared/translation-marker';
+import {VariableService} from "../../shared/_services/variable.service";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds));
 
@@ -35,10 +36,12 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     private userService: UserService,
     private appConfigService: AppConfigService,
     private dashboardService: DashboardService,
-    private classFormService: ClassFormService
+    private classFormService: ClassFormService,
+    private variableService: VariableService
   ) { }
 
   async ngAfterContentInit() {
+    await this.classFormService.initialize();
     this.route.queryParams.subscribe(async params => {
       this.classUtils = new ClassUtils();
       this.responseId = params['responseId'];
@@ -120,6 +123,26 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
           }
         }
         this.throttledSaveResponse(response);
+        // Reset vars and set to this new class-registration
+        if (response.form.id === 'class-registration' && !formResponse) {
+          await this.variableService.set('class-classIndex', null);
+          await this.variableService.set('class-currentClassId', null);
+          await this.variableService.set('class-curriculumId', null);
+          await this.variableService.set('class-currentItemId', null);
+          const classes = await this.dashboardService.getMyClasses();
+          const enabledClasses = classes.map(klass => {
+            if (!klass.doc.archive) {
+              return klass
+            }
+          });
+          const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
+          // set classIndex to allEnabledClasses.length
+          const classIndex = allEnabledClasses.length - 1
+          const currentClass = allEnabledClasses[classIndex]
+          const currentClassId = currentClass.id
+          await this.variableService.set('class-classIndex', classIndex);
+          await this.variableService.set('class-currentClassId', currentClassId);
+        }
         this.router.navigate(['dashboard']);
       });
     });
