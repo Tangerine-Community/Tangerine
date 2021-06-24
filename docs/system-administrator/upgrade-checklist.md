@@ -3,7 +3,7 @@
 ## Test on QA server
 * [ ] Clone production server to QA server.
 * [ ] Update `T_HOSTNAME` in `tangerine/config.sh`.
-* [ ] Run `./starts.sh <currently used version of tangerine>`. This puts the updated config in `config.sh` into the container.
+* [ ] Run `./start.sh <currently used version of tangerine>`. This puts the updated config in `config.sh` into the container.
 * [ ] Update `serverUrl` in all `app-config.json` files for each group in `tangerine/data/group/<your-group-id>/client/app-config.json`. 
 * [ ] Release all APKs and PWAs. This puts all updated app config into the APKs and PWAs.
 * [ ] Install and set up PWA/APKs for groups to test.
