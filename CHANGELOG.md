@@ -9,7 +9,7 @@
 - Serve base64 image data as image files [#2706](https://github.com/Tangerine-Community/Tangerine/issues/2706) PR: [#2725](https://github.com/Tangerine-Community/Tangerine/pull/2725)
 - Add Cycle sequences [1603](https://github.com/Tangerine-Community/Tangerine/issues/1603)
 - Sort by lastModified in the client case search [#2692](https://github.com/Tangerine-Community/Tangerine/pull/2692)
-- Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
+- Enable assigning multiple roles in forCaseRole in the eventFormDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
 - Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2696](https://github.com/Tangerine-Community/Tangerine/pull/2696/files)
 - Teach-specific strings in Russian for default content-set [#2676](https://github.com/Tangerine-Community/Tangerine/pull/2676)
 - Uploads status such as app version when updating the app [#2756](https://github.com/Tangerine-Community/Tangerine/issues/2756)
