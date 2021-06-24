@@ -28,6 +28,7 @@ const IssueEventTypeIconMap = {
 
 const IssueEventTypeLabelMap = {
   [IssueEventType.Comment]: _TRANSLATE('comment'),
+  [IssueEventType.UpdateMeta]: _TRANSLATE('Updated metadata'),
   [IssueEventType.ProposedChange]: _TRANSLATE('revision'),
   [IssueEventType.Merge]: _TRANSLATE('proposed changes merged'),
   [IssueEventType.Open]: _TRANSLATE('opened'),
@@ -108,6 +109,7 @@ export class IssueComponent implements OnInit {
 
   async update() {
     this.isOpen = this.issue.status === IssueStatus.Open ? true : false
+    debugger
     this.eventInfos = this.issue.events.map(event => {
       return <EventInfo>{
         id: event.id,
@@ -123,8 +125,16 @@ export class IssueComponent implements OnInit {
               margin: 15px 0px 5px;
             }
           </style>
-          ${event.data && event.data.comment ? Marked.parse(event.data.comment) : ``}
-          ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
+          ${event.type === IssueEventType.UpdateMeta ? `
+            <h3>Label</h3>
+            ${Marked.parse(event.data.label)}
+            <h3>Description</h3>
+            ${Marked.parse(event.data.description)}
+            <h3>Send to...</h3>
+            ...
+          `: ``}
+        ${event.data && event.data.comment ? Marked.parse(event.data.comment) : ``}
+         ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
         `
       }
     })
