@@ -88,11 +88,35 @@ def save_entity(doc):
     else:
         synapse_span_table.flexsert_span_table_record(tableName, data)
 
+def get_response_metadata(doc):
+    startDatetime = doc.get('startDatetime')
+    caseId = doc.get('caseId')
+    eventId = doc.get('eventId')
+    eventFormId = doc.get('eventFormId')
+    participantId = doc.get('participantId')
+    caseEventId = doc.get('caseEventId')
+
+    metadata = {}
+    metadata.update({'caseid': caseId})
+    metadata.update({'participantid': participantId})
+    metadata.update({'eventid': eventId})
+    metadata.update({'eventformid': eventFormId})
+    metadata.update({'caseeventid': caseEventId})
+    metadata.update({'startdatetime': startDatetime})
+
+    return metadata
+
+
 def save_response(doc):
     global synapse_span_table
-    id = doc.get('_id')
-    data = doc.get('data')
-    data['id'] = id
+    doc_id = doc.get('_id')
+    resp_data = doc.get('data')
+    resp_data['id'] = doc_id
+
+    metadata = get_response_metadata(doc)
+    metadata.update(resp_data)
+    data = metadata
+
     cleanData = {}
     for key in data.keys():
         cleanData[key.strip()] = data[key]
