@@ -89,20 +89,16 @@ def save_entity(doc):
         synapse_span_table.flexsert_span_table_record(tableName, data)
 
 def get_response_metadata(doc):
-    startDatetime = doc.get('startDatetime')
     caseId = doc.get('caseId')
     eventId = doc.get('eventId')
     eventFormId = doc.get('eventFormId')
     participantId = doc.get('participantId')
-    caseEventId = doc.get('caseEventId')
 
     metadata = {}
     metadata.update({'caseid': caseId})
     metadata.update({'participantid': participantId})
     metadata.update({'eventid': eventId})
     metadata.update({'eventformid': eventFormId})
-    metadata.update({'caseeventid': caseEventId})
-    metadata.update({'startdatetime': startDatetime})
 
     return metadata
 
