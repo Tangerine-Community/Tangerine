@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.18.1
+- Fix backup when using os encryption and sync protocol 2 and cordova. (PR: [#2767](https://github.com/Tangerine-Community/Tangerine/pull/2767))
+- Fix creating of new Device Users when using Sync Protocol 2. (PR: [#2769](https://github.com/Tangerine-Community/Tangerine/pull/2769))
+
+
 ## v3.18.0
 
 ### New Features
