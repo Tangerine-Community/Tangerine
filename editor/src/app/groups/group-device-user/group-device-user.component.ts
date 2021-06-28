@@ -32,7 +32,8 @@ export class GroupDeviceUserComponent implements OnInit {
           url: `device-users/${params.responseId}` 
         }
       ]
-      this.formPlayer.formResponseId = params.responseId
+      this.formPlayer.formResponseId = params.responseId || ''
+      this.formPlayer.formId = 'user-profile'
       this.formPlayer.preventSubmit = true
       this.formPlayer.render()
       this.formPlayer.$submit.subscribe(async () => {
