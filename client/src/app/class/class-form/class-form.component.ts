@@ -117,17 +117,9 @@ export class ClassFormComponent implements OnInit {
         this.formPlayer.formId = this.formId
       }
       await this.formPlayer.render()
-
-      this.formPlayer.formEl.addEventListener('TANGY_FORM_PRE_UPDATE', async (event) => {
-        console.log("TANGY_FORM_PRE_UPDATE")
-      })
-
-      this.formPlayer.formEl.addEventListener('submit', async (event) => {
-        console.log("submit")
-      })
+      
 
       this.formPlayer.formEl.addEventListener('TANGY_FORM_UPDATE', async (event) => {
-        console.log("TANGY_FORM_UPDATE")
         let state = event.target.store.getState()
         state.complete = false
         if (typeof this.formResponse !== 'undefined') {
@@ -139,7 +131,7 @@ export class ClassFormComponent implements OnInit {
               }
             });
           } else {
-            console.log("Why is this.formResponse.items null?")
+            // console.log("Why is this.formResponse.items null?")
           }
         }
         {
@@ -175,7 +167,6 @@ export class ClassFormComponent implements OnInit {
 
       this.formPlayer.$submit.subscribe(async () => {
         setTimeout(async () => {
-          console.log("Bonk")
           this.router.navigate([`../`], { relativeTo: this.route })
         }, 500)
       })
