@@ -369,7 +369,7 @@ export class DashboardComponent implements OnInit {
     const formsArray = Object.values(column.forms);
     const studentId = column.id;
     const classId = column.classId;
-    this.router.navigate(['class-forms-player'], { queryParams:
+    this.router.navigate(['class-form'], { queryParams:
         { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }

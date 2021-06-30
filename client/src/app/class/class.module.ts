@@ -19,7 +19,6 @@ import {SharedModule} from "../shared/shared.module";
 import {DashboardService} from "./_services/dashboard.service";
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
-import { ClassFormsPlayerComponent } from './class-forms-player/class-forms-player.component';
 import {MatPaginationIntlService} from "./_services/mat-pagination-intl.service";
 import {TranslateService} from "@ngx-translate/core";
 import { StudentSubtestReportComponent } from './reports/student-subtest-report/student-subtest-report.component';
@@ -57,7 +56,7 @@ import {TangyFormsModule} from "../tangy-forms/tangy-forms.module";
     MatSlideToggleModule,
     TangyFormsModule
   ],
-  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent],
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent],
   providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
