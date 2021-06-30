@@ -1,3 +1,13 @@
 #buildContainer {
   display:none
 }
+#profile-mgmt {
+  position: relative;
+  top: -90px;
+  left: 50px;
+}
+#profile-toolbar {
+  display: flex;
+  position: absolute;
+  top: -80px;
+}

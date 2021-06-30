@@ -8,6 +8,7 @@ import {ClassFormService} from "../_services/class-form.service";
 import {TangyFormService} from "../../tangy-forms/tangy-form.service";
 import {Subject} from "rxjs";
 import {VariableService} from "../../shared/_services/variable.service";
+import {_TRANSLATE} from "../../shared/translation-marker";
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -143,38 +144,37 @@ export class ClassFormComponent implements OnInit {
           }
         }
         await this.throttledSaveResponse(state)
-          // Reset vars and set to this new class-registration
-          if (state.form.id === 'class-registration' && !this.formResponse) {
-            await this.variableService.set('class-classIndex', null);
-            await this.variableService.set('class-currentClassId', null);
-            await this.variableService.set('class-curriculumId', null);
-            await this.variableService.set('class-currentItemId', null);
-            const classes = await this.dashboardService.getMyClasses();
-            const enabledClasses = classes.map(klass => {
-              if (!klass.doc.archive) {
-                return klass
-              }
-            });
-            const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
-            // set classIndex to allEnabledClasses.length
-            const classIndex = allEnabledClasses.length - 1
-            const currentClass = allEnabledClasses[classIndex]
-            const currentClassId = currentClass.id
-            await this.variableService.set('class-classIndex', classIndex);
-            await this.variableService.set('class-currentClassId', currentClassId);
-          }
+        // Reset vars and set to this new class-registration
+        if (state.form.id === 'class-registration' && !this.formResponse) {
+          await this.variableService.set('class-classIndex', null);
+          await this.variableService.set('class-currentClassId', null);
+          await this.variableService.set('class-curriculumId', null);
+          await this.variableService.set('class-currentItemId', null);
+          const classes = await this.dashboardService.getMyClasses();
+          const enabledClasses = classes.map(klass => {
+            if (!klass.doc.archive) {
+              return klass
+            }
+          });
+          const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
+          // set classIndex to allEnabledClasses.length
+          const classIndex = allEnabledClasses.length - 1
+          const currentClass = allEnabledClasses[classIndex]
+          const currentClassId = currentClass.id
+          await this.variableService.set('class-classIndex', classIndex);
+          await this.variableService.set('class-currentClassId', currentClassId);
+        }
+        this.router.navigate(['dashboard']);
       })
 
-      this.formPlayer.$submit.subscribe(async () => {
-        setTimeout(async () => {
-          this.router.navigate([`../`], { relativeTo: this.route })
-        }, 500)
-      })
+      // this.formPlayer.$submit.subscribe(async () => {
+      //   setTimeout(async () => {
+      //     this.router.navigate([`../`], { relativeTo: this.route })
+      //   }, 500)
+      // })
       
     })
   }
-
-
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
   // Everything else in between we can ignore.
@@ -225,6 +225,34 @@ export class ClassFormComponent implements OnInit {
       }
     }
     return obj;
+  }
+
+  async archiveStudent(studentId) {
+    // let studentId = studentId
+    console.log('Archiving student:' + studentId);
+    const deleteConfirmed = confirm(_TRANSLATE('Delete this student?'));
+    if (deleteConfirmed) {
+      try {
+        const responses = await this.classFormService.getResponsesByStudentId(studentId);
+        for (const response of responses as any[] ) {
+          response.doc.archive = true;
+          const lastModified = Date.now();
+          response.doc.lastModified = lastModified;
+          const archiveResult = await this.classFormService.saveResponse(response.doc);
+          console.log('archiveResult: ' + archiveResult);
+        }
+        const result = await this.dashboardService.archiveDoc(studentId);
+      } catch (e) {
+        console.log('Error deleting student: ' + e);
+        return false;
+      }
+    }
+  }
+
+  enableEditing(studentId, classId, event) {
+    const container = this.formPlayer.container.nativeElement;
+    const formEl = container.querySelector('tangy-form');
+    formEl.disableItemReadOnly();
   }
 
 }

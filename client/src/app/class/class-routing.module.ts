@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import {CreateProfileGuardService} from "../shared/_guards/create-profile-guard.service";
 import {LoginGuard} from "../shared/_guards/login-guard.service";
 import {DashboardComponent} from "./dashboard/dashboard.component";
-import {ClassFormsPlayerComponent} from "./class-forms-player/class-forms-player.component";
 import {StudentSubtestReportComponent} from "./reports/student-subtest-report/student-subtest-report.component";
 import {StudentGroupingReportComponent} from "./reports/student-grouping-report/student-grouping-report.component";
 import {StudentProgressTableComponent} from "./reports/student-progress-table/student-progress-table.component";
@@ -15,11 +14,6 @@ const appRoutes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService]
-  },
-  {
-    path: 'class-forms-player',
-    component: ClassFormsPlayerComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {
