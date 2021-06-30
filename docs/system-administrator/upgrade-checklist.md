@@ -4,7 +4,7 @@
 * [ ] Clone production server to QA server.
 * [ ] Update `T_HOSTNAME` in `tangerine/config.sh`.
 * [ ] Run `./start.sh <currently used version of tangerine>`. This puts the updated config in `config.sh` into the container.
-* [ ] Update `serverUrl` in all `app-config.json` files for each group in `tangerine/data/group/<your-group-id>/client/app-config.json`. 
+* [ ] Update `serverUrl` in all `app-config.json` files for each group in `tangerine/data/group/<your-group-id>/client/app-config.json`.  Find and replace from the tangerine folder by modifying the following command: `find ./data/groups/ -type f -name "app-config.json" -print0 | xargs -0 sed -i '' -e 's/production-server-hostname/qa-server-hostname/g'`
 * [ ] Release all APKs and PWAs. This puts all updated app config into the APKs and PWAs.
 * [ ] Install and set up PWA/APKs for groups to test.
 * [ ] Upgrade the QA server following the server instructions for the release you are upgrading to in `CHANGELOG.md` (https://github.com/Tangerine-Community/Tangerine/blob/master/CHANGELOG.md). Note that you must upgrade incrementally between the versions. If you skip one you may miss important updates or they may not apply correctly and you risk corrupting your install without knowing it.
