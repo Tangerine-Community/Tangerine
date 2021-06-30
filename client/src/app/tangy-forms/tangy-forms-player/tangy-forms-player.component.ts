@@ -23,6 +23,8 @@ export class TangyFormsPlayerComponent {
   @Input('response') response:TangyFormResponseModel
   // 3. Use this is you want a new form response.
   @Input('formId') formId:string
+  // 4. Use this if you want to attach the form html yourself.
+  @Input('formHtml') formHtml:string
 
   @Input('templateId') templateId:string
   @Input('location') location:any
@@ -87,11 +89,13 @@ export class TangyFormsPlayerComponent {
     if (!this.response && this.formResponseId) {
       this.response = await this.tangyFormService.getResponse(this.formResponseId)
     }
-    this.formId = this.formId
-      ? this.formId
-      : formResponse['form']['id']
-    this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
-    this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
+    if (!this.formHtml) {
+      this.formId = this.formId
+        ? this.formId
+        : formResponse['form']['id']
+      this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
+      this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
+    }
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
@@ -116,10 +120,15 @@ export class TangyFormsPlayerComponent {
         // for all new form responses.
         formVersionId = this.formInfo.formVersions[0].id 
       }
-      let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId)
+      if (!this.formHtml) {
+        this.formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId)
+      }
+      
+      
+      
       // Put the form on the screen.
       const container = this.container.nativeElement
-      container.innerHTML = formHtml
+      container.innerHTML = this.formHtml
       let formEl = container.querySelector('tangy-form')
       this.formEl = formEl;
       // Put a response in the store by issuing the FORM_OPEN action.
@@ -128,13 +137,14 @@ export class TangyFormsPlayerComponent {
       } else {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
-        formEl.response.formVersionId = this.formInfo.formVersionId
+        formEl.response.formVersionId = this.formInfo? this.formInfo.formVersionId : null
         this.throttledSaveResponse(formEl.response)
       }
       this.response = formEl.response
       // Listen up, save in the db.
       if (!this.skipSaving && !this.response.complete) {
         formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+          // _.dispatchEvent(new CustomEvent('TANGY_FORM_PRE_UPDATE'))
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
         })

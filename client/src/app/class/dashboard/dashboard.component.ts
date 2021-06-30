@@ -331,7 +331,7 @@ export class DashboardComponent implements OnInit {
     if (selectedForm['response']) {
       responseId = selectedForm['response']['_id'];
     }
-    this.router.navigate(['class-forms-player'], { queryParams:
+    this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId,
           curriculum: curriculum,
           studentId: studentId,
@@ -357,7 +357,7 @@ export class DashboardComponent implements OnInit {
     const src = selectedForm['src'];
     const title = selectedForm['title'];
     const responseId = selectedForm['response']['_id'];
-    this.router.navigate(['class-forms-player'], { queryParams:
+    this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
           classId: classId, itemId: selectedFormId, src: src, title:
           title, responseId: responseId }

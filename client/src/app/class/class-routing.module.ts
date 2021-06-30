@@ -9,6 +9,7 @@ import {StudentGroupingReportComponent} from "./reports/student-grouping-report/
 import {StudentProgressTableComponent} from "./reports/student-progress-table/student-progress-table.component";
 import {TaskReportComponent} from "./reports/task-report/task-report.component";
 import {ClassConfigComponent} from "./class-config/class-config.component";
+import {ClassFormComponent} from "./class-form/class-form.component";
 
 const appRoutes = [
   {
@@ -44,6 +45,11 @@ const appRoutes = [
   {
     path: 'class-config',
     component: ClassConfigComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'class-form',
+    component: ClassFormComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   }
 ];
