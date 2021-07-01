@@ -390,10 +390,11 @@ def main_job():
                 else:
                     log("Unexpected document type: " + id)
 
-    # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
-    config.set("TANGERINE","LastSequence",lastSequence)
-    with open(sys.argv[1], 'w') as configfile:
-        config.write(configfile)
+            # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
+            config.set("TANGERINE","LastSequence",lastSequence)
+            with open(sys.argv[1], 'w') as configfile:
+                config.write(configfile)
+
     # Finish.
     end_time = timeit.default_timer()
     totalTime = end_time - start_time
