@@ -130,8 +130,10 @@ export class IssueComponent implements OnInit {
             ${Marked.parse(event.data.label)}
             <h3>Description</h3>
             ${Marked.parse(event.data.description)}
-            <h3>Send to...</h3>
-            ...
+            <h3>Send to Devices</h3>
+            ${!event.data.sendToAllDevices && !event.data.sendToDeviceById ? `Do not send to devices.` : ''}
+            ${event.data.sendToAllDevices ? `Send to all devices.` : ''}
+            ${event.data.sendToDeviceById ? `Send to Device by ID: ${event.data.sendToDeviceById}` : ''}
           `: ``}
         ${event.data && event.data.comment ? Marked.parse(event.data.comment) : ``}
          ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
