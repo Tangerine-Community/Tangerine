@@ -10,6 +10,11 @@
     "languageDirection": "ltr"
   },
   {
+   "label": "Dari",
+   "languageCode": "faprs",
+   "languageDirection": "rtl"
+ },
+  {
     "label": "English",
     "languageCode": "en",
     "languageDirection": "ltr"
@@ -34,6 +39,11 @@
     "languageCode": "KH_km",
     "languageDirection": "ltr"
   },
+  {
+   "label": "Pashto",
+   "languageCode": "ps",
+   "languageDirection": "rtl"
+ },
   {
     "label": "Russian",
     "languageCode": "ru",
