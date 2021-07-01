@@ -4,8 +4,8 @@
     <paper-button *ngIf="issue.merged && !isOpen" class="status status-merged"><mwc-icon>call_merge</mwc-icon>merged</paper-button>
     <paper-button *ngIf="!issue.merged && !isOpen" class="status status-closed"><mwc-icon>check</mwc-icon>closed</paper-button>
     <paper-button *ngIf="isOpen" class="status status-open"><mwc-icon>list</mwc-icon>open</paper-button>
+    <a href="#/edit-issue/{{issue._id}}"><paper-button><mwc-icon>mode_edit</mwc-icon> Edit Issue</paper-button></a>
     <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review case</paper-button></a>
-    <a href="#/edit-issue/{{issue._id}}"><paper-button><mwc-icon>open_in_new</mwc-icon> Edit Issue</paper-button></a>
     <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review form</paper-button></a>
   </div>
   <paper-tabs class="tabs" selected="0" *ngIf="!conflict">
