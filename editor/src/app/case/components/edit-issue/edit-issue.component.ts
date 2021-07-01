@@ -37,13 +37,51 @@ export class EditIssueComponent implements OnInit {
       this.container.nativeElement.innerHTML = `
         <tangy-form id="form" #form>
           <tangy-form-item id="new-issue" title="New Issue">
-            <tangy-input name="title" label="Title" inner-label=" " value="${issueLabel}" required></tangy-input>
-            <tangy-input name="description" label="Description" inner-label=" " value="${issueDescription}"></tangy-input>
-            <tangy-radio-buttons name="send_to" label="Send to...">
+            <tangy-input
+              name="title"
+              label="Title"
+              inner-label=" "
+              value="${issueLabel}"
+              required
+            >
+            </tangy-input>
+            <tangy-input
+              name="description"
+              label="Description"
+              inner-label=" "
+              value="${issueDescription}"
+            >
+            </tangy-input>
+            <tangy-checkbox
+              name="should_send_to"
+              label="Send to Devices"
+              value="${issue.sendToAllDevices || issue.sendToDeviceById ? 'on' : ''}"
+            >
+            </tangy-checkbox>
+            <tangy-select 
+              name="send_to"
+              label="Send to..." 
+              show-if="getValue('should_send_to')"
+              value=${[
+                '"', 
+                issue.sendToAllDevices ? `all_devices` : '',
+                issue.sendToDeviceById ? `device_by_id` : '',
+                '"'
+              ].join('')}
+              required
+            >
               <option value="all_devices">All devices</option>
               <option value="device_by_id">Device by ID</option>
-            </tangy-radio-buttons>
-            <tangy-input name="device_id" label="Device ID" inner-label=" " show-if="getValue('send_to') === 'device_by_id'"></tangy-input>
+            </tangy-select>
+            <tangy-input 
+              name="device_id"
+              label="Device ID"
+              inner-label=" "
+              show-if="getValue('send_to') === 'device_by_id'"
+              value="${issue.sendToDeviceById || ''}"
+              required
+            >
+            </tangy-input>
           </tangy-form-item>
         </tangy-form>
       `
@@ -52,7 +90,7 @@ export class EditIssueComponent implements OnInit {
         const response = new TangyFormResponseModel(event.target.response)
         const issueLabel = response.inputsByName.title.value
         const issueDescription = response.inputsByName.description.value
-        const sendToAllDevices = response.inputsByName.send_to.value.find(option => option.name === 'all_devices').value === 'on'
+        const sendToAllDevices = response.inputsByName.send_to.value === 'all_devices'
           ? true 
           : false
         const sendToDeviceById = response.inputsByName.device_id.value
