@@ -1,6 +1,12 @@
 <div class="primary">
   <iron-icon icon="clear" class="back-to-cases" (click)="goBackToCases()"></iron-icon>
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
+<!-- TODO *appHasAPermission="let i;group:group._id; permission:'can_delete_cases'"-->
+  <span id="delete-case">
+          <a mat-icon-button  (click)="delete()">
+            <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
+          </a>
+        </span>
 </div>
 <div class="secondary" *ngIf="secondaryText">
     <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>

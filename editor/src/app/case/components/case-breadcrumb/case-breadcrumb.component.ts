@@ -4,6 +4,7 @@ import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { translate } from '@polymer/polymer/lib/utils/path';
+import {_TRANSLATE} from "../../../../../../client/src/app/shared/translation-marker";
 
 @Component({
   selector: 'app-case-breadcrumb',
@@ -72,6 +73,21 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   goBackToCases() {
     this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
+  }
+
+  async delete() {
+    const confirmDelete = confirm(
+      _TRANSLATE('Are you sure you want to delete this case? You will not be able to undo the operation')
+    );
+    if (confirmDelete) {
+      console.log("Deleting")
+      // this.caseService.deleteEventForm(this.eventForm.caseEventId, this.eventForm.id);
+      // await this.caseService.save();
+      // this.formDeleted.emit('formDeleted');
+      // this.ref.detectChanges();
+      await this.caseService.delete()
+      this.goBackToCases()
+    }
   }
 
 }
