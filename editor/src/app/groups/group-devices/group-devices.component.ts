@@ -256,7 +256,13 @@ export class GroupDevicesComponent implements OnInit {
     `
     } else if (device.replicationStatuses) {
       const replicationStatusesReversed = device.replicationStatuses.reverse()
-      let output = '<h2>Sync Log</h2>\n<style>.syncLog td {\n' +
+      let output = '<h2>Sync Log</h2>\n<p>Sync Property Notes: ' +
+        '<ul>' +
+        '<li>fullSync: Indicates the direction of a rewind sync. Disregard the `direction` property: even if fullSync = push, ' +
+        'the `direction` property changes from push to pull because it does both a push and a pull. </li>' +
+        '<li>compareDocsStartTime: Indicates a comparison sync. The compareDocsDirection property indicates the direction. </li>' +
+        '</ul>\n' +
+        '<style>.syncLog td {\n' +
         '  vertical-align: top;\n  display: inline-block; margin-bottom: 5px;\n' +
         '}</style><table class="syncLog">';
       replicationStatusesReversed.forEach(status => {
