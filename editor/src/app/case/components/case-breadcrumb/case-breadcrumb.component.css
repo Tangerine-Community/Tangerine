@@ -29,3 +29,7 @@
 .secondary iron-icon {
     color: var(--primary-text-color-overlay) !important;
 }
+
+#delete-case {
+  padding-left: 1em;
+}
