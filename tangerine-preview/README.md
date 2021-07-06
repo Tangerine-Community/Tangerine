@@ -19,10 +19,10 @@ npm install -g tangerine-preview
 
 
 ## Preview your content
-Open a command prompt, change directory to your content that you would like to preview, then run the `tangerine-preview` command.
+Open a command prompt, change directory to the `client` subfolder of the Tangerine group that you would like to preview, then run the `tangerine-preview` command.
 
 ```
-cd your-project
+cd your-project/client
 tangerine-preview
 ```
 
