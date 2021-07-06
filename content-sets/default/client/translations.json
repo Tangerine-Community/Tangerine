@@ -1,5 +1,20 @@
 [
   {
+    "label": "Amharic",
+    "languageCode": "am",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Bengali",
+    "languageCode": "bn",
+    "languageDirection": "ltr"
+  },
+  {
+   "label": "Dari",
+   "languageCode": "faprs",
+   "languageDirection": "rtl"
+ },
+  {
     "label": "English",
     "languageCode": "en",
     "languageDirection": "ltr"
@@ -7,6 +22,11 @@
   {
     "label": "French",
     "languageCode": "fr",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Hindi",
+    "languageCode": "hi",
     "languageDirection": "ltr"
   },
   {
@@ -20,13 +40,29 @@
     "languageDirection": "ltr"
   },
   {
+   "label": "Pashto",
+   "languageCode": "ps",
+   "languageDirection": "rtl"
+ },
+  {
     "label": "Russian",
     "languageCode": "ru",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Swahili",
+    "languageCode": "sw",
     "languageDirection": "ltr"
   },
   {
     "label": "Тоҷикӣ́",
     "languageCode": "tg",
     "languageDirection": "ltr"
+  },
+
+  {
+    "label": "Urdu",
+    "languageCode": "ur",
+    "languageDirection": "rtl"
   }
 ]
