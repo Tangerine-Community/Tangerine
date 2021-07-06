@@ -9,7 +9,7 @@ If, for example, the value entered into an "INPUT-NUMBER" field should have 9 or
     input.value.length > 9
 
 
-<img src="../media/add_input.png" width="570">
+<img src="./media/add_input.png" width="570">
 
 
 Tangerine also allow you to compare the value entered in the current item to a value entered for another, earlier item. This might be the case, e.g. for attendance when observing a classroom. That is, when recording attendance, the number of children present should not exceed the number of children enrolled. Assume that a relevant variable name of the earlier item was "boys_enrolled" and the current items is about the boys present, this might be the validation logic to enter under "Valid if" for boys_present.
@@ -17,7 +17,7 @@ Tangerine also allow you to compare the value entered in the current item to a v
     :::javascript
     parseInt(input.value) <= inputs.boys_enrolled.value
 
-<img src="../media/prior_valid.png" width="570">
+<img src="./media/prior_valid.png" width="570">
 
 
 If you want to validate that a number input is in between a particular range but also allow a 'No Reply' answer, use the below validation rule:
