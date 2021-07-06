@@ -28,5 +28,25 @@
     "label": "Тоҷикӣ́",
     "languageCode": "tg",
     "languageDirection": "ltr"
+  },
+  {
+    "label": "Swahili",
+    "languageCode": "sw",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Urdu",
+    "languageCode": "ur",
+    "languageDirection": "rtl"
+  },
+  {
+    "label": "Hindi",
+    "languageCode": "hi",
+    "languageDirection": "ltr"
+  },
+  {
+    "label": "Amharic",
+    "languageCode": "am",
+    "languageDirection": "ltr"
   }
 ]
