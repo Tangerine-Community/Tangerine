@@ -53,20 +53,20 @@ Other examples might include a specific value of a preceding item. Use the below
 ## Logic at instrument/form level
 At the instrument/form level, accessing this logic editor is via advanced settings in the section editor.
 
-<img src="../media/section_editor.png" width="570">
+<img src="./media/section_editor.png" width="570">
 
 
 Click on ADVANCED to see the screen below with "on-open" and "on-change" entries.
 
-<img src="../media/advanced_editor.png" width="570">
+<img src="./media/advanced_editor.png" width="570">
 
 As outlined earlier, at the item level, such logic can be added in the "Show if" field in the item editor.
 
-<img src="../media/show_if.png" width="270">
+<img src="./media/show_if.png" width="270">
 
 On-open and on-change
 
-<img src="../media/on_open.png" width="570">
+<img src="./media/on_open.png" width="570">
 
 As the name suggest, on-open logic is only executed when the form is opened whereas on-change logic is always executed whenever a change happens in the whole form. When selecting on-open logic either at the instrument/form level or in the section editor, the following screen appears. The interface allows JavaScript logic to be incorporated into the instrument.
 
@@ -78,7 +78,7 @@ Navigate to and select the "on-change" at the instrument/form level. This logic 
 
 In this example, the section gets skipped based on responses from a previous item, e.g., if the respondent answered negatively to a previous question "Do you have children?". Note that the sectionID is provided in Tangerine in the section details as shown below. Form level skip logic is used to present or hide an entire section page to the user. This is very useful when managing a workflow and you need to display some sections but hide others according to the selected option for a question. For example, you can show a certain section only for grade 1 and hide it if grade 2 is selected.
 
-<img src="../media/section_details.png" width="570">
+<img src="./media/section_details.png" width="570">
 
 
     :::javascript
@@ -117,13 +117,13 @@ In this example the item "teachers_name" should only be shown if the participant
 
 The Logic interface offer syntax highlighting. This is handy when you have errors in your code. Below is an example of an error and sample message.
 
-<img src="../media/syntax_hilite.png" width="570">
+<img src="./media/syntax_hilite.png" width="570">
 
 
 ## Logic at section level
 At the section level, the logic editor can be accessed by editing the Section Details clicking the pen icon on the right of the blue bar (where one can also rename the section).
 
-<img src="../media/section_detail_editor.png" width="570">
+<img src="./media/section_detail_editor.png" width="570">
 
 
 ## Skip logic with grid specific functions
