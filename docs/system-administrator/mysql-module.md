@@ -37,7 +37,8 @@ docker exec tangerine reporting-cache-clear
 You can check in on the progress of generating the mysql database using the `mysql-report` command. It will return for each kind of case data and form, how many records are in the source database vs. how many have made it over to mysql. Note that if your system is under heavy load during the processing of this, this command may stress it out even more so it may be best to wait until you see a load of less than one using a tool like `top` or `htop`. 
 
 ```
-docker exec tangerine mysql-report <groupId>
+docker exec -it tangerine bash 
+mysql-report <groupId> | json_pp
 ```
 
 ### Step 6
