@@ -63,7 +63,6 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
 		  ${subtest.collection === 'lessonPlan' ? `
 		  <tangy-box name="${subtest.name}"> ${subtest.html}</tangy-box>	             
 		  `: ``}
-
 	    ${(subtest.enumeratorHelp && subtest.enumeratorHelp !== '') ? `
 		<tangy-box name="header">${subtest.enumeratorHelp}</tangy-box>
 	    `: ``} 
@@ -90,7 +89,6 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
                       <option value="${option.value}">${option.label.replace(/["']/g, "`")}</option>
                     `).join('')}
 				  </tangy-checkboxes>
-
 				`: ``}
 				${question.prototype === 'html' ? `
 				<tangy-box name="box_${question._id}"> <p>${question.name}</p> ${question.html}</tangy-box>	             
@@ -106,18 +104,15 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
 					</audio>
 			</tangy-box>	             
 				`: ``}
-
 				${question.prototype === 'html' && question.fileType == 'image/jpeg' ? `
 				<tangy-box name="img_${question._id}">
 					<p><img  src="./assets/media/${question.elementFilename}"  alt="${question.fileName}" width="85%"/></p>
 			</tangy-box>	             
 				`: ``}
-
                 ${question.type === 'open' ? `
                   <tangy-input name="${question.name.replace(/["']/g, "`")}" label="${question.prompt.replace(/["']/g, "`")}" ${question.skippable ? '' : 'required'}>
                   </tangy-input>               
                 `: ``}
-
               `).join('')}
             `: ``}
             ${subtest.prototype === 'datetime' ? `
@@ -143,7 +138,6 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
 	    ${subtest.prototype === 'id' ? `
               <tangy-input name="student_id" label="" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
             `: ``}
-
 				 
 		</template>
         </tangy-form-item>
@@ -151,16 +145,16 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
     </tangy-form>
   `
   try {
-    await exec(`mkdir /tangerine/client/content/groups/${targetGroupId}/${assessment._id}/`)
+    await exec(`mkdir /tangerine/client/content/groups/${targetGroupId}/form_${assessment._id}/`)
   } catch (e) {
     // Do nothing. May be a redo.
   }
-  await writeFile(`/tangerine/client/content/groups/${targetGroupId}/${assessment._id}/form.html`, template, 'utf8')
+  await writeFile(`/tangerine/client/content/groups/${targetGroupId}/form_${assessment._id}/form.html`, template, 'utf8')
   const forms = JSON.parse(await readFile(`/tangerine/client/content/groups/${targetGroupId}/forms.json`))
   if (!forms.find(formInfo => formInfo.id === assessment._id)) {
     forms.push({
-      id: assessment._id,
-      src: `./assets/${assessment._id}/form.html`,
+      id: form_$:{assessment._id},
+      src: `./assets/form_${assessment._id}/form.html`,
       title: assessment.name
     })
     await writeFile(`/tangerine/client/content/groups/${targetGroupId}/forms.json`, JSON.stringify(forms), 'utf8')
