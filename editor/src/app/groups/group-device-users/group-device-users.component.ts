@@ -50,16 +50,4 @@ export class GroupDeviceUsersComponent implements OnInit {
     })
   }
 
-  async newDeviceUser() {
-    const data: any = await this.groupsService.getLocationList(this.groupId);
-    if (data.locationsLevels.length === 0) {
-      alert("Before adding users, you must first go to Configure / Location List and create at least one location.")
-    } else {
-      const response = new TangyFormResponseModel()
-      response.form.id = 'user-profile'
-      await this.http.post(`/api/${this.groupId}/${response._id}`, response).toPromise()
-      this.router.navigate([response._id], {relativeTo: this.route})
-    }
-  }
-
 }
