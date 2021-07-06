@@ -2,6 +2,14 @@ import { UserService } from './../../../shared/_services/user.service';
 import { SyncService } from './../../../sync/sync.service';
 import { Subject } from 'rxjs';
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import { VariableService } from 'src/app/shared/_services/variable.service';
+import { Router } from '@angular/router';
+
+export enum FIRST_SYNC_STATUS {
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETE = 'COMPLETE'
+}
+
 
 @Component({
   selector: 'app-device-sync',
@@ -32,6 +40,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
 
   constructor(
     private syncService:SyncService,
+    private variableService:VariableService,
+    private router:Router,
     private userService: UserService
   ) { }
 
@@ -51,6 +61,8 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.pushError = ''
     this.syncMessage = ''
     this.indexingMessage = ''
+
+    this.variableService.set('FIRST_SYNC_STATUS', FIRST_SYNC_STATUS.IN_PROGRESS)
 
     try {
       this.wakeLock =  await navigator['wakeLock'].request('screen');
@@ -131,6 +143,13 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
     this.syncInProgress = false
     const userDb = await this.userService.getUserDatabase()
     this.dbDocCount = (await userDb.db.info()).doc_count
+    // We need to also check if there is a pushError, which is the error if there is no Internet connection to begin with
+    // despite the fact there is no push on a first time sync.
+    if (!replicationStatus.pullError && !replicationStatus.pushError) {
+      this.variableService.set('FIRST_SYNC_STATUS', FIRST_SYNC_STATUS.COMPLETE)
+    } else {
+      this.router.navigate(['device-resync']);
+    }
     this.syncIsComplete = true
   }
 
