@@ -8,6 +8,7 @@ import { NewCaseComponent } from './components/new-case/new-case.component';
 import { CaseComponent } from './components/case/case.component';
 import { EventComponent } from './components/event/event.component'
 import { EventFormComponent } from './components/event-form/event-form.component'
+import {IssueComponent} from "./components/issue/issue.component";
 
 const routes: Routes = [
   {
@@ -38,6 +39,11 @@ const routes: Routes = [
   {
     path: 'new-issue/:caseId/:eventId/:eventFormId',
     component: NewIssueComponent,
+    canActivate: [LoginGuard]
+  },
+  { 
+    path: 'groups/:groupId/data/issues/:issueId', 
+    component: IssueComponent, 
     canActivate: [LoginGuard]
   }
 ];
