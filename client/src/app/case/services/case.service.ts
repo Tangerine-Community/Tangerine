@@ -268,11 +268,15 @@ class CaseService {
   /*
    * Role Access API
    */
-  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition) {
+  // @TODO Add EventForm.permissions to interface and pass in eventForm in every usage of hasEventFormPermission.
+  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition, eventForm:EventForm) {
     if (
         !eventFormDefinition.permissions ||
         !eventFormDefinition.permissions[operation] ||
-        eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+        (
+          eventForm.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0 ||
+          eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+        )
     ) {
       return true
     } else {
