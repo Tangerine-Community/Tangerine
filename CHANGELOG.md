@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.18.1
+- Fix backup when using os encryption and sync protocol 2 and cordova. (PR: [#2767](https://github.com/Tangerine-Community/Tangerine/pull/2767))
+- Fix creating of new Device Users when using Sync Protocol 2. (PR: [#2769](https://github.com/Tangerine-Community/Tangerine/pull/2769))
+- Fix default user profile form for Sync Protocol 1 users. We should not assume they are using roles or location.
+
+
 ## v3.18.0
 
 ### New Features
@@ -9,7 +15,7 @@
 - Serve base64 image data as image files [#2706](https://github.com/Tangerine-Community/Tangerine/issues/2706) PR: [#2725](https://github.com/Tangerine-Community/Tangerine/pull/2725)
 - Add Cycle sequences [1603](https://github.com/Tangerine-Community/Tangerine/issues/1603)
 - Sort by lastModified in the client case search [#2692](https://github.com/Tangerine-Community/Tangerine/pull/2692)
-- Enable assigning multiple roles in forCaseRole in the eventDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
+- Enable assigning multiple roles in forCaseRole in the eventFormDefinition [#2694](https://github.com/Tangerine-Community/Tangerine/pull/2694/)
 - Enable defining custom functions or valid JavaScript expressions that will be called when an event is opened and when an event is closed. On open and close events for case and case-events: [#2696](https://github.com/Tangerine-Community/Tangerine/pull/2696/files)
 - Teach-specific strings in Russian for default content-set [#2676](https://github.com/Tangerine-Community/Tangerine/pull/2676)
 - Uploads status such as app version when updating the app [#2756](https://github.com/Tangerine-Community/Tangerine/issues/2756)
@@ -33,7 +39,7 @@
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -60,7 +66,7 @@ docker rmi tangerine/tangerine:v3.17.11
   
   __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -90,7 +96,7 @@ docker rmi tangerine/tangerine:v3.17.10
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -119,7 +125,7 @@ docker rmi tangerine/tangerine:v3.17.9
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -166,7 +172,7 @@ docker rmi tangerine/tangerine:v3.17.8
   
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -192,7 +198,7 @@ docker rmi tangerine/tangerine:v3.17.7
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -219,7 +225,7 @@ docker rmi tangerine/tangerine:v3.17.6
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -245,7 +251,7 @@ docker rmi tangerine/tangerine:v3.17.5
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -280,7 +286,7 @@ docker rmi tangerine/tangerine:v3.17.4
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -307,7 +313,7 @@ docker rmi tangerine/tangerine:v3.17.3
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -336,7 +342,7 @@ docker rmi tangerine/tangerine:v3.17.2
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -363,7 +369,7 @@ docker rmi tangerine/tangerine:v3.17.1
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -404,7 +410,7 @@ __New Features and Fixes__
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -443,7 +449,7 @@ There is now a content set for developing projects with the Class module enabled
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -487,7 +493,7 @@ __New Features__
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -532,7 +538,7 @@ __Fixes__
 
 __Server upgrade instructions__
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -575,7 +581,7 @@ __Server upgrade instructions__
 
 If you want to enable filtered Case Event Schedule by Device's Assigned Location, add `filterCaseEventScheduleByDeviceAssignedLocation` to your groups' `app-config.json` set to a value of `true`.
 
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -618,7 +624,7 @@ __Fixes__
 
 
 __Server upgrade instructions__
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -681,7 +687,7 @@ __Fixes__
 - Add missing import of `editor/custom-scripts.js` when using editor so Data Dashboards can have imported JS files.
 
 __Server upgrade instructions__
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 
 ```
@@ -722,7 +728,7 @@ docker rmi tangerine/tangerine:v3.15.6
 - Added simple network statistics to the device replicationStatus, which is posted after every sync.
 
 __Server upgrade instructions__
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -750,7 +756,7 @@ __New Features and Fixes__
 - The default value of the new config file is set to "ORIGINAL_VALUE" so existing Tangerine instances will not be effected.
 
 __Server upgrade instructions__
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 Please add the below line into your config.sh to preserve current behavior (as a workaround for #2564)
 ```
@@ -785,7 +791,7 @@ __New Features and Fixes__
 - Batch size for sync is configurable via `pullSyncOptions` and `pushSyncOptions` variable in a group's app-config.json. Default is 200. If the value is set too high, the application will crash.
 
 __Server upgrade instructions__
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine
@@ -814,7 +820,7 @@ __Fixes__
 - Improve messaging during sync by removing floating change counts and showing the total number of docs in the database after sync.
 
 __Server upgrade instructions__
-Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist/) for making sure you test the upgrade safely.
+Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
 ```
 cd tangerine

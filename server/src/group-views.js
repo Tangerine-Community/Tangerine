@@ -85,6 +85,14 @@ module.exports.groupIssues = function(doc) {
   }
 }
 
+module.exports.groupConflicts = function(doc) {
+  if (doc.collection === "TangyFormResponse" && doc.type === "issue") {
+    if (doc.events && doc.events[0] && doc.events[0].data && doc.events[0].data.conflict) {
+      emit([doc.caseId])
+    }
+  }
+}
+
 module.exports.syncConflicts = function(doc) {
   if (doc._conflicts) {
     emit(true)

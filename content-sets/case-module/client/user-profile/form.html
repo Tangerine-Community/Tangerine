@@ -1,7 +1,18 @@
 <tangy-form id="user-profile">
-  <tangy-form-item id="item1" title="User Profile">
+  <tangy-form-item id="item1" title="User Profile"
+    on-open="
+      if (window.isEditorContext || window.isPreviewContext) {
+        inputs.roles.removeAttribute('disabled')
+      } else {
+        inputs.roles.setAttribute('disabled', '')
+      }
+    ">
     <tangy-input name="first_name" type="text" label="First name" required></tangy-input>
     <tangy-input name="last_name" type="text" label="Last name" required></tangy-input>
+    <tangy-checkboxes name="roles" label="Roles" disabled>
+      <option value="dataCollector">Data Collector</option>
+      <option value="admin">Admin</option>
+    </tangy-checkboxes>
     <tangy-location name="location" label="Assigned location" show-level="region,district,facility"></tangy-location>
   </tangy-form-item>
 </tangy-form>

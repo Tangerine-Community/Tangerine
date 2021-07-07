@@ -255,12 +255,18 @@ export class GroupDevicesComponent implements OnInit {
     </paper-dialog-scrollable>
     `
     } else if (device.replicationStatuses) {
-      const replicationStatusesSorted = device.replicationStatuses.slice().sort((a, b) => moment(b.info?.end_time).unix() - moment(a.info?.end_time).unix())
-      let output = '<h2>Sync Log</h2>\n<p>Sorted by sync end_time</p><style>.syncLog td {\n' +
+      const replicationStatusesReversed = device.replicationStatuses.reverse()
+      let output = '<h2>Sync Log</h2>\n<p>Sync Property Notes: ' +
+        '<ul>' +
+        '<li>fullSync: Indicates the direction of a rewind sync. Disregard the `direction` property: even if fullSync = push, ' +
+        'the `direction` property changes from push to pull because it does both a push and a pull. </li>' +
+        '<li>compareDocsStartTime: Indicates a comparison sync. The compareDocsDirection property indicates the direction. </li>' +
+        '</ul>\n' +
+        '<style>.syncLog td {\n' +
         '  vertical-align: top;\n  display: inline-block; margin-bottom: 5px;\n' +
         '}</style><table class="syncLog">';
-      replicationStatusesSorted.forEach(status => {
-        output = output + "<tr><td><strong>" + moment(status.info?.end_time).format("YYYY-MM-DD HH:mm:SS") + "</strong></td></tr><tr><td><pre>" + JSON.stringify(status, null, 2) + "</pre></td></tr>"
+      replicationStatusesReversed.forEach(status => {
+        output = output + "<tr><td><strong>" + moment(status.syncCouchdbServiceEndime).format("YYYY-MM-DD HH:mm:SS") + "</strong></td></tr><tr><td><pre>" + JSON.stringify(status, null, 2) + "</pre></td></tr>"
       })
       output = output + "</table>"
       window['dialog'].innerHTML = `
