@@ -21,6 +21,7 @@ import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.comp
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
   [IssueEventType.ProposedChange]: 'call_split',
+  [IssueEventType.UpdateMeta]: 'settings',
   [IssueEventType.Merge]: 'call_merge',
   [IssueEventType.Open]: 'playlist_add',
   [IssueEventType.Rebase]: 'settings_backup_restore'
@@ -28,7 +29,7 @@ const IssueEventTypeIconMap = {
 
 const IssueEventTypeLabelMap = {
   [IssueEventType.Comment]: _TRANSLATE('comment'),
-  [IssueEventType.UpdateMeta]: _TRANSLATE('Updated metadata'),
+  [IssueEventType.UpdateMeta]: _TRANSLATE('updated settings'),
   [IssueEventType.ProposedChange]: _TRANSLATE('revision'),
   [IssueEventType.Merge]: _TRANSLATE('proposed changes merged'),
   [IssueEventType.Open]: _TRANSLATE('opened'),
@@ -109,7 +110,6 @@ export class IssueComponent implements OnInit {
 
   async update() {
     this.isOpen = this.issue.status === IssueStatus.Open ? true : false
-    debugger
     this.eventInfos = this.issue.events.map(event => {
       return <EventInfo>{
         id: event.id,

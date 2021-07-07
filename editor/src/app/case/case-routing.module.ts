@@ -42,10 +42,6 @@ const routes: Routes = [
     component: NewIssueComponent,
     canActivate: [LoginGuard]
   },
-  {
-    path: 'edit-issue/:issueId',
-    component: EditIssueComponent,
-  },
   { 
     path: 'groups/:groupId/data/issues/:issueId', 
     component: IssueComponent, 

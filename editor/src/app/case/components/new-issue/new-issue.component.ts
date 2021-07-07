@@ -54,7 +54,7 @@ export class NewIssueComponent implements OnInit {
             <tangy-form-item id="new-issue" title="New Issue">
               <tangy-input
                 name="title"
-                label="Title"
+                label="Issue Label"
                 inner-label=" "
                 value="${this.renderedTemplateIssueTitle}"
                 required
@@ -62,11 +62,47 @@ export class NewIssueComponent implements OnInit {
               </tangy-input>
               <tangy-input
                 name="description"
-                label="Description"
+                label="Issue Description"
                 inner-label=" "
                 value="${this.renderedTemplateIssueDescription}"
               >
               </tangy-input>
+              <tangy-input
+                name="case_id"
+                label="Case ID"
+                value="${caseInstance._id}"
+                disabled
+              >
+              </tangy-input>
+              <tangy-input
+                name="case_event_id"
+                label="Case Event ID"
+                value="${caseEvent.id}"
+                disabled
+              >
+              </tangy-input>
+              <tangy-input
+                name="event_form_id"
+                label="Event Form ID"
+                value="${eventForm.id}"
+                disabled
+              >
+              </tangy-input>
+               <tangy-input
+                name="form_response_id"
+                label="Form Response ID"
+                value="${formResponse._id}"
+                disabled
+              >
+              </tangy-input>
+              <tangy-location
+                name="location"
+                label="Location"
+                value='${JSON.stringify(Object.getOwnPropertyNames(caseInstance.location).map(level => { return { level, value: caseInstance.location[level] } }))}'
+                disabled
+              >
+              </tangy-location>
+
               <tangy-checkbox
                 name="should_send_to"
                 label="Send to Devices"
@@ -96,13 +132,13 @@ export class NewIssueComponent implements OnInit {
         this.container.nativeElement.querySelector('tangy-form').addEventListener('submit', async (event) => {
           event.preventDefault()
           const response = new TangyFormResponseModel(event.target.response)
-          const title = response.inputsByName.title.value
-          const description = response.inputsByName.description.value
-          const sendToAllDevices = response.inputsByName.send_to.value.find(option => option.name === 'all_devices').value === 'on'
+          const issueLabel = response.inputsByName.title.value
+          const issueDescription = response.inputsByName.description.value
+          const sendToAllDevices = response.inputsByName.send_to.value === 'all_devices'
             ? true 
             : false
           const sendToDeviceById = response.inputsByName.device_id.value
-          await this.saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, groupId, sendToAllDevices, sendToDeviceById)
+          await this.saveIssueAndRedirect(issueLabel, issueDescription, caseId, eventId, eventFormId, userId, userName, groupId, sendToAllDevices, sendToDeviceById)
         })
       }
     })
