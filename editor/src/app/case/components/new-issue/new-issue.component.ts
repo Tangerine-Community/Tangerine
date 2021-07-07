@@ -52,13 +52,44 @@ export class NewIssueComponent implements OnInit {
         this.container.nativeElement.innerHTML = `
           <tangy-form id="form" #form>
             <tangy-form-item id="new-issue" title="New Issue">
-              <tangy-input name="title" label="Title" inner-label=" " value="${this.renderedTemplateIssueTitle}" required></tangy-input>
-              <tangy-input name="description" label="Description" inner-label=" " value="${this.renderedTemplateIssueDescription}"></tangy-input>
-              <tangy-radio-buttons name="send_to" label="Send to...">
+              <tangy-input
+                name="title"
+                label="Title"
+                inner-label=" "
+                value="${this.renderedTemplateIssueTitle}"
+                required
+              >
+              </tangy-input>
+              <tangy-input
+                name="description"
+                label="Description"
+                inner-label=" "
+                value="${this.renderedTemplateIssueDescription}"
+              >
+              </tangy-input>
+              <tangy-checkbox
+                name="should_send_to"
+                label="Send to Devices"
+                hint-text="Warning: If you remove this setting later, Devices that have downloaded this Issue will still have it and no longer receive updates on this Issue."
+              >
+              </tangy-checkbox>
+              <tangy-select 
+                name="send_to"
+                label="Send to..." 
+                show-if="getValue('should_send_to')"
+                required
+              >
                 <option value="all_devices">All devices</option>
                 <option value="device_by_id">Device by ID</option>
-              </tangy-radio-buttons>
-              <tangy-input name="device_id" label="Device ID" inner-label=" " show-if="getValue('send_to') === 'device_by_id'"></tangy-input>
+              </tangy-select>
+              <tangy-input 
+                name="device_id"
+                label="Device ID"
+                inner-label=" "
+                show-if="getValue('send_to') === 'device_by_id'"
+                required
+              >
+              </tangy-input>
             </tangy-form-item>
           </tangy-form>
         `
