@@ -29,15 +29,15 @@ async function generateCsvDataSet(dbName = '', formIds = [], outputPath = '', ye
   await writeState(state)
   for (let formId of state.formIds) {
     let complete = false
-    state.csvs.find(csv => csv.formId === formId).inProgress = false
+    state.csvs.find(csv => csv.formId === formId).inProgress = true
     await writeState(state)
     while (complete === false) {
+      await sleep(10*1000)
       complete = true
     }
     state.csvs.find(csv => csv.formId === formId).complete = true
     state.csvs.find(csv => csv.formId === formId).inProgress = false
     await writeState(state)
-    await sleep(10*1000)
   }
   state.complete = true
   await writeState(state)
