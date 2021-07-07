@@ -637,6 +637,37 @@ class CaseService {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
     const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    // If the Event or Event Form related to issue are not longer in the caseInstance, restore them.
+    // This may be due to either the Event or Event Form being removed, or a Data Conflict where this Event or Event Form is in the losing revision.
+    let currentEvent = caseInstance.events.find(event => event.id === issue.eventId)
+    if (!currentEvent) {
+      if (await this.hasProposedChange(issueId)) {
+        const proposedRevisionIssueEvent = await this.getProposedChange(issueId)
+        const theMissingCaseEvent = proposedRevisionIssueEvent.caseInstance.events.find(event => event.id === issue.eventId)
+        caseInstance.events.push(theMissingCaseEvent)
+      } else {
+        const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+        const theMissingCaseEvent = baseEvent.data.caseInstance.events.find(event => event.id === issue.eventId)
+        caseInstance.events.push(theMissingCaseEvent)
+      }
+      currentEvent = caseInstance.events.find(event => event.id === issue.eventId)
+    }
+    let currentEventForm = currentEvent.find(eventForm => eventForm.id === issue.eventFormId)
+    if (!currentEventForm) {
+      if (await this.hasProposedChange(issueId)) {
+        const proposedRevisionIssueEvent = await this.getProposedChange(issueId)
+        const theMissingEventForm = proposedRevisionIssueEvent.caseInstance
+          .events.find(event => event.id === issue.eventId)
+          .eventForms.find(eventForm => eventForm.id === issue.eventFormId)
+        currentEvent.eventForms.push(theMissingEventForm)
+      } else {
+        const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+        const theMissingEventForm = baseEvent.data.caseInstance
+          .events.find(event => event.id === issue.eventId)
+          .eventForms.find(eventForm => eventForm.id === issue.eventFormId)
+        currentEvent.eventForms.push(theMissingEventForm)
+      }
+    }
     issue.events.push(<IssueEvent>{
       id: UUID(),
       type: IssueEventType.Rebase,
