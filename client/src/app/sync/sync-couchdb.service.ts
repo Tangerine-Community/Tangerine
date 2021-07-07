@@ -522,15 +522,23 @@ export class SyncCouchdbService {
           return $or
         }, []),
         ...syncDetails.deviceSyncLocations.length > 0
-          ? syncDetails.deviceSyncLocations.map(locationConfig => {
+          ? syncDetails.deviceSyncLocations.reduce((filters, locationConfig) => {
             // Get last value, that's the focused sync point.
             let location = locationConfig.value.slice(-1).pop()
-            return {
-              "type": "issue",
-              [`location.${location.level}`]: location.value,
-              "resolveOnAppContext": AppContext.Client
-            }
-          })
+            return [
+              ...filters,
+              {
+                "type": "issue",
+                [`location.${location.level}`]: location.value,
+                "sendToAllDevices": true 
+              },
+              {
+                "type": "issue",
+                [`location.${location.level}`]: location.value,
+                "sendToDeviceById": syncDetails.deviceId
+              }
+            ] 
+          }, [])
           : [
             {
               "resolveOnAppContext": AppContext.Client,

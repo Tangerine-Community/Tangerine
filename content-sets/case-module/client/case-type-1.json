@@ -59,7 +59,7 @@
           "name": "Data Collector causes Issue to be created due to use of API in the form",
           "autoPopulate": true,
           "required": true,
-          "repeatable": false 
+          "repeatable": true 
         },
         {
           "id": "event-form-definition-vwgpn6",
@@ -480,6 +480,23 @@
           "autoPopulate": false,
           "required": false,
           "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "kitchen-sink-form-example",
+      "name": "Kitchen Sink Form Example",
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form--kitchen-sink-form",
+          "formId": "kitchen-sink-form",
+          "forCaseRole": "role-1",
+          "name": "Kitchen Sink Form Example",
+          "autoPopulate": true,
+          "required": true,
+          "repeatable": true 
         }
       ]
     },
