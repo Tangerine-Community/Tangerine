@@ -1,5 +1,8 @@
+import { EventFormPermissions } from "./event-form-definition.class";
+
 class EventForm {
   id:string;
+  permissions:EventFormPermissions
   eventFormDefinitionId:string;
   formResponseId?:string;
   participantId?:string
