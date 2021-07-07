@@ -56,6 +56,7 @@ export class EditIssueComponent implements OnInit {
               name="should_send_to"
               label="Send to Devices"
               value="${issue.sendToAllDevices || issue.sendToDeviceById ? 'on' : ''}"
+              hint-text="Warning: If you remove this setting later, Devices that have downloaded this Issue will still have it and no longer receive updates on this Issue."
             >
             </tangy-checkbox>
             <tangy-select 
