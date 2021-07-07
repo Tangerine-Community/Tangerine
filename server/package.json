@@ -14,6 +14,7 @@
     "reporting-worker-pause": "./src/scripts/reporting-worker-pause.sh",
     "create-group": "./src/scripts/create-group/bin.js",
     "generate-csv": "./src/scripts/generate-csv/bin.js",
+    "generate-csv-data-set": "./src/scripts/generate-csv-data-set/bin.js",
     "generate-uploads": "./src/scripts/generate-uploads/bin.js",
     "generate-cases": "./src/scripts/generate-cases/bin.js",
     "generate-form-json": "./src/scripts/generate-form-json/bin.js",
