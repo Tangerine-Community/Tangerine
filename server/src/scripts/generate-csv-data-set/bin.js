@@ -4,7 +4,7 @@ const generateCsvDataSet = require('./generate-csv-data-set.js')
 
 if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('  generate-csv <groupId> <formId[,formId]> <outputPath> <year> <month> [--include-pii]  ')
+  console.log('  generate-csv-data-set <groupId> <formId[,formId]> <outputPath> <year> <month> [--include-pii]  ')
   console.log('Example:')
   console.log(`  generate-csv-data-set group-abdc form1,form2 ./output.csv 2018 Jan --include-pii`)
   process.exit()
@@ -19,7 +19,7 @@ const params = {
   includePii: process.argv[7] ? true : false
 }
 
-async function go(state) {
+async function go(params) {
   try {
     await generateCsvDataSet(params.dbName, params.formIds, params.outputPath, params.year, params.month, params.includePii) 
     process.exit()
@@ -28,4 +28,4 @@ async function go(state) {
     process.exit(1)
   }
 }
-go(state)
+go(params)

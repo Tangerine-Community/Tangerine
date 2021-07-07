@@ -14,7 +14,7 @@ async function generateCsvDataSet(dbName = '', formIds = [], outputPath = '', ye
     year,
     month,
     includePii,
-    csvs: params.formIds.map(formId => {
+    csvs: formIds.map(formId => {
       return {
         formId: formId,
         inProgress: false,
@@ -22,20 +22,20 @@ async function generateCsvDataSet(dbName = '', formIds = [], outputPath = '', ye
         rows: 0
       }
     }),
-    statePath: params.outputPath.replace('.zip', '.state.json'),
+    statePath: outputPath.replace('.zip', '.state.json'),
     complete: false,
     startTime: new Date().toISOString()
   }
   await writeState(state)
   for (let formId of state.formIds) {
     let complete = false
-    state.csvs.find(csv.formId === formId).inProgress = false
+    state.csvs.find(csv => csv.formId === formId).inProgress = false
     await writeState(state)
     while (complete === false) {
       complete = true
     }
-    state.csvs.find(csv.formId === formId).complete = true
-    state.csvs.find(csv.formId === formId).inProgress = false
+    state.csvs.find(csv => csv.formId === formId).complete = true
+    state.csvs.find(csv => csv.formId === formId).inProgress = false
     await writeState(state)
     await sleep(10*1000)
   }
