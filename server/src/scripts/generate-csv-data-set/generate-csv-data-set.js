@@ -27,7 +27,7 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*') {
 
 async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', includePii = false) {
   let state = {
-    dbName: groupId + '-reporting',
+    dbName: `${groupId}-reporting${includePii ? '' : '-sanitized'}`,
     formIds,
     outputPath,
     year,
