@@ -5,6 +5,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CaseService } from '../../services/case.service';
 import { AppContext } from 'src/app/app-context.enum';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
+import { DeviceService } from 'src/app/device/services/device.service';
 
 @Component({
   selector: 'app-new-issue',
@@ -25,11 +26,13 @@ export class NewIssueComponent implements OnInit {
     private router:Router,
     private caseService: CaseService,
     private userService:UserService,
+    private deviceService:DeviceService,
     private formService:TangyFormService
   ) { }
 
   ngOnInit() {
     this.route.params.subscribe(async params => {
+      const device = await this.deviceService.getDevice()
       const caseId = params.caseId
       const eventId = params.eventId
       const eventFormId = params.eventFormId
@@ -47,7 +50,7 @@ export class NewIssueComponent implements OnInit {
       eval(`this.renderedTemplateIssueTitle = this.caseService.caseDefinition.templateIssueTitle ? \`${this.caseService.caseDefinition.templateIssueTitle}\` : \`${this.defaultTemplateIssueTitle}\``)
       eval(`this.renderedTemplateIssueDescription = this.caseService.caseDefinition.templateIssueDescription ? \`${this.caseService.caseDefinition.templateIssueDescription}\` : \`${this.defaultTemplateIssueDescription}\``)
       if (window.location.hash.split('/').includes('use-templates')) {
-        await this.saveIssueAndRedirect(this.renderedTemplateIssueTitle, this.renderedTemplateIssueDescription, caseId, eventId, eventFormId, userId, userName)
+        await this.saveIssueAndRedirect(this.renderedTemplateIssueTitle, this.renderedTemplateIssueDescription, caseId, eventId, eventFormId, userId, userName, device._id)
       } else {
         this.container.nativeElement.innerHTML = `
           <tangy-form id="form" #form>
@@ -62,14 +65,14 @@ export class NewIssueComponent implements OnInit {
           const response = new TangyFormResponseModel(event.target.response)
           const title = response.inputsByName.title.value
           const description = response.inputsByName.description.value
-          await this.saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName)
+          await this.saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, device._id)
         })
       }
     })
   }
 
-  async saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName) {
-    const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, [AppContext.Editor, AppContext.Client])
+  async saveIssueAndRedirect(title, description, caseId, eventId, eventFormId, userId, userName, deviceId) {
+    const issue = await this.caseService.createIssue(title, description, caseId, eventId, eventFormId, userId, userName, false, deviceId)
     this.router.navigate(['issue', issue._id, 'form-revision'])
   }
 
