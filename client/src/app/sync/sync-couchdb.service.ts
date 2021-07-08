@@ -14,7 +14,6 @@ import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
 import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
-import {ConflictService} from "./services/conflict.service";
 import { SyncDirection } from './sync-direction.enum';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const retryDelay = 5*1000
@@ -57,8 +56,7 @@ export class SyncCouchdbService {
     private appConfigService: AppConfigService,
     private caseDefinitionsService: CaseDefinitionsService,
     private caseService: CaseService,
-    private tangyFormService: TangyFormService,
-    private conflictService: ConflictService
+    private tangyFormService: TangyFormService
   ) { }
 
   cancel() {
