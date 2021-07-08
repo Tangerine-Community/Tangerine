@@ -2,12 +2,12 @@
 
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']"
+            [routerLink]="['/class-form/']"
             [queryParams]='classRegistrationParams'>
       {{'Add Class'|translate}}
     </button>
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']"
+            [routerLink]="['/class-form/']"
             [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
       {{'Add Student'|translate}}
     </button>
@@ -53,7 +53,7 @@
 <mat-toolbar *ngIf="!selectedClass" class="classDashboard">
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
+            [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
       {{'Add Class'|translate}}
     </button>
   </span>
@@ -65,6 +65,7 @@
 
     <mat-form-field>
       <mat-label>Select SubTask</mat-label>
+      
       <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let item of formList;" value="{{item.id}}"

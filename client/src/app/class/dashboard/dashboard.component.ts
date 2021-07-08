@@ -68,7 +68,8 @@ export class DashboardComponent implements OnInit {
   classGroupReport: ClassGroupingReport;
   displayClassGroupReport = false;
   feedbackViewInited = false;
-
+  getValue: (variableName, response) => any;
+  
   @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
@@ -86,6 +87,7 @@ export class DashboardComponent implements OnInit {
     (<any>window).Tangy = {};
     await this.classFormService.initialize();
     this.classes = await this.getMyClasses();
+    this.getValue = this.dashboardService.getValue
     const enabledClasses = this.classes.map(klass => {
       if (!klass.doc.archive) {
         return klass
@@ -94,12 +96,12 @@ export class DashboardComponent implements OnInit {
     this.enabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
     let classMenu = []
     for (const classDoc of this.enabledClasses) {
+      const grade = this.getValue('grade', classDoc.doc)
       let klass = {
         id: classDoc.id,
-        name: classDoc.doc.items[0].inputs[2].value,
+        name: grade,
         curriculum: []
       }
-      let curriculumInput = classDoc.doc.items[0].inputs[3].value
       // find the options that are set to 'on'
       this.currArray = await this.populateCurrentCurriculums(classDoc);
       klass.curriculum = this.currArray
@@ -280,9 +282,11 @@ export class DashboardComponent implements OnInit {
     // for (const student of this.students) {
     this.students.forEach((student) => {
       const studentResults = {};
+      const student_name = this.getValue('student_name', student.doc)
+      const classId = this.getValue('classId', student.doc)
       studentResults['id'] = student.id;
-      studentResults['name'] = student.doc.items[0].inputs[0].value;
-      studentResults['classId'] = student.doc.items[0].inputs[3].value;
+      studentResults['name'] = student_name
+      studentResults['classId'] = classId
       // studentResults["forms"] = [];
       studentResults['forms'] = {};
       // for (const form of this.curriculumForms) {
@@ -331,7 +335,7 @@ export class DashboardComponent implements OnInit {
     if (selectedForm['response']) {
       responseId = selectedForm['response']['_id'];
     }
-    this.router.navigate(['class-forms-player'], { queryParams:
+    this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId,
           curriculum: curriculum,
           studentId: studentId,
@@ -357,7 +361,7 @@ export class DashboardComponent implements OnInit {
     const src = selectedForm['src'];
     const title = selectedForm['title'];
     const responseId = selectedForm['response']['_id'];
-    this.router.navigate(['class-forms-player'], { queryParams:
+    this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
           classId: classId, itemId: selectedFormId, src: src, title:
           title, responseId: responseId }
@@ -369,7 +373,7 @@ export class DashboardComponent implements OnInit {
     const formsArray = Object.values(column.forms);
     const studentId = column.id;
     const classId = column.classId;
-    this.router.navigate(['class-forms-player'], { queryParams:
+    this.router.navigate(['class-form'], { queryParams:
         { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
