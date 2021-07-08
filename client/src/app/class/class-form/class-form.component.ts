@@ -1,6 +1,5 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {TangyFormsPlayerComponent} from "../../tangy-forms/tangy-forms-player/tangy-forms-player.component";
 import {ClassUtils} from "../class-utils";
 import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
 import {DashboardService} from "../_services/dashboard.service";
@@ -9,6 +8,7 @@ import {TangyFormService} from "../../tangy-forms/tangy-form.service";
 import {Subject} from "rxjs";
 import {VariableService} from "../../shared/_services/variable.service";
 import {_TRANSLATE} from "../../shared/translation-marker";
+import {ClassFormsPlayerComponent} from "../class-forms-player.component";
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -26,7 +26,7 @@ export class ClassFormComponent implements OnInit {
   
   @ViewChild('buildContainer', {static: true}) buildContainer: ElementRef;
   @ViewChild('container', {static: true}) container: ElementRef;
-  @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
+  @ViewChild('formPlayer', {static: true}) formPlayer: ClassFormsPlayerComponent
   responseId;
   curriculum;
   studentId;
