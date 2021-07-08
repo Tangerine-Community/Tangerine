@@ -37,8 +37,7 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
       return {
         formId: formId,
         inProgress: false,
-        complete: false,
-        rows: 0
+        complete: false
       }
     }),
     statePath: outputPath.replace('.zip', '.state.json'),
