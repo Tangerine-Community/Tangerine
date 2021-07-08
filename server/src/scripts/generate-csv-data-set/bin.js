@@ -5,8 +5,9 @@ const generateCsvDataSet = require('./generate-csv-data-set.js')
 if (process.argv[2] === '--help') {
   console.log('Usage:')
   console.log('  generate-csv-data-set <groupId> <formId[,formId]> <outputPath> <year> <month> [--include-pii]  ')
-  console.log('Example:')
+  console.log('Examples:')
   console.log(`  generate-csv-data-set group-abdc form1,form2 ./output.csv 2018 Jan --include-pii`)
+  console.log(`  generate-csv-data-set group-abdc form1,form2 ./output.csv * * --include-pii`)
   process.exit()
 }
 
