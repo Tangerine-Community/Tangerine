@@ -142,7 +142,6 @@ export class TangyFormsPlayerComponent {
       // Listen up, save in the db.
       if (!this.skipSaving && !this.response.complete) {
         formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-          // _.dispatchEvent(new CustomEvent('TANGY_FORM_PRE_UPDATE'))
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
         })
