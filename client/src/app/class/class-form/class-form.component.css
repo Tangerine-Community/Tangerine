@@ -1,6 +1,9 @@
+#buildContainer {
+  display:none
+}
 #profile-mgmt {
   position: relative;
-  top: -100px;
+  top: -90px;
   left: 50px;
 }
 #profile-toolbar {
