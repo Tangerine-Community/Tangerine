@@ -33,6 +33,7 @@ import { ClassConfigComponent } from './class-config/class-config.component';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { ClassFormComponent } from './class-form/class-form.component';
 import {TangyFormsModule} from "../tangy-forms/tangy-forms.module";
+import {ClassFormsPlayerComponent} from "./class-forms-player.component";
 
 @NgModule({
   imports: [
@@ -56,7 +57,7 @@ import {TangyFormsModule} from "../tangy-forms/tangy-forms.module";
     MatSlideToggleModule,
     TangyFormsModule
   ],
-  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent],
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent],
   providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {

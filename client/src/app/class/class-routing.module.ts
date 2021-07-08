@@ -9,6 +9,7 @@ import {StudentProgressTableComponent} from "./reports/student-progress-table/st
 import {TaskReportComponent} from "./reports/task-report/task-report.component";
 import {ClassConfigComponent} from "./class-config/class-config.component";
 import {ClassFormComponent} from "./class-form/class-form.component";
+import {ClassFormsPlayerComponent} from "./class-forms-player.component";
 
 const appRoutes = [
   {
@@ -45,7 +46,12 @@ const appRoutes = [
     path: 'class-form',
     component: ClassFormComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
-  }
+  },
+  {
+    path: 'class-forms-player',
+    component: ClassFormsPlayerComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
 ];
 
 @NgModule({
