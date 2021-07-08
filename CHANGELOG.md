@@ -1,6 +1,7 @@
 # Changelog
 
 ## v3.18.2
+- Feature: Editor User downloads CSVs for multiple forms as a set Issue: [#2768](https://github.com/Tangerine-Community/Tangerine/issues/2768)  PR:[#2777](https://github.com/Tangerine-Community/Tangerine/pull/2777)
 - Feature: Remove configurable characters from CSV output [#2787](https://github.com/Tangerine-Community/Tangerine/issues/2787).
 - Documentation updates for backup/restore and fixes to image paths
 - Fix default user profile so it doesn't assume use of roles or location
