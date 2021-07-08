@@ -756,22 +756,12 @@ class CaseService {
    * and use it to populate docType in the Issue it creates.
    */
   
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor], conflict: any = null) {
-
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, sendToAllDevices = false, sendToDeviceById = '') {
     const caseData = await this.tangyFormService.getResponse(caseId)
-    let formResponseId, docType
-    if (eventId) {
-      formResponseId = caseData
-        .events.find(event => event.id === eventId)
-        .eventForms.find(eventForm => eventForm.id === eventFormId)
-        .formResponseId
-    }
-    if (conflict) {
-      docType = conflict.docType
-    } else {
-      docType = 'response'
-    }
-
+    const formResponseId = caseData
+      .events.find(event => event.id === eventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
     const issue = new Issue({
       _id: UUID(),
       label,
@@ -779,15 +769,40 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Client,
-      resolveOnAppContexts,
+      sendToAllDevices, 
+      sendToDeviceById,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
-      formResponseId,
-      docType
+      formResponseId
     })
     await this.tangyFormService.saveResponse(issue)
-    return await this.openIssue(issue._id, comment, userId, userName, conflict)
+    await this.openIssue(issue._id, comment, userId, userName)
+    await this.updateIssueMeta(issue._id, label, comment, sendToAllDevices, sendToDeviceById, userName, userId)
+    return await this.getIssue(issue._id)
+  }
+
+  async updateIssueMeta(issueId:string, label:string, description:string, sendToAllDevices:boolean, sendToDeviceById:string, userName:string, userId:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.label = label
+    issue.description = description
+    issue.sendToAllDevices = sendToAllDevices
+    issue.sendToDeviceById = sendToDeviceById
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.UpdateMeta,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        label,
+        description,
+        sendToAllDevices,
+        sendToDeviceById
+      }
+    })
+    return await this.tangyFormService.saveResponse(issue)
   }
 
   async getIssue(issueId) {
