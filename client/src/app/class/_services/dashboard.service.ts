@@ -413,9 +413,11 @@ export class DashboardService {
 
     for (const student of students) {
       const studentResults: StudentResult = new StudentResult();
+      const student_name = this.getValue('student_name', student.doc)
+      const classId = this.getValue('classId', student.doc)
       studentResults.id = student.id;
-      studentResults.name = student.doc.items[0].inputs[0].value;
-      studentResults.classId = student.doc.items[0].inputs[3].value;
+      studentResults.name = student_name
+      studentResults.classId = classId
       studentResults.forms = [];
       if (studentsResponses[student.id]) {
         const studentResponse = studentsResponses[student.id][itemId];
@@ -610,6 +612,18 @@ export class DashboardService {
     }
     return feedback;
   }
+
+  public getValue = (variableName, response) => {
+    if (response) {
+      const variablesByName = response.items.reduce((variablesByName, item) => {
+        for (const input of item.inputs) {
+          variablesByName[input.name] = input.value;
+        }
+        return variablesByName;
+      }, {});
+      return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+    }
+  };
 
 }
 

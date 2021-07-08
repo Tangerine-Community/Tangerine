@@ -70,7 +70,6 @@ export class ClassFormComponent implements OnInit {
           // This is either a new subtest or from a stale dashboard, so check using the curriculum and student id
           const responses = await this.classFormService.getResponsesByStudentId(this.studentId);
           for (const response of responses as any[]) {
-            // const resp = this.getInputValues(response.doc);
             const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
             const respCurrId = response.doc.form.id;
             if (respClassId === this.classId && respCurrId === this.curriculum) {
@@ -81,18 +80,6 @@ export class ClassFormComponent implements OnInit {
           this.formResponse = await this.classFormService.getResponse(this.responseId);
         }
         if (typeof this.formResponse !== 'undefined') {
-        //   let formItems = []
-        //   this.formResponse.items = this.formResponse.items.forEach(item => {
-        //     if (itemsToDisable.includes(item.id)) {
-        //       // return Object.assign({}, item, {disabled: true});
-        //     } else {
-        //       // return Object.assign({}, item, {disabled: false});
-        //       const formItem = Object.assign({}, item, {disabled: false});
-        //       formItems.push(formItem)
-        //     }
-        //   });
-        //   this.formResponse.items = formItems
-        //   this.formResponse.complete = false
           this.formResponse.form.complete = false
         }
         this.formPlayer.response = this.formResponse
@@ -138,7 +125,7 @@ export class ClassFormComponent implements OnInit {
         {
           if (state.form.id !== 'student-registration' && state.form.id !== 'class-registration') {
             const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
-            const srValues = this.getInputValues(studentRegistrationDoc);
+            const srValues = this.classUtils.getInputValues(studentRegistrationDoc);
             srValues['id'] = this.studentId;
             state.metadata = {'studentRegistrationDoc': srValues};
           }
@@ -213,18 +200,6 @@ export class ClassFormComponent implements OnInit {
     }
     this.response = state
     this.$saved.next(state)
-  }
-
-  getInputValues(doc) {
-    const inputs = doc.items.reduce((acc, item) => [...acc, ...item.inputs], []);
-    const obj = {};
-    for (const el of inputs) {
-      const attrs = inputs.attributes;
-      for (let i = inputs.length - 1; i >= 0; i--) {
-        obj[inputs[i].name] = inputs[i].value;
-      }
-    }
-    return obj;
   }
 
   async archiveStudent(studentId) {
