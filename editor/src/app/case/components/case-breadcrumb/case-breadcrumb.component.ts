@@ -4,7 +4,7 @@ import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { translate } from '@polymer/polymer/lib/utils/path';
-import {_TRANSLATE} from "../../../../../../client/src/app/shared/translation-marker";
+import {_TRANSLATE} from "../../../shared/translation-marker";
 
 @Component({
   selector: 'app-case-breadcrumb',
