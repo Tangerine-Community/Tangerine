@@ -188,15 +188,70 @@ class CaseService {
       if (eventForm.formResponseId) {
         const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
         if (formResponse) {
-          formResponse.archived=true
-          await this.tangyFormService.saveResponse(formResponse)
+          const archivedFormResponse = new TangyFormResponseModel(
+            {
+              archived:true,
+              _rev : formResponse._rev,
+              _id : formResponse._id,
+              form : {
+                id: formResponse.form.id,
+                title: formResponse.form.title,
+                tagName: formResponse.form.tagName,
+                complete: formResponse.form.complete
+              },
+              items : [],
+              events : [],
+              location : formResponse.location,
+              type : "response",
+              caseId: formResponse.caseId,
+              eventId: formResponse.eventId,
+              eventFormId: formResponse.eventFormId,
+              participantId: formResponse.participantId,
+              groupId: formResponse.groupId,
+              complete: formResponse.complete,
+              tangerineModifiedOn: new Date().getTime()
+            }
+          )
+          await this.tangyFormService.saveResponse(archivedFormResponse)
         }
       }
     }
     this.case.archived=true
-    await this.save()
+    // Keeping inputs so that the case show up in searches *on the server*
+    const archivedCase = new Case(
+      {
+        archived:true,
+        _rev : this.case._rev,
+        _id : this.case._id,
+        form : {
+          id: this.case.form.id,
+          tagName: this.case.form.tagName,
+          complete: this.case.form.complete
+        },
+        items : [{
+          id: this.case.items['id'],
+          title: this.case.items['title'],
+          inputs: this.case.items['inputs'],
+          tagName: this.case.items['tagName']
+        }],
+        events : [],
+        location : this.case.location,
+        type : "case",
+        caseDefinitionId: this.case.caseDefinitionId,
+        groupId: this.case['groupId'],
+        complete: this.case.complete,
+        tangerineModifiedOn: new Date().getTime()
+      }
+    )
+    if (this.case.items[0]) {
+      archivedCase.items[0].id = this.case.items[0].id
+      archivedCase.items[0].title = this.case.items[0].title
+      archivedCase.items[0].tagName = this.case.items[0].tagName
+      archivedCase.items[0].inputs = this.case.items[0].inputs
+    }
+    await this.tangyFormService.saveResponse(archivedCase)
   }
-
+  
   async setCase(caseInstance) {
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
