@@ -13,6 +13,7 @@ export const createSearchIndex = async (db, formsInfo) => {
       if (
         doc.collection === 'TangyFormResponse' &&
         doc.items &&
+        !doc.archived &&
         Array.isArray(doc.items) &&
         doc.form &&
         doc.form.id &&

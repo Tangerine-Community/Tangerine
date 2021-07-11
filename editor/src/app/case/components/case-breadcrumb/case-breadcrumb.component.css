@@ -33,3 +33,8 @@
 #delete-case {
   padding-left: 1em;
 }
+
+.archived {
+  font-style: italic;
+  color: red;
+}
