@@ -80,10 +80,6 @@ export class CaseBreadcrumbComponent implements OnInit {
     );
     if (confirmDelete) {
       console.log("Deleting")
-      // this.caseService.deleteEventForm(this.eventForm.caseEventId, this.eventForm.id);
-      // await this.caseService.save();
-      // this.formDeleted.emit('formDeleted');
-      // this.ref.detectChanges();
       await this.caseService.delete()
       this.goBackToCases()
     }
