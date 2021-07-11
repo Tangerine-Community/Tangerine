@@ -66,7 +66,8 @@ export class SyncService {
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
     const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
-
+    const initialPushLastSeq = await this.variableService.get('sync-push-last_seq')
+    
     this.syncCouchdbService.syncMessage$.subscribe({
       next: (replicationStatus) => {
         this.syncMessage$.next(replicationStatus)
@@ -97,6 +98,15 @@ export class SyncService {
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
+    /**
+     * Delete archived docs
+     */
+
+    const deletedArchivedDocs = await this.deleteArchivedDocs(userDb.db, initialPushLastSeq)
+    if (deletedArchivedDocs > 0) {
+      this.replicationStatus.deletedArchivedDocs = deletedArchivedDocs
+    }
+    
     /**
      * Calculating Sync stats
      */
@@ -504,6 +514,32 @@ export class SyncService {
     }
     console.log("total_rows: " + total_rows)
     return allDocs;
+  }
+
+  /**
+   * Delete docs with 'archived:true'
+   * Using initialPullLastSeq, which is accessed before sync starts.
+   */
+  async deleteArchivedDocs(db: PouchDB, initialPushLastSeq: string) {
+    let deletedArchivedDocs = 0
+    if (initialPushLastSeq) {
+      // TODO: do we need the limit flag?
+      const changes = await db.changes({ since: initialPushLastSeq, include_docs: false })
+      if (changes.results.length > 0) {
+        for (let change of changes.results) {
+          try {
+            const doc = await db.get(change.id)
+            if (doc && doc.archived) {
+              await db.remove(doc)
+              deletedArchivedDocs++
+            }
+          } catch (error) {
+            // Don't log - probably could not get a doc that was deleted already.
+          }
+        }
+      }
+    }
+    return deletedArchivedDocs
   }
   
 }
