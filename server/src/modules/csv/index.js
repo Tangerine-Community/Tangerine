@@ -47,7 +47,7 @@ module.exports = {
         try {
           const {doc, sourceDb} = data
           const groupId = sourceDb.name
-          if (doc.type !== 'issue') {
+          if (doc.type !== 'issue' && !doc.archived) {
             // TODO: Can't this be cached?
             const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
   
