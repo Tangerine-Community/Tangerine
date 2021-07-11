@@ -228,12 +228,7 @@ class CaseService {
           tagName: this.case.form.tagName,
           complete: this.case.form.complete
         },
-        items : [{
-          id: this.case.items['id'],
-          title: this.case.items['title'],
-          inputs: this.case.items['inputs'],
-          tagName: this.case.items['tagName']
-        }],
+        items : [{}],
         events : [],
         location : this.case.location,
         type : "case",
