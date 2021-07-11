@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.19.0
+
+### New Features
+
+ - Adds API for deleting a case and its forms that sets the 'archived' flag for those docs and saves a minimal version of the doc with enough data to be indexed on the server. Search on client and server CSV output are modified to filter archived docs. When viewing cases in Editor, displays "Archived" when viewing an archived case. When client syncs, it deletes any docs with the 'archived' flag and sets deletedArchivedDocs In the replicationStatus log.
+
 ## v3.18.0
 
 ### New Features
