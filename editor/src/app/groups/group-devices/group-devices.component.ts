@@ -309,78 +309,99 @@ export class GroupDevicesComponent implements OnInit {
     const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
     window['dialog'].innerHTML = `
-    <paper-dialog-scrollable>
-    <h2>Device Settings</h2>
-    <style>
-    .device-settings-list {
-      vertical-align: top;
-      font-size: larger;
-      font-weight: bold ;
-    }
-    .device-settings-list-element {
-      vertical-align: top;
-      padding-top: 40px;
-    }
-    table {
-        margin-left: 1em;
-    }
-    </style>
-    <table>
-    <tr><td class="device-settings-list">ID</td><td>${device._id}</td></tr>
-    <tr><td class="device-settings-list">Token</td><td>${device.token}</td></tr>
-    <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
-    <tr><td class="device-settings-list"><div class="device-settings-list-element">Assigned Location:</div></td><td><tangy-location
-            disabled
-            name="assigned_location"
-            label="Assign device to location at which location?"
-            show-levels='${locationList.locationsLevels.join(',')}'
-            ${device.assignedLocation && device.assignedLocation.value ? `
-              value='${JSON.stringify(device.assignedLocation.value)}'
-            ` : ''}
-          >
-          </tangy-location></td></tr>
-     <tr><td class="device-settings-list"><div class="device-settings-list-element">Sync Location:</div></td><td><tangy-radio-buttons
-            disabled
-            ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
-              value='${
-      JSON.stringify(
-        locationList.locationsLevels.map(level => {
-          return {
-            name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
-          }
-        })
-      )
-    }'
-            ` : ''}
-            label="Sync device to location at which level?"
-            name="sync_location__show_levels"
-          >
-            ${locationList.locationsLevels.map(level => `
-              <option value="${level}">${level}</option>
-            `).join('')}
-          </tangy-radio-buttons>
-
-          <tangy-location
-            disabled
-            name="sync_location"
-            label="Sync device to which location?"
-            ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
-              show-levels='${device.syncLocations[0].showLevels.join(',')}'
-              value='${JSON.stringify(device.syncLocations[0].value)}'
-            ` : ''}
-          >
-          </tangy-location></td></tr>
-</table>
-<h2>Edit Device Description:</h2>
-      <tangy-form>
-        <tangy-form-item id="edit-device" on-change="">
-          <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
-        </tangy-form-item>
-      </tangy-form>
-    </paper-dialog-scrollable>
+      <paper-dialog-scrollable>
+        <h2>Device Settings</h2>
+        <tangy-form>
+          <tangy-form-item id="edit-device" on-change="
+            const locationsLevels = [ ${locationList.locationsLevels.map(level => `'${level}'`).join(',')} ]
+            if (getValue('sync_location__show_levels')) {
+              inputs.sync_location.setAttribute('show-levels', locationsLevels.slice(0, locationsLevels.indexOf(getValue('sync_location__show_levels'))+1).join(','))
+            }
+          ">
+            <style>
+              .device-settings-list {
+                vertical-align: top;
+                font-size: larger;
+                font-weight: bold ;
+              }
+              .device-settings-list-element {
+                vertical-align: top;
+                padding-top: 40px;
+              }
+              table {
+                  margin-left: 1em;
+              }
+            </style>
+            <table>
+              <tr><td class="device-settings-list">ID</td><td>${device._id}</td></tr>
+              <tr><td class="device-settings-list">Token</td><td>${device.token}</td></tr>
+              <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
+            </table>
+            <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
+            <tangy-location
+              name="assigned_location"
+              label="Assign device to location at which location?"
+              show-levels='${locationList.locationsLevels.join(',')}'
+              ${device.assignedLocation && device.assignedLocation.value ? `
+                value='${JSON.stringify(device.assignedLocation.value)}'
+              ` : ''}
+            >
+            </tangy-location>
+            <tangy-checkbox 
+              name="reconfigure_sync"
+              label="Reconfigure sync"
+              hint-text="Warning: Reconfiguring sync will result in the device deleting all of its data and downloading everything given the new sync settings."
+            >
+            </tangy-checkbox>
+            <tangy-radio-buttons
+              label="Sync device to location at which level?"
+              name="sync_location__show_levels"
+              disable-if="!getValue('reconfigure_sync')"
+              ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
+                value='${
+                  JSON.stringify(
+                    locationList.locationsLevels.map(level => {
+                      return {
+                        name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
+                      }
+                    })
+                  )
+                }'
+              ` : ''}
+            >
+              ${locationList.locationsLevels.map(level => `
+                <option value="${level}">${level}</option>
+              `).join('')}
+            </tangy-radio-buttons>
+            <tangy-location
+              disable-if="!getValue('reconfigure_sync')"
+              name="sync_location"
+              label="Sync device to which location?"
+              ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
+                show-levels='${device.syncLocations[0].showLevels.join(',')}'
+                value='${JSON.stringify(device.syncLocations[0].value)}'
+              ` : ''}
+            >
+            </tangy-location>
+          </tangy-form-item>
+        </tangy-form>
+      </paper-dialog-scrollable>
     `
     window['dialog'].querySelector('tangy-form').addEventListener('submit', async (event) => {
-      device.description = event.target.inputs.find(input => input.name === 'description').value
+      const inputs = event.target.inputs
+      device.description = inputs.find(input => input.name === 'description').value
+      device.assignedLocation = {
+        showLevels: inputs.find(input => input.name === 'assigned_location').showLevels.split(','),
+        value: inputs.find(input => input.name === 'assigned_location').value,
+      }
+      if (inputs.find(input => input.name === 'reconfigure_sync')) {
+        device.syncLocations = [
+          {
+            showLevels: inputs.find(input => input.name === 'sync_location').showLevels.split(','),
+            value: inputs.find(input => input.name === 'sync_location').value,
+          }
+        ]
+      }
       await this.groupDevicesService.updateDevice(this.groupId, device)
       this.update()
       window['dialog'].close()
