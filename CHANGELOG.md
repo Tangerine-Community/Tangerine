@@ -5,6 +5,7 @@
 This release has bugfixes specific to the Class module, which now uses updated API's for form rendering. 
 
 - Feature for Class/Teach: Archive or enable a class. Issue: [#2580](https://github.com/Tangerine-Community/Tangerine/issues/2580)
+- Bugfix for Class/Teach: Teach loses data and blocks app if Class form is not submited [#2783](https://github.com/Tangerine-Community/Tangerine/issues/2783)
 - Bugfix for Class/Teach: App should return user to previous Curriculum when resuming app. Issue: [#2648](https://github.com/Tangerine-Community/Tangerine/issues/2648)
 - Refactor Class to handle changes in tangy-form; Bug in CSV rendering for Tangerine Teach. Issue: [#2635](https://github.com/Tangerine-Community/Tangerine/issues/2635)
 
