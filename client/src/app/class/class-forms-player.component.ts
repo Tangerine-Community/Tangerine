@@ -136,7 +136,11 @@ export class ClassFormsPlayerComponent {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
         formEl.response.formVersionId = this.formInfo? this.formInfo.formVersionId : null
-        this.throttledSaveResponse(formEl.response)
+        let inputs = []
+        formEl.response.items.forEach(item => inputs = [...inputs, ...item.inputs]);
+        if (inputs.length > 0) {
+          await this.throttledSaveResponse(formEl.response)
+        }
       }
       this.response = formEl.response
       // Listen up, save in the db.

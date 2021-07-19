@@ -89,7 +89,7 @@ export class DashboardComponent implements OnInit {
     this.classes = await this.getMyClasses();
     this.getValue = this.dashboardService.getValue
     const enabledClasses = this.classes.map(klass => {
-      if (!klass.doc.archive) {
+      if ((klass.doc.items[0].inputs.length > 0) && (!klass.doc.archive)) {
         return klass
       }
     });
@@ -103,9 +103,12 @@ export class DashboardComponent implements OnInit {
         curriculum: []
       }
       // find the options that are set to 'on'
-      this.currArray = await this.populateCurrentCurriculums(classDoc);
-      klass.curriculum = this.currArray
-      classMenu.push(klass)
+      const classArray = await this.populateCurrentCurriculums(classDoc);
+      if (classArray) {
+        this.currArray = await this.populateCurrentCurriculums(classDoc);
+        klass.curriculum = this.currArray
+        classMenu.push(klass)
+      }
     }
     this.classUtils = new ClassUtils();
     await this.initDashboard(null, null, null, null);
@@ -202,18 +205,21 @@ export class DashboardComponent implements OnInit {
   }
 
   private async populateCurrentCurriculums(currentClass) {
-    let inputs = [];
+    let inputs = [], fullCurrArray
     currentClass.doc.items.forEach(item => inputs = [...inputs, ...item.inputs]);
-    // find the curriculum element
-    const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
-    // find the options that are set to 'on'
-    const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
-    const fullCurrArray =  Promise.all(currArray.map(async curr => {
-      const formId = curr.name;
-      const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-      curr.label = formInfo.title
-      return curr
-    }));
+    if (inputs.length > 0) {
+      // find the curriculum element
+      const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
+      // find the options that are set to 'on'
+      const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
+      fullCurrArray =  Promise.all(currArray.map(async curr => {
+        const formId = curr.name;
+        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
+        curr.label = formInfo.title
+        return curr
+      }));
+    }
+   
     return fullCurrArray;
   }
 
