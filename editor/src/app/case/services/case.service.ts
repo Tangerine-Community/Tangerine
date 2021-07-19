@@ -86,6 +86,14 @@ class CaseService {
     window['participant'] = this.participant
   }
 
+  getCurrentCaseEventId() {
+    return this?.caseEvent?.id
+  }
+  
+  getCurrentEventFormId() {
+    return this?.eventForm?.id
+  }
+
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
@@ -558,6 +566,21 @@ class CaseService {
   /*
    * Issues API.
    */
+  queuedIssuesForCreation:Array<any> = []
+
+  async queueIssueForCreation (label = '', comment = '') {
+    this.queuedIssuesForCreation.push({
+      label,
+      comment
+    })
+  }
+
+  async createIssuesInQueue() {
+    for (let queuedIssue of this.queuedIssuesForCreation) {
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), window['username'], window['username'], false, '')
+    }
+    this.queuedIssuesForCreation = []
+  }
 
   async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, sendToAllDevices = false, sendToDeviceById = '') {
     const caseData = await this.tangyFormService.getResponse(caseId)
