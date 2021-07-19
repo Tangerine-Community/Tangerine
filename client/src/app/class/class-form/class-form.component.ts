@@ -119,7 +119,8 @@ export class ClassFormComponent implements OnInit {
               }
             });
           } else {
-            // console.log("Why is this.formResponse.items null?")
+            // this.formResponse.items may be null because this is a new response that formerly had no items.
+            // This can happen when a user views a form but does not enter anything.
           }
         }
         {
