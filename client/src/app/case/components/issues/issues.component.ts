@@ -29,7 +29,6 @@ export class IssuesComponent implements OnInit {
     this.issues = <Array<Issue>>(await userDb.query('byType', {key: 'issue', include_docs: true}))
       .rows
       .map(row => <Issue>row.doc)
-      .filter(issue => issue.resolveOnAppContexts && issue.resolveOnAppContexts.includes(AppContext.Client) && issue.deviceId === device._id)
   }
 
 }
