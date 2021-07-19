@@ -111,6 +111,7 @@ export class EventFormComponent implements OnInit {
               window['username']
             )
           }
+          await this.caseService.createIssuesInQueue()
           window.location.hash = window['eventFormRedirect']
             ? window['eventFormRedirect']
             : `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
