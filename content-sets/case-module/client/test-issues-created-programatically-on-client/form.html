@@ -1,6 +1,9 @@
 <tangy-form
   id="test-issues-created-programatically-on-client"
   title="Test Issues created programatically on client"
+  on-submit="
+    caseService.queueIssueForCreation('Please print this form and mail it', 'See details in form for address.')
+  "
 >
   <tangy-form-item id="item-1" title="Test issues created on Client">
     <tangy-input
@@ -10,30 +13,5 @@
       required
     >
     </tangy-input>
-    <tangy-box name="info">
-      In the `on-open` logic in the next item, code will use the `T.case.createIssue()` API to create an Issue. 
-    </tangy-box>
-    <tangy-checkboxes name="issue_target" label="Which context(s) should the Issue target?" hint-text="You pick one or the other, or both. Depending on the context you choose, the Issue will appear either on the Client App on Tablets, and/or the Editor App online.">
-      <option value="CLIENT">Client</option>
-      <option value="EDITOR">Editor</option>
-    </tangy-checkboxes>
-  </tangy-form-item>
-  <tangy-form-item id="item-2"
-    on-open="
-      async function createIssue() {
-        const userProfile = await T.user.getUserProfile()
-        const username = T.user.getCurrentUser()
-        await T.case.createIssue('Please print this form and mail it', 'See details in form for address.', T.case.id, caseEvent.id, eventForm.id, userProfile._id, username, getValue('issue_target'))
-      }
-      // Note the check for window.isRevision. window.isRevision will be true when a user is suggesting changes using an Issue. 
-      // We check this to guarantee we don't create a duplicate issue when proposing a change.
-      if (!window.isRevision) {
-        createIssue()
-      }
-    "
-  >
-      <tangy-box name="info2">
-        Your data has been saved
-      </tangy-box>
   </tangy-form-item>
 </tangy-form>
