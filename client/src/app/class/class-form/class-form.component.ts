@@ -105,10 +105,10 @@ export class ClassFormComponent implements OnInit {
         this.formPlayer.formId = this.formId
       }
       await this.formPlayer.render()
-      
 
-      this.formPlayer.formEl.addEventListener('TANGY_FORM_UPDATE', async (event) => {
-        let state = event.target.store.getState()
+      // this.formPlayer.formEl.addEventListener('TANGY_FORM_UPDATE', async (event) => {
+      this.formPlayer.$submit.subscribe(async () => {
+        let state = this.formPlayer.formEl.store.getState()
         state.complete = false
         if (typeof this.formResponse !== 'undefined') {
           // let formItems = []
@@ -123,15 +123,13 @@ export class ClassFormComponent implements OnInit {
             // This can happen when a user views a form but does not enter anything.
           }
         }
-        {
-          if (state.form.id !== 'student-registration' && state.form.id !== 'class-registration') {
-            const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
-            const srValues = this.classUtils.getInputValues(studentRegistrationDoc);
-            srValues['id'] = this.studentId;
-            state.metadata = {'studentRegistrationDoc': srValues};
-          }
+        if (state.form.id !== 'student-registration' && state.form.id !== 'class-registration') {
+          const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
+          const srValues = this.classUtils.getInputValues(studentRegistrationDoc);
+          srValues['id'] = this.studentId;
+          state.metadata = {'studentRegistrationDoc': srValues};
         }
-        await this.throttledSaveResponse(state)
+        await this.saveResponse(state)
         // Reset vars and set to this new class-registration
         if (state.form.id === 'class-registration' && !this.formResponse) {
           await this.variableService.set('class-classIndex', null);
@@ -154,31 +152,7 @@ export class ClassFormComponent implements OnInit {
         }
         this.router.navigate(['dashboard']);
       })
-
-      // this.formPlayer.$submit.subscribe(async () => {
-      //   setTimeout(async () => {
-      //     this.router.navigate([`../`], { relativeTo: this.route })
-      //   }, 500)
-      // })
-      
     })
-  }
-
-  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
-  // Everything else in between we can ignore.
-  async throttledSaveResponse(response) {
-    // If already loaded, return.
-    if (this.throttledSaveLoaded) return
-    // Throttle this fire by waiting until last fire is done.
-    if (this.throttledSaveFiring) {
-      this.throttledSaveLoaded = true
-      while (this.throttledSaveFiring) await sleep(200)
-      this.throttledSaveLoaded = false
-    }
-    // Fire it.
-    this.throttledSaveFiring = true
-    await this.saveResponse(response)
-    this.throttledSaveFiring = false
   }
 
   async saveResponse(state) {
