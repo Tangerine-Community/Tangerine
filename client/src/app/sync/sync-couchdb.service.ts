@@ -167,6 +167,16 @@ export class SyncCouchdbService {
     // Sync Locations Change Detection. 
     const previousDeviceSyncLocations = await this.variableService.get('previousDeviceSyncLocations')
     if (!isFirstSync && syncLocationsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations)) {
+      this.fullSync = 'push' 
+      while (!hadPushSuccess && !this.cancelling) {
+        pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
+        if (!pushReplicationStatus.pushError) {
+          hadPushSuccess = true
+        } else {
+          await sleep(retryDelay)
+        }
+      }
+      replicationStatus = {...replicationStatus, ...pushReplicationStatus}
       const device = await this.deviceService.getDevice()
       await this.userService.reinstallSharedUserDatabase(device)
       // Refresh db connection.
