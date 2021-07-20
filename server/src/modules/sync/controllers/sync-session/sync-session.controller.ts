@@ -1,6 +1,6 @@
 import { GroupDeviceService } from './../../../../shared/services/group-device/group-device.service';
 import { Controller, Get, Param, Post } from '@nestjs/common';
-import { SyncSessionService } from '../../services/sync-session/sync-session.service';
+import { SyncSessionInfo, SyncSessionService } from '../../services/sync-session/sync-session.service';
 const log = require('tangy-log').log
 
 @Controller('sync-session')
@@ -13,7 +13,7 @@ export class SyncSessionController {
 
   
   @Get ('start/:groupId/:deviceId/:deviceToken')
-  async start(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string, @Param('deviceToken') deviceToken:string):Promise<string> {
+  async start(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string, @Param('deviceToken') deviceToken:string):Promise<SyncSessionInfo> {
     try {
       if (await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, deviceToken)) {
         return await this.syncSessionService.start(groupId, deviceId)
