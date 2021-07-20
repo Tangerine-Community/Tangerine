@@ -2,7 +2,9 @@
 
 ## v3.17.12
 
-This release has bugfixes specific to the Class module, which now uses updated API's for form rendering. 
+- Feature: Remove configurable characters from CSV output [#2787](https://github.com/Tangerine-Community/Tangerine/issues/2787).
+
+This release also has bugfixes specific to the Class module, which now uses updated API's for form rendering. 
 
 - Feature for Class/Teach: Archive or enable a class. Issue: [#2580](https://github.com/Tangerine-Community/Tangerine/issues/2580)
 - Bugfix for Class/Teach: Teach loses data and blocks app if Class form is not submited [#2783](https://github.com/Tangerine-Community/Tangerine/issues/2783)
