@@ -78,6 +78,11 @@ if echo "$T_MODULES" | grep mysql; then
   ./mysql-setup.sh
 fi
 
+if "$T_MYSQL_PHPMYADMIN" = "TRUE"; then
+  echo "Starting phpmyadmin..."
+  ./phpmyadmin-start.sh
+fi
+
 #
 # Get software and shut down existing containers if they exist.
 #
