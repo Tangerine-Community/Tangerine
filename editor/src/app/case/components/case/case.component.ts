@@ -1,4 +1,4 @@
-import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterContentInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -17,7 +17,7 @@ class CaseEventInfo {
   templateUrl: './case.component.html',
   styleUrls: ['./case.component.css']
 })
-export class CaseComponent implements AfterContentInit {
+export class CaseComponent implements AfterContentInit, OnDestroy {
 
   private ready = false
   templateTitle = ''
@@ -52,8 +52,8 @@ export class CaseComponent implements AfterContentInit {
     }
     this.caseService.setContext()
     this.window.caseService = this.caseService
+    this.onCaseOpen()
     this.groupId = this.caseService.case['groupId']
-
     let queryResults = await this.groupIssuesService.query(this.groupId, {
       fun: "groupConflicts",
       key: [caseId],
@@ -61,7 +61,6 @@ export class CaseComponent implements AfterContentInit {
       descending:true
     })
     this.conflicts = queryResults.map(issue => issue.doc)
-    
     this.calculateTemplateData()
     this.ready = true
   }
@@ -103,7 +102,13 @@ export class CaseComponent implements AfterContentInit {
     this.caseService.openCaseConfirmed = true
     this.ref.detectChanges()
   }
+  onCaseOpen(){
+    eval(this.caseService.caseDefinition.onCaseOpen)
+  }
 
+  ngOnDestroy(){
+    eval(this.caseService.caseDefinition.onCaseClose)
+  }
   async onSubmit() {
     const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
     const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
