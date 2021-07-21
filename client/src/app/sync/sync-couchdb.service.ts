@@ -126,7 +126,7 @@ export class SyncCouchdbService {
     let syncSessionUrl
     let remoteDb
     try {
-      const syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+      const syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
       syncDetails.deviceSyncLocations = syncSessionInfo.deviceSyncLocations
       remoteDb = new PouchDB(syncSessionInfo.syncSessionUrl)
     } catch (e) {
