@@ -18,8 +18,8 @@ export class BulkSyncController {
   async start(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string, @Param('deviceToken') deviceToken:string) {
     try {
       if (await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, deviceToken)) {
-        const syncSessionInfo = await this.syncSessionService.start(groupId, deviceId)
-        const params = syncSessionInfo.syncSessionUrl.split('/')
+        const tokenUrl = await this.syncSessionService.start(groupId, deviceId)
+        const params = tokenUrl.split('/')
         // return `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`
         const baseUrl = params[2]
         const baseUrlParams = baseUrl.split('@')
