@@ -1,4 +1,4 @@
-import { AppConfigService } from './../../shared/_services/app-config.service';
+import { AppConfigService, LocationNode } from './../../shared/_services/app-config.service';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
@@ -30,6 +30,8 @@ class CaseService {
 
   _case:Case
   caseDefinition:CaseDefinition
+  location:Array<LocationNode>
+
   openCaseConfirmed = false
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
@@ -190,6 +192,8 @@ class CaseService {
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseInstance.caseDefinitionId)
+    const flatLocationList = await this.appConfigService.getFlatLocationList()
+    this.location = Object.keys(caseInstance.location).map(level => flatLocationList.locations.find(node => node.id === caseInstance.location[level]))
     this.case = caseInstance
   }
 
