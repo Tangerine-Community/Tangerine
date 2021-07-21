@@ -19,7 +19,12 @@ export class CaseReportsComponent implements OnInit {
 
   async ngOnInit() {
     this.reportsHtml = await this.http.get('./assets/reports.html', {responseType: 'text'}).toPromise()
-    const reportsJs = await this.http.get('./assets/reports.js', {responseType: 'text'}).toPromise()
+    let reportsJs = ''
+    try {
+      reportsJs = await this.http.get('./assets/reports.js', {responseType: 'text'}).toPromise()
+    } catch (e) {
+      console.error(e)
+    }
     this.ref.detectChanges();
     eval(reportsJs)
   }

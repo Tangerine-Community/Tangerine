@@ -26,6 +26,7 @@ import { AppConfig } from './shared/_classes/app-config.class';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { SearchService } from './shared/_services/search.service';
 import { Get } from 'tangy-form/helpers.js'
+import { FIRST_SYNC_STATUS } from './device/components/device-sync/device-sync.component';
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -138,7 +139,6 @@ export class AppComponent implements OnInit {
     if (!this.installed) {
       await this.install();
     }
-
     await this.checkPermissions();
     // Initialize services.
     await this.deviceService.initialize()
@@ -178,7 +178,11 @@ export class AppComponent implements OnInit {
     }
     this.ready = true;
 
-    // Lastly, navigate to update page if an update is running.
+    // Warn if device has not been properly synced on first try.
+    if (await this.variableService.get('FIRST_SYNC_STATUS') === FIRST_SYNC_STATUS.IN_PROGRESS) {
+      alert("Warning: This device has not successfully completed the first sync. Please connect to the Internet and log in as Device Admin to try again.")
+    }
+    // Navigate to update page if an update is running.
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
       this.router.navigate(['/update']);
     }

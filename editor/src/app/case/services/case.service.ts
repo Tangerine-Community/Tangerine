@@ -86,6 +86,14 @@ class CaseService {
     window['participant'] = this.participant
   }
 
+  getCurrentCaseEventId() {
+    return this?.caseEvent?.id
+  }
+  
+  getCurrentEventFormId() {
+    return this?.eventForm?.id
+  }
+
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
@@ -270,8 +278,8 @@ class CaseService {
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (
-          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+        if (eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)
+          &&
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -489,8 +497,8 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (
-          caseRoleId === eventFormDefinition.forCaseRole && 
+        if (eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseRoleId)
+          &&
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -558,8 +566,23 @@ class CaseService {
   /*
    * Issues API.
    */
+  queuedIssuesForCreation:Array<any> = []
 
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor]) {
+  async queueIssueForCreation (label = '', comment = '') {
+    this.queuedIssuesForCreation.push({
+      label,
+      comment
+    })
+  }
+
+  async createIssuesInQueue() {
+    for (let queuedIssue of this.queuedIssuesForCreation) {
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), window['username'], window['username'], false, '')
+    }
+    this.queuedIssuesForCreation = []
+  }
+
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, sendToAllDevices = false, sendToDeviceById = '') {
     const caseData = await this.tangyFormService.getResponse(caseId)
     const formResponseId = caseData
       .events.find(event => event.id === eventId)
@@ -572,14 +595,40 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Editor,
-      resolveOnAppContexts,
+      sendToAllDevices, 
+      sendToDeviceById,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
       formResponseId
     })
     await this.tangyFormService.saveResponse(issue)
-    return await this.openIssue(issue._id, comment, userId, userName)
+    await this.openIssue(issue._id, comment, userId, userName)
+    await this.updateIssueMeta(issue._id, label, comment, sendToAllDevices, sendToDeviceById, userName, userId)
+    return await this.getIssue(issue._id)
+  }
+
+  async updateIssueMeta(issueId:string, label:string, description:string, sendToAllDevices:boolean, sendToDeviceById:string, userName:string, userId:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.label = label
+    issue.description = description
+    issue.sendToAllDevices = sendToAllDevices
+    issue.sendToDeviceById = sendToDeviceById
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.UpdateMeta,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        label,
+        description,
+        sendToAllDevices,
+        sendToDeviceById
+      }
+    })
+    return await this.tangyFormService.saveResponse(issue)
   }
 
   async getIssue(issueId) {
@@ -613,6 +662,37 @@ class CaseService {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const caseInstance = await this.tangyFormService.getResponse(issue.caseId)
     const response = await this.tangyFormService.getResponse(issue.formResponseId)
+    // If the Event or Event Form related to issue are not longer in the caseInstance, restore them.
+    // This may be due to either the Event or Event Form being removed, or a Data Conflict where this Event or Event Form is in the losing revision.
+    let currentEvent = caseInstance.events.find(event => event.id === issue.eventId)
+    if (!currentEvent) {
+      if (await this.hasProposedChange(issueId)) {
+        const proposedRevisionIssueEvent = await this.getProposedChange(issueId)
+        const theMissingCaseEvent = proposedRevisionIssueEvent.caseInstance.events.find(event => event.id === issue.eventId)
+        caseInstance.events.push(theMissingCaseEvent)
+      } else {
+        const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+        const theMissingCaseEvent = baseEvent.data.caseInstance.events.find(event => event.id === issue.eventId)
+        caseInstance.events.push(theMissingCaseEvent)
+      }
+      currentEvent = caseInstance.events.find(event => event.id === issue.eventId)
+    }
+    let currentEventForm = currentEvent.find(eventForm => eventForm.id === issue.eventFormId)
+    if (!currentEventForm) {
+      if (await this.hasProposedChange(issueId)) {
+        const proposedRevisionIssueEvent = await this.getProposedChange(issueId)
+        const theMissingEventForm = proposedRevisionIssueEvent.caseInstance
+          .events.find(event => event.id === issue.eventId)
+          .eventForms.find(eventForm => eventForm.id === issue.eventFormId)
+        currentEvent.eventForms.push(theMissingEventForm)
+      } else {
+        const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+        const theMissingEventForm = baseEvent.data.caseInstance
+          .events.find(event => event.id === issue.eventId)
+          .eventForms.find(eventForm => eventForm.id === issue.eventFormId)
+        currentEvent.eventForms.push(theMissingEventForm)
+      }
+    }
     issue.events.push(<IssueEvent>{
       id: UUID(),
       type: IssueEventType.Rebase,

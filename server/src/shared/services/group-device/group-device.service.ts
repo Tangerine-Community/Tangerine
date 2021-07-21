@@ -169,6 +169,27 @@ export class GroupDeviceService {
     }
   }
 
+  async didUpdateStatus(groupId:string, deviceId:string, version:string, status) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      if (!originalDevice.replicationStatuses) {
+        originalDevice.replicationStatuses = []
+      }
+      originalDevice.replicationStatuses.push(status)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        updatedOn: Date.now(),
+        version,
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   async register(groupId, deviceId) {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     const device = <GroupDevice>await groupDevicesDb.get(deviceId)

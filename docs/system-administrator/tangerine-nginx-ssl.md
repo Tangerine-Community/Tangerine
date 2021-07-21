@@ -74,7 +74,6 @@ server {
 server {
 server_name DOMAIN.ORG
 client_max_body_size 0;
-;
 
         location / {
                 # First attempt to serve request as file, then

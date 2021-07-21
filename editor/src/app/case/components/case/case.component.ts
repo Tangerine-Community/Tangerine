@@ -4,6 +4,8 @@ import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
+import {Issue} from "../../classes/issue.class";
+import {GroupIssuesService} from "../../../groups/services/group-issues.service";
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -26,15 +28,20 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
   caseService: CaseService
+  conflicts:Array<Issue>
+  moment
+  groupId:string
 
   constructor(
     private route: ActivatedRoute,
     caseService: CaseService,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private groupIssuesService:GroupIssuesService,
   ) {
     ref.detach()
     this.window = window
     this.caseService = caseService
+    this.moment = moment
   }
 
   async ngAfterContentInit() {
@@ -46,6 +53,14 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService.setContext()
     this.window.caseService = this.caseService
     this.onCaseOpen()
+    this.groupId = this.caseService.case['groupId']
+    let queryResults = await this.groupIssuesService.query(this.groupId, {
+      fun: "groupConflicts",
+      key: [caseId],
+      include_docs: true,
+      descending:true
+    })
+    this.conflicts = queryResults.map(issue => issue.doc)
     this.calculateTemplateData()
     this.ready = true
   }

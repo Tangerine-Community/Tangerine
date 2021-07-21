@@ -8,6 +8,7 @@ import { EventForm } from '../../classes/event-form.class';
 import { CaseEvent } from '../../classes/case-event.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -21,10 +22,12 @@ export class EventFormComponent implements OnInit, OnDestroy {
   caseEventDefinition: CaseEventDefinition
   eventFormDefinition: EventFormDefinition
   eventForm: EventForm
+  caseId:string
   formInfo: FormInfo
   formId:string
   templateId:string
   formResponseId:string
+  allowCreationOfIssues:boolean
 
   hasEventFormRedirect = false
   eventFormRedirectUrl = ''
@@ -45,6 +48,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     private hostElementRef: ElementRef,
     private router: Router,
     private caseService: CaseService,
+    private appConfigService:AppConfigService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -57,7 +61,8 @@ export class EventFormComponent implements OnInit, OnDestroy {
     this.eventFormRedirectUrl = window['eventFormRedirect']
     this.eventFormRedirectBackButtonText = window['eventFormRedirectBackButtonText']
     this.route.params.subscribe(async params => {
-      await this.caseService.load(params.caseId)
+      this.caseId = params.caseId
+      await this.caseService.load(this.caseId)
       this.caseService.setContext(params.eventId, params.eventFormId)
       this.window.caseService = this.caseService
       this.caseEvent = this
@@ -89,20 +94,9 @@ export class EventFormComponent implements OnInit, OnDestroy {
         participantId: this.eventForm.participantId
       }
       this.formPlayer.render()
-
       this.caseService.onChangeLocation$.subscribe(location => {
         this.formPlayer.location = this.caseService.case.location
       })
-      this.formPlayer.$saved.subscribe(async () => {
-        if (this.isWrappingUp) return
-        if (!this.formResponseId && this.formPlayer.response && this.formPlayer.response.items && this.formPlayer.response.items[0] && this.formPlayer.response.items[0].inputs && this.formPlayer.response.items[0].inputs.length > 0) {
-          this.eventForm.formResponseId = this.formPlayer.formResponseId
-          this.isSaving = true
-          await this.caseService.save()
-          this.isSaving = false
-        }
-      })
-      
       this.formPlayer.$submit.subscribe(async () => {
         this.isWrappingUp = true
         setTimeout(async () => {
@@ -111,7 +105,16 @@ export class EventFormComponent implements OnInit, OnDestroy {
           }
           // If this was a one page form, the form response ID may not have been linked yet.
           if (!this.eventForm.formResponseId) {
-            this.eventForm.formResponseId = this.formPlayer.formResponseId
+            // Note that this.eventForm is a memory reference that may be now disconnected from caseService's loaded case due to loading a different
+            // case and then the current case back again. This is why we need to be careful to set the relationship directly into the case in memory.
+            this
+              .caseService
+              .case
+              .events
+              .find(caseEvent => caseEvent.id === this.caseEvent.id)
+              .eventForms
+              .find(eventForm => eventForm.id === this.eventForm.id)
+              .formResponseId = this.formPlayer.formResponseId
           }
           this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
           await this.caseService.save()
@@ -122,6 +125,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
             const formInfo = this.formPlayer.formInfo
             await this.caseService.createIssue(`Discrepancy on ${formInfo.title}`, '', this.caseService.case._id, this.caseEvent.id, this.eventForm.id, window['userProfile']._id, window['username'], null)
           }
+          await this.caseService.createIssuesInQueue()
           // @TODO This redirect may not be need now that we are not displaying form until `this.readyForDataEntry = true`.
           // @TODO Why do we have to redirect back to the case event page to avoid a database conflict error when redirecting
           // to another event form???
@@ -131,6 +135,8 @@ export class EventFormComponent implements OnInit, OnDestroy {
           }
         }, 500)
       })
+      const appConfig = await this.appConfigService.getAppConfig()
+      this.allowCreationOfIssues = appConfig.allowCreationOfIssues
       this.loaded = true
       this.ref.detectChanges()
     })

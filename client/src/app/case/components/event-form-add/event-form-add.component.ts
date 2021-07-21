@@ -75,7 +75,7 @@ export class EventFormAddComponent implements AfterContentInit {
   async calculateAvailableEventFormDefinitions(participantId) {
     const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
     const availableEventFormDefinitionsForParticipant = this.caseEventDefinition.eventFormDefinitions
-      .filter(eventFormDefinition => eventFormDefinition.forCaseRole === participant.caseRoleId)
+      .filter(eventFormDefinition => eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(participant.caseRoleId))
       .reduce((availableEventFormDefinitions, eventFormDefinition) => {
         const eventFormDefinitionHasForm = this.caseEvent.eventForms
           .filter(eventForm => eventForm.participantId === participantId)

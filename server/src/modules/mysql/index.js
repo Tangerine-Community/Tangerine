@@ -228,7 +228,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     complete: formResponse.complete
   };
   function set(input, key, value) {
-    flatFormResponse[key] = input.skipped
+    flatFormResponse[key.trim()] = input.skipped
       ? process.env.T_REPORTING_MARK_SKIPPED_WITH
       : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
         ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
@@ -262,6 +262,9 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
             set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
+      } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
+        let selectedOption = input.value.find(option => !!option.value) 
+        set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
       } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
         set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input && typeof input.value === 'string') {

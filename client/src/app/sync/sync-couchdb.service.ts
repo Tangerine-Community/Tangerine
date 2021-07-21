@@ -14,7 +14,6 @@ import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
 import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
-import {ConflictService} from "./services/conflict.service";
 import { SyncDirection } from './sync-direction.enum';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const retryDelay = 5*1000
@@ -57,8 +56,7 @@ export class SyncCouchdbService {
     private appConfigService: AppConfigService,
     private caseDefinitionsService: CaseDefinitionsService,
     private caseService: CaseService,
-    private tangyFormService: TangyFormService,
-    private conflictService: ConflictService
+    private tangyFormService: TangyFormService
   ) { }
 
   cancel() {
@@ -87,6 +85,8 @@ export class SyncCouchdbService {
     isFirstSync = false,
     fullSync?:SyncDirection
   ): Promise<ReplicationStatus> {
+    // set fullSync
+    this.fullSync = fullSync
     // Prepare config.
     const appConfig = await this.appConfigService.getAppConfig()
     this.batchSize = appConfig.batchSize || this.batchSize
@@ -520,15 +520,23 @@ export class SyncCouchdbService {
           return $or
         }, []),
         ...syncDetails.deviceSyncLocations.length > 0
-          ? syncDetails.deviceSyncLocations.map(locationConfig => {
+          ? syncDetails.deviceSyncLocations.reduce((filters, locationConfig) => {
             // Get last value, that's the focused sync point.
             let location = locationConfig.value.slice(-1).pop()
-            return {
-              "type": "issue",
-              [`location.${location.level}`]: location.value,
-              "resolveOnAppContext": AppContext.Client
-            }
-          })
+            return [
+              ...filters,
+              {
+                "type": "issue",
+                [`location.${location.level}`]: location.value,
+                "sendToAllDevices": true 
+              },
+              {
+                "type": "issue",
+                [`location.${location.level}`]: location.value,
+                "sendToDeviceById": syncDetails.deviceId
+              }
+            ] 
+          }, [])
           : [
             {
               "resolveOnAppContext": AppContext.Client,
