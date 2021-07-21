@@ -80,6 +80,11 @@ if echo "$T_MODULES" | grep mysql; then
   ./mysql-setup.sh
 fi
 
+if "$T_MYSQL_PHPMYADMIN" = "TRUE"; then
+  echo "Starting phpmyadmin..."
+  ./phpmyadmin-start.sh
+fi
+
 # Set t_TAG to current branch and the hash for the current commit in Git
 if [ "$1" = "" ]; then
   if [ "$T_TAG" = "" ]; then
