@@ -1,3 +1,5 @@
+import { NewIssueComponent } from './components/new-issue/new-issue.component';
+import { CaseService } from 'src/app/case/services/case.service';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { IssueComponent } from './components/issue/issue.component';
 import { CreateProfileGuardService } from './../shared/_guards/create-profile-guard.service';
@@ -31,6 +33,28 @@ export class CanDeactivateEvent implements CanDeactivate<EventComponent> {
   }
 }
 
+@Injectable()
+export class CanDeactivateEventForm implements CanDeactivate<EventFormComponent> {
+
+  constructor(private caseService:CaseService) {}
+
+  async canDeactivate(
+    component: EventFormComponent,
+    currentRoute: ActivatedRouteSnapshot,
+    currentState: RouterStateSnapshot,
+    nextState: RouterStateSnapshot
+  ): Promise<boolean> {
+    if (!component.formResponseId && !component.eventForm.formResponseId && component.formPlayer.response && component.formPlayer.response.items && component.formPlayer.response.items[0] && component.formPlayer.response.items[0].inputs && component.formPlayer.response.items[0].inputs.length > 0) {
+      component.eventForm.formResponseId = component.formPlayer.formResponseId
+      component.isSaving = true
+      await this.caseService.save()
+      component.isSaving = false
+    }
+    return true
+  }
+
+}
+
 const routes: Routes = [
   {
     path: 'custom-app',
@@ -61,7 +85,8 @@ const routes: Routes = [
   {
     path: 'case/event/form/:caseId/:eventId/:eventFormId',
     component: EventFormComponent,
-    canActivate: [LoginGuard]
+    canActivate: [LoginGuard],
+    canDeactivate: [CanDeactivateEventForm]
   },
   {
     path: 'new-case',
@@ -73,6 +98,16 @@ const routes: Routes = [
   { path: 'issue/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'issue/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'issue/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
+  {
+    path: 'new-issue/:caseId/:eventId/:eventFormId/use-templates',
+    component: NewIssueComponent,
+    canActivate: [LoginGuard]
+  },
+  {
+    path: 'new-issue/:caseId/:eventId/:eventFormId',
+    component: NewIssueComponent,
+    canActivate: [LoginGuard]
+  }
  
  
 ];
@@ -81,6 +116,9 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [ CanDeactivateEvent ]
+  providers: [ 
+    CanDeactivateEvent,
+    CanDeactivateEventForm
+  ]
 })
 export class CaseRoutingModule { }

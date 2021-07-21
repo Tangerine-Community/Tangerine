@@ -1,13 +1,15 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v3.7.1
+FROM tangerine/docker-tangerine-base-image:v3.7.3
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Install global node dependencies
+# set unsafe-perm true allows it to work on ARM Macs(M1)
+RUN npm config set unsafe-perm true
 RUN npm install -g nodemon uuid
-
+RUN npm config set unsafe-perm false
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1
 ENV T_USER1_PASSWORD password

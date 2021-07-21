@@ -268,11 +268,18 @@ class CaseService {
   /*
    * Role Access API
    */
-  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition) {
+  // @TODO Add EventForm.permissions to interface and pass in eventForm in every usage of hasEventFormPermission.
+  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition, eventForm?:EventForm) {
     if (
+      (
+        eventForm &&
+        eventForm.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+      ) ||
+      (
         !eventFormDefinition.permissions ||
         !eventFormDefinition.permissions[operation] ||
         eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+      )
     ) {
       return true
     } else {
@@ -321,7 +328,7 @@ class CaseService {
     for (const caseParticipant of this.case.participants) {
       for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (
-          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)&& 
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -549,7 +556,8 @@ class CaseService {
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (
-          caseRoleId === eventFormDefinition.forCaseRole && 
+          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseRoleId)
+          && 
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -580,7 +588,8 @@ class CaseService {
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (
-          caseParticipant.caseRoleId === eventFormDefinition.forCaseRole && 
+          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)
+          && 
           (
             eventFormDefinition.autoPopulate || 
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
@@ -606,7 +615,7 @@ class CaseService {
     }
   }
 
-  deactivateParticipant(participantId:string) {
+  async deactivateParticipant(participantId:string) {
     this.case = {
       ...this.case,
       participants: this.case.participants.map(participant => {
@@ -746,23 +755,31 @@ class CaseService {
    * If the issue is a case or other type, createIssue will get the type from metadata.docType
    * and use it to populate docType in the Issue it creates.
    */
+
+  queuedIssuesForCreation:Array<any> = []
+
+  async queueIssueForCreation (label = '', comment = '') {
+    this.queuedIssuesForCreation.push({
+      label,
+      comment
+    })
+  }
+
+  async createIssuesInQueue() {
+    const userProfile = await this.userService.getUserProfile()
+    for (let queuedIssue of this.queuedIssuesForCreation) {
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, '')
+
+    }
+    this.queuedIssuesForCreation = []
+  }
   
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor], conflict: any = null) {
-
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, sendToAllDevices = false, sendToDeviceById = '') {
     const caseData = await this.tangyFormService.getResponse(caseId)
-    let formResponseId, docType
-    if (eventId) {
-      formResponseId = caseData
-        .events.find(event => event.id === eventId)
-        .eventForms.find(eventForm => eventForm.id === eventFormId)
-        .formResponseId
-    }
-    if (conflict) {
-      docType = conflict.docType
-    } else {
-      docType = 'response'
-    }
-
+    const formResponseId = caseData
+      .events.find(event => event.id === eventId)
+      .eventForms.find(eventForm => eventForm.id === eventFormId)
+      .formResponseId
     const issue = new Issue({
       _id: UUID(),
       label,
@@ -770,15 +787,40 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Client,
-      resolveOnAppContexts,
+      sendToAllDevices, 
+      sendToDeviceById,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
-      formResponseId,
-      docType
+      formResponseId
     })
     await this.tangyFormService.saveResponse(issue)
-    return await this.openIssue(issue._id, comment, userId, userName, conflict)
+    await this.openIssue(issue._id, comment, userId, userName)
+    await this.updateIssueMeta(issue._id, label, comment, sendToAllDevices, sendToDeviceById, userName, userId)
+    return await this.getIssue(issue._id)
+  }
+
+  async updateIssueMeta(issueId:string, label:string, description:string, sendToAllDevices:boolean, sendToDeviceById:string, userName:string, userId:string) {
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    issue.label = label
+    issue.description = description
+    issue.sendToAllDevices = sendToAllDevices
+    issue.sendToDeviceById = sendToDeviceById
+    issue.events.push(<IssueEvent>{
+      id: UUID(),
+      type: IssueEventType.UpdateMeta,
+      date: Date.now(),
+      userName,
+      userId,
+      createdAppContext: AppContext.Editor,
+      data: {
+        label,
+        description,
+        sendToAllDevices,
+        sendToDeviceById
+      }
+    })
+    return await this.tangyFormService.saveResponse(issue)
   }
 
   async getIssue(issueId) {
@@ -938,10 +980,12 @@ class CaseService {
 
   async canMergeProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    const firstOpenEvent = issue.events.find(event => event.type === IssueEventType.Open)
+    const eventBase = [...issue.events]
+      .reverse()
+      .find(event => event.type === IssueEventType.Rebase || event.type === IssueEventType.Open)
     const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
-    return currentFormResponse._rev === firstOpenEvent.data.response._rev && currentCaseInstance._rev === firstOpenEvent.data.caseInstance._rev ? true : false
+    return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
   }
 
   async issueDiff(issueId) {

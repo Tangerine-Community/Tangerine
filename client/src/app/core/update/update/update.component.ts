@@ -12,6 +12,7 @@ import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { Device } from 'src/app/device/classes/device.class';
+import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
 
 export const VARIABLE_FINISH_UPDATE_ON_LOGIN = 'VARIABLE_FINISH_UPDATE_ON_LOGIN'
 
@@ -44,6 +45,25 @@ export class UpdateComponent implements AfterContentInit {
     this.updateService.status$.subscribe({next: message => {
       this.message = message
     }})
+    let beforeCustomUpdates, afterCustomUpdates
+    try {
+      beforeCustomUpdates = await this.updateService.getBeforeCustomUpdates()
+    } catch (e) {
+    }
+    try {
+      afterCustomUpdates = await this.updateService.getAfterCustomUpdates()
+    } catch (e) {
+    }
+    
+    if (beforeCustomUpdates) {
+      // TODO: support pre-flight and progress of update
+      try {
+        await this.updateService.runCustomUpdatesBefore(beforeCustomUpdates)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
+    }
+
 
     /*
      * SP1
@@ -85,9 +105,43 @@ export class UpdateComponent implements AfterContentInit {
     ) {
       await this.updateService.sp2_processUpdates()
       await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
-      await this.deviceService.didUpdate()
+
+      let replicationStatus:ReplicationStatus = <ReplicationStatus>{
+        info: ''
+      };
+      // await this.syncService.addDeviceSyncMetadata();
+      const deviceInfo = await this.deviceService.getAppInfo()
+      replicationStatus.deviceInfo = deviceInfo
+      const userDb = await this.userService.getUserDatabase()
+      const dbDocCount = (await userDb.db.info()).doc_count
+      replicationStatus.dbDocCount = dbDocCount
+      const connection = navigator['connection']
+      const effectiveType = connection.effectiveType;
+      const downlink = connection.downlink;
+      const downlinkMax = connection.downlinkMax;
+      replicationStatus.effectiveConnectionType = effectiveType
+      replicationStatus.networkDownlinkSpeed = downlink
+      replicationStatus.networkDownlinkMax = downlinkMax
+      const userAgent = navigator['userAgent']
+      replicationStatus.userAgent = userAgent
+      replicationStatus.message = "update"
+
+      const device = await this.deviceService.getDevice()
+      const deviceId = device._id
+      const deviceToken = device.token
+      
+      await this.deviceService.didUpdate(deviceId, deviceToken, replicationStatus)
       this.message = _TRANSLATE('✓ Yay! You are up to date.')
-    } 
+    }
+    
+    if (afterCustomUpdates) {
+      // TODO: support pre-flight and progress of update
+      try {
+        await this.updateService.runCustomUpdatesAfter(afterCustomUpdates)
+      } catch (e) {
+        console.log("Error: " + e)
+      }
+    }
 
     /*
      * Show the button to proceed.

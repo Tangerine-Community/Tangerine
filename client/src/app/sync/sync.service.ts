@@ -208,6 +208,9 @@ export class SyncService {
       'tangy-form/responsesUnLockedAndUploaded',
       'tangy-form/responseByUploadDatetime',
       'responsesUnLockedAndNotUploaded',
+      'sync-queue',
+      'sync-conflicts',
+      'tangy-form',
       'find-docs-by-form-id-pageable/find-docs-by-form-id-pageable'
     ]
     const db = await this.userService.getUserDatabase()
