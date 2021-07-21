@@ -42,5 +42,9 @@ export class AppConfig {
   findSelectorLimit: number;
   compareLimit: number;
   allowCreationOfIssues:boolean
+  // By default, User Profiles (AKA Device Users) will sync down to devices given the Sync Settings and then filtered
+  // by assignment when associating accounts on the Device. Setting this to true will ensure all User Profiles are
+  // Synced to all Devices and there will also be no filtering when associating Device Users to Accounts on Devices.
+  disableDeviceUserFilteringByAssignment:boolean 
 }
 

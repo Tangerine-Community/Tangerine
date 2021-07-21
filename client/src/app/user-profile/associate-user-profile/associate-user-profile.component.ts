@@ -28,12 +28,16 @@ export class AssociateUserProfileComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    const appConfig = await this.appConfigService.getAppConfig()
     const deviceInfo = await this.deviceService.getDevice()
     const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]
-    const userProfiles = await this.tangyFormService.getResponsesByFormId('user-profile')
-    const localUserProfiles = userProfiles.filter(profile => profile.location[lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
+    let userProfiles = await this.tangyFormService.getResponsesByFormId('user-profile')
+    if (!appConfig.disableDeviceUserFilteringByAssignment) {
+      const localUserProfiles = userProfiles.filter(profile => profile.location[lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
+      userProfiles = localUserProfiles
+    }
     const userAccounts = await this.userService.getAllUserAccounts()
-    const availableUserProfiles = localUserProfiles.filter((userProfile) => !userAccounts.find(userAccount => userAccount.userUUID === userProfile._id))
+    const availableUserProfiles = userProfiles.filter((userProfile) => !userAccounts.find(userAccount => userAccount.userUUID === userProfile._id))
     this.container.nativeElement.innerHTML = `
       <tangy-form id="user-profile-select-form">
         <tangy-form-item id="user-profile-select-item">
