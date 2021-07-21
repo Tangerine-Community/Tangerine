@@ -197,26 +197,6 @@ class CaseService {
     await this.save()
   }
 
-  async delete() {
-    const eventForms:Array<EventForm> = this.case.events.reduce((eventForms, event) => {
-      return Array.isArray(event.eventForms)
-        ? [...eventForms, ...event.eventForms]
-        : eventForms
-    }, [])
-    for (let eventForm of eventForms) {
-      if (eventForm.formResponseId) {
-        const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
-        if (formResponse) {
-          formResponse.archived=true
-          await this.tangyFormService.saveResponse(formResponse)
-        }
-      }
-    }
-    this.case.archived=true
-    await this.save()
-  }
-
-
   async setCase(caseInstance) {
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
