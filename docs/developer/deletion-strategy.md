@@ -4,7 +4,16 @@
 
 To delete a case in Editor, click the "Trashcan" button to the right of the case ID in the "breadcrumbs" area at the top of the case document. This adds `archived:true` to the case document as well as all eventForm responses for the case. 
 
-The client search index code filters out docs with the `archived:true` flag. You may need to create an update with the `await window['T'].search.createIndex()` to initiate indexing on client if data has already been collected on a tablet.
+The client search index code filters out docs with the `archived:true` flag. 
+
+Once you start using this deletion feature, create an update using the following code:
+
+```js
+await window['T'].search.createIndex()
+await userDb.query('search', { limit: 1 })
+```
+
+This code will rebuild the index on client in order to return the correct results when running a search on a tablet that already has data collected on it.
 
 ## Deleting a record in Tangerine manually on the server
 

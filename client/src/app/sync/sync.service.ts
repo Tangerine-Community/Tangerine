@@ -102,10 +102,11 @@ export class SyncService {
      * Delete archived docs
      */
 
-    const deletedArchivedDocs = await this.deleteArchivedDocs(userDb.db, initialPushLastSeq)
-    if (deletedArchivedDocs > 0) {
-      this.replicationStatus.deletedArchivedDocs = deletedArchivedDocs
-    }
+    // TODO Enable once we understand the implications of deleting local docs flagged with `archived`
+    // const deletedArchivedDocs = await this.deleteArchivedDocs(userDb.db, initialPushLastSeq)
+    // if (deletedArchivedDocs > 0) {
+    //   this.replicationStatus.deletedArchivedDocs = deletedArchivedDocs
+    // }
     
     /**
      * Calculating Sync stats
