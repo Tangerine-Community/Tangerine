@@ -215,7 +215,7 @@ app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
   return express.static(contentPath).apply(this, arguments);
 });
 
-app.use('/csv/', express.static('/csv/'));
+app.use('/csv/', isAuthenticated, express.static('/csv/'));
 
 app.use('/releases/', express.static('/tangerine/client/releases'))
 app.use('/client/', express.static('/tangerine/client/builds/dev'))
