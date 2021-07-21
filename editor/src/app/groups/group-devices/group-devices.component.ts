@@ -393,7 +393,8 @@ export class GroupDevicesComponent implements OnInit {
                     JSON.stringify(
                       locationList.locationsLevels.map(level => {
                         return {
-                          name:level,value:level === syncLocations[i].showLevels.slice(-1)[0] ? 'on' : ''
+                          name: level,
+                          value: level === syncLocations[i].showLevels.slice(-1)[0] ? 'on' : ''
                         }
                       })
                     )
