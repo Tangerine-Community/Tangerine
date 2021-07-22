@@ -196,7 +196,7 @@ app.get('/api/csvDataSet/:groupId/:formIds', isAuthenticated, generateCSVDataSet
 app.get('/api/csvDataSet/:groupId/:formIds/:year/:month', isAuthenticated, generateCSVDataSet)
 app.get('/api/csvDataSet-sanitized/:groupId/:formIds', isAuthenticated, generateCSVDataSet)
 app.get('/api/csvDataSet-sanitized/:groupId/:formIds/:year/:month', isAuthenticated, generateCSVDataSet)
-app.get('/apis/listCSVDatasets/:groupId', isAuthenticated, listCSVDataSets)
+app.get('/apis/listCSVDatasets/:groupId/:pageIndex/:pageSize', isAuthenticated, listCSVDataSets)
 app.get('/apis/CSVDatasetDetail/:datasetId', isAuthenticated, getDatasetDetail)
 
 app.get('/api/usage', require('./routes/usage'));

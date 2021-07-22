@@ -103,9 +103,11 @@ const generateCSVDataSet = async (req, res) => {
 
 const listCSVDataSets = async (req, res) => {
   try {
-    const { groupId } = req.params
+    const { groupId, pageIndex, pageSize } = req.params
     CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
-    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }] })
+    const numberOfDocs = (await CSV_DATASETS.find({ selector: { groupId } })).docs.length
+    console.log(numberOfDocs)
+    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:+pageIndex,limit:+pageSize })
     const http = await getUser1HttpInterface()
     const data = result.docs.map(async e => {
       let complete = false;
@@ -114,7 +116,7 @@ const listCSVDataSets = async (req, res) => {
       } catch (error) {
         complete = false
       }
-      return ({ ...e, complete })
+      return ({ ...e, complete, numberOfDocs })
     })
     res.send(await Promise.all(data))
   } catch (error) {
