@@ -56,7 +56,8 @@ const {AppContext} = require("../../editor/src/app/app-context.enum");
 const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
-const {archiveToDiskConfig} = require('./config-utils.js')
+const {archiveToDiskConfig} = require('./config-utils.js');
+const { generateCSV, generateCSVDataSet, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
 
 if (process.env.T_AUTO_COMMIT === 'true') {
   setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
@@ -193,16 +194,22 @@ app.delete('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-
 if (process.env.T_LEGACY === "true") {
   app.post('/upload/:groupId', require('./routes/group-upload.js'))
 }
-app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
-app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
-app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
-app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv/:groupId/:formId', isAuthenticated, generateCSV)
+app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
+app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, generateCSV)
+app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
+app.get('/api/csvDataSet/:groupId/:formIds', isAuthenticated, generateCSVDataSet)
+app.get('/api/csvDataSet/:groupId/:formIds/:year/:month', isAuthenticated, generateCSVDataSet)
+app.get('/api/csvDataSet-sanitized/:groupId/:formIds', isAuthenticated, generateCSVDataSet)
+app.get('/api/csvDataSet-sanitized/:groupId/:formIds/:year/:month', isAuthenticated, generateCSVDataSet)
+app.get('/apis/listCSVDatasets/:groupId', isAuthenticated, listCSVDataSets)
+app.get('/apis/CSVDatasetDetail/:datasetId', isAuthenticated, getDatasetDetail)
+
 app.get('/api/usage', require('./routes/usage'));
 // For backwards compatibility for older consumers of this API.
 app.get('/usage', require('./routes/usage'));
 app.get('/usage/:startdate', require('./routes/usage'));
 app.get('/usage/:startdate/:enddate', require('./routes/usage'));
-
 
 // Static assets.
 app.use('/client', express.static('/tangerine/client/dev'));
