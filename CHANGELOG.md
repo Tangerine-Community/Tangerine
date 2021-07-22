@@ -2,6 +2,12 @@
 
 ## v3.19.0
 
+This is a big release; we are putting this important instruction at the beginning so that it does not get lost:
+
+<blockquote> When upgrading a server, be sure to run `docker exec tangerine push-all-groups-views` in order to 
+have the `groupConflicts` view.
+</blockquote>
+
 __New Features__
 
 - Data Manager requests and downloads CSVs for multiple forms as a set.
@@ -67,6 +73,27 @@ __Fixes__
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2773
 
 
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.19.0
+./start.sh v3.19.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.18.1
+```
 
 ## v3.18.1
 - Fix backup when using os encryption and sync protocol 2 and cordova. (PR: [#2767](https://github.com/Tangerine-Community/Tangerine/pull/2767))
