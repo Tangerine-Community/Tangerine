@@ -394,7 +394,7 @@ export const updates = [
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.0')) return
       console.log('Updating to v3.19.0...')
       const device = await window['T'].device.getDevice()
-      await variableService.set('previousDeviceSyncLocations', device.deviceSyncLocations)
+      await variableService.set('previousDeviceSyncLocations', device.syncLocations)
       await variableService.set('ran-update-v3.19.0', 'true')
     }
   }
