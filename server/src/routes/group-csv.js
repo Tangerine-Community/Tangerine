@@ -68,32 +68,15 @@ const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
   const formIds = sanitize(req.params.formIds)
   const { year, month } = req.params
-  let sanitizedExtension = ''
-
-  const forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
-  // const formInfo = forms.find(formInfo => formInfo.id === formIds)
-  // const title = formInfo.title.replace(/ /g, '_')
-  // this.group = await this.groupsService.getGroupInfo(groupId);
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/ /g, '_')
   const options = {
     replacement: '_'
   }
-  // const groupFormname = sanitize(groupLabel + '-' + title, options)
-  const fileName = `${sanitize(groupLabel, options)}${sanitizedExtension}-${Date.now()}.zip`.replace(/'/g, "_")
+  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/'/g, "_")
   let outputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
-  const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
-  // console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
-
-  const sleepTimeBetweenBatches = 0
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} `
-  if (year && month) {
-    cmd += ` ${sanitize(req.params.year)} ${sanitize(req.params.month)} `
-  }
-  if (req.originalUrl.includes('-sanitized')) {
-   cmd += ' --sanitized ' 
-  }
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${req.params.year ? sanitize(req.params.year) : `'*'`} ${req.params.month ? sanitize(req.params.month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)}`)
@@ -111,7 +94,6 @@ const generateCSVDataSet = async (req, res) => {
     year,
     month,
     dateCreated: Date.now()
-
   })
   res.send({
     stateUrl,
