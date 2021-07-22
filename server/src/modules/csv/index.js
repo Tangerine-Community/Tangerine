@@ -57,9 +57,27 @@ module.exports = {
             // TODO: Can't this be cached?
             const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
             if (doc.archived) {
+              debugger;
               // Delete from the -reporting db.
-              REPORTING_DB.remove(doc)
-              SANITIZED_DB.remove(doc)
+              console.log("Deleting: " + doc._id)
+              try {
+                // await REPORTING_DB.remove(doc._id, doc._rev)
+                await REPORTING_DB.get(doc._id).then(function (doc) {
+                  return REPORTING_DB.remove(doc._id, doc._rev);
+                });
+                console.log("Deleted from REPORTING_DB: " + doc._id + " rev: " + doc._rev)
+              } catch (e) {
+                console.log("Error: " + JSON.stringify(e))
+              }
+              try {
+                // await SANITIZED_DB.remove(doc._id, doc._rev)
+                await SANITIZED_DB.get(doc._id).then(function (doc) {
+                  return SANITIZED_DB.remove(doc._id, doc._rev);
+                });
+                console.log("Deleted from SANITIZED_DB: " + doc._id + " rev: " + doc._rev)
+              } catch (e) {
+                console.log("Error: " + JSON.stringify(e))
+              }
             } else {
               let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
               // Process the flatResponse
