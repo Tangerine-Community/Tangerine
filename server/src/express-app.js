@@ -112,6 +112,12 @@ var hasUploadToken = require('./middleware/has-upload-token.js')
 var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
+app.get('/version',
+  function (req, res) {
+    res.send(process.env.T_VERSION);
+  }
+)
+
 /*
  * Login and session API
  */
