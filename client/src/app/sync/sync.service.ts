@@ -61,6 +61,12 @@ export class SyncService {
     this.syncCouchdbService.cancel()
   }
   
+  async getStorageStats() {
+    return new Promise(function (resolve, reject) {
+      window['cordova'].exec(resolve, reject, "File", "getFreeDiskSpace", [])
+    })
+  }
+  
   async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
@@ -130,11 +136,7 @@ export class SyncService {
     let storageAvailable;
 
     if (window['isCordovaApp']) {
-      window['cordova'].exec(function(result) {
-        storageAvailable = result
-      }, function(error) {
-        console.log("Error: " + error)
-      }, "File", "getFreeDiskSpace", []);
+      storageAvailable = await this.getStorageStats()
     }
 
     try {
