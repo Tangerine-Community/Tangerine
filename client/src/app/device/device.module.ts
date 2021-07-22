@@ -14,6 +14,7 @@ import { RouterModule } from '@angular/router';
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatCardModule} from "@angular/material/card";
 import { RestoreBackupComponent } from './components/restore-backup/restore-backup.component';
+import { DeviceResyncComponent } from './components/device-resync/device-resync.component';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -23,7 +24,8 @@ import { RestoreBackupComponent } from './components/restore-backup/restore-back
     DeviceLanguageComponent,
     DeviceSyncComponent,
     DevicePasswordComponent,
-    RestoreBackupComponent
+    RestoreBackupComponent,
+    DeviceResyncComponent
   ],
   imports: [
     CommonModule,
