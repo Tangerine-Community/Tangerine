@@ -308,79 +308,139 @@ export class GroupDevicesComponent implements OnInit {
   async editDevice(deviceId:string) {
     const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
-    window['dialog'].innerHTML = `
-    <paper-dialog-scrollable>
-    <h2>Device Settings</h2>
-    <style>
-    .device-settings-list {
-      vertical-align: top;
-      font-size: larger;
-      font-weight: bold ;
-    }
-    .device-settings-list-element {
-      vertical-align: top;
-      padding-top: 40px;
-    }
-    table {
-        margin-left: 1em;
-    }
-    </style>
-    <table>
-    <tr><td class="device-settings-list">ID</td><td>${device._id}</td></tr>
-    <tr><td class="device-settings-list">Token</td><td>${device.token}</td></tr>
-    <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
-    <tr><td class="device-settings-list"><div class="device-settings-list-element">Assigned Location:</div></td><td><tangy-location
-            disabled
-            name="assigned_location"
-            label="Assign device to location at which location?"
-            show-levels='${locationList.locationsLevels.join(',')}'
-            ${device.assignedLocation && device.assignedLocation.value ? `
-              value='${JSON.stringify(device.assignedLocation.value)}'
-            ` : ''}
-          >
-          </tangy-location></td></tr>
-     <tr><td class="device-settings-list"><div class="device-settings-list-element">Sync Location:</div></td><td><tangy-radio-buttons
-            disabled
-            ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
-              value='${
-      JSON.stringify(
-        locationList.locationsLevels.map(level => {
-          return {
-            name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
-          }
-        })
+    const maxSyncLocations = 20
+    const syncLocations = []
+    let i = 0
+    while (i < maxSyncLocations) {
+      syncLocations.push(device.syncLocations[i]
+        ? device.syncLocations[i]
+        : null
       )
-    }'
-            ` : ''}
-            label="Sync device to location at which level?"
-            name="sync_location__show_levels"
-          >
-            ${locationList.locationsLevels.map(level => `
-              <option value="${level}">${level}</option>
+      i++
+    }
+    window['dialog'].innerHTML = `
+      <paper-dialog-scrollable>
+        <h2>Device Settings</h2>
+        <tangy-form>
+          <tangy-form-item id="edit-device" on-change="
+            const locationsLevels = [ ${locationList.locationsLevels.map(level => `'${level}'`).join(',')} ]
+            ${syncLocations.map((syncLocation, i) => `
+              if (getValue('sync_location__show_levels__${i}')) {
+                inputs.sync_location__${i}.setAttribute('show-levels', locationsLevels.slice(0, locationsLevels.indexOf(getValue('sync_location__show_levels__${i}'))+1).join(','))
+              }
             `).join('')}
-          </tangy-radio-buttons>
-
-          <tangy-location
-            disabled
-            name="sync_location"
-            label="Sync device to which location?"
-            ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
-              show-levels='${device.syncLocations[0].showLevels.join(',')}'
-              value='${JSON.stringify(device.syncLocations[0].value)}'
-            ` : ''}
-          >
-          </tangy-location></td></tr>
-</table>
-<h2>Edit Device Description:</h2>
-      <tangy-form>
-        <tangy-form-item id="edit-device" on-change="">
-          <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
-        </tangy-form-item>
-      </tangy-form>
-    </paper-dialog-scrollable>
+          ">
+            <style>
+              .device-settings-list {
+                vertical-align: top;
+                font-size: larger;
+                font-weight: bold ;
+              }
+              .device-settings-list-element {
+                vertical-align: top;
+                padding-top: 40px;
+              }
+              table {
+                  margin-left: 1em;
+              }
+            </style>
+            <table>
+              <tr><td class="device-settings-list">ID</td><td>${device._id}</td></tr>
+              <tr><td class="device-settings-list">Token</td><td>${device.token}</td></tr>
+              <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
+            </table>
+            <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
+            <tangy-location
+              name="assigned_location"
+              label="Assign device to location at which location?"
+              show-levels='${locationList.locationsLevels.join(',')}'
+              ${device.assignedLocation && device.assignedLocation.value ? `
+                value='${JSON.stringify(device.assignedLocation.value)}'
+              ` : ''}
+            >
+            </tangy-location>
+            <tangy-checkbox 
+              name="reconfigure_sync"
+              label="Reconfigure sync"
+              hint-text="Warning: Reconfiguring sync will result in the device deleting all of its data and downloading everything given the new sync settings."
+            >
+            </tangy-checkbox>
+            <tangy-select
+              name="number_of_sync_locations"
+              label="Number of locations to sync to"
+              disable-if="!getValue('reconfigure_sync')"
+              value="${device.syncLocations.length ? device.syncLocations.length : 0}"
+            >
+              ${syncLocations.map((syncLocation, i) => `
+                <option value=${i+1}>${i+1}</option>
+              `).join('')}
+            </tangy-select>
+            ${syncLocations.map((syncLocation, i) => `
+              <tangy-box
+                name="sync_location__title__${i}"
+                disable-if="!getValue('reconfigure_sync')"
+                show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
+              >
+                <h2 style="padding: 0px; margin: 0px;">Sync Location ${i+1}</h2>
+              </tangy-box>
+              <tangy-radio-buttons
+                label="Sync device to location at which level?"
+                name="sync_location__show_levels__${i}"
+                disable-if="!getValue('reconfigure_sync')"
+                show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
+                ${syncLocations && syncLocations[i] && syncLocations[i].showLevels ? `
+                  value='${
+                    JSON.stringify(
+                      locationList.locationsLevels.map(level => {
+                        return {
+                          name: level,
+                          value: level === syncLocations[i].showLevels.slice(-1)[0] ? 'on' : ''
+                        }
+                      })
+                    )
+                  }'
+                ` : ''}
+              >
+                ${locationList.locationsLevels.map(level => `
+                  <option value="${level}">${level}</option>
+                `).join('')}
+              </tangy-radio-buttons>
+              <tangy-location
+                disable-if="!getValue('reconfigure_sync')"
+                name="sync_location__${i}"
+                show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
+                label="Sync device to which location?"
+                ${syncLocations && syncLocations[i] && syncLocations[i].value ? `
+                  show-levels='${syncLocations[i].showLevels.join(',')}'
+                  value='${JSON.stringify(syncLocations[i].value)}'
+                ` : ''}
+              >
+              </tangy-location>
+            `).join('')}
+          </tangy-form-item>
+        </tangy-form>
+      </paper-dialog-scrollable>
     `
     window['dialog'].querySelector('tangy-form').addEventListener('submit', async (event) => {
-      device.description = event.target.inputs.find(input => input.name === 'description').value
+      const inputs = event.target.inputs
+      device.description = inputs.find(input => input.name === 'description').value
+      device.assignedLocation = {
+        showLevels: inputs.find(input => input.name === 'assigned_location').showLevels.split(','),
+        value: inputs.find(input => input.name === 'assigned_location').value,
+      }
+      const numberOfSyncLocations = parseInt(inputs.find(input => input.name === 'number_of_sync_locations').value)
+      let i = 0
+      const syncLocations = []
+      while (i < numberOfSyncLocations) {
+        syncLocations.push(
+          {
+            showLevels: inputs.find(input => input.name === `sync_location__${i}`).showLevels.split(','),
+            value: inputs.find(input => input.name === `sync_location__${i}`).value,
+          }
+        )
+        i++
+      }
+      device.syncLocations = syncLocations
       await this.groupDevicesService.updateDevice(this.groupId, device)
       this.update()
       window['dialog'].close()
@@ -391,29 +451,94 @@ export class GroupDevicesComponent implements OnInit {
 
   async generateDevices() {
     const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
+    const maxSyncLocations = 20
+    // Set up an array of blank syncLocations for the template to iterate over.
+    const syncLocations = []
+    let i = 0
+    while (i < maxSyncLocations) {
+      syncLocations.push(null)
+      i++
+    }
     window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="
+          const locationsLevels = [ ${locationList.locationsLevels.map(level => `'${level}'`).join(',')} ]
+          ${syncLocations.map((syncLocation, i) => `
+            if (getValue('sync_location__show_levels__${i}')) {
+              inputs.sync_location__${i}.setAttribute('show-levels', locationsLevels.slice(0, locationsLevels.indexOf(getValue('sync_location__show_levels__${i}'))+1).join(','))
+            }
+          `).join('')}
         ">
+          <style>
+            .device-settings-list {
+              vertical-align: top;
+              font-size: larger;
+              font-weight: bold ;
+            }
+            .device-settings-list-element {
+              vertical-align: top;
+              padding-top: 40px;
+            }
+            table {
+                margin-left: 1em;
+            }
+          </style>
           <tangy-input name="number_of_devices" value="1" label="Number of devices to generate" type="number" required></tangy-input>
+          <tangy-input name="description" label="Device description"></tangy-input>
           <tangy-location
-            required
             name="assigned_location"
-            label="Assign devices which location?"
+            label="Assign device to location at which location?"
             show-levels='${locationList.locationsLevels.join(',')}'
           >
           </tangy-location>
-          <tangy-radio-buttons
-            required
-            label="Sync device to location at which level?"
-            name="sync_location__show_levels"
+          <tangy-select
+            name="number_of_sync_locations"
+            label="Number of locations to sync to"
+            value="1"
           >
-            ${locationList.locationsLevels.map(level => `
-              <option value="${level}">${level}</option>
+            ${syncLocations.map((syncLocation, i) => `
+              <option value=${i+1}>${i+1}</option>
             `).join('')}
-          </tangy-radio-buttons>
-          <tangy-input name="description" label="Device description"></tangy-input>
+          </tangy-select>
+          ${syncLocations.map((syncLocation, i) => `
+            <tangy-box
+              name="sync_location__title__${i}"
+              show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
+            >
+              <h2 style="padding: 0px; margin: 0px;">Sync Location ${i+1}</h2>
+            </tangy-box>
+            <tangy-radio-buttons
+              label="Sync device to location at which level?"
+              name="sync_location__show_levels__${i}"
+              show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
+              ${syncLocations && syncLocations[i] && syncLocations[i].showLevels ? `
+                value='${
+                  JSON.stringify(
+                    locationList.locationsLevels.map(level => {
+                      return {
+                        name:level,value:level === syncLocations[i].showLevels.slice(-1)[0] ? 'on' : ''
+                      }
+                    })
+                  )
+                }'
+              ` : ''}
+            >
+              ${locationList.locationsLevels.map(level => `
+                <option value="${level}">${level}</option>
+              `).join('')}
+            </tangy-radio-buttons>
+            <tangy-location
+              name="sync_location__${i}"
+              show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
+              label="Sync device to which location?"
+              ${syncLocations && syncLocations[i] && syncLocations[i].value ? `
+                show-levels='${syncLocations[i].showLevels.join(',')}'
+                value='${JSON.stringify(syncLocations[i].value)}'
+              ` : ''}
+            >
+            </tangy-location>
+          `).join('')}
         </tangy-form-item>
       </tangy-form>
     </paper-dialog-scrollable>
@@ -422,30 +547,26 @@ export class GroupDevicesComponent implements OnInit {
       const numberOfDevicesToGenerate = parseInt(event.target.inputs.find(input => input.name === 'number_of_devices').value) 
       const assignedLevels = event.target.inputs.find(input => input.name === 'assigned_location').showLevels.split(',')
       const assignedLocationNodes = event.target.inputs.find(input => input.name === 'assigned_location').value
-      const syncLevels = event.target.inputs
-        .find(input => input.name === 'sync_location__show_levels')
-        .value
-        .slice(
-          0,
-          event.target.inputs
-            .find(input => input.name === 'sync_location__show_levels')
-            .value
-            .findIndex(option => option.value === 'on')+1
-        )
-        .map(option => option.name)
-      const syncLocationNodes = event.target.inputs.find(input => input.name === 'assigned_location').value
-        .filter(node => syncLevels.includes(node.level))
       const description = event.target.inputs.find(input => input.name === 'description').value
+      const numberOfSyncLocations = parseInt(event.target.inputs.find(input => input.name === 'number_of_sync_locations').value)
+      let i = 0
+      const syncLocations = []
+      while (i < numberOfSyncLocations) {
+        syncLocations.push(
+          {
+            showLevels: event.target.inputs.find(input => input.name === `sync_location__${i}`).showLevels.split(','),
+            value: event.target.inputs.find(input => input.name === `sync_location__${i}`).value,
+          }
+        )
+        i++
+      }
       let numberOfDevicesGenerated = 0
       window['dialog'].innerHTML = `<h1>Generating Devices...</h1>`
       while (numberOfDevicesGenerated < numberOfDevicesToGenerate) {
         const device = await this.groupDevicesService.createDevice(this.groupId)
         device.assignedLocation.value = assignedLocationNodes
         device.assignedLocation.showLevels = assignedLevels 
-        device.syncLocations[0] = {
-          value: syncLocationNodes,
-          showLevels: syncLevels
-        }
+        device.syncLocations = syncLocations 
         device.description = description
         await this.groupDevicesService.updateDevice(this.groupId, device)
         numberOfDevicesGenerated++
