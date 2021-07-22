@@ -69,10 +69,7 @@ const generateCSVDataSet = async (req, res) => {
   const formIds = sanitize(req.params.formIds)
   const { year, month } = req.params
   let sanitizedExtension = ''
-  if (req.originalUrl.includes('-sanitized')) {
-    sanitizedExtension = '-sanitized'
-  }
-  let dbName = `${groupId}-reporting${sanitizedExtension}`;
+
   const forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
   // const formInfo = forms.find(formInfo => formInfo.id === formIds)
   // const title = formInfo.title.replace(/ /g, '_')
@@ -90,9 +87,12 @@ const generateCSVDataSet = async (req, res) => {
   // console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
 
   const sleepTimeBetweenBatches = 0
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${dbName} ${formIds} "${outputPath}" ${batchSize} ${sleepTimeBetweenBatches}`
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} `
   if (year && month) {
-    cmd += ` ${sanitize(req.params.year)} ${sanitize(req.params.month)}`
+    cmd += ` ${sanitize(req.params.year)} ${sanitize(req.params.month)} `
+  }
+  if (req.originalUrl.includes('-sanitized')) {
+   cmd += ' --sanitized ' 
   }
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
