@@ -393,9 +393,13 @@ export const updates = [
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
       if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.0')) return
       console.log('Updating to v3.19.0...')
+      console.log('Adding support for previousDeviceSyncLocations variable...')
       const device = await window['T'].device.getDevice()
       await variableService.set('previousDeviceSyncLocations', device.syncLocations)
       await variableService.set('ran-update-v3.19.0', 'true')
+      console.log('Adding support for archived flags in search index...')
+      await T.search.createIndex()
+      await T.search.search(userService.getCurrentUser(), '', 1, 0)
     }
   }
 ]
