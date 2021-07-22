@@ -398,8 +398,8 @@ export const updates = [
       await variableService.set('previousDeviceSyncLocations', device.syncLocations)
       await variableService.set('ran-update-v3.19.0', 'true')
       console.log('Adding support for archived flags in search index...')
-      await T.search.createIndex()
-      await T.search.search(userService.getCurrentUser(), '', 1, 0)
+      await window['T'].search.createIndex()
+      await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
     }
   }
 ]
