@@ -35,7 +35,16 @@ export class CsvDataSetDetailComponent implements OnInit {
   }
 
   async ngOnInit(){
-     this.datasetDetail = await this.groupsService.getDatasetDetail(this.datasetId)
+    await this.getDatasetDetail()
+    const detailInterval = setInterval(await this.getDatasetDetail, 10*1000)
+    if(this.datasetDetail.complete){
+      clearInterval(detailInterval)
+    }
+     
+  }
+
+  async getDatasetDetail(){
+    this.datasetDetail = await this.groupsService.getDatasetDetail(this.datasetId)
   }
 
 }
