@@ -80,6 +80,11 @@ if echo "$T_MODULES" | grep mysql; then
   ./mysql-setup.sh
 fi
 
+if "$T_MYSQL_PHPMYADMIN" = "TRUE"; then
+  echo "Starting phpmyadmin..."
+  ./phpmyadmin-start.sh
+fi
+
 # Set t_TAG to current branch and the hash for the current commit in Git
 if [ "$1" = "" ]; then
   if [ "$T_TAG" = "" ]; then
@@ -162,6 +167,8 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_MODULES=$T_MODULES\" \
+  --env \"T_AUTO_COMMIT=$T_AUTO_COMMIT\" \
+  --env \"T_AUTO_COMMIT_FREQUENCY=$T_AUTO_COMMIT_FREQUENCY\" \
   --env \"T_LEGACY=$T_LEGACY\" \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \

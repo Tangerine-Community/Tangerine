@@ -58,7 +58,9 @@ const APPNAME = "Tangerine"
 const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
 const {archiveToDiskConfig} = require('./config-utils.js')
 
-setInterval(commitFilesToVersionControl, 60000)
+if (process.env.T_AUTO_COMMIT === 'true') {
+  setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
+}
 module.exports = async function expressAppBootstrap(app) {
 
 // Enforce SSL behind Load Balancers.
@@ -213,7 +215,7 @@ app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
   return express.static(contentPath).apply(this, arguments);
 });
 
-app.use('/csv/', express.static('/csv/'));
+app.use('/csv/', isAuthenticated, express.static('/csv/'));
 
 app.use('/releases/', express.static('/tangerine/client/releases'))
 app.use('/client/', express.static('/tangerine/client/builds/dev'))

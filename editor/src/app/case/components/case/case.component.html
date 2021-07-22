@@ -41,3 +41,18 @@
     </div>
     </div>
 </div>
+
+<div *ngFor="let conflict of conflicts" class="icon-list-item search-result" routerLink="/groups/{{groupId}}/data/issues/{{conflict._id}}">
+  <mwc-icon slot="item-icon">receipt</mwc-icon>
+  <div>
+    <div><strong>{{conflict.label}}</strong> {{moment(conflict.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
+    </div>
+    <div secondary>
+      Status: {{conflict.status}}
+      <span *ngIf="conflict.docType === 'case' && conflict.events.length > 0 && conflict.events[0].data.conflict">Merged: {{conflict.events[0].data.conflict.merged}}</span>
+      <span class="secondarySpacer" *ngIf="conflict.formResponseId">Response id: {{conflict.formResponseId | slice:0:8}}</span>
+      <span class="secondarySpacer" *ngIf="conflict.caseId">Case id: {{conflict.caseId | slice:0:8}}</span>
+      Device: {{conflict.tangerineModifiedByDeviceId | slice:0:8}}
+    </div>
+  </div>
+</div>

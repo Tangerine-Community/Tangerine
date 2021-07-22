@@ -42,7 +42,7 @@
       </div>
       <div class="card-actions">
         <paper-button routerLink="form-revision"><mwc-icon>call_split</mwc-icon>Propose</paper-button>
-        <paper-button *ngIf="hasProposedChange" (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Merge</paper-button>
+        <!-- Not showing this on client for now paper-button *ngIf="hasProposedChange" (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Merge</paper-button -->
       </div>
     </paper-card>
 
@@ -69,8 +69,8 @@
         </div>
       </div>
       <div class="card-actions">
-        <paper-button *ngIf="isOpen" (click)="onCloseClick()">close issue</paper-button>
-        <paper-button *ngIf="!isOpen && !issue.merged" (click)="onOpenClick()">open issue</paper-button>
+        <!-- paper-button *ngIf="isOpen" (click)="onCloseClick()">close issue</paper-button -->
+        <!-- paper-button *ngIf="!isOpen && !issue.merged" (click)="onOpenClick()">open issue</paper-button -->
         <paper-button (click)="onCommentFormSubmit()">comment</paper-button>
       </div>
     </paper-card>

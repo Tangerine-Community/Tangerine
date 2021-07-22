@@ -90,7 +90,8 @@ export class SyncService {
         deviceId: device._id,
         deviceToken: device.token,
         deviceSyncLocations: device.syncLocations,
-        formInfos
+        formInfos,
+        disableDeviceUserFilteringByAssignment: appConfig.disableDeviceUserFilteringByAssignment
       },
       null,
       isFirstSync,

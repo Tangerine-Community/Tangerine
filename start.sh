@@ -78,6 +78,11 @@ if echo "$T_MODULES" | grep mysql; then
   ./mysql-setup.sh
 fi
 
+if "$T_MYSQL_PHPMYADMIN" = "TRUE"; then
+  echo "Starting phpmyadmin..."
+  ./phpmyadmin-start.sh
+fi
+
 #
 # Get software and shut down existing containers if they exist.
 #
@@ -168,6 +173,8 @@ RUN_OPTIONS="
   --env \"T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS\" \
   --env \"T_USER1_MANAGED_SERVER_USERS=$T_USER1_MANAGED_SERVER_USERS\" \
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
+  --env \"T_AUTO_COMMIT=$T_AUTO_COMMIT\" \
+  --env \"T_AUTO_COMMIT_FREQUENCY=$T_AUTO_COMMIT_FREQUENCY\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_REPORTING_DELAY=$T_REPORTING_DELAY\" \
   --env \"T_MODULES=$T_MODULES\" \
