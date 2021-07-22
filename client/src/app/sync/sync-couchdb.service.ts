@@ -15,6 +15,8 @@ import {CaseDefinitionsService} from "../case/services/case-definitions.service"
 import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import { SyncDirection } from './sync-direction.enum';
+import { UserService } from '../shared/_services/user.service';
+import { DeviceService } from '../device/services/device.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const retryDelay = 5*1000
 
@@ -33,6 +35,28 @@ export class SyncCouchdbDetails {
   deviceSyncLocations:Array<LocationConfig>
   disableDeviceUserFilteringByAssignment:boolean
 }
+
+export class SyncSessionInfo {
+  syncSessionUrl:string
+  deviceSyncLocations:Array<LocationConfig> 
+}
+
+function syncLocationsDontMatch(a:Array<LocationConfig>, b:Array<LocationConfig>) {
+  let syncLocationsDontMatch = false
+  for (let locationConfigA of a) {
+    const lowestLevel = locationConfigA.showLevels[locationConfigA.showLevels.length-1] 
+    if (!b.find(locationConfigB => locationConfigB.value.find(node => node.level === lowestLevel).value === locationConfigA.value.find(node => node.level === lowestLevel).value)) {
+      syncLocationsDontMatch = true
+    }
+  }
+  for (let locationConfigB of b) {
+    const lowestLevel = locationConfigB.showLevels[locationConfigB.showLevels.length-1] 
+    if (!a.find(locationConfigA => locationConfigA.value.find(node => node.level === lowestLevel).value === locationConfigB.value.find(node => node.level === lowestLevel).value)) {
+      syncLocationsDontMatch = true
+    }
+  }
+  return syncLocationsDontMatch
+} 
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +81,8 @@ export class SyncCouchdbService {
     private appConfigService: AppConfigService,
     private caseDefinitionsService: CaseDefinitionsService,
     private caseService: CaseService,
+    private userService: UserService,
+    private deviceService: DeviceService,
     private tangyFormService: TangyFormService
   ) { }
 
@@ -101,8 +127,9 @@ export class SyncCouchdbService {
     let syncSessionUrl
     let remoteDb
     try {
-      syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-      remoteDb = new PouchDB(syncSessionUrl)
+      const syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+      syncDetails.deviceSyncLocations = syncSessionInfo.deviceSyncLocations
+      remoteDb = new PouchDB(syncSessionInfo.syncSessionUrl)
     } catch (e) {
       replicationStatus = {
         ...replicationStatus,
@@ -136,6 +163,30 @@ export class SyncCouchdbService {
     if (this.cancelling) {
       this.finishCancelling(replicationStatus)
       return replicationStatus
+    }
+
+    // Sync Locations Change Detection. 
+    const previousDeviceSyncLocations = await this.variableService.get('previousDeviceSyncLocations')
+    if (!isFirstSync && syncLocationsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations)) {
+      this.fullSync = 'push' 
+      while (!hadPushSuccess && !this.cancelling) {
+        pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
+        if (!pushReplicationStatus.pushError) {
+          hadPushSuccess = true
+        } else {
+          await sleep(retryDelay)
+        }
+      }
+      replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+      const device = await this.deviceService.getDevice()
+      await this.userService.reinstallSharedUserDatabase(device)
+      // Refresh db connection.
+      userDb = await this.userService.getUserDatabase()
+      await this.variableService.set('previousDeviceSyncLocations', syncDetails.deviceSyncLocations)
+      await this.variableService.set('sync-pull-last_seq', 0)
+   }
+    if (isFirstSync) {
+      await this.variableService.set('previousDeviceSyncLocations', syncDetails.deviceSyncLocations)
     }
 
     // Pull.
