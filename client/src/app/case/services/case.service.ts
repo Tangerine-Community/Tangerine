@@ -198,7 +198,6 @@ class CaseService {
     await this.save()
   }
 
-  
   async setCase(caseInstance) {
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
