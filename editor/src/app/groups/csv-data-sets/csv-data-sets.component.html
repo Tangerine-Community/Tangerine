@@ -40,7 +40,7 @@
     <ng-container matColumnDef="downloadUrl">
       <th mat-header-cell *matHeaderCellDef>{{'Download File'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
-        <a mat-icon-button [href]="dataSet.downloadUrl">
+        <a [disabled]="!dataSet.complete" mat-icon-button [href]="dataSet.downloadUrl">
           <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
         </a>
       </td>
