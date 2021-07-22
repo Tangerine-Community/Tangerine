@@ -37,6 +37,18 @@
     </mat-card-header>
   </mat-card>
 
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="csv-data-sets">
+    <mat-card-header>
+        <div mat-card-avatar>
+          <mwc-icon class="tangy-foreground-secondary">table_view</mwc-icon>
+        </div>
+        <mat-card-title>
+            <a>{{'Download CSV Data Set'|translate}}</a>
+        </mat-card-title>
+        <mat-card-subtitle>{{'Download Multiple CSVs at once.'|translate}}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
   <span *ngIf="config.enabledModules.includes('case')">
     <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_cases'"  class="is-link mat-elevation-z3" routerLink="cases">
       <mat-card-header>
