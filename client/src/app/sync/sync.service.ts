@@ -127,6 +127,15 @@ export class SyncService {
     const diff = end.diff(start)
     const duration = moment.duration(diff).as('milliseconds')
     // const durationUTC = moment.utc(duration).format('HH:mm:ss')
+    let storageAvailable;
+
+    if (window['isCordovaApp']) {
+      window['cordova'].exec(function(result) {
+        storageAvailable = result
+      }, function(error) {
+        console.log("Error: " + error)
+      }, "File", "getFreeDiskSpace", []);
+    }
 
     try {
       // reset pullConflicts - we don't want to send these stats.
@@ -134,6 +143,7 @@ export class SyncService {
       this.replicationStatus.syncCouchdbServiceStartTime = this.syncCouchdbServiceStartTime
       this.replicationStatus.syncCouchdbServiceEndime = this.syncCouchdbServiceEndime
       this.replicationStatus.syncCouchdbServiceDuration = duration
+      this.replicationStatus.storageAvailable = storageAvailable
       await this.addDeviceSyncMetadata();
 
       this.syncMessage$.next({

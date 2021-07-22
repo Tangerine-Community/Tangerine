@@ -38,4 +38,5 @@ export class ReplicationStatus {
   fullSync: string;
   compareDocsDirection: string;
   deletedArchivedDocs: number;
+  storageAvailable: number;
 }

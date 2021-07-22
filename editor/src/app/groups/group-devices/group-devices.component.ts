@@ -48,9 +48,8 @@ interface UserField {
 export class GroupDevicesComponent implements OnInit {
 
   title = _TRANSLATE("Devices")
+  storageAvailableErrorThreshhold = 1
   breadcrumbs:Array<Breadcrumb> = []
-
-
   devices:Array<GroupDevice>
   users:Array<TangyFormResponseModel> = []
   deviceInfos:Array<DeviceInfo> = []
@@ -59,12 +58,13 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'encryptionLevel', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'network', 'os', 'browserVersion', 'star']
+  devicesDisplayedColumns = ['id', 'description', 'assigned-location', 'sync-location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'tagVersion', 'tangerineVersion', 'encryptionLevel', 'errorMessage', 'dbDocCount',  'localDocsForLocation', 'storageAvailable', 'network', 'os', 'browserVersion', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog', {static: true}) dialog: ElementRef;
   @ViewChild('locationEl', {static: true}) locationEl: ElementRef;
   isExporting: boolean;
+  displayLowStorageWarning: boolean
 
   constructor(
     private menuService:MenuService,
@@ -192,8 +192,14 @@ export class GroupDevicesComponent implements OnInit {
         const encryptionLevel = replicationStatus?.deviceInfo?.encryptionLevel
         const dbDocCount = replicationStatus?.dbDocCount
         const localDocsForLocation = replicationStatus?.localDocsForLocation
+        const storageAvailable = replicationStatus?.storageAvailable ? (replicationStatus?.storageAvailable / (1024*1024)).toFixed(2) : ""
+        
         const effectiveConnectionType = replicationStatus?.effectiveConnectionType
-        let os, osName, osVersion, browserVersion
+        let os, osName, osVersion, browserVersion, isStorageThresholdExceeded
+        if (replicationStatus?.storageAvailable && (replicationStatus?.storageAvailable / (1024*1024)) < this.storageAvailableErrorThreshhold) {
+          isStorageThresholdExceeded = true
+          this.displayLowStorageWarning = true
+        }
         // There are some old clients that may not have replicationStatus; parser.setUA crashes if you send it null.
         if (replicationStatus?.userAgent) {
           const parser = new UAParser();
@@ -234,6 +240,8 @@ export class GroupDevicesComponent implements OnInit {
         encryptionLevel: encryptionLevel,
         dbDocCount: dbDocCount,
         localDocsForLocation: localDocsForLocation,
+        storageAvailable: storageAvailable,
+        isStorageThresholdExceeded: isStorageThresholdExceeded,
         effectiveConnectionType: effectiveConnectionType,
         errorFlag: errorFlag,
         os: replicationStatus?.userAgent ? os : null,
