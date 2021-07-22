@@ -1,0 +1,52 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div class="new-data-set-btn">
+  <a routerLink="../csv-data-sets/new">
+    <button mat-raised-button color="accent">
+      {{ "New Data Set" | translate }}
+    </button>
+  </a>
+</div>
+<div class="tangy-full-width">
+  <table
+    mat-table
+    [dataSource]="csvDataSets"
+    class="mat-elevation-z8 tangy-full-width"
+  >
+    <ng-container matColumnDef="fileName">
+      <th mat-header-cell *matHeaderCellDef>{{'File Name'|translate}}</th>
+      <td class="tangy-foreground-secondary link" [routerLink]="dataSet._id" mat-cell *matCellDef="let dataSet">{{ dataSet.fileName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="month">
+      <th mat-header-cell *matHeaderCellDef>{{'Month'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet.month||'*' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="year">
+      <th mat-header-cell *matHeaderCellDef>{{'Year'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet.year||'*' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateCreated">
+      <th mat-header-cell *matHeaderCellDef>{{'Created On'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet.dateCreated| date:'medium' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet.complete?'Complete':'In Progress' |translate}}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="downloadUrl">
+      <th mat-header-cell *matHeaderCellDef>{{'Download File'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">
+        <a mat-icon-button [href]="dataSet.downloadUrl">
+          <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+        </a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
