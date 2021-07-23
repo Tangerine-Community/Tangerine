@@ -54,13 +54,17 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.window.caseService = this.caseService
     this.onCaseOpen()
     this.groupId = this.caseService.case['groupId']
-    let queryResults = await this.groupIssuesService.query(this.groupId, {
-      fun: "groupConflicts",
-      key: [caseId],
-      include_docs: true,
-      descending:true
-    })
-    this.conflicts = queryResults.map(issue => issue.doc)
+    try {
+      let queryResults = await this.groupIssuesService.query(this.groupId, {
+        fun: "groupConflicts",
+        key: [caseId],
+        include_docs: true,
+        descending: true
+      })
+      this.conflicts = queryResults.map(issue => issue.doc)
+    } catch (e) {
+      console.log("Error fetching conflicts: " + e)
+    }
     this.calculateTemplateData()
     this.ready = true
   }
