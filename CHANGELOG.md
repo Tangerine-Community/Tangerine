@@ -8,6 +8,8 @@ This is a big release; we are putting this important instruction at the beginnin
 have the `groupConflicts` view.
 </blockquote>
 
+Will repeat this instruction at the end of this release note.
+
 __New Features__
 
 - Data Manager requests and downloads CSVs for multiple forms as a set.
@@ -94,6 +96,10 @@ git checkout v3.19.0
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.18.1
 ```
+
+<blockquote> Next, run `docker exec tangerine push-all-groups-views` in order to 
+have the `groupConflicts` view. This new view provides a listing of issues when viewing a case in Editor.
+</blockquote>
 
 ## v3.18.1
 - Fix backup when using os encryption and sync protocol 2 and cordova. (PR: [#2767](https://github.com/Tangerine-Community/Tangerine/pull/2767))
