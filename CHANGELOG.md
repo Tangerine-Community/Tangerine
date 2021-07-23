@@ -5,6 +5,8 @@
 - Feature: Remove configurable characters from CSV output [#2787](https://github.com/Tangerine-Community/Tangerine/issues/2787).
 - Documentation updates for backup/restore and fixes to image paths
 - Fix default user profile so it doesn't assume use of roles or location
+- Disabled "Print form backup" in Editor
+- Improvements to display of "Print metadata" in Editor
 
 ## v3.18.1
 - Fix backup when using os encryption and sync protocol 2 and cordova. (PR: [#2767](https://github.com/Tangerine-Community/Tangerine/pull/2767))
