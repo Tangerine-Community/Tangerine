@@ -2,24 +2,28 @@
 
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']"
+            [routerLink]="['/class-form/']"
             [queryParams]='classRegistrationParams'>
       {{'Add Class'|translate}}
     </button>
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']"
+            [routerLink]="['/class-form/']"
             [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
       {{'Add Student'|translate}}
     </button>
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-config/']">
+      <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>
+    </button>
   </span>
-  <span dir="rtl" *ngFor="let class of classes; let classIndex=index" class="class-dashboard-curr-button-spacer">
+  <span dir="rtl" *ngFor="let class of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">
       <button mat-stroked-button color="primary" [matMenuTriggerFor]="catMenu" class="mat-button"
               attr.data-classId = "{{class.id}}">
         {{class.doc.items[0].inputs[2].value}}
       </button>
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
-          <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value; let curriculumIndex=index;">
+          <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">
             <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>
           </span>
         </ng-template>
@@ -49,7 +53,7 @@
 <mat-toolbar *ngIf="!selectedClass" class="classDashboard">
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
+            [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
       {{'Add Class'|translate}}
     </button>
   </span>
@@ -61,6 +65,7 @@
 
     <mat-form-field>
       <mat-label>Select SubTask</mat-label>
+      
       <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
         <mat-option>None</mat-option>
         <mat-option *ngFor="let item of formList;" value="{{item.id}}"
