@@ -1,4 +1,18 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
+<mat-card [hidden]="!syncProtocol2Enabled" *appHasAllPermissions="let i;group:groupId; permissions:['can_access_devices']" class="is-link mat-elevation-z3" routerLink="devices">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <i class="material-icons tangy-foreground-secondary group-avatar">view_in_ar</i>
+        <i class="material-icons tangy-foreground-secondary group-avatar">settings_input_antenna</i>
+      </div>
+      <mat-card-title>
+          <a>{{'Sync Zones'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{"Manage devices using this group's app"|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
 <mat-card [hidden]="!syncProtocol2Enabled" *appHasAllPermissions="let i;group:groupId; permissions:['can_access_devices']" class="is-link mat-elevation-z3" routerLink="devices">
   <mat-card-header>
       <div mat-card-avatar>
