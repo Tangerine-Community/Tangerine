@@ -73,6 +73,8 @@ __Fixes__
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2775
 - Increase liklihood that migration of data to mysql will recover where it left off if server restarts.
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2773
+- From Case Definitions, the `onCaseOpen` and `onCaseClose` now also run in the server context.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2696
 
 
 __Server upgrade instructions__
