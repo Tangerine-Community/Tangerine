@@ -50,6 +50,9 @@ async function batch() {
   // console.log("docs: " + JSON.stringify(docs))
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
   console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
+  let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
+  console.log("csvReplacementCharacters: " + csvReplacementCharacters)
+  // let csvReplacement = csvReplacementCharacters? JSON.parse(csvReplacementCharacters) : false
   if (docs.length === 0) {
     state.complete = true
   } else {
@@ -58,26 +61,41 @@ async function batch() {
       const rows = docs.map(doc => {
         return [ doc._id, ...state.headersKeys.map(header => {
           // Check to see if variable comes from a section that was disabled.
+          let value = doc[header];
+          if (typeof value === 'string') {
+            if (csvReplacementCharacters) {
+              csvReplacementCharacters.forEach(expression => {
+                const search = expression[0];
+                const re = new RegExp(search, 'g')
+                const replace = expression[1];
+                try {
+                  value = value.replace(re, replace)
+                } catch (e) {
+                  console.log("ERROR! re: " + re + " replace: " + replace + " value: " + value + " Error: " + e)
+                }
+              })
+            }
+          }
           if(typeof header === 'string' && header.split('.').length === 3) {
             const itemId = header.split('.')[1]
             if (itemId && doc[`${itemId}_disabled`] === 'true') {
               if (outputDisabledFieldsToCSV) {
-                return doc[header]
+                return value
               } else {
                 return process.env.T_REPORTING_MARK_SKIPPED_WITH
               }
             } else {
-              if (doc[header] === undefined) {
+              if (value === undefined) {
                   return process.env.T_REPORTING_MARK_UNDEFINED_WITH
               } else {
-                  return doc[header]
+                  return value
               }
             }
           } else {
-            if (doc[header] === undefined) {
+            if (value === undefined) {
               return process.env.T_REPORTING_MARK_UNDEFINED_WITH
             } else {
-                return doc[header]
+                return value
             }          
           }
         })]
