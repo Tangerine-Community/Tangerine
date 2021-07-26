@@ -95,7 +95,7 @@ export class DashboardService {
    * Acts like a delete but archives instead so that it will get sync'd.
    * @param id
    */
-  async archiveStudentRegistration(id) {
+  async archiveDoc(id) {
     try {
       this.db = await this.getUserDB();
       const doc = await this.db.get(id);
@@ -105,9 +105,26 @@ export class DashboardService {
       const result = await this.db.put(doc);
       return result;
     } catch (e) {
-      console.log('Error deleting student: ' + e);
+      console.log('Error deleting document: ' + e);
     }
+  }
 
+  /**
+   * Removed 'archived' property from document.
+   * @param id
+   */
+  async enableDoc(id) {
+    try {
+      this.db = await this.getUserDB();
+      const doc = await this.db.get(id);
+      delete doc.archive
+      const lastModified = Date.now();
+      doc.lastModified = lastModified;
+      const result = await this.db.put(doc);
+      return result;
+    } catch (e) {
+      console.log('Error enabling document: ' + e);
+    }
   }
 
   /**
@@ -396,9 +413,11 @@ export class DashboardService {
 
     for (const student of students) {
       const studentResults: StudentResult = new StudentResult();
+      const student_name = this.getValue('student_name', student.doc)
+      const classId = this.getValue('classId', student.doc)
       studentResults.id = student.id;
-      studentResults.name = student.doc.items[0].inputs[0].value;
-      studentResults.classId = student.doc.items[0].inputs[3].value;
+      studentResults.name = student_name
+      studentResults.classId = classId
       studentResults.forms = [];
       if (studentsResponses[student.id]) {
         const studentResponse = studentsResponses[student.id][itemId];
@@ -593,6 +612,18 @@ export class DashboardService {
     }
     return feedback;
   }
+
+  public getValue = (variableName, response) => {
+    if (response) {
+      const variablesByName = response.items.reduce((variablesByName, item) => {
+        for (const input of item.inputs) {
+          variablesByName[input.name] = input.value;
+        }
+        return variablesByName;
+      }, {});
+      return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+    }
+  };
 
 }
 
