@@ -66,7 +66,7 @@
       </a>
     </span>
     <span>
-      <mat-select #test>
+      <mat-select #printActiveForm>
         <mat-option style="width:160px;">
           <a mat-icon-button target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
         </mat-option>
@@ -85,7 +85,7 @@
       </mat-select>
     </span>
     <span>
-      <a mat-icon-button (click)="test.open()">
+      <a mat-icon-button (click)="printActiveForm.open()">
         <i class="material-icons mat-32 tangy-location-list-icon">print</i>
       </a>
     </span>
@@ -169,8 +169,27 @@
       </a>
     </span>
 
-    <span >
-      <a mat-icon-button target="_new" href="{{form.printUrl}}">
+    <span>
+      <mat-select #printInActiveForm>
+        <mat-option style="width:160px;">
+          <a mat-icon-button target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
+        </mat-option>
+        <mat-option style="width:160px; ">
+          <a mat-icon-button target="_new"
+            [href]="groupUrl+'#/groups/'+groupId+'/printFormAsTable/'+form.id">{{'Print Metadata'|translate}}</a>
+        </mat-option>
+        <mat-option style="width:160px; ">
+          <a mat-icon-button target="_new"
+             [href]="groupUrl+'#/groups/'+groupId+'/printStimuliScreen/'+form.id">{{'Print Form Stimuli'|translate}}</a>
+        </mat-option>
+        <mat-option style="width:160px; ">
+          <a mat-icon-button target="_new"
+            [href]="groupUrl+'#/groups/'+groupId+'/printFormBackup/'+form.id">{{'Print Form Backup'|translate}}</a>
+        </mat-option>
+      </mat-select>
+    </span>
+    <span>
+      <a mat-icon-button (click)="printInActiveForm.open()">
         <i class="material-icons mat-32 tangy-location-list-icon">print</i>
       </a>
     </span>
