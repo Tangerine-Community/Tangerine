@@ -25,6 +25,7 @@ QUEUE_DOCS=False
 DOC_FETCH_COUNT=100
 DOC_FLUSH_COUNT=500000
 TABLE_PREFIX=''
+CONTINUOUS=True
 
 #
 # Helper functions
@@ -227,7 +228,8 @@ def main_job(lastSequence):
             update_state(lastSequence)
     log('Processing changes with lastSequence of ' + lastSequence + '.')
     log('Logged into Tangerine database')
-    changes_feed_mode(lastSequence)
+    if CONTINUOUS:
+        changes_feed_mode(lastSequence)
 
 #
 # Startup
@@ -251,6 +253,7 @@ synProjectName= config['SYNAPSE']['ProjectName']
 synUserName= config['SYNAPSE']['UserName']
 apiKey= config['SYNAPSE']['apiKey']
 TABLE_PREFIX = config['SYNAPSE']['tablePrefix']
+CONTINUOUS = config['SYNAPSE'].get('continuous', True)
 syn.login(email=synUserName, apiKey=apiKey)
 project = syn.get(synProjectName)
 log('Installing Synapse Span Table')
