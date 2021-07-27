@@ -1,10 +1,14 @@
 export class ClassUtils {
 
+  /**
+   * Provides an object with key/value pairs for a document
+   * @param doc
+   * @returns {{}} 
+   */
   getInputValues(doc) {
     let inputs = doc.items.reduce((acc, item) => [...acc, ...item.inputs], [])
     let obj = {}
     for (const el of inputs) {
-      var attrs = inputs.attributes;
       for(let i = inputs.length - 1; i >= 0; i--) {
         obj[inputs[i].name] = inputs[i].value;
       }
