@@ -761,8 +761,7 @@ class CaseService {
   async createIssuesInQueue() {
     const userProfile = await this.userService.getUserProfile()
     for (let queuedIssue of this.queuedIssuesForCreation) {
-      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, '')
-
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), [AppContext.Editor])
     }
     this.queuedIssuesForCreation = []
   }
