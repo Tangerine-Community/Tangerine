@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.18.3
+
+__Fixes__
+- Backported a fix from the v3.19.0 branch for "Issue created programmatically in on-submit says we must rebase but no button to rebase #2785"
+  - Description: Cases that have used the `T.case.createIssue()` API in forms to create Issues on the current form have recently found the resulting issues are broken. This is due to a change in when the Form Response is associated with the case (later than when T.case.createIssue() is called in a form's on-submit). To remedy this, we've added a new `T.case.queueIssueForCreation("Some label", "Some comment")` API. __If you are using T.case.createIssue(), immediately upgrade and replace its usage with T.case.queueIssueForCreation()__.
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2785
+  - Example: https://github.com/Tangerine-Community/Tangerine/blob/next/content-sets/case-module/client/test-issues-created-programatically-on-client/form.html#L5
+
 ## v3.18.2
 - Feature: Editor User downloads CSVs for multiple forms as a set Issue: [#2768](https://github.com/Tangerine-Community/Tangerine/issues/2768)  PR:[#2777](https://github.com/Tangerine-Community/Tangerine/pull/2777)
 - Feature: Remove configurable characters from CSV output [#2787](https://github.com/Tangerine-Community/Tangerine/issues/2787).
