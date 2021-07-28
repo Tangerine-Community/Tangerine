@@ -6,7 +6,10 @@ name: Test Hello World
 # Controls when the workflow will run
 on:
   release:
-    types: [prereleased, released]
+    types: 
+    - prereleased
+    - released
+    - published
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
