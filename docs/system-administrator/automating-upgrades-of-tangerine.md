@@ -7,7 +7,17 @@ If you have a particularly complex upgrade of Tangerine that involves changing c
 
 In this example, we modify the `xyz` group's configuration to implement some csvReplacementCharacters. First we install into the container the jq utility for modifying JSON on the command line, then we modify the group's config doc in the second command. To use this example, replace the two `xyz` instances with the group's ID you want to modify.
 
-```
+```bash
 docker exec -it tangerine apt install -y jq
 docker exec -it tangerine bash -c 'curl -s $T_COUCHDB_ENDPOINT/groups/xyz | jq ".csvReplacementCharacters = [[\",\",\"|\"],[\"\n\",\"___\"]]" | curl -s -T - -H "Content-Type: application/json" -X PUT $T_COUCHDB_ENDPOINT/groups/xyz'
+```
+
+## Updating a group's content repository
+
+Given the upgrade of Tangerine, there may be associated content changes required. Set up an deploy key in your content repository on github and modify the following script to suit your needs.
+
+```bash
+cd /path-to-tangerine/tangerine/data/groups/some-group-id/
+GIT_SSH_COMMAND='ssh -i /root/.ssh/id_github.pub' git fetch origin
+git checkout v2.0.0
 ```
