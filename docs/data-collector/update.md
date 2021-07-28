@@ -8,7 +8,7 @@ Note: Ask the tablet user to always Sync their data before they do an update.
 Select "**Check for Update**" and proceed to install the update.
 
 
-<img src="./media/image83.png" width="200">
+<img src="../media/image83.png" width="200">
 
 
 !!! Warning 
