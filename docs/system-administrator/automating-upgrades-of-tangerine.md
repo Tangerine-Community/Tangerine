@@ -27,7 +27,7 @@ git checkout v2.0.0
 ```
 docker exec -it tangerine apt install -y jq
 # Create a temporary file modified by jq.
-docker exec -it tangerine bash -c 'cat /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json | jq ".disableDeviceUserFilteringByAssignment = true" > cat /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json.tmp'
+docker exec -it tangerine bash -c 'cat /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json | jq ".disableDeviceUserFilteringByAssignment = true" > /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json.tmp'
 # Overwrite app-config.json using the temporary file.
 docker exec -it tangerine bash -c 'mv /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json.tmp /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json'
 ```
