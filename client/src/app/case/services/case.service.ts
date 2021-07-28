@@ -203,7 +203,9 @@ class CaseService {
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseInstance.caseDefinitionId)
     const flatLocationList = await this.appConfigService.getFlatLocationList()
-    this.location = Object.keys(caseInstance.location).map(level => flatLocationList.locations.find(node => node.id === caseInstance.location[level]))
+    this.location = caseInstance.location
+      ? Object.keys(caseInstance.location).map(level => flatLocationList.locations.find(node => node.id === caseInstance.location[level]))
+      : []
     this.case = caseInstance
   }
 
