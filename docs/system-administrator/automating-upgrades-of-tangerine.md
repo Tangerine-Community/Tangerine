@@ -3,7 +3,7 @@
 If you have a particularly complex upgrade of Tangerine that involves changing configurations, writing your own upgrade script and testing that on a QA server can be a way to ensure smooth upgrades when you go to production. Below you will find various tips and tricks we've discovered along the way of writing our own upgrade scripts.
 
 
-## Update group configuration in the groups database
+## Update a group's configuration in the groups database
 
 In this example, we modify the `xyz` group's configuration to implement some csvReplacementCharacters. First we install into the container the jq utility for modifying JSON on the command line, then we modify the group's config doc in the second command. To use this example, replace the two `xyz` instances with the group's ID you want to modify.
 
