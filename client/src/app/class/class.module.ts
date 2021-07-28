@@ -19,18 +19,21 @@ import {SharedModule} from "../shared/shared.module";
 import {DashboardService} from "./_services/dashboard.service";
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
-import { ClassFormsPlayerComponent } from './class-forms-player/class-forms-player.component';
 import {MatPaginationIntlService} from "./_services/mat-pagination-intl.service";
 import {TranslateService} from "@ngx-translate/core";
 import { StudentSubtestReportComponent } from './reports/student-subtest-report/student-subtest-report.component';
 import { StudentGroupingReportComponent } from './reports/student-grouping-report/student-grouping-report.component';
 import {PageNotFoundComponent} from "./page-not-found.component";
 import { StudentProgressTableComponent } from './reports/student-progress-table/student-progress-table.component';
-import { CookieService } from "ngx-cookie-service";
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { TaskReportComponent } from './reports/task-report/task-report.component';
 import {ClassFormService} from './_services/class-form.service';
 import {UserService} from '../shared/_services/user.service';
+import { ClassConfigComponent } from './class-config/class-config.component';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { ClassFormComponent } from './class-form/class-form.component';
+import {TangyFormsModule} from "../tangy-forms/tangy-forms.module";
+import {ClassFormsPlayerComponent} from "./class-forms-player.component";
 
 @NgModule({
   imports: [
@@ -50,10 +53,12 @@ import {UserService} from '../shared/_services/user.service';
     MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatSlideToggleModule,
+    TangyFormsModule
   ],
-  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent],
-  providers: [UserService, ClassFormService, DashboardService, CookieService,  {
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent],
+  providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
       const service = new MatPaginationIntlService();
