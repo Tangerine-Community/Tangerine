@@ -134,7 +134,7 @@ Showing a question based on the number of attempted items on a grid
 If you'd like to hide a question when the number of attempted items on a particular grid is over a certain threshold you can make use of the 'numberOfItemsAttempted(input)' function. If your grid variable is 'letter_sound' and the question you want to skip is 'Q_1' then in the question Q_1 I can insert the below skip logic(under Show If) to show it only when the number of attempted items on the grid is greater than 10
 
     :::javascript
-    numberOfItemsAttempted(inputs.letter_sound > 10)
+    numberOfItemsAttempted(inputs.letter_sound) > 10
 
 Showing a question based on the number of correct items of a grid
 
