@@ -23,11 +23,9 @@ git checkout v2.0.0
 ```
 
 ## Update a group's app-config.json
+Best practice for ensuring that configuration in `client/app-config.json` is maintained over time is to first update the configuration you want to modify in your group's `client/app-config.defaults.json` and then retemplate the defaults to the `client/app-config.json` file. To use the following example, replace instances of `group-xyz` with the relevant Group ID and `GROUP XYZ` with the relevant Group Name.
 
 ```
 docker exec -it tangerine apt install -y jq
-# Create a temporary file modified by jq.
-docker exec -it tangerine bash -c 'cat /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json | jq ".disableDeviceUserFilteringByAssignment = true" > /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json.tmp'
-# Overwrite app-config.json using the temporary file.
-docker exec -it tangerine bash -c 'mv /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json.tmp /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json'
+docker exec -it tangerine bash -c 'cat /tangerine/groups/group-xyz/client/app-config.defaults.json | jq ".serverUrl = \"$T_PROTOCOL://$T_HOST_NAME\"" | jq ".groupId = \"group-xyz\"" | jq ".groupName = \"Group XYZ\"" > /tangerine/groups/group-xyz/client/app-config.json'
 ```
