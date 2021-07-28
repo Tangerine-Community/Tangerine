@@ -21,3 +21,13 @@ cd /path-to-tangerine/tangerine/data/groups/some-group-id/
 GIT_SSH_COMMAND='ssh -i /root/.ssh/id_github.pub' git fetch origin
 git checkout v2.0.0
 ```
+
+## Update a group's app-config.json
+
+```
+docker exec -it tangerine apt install -y jq
+# Create a temporary file modified by jq.
+docker exec -it tangerine bash -c 'cat /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json | jq ".disableDeviceUserFilteringByAssignment = true" > cat /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json.tmp'
+# Overwrite app-config.json using the temporary file.
+docker exec -it tangerine bash -c 'mv /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json.tmp /path-to-tangerine/tangerine/data/groups/some-group-id/client/app-config.json'
+```
