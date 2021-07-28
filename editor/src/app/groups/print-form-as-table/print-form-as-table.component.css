@@ -12,3 +12,10 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+#container {
+  display:none
+}
+
+.card-title td {
+  padding:5px
+}

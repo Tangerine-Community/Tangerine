@@ -12,12 +12,27 @@
 <div class="tangy-content tangy-full-width">
   <mat-card>
     <mat-card-title>
-      <div #container></div>
-      {{'Group'|translate}}: {{groupDetails?.label}}<br>
-      {{'Group ID'}}: {{groupDetails?.id}}<br>
-      {{'Form'|translate}}: {{meta?.form.title}}
+      <div id="container" #container></div>
+      <table class="card-title">
+        <tr>
+          <td>{{'Group'|translate}}</td>
+          <td>{{groupDetails?.label}}</td>
+        </tr>
+        <tr>
+          <td>{{'Group ID'}}</td>
+          <td>{{groupDetails?._id}}</td>
+        </tr>
+        <tr>
+          <td>{{'Form Title'|translate}}</td>
+          <td>{{myForm.title}}</td>
+        </tr>
+        <tr>
+          <td>{{'Form ID'|translate}}</td>
+          <td>{{myForm.id}}</td>
+        </tr>
+      </table>
     </mat-card-title>
-    <br><br><br>
+    <br>
     <div>
       <div *ngFor="let section of meta?.items;let index= index">
         <p>Section {{index+1}}</p>

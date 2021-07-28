@@ -73,18 +73,6 @@ export class ClassFormService {
     return r.rows.map((row) => row.doc);
   }
 
-  getInputValues(doc) {
-    const inputs = doc.items.reduce((acc, item) => [...acc, ...item.inputs], []);
-    const obj = {};
-    for (const el of inputs) {
-      const attrs = inputs.attributes;
-      for (let i = inputs.length - 1; i >= 0; i--) {
-        obj[inputs[i].name] = inputs[i].value;
-      }
-    }
-    return obj;
-  }
-
 }
 
 const tangyClassDesignDoc = {
