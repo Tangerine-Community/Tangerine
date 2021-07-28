@@ -59,6 +59,9 @@ __New Features__
   - Description: Currently we can configure in a Case Definition the operation permissions on all instances of an Event Form. This change allows a Form Developer to write logic that would control those permissions on a per Event Form basis by setting the same `permissions` property on the Event Form itself.
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2624
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2660
+- Data Collector skips optimization of database views not in use on Device.
+  - Description: Some projects relying heavily on a custom app will find they do not use all of the standard Tangerine database views, thus they can be skipped during the data optimization phase after a sync. In `app-config.json`, you can add a new `doNotOptimize` property with a value as an array of views to skip. To discover what views your app is indexing, see the console logs from a device during the optimization phase. You may discover some views you can add to `doNotOptimize` to speed up that optmization process.
+  - Commit: https://github.com/Tangerine-Community/Tangerine/commit/4b8864470c1cad98e43152dd6bb3c91ee3e576a6
 
 __Fixes__
 - Issue created programatically in on-submit says we must rebase but no button to rebase #2785
