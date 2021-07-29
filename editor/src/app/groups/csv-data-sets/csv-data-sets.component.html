@@ -56,6 +56,6 @@
   <mat-paginator [length]="csvDataSets[0]?.numberOfDocs" (page)="onPageChange($event)" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </div>
 
-<div class="tangy-full-width">
+<div class="tangy-full-width" *ngIf="csvDataSets?.length<1">
   <h2>{{'No Datasets available'|translate}}</h2>
 </div>

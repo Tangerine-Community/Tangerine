@@ -16,8 +16,8 @@ export class CsvDataSetsComponent implements OnInit {
   csvDataSets;
   displayedColumns = ['fileName', 'month', 'year', 'dateCreated', 'status', 'downloadUrl']
   groupId
-  pageIndex = 1
-  pageSize = 5
+  pageIndex = 0
+  pageSize = 10
   constructor(
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
