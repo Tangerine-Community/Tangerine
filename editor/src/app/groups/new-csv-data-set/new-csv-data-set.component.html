@@ -34,7 +34,7 @@
         <mat-checkbox (change)="onFormCheckBoxChange(form.id, $event)">{{form.title}}</mat-checkbox>
         <br>
       </div>
-      <paper-button class="button" (click)="process()" [disabled]="selectedForms.length<1">submit</paper-button>
+      <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit'|translate}}</button>
     </div>
   </form>
 </div>
