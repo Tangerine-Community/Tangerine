@@ -748,6 +748,23 @@ class CaseService {
    * If the issue is a case or other type, createIssue will get the type from metadata.docType
    * and use it to populate docType in the Issue it creates.
    */
+
+  queuedIssuesForCreation:Array<any> = []
+
+  async queueIssueForCreation (label = '', comment = '') {
+    this.queuedIssuesForCreation.push({
+      label,
+      comment
+    })
+  }
+
+  async createIssuesInQueue() {
+    const userProfile = await this.userService.getUserProfile()
+    for (let queuedIssue of this.queuedIssuesForCreation) {
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), [AppContext.Editor])
+    }
+    this.queuedIssuesForCreation = []
+  }
   
   async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor], conflict: any = null) {
 
