@@ -7,12 +7,12 @@ release your instruments or instrument updates, select the "Release" tab
 in the top menu of the main group page.
 
 
-<img src="./media/image75.png" width="570">
+<img src="../media/image75.png" width="570">
 
 
 Upon selecting "Release", you will see the screen below.
 
-<img src="./media/image76.png" width="570">
+<img src="../media/image76.png" width="570">
 
 
 Tangerine offers two deployment types, test release and live release:
@@ -62,7 +62,7 @@ an Android tablet or smartphone. Click on Android Installation Test
 Release/Live Release as shown in the screen above. **Wait.**
 
 
-<img src="./media/image77.png" width="570">
+<img src="../media/image77.png" width="570">
 
 
 Once Tangerine has compiled the apk, click on "Download your APK here",
@@ -70,7 +70,7 @@ as shown below. This will download an apk file into your computer's
 downloads folder.
 
 
-<img src="./media/image78.png" width="570">
+<img src="../media/image78.png" width="570">
 
 
 !!! Warning 
@@ -88,7 +88,7 @@ Once Tangerine has compiled the PWA, it will show an installation URL
 like in the screen below.
 
 
-<img src="./media/image79.png" width="570">
+<img src="../media/image79.png" width="570">
 
 
 Use this URL from the **Chrome browser on the tablet** to install the
@@ -99,7 +99,7 @@ your computer to test your instruments online. The browser window may
 require you to confirm that you want to apply the updates.
 
 
-<img src="./media/image80.png" width="570">
+<img src="../media/image80.png" width="570">
 
 
 After "**Click here to proceed**", Tangerine will show an online data
@@ -107,7 +107,7 @@ collection version of your instruments with a similar look and function
 as on a tablet/smartphone.
 
 
-<img src="./media/image81.png" width="570">
+<img src="../media/image81.png" width="570">
 
 
 
@@ -117,7 +117,7 @@ as on a tablet/smartphone.
 Select "**Check for Update**" and proceed to install the update.
 
 
-<img src="./media/image83.png" width="200">
+<img src="../media/image83.png" width="200">
 
 
 !!! Warning 
@@ -170,7 +170,7 @@ Locate the Tangerine app in the application drawer and click it.
 
 The first step is to select the language for the user interface
 
-<img src="./media/device2.png" width="240">
+<img src="../media/device2.png" width="240">
 
 Select the language and click Submit
 
@@ -179,21 +179,21 @@ use the same admin password for all tables at your site. This same
 password will be required each time a user is registering to use the app
 on this device.
 
-<img src="./media/device3.png" width="240">
+<img src="../media/device3.png" width="240">
 
 
 Select Yes if you have a device code or No if you are going to insert a
 device ID and Token for the registration.
 
-<img src="./media/device4.png" width="240">
+<img src="../media/device4.png" width="240">
 
-<img src="./media/device5.png" width="240">
+<img src="../media/device5.png" width="240">
 
 
 Insert the ID and Token or click the Scan icon to scan the registration
 QR code.
 
-<img src="./media/device6.png" width="240">
+<img src="../media/device6.png" width="240">
 
 
 Click Submit when done. The next screen will show you some information
@@ -201,7 +201,7 @@ for this device. If it is correct select Yes, if the scanned device code
 and ID correspond to a different device select No and start over with
 the correct device code.
 
-<img src="./media/device7.png" width="240">
+<img src="../media/device7.png" width="240">
 
 
 On the next screen you will see some synchronization information. The
@@ -209,7 +209,7 @@ app at this moment is contacting the server and obtaining users assigned
 to your device location. If you have already collected data on another
 tablet for this location, this data will also be pulled.
 
-<img src="./media/device8.png" width="240">
+<img src="../media/device8.png" width="240">
 
 Click Next and then go to the Registration tap. Ask your administrator
 to enter the admin password and enter your user information below. Click
@@ -220,19 +220,19 @@ password and ask the user to enter their username and password. Here the
 Year of Birth can be used by the user to reset their password in case
 they forgot it.
 
-<img src="./media/device9.png" width="240">
+<img src="../media/device9.png" width="240">
 
 
 On the next screen you will see a dropdown of all users for this
 location. Select the one that corresponds to you and click Submit.
 
-<img src="./media/device10.png" width="240">
+<img src="../media/device10.png" width="240">
 
 
 You will now see a screen similar to the one below where you can start
 working
 
-<img src="./media/device11.png" width="240">
+<img src="../media/device11.png" width="240">
 
 
 Installation in your Chrome browser
@@ -249,20 +249,20 @@ been given to you or copied directly after it's generation in the
 backend. Copy the link and paste it in the Chrome's address bar. You
 will see a screen indicating that the app is being installed.
 
-<img src="./media/device12.png" width="240">
+<img src="../media/device12.png" width="240">
 
 
 After a successful installation you will receive a confirmation screen
 like the one below. **Do not click the link to proceed**.
 
-<img src="./media/device13.png" width="570">
+<img src="../media/device13.png" width="570">
 
 
 Click the + icon beside the address bar to install Tangerine in your
 browser. A popup will open to give you the option to install the app.
 Click Install
 
-<img src="./media/device14.png" width="570">
+<img src="../media/device14.png" width="570">
 
 
 Depending on your browser setup, you may be asked to create a shortcut
@@ -276,12 +276,12 @@ If you cannot find it type this into the address bar of your browser:
 !!! Warning     
     Always start Tangerine from the application icon and not from the URL address. Only one Tangerine instllation per browser profile is allowed.
 
-<img src="./media/device15.png" width="240">
+<img src="../media/device15.png" width="240">
 
 
 Click the Tangerine app to start the application.
 
-<img src="./media/device16.png" width="570">
+<img src="../media/device16.png" width="570">
 
 
 Select the language and click Submit
@@ -291,22 +291,22 @@ use the same admin password for all tables at your site. This same
 password will be required each time a user is registering to use the app
 on this device.
 
-<img src="./media/device17.png" width="570">
+<img src="../media/device17.png" width="570">
 
 
 Select Yes if you have a device code or No if you are going to insert a
 device ID and Token for the registration.
 
-<img src="./media/device4.png" width="240">
+<img src="../media/device4.png" width="240">
 
-<img src="./media/device5.png" width="240">
+<img src="../media/device5.png" width="240">
 
 
 Insert the ID and Token or click the Scan icon to scan the registration
 QR code. If your PC or laptop doesn't have a camera that can be used to
 scan the barcode, you'd have to type in the ID and Token
 
-<img src="./media/device18.png" width="240">
+<img src="../media/device18.png" width="240">
 
 
 Click Submit when done. The next screen will show you some information
@@ -314,7 +314,7 @@ for this device. If it is correct select Yes, if the scanned device code
 and ID correspond to a different device select No and start over with
 the correct device code.
 
-<img src="./media/device7.png" width="240">
+<img src="../media/device7.png" width="240">
 
 
 On the next screen you will see some synchronization information. The
@@ -322,7 +322,7 @@ app at this moment is contacting the server and obtaining users assigned
 to your device location. If you have already collected data on another
 tablet for this location, this data will also be pulled.
 
-<img src="./media/device8.png" width="240">
+<img src="../media/device8.png" width="240">
 
 Click Next and then go to the Registration tap. Ask your administrator
 to enter the admin password and enter your user information below. Click
@@ -333,13 +333,13 @@ password and ask the user to enter their username and password. Here the
 Year of Birth can be used by the user to reset their password in case
 they forgot it.
 
-<img src="./media/device9.png" width="240">
+<img src="../media/device9.png" width="240">
 
 
 On the next screen you will see a dropdown of all users for this
 location. Select the one that corresponds to you and click Submit.
 
-<img src="./media/device10.png" width="240">
+<img src="../media/device10.png" width="240">
 
 
 You will now see a screen similar to the one below where you can start
@@ -356,7 +356,7 @@ installation of your app on the user device or Chrome browser. The menu
 items used during setup can be found under the Deploy link in the left
 side navigation menu.
 
-<img src="./media/device19.png" width="570">
+<img src="../media/device19.png" width="570">
 
 
 Click the Device Users section to create a new tablet user profile. On
@@ -371,7 +371,7 @@ new device user profile.
 -   You will see that next to the Submit button a blue check marks
     appears indicating that the profile was saved
 
-<img src="./media/device20.png" width="140">
+<img src="../media/device20.png" width="140">
 
 
 -   Repeat the above steps for all users
@@ -397,7 +397,7 @@ The device listing go to Deploy-\>Devices
 -   Here, if you have some devices already created you will see a full
     listing with some other information
 
-<img src="./media/device21.png" width="570">
+<img src="../media/device21.png" width="570">
 
 
 -   The device listing gives you:
@@ -430,7 +430,7 @@ Create a new device by going to Deploy-\>Devices
     screen) In cases where the QR code cannot be sent to the site for
     installation you can also use the ID and Token to install Tangerine.
 
-<img src="./media/device22.png" width="240">
+<img src="../media/device22.png" width="240">
 
 
 -   Select the location this device is assigned to
@@ -447,7 +447,7 @@ Create a new device by going to Deploy-\>Devices
     code for it by clicking the Options menu and selecting Registration
     Code
 
-<img src="./media/device23.png" width="570">
+<img src="../media/device23.png" width="570">
 
 
 -   Repeat the above steps for all devices that you need to use on your
