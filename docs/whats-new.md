@@ -1,5 +1,15 @@
 # What's new 
 
+## v3.18.2
+- Feature: Editor User downloads CSVs for multiple forms as a set Issue: [#2768](https://github.com/Tangerine-Community/Tangerine/issues/2768)  PR:[#2777](https://github.com/Tangerine-Community/Tangerine/pull/2777)
+- Feature: Remove configurable characters from CSV output [#2787](https://github.com/Tangerine-Community/Tangerine/issues/2787).
+- Documentation updates for backup/restore and fixes to image paths
+- Fix default user profile so it doesn't assume use of roles or location
+- Disabled "Print form backup" in Editor
+- Improvements to display of "Print metadata" in Editor
+- Update and fix for Cycle Sequences to enable numbering of sequences starting from 1. PR's: [#231](https://github.com/Tangerine-Community/tangy-form-editor/pull/231), [#269](https://github.com/Tangerine-Community/tangy-form/pull/269)
+- Bump tangy-form to 4.25.11 and tangy-form-editor to 7.8.8.
+
 ## v3.18.1
 - Fix backup when using os encryption and sync protocol 2 and cordova. (PR: [#2767](https://github.com/Tangerine-Community/Tangerine/pull/2767))
 - Fix creating of new Device Users when using Sync Protocol 2. (PR: [#2769](https://github.com/Tangerine-Community/Tangerine/pull/2769))
