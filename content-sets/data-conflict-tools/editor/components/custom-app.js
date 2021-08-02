@@ -31,9 +31,18 @@ class CustomApp extends LitElement {
     localStorage.setItem('route', route)
   }
 
-  go(route) {
-    this.setRoute(route)
-    this.route = route
+  go(route, showConfirm) {
+    if (showConfirm) {
+      const confirm = window.confirm(showConfirm);
+      if (confirm) {
+        this.setRoute(route)
+        this.route = route
+      }
+    } else {
+      this.setRoute(route)
+      this.route = route
+    }
+
   }
 
   set(name = '', value = '') {
@@ -100,6 +109,32 @@ class CustomApp extends LitElement {
           border-radius: 1.5rem;
           background: linear-gradient(to left, #363795, #005c97);
         }
+        /* Tooltip container */
+        .tooltip {
+          position: relative;
+          display: inline-block;
+          border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 120px;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          padding: 5px 0;
+          border-radius: 6px;
+
+          /* Position the tooltip text - see examples below! */
+          position: absolute;
+          z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+        }
       </style>
       ${!this.ready ? html`Loading...`:``}
       ${this.ready ? html`
@@ -107,10 +142,10 @@ class CustomApp extends LitElement {
           <h1 style="margin-left: 15px;">Data Tools</h1>
           <nav>
             <ul>
-              <li><a @click="${() => this.go('active-conflicts')}">Active Conflicts</a></li>
-              <li><a @click="${() => this.go('archived-conflicts')}">Archived Conflicts</a></li>
-              <li><a @click="${() => this.go('data-log')}">Data Log</a></li>
-              <li><a @click="${() => this.go('search-active-conflicts')}">Search Active Conflicts</a></li>
+              <li class="tooltip"><a @click="${() => this.go('active-conflicts')}">Active Conflicts</a><span class="tooltiptext">View a list of Conflicts, Conflict Diffs, and Merge and/or Archive Conflicts.</span></li>
+              <li class="tooltip"><a @click="${() => this.go('archived-conflicts')}">Archived Conflicts</a><span class="tooltiptext">View Archived Conflicts</span></li>
+              <li class="tooltip"><a @click="${() => this.go('data-log')}">Data Log</a><span class="tooltiptext">Log of Conflict operations</span></li>
+              <li class="tooltip"><a @click="${() => this.go('search-active-conflicts', 'Careful: this action downloads all revs from all Active Conflicts. Proceed?')}">Search Active Conflicts</a><span class="tooltiptext">Tooltip text</span></li>
             </ul>
           </nav>
         `: ``}
