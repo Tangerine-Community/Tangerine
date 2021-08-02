@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout Master
         uses: actions/checkout@v2
+      - name: copy changelog to whatsnew
+        uses: canastro/copy-file-action@master
+        with:
+          source: "CHANGELOG.md"
+          target: "docs/whats-new.md"
 
       - name: Build and Deploy Documentation using MkDocs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master

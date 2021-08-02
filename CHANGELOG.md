@@ -1,4 +1,4 @@
-# Changelog
+# What's new
 
 ## v3.19.0
 
@@ -108,6 +108,7 @@ wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ## v3.18.3
 
 __Fixes__
+
 - *Important* If your site uses csvReplacementCharacters to support search and replace configuration for CSV output, which was released v3.18.2, you must change the configuration string. See issue [#2804](https://github.com/Tangerine-Community/Tangerine/issues/2804) for information about the new schema.
 - Backported a fix from the v3.19.0 branch for "Issue created programmatically in on-submit says we must rebase but no button to rebase #2785"
   - Description: Cases that have used the `T.case.createIssue()` API in forms to create Issues on the current form have recently found the resulting issues are broken. This is due to a change in when the Form Response is associated with the case (later than when T.case.createIssue() is called in a form's on-submit). To remedy this, we've added a new `T.case.queueIssueForCreation("Some label", "Some comment")` API. __If you are using T.case.createIssue(), immediately upgrade and replace its usage with T.case.queueIssueForCreation()__.
