@@ -72,17 +72,47 @@ class CustomApp extends LitElement {
           left: 0px;
           z-index: 98765456789876545678;
         }
+        nav {
+          display: flex;
+        }
+
+        nav ul {
+          display: flex;
+          justify-content: space-between;
+          width: 40%;
+        }
+
+        nav ul li {
+          list-style: none;
+          display: inline;
+        }
+
+        nav ul li a {
+          text-decoration: none;
+          color: black;
+          text-transform: uppercase;
+          display: block;
+          padding: 1rem 2rem;
+        }
+
+        nav ul li a:hover {
+          color: white;
+          border-radius: 1.5rem;
+          background: linear-gradient(to left, #363795, #005c97);
+        }
       </style>
       ${!this.ready ? html`Loading...`:``}
       ${this.ready ? html`
         ${this.route === '' ? html`
           <h1 style="margin-left: 15px;">Data Tools</h1>
-          <ul>
-            <li @click="${() => this.go('active-conflicts')}">Active Conflicts</li>
-            <li @click="${() => this.go('archived-conflicts')}">Archived Conflicts</li>
-            <li @click="${() => this.go('data-log')}">Data Log</li>
-            <li @click="${() => this.go('search-active-conflicts')}">Search Active Conflicts</li>
-          </ul>
+          <nav>
+            <ul>
+              <li><a @click="${() => this.go('active-conflicts')}">Active Conflicts</a></li>
+              <li><a @click="${() => this.go('archived-conflicts')}">Archived Conflicts</a></li>
+              <li><a @click="${() => this.go('data-log')}">Data Log</a></li>
+              <li><a @click="${() => this.go('search-active-conflicts')}">Search Active Conflicts</a></li>
+            </ul>
+          </nav>
         `: ``}
         ${this.route !== '' ? html`
           <paper-button @click="${() => App.go('')}">< BACK</paper-button> 
