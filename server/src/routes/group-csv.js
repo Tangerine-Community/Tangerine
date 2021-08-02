@@ -66,7 +66,8 @@ const generateCSV = async (req, res) => {
 
 const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
-  const formIds = sanitize(req.params.formIds)
+  // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
+  const formIds = req.params.formIds.split(',').map(formId => sanitize(formId)).join(',')
   const { year, month } = req.params
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
