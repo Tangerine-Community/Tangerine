@@ -19,10 +19,10 @@ function(doc) {
 ```
 
 ### Step 2
-Create a `${groupId}-conflict-rev` database.
+Create a `${groupId}-conflict-revs` database.
 
 ### Step 3
-Add required view in group conflict rev database:
+Add required view in group conflict revs database:
 
 `_design/byConflictDocId/_view/byConflictDocId`
 

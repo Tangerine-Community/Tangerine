@@ -30,6 +30,7 @@ class ArchivedConflicts extends LitElement {
     this.conflictInfos = []
     this.matches = []
     this.selection = { conflicts:[] }
+    this.list = []
   }
 
   async connectedCallback() {
