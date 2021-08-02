@@ -22,7 +22,7 @@ jobs:
             tangerine/tangerine
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=semver,pattern={{raw}}
+            type=semver,prefix=v,pattern={{raw}}
     -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -49,4 +49,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha
-    
