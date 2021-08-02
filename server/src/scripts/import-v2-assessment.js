@@ -153,7 +153,7 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
   const forms = JSON.parse(await readFile(`/tangerine/client/content/groups/${targetGroupId}/forms.json`))
   if (!forms.find(formInfo => formInfo.id === assessment._id)) {
     forms.push({
-      id: form_$:{assessment._id},
+      id: `form_${assessment._id}`,
       src: `./assets/form_${assessment._id}/form.html`,
       title: assessment.name
     })
