@@ -213,7 +213,7 @@ def changes_feed_mode(lastSequence):
 
 def view_docs_mode(designDoc, designDocView):
     global QUEUE_DOCS
-    QUEUE_DOCS = False
+    QUEUE_DOCS = True
 
     tangerine_database = couchdb_connect()
 
