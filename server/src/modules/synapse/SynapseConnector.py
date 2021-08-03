@@ -119,9 +119,6 @@ def save_response(doc):
         cleanData[key.strip()] = data[key]
     data = cleanData
     formID = data.get('formId')
-
-    if formID == 'mnh_neonatal_vaccination':
-        return
     
     tableName = TABLE_PREFIX + formID
     if QUEUE_DOCS:
@@ -213,23 +210,51 @@ def changes_feed_mode(lastSequence):
         save_doc(doc)
         update_state(seq)
 
+
+def view_docs_mode(designDoc, designDocView):
+    global QUEUE_DOCS
+    QUEUE_DOCS = False
+
+    tangerine_database = couchdb_connect()
+
+    start_time = timeit.default_timer()
+    # get raw response content based on a design document view
+    docs = tangerine_database.get_view_result(designDoc, designDocView, raw_result=True, include_docs=True)
+
+    rows = docs.get('rows', [])
+    log('Queuing docs %d to %d' % (0, len(rows)))
+    for row in rows:
+        doc = row.get('doc')
+        save_doc(doc)
+    end_time = timeit.default_timer()
+    log('Queued %d docs in %d seconds' % (len(rows), int(end_time - start_time)))
+
+    log(str('Flushing remaining docs'))
+    start_time = timeit.default_timer()
+    synapse_span_table.flush_span_tables()
+    end_time = timeit.default_timer()
+    log('Flushed docs in ' + str(int(end_time - start_time)) + ' seconds')
+
 #
 # Main job
 #
 
 def main_job(lastSequence):
-    if lastSequence == '0':
-        log('Processing all docs.')
-        if all_docs_mode():
-            log('Successfully processed all docs.')
-            db = couchdb_connect()
-            lastSequence = get_last_change_seq(db)
-            log('Saving state with lastSequence of ' + lastSequence + '.')
-            update_state(lastSequence)
-    log('Processing changes with lastSequence of ' + lastSequence + '.')
-    log('Logged into Tangerine database')
-    if CONTINUOUS:
-        changes_feed_mode(lastSequence)
+    if VIEW_MODE:
+        view_docs_mode(DESIGN_DOC, DESIGN_DOC_VIEW)
+    else:
+        if lastSequence == '0':
+            log('Processing all docs.')
+            if all_docs_mode():
+                log('Successfully processed all docs.')
+                db = couchdb_connect()
+                lastSequence = get_last_change_seq(db)
+                log('Saving state with lastSequence of ' + lastSequence + '.')
+                update_state(lastSequence)
+        log('Processing changes with lastSequence of ' + lastSequence + '.')
+        log('Logged into Tangerine database')
+        if CONTINUOUS:
+            changes_feed_mode(lastSequence)
 
 #
 # Startup
@@ -254,6 +279,16 @@ synUserName= config['SYNAPSE']['UserName']
 apiKey= config['SYNAPSE']['apiKey']
 TABLE_PREFIX = config['SYNAPSE']['tablePrefix']
 CONTINUOUS = config['SYNAPSE'].get('continuous', True)
+
+# View mode config
+VIEW_MODE = config['TANGERINE'].get('viewMode', True)
+DESIGN_DOC = config['TANGERINE'].get('designDoc', False)
+DESIGN_DOC_VIEW = config['TANGERINE'].get('designDocView', False)
+
+if VIEW_MODE and (not DESIGN_DOC or not DESIGN_DOC_VIEW):
+    log('VIEW_MODE is True, but no DESIGN_DOC or DESIGN_DOC_VIEW defined.')
+    exit(1)
+
 syn.login(email=synUserName, apiKey=apiKey)
 project = syn.get(synProjectName)
 log('Installing Synapse Span Table')
