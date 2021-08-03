@@ -281,7 +281,7 @@ TABLE_PREFIX = config['SYNAPSE']['tablePrefix']
 CONTINUOUS = config['SYNAPSE'].get('continuous', True)
 
 # View mode config
-VIEW_MODE = config['TANGERINE'].get('viewMode', True)
+VIEW_MODE = config['TANGERINE'].get('viewMode', False)
 DESIGN_DOC = config['TANGERINE'].get('designDoc', False)
 DESIGN_DOC_VIEW = config['TANGERINE'].get('designDocView', False)
 
