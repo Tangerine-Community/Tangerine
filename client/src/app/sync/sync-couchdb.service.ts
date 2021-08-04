@@ -152,12 +152,14 @@ export class SyncCouchdbService {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
           hadPushSuccess = true
+          pushReplicationStatus.hadPushSuccess = true
           await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
         } else {
           await sleep(retryDelay)
         }
       }
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
     }
 
     if (this.cancelling) {
@@ -173,11 +175,14 @@ export class SyncCouchdbService {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
           hadPushSuccess = true
+          pushReplicationStatus.hadPushSuccess = true
         } else {
           await sleep(retryDelay)
         }
       }
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
+      
       const device = await this.deviceService.getDevice()
       await this.userService.reinstallSharedUserDatabase(device)
       // Refresh db connection.
@@ -198,6 +203,7 @@ export class SyncCouchdbService {
         if (!pullReplicationStatus.pullError) {
           await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
           hadPullSuccess = true
+          pushReplicationStatus.hadPushSuccess = true
         } else {
           await sleep(retryDelay)
         }
@@ -210,6 +216,7 @@ export class SyncCouchdbService {
       }
     }
     replicationStatus = {...replicationStatus, ...pullReplicationStatus}
+    this.syncMessage$.next(replicationStatus);
 
     // Whatever we pulled, even if there was an error, we don't need to push so set last push sequence again.
     const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
@@ -227,11 +234,6 @@ export class SyncCouchdbService {
     return new Promise( (resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction = 'push'
-      const progress = {
-        'direction': direction,
-        'remaining': syncOptions.remaining
-      }
-      this.syncMessage$.next(progress)
       userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
         const status = <ReplicationStatus>{
           pushed: info.docs_written,
@@ -308,7 +310,7 @@ export class SyncCouchdbService {
       }).on('error', function (error) {
         console.error(error)
         const status = <ReplicationStatus>{
-          pushError: "_push failed. error: " + error
+          pushError: "Push failed. error: " + error
         }
         reject(status);
       });
@@ -378,13 +380,10 @@ export class SyncCouchdbService {
     status.currentPushLastSeq = status.info.last_seq
 
     if (failureDetected) {
-      const errorMessageDialog = window['t']('Error: ')
-      const errorMessage = errorMessageDialog + status.pushError
-      status.error = errorMessage
       console.error(status)
-      this.syncMessage$.next(status)
-    } else {
     }
+    this.syncMessage$.next(status)
+
     return status;
   }
 
@@ -398,11 +397,6 @@ export class SyncCouchdbService {
         direction: ''
       }
       const direction = 'pull'
-      const progress = {
-        'direction': direction,
-        'message': "Checking the server for updates."
-      }
-      this.syncMessage$.next(progress)
       try {
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
@@ -541,8 +535,10 @@ export class SyncCouchdbService {
 
     if (failureDetected) {
       status.pullError = `${error.message || error}. ${window['t']('Trying again')}.`
-      this.syncMessage$.next(status)
-    }
+    } 
+    
+    this.syncMessage$.next(status)
+    
     return status;
   }
 
