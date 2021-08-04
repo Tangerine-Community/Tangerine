@@ -3,7 +3,7 @@ const emit = _ => { }
 module.exports = {}
 
 module.exports.docCountByLocationId = {
-  view: function(doc) {
+  map: function(doc) {
     if (doc.location) {
       Object.getOwnPropertyNames(doc.location).forEach(function(locationLevel) {
         // Emit location's ID and add one.
