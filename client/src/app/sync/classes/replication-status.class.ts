@@ -40,4 +40,6 @@ export class ReplicationStatus {
   compareDocsDirection: string;
   deletedArchivedDocs: number;
   storageAvailable: number;
+  hadPushSuccess: boolean;
+  hadPullSuccess: boolean;
 }

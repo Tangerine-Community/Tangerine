@@ -123,12 +123,22 @@ export class SyncComponent implements OnInit, OnDestroy {
           }
           if (typeof progress.error !== 'undefined') {
             this.errorMessage = progress.error
+          } else {
+            this.errorMessage = null
           }
           if (typeof progress.pullError !== 'undefined') {
             this.pullError = progress.pullError
+          } else {
+            if (progress.hadPullSuccess) {
+              this.pullError = null
+            }
           }
           if (typeof progress.pushError !== 'undefined') {
             this.pushError = progress.pushError
+          } else {
+            if (progress.hadPushSuccess) {
+              this.pushError = null
+            }
           }
           if (typeof progress.remaining !== 'undefined' && progress.remaining !== null) {
             this.syncMessage = docPulled + progress.remaining + '% remaining to sync '
