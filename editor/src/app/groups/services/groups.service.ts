@@ -132,9 +132,9 @@ export class GroupsService {
       }
     }
   }
-  async listCSVDataSets(groupId: string){
+  async listCSVDataSets(groupId: string, pageIndex: number, pageSize: number){
     try {
-      const result = await this.httpClient.get(`/apis/listCSVDatasets/${groupId}`).toPromise()
+      const result = await this.httpClient.get(`/apis/listCSVDatasets/${groupId}/${pageIndex}/${pageSize}`).toPromise()
       return result
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
