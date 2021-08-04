@@ -4,15 +4,10 @@
 .month {
   height: 100px;
 }
-.button {
+button {
   margin-top: 3rem;
   background: var(--mdc-theme-secondary);
   color: var(--accent-text-color);
-}
-.button-disabled {
-
-  margin-top: 3rem;
-  color: white;
 }
 .form {
   padding-bottom: 60px;
