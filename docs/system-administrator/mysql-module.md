@@ -48,6 +48,13 @@ In the reboot instruction in crontab that to starts Tangerine on reboot, add mys
 @reboot docker start couchdb mysql && sleep 60 && docker start tangerine
 ```
 
+Also add a cron job to run mysql-report at 1 a.m every day - this will keep the mysql indexes current.
+
+```
+# Run mysql-report at 1 a.m every day:
+# 0 1 * * * docker exec tangerine mysql-report group-479f455e-b1bd-481b-8bd7-0d985a07431c
+```
+
 ### Step 7
 The most basic way to access MySQL would be to use the MySQL CLI. 
 
