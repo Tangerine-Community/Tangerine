@@ -330,14 +330,36 @@ export class GroupDevicesComponent implements OnInit {
       <paper-dialog-scrollable>
         <h2>Device Settings</h2>
         <tangy-form>
-          <tangy-form-item id="edit-device" on-change="
-            const locationsLevels = [ ${locationList.locationsLevels.map(level => `'${level}'`).join(',')} ]
-            ${syncLocations.map((syncLocation, i) => `
-              if (getValue('sync_location__show_levels__${i}')) {
-                inputs.sync_location__${i}.setAttribute('show-levels', locationsLevels.slice(0, locationsLevels.indexOf(getValue('sync_location__show_levels__${i}'))+1).join(','))
+          <tangy-form-item id="edit-device" 
+            on-open="
+              window.calculateDownSyncSize = async function() {
+                debugger
+                const locationIds = Object.keys(inputs).reduce((locationIds, variableName) => {
+                  return inputs[variableName].tagName === 'TANGY-LOCATION' && 
+                    variableName.includes('sync_location') &&
+                    inputs[variableName].value &&
+                    inputs[variableName].value.length > 0
+                      ? [...locationIds, inputs[variableName].value[inputs[variableName].value.length - 1].value]
+                      : locationIds
+                }, [])
+                let totalNumberOfDownSyncDocs = 0
+                for (let locationId of locationIds) {
+                  const numberOfDownSyncDocsForLocation = parseInt(await (await fetch('downSyncDocCountByLocationId/' + locationId)).text())
+                  totalNumberOfDownSyncDocs += numberOfDownSyncDocsForLocation
+                }
+                alert('Estimated total number of docs to sync down will is ' + totalNumberOfDownSyncDocs.toString() + '.')
               }
-            `).join('')}
-          ">
+
+            "
+            on-change="
+              const locationsLevels = [ ${locationList.locationsLevels.map(level => `'${level}'`).join(',')} ]
+              ${syncLocations.map((syncLocation, i) => `
+                if (getValue('sync_location__show_levels__${i}')) {
+                  inputs.sync_location__${i}.setAttribute('show-levels', locationsLevels.slice(0, locationsLevels.indexOf(getValue('sync_location__show_levels__${i}'))+1).join(','))
+                }
+              `).join('')}
+            "
+          >
             <style>
               .device-settings-list {
                 vertical-align: top;
@@ -425,6 +447,7 @@ export class GroupDevicesComponent implements OnInit {
               >
               </tangy-location>
             `).join('')}
+            <mwc-button onclick="window.calculateDownSyncSize()">Calculate down-sync size</mwc-button>
           </tangy-form-item>
         </tangy-form>
       </paper-dialog-scrollable>
