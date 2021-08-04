@@ -1,12 +1,21 @@
 #!/usr/bin/env node
 
 const fs = require('fs-extra')
+const groupsList = require('../groups-list.js')
 const DB = require('../db.js')
 
 async function updateDownSyncDocCountByLocationId (GROUP_ID) {
-  console.log('')
-  console.log(`Updating search index for group ${GROUP_ID}`)
-  console.log('')
+  if (GROUP_ID === '*') {
+    for (let groupId of groupIds) {
+      await updateGroup(groupId)
+    }
+  } else {
+    await updateGroup(GROUP_ID)
+  }
+}
+
+async function updateGroup(GROUP_ID) {
+  console.log(`Updating down sync doc count by location index for group ${GROUP_ID}`)
   const formsInfo = await fs.readJSON(`/tangerine/groups/${GROUP_ID}/client/forms.json`) 
   const db = DB(GROUP_ID)
   const formIdsToDownSync = formsInfo.reduce((formIdsToDownSync, formInfo) => {
@@ -71,6 +80,7 @@ async function updateDownSyncDocCountByLocationId (GROUP_ID) {
 if (process.argv[2] === '--help') {
   console.log('Usage:')
   console.log('update-down-sync-doc-count-by-location-id-index <groupId>')
+  console.log('update-down-sync-doc-count-by-location-id-index \'*\'')
   process.exit()
 }
 
