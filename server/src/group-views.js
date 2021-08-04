@@ -2,6 +2,18 @@ const emit = _ => { }
 
 module.exports = {}
 
+module.exports.docCountByLocationId = {
+  view: function(doc) {
+    if (doc.location) {
+      Object.getOwnPropertyNames(doc.location).forEach(function(locationLevel) {
+        // Emit location's ID and add one.
+        emit(doc.location[locationLevel], 1)
+      })
+    }
+  },
+  reduce: '_sum'
+}
+
 module.exports.responsesByFormId = function(doc) {
   if (doc.form && doc.form.id) {
     return emit(doc.form.id, true)
