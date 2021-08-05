@@ -1,5 +1,10 @@
 # What's new
 
+## v3.18.4
+
+__Fixes__
+- Backported a fix from the v3.19.0 branch for "Save the lastSequence number after each change is processed in the tangerine-mysql connector" Issue [#2772](https://github.com/Tangerine-Community/Tangerine/issues/2772)
+
 ## v3.18.3
 
 __Fixes__
