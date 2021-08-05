@@ -64,7 +64,7 @@ async function updateGroup(GROUP_ID) {
     updatedDesignDoc['_rev'] = existingDesignDoc._rev
   } 
   catch (e) {
-    console.error(e)
+    // No prob, must be the first time.
   }
   try {
     if (!existingDesignDoc || (existingDesignDoc && existingDesignDoc.views.downSyncDocCountByLocationId.map !== updatedDesignDoc.views.downSyncDocCountByLocationId.map)) {
