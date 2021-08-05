@@ -6,6 +6,7 @@ const DB = require('../db.js')
 
 async function updateDownSyncDocCountByLocationId (GROUP_ID) {
   if (GROUP_ID === '*') {
+    const groupIds = await groupsList()
     for (let groupId of groupIds) {
       await updateGroup(groupId)
     }
