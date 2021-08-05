@@ -31,7 +31,7 @@ const template__calculateDownSyncSizeFunction = `
       const numberOfDownSyncDocsForLocation = parseInt(await (await fetch('downSyncDocCountByLocationId/' + locationId)).text())
       totalNumberOfDownSyncDocs += numberOfDownSyncDocsForLocation
     }
-    alert('Estimated total number of docs to sync down will is ' + totalNumberOfDownSyncDocs.toString() + '.')
+    alert('Estimated total number of docs to sync down is ' + totalNumberOfDownSyncDocs.toString() + '.')
   }
 `
 
