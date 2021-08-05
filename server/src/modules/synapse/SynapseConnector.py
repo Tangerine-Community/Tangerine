@@ -120,11 +120,12 @@ def save_response(doc):
     data = cleanData
     formID = data.get('formId')
     
-    tableName = TABLE_PREFIX + formID
-    if QUEUE_DOCS:
-        synapse_span_table.queue_span_table_record(tableName, data)
-    else:
-        synapse_span_table.flexsert_span_table_record(tableName, data)
+    if formID is not None:
+        tableName = TABLE_PREFIX + formID
+        if QUEUE_DOCS:
+            synapse_span_table.queue_span_table_record(tableName, data)
+        else:
+            synapse_span_table.flexsert_span_table_record(tableName, data)
 
 def save_doc(doc):
     id = doc.get('_id')
