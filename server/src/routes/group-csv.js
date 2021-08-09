@@ -66,7 +66,8 @@ const generateCSV = async (req, res) => {
 
 const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
-  const formIds = sanitize(req.params.formIds)
+  // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
+  const formIds = req.params.formIds.split(',').map(formId => sanitize(formId)).join(',')
   const { year, month } = req.params
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
@@ -103,9 +104,10 @@ const generateCSVDataSet = async (req, res) => {
 
 const listCSVDataSets = async (req, res) => {
   try {
-    const { groupId } = req.params
+    const { groupId, pageIndex, pageSize } = req.params
     CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
-    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }] })
+    const numberOfDocs = (await CSV_DATASETS.find({ selector: { groupId } })).docs.length
+    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:(+pageIndex)*(+pageSize),limit:+pageSize })
     const http = await getUser1HttpInterface()
     const data = result.docs.map(async e => {
       let complete = false;
@@ -114,7 +116,7 @@ const listCSVDataSets = async (req, res) => {
       } catch (error) {
         complete = false
       }
-      return ({ ...e, complete })
+      return ({ ...e, complete, numberOfDocs })
     })
     res.send(await Promise.all(data))
   } catch (error) {

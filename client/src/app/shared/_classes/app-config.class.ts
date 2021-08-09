@@ -46,5 +46,7 @@ export class AppConfig {
   // by assignment when associating accounts on the Device. Setting this to true will ensure all User Profiles are
   // Synced to all Devices and there will also be no filtering when associating Device Users to Accounts on Devices.
   disableDeviceUserFilteringByAssignment:boolean 
+  // List of views to skip optimization of after a sync.
+  doNotOptimize: Array<string>
 }
 
