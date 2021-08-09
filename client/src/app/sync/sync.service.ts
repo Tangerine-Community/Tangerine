@@ -225,7 +225,7 @@ export class SyncService {
 
 // Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
   async indexViews() {
-    const exclude = [
+    let exclude = [
       'tangy-form/responsesLockedAndNotUploaded',
       'tangy-form/responsesUnLockedAndNotUploaded',
       'tangy-form/responsesLockedAndUploaded',
@@ -237,6 +237,13 @@ export class SyncService {
       'tangy-form',
       'find-docs-by-form-id-pageable/find-docs-by-form-id-pageable'
     ]
+    const appConfig = await this.appConfigService.getAppConfig()
+    if (appConfig.doNotOptimize && Array.isArray(appConfig.doNotOptimize)) {
+      exclude = [
+        ...exclude,
+        ...appConfig.doNotOptimize
+      ]
+    }
     const db = await this.userService.getUserDatabase()
     const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
     console.log(`Indexing ${result.rows.length} views.`)
