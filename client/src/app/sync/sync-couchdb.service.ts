@@ -74,6 +74,7 @@ export class SyncCouchdbService {
   pullSyncOptions;
   pushSyncOptions;
   fullSync: string;
+  retryCount: number
   
   constructor(
     private http: HttpClient,
@@ -147,6 +148,7 @@ export class SyncCouchdbService {
     // Push.
     let pushReplicationStatus
     let hadPushSuccess = false
+    this.retryCount = 1
     if (!isFirstSync) {
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
@@ -156,6 +158,7 @@ export class SyncCouchdbService {
           await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       }
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
@@ -170,7 +173,8 @@ export class SyncCouchdbService {
     // Sync Locations Change Detection. 
     const previousDeviceSyncLocations = await this.variableService.get('previousDeviceSyncLocations')
     if (!isFirstSync && syncLocationsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations)) {
-      this.fullSync = 'push' 
+      this.fullSync = 'push'
+      this.retryCount = 1
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
@@ -178,6 +182,7 @@ export class SyncCouchdbService {
           pushReplicationStatus.hadPushSuccess = true
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       }
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
@@ -197,15 +202,17 @@ export class SyncCouchdbService {
     // Pull.
     let pullReplicationStatus
     let hadPullSuccess = false
+    this.retryCount = 1
     while (!hadPullSuccess && !this.cancelling) {
       try {
         pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
         if (!pullReplicationStatus.pullError) {
           await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
           hadPullSuccess = true
-          pushReplicationStatus.hadPushSuccess = true
+          pullReplicationStatus.hadPullSuccess = true
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       } catch (e) {
         // Theoretically this.pull shouldn't ever throw an error, but just in case make sure we set that last push sequence.
@@ -358,7 +365,7 @@ export class SyncCouchdbService {
     }
 
     syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
-
+    let error;
     try {
       status = <ReplicationStatus>await this._push(userDb, remoteDb, syncOptions);
       if (typeof status.pushed !== 'undefined') {
@@ -373,6 +380,9 @@ export class SyncCouchdbService {
         ...status,
         ...statusWithError
       }
+      if (statusWithError.pushError) {
+        error = statusWithError.pushError
+      }
       failureDetected = true
     }
     
@@ -381,6 +391,7 @@ export class SyncCouchdbService {
 
     if (failureDetected) {
       console.error(status)
+      status.pushError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
     }
     this.syncMessage$.next(status)
 
@@ -534,7 +545,7 @@ export class SyncCouchdbService {
     status.batchSize = batchSize
 
     if (failureDetected) {
-      status.pullError = `${error.message || error}. ${window['t']('Trying again')}.`
+      status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
     } 
     
     this.syncMessage$.next(status)
