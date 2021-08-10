@@ -83,6 +83,7 @@ __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
+
 ```
 cd tangerine
 # Check the size of the data folder.
@@ -107,6 +108,32 @@ update-down-sync-doc-count-by-location-id-index '*'
 # the project has a lot of data.
 npm install -g couchdb-wedge
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
+## v3.18.4
+
+__Fixes__
+
+- Backported a fix from the v3.19.0 branch for "Save the lastSequence number after each change is processed in the tangerine-mysql connector" Issue [#2772](https://github.com/Tangerine-Community/Tangerine/issues/2772)
+- Address crashes when importing data using the mysql module [#2820](https://github.com/Tangerine-Community/Tangerine/issues/2820)
+
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.18.4
+./start.sh v3.18.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.18.3
 ```
 
 ## v3.18.3
