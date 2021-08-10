@@ -26,6 +26,7 @@ import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
 import { SearchService } from './_services/search.service';
 import { FormTypesService } from './_services/form-types.service';
 import { ProcessMonitorService } from './_services/process-monitor.service';
+import {ProcessGuard} from "./_guards/process-guard.service";
 
 @NgModule({
   imports: [
@@ -51,7 +52,8 @@ import { ProcessMonitorService } from './_services/process-monitor.service';
     SearchService,
     FormTypesService,
     ProcessMonitorService,
-    CreateProfileGuardService
+    CreateProfileGuardService,
+    ProcessGuard
   ],
   declarations: [
     UnsanitizeHtmlPipe,

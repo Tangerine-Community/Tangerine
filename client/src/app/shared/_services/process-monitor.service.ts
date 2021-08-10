@@ -23,27 +23,33 @@ class ProcessMonitorService {
   constructor() {
   }
 
+  hasNoProcesses = this.processes.length === 0
+    ? true
+    : false
+
   start(name, description):Process {
     const process = <Process>{
       id: UUID(),
       name,
       description
     }
-    let hasNoProcesses = this.processes.length === 0
-      ? true
-      : false
+    
     this.processes.push(process)
-    if (hasNoProcesses) {
+    if (this.hasNoProcesses) {
       this.busy.next(true)
     }
     return process
   }
 
   stop(pid:string) {
-    this.processes = this.processes.filter(process => process.id === pid)
+    this.processes = this.processes.filter(process => process.id !== pid)
     if (this.processes.length === 0) {
       this.done.next(true)
     }
+  }
+  
+  clear() {
+    this.processes = []
   }
 
 }
