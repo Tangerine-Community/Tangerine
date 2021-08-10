@@ -51,7 +51,7 @@ async function batch() {
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
   console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
   let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
-  console.log("csvReplacementCharacters: " + csvReplacementCharacters)
+  console.log("csvReplacementCharacters: " + JSON.stringify(csvReplacementCharacters))
   // let csvReplacement = csvReplacementCharacters? JSON.parse(csvReplacementCharacters) : false
   if (docs.length === 0) {
     state.complete = true
@@ -65,13 +65,15 @@ async function batch() {
           if (typeof value === 'string') {
             if (csvReplacementCharacters) {
               csvReplacementCharacters.forEach(expression => {
-                const search = expression[0];
-                const re = new RegExp(search, 'g')
-                const replace = expression[1];
-                try {
-                  value = value.replace(re, replace)
-                } catch (e) {
-                  console.log("ERROR! re: " + re + " replace: " + replace + " value: " + value + " Error: " + e)
+                const search = expression["search"];
+                const replace = expression["replace"];
+                if (search && replace) {
+                  const re = new RegExp(search, 'g')
+                  try {
+                    value = value.replace(re, replace)
+                  } catch (e) {
+                    console.log("ERROR! re: " + re + " replace: " + replace + " value: " + value + " Error: " + e)
+                  }
                 }
               })
             }
