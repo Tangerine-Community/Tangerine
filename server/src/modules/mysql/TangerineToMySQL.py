@@ -9,6 +9,7 @@ import mysql.connector
 import pymysql
 import time
 import timeit
+import logging
 
 from datetime import datetime
 from cloudant.client import CouchDB
@@ -357,43 +358,53 @@ def main_job():
     start_time = timeit.default_timer()
     changes = tangerine_database.changes(include_docs=True,descending=False,  since=lastSequence)
     cnt2 = 0
-    for change in changes:
-        cnt2 = cnt2 + 1
-        if change is not None:
-            seq = change.get('seq')
-            lastSequence = seq 
-            id = change.get('id')
-            cng = change.get('changes')
-            # Check to see if is a delete change,if it is, just delete the record.
-            if change.get('deleted'):
-                # Remove the ID from the table, but we don't know which table.
-                # @TODO
-                #delete_record(tangerine_database, id)
-                continue
-            version = cng[0].get('rev')
-            doc = change.get('doc')
-            type = doc.get('type')
-            if type is not None:
-                id = doc.get('_id')
-                log("Processing Seq: " + lastSequence + ", ID: " + id)
-                # There are 5 major types: case, participant, case-event, event-form and response
-                if (type.lower() == "case"):
-                    convert_case(doc)
-                elif (type.lower() == "participant"):
-                    convert_participant(doc)
-                elif (type.lower() == "event-form"):
-                    convert_event_form(doc)
-                elif (type.lower() == "case-event"):
-                    convert_case_event(doc)
-                elif (type.lower() == "response"):
-                    convert_response(doc)
-                else:
-                    log("Unexpected document type: " + id)
 
-            # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
-            config.set("TANGERINE","LastSequence",lastSequence)
-            with open(sys.argv[1], 'w') as configfile:
-                config.write(configfile)
+    try: 
+      for change in changes:
+          cnt2 = cnt2 + 1
+          if change is not None:
+              seq = change.get('seq')
+              lastSequence = seq 
+              id = change.get('id')
+              cng = change.get('changes')
+              # Check to see if is a delete change,if it is, just delete the record.
+              if change.get('deleted'):
+                  # Remove the ID from the table, but we don't know which table.
+                  # @TODO
+                  #delete_record(tangerine_database, id)
+                  continue
+              version = cng[0].get('rev')
+              doc = change.get('doc')
+              type = doc.get('type')
+              if type is not None:
+                  id = doc.get('_id')
+                  log("Processing Seq: " + lastSequence + ", ID: " + id)
+                  # There are 5 major types: case, participant, case-event, event-form and response
+                  if (type.lower() == "case"):
+                      convert_case(doc)
+                  elif (type.lower() == "participant"):
+                      convert_participant(doc)
+                  elif (type.lower() == "event-form"):
+                      convert_event_form(doc)
+                  elif (type.lower() == "case-event"):
+                      convert_case_event(doc)
+                  elif (type.lower() == "response"):
+                      convert_response(doc)
+                  else:
+                      log("Unexpected document type: " + id)
+  
+              # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
+              config.set("TANGERINE","LastSequence",lastSequence)
+              with open(sys.argv[1], 'w') as configfile:
+                  config.write(configfile)
+    except (HTTPError, ProtocolError) as api_error:
+            # log("The connection to the server has failed! Previous change processed successfully: "  + lastSequence)
+            logger.exception("The connection to the server has failed!  Previous change processed successfully: "  + lastSequence)
+            # raise api_error
+    except Exception:
+            # log("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
+            logger.exception("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
+            # raise
 
     # Finish.
     end_time = timeit.default_timer()
