@@ -34,7 +34,7 @@ Clear reporting cache to start generating a MySQL database for each group.
 docker exec tangerine reporting-cache-clear
 ```
 
-You can check in on the progress of generating the mysql database using the `mysql-report` command. It will return for each kind of case data and form, how many records are in the source database vs. how many have made it over to mysql. Note that if your system is under heavy load during the processing of this, this command may stress it out even more so it may be best to wait until you see a load of less than one using a tool like `top` or `htop`. 
+You can check in on the progress of generating the mysql database using the `mysql-report` command. (*Warning* The `mysql-report` command creates a heavy workload to an instance so do not use it when mysql is trying to process a lot of data from couchdb. See the "Troubleshooting" section below.) It will return for each kind of case data and form, how many records are in the source database vs. how many have made it over to mysql. Note that if your system is under heavy load during the processing of this, this command may stress it out even more so it may be best to wait until you see a load of less than one using a tool like `top` or `htop`. 
 
 ```
 docker exec -it tangerine bash 
@@ -46,6 +46,13 @@ In the reboot instruction in crontab that to starts Tangerine on reboot, add mys
 
 ```
 @reboot docker start couchdb mysql && sleep 60 && docker start tangerine
+```
+
+Also add a cron job to run mysql-report at 1 a.m every day - this will keep the mysql indexes current.
+
+```
+# Run mysql-report at 1 a.m every day:
+# 0 1 * * * docker exec tangerine mysql-report group-479f455e-b1bd-481b-8bd7-0d985a07431c
 ```
 
 ### Step 7
@@ -65,3 +72,15 @@ To set up remote encrypted connections to mysql, three options:
 1. __TLS__: In the `tangerine/data/mysql/databases` folder you will find files `ca.pem`, `client-cert.pem`, and `client-key.pem`. Distribute those files to your MySQL users so they may connnect to your server's IP addres port 3306 using these certificates. For example, `mysql  -u admin -p"you-mysql-password" --ssl-ca=ca.pem --ssl-cert=client-cert.pem --ssl-key=client-key.pem`.
 2. __SSH__: For each person using MySQL, they will need SSH access to the server. When granted, they may use tunneling of mysql port 3306 over SSH to access mysql at `127.0.0.1:3306`.  For example, to set up an SSH port forwarding on Mac or Linux, run `ssh -L 3306:your-server:3306 your-server`.
 3. __VPN__: If you connect to MySQL via the IP address of the server, using a VPN will ensure that communication with MySQL is encrypted. Note however that the traffic will be visible to those also on your VPN so make sure it's a trusted VPN only used by those who have permission to access the data.
+
+## Troubleshooting
+
+### Issue: Data on the Mysql db is far behind the Couchdb.
+
+This scenario can happen when replicating data from a Production database on another server instance. Step to triage and resolve this issue:
+
+1. run `docker ps -a` to see if the tangerine and couchdb instances are up
+2. Bring back up those instance by using the `start.sh` script.
+3. Confirm using `docker logs -f tangerine` that the docker containers are back up and processing data correctly.
+4. If the server must catch up more than a day's worth of documents, use the [wedge](https://github.com/rjsteinert/CouchDB-Wedge) pre-warm-views at the end of the day to hit all views in the couchdb to pre-warm them (i.e. index those views). 
+5. After the indexes have been built, use the `mysql-report groupID` command to see if the mysql and couchdb databases are caught up.

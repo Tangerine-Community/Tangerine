@@ -32,11 +32,11 @@ After code freeze, a release branch is made and it's time to start creating some
 Once the release candidate (rc) has passed testing, it's time to roll the stable release.
 
 0. Try to merge master into the release branch. If commits are merged, then there may be released code that is missing from the RC that passed QA. Stop this release and tag a new RC for QA. 
-0. Merge release branch into master.
-0. Checkout the release candidate tag and tag that commit with a stable version. ie. `git checkout v3.15.0-rc-21 && git tag v3.15.0 && git push origin v3.15.0`
-0. Cancel the build on Docker Hub then pull the RC image, rename it, and push it. ie. `docker pull tangerine/tangerine:v3.15.0-rc-21 && docker tag tangerine/tangerine:v3.15.0-rc-21 tangerine/tangerine:v3.15.0 && docker push tangerine/tangerine:v3.15.0`
-0. Make release on Github using the same tag pushed up to Github. Link to the appropriate release on ["What's New" page on docs.tangerinecentral.org](https://docs.tangerinecentral.org/whats-new/).
-0. Merge master into next.
-0. On master branch migrate changes in `CHANGELOG.md` to `./docs/whats-new.md`. This will trigger the docs 
-0. Publish a `tangerine-preview` release with `rm -rf tangerine && git clone git@github.com:tangerine-community/tangerine && cd tangerine && ./release-preview.sh <tag name>`.
-0. Announce on Teams we have a new release.
+1. Merge release branch into master.
+2. Checkout the release candidate tag and tag that commit with a stable version. ie. `git checkout v3.15.0-rc-21 && git tag v3.15.0 && git push origin v3.15.0`
+3. Pull the RC image, rename it, and push it. ie. `docker pull tangerine/tangerine:v3.15.0-rc-21 && docker tag tangerine/tangerine:v3.15.0-rc-21 tangerine/tangerine:v3.15.0 && docker push tangerine/tangerine:v3.15.0`
+4. Make release on Github using the same tag pushed up to Github. Link to the appropriate release on ["What's New" page on docs.tangerinecentral.org](https://docs.tangerinecentral.org/whats-new/). Copy the release notes from the CHANGELOG to this release.
+5. Cancel the build in GitHub Actions for this tag.
+6. Merge master into next.
+8. Publish a `tangerine-preview` release with `rm -rf tangerine && git clone git@github.com:tangerine-community/tangerine && cd tangerine && ./release-preview.sh <tag name>`.
+9. Announce on Teams we have a new release.
