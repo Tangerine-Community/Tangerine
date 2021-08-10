@@ -71,7 +71,9 @@ async function go(state) {
     //  Run batches.
     while (state.complete === false) {
       console.log(`Run batch at skip of ${state.skip} at statePath: ${state.statePath}`)
-      await exec(`./batch.js '${state.statePath}'`)
+      const response = await exec(`./batch.js '${state.statePath}'`)
+      if (response.stderr) console.error(response.stderr)
+      if (process.env.NODE_ENV === 'development') console.log(response)
       state = JSON.parse(await readFile(state.statePath))
       await sleep(state.sleepTimeBetweenBatches)
     }
