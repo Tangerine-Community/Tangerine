@@ -67,6 +67,7 @@ __New Features__
   - Commit: https://github.com/Tangerine-Community/Tangerine/commit/4b8864470c1cad98e43152dd6bb3c91ee3e576a6
 
 __Fixes__
+
 - Issue created programatically in on-submit says we must rebase but no button to rebase #2785
   - Description: Cases that have used the `T.case.createIssue()` API in forms to create Issues on the current form have recently found the resulting issues are broken. This is due to a change in when the Form Response is associated with the case (later than when T.case.createIssue() is called in a form's on-submit). To remedy this, we've added a new `T.case.queueIssueForCreation("Some label", "Some comment")` API. __If you are using T.case.createIssue(), immediately upgrade and replace its usage with T.case.queueIssueForCreation()__. 
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2785
@@ -112,9 +113,27 @@ wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ## v3.18.4
 
 __Fixes__
+
 - Backported a fix from the v3.19.0 branch for "Save the lastSequence number after each change is processed in the tangerine-mysql connector" Issue [#2772](https://github.com/Tangerine-Community/Tangerine/issues/2772)
 - Address crashes when importing data using the mysql module [#2820](https://github.com/Tangerine-Community/Tangerine/issues/2820)
 
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.18.4
+./start.sh v3.18.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.18.3
+```
 
 ## v3.18.3
 
