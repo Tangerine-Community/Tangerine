@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Syncing branches
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Run the Action
         uses: devops-infra/action-pull-request@v0.4
         with:
