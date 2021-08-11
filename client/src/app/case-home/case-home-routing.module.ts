@@ -10,8 +10,7 @@ const routes: Routes = [
   {
     path: 'case-home',
     component: CaseHomeComponent,
-    canActivate: [LoginGuard, CreateProfileGuardService],
-    canDeactivate: [ProcessGuard]
+    canActivate: [LoginGuard, CreateProfileGuardService]
   }
 ];
 
