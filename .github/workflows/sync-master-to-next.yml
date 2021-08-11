@@ -11,14 +11,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v1
         with:
-          fetch-depth: 0
-      - name: Run the Action
-        uses: devops-infra/action-pull-request@v0.4
+          node-version: 12
+      - name: Opening pull request
+        id: pull
+        uses: tretuna/sync-branches@1.2.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: master
-          target_branch: next
-          title: Sync master to next
-          body: "**Automated pull request**"
-          label: automerge
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          FROM_BRANCH: "master"
+          TO_BRANCH: "next"
+       - name: automerge
+        uses: "pascalgn/automerge-action@v0.14.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          PULL_REQUEST: "${{ steps.pull.outputs.PULL_REQUEST_NUMBER"
