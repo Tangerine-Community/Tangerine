@@ -24,7 +24,7 @@ jobs:
           TO_BRANCH: "next"
       - name: automerge
         uses: "pascalgn/automerge-action@v0.14.2"
-        env:
+        with:
           MERGE_LABELS: ""
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           PULL_REQUEST: "${{ steps.pull.outputs.PULL_REQUEST_NUMBER }}"
