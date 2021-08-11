@@ -21,4 +21,4 @@ jobs:
           target_branch: next
           title: Sync master to next
           body: "**Automated pull request**"
-          label: auto-merge
+          label: automerge
