@@ -109,7 +109,45 @@ export class GroupsService {
       }
     }
   }
-
+  async downloadCSVDataSet(groupName: string, formIds: string, selectedYear = '*', selectedMonth = '*', excludePII: boolean) {
+    let sanitized = ''
+    if (excludePII) {
+      sanitized = '-sanitized'
+    }
+    try {
+      if (selectedMonth === '*' || selectedYear === '*') {
+        const result = await this.httpClient
+          .get(`/api/csvDataSet${sanitized}/${groupName}/${formIds}`)
+          .toPromise();
+        return result;
+      } else {
+        const result = await this.httpClient
+          .get(`/api/csvDataSet${sanitized}/${groupName}/${formIds}/${selectedYear}/${selectedMonth}`)
+          .toPromise();
+        return result;
+      }
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+  async listCSVDataSets(groupId: string, pageIndex: number, pageSize: number){
+    try {
+      const result = await this.httpClient.get(`/apis/listCSVDatasets/${groupId}/${pageIndex}/${pageSize}`).toPromise()
+      return result
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+  async getDatasetDetail(datasetId: string){
+    try {
+      const result = await this.httpClient.get(`/apis/CSVDatasetDetail/${datasetId}`).toPromise()
+      return result
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
   async checkCSVDownloadStatus(stateUrl: string) {
     try {
       const result = await this.httpClient.get(stateUrl).toPromise();
