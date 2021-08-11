@@ -1,6 +1,5 @@
 # What's new
 
-
 ## v3.19.0
 
 This is a big release; we are putting this important instruction at the beginning so that it does not get lost:
