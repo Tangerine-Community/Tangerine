@@ -18,6 +18,7 @@ export enum IssueEventType {
   Close='Close',
   Comment='Comment',
   ProposedChange='ProposedChange',
+  UpdateMeta='UpdateMeta',
   Merge='Merge',
   Rebase='Rebase'
 }
@@ -29,23 +30,14 @@ export class IssueEvent {
   userId:string
   createdAppContext:AppContext
   date:number
-  data:IssueData
-  docType:string
-}
-
-export class IssueData {
-  comment:string
-  caseInstance:Case
-  response:any
-  conflict:Conflict
-  diff:InputChange[]
+  data:any
 }
 
 class Issue extends TangyFormResponseModel {
-
   _id: string
   userId:string
   label:string
+  description:string
   tags:Array<string>
   status:IssueStatus
   events:Array<IssueEvent> = []
@@ -56,7 +48,8 @@ class Issue extends TangyFormResponseModel {
   type:string = 'issue'
   createdOn:number
   createdAppContext:AppContext
-  resolveOnAppContext:AppContext
+  sendToAllDevices:Boolean
+  sendToDeviceById:string
   docType:string
 
   constructor(data?:any) {

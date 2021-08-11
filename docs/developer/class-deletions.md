@@ -2,6 +2,8 @@
 
 We're archiving records instead of deleting them in Tangerine by setting `archive:true` on the root of the doc and filtering queries by `&& !archive`.
 
+*Please note that vanilla Tangerine uses the `archived` flag.'*
+
 For most queries, you simply must simply append  `&& !archive` to the query in order to ensure your views filter for the archive flag.
 
 Sample view that filters by archive:

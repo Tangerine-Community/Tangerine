@@ -1,0 +1,40 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
+<div class="tangy-full-width" id="container">
+  <form class="form">
+    <div>
+      <mat-form-field appearance="fill" color="primary">
+        <mat-label>{{ "Month" | translate }}</mat-label>
+        <mat-select
+          name="selectedMonth"
+          class="month"
+          [(ngModel)]="selectedMonth"
+        >
+          <mat-option value="*" selected="selected">*</mat-option>
+          <mat-option *ngFor="let month of months" value="{{ month }}">{{
+            month
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill" color="primary">
+        <mat-label>{{ "Year" | translate }}</mat-label>
+        <mat-select name="selectedYear" class="year" [(ngModel)]="selectedYear">
+          <mat-option value="*" selected="selected">*</mat-option>
+          <mat-option *ngFor="let year of years" value="{{ year }}">{{
+            year
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox name="excludePII" [(ngModel)]="excludePII"
+        >{{ "Exclude PII?" | translate }}
+      </mat-checkbox>
+    </div>
+    <div class="form-list">
+      <div *ngFor="let form of forms" >
+        <mat-checkbox (change)="onFormCheckBoxChange(form.id, $event)">{{form.title}}</mat-checkbox>
+        <br>
+      </div>
+      <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit'|translate}}</button>
+    </div>
+  </form>
+</div>
