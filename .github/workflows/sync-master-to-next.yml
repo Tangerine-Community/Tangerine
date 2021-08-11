@@ -16,8 +16,8 @@ jobs:
         uses: devops-infra/action-pull-request@v0.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: next
-          target_branch: master
+          source_branch: master
+          target_branch: next
           title: Sync master to next
           body: "**Automated pull request**"
           label: auto-merge
