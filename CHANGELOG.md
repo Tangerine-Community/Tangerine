@@ -73,11 +73,13 @@ __Fixes__
   - Example: https://github.com/Tangerine-Community/Tangerine/blob/next/content-sets/case-module/client/test-issues-created-programatically-on-client/form.html#L5
 - Using a simpler reverse sort for device status.
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2775
-- Increase liklihood that migration of data to mysql will recover where it left off if server restarts.
+- Increase likelihood that migration of data to mysql will recover where it left off if server restarts.
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2773
 - From Case Definitions, the `onCaseOpen` and `onCaseClose` now also run in the server context.
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2696
-
+- Synchronization UX Improvements - remove error state after retries when retry is successful 
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2808
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2826
 
 __Server upgrade instructions__
 
@@ -98,7 +100,7 @@ git fetch origin
 git checkout v3.19.0
 ./start.sh v3.19.0
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.18.1
+docker rmi tangerine/tangerine:v3.18.3
 # Perform additional upgrades.
 docker exec -it tangerine bash
 push-all-groups-views
