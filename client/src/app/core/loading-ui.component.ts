@@ -1,5 +1,6 @@
 import {LitElement, html, css} from 'lit-element';
 import {customElement, property} from "lit-element/lib/decorators";
+import '@polymer/paper-progress/paper-progress.js';
 
 @customElement('loading-ui')
 export class LoadingUiComponent extends LitElement {
@@ -10,14 +11,15 @@ export class LoadingUiComponent extends LitElement {
     .loading-text {
       display: flex;
       width: 50%;
-      height: 200px;
+      height: 100px;
       margin: auto;
       margin-top: 200px;
       border-radius: 10px;
       border: 3px dashed #1c87c9;
       align-items: center;
       justify-content: center;
-      background: lightyellow;
+      background: var(--primary-color);
+      color:white;
       opacity: 100%;
       font-size: x-large;
     }
@@ -25,12 +27,13 @@ export class LoadingUiComponent extends LitElement {
   
   render() {
     return html`
-      <div class="loading-text" @click=${this.escape}>Loading...</div>
+      <div class="loading-text" @click=${this.escape}>
+        <paper-progress indeterminate></paper-progress>
+      </div>
     `;
   }
   
   escape() {
-    console.log("let me go!")
     window['T'].process.clear()
   }
 }
