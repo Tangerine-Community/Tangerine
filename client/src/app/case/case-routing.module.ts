@@ -15,7 +15,6 @@ import { NewCaseComponent } from './components/new-case/new-case.component';
 import { CaseComponent } from './components/case/case.component';
 import { EventComponent } from './components/event/event.component'
 import { EventFormComponent } from './components/event-form/event-form.component'
-import {ProcessGuard} from "../shared/_guards/process-guard.service";
 
 @Injectable()
 export class CanDeactivateEvent implements CanDeactivate<EventComponent> {
@@ -87,7 +86,7 @@ const routes: Routes = [
     path: 'case/event/form/:caseId/:eventId/:eventFormId',
     component: EventFormComponent,
     canActivate: [LoginGuard],
-    canDeactivate: [CanDeactivateEventForm, ProcessGuard]
+    canDeactivate: [CanDeactivateEventForm]
   },
   {
     path: 'new-case',

@@ -32,9 +32,11 @@ import { ClassModule } from './class/class.module';
 import { AboutModule } from './core/about/about.module';
 import { SearchModule } from './core/search/search.module';
 import { NewFormResponseModule } from './core/new-form-response/new-form-response.module';
+import './core/loading-ui.component'
 import {AppInit} from './app-init';
 import {AdminConfigurationModule} from "./core/admin-configuration/admin-configuration.module";
 export { AppComponent }
+
 
 export function initializeApp1(appInit: AppInit) {
   return (): Promise<any> => {

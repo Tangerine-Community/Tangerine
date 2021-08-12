@@ -14,7 +14,7 @@ import { CaseService } from 'src/app/case/services/case.service';
 import { VariableService } from './shared/_services/variable.service';
 import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
-import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
+import {Component, ElementRef, OnInit, QueryList, ViewChild} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
@@ -27,6 +27,8 @@ import { AppConfigService } from './shared/_services/app-config.service';
 import { SearchService } from './shared/_services/search.service';
 import { Get } from 'tangy-form/helpers.js'
 import { FIRST_SYNC_STATUS } from './device/components/device-sync/device-sync.component';
+import {LoadingUiComponent} from "./core/loading-ui.component";
+import {ProcessMonitorService} from "./shared/_services/process-monitor.service";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -50,6 +52,7 @@ export class AppComponent implements OnInit {
   languagePath:string
   ready = false
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
+  @ViewChild('loadingUi', { static: true }) loadingUi: ElementRef<LoadingUiComponent>;
 
   constructor(
     private userService: UserService,
@@ -73,7 +76,8 @@ export class AppComponent implements OnInit {
     private dashboardService:DashboardService,
     private variableService:VariableService,
     private syncCouchdbService:SyncCouchdbService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private processMonitorService:ProcessMonitorService
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
@@ -102,7 +106,8 @@ export class AppComponent implements OnInit {
       variable: variableService,
       classForm: classFormService,
       classDashboard: dashboardService,
-      translate: window['t']
+      translate: window['t'],
+      process:processMonitorService
     }
   }
   
@@ -186,8 +191,18 @@ export class AppComponent implements OnInit {
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
       this.router.navigate(['/update']);
     }
+    this.processMonitorService.busy.subscribe((isBusy) => {
+      console.log("busy")
+      // this.loadingUi.nativeElement.style.display = 'block';
+      this.loadingUi.nativeElement.hidden = false
+    });
+    this.processMonitorService.done.subscribe((isBusy) => {
+      console.log("no longer busy")
+      // this.loadingUi.nativeElement.style.display = 'none';
+      this.loadingUi.nativeElement.hidden = true
+    });
   }
-
+  
   async install() {
     try {
       const config =<any> await this.http.get('./assets/app-config.json').toPromise()

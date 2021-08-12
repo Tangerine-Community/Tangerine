@@ -6,7 +6,6 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
-import {ProcessGuard} from "../../shared/_guards/process-guard.service";
 import {ProcessMonitorService} from "../../shared/_services/process-monitor.service";
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 

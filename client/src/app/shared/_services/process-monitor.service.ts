@@ -50,6 +50,7 @@ class ProcessMonitorService {
   
   clear() {
     this.processes = []
+    this.done.next(true)
   }
 
 }
