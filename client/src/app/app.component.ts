@@ -192,13 +192,9 @@ export class AppComponent implements OnInit {
       this.router.navigate(['/update']);
     }
     this.processMonitorService.busy.subscribe((isBusy) => {
-      console.log("busy")
-      // this.loadingUi.nativeElement.style.display = 'block';
       this.loadingUi.nativeElement.hidden = false
     });
     this.processMonitorService.done.subscribe((isBusy) => {
-      console.log("no longer busy")
-      // this.loadingUi.nativeElement.style.display = 'none';
       this.loadingUi.nativeElement.hidden = true
     });
   }
