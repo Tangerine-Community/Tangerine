@@ -6,9 +6,6 @@ export class LoadingUiComponent extends LitElement {
   static styles = css`
     :host {
       display: block;
-      border: solid 1px gray;
-      padding: 16px;
-      max-width: 800px;
     }
     .loading-text {
       display: flex;
@@ -28,8 +25,13 @@ export class LoadingUiComponent extends LitElement {
   
   render() {
     return html`
-      <div class="loading-text">Loading...</div>
+      <div class="loading-text" @click=${this.escape}>Loading...</div>
     `;
+  }
+  
+  escape() {
+    console.log("let me go!")
+    window['T'].process.clear()
   }
 }
 
