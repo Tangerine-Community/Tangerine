@@ -276,125 +276,136 @@ div.more {
   margin-left: -10px;
 }
 
-  form.portrait {
-    width: 20em;
-    margin: 4em auto;
-    padding: 3em 2em 2em 2em;
-    background: #fafafa;
-    border: 1px solid #ebebeb;
-    box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+form.portrait {
+  width: 20em;
+  margin: 4em auto;
+  padding: 3em 2em 2em 2em;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 
-  }
+}
 
-  .group {
-    position: relative;
-    margin-bottom: 45px;
+.group {
+  position: relative;
+  margin-bottom: 45px;
 
-  }
+}
 
-  .corner-ribbon{
-    width: 200px;
-    background: #e43;
-    position: absolute;
-    top: 25px;
-    left: -50px;
-    text-align: center;
-    line-height: 50px;
-    letter-spacing: 1px;
-    color: #f0f0f0;
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
-  }
+.corner-ribbon{
+  width: 200px;
+  background: #e43;
+  position: absolute;
+  top: 25px;
+  left: -50px;
+  text-align: center;
+  line-height: 50px;
+  letter-spacing: 1px;
+  color: #f0f0f0;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
 
-  /* Custom styles */
+/* Custom styles */
 
-  .corner-ribbon.sticky{
-    position: fixed;
-  }
+.corner-ribbon.sticky{
+  position: fixed;
+}
 
-  .corner-ribbon.shadow{
-    box-shadow: 0 0 3px rgba(0,0,0,.3);
-  }
+.corner-ribbon.shadow{
+  box-shadow: 0 0 3px rgba(0,0,0,.3);
+}
 
-  /* positions */
-  .corner-ribbon.top-right{
-    top: 25px;
-    right: -50px;
-    left: auto;
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-  }
-  #error {
-    color :$tangy-foreground-error-message;
-  }
-  #success{
-    color :$tangy-foreground-success-message;
-  }
+/* positions */
+.corner-ribbon.top-right{
+  top: 25px;
+  right: -50px;
+  left: auto;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+#error {
+  color :$tangy-foreground-error-message;
+}
+#success{
+  color :$tangy-foreground-success-message;
+}
 
-  .material-icons  {
-    vertical-align: text-bottom;
-  }
+.material-icons  {
+  vertical-align: text-bottom;
+}
 
-  tangy-form > *, tangy-form {
-    font-size: 1.2rem;
-    line-height: 1.2rem;
-    --paper-input-container-shared-input-style_-_line-height: 1.2rem;
-  }
+tangy-form > *, tangy-form {
+  font-size: 1.2rem;
+  line-height: 1.2rem;
+  --paper-input-container-shared-input-style_-_line-height: 1.2rem;
+}
 
-  /*
-   * Custom Icon List Item component
-   *
-   * Example:
+/*
+ * Custom Icon List Item component
+ *
+ * Example:
 
-      <div class="icon-list-item">
-        <mwc-icon slot="item-icon">arrow_forward</mwc-icon>
+    <div class="icon-list-item">
+      <mwc-icon slot="item-icon">arrow_forward</mwc-icon>
+      <div>
         <div>
-          <div>
-            foo
-          </div>
-          <div secondary>
-            bar
-          </div>
+          foo
+        </div>
+        <div secondary>
+          bar
         </div>
       </div>
+    </div>
 
-   */
-  .icon-list-item {
-    background: var(--paper-color);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-family: var(--paper-font-subhead_-_font-family);
-    font-size: var(--paper-font-subhead_-_font-size);
-    font-weight: var(--paper-font-subhead_-_font-weight);
-    line-height: var(--paper-font-subhead_-_line-height);
-    min-height: var(--paper-item-min-height, 48px);
-    padding: 0 16px;
-  }
-  .icon-list-item > mwc-icon {
-    width: 56px;
-  }
-  .icon-list-item > div {
-    min-height: var(--paper-item-body-two-line-min-height, 72px);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex: 1;
-    flex-basis: 0.0000000001px;
-  }
-  .icon-list-item > div > div {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .icon-list-item > div > div + div {
-    font-size: var(--paper-font-body1_-_font-size);
-    font-weight: var(--paper-font-body1_-_font-weight);
-    line-height: var(--paper-font-body1_-_line-height);
-    color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
-  }
+ */
+.icon-list-item {
+  background: var(--paper-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: var(--paper-font-subhead_-_font-family);
+  font-size: var(--paper-font-subhead_-_font-size);
+  font-weight: var(--paper-font-subhead_-_font-weight);
+  line-height: var(--paper-font-subhead_-_line-height);
+  min-height: var(--paper-item-min-height, 48px);
+  padding: 0 16px;
+}
+.icon-list-item > mwc-icon {
+  width: 56px;
+}
+.icon-list-item > div {
+  min-height: var(--paper-item-body-two-line-min-height, 72px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  flex-basis: 0.0000000001px;
+}
+.icon-list-item > div > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.icon-list-item > div > div + div {
+  font-size: var(--paper-font-body1_-_font-size);
+  font-weight: var(--paper-font-body1_-_font-weight);
+  line-height: var(--paper-font-body1_-_line-height);
+  color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
+}
 
-  .icon-list-item>mwc-icon{
-    color: var(--primary-color) !important;
-  }
+.icon-list-item>mwc-icon{
+  color: var(--primary-color) !important;
+}
+
+.loading-ui-container {
+  position: fixed;
+  display: block;
+  height: 100%;
+  width: 100%;
+  opacity: 0.7;
+  background-color: #fff;
+  top: 0;
+  z-index: 100;
+}

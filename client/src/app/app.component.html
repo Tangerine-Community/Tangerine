@@ -62,6 +62,7 @@
   </mat-menu>
 
 </mat-toolbar>
+<div #loadingUi class="tangerine-app-content mat-typography loading-ui-container" [hidden]="true"><loading-ui></loading-ui></div>
 <div class="tangerine-app-content mat-typography">
   <router-outlet *ngIf="ready"></router-outlet>
 </div>
