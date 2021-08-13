@@ -194,7 +194,7 @@ export class AppComponent implements OnInit {
     this.processMonitorService.busy.subscribe((isBusy) => {
       this.loadingUi.nativeElement.hidden = false
     });
-    this.processMonitorService.done.subscribe((isBusy) => {
+    this.processMonitorService.done.subscribe((isDone) => {
       this.loadingUi.nativeElement.hidden = true
     });
   }
