@@ -34,7 +34,9 @@ export class LoadingUiComponent extends LitElement {
   }
   
   escape() {
-    window['T'].process.clear()
+    if (confirm(`${window['T'].translate('Please only leave this dialog if you believe there is an error in the application.')}`)) {
+      window['T'].process.clear()
+    }
   }
 }
 
