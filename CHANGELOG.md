@@ -76,13 +76,14 @@ __New Features__
   - Commit: https://github.com/Tangerine-Community/Tangerine/commit/4b8864470c1cad98e43152dd6bb3c91ee3e576a6
 
 __Fixes__
+
 - Issue created programatically in on-submit says we must rebase but no button to rebase #2785
   - Description: Cases that have used the `T.case.createIssue()` API in forms to create Issues on the current form have recently found the resulting issues are broken. This is due to a change in when the Form Response is associated with the case (later than when T.case.createIssue() is called in a form's on-submit). To remedy this, we've added a new `T.case.queueIssueForCreation("Some label", "Some comment")` API. __If you are using T.case.createIssue(), immediately upgrade and replace its usage with T.case.queueIssueForCreation()__. 
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2785
   - Example: https://github.com/Tangerine-Community/Tangerine/blob/next/content-sets/case-module/client/test-issues-created-programatically-on-client/form.html#L5
 - Using a simpler reverse sort for device status.
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2775
-- Increase liklihood that migration of data to mysql will recover where it left off if server restarts.
+- Increase likelihood that migration of data to mysql will recover where it left off if server restarts.
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2773
 - From Case Definitions, the `onCaseOpen` and `onCaseClose` now also run in the server context.
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2696
@@ -90,7 +91,9 @@ __Fixes__
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2800
 - Synclog date/time header is incorrect and sort is broken
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2762
-
+- Synchronization UX Improvements - remove error state after retries when retry is successful 
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2808
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2826
 
 __Server upgrade instructions__
 
@@ -111,7 +114,7 @@ git fetch origin
 git checkout v3.19.0
 ./start.sh v3.19.0
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.18.1
+docker rmi tangerine/tangerine:v3.18.3
 # Perform additional upgrades.
 docker exec -it tangerine bash
 push-all-groups-views
