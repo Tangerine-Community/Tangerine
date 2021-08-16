@@ -74,6 +74,7 @@ export class SyncCouchdbService {
   pullSyncOptions;
   pushSyncOptions;
   fullSync: string;
+  retryCount: number
   
   constructor(
     private http: HttpClient,
@@ -147,17 +148,21 @@ export class SyncCouchdbService {
     // Push.
     let pushReplicationStatus
     let hadPushSuccess = false
+    this.retryCount = 1
     if (!isFirstSync) {
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
           hadPushSuccess = true
+          pushReplicationStatus.hadPushSuccess = true
           await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       }
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
     }
 
     if (this.cancelling) {
@@ -168,16 +173,21 @@ export class SyncCouchdbService {
     // Sync Locations Change Detection. 
     const previousDeviceSyncLocations = await this.variableService.get('previousDeviceSyncLocations')
     if (!isFirstSync && syncLocationsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations)) {
-      this.fullSync = 'push' 
+      this.fullSync = 'push'
+      this.retryCount = 1
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
           hadPushSuccess = true
+          pushReplicationStatus.hadPushSuccess = true
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       }
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
+      
       const device = await this.deviceService.getDevice()
       await this.userService.reinstallSharedUserDatabase(device)
       // Refresh db connection.
@@ -192,14 +202,17 @@ export class SyncCouchdbService {
     // Pull.
     let pullReplicationStatus
     let hadPullSuccess = false
+    this.retryCount = 1
     while (!hadPullSuccess && !this.cancelling) {
       try {
         pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
         if (!pullReplicationStatus.pullError) {
           await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
           hadPullSuccess = true
+          pullReplicationStatus.hadPullSuccess = true
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       } catch (e) {
         // Theoretically this.pull shouldn't ever throw an error, but just in case make sure we set that last push sequence.
@@ -210,6 +223,7 @@ export class SyncCouchdbService {
       }
     }
     replicationStatus = {...replicationStatus, ...pullReplicationStatus}
+    this.syncMessage$.next(replicationStatus);
 
     // Whatever we pulled, even if there was an error, we don't need to push so set last push sequence again.
     const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
@@ -227,11 +241,6 @@ export class SyncCouchdbService {
     return new Promise( (resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction = 'push'
-      const progress = {
-        'direction': direction,
-        'remaining': syncOptions.remaining
-      }
-      this.syncMessage$.next(progress)
       userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
         const status = <ReplicationStatus>{
           pushed: info.docs_written,
@@ -308,7 +317,7 @@ export class SyncCouchdbService {
       }).on('error', function (error) {
         console.error(error)
         const status = <ReplicationStatus>{
-          pushError: "_push failed. error: " + error
+          pushError: "Push failed. error: " + error
         }
         reject(status);
       });
@@ -356,7 +365,7 @@ export class SyncCouchdbService {
     }
 
     syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
-
+    let error;
     try {
       status = <ReplicationStatus>await this._push(userDb, remoteDb, syncOptions);
       if (typeof status.pushed !== 'undefined') {
@@ -371,6 +380,9 @@ export class SyncCouchdbService {
         ...status,
         ...statusWithError
       }
+      if (statusWithError.pushError) {
+        error = statusWithError.pushError
+      }
       failureDetected = true
     }
     
@@ -378,13 +390,11 @@ export class SyncCouchdbService {
     status.currentPushLastSeq = status.info.last_seq
 
     if (failureDetected) {
-      const errorMessageDialog = window['t']('Error: ')
-      const errorMessage = errorMessageDialog + status.pushError
-      status.error = errorMessage
       console.error(status)
-      this.syncMessage$.next(status)
-    } else {
+      status.pushError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
     }
+    this.syncMessage$.next(status)
+
     return status;
   }
 
@@ -398,11 +408,6 @@ export class SyncCouchdbService {
         direction: ''
       }
       const direction = 'pull'
-      const progress = {
-        'direction': direction,
-        'message': "Checking the server for updates."
-      }
-      this.syncMessage$.next(progress)
       try {
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
@@ -540,9 +545,11 @@ export class SyncCouchdbService {
     status.batchSize = batchSize
 
     if (failureDetected) {
-      status.pullError = `${error.message || error}. ${window['t']('Trying again')}.`
-      this.syncMessage$.next(status)
-    }
+      status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
+    } 
+    
+    this.syncMessage$.next(status)
+    
     return status;
   }
 
