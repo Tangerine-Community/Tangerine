@@ -21,6 +21,6 @@
         {{role.role}}
     </mat-checkbox>
 </p>
-  <p *ngIf="allRoles.length<1" class="tangy-input-width">{{'No Roles exist yet. '|translate}}</p>
+  <p *ngIf="allRoles && allRoles.length<1" class="tangy-input-width">{{'No Roles exist yet. '|translate}}</p>
   <button [disabled]="!selectedUser" mat-raised-button color="warn" (click)="addUserToGroup();addUserToGroupForm.reset()">{{'Add User to Group'|translate}}</button>
 </form>
