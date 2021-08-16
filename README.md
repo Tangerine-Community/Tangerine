@@ -198,7 +198,11 @@ npm start
 
 View the app at <http://localhost:4200>.
 
-__Optional__: If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
+__Optional__: If you are also developing the form library Tangy Form at the same time, do the following:
+- Symlink that repository into `node_modules` folder. 
+- Start Tangerine instance using ./develop-tangy-form-libs.sh , which exposes the source code for your tangy-form and tangy-form-editor libs to the container.
+ 
+Symlink example:
 
 ```
 rm -r node_modules/tangy-form
