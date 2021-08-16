@@ -74,6 +74,12 @@ __New Features__
 - Form Developer configures Devices to skip optimization of database views not in use on Device.
   - Description: Some projects relying heavily on a custom app will find they do not use all of the standard Tangerine database views, thus they can be skipped during the data optimization phase after a sync. In `app-config.json`, you can add a new `doNotOptimize` property with a value as an array of views to skip. To discover what views your app is indexing, see the console logs from a device during the optimization phase. You may discover some views you can add to `doNotOptimize` to speed up that optmization process.
   - Commit: https://github.com/Tangerine-Community/Tangerine/commit/4b8864470c1cad98e43152dd6bb3c91ee3e576a6
+- Translations update and tr script update
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2855
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2727
+- System Administrator batch imports all forms from a Tangerine v2 group into a Tangerine v3 group
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2857
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2584
 
 __Fixes__
 
@@ -94,6 +100,11 @@ __Fixes__
 - Synchronization UX Improvements - remove error state after retries when retry is successful 
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2808
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2826
+- Fix missing 'form_' from id for v2 import
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2856
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2726
+- Minor tweak to tangerine-preview README
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2735
 
 __Server upgrade instructions__
 
