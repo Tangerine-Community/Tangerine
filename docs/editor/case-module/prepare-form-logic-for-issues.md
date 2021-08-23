@@ -48,6 +48,6 @@ There are also many input types such as GPS and Signature where it often does no
 
 ```
 <tangy-gps name="gps" disable-if="T.case.isIssueContext()"></tangy-gps>
-<tangy-signature name="signature" disable-if="disable-if="T.case.isIssueContext()"></tangy-signature>
+<tangy-signature name="signature" disable-if="T.case.isIssueContext()"></tangy-signature>
 ```
 
