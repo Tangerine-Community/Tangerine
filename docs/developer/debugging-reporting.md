@@ -67,6 +67,7 @@ In Chrome, go to `chrome://inspect`, click `Configure...`, and add `127.0.0.1:92
 https://www.youtube.com/watch?v=AToUBoApw8E&feature=youtu.be
 
 Now manually trigger a batch. After the command finishes, verify the batch by checking `http://localhost:5984/_utils/#database/foo-reporting/_all_docs`.
+
 ```
 node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)
 ```
@@ -75,11 +76,13 @@ There will be only 15 docs in your reporting db because that is the batch size.
 Although Tangerine in develop.sh mode runs node in a debugger process, you must launch a separate node process to debug the batch reporting worker.
 
 If no errors occurred, copy the temporary state to the current state.
+
 ```
 cp /reporting-worker-state.json_tmp /reporting-worker-state.json
 ```
 
 Keep repeating to continue processing...
+
 ```
 cat /reporting-worker-state.json | /tangerine/serversrc/scripts/reporting-worker-batch.js | tee /reporting-worker-state.json_tmp
 cp /reporting-worker-state.json_tmp /reporting-worker-state.json
@@ -95,11 +98,13 @@ When you run that command, it will wait on the first line of the script for a de
 
 
 If you want to keep the cache worker running, use watch.
+
 ```
 watch -n 1 "cat /reporting-worker-state.json | node /tangerine/server/reporting/run-worker.js | tee /.reporting-worker-state.json | json_pp && cp /.reporting-worker-state.json /reporting-worker-state.json"
 ```
 
 If you need to clear a reporting cache, don't simply delete the reporting db. Use
+
 ```
 reporting-cache-clear
 
