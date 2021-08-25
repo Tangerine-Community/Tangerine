@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -9,7 +9,7 @@ import { GroupsService } from '../services/groups.service';
   templateUrl: './csv-data-set-detail.component.html',
   styleUrls: ['./csv-data-set-detail.component.css']
 })
-export class CsvDataSetDetailComponent implements OnInit {
+export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
   breadcrumbs: Array<Breadcrumb> = [
     <Breadcrumb>{
       label: _TRANSLATE('Download CSV Data Set'),
@@ -20,6 +20,7 @@ export class CsvDataSetDetailComponent implements OnInit {
   datasetId
   datasetDetail
   displayedColumns = ['formId','inProgress','outputPath']
+  detailInterval:any
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService
@@ -36,11 +37,14 @@ export class CsvDataSetDetailComponent implements OnInit {
 
   async ngOnInit(){
     await this.getDatasetDetail()
-    const detailInterval = setInterval(await this.getDatasetDetail, 10*1000)
+    this.detailInterval = setInterval(() => this.getDatasetDetail, 15*1000)
     if(this.datasetDetail.complete){
-      clearInterval(detailInterval)
+      clearInterval(this.detailInterval)
     }
-     
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.detailInterval)
   }
 
   async getDatasetDetail(){
