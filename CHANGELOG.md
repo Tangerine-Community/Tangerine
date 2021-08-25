@@ -14,6 +14,7 @@ __New Features__
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2776
 - Devices Manager reconfigures claimed Device sync settings and selects multiple Sync Locations for a Device.
   - Details: To change a Device's sync settings currently requires a reinstall of the app on the Device and setting up all the accounts again. This PR will allow system admins to change the sync settings for a Device which then triggers on next sync a Rewind Push, database delete, then a first pull with the new sync settings. Subsequent syncs then use the new sync settings. This PR also refactors the Create and Edit forms for Devices on the server so that multiple sync locations can be added.
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2867
   - PR: [#2782](https://github.com/Tangerine-Community/Tangerine/pull/2782)
 - Device Manager estimates how large an initial sync will be given selected sync settings.
   - Details: When setting up sync settings for a Device, it is useful to know how many documents will need to be downloaded given which forms are configured for syncing down and the locations assigned. There is now a "calculate down-sync size" button at the bottom of Device edit/creation forms that when pressed will tally up the documents needing to be down synced given the device sync settings.
