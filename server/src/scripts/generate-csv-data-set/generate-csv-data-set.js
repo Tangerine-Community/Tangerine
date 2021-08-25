@@ -55,17 +55,22 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
       await sleep(1*1000)
     }
     while (state.csvs.find(csv => csv.formId === formId).complete === false) {
-      const csvState = await fs.readJSON(csvStatePath)
-      state.csvs = state.csvs.map(csvInfo => {
-        return csvInfo.formId === formId
-          ? {
-            ...csvInfo,
-            ...csvState
-          }
-          : csvInfo
-      })
-      await writeState(state)
-      if (state.csvs.find(csv => csv.formId === formId).complete === false) {
+      try {
+        const csvState = await fs.readJSON(csvStatePath)
+        state.csvs = state.csvs.map(csvInfo => {
+          return csvInfo.formId === formId
+            ? {
+              ...csvInfo,
+              ...csvState
+            }
+            : csvInfo
+        })
+        await writeState(state)
+        if (state.csvs.find(csv => csv.formId === formId).complete === false) {
+          await sleep(3*1000)
+        }
+      } catch (e) {
+        // The state file for that CSV was either not yet available or being written.
         await sleep(3*1000)
       }
     }
