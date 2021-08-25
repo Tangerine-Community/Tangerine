@@ -387,9 +387,17 @@ export class GroupDevicesComponent implements OnInit {
               <tr><td class="device-settings-list">Claimed</td><td>${device.claimed ? 'Yes' : 'No'}</td></tr>
             </table>
             <tangy-input name="description" label="Device description" value="${device.description ? device.description : ''}"></tangy-input>
+            <tangy-checkbox 
+              name="reconfigure_assigned_location"
+              label="Reconfigure assigned location"
+              hint-text="Warning: Reconfiguring assigned location will not take affect on the Device until this Device record is Reset and then the app is reinstalled on the Tablet."
+            >
+            </tangy-checkbox>
             <tangy-location
               name="assigned_location"
               label="Assign device to location at which location?"
+              hint-text="This determines the default location metadata for syncing that is applied to a new Case. Your forms may reassign a Case, see change-location-of-case form in the case-module content set for an example."
+              disable-if="!getValue('reconfigure_assigned_location')"
               show-levels='${locationList.locationsLevels.join(',')}'
               ${device.assignedLocation && device.assignedLocation.value ? `
                 value='${JSON.stringify(device.assignedLocation.value)}'
@@ -531,6 +539,7 @@ export class GroupDevicesComponent implements OnInit {
           <tangy-location
             name="assigned_location"
             label="Assign device to location at which location?"
+            hint-text="This determines the default location metadata for syncing that is applied to a new Case. Your forms may reassign a Case, see change-location-of-case form in the case-module content set for an example."
             show-levels='${locationList.locationsLevels.join(',')}'
           >
           </tangy-location>
