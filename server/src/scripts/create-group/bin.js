@@ -76,6 +76,11 @@ async function createGroup() {
     } else if (contentSetVersion === 2) {
       appConfigDefaultsPath = `${groupPath}/client/app-config.defaults.json`
     }
+    try {
+      await exec(`mkdir ${groupPath}/client/media`)
+    } catch (e) {
+      // Content set must have already implemented media folder.
+    }
     const appConfig = await fs.readJson(appConfigDefaultsPath)
     await fs.writeJson(appConfigPath, {
       ...appConfig,
