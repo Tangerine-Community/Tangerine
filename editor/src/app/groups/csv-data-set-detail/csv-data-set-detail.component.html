@@ -19,7 +19,11 @@
 
     <ng-container matColumnDef="inProgress">
       <th mat-header-cell *matHeaderCellDef>{{'Status'|translate}}</th>
-      <td mat-cell *matCellDef="let dataSet">{{ dataSet.inProgress?'In Progress':'Complete' |translate}}</td>
+      <td mat-cell *matCellDef="let dataSet">
+        {{ dataSet.inProgress ? 'In Progress' : '' | translate}}
+        {{ dataSet.complete ? 'Complete' : '' | translate}}
+        {{ !dataSet.complete && !dataSet.inProgress ? 'Queued' : '' | translate}}
+      </td>
     </ng-container>
     
     <ng-container matColumnDef="outputPath">
