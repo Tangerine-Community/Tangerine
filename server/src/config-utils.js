@@ -8,6 +8,17 @@ const archiveToDiskConfig = async (req, res)=>{
     }
 }
 
+const passwordPolicyConfig = async (req, res)=>{
+  try {
+    const {T_PASSWORD_POLICY, T_PASSWORD_RECIPE} = process.env
+    res.send({ statusCode: 200, T_PASSWORD_POLICY, T_PASSWORD_RECIPE });
+  } catch (error) {
+    console.error()
+    res.sendStatus(500)
+  }
+}
+
 module.exports = {
-    archiveToDiskConfig
+    archiveToDiskConfig,
+    passwordPolicyConfig
 }

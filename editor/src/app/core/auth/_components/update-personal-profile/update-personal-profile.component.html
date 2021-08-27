@@ -1,6 +1,11 @@
-<h1 class="tangy-foreground-secondary">
-  {{'Edit User'|translate}} {{user.username}}
+<h1 class="tangy-foreground-secondary" *ngIf="user; else elseBlock">
+  {{'Edit User'|translate }} {{user.username}}
 </h1>
+<ng-template #elseBlock>
+  <h1 class="tangy-foreground-secondary">
+    {{'Edit User'|translate }}
+  </h1>
+</ng-template>
 <div id="container" *ngIf="user">
   <form class="tangy-full-width" novalidate #editUserForm="ngForm">
     
@@ -53,8 +58,11 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <br>
-    <br>
-    <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE DETAILS'|translate}}</button>
+    <span [id]="statusMessage.type" *ngIf="statusMessage.type==='error'">
+        <small>{{statusMessage.message}}</small>
+    </span>
+    <p>
+    <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)||disableSubmit" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE DETAILS'|translate}}</button>
+    </p>
   </form>
 </div>
