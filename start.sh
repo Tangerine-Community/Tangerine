@@ -184,6 +184,8 @@ RUN_OPTIONS="
   --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
   --env \"T_ARCHIVE_APKS_TO_DISK=$T_ARCHIVE_APKS_TO_DISK\" \
   --env \"T_ARCHIVE_PWAS_TO_DISK=$T_ARCHIVE_PWAS_TO_DISK\" \
+  --env \"T_PASSWORD_POLICY=$T_PASSWORD_POLICY\" \
+  --env \"T_PASSWORD_RECIPE=$T_PASSWORD_RECIPE\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
