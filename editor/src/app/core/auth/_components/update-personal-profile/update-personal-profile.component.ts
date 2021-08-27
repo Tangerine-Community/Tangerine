@@ -68,6 +68,9 @@ export class UpdatePersonalProfileComponent implements OnInit {
         // this.disableSubmit = true
         // this.errorHandler.handleError(this.passwordIsNotStrong.message);
         return
+      } else {
+        // Clear out statusMessage is it had been set earlier.
+        this.statusMessage = { type: '', message: '' };
       }
       
       const data = await this.userService.updateMyUser({...this.user, updateUserPassword: this.updateUserPassword});

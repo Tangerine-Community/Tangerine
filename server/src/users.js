@@ -242,7 +242,7 @@ const updateMyUser = async (req, res) => {
   try {
     const username = req.user.name;
     const { firstName, lastName, email, currentPassword, password, confirmPassword, updateUserPassword } = req.body;
-    console.log(req.body)
+    // console.log(req.body)
     if (!firstName || !lastName || !email) {
       return res.status(500).send({ data: `Could not update User` });
     }
