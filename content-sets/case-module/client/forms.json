@@ -28,6 +28,41 @@
     }
   },
   {
+    "id" : "case-type-2-manifest",
+    "src" : "./assets/case-type-2-manifest/form.html",
+    "description" : "This is Case Type 2.",
+    "listed" : true,
+    "title" : "Case Type 2",
+    "icon" : "folder",
+    "type" : "case",
+    "searchSettings" : {
+      "primaryTemplate" : "${searchDoc.variables.participant_id ? `Participant ID: ${searchDoc.variables.participant_id} &nbsp; &nbsp; &nbsp; Enrollment Date: ${searchDoc.variables.enrollment_date ? searchDoc.variables.enrollment_date.substring(8,10) + '-' + (searchDoc.variables.enrollment_date).substring(5,7)+ '-' + (searchDoc.variables.enrollment_date).substring(0,4) : ''}` : `Screening ID: ${searchDoc._id.substr(0,6)}  &nbsp; &nbsp; &nbsp; Screening Date: ${searchDoc.variables.screening_date ? searchDoc.variables.screening_date : 'N/A' }` }",
+      "shouldIndex" : true,
+      "secondaryTemplate" : "${searchDoc.variables.participant_id ? `Name: ${searchDoc.variables.first_name} ${searchDoc.variables.last_name}  &nbsp; &nbsp; &nbsp; Location: ${searchDoc.variables.location}  &nbsp; &nbsp; &nbsp; Status: Enrolled &nbsp; &nbsp; &nbsp;` : `Status: Not enrolled  &nbsp; &nbsp; &nbsp;` }",
+      "variablesToIndex" : [
+        "first_name",
+        "last_name",
+        "status",
+        "location",
+        "participant_id",
+        "enrollment_date",
+        "screening_date"
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
     "id" : "case-type-1-manifest",
     "src" : "./assets/case-type-1-manifest/form.html",
     "description" : "This is Case Type 1.",
@@ -36,7 +71,7 @@
     "icon" : "folder",
     "type" : "case",
     "searchSettings" : {
-      "primaryTemplate" : "${searchDoc.variables.status === 'Enrolled' ? `Participant ID: ${searchDoc.variables.participant_id} &nbsp; &nbsp; &nbsp; Enrollment Date: ${(searchDoc.variables.enrollment_date).substring(8,10) + '-' + (searchDoc.variables.enrollment_date).substring(5,7)+ '-' + (searchDoc.variables.enrollment_date).substring(0,4)}` : `Screening ID: ${searchDoc._id.substr(0,6)}  &nbsp; &nbsp; &nbsp; Screening Date: ${searchDoc.variables.screening_date ? searchDoc.variables.screening_date : 'N/A' }` }",
+      "primaryTemplate" : "${searchDoc.variables.participant_id ? `Participant ID: ${searchDoc.variables.participant_id} &nbsp; &nbsp; &nbsp; Enrollment Date: ${searchDoc.variables.enrollment_date ? searchDoc.variables.enrollment_date.substring(8,10) + '-' + (searchDoc.variables.enrollment_date).substring(5,7)+ '-' + (searchDoc.variables.enrollment_date).substring(0,4) : ''}` : `Screening ID: ${searchDoc._id.substr(0,6)}  &nbsp; &nbsp; &nbsp; Screening Date: ${searchDoc.variables.screening_date ? searchDoc.variables.screening_date : 'N/A' }` }",
       "shouldIndex" : true,
       "secondaryTemplate" : "${searchDoc.variables.status === 'Enrolled' ? `Name: ${searchDoc.variables.first_name} ${searchDoc.variables.last_name}  &nbsp; &nbsp; &nbsp; Location: ${searchDoc.variables.location}  &nbsp; &nbsp; &nbsp; Status: Enrolled &nbsp; &nbsp; &nbsp;` : `Status: Not enrolled  &nbsp; &nbsp; &nbsp;` }",
       "variablesToIndex" : [
@@ -583,6 +618,34 @@
     }
   },
   {
+    "id" : "kitchen-sink-form",
+    "src" : "./assets/kitchen-sink-form/form.html",
+    "description" : "Kitchen Sink Form",
+    "listed" : false,
+    "title" : "Kitchen Sink Form",
+    "icon" : "assignment",
+    "type" : "form",
+    "searchSettings" : {
+      "shouldIndex" : false,
+      "primaryTemplate" : "",
+      "secondaryTemplate" : "",
+      "variablesToIndex" : [
+      ]
+    },
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
+  },
+  {
     "id": "transfer-participant",
     "src": "./assets/transfer-participant/form.html",
     "description": "A form demonstrating the Participant Transfer feature.",
@@ -600,7 +663,7 @@
       "enabled": false,
       "push": false,
       "pull": false,
-      "excludeIncomplete": false
+      "excludeIncomplete":false
     },
     "couchdbSyncSettings": {
       "enabled": true,

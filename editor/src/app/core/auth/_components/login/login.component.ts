@@ -24,6 +24,11 @@ export class LoginComponent implements OnInit {
     if (await this.authenticationService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
     }
+    // We always want to log in from the "front door". If we log in from path of `/app/<groupId>`, then the global cookie
+    // will be tied to that pathname and not available at other pathnames such as `/csv/` that is looking for authentication.
+    if (window.location.pathname !== '/') { 
+      window.location.pathname = '/'
+    }
   }
   async loginUser() {
     try {

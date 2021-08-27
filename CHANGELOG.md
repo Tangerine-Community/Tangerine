@@ -1,5 +1,116 @@
 # What's new
 
+
+## v3.19.0
+
+This is a big release; we are putting this important instruction at the beginning so that it does not get lost:
+
+__When upgrading a server, note the additional upgrade instructions at the end of the usual upgrade script.__
+
+__New Features__
+
+- Data Manager requests and downloads CSVs for multiple forms as a set.
+  - Details: When logged into the server and in a group, you will now find a "Download CSV Data Set" menu item under "Data". From there you can view all of the CSV Data Sets you have generated in the past, the status of wether or not they have finished generating, a link to download them, and other meta data. Click the "New Data Set" button and you will be able to select any number of forms to generate CSVs for, data for all time or a specific month, and wether or not to exclude PII. This is especially useful for generating CSVs that take longer to generate than the automatic logout built into the server. You may request a CSV Data Set, log out, and then log back in later to check in on the status and download it. A Server Administrator can also configure cron with a `generate-csv-data-set` command to generate a data set on a daily, weekly, or monthly basis, handy for situations where you want CSVs to automatically generate on the weekend and then download them on Monday. 
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2768
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2777
+- Data Manager archives a Case to remove it from reporting output and Devices.
+  - Details: This adds an "archive" button on Cases that flags all related Form Responses as archived and removes them from CSV output and Search on Devices. This uses the new T.case.archive() API which adds an 'archived' flag for those docs and saves a minimal version of the doc with enough data to be indexed on the server. Search on client and server CSV output are modified to filter archived docs. When viewing cases in Editor, displays "Archived" when viewing an archived case. When client syncs, it deletes any docs with the 'archived' flag and sets deletedArchivedDocs In the replicationStatus log.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2776
+- Devices Manager reconfigures claimed Device sync settings and selects multiple Sync Locations for a Device.
+  - Details: To change a Device's sync settings currently requires a reinstall of the app on the Device and setting up all the accounts again. This PR will allow system admins to change the sync settings for a Device which then triggers on next sync a Rewind Push, database delete, then a first pull with the new sync settings. Subsequent syncs then use the new sync settings. This PR also refactors the Create and Edit forms for Devices on the server so that multiple sync locations can be added.
+  - PR: [#2782](https://github.com/Tangerine-Community/Tangerine/pull/2782)
+- Device Manager estimates how large an initial sync will be given selected sync settings.
+  - Details: When setting up sync settings for a Device, it is useful to know how many documents will need to be downloaded given which forms are configured for syncing down and the locations assigned. There is now a "calculate down-sync size" button at the bottom of Device edit/creation forms that when pressed will tally up the documents needing to be down synced given the device sync settings.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2818
+- Devices Manager monitors for Devices close to filling up disk space.
+  - Details: Devices now report how much free space they have to the server after a sync. This can be monitored on the `Deploy > Devices` list. When a Device reports having less than 1GB free storage, a warning is shown on the Devices list.
+  - Ticket: [2779](https://github.com/Tangerine-Community/Tangerine/issues/2779)
+  - PR: [2795](https://github.com/Tangerine-Community/Tangerine/pull/2795) 
+- Server User views the version of Tangerine installed. 
+  - Details: Any user on the server can now view the version of Tangerine installed by going to Help menu in the left nav bar.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2794
+- Database Consumer accesses Tangerine MySQL databases via web browser.
+  - Details: Users of Tangerine's MySQL database sometimes are not allowed to install tools such as MySQL Workbench on their work computers. This PR makes starting PHPmyAdmin (a mysql viewer) as a web service a configuration option in Tangerine so no one has to install software on their computer to access Tangerine MySQL.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2793
+- Data Collector creates Account on Device and associates with any User Profile in Group (ignoring Device assignment/sync settings).
+  - Details: By default, when a Data Collector creates an Account on Device, they can only associate with User Profiles that are assigned to the same location as the Device's Assigned Location. Add `"disableDeviceUserFilteringByAssignment":true` to the app-config.json for the group and this restriction will be removed. Tablets will also sync all User Profiles, ignoring the Device's configured Sync Location(s). 
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2792
+- Form Developer writes code that can access Case's related Location metadata without writing asynchronous code. 
+  - Details: When working synchronously in forms, we don't currently have access to the related Location Node data without loading the Location List async and using T.case.case.location to search the hierarchy for the node we want. This PR loads all related Location Nodes into memory at T.case.location when the context of a Case is set.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2791
+- Server Administrator configures substitutions for CSV output.
+  - Details: This feature allows a Server Administrator to update the group's configuration in the app database to contains Regex string replacements for CSV output. This can be handy in situations where Data Analysts are having trouble parsing CSV data that contains line breaks and commas. An example configuration to remove line breaks and commas from data would be `"csvReplacementCharacters": [[",","|"],["\n","___"]]`. 
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2788
+- Server Administrator configures Tangerine to not auto-commit in groups' data directories to preserver manually managed git content repositories.
+  - Details: When using git to manage group content in a git flow like manner, the automatic commit can result in unnintentional commits. System Administrators can now turn off this auto-commit by configuring Tangerine's `config.sh` with `T_AUTO_COMMIT="false"`. 
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2614
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2748
+- Data Collector proposes change to a Form on a Case.
+  - Details: The issues feature that has been available on the server is now optionally also available on Devices. Most of the features of Issues are there, except for mering proposals. Issues from Devices are uploaded to the server where proposals can be merged by a Data Manager. We also streamlined the Issue creation and proposal process by skipping the page to fill out an issue title/description, and then forward them directly to creating a proposal. To aid in issue titles/descriptions that make sense, Content Developers can now add `templateIssueTitle` and `templateIssueDescription` to Case Definition files. 
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2330
+- Data Manager updates Issue Title and Issue Description
+  - Details: Data Managers will now find a metadata tab on an Issue where they can update the Title, Description, and new "Send to" settings.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2330
+- Data Manager sends an Issue to all Devices in Sync Area or specific Device
+  - Details: When create/configuring an Issue, Data Managers now have the option to send an Issue to a specific location in a Sync Area, or send it to a specific Device by Device ID. 
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2330
+- Add support for injecting custom logic into client search index via custom-search.js #2740
+- Data Manager views list of Issues related to Case
+  - Details: When viewing a Case on the server, the first screen when opened will now show a list of related Issues.
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2723
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2573
+- API overrides Device User based access to Event Forms on a per Case Event basis
+  - Description: Currently we can configure in a Case Definition the operation permissions on all instances of an Event Form. This change allows a Form Developer to write logic that would control those permissions on a per Event Form basis by setting the same `permissions` property on the Event Form itself.
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2624
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2660
+- Data Collector skips optimization of database views not in use on Device.
+  - Description: Some projects relying heavily on a custom app will find they do not use all of the standard Tangerine database views, thus they can be skipped during the data optimization phase after a sync. In `app-config.json`, you can add a new `doNotOptimize` property with a value as an array of views to skip. To discover what views your app is indexing, see the console logs from a device during the optimization phase. You may discover some views you can add to `doNotOptimize` to speed up that optmization process.
+  - Commit: https://github.com/Tangerine-Community/Tangerine/commit/4b8864470c1cad98e43152dd6bb3c91ee3e576a6
+
+__Fixes__
+
+- Issue created programatically in on-submit says we must rebase but no button to rebase #2785
+  - Description: Cases that have used the `T.case.createIssue()` API in forms to create Issues on the current form have recently found the resulting issues are broken. This is due to a change in when the Form Response is associated with the case (later than when T.case.createIssue() is called in a form's on-submit). To remedy this, we've added a new `T.case.queueIssueForCreation("Some label", "Some comment")` API. __If you are using T.case.createIssue(), immediately upgrade and replace its usage with T.case.queueIssueForCreation()__. 
+  - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2785
+  - Example: https://github.com/Tangerine-Community/Tangerine/blob/next/content-sets/case-module/client/test-issues-created-programatically-on-client/form.html#L5
+- Using a simpler reverse sort for device status.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2775
+- Increase liklihood that migration of data to mysql will recover where it left off if server restarts.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2773
+- From Case Definitions, the `onCaseOpen` and `onCaseClose` now also run in the server context.
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/2696
+
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.19.0
+./start.sh v3.19.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.18.1
+# Perform additional upgrades.
+docker exec -it tangerine bash
+push-all-groups-views
+update-down-sync-doc-count-by-location-id-index '*'
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+npm install -g couchdb-wedge
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.18.5
 
 __Fixes__
@@ -8,8 +119,27 @@ __Fixes__
 ## v3.18.4
 
 __Fixes__
+
 - Backported a fix from the v3.19.0 branch for "Save the lastSequence number after each change is processed in the tangerine-mysql connector" Issue [#2772](https://github.com/Tangerine-Community/Tangerine/issues/2772)
 - Address crashes when importing data using the mysql module [#2820](https://github.com/Tangerine-Community/Tangerine/issues/2820)
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.18.4
+./start.sh v3.18.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.18.3
+```
 
 ## v3.18.3
 

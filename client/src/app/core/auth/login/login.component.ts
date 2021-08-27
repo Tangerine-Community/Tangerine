@@ -12,6 +12,7 @@ import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { VARIABLE_FINISH_UPDATE_ON_LOGIN } from '../../update/update/update.component';
+import { FIRST_SYNC_STATUS } from 'src/app/device/components/device-sync/device-sync.component';
 
 @Component({
   selector: 'app-login',
