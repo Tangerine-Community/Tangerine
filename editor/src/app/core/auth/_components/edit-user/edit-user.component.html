@@ -49,8 +49,11 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <br>
-          <br>
-          <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE USER'|translate}}</button>
+          <span [id]="statusMessage.type" *ngIf="statusMessage.type==='error'">
+            <small>{{statusMessage.message}}</small>
+          </span>
+          <p>
+            <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE USER'|translate}}</button>
+          </p>
         </form>
     </div>
