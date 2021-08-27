@@ -1,9 +1,8 @@
 import { Router } from '@angular/router';
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseService } from '../../services/case.service'
-import { t } from 'tangy-form/util/t.js'
-import { CaseDefinition } from '../../classes/case-definition.class';
-import { translate } from '@polymer/polymer/lib/utils/path';
+import {_TRANSLATE} from "../../../shared/translation-marker";
+import {Case} from "../../classes/case.class";
 
 @Component({
   selector: 'app-case-breadcrumb',
@@ -15,6 +14,7 @@ export class CaseBreadcrumbComponent implements OnInit {
   @Input() caseId:string
   @Input() caseEventId:string
   @Input() eventFormId:string
+  @Input() caseInstance:Case
   primaryText = ''
   secondaryText = ''
   secondaryLink = ''
@@ -28,9 +28,9 @@ export class CaseBreadcrumbComponent implements OnInit {
   }
 
   ngOnInit() {
-    const caseInstance = this.caseService.case
+    this.caseInstance = this.caseService.case
     const caseEvent = this.caseEventId
-      ? caseInstance
+      ? this.caseInstance
         .events
         .find(caseEvent => caseEvent.id === this.caseEventId)
       : null
@@ -60,18 +60,29 @@ export class CaseBreadcrumbComponent implements OnInit {
         ? caseEventDefinition.name 
         : ''
     this.secondaryLink = eventForm 
-      ? `/case/event/${caseInstance._id}/${caseEvent.id}`
-      : `/case/${caseInstance._id}`
+      ? `/case/event/${this.caseInstance._id}/${caseEvent.id}`
+      : `/case/${this.caseInstance._id}`
     eval(`
       this.primaryText = this.caseService.caseDefinition.templateBreadcrumbText 
         ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\`
-        : \`Case: ${caseInstance._id.substr(0,6)} \`
+        : \`Case: ${this.caseInstance._id.substr(0,6)} \`
     `)
     this.ref.detectChanges()
   }
 
   goBackToCases() {
     this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
+  }
+
+  async delete() {
+    const confirmDelete = confirm(
+      _TRANSLATE('Are you sure you want to delete this case? You will not be able to undo the operation')
+    );
+    if (confirmDelete) {
+      console.log("Deleting")
+      await this.caseService.delete()
+      this.goBackToCases()
+    }
   }
 
 }
