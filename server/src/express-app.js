@@ -56,7 +56,7 @@ const {AppContext} = require("../../editor/src/app/app-context.enum");
 const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
-const {archiveToDiskConfig} = require('./config-utils.js')
+const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
 
 setInterval(commitFilesToVersionControl, 60000)
 module.exports = async function expressAppBootstrap(app) {
@@ -152,6 +152,7 @@ app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUse
  */
 
  app.get('/configuration/archiveToDisk', isAuthenticated, archiveToDiskConfig);
+ app.get('/configuration/passwordPolicyConfig', isAuthenticated, passwordPolicyConfig);
 
 
 /**

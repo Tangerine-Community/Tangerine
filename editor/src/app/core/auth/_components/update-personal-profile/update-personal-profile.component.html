@@ -55,6 +55,11 @@
     </div>
     <br>
     <br>
-    <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE DETAILS'|translate}}</button>
+    <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)||disableSubmit" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE DETAILS'|translate}}</button>
+    <br>
+    <br>
+    <span [id]="statusMessage.type">
+        <small>{{statusMessage.message}}</small>
+      </span>
   </form>
 </div>
