@@ -78,7 +78,7 @@
   </span>
    
   <span>
-    <mat-card class="is-link mat-elevation-z3" routerLink="database-conflicts">
+    <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_database_conflicts'" class="is-link mat-elevation-z3" routerLink="database-conflicts">
       <mat-card-header>
           <div mat-card-avatar>
             <mwc-icon class="tangy-foreground-secondary">receipt</mwc-icon>
