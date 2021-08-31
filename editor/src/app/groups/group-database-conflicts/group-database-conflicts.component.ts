@@ -9,18 +9,15 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 })
 export class GroupDatabaseConflictsComponent implements OnInit {
 
+  title = _TRANSLATE('Database Conflicts')
   @ViewChild('container', {static: true}) container: ElementRef;
-  groupId:string = window.location.hash.split('/')[2]
-  userId:string = window['username']
   breadcrumbs:Array<Breadcrumb> = []
-  constructor(
-  ) { }
 
   async ngOnInit() {
     this.breadcrumbs = [
       <Breadcrumb>{
         label: _TRANSLATE('Database Conflicts'),
-        url: 'issues'
+        url: 'database-conflicts'
       }
     ]
     const username = prompt('CouchDB Username:')
