@@ -4,9 +4,9 @@
 # Start container.
 #
 
-docker build -t tangerine/python-tangerine-synapse-connector:local .
-
 T_CONTAINER_NAME="python-tangerine-synapse-connector"
+
+docker build -t tangerine/${T_CONTAINER_NAME}:local .
 
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
@@ -18,7 +18,7 @@ RUN_OPTIONS="
   --volume $(pwd)/SynapseConnector.py:/SynapseConnector.py:delegated \
   --entrypoint=\"\"
 "
-CMD="docker run -it $RUN_OPTIONS tangerine/python-tangerine-synapse-connector:local bash"
+CMD="docker run -it $RUN_OPTIONS tangerine/${T_CONTAINER_NAME}:local bash"
 
 echo "$CMD"
 eval ${CMD}
