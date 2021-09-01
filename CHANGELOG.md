@@ -1,5 +1,10 @@
 # What's new
 
+## v3.18.6
+
+__Fixes__
+- Remove incorrect exception classes for changes processing #2883 PR: [#2883](https://github.com/Tangerine-Community/Tangerine/pull/2883) Issue: [#2882](https://github.com/Tangerine-Community/Tangerine/issues/2882)
+
 ## v3.18.5
 
 __Fixes__
