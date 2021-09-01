@@ -3,3 +3,8 @@ html {
   --accent-color: #2d456b !important;
   --accent-color-dark: #5a87c0 !important;
 }
+
+/* This repository does not demonstrate the Qeuries functinoality. Hide it.*/
+.mat-tab-label:nth-child(3) {
+  display:none !important;
+}

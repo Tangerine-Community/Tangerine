@@ -1,15 +1,14 @@
 <tangy-form
   id="test-issues-created-programatically-on-client"
-  title="Test Issues created programatically on client"
   on-submit="
-    caseService.queueIssueForCreation('Please print this form and mail it', 'See details in form for address.')
+    caseService.createIssue('Please print this form and mail it', 'See details in form for address.', caseInstance._id, caseEvent.id, eventForm.id, userProfile._id, username)
   "
 >
   <tangy-form-item id="item-1" title="Test issues created on Client">
     <tangy-input
       name="address"
       type="text"
-      label="Enter an address for mailing this form to. When this form is submitted, an alternative template with this address will be available to print out."
+      label="Enter an address for mailing this form to. When this form is submitted and uploaded, an issue will be created for someone on the server to print it out."
       required
     >
     </tangy-input>

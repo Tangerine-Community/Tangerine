@@ -1,11 +1,9 @@
-import { Component, AfterContentInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
-import {Issue} from "../../classes/issue.class";
-import {GroupIssuesService} from "../../../groups/services/group-issues.service";
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -17,7 +15,7 @@ class CaseEventInfo {
   templateUrl: './case.component.html',
   styleUrls: ['./case.component.css']
 })
-export class CaseComponent implements AfterContentInit, OnDestroy {
+export class CaseComponent implements AfterContentInit {
 
   private ready = false
   templateTitle = ''
@@ -28,20 +26,15 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
   caseService: CaseService
-  conflicts:Array<Issue>
-  moment
-  groupId:string
 
   constructor(
     private route: ActivatedRoute,
     caseService: CaseService,
-    private ref: ChangeDetectorRef,
-    private groupIssuesService:GroupIssuesService,
+    private ref: ChangeDetectorRef
   ) {
     ref.detach()
     this.window = window
     this.caseService = caseService
-    this.moment = moment
   }
 
   async ngAfterContentInit() {
@@ -52,19 +45,6 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     }
     this.caseService.setContext()
     this.window.caseService = this.caseService
-    this.onCaseOpen()
-    this.groupId = this.caseService.case['groupId']
-    try {
-      let queryResults = await this.groupIssuesService.query(this.groupId, {
-        fun: "groupConflicts",
-        key: [caseId],
-        include_docs: true,
-        descending: true
-      })
-      this.conflicts = queryResults.map(issue => issue.doc)
-    } catch (e) {
-      console.log("Error fetching conflicts: " + e)
-    }
     this.calculateTemplateData()
     this.ready = true
   }
@@ -106,13 +86,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService.openCaseConfirmed = true
     this.ref.detectChanges()
   }
-  onCaseOpen(){
-    eval(this.caseService.caseDefinition.onCaseOpen)
-  }
 
-  ngOnDestroy(){
-    eval(this.caseService.caseDefinition.onCaseClose)
-  }
   async onSubmit() {
     const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
     const caseEvent = this.caseService.createEvent(this.selectedNewEventType)

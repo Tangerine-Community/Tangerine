@@ -86,13 +86,8 @@
       }
     "
   >
-    
-    <tangy-radio-buttons label="Do you have a Device QR code to scan?" name="has_qr">
-      <option value="yes" label="yes">yes</option>
-      <option value="no" label="no">no</option>
-    </tangy-radio-buttons>
-    <tangy-qr name="qr" show-if="getValue('has_qr').includes('yes')" label="Scan a new participant card" required></tangy-qr>
-    <tangy-input name="participant_id" label="Participant ID" disable-if="!getValue('has_qr').includes('no')"></tangy-input>
+    <tangy-qr name="qr" label="Scan a new participant card" required></tangy-qr>
+    <tangy-input name="participant_id" label="Participant ID" disabled></tangy-input>
     <tangy-input name="enrollment_date" label="Enrollment Date" type="date" disabled></tangy-input>
     <tangy-input name="number_of_role_2_participants_to_enroll" type="number" label="How many participant of type Role 2 would you like to enroll in this case?" required></tangy-input>
   </tangy-form-item>

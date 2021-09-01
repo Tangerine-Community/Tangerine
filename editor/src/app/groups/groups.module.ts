@@ -88,9 +88,6 @@ import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-te
 import { HistoricalReleasesApkLiveComponent } from './historical-releases-apk-live/historical-releases-apk-live.component';
 import { HistoricalReleasesApkTestComponent } from './historical-releases-apk-test/historical-releases-apk-test.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { CsvDataSetsComponent } from './csv-data-sets/csv-data-sets.component';
-import { NewCsvDataSetComponent } from './new-csv-data-set/new-csv-data-set.component';
-import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-detail.component';
 
 
 @NgModule({
@@ -184,10 +181,7 @@ import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-de
     HistoricalReleasesPwaLiveComponent,
     HistoricalReleasesPwaTestComponent,
     HistoricalReleasesApkLiveComponent,
-    HistoricalReleasesApkTestComponent,
-    CsvDataSetsComponent,
-    NewCsvDataSetComponent,
-    CsvDataSetDetailComponent
+    HistoricalReleasesApkTestComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

@@ -1,7 +1,7 @@
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -14,7 +14,7 @@ import { EventFormDefinition } from '../../classes/event-form-definition.class';
   templateUrl: './event-form.component.html',
   styleUrls: ['./event-form.component.css']
 })
-export class EventFormComponent implements OnInit, OnDestroy {
+export class EventFormComponent implements OnInit {
 
   caseEvent: CaseEvent
   caseEventDefinition: CaseEventDefinition
@@ -66,7 +66,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
         .eventFormDefinitions
         .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
       this.formId = this.eventFormDefinition.formId
-      this.onEventOpen()
+
       this.formResponseId = this.eventForm.formResponseId || ''
       this.formPlayer.formId = this.formId
       this.formPlayer.formResponseId = this.formResponseId
@@ -111,7 +111,6 @@ export class EventFormComponent implements OnInit, OnDestroy {
               window['username']
             )
           }
-          await this.caseService.createIssuesInQueue()
           window.location.hash = window['eventFormRedirect']
             ? window['eventFormRedirect']
             : `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
@@ -120,11 +119,5 @@ export class EventFormComponent implements OnInit, OnDestroy {
       this.loaded = true
     })
   }
-  onEventOpen(){
-    eval(this.eventFormDefinition.onEventOpen)
-  }
 
-  ngOnDestroy(){
-    eval(this.eventFormDefinition.onEventClose)
-  }
 }

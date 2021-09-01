@@ -9,7 +9,6 @@
   </div>
   <paper-tabs class="tabs" selected="0" *ngIf="!conflict">
     <paper-tab (click)="tab = 'activity'">Activity</paper-tab>
-    <paper-tab (click)="tab = 'settings'">Settings</paper-tab>
     <paper-tab (click)="tab = 'current'">Current</paper-tab>
     <paper-tab (click)="tab = 'proposed'">Proposed</paper-tab>
     <paper-tab (click)="tab = 'differences'">Differences</paper-tab>
@@ -99,10 +98,6 @@
       </div>
     </paper-card>
 
-  </div>
-
-  <div [hidden]="tab !== 'settings'">
-    <app-edit-issue></app-edit-issue>
   </div>
 
   <div [hidden]="tab !== 'current'">

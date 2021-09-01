@@ -13,8 +13,6 @@ export class EventFormDefinition {
   templateListItemSecondary:string
   allowDeleteIfFormNotCompleted:string
   allowDeleteIfFormNotStarted:string
-  onEventOpen?:string
-  onEventClose?:string
 
   constructor() {
   }

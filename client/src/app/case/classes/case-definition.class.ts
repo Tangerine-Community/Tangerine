@@ -22,8 +22,6 @@ class CaseDefinition {
   templateScheduleListItemIcon?:string
   templateScheduleListItemPrimary?:string
   templateScheduleListItemSecondary?:string
-  templateIssueTitle?:string
-  templateIssueDescription?:string
   onCaseOpen?:string
   onCaseClose?:string
   constructor(init:any) {

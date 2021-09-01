@@ -16,8 +16,7 @@ class Case extends TangyFormResponseModel {
   events: Array<CaseEvent> = []
   notifications: Array<Notification> = []
   type:string = 'case'
-  archived:boolean
-  
+
   constructor(data?:any) {
     super()
     Object.assign(this, data)

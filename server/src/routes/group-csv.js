@@ -1,5 +1,4 @@
 const DB = require('../db.js')
-const CSV_DATASETS = new DB('csv_datasets')
 const clog = require('tangy-log').clog
 const log = require('tangy-log').log
 const sanitize = require('sanitize-filename');
@@ -23,7 +22,7 @@ async function getUser1HttpInterface() {
   return http
 }
 
-const generateCSV = async (req, res) => {
+module.exports = async function (req, res) {
   const groupId = sanitize(req.params.groupId)
   const formId = sanitize(req.params.formId)
   let sanitizedExtension = ''
@@ -46,7 +45,7 @@ const generateCSV = async (req, res) => {
   let outputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   // console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
-
+    
   const sleepTimeBetweenBatches = 0
   let cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${dbName} ${formId} "${outputPath}" ${batchSize} ${sleepTimeBetweenBatches}`
   if (req.params.year && req.params.month) {
@@ -62,86 +61,4 @@ const generateCSV = async (req, res) => {
     stateUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.csv', '.state.json')}`,
     downloadUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
   })
-}
-
-const generateCSVDataSet = async (req, res) => {
-  const groupId = sanitize(req.params.groupId)
-  // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
-  const formIds = req.params.formIds.split(',').map(formId => sanitize(formId)).join(',')
-  const { year, month } = req.params
-  const http = await getUser1HttpInterface()
-  const group = (await http.get(`/nest/group/read/${groupId}`)).data
-  const groupLabel = group.label.replace(/ /g, '_')
-  const options = {
-    replacement: '_'
-  }
-  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/'/g, "_")
-  let outputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${req.params.year ? sanitize(req.params.year) : `'*'`} ${req.params.month ? sanitize(req.params.month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
-  log.info(`generating csv start: ${cmd}`)
-  exec(cmd).then(status => {
-    log.info(`generate csv done: ${JSON.stringify(status)}`)
-  }).catch(error => {
-    log.error(error)
-  })
-  const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.zip', '.state.json')}`
-  const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
-  await CSV_DATASETS.post({
-    groupId,
-    formIds,
-    fileName,
-    stateUrl,
-    downloadUrl,
-    year,
-    month,
-    dateCreated: Date.now()
-  })
-  res.send({
-    stateUrl,
-    downloadUrl
-  })
-}
-
-const listCSVDataSets = async (req, res) => {
-  try {
-    const { groupId, pageIndex, pageSize } = req.params
-    CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
-    const numberOfDocs = (await CSV_DATASETS.find({ selector: { groupId } })).docs.length
-    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:(+pageIndex)*(+pageSize),limit:+pageSize })
-    const http = await getUser1HttpInterface()
-    const data = result.docs.map(async e => {
-      let complete = false;
-      try {
-        complete = (await http.get(e.stateUrl)).data.complete
-      } catch (error) {
-        complete = false
-      }
-      return ({ ...e, complete, numberOfDocs })
-    })
-    res.send(await Promise.all(data))
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const getDatasetDetail = async (req, res) => {
-  const { datasetId } = req.params
-  const result = await CSV_DATASETS.get(datasetId)
-  const http = await getUser1HttpInterface()
-  res.send({
-     ...(await http.get(result.stateUrl)).data, 
-     month: result.month,
-     year: result.year,
-     downloadUrl: result.downloadUrl,
-     fileName: result.fileName,
-     dateCreated: result.dateCreated,
-     baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
-  })
-
-}
-module.exports = {
-  generateCSV,
-  generateCSVDataSet,
-  getDatasetDetail,
-  listCSVDataSets
 }

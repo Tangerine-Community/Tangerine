@@ -20,7 +20,6 @@
     "generate-form-json": "./src/scripts/generate-form-json/bin.js",
     "extract-pii-variables": "./src/scripts/extract-pii-variables/bin.js",
     "generate-location-level-indexes": "./src/scripts/generate-location-level-indexes/bin.js",
-    "update-down-sync-doc-count-by-location-id-index": "./src/scripts/update-down-sync-doc-count-by-location-id-index.js",
     "generate-indexes": "./src/scripts/generate-indexes/bin.js",
     "push-all-groups-views": "./src/scripts/push-all-groups-views.js",
     "index-all-groups-views": "./src/scripts/index-all-groups-views.js",
