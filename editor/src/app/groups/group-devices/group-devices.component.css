@@ -77,9 +77,3 @@ th, td {
 .red-icon svg {
   fill: red;
 }
-
-.error {
-  color: red;
-  font-size: larger;
-  font-weight: bold;
-}

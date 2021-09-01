@@ -62,12 +62,6 @@ export class UserService {
     }
   }
 
-  async reinstallSharedUserDatabase(device) {
-    const sharedUserDatabase = await this.getUserDatabase()
-    await sharedUserDatabase.db.destroy()
-    await this.installSharedUserDatabase(device)
-  }
-
   async installSharedUserDatabase(device) {
     this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
     const formsInfo = await this.formsInfoService.getFormsInfo()

@@ -2,7 +2,6 @@ import { createSearchIndex } from './create-search-index';
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { HttpClient } from '@angular/common/http';
 
 export class SearchDoc {
   _id: string
@@ -21,7 +20,6 @@ export class SearchService {
 
   constructor(
     private readonly userService:UserService,
-    private readonly http:HttpClient,
     private readonly formsInfoService:TangyFormsInfoService
   ) { }
 
@@ -32,14 +30,8 @@ export class SearchService {
     } else {
       db = await this.userService.getUserDatabase(username)
     }
-    let customSearchJs = ''
-    try {
-      customSearchJs = await this.http.get('./assets/custom-search.js', {responseType: 'text'}).toPromise()
-    } catch (err) {
-      // No custom-search.js, no problem.
-    }
     const formsInfo = await this.formsInfoService.getFormsInfo()
-    await createSearchIndex(db, formsInfo, customSearchJs) 
+    await createSearchIndex(db, formsInfo) 
   }
 
   async search(username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {

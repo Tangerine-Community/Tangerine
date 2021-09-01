@@ -33,9 +33,9 @@ export function diffTemplate(diff:Array<InputChange>) {
     </style>
     <table class="diff-table">
       <tr>
-        <td class="blank-cell"></td> 
-        <td class="header-cell">Original</td> 
-        <td class="header-cell">Proposed</td> 
+        <td class="blank-cell"></td>
+        <td class="header-cell">Original</td>
+        <td class="header-cell">Proposed</td>
       </tr>
       ${diff.map(change => `
       <tr>
@@ -43,10 +43,10 @@ export function diffTemplate(diff:Array<InputChange>) {
           <b>${change.a.label ? change.a.label : change.name}</b>
         </td>
         <td class="value">
-          ${valueTemplate(change.a)}
+          ${valueTemplate(change.a.value)}
         </td>
         <td class="value">
-          ${valueTemplate(change.b)}
+          ${change.b ? valueTemplate(change.b.value): 'Missing input'}
         </td>
       </tr>
       `).join('')}
@@ -54,30 +54,8 @@ export function diffTemplate(diff:Array<InputChange>) {
   `
 }
 
-function valueTemplate(input) {
-  if (input.tagName === 'TANGY-RADIO-BUTTONS') {
-    return input.value && input.value.some(option => option.value === 'on')
-      ? input.value.find(option => option.value === 'on').name
-      : ''
-  } else if (
-    input.tagName === 'TANGY-CHECKBOX' ||
-    input.tagName === 'TANGY-TOGGLE'
-  ) {
-    return input.value ? 'on' : 'off'
-  } else if (input.tagName === 'TANGY-CHECKBOXES') {
-      return input.value
-        .filter(option => option.value === 'on')
-        .map(option => option.name)
-        .join(', ')
-  } else if (
-    input.tagName === 'TANGY-SIGNATURE' || 
-    input.tagName === 'TANGY-TIMED' || 
-    input.tagName === 'TANGY-LOCATION' ||
-    input.value === 'object'
-  ) {
-    return `(${`see form`})`
-  } else {
-    return input.value
-  }
-
+function valueTemplate(value) {
+  return `
+    ${typeof value === 'object' ? `<pre>${JSON.stringify(value, undefined, 4)}</pre>` : value}
+  `
 }

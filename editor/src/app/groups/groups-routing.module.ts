@@ -60,9 +60,6 @@ import { HistoricalReleasesApkTestComponent } from './historical-releases-apk-te
 import { HistoricalReleasesApkLiveComponent } from './historical-releases-apk-live/historical-releases-apk-live.component';
 import { HistoricalReleasesPwaLiveComponent } from './historical-releases-pwa-live/historical-releases-pwa-live.component';
 import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-test/historical-releases-pwa-test.component';
-import { CsvDataSetsComponent } from './csv-data-sets/csv-data-sets.component';
-import { NewCsvDataSetComponent } from './new-csv-data-set/new-csv-data-set.component';
-import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-detail.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -133,9 +130,6 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/printFormAsTable/:formId', component: PrintFormAsTableComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/printFormBackup/:formId', component: PrintFormBackupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/printStimuliScreen/:formId', component: PrintStimuliScreenComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/data/csv-data-sets', component: CsvDataSetsComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/data/csv-data-sets/new', component: NewCsvDataSetComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/data/csv-data-sets/:dataSetId', component: CsvDataSetDetailComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [

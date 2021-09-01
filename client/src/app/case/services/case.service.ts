@@ -1,6 +1,6 @@
 import { CaseEventOperation, CaseEventPermissions } from './../classes/case-event-definition.class';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { AppConfigService, LocationNode } from 'src/app/shared/_services/app-config.service';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { EventFormDefinition, EventFormOperation } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
@@ -34,7 +34,6 @@ class CaseService {
 
   _case:Case
   caseDefinition:CaseDefinition
-  location:Array<LocationNode>
 
   // Opening a case confirmation semaphore.
   openCaseConfirmed = false
@@ -198,14 +197,11 @@ class CaseService {
     await this.save()
   }
 
+  
   async setCase(caseInstance) {
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseInstance.caseDefinitionId)
-    const flatLocationList = await this.appConfigService.getFlatLocationList()
-    this.location = caseInstance.location
-      ? Object.keys(caseInstance.location).map(level => flatLocationList.locations.find(node => node.id === caseInstance.location[level]))
-      : []
     this.case = caseInstance
   }
 
@@ -272,18 +268,11 @@ class CaseService {
   /*
    * Role Access API
    */
-  // @TODO Add EventForm.permissions to interface and pass in eventForm in every usage of hasEventFormPermission.
-  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition, eventForm?:EventForm) {
+  hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition) {
     if (
-      (
-        eventForm &&
-        eventForm.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
-      ) ||
-      (
         !eventFormDefinition.permissions ||
         !eventFormDefinition.permissions[operation] ||
         eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
-      )
     ) {
       return true
     } else {
@@ -619,7 +608,7 @@ class CaseService {
     }
   }
 
-  async deactivateParticipant(participantId:string) {
+  deactivateParticipant(participantId:string) {
     this.case = {
       ...this.case,
       participants: this.case.participants.map(participant => {
@@ -772,17 +761,27 @@ class CaseService {
   async createIssuesInQueue() {
     const userProfile = await this.userService.getUserProfile()
     for (let queuedIssue of this.queuedIssuesForCreation) {
-      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, '')
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), [AppContext.Editor])
     }
     this.queuedIssuesForCreation = []
   }
   
-  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, sendToAllDevices = false, sendToDeviceById = '') {
+  async createIssue (label = '', comment = '', caseId:string, eventId:string, eventFormId:string, userId, userName, resolveOnAppContexts:Array<AppContext> = [AppContext.Editor], conflict: any = null) {
+
     const caseData = await this.tangyFormService.getResponse(caseId)
-    const formResponseId = caseData
-      .events.find(event => event.id === eventId)
-      .eventForms.find(eventForm => eventForm.id === eventFormId)
-      .formResponseId
+    let formResponseId, docType
+    if (eventId) {
+      formResponseId = caseData
+        .events.find(event => event.id === eventId)
+        .eventForms.find(eventForm => eventForm.id === eventFormId)
+        .formResponseId
+    }
+    if (conflict) {
+      docType = conflict.docType
+    } else {
+      docType = 'response'
+    }
+
     const issue = new Issue({
       _id: UUID(),
       label,
@@ -790,40 +789,15 @@ class CaseService {
       caseId,
       createdOn: Date.now(),
       createdAppContext: AppContext.Client,
-      sendToAllDevices, 
-      sendToDeviceById,
+      resolveOnAppContexts,
       eventId,
       eventFormId,
       status: IssueStatus.Open,
-      formResponseId
+      formResponseId,
+      docType
     })
     await this.tangyFormService.saveResponse(issue)
-    await this.openIssue(issue._id, comment, userId, userName)
-    await this.updateIssueMeta(issue._id, label, comment, sendToAllDevices, sendToDeviceById, userName, userId)
-    return await this.getIssue(issue._id)
-  }
-
-  async updateIssueMeta(issueId:string, label:string, description:string, sendToAllDevices:boolean, sendToDeviceById:string, userName:string, userId:string) {
-    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    issue.label = label
-    issue.description = description
-    issue.sendToAllDevices = sendToAllDevices
-    issue.sendToDeviceById = sendToDeviceById
-    issue.events.push(<IssueEvent>{
-      id: UUID(),
-      type: IssueEventType.UpdateMeta,
-      date: Date.now(),
-      userName,
-      userId,
-      createdAppContext: AppContext.Editor,
-      data: {
-        label,
-        description,
-        sendToAllDevices,
-        sendToDeviceById
-      }
-    })
-    return await this.tangyFormService.saveResponse(issue)
+    return await this.openIssue(issue._id, comment, userId, userName, conflict)
   }
 
   async getIssue(issueId) {
@@ -983,12 +957,10 @@ class CaseService {
 
   async canMergeProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    const eventBase = [...issue.events]
-      .reverse()
-      .find(event => event.type === IssueEventType.Rebase || event.type === IssueEventType.Open)
+    const firstOpenEvent = issue.events.find(event => event.type === IssueEventType.Open)
     const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
-    return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
+    return currentFormResponse._rev === firstOpenEvent.data.response._rev && currentCaseInstance._rev === firstOpenEvent.data.caseInstance._rev ? true : false
   }
 
   async issueDiff(issueId) {

@@ -8,7 +8,6 @@ import { EventForm } from '../../classes/event-form.class';
 import { CaseEvent } from '../../classes/case-event.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
-import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -22,12 +21,10 @@ export class EventFormComponent implements OnInit, OnDestroy {
   caseEventDefinition: CaseEventDefinition
   eventFormDefinition: EventFormDefinition
   eventForm: EventForm
-  caseId:string
   formInfo: FormInfo
   formId:string
   templateId:string
   formResponseId:string
-  allowCreationOfIssues:boolean
 
   hasEventFormRedirect = false
   eventFormRedirectUrl = ''
@@ -48,7 +45,6 @@ export class EventFormComponent implements OnInit, OnDestroy {
     private hostElementRef: ElementRef,
     private router: Router,
     private caseService: CaseService,
-    private appConfigService:AppConfigService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -61,8 +57,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     this.eventFormRedirectUrl = window['eventFormRedirect']
     this.eventFormRedirectBackButtonText = window['eventFormRedirectBackButtonText']
     this.route.params.subscribe(async params => {
-      this.caseId = params.caseId
-      await this.caseService.load(this.caseId)
+      await this.caseService.load(params.caseId)
       this.caseService.setContext(params.eventId, params.eventFormId)
       this.window.caseService = this.caseService
       this.caseEvent = this
@@ -135,8 +130,6 @@ export class EventFormComponent implements OnInit, OnDestroy {
           }
         }, 500)
       })
-      const appConfig = await this.appConfigService.getAppConfig()
-      this.allowCreationOfIssues = appConfig.allowCreationOfIssues
       this.loaded = true
       this.ref.detectChanges()
     })

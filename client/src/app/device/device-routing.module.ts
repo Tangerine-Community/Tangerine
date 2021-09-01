@@ -2,19 +2,12 @@ import { DeviceSetupComponent } from './components/device-setup/device-setup.com
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {RestoreBackupComponent} from "./components/restore-backup/restore-backup.component";
-import { DeviceResyncComponent } from './components/device-resync/device-resync.component';
 
 
-const routes: Routes = [
-  {
-    path: 'device-setup',
-    component: DeviceSetupComponent
-  },
-  {
-    path: 'device-resync',
-    component: DeviceResyncComponent 
-  },
-  {
+const routes: Routes = [{
+  path: 'device-setup',
+  component: DeviceSetupComponent
+  },{
     path: 'restore-backup',
     component: RestoreBackupComponent
   }

@@ -44,10 +44,5 @@ Note in the following example how we only set `caseOpenedOn` in `on-submit`. Thi
 
 ```
 
-There are also many input types such as GPS and Signature where it often does not make sense to recollect data upon submitting a proposal on an Issue. Consider adding `disable-if="T.case.isIssueContext()"` to these inputs.
 
-```html
-<tangy-gps name="gps" disable-if="T.case.isIssueContext()"></tangy-gps>
-<tangy-signature name="signature" disable-if="T.case.isIssueContext()"></tangy-signature>
-```
 

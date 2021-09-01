@@ -1,4 +1,3 @@
-import { NewIssueComponent } from './components/new-issue/new-issue.component';
 import { CaseDocs } from './case.docs';
 import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
@@ -63,8 +62,7 @@ import { IssuesComponent } from './components/issues/issues.component';
     EventFormsForParticipantComponent,
     EventFormsForParticipantPageComponent,
     CustomAppComponent,
-    IssuesComponent,
-    NewIssueComponent
+    IssuesComponent
   ]
 })
 export class CaseModule { }

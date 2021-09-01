@@ -5,6 +5,7 @@ import {Endpoint} from '../peers/endpoint';
 import PouchDB from 'pouchdb';
 import {UserService} from '../../../shared/_services/user.service';
 import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
+import {ConflictService} from "../../../sync/services/conflict.service";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class PeersService {
   pushing: boolean
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private conflictService: ConflictService
   ) {
     this.window = window;
     this.init();
@@ -154,6 +156,9 @@ export class PeersService {
             const pullReplicationStatus = <ReplicationStatus>{
               pulled: info.docs_written,
               pullConflicts: conflictsQuery.rows.map(row => row.id)
+            }
+            if (pullReplicationStatus.pullConflicts.length > 0) {
+              await this.conflictService.resolveConflicts(pullReplicationStatus, this.localDatabase, null, 'pull', null);
             }
             const repliMessage  = 'Data downloaded to tablet.'
             console.log(repliMessage);

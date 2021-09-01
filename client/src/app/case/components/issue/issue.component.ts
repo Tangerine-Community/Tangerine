@@ -18,7 +18,6 @@ import { Marked } from '@ts-stack/markdown';
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
   [IssueEventType.ProposedChange]: 'call_split',
-  [IssueEventType.UpdateMeta]: 'settings',
   [IssueEventType.Merge]: 'call_merge',
   [IssueEventType.Open]: 'playlist_add',
   [IssueEventType.Rebase]: 'settings_backup_restore'
@@ -26,7 +25,6 @@ const IssueEventTypeIconMap = {
 
 const IssueEventTypeLabelMap = {
   [IssueEventType.Comment]: _TRANSLATE('comment'),
-  [IssueEventType.UpdateMeta]: _TRANSLATE('updated settings'),
   [IssueEventType.ProposedChange]: _TRANSLATE('revision'),
   [IssueEventType.Merge]: _TRANSLATE('proposed changes merged'),
   [IssueEventType.Open]: _TRANSLATE('opened'),

@@ -14,7 +14,6 @@ class Case extends TangyFormResponseModel {
   participants?:Array<CaseParticipant> = []
   disabledEventDefinitionIds?: Array<string> = []
   notifications?: Array<Notification> = []
-  archived:boolean
 
   constructor(data?:any) {
     super()

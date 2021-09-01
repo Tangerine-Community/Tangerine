@@ -358,7 +358,6 @@ def main_job():
     start_time = timeit.default_timer()
     changes = tangerine_database.changes(include_docs=True,descending=False,  since=lastSequence)
     cnt2 = 0
-
     try: 
       for change in changes:
           cnt2 = cnt2 + 1
@@ -405,7 +404,6 @@ def main_job():
             # log("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
             logger.exception("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
             # raise
-
     # Finish.
     end_time = timeit.default_timer()
     totalTime = end_time - start_time
@@ -419,7 +417,7 @@ def scheduled_job():
     s.enter(60*int(interval), 1, scheduled_job)
 
 # Read in the configuration file.
-config = configparser.ConfigParser(interpolation=None)
+config = configparser.ConfigParser()
 pathName = sys.argv[1]
 config.read(pathName)
 config.sections()
