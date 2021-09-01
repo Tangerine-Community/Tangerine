@@ -396,13 +396,10 @@ def main_job():
               config.set("TANGERINE","LastSequence",lastSequence)
               with open(sys.argv[1], 'w') as configfile:
                   config.write(configfile)
-    except (HTTPError, ProtocolError) as api_error:
-            # log("The connection to the server has failed! Previous change processed successfully: "  + lastSequence)
-            logger.exception("The connection to the server has failed!  Previous change processed successfully: "  + lastSequence)
-            # raise api_error
-    except Exception:
+    except Exception as error:
             # log("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
-            logger.exception("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
+            logger.exception("Unexpected exception while processing changes. Previous change processed successfully: "  + lastSequence)
+            logger.exception("Unexpected error: " + error)
             # raise
     # Finish.
     end_time = timeit.default_timer()
