@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
+import {DB} from "../../../shared/_factories/db.factory";
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
 const USERS_DATABASE_NAME = 'users';
@@ -20,6 +21,7 @@ export class RestoreBackupComponent implements OnInit {
   statusMessage: string
   errorMessage: string
   success: boolean
+  showDirectoryDialog: boolean
 
   ngOnInit(): void {
     console.log("RestoreBackupComponent init")
@@ -35,8 +37,8 @@ export class RestoreBackupComponent implements OnInit {
     this.statusMessage = ''
     this.errorMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
-    if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
-      const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+    const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+    if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
       const len = dbNames.length
       let copiedDbs = []
       for (let index = 0; index < dbNames.length; index++) {
@@ -72,6 +74,40 @@ export class RestoreBackupComponent implements OnInit {
           this.errorMessage += '<p>Error with db: ' + dbName + ' at restoreLocation: ' + restoreLocation + ' Message: ' + JSON.stringify(e) + '</p>'
         });
       }
+    } else {
+      if (this.window.isCordovaApp) {
+        for (let index = 0; index < dbNames.length; index++) {
+          let restoreFile, payload
+          const dbName = dbNames[index]
+          if (this.window.isCordovaApp) {
+            restoreFile = cordova.file.externalRootDirectory + 'Download/restore/' + dbName;
+            this.window.resolveLocalFileSystemURL(restoreFile, (fileEntry) => {
+              // decrypt it!
+              payload = fileEntry
+            }, (e) => {
+              this.success = false
+              console.log("Error: " + e)
+              this.errorMessage += '<p>Error with db: ' + dbName + ' fetching restoreFile: ' + restoreFile + ' Message: ' + JSON.stringify(e) + '</p>'
+            });
+          }
+
+          const stream = new window['Memorystream']
+          stream.end(payload);
+          // copy the database
+          console.log(`Restoring ${dbName} db`)
+          const db = DB(dbName)
+        }
+      } else {
+        this.showDirectoryDialog = true
+      }
+      
+    }
+  }
+
+  fileChangeEvent(files: File[]) {
+    for (var i=0; i<files.length; i++) {
+      const file = files[i]
+      console.log("processing " + file)
     }
   }
 }
