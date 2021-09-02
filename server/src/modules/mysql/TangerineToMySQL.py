@@ -377,7 +377,7 @@ def main_job():
               type = doc.get('type')
               if type is not None:
                   id = doc.get('_id')
-                  log("Processing Seq: " + lastSequence + ", ID: " + id)
+                  log("Processing Seq: " + lastSequence + ", ID: " + id + ", type: " + type.lower())
                   # There are 5 major types: case, participant, case-event, event-form and response
                   if (type.lower() == "case"):
                       convert_case(doc)
@@ -398,8 +398,8 @@ def main_job():
                   config.write(configfile)
     except Exception as error:
             # log("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
-            logger.exception("Unexpected exception while processing changes. Previous change processed successfully: "  + lastSequence)
-            logger.exception("Unexpected error: " + error)
+            log("Unexpected exception while processing changes. Previous change processed successfully: "  + lastSequence)
+            log("Unexpected error: " + error)
             # raise
     # Finish.
     end_time = timeit.default_timer()
