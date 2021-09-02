@@ -19,3 +19,9 @@ mat-card {
   color: red;
   font-size: large;
 }
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
