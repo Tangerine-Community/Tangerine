@@ -399,7 +399,7 @@ def main_job():
     except Exception as error:
             # log("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
             log("Unexpected exception while processing changes. Previous change processed successfully: "  + lastSequence)
-            log("Unexpected error: " + error)
+            log("Unexpected error: " + str(error))
             # raise
     # Finish.
     end_time = timeit.default_timer()
