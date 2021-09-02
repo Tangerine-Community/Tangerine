@@ -2,6 +2,11 @@
 
 ## v3.18.6
 
+__Updates__
+- Updated tangy-form lib from 4.25.11 to 4.25.14 ([Changelog](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v42514)), which provides:
+  - A fix for photo-capture so that it de-activates the camera when going to the next page or leaving a form. 
+  - Implemented a new 'before-submit' event to tangy-form in order to listen to events before the 'submit' event is dispatched.
+  - A fix for User defined Cycle Sequences.
 __Fixes__
 - Remove incorrect exception classes for changes processing #2883 PR: [#2883](https://github.com/Tangerine-Community/Tangerine/pull/2883) Issue: [#2882](https://github.com/Tangerine-Community/Tangerine/issues/2882)
 
