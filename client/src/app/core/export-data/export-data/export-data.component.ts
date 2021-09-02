@@ -4,12 +4,14 @@ import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {VariableService} from "../../../shared/_services/variable.service";
-
+// import PouchDB from 'pouchdb';
+import { DB } from '../../../shared/_factories/db.factory'
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
 const USERS_DATABASE_NAME = 'users';
 const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
 const VARIABLES_DATABASE_NAME = 'tangerine-variables';
+
 declare const cordova: any;
 @Component({
   selector: 'app-export-data',
@@ -34,8 +36,8 @@ export class ExportDataComponent implements OnInit {
   
   async exportAllRecords() {
     const appConfig = await this.appConfigService.getAppConfig()
+    const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
-      const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
       for (const dbName of dbNames) {
         // copy the database
         console.log(`copying ${dbName} db over to the user accessible fs`)
@@ -54,37 +56,55 @@ export class ExportDataComponent implements OnInit {
         }, null);
       }
     } else {
-      const usernames = await this.userService.getUsernames();
-      const data = await Promise.all(usernames.map(async databaseName => {
-        const docs = await this.syncingService.getAllUsersDocs(databaseName);
-        return {
-          databaseName,
-          docs
-        };
-      }));
-      const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const currentUser = this.userService.getCurrentUser();
-      const now = new Date();
-      const fileName =
-        `${currentUser}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
-      if (this.window.isCordovaApp) {
-        document.addEventListener('deviceready', () => {
-          this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
-            directoryEntry.getFile(fileName, { create: true }, (fileEntry) => {
-              fileEntry.createWriter((fileWriter) => {
-                fileWriter.onwriteend = (data) => {
-                  alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${fileName}`);
-                };
-                fileWriter.onerror = (e) => {
-                  alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-                };
-                fileWriter.write(JSON.stringify(data));
+      // const usernames = await this.userService.getUsernames();
+      // const data = await Promise.all(usernames.map(async databaseName => {
+      //   const docs = await this.syncingService.getAllUsersDocs(databaseName);
+      //   return {
+      //     databaseName,
+      //     docs
+      //   };
+      // }));
+      const stream = new window['Memorystream']
+      // const replicationStream = window['PouchReplicationStream']
+      // PouchDB.plugin(replicationStream.plugin);
+      // PouchDB.adapter('writableStream', replicationStream.adapters.writableStream);
+      var data = '';
+      stream.on('data', function(chunk) {
+        data += chunk.toString();
+      });
+      for (const dbName of dbNames) {
+        // copy the database
+        console.log(`copying ${dbName} db over to the user accessible fs`)
+        const db = DB(dbName)
+        db.dump(stream).then(() => {
+          console.log('Successfully dumped : ' + dbName);
+          const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
+          // const currentUser = this.userService.getCurrentUser();
+          const now = new Date();
+          const fileName =
+            `${dbName}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
+          if (this.window.isCordovaApp) {
+            document.addEventListener('deviceready', () => {
+              this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
+                directoryEntry.getFile(fileName, { create: true }, (fileEntry) => {
+                  fileEntry.createWriter((fileWriter) => {
+                    fileWriter.onwriteend = (data) => {
+                      alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${fileName}`);
+                    };
+                    fileWriter.onerror = (e) => {
+                      alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                    };
+                    fileWriter.write(JSON.stringify(data));
+                  });
+                });
               });
-            });
-          });
-        }, false);
-      } else {
-        downloadData(file, fileName, 'application/json');
+            }, false);
+          } else {
+            downloadData(file, fileName, 'application/json');
+          }
+        }).catch(function (err) {
+          console.log('oh no an error', err);
+        });
       }
     }
   }
