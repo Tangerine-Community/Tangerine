@@ -64,21 +64,25 @@ export class ExportDataComponent implements OnInit {
       //     docs
       //   };
       // }));
-      const stream = new window['Memorystream']
-      // const replicationStream = window['PouchReplicationStream']
-      // PouchDB.plugin(replicationStream.plugin);
-      // PouchDB.adapter('writableStream', replicationStream.adapters.writableStream);
-      var data = '';
-      stream.on('data', function(chunk) {
-        data += chunk.toString();
-      });
-      for (const dbName of dbNames) {
+
+      // for (const dbName of dbNames) {
+      for (let index = 0; index < dbNames.length; index++) {
+        const stream = new window['Memorystream']
+        // const replicationStream = window['PouchReplicationStream']
+        // PouchDB.plugin(replicationStream.plugin);
+        // PouchDB.adapter('writableStream', replicationStream.adapters.writableStream);
+        let data = '';
+        stream.on('data', function(chunk) {
+          data += chunk.toString();
+        });
+        const dbName = dbNames[index]
         // copy the database
         console.log(`copying ${dbName} db over to the user accessible fs`)
         const db = DB(dbName)
-        db.dump(stream).then(() => {
+        try {
+          await db.dump(stream)
           console.log('Successfully dumped : ' + dbName);
-          const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
+          const file = new Blob([JSON.stringify(data)], {type: 'application/json'});
           // const currentUser = this.userService.getCurrentUser();
           const now = new Date();
           const fileName =
@@ -86,7 +90,7 @@ export class ExportDataComponent implements OnInit {
           if (this.window.isCordovaApp) {
             document.addEventListener('deviceready', () => {
               this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
-                directoryEntry.getFile(fileName, { create: true }, (fileEntry) => {
+                directoryEntry.getFile(fileName, {create: true}, (fileEntry) => {
                   fileEntry.createWriter((fileWriter) => {
                     fileWriter.onwriteend = (data) => {
                       alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${fileName}`);
@@ -102,9 +106,9 @@ export class ExportDataComponent implements OnInit {
           } else {
             downloadData(file, fileName, 'application/json');
           }
-        }).catch(function (err) {
-          console.log('oh no an error', err);
-        });
+        } catch (e) {
+          console.log("Error dumping data: " + e)
+        }
       }
     }
   }
