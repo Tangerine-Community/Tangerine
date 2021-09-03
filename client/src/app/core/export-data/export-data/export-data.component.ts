@@ -86,7 +86,7 @@ export class ExportDataComponent implements OnInit {
           // const currentUser = this.userService.getCurrentUser();
           const now = new Date();
           const fileName =
-            `${dbName}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
+            `${dbName}_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
           if (this.window.isCordovaApp) {
             document.addEventListener('deviceready', () => {
               this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
