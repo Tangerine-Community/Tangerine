@@ -22,6 +22,7 @@ export class RestoreBackupComponent implements OnInit {
   errorMessage: string
   success: boolean
   showDirectoryDialog: boolean
+  dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
 
   ngOnInit(): void {
     console.log("RestoreBackupComponent init")
@@ -37,12 +38,11 @@ export class RestoreBackupComponent implements OnInit {
     this.statusMessage = ''
     this.errorMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
-    const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
-      const len = dbNames.length
+      const len = this.dbNames.length
       let copiedDbs = []
-      for (let index = 0; index < dbNames.length; index++) {
-        const dbName = dbNames[index]
+      for (let index = 0; index < this.dbNames.length; index++) {
+        const dbName = this.dbNames[index]
         // copy the database
         const restoreLocation = cordova.file.externalRootDirectory + 'Download/restore/' + dbName;
         this.window.resolveLocalFileSystemURL(restoreLocation, (fileEntry) => {
@@ -76,9 +76,9 @@ export class RestoreBackupComponent implements OnInit {
       }
     } else {
       if (this.window.isCordovaApp) {
-        for (let index = 0; index < dbNames.length; index++) {
+        for (let index = 0; index < this.dbNames.length; index++) {
           let restoreFile, payload
-          const dbName = dbNames[index]
+          const dbName = this.dbNames[index]
           if (this.window.isCordovaApp) {
             restoreFile = cordova.file.externalRootDirectory + 'Download/restore/' + dbName;
             this.window.resolveLocalFileSystemURL(restoreFile, (fileEntry) => {
@@ -104,10 +104,36 @@ export class RestoreBackupComponent implements OnInit {
     }
   }
 
-  fileChangeEvent(files: File[]) {
-    for (var i=0; i<files.length; i++) {
+  async fileChangeEvent(files: File[]) {
+    let copiedDbs = []
+    const len = this.dbNames.length
+    for (var i = 0; i < files.length; i++) {
       const file = files[i]
-      console.log("processing " + file)
+      console.log("processing " + file.name)
+      const fileNameArray = file.name.split('_')
+      const dbName = fileNameArray[0]
+      //file.webkitRelativePath
+      // const stream = fileObject.stream();
+      const reader = new FileReader();
+      reader.addEventListener('load', async (event) => {
+        const result = event.target.result;
+        const stream = new window['Memorystream']
+        stream.end(result);
+        // copy the database
+        console.log(`Restoring ${dbName} db`)
+        const db = DB(dbName)
+        try {
+          await db.load(stream)
+          this.statusMessage += `<p>${dbName} restored</p>`
+          copiedDbs.push(dbName)
+          if (copiedDbs.length === len) {
+            this.statusMessage += `<p>Please exit the app and restart.</p>`
+          }
+        } catch (e) {
+          console.log("Error loading db: " + e)
+        }
+      });
+      await reader.readAsText(file);
     }
   }
 }
