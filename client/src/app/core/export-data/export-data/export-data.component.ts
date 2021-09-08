@@ -3,8 +3,6 @@ import { UserService } from '../../../shared/_services/user.service';
 import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
-import {VariableService} from "../../../shared/_services/variable.service";
-// import PouchDB from 'pouchdb';
 import { DB } from '../../../shared/_factories/db.factory'
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
@@ -25,8 +23,7 @@ export class ExportDataComponent implements OnInit {
   constructor(
     private userService: UserService,
     private syncingService: SyncingService,
-    private appConfigService: AppConfigService,
-    private variableService: VariableService,
+    private appConfigService: AppConfigService
   ) {
     this.window = window;
   }
@@ -56,37 +53,25 @@ export class ExportDataComponent implements OnInit {
         }, null);
       }
     } else {
-      // const usernames = await this.userService.getUsernames();
-      // const data = await Promise.all(usernames.map(async databaseName => {
-      //   const docs = await this.syncingService.getAllUsersDocs(databaseName);
-      //   return {
-      //     databaseName,
-      //     docs
-      //   };
-      // }));
-
-      // for (const dbName of dbNames) {
       for (let index = 0; index < dbNames.length; index++) {
         const stream = new window['Memorystream']
-        // const replicationStream = window['PouchReplicationStream']
-        // PouchDB.plugin(replicationStream.plugin);
-        // PouchDB.adapter('writableStream', replicationStream.adapters.writableStream);
         let data = '';
         stream.on('data', function(chunk) {
           data += chunk.toString();
         });
         const dbName = dbNames[index]
         // copy the database
-        console.log(`copying ${dbName} db over to the user accessible fs`)
+        console.log(`exporting ${dbName} db over to the user accessible fs`)
         const db = DB(dbName)
         try {
           await db.dump(stream)
           console.log('Successfully dumped : ' + dbName);
-          const file = new Blob([JSON.stringify(data)], {type: 'application/json'});
+          const file = new Blob([data], {type: 'application/json'});
           // const currentUser = this.userService.getCurrentUser();
           const now = new Date();
           const fileName =
             `${dbName}_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
+          
           if (this.window.isCordovaApp) {
             document.addEventListener('deviceready', () => {
               this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
@@ -98,7 +83,7 @@ export class ExportDataComponent implements OnInit {
                     fileWriter.onerror = (e) => {
                       alert(`${_TRANSLATE('Write Failed')}` + e.toString());
                     };
-                    fileWriter.write(JSON.stringify(data));
+                    fileWriter.write(data);
                   });
                 });
               });

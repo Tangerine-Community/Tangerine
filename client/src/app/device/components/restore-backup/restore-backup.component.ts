@@ -76,64 +76,117 @@ export class RestoreBackupComponent implements OnInit {
       }
     } else {
       if (this.window.isCordovaApp) {
-        for (let index = 0; index < this.dbNames.length; index++) {
-          let restoreFile, payload
-          const dbName = this.dbNames[index]
-          if (this.window.isCordovaApp) {
-            restoreFile = cordova.file.externalRootDirectory + 'Download/restore/' + dbName;
-            this.window.resolveLocalFileSystemURL(restoreFile, (fileEntry) => {
-              // decrypt it!
-              payload = fileEntry
-            }, (e) => {
-              this.success = false
-              console.log("Error: " + e)
-              this.errorMessage += '<p>Error with db: ' + dbName + ' fetching restoreFile: ' + restoreFile + ' Message: ' + JSON.stringify(e) + '</p>'
-            });
+        // for (let index = 0; index < this.dbNames.length; index++) {
+        //   let restoreFile, payload
+        //   const dbName = this.dbNames[index]
+        //     restoreFile = cordova.file.externalRootDirectory + 'Download/restore/' + dbName;
+        //     this.window.resolveLocalFileSystemURL(restoreFile, (fileEntry) => {
+        //       // decrypt it!
+        //       payload = fileEntry
+        //     }, (e) => {
+        //       this.success = false
+        //       console.log("Error: " + e)
+        //       this.errorMessage += '<p>Error with db: ' + dbName + ' fetching restoreFile: ' + restoreFile + ' Message: ' + JSON.stringify(e) + '</p>'
+        //     });
+        //
+        //   const stream = new window['Memorystream']
+        //   stream.end(payload);
+        //   // copy the database
+        //   console.log(`Restoring ${dbName} db`)
+        //   const db = DB(dbName)
+        // }
+        const path = cordova.file.externalRootDirectory + 'Download/restore/'
+        window['resolveLocalFileSystemURL'](path, (fileSystem) => {
+            const reader = fileSystem.createReader();
+            reader.readEntries(
+              async (entries) => {
+                console.log(entries);
+                // let fileNames = []
+                // entries.forEach(function(entry) {
+                //   fileNames.push(entry.name)
+                // });
+                try {
+                  await this.restoreBackups(entries)
+                } catch (e) {
+                  console.log(e);
+                  this.errorMessage += '<p>Error restoring backup. Message: ' + e + '</p>'
+                }
+              },
+              function (err) {
+                console.log(err);
+              }
+            );
+          }, function (err) {
+            console.log(err);
           }
-
-          const stream = new window['Memorystream']
-          stream.end(payload);
-          // copy the database
-          console.log(`Restoring ${dbName} db`)
-          const db = DB(dbName)
-        }
+        );
       } else {
         this.showDirectoryDialog = true
       }
-      
     }
   }
 
-  async fileChangeEvent(files: File[]) {
+  async restoreBackups(files: any[]) {
     let copiedDbs = []
     const len = this.dbNames.length
     for (var i = 0; i < files.length; i++) {
-      const file = files[i]
-      console.log("processing " + file.name)
-      const fileNameArray = file.name.split('_')
-      const dbName = fileNameArray[0]
-      //file.webkitRelativePath
-      // const stream = fileObject.stream();
-      const reader = new FileReader();
-      reader.addEventListener('load', async (event) => {
-        const result = event.target.result;
-        const stream = new window['Memorystream']
-        stream.end(result);
-        // copy the database
-        console.log(`Restoring ${dbName} db`)
-        const db = DB(dbName)
-        try {
-          await db.load(stream)
-          this.statusMessage += `<p>${dbName} restored</p>`
-          copiedDbs.push(dbName)
-          if (copiedDbs.length === len) {
-            this.statusMessage += `<p>Please exit the app and restart.</p>`
+      const promisify = function (funcToPromisify) {
+        return new Promise(function (resolve, reject) {
+            funcToPromisify(resolve, reject);
           }
-        } catch (e) {
-          console.log("Error loading db: " + e)
+        );
+      };
+      let entry = files[i]
+      console.log("processing " + entry.name)
+      const fileNameArray = entry.name.split('_')
+      const dbName = fileNameArray[0]
+      // const stream = fileObject.stream();
+      if (this.window.isCordovaApp) {
+        const fileObj = await promisify(entry.file.bind(entry))
+        const reader = new FileReader();
+        reader.onloadend = async (event) => {
+          const result = event.target.result;
+          const stream = new window['Memorystream']
+          stream.end(result);
+          console.log(`Loading data into ${dbName}`)
+          const db = DB(dbName)
+          try {
+            await db.load(stream)
+            // await tempDb.replicate.to(db)
+            this.statusMessage += `<p>${dbName} restored</p>`
+            copiedDbs.push(dbName)
+            if (copiedDbs.length === len) {
+              this.statusMessage += `<p>Please exit the app and restart.</p>`
+            }
+          } catch (e) {
+            console.log("Error loading db: " + e)
+            this.errorMessage += '<p>Error restoring backup database. Message: ' + JSON.stringify(e) + '</p>'
+          }
         }
-      });
-      await reader.readAsText(file);
+        reader.readAsText(<Blob>fileObj);
+      } else {
+        const reader = new FileReader();
+        reader.addEventListener('load', async (event) => {
+          const result = event.target.result;
+          const stream = new window['Memorystream']
+          stream.end(result);
+          // copy the database
+          console.log(`Restoring ${dbName} db`)
+          const db = DB(dbName)
+          try {
+            await db.load(stream)
+            this.statusMessage += `<p>${dbName} restored</p>`
+            copiedDbs.push(dbName)
+            if (copiedDbs.length === len) {
+              this.statusMessage += `<p>Please exit the app and restart.</p>`
+            }
+          } catch (e) {
+            console.log("Error loading db: " + e)
+            this.errorMessage += '<p>Error restoring backup database. Message: ' + JSON.stringify(e) + '</p>'
+          }
+        });
+        await reader.readAsText(entry);
+      }
     }
   }
 }
