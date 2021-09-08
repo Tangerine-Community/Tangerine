@@ -90,7 +90,6 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 // Fix for global undefined https://github.com/angular/angular-cli/issues/9920#issuecomment-393424161
 (window as any).global = window;
-
 import * as Redux from 'redux';
 (window as any).Redux = Redux;
 
@@ -98,6 +97,7 @@ import * as _ from 'underscore';
 (window as any)._ = _;
 
 import 'tangy-form-editor/tangy-form-editor.js'
+import 'couchdb-conflict-manager'
 // @TODO Remove this when this element has been added to tangy-form-editor.
 import 'tangy-form/input/tangy-ethio-date.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js'
