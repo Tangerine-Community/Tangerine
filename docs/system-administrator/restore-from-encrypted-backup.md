@@ -2,7 +2,7 @@
 
 ## Backing up
 
-Ask user to go to Export Data and press "Export Data for all Users". It wiil display an alert after each database backup is saved. The backup files will be saved in the `Android/data/org.rti.tangerine/files` directory. Use [Android File transfer tool](https://www.android.com/filetransfer/) to transfer the files. Save *all* of the database backup files.
+Ask user to go to Export Data and press "Export Data for all Users". It will display an alert after each database backup is saved. The backup files will be saved in the `Android/data/org.rti.tangerine/files` directory. Use [Android File transfer tool](https://www.android.com/filetransfer/) to transfer the files. Save *all* of the database backup files.
 
 ![backup-files-listing](./assets/backup-files-listing.png )
 
@@ -14,7 +14,7 @@ Connect the tablet to the pc with a USB cable. Use Android File transfer or Sams
 
 ![restore-files-listing](./assets/restore-files-listing.png )
 
-Install the Tangerine app on the tablet.  From the language dropdown screen, click a link marked `Restore database`. 
+Install the Tangerine app on the tablet.  DO NOT do the initial device setup (language selection/enter admin password/etc); instead, press the "Restore backup" button to start the restore process. 
 
 ![Restore backup button](./assets/tangy-restore-backup-button_sm.jpg )
 
