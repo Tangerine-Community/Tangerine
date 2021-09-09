@@ -397,9 +397,8 @@ def main_job():
               with open(sys.argv[1], 'w') as configfile:
                   config.write(configfile)
     except Exception as error:
-            # log("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
             log("Unexpected exception while processing changes. Previous change processed successfully: "  + lastSequence)
-            log("Unexpected error: " + error)
+            log("Unexpected error: {}".format(error.message))
             # raise
     # Finish.
     end_time = timeit.default_timer()
