@@ -8,5 +8,6 @@ arrange:
     - CONTRIBUTING.md
     - editor
     - data-collector
+    - data-manager 
     - developer
     - system-administrator
