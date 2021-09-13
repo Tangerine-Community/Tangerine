@@ -42,7 +42,7 @@ __New Features__
   - Details: This feature allows a Server Administrator to update the group's configuration in the app database to contains Regex string replacements for CSV output. This can be handy in situations where Data Analysts are having trouble parsing CSV data that contains line breaks and commas. An example configuration to remove line breaks and commas from data would be `"csvReplacementCharacters": [[",","|"],["\n","___"]]`. 
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2788
 - Server Administrator configures Tangerine to not auto-commit in groups' data directories to preserver manually managed git content repositories.
-  - Details: When using git to manage group content in a git flow like manner, the automatic commit can result in unnintentional commits. System Administrators can now turn off this auto-commit by configuring Tangerine's `config.sh` with `T_AUTO_COMMIT="false"`. 
+  - Details: When using git to manage group content in a git flow like manner, the automatic commit can result in unnintentional commits. System Administrators can now turn off this auto-commit by configuring Tangerine's `config.sh` with `T_AUTO_COMMIT="false"`. If set to true also include the frequency `T_AUTO_COMMIT_FREQUENCY="60000"` 
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2614
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2748
 - Data Collector proposes change to a Form on a Case.
