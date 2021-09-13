@@ -23,6 +23,7 @@ const updateGroupSearchIndex = async function (GROUP_ID) {
       if (
         doc.collection === 'TangyFormResponse' &&
         doc.items &&
+        !doc.archived &&
         Array.isArray(doc.items) &&
         doc.form &&
         doc.form.id &&
