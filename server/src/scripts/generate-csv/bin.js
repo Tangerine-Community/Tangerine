@@ -41,7 +41,9 @@ async function go(state) {
   try {
     console.log(`dbName: ${state.dbName}`)
     const db = new DB(`${state.dbName}`)
-    const groupId = state.dbName.replace('-reporting', '')
+    const groupId = state.dbName
+      .replace('-reporting-sanitized', '')
+      .replace('-reporting', '')
     const groupsDb = new DB(`groups`)
     let groupConfigurationDoc
     try {

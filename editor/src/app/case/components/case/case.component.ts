@@ -28,7 +28,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
   caseService: CaseService
-  conflicts:Array<Issue>
+  issues:Array<Issue>
   moment
   groupId:string
 
@@ -56,14 +56,14 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.groupId = this.caseService.case['groupId']
     try {
       let queryResults = await this.groupIssuesService.query(this.groupId, {
-        fun: "groupConflicts",
-        key: [caseId],
+        fun: "issuesByCaseId",
+        keys: [caseId],
         include_docs: true,
         descending: true
       })
-      this.conflicts = queryResults.map(issue => issue.doc)
+      this.issues = queryResults.map(issue => issue.doc)
     } catch (e) {
-      console.log("Error fetching conflicts: " + e)
+      console.log("Error fetching issues: " + e)
     }
     this.calculateTemplateData()
     this.ready = true

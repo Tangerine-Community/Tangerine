@@ -32,6 +32,8 @@ export class AssociateUserProfileComponent implements OnInit {
     const deviceInfo = await this.deviceService.getDevice()
     const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]
     let userProfiles = await this.tangyFormService.getResponsesByFormId('user-profile')
+    // Filter out any Device Admin profiles which have no content.
+    userProfiles = userProfiles.filter(userProfile => userProfile.items && userProfile.items[0])
     if (!appConfig.disableDeviceUserFilteringByAssignment) {
       const localUserProfiles = userProfiles.filter(profile => profile.location[lowestLevelOfLocation.level] === lowestLevelOfLocation.value)
       userProfiles = localUserProfiles
