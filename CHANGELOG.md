@@ -46,7 +46,7 @@ __New Features__
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2787
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2788
 - Server Administrator configures Tangerine to not auto-commit in groups' data directories to preserver manually managed git content repositories.
-  - Details: When using git to manage group content in a git flow like manner, the automatic commit can result in unnintentional commits. System Administrators can now turn off this auto-commit by configuring Tangerine's `config.sh` with `T_AUTO_COMMIT="false"`. 
+  - Details: When using git to manage group content in a git flow like manner, the automatic commit can result in unnintentional commits. System Administrators can now turn off this auto-commit by configuring Tangerine's `config.sh` with `T_AUTO_COMMIT="false"`. If set to true also include the frequency `T_AUTO_COMMIT_FREQUENCY="60000"` 
   - Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2614
   - PR: https://github.com/Tangerine-Community/Tangerine/pull/2748
 - Data Collector proposes change to a Form on a Case.
