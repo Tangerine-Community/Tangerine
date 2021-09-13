@@ -129,11 +129,11 @@ git checkout v3.19.0
 docker rmi tangerine/tangerine:v3.18.3
 # Perform additional upgrades.
 docker exec -it tangerine bash
+translations-update
 push-all-groups-views
 update-down-sync-doc-count-by-location-id-index '*'
 # This will index all database views in all groups. It may take many hours if 
 # the project has a lot of data.
-npm install -g couchdb-wedge
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
