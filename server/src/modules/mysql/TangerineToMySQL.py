@@ -398,7 +398,8 @@ def main_job():
                   config.write(configfile)
     except Exception as error:
             log("Unexpected exception while processing changes. Previous change processed successfully: "  + lastSequence)
-            log("Unexpected error: {}".format(error.message))
+#             log("Unexpected error: " + str(error))
+            log("Unexpected error: {}".format(error))
             # raise
     # Finish.
     end_time = timeit.default_timer()

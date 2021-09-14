@@ -4,6 +4,8 @@ import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import { DB } from '../../../shared/_factories/db.factory'
+import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
+
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
 const USERS_DATABASE_NAME = 'users';
@@ -20,9 +22,11 @@ export class ExportDataComponent implements OnInit {
 
   window:any;
   statusMessage: string
+  progressMessage: string
   errorMessage: string
   backupDir: string = 'Documents/Tangerine/backups/'
-  
+  DEFAULT_BATCH_SIZE = 50;
+  LIMIT = 5000;
   constructor(
     private userService: UserService,
     private syncingService: SyncingService,
@@ -33,6 +37,7 @@ export class ExportDataComponent implements OnInit {
 
   ngOnInit() {
     this.statusMessage = ''
+    this.progressMessage = ''
     this.errorMessage = ''
     
     if (this.window.isCordovaApp) {
@@ -45,16 +50,17 @@ export class ExportDataComponent implements OnInit {
       this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Documents', (directoryEntry) => {
         directoryEntry.getDirectory('Tangerine', { create: true }, (dirEntry) => {
           dirEntry.getDirectory('backups', { create: true }, (subDirEntry) => {
-          }, onErrorGetDir);
+          }, this.onErrorGetDir);
           dirEntry.getDirectory('restore', { create: true }, (subDirEntry) => {
-          }, onErrorGetDir);
-        }, onErrorGetDir);
+          }, this.onErrorGetDir);
+        }, this.onErrorGetDir);
       })
     }
   }
   
   async exportAllRecords() {
     this.statusMessage = ''
+    this.progressMessage = ''
     this.errorMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
     const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
@@ -91,43 +97,43 @@ export class ExportDataComponent implements OnInit {
         console.log(`exporting ${dbName} db over to the user accessible fs`)
         const db = DB(dbName)
         try {
-          await db.dump(stream)
-          console.log('Successfully exported : ' + dbName);
-          this.statusMessage += `<p>${_TRANSLATE('Successfully exported database ')} ${dbName}</p>`
-          const file = new Blob([data], {type: 'application/json'});
-          // const currentUser = this.userService.getCurrentUser();
+          // await db.dump(stream)
+          // console.log('Successfully exported : ' + dbName);
+          // this.statusMessage += `<p>${_TRANSLATE('Successfully exported database ')} ${dbName}</p>`
+          // const file = new Blob([data], {type: 'application/json'});
           const now = new Date();
           const fileName =
             `${dbName}_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
           if (this.window.isCordovaApp) {
             const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
-            document.addEventListener('deviceready', () => {
-              this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
-                directoryEntry.getFile(fileName, {create: true}, (fileEntry) => {
-                  fileEntry.createWriter((fileWriter) => {
-                    fileWriter.onwriteend = (data) => {
-                      this.statusMessage += `<p>${_TRANSLATE('File Stored At')} ${backupLocation}${dbName}</p>`
-                    };
-                    fileWriter.onerror = (e) => {
-                      alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-                      this.errorMessage += `<p>${_TRANSLATE('Write Failed')}` + e.toString() + "</p>"
-                    };
-                    fileWriter.write(data);
-                  });
-                });
-              }, (e) => {
+            // this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
+              
+              const opts = {
+                batch_size: this.DEFAULT_BATCH_SIZE,
+                include_docs: true,
+                return_docs: false,
+                limit: this.LIMIT
+              }
+              let status = <ReplicationStatus>{
+                pulled: 0,
+                info: ''
+              }
+              try {
+                status = await this.dump(dbName, backupLocation, fileName, opts)
+                this.statusMessage += `<p>${_TRANSLATE(' Completed backup at ')} ${backupLocation}${fileName}. ${_TRANSLATE('last_seq: ')} ${status.pulled} </p>`
+              } catch (e) {
                 console.log("Error: " + e)
-                let errorMessage
-                if (e && e.code && e.code === 1) {
-                  errorMessage = "File or directory not found."
-                } else {
-                  errorMessage = e
-                }
-                this.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
-              });
-            }, false);
+              }
+              // do we use info.last_seq when splitting up files?
+              // pulled: info.docs_written,
+            console.log("status: " + JSON.stringify(status))
+            
           } else {
-            downloadData(file, fileName, 'application/json');
+            await db.dump(stream)
+            console.log('Successfully exported : ' + dbName);
+            this.statusMessage += `<p>${_TRANSLATE('Successfully exported database ')} ${dbName}</p>`
+            const file = new Blob([data], {type: 'application/json'});
+            this.downloadData(file, fileName, 'application/json');
           }
         } catch (e) {
           console.log("Error: " + e)
@@ -136,9 +142,66 @@ export class ExportDataComponent implements OnInit {
       }
     }
   }
-}
 
-function onErrorGetDir(e) {
+  async dump(dbName, backupLocation, fileName, opts):Promise<ReplicationStatus> {
+    return new Promise((resolve, reject) => {
+      const db = DB(dbName)
+
+      // const chain = db.info().then((info) => {
+        // return db.replicate.to(output, opts);
+      db.changes(opts).on('change', (change) => {
+        // handle change
+        this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
+          directoryEntry.getFile(fileName, {create: true, exclusive: false}, (fileEntry) => {
+            fileEntry.createWriter((fileWriter) => {
+              fileWriter.onwriteend = (data) => {
+                this.progressMessage = `<p>${_TRANSLATE('Change: ')} ${change.seq} ${_TRANSLATE('Stored At')} ${backupLocation}${fileName} </p>`
+              };
+              fileWriter.onerror = (e) => {
+                alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                this.errorMessage += `<p>${_TRANSLATE('Write Failed')}` + e.toString() + "</p>"
+              };
+              // fileWriter.write(file);
+              fileWriter.seek(fileWriter.length);
+              fileWriter.write(JSON.stringify(change) + "\n");
+            });
+          });
+        }, (e) => {
+          console.log("Error: " + e)
+          let errorMessage
+          if (e && e.code && e.code === 1) {
+            errorMessage = "File or directory not found."
+          } else {
+            errorMessage = e
+          }
+          this.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
+        });
+      }).on('complete', (info) => {
+        // do we use info.last_seq when splitting up files?
+        let status = <ReplicationStatus>{
+          pulled: info.last_seq,
+          info: info
+        }
+        // TODO: Should we always resolve or if there is an errors property in the info doc should we reject?
+        // If that is the case - we may need to make sure the sync-pull-last-seq is not set.
+        resolve(status)
+      }).on('error', (err) => {
+        // console.log(err);
+        this.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${err}</p>`
+        reject(err)
+      });
+      // })
+
+      /* istanbul ignore next */
+      function onErr(err) {
+        // callback(err);
+        console.log("Error: " + err)
+      }
+      // chain.catch(onErr);
+    })
+  }
+  
+  onErrorGetDir(e) {
     console.log("Error: " + e)
     let errorMessage
     if (e && e.code && e.code === 1) {
@@ -147,14 +210,20 @@ function onErrorGetDir(e) {
       errorMessage = e
     }
     this.errorMessage += `<p>${_TRANSLATE('Error creating directory. Error: ')} ${errorMessage}</p>`
+  }
+
+  downloadData(content, fileName, type) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(content);
+    a.download = fileName;
+    a.click();
+  }
+  
 }
 
-function downloadData(content, fileName, type) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(content);
-  a.download = fileName;
-  a.click();
-}
+
+
+ 
 
 
 
