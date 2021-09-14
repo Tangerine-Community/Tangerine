@@ -14,6 +14,7 @@
             <button color="primary" mat-raised-button (click)="exportAllRecords()">{{'EXPORT DATA FOR ALL USERS'|translate}}</button>
           </mat-card-actions>
         </mat-card>
+        <div [innerHTML]="progressMessage" class="status"></div>
         <div [innerHTML]="statusMessage" class="status"></div>
         <div [innerHTML]="errorMessage" class="error"></div>
       </div>
