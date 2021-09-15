@@ -111,7 +111,6 @@ export class ExportDataComponent implements OnInit {
               const opts = {
                 batch_size: this.DEFAULT_BATCH_SIZE,
                 include_docs: true,
-                return_docs: false,
                 limit: this.LIMIT
               }
               let status = <ReplicationStatus>{
@@ -121,6 +120,31 @@ export class ExportDataComponent implements OnInit {
               try {
                 status = await this.dump(dbName, backupLocation, fileName, opts)
                 this.statusMessage += `<p>${_TRANSLATE(' Completed backup at ')} ${backupLocation}${fileName}. ${_TRANSLATE('last_seq: ')} ${status.pulled} </p>`
+                this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
+                  directoryEntry.getFile(fileName, {create: true, exclusive: false}, (fileEntry) => {
+                    fileEntry.createWriter((fileWriter) => {
+                      fileWriter.onwriteend = (data) => {
+                        this.progressMessage = `<p>${_TRANSLATE('Change: ')} ${status.pulled} ${_TRANSLATE('Stored At')} ${backupLocation}${fileName} </p>`
+                      };
+                      fileWriter.onerror = (e) => {
+                        alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                        this.errorMessage += `<p>${_TRANSLATE('Write Failed')}` + e.toString() + "</p>"
+                      };
+                      // fileWriter.write(file);
+                      // fileWriter.seek(fileWriter.length);
+                      fileWriter.write(JSON.stringify(status.info.results) + "\n");
+                    });
+                  });
+                }, (e) => {
+                  console.log("Error: " + e)
+                  let errorMessage
+                  if (e && e.code && e.code === 1) {
+                    errorMessage = "File or directory not found."
+                  } else {
+                    errorMessage = e
+                  }
+                  this.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
+                });
               } catch (e) {
                 console.log("Error: " + e)
               }
@@ -151,31 +175,7 @@ export class ExportDataComponent implements OnInit {
         // return db.replicate.to(output, opts);
       db.changes(opts).on('change', (change) => {
         // handle change
-        this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
-          directoryEntry.getFile(fileName, {create: true, exclusive: false}, (fileEntry) => {
-            fileEntry.createWriter((fileWriter) => {
-              fileWriter.onwriteend = (data) => {
-                this.progressMessage = `<p>${_TRANSLATE('Change: ')} ${change.seq} ${_TRANSLATE('Stored At')} ${backupLocation}${fileName} </p>`
-              };
-              fileWriter.onerror = (e) => {
-                alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-                this.errorMessage += `<p>${_TRANSLATE('Write Failed')}` + e.toString() + "</p>"
-              };
-              // fileWriter.write(file);
-              fileWriter.seek(fileWriter.length);
-              fileWriter.write(JSON.stringify(change) + "\n");
-            });
-          });
-        }, (e) => {
-          console.log("Error: " + e)
-          let errorMessage
-          if (e && e.code && e.code === 1) {
-            errorMessage = "File or directory not found."
-          } else {
-            errorMessage = e
-          }
-          this.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
-        });
+        
       }).on('complete', (info) => {
         // do we use info.last_seq when splitting up files?
         let status = <ReplicationStatus>{
