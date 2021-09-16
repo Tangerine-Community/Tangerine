@@ -115,41 +115,88 @@ export class RestoreBackupComponent implements OnInit {
   }
 
   async restoreBackups(files: any[]) {
+    const promisify = (f) =>
+      (...a) => new Promise ((res, rej) => f (...a, res, rej))
+    
     let copiedDbs = []
     const len = this.dbNames.length
     for (var i = 0; i < files.length; i++) {
-      const promisify = (f) =>
-        (...a) => new Promise ((res, rej) => f (...a, res, rej))
+      const dumpFiles = []
       let entry = files[i]
       console.log("processing " + entry.name)
       this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
-      const fileNameArray = entry.name.split('_')
-      const dbName = fileNameArray[0]
+      // const fileNameArray = entry.name.split('_')
+      const dbName = entry.name
       // const stream = fileObject.stream();
       if (this.window.isCordovaApp) {
-        await promisify(entry.file(async (file) => {
-          const reader = new FileReader();
-          reader.onloadend = async (event) => {
-            const result = event.target.result;
-            const stream = new window['Memorystream']
-            stream.end(result);
-            // copy the database
-            console.log(`Restoring ${dbName} db`)
-            const db = DB(dbName)
-            try {
-              await db.load(stream)
-              this.statusMessage += `<p>${dbName} ${_TRANSLATE("restored")}</p>`
-              copiedDbs.push(dbName)
-              if (copiedDbs.length === len) {
-                this.statusMessage += `<p>&nbsp;</p>\n<p class="doneMessage">${_TRANSLATE("Restore complete: Please exit the app and restart.")}</p>`
+        const path = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/' + dbName
+        window['resolveLocalFileSystemURL'](path, (fileSystem) => {
+          const reader = fileSystem.createReader();
+          reader.readEntries(
+            async (entries) => {
+              for (var i = 0; i < entries.length; i++) {
+                let entry = entries[i]
+                console.log("processing " + entry.name)
+                dumpFiles.push(entry.name)
+                this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
+                await promisify(entry.file(async (file) => {
+                  const reader = new FileReader();
+                  reader.onloadend = async (event) => {
+                    const result = event.target.result;
+                    const stream = new window['Memorystream']
+                    stream.end(result);
+                    // copy the database
+                    console.log(`Restoring ${dbName} db`)
+                    const db = DB(dbName)
+                    let series = Promise.resolve();
+
+                    async function processDumpfile(that, dumpFile) {
+                      console.log('Processing Dumpfile: ' + dumpFile)
+                      that.progressMessage = 'Processing Dumpfile: ' + dumpFile
+                      let fileHandle = await that.dirHandle.getFileHandle(dumpFile);
+                      const file = await fileHandle.getFile();
+                      const contents = await file.text();
+                      return db.loadIt(contents);
+                    }
+
+                    for (let index = 0; index < dumpFiles.length; index++) {
+                      const dumpFile = dumpFiles[index]
+                      series = series.then(await processDumpfile(this, dumpFile));
+                    }
+                    // });
+
+                    function success() {
+                      // done loading!
+                      console.log('Loaded dumpfiles!')
+                      this.progressMessage = 'Loaded dumpfiles!'
+                    }
+
+                    function error(err) {
+                      // HTTP error or something like that
+                      console.log(err)
+                      this.progressMessage = 'Error: ' + err
+                    }
+                    series.then(success.bind(this)).catch(error.bind(this));
+                    
+                    // try {
+                    //   await db.load(stream)
+                    //   this.statusMessage += `<p>${dbName} ${_TRANSLATE("restored")}</p>`
+                    //   copiedDbs.push(dbName)
+                    //   if (copiedDbs.length === len) {
+                    //     this.statusMessage += `<p>&nbsp;</p>\n<p class="doneMessage">${_TRANSLATE("Restore complete: Please exit the app and restart.")}</p>`
+                    //   }
+                    // } catch (e) {
+                    //   console.log("Error loading db: " + e)
+                    //   this.errorMessage += '<p>' + _TRANSLATE("Error restoring backup database. Message: ") + JSON.stringify(e) + '</p>'
+                    // }
+                  }
+                  await reader.readAsText(file);
+                }))
               }
-            } catch (e) {
-              console.log("Error loading db: " + e)
-              this.errorMessage += '<p>' + _TRANSLATE("Error restoring backup database. Message: ") + JSON.stringify(e) + '</p>'
-            }
-          }
-          await reader.readAsText(file);
-        }))
+            })
+        })
+              
+        
       } else {
         const reader = new FileReader();
         reader.addEventListener('load', async (event) => {
