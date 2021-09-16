@@ -4,10 +4,8 @@ import {SyncingService} from '../../sync-records/_services/syncing.service';
 import {_TRANSLATE} from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {DB} from '../../../shared/_factories/db.factory'
-import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
 
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
-const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
 const USERS_DATABASE_NAME = 'users';
 const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
 const VARIABLES_DATABASE_NAME = 'tangerine-variables';
@@ -29,6 +27,8 @@ export class ExportDataComponent implements OnInit {
   DEFAULT_BATCH_SIZE = 50;
   LIMIT = 5000;
   SPLIT = 50
+  rootDirEntry
+  destDirEntry
   dirHandle
   fileHandle
 
@@ -68,7 +68,7 @@ export class ExportDataComponent implements OnInit {
     this.progressMessage = ''
     this.errorMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
-    const dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+    const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
     // APK's that use in-app encryption
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
       const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
@@ -91,6 +91,14 @@ export class ExportDataComponent implements OnInit {
       }
     } else {
       // APK's or PWA's that do not use in-app encryption - have turnOffAppLevelEncryption:true in app-config.json
+
+      if (this.window.isCordovaApp) {
+        const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
+        this.rootDirEntry = await new Promise(resolve =>
+          this.window.resolveLocalFileSystemURL(backupLocation, resolve)
+        );
+      }
+
       for (let index = 0; index < dbNames.length; index++) {
         const dbName = dbNames[index]
         // copy the database
@@ -101,6 +109,7 @@ export class ExportDataComponent implements OnInit {
           `${dbName}_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
         if (this.window.isCordovaApp) {
           const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
+
           function onErrorDir(e) {
             console.log("Error: " + e)
             let errorMessage
@@ -112,15 +121,39 @@ export class ExportDataComponent implements OnInit {
             this.errorMessage += `<p>${_TRANSLATE('Error with dir: ')} ${dbName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
           }
 
-          this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
-            // first delete dir
-            this.progressMessage = `<p>${_TRANSLATE('Deleting old backup directory at ')} ${backupLocation}${dbName} </p>`
-            directoryEntry.getDirectory(dbName, {create: false}, function (subDirEntry) {
-              subDirEntry.removeRecursively(function () {
-                console.log(`${_TRANSLATE('Deleted old data directory at ')} ${backupLocation}${dbName}`);
-              }, onErrorDir)
-            })
-          })
+          // this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
+          // first delete dir
+          this.progressMessage = `<p>${_TRANSLATE('Deleting old backup directory at ')} ${backupLocation}${dbName} </p>`
+          // this.rootDirEntry.getDirectory(dbName, {create: false}, function (subDirEntry) {
+          //   subDirEntry.removeRecursively(function () {
+          //     console.log(`${_TRANSLATE('Deleted old data directory at ')} ${backupLocation}${dbName}`);
+          //   }, onErrorDir)
+          // })
+
+          const deletedDirectoryMessage = await new Promise((resolve, reject) => {
+              // console.log(`Created directory at ${backupLocation}${dbName}`)
+              // this.progressMessage = `<p>${_TRANSLATE('Created directory at ')} ${backupLocation}${dbName} </p>`
+              // const deletedDir =  this.rootDirEntry.getDirectory(dbName, {create: true}, resolve, reject)
+              const deletedDir =  this.rootDirEntry.getDirectory(dbName, {create: true}, (subDirEntry) => {
+                subDirEntry.removeRecursively(function () {
+                  const message = `${_TRANSLATE('Deleted old data directory at ')} ${backupLocation}${dbName}`
+                  console.log(message);
+                  resolve(message)
+                }, onErrorDir)
+              }, reject)
+              return deletedDir
+            }
+          );
+          console.log(deletedDirectoryMessage)
+          
+          // })
+          // Now create the dir
+          this.destDirEntry = await new Promise((resolve, reject) => {
+              console.log(`Created directory at ${backupLocation}${dbName}`)
+              this.progressMessage = `<p>${_TRANSLATE('Created directory at ')} ${backupLocation}${dbName} </p>`
+              return this.rootDirEntry.getDirectory(dbName, {create: true}, resolve, reject)
+            }
+          );
 
           let dumpOpts = {
             batch_size: 100 // decent default for good performance
@@ -155,49 +188,45 @@ export class ExportDataComponent implements OnInit {
           }
 
           async function dumpToSplitFile(that) {
-
-            const suggestedName = createSplitFileName()
-
-            that.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
-
-              // create backup dir
-              directoryEntry.getDirectory(dbName, {create: true}, function (subDirEntry) {
-                that.progressMessage = `<p>${_TRANSLATE('Created directory at ')} ${backupLocation}${dbName} </p>`
-                subDirEntry.getFile(suggestedName, {create: true, exclusive: false}, (fileEntry) => {
-                  fileEntry.createWriter((fileWriter) => {
-                    fileWriter.onwriteend = (data) => {
-                      that.progressMessage = `<p>${_TRANSLATE('Backup stored At')} ${backupLocation}${dbName}/${fileName} </p>`
-                    };
-                    fileWriter.onerror = (e) => {
-                      alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-                      that.errorMessage += `<p>${_TRANSLATE('Write Failed')}` + e.toString() + "</p>"
-                    };
-                    const stringOutput = header + out.join()
-                    fileWriter.write(stringOutput);
-                    // const message = `<p>${_TRANSLATE('Backup stored At')} ${backupLocation}${dbName}/${fileName} </p>`
-                    // console.log(message)
-                    // that.progressMessage = message
-                  });
+              const suggestedName = createSplitFileName()
+              that.destDirEntry.getFile(suggestedName, {create: true}, (fileEntry) => {
+                fileEntry.createWriter((fileWriter) => {
+                  fileWriter.onwriteend = (data) => {
+                    console.log(`Backup stored at ${dbName}/${suggestedName}`)
+                    that.progressMessage = `<p>${_TRANSLATE('Backup stored at ')} ${backupLocation}${dbName}/${suggestedName} </p>`
+                  };
+                  fileWriter.onerror = (e) => {
+                    alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                    that.errorMessage += `<p>${_TRANSLATE('Write Failed')}` + e.toString() + "</p>"
+                  };
+                  const stringOutput = header + out.join("")
+                  fileWriter.write(stringOutput);
+                  console.log(`wrote out ${dbName}/${suggestedName}`)
+                  console.log(`resetting out array`)
+                  out = [];
+                  numDocsInBatch = 0;
+                  numFiles++;
                 });
-              }, onErrorDir);
+              });
+            // }, onErrorDir);
 
-            }, (e) => {
-              console.log("Error: " + e)
-              let errorMessage
-              if (e && e.code && e.code === 1) {
-                errorMessage = "File or directory not found."
-              } else {
-                errorMessage = e
-              }
-              that.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
-            })
+            // }, (e) => {
+            //   console.log("Error: " + e)
+            //   let errorMessage
+            //   if (e && e.code && e.code === 1) {
+            //     errorMessage = "File or directory not found."
+            //   } else {
+            //     errorMessage = e
+            //   }
+            //   that.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
+            // })
 
             // splitPromises.push(new Promise(function (resolve) {
             //   outstream.on('finish', resolve);
             // }));
-            out = [];
-            numDocsInBatch = 0;
-            numFiles++;
+            // out = [];
+            // numDocsInBatch = 0;
+            // numFiles++;
           }
 
           const stream = new window['Memorystream']
@@ -233,16 +262,17 @@ export class ExportDataComponent implements OnInit {
             if (out.length) {
               await dumpToSplitFile(this);
             }
-            return Promise.all(splitPromises).then(() => {
-              console.log(); // clear the progress bar
+            Promise.all(splitPromises).then(() => {
+              console.log(`Finished processing ${dbName}`); // clear the progress bar
             });
           }
+
           await db.dump(stream, dumpOpts).then(processData.bind(this));
           this.progressMessage = ""
           this.statusMessage += `<p>${_TRANSLATE('Backup completed at')} ${backupLocation}${dbName}</p>`
-          
+
         } else {
-          
+
           const stream = new window['Memorystream']
           let data = '';
           stream.on('data', function (chunk) {

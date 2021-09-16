@@ -3,7 +3,6 @@ import {_TRANSLATE} from "../../../shared/translation-marker";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {DB} from "../../../shared/_factories/db.factory";
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
-const SHARED_USER_DATABASE_INDEX_NAME = 'shared-user-database-index';
 const USERS_DATABASE_NAME = 'users';
 const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
 const VARIABLES_DATABASE_NAME = 'tangerine-variables';
@@ -19,15 +18,17 @@ export class RestoreBackupComponent implements OnInit {
     this.window = window;
   }
   statusMessage: string
+  progressMessage: string
   errorMessage: string
   success: boolean
   showDirectoryDialog: boolean
-  dbNames = [SHARED_USER_DATABASE_NAME, SHARED_USER_DATABASE_INDEX_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+  dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
   restoreDir: string = 'Documents/Tangerine/restore/'
   
   ngOnInit(): void {
     // console.log("RestoreBackupComponent init")
     this.statusMessage = ''
+    this.progressMessage = ''
     this.errorMessage = ''
     this.success = false
     if (this.window.isCordovaApp) {
@@ -134,6 +135,8 @@ export class RestoreBackupComponent implements OnInit {
           const reader = fileSystem.createReader();
           reader.readEntries(
             async (entries) => {
+              // sort the entries
+              entries.sort((a, b) => (a.name > b.name) ? 1 : -1)
               for (var i = 0; i < entries.length; i++) {
                 let entry = entries[i]
                 console.log("processing " + entry.name)
@@ -142,26 +145,23 @@ export class RestoreBackupComponent implements OnInit {
                 await promisify(entry.file(async (file) => {
                   const reader = new FileReader();
                   reader.onloadend = async (event) => {
-                    const result = event.target.result;
-                    const stream = new window['Memorystream']
-                    stream.end(result);
-                    // copy the database
+                    const dumpFileText = event.target.result;
                     console.log(`Restoring ${dbName} db`)
                     const db = DB(dbName)
                     let series = Promise.resolve();
 
-                    async function processDumpfile(that, dumpFile) {
-                      console.log('Processing Dumpfile: ' + dumpFile)
-                      that.progressMessage = 'Processing Dumpfile: ' + dumpFile
-                      let fileHandle = await that.dirHandle.getFileHandle(dumpFile);
-                      const file = await fileHandle.getFile();
-                      const contents = await file.text();
-                      return db.loadIt(contents);
+                    function processDumpfile(that, dumpFileName, dumpFileText) {
+                      console.log('Processing Dumpfile: ' + dumpFileName)
+                      that.progressMessage = 'Processing Dumpfile: ' + dumpFileName
+                      // let fileHandle = await that.dirHandle.getFileHandle(dumpFileName);
+                      // const file = await fileHandle.getFile();
+                      // const contents = await file.text();
+                      return db.loadIt(dumpFileText);
                     }
 
                     for (let index = 0; index < dumpFiles.length; index++) {
-                      const dumpFile = dumpFiles[index]
-                      series = series.then(await processDumpfile(this, dumpFile));
+                      const dumpFileName = dumpFiles[index]
+                      series = series.then(processDumpfile(this, dumpFileName, dumpFileText));
                     }
                     // });
 
@@ -169,26 +169,17 @@ export class RestoreBackupComponent implements OnInit {
                       // done loading!
                       console.log('Loaded dumpfiles!')
                       this.progressMessage = 'Loaded dumpfiles!'
+                      this.statusMessage += 'Loaded dumpfiles!'
                     }
 
                     function error(err) {
                       // HTTP error or something like that
                       console.log(err)
                       this.progressMessage = 'Error: ' + err
+                      this.statusMessage +='Error: ' + err
+                      this.errorMessage +='Error: ' + err
                     }
                     series.then(success.bind(this)).catch(error.bind(this));
-                    
-                    // try {
-                    //   await db.load(stream)
-                    //   this.statusMessage += `<p>${dbName} ${_TRANSLATE("restored")}</p>`
-                    //   copiedDbs.push(dbName)
-                    //   if (copiedDbs.length === len) {
-                    //     this.statusMessage += `<p>&nbsp;</p>\n<p class="doneMessage">${_TRANSLATE("Restore complete: Please exit the app and restart.")}</p>`
-                    //   }
-                    // } catch (e) {
-                    //   console.log("Error loading db: " + e)
-                    //   this.errorMessage += '<p>' + _TRANSLATE("Error restoring backup database. Message: ") + JSON.stringify(e) + '</p>'
-                    // }
                   }
                   await reader.readAsText(file);
                 }))
