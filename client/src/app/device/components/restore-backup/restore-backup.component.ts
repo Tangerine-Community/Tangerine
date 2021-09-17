@@ -110,14 +110,11 @@ export class RestoreBackupComponent implements OnInit {
     }
   }
 
-  async restoreBackups(files: any[]) {
-    // const promisify = (f) =>
-    //   (...a) => new Promise ((res, rej) => f (...a, res, rej))
+  async restoreBackups(dirEntries: any[]) {
     let copiedDbs = []
-    const len = this.dbNames.length
-    for (var i = 0; i < files.length; i++) {
+    for (var i = 0; i < dirEntries.length; i++) {
       const dumpFiles = []
-      let entry = files[i]
+      let entry = dirEntries[i]
       console.log("processing directory: " + entry.name)
       this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + entry.name + "</p>"
       // const fileNameArray = entry.name.split('_')
@@ -134,8 +131,8 @@ export class RestoreBackupComponent implements OnInit {
         });
 
         restoreDbDirEntries.sort((a, b) => (a.name > b.name) ? 1 : -1)
-        for (var i = 0; i < restoreDbDirEntries.length; i++) {
-          let entry = restoreDbDirEntries[i]
+        for (var j = 0; j < restoreDbDirEntries.length; j++) {
+          let entry = restoreDbDirEntries[j]
           console.log("processing " + entry.name)
           dumpFiles.push(entry.name)
           this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
@@ -156,44 +153,40 @@ export class RestoreBackupComponent implements OnInit {
               db.loadIt(this.result)
               resolve("Finished process dumpfile.")
             })
-            console.log("done loading")
           };
-          const result = await new Promise(resolve => {
-            let text;
-            try {
-              text = reader.readAsText(fileObj)
-              resolve(text)
-            } catch (e) {
-              console.log("error: " + e)
-            }
-          })
-          console.log("boop: " + result)
+          reader.readAsText(fileObj)
           // })
           // })
           // await promisify()
         }
+        copiedDbs.push(dbName)
+        console.log("finished processing files for " + dbName)
+        if (copiedDbs.length === this.dbNames.length) {
+          this.statusMessage += `<p>${_TRANSLATE("Please exit the app and restart.")}</p>`
+        }
       } else {
-        const reader = new FileReader();
-        reader.addEventListener('load', async (event) => {
-          const result = event.target.result;
-          const stream = new window['Memorystream']
-          stream.end(result);
-          // copy the database
-          console.log(`Restoring ${dbName} db`)
-          const db = DB(dbName)
-          try {
-            await db.load(stream)
-            this.statusMessage += `<p>${dbName} ${_TRANSLATE("restored")}</p>`
-            copiedDbs.push(dbName)
-            if (copiedDbs.length === len) {
-              this.statusMessage += `<p>${_TRANSLATE("Please exit the app and restart.")}</p>`
-            }
-          } catch (e) {
-            console.log("Error loading db: " + e)
-            this.errorMessage += '<p>' + _TRANSLATE("Error restoring backup database. Message: ") + JSON.stringify(e) + '</p>'
-          }
-        });
-        await reader.readAsText(entry);
+        // const len = this.dbNames.length
+        // const reader = new FileReader();
+        // reader.addEventListener('load', async (event) => {
+        //   const result = event.target.result;
+        //   const stream = new window['Memorystream']
+        //   stream.end(result);
+        //   // copy the database
+        //   console.log(`Restoring ${dbName} db`)
+        //   const db = DB(dbName)
+        //   try {
+        //     await db.load(stream)
+        //     this.statusMessage += `<p>${dbName} ${_TRANSLATE("restored")}</p>`
+        //     copiedDbs.push(dbName)
+        //     if (copiedDbs.length === len) {
+        //       this.statusMessage += `<p>${_TRANSLATE("Please exit the app and restart.")}</p>`
+        //     }
+        //   } catch (e) {
+        //     console.log("Error loading db: " + e)
+        //     this.errorMessage += '<p>' + _TRANSLATE("Error restoring backup database. Message: ") + JSON.stringify(e) + '</p>'
+        //   }
+        // });
+        // await reader.readAsText(entry);
       }
     }
   }
