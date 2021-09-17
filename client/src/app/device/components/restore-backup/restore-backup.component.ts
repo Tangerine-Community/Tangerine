@@ -24,6 +24,7 @@ export class RestoreBackupComponent implements OnInit {
   showDirectoryDialog: boolean
   dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
   restoreDir: string = 'Documents/Tangerine/restore/'
+  rootDirEntry
   
   ngOnInit(): void {
     // console.log("RestoreBackupComponent init")
@@ -89,26 +90,20 @@ export class RestoreBackupComponent implements OnInit {
     } else {
       if (this.window.isCordovaApp) {
         const path = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/'
-        window['resolveLocalFileSystemURL'](path, (fileSystem) => {
-            const reader = fileSystem.createReader();
-            reader.readEntries(
-              async (entries) => {
-                console.log(entries);
-                try {
-                  await this.restoreBackups(entries)
-                } catch (e) {
-                  console.log(e);
-                  this.errorMessage += `<p>${_TRANSLATE('Error restoring backup')} Message: ${JSON.stringify(e)}</p>`
-                }
-              },
-              function (err) {
-                console.log(err);
-              }
-            );
-          }, function (err) {
-            console.log(err);
-          }
+        this.rootDirEntry = await new Promise(resolve =>
+          this.window.resolveLocalFileSystemURL(path, resolve)
         );
+        const restoreDirEntries: any[] = await new Promise(resolve => {
+          const reader = this.rootDirEntry.createReader();
+          reader.readEntries((entries) => resolve(entries))
+        });
+        // console.log(JSON.stringify(restoreDirEntries));
+        try {
+          await this.restoreBackups(restoreDirEntries)
+        } catch (e) {
+          console.log(e);
+          this.errorMessage += `<p>${_TRANSLATE('Error restoring backup')} Message: ${JSON.stringify(e)}</p>`
+        }
       } else {
         this.showDirectoryDialog = true
       }
@@ -116,78 +111,67 @@ export class RestoreBackupComponent implements OnInit {
   }
 
   async restoreBackups(files: any[]) {
-    const promisify = (f) =>
-      (...a) => new Promise ((res, rej) => f (...a, res, rej))
-    
+    // const promisify = (f) =>
+    //   (...a) => new Promise ((res, rej) => f (...a, res, rej))
     let copiedDbs = []
     const len = this.dbNames.length
     for (var i = 0; i < files.length; i++) {
       const dumpFiles = []
       let entry = files[i]
-      console.log("processing " + entry.name)
-      this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
+      console.log("processing directory: " + entry.name)
+      this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + entry.name + "</p>"
       // const fileNameArray = entry.name.split('_')
       const dbName = entry.name
       // const stream = fileObject.stream();
       if (this.window.isCordovaApp) {
         const path = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/' + dbName
-        window['resolveLocalFileSystemURL'](path, (fileSystem) => {
-          const reader = fileSystem.createReader();
-          reader.readEntries(
-            async (entries) => {
-              // sort the entries
-              entries.sort((a, b) => (a.name > b.name) ? 1 : -1)
-              for (var i = 0; i < entries.length; i++) {
-                let entry = entries[i]
-                console.log("processing " + entry.name)
-                dumpFiles.push(entry.name)
-                this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
-                await promisify(entry.file(async (file) => {
-                  const reader = new FileReader();
-                  reader.onloadend = async (event) => {
-                    const dumpFileText = event.target.result;
-                    console.log(`Restoring ${dbName} db`)
-                    const db = DB(dbName)
-                    let series = Promise.resolve();
+        const restoreDbDirHandle: any = await new Promise(resolve =>
+          this.window.resolveLocalFileSystemURL(path, resolve)
+        );
+        const restoreDbDirEntries: any[] = await new Promise(resolve => {
+          const reader = restoreDbDirHandle.createReader();
+          reader.readEntries((entries) => resolve(entries))
+        });
 
-                    function processDumpfile(that, dumpFileName, dumpFileText) {
-                      console.log('Processing Dumpfile: ' + dumpFileName)
-                      that.progressMessage = 'Processing Dumpfile: ' + dumpFileName
-                      // let fileHandle = await that.dirHandle.getFileHandle(dumpFileName);
-                      // const file = await fileHandle.getFile();
-                      // const contents = await file.text();
-                      return db.loadIt(dumpFileText);
-                    }
-
-                    for (let index = 0; index < dumpFiles.length; index++) {
-                      const dumpFileName = dumpFiles[index]
-                      series = series.then(processDumpfile(this, dumpFileName, dumpFileText));
-                    }
-                    // });
-
-                    function success() {
-                      // done loading!
-                      console.log('Loaded dumpfiles!')
-                      this.progressMessage = 'Loaded dumpfiles!'
-                      this.statusMessage += 'Loaded dumpfiles!'
-                    }
-
-                    function error(err) {
-                      // HTTP error or something like that
-                      console.log(err)
-                      this.progressMessage = 'Error: ' + err
-                      this.statusMessage +='Error: ' + err
-                      this.errorMessage +='Error: ' + err
-                    }
-                    series.then(success.bind(this)).catch(error.bind(this));
-                  }
-                  await reader.readAsText(file);
-                }))
-              }
+        restoreDbDirEntries.sort((a, b) => (a.name > b.name) ? 1 : -1)
+        for (var i = 0; i < restoreDbDirEntries.length; i++) {
+          let entry = restoreDbDirEntries[i]
+          console.log("processing " + entry.name)
+          dumpFiles.push(entry.name)
+          this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
+          // const fileProcessStatus: any = await new Promise(resolve => {
+          const fileObj:any = await new Promise(resolve => {
+            entry.file(resolve);
+          })
+          // entry.file(async (file) => {
+          const reader = new FileReader();
+          let progressMessage = this.progressMessage
+          reader.onloadend = async function () {
+            // console.log("Successful file read: " + this.result);
+            console.log(`Restoring ${dbName} db`)
+            const db = DB(dbName)
+            console.log('Processing Dumpfile: ' + entry.name)
+            progressMessage = 'Processing Dumpfile: ' + entry.name
+            const result = await new Promise(resolve => {
+              db.loadIt(this.result)
+              resolve("Finished process dumpfile.")
             })
-        })
-              
-        
+            console.log("done loading")
+          };
+          const result = await new Promise(resolve => {
+            let text;
+            try {
+              text = reader.readAsText(fileObj)
+              resolve(text)
+            } catch (e) {
+              console.log("error: " + e)
+            }
+          })
+          console.log("boop: " + result)
+          // })
+          // })
+          // await promisify()
+        }
       } else {
         const reader = new FileReader();
         reader.addEventListener('load', async (event) => {
