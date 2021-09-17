@@ -11,6 +11,10 @@ PouchDB.plugin(PouchDBFind);
 PouchDB.plugin(PouchDBUpsert);
 PouchDB.plugin(cordovaSqlitePlugin);
 PouchDB.plugin(window['PouchReplicationStream'].plugin);
+let PouchDBLoad = (window as { [key: string]: any })["PouchDBLoad"];
+PouchDB.plugin({
+  loadIt: PouchDBLoad.load
+});
 PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
 PouchDB.defaults({auto_compaction: true, revs_limit: 1});
 
