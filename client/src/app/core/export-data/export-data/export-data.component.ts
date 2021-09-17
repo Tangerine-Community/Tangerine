@@ -24,8 +24,6 @@ export class ExportDataComponent implements OnInit {
   progressMessage: string
   errorMessage: string
   backupDir: string = 'Documents/Tangerine/backups/'
-  DEFAULT_BATCH_SIZE = 50;
-  LIMIT = 5000;
   SPLIT = 50
   rootDirEntry
   destDirEntry
@@ -68,6 +66,8 @@ export class ExportDataComponent implements OnInit {
     this.progressMessage = ''
     this.errorMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
+    const defaultSPLIT = this.SPLIT
+    this.SPLIT =  appConfig.dbBackupSplitNumberFiles ? appConfig.dbBackupSplitNumberFiles : defaultSPLIT
     const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
     // APK's that use in-app encryption
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
