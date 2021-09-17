@@ -9,6 +9,8 @@ __Updates__
   - A fix for User defined Cycle Sequences.
 __Fixes__
 - Remove incorrect exception classes for changes processing #2883 PR: [#2883](https://github.com/Tangerine-Community/Tangerine/pull/2883) Issue: [#2882](https://github.com/Tangerine-Community/Tangerine/issues/2882)
+- Added backup and restore feature for Tangerine databases using device encryption. Increase the appConfig.json parameter `dbBackupSplitNumberFiles` (default: 50) if your database is large to avoid crashes while backing up and/or restoring. PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
+- 
 
 ## v3.18.5
 
