@@ -25,16 +25,17 @@ export class ExportDataComponent implements OnInit {
   progressMessage: string
   errorMessage: string
   backupDir: string = 'Documents/Tangerine/backups/'
-  SPLIT = 50
+  SPLIT = 200
   rootDirEntry
   destDirEntry
   dirHandle
   fileHandle
   shouldShow
+  private appConfig: AppConfig;
+  splitFilesValue: any;
   
   @ViewChild('splitFiles', {static: false}) splitFiles: ElementRef
   @ViewChild('container', {static: false}) container: ElementRef;
-  private appConfig: AppConfig;
 
   constructor(
     private userService: UserService,
@@ -78,7 +79,8 @@ export class ExportDataComponent implements OnInit {
   async ngAfterViewInit() {
     if (this.window.isCordovaApp && window['turnOffAppLevelEncryption']) {
       await this.calculateSplit()
-      this.splitFiles.nativeElement.value = String(this.SPLIT)
+      // this.splitFiles.nativeElement.value = String(this.SPLIT)
+      this.splitFilesValue = String(this.SPLIT)
     }
   }
 
@@ -89,9 +91,7 @@ export class ExportDataComponent implements OnInit {
     const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
     // APK's that use in-app encryption
     if (window['isCordovaApp'] && this.appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
-      if (this.splitFiles.nativeElement.value && this.splitFiles.nativeElement.value.length > 0) {
-        this.SPLIT = Number(this.splitFiles.nativeElement.value)
-      }
+
       const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
       for (const dbName of dbNames) {
         // copy the database
@@ -113,6 +113,9 @@ export class ExportDataComponent implements OnInit {
     } else {
       // APK's or PWA's that do not use in-app encryption - have turnOffAppLevelEncryption:true in app-config.json
       if (this.window.isCordovaApp) {
+        if (this.splitFiles.nativeElement.value && this.splitFiles.nativeElement.value.length > 0) {
+          this.SPLIT = Number(this.splitFiles.nativeElement.value)
+        }
         const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
         this.rootDirEntry = await new Promise(resolve =>
           this.window.resolveLocalFileSystemURL(backupLocation, resolve)
@@ -141,19 +144,11 @@ export class ExportDataComponent implements OnInit {
             this.errorMessage += `<p>${_TRANSLATE('Error with dir: ')} ${dbName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
           }
 
-          // this.window.resolveLocalFileSystemURL(backupLocation, (directoryEntry) => {
           // first delete dir
           this.progressMessage = `<p>${_TRANSLATE('Deleting old backup directory at ')} ${backupLocation}${dbName} </p>`
-          // this.rootDirEntry.getDirectory(dbName, {create: false}, function (subDirEntry) {
-          //   subDirEntry.removeRecursively(function () {
-          //     console.log(`${_TRANSLATE('Deleted old data directory at ')} ${backupLocation}${dbName}`);
-          //   }, onErrorDir)
-          // })
+
 
           const deletedDirectoryMessage = await new Promise((resolve, reject) => {
-              // console.log(`Created directory at ${backupLocation}${dbName}`)
-              // this.progressMessage = `<p>${_TRANSLATE('Created directory at ')} ${backupLocation}${dbName} </p>`
-              // const deletedDir =  this.rootDirEntry.getDirectory(dbName, {create: true}, resolve, reject)
               const deletedDir =  this.rootDirEntry.getDirectory(dbName, {create: true}, (subDirEntry) => {
                 subDirEntry.removeRecursively(function () {
                   const message = `${_TRANSLATE('Deleted old data directory at ')} ${backupLocation}${dbName}`
@@ -165,8 +160,7 @@ export class ExportDataComponent implements OnInit {
             }
           );
           console.log(deletedDirectoryMessage)
-          
-          // })
+
           // Now create the dir
           this.destDirEntry = await new Promise((resolve, reject) => {
               console.log(`Created directory at ${backupLocation}${dbName}`)
@@ -221,32 +215,12 @@ export class ExportDataComponent implements OnInit {
                   };
                   const stringOutput = header + out.join("")
                   fileWriter.write(stringOutput);
-                  console.log(`wrote out ${dbName}/${suggestedName}`)
                   //resetting out array
                   out = [];
                   numDocsInBatch = 0;
                   numFiles++;
                 });
               });
-            // }, onErrorDir);
-
-            // }, (e) => {
-            //   console.log("Error: " + e)
-            //   let errorMessage
-            //   if (e && e.code && e.code === 1) {
-            //     errorMessage = "File or directory not found."
-            //   } else {
-            //     errorMessage = e
-            //   }
-            //   that.errorMessage += `<p>${_TRANSLATE('Error exporting file: ')} ${fileName} ${_TRANSLATE(' at backup location: ')} ${backupLocation}  ${_TRANSLATE(' Error: ')} ${errorMessage}</p>`
-            // })
-
-            // splitPromises.push(new Promise(function (resolve) {
-            //   outstream.on('finish', resolve);
-            // }));
-            // out = [];
-            // numDocsInBatch = 0;
-            // numFiles++;
           }
 
           const stream = new window['Memorystream']
@@ -261,7 +235,6 @@ export class ExportDataComponent implements OnInit {
               this.statusMessage += `<p>${_TRANSLATE('Backing up ')} ${totalDocs} ${_TRANSLATE(' docs for ')} ${dbName}</p>`
 
             } else if (line.seq) {
-              // bar.tick(1);
               // console.log("line")
             }
 
