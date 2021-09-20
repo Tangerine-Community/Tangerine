@@ -14,7 +14,7 @@
           <div [hidden]="!shouldShow">
             <mat-form-field class="example-full-width" appearance="fill">
               <mat-label>Docs per backup file</mat-label>
-              <input type="number" matInput #splitFiles maxlength="5">
+              <input type="number" matInput #splitFiles [value]="splitFilesValue" maxlength="5">
               <mat-hint align="start"><strong>Number of docs per backup file</strong></mat-hint>
             </mat-form-field>
           </div>
