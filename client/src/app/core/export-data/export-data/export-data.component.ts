@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../../shared/_services/user.service';
 import {SyncingService} from '../../sync-records/_services/syncing.service';
 import {_TRANSLATE} from '../../../shared/translation-marker';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {DB} from '../../../shared/_factories/db.factory'
+import {AppConfig} from "../../../shared/_classes/app-config.class";
 
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const USERS_DATABASE_NAME = 'users';
@@ -29,6 +30,11 @@ export class ExportDataComponent implements OnInit {
   destDirEntry
   dirHandle
   fileHandle
+  shouldShow
+  
+  @ViewChild('splitFiles', {static: false}) splitFiles: ElementRef
+  @ViewChild('container', {static: false}) container: ElementRef;
+  private appConfig: AppConfig;
 
   constructor(
     private userService: UserService,
@@ -38,10 +44,12 @@ export class ExportDataComponent implements OnInit {
     this.window = window;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.statusMessage = ''
     this.progressMessage = ''
     this.errorMessage = ''
+    this.appConfig = await this.appConfigService.getAppConfig()
+
 
     if (this.window.isCordovaApp) {
       this.backupDir = 'Documents/Tangerine/backups/'
@@ -59,18 +67,31 @@ export class ExportDataComponent implements OnInit {
         }, this.onErrorGetDir);
       })
     }
+
+    if (this.window.isCordovaApp && window['turnOffAppLevelEncryption']) {
+      this.shouldShow = true
+    } else {
+      this.shouldShow = false
+    }
+  }
+
+  async ngAfterViewInit() {
+    if (this.window.isCordovaApp && window['turnOffAppLevelEncryption']) {
+      await this.calculateSplit()
+      this.splitFiles.nativeElement.value = String(this.SPLIT)
+    }
   }
 
   async exportAllRecords() {
     this.statusMessage = ''
     this.progressMessage = ''
     this.errorMessage = ''
-    const appConfig = await this.appConfigService.getAppConfig()
-    const defaultSPLIT = this.SPLIT
-    this.SPLIT =  appConfig.dbBackupSplitNumberFiles ? appConfig.dbBackupSplitNumberFiles : defaultSPLIT
     const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
     // APK's that use in-app encryption
-    if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
+    if (window['isCordovaApp'] && this.appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
+      if (this.splitFiles.nativeElement.value && this.splitFiles.nativeElement.value.length > 0) {
+        this.SPLIT = Number(this.splitFiles.nativeElement.value)
+      }
       const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
       for (const dbName of dbNames) {
         // copy the database
@@ -91,7 +112,6 @@ export class ExportDataComponent implements OnInit {
       }
     } else {
       // APK's or PWA's that do not use in-app encryption - have turnOffAppLevelEncryption:true in app-config.json
-
       if (this.window.isCordovaApp) {
         const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
         this.rootDirEntry = await new Promise(resolve =>
@@ -137,7 +157,7 @@ export class ExportDataComponent implements OnInit {
               const deletedDir =  this.rootDirEntry.getDirectory(dbName, {create: true}, (subDirEntry) => {
                 subDirEntry.removeRecursively(function () {
                   const message = `${_TRANSLATE('Deleted old data directory at ')} ${backupLocation}${dbName}`
-                  console.log(message);
+                  // console.log(message);
                   resolve(message)
                 }, onErrorDir)
               }, reject)
@@ -202,7 +222,7 @@ export class ExportDataComponent implements OnInit {
                   const stringOutput = header + out.join("")
                   fileWriter.write(stringOutput);
                   console.log(`wrote out ${dbName}/${suggestedName}`)
-                  console.log(`resetting out array`)
+                  //resetting out array
                   out = [];
                   numDocsInBatch = 0;
                   numFiles++;
@@ -286,6 +306,13 @@ export class ExportDataComponent implements OnInit {
         }
       }
     }
+  }
+
+  private async calculateSplit() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const defaultSPLIT = this.SPLIT
+    this.SPLIT = appConfig.dbBackupSplitNumberFiles ? appConfig.dbBackupSplitNumberFiles : defaultSPLIT
+    return this.SPLIT;
   }
 
   onErrorGetDir(e) {
