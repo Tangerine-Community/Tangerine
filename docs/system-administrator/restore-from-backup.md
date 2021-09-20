@@ -21,6 +21,10 @@ It will display a status message after each database backup is saved. The backup
 
 ![backup-files-listing](./assets/backup-progress-and-ui.jpg )
 
+The listing is similar when backing up an encrypted database; however, it backs up 4 files instead of 4 directories:
+
+![backup-encrypted-log](./assets/backup-encrypted-log.jpg )
+
 ## Restoring backups onto a fresh Tangerine app installation.
 
 This only works for sync-protocol-2. 
@@ -40,6 +44,10 @@ Read the instructions. When ready, press the "Restore Backup" button. It will di
 The restore feature logs the process for each database. After the databases have been restored, it initiates indexing of the databases:
 
 ![Restore backup prompt](./assets/restore-optimizing.jpg )
+
+When restoring an encrypted database, indexing is *not* run due to the state of the application at this point of the installtion. In this case, prepare to wait a few minutes or longer after restarting the app and logging in to allow it to index the home page. Once the home page is displayed, do a Sync to upload/download any updated files; this will also kick off indexing.
+
+![backup-files-listing](./assets/restore-encrypted.jpg )
 
 After the restore process is complete, click the context button (|||) to close Tangerine and launch it again to load with the restored databases.
 

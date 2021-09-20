@@ -102,7 +102,7 @@ export class ExportDataComponent implements OnInit {
             fileEntry.copyTo(directory, dbName, () => {
               console.log('DB Copied!');
               // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${dbName}`);
-              this.statusMessage += `<p>${_TRANSLATE('DB Copied to ')} ${cordova.file.externalDataDirectory}${dbName}</p>`
+              this.statusMessage += `<p>${_TRANSLATE('DB Copied to ')} ${backupLocation}${dbName}</p>`
             }, (e) => {
               console.log('Unable to copy DB');
               alert(`${_TRANSLATE('Write Failed: ')}` + e.toString());
