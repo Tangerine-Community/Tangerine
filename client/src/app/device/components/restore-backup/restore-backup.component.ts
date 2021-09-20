@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {DB} from "../../../shared/_factories/db.factory";
+import {SyncService} from "../../../sync/sync.service";
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
 const USERS_DATABASE_NAME = 'users';
 const LOCKBOX_DATABASE_NAME = 'tangerine-lock-boxes';
@@ -14,7 +15,10 @@ declare const cordova: any;
 })
 export class RestoreBackupComponent implements OnInit {
   window:any;
-  constructor(private appConfigService: AppConfigService) {
+  constructor(
+    private appConfigService: AppConfigService,
+  private syncService: SyncService
+  ) {
     this.window = window;
   }
   statusMessage: string
@@ -25,6 +29,10 @@ export class RestoreBackupComponent implements OnInit {
   dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
   restoreDir: string = 'Documents/Tangerine/restore/'
   rootDirEntry
+  subscription: any // messages from sync.service
+  indexing: any // messages from sync.service
+  indexingMessage: string // messages from sync.service
+  otherMessage: any // messages from sync.service
   
   ngOnInit(): void {
     // console.log("RestoreBackupComponent init")
@@ -32,6 +40,9 @@ export class RestoreBackupComponent implements OnInit {
     this.progressMessage = ''
     this.errorMessage = ''
     this.success = false
+    this.indexingMessage = ''
+    this.otherMessage = ''
+    
     if (this.window.isCordovaApp) {
       this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Documents', (directoryEntry) => {
         directoryEntry.getDirectory('Tangerine', { create: true }, (dirEntry) => {
@@ -45,11 +56,15 @@ export class RestoreBackupComponent implements OnInit {
   }
 
   async importBackups() {
+    this.statusMessage = ''
+    this.progressMessage = ''
+    this.errorMessage = ''
+    this.indexingMessage = ''
+    this.otherMessage = ''
+    
     if (!confirm(_TRANSLATE('Are you sure you want to restore this backup? It will wipe any data already in Tangerine.'))) {
       return
     }
-    this.statusMessage = ''
-    this.errorMessage = ''
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
       const len = this.dbNames.length
@@ -68,7 +83,7 @@ export class RestoreBackupComponent implements OnInit {
               this.statusMessage += `<p>${_TRANSLATE('File restored from ')} ${directory.fullPath}${dbName}}</p>`
               copiedDbs.push(dbName)
               if (copiedDbs.length === len) {
-                this.statusMessage += `<p>${_TRANSLATE('Please exit the app and restart.')}</p>`
+                this.statusMessage += `<p>${_TRANSLATE('Finished restoring backups. Please wait for indexing to complete.')}</p>`
               }
               },
               function(e) {
@@ -89,6 +104,20 @@ export class RestoreBackupComponent implements OnInit {
       }
     } else {
       if (this.window.isCordovaApp) {
+        this.subscription = this.syncService.syncMessage$.subscribe({
+          next: (progress) => {
+            if (progress) {
+              if (typeof progress.message !== 'undefined') {
+                this.progressMessage = progress.message
+              }
+              if (progress.indexing) {
+                this.indexingMessage = 'Indexing ' + progress.indexing.view + " Doc Count: " + progress.indexing.countIndexedDocs + " Sequence Number: " + progress.indexing.last_seq
+              } else {
+                this.indexingMessage = ''
+              }
+            }
+          }
+        })
         const path = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/'
         this.rootDirEntry = await new Promise(resolve =>
           this.window.resolveLocalFileSystemURL(path, resolve)
@@ -100,6 +129,11 @@ export class RestoreBackupComponent implements OnInit {
         // console.log(JSON.stringify(restoreDirEntries));
         try {
           await this.restoreBackups(restoreDirEntries)
+          this.statusMessage += `<p>${_TRANSLATE("Optimizing data. This may take several minutes. Please wait...")}</p>`
+          await this.syncService.indexViews("admin")
+          this.progressMessage = `${_TRANSLATE("Done! Please exit the app and restart.")}`
+          this.statusMessage += `<p>${_TRANSLATE("Done! Please exit the app and restart.")}</p>`
+
         } catch (e) {
           console.log(e);
           this.errorMessage += `<p>${_TRANSLATE('Error restoring backup')} Message: ${JSON.stringify(e)}</p>`
@@ -162,7 +196,7 @@ export class RestoreBackupComponent implements OnInit {
         copiedDbs.push(dbName)
         console.log("finished processing files for " + dbName)
         if (copiedDbs.length === this.dbNames.length) {
-          this.statusMessage += `<p>${_TRANSLATE("Please exit the app and restart.")}</p>`
+          this.statusMessage += `<p>${_TRANSLATE("Finished restoring backups. Please wait for indexing to complete.")}</p>`
         }
       } else {
         // const len = this.dbNames.length
@@ -179,7 +213,7 @@ export class RestoreBackupComponent implements OnInit {
         //     this.statusMessage += `<p>${dbName} ${_TRANSLATE("restored")}</p>`
         //     copiedDbs.push(dbName)
         //     if (copiedDbs.length === len) {
-        //       this.statusMessage += `<p>${_TRANSLATE("Please exit the app and restart.")}</p>`
+        //       this.statusMessage += `<p>${_TRANSLATE("Finished restoring backups. Please wait for indexing to complete.")}</p>`
         //     }
         //   } catch (e) {
         //     console.log("Error loading db: " + e)
