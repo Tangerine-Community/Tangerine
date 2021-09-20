@@ -65,6 +65,24 @@ export class RestoreBackupComponent implements OnInit {
     if (!confirm(_TRANSLATE('Are you sure you want to restore this backup? It will wipe any data already in Tangerine.'))) {
       return
     }
+
+    if (this.window.isCordovaApp) {
+      this.subscription = this.syncService.syncMessage$.subscribe({
+        next: (progress) => {
+          if (progress) {
+            if (typeof progress.message !== 'undefined') {
+              this.progressMessage = progress.message
+            }
+            if (progress.indexing) {
+              this.indexingMessage = 'Indexing ' + progress.indexing.view + " Doc Count: " + progress.indexing.countIndexedDocs + " Sequence Number: " + progress.indexing.last_seq
+            } else {
+              this.indexingMessage = ''
+            }
+          }
+        }
+      })
+    }
+    
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
       const len = this.dbNames.length
@@ -76,15 +94,21 @@ export class RestoreBackupComponent implements OnInit {
         const databasesLocation = cordova.file.applicationStorageDirectory + 'databases/';
         this.window.resolveLocalFileSystemURL(restoreLocation, (fileEntry) => {
           this.window.resolveLocalFileSystemURL(databasesLocation, (directory) => {
-            fileEntry.copyTo(directory, dbName, () => {
-              this.success = true
-              console.log(`${dbName} copied!`);
-              // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.applicationStorageDirectory}/databases/${dbName}`);
-              this.statusMessage += `<p>${_TRANSLATE('File restored from ')} ${directory.fullPath}${dbName}}</p>`
-              copiedDbs.push(dbName)
-              if (copiedDbs.length === len) {
-                this.statusMessage += `<p>${_TRANSLATE('Finished restoring backups. Please wait for indexing to complete.')}</p>`
-              }
+            fileEntry.copyTo(directory, dbName, async () => {
+                this.success = true
+                console.log(`${dbName} copied!`);
+                // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.applicationStorageDirectory}/databases/${dbName}`);
+                this.statusMessage += `<p>${_TRANSLATE('File restored from ')} ${directory.fullPath}${dbName}</p>`
+                copiedDbs.push(dbName)
+                if (copiedDbs.length === len) {
+                  this.statusMessage += `<p>${_TRANSLATE('Done! Please exit the app and restart.')}</p>`
+                  // Unable to open the shared-user-database to index - possibly due to not being able to open the lockbox yet and get the device key.
+                  // this.statusMessage += `<p>${_TRANSLATE('Finished restoring backups. Please wait for indexing to complete.')}</p>`
+                  // this.statusMessage += `<p>${_TRANSLATE("Optimizing data. This may take several minutes. Please wait...")}</p>`
+                  // await this.syncService.indexViews("admin")
+                  // this.progressMessage = `${_TRANSLATE("Done! Please exit the app and restart.")}`
+                  // this.statusMessage += `<p>${_TRANSLATE("Done! Please exit the app and restart.")}</p>`
+                }
               },
               function(e) {
                 this.success = false
@@ -104,20 +128,6 @@ export class RestoreBackupComponent implements OnInit {
       }
     } else {
       if (this.window.isCordovaApp) {
-        this.subscription = this.syncService.syncMessage$.subscribe({
-          next: (progress) => {
-            if (progress) {
-              if (typeof progress.message !== 'undefined') {
-                this.progressMessage = progress.message
-              }
-              if (progress.indexing) {
-                this.indexingMessage = 'Indexing ' + progress.indexing.view + " Doc Count: " + progress.indexing.countIndexedDocs + " Sequence Number: " + progress.indexing.last_seq
-              } else {
-                this.indexingMessage = ''
-              }
-            }
-          }
-        })
         const path = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/'
         this.rootDirEntry = await new Promise(resolve =>
           this.window.resolveLocalFileSystemURL(path, resolve)
