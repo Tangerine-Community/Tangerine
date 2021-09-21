@@ -4,20 +4,32 @@
       <div class="container">
         <mat-card>
           <div class="mat-card-header-text">
-            Restore Backup
+            {{'Restore Backup'|translate}}
           </div>
           <mat-card-content class="card-content">
-            <p>Restore Backup copies backup databases to the Tangerine application.</p>
-            <p>Press the button below and view the log of the process. Wait for all the files to be copied. When it is complete, it will display
-              "Please exit the app and restart."</p>
+            <p>{{'This feature copies backup databases to the Tangerine application.'|translate}}</p>
+            <p>{{'Instructions:'|translate}}</p>
+            <ul>
+              <li>{{'If APK (running on a tablet): Place files in the "Documents/Tangerine/restore" directory. Press the button below to start the restore process.'|translate}}</li>
+              <li>{{'If PWA (running on a computer and/or in a web browser): Press the button below and choose the directory where the backup files are stored. This will start the restore process.'|translate}}</li>
+              <li>{{'View the log of the process. Wait for all the files to be copied. When it is complete, it will display "Please exit the app and restart."'|translate}}</li>
+              <li>{{'Close the application completely and re-open.'|translate}}</li>
+            </ul>
+            
+            <div *ngIf="showDirectoryDialog">
+              <label for="folder">{{'Select folder'|translate}}</label>
+              <input type="file" id="folder" webkitdirectory multiple (change)="restoreBackups($event.target.files)"/>
+            </div>
+            
           </mat-card-content>
           <mat-card-actions class="card-actions">
             <button color="primary" mat-raised-button (click)="importBackups()">{{'RESTORE BACKUP'|translate}}</button>
           </mat-card-actions>
-        </mat-card>
-<!--          <div [innerHTML]="statusMessage | safeHtml" class="status"></div>-->
-          <div [innerHTML]="statusMessage" class="status"></div>
-          <div class="error">{{errorMessage}}</div>
+        </mat-card> 
+        <div [innerHTML]="progressMessage" class="status"></div>
+        <div [innerHTML]="statusMessage" class="status"></div>
+        <div [innerHTML]="indexingMessage" class="status"></div>
+        <div [innerHTML]="errorMessage" class="error"></div>
       </div>
     </ng-template>
   </mat-tab>

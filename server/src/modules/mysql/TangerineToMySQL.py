@@ -378,7 +378,7 @@ def main_job():
               type = doc.get('type')
               if type is not None:
                   id = doc.get('_id')
-                  log("Processing Seq: " + lastSequence + ", ID: " + id)
+                  log("Processing Seq: " + lastSequence + ", ID: " + id + ", type: " + type.lower())
                   # There are 5 major types: case, participant, case-event, event-form and response
                   if (type.lower() == "case"):
                       convert_case(doc)
@@ -397,13 +397,10 @@ def main_job():
               config.set("TANGERINE","LastSequence",lastSequence)
               with open(sys.argv[1], 'w') as configfile:
                   config.write(configfile)
-    except (HTTPError, ProtocolError) as api_error:
-            # log("The connection to the server has failed! Previous change processed successfully: "  + lastSequence)
-            logger.exception("The connection to the server has failed!  Previous change processed successfully: "  + lastSequence)
-            # raise api_error
-    except Exception:
-            # log("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
-            logger.exception("Unexpected exception...  Previous change processed successfully: "  + lastSequence)
+    except Exception as error:
+            log("Unexpected exception while processing changes. Previous change processed successfully: "  + lastSequence)
+#             log("Unexpected error: " + str(error))
+            log("Unexpected error: {}".format(error))
             # raise
 
     # Finish.
