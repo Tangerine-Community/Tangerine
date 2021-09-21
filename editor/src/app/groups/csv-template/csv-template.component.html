@@ -1,0 +1,57 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div id="container">
+  <form class="form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Title</mat-label>
+      <input matInput placeholder="Template Title" [(ngModel)]="csvTemplateTitle" name="title">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Forms</mat-label>
+      <select matNativeControl required (change)="onFormIdSelect($event)" [(ngModel)]="formId" name="formId">
+        <option value="" selected></option>
+        <option *ngFor="let formInfo of formsInfo" [value]="formInfo.id">{{formInfo.title}}</option>
+      </select>
+    </mat-form-field> 
+    <h2>Columns</h2>
+    <ol  class="headers">
+      <li *ngFor="let header of headers">
+        <table>
+          <tr>
+            <td>
+              {{header}}
+            </td>
+            <td class="actions-column">
+              <span >
+                <paper-button class="button" *ngIf="headers.indexOf(header) !== 0" (click)="headerUp(header)">↑</paper-button>
+                <paper-button class="disabled-button" *ngIf="headers.indexOf(header) === 0">↑</paper-button>
+                <paper-button class="button" *ngIf="headers.indexOf(header) !== headers.length - 1" (click)="headerDown(header)">↓</paper-button>
+                <paper-button class="disabled-button" *ngIf="headers.indexOf(header) === headers.length - 1">↓</paper-button>
+                <paper-button class="button" (click)="headerRemove(header)">X</paper-button>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </li>
+    </ol>
+    <span *ngIf="removedHeaders.length > 0">
+      <h2>Excluded</h2>
+      <ul  class="headers">
+        <li *ngFor="let header of removedHeaders">
+          <table>
+            <tr>
+              <td>
+                {{header}}
+              </td>
+              <td class="actions-column">
+                <span >
+                  <paper-button class="button" (click)="headerAdd(header)">+</paper-button>
+                </span> 
+              </td>
+            </tr>
+          </table>
+        </li>
+      </ul>
+    </span>
+    <paper-button class="button" (click)="onSubmit()">submit</paper-button>
+  </form>
+</div>

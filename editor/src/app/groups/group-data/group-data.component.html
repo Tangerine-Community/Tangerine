@@ -24,7 +24,19 @@
         <mat-card-subtitle>{{'View uploaded form responses from devices.'|translate}}</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-  
+   
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="csv-templates">
+    <mat-card-header>
+        <div mat-card-avatar>
+          <mwc-icon class="tangy-foreground-secondary">table_chart</mwc-icon>
+        </div>
+        <mat-card-title>
+            <a>{{'CSV Templates'|translate}}</a>
+        </mat-card-title>
+        <mat-card-subtitle>{{'Templates for CSV data.'|translate}}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
   <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="download-csv">
     <mat-card-header>
         <div mat-card-avatar>

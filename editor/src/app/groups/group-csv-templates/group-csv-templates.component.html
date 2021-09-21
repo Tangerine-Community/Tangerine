@@ -1,0 +1,3 @@
+<app-dynamic-table [data]="csvTemplates" (rowDelete)="onRowDelete($event)" (rowEdit)="onRowEdit($event)"></app-dynamic-table>
+<paper-fab (click)="createCsvTemplate()" mat-raised-button icon="add" color="accent" class="action">
+</paper-fab>
