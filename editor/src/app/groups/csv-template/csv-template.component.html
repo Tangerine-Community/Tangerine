@@ -6,7 +6,7 @@
       <input matInput placeholder="Template Title" [(ngModel)]="csvTemplateTitle" name="title">
     </mat-form-field>
     <mat-form-field appearance="fill">
-      <mat-label>Forms</mat-label>
+      <mat-label>Form</mat-label>
       <select matNativeControl required (change)="onFormIdSelect($event)" [(ngModel)]="formId" name="formId">
         <option value="" selected></option>
         <option *ngFor="let formInfo of formsInfo" [value]="formInfo.id">{{formInfo.title}}</option>
