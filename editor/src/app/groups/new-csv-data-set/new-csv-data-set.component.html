@@ -49,10 +49,9 @@
           {{form.title}}
         </td>
         <td>
-          <mat-form-field class="csv-template-selection" appearance="fill" color="primary" *ngIf="form.csvTemplates.length > 0">
-            <mat-label>{{ "CSV Template" | translate }}</mat-label>
+          <mat-form-field class="csv-template-selection" appearance="fill" color="primary">
             <mat-select name="template" [(ngModel)]="templateSelections[form.id]">
-              <mat-option value="" selected>--</mat-option>
+              <mat-option value="" selected>{{ "All data" | translate }}</mat-option>
               <mat-option *ngFor="let csvTemplate of form.csvTemplates" [value]="csvTemplate._id">{{csvTemplate.title}}</mat-option>
             </mat-select>
           </mat-form-field> 
