@@ -12,7 +12,7 @@
         <option *ngFor="let formInfo of formsInfo" [value]="formInfo.id">{{formInfo.title}}</option>
       </select>
     </mat-form-field> 
-    <h2>Columns</h2>
+    <h2>Included Columns</h2>
     <ol  class="headers">
       <li *ngFor="let header of headers">
         <table>
@@ -34,8 +34,8 @@
       </li>
     </ol>
     <span *ngIf="removedHeaders.length > 0">
-      <h2>Excluded</h2>
-      <ul  class="headers">
+      <h2>Excluded Columns</h2>
+      <ol  class="headers">
         <li *ngFor="let header of removedHeaders">
           <table>
             <tr>
@@ -50,7 +50,7 @@
             </tr>
           </table>
         </li>
-      </ul>
+      </ol>
     </span>
     <paper-button class="button" (click)="onSubmit()">submit</paper-button>
   </form>

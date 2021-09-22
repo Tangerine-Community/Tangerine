@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { GroupsService } from '../services/groups.service';
+import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
   selector: 'app-csv-data-set-detail',
@@ -19,13 +20,15 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
   groupId;
   datasetId
   datasetDetail
-  displayedColumns = ['formId','inProgress','outputPath']
+  displayedColumns = ['formTitle','csvTemplateTitle','inProgress','outputPath']
   detailInterval:any
   constructor(
     private route: ActivatedRoute,
+    private formService: TangerineFormsService,
     private groupsService: GroupsService
   ) { 
     this.datasetId = this.route.snapshot.paramMap.get('dataSetId')
+    this.groupId = this.route.snapshot.paramMap.get('groupId')
     this.breadcrumbs = [
       ...this.breadcrumbs,
       <Breadcrumb>{
@@ -48,7 +51,16 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
   }
 
   async getDatasetDetail(){
-    this.datasetDetail = await this.groupsService.getDatasetDetail(this.datasetId)
+    const datasetDetail = await this.groupsService.getDatasetDetail(this.datasetId)
+    const csvTemplates = await this.formService.listCsvTemplates(this.groupId)
+    const formsInfo = await this.formService.getFormsInfo(this.groupId)
+
+    datasetDetail['csvs'] = datasetDetail['csvs'].map(csv =>{return {
+      ...csv,
+      csvTemplateTitle: csvTemplates.find(t => t._id === csv.csvTemplateId)?.title || '',
+      formTitle: formsInfo.find(f => f.id === csv.formId)?.title || ''
+    }})
+    this.datasetDetail = datasetDetail
   }
 
 }

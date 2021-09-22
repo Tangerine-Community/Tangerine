@@ -69,6 +69,12 @@ export class NewCsvDataSetComponent implements OnInit {
         csvTemplates: csvTemplates.filter(template => template.formId === form.id)
       }
     })
+    this.templateSelections = this.forms.reduce((templateSelections, form) => {
+      return {
+        ...templateSelections,
+        [form.id]: ''
+      }
+    })
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }

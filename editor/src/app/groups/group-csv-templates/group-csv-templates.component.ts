@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { CsvTemplate, TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
@@ -9,7 +11,15 @@ import { CsvTemplate, TangerineFormsService } from '../services/tangerine-forms.
 })
 export class GroupCsvTemplatesComponent implements OnInit {
 
-  csvTemplates:Array<CsvTemplate> = []
+  title = _TRANSLATE('CSV Templates')
+  breadcrumbs:Array<Breadcrumb> = [
+    <Breadcrumb>{
+      label: _TRANSLATE('CSV Templates'),
+      url: 'csv-templates'
+    }
+  ]
+
+  csvTemplates:Array<any> = []
   groupId:string
 
   constructor(
@@ -26,7 +36,15 @@ export class GroupCsvTemplatesComponent implements OnInit {
   }
 
   async listCsvTemplates() {
-    this.csvTemplates = await this.formsService.listCsvTemplates(this.groupId)
+    const formsInfo = await this.formsService.getFormsInfo(this.groupId)
+    const csvTemplates = await this.formsService.listCsvTemplates(this.groupId)
+    csvTemplates.forEach(template => delete template['_rev'])
+    this.csvTemplates = csvTemplates.map(csvTemplate => { return {
+      "_id": csvTemplate._id,
+      "Template Title": csvTemplate.title,
+      "Form": formsInfo.find(formInfo => formInfo.id === csvTemplate.formId).title,
+      "Columns": csvTemplate.headers
+    }})
   }
 
   async createCsvTemplate() {
