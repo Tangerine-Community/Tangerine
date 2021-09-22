@@ -65,7 +65,7 @@ async function go(state) {
     }
     headersDoc.columnHeaders = state.columnHeadersOverride.length > 0
       ? headersDoc.columnHeaders.filter(columnHeader => state.columnHeadersOverride.includes(columnHeader.header))
-      : headersDocs.columnHeaders
+      : headersDoc.columnHeaders
     state.headers = headersDoc.columnHeaders.map(header => header.header)
     state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
     state.headers.unshift('_id')
