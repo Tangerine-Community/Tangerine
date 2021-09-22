@@ -44,7 +44,7 @@
         {{ "Download File" | translate }}
       </th>
       <td mat-cell *matCellDef="let dataSet">
-        <a [disabled]="!dataSet.complete" mat-icon-button [href]="dataSet.downloadUrl">
+        <a *ngIf="dataSet.complete&&dataSet.fileExists" mat-icon-button [href]="dataSet.downloadUrl">
           <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
         </a>
       </td>
