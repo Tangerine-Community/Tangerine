@@ -32,6 +32,14 @@
     <div class="form-list">
       <div *ngFor="let form of forms" >
         <mat-checkbox (change)="onFormCheckBoxChange(form.id, $event)">{{form.title}}</mat-checkbox>
+        <mat-form-field appearance="fill" color="primary" *ngIf="form.csvTemplates.length > 0">
+          <mat-label>{{ "template" | translate }}</mat-label>
+          <mat-select name="template" [(ngModel)]="templateSelections[form.id]">
+            <mat-option value="none" selected>none</mat-option>
+            <mat-option *ngFor="let csvTemplate of form.csvTemplates" [value]="csvTemplate._id">{{csvTemplate.title}}</mat-option>
+          </mat-select>
+        </mat-form-field> 
+        <br>
         <br>
       </div>
       <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit'|translate}}</button>
