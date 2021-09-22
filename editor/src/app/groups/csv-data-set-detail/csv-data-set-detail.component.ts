@@ -57,7 +57,7 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
 
     datasetDetail['csvs'] = datasetDetail['csvs'].map(csv =>{return {
       ...csv,
-      csvTemplateTitle: csvTemplates.find(t => t._id === csv.csvTemplateId)?.title || '',
+      csvTemplateTitle: csvTemplates.find(t => t._id === csv.csvTemplateId)?.title || _TRANSLATE('All data'),
       formTitle: formsInfo.find(f => f.id === csv.formId)?.title || ''
     }})
     this.datasetDetail = datasetDetail
