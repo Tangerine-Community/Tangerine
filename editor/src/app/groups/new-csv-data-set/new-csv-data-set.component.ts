@@ -19,6 +19,7 @@ export class NewCsvDataSetComponent implements OnInit {
       url: 'csv-data-sets'
     }]
 
+  templateSelections:any = {}
   months = []
   years = []
   selectedMonth = '*'
@@ -61,13 +62,21 @@ export class NewCsvDataSetComponent implements OnInit {
   }
 
   async getForms() {
-    this.forms = (await this.formsService.getFormsInfo(this.groupId));;
+    const csvTemplates = (await this.formsService.listCsvTemplates(this.groupId))
+    this.forms = (await this.formsService.getFormsInfo(this.groupId)).map(form => {
+      return {
+        ...form,
+        csvTemplates: csvTemplates.filter(template => template.formId === form.id)
+      }
+    })
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }
 
   async process() {
-    const forms = this.selectedForms.toString()
+    const forms = this.selectedForms
+      .map(formId => this.templateSelections[formId] ? `${formId}:${this.templateSelections[formId]}` : formId)
+      .toString()
     if ((this.selectedMonth === '*' && this.selectedYear !== '*') || (this.selectedMonth !== '*' && this.selectedYear === '*')) {
       alert('You must choose a month and a year.')
       return
