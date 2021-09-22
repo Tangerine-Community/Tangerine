@@ -19,12 +19,18 @@
             </mat-form-field>
           </div>
           <mat-card-actions class="card-actions">
-            <button color="primary" mat-raised-button (click)="exportAllRecords()">{{'EXPORT DATA FOR ALL USERS'|translate}}</button>
+            <button color="primary" mat-raised-button [hidden]="hideExportButton" (click)="exportAllRecords()">{{'EXPORT DATA FOR ALL USERS'|translate}}</button>
           </mat-card-actions>
         </mat-card>
-        <div [innerHTML]="progressMessage" class="status"></div>
-        <div [innerHTML]="statusMessage" class="status"></div>
-        <div [innerHTML]="errorMessage" class="error"></div>
+        <div [hidden]="hideLogs" class="logs">
+          <p>The Progress section shows specific parts of the backup's progress such as the creation of individual backup files. The Status Log section shows the general status of the backup and its completion. </p>
+          <div id="progressLabel"><h2>Progress</h2></div>
+          <div [innerHTML]="progressMessage" class="progress"></div>
+          <div id="statusLabel"><h2>Status Log</h2></div>
+          <div [innerHTML]="statusMessage" class="status"></div>
+          <div [innerHTML]="errorMessage" class="error"></div>
+        </div>
+        
       </div>
     </ng-template>
   </mat-tab>
