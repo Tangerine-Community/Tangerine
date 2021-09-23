@@ -41,6 +41,10 @@ Read the instructions. When ready, press the "Restore Backup" button. It will di
 
 ![Restore backup prompt](./assets/confirm-restore-prompt.jpg )
 
+If the device does not have a "Documents" directory in Internal Storage, it displays an error. The Troubleshooting section provides details about the error and its resolution:
+
+![Restore backup prompt](./assets/restore-troubleshooting-error.jpg )
+
 The restore feature logs the process for each database. After the databases have been restored, it initiates indexing of the databases:
 
 ![Restore backup prompt](./assets/restore-optimizing.jpg )

@@ -44,6 +44,7 @@ export class RestoreBackupComponent implements OnInit {
     this.otherMessage = ''
     
     if (this.window.isCordovaApp) {
+      this["accessingDirectory"] = "Documents"
       this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Documents', (directoryEntry) => {
         directoryEntry.getDirectory('Tangerine', { create: true }, (dirEntry) => {
           dirEntry.getDirectory('backups', { create: true }, (subDirEntry) => {
@@ -51,10 +52,10 @@ export class RestoreBackupComponent implements OnInit {
           dirEntry.getDirectory('restore', { create: true }, (subDirEntry) => {
           }, this.onErrorGetDir);
         }, this.onErrorGetDir);
-      })
+      }, this.onErrorGetDir.bind(this))
     }
   }
-
+  
   async importBackups() {
     this.statusMessage = ''
     this.progressMessage = ''
@@ -110,13 +111,19 @@ export class RestoreBackupComponent implements OnInit {
               });
           }, (e) => {
             this.success = false
-            console.log("Error: " + e)
+            console.log("Error: " + JSON.stringify(e))
             this.errorMessage += `<p>${_TRANSLATE('Error restoring db ')} : ${dbName} to restoreLocation:  ${restoreLocation} Message: ${JSON.stringify(e)}</p>`
           });
         }, (e) => {
           this.success = false
-          console.log("Error: " + e)
-          this.errorMessage += `<p>${_TRANSLATE('Error restoring db ')} : ${dbName} to restoreLocation:  ${restoreLocation} Message: ${JSON.stringify(e)}</p>`
+          let message = ""
+          if (e.code) {
+            if (e.code === 1) {
+              message = " Backup file not found. "
+            }
+          }
+          console.log(message + "Error: " + JSON.stringify(e))
+          this.errorMessage += `<p>${_TRANSLATE('Error restoring db ')} : ${dbName} to restoreLocation:  ${restoreLocation} ${message} Error: ${JSON.stringify(e)}</p>`
         });
       }
     } else {
@@ -148,93 +155,113 @@ export class RestoreBackupComponent implements OnInit {
   }
 
   async restoreBackups(dirEntries: any[]) {
+
+    const dumpFiles = []
     let copiedDbs = []
-    for (var i = 0; i < dirEntries.length; i++) {
-      const dumpFiles = []
-      let entry = dirEntries[i]
-      console.log("processing directory: " + entry.name)
-      this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + entry.name + "</p>"
-      // const fileNameArray = entry.name.split('_')
-      const dbName = entry.name
-      console.log(`Restoring ${dbName} db`)
-      const db = DB(dbName)
-      // const stream = fileObject.stream();
-      if (this.window.isCordovaApp) {
-        const path = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/' + dbName
+
+    if (this.window.isCordovaApp) {
+      for (var i = 0; i < dirEntries.length; i++) {
+        let entry = dirEntries[i]
+        // const stream = fileObject.stream();
+        let restoreDirRootPath, restoreDbDirEntries: any[]
+        console.log("processing directory: " + entry.name)
+        this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + entry.name + "</p>"
+        // const fileNameArray = entry.name.split('_')
+        const dbName = entry.name
+        console.log(`Restoring ${dbName} db`)
+        const db = DB(dbName)
+        // for Cordova, must fetch the dirs per db
+        restoreDirRootPath = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/' + dbName
         const restoreDbDirHandle: any = await new Promise(resolve =>
-          this.window.resolveLocalFileSystemURL(path, resolve)
+          this.window.resolveLocalFileSystemURL(restoreDirRootPath, resolve)
         );
-        const restoreDbDirEntries: any[] = await new Promise(resolve => {
+        restoreDbDirEntries = await new Promise(resolve => {
           const reader = restoreDbDirHandle.createReader();
           reader.readEntries((entries) => resolve(entries))
         });
         restoreDbDirEntries.sort((a, b) => (a.name > b.name) ? 1 : -1)
         for (var j = 0; j < restoreDbDirEntries.length; j++) {
           let entry = restoreDbDirEntries[j]
-          console.log("processing " + entry.name)
-          dumpFiles.push(entry.name)
-          this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
-          // const fileProcessStatus: any = await new Promise(resolve => {
-          const fileObj:any = await new Promise(resolve => {
-            entry.file(resolve);
-          })
-          // entry.file(async (file) => {
-          const reader = new FileReader();
-          let progressMessage = this.progressMessage
-          reader.onloadend = async function () {
-            // console.log("Successful file read: " + this.result);
-            console.log('Processing Dumpfile: ' + entry.name)
-            progressMessage = 'Processing Dumpfile: ' + entry.name
-            const result = await new Promise(resolve => {
-              db.loadIt(this.result)
-              resolve("Finished process dumpfile.")
-            })
-          };
-          reader.readAsText(fileObj)
-          // })
-          // })
-          // await promisify()
+          await this.restoreDumpfile(entry, dumpFiles, db);
         }
         copiedDbs.push(dbName)
         console.log("finished processing files for " + dbName)
-        if (copiedDbs.length === this.dbNames.length) {
-          this.statusMessage += `<p>${_TRANSLATE("Finished restoring backups. Please wait for indexing to complete.")}</p>`
-        }
-      } else {
-        // const len = this.dbNames.length
-        // const reader = new FileReader();
-        // reader.addEventListener('load', async (event) => {
-        //   const result = event.target.result;
-        //   const stream = new window['Memorystream']
-        //   stream.end(result);
-        //   // copy the database
-        //   console.log(`Restoring ${dbName} db`)
-        //   const db = DB(dbName)
-        //   try {
-        //     await db.load(stream)
-        //     this.statusMessage += `<p>${dbName} ${_TRANSLATE("restored")}</p>`
-        //     copiedDbs.push(dbName)
-        //     if (copiedDbs.length === len) {
-        //       this.statusMessage += `<p>${_TRANSLATE("Finished restoring backups. Please wait for indexing to complete.")}</p>`
-        //     }
-        //   } catch (e) {
-        //     console.log("Error loading db: " + e)
-        //     this.errorMessage += '<p>' + _TRANSLATE("Error restoring backup database. Message: ") + JSON.stringify(e) + '</p>'
-        //   }
-        // });
-        // await reader.readAsText(entry);
       }
+    } else {
+      // browser-based code does a recursive search for files. 
+      // cordova only returns the top-level dirs.
+      const dirEntriesArray = [...dirEntries]
+      const webDirEntries = {}
+      this.dbNames.forEach(dbName => {
+        const entries = dirEntriesArray.filter(entry => {
+          const pathArray = entry.webkitRelativePath.split("/")
+          if (pathArray[1] === dbName) {
+            return entry
+          }
+        })
+        webDirEntries[dbName] = entries
+      })
+      const webDirDbNames = Object.keys(webDirEntries)
+      for (var i = 0; i < webDirDbNames.length; i++) {
+        const dbName = webDirDbNames[i]
+        // console.log(`${property}: ${object[property]}`);
+        console.log("processing directory: " + dbName)
+        this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + dbName + "</p>"
+        console.log(`Restoring ${dbName} db`)
+        const db = DB(dbName)
+        const restoreDbDirEntries = webDirEntries[dbName]
+        restoreDbDirEntries.sort((a, b) => (a.name > b.name) ? 1 : -1)
+        for (var j = 0; j < restoreDbDirEntries.length; j++) {
+          let entry = restoreDbDirEntries[j]
+          await this.restoreDumpfile(entry, dumpFiles, db);
+        }
+        copiedDbs.push(dbName)
+        console.log("finished processing files for " + dbName)
+      }
+    }
+
+    if (copiedDbs.length === this.dbNames.length) {
+      this.statusMessage += `<p>${_TRANSLATE("Finished restoring backups. Please wait for indexing to complete.")}</p>`
     }
   }
 
+  private async restoreDumpfile(entry, dumpFiles: any[], db) {
+    console.log("processing " + entry.name)
+    dumpFiles.push(entry.name)
+    this.statusMessage += "<p>" + _TRANSLATE("Processing ") + entry.name + "</p>"
+    // const fileProcessStatus: any = await new Promise(resolve => {
+    let fileObj
+    if (this.window.isCordovaApp) {
+      fileObj = await new Promise(resolve => {
+        entry.file(resolve);
+      })
+    } else {
+      fileObj = entry
+    }
+    // entry.file(async (file) => {
+    const dumpfileText = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = (e) => {
+        resolve(e.target.result)
+      };
+      reader.readAsText(fileObj)
+    })
+    const result = await new Promise(resolve => {
+      db.loadIt(dumpfileText)
+      resolve("Finished processing dumpfile: " + entry.name)
+    })
+    console.log(result)
+    this.progressMessage = result.toString()
+  }
+
   onErrorGetDir(e) {
-    console.log("Error: " + e)
     let errorMessage
     if (e && e.code && e.code === 1) {
-      errorMessage = "File or directory not found."
+      errorMessage = this["accessingDirectory"] ? this["accessingDirectory"] + " directory not found. Please exit the app, create the " + this["accessingDirectory"] + "  directory, and return." : "File or directory not found."
     } else {
-      errorMessage = e
+      errorMessage = JSON.stringify(e)
     }
+    console.log("Error: " + errorMessage)
     this.errorMessage += `<p>${_TRANSLATE('Error creating directory. Error: ')} ${errorMessage}</p>`
   }
   
