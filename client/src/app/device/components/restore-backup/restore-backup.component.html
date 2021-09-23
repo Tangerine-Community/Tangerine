@@ -17,7 +17,8 @@
             </ul>
             <p>{{'Troubleshooting:'|translate}}</p>
             <ul>
-              <li>{{'Is there is an error and it says "Is Backup a File?: false" - this means that you probably have a backup from a non-encrypted database, which backs up to a directory instead of a file.'|translate}}</li>
+              <li>{{'Is there is an error that says "Is Backup a File?: false" - this means that you probably have a backup from a non-encrypted database, which backs up to a directory instead of a file.'|translate}}</li>
+              <li>{{'When this page opens, it checks if there is a "Documents" directory and creates the necessary "Tangerine", "backups", and "restore" directories. If the "Documents" directory is not available, it will display an error message below. You may use the device\'s File manager (or download Google Files) to create the "Documents" directory in Internal Storage. '|translate}}</li>
             </ul>
             <div *ngIf="showDirectoryDialog">
               <label for="folder">{{'Select folder'|translate}}</label>
