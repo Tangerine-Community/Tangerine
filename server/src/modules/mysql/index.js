@@ -8,7 +8,7 @@ const exec = util.promisify(require('child_process').exec)
 const { spawn } = require('child_process');
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
-const { v4: uuidv4 } = require('uuid');
+import { v4 as UUID } from 'uuid';
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
@@ -65,6 +65,7 @@ module.exports = {
           if (doc.type === 'case') {
             // output case
             await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            let numInf = getItemValue(doc, 'numinf') // Why is this here --- this is very site specific to ARC, no?
             let participant_id = getItemValue(doc, 'participant_id')
             if (participant_id && process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
               participant_id = doc._id + '-' + participant_id
@@ -74,7 +75,7 @@ module.exports = {
             for (const participant of doc.participants) {
               await pushResponse({
                 ...participant,
-                _id: participant_id,
+                _id: UUID(),
                 caseId: doc._id,
                 numInf: participant.participant_id === participant_id ? numInf : '',
                 type: "participant"
