@@ -8,7 +8,7 @@ const exec = util.promisify(require('child_process').exec)
 const { spawn } = require('child_process');
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
-import { v4 as UUID } from 'uuid';
+const { v4: uuidv4 } = require('uuid');
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
@@ -75,7 +75,7 @@ module.exports = {
             for (const participant of doc.participants) {
               await pushResponse({
                 ...participant,
-                _id: UUID(),
+                _id: uuidv4(),
                 caseId: doc._id,
                 numInf: participant.participant_id === participant_id ? numInf : '',
                 type: "participant"
