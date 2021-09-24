@@ -4,6 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { HttpClient } from '@angular/common/http';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
+import {Breadcrumb} from "../../shared/_components/breadcrumb/breadcrumb.component";
+import {_TRANSLATE} from "../../shared/_services/translation-marker";
+import * as XLSX from "xlsx";
 
 @Component({
   selector: 'app-print-form-as-table',
@@ -13,8 +16,13 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 export class PrintFormAsTableComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;
   groupDetails;
+  groupLabel;
   meta;
   myForm;
+  breadcrumbs:Array<Breadcrumb> = []
+  title = _TRANSLATE("Form Metadata")
+  isExporting: boolean;
+  
   constructor(private route: ActivatedRoute,
     private http: HttpClient,
     private tangerineFormsService:TangerineFormsService,
@@ -22,9 +30,18 @@ export class PrintFormAsTableComponent implements OnInit {
     private groupsService: GroupsService) { }
 
   async ngOnInit() {
+    
     const groupId = this.route.snapshot.paramMap.get('groupId');
-    const formId = this.route.snapshot.paramMap.get('formId');
     this.groupDetails = await this.groupsService.getGroupInfo(groupId);
+    this.groupLabel = this.groupDetails.label;
+    const formId = this.route.snapshot.paramMap.get('formId');
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: formId,
+        url: formId
+      }
+    ]
+    
     const forms = await this.tangerineFormsService.getFormsInfo(groupId);
     this.myForm = forms.find(e => e['id'] === formId);
     const formHtml = await this.http.get(`/editor/${groupId}/content/${this.myForm.id}/form.html`, { responseType: 'text' }).toPromise();
@@ -34,6 +51,15 @@ export class PrintFormAsTableComponent implements OnInit {
     `;
     this.meta = (container.querySelector('tangy-form')).getMeta();
     console.log("hoot")
+  }
+
+  async export() {
+    this.isExporting = true;
+    // const worksheet = XLSX.utils.json_to_sheet(this.deviceInfos);
+    // const workbook = XLSX.utils.book_new();
+    // XLSX.utils.book_append_sheet(workbook, worksheet, 'devices');
+    // XLSX.writeFile(workbook, 'devices.xlsx');
+    // this.isExporting = false;
   }
 
 }
