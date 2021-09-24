@@ -29,10 +29,17 @@ export class GroupDeviceService {
 
   async list(groupId) {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
-    const response  = await groupDevicesDb.allDocs({include_docs:true})
+    // const response  = await groupDevicesDb.allDocs({include_docs:true})
+    // const response  = await groupDevicesDb.query({
+    //   'listDevices'
+    // })
+    const response  = await groupDevicesDb.query('listDevices', {
+      include_docs: false
+    })
+    // console.log("response: " + JSON.stringify(response))
     return response
       .rows
-      .map(row => row.doc)
+      .map(row => row.value)
   }
   
   async create(groupId, deviceData:any):Promise<GroupDevice> {
