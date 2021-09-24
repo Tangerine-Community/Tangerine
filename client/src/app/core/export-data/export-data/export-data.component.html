@@ -4,15 +4,27 @@
       <div class="container">
         <mat-card>
           <div class="mat-card-header-text">
-            Export Backup
+            {{'Export Backup'|translate}}
           </div>
           <mat-card-content class="card-content">
-            <p>Export Data creates a backup of all of your records and saves it to your device.</p>
+            <p>{{'Export Data creates a backup of all of your records and saves it to your device.'|translate}}</p>
+            <p>{{'Backup directory'|translate}} : {{backupDir}}</p>
           </mat-card-content>
+<!--          <input type="number" #splitFiles maxlength="5">-->
+          <div [hidden]="!shouldShow">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Docs per backup file</mat-label>
+              <input type="number" matInput #splitFiles [value]="splitFilesValue" maxlength="5">
+              <mat-hint align="start"><strong>Number of docs per backup file</strong></mat-hint>
+            </mat-form-field>
+          </div>
           <mat-card-actions class="card-actions">
             <button color="primary" mat-raised-button (click)="exportAllRecords()">{{'EXPORT DATA FOR ALL USERS'|translate}}</button>
           </mat-card-actions>
         </mat-card>
+        <div [innerHTML]="progressMessage" class="status"></div>
+        <div [innerHTML]="statusMessage" class="status"></div>
+        <div [innerHTML]="errorMessage" class="error"></div>
       </div>
     </ng-template>
   </mat-tab>
