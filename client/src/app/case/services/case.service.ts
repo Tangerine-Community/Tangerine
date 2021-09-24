@@ -543,7 +543,7 @@ class CaseService {
    * Participant API
    */
 
-  createParticipant(caseRoleId = ''):CaseParticipant {
+  createParticipant(caseRoleId = ''): CaseParticipant {
     const id = UUID()
     const data = {}
     const caseParticipant = <CaseParticipant>{
@@ -552,25 +552,7 @@ class CaseService {
       inactive: false,
       data
     }
-    this.case.participants.push(caseParticipant)
-    for (let caseEvent of this.case.events) {
-      const caseEventDefinition = this
-        .caseDefinition
-        .eventDefinitions
-        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
-      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (
-          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseRoleId)
-          && 
-          (
-            eventFormDefinition.autoPopulate || 
-            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
-          )
-        ) {
-          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
-        }
-      }
-    }
+    this.addParticipant(caseParticipant)
     return caseParticipant
   }
 
@@ -585,6 +567,18 @@ class CaseService {
 
   addParticipant(caseParticipant:CaseParticipant) {
     this.case.participants.push(caseParticipant)
+    this.updateParticipantEventForms(caseParticipant)
+  }
+
+  setParticipantCaseRole(participantId: string, caseRoleId: string) {
+    let caseParticipant = this.case.participants.find(participant => participant.id === participantId)
+    if (caseParticipant) {
+      caseParticipant.caseRoleId = caseRoleId
+      this.updateParticipantEventForms(caseParticipant)
+    }
+  }
+
+  updateParticipantEventForms(caseParticipant: CaseParticipant) {
     for (let caseEvent of this.case.events) {
       const caseEventDefinition = this
         .caseDefinition
@@ -592,10 +586,10 @@ class CaseService {
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
         if (
-          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)
-          && 
+          eventFormDefinition.forCaseRole.split(',').map(e => e.trim()).includes(caseParticipant.caseRoleId)
+          &&
           (
-            eventFormDefinition.autoPopulate || 
+            eventFormDefinition.autoPopulate ||
             (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
           )
         ) {
