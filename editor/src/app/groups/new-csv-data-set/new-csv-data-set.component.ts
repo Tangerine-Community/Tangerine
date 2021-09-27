@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TangerineFormInfo } from 'src/app/shared/_classes/tangerine-form.class';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -20,6 +21,7 @@ export class NewCsvDataSetComponent implements OnInit {
       url: 'csv-data-sets'
     }]
 
+  templateSelections:any = {}
   months = []
   years = []
   selectedMonth = '*'
@@ -63,21 +65,36 @@ export class NewCsvDataSetComponent implements OnInit {
   }
 
   async getForms() {
+    const csvTemplates = (await this.formsService.listCsvTemplates(this.groupId))
     const config = await this.serverConfig.getServerConfig()
-    const appendedForms = [
+    const appendedForms = <Array<TangerineFormInfo>>[
       {id: 'participant',title:_TRANSLATE('Participant')},
       {id: 'event-form',title:_TRANSLATE('Event Form')},
       {id: 'case-event',title: _TRANSLATE('Case Event')}]
-    this.forms = (await this.formsService.getFormsInfo(this.groupId));
+    let forms = await this.formsService.getFormsInfo(this.groupId)
     if(config.enabledModules.includes('case')){
-      this.forms = [...this.forms, ...appendedForms]
+      forms = [...forms, ...appendedForms]
     }
+    this.forms = forms.map(form => {
+      return {
+        ...form,
+        csvTemplates: csvTemplates.filter(template => template.formId === form.id)
+      }
+    })
+    this.templateSelections = this.forms.reduce((templateSelections, form) => {
+      return {
+        ...templateSelections,
+        [form.id]: ''
+      }
+    })
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }
 
   async process() {
-    const forms = this.selectedForms.toString()
+    const forms = this.selectedForms
+      .map(formId => this.templateSelections[formId] ? `${formId}:${this.templateSelections[formId]}` : formId)
+      .toString()
     if ((this.selectedMonth === '*' && this.selectedYear !== '*') || (this.selectedMonth !== '*' && this.selectedYear === '*')) {
       alert('You must choose a month and a year.')
       return

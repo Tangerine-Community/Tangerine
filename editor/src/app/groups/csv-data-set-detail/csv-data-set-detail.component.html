@@ -16,11 +16,16 @@
     [dataSource]="datasetDetail.csvs"
     class="mat-elevation-z8 tangy-full-width"
   >
-    <ng-container matColumnDef="formId">
-      <th mat-header-cell *matHeaderCellDef>{{'Form ID'|translate}}</th>
-      <td mat-cell *matCellDef="let dataSet">{{ dataSet.formId }}</td>
+    <ng-container matColumnDef="formTitle">
+      <th mat-header-cell *matHeaderCellDef>{{'Form'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet.formTitle }}</td>
     </ng-container>
 
+    <ng-container matColumnDef="csvTemplateTitle">
+      <th mat-header-cell *matHeaderCellDef>{{'CSV Template'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet.csvTemplateTitle }}</td>
+    </ng-container>
+    
     <ng-container matColumnDef="inProgress">
       <th mat-header-cell *matHeaderCellDef>{{'Status'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
