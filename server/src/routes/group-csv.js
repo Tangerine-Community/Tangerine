@@ -7,6 +7,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra')
 const axios = require('axios')
+const tangyModules = require('../modules/index.js')()
 
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
@@ -31,7 +32,14 @@ const generateCSV = async (req, res) => {
     sanitizedExtension = '-sanitized'
   }
   let dbName = `${groupId}-reporting${sanitizedExtension}`;
-  const forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+  let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+  if(tangyModules.enabledModules.includes('case')){
+    const appendedForms = [
+      {id: 'participant',title:'Participant'},
+      {id: 'event-form',title:'Event Form'},
+      {id: 'case-event',title: 'Case Event'}];
+      forms = [...forms, ...appendedForms]
+  }
   const formInfo = forms.find(formInfo => formInfo.id === formId)
   const title = formInfo.title.replace(/ /g, '_')
   // this.group = await this.groupsService.getGroupInfo(groupId);
