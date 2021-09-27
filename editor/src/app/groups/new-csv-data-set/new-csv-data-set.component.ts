@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TangerineFormInfo } from 'src/app/shared/_classes/tangerine-form.class';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
+import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { GroupsService } from '../services/groups.service';
@@ -36,6 +38,7 @@ export class NewCsvDataSetComponent implements OnInit {
     private route: ActivatedRoute,
     private formsService: TangerineFormsService,
     private groupsService:GroupsService,
+    private serverConfig: ServerConfigService,
     private errorHandler: TangyErrorHandler) {
     this.breadcrumbs = [
       ...this.breadcrumbs,
@@ -63,7 +66,16 @@ export class NewCsvDataSetComponent implements OnInit {
 
   async getForms() {
     const csvTemplates = (await this.formsService.listCsvTemplates(this.groupId))
-    this.forms = (await this.formsService.getFormsInfo(this.groupId)).map(form => {
+    const config = await this.serverConfig.getServerConfig()
+    const appendedForms = <Array<TangerineFormInfo>>[
+      {id: 'participant',title:_TRANSLATE('Participant')},
+      {id: 'event-form',title:_TRANSLATE('Event Form')},
+      {id: 'case-event',title: _TRANSLATE('Case Event')}]
+    let forms = await this.formsService.getFormsInfo(this.groupId)
+    if(config.enabledModules.includes('case')){
+      forms = [...forms, ...appendedForms]
+    }
+    this.forms = forms.map(form => {
       return {
         ...form,
         csvTemplates: csvTemplates.filter(template => template.formId === form.id)

@@ -1,6 +1,10 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <div *ngIf="datasetDetail" class="tangy-full-width">
-    <p><strong>{{'File Name'|translate}}</strong>: <a class="tangy-foreground-secondary" [href]="datasetDetail.downloadUrl">{{datasetDetail.fileName}}</a></p>
+    <p><strong>{{'File Name'|translate}}</strong>: 
+      <span *ngIf="!datasetDetail.complete">{{datasetDetail.fileName}}</span>
+      <a *ngIf="datasetDetail.complete&& datasetDetail.fileExists" 
+          class="tangy-foreground-secondary" [href]="datasetDetail.downloadUrl">{{datasetDetail.fileName}}</a>
+    </p>
     <p><strong>{{'Include PII'|translate}}</strong>: {{datasetDetail.includePii}}</p>
     <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail.complete? 'Complete':'In Progress' |translate}}</p>
     <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail.month?datasetDetail.month: '*'}}</p>
@@ -34,7 +38,7 @@
     <ng-container matColumnDef="outputPath">
       <th mat-header-cell *matHeaderCellDef>{{'Download File'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
-        <a [disabled]="dataSet.inProgress" mat-icon-button [href]="datasetDetail.baseUrl+ dataSet.outputPath">
+        <a *ngIf="dataSet.complete" mat-icon-button [href]="datasetDetail.baseUrl+ dataSet.outputPath">
           <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
         </a>
       </td>

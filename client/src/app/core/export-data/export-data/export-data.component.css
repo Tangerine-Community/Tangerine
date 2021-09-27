@@ -7,3 +7,21 @@ mat-card {
   font-size: 24px;
   font-weight: 400;
 }
+
+.status {
+  margin-top: 2em;
+  font-size: large;
+}
+
+.error {
+  text-align: center;
+  margin-top: 2em;
+  color: red;
+  font-size: large;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
