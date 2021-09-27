@@ -48,5 +48,6 @@ export class AppConfig {
   disableDeviceUserFilteringByAssignment:boolean 
   // List of views to skip optimization of after a sync.
   doNotOptimize: Array<string>
+  dbBackupSplitNumberFiles: number;
 }
 

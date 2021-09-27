@@ -166,7 +166,7 @@ export class SyncService {
         message: window['t']('Optimizing data. This may take several minutes. Please wait...'),
         remaining: null
       })
-      await this.indexViews()
+      await this.indexViews(null)
     }
     return this.replicationStatus
   }
@@ -223,8 +223,19 @@ export class SyncService {
     return formStats;
   }
 
-// Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
-  async indexViews() {
+  /**
+   * Sync Protocol 2 view indexer. This excludes views for SP1 and includes custom views from content developers.
+   * 
+   * @param username - only passed in when restoring a database.
+   */
+  async indexViews(username) {
+    let db
+    if (username) {
+      db = await this.userService.getUserDatabase(username)
+    } else {
+      db = await this.userService.getUserDatabase()
+    }
+    
     let exclude = [
       'tangy-form/responsesLockedAndNotUploaded',
       'tangy-form/responsesUnLockedAndNotUploaded',
@@ -237,6 +248,7 @@ export class SyncService {
       'tangy-form',
       'find-docs-by-form-id-pageable/find-docs-by-form-id-pageable'
     ]
+
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.doNotOptimize && Array.isArray(appConfig.doNotOptimize)) {
       exclude = [
@@ -244,7 +256,7 @@ export class SyncService {
         ...appConfig.doNotOptimize
       ]
     }
-    const db = await this.userService.getUserDatabase()
+
     const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
     console.log(`Indexing ${result.rows.length} views.`)
     db.db.on('indexing', async (progress) => {
@@ -469,7 +481,7 @@ export class SyncService {
         message: window['t']('Optimizing data. This may take several minutes. Please wait...'),
         remaining: null
       })
-      await this.indexViews()
+      await this.indexViews(null)
     }
     
     return status

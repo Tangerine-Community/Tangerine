@@ -4,6 +4,21 @@ const fs = require('fs-extra');
 const sanitize = require('sanitize-filename');
 const axios = require('axios')
 const writeFile = util.promisify(fs.writeFile);
+
+async function getUser1HttpInterface() {
+  const body = await axios.post('http://localhost/login', {
+    username: process.env.T_USER1,
+    password: process.env.T_USER1_PASSWORD
+  })
+  const token = body['data']['data']['token']
+  let http = axios.create({
+    headers: {
+      authorization: token
+    },
+    baseUrl: 'http://localhost'
+  })
+  return http
+}
 const writeState = async function (state) {
   await writeFile(state.statePath, JSON.stringify(state, null, 2))
 }
@@ -35,6 +50,12 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
 }
 
 async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', includePii = false) {
+  const http = await getUser1HttpInterface()
+  const group = (await http.get(`/nest/group/read/${groupId}`)).data
+  const groupLabel = group.label.replace(/ /g, '_')
+  const options = {
+    replacement: '_'
+  }
   let state = {
     dbName: `${groupId}-reporting${includePii ? '-sanitized' : ''}`,
     formIds,
@@ -59,8 +80,15 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     const formId = csv.formId
     state.csvs.find(csv => csv.formId === formId).inProgress = true
     await writeState(state)
-    const csvOutputPath = `${outputPath.replace('.zip', '')}-${formId}.csv`
-    const csvStatePath = `${outputPath.replace('.zip', '')}-${formId}.state.json`
+    const forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+    const formInfo = forms.find(formInfo => formInfo.id === formId)
+    const formTitle = formInfo
+      ? formInfo.title.replace(/ /g, '_')
+      : formId
+    const groupFormname = sanitize(groupLabel + '-' + formTitle, options)
+    const fileName = `${groupFormname}${includePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
+    const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
+    const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
     generateCsv(state.dbName, formId, csvOutputPath, year, month, csv.csvTemplateId)
     while (!await fs.pathExists(csvStatePath)) {
       await sleep(1*1000)

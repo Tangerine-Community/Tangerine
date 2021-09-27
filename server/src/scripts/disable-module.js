@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const clearReportingCache = require('../reporting/clear-reporting-cache')
+const disableModule = require('../modules/disable-module.js')
 if (process.argv[2] === '--help') {
-  console.log('Clears reporting caches.')
+  console.log('Disable a module by name.')
   console.log('Usage:')
-  console.log('   reporting-cache-clear')
+  console.log('   disable-module <moduleName>')
   process.exit()
 }
-clearReportingCache()
+disableModule(process.argv[2])

@@ -14,7 +14,7 @@
 T_HOST_NAME='example.com'
 # Set to HTTPS for redirecting any requests to https. However you will need to put a reverse proxy with SSL in front.
 T_PROTOCOL="http"
-# Administrator User for logging into 
+# Administrator User for logging into Tangerine -- Do not change the username until after the first login
 T_USER1="user1"
 T_USER1_PASSWORD="password"
 # If using Sync Protocol 1, this is the password tablets will use to authenticate when uploading data.
