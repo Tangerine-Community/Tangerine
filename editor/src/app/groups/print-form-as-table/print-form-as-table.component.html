@@ -50,11 +50,6 @@
         <th>Hidden</th>
         <th></th>
         <ng-container *ngFor="let section of meta?.items;let index= index">
-<!--        <ng-template *ngFor="let section of meta?.items;let index= index">-->
-<!--      <div *ngFor="let section of meta?.items;let index= index">-->
-<!--        <p>Section {{index+1}}</p>-->
-<!--        <p>ID: {{section.id}}</p>-->
-
           <tr *ngFor="let input of section.inputs">
             <td>{{section.id}}</td>
             <td>{{input.name}}</td>
