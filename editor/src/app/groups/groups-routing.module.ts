@@ -63,6 +63,7 @@ import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-te
 import { CsvDataSetsComponent } from './csv-data-sets/csv-data-sets.component';
 import { NewCsvDataSetComponent } from './new-csv-data-set/new-csv-data-set.component';
 import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-detail.component';
+import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -85,6 +86,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/issues/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId', component: IssueComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues', component: GroupIssuesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/database-conflicts', component: GroupDatabaseConflictsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },

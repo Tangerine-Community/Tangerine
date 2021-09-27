@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
+import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { GroupsService } from '../services/groups.service';
@@ -35,6 +36,7 @@ export class NewCsvDataSetComponent implements OnInit {
     private route: ActivatedRoute,
     private formsService: TangerineFormsService,
     private groupsService:GroupsService,
+    private serverConfig: ServerConfigService,
     private errorHandler: TangyErrorHandler) {
     this.breadcrumbs = [
       ...this.breadcrumbs,
@@ -61,7 +63,15 @@ export class NewCsvDataSetComponent implements OnInit {
   }
 
   async getForms() {
-    this.forms = (await this.formsService.getFormsInfo(this.groupId));;
+    const config = await this.serverConfig.getServerConfig()
+    const appendedForms = [
+      {id: 'participant',title:_TRANSLATE('Participant')},
+      {id: 'event-form',title:_TRANSLATE('Event Form')},
+      {id: 'case-event',title: _TRANSLATE('Case Event')}]
+    this.forms = (await this.formsService.getFormsInfo(this.groupId));
+    if(config.enabledModules.includes('case')){
+      this.forms = [...this.forms, ...appendedForms]
+    }
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }
