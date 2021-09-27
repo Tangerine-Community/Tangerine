@@ -111,12 +111,15 @@ const listCSVDataSets = async (req, res) => {
     const http = await getUser1HttpInterface()
     const data = result.docs.map(async e => {
       let complete = false;
+      let fileExists = false;
       try {
         complete = (await http.get(e.stateUrl)).data.complete
+        fileExists = await fs.pathExists(`/csv/${e.fileName}`)
       } catch (error) {
         complete = false
+        fileExists = false
       }
-      return ({ ...e, complete, numberOfDocs })
+      return ({ ...e, complete, fileExists, numberOfDocs })
     })
     res.send(await Promise.all(data))
   } catch (error) {
