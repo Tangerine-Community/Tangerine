@@ -173,6 +173,7 @@ module.exports.issuesOfTypeConflictByConflictingDocId = {
 } 
 
 module.exports.listDevices =  {
+  database: 'devices',
   map: function (doc) {
     var replicationStatus
     if (doc.replicationStatuses && doc.replicationStatuses.length > 0) {
