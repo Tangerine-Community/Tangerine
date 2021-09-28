@@ -97,23 +97,16 @@ export class RestoreBackupComponent implements OnInit {
             fileEntry.copyTo(directory, dbName, async () => {
                 this.success = true
                 console.log(`${dbName} copied!`);
-                // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.applicationStorageDirectory}/databases/${dbName}`);
                 this.statusMessage += `<p>${_TRANSLATE('File restored from ')} ${directory.fullPath}${dbName}</p>`
                 copiedDbs.push(dbName)
                 if (copiedDbs.length === len) {
                   this.statusMessage += `<p>${_TRANSLATE('Done! Please exit the app and restart.')}</p>`
-                  // Unable to open the shared-user-database to index - possibly due to not being able to open the lockbox yet and get the device key.
-                  // this.statusMessage += `<p>${_TRANSLATE('Finished restoring backups. Please wait for indexing to complete.')}</p>`
-                  // this.statusMessage += `<p>${_TRANSLATE("Optimizing data. This may take several minutes. Please wait...")}</p>`
-                  // await this.syncService.indexViews("admin")
-                  // this.progressMessage = `${_TRANSLATE("Done! Please exit the app and restart.")}`
-                  // this.statusMessage += `<p>${_TRANSLATE("Done! Please exit the app and restart.")}</p>`
                 }
               },
-              function(e) {
+              (e) => {
                 this.success = false
-                console.log('Unable to copy DB' + dbName);
-                this.errorMessage += `<p>${_TRANSLATE('Error restoring db ')} : ${dbName} to restoreLocation:  ${restoreLocation} Message: ${JSON.stringify(e)}</p>`
+                console.log('Unable to copy DB ' + dbName);
+                this.errorMessage += `<p>${_TRANSLATE('Error restoring db ')} : ${dbName} to restoreLocation:  ${restoreLocation} Is Backup a File?: ${fileEntry.isFile} Message: ${JSON.stringify(e)}</p>`
               });
           }, (e) => {
             this.success = false
@@ -163,6 +156,8 @@ export class RestoreBackupComponent implements OnInit {
       this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + entry.name + "</p>"
       // const fileNameArray = entry.name.split('_')
       const dbName = entry.name
+      console.log(`Restoring ${dbName} db`)
+      const db = DB(dbName)
       // const stream = fileObject.stream();
       if (this.window.isCordovaApp) {
         const path = cordova.file.externalRootDirectory + 'Documents/Tangerine/restore/' + dbName
@@ -173,7 +168,6 @@ export class RestoreBackupComponent implements OnInit {
           const reader = restoreDbDirHandle.createReader();
           reader.readEntries((entries) => resolve(entries))
         });
-
         restoreDbDirEntries.sort((a, b) => (a.name > b.name) ? 1 : -1)
         for (var j = 0; j < restoreDbDirEntries.length; j++) {
           let entry = restoreDbDirEntries[j]
@@ -189,8 +183,6 @@ export class RestoreBackupComponent implements OnInit {
           let progressMessage = this.progressMessage
           reader.onloadend = async function () {
             // console.log("Successful file read: " + this.result);
-            console.log(`Restoring ${dbName} db`)
-            const db = DB(dbName)
             console.log('Processing Dumpfile: ' + entry.name)
             progressMessage = 'Processing Dumpfile: ' + entry.name
             const result = await new Promise(resolve => {
