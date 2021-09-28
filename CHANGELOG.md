@@ -1,5 +1,9 @@
 # What's new
 
+## v3.18.7
+__Fixes__
+- Back-ported some fixes to the backup and restore feature from the v3.19.1 branch.
+
 ## v3.18.6
 
 __Updates__
