@@ -8,8 +8,14 @@ mat-card {
   font-weight: 400;
 }
 
+.progress {
+  margin-top: 1em;
+  font-size: large;
+  background: greenyellow;
+}
+
 .status {
-  margin-top: 2em;
+  margin-top: 1em;
   font-size: large;
 }
 
@@ -24,4 +30,12 @@ label {
   font-weight: bold;
   display: block;
   margin-bottom: 10px;
+}
+
+#progressLabel {
+  margin-top: 1em;
+}
+
+.logs {
+  margin-top: 1em;
 }
