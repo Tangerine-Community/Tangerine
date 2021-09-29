@@ -115,6 +115,10 @@ T_ARCHIVE_APKS_TO_DISK="true"
 # Set to false if you would not want to archive PWAs to Disk when creating a release
 T_ARCHIVE_PWAS_TO_DISK="true"
 
+# The value to use for issuer parameter when signing JWTs.
+T_JWT_ISSUER="Tangerine"
+# The validity period for a signed JWT Token - determines how long before a token is conidered invalid. Expressed in seconds or a string describing a time span as defined in https://github.com/zeit/ms
+T_JWT_EXPIRES_IN="1h"
 #
 # Development
 #
