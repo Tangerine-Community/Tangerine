@@ -393,6 +393,34 @@ class CaseService {
     }
   }
 
+  activateEvent(eventId: string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === eventId
+          ? {
+            ...event,
+            inactive: false
+          }
+          : event
+      })
+    }
+  }
+
+  deactivateEvent(eventId: string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === eventId
+          ? {
+            ...event,
+            inactive: true
+          }
+          : event
+      })
+    }
+  }
+
   /*
    * Event Form API
    */
