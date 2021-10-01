@@ -4,9 +4,9 @@
 # Start container.
 #
 
-docker build -t tangerine/python-tangerine-synapse-connector:local .
+T_CONTAINER_NAME="python-tangerine-synapse-clear-cache"
 
-T_CONTAINER_NAME="python-tangerine-synapse-connector"
+docker build -t tangerine/${T_CONTAINER_NAME}:local .
 
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
@@ -18,9 +18,9 @@ RUN_OPTIONS="
   --entrypoint=\"\"
 "
 # --entrypoint=\"/usr/local/bin/python /clear-cache.py\"
-CMD="docker run -it $RUN_OPTIONS tangerine/python-tangerine-synapse-connector:local python /clear-cache.py"
+CMD="docker run -it $RUN_OPTIONS tangerine/$T_CONTAINER_NAME:local python /clear-cache.py"
 
 echo "$CMD"
 eval ${CMD}
 
-docker logs -f python-tangerine-synapse-connector
+docker logs -f $T_CONTAINER_NAME
