@@ -24,7 +24,8 @@ interface ParticipantInfo {
 @Component({
   selector: 'app-event',
   templateUrl: './event.component.html',
-  styleUrls: ['./event.component.css']
+  styleUrls: ['./event.component.css'],
+  providers: [ CaseService ]
 })
 export class EventComponent implements OnInit, AfterContentInit {
 
