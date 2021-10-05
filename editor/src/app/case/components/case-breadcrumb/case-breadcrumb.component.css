@@ -30,3 +30,6 @@
     color: var(--primary-text-color-overlay) !important;
 }
 
+.back-to-cases {
+  cursor: pointer;
+}
