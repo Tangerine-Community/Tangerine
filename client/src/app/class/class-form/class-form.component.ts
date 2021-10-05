@@ -107,8 +107,7 @@ export class ClassFormComponent implements OnInit {
       await this.formPlayer.render()
 
       // this.formPlayer.formEl.addEventListener('TANGY_FORM_UPDATE', async (event) => {
-      this.formPlayer.$submit.subscribe(async () => {
-        let state = this.formPlayer.formEl.store.getState()
+      this.formPlayer.$afterSubmit.subscribe(async (state:any) => {
         state.complete = false
         if (typeof this.formResponse !== 'undefined') {
           // let formItems = []
