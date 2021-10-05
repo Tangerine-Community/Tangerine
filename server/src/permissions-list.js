@@ -11,6 +11,7 @@ const permissionsList = {
       'can_access_uploads',
       'can_access_download_csv',
       'can_access_cases',
+        'can_delete_cases',
       'can_access_issues',
     'can_access_author',
       'can_access_forms',

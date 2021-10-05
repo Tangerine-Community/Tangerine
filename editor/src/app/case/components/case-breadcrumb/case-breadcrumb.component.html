@@ -1,9 +1,7 @@
 <div class="primary">
   <iron-icon icon="clear" class="back-to-cases" (click)="goBackToCases()"></iron-icon>
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
-<!-- TODO *appHasAPermission="let i;group:group._id; permission:'can_delete_cases'"-->
-
-  <span id="delete-case">
+  <span id="delete-case" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_delete_cases')">
     <span *ngIf="caseInstance.archived; else otherContent" class="archived">
     Archived
     </span>

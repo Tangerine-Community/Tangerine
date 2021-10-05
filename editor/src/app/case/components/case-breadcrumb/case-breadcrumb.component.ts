@@ -3,6 +3,7 @@ import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {Case} from "../../classes/case.class";
+import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 
 @Component({
   selector: 'app-case-breadcrumb',
@@ -18,10 +19,12 @@ export class CaseBreadcrumbComponent implements OnInit {
   primaryText = ''
   secondaryText = ''
   secondaryLink = ''
+  groupId = ''
 
   constructor(
     private caseService: CaseService,
     private router: Router,
+    private authenticationService: AuthenticationService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -29,6 +32,7 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   ngOnInit() {
     this.caseInstance = this.caseService.case
+    this.groupId = window.location.pathname.split('/')[2]
     const caseEvent = this.caseEventId
       ? this.caseInstance
         .events
