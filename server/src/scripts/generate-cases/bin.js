@@ -42,12 +42,10 @@ try {
 
 async function setLocation(groupId) {
   // Get a Device to set the location
-
-  const response  = await groupDevicesDb.allDocs({include_docs:true})
-  const devices = response
-      .rows
-      .map(row => row.doc)
-
+  const devices  = (await groupDevicesDb.allDocs({include_docs:true}))
+    .rows
+    .map(row => row.doc)
+    .filter(doc => doc._id.indexOf('_design') === -1)
   if (devices.length > 0) {
     let device = devices[0]
     let syncLocation = device.syncLocations[0]
@@ -68,6 +66,7 @@ async function go() {
     // Change the case's ID.
     const caseId = uuidv1()
     caseDoc._id = caseId
+    caseDoc.groupId = groupId
     // note that participant_id and participantUuid are different!
     // const participant_id = Math.round(Math.random() * 1000000)
     const participantUuid = uuidv1()
