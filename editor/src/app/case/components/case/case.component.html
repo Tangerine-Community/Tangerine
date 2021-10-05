@@ -4,6 +4,20 @@
   <h1>
     <span [innerHTML]="templateTitle|unsanitizeHtml"></span>
   </h1>
+  <span id="case-actions" >
+    <span *ngIf="caseService.case.archived" class="archived">
+      [ Archived ]
+      <a mat-icon-button (click)="unarchive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_unarchive_cases')">
+        <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
+      </a>
+    </span>
+    <a mat-icon-button (click)="delete()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_delete_cases') && !caseService.case.archived">
+      <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
+    </a>
+    <a mat-icon-button (click)="archive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_archive_cases') && !caseService.case.archived">
+      <i class="material-icons mat-32 tangy-location-list-icon">archive</i> 
+    </a>
+  </span>
   <div secondary>
     <span [innerHTML]="templateDescription|unsanitizeHtml" class="description"></span>
     <div class="confirm-correct-case-prompt" *ngIf="caseService.openCaseConfirmed === false">

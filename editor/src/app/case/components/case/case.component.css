@@ -1,4 +1,13 @@
 
+#case-actions {
+  float: right;
+  margin-left: 15px;
+}
+
+.archived {
+  font-style: italic;
+  color: red;
+}
 
 .confirm-correct-case-prompt {
     width: 100%;
