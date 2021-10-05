@@ -1,16 +1,6 @@
 <div class="primary">
   <iron-icon icon="clear" class="back-to-cases" (click)="goBackToCases()"></iron-icon>
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
-  <span id="delete-case" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_delete_cases')">
-    <span *ngIf="caseInstance.archived; else otherContent" class="archived">
-    Archived
-    </span>
-    <ng-template #otherContent>
-    <a mat-icon-button (click)="delete()">
-            <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
-    </a>
-    </ng-template>
-  </span>
 </div>
 <div class="secondary" *ngIf="secondaryText">
     <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>

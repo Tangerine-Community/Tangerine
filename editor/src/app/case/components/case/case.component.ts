@@ -1,11 +1,13 @@
 import { Component, AfterContentInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
 import {Issue} from "../../classes/issue.class";
 import {GroupIssuesService} from "../../../groups/services/group-issues.service";
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -35,7 +37,9 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     caseService: CaseService,
+    private router: Router,
     private ref: ChangeDetectorRef,
+    private authenticationService: AuthenticationService,
     private groupIssuesService:GroupIssuesService,
   ) {
     ref.detach()
@@ -45,6 +49,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   }
 
   async ngAfterContentInit() {
+    this.groupId = window.location.pathname.split('/')[2]
     const caseId = window.location.hash.split('/')[2]
     if (!this.caseService.case || caseId !== this.caseService.case._id) {
       await this.caseService.load(caseId)
@@ -53,7 +58,6 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService.setContext()
     this.window.caseService = this.caseService
     this.onCaseOpen()
-    this.groupId = this.caseService.case['groupId']
     try {
       let queryResults = await this.groupIssuesService.query(this.groupId, {
         fun: "issuesByCaseId",
@@ -113,11 +117,38 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   ngOnDestroy(){
     eval(this.caseService.caseDefinition.onCaseClose)
   }
+
   async onSubmit() {
     const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
     const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
     await this.caseService.save()
     this.calculateTemplateData()
+  }
+
+  async archive() {
+    const confirmation = confirm(_TRANSLATE('Are you sure you want to archive this case?'))
+    if (confirmation) {
+      await this.caseService.archive()
+      this.ref.detectChanges()
+    }
+  }
+
+  async unarchive() {
+    const confirmation = confirm(_TRANSLATE('Are you sure you want to unarchive this case?'))
+    if (confirmation) {
+      await this.caseService.unarchive()
+      this.ref.detectChanges()
+    }
+  }
+
+  async delete() {
+    const confirmDelete = confirm(
+      _TRANSLATE('Are you sure you want to delete this case? You will not be able to undo the operation')
+    );
+    if (confirmDelete) {
+      await this.caseService.delete()
+      this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
+    }
   }
 
 }

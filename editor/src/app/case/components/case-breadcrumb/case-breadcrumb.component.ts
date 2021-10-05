@@ -1,9 +1,8 @@
 import { Router } from '@angular/router';
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {Case} from "../../classes/case.class";
-import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 
 @Component({
   selector: 'app-case-breadcrumb',
@@ -19,12 +18,10 @@ export class CaseBreadcrumbComponent implements OnInit {
   primaryText = ''
   secondaryText = ''
   secondaryLink = ''
-  groupId = ''
 
   constructor(
     private caseService: CaseService,
     private router: Router,
-    private authenticationService: AuthenticationService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -32,7 +29,6 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   ngOnInit() {
     this.caseInstance = this.caseService.case
-    this.groupId = window.location.pathname.split('/')[2]
     const caseEvent = this.caseEventId
       ? this.caseInstance
         .events
@@ -76,17 +72,6 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   goBackToCases() {
     this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
-  }
-
-  async delete() {
-    const confirmDelete = confirm(
-      _TRANSLATE('Are you sure you want to delete this case? You will not be able to undo the operation')
-    );
-    if (confirmDelete) {
-      console.log("Deleting")
-      await this.caseService.delete()
-      this.goBackToCases()
-    }
   }
 
 }
