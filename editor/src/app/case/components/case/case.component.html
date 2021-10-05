@@ -7,16 +7,16 @@
   <span id="case-actions" >
     <span *ngIf="caseService.case.archived" class="archived">
       [ Archived ]
-      <a mat-icon-button (click)="unarchive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_unarchive_cases')">
-        <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
-      </a>
+      <paper-button class="button" mat-icon-button (click)="unarchive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_unarchive_cases')">
+        <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i> Unarchive
+      </paper-button>
     </span>
-    <a mat-icon-button (click)="delete()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_delete_cases') && !caseService.case.archived">
-      <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
-    </a>
-    <a mat-icon-button (click)="archive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_archive_cases') && !caseService.case.archived">
-      <i class="material-icons mat-32 tangy-location-list-icon">archive</i> 
-    </a>
+    <paper-button class="button" mat-icon-button (click)="delete()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_delete_cases') && !caseService.case.archived">
+      <i class="material-icons mat-32 tangy-location-list-icon">delete</i> Delete
+    </paper-button>
+    <paper-button class="button" mat-icon-button (click)="archive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_archive_cases') && !caseService.case.archived">
+      <i class="material-icons mat-32 tangy-location-list-icon">archive</i>  Archive
+    </paper-button>
   </span>
   <div secondary>
     <span [innerHTML]="templateDescription|unsanitizeHtml" class="description"></span>
