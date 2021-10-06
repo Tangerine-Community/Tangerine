@@ -26,6 +26,7 @@ T_COUCHDB_USER_ADMIN_PASS="password"
 T_MYSQL_CONTAINER_NAME="mysql"
 T_MYSQL_USER="admin"
 T_MYSQL_PASSWORD="password"
+T_MYSQL_PHPMYADMIN="FALSE"
 
 #
 # Optional
@@ -72,6 +73,11 @@ T_REGISTRATION_REQUIRES_SERVER_USER="false"
 # Sync Protocol 1 Only: On client sync, will result in any changes made to a user profile on the server to be downloaded and reflected on the client.
 # This setting only works with new groups being created.
 T_CENTRALLY_MANAGED_USER_PROFILE="false"
+
+# Auto Commit will make a commit in every group's content folder at a specified frequency. Changes are only committed if there is a change.
+T_AUTO_COMMIT="true"
+# How often a commit is made in milliseconds.
+T_AUTO_COMMIT_FREQUENCY="60000"
 
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`

@@ -41,3 +41,19 @@
     </div>
     </div>
 </div>
+
+<h2 *ngIf="issues.length > 0">Issues</h2>
+<div *ngFor="let issue of issues" class="icon-list-item search-result" routerLink="/groups/{{groupId}}/data/issues/{{issue._id}}">
+  <mwc-icon slot="item-icon">receipt</mwc-icon>
+  <div>
+    <div><strong>{{issue.label}}</strong> {{moment(issue.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
+    </div>
+    <div secondary>
+      Status: {{issue.status}}
+      <span *ngIf="issue.docType === 'case' && issue.events.length > 0 && issue.events[0].data.issue">Merged: {{issue.events[0].data.issue.merged}}</span>
+      <span class="secondarySpacer" *ngIf="issue.formResponseId">Response id: {{issue.formResponseId | slice:0:8}}</span>
+      <span class="secondarySpacer" *ngIf="issue.caseId">Case id: {{issue.caseId | slice:0:8}}</span>
+      Device: {{issue.tangerineModifiedByDeviceId | slice:0:8}}
+    </div>
+  </div>
+</div>

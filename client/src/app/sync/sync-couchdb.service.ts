@@ -14,8 +14,9 @@ import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
 import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
-import {ConflictService} from "./services/conflict.service";
 import { SyncDirection } from './sync-direction.enum';
+import { UserService } from '../shared/_services/user.service';
+import { DeviceService } from '../device/services/device.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const retryDelay = 5*1000
 
@@ -32,7 +33,30 @@ export class SyncCouchdbDetails {
   formInfos:Array<FormInfo> = []
   locationQueries:Array<LocationQuery> = []
   deviceSyncLocations:Array<LocationConfig>
+  disableDeviceUserFilteringByAssignment:boolean
 }
+
+export class SyncSessionInfo {
+  syncSessionUrl:string
+  deviceSyncLocations:Array<LocationConfig> 
+}
+
+function syncLocationsDontMatch(a:Array<LocationConfig>, b:Array<LocationConfig>) {
+  let syncLocationsDontMatch = false
+  for (let locationConfigA of a) {
+    const lowestLevel = locationConfigA.showLevels[locationConfigA.showLevels.length-1] 
+    if (!b.find(locationConfigB => locationConfigB.value.find(node => node.level === lowestLevel).value === locationConfigA.value.find(node => node.level === lowestLevel).value)) {
+      syncLocationsDontMatch = true
+    }
+  }
+  for (let locationConfigB of b) {
+    const lowestLevel = locationConfigB.showLevels[locationConfigB.showLevels.length-1] 
+    if (!a.find(locationConfigA => locationConfigA.value.find(node => node.level === lowestLevel).value === locationConfigB.value.find(node => node.level === lowestLevel).value)) {
+      syncLocationsDontMatch = true
+    }
+  }
+  return syncLocationsDontMatch
+} 
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +74,7 @@ export class SyncCouchdbService {
   pullSyncOptions;
   pushSyncOptions;
   fullSync: string;
+  retryCount: number
   
   constructor(
     private http: HttpClient,
@@ -57,8 +82,9 @@ export class SyncCouchdbService {
     private appConfigService: AppConfigService,
     private caseDefinitionsService: CaseDefinitionsService,
     private caseService: CaseService,
-    private tangyFormService: TangyFormService,
-    private conflictService: ConflictService
+    private userService: UserService,
+    private deviceService: DeviceService,
+    private tangyFormService: TangyFormService
   ) { }
 
   cancel() {
@@ -102,8 +128,9 @@ export class SyncCouchdbService {
     let syncSessionUrl
     let remoteDb
     try {
-      syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-      remoteDb = new PouchDB(syncSessionUrl)
+      const syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+      syncDetails.deviceSyncLocations = syncSessionInfo.deviceSyncLocations
+      remoteDb = new PouchDB(syncSessionInfo.syncSessionUrl)
     } catch (e) {
       replicationStatus = {
         ...replicationStatus,
@@ -121,17 +148,21 @@ export class SyncCouchdbService {
     // Push.
     let pushReplicationStatus
     let hadPushSuccess = false
+    this.retryCount = 1
     if (!isFirstSync) {
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
         if (!pushReplicationStatus.pushError) {
           hadPushSuccess = true
+          pushReplicationStatus.hadPushSuccess = true
           await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       }
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
     }
 
     if (this.cancelling) {
@@ -139,17 +170,49 @@ export class SyncCouchdbService {
       return replicationStatus
     }
 
+    // Sync Locations Change Detection. 
+    const previousDeviceSyncLocations = await this.variableService.get('previousDeviceSyncLocations')
+    if (!isFirstSync && syncLocationsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations)) {
+      this.fullSync = 'push'
+      this.retryCount = 1
+      while (!hadPushSuccess && !this.cancelling) {
+        pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
+        if (!pushReplicationStatus.pushError) {
+          hadPushSuccess = true
+          pushReplicationStatus.hadPushSuccess = true
+        } else {
+          await sleep(retryDelay)
+          ++this.retryCount
+        }
+      }
+      replicationStatus = {...replicationStatus, ...pushReplicationStatus}
+      this.syncMessage$.next(replicationStatus);
+      
+      const device = await this.deviceService.getDevice()
+      await this.userService.reinstallSharedUserDatabase(device)
+      // Refresh db connection.
+      userDb = await this.userService.getUserDatabase()
+      await this.variableService.set('previousDeviceSyncLocations', syncDetails.deviceSyncLocations)
+      await this.variableService.set('sync-pull-last_seq', 0)
+   }
+    if (isFirstSync) {
+      await this.variableService.set('previousDeviceSyncLocations', syncDetails.deviceSyncLocations)
+    }
+
     // Pull.
     let pullReplicationStatus
     let hadPullSuccess = false
+    this.retryCount = 1
     while (!hadPullSuccess && !this.cancelling) {
       try {
         pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
         if (!pullReplicationStatus.pullError) {
           await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
           hadPullSuccess = true
+          pullReplicationStatus.hadPullSuccess = true
         } else {
           await sleep(retryDelay)
+          ++this.retryCount
         }
       } catch (e) {
         // Theoretically this.pull shouldn't ever throw an error, but just in case make sure we set that last push sequence.
@@ -160,6 +223,7 @@ export class SyncCouchdbService {
       }
     }
     replicationStatus = {...replicationStatus, ...pullReplicationStatus}
+    this.syncMessage$.next(replicationStatus);
 
     // Whatever we pulled, even if there was an error, we don't need to push so set last push sequence again.
     const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
@@ -177,11 +241,6 @@ export class SyncCouchdbService {
     return new Promise( (resolve, reject) => {
       let checkpointProgress = 0, diffingProgress = 0, startBatchProgress = 0, pendingBatchProgress = 0
       const direction = 'push'
-      const progress = {
-        'direction': direction,
-        'remaining': syncOptions.remaining
-      }
-      this.syncMessage$.next(progress)
       userDb.db['replicate'].to(remoteDb, syncOptions).on('complete', async (info) => {
         const status = <ReplicationStatus>{
           pushed: info.docs_written,
@@ -258,7 +317,7 @@ export class SyncCouchdbService {
       }).on('error', function (error) {
         console.error(error)
         const status = <ReplicationStatus>{
-          pushError: "_push failed. error: " + error
+          pushError: "Push failed. error: " + error
         }
         reject(status);
       });
@@ -306,7 +365,7 @@ export class SyncCouchdbService {
     }
 
     syncOptions = this.pushSyncOptions ? this.pushSyncOptions : syncOptions
-
+    let error;
     try {
       status = <ReplicationStatus>await this._push(userDb, remoteDb, syncOptions);
       if (typeof status.pushed !== 'undefined') {
@@ -321,6 +380,9 @@ export class SyncCouchdbService {
         ...status,
         ...statusWithError
       }
+      if (statusWithError.pushError) {
+        error = statusWithError.pushError
+      }
       failureDetected = true
     }
     
@@ -328,13 +390,11 @@ export class SyncCouchdbService {
     status.currentPushLastSeq = status.info.last_seq
 
     if (failureDetected) {
-      const errorMessageDialog = window['t']('Error: ')
-      const errorMessage = errorMessageDialog + status.pushError
-      status.error = errorMessage
       console.error(status)
-      this.syncMessage$.next(status)
-    } else {
+      status.pushError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
     }
+    this.syncMessage$.next(status)
+
     return status;
   }
 
@@ -348,11 +408,6 @@ export class SyncCouchdbService {
         direction: ''
       }
       const direction = 'pull'
-      const progress = {
-        'direction': direction,
-        'message': "Checking the server for updates."
-      }
-      this.syncMessage$.next(progress)
       try {
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
@@ -490,47 +545,67 @@ export class SyncCouchdbService {
     status.batchSize = batchSize
 
     if (failureDetected) {
-      status.pullError = `${error.message || error}. ${window['t']('Trying again')}.`
-      this.syncMessage$.next(status)
-    }
+      status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
+    } 
+    
+    this.syncMessage$.next(status)
+    
     return status;
   }
 
-  getPullSelector(syncDetails) {
+  getPullSelector(syncDetails:SyncCouchdbDetails) {
     const pullSelector = {
       "$or": [
         ...syncDetails.formInfos.reduce(($or, formInfo) => {
           if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-            $or = [
-              ...$or,
-              ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                ? syncDetails.deviceSyncLocations.map(locationConfig => {
-                  // Get last value, that's the focused sync point.
-                  let location = locationConfig.value.slice(-1).pop()
-                  return {
-                    "form.id": formInfo.id,
-                    [`location.${location.level}`]: location.value
-                  }
-                })
-                : [
-                  {
-                    "form.id": formInfo.id
-                  }
-                ]
-            ]
+            if (formInfo.id === 'user-profile' && syncDetails.disableDeviceUserFilteringByAssignment) {
+              // Replicate all user profiles regardless of location.
+              $or = [
+                ...$or,
+                {
+                  'form.id': 'user-profile'
+                }
+              ]
+            } else {
+              $or = [
+                ...$or,
+                ...syncDetails.deviceSyncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                  ? syncDetails.deviceSyncLocations.map(locationConfig => {
+                    // Get last value, that's the focused sync point.
+                    let location = locationConfig.value.slice(-1).pop()
+                    return {
+                      "form.id": formInfo.id,
+                      [`location.${location.level}`]: location.value
+                    }
+                  })
+                  : [
+                    {
+                      "form.id": formInfo.id
+                    }
+                  ]
+              ]
+            }
           }
           return $or
         }, []),
         ...syncDetails.deviceSyncLocations.length > 0
-          ? syncDetails.deviceSyncLocations.map(locationConfig => {
+          ? syncDetails.deviceSyncLocations.reduce((filters, locationConfig) => {
             // Get last value, that's the focused sync point.
             let location = locationConfig.value.slice(-1).pop()
-            return {
-              "type": "issue",
-              [`location.${location.level}`]: location.value,
-              "resolveOnAppContext": AppContext.Client
-            }
-          })
+            return [
+              ...filters,
+              {
+                "type": "issue",
+                [`location.${location.level}`]: location.value,
+                "sendToAllDevices": true 
+              },
+              {
+                "type": "issue",
+                [`location.${location.level}`]: location.value,
+                "sendToDeviceById": syncDetails.deviceId
+              }
+            ] 
+          }, [])
           : [
             {
               "resolveOnAppContext": AppContext.Client,

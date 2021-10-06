@@ -1,4 +1,4 @@
-export const createSearchIndex = async (db, formsInfo) => {
+export const createSearchIndex = async (db, formsInfo, customSearchJs = '') => {
   const variablesToIndexByFormId = formsInfo.reduce((variablesToIndexByFormId, formInfo) => {
     return formInfo.searchSettings?.shouldIndex
       ? {
@@ -9,10 +9,12 @@ export const createSearchIndex = async (db, formsInfo) => {
   }, {})
   const map = `
     function(doc) {
+      ${customSearchJs}
       const variablesToIndexByFormId = ${JSON.stringify(variablesToIndexByFormId)}
       if (
         doc.collection === 'TangyFormResponse' &&
         doc.items &&
+        !doc.archived &&
         Array.isArray(doc.items) &&
         doc.form &&
         doc.form.id &&

@@ -18,3 +18,10 @@
 .event-form-redirect-back-button .icon {
   vertical-align: bottom;
 }
+
+.new-issue-button {
+  position: absolute;
+  top: 61px;
+  right: 15px;
+  color: #fff;
+}

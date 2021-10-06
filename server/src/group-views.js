@@ -2,6 +2,18 @@ const emit = _ => { }
 
 module.exports = {}
 
+module.exports.docCountByLocationId = {
+  map: function(doc) {
+    if (doc.location) {
+      Object.getOwnPropertyNames(doc.location).forEach(function(locationLevel) {
+        // Emit location's ID and add one.
+        emit(doc.location[locationLevel], 1)
+      })
+    }
+  },
+  reduce: '_sum'
+}
+
 module.exports.responsesByFormId = function(doc) {
   if (doc.form && doc.form.id) {
     return emit(doc.form.id, true)
@@ -81,6 +93,19 @@ module.exports.groupIssues = function(doc) {
       emit([doc.status,"conflict",lastFilledOutNode, doc.tangerineModifiedOn])
     } else {
       emit([doc.status,"issue",lastFilledOutNode, doc.tangerineModifiedOn])
+    }
+  }
+}
+
+module.exports.issuesByCaseId = function(doc) {
+  if (doc.collection === "TangyFormResponse" && doc.type === "issue") {
+    emit(doc.caseId, true)
+  }
+}
+module.exports.groupConflicts = function(doc) {
+  if (doc.collection === "TangyFormResponse" && doc.type === "issue") {
+    if (doc.events && doc.events[0] && doc.events[0].data && doc.events[0].data.conflict) {
+      emit([doc.caseId])
     }
   }
 }

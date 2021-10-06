@@ -57,8 +57,11 @@ const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
 const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
+const { generateCSV, generateCSVDataSet, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
 
-setInterval(commitFilesToVersionControl, 60000)
+if (process.env.T_AUTO_COMMIT === 'true') {
+  setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
+}
 module.exports = async function expressAppBootstrap(app) {
 
 // Enforce SSL behind Load Balancers.
@@ -109,6 +112,12 @@ var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
+
+app.get('/version',
+  function (req, res) {
+    res.send(process.env.T_VERSION);
+  }
+)
 
 /*
  * Login and session API
@@ -173,6 +182,8 @@ app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./ro
 app.get('/app/:groupId/response-variable-value/:responseId/:variableName', isAuthenticated, require('./routes/group-response-variable-value.js'))
 app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))
 app.get('/api/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
+app.get('/app/:groupId/docCountByLocationId/:locationId', isAuthenticated, require('./routes/group-doc-count-by-location-id.js'))
+app.get('/app/:groupId/downSyncDocCountByLocationId/:locationId', isAuthenticated, require('./routes/group-down-sync-doc-count-by-location-id.js'))
 // Support for API working with group pathed cookie :). We should do this for others because our group cookies can't access /api/.
 app.get('/app/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
 
@@ -186,16 +197,22 @@ app.delete('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-
 if (process.env.T_LEGACY === "true") {
   app.post('/upload/:groupId', require('./routes/group-upload.js'))
 }
-app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
-app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
-app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
-app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv/:groupId/:formId', isAuthenticated, generateCSV)
+app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
+app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, generateCSV)
+app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
+app.get('/api/csvDataSet/:groupId/:formIds', isAuthenticated, generateCSVDataSet)
+app.get('/api/csvDataSet/:groupId/:formIds/:year/:month', isAuthenticated, generateCSVDataSet)
+app.get('/api/csvDataSet-sanitized/:groupId/:formIds', isAuthenticated, generateCSVDataSet)
+app.get('/api/csvDataSet-sanitized/:groupId/:formIds/:year/:month', isAuthenticated, generateCSVDataSet)
+app.get('/apis/listCSVDatasets/:groupId/:pageIndex/:pageSize', isAuthenticated, listCSVDataSets)
+app.get('/apis/CSVDatasetDetail/:datasetId', isAuthenticated, getDatasetDetail)
+
 app.get('/api/usage', require('./routes/usage'));
 // For backwards compatibility for older consumers of this API.
 app.get('/usage', require('./routes/usage'));
 app.get('/usage/:startdate', require('./routes/usage'));
 app.get('/usage/:startdate/:enddate', require('./routes/usage'));
-
 
 // Static assets.
 app.use('/client', express.static('/tangerine/client/dev'));
@@ -214,7 +231,7 @@ app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
   return express.static(contentPath).apply(this, arguments);
 });
 
-app.use('/csv/', express.static('/csv/'));
+app.use('/csv/', isAuthenticated, express.static('/csv/'));
 
 app.use('/releases/', express.static('/tangerine/client/releases'))
 app.use('/client/', express.static('/tangerine/client/builds/dev'))

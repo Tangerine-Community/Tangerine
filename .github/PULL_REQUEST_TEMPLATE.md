@@ -26,6 +26,9 @@
 
 [Optional. What are the limitations of the proposed solution? What are the potential edge cases that one should be aware of? What are some of the tradeoffs? What are some of the approaches considered and not used? Why were they not used? ]
 
+## Security considerations
+
+
 ## Screenshots/Videos
 
 ---
