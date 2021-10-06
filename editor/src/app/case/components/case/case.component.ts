@@ -29,6 +29,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   window:any
   caseService: CaseService
   issues:Array<Issue>
+  conflicts:Array<any>
   moment
   groupId:string
 
@@ -64,6 +65,23 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
       this.issues = queryResults.map(issue => issue.doc)
     } catch (e) {
       console.log("Error fetching issues: " + e)
+    }
+    try {
+      let queryResults = await this.groupIssuesService.query(this.groupId, {
+        fun: "conflicts",
+        keys: [caseId],
+        include_docs: true,
+        descending: true
+      })
+      const conflicts = queryResults.map(conflicts => conflicts.doc)
+      const caseParticipantIds = this.caseService.case.participants.map(participant => participant.id)
+      conflicts.forEach(conflict => {
+        const conflictEvents = conflict.events.map(event => {
+          
+        })
+      })
+    } catch (e) {
+      console.log("Error fetching conflicts: " + e)
     }
     this.calculateTemplateData()
     this.ready = true
