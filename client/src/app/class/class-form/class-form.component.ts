@@ -102,7 +102,6 @@ export class ClassFormComponent implements OnInit {
       } else {
         // For new student-registration etc.
         this.formPlayer.formHtml = formHtml
-        this.formPlayer.formId = this.formId
       }
       await this.formPlayer.render()
 
@@ -167,9 +166,7 @@ export class ClassFormComponent implements OnInit {
       }
       await this.tangyFormService.saveResponse({
         ...state,
-        _rev: stateDoc['_rev'],
-        location: this.formPlayer.location || state.location,
-        ...this.formPlayer.metadata
+        _rev: stateDoc['_rev']
       })
     }
     this.response = state
