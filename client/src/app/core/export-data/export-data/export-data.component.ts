@@ -36,6 +36,8 @@ export class ExportDataComponent implements OnInit {
   
   @ViewChild('splitFiles', {static: false}) splitFiles: ElementRef
   @ViewChild('container', {static: false}) container: ElementRef;
+  hideExportButton: boolean;
+  hideLogs: boolean;
 
   constructor(
     private userService: UserService,
@@ -49,9 +51,9 @@ export class ExportDataComponent implements OnInit {
     this.statusMessage = ''
     this.progressMessage = ''
     this.errorMessage = ''
+    this.hideLogs = true
     this.appConfig = await this.appConfigService.getAppConfig()
-
-
+    
     if (this.window.isCordovaApp) {
       this.backupDir = 'Documents/Tangerine/backups/'
     } else {
@@ -88,10 +90,11 @@ export class ExportDataComponent implements OnInit {
     this.statusMessage = ''
     this.progressMessage = ''
     this.errorMessage = ''
+    this.hideExportButton = true
+    this.hideLogs = false
     const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
     // APK's that use in-app encryption
     if (window['isCordovaApp'] && this.appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
-
       const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
       for (const dbName of dbNames) {
         // copy the database
@@ -110,6 +113,7 @@ export class ExportDataComponent implements OnInit {
           }, null);
         }, null);
       }
+      this.hideExportButton = false
     } else {
       // APK's or PWA's that do not use in-app encryption - have turnOffAppLevelEncryption:true in app-config.json
       if (this.window.isCordovaApp) {
@@ -125,7 +129,7 @@ export class ExportDataComponent implements OnInit {
       for (let index = 0; index < dbNames.length; index++) {
         const dbName = dbNames[index]
         // copy the database
-        console.log(`exporting ${dbName} db over to the user accessible fs`)
+        console.log(`Starting exporting of ${dbName} db.`)
         const db = DB(dbName)
         const now = new Date();
         const fileName =
@@ -146,8 +150,7 @@ export class ExportDataComponent implements OnInit {
 
           // first delete dir
           this.progressMessage = `<p>${_TRANSLATE('Deleting old backup directory at ')} ${backupLocation}${dbName} </p>`
-
-
+          
           const deletedDirectoryMessage = await new Promise((resolve, reject) => {
               const deletedDir =  this.rootDirEntry.getDirectory(dbName, {create: true}, (subDirEntry) => {
                 subDirEntry.removeRecursively(function () {
@@ -263,6 +266,7 @@ export class ExportDataComponent implements OnInit {
           await db.dump(stream, dumpOpts).then(processData.bind(this));
           this.progressMessage = ""
           this.statusMessage += `<p>${_TRANSLATE('Backup completed at')} ${backupLocation}${dbName}</p>`
+          this.hideExportButton = false
 
         } else {
 
@@ -276,6 +280,7 @@ export class ExportDataComponent implements OnInit {
           this.statusMessage += `<p>${_TRANSLATE('Successfully exported database ')} ${dbName}</p>`
           const file = new Blob([data], {type: 'application/json'});
           this.downloadData(file, fileName, 'application/json');
+          this.hideExportButton = false
         }
       }
     }
