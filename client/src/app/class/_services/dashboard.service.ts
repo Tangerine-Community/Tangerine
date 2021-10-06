@@ -217,8 +217,8 @@ export class DashboardService {
               if (optionValue > max) {
                 max = optionValue;
               }
-              totalMax =  totalMax + max;
             });
+            totalMax =  totalMax + max;
           } else  if (input.tagName === 'TANGY-CHECKBOX') {
             if (input.value !== '') {
               value = 1;
