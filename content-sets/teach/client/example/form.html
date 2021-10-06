@@ -1,44 +1,512 @@
-<tangy-form title="Example Form" id="example">
-  <tangy-form-item title="item1" id="item_1">
-    <template>
-      <tangy-input name="first_name" label="What is your first name?"></tangy-input>
-      <tangy-input name="middle_name" label="What is your middle name?"></tangy-input>
-      <tangy-input name="last_name" label="What is your last name?"></tangy-input>
-      <tangy-radio-buttons name="fruit_selection" label="What is your favorite fruit?">
-        <option value="orange">Orange</option>
-        <option value="banana">Banana</option>
-        <option value="tangerine">Tangerine</option>
-      </tangy-radio-buttons>
-      <tangy-select name="fruit_selection_2" label="What is your second favorite fruit?">
-        <option value="orange">Orange</option>
-        <option value="banana">Banana</option>
-        <option value="tangerine">Tangerine</option>
-      </tangy-select>
-    </template>
-  </tangy-form-item>
-  <tangy-form-item id="item-2" title="Item 2">
-    <template>
-      <tangy-checkboxes name="fruit_time" label="What time do you take fruit?">
-        <option value="morning">Morning</option>
-        <option value="afternoon">Afternoon</option>
-        <option value="evening">Evening</option>
-      </tangy-checkboxes>
-      <tangy-box name="prompt1">
-        Where do you eat fruit?
+<tangy-form title="Grade 1 English" category="null"
+      on-open="
+       null
+      "
+      exit-clicks="                                                                        "
+      cycle-sequences=""
+      on-change="
+      null
+      "
+      on-submit="
+      "
+    >
+        <tangy-form-item id="item_49c5dc4fa6f24ef1991c08f223a52688" 
+          title="Letters Unit 1"
+          on-open="
+          "
+          on-change="
+            debugger
+            var questions = ['m','M','a','A','e','E','t','T'];
+          var score = 0
+          var j = 0
+          function findObjectByKey(array, key, value) {
+              for (var i = 0; i < array.length; i++) {
+                  if (array[i] == key) {
+                      return array[i];
+                      }
+          }
+              return null;
+          }
+         function sumScore(input) {
+        var s = 0
+        for (var i = 0; i < input.length; i++) {
+              if (typeof input !== 'string')
+                  if (isNaN(input)) 
+                      s +=1
+                  else
+                   s += parseInt(input[i]);
+              else
+                  if (isNaN(input)) 
+                      s = 1
+                  else
+                      s = parseInt(input);
+          }
+        return s;
+      }
+          for (var input in inputs) {
+              var a = findObjectByKey(questions, input)
+              if (a != null){score += sumScore(getValue(input))}
+          }
+          score = score
+          inputs.item_49c5dc4fa6f24ef1991c08f223a52688_score.value = score.toString()
+          "
+          category="
+            Reading
+          "
+        >
+          <template>
+    <tangy-box name="" class="" style=""><p>Please choose the option correctly identified</p></tangy-box>
+    <tangy-box name="" class="" style=""><table>
+  <tbody>
+      <tr>
+          <td>
+             <tangy-checkbox name="m" label="m" incomplete="" error-text="">m</tangy-checkbox>
+          </td><td>
+              <tangy-checkbox name="M" label="M" incomplete="" error-text="">M</tangy-checkbox>
+          </td>
+          <td>
+             <tangy-checkbox name="a" label="a" incomplete="" error-text="">a</tangy-checkbox>
+          </td>
+          <td>
+             <tangy-checkbox name="A" label="A" incomplete="" error-text="">A</tangy-checkbox>
+          </td>
+      </tr>
+      <tr>
+          <td>
+             <tangy-checkbox name="e" label="e" incomplete="" error-text="">e</tangy-checkbox>
+          </td>
+          <td>
+             <tangy-checkbox name="E" label="E" incomplete="" error-text="">E</tangy-checkbox>
+          </td>
+          <td>
+             <tangy-checkbox name="t" label="t" incomplete="" error-text="">t</tangy-checkbox>
+          </td>
+          <td>
+              <tangy-checkbox name="T" label="T" incomplete="" error-text="">T</tangy-checkbox>
+          </td>
+      </tr>
+  </tbody>
+</table></tangy-box>
+    <tangy-input name="item_49c5dc4fa6f24ef1991c08f223a52688_score" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
+          </template>
+        </tangy-form-item>
+        <tangy-form-item id="item_fea18d33219240afa76ec0c3e4523a97" 
+          title="Words Unit 1"
+          on-open="
+          "
+          on-change="
+            var questions = ['mat','met','tee','me'];
+          var score = 0
+          var j = 0
+          function findObjectByKey(array, key, value) {
+              for (var i = 0; i < array.length; i++) {
+                  if (array[i] == key) {
+                          if (!isNaN(key))
+                      return array[i];
+                      else return 1;
+                  }
+          }
+              return null;
+          }
+       function sumScore(input) {
+        var s = 0
+        for (var i = 0; i < input.length; i++) {
+              if (typeof input !== 'string')
+                  if (isNaN(input)) 
+                      s +=1
+                  else
+                   s += parseInt(input[i]);
+              else
+                  if (isNaN(input)) 
+                      s = 1
+                  else
+                      s = parseInt(input);
+          }
+        return s;
+      }
+          for (var input in inputs) {
+              var a = findObjectByKey(questions, input)
+              if (a != null){score += sumScore(getValue(input))}
+          }
+          score = score
+          inputs.item_fea18d33219240afa76ec0c3e4523a97_score.value = score.toString()
+          "
+          category="
+            Reading
+          "
+        >
+          <template>
+    <tangy-box name="" class="" style=""><p>Please Choose the items correctly identified</p></tangy-box>
+    <tangy-box name="header" class="" style="">
+<table>
+<tbody>
+    <tr>
+        <td>
+            <tangy-checkbox name="mat" label="mat" incomplete="" error-text="">mat</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="met" label="met" incomplete="" error-text="">met</tangy-checkbox>
+        </td>
+         </tr>
+         <tr>
+        <td>
+            <tangy-checkbox name="tee" label="tee" incomplete="" error-text="">tee</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="me" label="me" incomplete="" error-text="">me</tangy-checkbox>
+        </td>
+    </tr>
+</tbody>
+</table>
       </tangy-box>
-      <tangy-gps name="gps"></tangy-gps>
-      <tangy-box name="prompt2">
-        Have the assessee read aloud the following fruits and mark the items they pronounce incorrectly.
-      </tangy-box>
-      <tangy-timed show-labels required columns="3" duration=20 name="pronounse_fruits">
-        <option value="orange">Orange</option>
-        <option value="banana">Banana</option>
-        <option value="tangerine">Tangerine</option>
-        <option value="kiwi">Kiwi</option>
-        <option value="coconut">Coconut</option>
-        <option value="strawberry">Strawberry</option>
-      </tangy-timed>
-    </template>
-  </tangy-form-item>
+    <tangy-input name="item_fea18d33219240afa76ec0c3e4523a97_score" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
+          </template>
+        </tangy-form-item>
+        <tangy-form-item id="item_62f493b2eacf4e2285717eed501e9f68" 
+          title="Letters Unit 2"
+          on-open="
+          "
+          on-change="
+        var questions = ['r','R','s','S','i','I','n','N'];
+         var score = 0
+          var j = 0
+          function findObjectByKey(array, key, value) {
+              for (var i = 0; i < array.length; i++) {
+                  if (array[i] == key) {
+                          if (!isNaN(key))
+                      return array[i];
+                      else return 1;
+                  }
+          }
+              return null;
+          }
+       function sumScore(input) {
+        var s = 0
+        for (var i = 0; i < input.length; i++) {
+              if (typeof input !== 'string')
+                  if (isNaN(input)) 
+                      s +=1
+                  else
+                   s += parseInt(input[i]);
+              else
+                  if (isNaN(input)) 
+                      s = 1
+                  else
+                      s = parseInt(input);
+          }
+        return s;
+      }
+          for (var input in inputs) {
+              var a = findObjectByKey(questions, input)
+              if (a != null){score += sumScore(getValue(input))}
+          }
+          score = score
+        inputs.item_62f493b2eacf4e2285717eed501e9f68_score.value = score.toString()
+          "
+          category="
+            Reading
+          "
+        >
+          <template>
+    <tangy-box name="" class="" style=""><p>Please Choose the items correctly identified</p></tangy-box>
+    <tangy-box name="" class="" style="">
+<table>
+<tbody>
+    <tr>
+        <td>
+            <tangy-checkbox name="r" label="r" incomplete="" error-text="">r</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="R" label="R" incomplete="" error-text="">R</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="s" label="s" incomplete="" error-text="">s</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="S" label="S" incomplete="" error-text="">S</tangy-checkbox>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <tangy-checkbox name="i" label="i" incomplete="" error-text="">i</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="I" label="I" incomplete="" error-text="">I</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="n" label="n" incomplete="" error-text="">n</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="N" label="N" incomplete="" error-text="">N</tangy-checkbox>
+        </td>
+    </tr>
+</tbody>
+</table>
+</tangy-box>
+    <tangy-input name="item_62f493b2eacf4e2285717eed501e9f68_score" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
+          </template>
+        </tangy-form-item>
+        <tangy-form-item id="item_9b24315ca762479ea849b8499fe3b6d9" 
+          title="Words Unit 2"
+          on-open="
+          "
+          on-change="
+          var questions = ['rim','sat','sit','tin','net'];
+         var score = 0
+          var j = 0
+          function findObjectByKey(array, key, value) {
+              for (var i = 0; i < array.length; i++) {
+                  if (array[i] == key) {
+                          if (!isNaN(key))
+                      return array[i];
+                      else return 1;
+                  }
+          }
+              return null;
+          }
+       function sumScore(input) {
+        var s = 0
+        for (var i = 0; i < input.length; i++) {
+              if (typeof input !== 'string')
+                  if (isNaN(input)) 
+                      s +=1
+                  else
+                   s += parseInt(input[i]);
+              else
+                  if (isNaN(input)) 
+                      s = 1
+                  else
+                      s = parseInt(input);
+          }
+        return s;
+      }
+          for (var input in inputs) {
+              var a = findObjectByKey(questions, input)
+              if (a != null){score += sumScore(getValue(input))}
+          }
+          score = score
+        inputs.item_9b24315ca762479ea849b8499fe3b6d9_score.value = score.toString()
+          "
+          category="
+            Reading
+          "
+        >
+          <template>
+    <tangy-box name="" class="" style=""><p>Please Choose the items correctly identified</p></tangy-box>
+    <tangy-box name="" class="" style="">
+<table>
+<tbody>
+    <tr>
+        <td>
+            <tangy-checkbox name="rim" label="rim" incomplete="" error-text="">rim</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="sat" label="sat" incomplete="" error-text="">sat</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="sit" label="sit" incomplete="" error-text="">sit</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="tin" label="tin" incomplete="" error-text="">tin</tangy-checkbox>
+        </td>
+        <td>
+            <tangy-checkbox name="net" label="net" incomplete="" error-text="">net</tangy-checkbox>
+        </td>
+    </tr>
+</tbody>
+</table>
+</tangy-box>
+    <tangy-input name="item_9b24315ca762479ea849b8499fe3b6d9_score" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
+          </template>
+        </tangy-form-item>
+        <tangy-form-item id="item_50696345eedb4ef9bf2b9ef33be1621c" 
+          title="Passage Reading"
+          on-open="
+          "
+          on-change="
+inputs.item_50696345eedb4ef9bf2b9ef33be1621c_score.value = itemsPerMinute(inputs.reading1)
+          "
+          category="
+          "
+        >
+          <template>
+    <tangy-timed name="reading1" hint-text="" columns="4" duration="60" required="" option-font-size="0.7">
+      <option value="1">Nora</option>
+      <option value="2">has</option>
+      <option value="3">a</option>
+      <option value="4">dog.</option>
+      <option value="5">The</option>
+      <option value="6">dog</option>
+      <option value="7">is</option>
+      <option value="8">brown</option>
+      <option value="9">with</option>
+      <option value="10">white</option>
+      <option value="11">spots.</option>
+      <option value="12">Nora</option>
+      <option value="13">calls</option>
+      <option value="14">her</option>
+      <option value="15">dog</option>
+      <option value="16">Bennie.</option>
+      <option value="17">Bennie</option>
+      <option value="18">likes</option>
+      <option value="19">to</option>
+      <option value="20">catch</option>
+      <option value="21">sticks.</option>
+      <option value="22">Nora</option>
+      <option value="23">can</option>
+      <option value="24">throw</option>
+      <option value="25">the</option>
+      <option value="26">stick</option>
+      <option value="27">very</option>
+      <option value="28">far.</option>
+      <option value="29">Bennie</option>
+      <option value="30">runs</option>
+      <option value="31">fast</option>
+      <option value="32">to</option>
+      <option value="33">get</option>
+      <option value="34">it.</option>
+      <option value="35">Nora</option>
+      <option value="36">is</option>
+      <option value="37">happy</option>
+      <option value="38">playing</option>
+      <option value="39">with</option>
+      <option value="40">Bennie.</option>
+    </tangy-timed>
+    <tangy-input name="item_50696345eedb4ef9bf2b9ef33be1621c_score" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
+    <tangy-box name="" class="" style=""><p>&nbsp;</p></tangy-box>
+          </template>
+        </tangy-form-item>
+        <tangy-form-item id="item_266fb8ba35bc4447b511ba111b795c1d" 
+          title="Reading Comprehension"
+          on-open="
+          "
+          on-change="
+          var questions = ['read_comp1','read_comp2','read_comp3','read_comp4'];
+        var score = 0
+          var j = 0
+          function findObjectByKey(array, key, value) {
+              for (var i = 0; i < array.length; i++) {
+                  if (array[i] == key) {
+                          if (!isNaN(key))
+                      return array[i];
+                      else return 1;
+                  }
+          }
+              return null;
+          }
+       function sumScore(input) {
+        var s = 0
+        for (var i = 0; i < input.length; i++) {
+              if (typeof input !== 'string')
+                  if (isNaN(input)) 
+                      s +=1
+                  else
+                   s += parseInt(input[i]);
+              else
+                  if (isNaN(input)) 
+                      s = 1
+                  else
+                      s = parseInt(input);
+          }
+        return s;
+      }
+          for (var input in inputs) {
+              var a = findObjectByKey(questions, input)
+              if (a != null){score += sumScore(getValue(input))}
+          }
+          score = score
+        inputs.item_266fb8ba35bc4447b511ba111b795c1d_score.value = score.toString()
+          "
+          category="
+            Reading
+          "
+        >
+          <template>
+    <tangy-select name="read_comp1" class="" style="" question-number="" label="What color is Nora's dog?" error-text="" hint-text="">
+        <option value="0">incorrect</option>
+        <option value="1">correct</option>
+        <option value="2">don't know</option>
+    </tangy-select>
+    <tangy-select name="read_comp2" class="" style="" question-number="" label="What is the dog's name?" error-text="" hint-text="">
+        <option value="0">incorrect</option>
+        <option value="1">correct</option>
+        <option value="2">don't know</option>
+    </tangy-select>
+    <tangy-select name="read_comp3" class="" style="" question-number="" label="What game does Bennie like to play?" error-text="" hint-text="">
+        <option value="0">incorrect</option>
+        <option value="1">correct</option>
+        <option value="2">don't know</option>
+    </tangy-select>
+    <tangy-select name="read_comp4" class="" style="" question-number="" label="How does Nora feel playing with Bennie?" error-text="" hint-text="">
+        <option value="0">incorrect</option>
+        <option value="1">correct</option>
+        <option value="2">don't know</option>
+    </tangy-select>
+    <tangy-box name="" class="" style=""><p>&nbsp;</p></tangy-box>
+    <tangy-input name="item_266fb8ba35bc4447b511ba111b795c1d_score" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
+          </template>
+        </tangy-form-item>
+        <tangy-form-item id="item_ef4fdbe857a74c8c85e35322ac4616fd" 
+          title="Listening Comprehension"
+          on-open="
+          "
+          on-change="
+    var questions = ['q1','q2'];
+      var score = 0
+          var j = 0
+          function findObjectByKey(array, key, value) {
+              for (var i = 0; i < array.length; i++) {
+                  if (array[i] == key) {
+                          if (!isNaN(key))
+                      return array[i];
+                      else return 1;
+                  }
+          }
+              return null;
+          }
+       function sumScore(input) {
+        var s = 0
+        for (var i = 0; i < input.length; i++) {
+              if (typeof input !== 'string')
+                  if (isNaN(input)) 
+                      s +=1
+                  else
+                   s += parseInt(input[i]);
+              else
+                  if (isNaN(input)) 
+                      s = 1
+                  else
+                      s = parseInt(input);
+          }
+        return s;
+      }
+          for (var input in inputs) {
+              var a = findObjectByKey(questions, input)
+              if (a != null){score += sumScore(getValue(input))}
+          }
+          score = score
+      inputs.item_ef4fdbe857a74c8c85e35322ac4616fd_score.value = score.toString()
+          "
+          category="
+            Listening
+          "
+        >
+          <template>
+    <tangy-box name="" class="" style=""><p>Read the text to the child and then ask the related questions</p></tangy-box>
+    <tangy-box name="" class="" style=""><p><strong>I have been thinking to visit Grandmother at the hospital after school is over on Monday. Grandmother hurt her right leg and the doctor put white tape on it to help the “hurt” go away.</strong></p></tangy-box>
+    <tangy-radio-buttons name="q1" class="" style="" question-number="" label="When will you visit grandma? (after school/Monday)" error-text="" hint-text="">
+        <option value="1">Correct</option>
+        <option value="0">Incorrect</option>
+    </tangy-radio-buttons>
+    <tangy-radio-buttons name="q2" class="" style="" question-number="" label="Where will you visit grandma? (at the hostpital)" error-text="" hint-text="">
+        <option value="1">Correct</option>
+        <option value="0">Incorrect</option>
+    </tangy-radio-buttons>
+    <tangy-box name="" class="" style=""><p>&nbsp;</p></tangy-box>
+    <tangy-input name="item_ef4fdbe857a74c8c85e35322ac4616fd_score" class="" style="" hidden="" question-number="" label="" error-text="" hint-text="" type="number" inner-label="" allowed-pattern=""></tangy-input>
+          </template>
+        </tangy-form-item>
+    </tangy-form>
+
 </tangy-form>
 
