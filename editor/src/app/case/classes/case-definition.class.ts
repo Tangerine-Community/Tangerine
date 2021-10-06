@@ -5,24 +5,27 @@ class CaseDefinition {
 
   id:string
   formId:string
-  revision:string
   name:string
-  caseRoles:Array<CaseRole>
-  description:string
-  templateBreadcrumbText:string 
-  templateCaseTitle:string 
-  templateCaseDescription:string 
-  templateCaseEventListItemIcon:string 
-  templateCaseEventListItemPrimary:string 
-  templateCaseEventListItemSecondary:string 
-  templateEventFormListItemIcon:string 
-  templateEventFormListItemPrimary:string 
-  templateEventFormListItemSecondary:string 
+  caseRoles?:Array<CaseRole>
+  description?:string
   eventDefinitions: Array<CaseEventDefinition> = []
-  startFormOnOpen: CaseFormPath
-  templateScheduleListItemIcon:string
-  templateScheduleListItemPrimary:string
-  templateScheduleListItemSecondary:string
+  templateBreadcrumbText?:string 
+  templateCaseTitle?:string 
+  templateCaseDescription?:string 
+  templateCaseEventListItemIcon?:string 
+  templateCaseEventListItemPrimary?:string 
+  templateCaseEventListItemSecondary?:string 
+  templateEventFormListItemIcon?:string 
+  templateEventFormListItemPrimary?:string 
+  templateEventFormListItemSecondary?:string 
+  startFormOnOpen?: CaseFormPath
+  templateScheduleListItemIcon?:string
+  templateScheduleListItemPrimary?:string
+  templateScheduleListItemSecondary?:string
+  templateIssueTitle?:string
+  templateIssueDescription?:string
+  onCaseOpen?:string
+  onCaseClose?:string
   constructor(init:any) {
     Object.assign(this, init);
     /*

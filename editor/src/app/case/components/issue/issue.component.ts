@@ -21,6 +21,7 @@ import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.comp
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
   [IssueEventType.ProposedChange]: 'call_split',
+  [IssueEventType.UpdateMeta]: 'settings',
   [IssueEventType.Merge]: 'call_merge',
   [IssueEventType.Open]: 'playlist_add',
   [IssueEventType.Rebase]: 'settings_backup_restore'
@@ -28,6 +29,7 @@ const IssueEventTypeIconMap = {
 
 const IssueEventTypeLabelMap = {
   [IssueEventType.Comment]: _TRANSLATE('comment'),
+  [IssueEventType.UpdateMeta]: _TRANSLATE('updated settings'),
   [IssueEventType.ProposedChange]: _TRANSLATE('revision'),
   [IssueEventType.Merge]: _TRANSLATE('proposed changes merged'),
   [IssueEventType.Open]: _TRANSLATE('opened'),
@@ -123,8 +125,18 @@ export class IssueComponent implements OnInit {
               margin: 15px 0px 5px;
             }
           </style>
-          ${event.data && event.data.comment ? Marked.parse(event.data.comment) : ``}
-          ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
+          ${event.type === IssueEventType.UpdateMeta ? `
+            <h3>Label</h3>
+            ${Marked.parse(event.data.label)}
+            <h3>Description</h3>
+            ${Marked.parse(event.data.description)}
+            <h3>Send to Devices</h3>
+            ${!event.data.sendToAllDevices && !event.data.sendToDeviceById ? `Do not send to devices.` : ''}
+            ${event.data.sendToAllDevices ? `Send to all devices.` : ''}
+            ${event.data.sendToDeviceById ? `Send to Device by ID: ${event.data.sendToDeviceById}` : ''}
+          `: ``}
+        ${event.data && event.data.comment ? Marked.parse(event.data.comment) : ``}
+         ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
         `
       }
     })

@@ -2,9 +2,22 @@
 
 ## Introduction:
 
-Our goal is to have deletions on the client to follow deletions on the server. Sadly, this is not possible yet. For now, we will focus on deleting data on the server.
+To delete a case in Editor, click the "Trashcan" button to the right of the case ID in the "breadcrumbs" area at the top of the case document. This adds `archived:true` to the case document as well as all eventForm responses for the case. 
 
-## Deleting a record in Tangerine manually
+The client search index code filters out docs with the `archived:true` flag. 
+
+Once you start using this deletion feature, create an update using the following code:
+
+```js
+await window['T'].search.createIndex()
+await userDb.query('search', { limit: 1 })
+```
+
+This code will rebuild the index on client in order to return the correct results when running a search on a tablet that already has data collected on it.
+
+## Deleting a record in Tangerine manually on the server
+
+When using this manual method, deletions on the client do not follow deletions on the server.
 
 Open the document in Fauxton. Click the "Delete" button on the right hand side of the header to delete. This will create a bare-bones document that includes the _deleted" flag. By default, deleted docs are not included in replication; however, there is a way to query them (see below).
 

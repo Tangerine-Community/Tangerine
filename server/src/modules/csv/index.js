@@ -47,37 +47,63 @@ module.exports = {
         try {
           const {doc, sourceDb} = data
           const groupId = sourceDb.name
+
+          // @TODO Rename `-reporting` to `-csv`.
+          const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+          // @TODO Rename `-reporting` to `-csv-sanitized`.
+          const SANITIZED_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
+          
           if (doc.type !== 'issue') {
             // TODO: Can't this be cached?
             const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-  
-            let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
-            // Process the flatResponse
-            // @TODO Rename `-reporting` to `-csv`.
-            let REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
-            let processedResult = flatResponse;
-            // Don't add user-profile to the user-profile
-            if (processedResult.formId !== 'user-profile') {
-              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+            if (doc.archived) {
+              debugger;
+              // Delete from the -reporting db.
+              console.log("Deleting: " + doc._id)
+              try {
+                // await REPORTING_DB.remove(doc._id, doc._rev)
+                await REPORTING_DB.get(doc._id).then(function (doc) {
+                  return REPORTING_DB.remove(doc._id, doc._rev);
+                });
+                console.log("Deleted from REPORTING_DB: " + doc._id + " rev: " + doc._rev)
+              } catch (e) {
+                console.log("Error: " + JSON.stringify(e))
+              }
+              try {
+                // await SANITIZED_DB.remove(doc._id, doc._rev)
+                await SANITIZED_DB.get(doc._id).then(function (doc) {
+                  return SANITIZED_DB.remove(doc._id, doc._rev);
+                });
+                console.log("Deleted from SANITIZED_DB: " + doc._id + " rev: " + doc._rev)
+              } catch (e) {
+                console.log("Error: " + JSON.stringify(e))
+              }
+            } else {
+              let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
+              // Process the flatResponse
+              let processedResult = flatResponse;
+              // Don't add user-profile to the user-profile
+              if (processedResult.formId !== 'user-profile') {
+                processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+              }
+              // @TODO Ensure design docs are in the database.
+              await saveFormInfo(processedResult, REPORTING_DB);
+              await saveFlatFormResponse(processedResult, REPORTING_DB);
+              // Index the view now.
+              await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+
+              // Sanitizing the data:
+              // Repeat the flattening in order to deliver sanitized (non-PII) output
+              flatResponse = await generateFlatResponse(doc, locationList, true, groupId);
+              // Process the flatResponse
+              processedResult = flatResponse
+              // Don't add user-profile to the sanitized db
+              // @TODO Ensure design docs are in the database.
+              await saveFormInfo(processedResult, SANITIZED_DB);
+              await saveFlatFormResponse(processedResult, SANITIZED_DB);
+              // Index the view now.
+              await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
             }
-            // @TODO Ensure design docs are in the database.
-            await saveFormInfo(processedResult, REPORTING_DB);
-            await saveFlatFormResponse(processedResult, REPORTING_DB);
-            // Index the view now.
-            await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
-  
-            // Repeat the flattening in order to deliver sanitized (non-PII) output
-            flatResponse = await generateFlatResponse(doc, locationList, true, groupId);
-            // Process the flatResponse
-            // @TODO Rename `-reporting` to `-csv`.
-            REPORTING_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
-            processedResult = flatResponse
-            // Don't add user-profile to the sanitized db
-            // @TODO Ensure design docs are in the database.
-            await saveFormInfo(processedResult, REPORTING_DB);
-            await saveFlatFormResponse(processedResult, REPORTING_DB);
-            // Index the view now.
-            await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           }
           resolve(data)
         } catch(e) {

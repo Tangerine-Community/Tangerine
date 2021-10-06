@@ -1,0 +1,40 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div *ngIf="datasetDetail" class="tangy-full-width">
+    <p><strong>{{'File Name'|translate}}</strong>: <a class="tangy-foreground-secondary" [href]="datasetDetail.downloadUrl">{{datasetDetail.fileName}}</a></p>
+    <p><strong>{{'Include PII'|translate}}</strong>: {{datasetDetail.includePii}}</p>
+    <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail.complete? 'Complete':'In Progress' |translate}}</p>
+    <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail.month?datasetDetail.month: '*'}}</p>
+    <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail.year?datasetDetail.year: '*'}}</p>
+    <p><strong>{{'Created On'|translate}}:</strong> {{datasetDetail.dateCreated |date:'medium'}}</p>
+</div>
+<table *ngIf="datasetDetail"
+    mat-table
+    [dataSource]="datasetDetail.csvs"
+    class="mat-elevation-z8 tangy-full-width"
+  >
+    <ng-container matColumnDef="formId">
+      <th mat-header-cell *matHeaderCellDef>{{'Form ID'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet.formId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="inProgress">
+      <th mat-header-cell *matHeaderCellDef>{{'Status'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">
+        {{ dataSet.inProgress ? 'In Progress' : '' | translate}}
+        {{ dataSet.complete ? 'Complete' : '' | translate}}
+        {{ !dataSet.complete && !dataSet.inProgress ? 'Queued' : '' | translate}}
+      </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="outputPath">
+      <th mat-header-cell *matHeaderCellDef>{{'Download File'|translate}}</th>
+      <td mat-cell *matCellDef="let dataSet">
+        <a [disabled]="dataSet.inProgress" mat-icon-button [href]="datasetDetail.baseUrl+ dataSet.outputPath">
+          <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+        </a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>

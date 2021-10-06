@@ -61,12 +61,19 @@ export class SyncService {
     this.syncCouchdbService.cancel()
   }
   
+  async getStorageStats() {
+    return new Promise(function (resolve, reject) {
+      window['cordova'].exec(resolve, reject, "File", "getFreeDiskSpace", [])
+    })
+  }
+  
   async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
     const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
-
+    const initialPushLastSeq = await this.variableService.get('sync-push-last_seq')
+    
     this.syncCouchdbService.syncMessage$.subscribe({
       next: (replicationStatus) => {
         this.syncMessage$.next(replicationStatus)
@@ -89,7 +96,8 @@ export class SyncService {
         deviceId: device._id,
         deviceToken: device.token,
         deviceSyncLocations: device.syncLocations,
-        formInfos
+        formInfos,
+        disableDeviceUserFilteringByAssignment: appConfig.disableDeviceUserFilteringByAssignment
       },
       null,
       isFirstSync,
@@ -97,6 +105,16 @@ export class SyncService {
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
+    /**
+     * Delete archived docs
+     */
+
+    // TODO Enable once we understand the implications of deleting local docs flagged with `archived`
+    // const deletedArchivedDocs = await this.deleteArchivedDocs(userDb.db, initialPushLastSeq)
+    // if (deletedArchivedDocs > 0) {
+    //   this.replicationStatus.deletedArchivedDocs = deletedArchivedDocs
+    // }
+    
     /**
      * Calculating Sync stats
      */
@@ -115,6 +133,11 @@ export class SyncService {
     const diff = end.diff(start)
     const duration = moment.duration(diff).as('milliseconds')
     // const durationUTC = moment.utc(duration).format('HH:mm:ss')
+    let storageAvailable;
+
+    if (window['isCordovaApp']) {
+      storageAvailable = await this.getStorageStats()
+    }
 
     try {
       // reset pullConflicts - we don't want to send these stats.
@@ -122,6 +145,7 @@ export class SyncService {
       this.replicationStatus.syncCouchdbServiceStartTime = this.syncCouchdbServiceStartTime
       this.replicationStatus.syncCouchdbServiceEndime = this.syncCouchdbServiceEndime
       this.replicationStatus.syncCouchdbServiceDuration = duration
+      this.replicationStatus.storageAvailable = storageAvailable
       await this.addDeviceSyncMetadata();
 
       this.syncMessage$.next({
@@ -206,7 +230,13 @@ export class SyncService {
    */
   async indexViews(username) {
     let db
-    const exclude = [
+    if (username) {
+      db = await this.userService.getUserDatabase(username)
+    } else {
+      db = await this.userService.getUserDatabase()
+    }
+    
+    let exclude = [
       'tangy-form/responsesLockedAndNotUploaded',
       'tangy-form/responsesUnLockedAndNotUploaded',
       'tangy-form/responsesLockedAndUploaded',
@@ -218,11 +248,15 @@ export class SyncService {
       'tangy-form',
       'find-docs-by-form-id-pageable/find-docs-by-form-id-pageable'
     ]
-    if (username) {
-      db = await this.userService.getUserDatabase(username)
-    } else {
-      db = await this.userService.getUserDatabase()
+
+    const appConfig = await this.appConfigService.getAppConfig()
+    if (appConfig.doNotOptimize && Array.isArray(appConfig.doNotOptimize)) {
+      exclude = [
+        ...exclude,
+        ...appConfig.doNotOptimize
+      ]
     }
+
     const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
     console.log(`Indexing ${result.rows.length} views.`)
     db.db.on('indexing', async (progress) => {
@@ -513,6 +547,32 @@ export class SyncService {
     }
     console.log("total_rows: " + total_rows)
     return allDocs;
+  }
+
+  /**
+   * Delete docs with 'archived:true'
+   * Using initialPullLastSeq, which is accessed before sync starts.
+   */
+  async deleteArchivedDocs(db: PouchDB, initialPushLastSeq: string) {
+    let deletedArchivedDocs = 0
+    if (initialPushLastSeq) {
+      // TODO: do we need the limit flag?
+      const changes = await db.changes({ since: initialPushLastSeq, include_docs: false })
+      if (changes.results.length > 0) {
+        for (let change of changes.results) {
+          try {
+            const doc = await db.get(change.id)
+            if (doc && doc.archived) {
+              await db.remove(doc)
+              deletedArchivedDocs++
+            }
+          } catch (error) {
+            // Don't log - probably could not get a doc that was deleted already.
+          }
+        }
+      }
+    }
+    return deletedArchivedDocs
   }
   
 }
