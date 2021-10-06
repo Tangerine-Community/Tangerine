@@ -337,6 +337,17 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
+        } else if (input.tagName === 'TANGY-EFTOUCH') {
+          let elementKeys = Object.keys(input.value);
+          for (let key of elementKeys) {
+            set(
+              input, 
+              `${formID}.${item.id}.${input.name}.${key}`, 
+              Array.isArray(input.value[key])
+                ? input.value[key].join('|')
+                : input.value[key]
+            )
+          }
         } else if (input.tagName === 'TANGY-TIMED') {
           let hitLastAttempted = false
           for (let toggleInput of input.value) {

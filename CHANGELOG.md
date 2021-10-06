@@ -100,14 +100,46 @@ update-down-sync-doc-count-by-location-id-index '*'
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
+## v3.18.7
+
+__Fixes__
+
+- Back-ported some fixes to the backup and restore feature from the v3.19.1 branch.
+- Fixed issue with Teach where third subtask would not open correctly.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.18.7
+./start.sh v3.18.7
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.18.6
+```
+
 ## v3.18.6
 
 __Updates__
+
 - Updated tangy-form lib from 4.25.11 to 4.25.14 ([Changelog](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v42514)), which provides:
   - A fix for photo-capture so that it de-activates the camera when going to the next page or leaving a form. 
   - Implemented a new 'before-submit' event to tangy-form in order to listen to events before the 'submit' event is dispatched.
   - A fix for User defined Cycle Sequences.
+  
 __Fixes__
+
 - Remove incorrect exception classes for changes processing #2883 PR: [#2883](https://github.com/Tangerine-Community/Tangerine/pull/2883) Issue: [#2882](https://github.com/Tangerine-Community/Tangerine/issues/2882)
 - Added backup and restore feature for Tangerine databases using device encryption. Increase the appConfig.json parameter `dbBackupSplitNumberFiles` (default: 200) to speed up the backup/restore process if your database is large. You may also change that parameter in the Export Backup user interface. Updated docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
 
