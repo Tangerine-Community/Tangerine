@@ -34,7 +34,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   window:any
   caseService: CaseService
   issues:Array<Issue>
-  conflicts:Array<any>
+  conflictingEvents:Array<any>
   moment
   groupId:string
   hideRestore: boolean = false
@@ -65,76 +65,8 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService.setContext()
     this.window.caseService = this.caseService
     this.onCaseOpen()
-    try {
-      const queryResults = await this.groupIssuesService.query(this.groupId, {
-        fun: "issuesByCaseId",
-        keys: [caseId],
-        include_docs: true,
-        descending: true
-      })
-      this.issues = queryResults.map(issue => issue.doc)
-    } catch (e) {
-      console.error("Error fetching issues: " + JSON.stringify(e))
-    }
-    try {
-      const queryResults = await this.groupIssuesService.query(this.groupId, {
-        fun: "conflicts",
-        keys: [caseId],
-        conflicts: true,
-        include_docs: true,
-        descending: true
-      })
-      const conflictsQueryResults = queryResults.map(conflicts => conflicts.doc)
-      // const conflictRevisionIds = conflictsQueryResults.map(currentDoc => currentDoc._conflicts)
-      let conflictRevisionIds = conflictsQueryResults.reduce(function(previousValue, currentValue) {
-        return [...previousValue, ...currentValue._conflicts]
-      }, [])
-      const conflicts = []
-      if (conflictRevisionIds) {
-        for (const conflictRevisionId of conflictRevisionIds) {
-          const token = localStorage.getItem('token');
-          const conflictRevisionDoc = (<any>await axios.get(`/group-responses/readRev/${this.groupId}/${caseId}/${conflictRevisionId}`, { headers: { authorization: token }})).data
-          conflicts.push(conflictRevisionDoc)
-        }
-      }
-      const caseParticipantIds = this.caseService.case.participants.map(participant => participant.id)
-      this.conflicts = []
-      const allConflictEventIds = []
-      conflicts.forEach(conflict => {
-        const conflictEvents = conflict.events.map(event => {
-          allConflictEventIds.push(event.id)
-          if (event.eventForms) {
-            const hasParticipant = (eventForm) => {
-              return caseParticipantIds.includes(eventForm.participantId)
-            }
-            const relevantEvent = event.eventForms.some(hasParticipant)
-            if (relevantEvent) {
-              return event
-            }
-          }
-        })
-        // const conflictIds = conflictEvents.map(event => event.id)
-        const caseEventIds = this.caseService.case.events.map(event => event.id)
-        // const conflictFormResponses = []
-        conflictEvents.forEach(event => {
-          const isOldEvent = caseEventIds.includes(event.id)
-          if (!isOldEvent) {
-            event.conflictRevisionId = conflict._rev
-            this.conflicts.push(event)
-          }
-          if (event.eventForms) {
-            event.eventForms.forEach(eventForm => {
-              if (eventForm.formResponseId) {
-                // conflictFormResponses.push(eventForm)
-              }
-            })
-          }
-        })
-    })
-    } catch (e) {
-      console.error("Error fetching conflicts: " + JSON.stringify(e))
-    }
     this.calculateTemplateData()
+    await this.getIssuesAndConflicts(caseId)
     this.ready = true
   }
 
@@ -169,6 +101,74 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
     this.ref.detectChanges()
+  }
+  
+  async getIssuesAndConflicts(caseId) {
+    try {
+      const queryResults = await this.groupIssuesService.query(this.groupId, {
+        fun: "issuesByCaseId",
+        keys: [caseId],
+        include_docs: true,
+        descending: true
+      })
+      this.issues = queryResults.map(issue => issue.doc)
+    } catch (e) {
+      console.error("Error fetching issues: " + JSON.stringify(e))
+    }
+    try {
+      const queryResults = await this.groupIssuesService.query(this.groupId, {
+        fun: "conflicts",
+        keys: [caseId],
+        conflicts: true,
+        include_docs: true,
+        descending: true
+      })
+      const conflictsQueryResults = queryResults.map(conflicts => conflicts.doc)
+      let conflictRevisionIds = conflictsQueryResults.reduce(function (previousValue, currentValue) {
+        return [...previousValue, ...currentValue._conflicts]
+      }, [])
+      const conflicts = []
+      if (conflictRevisionIds) {
+        for (const conflictRevisionId of conflictRevisionIds) {
+          const token = localStorage.getItem('token');
+          const conflictRevisionDoc = (<any>await axios.get(`/group-responses/readRev/${this.groupId}/${caseId}/${conflictRevisionId}`, {headers: {authorization: token}})).data
+          conflicts.push(conflictRevisionDoc)
+        }
+      }
+      const caseParticipantIds = this.caseService.case.participants.map(participant => participant.id)
+      this.conflictingEvents = []
+      conflicts.forEach(conflict => {
+        const caseEventIds = this.caseService.case.events.map(event => event.id)
+        // filter out any events that are from participants not in this "winning" case rev
+        const conflictEvents = conflict.events.map(event => {
+          if (event.eventForms) {
+            const hasParticipant = (eventForm) => {
+              // The first Registration event's participantId is empty.
+              if (eventForm.participantId === "") {
+                return true
+              } else {
+                return caseParticipantIds.includes(eventForm.participantId)
+              }
+            }
+            const relevantEvent = event.eventForms.some(hasParticipant)
+            if (relevantEvent) {
+              return event
+            }
+          }
+        })
+        // Now find any events that are not in the "winning" rev.
+        conflictEvents.forEach(event => {
+          const isOldEvent = caseEventIds.includes(event.id)
+          if (!isOldEvent) {
+            // since we are putting events from different _revs in the same array, need to mark which _rev the event belongs to.
+            event.conflictRevisionId = conflict._rev
+            this.conflictingEvents.push(event)
+          }
+        })
+      })
+    } catch (e) {
+      console.error("Error fetching conflicts: " + JSON.stringify(e))
+    }
   }
 
   onOpenCaseConfirmButtonClick() {
@@ -208,6 +208,13 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
         } catch (e) {
           console.log("Error: " + JSON.stringify(e))
         }
+        // recalc the case structure - this.calculateTemplateData()
+        // then this.ref.detectChanges()
+        this.calculateTemplateData()
+        const caseId = window.location.hash.split('/')[2]
+        await this.getIssuesAndConflicts(caseId)
+        // calculateTemplateData already does a this.ref.detectChanges(), but just in case...
+        this.ref.detectChanges()
       }
     }
   }
