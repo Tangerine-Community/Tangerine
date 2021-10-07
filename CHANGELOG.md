@@ -168,6 +168,7 @@ docker rmi tangerine/tangerine:v3.18.5
 ## v3.18.5
 
 __Fixes__
+
 - Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
 
 ## v3.18.4
