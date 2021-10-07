@@ -50,7 +50,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
 
   async ngAfterContentInit() {
     const caseId = window.location.hash.split('/')[2]
-    const groupId = window.location.pathname.split('/')[2]
+    this.groupId = window.location.pathname.split('/')[2]
     if (!this.caseService.case || caseId !== this.caseService.case._id) {
       await this.caseService.load(caseId)
       this.caseService.openCaseConfirmed = false
@@ -59,7 +59,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.window.caseService = this.caseService
     this.onCaseOpen()
     try {
-      const queryResults = await this.groupIssuesService.query(groupId, {
+      const queryResults = await this.groupIssuesService.query(this.groupId, {
         fun: "issuesByCaseId",
         keys: [caseId],
         include_docs: true,
@@ -70,7 +70,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
       console.error("Error fetching issues: " + JSON.stringify(e))
     }
     try {
-      const queryResults = await this.groupIssuesService.query(groupId, {
+      const queryResults = await this.groupIssuesService.query(this.groupId, {
         fun: "conflicts",
         keys: [caseId],
         conflicts: true,
@@ -85,13 +85,8 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
       const conflicts = []
       if (conflictRevisionIds) {
         for (const conflictRevisionId of conflictRevisionIds) {
-          // const conflictRevisionDoc = await this.db.get(caseId, {rev: conflictRevisionId})
-
           const token = localStorage.getItem('token');
-          // return (<any>await axios.get(`/group-responses/read/${this.groupId}/${id}`, { headers: { authorization: token }})).data
-          
-          // const conflictRevisionDoc = (<any>await axios.get(`/db/${groupId}/${caseId}?rev=${conflictRevisionId}`, { headers: { authorization: token }})).data
-          const conflictRevisionDoc = (<any>await axios.get(`/group-responses/readRev/${groupId}/${caseId}/${conflictRevisionId}`, { headers: { authorization: token }})).data
+          const conflictRevisionDoc = (<any>await axios.get(`/group-responses/readRev/${this.groupId}/${caseId}/${conflictRevisionId}`, { headers: { authorization: token }})).data
           conflicts.push(conflictRevisionDoc)
         }
       }
