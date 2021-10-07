@@ -78,7 +78,10 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
         descending: true
       })
       const conflictsQueryResults = queryResults.map(conflicts => conflicts.doc)
-      const conflictRevisionIds = conflictsQueryResults.map(currentDoc => currentDoc._conflicts)
+      // const conflictRevisionIds = conflictsQueryResults.map(currentDoc => currentDoc._conflicts)
+      let conflictRevisionIds = conflictsQueryResults.reduce(function(previousValue, currentValue) {
+        return [...previousValue, ...currentValue._conflicts]
+      }, [])
       const conflicts = []
       if (conflictRevisionIds) {
         for (const conflictRevisionId of conflictRevisionIds) {
