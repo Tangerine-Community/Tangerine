@@ -8,6 +8,8 @@ Enable "Allow Creation of Issues" in your App Config for Devices and Data Collec
 
 ## Configuration
 - To enable Devices to create Issues, add `"allowCreationOfIssues": true` to the group's `client/app-config.json` and release to Devices.
-- To template out the resulting Issue title and descriptions, add `templateIssueTitle` and `templateIssueDescription` to Case Definitions.
 - To allow Devices to see Issues that have been created on the Device or been synced down to the Device, add `"showIssues": true`to the group's `client/app-config.json` and release to Devices.
+- To template out the resulting Issue title and descriptions, add `templateIssueTitle` and `templateIssueDescription` to Case Definitions.
+  - Example template for Issue Title: `Issue for ${caseService.getVariable('study_id')} (${caseService.getVariable('firstname')} ${caseService.getVariable('surname')}, ${caseService.getVariable('village')}) by ${userId}`
+
 
