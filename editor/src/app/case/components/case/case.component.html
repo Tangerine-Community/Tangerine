@@ -66,12 +66,21 @@
     <div>
       <div secondary>
         Complete: {{conflict.complete}}
+        <span *ngFor="let eventForm of conflict.eventForms">
+          ID: {{eventForm.formResponseId | slice:0:8}} Rev: {{conflict.conflictRevisionId| slice:0:8}}
+        </span>
       </div>
       <div class="text-right">
+        <ng-container *ngFor="let eventForm of conflict.eventForms">
+          <ng-container *ngIf="eventForm.formResponseId">
+            <paper-button (click)="showConflictFormResponse(eventForm.formResponseId)" class="button-left">View</paper-button>
+          </ng-container>
+        </ng-container>
         <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
       </div>
     </div>
-    
-
   </div>
+</div>
+<div>
+  <app-tangy-forms-player [skipSaving]="true" #proposedFormResponseContainer></app-tangy-forms-player>
 </div>

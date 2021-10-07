@@ -1,4 +1,4 @@
-import { Component, AfterContentInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {Component, AfterContentInit, ChangeDetectorRef, OnDestroy, ViewChild, Input} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -8,6 +8,9 @@ import {Issue} from "../../classes/issue.class";
 import {GroupIssuesService} from "../../../groups/services/group-issues.service";
 import axios from "axios";
 import {_TRANSLATE} from "../../../../../../client/src/app/shared/translation-marker";
+import {TangyFormService} from "../../../tangy-forms/tangy-form.service";
+import {TangyFormsPlayerComponent} from "../../../tangy-forms/tangy-forms-player/tangy-forms-player.component";
+import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -35,12 +38,16 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   moment
   groupId:string
   hideRestore: boolean = false
-
+  // @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
+  @ViewChild('proposedFormResponseContainer', {static: false}) proposedFormResponseContainer:TangyFormsPlayerComponent
+  hideFormPlayer = true
+  // @Input('response') response:TangyFormResponseModel
   constructor(
     private route: ActivatedRoute,
     caseService: CaseService,
     private ref: ChangeDetectorRef,
     private groupIssuesService:GroupIssuesService,
+    private tangyFormService: TangyFormService
   ) {
     ref.detach()
     this.window = window
@@ -115,15 +122,14 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
             event.conflictRevisionId = conflict._rev
             this.conflicts.push(event)
           }
-          // if (event.eventForms) {
-          //   event.eventForms.forEach(eventForm => {
-          //     if (eventForm.formResponseId) {
-          //       conflictFormResponses.push(eventForm)
-          //     }
-          //   })
-          // }
+          if (event.eventForms) {
+            event.eventForms.forEach(eventForm => {
+              if (eventForm.formResponseId) {
+                // conflictFormResponses.push(eventForm)
+              }
+            })
+          }
         })
-        
     })
     } catch (e) {
       console.error("Error fetching conflicts: " + JSON.stringify(e))
@@ -204,6 +210,24 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
         }
       }
     }
+  }
+  
+  async showConflictFormResponse(formResponseId) {
+    if (formResponseId) {
+      console.log("Displaying formResponseId: " + formResponseId)
+      const formResponse = await this.tangyFormService.getResponse(formResponseId)
+      // this.formPlayer.formResponseId = formResponse._id
+      // this.formPlayer.response = formResponse
+      // await this.formPlayer.render()
+      this.hideFormPlayer = false
+      this.proposedFormResponseContainer.response = formResponse
+      await this.proposedFormResponseContainer.render()
+      this.scroll(this.proposedFormResponseContainer.container.nativeElement)
+    }
+  }
+
+  scroll(el: HTMLElement) {
+    el.scrollIntoView();
   }
 
 }
