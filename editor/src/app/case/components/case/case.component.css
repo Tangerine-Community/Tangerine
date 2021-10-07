@@ -88,6 +88,11 @@ app-case-breadcrumb {
     background: #CCC;
 }
 
+.conflict {
+  background-color: #f26f1133;
+  border-left: red solid 4px;
+}
+
 :host {
     position: relative;
 }

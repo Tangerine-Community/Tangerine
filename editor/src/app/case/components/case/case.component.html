@@ -23,8 +23,8 @@
   <div class="icon-list-item event new-event">
     <mwc-icon slot="item-icon">event</mwc-icon>
     <div>
-    <div>{{'New Event'|translate}}</div>
-      <div >
+      <div>{{'New Event'|translate}}</div>
+      <div>
           <form (ngSubmit)="onSubmit()" #form="ngForm">
             <div class="dropdown-container">
               <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
@@ -42,7 +42,7 @@
     </div>
 </div>
 
-<h2 *ngIf="issues.length > 0">Issues</h2>
+<h2 *ngIf="issues?.length > 0">Issues</h2>
 <div *ngFor="let issue of issues" class="icon-list-item search-result" routerLink="/groups/{{groupId}}/data/issues/{{issue._id}}">
   <mwc-icon slot="item-icon">receipt</mwc-icon>
   <div>
@@ -58,18 +58,20 @@
   </div>
 </div>
 
-<h2 *ngIf="conflicts.length > 0">Events in Conflict</h2>
-<div *ngFor="let conflict of conflicts" class="icon-list-item search-result" routerLink="/groups/{{groupId}}/data/issues/{{conflict._id}}">
+<h2 *ngIf="conflicts?.length > 0">Events in Conflict</h2>
+<div *ngFor="let conflict of conflicts" class="icon-list-item conflict new-event">
   <mwc-icon slot="item-icon">receipt</mwc-icon>
   <div>
-    <div><strong>{{conflict.label}}</strong> {{moment(conflict.tangerineModifiedOn).format('YYYY-MM-DD hh:mm a')}}
+    <div><strong>{{conflict.name}}</strong></div>
+    <div>
+      <div secondary>
+        Complete: {{conflict.complete}}
+      </div>
+      <div class="text-right">
+        <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
+      </div>
     </div>
-    <div secondary>
-      Status: {{conflict.status}}
-      <span *ngIf="conflict.docType === 'case' && conflict.events.length > 0 && conflict.events[0].data.issue">Merged: {{conflict.events[0].data.issue.merged}}</span>
-      <span class="secondarySpacer" *ngIf="conflict.formResponseId">Response id: {{conflict.formResponseId | slice:0:8}}</span>
-      <span class="secondarySpacer" *ngIf="conflict.caseId">Case id: {{conflict.caseId | slice:0:8}}</span>
-      Device: {{conflict.tangerineModifiedByDeviceId | slice:0:8}}
-    </div>
+    
+
   </div>
 </div>
