@@ -30,6 +30,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
   caseService: CaseService
+  authenticationService: AuthenticationService
   issues:Array<Issue>
   moment
   groupId:string
@@ -39,12 +40,13 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     caseService: CaseService,
     private router: Router,
     private ref: ChangeDetectorRef,
-    private authenticationService: AuthenticationService,
+    authenticationService: AuthenticationService,
     private groupIssuesService:GroupIssuesService,
   ) {
     ref.detach()
     this.window = window
     this.caseService = caseService
+    this.authenticationService = authenticationService
     this.moment = moment
   }
 
