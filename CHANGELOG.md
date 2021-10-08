@@ -4,6 +4,7 @@
 
 __Fixes__
 - Improved backup and restore file processing. Docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
+- Added archive/unarchive Case functionality and permission for "can delete" [#2954](https://github.com/Tangerine-Community/Tangerine/pull/2954)
 
 __Server upgrade instructions__
 
