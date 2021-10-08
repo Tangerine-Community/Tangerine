@@ -66,6 +66,7 @@ import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-de
 import { CsvTemplateComponent } from './csv-template/csv-template.component';
 import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-templates.component';
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
+import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -142,6 +143,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/csv-data-sets', component: CsvDataSetsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-data-sets/new', component: NewCsvDataSetComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-data-sets/:dataSetId', component: CsvDataSetDetailComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/download-statistical-files', component: DownloadStatisticalFileComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [

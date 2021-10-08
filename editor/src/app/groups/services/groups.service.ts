@@ -159,6 +159,17 @@ export class GroupsService {
     }
   }
 
+  async getFormHeaders(groupId, formId){
+    try {
+      const result = await this.httpClient.get(`/app/${groupId}/csv-headers/${formId}`).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
   async releasePWA(groupName: string, releaseType: string, versionTag: string, releaseNotes: string) {
     try {
       const result = await this.httpClient.post(`/editor/release-pwa/${groupName}`,
