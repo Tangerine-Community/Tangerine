@@ -70,7 +70,7 @@ export class DownloadStatisticalFileComponent implements OnInit {
     const domFromFromHTML = Array.from(document.createRange().createContextualFragment(formHtml).querySelectorAll('template'))
     const structure = domFromFromHTML.flatMap(e=>{
       return Array.from(e.content.children).map(el=>{
-        let obj ={ name: el.getAttribute('name'), label: el.getAttribute('label'??'')}
+        let obj ={ name: el.getAttribute('name'), label: el.getAttribute('label'??'' ), type: el.getAttribute('type'?? undefined )}
         if(el.tagName==='TANGY-RADIO-BUTTONS'|| el.tagName==='TANGY-SELECT'||el.tagName==='TANGY-CHECKBOXES'||el.tagName==='TANGY-TIMED'||el.tagName==='TANGY-UNTIMED'){
           obj['options'] = [...Array.from(el.children).map(c=>({value:c.getAttribute('value'), label:c['label']}))]
         }
@@ -84,9 +84,22 @@ export class DownloadStatisticalFileComponent implements OnInit {
     const labelDefines = structure.map(item=>{
       let optionString = ""
       item?.options && item['options'].forEach(e=>optionString+=`${e.value} "${e.label}"`)
-      return `label define ${item.name}_  0 "Incomplete" 1 "Unverified" 2 "Complete"\n`}).join('')
+      return item?.options && `label define ${item.name}_  ${optionString}\n`}).join('')
     const labelValues = structure.map( item => `label values ${item.name} ${item.name}_\n`).join('')
-    const labelVariables = structure.map(item =>`label variable ${item.name} "${item.label}"\n`).join('')
+    const dateReplace = structure.map(item=>{
+      if(item.type==='date'){
+        return`
+tostring ${item.name}, replace
+gen _date_ = date(${item.name},"YMD")
+drop ${item.name}
+rename _date_ ${item.name}
+format ${item.name} %dM_d,_CY\n
+    `
+      } else{
+        return ''
+      }
+    }).join('')
+    const labelVariables = structure.map(item =>`label variable ${item.name} "${item.label??''}"\n`).join('')
     const stataTemplate = `
 /* please enter the label for your dataset and the correct path/filename to the csv file*/
 version 13
@@ -99,6 +112,7 @@ label data "enter-label-for-your-dataset"
 ${labelDefines}
 ${labelValues}
 
+${dateReplace}
 ${labelVariables}
 
 
