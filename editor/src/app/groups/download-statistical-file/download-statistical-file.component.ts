@@ -59,10 +59,7 @@ export class DownloadStatisticalFileComponent implements OnInit {
 
 
   async getForms() {
-    this.forms = (await this.tangerineForms.getFormsInfo(this.groupId)).map(formInfo => ({
-      ...formInfo,
-      printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${this.groupId}/${formInfo.id}/print`
-    }));
+    this.forms = await this.tangerineForms.getFormsInfo(this.groupId) as [];
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }
@@ -110,8 +107,9 @@ set more off
 describe
     
     `
+    const formName = this.forms.find(f=>f.id===formId).title
     const file = new Blob([stataTemplate], {type: 'text/plain'});
-    this.downloadData(file, `${formId}.do`, 'text/plain');
+    this.downloadData(file, `${this.groupLabel}-${formName}.do`, 'text/plain');
     
   }
   
