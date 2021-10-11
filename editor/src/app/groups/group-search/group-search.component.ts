@@ -34,6 +34,7 @@ export class GroupSearchComponent implements OnInit {
 
   @ViewChild('searchBar', {static: true}) searchBar: ElementRef
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
+  @ViewChild('viewArchived', {static: true}) viewArchived: ElementRef
   //@ViewChild('scanner', {static: true}) scanner: SearchBarcodeComponent
   onSearch$ = new Subject()
   didSearch$ = new Subject()
@@ -89,6 +90,7 @@ export class GroupSearchComponent implements OnInit {
       this.stoppedSearching$.next(true)
       return 
     }
+    const showArchived = this.viewArchived.nativeElement.hasAttribute('checked') ? true : false
     this.isSearching$.next(true)
     this.searchResults.nativeElement.innerHTML = "Loading..."
     this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, { phrase: searchString }).toPromise()
