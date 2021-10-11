@@ -82,23 +82,8 @@ export class GroupSearchComponent implements OnInit {
     this
       .viewArchived
       .nativeElement
-      .addEventListener('change', event => {
-        const archivedChecked = event.target.checked
-        if (archivedChecked) {
-          this.searchResults.nativeElement.innerHTML = `
-            <span style="padding: 25px">
-              ${t('Enter a search term')}
-            </span>
-          `
-          this.isSearching$.next(true)
-        } else {
-          // this.onSearch$.next('')
-          this.searchResults.nativeElement.innerHTML = `
-            <span style="padding: 25px">
-              ${t('')}
-            </span>
-          `
-        }
+      .addEventListener('change', async event => {
+          await this.searchAndRender('');
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
@@ -111,10 +96,17 @@ export class GroupSearchComponent implements OnInit {
       this.stoppedSearching$.next(true)
       return 
     }
+    await this.searchAndRender(searchString);
+  }
+
+  private async searchAndRender(searchString) {
     const searchType = this.viewArchived.nativeElement.hasAttribute('checked') ? 'archived' : 'search'
     this.isSearching$.next(true)
     this.searchResults.nativeElement.innerHTML = "Loading..."
-    this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, { phrase: searchString, type: searchType }).toPromise()
+    this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, {
+      phrase: searchString,
+      type: searchType
+    }).toPromise()
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     if (this.searchDocs.length === 0) {
