@@ -17,6 +17,8 @@ import { HasSomePermissionsDirective } from '../core/auth/_directives/has-some-p
 import { HasAllPermissionsDirective } from '../core/auth/_directives/has-all-permissions.directive';
 import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table.component';
 import { MatMenuModule } from '@angular/material/menu';
+import {ProcessMonitorService} from "./_services/process-monitor.service";
+import {ProcessGuard} from "./_guards/process-guard.service";
 
 @NgModule({
   imports: [
@@ -29,7 +31,9 @@ import { MatMenuModule } from '@angular/material/menu';
   providers: [
     AppConfigService,
     ServerConfigService,
-    LoginGuard
+    LoginGuard,
+    ProcessMonitorService,
+    ProcessGuard
   ],
   exports: [
     TranslateModule,
