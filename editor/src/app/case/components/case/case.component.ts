@@ -8,6 +8,7 @@ import {Issue} from "../../classes/issue.class";
 import {GroupIssuesService} from "../../../groups/services/group-issues.service";
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
+import {ProcessMonitorService} from "../../../shared/_services/process-monitor.service";
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -34,6 +35,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   issues:Array<Issue>
   moment
   groupId:string
+  process: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -42,6 +44,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     private ref: ChangeDetectorRef,
     authenticationService: AuthenticationService,
     private groupIssuesService:GroupIssuesService,
+    private processMonitorService: ProcessMonitorService
   ) {
     ref.detach()
     this.window = window
@@ -130,7 +133,9 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   async archive() {
     const confirmation = confirm(_TRANSLATE('Are you sure you want to archive this case?'))
     if (confirmation) {
+      this.process = this.processMonitorService.start('archiving a case', 'Archiving a case.')
       await this.caseService.archive()
+      this.processMonitorService.stop(this.process.id)
       this.ref.detectChanges()
     }
   }
@@ -138,7 +143,9 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   async unarchive() {
     const confirmation = confirm(_TRANSLATE('Are you sure you want to unarchive this case?'))
     if (confirmation) {
+      this.process = this.processMonitorService.start('unarchiving a case', 'Un-archiving a case.')
       await this.caseService.unarchive()
+      this.processMonitorService.stop(this.process.id)
       this.ref.detectChanges()
     }
   }
@@ -148,7 +155,9 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
       _TRANSLATE('Are you sure you want to delete this case? You will not be able to undo the operation')
     );
     if (confirmDelete) {
+      this.process = this.processMonitorService.start('deleting a case', 'Deleting a case.')
       await this.caseService.delete()
+      this.processMonitorService.stop(this.process.id)
       this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
     }
   }

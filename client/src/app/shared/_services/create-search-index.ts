@@ -42,7 +42,7 @@ export const createSearchIndex = async (db, formsInfo, customSearchJs = '') => {
       }
     }
   `
-  const doc = {
+  const updatedSearchDoc = {
     _id: '_design/search',
     views: {
       'search': {
@@ -50,9 +50,12 @@ export const createSearchIndex = async (db, formsInfo, customSearchJs = '') => {
       }
     }
   }
+  let existingSearchDoc
   try {
-    const existingSearchDoc = await db.get('_design/search')
-    doc['_rev'] = existingSearchDoc._rev
+    existingSearchDoc = await db.get('_design/search')
+    updatedSearchDoc['_rev'] = existingSearchDoc._rev
   } catch (e) { }
-  await db.put(doc)
+  if (!existingSearchDoc || (existingSearchDoc && existingSearchDoc.views.search.map !== updatedSearchDoc.views.search.map)) {
+    await db.put(updatedSearchDoc)
+  }
 }
