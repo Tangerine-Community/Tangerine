@@ -306,3 +306,14 @@ mat-card-content > * {
   .icon-list-item>mwc-icon{
     color: var(--primary-color) !important;
   }
+
+.loading-ui-container {
+  position: fixed;
+  display: block;
+  height: 100%;
+  width: 100%;
+  opacity: 0.7;
+  background-color: #fff;
+  top: 0;
+  z-index: 100;
+}

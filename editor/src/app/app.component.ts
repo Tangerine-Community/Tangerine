@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { TangyFormsInfoService } from './tangy-forms/tangy-forms-info-service';
 import { TangyFormService } from './tangy-forms/tangy-form.service';
 import { MenuService } from './shared/_services/menu.service';
-import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
@@ -17,6 +17,8 @@ import { _TRANSLATE } from './shared/_services/translation-marker';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { CaseService } from './case/services/case.service';
 import { Get } from 'tangy-form/helpers.js'
+import {ProcessMonitorService} from "./shared/_services/process-monitor.service";
+import {LoadingUiComponent} from "./core/loading-ui.component";
 
 @Component({
   selector: 'app-root',
@@ -38,7 +40,8 @@ export class AppComponent implements OnInit, OnDestroy {
   isConfirmDialogActive = false;
 
   @ViewChild('snav', {static: true}) snav: MatSidenav;
-
+  @ViewChild('loadingUi', { static: true }) loadingUi: ElementRef<LoadingUiComponent>;
+  
   private _mobileQueryListener: () => void;
 
   constructor(
@@ -57,7 +60,8 @@ export class AppComponent implements OnInit, OnDestroy {
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
     private appConfigService: AppConfigService,
-    private permissionService: NgxPermissionsService
+    private permissionService: NgxPermissionsService,
+    private processMonitorService:ProcessMonitorService
   ) {
     translate.setDefaultLang('translation');
     translate.use('translation');
@@ -82,7 +86,8 @@ export class AppComponent implements OnInit, OnDestroy {
       case: caseService,
       cases: casesService,
       caseDefinition: caseDefinitionsService,
-      translate: window['t']
+      translate: window['t'],
+      process:processMonitorService
     }
   }
 
@@ -116,6 +121,13 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
     this.window.translation = await this.appConfigService.getTranslations();
+
+    this.processMonitorService.busy.subscribe((isBusy) => {
+      this.loadingUi.nativeElement.hidden = false
+    });
+    this.processMonitorService.done.subscribe((isDone) => {
+      this.loadingUi.nativeElement.hidden = true
+    });
   }
 
   ngOnDestroy(): void {
