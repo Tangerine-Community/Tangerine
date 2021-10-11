@@ -104,7 +104,6 @@ export class GroupSearchComponent implements OnInit {
     for (const searchDoc of this.searchDocs) {
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      const formId = formInfo.id
       searchResultsMarkup += `
       <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
         <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
