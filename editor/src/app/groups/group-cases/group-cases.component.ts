@@ -7,6 +7,7 @@ import { TangyFormsInfoService } from './../../tangy-forms/tangy-forms-info-serv
 import { FormInfo } from './../../tangy-forms/classes/form-info.class';
 import { GroupResponsesService } from './../services/group-responses.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import {HttpClient} from "@angular/common/http";
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -50,7 +51,8 @@ export class GroupCasesComponent implements OnInit {
   constructor(
     private groupResponsesService:GroupResponsesService,
     private formsInfoService: TangyFormsInfoService,
-    private router: Router
+    private router: Router,
+    private httpClient: HttpClient,
   ) { }
 
   async ngOnInit() {
@@ -84,11 +86,7 @@ export class GroupCasesComponent implements OnInit {
 
   async query() {
     this.loading = true
-    this.cases = await this.groupResponsesService.query(this.groupId, {
-      selector: this.selector,
-      limit: this.limit,
-      skip: this.skip
-    })
+    this.cases = <Array<any>>await this.httpClient.post(`/group-responses/search/${this.groupId}`, { phrase: '' }).toPromise()
     this.renderSearchResults()
     this.loading = false
   }
@@ -96,10 +94,10 @@ export class GroupCasesComponent implements OnInit {
   formResponseToSearchDoc(doc, formInfo:FormInfo) {
     const searchDoc = {
       _id: doc._id,
-      formId: doc.form.id,
+      formId: doc.formId,
       formType: formInfo.type ? formInfo.type : 'form',
-      lastModified: Date.now(),
-      tangerineModifiedOn: new Date(doc.tangerineModifiedOn).getTime(),
+      lastModified: doc.lastModified,
+      tangerineModifiedOn: new Date(doc.lastModified).getTime(),
       variables: {}
     }
     const response = new TangyFormResponseModel(doc)
@@ -130,20 +128,11 @@ export class GroupCasesComponent implements OnInit {
   }
 
   renderSearchResults() {
-    //
-    const searchDocs = []
-    for (const caseDoc of this.cases) {
-      const formInfo = this.formsInfo.find(formInfo => formInfo.id === caseDoc.form.id)
-      const searchDoc = this.formResponseToSearchDoc(caseDoc, formInfo)
-      searchDocs.push(searchDoc)
-    }
-    //
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
-    for (const searchDoc of searchDocs) {
+    for (const searchDoc of this.cases) {
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      const formId = formInfo.id
       searchResultsMarkup += `
       <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
         <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
