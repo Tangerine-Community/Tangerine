@@ -4,6 +4,7 @@
 
 __Fixes__
 - Added process indicator when archiving, un-archiving, or deleting a case. Issue: [#2974](https://github.com/Tangerine-Community/Tangerine/issues/2974)
+- Add v3.19.2 update to recover if v3.19.0 search indexing failed
 
 __Server upgrade instructions__
 
