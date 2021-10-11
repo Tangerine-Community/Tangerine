@@ -34,6 +34,7 @@ export class GroupSearchComponent implements OnInit {
 
   @ViewChild('searchBar', {static: true}) searchBar: ElementRef
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
+  @ViewChild('viewArchived', {static: true}) viewArchived: ElementRef
   //@ViewChild('scanner', {static: true}) scanner: SearchBarcodeComponent
   onSearch$ = new Subject()
   didSearch$ = new Subject()
@@ -78,6 +79,12 @@ export class GroupSearchComponent implements OnInit {
           `
         }
       })
+    this
+      .viewArchived
+      .nativeElement
+      .addEventListener('change', async event => {
+          await this.searchAndRender('');
+      })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
     //this.onSearch('')
@@ -89,9 +96,17 @@ export class GroupSearchComponent implements OnInit {
       this.stoppedSearching$.next(true)
       return 
     }
+    await this.searchAndRender(searchString);
+  }
+
+  private async searchAndRender(searchString) {
+    const searchType = this.viewArchived.nativeElement.hasAttribute('checked') ? 'archived' : 'search'
     this.isSearching$.next(true)
     this.searchResults.nativeElement.innerHTML = "Loading..."
-    this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, { phrase: searchString }).toPromise()
+    this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, {
+      phrase: searchString,
+      type: searchType
+    }).toPromise()
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     if (this.searchDocs.length === 0) {
