@@ -401,5 +401,15 @@ export const updates = [
       await window['T'].search.createIndex()
       await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.2')) return
+      console.log('Updating to v3.19.2...')
+      console.log('Adding support for archived flags in search index...')
+      await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
+      await variableService.set('ran-update-v3.19.2', 'true')
+    }
   }
 ]
