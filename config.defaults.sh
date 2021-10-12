@@ -115,6 +115,9 @@ T_ARCHIVE_APKS_TO_DISK="true"
 # Set to false if you would not want to archive PWAs to Disk when creating a release
 T_ARCHIVE_PWAS_TO_DISK="true"
 
+# Custom HTML to place on the login page of the server.
+T_CUSTOM_LOGIN_MARKUP=''
+
 #
 # Development
 #
