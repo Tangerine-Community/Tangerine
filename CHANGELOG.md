@@ -1,5 +1,9 @@
 # What's new
 
+## v3.18.8
+- Add support for skipping indexes in form's cycle sequences.
+- Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable.
+
 ## v3.18.7
 __Fixes__
 - Back-ported some fixes to the backup and restore feature from the v3.19.1 branch.
