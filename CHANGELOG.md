@@ -2,7 +2,8 @@
 
 ## v3.18.8
 - Add support for skipping indexes in form's cycle sequences.
-- Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable.
+- Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable. https://github.com/Tangerine-Community/Tangerine/issues/2947
+- On Tangerine Teach reports, fix calculating of "percentile", AKA percent correct grouping. https://github.com/Tangerine-Community/Tangerine/issues/2941
 
 ## v3.18.7
 __Fixes__
