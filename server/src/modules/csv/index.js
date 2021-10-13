@@ -56,29 +56,6 @@ module.exports = {
           if (doc.type !== 'issue') {
             // TODO: Can't this be cached?
             const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-            if (doc.archived) {
-              debugger;
-              // Delete from the -reporting db.
-              console.log("Deleting: " + doc._id)
-              try {
-                // await REPORTING_DB.remove(doc._id, doc._rev)
-                await REPORTING_DB.get(doc._id).then(function (doc) {
-                  return REPORTING_DB.remove(doc._id, doc._rev);
-                });
-                console.log("Deleted from REPORTING_DB: " + doc._id + " rev: " + doc._rev)
-              } catch (e) {
-                console.log("Error: " + JSON.stringify(e))
-              }
-              try {
-                // await SANITIZED_DB.remove(doc._id, doc._rev)
-                await SANITIZED_DB.get(doc._id).then(function (doc) {
-                  return SANITIZED_DB.remove(doc._id, doc._rev);
-                });
-                console.log("Deleted from SANITIZED_DB: " + doc._id + " rev: " + doc._rev)
-              } catch (e) {
-                console.log("Error: " + JSON.stringify(e))
-              }
-            } else {
               let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
               // Process the flatResponse
               let processedResult = flatResponse;
@@ -103,7 +80,6 @@ module.exports = {
               await saveFlatFormResponse(processedResult, SANITIZED_DB);
               // Index the view now.
               await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
-            }
           }
           resolve(data)
         } catch(e) {
@@ -145,6 +121,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
+    archived: formResponse.archived,
     tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,
