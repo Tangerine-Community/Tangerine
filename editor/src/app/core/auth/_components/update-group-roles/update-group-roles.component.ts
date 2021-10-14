@@ -55,6 +55,6 @@ export class UpdateGroupRolesComponent implements OnInit {
   async submit() {
     this.authenticationService.updateRoleInGroup(this.groupId, this.role);
     this.errorHandler.handleError('Role Updated Successfully');
-    this.router.navigate([`groups/${this.groupId}/configure/security/configure-roles`]);
+    this.router.navigate([`groups/${this.groupId}/configure/security`]);
   }
 }

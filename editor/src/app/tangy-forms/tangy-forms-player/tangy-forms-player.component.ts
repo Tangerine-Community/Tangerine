@@ -6,8 +6,9 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
-const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+import {ProcessMonitorService} from "../../shared/_services/process-monitor.service";
 
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
   selector: 'app-tangy-forms-player',
@@ -46,9 +47,12 @@ export class TangyFormsPlayerComponent {
 
   window:any;
   @ViewChild('container', {static: true}) container: ElementRef;
+  process: any;
+  
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
-    private tangyFormService: TangyFormService
+    private tangyFormService: TangyFormService,
+    private processMonitorService: ProcessMonitorService,
   ) {
     this.window = window
   }
@@ -136,6 +140,11 @@ export class TangyFormsPlayerComponent {
           this.throttledSaveResponse(response)
         })
       }
+      formEl.addEventListener('before-submit', async (event) => {
+        if (this.preventSubmit) event.preventDefault()
+        this.process = this.processMonitorService.start('saving-a-tangy-form', 'Updating a form response.')
+        this.$submit.next(true)
+      })
       formEl.addEventListener('submit', async (event) => {
         if (this.preventSubmit) event.preventDefault() 
         while (this.throttledSaveFiring === true) {
@@ -148,6 +157,7 @@ export class TangyFormsPlayerComponent {
         while (this.throttledSaveFiring === true) {
           await sleep(1000)
         }
+        this.processMonitorService.stop(this.process.id)
         this.$afterSubmit.next(true)
       })
       formEl.addEventListener('resubmit', async (event) => {
