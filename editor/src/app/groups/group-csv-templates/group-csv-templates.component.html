@@ -1,0 +1,7 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div id="description">
+  {{'CSV Template are filters for CSV output that allow you to define which columns to include in our CSV file for specific forms. Define a CSV Template for a specific form and then when selecting which forms to include in a CSV Data Set, the CSV Templates will be available to apply to the CSV Data Set output.'|translate}}
+</div>
+<app-dynamic-table [data]="csvTemplates" (rowDelete)="onRowDelete($event)" (rowEdit)="onRowEdit($event)"></app-dynamic-table>
+<paper-fab (click)="createCsvTemplate()" mat-raised-button icon="add" color="accent" class="action">
+</paper-fab>

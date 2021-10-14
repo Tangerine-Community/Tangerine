@@ -7,6 +7,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra')
 const axios = require('axios')
+const tangyModules = require('../modules/index.js')()
 
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
@@ -31,7 +32,14 @@ const generateCSV = async (req, res) => {
     sanitizedExtension = '-sanitized'
   }
   let dbName = `${groupId}-reporting${sanitizedExtension}`;
-  const forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+  let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
+  if(tangyModules.enabledModules.includes('case')){
+    const appendedForms = [
+      {id: 'participant',title:'Participant'},
+      {id: 'event-form',title:'Event Form'},
+      {id: 'case-event',title: 'Case Event'}];
+      forms = [...forms, ...appendedForms]
+  }
   const formInfo = forms.find(formInfo => formInfo.id === formId)
   const title = formInfo.title.replace(/ /g, '_')
   // this.group = await this.groupsService.getGroupInfo(groupId);
@@ -67,7 +75,7 @@ const generateCSV = async (req, res) => {
 const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
   // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
-  const formIds = req.params.formIds.split(',').map(formId => sanitize(formId)).join(',')
+  const formIds = req.params.formIds.split(',').map(formId => formId).join(',')
   const { year, month } = req.params
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
@@ -111,12 +119,15 @@ const listCSVDataSets = async (req, res) => {
     const http = await getUser1HttpInterface()
     const data = result.docs.map(async e => {
       let complete = false;
+      let fileExists = false;
       try {
         complete = (await http.get(e.stateUrl)).data.complete
+        fileExists = await fs.pathExists(`/csv/${e.fileName}`)
       } catch (error) {
         complete = false
+        fileExists = false
       }
-      return ({ ...e, complete, numberOfDocs })
+      return ({ ...e, complete, fileExists, numberOfDocs })
     })
     res.send(await Promise.all(data))
   } catch (error) {

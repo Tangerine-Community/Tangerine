@@ -18,6 +18,7 @@ export class CsvDataSetsComponent implements OnInit {
   groupId
   pageIndex = 0
   pageSize = 10
+  ready = false
   constructor(
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
@@ -45,7 +46,7 @@ export class CsvDataSetsComponent implements OnInit {
   async getData(){
     try {
       this.csvDataSets = await this.groupsService.listCSVDataSets(this.groupId, this.pageIndex, this.pageSize)
-      
+      this.ready = true
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'))
     }
