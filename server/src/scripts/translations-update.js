@@ -13,7 +13,7 @@ if (process.argv[2] === '--help') {
 async function go() {
   const groupNames = await groupsList()
   for (let groupName of groupNames) {
-    await exec(`cp /tangerine/client/default-assets/translation* /tangerine/client/content/groups/${groupName}/`) 
+    await exec(`cp /tangerine/translations/*.json /tangerine/client/content/groups/${groupName}/`) 
   }
 }
 go()
