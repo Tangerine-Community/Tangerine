@@ -74,10 +74,17 @@ export class GroupFormsCsvComponent implements OnInit, AfterViewInit {
   }
 
   async getForms() {
+    const appendedForms = [
+      {id: 'participant',title:_TRANSLATE('Participant')},
+      {id: 'event-form',title:_TRANSLATE('Event Form')},
+      {id: 'case-event',title: _TRANSLATE('Case Event')}];
     this.forms = (await this.tangerineForms.getFormsInfo(this.groupId)).map(formInfo => ({
       ...formInfo,
       printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${this.groupId}/${formInfo.id}/print`
     }));;
+    if(this.enabledModules.includes('case')){
+      this.forms = [...this.forms, ...appendedForms]
+    }
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }
