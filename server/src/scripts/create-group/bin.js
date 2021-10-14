@@ -76,6 +76,8 @@ async function createGroup() {
     } else if (contentSetVersion === 2) {
       appConfigDefaultsPath = `${groupPath}/client/app-config.defaults.json`
     }
+    // Add translations.
+    await exec(`cp /tangerine/translations/*.json ${groupPath}/client/`)
     const appConfig = await fs.readJson(appConfigDefaultsPath)
     await fs.writeJson(appConfigPath, {
       ...appConfig,

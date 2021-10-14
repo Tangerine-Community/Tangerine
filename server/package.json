@@ -36,6 +36,9 @@
     "generate-ssh-keys": "./src/scripts/generate-ssh-keys.js",
     "import-v2-assessment": "./src/scripts/import-v2-assessment.js",
     "redact-values": "./src/scripts/redact-values/bin.js",
+    "make-translations-consistent": "./src/scripts/make-translations-consistent.js",
+    "export-translations-csvs": "./src/scripts/export-translations-csvs.js",
+    "import-translations-csvs": "./src/scripts/import-translations-csvs.js",
     "mysql-report": "./src/scripts/mysql-report.js"
   },
   "scripts": {
