@@ -1,9 +1,46 @@
 # What's new
 
+
+## v3.19.2
+
+__Fixes__
+
+- Added process indicator when archiving, un-archiving, or deleting a case. Issue: [#2974](https://github.com/Tangerine-Community/Tangerine/issues/2974)
+- Add v3.19.2 update to recover if v3.19.0 search indexing failed
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.19.2
+./start.sh v3.19.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.19.1
+# Perform additional upgrades.
+docker exec -it tangerine bash
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.19.1
 
-- Added backup and restore feature for Tangerine databases using device encryption. Increase the appConfig.json parameter `dbBackupSplitNumberFiles` (default: 200) to speed up the backup/restore process if your database is large. You may also change that parameter in the Export Backup user interface. Updated docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
-- Improve rendering of Device listing. PR: [#2924](https://github.com/Tangerine-Community/Tangerine/issues/2924) *Note* that you must run the update or else the Device view will fail.
+__Fixes__
+
+- Improved backup and restore file processing. Docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
+- Added archive/unarchive Case functionality and permission for "can delete" [#2954](https://github.com/Tangerine-Community/Tangerine/pull/2954)
 
 __Server upgrade instructions__
 
@@ -25,15 +62,14 @@ cp -r data ../data-backup-$(date "+%F-%T")
 git fetch origin
 git checkout v3.19.1
 ./start.sh v3.19.1
-# Run the update to install the new listDevices view.
-docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.1.js
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.19.0
+# Perform additional upgrades.
+docker exec -it tangerine bash
 # This will index all database views in all groups. It may take many hours if 
 # the project has a lot of data.
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
-
 
 ## v3.19.0
 
