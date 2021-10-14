@@ -1,8 +1,10 @@
 # What's new
 
+
 ## v3.19.2
 
 __Fixes__
+
 - Added process indicator when archiving, un-archiving, or deleting a case. Issue: [#2974](https://github.com/Tangerine-Community/Tangerine/issues/2974)
 - Add v3.19.2 update to recover if v3.19.0 search indexing failed
 
@@ -33,14 +35,16 @@ docker exec -it tangerine bash
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
-
 ## v3.19.1
 
 __Fixes__
+
 - Improved backup and restore file processing. Docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
 - Added archive/unarchive Case functionality and permission for "can delete" [#2954](https://github.com/Tangerine-Community/Tangerine/pull/2954)
 
 __Server upgrade instructions__
+
+Important upgrade: Please note that you must run update below (v3.19.1.js) to install the new listDevices view. If you don't the Devices listing will fail.
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 

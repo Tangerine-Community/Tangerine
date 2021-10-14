@@ -36,6 +36,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   isWrappingUp = false
   isSaving = false
   loaded = false
+  isFormComplete = false
 
   window:any
 
@@ -138,6 +139,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
       const appConfig = await this.appConfigService.getAppConfig()
       this.allowCreationOfIssues = appConfig.allowCreationOfIssues
       this.loaded = true
+      this.isFormComplete = this.eventForm.complete
       this.ref.detectChanges()
     })
   }

@@ -24,7 +24,21 @@
         <mat-card-subtitle>{{'View uploaded form responses from devices.'|translate}}</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-  
+   
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="csv-templates">
+    <mat-card-header>
+        <div mat-card-avatar>
+          <mwc-icon class="tangy-foreground-secondary">view_module</mwc-icon>
+        </div>
+        <mat-card-title>
+            <a>{{'CSV Templates'|translate}}</a>
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{'CSV Template are filters for CSV output that allow you to define which columns to include in our CSV file for specific forms. Define a CSV Template for a specific form and then when selecting which forms to include in a CSV Data Set, the CSV Templates will be available to apply to the CSV Data Set output.'|translate}}
+        </mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
   <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="download-csv">
     <mat-card-header>
         <div mat-card-avatar>
@@ -76,5 +90,19 @@
       </mat-card-header>
     </mat-card>
   </span>
-  
+   
+  <span>
+    <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_database_conflicts'" class="is-link mat-elevation-z3" routerLink="database-conflicts">
+      <mat-card-header>
+          <div mat-card-avatar>
+            <mwc-icon class="tangy-foreground-secondary">receipt</mwc-icon>
+          </div>
+          <mat-card-title>
+            <a>{{'Database Conflicts'|translate}}</a>
+          </mat-card-title>
+          <mat-card-subtitle>{{'Review issues.'|translate}}</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </span> 
+
 </ng-container>

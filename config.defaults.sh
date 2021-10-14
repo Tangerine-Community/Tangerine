@@ -14,7 +14,7 @@
 T_HOST_NAME='example.com'
 # Set to HTTPS for redirecting any requests to https. However you will need to put a reverse proxy with SSL in front.
 T_PROTOCOL="http"
-# Administrator User for logging into 
+# Administrator User for logging into Tangerine -- Do not change the username until after the first login
 T_USER1="user1"
 T_USER1_PASSWORD="password"
 # If using Sync Protocol 1, this is the password tablets will use to authenticate when uploading data.
@@ -115,6 +115,10 @@ T_ARCHIVE_APKS_TO_DISK="true"
 # Set to false if you would not want to archive PWAs to Disk when creating a release
 T_ARCHIVE_PWAS_TO_DISK="true"
 
+# The value to use for issuer parameter when signing JWTs.
+T_JWT_ISSUER="Tangerine"
+# The validity period for a signed JWT Token - determines how long before a token is conidered invalid. Expressed in seconds or a string describing a time span as defined in https://github.com/zeit/ms
+T_JWT_EXPIRES_IN="1h"
 #
 # Development
 #
