@@ -19,7 +19,7 @@ jobs:
           echo "Building for $VERSION"
           cd tangerine-preview
           npm install
-          git clone https://github.com/rjsteinert/rjsteinert-publish-tangerine-preview-test tmp
+          git clone https://github.com/tangerine-community/tangerine tmp
           cd tmp 
           git checkout $VERSION
           cd client
