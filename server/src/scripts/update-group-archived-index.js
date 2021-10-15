@@ -4,9 +4,6 @@ const fs = require('fs-extra')
 const DB = require('../db.js')
 
 const updateGroupArchivedIndex = async function (GROUP_ID) {
-  console.log('')
-  console.log(`Updating archived index for group ${GROUP_ID}`)
-  console.log('')
   const formsInfo = await fs.readJSON(`/tangerine/groups/${GROUP_ID}/client/forms.json`) 
   const db = DB(GROUP_ID)
   const variablesToIndexByFormId = formsInfo.reduce((variablesToIndexByFormId, formInfo) => {
