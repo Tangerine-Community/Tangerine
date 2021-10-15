@@ -63,14 +63,15 @@ const updateGroupSearchIndex = async function (GROUP_ID) {
     updatedSearchDoc['_rev'] = existingSearchDoc._rev
   } 
   catch (e) {
-    console.error("Error while updating search docs. Message: " + e)
+    console.error("Error while fetching search design doc. Message: " + JSON.stringify(e))
   }
   try {
     if (!existingSearchDoc || (existingSearchDoc && existingSearchDoc.views.search.map !== updatedSearchDoc.views.search.map)) {
+      console.log(`Created or updated search index for group ${GROUP_ID}`)
       await db.put(updatedSearchDoc)
     }
   } catch (e) {
-    console.error(e)
+    console.error("Error while updating (via put) search design doc. Message: " + JSON.stringify(e))
   }
 }
 

@@ -46,15 +46,26 @@ export class GroupResponsesService {
     return response.docs
   }
 
-  async search(groupId, phrase:string, type:string, limit = 50, skip = 0) {
-    if (type ==='search') {
-      await updateGroupSearchIndex(groupId)
-    } else {
+  /**
+   * Specify which index to use - either 'search' or 'archived'
+   * @param groupId
+   * @param phrase
+   * @param index - either 'search' or 'archived'
+   * @param limit
+   * @param skip
+   */
+  async search(groupId, phrase:string, index:string, limit = 50, skip = 0) {
+    if (typeof index === 'undefined') {
+      index = 'search'
+    }
+    if (index ==='archived') {
       await updateGroupArchivedIndex(groupId)
+    } else {
+      await updateGroupSearchIndex(groupId)
     }
     const groupDb = this.getGroupsDb(groupId)
     const result  = await groupDb.query(
-      type,
+      index,
       phrase
         ? { 
           startkey: `${phrase}`.toLocaleLowerCase(),
