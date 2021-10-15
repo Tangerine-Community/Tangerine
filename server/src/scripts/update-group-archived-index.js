@@ -63,14 +63,15 @@ const updateGroupArchivedIndex = async function (GROUP_ID) {
     updatedArchivedDoc['_rev'] = existingArchivedDoc._rev
   } 
   catch (e) {
-    console.log(e)
+    console.error("Error while fetching archived design doc. Message: " + JSON.stringify(e))
   }
   try {
-    if (!existingArchivedDoc || (existingArchivedDoc && existingArchivedDoc.views.archived.map !== updatedArchivedDoc.views.archived.map)) {
+      if (!existingArchivedDoc || (existingArchivedDoc && existingArchivedDoc.views.archived.map !== updatedArchivedDoc.views.archived.map)) {
+      console.log(`Created or updated archived index for group ${GROUP_ID}`)
       await db.put(updatedArchivedDoc)
     }
   } catch (e) {
-    console.error(e)
+    console.error("Error while updating (via put) search design doc. Message: " + JSON.stringify(e))
   }
 }
 
