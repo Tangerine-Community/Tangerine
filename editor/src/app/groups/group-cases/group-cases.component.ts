@@ -86,7 +86,7 @@ export class GroupCasesComponent implements OnInit {
 
   async query() {
     this.loading = true
-    this.cases = <Array<any>>await this.httpClient.post(`/group-responses/search/${this.groupId}`, { phrase: '' }).toPromise()
+    this.cases = <Array<any>>await this.httpClient.post(`/group-responses/search/${this.groupId}`, { phrase: '', type: 'search' }).toPromise()
     this.renderSearchResults()
     this.loading = false
   }

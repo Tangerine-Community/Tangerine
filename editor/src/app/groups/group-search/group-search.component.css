@@ -21,6 +21,10 @@
     top: -3px;
   }
   
+  .view-archived {
+    margin: 5px 25px
+  }
+  
   #search-bar {
     margin: 0px 25px;
   }
@@ -43,6 +47,7 @@
   
   #search-results {
     margin: 0px 15px 64px 0px;
+    padding-top:1em;
   }
   
   #bottom-nav {
