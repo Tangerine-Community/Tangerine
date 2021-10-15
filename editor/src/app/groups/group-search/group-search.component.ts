@@ -105,7 +105,7 @@ export class GroupSearchComponent implements OnInit {
     this.searchResults.nativeElement.innerHTML = "Loading..."
     this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, {
       phrase: searchString,
-      type: searchType
+      index: searchType
     }).toPromise()
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
