@@ -102,13 +102,11 @@ export class ClassFormComponent implements OnInit {
       } else {
         // For new student-registration etc.
         this.formPlayer.formHtml = formHtml
-        this.formPlayer.formId = this.formId
       }
       await this.formPlayer.render()
 
       // this.formPlayer.formEl.addEventListener('TANGY_FORM_UPDATE', async (event) => {
-      this.formPlayer.$submit.subscribe(async () => {
-        let state = this.formPlayer.formEl.store.getState()
+      this.formPlayer.$afterSubmit.subscribe(async (state:any) => {
         state.complete = false
         if (typeof this.formResponse !== 'undefined') {
           // let formItems = []
@@ -168,9 +166,7 @@ export class ClassFormComponent implements OnInit {
       }
       await this.tangyFormService.saveResponse({
         ...state,
-        _rev: stateDoc['_rev'],
-        location: this.formPlayer.location || state.location,
-        ...this.formPlayer.metadata
+        _rev: stateDoc['_rev']
       })
     }
     this.response = state

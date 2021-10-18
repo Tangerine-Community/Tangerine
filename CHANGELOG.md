@@ -3,6 +3,7 @@
 ## v3.19.3
 
 __New Features__
+
 - Added ability to search archived cases. Issue: [#2977](https://github.com/Tangerine-Community/Tangerine/issues/2977)
   *Important* : Run `docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js` to enable searching archived cases.
 
@@ -33,10 +34,10 @@ docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
-
 ## v3.19.2
 
 __Fixes__
+
 - Added process indicator when archiving, un-archiving, or deleting a case. Issue: [#2974](https://github.com/Tangerine-Community/Tangerine/issues/2974)
 - Add v3.19.2 update to recover if v3.19.0 search indexing failed
 
@@ -71,6 +72,7 @@ wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ## v3.19.1
 
 __Fixes__
+
 - Improved backup and restore file processing. Docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
 - Added archive/unarchive Case functionality and permission for "can delete" [#2954](https://github.com/Tangerine-Community/Tangerine/pull/2954)
 
@@ -166,14 +168,28 @@ update-down-sync-doc-count-by-location-id-index '*'
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
+## v3.18.8
+- Add support for skipping indexes in form's cycle sequences.
+- Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable. https://github.com/Tangerine-Community/Tangerine/issues/2947
+- On Tangerine Teach reports, fix calculating of "percentile", AKA percent correct grouping. https://github.com/Tangerine-Community/Tangerine/issues/2941
+
+## v3.18.7
+
+__Fixes__
+
+- Back-ported some fixes to the backup and restore feature from the v3.19.1 branch.
+
 ## v3.18.6
 
 __Updates__
+
 - Updated tangy-form lib from 4.25.11 to 4.25.14 ([Changelog](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v42514)), which provides:
   - A fix for photo-capture so that it de-activates the camera when going to the next page or leaving a form. 
   - Implemented a new 'before-submit' event to tangy-form in order to listen to events before the 'submit' event is dispatched.
   - A fix for User defined Cycle Sequences.
+
 __Fixes__
+
 - Remove incorrect exception classes for changes processing #2883 PR: [#2883](https://github.com/Tangerine-Community/Tangerine/pull/2883) Issue: [#2882](https://github.com/Tangerine-Community/Tangerine/issues/2882)
 - Added backup and restore feature for Tangerine databases using device encryption. Increase the appConfig.json parameter `dbBackupSplitNumberFiles` (default: 200) to speed up the backup/restore process if your database is large. You may also change that parameter in the Export Backup user interface. Updated docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
 
@@ -202,6 +218,7 @@ docker rmi tangerine/tangerine:v3.18.5
 ## v3.18.5
 
 __Fixes__
+
 - Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
 
 ## v3.18.4
