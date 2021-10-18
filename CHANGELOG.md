@@ -1,6 +1,5 @@
 # What's new
 
-
 ## v3.19.2
 
 __Fixes__
@@ -135,6 +134,12 @@ update-down-sync-doc-count-by-location-id-index '*'
 # the project has a lot of data.
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
+
+## v3.18.8
+- Add support for skipping indexes in form's cycle sequences.
+- Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable. https://github.com/Tangerine-Community/Tangerine/issues/2947
+- On Tangerine Teach reports, fix calculating of "percentile", AKA percent correct grouping. https://github.com/Tangerine-Community/Tangerine/issues/2941
+
 
 ## v3.18.7
 
