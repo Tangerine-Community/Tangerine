@@ -172,6 +172,7 @@ export class TangyFormsPlayerComponent {
         while (this.throttledSaveFiring === true) {
           await sleep(1000)
         }
+        this.processMonitorService.stop(this.process.id)
         this.$afterResubmit.next(true)
       })
     }
