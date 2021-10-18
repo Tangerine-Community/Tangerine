@@ -54,6 +54,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   }
 
   async ngAfterContentInit() {
+    const process = this.processMonitorService.start('caseOpen', 'Opening Case...')
     this.groupId = window.location.pathname.split('/')[2]
     const caseId = window.location.hash.split('/')[2]
     if (!this.caseService.case || caseId !== this.caseService.case._id) {
@@ -76,6 +77,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     }
     this.calculateTemplateData()
     this.ready = true
+    this.processMonitorService.stop(process.id)
   }
 
   calculateTemplateData() {
