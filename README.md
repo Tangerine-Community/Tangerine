@@ -155,7 +155,6 @@ cd tangerine
 ./start.sh
 ```
 
-
 ### Tablet Upgrades
 For the app on the tablet, wether you are using the Android Installation method or the Web Browser installation method, the update process is the same. After server upgrades or content changes, return to the "Releases" tab in the online Editor and click "Test Release". When that completes, fetch your designated test tablet. Ensure you have an Internet connection on your designated test tablet, open the app, log in, and from the top right menu select "Check for Update". Follow the prompts to update. If the updates are satisfactory, return to your "Releases" tab online and click "Live Release". Proceed to update your Tablets with the "Live Release" app.
 

@@ -12,6 +12,20 @@
     ]
   },
   {
+    "title": "Student Registration",
+    "src": "./assets/student-registration/form.html",
+    "id": "student-registration",
+    "templates": [
+    ]
+  },
+  {
+    "title": "Class Registration",
+    "src": "./assets/class-registration/form.html",
+    "id": "class-registration",
+    "templates": [
+    ]
+  },
+  {
     "title": "Russian Form",
     "src": "./assets/russian/form.html",
     "id": "russian",
