@@ -38,6 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
   menuService: MenuService;
   sessionTimeoutCheckTimerID;
   isConfirmDialogActive = false;
+  processes = []
 
   @ViewChild('snav', {static: true}) snav: MatSidenav;
   @ViewChild('loadingUi', { static: true }) loadingUi: ElementRef<LoadingUiComponent>;
@@ -123,6 +124,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.window.translation = await this.appConfigService.getTranslations();
 
     this.processMonitorService.busy.subscribe((isBusy) => {
+      this.processes = this.processMonitorService.processes
       this.loadingUi.nativeElement.hidden = false
     });
     this.processMonitorService.done.subscribe((isDone) => {
