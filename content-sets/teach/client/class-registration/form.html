@@ -1,38 +1,101 @@
-<tangy-form has-summary linear-mode hide-closed-items id="class-registration" on-change="" >
-    <tangy-form-item id="class-registration" title="Class Registration" hide-back-button hide-next-button on-open="">
-        <template>
-            <tangy-input
-                    name="school_name"
-                    label="School name"
-                    type="text"
-                    error-message="This is required."
-                    required>
-            </tangy-input>
 
-            <tangy-input
-                    name="school_year"
-                    label="School year"
-                    type="text"
-                    error-message="This is required."
-                    required>
-            </tangy-input>
+      <tangy-form id="class-registration" title="Class Registration" category="null"
+        on-open="
+        
+        "
+        exit-clicks=""
+        cycle-sequences=""
+        on-change="
+        
+        "
+        on-submit="
+         
+        "
+      >
+        
+          <tangy-form-item id="class-registration" 
+            title="Class Registration"
+             hide-back-button
+            
 
-            <tangy-input
-                    name="grade"
-                    label="Grade"
-                    type="text"
-                    error-message="This is required."
-                    required>
-            </tangy-input>
-
-            <tangy-checkboxes-dynamic
-                    name="curriculum"
-                    label="Curriculum"
-                    options-list-source="./assets/forms.json"
-                    options-list-excludes="class-registration,student-registration,user-profile"
-                    options-list-properties="id,title"
-                    options-list-exclude-by="id">
-            </tangy-checkboxes-dynamic>
-        </template>
-    </tangy-form-item>
-</tangy-form>
+            on-open="
+              
+  function fetchLocal(url) {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+          if (xhr.status < 200 || xhr.status >= 300) {
+          	if (xhr.status === 0) {
+          		if (Array.isArray(xhr.response)) {
+          			resolve(xhr.response)
+          		} else {
+          			reject({request: xhr});
+          		}
+          	} else {
+          	  reject({request: xhr});
+          	}
+          } else {
+          resolve(xhr.response)
+          }
+        }
+        xhr.open('GET', url)
+        xhr.send(null)
+      })
+    }
+    async function loadCurricula(that) {
+      let filePath = './assets/forms.json'
+      let data = await fetchLocal(filePath)
+      .catch(function (err) {
+        console.error('Augh, there was an error!', err.request.status);
+      });
+      let tcsEl = document.querySelector('tangy-checkboxes[name=\'curriculum\']')
+      let cbDiv = tcsEl.$.checkboxes;
+     debugger
+      cbDiv.innerHTML = ''
+      data.forEach(function(el) {
+        if ((typeof el.archived == 'undefined' || el.archived == false) 
+        && el.id != 'reports'  && el.id !=='class-registration'   
+        && el.id !=='student-registration'   && el.id !=='user-profile') {
+            let checkbox = document.createElement('tangy-checkbox')
+            checkbox.name = el.id
+            checkbox.innerHTML = el.title
+            cbDiv.appendChild(checkbox)
+        }
+      })
+      let newValue = []
+      cbDiv.querySelectorAll('tangy-checkbox')
+      .forEach((el) => {
+        el.addEventListener('change', tcsEl.onCheckboxClick.bind(tcsEl))
+        newValue.push(el.getProps())
+      })
+      if (!that.value || (typeof that.value === 'object' && that.value.length < newValue.length)) {
+      that.value = newValue
+      }
+    }
+     let that = this;
+     loadCurricula(that);   
+                  
+            "
+            on-change="
+            "
+            category="  
+            "
+          >
+            <template>
+                
+      <tangy-input type="text" allowed-pattern="" inner-label="" name="school_name" required="" question-number="" label="School name" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+    
+      <tangy-input type="text" allowed-pattern="" inner-label="" name="school_year" required="" question-number="" label="School year" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+    
+      <tangy-input type="text" allowed-pattern="" inner-label="" name="grade" required="" question-number="" label="Grade" hint-text="[Don't just write 3, e.g., but write out Grade 3]" error-text="" warn-text="" class="" style=""></tangy-input>
+    
+    
+     <tangy-checkboxes name="curriculum" class="" style="" required="" question-number="" label="Curriculum" error-text="" hint-text="" option-select-label="----" secondary-label="">
+      </tangy-checkboxes>       
+              
+            </template>
+          </tangy-form-item>
+        
+      </tangy-form>
+    
