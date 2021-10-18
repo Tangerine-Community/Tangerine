@@ -19,6 +19,8 @@ import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table
 import { MatMenuModule } from '@angular/material/menu';
 import {ProcessMonitorService} from "./_services/process-monitor.service";
 import {ProcessGuard} from "./_guards/process-guard.service";
+import { ProcessMonitorDialogComponent } from './_components/process-monitor-dialog/process-monitor-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   imports: [
@@ -26,6 +28,7 @@ import {ProcessGuard} from "./_guards/process-guard.service";
     MatTableModule,
     MatMenuModule,
     MatIconModule,
+    MatDialogModule,
     MatButtonModule
   ],
   providers: [
@@ -54,7 +57,8 @@ import {ProcessGuard} from "./_guards/process-guard.service";
     HasAPermissionDirective,
     HasSomePermissionsDirective,
     HasAllPermissionsDirective,
-    DynamicTableComponent
+    DynamicTableComponent,
+    ProcessMonitorDialogComponent
   ]
 })
 export class SharedModule { }
