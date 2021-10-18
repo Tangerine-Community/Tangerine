@@ -2,8 +2,16 @@
 
 ## v3.19.3
 
+__Fixes__
+
+- Fix issue where loading screen would not close after submitting a proposal on an Issue.
+- Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever.
+- Fixes from v3.18.8 incorporated.
+
 __New Features__
 
+- Material design applied to loading indicator on the server. 
+- New cancel button on loading indicator on the server. Will warn that this may cause data corruption and data loss.
 - Added ability to search archived cases. Issue: [#2977](https://github.com/Tangerine-Community/Tangerine/issues/2977)
   *Important* : Run `docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js` to enable searching archived cases.
 
