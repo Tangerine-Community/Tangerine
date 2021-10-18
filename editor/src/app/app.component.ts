@@ -19,6 +19,8 @@ import { CaseService } from './case/services/case.service';
 import { Get } from 'tangy-form/helpers.js'
 import {ProcessMonitorService} from "./shared/_services/process-monitor.service";
 import {LoadingUiComponent} from "./core/loading-ui.component";
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
   menuService: MenuService;
   sessionTimeoutCheckTimerID;
   isConfirmDialogActive = false;
+  dialogRef:any
 
   @ViewChild('snav', {static: true}) snav: MatSidenav;
   @ViewChild('loadingUi', { static: true }) loadingUi: ElementRef<LoadingUiComponent>;
@@ -61,7 +64,8 @@ export class AppComponent implements OnInit, OnDestroy {
     media: MediaMatcher,
     private appConfigService: AppConfigService,
     private permissionService: NgxPermissionsService,
-    private processMonitorService:ProcessMonitorService
+    private processMonitorService:ProcessMonitorService,
+    public dialog: MatDialog
   ) {
     translate.setDefaultLang('translation');
     translate.use('translation');
@@ -121,13 +125,20 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
     this.window.translation = await this.appConfigService.getTranslations();
-
-    this.processMonitorService.busy.subscribe((isBusy) => {
-      this.loadingUi.nativeElement.hidden = false
-    });
-    this.processMonitorService.done.subscribe((isDone) => {
-      this.loadingUi.nativeElement.hidden = true
-    });
+    this.processMonitorService.change.subscribe((isDone) => {
+      if (this.processMonitorService.processes.length === 0) {
+        this.dialog.closeAll()
+      } else {
+        this.dialog.closeAll()
+        this.dialogRef = this.dialog.open(ProcessMonitorDialogComponent, {
+          data: {
+            messages: this.processMonitorService.processes.map(process => process.description).reverse()
+          }
+        })
+      }
+    })
+    let appStartProcess = this.processMonitorService.start('init', "App starting...")
+    setTimeout(() => this.processMonitorService.stop(appStartProcess.id), 1000)
   }
 
   ngOnDestroy(): void {
