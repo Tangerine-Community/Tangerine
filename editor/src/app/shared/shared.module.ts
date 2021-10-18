@@ -5,7 +5,7 @@ import { LoginGuard } from './_guards/login-guard.service';
 import { ServerConfigService } from './_services/server-config.service';
 import { UnsanitizeHtmlPipe } from './../pipes/unsanitize.pipe';
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from "../shared/_services/app-config.service";
@@ -23,6 +23,7 @@ import { ProcessMonitorDialogComponent } from './_components/process-monitor-dia
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     MatTableModule,
