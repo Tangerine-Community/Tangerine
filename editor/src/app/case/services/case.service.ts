@@ -8,6 +8,7 @@ import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseDefinitionsService } from './case-definitions.service';
 import { HttpClient } from '@angular/common/http';
+import {ProcessMonitorService} from "../../shared/_services/process-monitor.service";
 // Classes.
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Case } from '../classes/case.class'
@@ -37,7 +38,8 @@ class CaseService {
   queryEventFormDefinitionId: any
   queryFormId: any
   _shouldSave = true
-
+  processMonitorService: ProcessMonitorService
+  
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = {
       caseInstance,
@@ -910,7 +912,8 @@ class CaseService {
         caseInstance
       }
     })
-    return await this.tangyFormService.saveResponse(issue)
+    await this.tangyFormService.saveResponse(issue)
+    return this.processMonitorService.stop(this.process.id)
   }
 
   async mergeProposedChange(issueId:string, userId:string, userName:string) {

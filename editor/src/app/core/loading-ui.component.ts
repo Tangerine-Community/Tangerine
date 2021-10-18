@@ -4,14 +4,18 @@ import '@polymer/paper-progress/paper-progress.js';
 
 @customElement('loading-ui')
 export class LoadingUiComponent extends LitElement {
+
+  @property({type: String}) message = ''
+
   static styles = css`
     :host {
       display: block;
     }
-    .loading-text {
+    .progress-bar {
       display: flex;
+      flex-direction: column;
       width: 50%;
-      height: 100px;
+      height: 150px;
       margin: auto;
       margin-top: 200px;
       border-radius: 10px;
@@ -23,13 +27,23 @@ export class LoadingUiComponent extends LitElement {
       opacity: 100%;
       font-size: x-large;
     }
+    .loading-text {
+      margin-top: 1em;
+    }
+    paper-progress {
+      --paper-progress-height: 8px;
+    }
   `;
 
   render() {
     return html`
-      <div class="loading-text" @click=${this.escape}>
+      <div class="progress-bar" @click=${this.escape}>
         <paper-progress indeterminate></paper-progress>
+        <div class="loading-text" @click=${this.escape}>
+          <slot></slot>
+        </div>
       </div>
+      
     `;
   }
 
