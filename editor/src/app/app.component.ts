@@ -133,7 +133,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.dialogRef = this.dialog.open(ProcessMonitorDialogComponent, {
           data: {
             messages: this.processMonitorService.processes.map(process => process.description).reverse()
-          }
+          },
+          disableClose: true
         })
       }
     })
