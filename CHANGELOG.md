@@ -1,5 +1,49 @@
 # What's new
 
+## v3.19.3
+
+__Fixes__
+
+- Fix issue where loading screen would not close after submitting a proposal on an Issue.
+- Fixes from v3.18.8 incorporated.
+- Fixes to how role based permission rules are applied on the schedule view. 
+- Fix CaseService.rebaseIssue from failing due to accessing eventForms incorrectly.
+
+__New Features__
+
+- Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever. (demo: https://youtu.be/RkoUN41jqr4)
+- Material design applied to loading indicator on the server. 
+- New cancel button on loading indicator on the server. Will warn that this may cause data corruption and data loss. (demo: https://youtu.be/da9cxG5w8c0)
+- Added ability to search archived cases. Issue: [#2977](https://github.com/Tangerine-Community/Tangerine/issues/2977)
+  *Important* : Run `docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js` to enable searching archived cases.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.19.3
+./start.sh v3.19.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.19.2
+# Run the v3.19.3.js update to enable indexing of archived documents.
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.19.2
 
 __Fixes__
@@ -170,6 +214,7 @@ git checkout v3.18.7
 docker rmi tangerine/tangerine:v3.18.6
 ```
 
+
 ## v3.18.6
 
 __Updates__
@@ -178,7 +223,7 @@ __Updates__
   - A fix for photo-capture so that it de-activates the camera when going to the next page or leaving a form. 
   - Implemented a new 'before-submit' event to tangy-form in order to listen to events before the 'submit' event is dispatched.
   - A fix for User defined Cycle Sequences.
-  
+
 __Fixes__
 
 - Remove incorrect exception classes for changes processing #2883 PR: [#2883](https://github.com/Tangerine-Community/Tangerine/pull/2883) Issue: [#2882](https://github.com/Tangerine-Community/Tangerine/issues/2882)
