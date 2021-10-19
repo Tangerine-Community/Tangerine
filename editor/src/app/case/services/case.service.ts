@@ -788,7 +788,7 @@ class CaseService {
       }
       currentEvent = caseInstance.events.find(event => event.id === issue.eventId)
     }
-    let currentEventForm = currentEvent.find(eventForm => eventForm.id === issue.eventFormId)
+    let currentEventForm = currentEvent.eventForms.find(eventForm => eventForm.id === issue.eventFormId)
     if (!currentEventForm) {
       if (await this.hasProposedChange(issueId)) {
         const proposedRevisionIssueEvent = await this.getProposedChange(issueId)
