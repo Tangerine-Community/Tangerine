@@ -304,5 +304,16 @@
   "summary": "summary",
   "yes, continue": "Yes, continue",
   "✓ Yay! You are up to date.": "✓ Yay! You are up to date.",
-  "✓ Yay, You are up to date.": "✓ Yay, You are up to date."
+  "✓ Yay, You are up to date.": "✓ Yay, You are up to date.",
+  "Completed?": "Completed?",
+  "Select Subtask": "Select Subtask",
+  "None": "None",
+  "Click on a percentile to view related feedback.": "Click on a percentile to view related feedback.",
+  "Select Student": "Select Student",
+  "Results": "Results",
+  "Concerning": "Concerning",
+  "Good": "Good",
+  "Great": "Great",
+  "Poor": "Poor",
+  "Mediocre": "Mediocre"
 }
