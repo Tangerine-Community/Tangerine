@@ -2,6 +2,7 @@ import { UserService } from './../../shared/_services/user.service';
 import { Injectable } from '@angular/core';
 import { CaseService } from './case.service';
 import { CaseEvent } from '../classes/case-event.class';
+import { CaseEventOperation } from '../classes/case-event-definition.class';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,10 @@ export class CasesService {
     for (let row of queryResults.rows) {
       await this.caseService.load(row.value.caseId)
       let caseEvent = this.caseService.case.events.find(event => event.id === row.value.eventId)
-      caseEvents.push(caseEvent)
+      const eventDefinition = this.caseService.caseDefinition.eventDefinitions.find(ed => ed.id === caseEvent.caseEventDefinitionId)
+      if (this.caseService.hasCaseEventPermission(CaseEventOperation.READ, eventDefinition)) {
+        caseEvents.push(caseEvent)
+      }
     }
     return caseEvents
   }
