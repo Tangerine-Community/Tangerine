@@ -27,9 +27,7 @@ export class DashboardService {
   classUtils: ClassUtils = new ClassUtils();
 
   async getUserDB() {
-    // this.db = this.db ? this.db : await this.userService.getUserDatabase('tangy-class');
-    this.db = this.db ? this.db : await this.userService.getUserDatabase();
-    return this.db;
+    return await this.userService.getUserDatabase();
   }
 
   async getFormList() {
