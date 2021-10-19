@@ -6,6 +6,7 @@ import PouchDB from 'pouchdb'
 import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { updateGroupSearchIndex } from '../../../scripts/update-group-search-index.js'
+import { updateGroupArchivedIndex } from '../../../scripts/update-group-archived-index.js'
 const DB = require('../../../db')
 const log = require('tangy-log').log
 const fs = require('fs-extra')
@@ -45,11 +46,15 @@ export class GroupResponsesService {
     return response.docs
   }
 
-  async search(groupId, phrase:string, limit = 50, skip = 0) {
-    await updateGroupSearchIndex(groupId)
+  async search(groupId, phrase:string, type:string, limit = 50, skip = 0) {
+    if (type ==='search') {
+      await updateGroupSearchIndex(groupId)
+    } else {
+      await updateGroupArchivedIndex(groupId)
+    }
     const groupDb = this.getGroupsDb(groupId)
     const result  = await groupDb.query(
-      'search',
+      type,
       phrase
         ? { 
           startkey: `${phrase}`.toLocaleLowerCase(),

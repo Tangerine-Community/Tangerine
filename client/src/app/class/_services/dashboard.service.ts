@@ -217,8 +217,8 @@ export class DashboardService {
               if (optionValue > max) {
                 max = optionValue;
               }
-              totalMax =  totalMax + max;
             });
+            totalMax =  totalMax + max;
           } else  if (input.tagName === 'TANGY-CHECKBOX') {
             if (input.value !== '') {
               value = 1;
@@ -571,7 +571,7 @@ export class DashboardService {
       percentile = 3;
          } else if (score >= 40 && score <= 59) {
       percentile = 2;
-         } else if (score >= 20 && score <= 29) {
+         } else if (score >= 20 && score <= 39) {
       percentile = 1;
          } else {
       percentile = 0;
