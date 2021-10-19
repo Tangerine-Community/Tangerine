@@ -23,6 +23,7 @@ echo "translations-update      (Update translation files in all group content fo
 echo "import-v2-assessment     (Migrate an Assessment from a Tangerine v2 server to a Tangerine v3 Form)"
 echo "generate-ssh-keys        (Generates new SSH keys for creating groups from remote and private content sets)"
 echo "update-group-search-index(Required to run when forms.json search settings change in a group)"
+echo "update-group-archived-index(Required to run when forms.json search settings change in a group)"
 echo "update-down-sync-doc-count-by-location-id-index (If forms.json couchdbSyncSetting.pull changes, this needs to be run)"
 echo "mysql-report             (Report on the data migration process to mysql)"
 echo "make-translations-consistent (Ensures all translation files have all known translateables.)"

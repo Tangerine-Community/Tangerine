@@ -32,6 +32,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import './core/loading-ui.component'
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { RouterModule } from '@angular/router';
+import { MatDialogModule } from '@angular/material/dialog';
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
@@ -46,6 +47,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     MatButtonModule,
     MatCheckboxModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatIconModule,
     MatMenuModule,
     MatCardModule,
