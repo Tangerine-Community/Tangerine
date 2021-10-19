@@ -12,7 +12,7 @@
 
  <mat-card class="tangy-card-content-container">
    <div id="overview">
-     <h2 title="Student Grouping">{{'Student Grouping'|translate}}: {{classGroupReport?.subtestName}}</h2>
+     <h2 title="{{'Student Grouping'|translate}}">{{'Student Grouping'|translate}}: {{classGroupReport?.subtestName}}</h2>
      <div class="flexbox-horizontal-container">
        <div>
          <p>{{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}</p>
@@ -30,20 +30,20 @@
    </div>
 
     <div>
-      <h2 title="Student Grouping" *ngIf="classGroupReport?.studentsAssessed > 0">{{'Student Grouping'|translate}}</h2>
+      <h2 title="{{'Student Grouping'|translate}}" *ngIf="classGroupReport?.studentsAssessed > 0">{{'Student Grouping'|translate}}</h2>
     </div>
    <div id="reportContainer">
      <div id="stats">
         <table cdk-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="classGroupReport?.studentsAssessed > 0">
           <!-- Student Column -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef title="Student"> {{'Student'|translate}} </th>
+            <th mat-header-cell *matHeaderCellDef title="{{'Student'|translate}}"> {{'Student'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)"> {{element["name"]}} </td>
           </ng-container>
 
           <!-- calculatedScore Column -->
           <ng-container matColumnDef="calculatedScore">
-            <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
+            <th mat-header-cell *matHeaderCellDef title="{{'Score'|translate}}"> {{'Score'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
               <span *ngIf="element.score !== undefined">{{element.score}} / {{element.maxValueAnswer}}</span>
             </td>
@@ -51,7 +51,7 @@
 
           <!-- Percentile Column -->
           <ng-container matColumnDef="score">
-            <th mat-header-cell *matHeaderCellDef title="Percentile"> {{'Percentile'|translate}} </th>
+            <th mat-header-cell *matHeaderCellDef title="{{'Percentile'|translate}}"> {{'Percentile'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
               <span *ngIf="element.scorePercentageCorrect > -1">{{element.scorePercentageCorrect}} % </span>
             </td>
@@ -59,7 +59,7 @@
 
           <!-- Status Column -->
           <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef title="Status"> {{'Status'|translate}} </th>
+            <th mat-header-cell *matHeaderCellDef title="{{'Status'|translate}}"> {{'Status'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
               <span *ngIf="element.status">{{element.status}}</span>
             </td>
