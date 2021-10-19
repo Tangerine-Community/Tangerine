@@ -6,6 +6,7 @@ __Fixes__
 
 - Fix issue where loading screen would not close after submitting a proposal on an Issue.
 - Fixes from v3.18.8 incorporated.
+- Fixes to how role based permission rules are applied on the schedule view. 
 
 __New Features__
 
