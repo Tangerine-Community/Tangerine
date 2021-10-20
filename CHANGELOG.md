@@ -5,8 +5,8 @@
 __Fixes__
 
 - Backport: Restrict access to events by permissions when query by date on schedule view.
-- Fix issue where logging in as a different user shows the previously logged in users data #2060 
-- Add additional translateables to Tangerine Teach components #2693 #2986 
+- Fix issue where logging in as a different user shows the previously logged in users data (Multiuser/Tablet sharing https://github.com/Tangerine-Community/Tangerine/issues/2060)
+- Add additional translateables to Tangerine Teach components (Translatable feedback status text: https://github.com/Tangerine-Community/Tangerine/issues/2693) (Missing translatable strings: https://github.com/Tangerine-Community/Tangerine/issues/2987)
 
 
 ## v3.18.8
