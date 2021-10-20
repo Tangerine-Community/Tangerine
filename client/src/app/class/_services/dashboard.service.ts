@@ -60,6 +60,41 @@ export class DashboardService {
     return result.rows;
   }
 
+  async getStudentSubtaskStatusesByClassIdAndCurriculumId(classId:string, curriculumId:string) {
+    this.db = await this.getUserDB();
+    const studentCurriculumDocs = (await this.db.query('tangy-class/responsesByClassIdCurriculumId', {
+        key: [classId, curriculumId],
+        include_docs: true
+      }))
+      .rows
+      .map(row => row.doc);
+    const curriculumSubtasks = await this.getCurriculumSubtasks(curriculumId)
+    const students = this.getStudentsByClassId(classId)
+    return students.map(student => {
+      const studentCurriculumDoc = studentCurriculumDocs.find(doc => doc.studentId === student.id)
+      const subtaskStatusBySubtaskId = {}
+      for (let subtaskId of curriculumSubtasks) {
+        const subtaskItem = studentCurriculumDoc.items.find(item => item.id === subtaskId)
+        subtaskStatusBySubtaskId[subtaskId] = subtaskItem
+          ? true
+          : false
+        }
+      }
+      return {
+        ...student,
+        curriculumSubtasks
+      }
+    })
+  }
+
+  async getCurriculumSubtasks(curriculumId) {
+    // @TODO Put HTML in a template element and parse out the tangy-form-item IDs.
+    const curriculumFormHtml = this.getCurriculaForms(curriculumId)
+    return []
+
+
+  }
+
   /**
    *
    * @param classId
