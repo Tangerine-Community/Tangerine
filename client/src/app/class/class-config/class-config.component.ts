@@ -4,6 +4,7 @@ import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service"
 import {_TRANSLATE} from "../../../../../editor/src/app/shared/_services/translation-marker";
 import {ClassFormService} from "../_services/class-form.service";
 import {VariableService} from "../../shared/_services/variable.service";
+import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 
 @Component({
   selector: 'app-class-config',
@@ -43,6 +44,11 @@ export class ClassConfigComponent implements OnInit {
       await this.variableService.set('class-currentClassId', null);
       await this.variableService.set('class-curriculumId', null);
       await this.variableService.set('class-currentItemId', null);
+  }
+
+  getClassTitle(classResponse:TangyFormResponse) {
+    const gradeInput = classResponse.items[0].inputs.find(input => input.name === 'grade')
+    return gradeInput.value
   }
   
 }
