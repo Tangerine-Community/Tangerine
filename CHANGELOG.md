@@ -1,5 +1,14 @@
 # What's new
 
+## v3.18.9
+
+__Fixes__
+
+- Backport: Restrict access to events by permissions when query by date on schedule view.
+- Fix issue where logging in as a different user shows the previously logged in users data #2060 
+- Add additional translateables to Tangerine Teach components #2693 #2986 
+
+
 ## v3.18.8
 - Add support for skipping indexes in form's cycle sequences.
 - Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable. https://github.com/Tangerine-Community/Tangerine/issues/2947
