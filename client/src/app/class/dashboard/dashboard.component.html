@@ -19,7 +19,7 @@
   <span dir="rtl" *ngFor="let class of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">
       <button mat-stroked-button color="primary" [matMenuTriggerFor]="catMenu" class="mat-button"
               attr.data-classId = "{{class.id}}">
-        {{class.doc.items[0].inputs[2].value}}
+        {{getClassTitle(class.doc)}}
       </button>
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
@@ -61,7 +61,7 @@
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
-    <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{selectedClass.doc.items[0].inputs[2].value}} - {{selectedCurriculum.label}}</p></div>
+    <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
 
     <mat-form-field>
       <mat-label>{{'Select Subtask'|translate}}</mat-label>
