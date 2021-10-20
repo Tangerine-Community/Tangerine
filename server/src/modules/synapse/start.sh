@@ -23,4 +23,4 @@ CMD="docker run -d $RUN_OPTIONS tangerine/${T_CONTAINER_NAME}:local"
 echo "$CMD"
 eval ${CMD}
 
-docker logs -f T_CONTAINER_NAME
+docker logs -f $T_CONTAINER_NAME
