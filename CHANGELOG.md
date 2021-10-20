@@ -7,6 +7,7 @@ __Fixes__
 - Backport: Restrict access to events by permissions when query by date on schedule view.
 - Fix issue where logging in as a different user shows the previously logged in users data (Multiuser/Tablet sharing https://github.com/Tangerine-Community/Tangerine/issues/2060)
 - Add additional translateables to Tangerine Teach components (Translatable feedback status text: https://github.com/Tangerine-Community/Tangerine/issues/2693) (Missing translatable strings: https://github.com/Tangerine-Community/Tangerine/issues/2987)
+- Allow class title to be anywhere on form [#2994](https://github.com/Tangerine-Community/Tangerine/pull/2994)
 
 
 ## v3.18.8
