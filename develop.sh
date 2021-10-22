@@ -148,6 +148,10 @@ sleep 10
 # Start Tangerine.
 #
 
+if [ -x "$(command -v say)" ]; then
+  say 'go go tangerine'
+fi
+
 OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
   -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
