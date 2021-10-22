@@ -179,6 +179,15 @@ update-down-sync-doc-count-by-location-id-index '*'
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
+## v3.18.9
+
+__Fixes__
+
+- Backport: Restrict access to events by permissions when query by date on schedule view.
+- Fix issue where logging in as a different user shows the previously logged in users data (Multiuser/Tablet sharing https://github.com/Tangerine-Community/Tangerine/issues/2060)
+- Add additional translateables to Tangerine Teach components (Translatable feedback status text: https://github.com/Tangerine-Community/Tangerine/issues/2693) (Missing translatable strings: https://github.com/Tangerine-Community/Tangerine/issues/2987)
+- Allow class title to be anywhere on form [#2994](https://github.com/Tangerine-Community/Tangerine/pull/2994)
+
 ## v3.18.8
 - Add support for skipping indexes in form's cycle sequences.
 - Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable. https://github.com/Tangerine-Community/Tangerine/issues/2947
