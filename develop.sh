@@ -149,7 +149,7 @@ sleep 10
 #
 
 if [ -x "$(command -v say)" ]; then
-  say 'go go tangerine'
+  say 'go go gadget tangerine'
 fi
 
 OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
