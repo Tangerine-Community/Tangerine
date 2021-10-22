@@ -12,6 +12,7 @@ import {ClassGroupingReport} from '../reports/student-grouping-report/class-grou
 import {TangyFormService} from '../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import {VariableService} from "../../shared/_services/variable.service";
+import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 
 export interface StudentResult {
   id: string;
@@ -82,6 +83,11 @@ export class DashboardComponent implements OnInit {
     private tangyFormsInfoService: TangyFormsInfoService,
     private variableService: VariableService
   ) { }
+
+  getClassTitle(classResponse:TangyFormResponse) {
+    const gradeInput = classResponse.items[0].inputs.find(input => input.name === 'grade')
+    return gradeInput.value
+  }
 
   async ngOnInit() {
     (<any>window).Tangy = {};

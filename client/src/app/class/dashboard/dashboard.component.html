@@ -19,7 +19,7 @@
   <span dir="rtl" *ngFor="let class of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">
       <button mat-stroked-button color="primary" [matMenuTriggerFor]="catMenu" class="mat-button"
               attr.data-classId = "{{class.id}}">
-        {{class.doc.items[0].inputs[2].value}}
+        {{getClassTitle(class.doc)}}
       </button>
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
@@ -61,13 +61,13 @@
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
-    <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{selectedClass.doc.items[0].inputs[2].value}} - {{selectedCurriculum.label}}</p></div>
+    <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
 
     <mat-form-field>
-      <mat-label>Select SubTask</mat-label>
+      <mat-label>{{'Select Subtask'|translate}}</mat-label>
       
       <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
-        <mat-option>None</mat-option>
+        <mat-option>{{'None'|translate}}</mat-option>
         <mat-option *ngFor="let item of formList;" value="{{item.id}}"
                     (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
       </mat-select>
@@ -79,8 +79,8 @@
       <div>
         <table class="dashboard-table">
           <tr>
-            <th>Student</th>
-            <th>Completed?</th>
+            <th>{{'Student'|translate}}</th>
+            <th>{{'Completed?'|translate}}</th>
           </tr>
           <tr *ngFor="let element of allStudentResults">
             <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
