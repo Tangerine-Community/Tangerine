@@ -38,6 +38,7 @@ rm -r $RELEASE_DIRECTORY
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
 cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
+cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
