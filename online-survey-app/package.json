@@ -26,6 +26,7 @@
     "redux": "^4.0.5",
     "rxjs": "~6.6.0",
     "tangy-form": "^4.28.0",
+    "translation-web-component": "^1.1.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
