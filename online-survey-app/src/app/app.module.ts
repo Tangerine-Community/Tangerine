@@ -15,6 +15,7 @@ import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-play
 import { HttpClientModule } from '@angular/common/http';
 import { FormsListComponent } from './forms-list/forms-list.component';
 import { FormSubmittedSuccessComponent } from './form-submitted-success/form-submitted-success.component';
+import { LanguageSelectComponent } from './language-select/language-select.component';
 
 @NgModule({
   declarations: [
