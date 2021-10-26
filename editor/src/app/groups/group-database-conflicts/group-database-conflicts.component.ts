@@ -3,7 +3,6 @@ import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.com
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import {GroupsService} from "../services/groups.service";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
-import {SyncSessionInfo} from "../../../../../client/src/app/sync/sync-couchdb.service";
 import {HttpClient} from "@angular/common/http";
 
 @Component({
