@@ -48,4 +48,12 @@ export class GroupController {
     }
   }
 
+  @All('start-session')
+  async startSession(@Body('group') group, @Body('username') username, @Body('type') type) {
+    console.log("started session for group: " + group + " username: " + username)
+    let dbUrlWithCredentials = await this.groupService.startSession(group, username, type)
+    // return {username:'admin', password: 'password'}
+    return dbUrlWithCredentials
+  }
+
 }
