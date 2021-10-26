@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {HttpService, Injectable} from '@nestjs/common';
 import { TangerineConfigService } from '../tangerine-config/tangerine-config.service';
 import { Group } from '../../classes/group';
 import PouchDB from 'pouchdb'
 import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from '../user/user.service';
+import {SyncSessionInfo} from "../../../modules/sync/services/sync-session/sync-session-v2.service";
+import axios from "axios";
 const insertGroupViews = require('../../../insert-group-views.js')
 
 const DB = require('../../../db')
@@ -34,7 +36,8 @@ export class GroupService {
 
   constructor(
     private readonly configService: TangerineConfigService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly http:HttpService,
   ){}
 
   async initialize() {
@@ -308,6 +311,40 @@ export class GroupService {
     await groupDb.destroy()
     await exec(`rm -r /tangerine/groups/${group._id}`)
     await exec(`rm /tangerine/client/content/groups/${group._id}`)
+  }
+
+  async startSession(groupId:string, username:string, type: string):Promise<object> {
+    try {
+      // Create sync user
+      const adminUsername = `adminUser-${UUID()}-${Date.now()}`
+      const adminPassword = UUID()
+      const config = await this.configService.config()
+      const adminUserDoc = {
+        "_id": `org.couchdb.user:${adminUsername}`,
+        "name": adminUsername,
+        "roles": [`admin-${groupId}`],
+        "type": "user",
+        "password": adminPassword
+      }
+      console.log("adminUserDoc: " + JSON.stringify(adminUserDoc))
+      await this.http.post(`${config.couchdbEndpoint}/_users`, adminUserDoc).toPromise()
+      log.info(`Created admin account for user ${username} in group ${groupId}`)
+      // const securityInfo = (await axios.get(`${process.env.T_COUCHDB_ENDPOINT}${groupId}/_security`)).data
+      // const updatedSecurityInfo = {...securityInfo, ...{
+      //     admins: {
+      //       roles: [
+      //         `admin-${groupId}`
+      //       ]
+      //     }
+      //   }}
+      // console.log("securityInfo: " + JSON.stringify(securityInfo))
+      // console.log("updatedSecurityInfo: " + JSON.stringify(updatedSecurityInfo))
+      // const response = await axios.put(`${process.env.T_COUCHDB_ENDPOINT}${groupId}/_security`, updatedSecurityInfo)
+      // const dbUrlWithCredentials = `${window.location.protocol}//${username}:${password}@${window.location.hostname}/db/${window.location.pathname.split('/')[2]}`
+      return {"dbUrlWithCredentials": `${config.protocol}://${adminUsername}:${adminPassword}@${config.hostName}/db/${groupId}`}
+    } catch(e) {
+      throw e
+    }
   }
 
 }

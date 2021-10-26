@@ -23,7 +23,8 @@ const permissionsList = {
     'can_access_deploy',
       'can_access_device_users',
       'can_access_devices',
-      'can_access_releases'
+      'can_access_releases',
+    'can_administer_couchdb_server'
   ],
   sitewidePermissions: [
     'can_create_group',
