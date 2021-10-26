@@ -45,14 +45,6 @@ export class GroupDatabaseConflictsComponent implements OnInit {
         try {
           const data = await this.http.post('/nest/group/start-session', {group: this.group._id, username: username, type: 'admin'}, {observe: 'response'}).toPromise();
           if (data.status === 200) {
-            // const token = data.body['data']['token'];
-            // await this.setTokens(token);
-            // return true;
-            // const username = prompt('CouchDB Username:')
-            // const password = prompt('CouchDB Password:')
-            // const username = data.body.username
-            // const password = data.body.password
-            // const dbUrlWithCredentials = `${window.location.protocol}//${username}:${password}@${window.location.hostname}/db/${window.location.pathname.split('/')[2]}`
             const dbUrlWithCredentials = data.body["dbUrlWithCredentials"]
             this.container.nativeElement.innerHTML = `
       <couchdb-conflict-manager dbUrl="${dbUrlWithCredentials}" username="${window['userId']}"></couchdb-conflict-manager>
