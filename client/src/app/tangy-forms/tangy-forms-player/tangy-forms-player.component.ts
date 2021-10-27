@@ -31,6 +31,7 @@ export class TangyFormsPlayerComponent {
   @Input('metadata') metadata:any
 
   $rendered = new Subject()
+  $beforeSubmit = new Subject()
   $submit = new Subject()
   $afterSubmit = new Subject()
   $resubmit = new Subject()
@@ -139,6 +140,9 @@ export class TangyFormsPlayerComponent {
           this.throttledSaveResponse(response)
         })
       }
+      formEl.addEventListener('before-submit', (event) => {
+        this.$beforeSubmit.next(true)
+      })
       formEl.addEventListener('submit', (event) => {
         if (this.preventSubmit) event.preventDefault() 
         this.$submit.next(true)
