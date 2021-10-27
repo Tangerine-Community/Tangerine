@@ -59,9 +59,17 @@ export class DeviceService {
     const encryptionLevel = (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption'])
       ? _TRANSLATE('in-app')
       : 'OS'
-    const assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
-      ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
-      : 'N/A'
+    let assignedLocation
+    try {
+      assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
+        ? device.assignedLocation.value.map(value => ` ${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
+        : 'N/A'
+    } catch (e) {
+      // This may be a restored backup in an APK with a different app-config.json. Use the device's assignedLocation.
+      assignedLocation = device && device.assignedLocation && device.assignedLocation.value && Array.isArray(device.assignedLocation.value)
+        ? device.assignedLocation.value.map(value => ` ${value.level}: Restored-${value.value}`).join(', ')
+        : 'N/A'
+    }
     const tangerineVersion = window.location.hostname !== 'localhost' ? await this.getTangerineVersion() : 'localhost'
     const versionTag = window.location.hostname !== 'localhost' ? await this.getVersionTag() : 'localhost'
     this.appInfo = <AppInfo>{
