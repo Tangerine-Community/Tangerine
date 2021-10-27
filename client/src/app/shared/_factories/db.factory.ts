@@ -57,6 +57,7 @@ export function connectToCryptoPouchDb(name, key = ''):PouchDB {
     const pouch = new PouchDB(name, pouchDBOptions);
     if (key) {
       pouch.crypto(key)
+      pouch.cryptoPouchIsEnabled = true
     }
     return pouch
   } catch (e) {
