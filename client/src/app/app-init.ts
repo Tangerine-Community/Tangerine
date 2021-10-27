@@ -35,7 +35,14 @@ async function hasInstalledOnPouchDB() {
 }
 
 async function hasInstalledOnSqlcipher() {
+  if (!window['isCordovaApp']) {
+    // Not a Cordova App? Definitely never installed using SqlCipher.
+    return false
+  }
   let hasInstalled = false
+  // While this doesn't connect to an encrypted db, it will connect to a db in sqlite thus testing if
+  // sqlcipher has ever been installed on. Note that if we ever add support for unencrypted sqlite, this
+  // check won't work.
   let db = connectToSqlCipherDb('tangerine-variables')
   try {
     await db.get('installed')
@@ -49,9 +56,15 @@ async function hasInstalledOnSqlcipher() {
 async function hasInstalledOnCryptoPouch() {
   let hasInstalled = false
   let db = connectToCryptoPouchDb('shared-user-database')
-  let testDoc = (await db.allDocs({limit: 1, include_docs: true})).rows[0].doc
-  // @TODO This the right property? Prone to getting a design doc that wouldn't be encrypted?
-  if (testDoc.encryptedData) {
+  let results = await db.allDocs({limit: 1, include_docs: true})
+  // @TODO Prone to getting a design doc that wouldn't be encrypted?
+  // If CryptoPouch has been used, a doc will consist of only 3 properties: payload, _id, and _rev.
+  if (
+    results.rows[0]?.doc?.payload &&
+    results.rows[0].doc._id &&
+    results.rows[0].doc._rev &&
+    Object.keys(results.rows[0].doc).length === 3
+  ) {
     hasInstalled = true
   }
   return hasInstalled
@@ -99,15 +112,17 @@ export class AppInit {
       console.log("AppInitService.init() called");
       if (window['isCordovaApp']) {
         document.addEventListener('deviceready', async () => {
+          // Wait until sqlite is ready.
           while (!window['sqliteStorageFile']) {
             await sleep(1000)
           }
+          // Determine if we should start an encryption plugin.
           if (
             await hasInstalledOnSqlcipher() || 
             (await sqlcipherIsEnabled() && await hasNotInstalledOnAnything())
           ) {
             await startSqlcipher()
-          } 
+          }
           if (
             await hasInstalledOnCryptoPouch() ||
             (await cryptoPouchIsEnabled() && await hasNotInstalledOnAnything())
