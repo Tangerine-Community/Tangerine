@@ -32,6 +32,7 @@ export class EventFormsForParticipantComponent implements OnInit {
   @Input('participantId') participantId:string
   @Input('caseId') caseId:string
   @Input('eventId') eventId:string
+  @Input('caseService') caseService: CaseService
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
@@ -48,7 +49,6 @@ export class EventFormsForParticipantComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private caseService: CaseService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()

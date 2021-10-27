@@ -21,8 +21,8 @@ export class GroupResponsesController {
   }
 
   @All('search/:groupId')
-  async search(@Param('groupId') groupId, @Body('phrase') phrase, @Body('type') type) {
-    return await this.groupResponsesService.search(groupId, phrase, type)
+  async search(@Param('groupId') groupId, @Body('phrase') phrase, @Body('index') index) {
+    return await this.groupResponsesService.search(groupId, phrase, index)
   }
   
   @All('index/:groupId')
@@ -40,6 +40,11 @@ export class GroupResponsesController {
   @All('read/:groupId/:responseId')
   async read(@Param('groupId') groupId, @Param('responseId') responseId) {
     return await this.groupResponsesService.read(groupId, responseId)
+  }
+
+  @All('readRev/:groupId/:responseId/:rev')
+  async readRev(@Param('groupId') groupId, @Param('responseId') responseId, @Param('rev') rev) {
+    return await this.groupResponsesService.readRev(groupId, responseId, rev)
   }
 
   @All('update/:groupId')
