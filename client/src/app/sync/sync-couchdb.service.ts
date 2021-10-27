@@ -30,6 +30,7 @@ export class SyncCouchdbDetails {
   groupId:string
   deviceId:string
   deviceToken:string
+  usePouchDbLastSequenceTracking:boolean
   formInfos:Array<FormInfo> = []
   locationQueries:Array<LocationQuery> = []
   deviceSyncLocations:Array<LocationConfig>
@@ -124,6 +125,9 @@ export class SyncCouchdbService {
       ? this.initialBatchSize
       : this.batchSize
     let replicationStatus:ReplicationStatus
+    syncDetails.usePouchDbLastSequenceTracking = appConfig.usePouchDbLastSequenceTracking || await this.variableService.get('usePouchDbLastSequenceTracking')
+      ? true
+      : false
     // Create sync session and instantiate remote database connection.
     let syncSessionUrl
     let remoteDb
@@ -353,7 +357,7 @@ export class SyncCouchdbService {
     let failureDetected = false
     let pushed = 0
     let syncOptions = {
-      "since":push_last_seq,
+      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": push_last_seq },
       "batch_size": this.batchSize,
       "batches_limit": 1,
       "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null,
@@ -514,7 +518,7 @@ export class SyncCouchdbService {
      * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
      */
     let syncOptions = {
-      "since": pull_last_seq,
+      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": pull_last_seq },
       "batch_size": batchSize,
       "write_batch_size": this.writeBatchSize,
       "batches_limit": 1,

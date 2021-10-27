@@ -52,6 +52,7 @@ export class AppConfig {
   // List of views to skip optimization of after a sync.
   doNotOptimize: Array<string>
   dbBackupSplitNumberFiles: number;
+  usePouchDbLastSequenceTracking:boolean
 }
 
 export enum EncryptionPlugin {
