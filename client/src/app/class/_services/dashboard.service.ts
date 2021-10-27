@@ -80,6 +80,17 @@ export class DashboardService {
     return cleanData;
   }
 
+  async getCurriculumResponse(classId, curriculumId, studentId) {
+    this.db = await this.getUserDB();
+    const curriculumResponsesForClass = (await this.db.query('tangy-class/responsesByClassIdCurriculumId', {
+        key: [classId, curriculumId],
+        include_docs: true
+      }))
+      .rows
+      .map(row => row.doc)
+    return curriculumResponsesForClass.find(response => response.metadata.studentRegistrationDoc.id === studentId)
+  }
+
   clean = function(obj, deleteValue) {
     for (let i = 0; i < obj.length; i++) {
       if (obj[i] == deleteValue) {
