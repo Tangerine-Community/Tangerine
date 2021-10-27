@@ -125,6 +125,7 @@ export class UpdateComponent implements AfterContentInit {
       const userAgent = navigator['userAgent']
       replicationStatus.userAgent = userAgent
       replicationStatus.message = "update"
+      replicationStatus.syncCouchdbServiceStartTime = new Date().toISOString()
 
       const device = await this.deviceService.getDevice()
       const deviceId = device._id

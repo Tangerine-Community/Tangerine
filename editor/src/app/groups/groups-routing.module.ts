@@ -63,6 +63,10 @@ import { HistoricalReleasesPwaTestComponent } from './historical-releases-pwa-te
 import { CsvDataSetsComponent } from './csv-data-sets/csv-data-sets.component';
 import { NewCsvDataSetComponent } from './new-csv-data-set/new-csv-data-set.component';
 import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-detail.component';
+import { CsvTemplateComponent } from './csv-template/csv-template.component';
+import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-templates.component';
+import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
+import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -80,6 +84,9 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/uploads', component: GroupUploadsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/uploads/:responseId', component: GroupUploadsViewComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/database-conflicts', component: GroupDatabaseConflictsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/csv-templates', component: GroupCsvTemplatesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/csv-templates/:csvTemplateId', component: CsvTemplateComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
@@ -136,6 +143,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/csv-data-sets', component: CsvDataSetsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-data-sets/new', component: NewCsvDataSetComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-data-sets/:dataSetId', component: CsvDataSetDetailComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/download-statistical-files', component: DownloadStatisticalFileComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [

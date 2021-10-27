@@ -6,6 +6,8 @@ import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
+import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -15,7 +17,8 @@ class CaseEventInfo {
 @Component({
   selector: 'app-case',
   templateUrl: './case.component.html',
-  styleUrls: ['./case.component.css']
+  styleUrls: ['./case.component.css'],
+  providers: [ CaseService ]
 })
 export class CaseComponent implements AfterContentInit, OnDestroy {
 
@@ -36,6 +39,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     private route: ActivatedRoute,
     private userService:UserService,
     caseService: CaseService,
+    private processMonitorService:ProcessMonitorService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -43,6 +47,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService = caseService
   }
   async ngAfterContentInit() {
+    const process = this.processMonitorService.start('caseOpen', _TRANSLATE('Opening Case...'))
     this.userRoles = await this.userService.getRoles()
     const caseId = window.location.hash.split('/')[2]
     // if (!this.caseService.case || caseId !== this.caseService.case._id) {
@@ -54,6 +59,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.onCaseOpen()
     this.calculateTemplateData()
     this.ready = true
+    this.processMonitorService.stop(process.id)
   }
 
   calculateTemplateData() {
@@ -113,11 +119,13 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     eval(this.caseService.caseDefinition.onCaseClose)
   }
   async onSubmit() {
+    const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
     if (this.selectedNewEventType !== '') {
       const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
       const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
       await this.caseService.save()
       this.calculateTemplateData()
+      this.processMonitorService.stop(process.id)
     }
   }
 

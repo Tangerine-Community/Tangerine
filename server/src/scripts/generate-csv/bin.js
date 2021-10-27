@@ -2,10 +2,10 @@
 
 if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('  generate-csv <groupName> <formId> <outputPath> [batchSize] <sleepTimeBetweenBatches> <year> <month>`  ')
+  console.log('  generate-csv <groupName> <formId> <outputPath> [batchSize] <sleepTimeBetweenBatches> [year] [month] [headers]`  ')
   console.log('Example:')
   console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv`)
-  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv 10 5 2018 Jan true`)
+  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv 10 5 2018 Jan true 'first_name,last_name'`)
   process.exit()
 }
 
@@ -26,7 +26,8 @@ const params = {
   batchSize: (process.argv[5]) ? parseInt(process.argv[5]) : 5,
   sleepTimeBetweenBatches: (process.argv[6]) ? parseInt(process.argv[6]) : 0,
   year: (process.argv[7]) ? process.argv[7] : null,
-  month: (process.argv[8]) ? process.argv[8] : null
+  month: (process.argv[8]) ? process.argv[8] : null,
+  columnHeadersOverride: process.argv[9] ? process.argv[9].split(',') : []
 }
 
 let state = Object.assign({}, params, {
@@ -62,6 +63,9 @@ async function go(state) {
       await writeFile(state.statePath, JSON.stringify(Object.assign(state, {complete: true})), 'utf-8')
       process.exit()
     }
+    headersDoc.columnHeaders = state.columnHeadersOverride.length > 0
+      ? headersDoc.columnHeaders.filter(columnHeader => state.columnHeadersOverride.includes(columnHeader.header))
+      : headersDoc.columnHeaders
     state.headers = headersDoc.columnHeaders.map(header => header.header)
     state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
     state.headers.unshift('_id')

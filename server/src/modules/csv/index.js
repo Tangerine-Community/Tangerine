@@ -47,7 +47,8 @@ module.exports = {
         try {
           const {doc, sourceDb} = data
           const groupId = sourceDb.name
-
+          const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+          console.log(doc.type)
           // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
           // @TODO Rename `-reporting` to `-csv-sanitized`.
@@ -55,7 +56,29 @@ module.exports = {
           
           if (doc.type !== 'issue') {
             // TODO: Can't this be cached?
-            const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+            if (doc.archived) {
+              debugger;
+              // Delete from the -reporting db.
+              console.log("Deleting: " + doc._id)
+              try {
+                // await REPORTING_DB.remove(doc._id, doc._rev)
+                await REPORTING_DB.get(doc._id).then(function (doc) {
+                  return REPORTING_DB.remove(doc._id, doc._rev);
+                });
+                console.log("Deleted from REPORTING_DB: " + doc._id + " rev: " + doc._rev)
+              } catch (e) {
+                console.log("Error: " + JSON.stringify(e))
+              }
+              try {
+                // await SANITIZED_DB.remove(doc._id, doc._rev)
+                await SANITIZED_DB.get(doc._id).then(function (doc) {
+                  return SANITIZED_DB.remove(doc._id, doc._rev);
+                });
+                console.log("Deleted from SANITIZED_DB: " + doc._id + " rev: " + doc._rev)
+              } catch (e) {
+                console.log("Error: " + JSON.stringify(e))
+              }
+            } else {
               let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
               // Process the flatResponse
               let processedResult = flatResponse;
@@ -81,6 +104,100 @@ module.exports = {
               // Index the view now.
               await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           }
+          if (doc.type === 'case') {
+            let numInf = getItemValue(doc, 'numinf')
+            let participant_id = getItemValue(doc, 'participant_id')
+
+            const startUnixtime = doc.startUnixtime
+            const lastSaveUnixtime = doc.lastSaveUnixtime
+
+            // output participants
+            for (const participant of doc.participants) {
+              const flattenedParticipant = {
+                ...participant,
+                ...(participant.data ? Object.keys(participant.data).reduce((safeData, key)=>{return {...safeData, [`data_${key}`]:participant.data[key]}},{}):{}),
+                _id: participant.id,
+                caseId: doc._id,
+                numInf: participant.participant_id === participant_id ? numInf : '',
+                formId: "participant",
+                startUnixtime,
+                lastSaveUnixtime,
+                groupId
+              }
+              await saveFormInfo(flattenedParticipant, REPORTING_DB);
+              await saveFlatFormResponse(flattenedParticipant, REPORTING_DB);
+              // Index the view now.
+              await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+              // @TODO Ensure design docs are in the database.
+              await saveFormInfo(flattenedParticipant, SANITIZED_DB);
+              await saveFlatFormResponse(flattenedParticipant, SANITIZED_DB);
+              // Index the view now.
+              await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+            }
+            
+          
+            // output case-events
+            for (const event of doc.events) {
+              // output event-forms
+              if (event['eventForms']) {
+                for (const eventForm of event['eventForms']) {
+                  // for (let index = 0; index < event['eventForms'].length; index++) {
+                  // const eventForm = event['eventForms'][index]
+                  try {
+                    const flattenedEventForm = { 
+                      ...eventForm,
+                      formId: "event-form",
+                      ...(eventForm.data ? Object.keys(eventForm.data).reduce((safeData, key)=>{return {...safeData, [`data_${key}`]:eventForm.data[key]}},{}):{}),
+                      _id: eventForm.id,
+                      startUnixtime,
+                      lastSaveUnixtime,
+                      groupId
+                    };
+                    await saveFormInfo(flattenedEventForm, REPORTING_DB);
+                    await saveFlatFormResponse(flattenedEventForm, REPORTING_DB);
+                    // Index the view now.
+                    await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+                    // @TODO Ensure design docs are in the database.
+                    await saveFormInfo(flattenedEventForm, SANITIZED_DB);
+                    await saveFlatFormResponse(flattenedEventForm, SANITIZED_DB);
+                    // Index the view now.
+                    await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+                  } catch (e) {
+                    if (e.status !== 404) {
+                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                    }
+                  }
+                }
+              } else {
+                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+              }
+              // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
+              // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+              const eventClone = Object.assign({}, event);
+              // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
+              // since we are already serializing each event-form and have the parent caseEventId on each one.
+              delete eventClone.eventForms
+              const flattenedCaseEvent = 
+                {
+                  ...eventClone,
+                  ...(eventClone.data ? Object.keys(eventClone.data).reduce((safeData, key)=>{return {...safeData, [`data_${key}`]:eventClone.data[key]}},{}):{}),
+                  _id: eventClone.id,
+                  formId: "case-event",
+                  startUnixtime,
+                  lastSaveUnixtime,
+                  groupId
+                };
+                await saveFormInfo(flattenedCaseEvent, REPORTING_DB);
+                await saveFlatFormResponse(flattenedCaseEvent, REPORTING_DB);
+                // Index the view now.
+                await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+                // @TODO Ensure design docs are in the database.
+                await saveFormInfo(flattenedCaseEvent, SANITIZED_DB);
+                await saveFlatFormResponse(flattenedCaseEvent, SANITIZED_DB);
+                // Index the view now.
+                await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+            }
+          }
           resolve(data)
         } catch(e) {
           reject(e)
@@ -97,6 +214,16 @@ module.exports = {
   }
 }
 
+const getItemValue = (doc, variableName) => {
+  const variablesByName = doc.items.reduce((variablesByName, item) => {
+    for (const input of item.inputs) {
+      variablesByName[input.name] = input.value;
+    }
+    return variablesByName;
+  }, {});
+  return variablesByName[variableName];
+};
+
 /** This function processes form response for csv.
  *
  * @param {object} formData - form response from database
@@ -106,7 +233,7 @@ module.exports = {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList, sanitized, groupId) {
+const  generateFlatResponse = async function (formResponse, locationList, sanitized, groupId) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }

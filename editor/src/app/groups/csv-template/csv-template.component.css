@@ -1,0 +1,53 @@
+.year {
+  height: 130px;
+}
+.month {
+  height: 100px
+}
+.button {
+  background: var(--mdc-theme-secondary);
+  color: var(--accent-text-color);
+}
+.disabled-button {
+  background: #CCC;
+  color: var(--accent-text-color);
+}
+.headers {
+  margin: 15px;
+}
+
+.headers li {
+  background: #DEDEDE;
+  margin: 15px;
+  padding: 25px 15px;
+}
+
+.actions-column {
+  width: 100%; 
+  text-align: right;
+}
+
+.form {
+  padding-bottom: 60px;
+  padding-top: 0px;
+}
+
+#container {
+  margin: 15px;
+}
+
+.download {
+  float: left !important;
+  position: relative;
+  left: -5px;
+
+}
+
+.mat-form-field {
+  height: 20px;
+  padding-right: 1em
+}
+
+.mat-select {
+  height: 20px;
+}

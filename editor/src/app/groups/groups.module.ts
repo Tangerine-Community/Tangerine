@@ -91,6 +91,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { CsvDataSetsComponent } from './csv-data-sets/csv-data-sets.component';
 import { NewCsvDataSetComponent } from './new-csv-data-set/new-csv-data-set.component';
 import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-detail.component';
+import { CsvTemplateComponent } from './csv-template/csv-template.component';
+import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-templates.component';
+import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
+import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 
 
 @NgModule({
@@ -173,6 +177,7 @@ import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-de
     GroupDeviceUserComponent,
     GroupCasesComponent,
     GroupIssuesComponent,
+    CsvTemplateComponent,
     CaseSettingsComponent,
     ConfigureGroupSecurityComponent,
     ExportLocationListComponent,
@@ -187,7 +192,10 @@ import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-de
     HistoricalReleasesApkTestComponent,
     CsvDataSetsComponent,
     NewCsvDataSetComponent,
-    CsvDataSetDetailComponent
+    CsvDataSetDetailComponent,
+    GroupCsvTemplatesComponent,
+    GroupDatabaseConflictsComponent,
+    DownloadStatisticalFileComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

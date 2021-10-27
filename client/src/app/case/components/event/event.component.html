@@ -11,6 +11,7 @@
       [caseEventDefinition]="caseEventDefinition"
       [eventForm]="eventFormInfo.eventForm"
       [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+      [caseService]="caseService"
       class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
       routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
     >
@@ -19,6 +20,7 @@
       [caseId]="caseService.case._id"
       [eventId]="caseEvent.id"
       [participantId]="participant.id"
+      [caseService]="caseService"
       *ngFor="let participant of caseService.case.participants"
     >
     </app-event-forms-for-participant>

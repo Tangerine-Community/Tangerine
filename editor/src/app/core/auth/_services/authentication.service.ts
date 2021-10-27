@@ -211,4 +211,8 @@ export class AuthenticationService {
     const groupPermissions = this.getUserGroupPermissions(groupId);
     return permissions.some(e => groupPermissions.includes(e));
   }
+
+  async getCustomLoginMarkup() {
+    return <string>await this.http.get('/custom-login-markup', {responseType: 'text'}).toPromise()
+  }
 }

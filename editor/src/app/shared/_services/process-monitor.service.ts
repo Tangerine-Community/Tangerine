@@ -17,6 +17,9 @@ class ProcessMonitorService {
   busy = new Subject()
   // When number of processes go to 0, this Subject will emit true.
   done = new Subject()
+  // Any time a process status changes.
+  change = new Subject()
+ 
   // A list of the active processes.
   processes:Array<Process> = []
 
@@ -38,6 +41,7 @@ class ProcessMonitorService {
     if (this.hasNoProcesses) {
       this.busy.next(true)
     }
+    this.change.next(true)
     return process
   }
 
@@ -46,11 +50,13 @@ class ProcessMonitorService {
     if (this.processes.length === 0) {
       this.done.next(true)
     }
+    this.change.next(true)
   }
 
   clear() {
     this.processes = []
     this.done.next(true)
+    this.change.next(true)
   }
 
 }

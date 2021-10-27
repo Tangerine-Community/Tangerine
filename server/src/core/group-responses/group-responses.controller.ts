@@ -42,6 +42,11 @@ export class GroupResponsesController {
     return await this.groupResponsesService.read(groupId, responseId)
   }
 
+  @All('readRev/:groupId/:responseId/:rev')
+  async readRev(@Param('groupId') groupId, @Param('responseId') responseId, @Param('rev') rev) {
+    return await this.groupResponsesService.readRev(groupId, responseId, rev)
+  }
+
   @All('update/:groupId')
   async update(@Param('groupId') groupId, @Body('response') response:any) {
     const freshResponse = await this.groupResponsesService.update(groupId, response)

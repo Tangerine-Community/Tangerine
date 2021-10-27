@@ -29,3 +29,16 @@ button {
 .form-list{
   margin-top: 3rem;
 }
+
+.csv-template-selection {
+  position: relative;
+  top: -7px;
+}
+
+h2.table-header {
+  margin: 25px 0px 0px;
+}
+
+table {
+  /* margin-top: 5px !important; */
+}
