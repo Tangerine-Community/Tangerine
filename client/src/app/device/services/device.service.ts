@@ -134,6 +134,17 @@ export class DeviceService {
 
   async getDevice():Promise<Device> {
     try {
+      if (window.location.hostname === 'localhost') {
+        return <Device>{
+          _id: 'device1',
+          collection: 'Device',
+          token: 'token1',
+          key: 'test',
+          version: 'sandbox',
+          claimed: true,
+          syncLocations: []
+        }
+      }
       const locker = this.lockBoxService.getOpenLockBox()
       return locker.contents.device
     } catch (e) {
