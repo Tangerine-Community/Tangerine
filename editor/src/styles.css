@@ -37,6 +37,26 @@ h2 {
   margin-left: 15px;
 }
 
+table.materialish {
+  background: #FFF;
+  border-collapse: collapse;
+  box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%), 0 3px 14px 2px rgb(0 0 0 / 12%);
+  box-sizing: border-box;
+  width: 100%;
+}
+table.materialish tr.table-header {
+  border-style: none;
+  font-size: 12px;
+  font-weight: 500;
+}
+table.materialish tr {
+  border-width: 1px 0px 0px;
+  border-style: solid;
+}
+table.materialish td {
+  padding: 15px;
+  color: #777;
+}
 
 
 .container {

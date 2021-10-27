@@ -4,7 +4,7 @@
   <span *ngFor="let class of classes; let classIndex=index">
     <p>
       <mat-slide-toggle [checked]="!class.doc.archive"
-                        (click)="toggleClass(class.id)">Class: {{class.doc.items[0].inputs[2].value}}</mat-slide-toggle>
+                        (click)="toggleClass(class.id)">Class: {{getClassTitle(class.doc)}}</mat-slide-toggle>
     </p>
   </span>
 </div>

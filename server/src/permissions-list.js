@@ -15,6 +15,7 @@ const permissionsList = {
         'can_archive_cases',
         'can_unarchive_cases',
       'can_access_issues',
+      'can_access_database_conflicts',
     'can_access_author',
       'can_access_forms',
         'can_manage_forms',

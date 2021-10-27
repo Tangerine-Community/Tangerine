@@ -148,6 +148,10 @@ sleep 10
 # Start Tangerine.
 #
 
+if [ -x "$(command -v say)" ]; then
+  say 'go go gadget tangerine'
+fi
+
 OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
   -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
@@ -185,6 +189,8 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --env \"T_PASSWORD_POLICY=$T_PASSWORD_POLICY\" \
   --env \"T_PASSWORD_RECIPE=$T_PASSWORD_RECIPE\" \
   --env \"T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP\" \
+  --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
+  --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -210,6 +216,7 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/data/id_rsa:/root/.ssh/id_rsa:delegated \
   --volume $(pwd)/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
+  --volume $(pwd)/translations:/tangerine/translations:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
   tangerine/tangerine:local
  "
