@@ -111,6 +111,12 @@ export class GroupResponsesService {
     return response
   }
 
+  async readRev(groupId, responseId, rev) {
+    const groupDb = this.getGroupsDb(groupId)
+    const response = <Group>await groupDb.get(responseId, {rev: rev})
+    return response
+  }
+
   async update(groupId, response) {
     try {
       const groupDb = this.getGroupsDb(groupId)
