@@ -42,11 +42,14 @@ export function connectToSqlCipherDb(name, key = ''):PouchDB {
 }
 
 export function connectToCryptoPouchDb(name, key = ''):PouchDB {
-  const pouchDBOptions = <any>{
-    view_adapter: 'cordova-sqlite',
-    location: 'default',
-    androidDatabaseImplementation: 2
-  };
+  let pouchDBOptions = <any>{}
+  if (window['isCordovaApp']) {
+    pouchDBOptions = {
+      view_adapter: 'cordova-sqlite',
+      location: 'default',
+      androidDatabaseImplementation: 2
+    }
+  }
   if (window['changes_batch_size'] && name === 'shared-user-database') {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
