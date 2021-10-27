@@ -1,0 +1,69 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
+<mat-list class="drag-list">
+  <mat-list-item class="drag-item" *ngFor="let form of activeForms; let index=index">
+    <mat-list class="tangy-full-width" *cdkDragPreview>
+      <mat-list-item>
+        <span>{{index+1}}</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span [innerHTML]="form.title|unsanitizeHtml"></span>
+        <span class="tangy-spacer-drag"></span>
+
+        <span><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+          </a>
+        </span>
+      </mat-list-item>
+    </mat-list>
+    <span>{{index+1}}</span>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span>
+        <mat-select #downloadActiveForm>
+          <mat-option style="width:180px;">
+            <button (click)="getStataDoFile(form.id)" mat-icon-button>{{'Download Stata Do File'|translate}}</button>
+          </mat-option>
+        </mat-select>
+      </span>
+      <span>
+        <a mat-icon-button (click)="downloadActiveForm.open()">
+          <i class="material-icons mat-32 tangy-location-list-icon">download</i>
+        </a>
+      </span>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-list>
+<h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
+<mat-list class="drag-list" cdkDropList>
+  <mat-list-item class="drag-item" *ngFor="let form of archivedForms; let index=index">
+    <mat-list class="tangy-full-width" *cdkDragPreview>
+      <mat-list-item>
+        <span>{{index+1}}</span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span [innerHTML]="form.title|unsanitizeHtml"></span>
+        <span class="tangy-spacer-drag"></span>
+        <span><a mat-icon-button>
+            <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+          </a>
+        </span>
+      </mat-list-item>
+    </mat-list>
+    <span>{{index+1}}</span>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+
+    <span>
+        <mat-select #downloadActiveForm>
+          <mat-option style="width:180px;">
+            <button (click)="getStataDoFile(form.id)" mat-icon-button>{{'Download Stata Do File'|translate}}</button>
+          </mat-option>
+        </mat-select>
+      </span>
+      <span>
+        <a mat-icon-button (click)="downloadActiveForm.open()">
+          <i class="material-icons mat-32 tangy-location-list-icon">download</i>
+        </a>
+      </span>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-list>
