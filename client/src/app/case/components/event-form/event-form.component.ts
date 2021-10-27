@@ -16,7 +16,8 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 @Component({
   selector: 'app-event-form',
   templateUrl: './event-form.component.html',
-  styleUrls: ['./event-form.component.css']
+  styleUrls: ['./event-form.component.css'],
+  providers: [ CaseService ]
 })
 export class EventFormComponent implements OnInit, OnDestroy {
 

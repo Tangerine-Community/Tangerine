@@ -17,7 +17,8 @@ class CaseEventInfo {
 @Component({
   selector: 'app-case',
   templateUrl: './case.component.html',
-  styleUrls: ['./case.component.css']
+  styleUrls: ['./case.component.css'],
+  providers: [ CaseService ]
 })
 export class CaseComponent implements AfterContentInit, OnDestroy {
 

@@ -29,6 +29,8 @@ export class EventFormListItemComponent implements OnInit {
   @Input() caseEvent: CaseEvent;
   @Input() eventFormDefinition: EventFormDefinition;
   @Input() eventForm: EventForm;
+  @Input() caseService: CaseService;
+
   @Output() formDeleted = new EventEmitter();
   canOpen:Boolean
 
@@ -49,8 +51,7 @@ export class EventFormListItemComponent implements OnInit {
   constructor(
     private formService: TangyFormService,
     private ref: ChangeDetectorRef,
-    private userService:UserService,
-    private caseService: CaseService
+    private userService:UserService
   ) {
     ref.detach();
   }
