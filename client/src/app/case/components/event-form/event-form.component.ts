@@ -9,6 +9,8 @@ import { CaseEvent } from '../../classes/case-event.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
+import { Process, ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -33,6 +35,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   eventFormRedirectUrl = ''
   eventFormRedirectBackButtonText = ''
 
+  submitProcess:Process
   isWrappingUp = false
   isSaving = false
   loaded = false
@@ -50,6 +53,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     private router: Router,
     private caseService: CaseService,
     private appConfigService:AppConfigService,
+    private processMonitorService:ProcessMonitorService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -57,6 +61,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    const process = this.processMonitorService.start('eventFormOpen', _TRANSLATE('Opening Event Form...'))
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 1500)
     this.hasEventFormRedirect = window['eventFormRedirect'] ? true : false
     this.eventFormRedirectUrl = window['eventFormRedirect']
@@ -94,11 +99,18 @@ export class EventFormComponent implements OnInit, OnDestroy {
         eventFormId: this.eventForm.id,
         participantId: this.eventForm.participantId
       }
-      this.formPlayer.render()
       this.caseService.onChangeLocation$.subscribe(location => {
         this.formPlayer.location = this.caseService.case.location
       })
-      this.formPlayer.$submit.subscribe(async () => {
+      const appConfig = await this.appConfigService.getAppConfig()
+      this.allowCreationOfIssues = appConfig.allowCreationOfIssues
+      this.loaded = true
+      this.isFormComplete = this.eventForm.complete
+      this.ref.detectChanges()
+      this.formPlayer.$beforeSubmit.subscribe(async () => {
+        this.submitProcess = this.processMonitorService.start('eventFormSubmitProcess', _TRANSLATE("Submitting..."))
+      })
+      this.formPlayer.$afterSubmit.subscribe(async () => {
         this.isWrappingUp = true
         setTimeout(async () => {
           while (this.isSaving) {
@@ -134,13 +146,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
           if (window['eventFormRedirect']) {
             this.eventFormRedirect()
           }
+          this.processMonitorService.stop(this.submitProcess.id)
         }, 500)
       })
-      const appConfig = await this.appConfigService.getAppConfig()
-      this.allowCreationOfIssues = appConfig.allowCreationOfIssues
-      this.loaded = true
-      this.isFormComplete = this.eventForm.complete
-      this.ref.detectChanges()
+      this.formPlayer.$rendered.subscribe(async () => {
+        this.processMonitorService.stop(process.id)
+      })
+      this.formPlayer.render()
     })
   }
   
