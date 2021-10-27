@@ -10,10 +10,17 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
         const {groupName, appConfig} = data
         let groupLogDb = new DB(`${groupName}-log`)
+        let doc
         try {
-          let doc = await groupLogDb.put({"_id":"foo"})
+          doc = await groupLogDb.put({"_id":"foo"})
           log.info(`Init doc inserted into ${groupName}-log`)
-          await groupLogDb.remove(doc)
+        } catch (error) {
+          log.error(error)
+        }
+        // console.log("doc: " + JSON.stringify(doc))
+        try {
+          await groupLogDb.remove(doc.id, doc.rev)
+          log.info(`Removed init doc from ${groupName}-log`)
         } catch (error) {
           log.error(error)
         }
