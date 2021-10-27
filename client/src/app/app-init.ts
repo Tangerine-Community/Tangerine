@@ -57,7 +57,6 @@ async function hasInstalledOnCryptoPouch() {
   let hasInstalled = false
   let db = connectToCryptoPouchDb('shared-user-database')
   let results = await db.allDocs({limit: 1, include_docs: true})
-  // @TODO Prone to getting a design doc that wouldn't be encrypted?
   // If CryptoPouch has been used, a doc will consist of only 3 properties: payload, _id, and _rev.
   if (
     results.rows[0]?.doc?.payload &&
