@@ -317,7 +317,7 @@ export class GroupService {
 
   async startSession(groupId:string, username:string, type: string):Promise<object> {
     try {
-      // Create sync user
+      // Create couchdb adminUser
       const adminUsername = `adminUser-${UUID()}-${Date.now()}`
       const adminPassword = UUID()
       const config = await this.configService.config()
@@ -328,21 +328,8 @@ export class GroupService {
         "type": "user",
         "password": adminPassword
       }
-      console.log("adminUserDoc: " + JSON.stringify(adminUserDoc))
       await this.http.post(`${config.couchdbEndpoint}/_users`, adminUserDoc).toPromise()
       log.info(`Created admin account for user ${username} in group ${groupId}`)
-      // const securityInfo = (await axios.get(`${process.env.T_COUCHDB_ENDPOINT}${groupId}/_security`)).data
-      // const updatedSecurityInfo = {...securityInfo, ...{
-      //     admins: {
-      //       roles: [
-      //         `admin-${groupId}`
-      //       ]
-      //     }
-      //   }}
-      // console.log("securityInfo: " + JSON.stringify(securityInfo))
-      // console.log("updatedSecurityInfo: " + JSON.stringify(updatedSecurityInfo))
-      // const response = await axios.put(`${process.env.T_COUCHDB_ENDPOINT}${groupId}/_security`, updatedSecurityInfo)
-      // const dbUrlWithCredentials = `${window.location.protocol}//${username}:${password}@${window.location.hostname}/db/${window.location.pathname.split('/')[2]}`
       return {"dbUrlWithCredentials": `${config.protocol}://${adminUsername}:${adminPassword}@${config.hostName}/db/${groupId}`}
     } catch(e) {
       throw e

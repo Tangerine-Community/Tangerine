@@ -34,12 +34,6 @@ export class GroupDatabaseConflictsComponent implements OnInit {
 
     const canAdministerCouchdbServer = await this.authenticationService.doesUserHaveAPermission(this.group._id, 'can_administer_couchdb_server');
     if (canAdministerCouchdbServer) {
-      console.log("getUserPass")
-
-      //const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType: 'text'}).toPromise()
-      // const syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
-
-
         const username = localStorage.getItem('user_id');
         try {
           const data = await this.http.post('/nest/group/start-session', {group: this.group._id, username: username, type: 'admin'}, {observe: 'response'}).toPromise();
