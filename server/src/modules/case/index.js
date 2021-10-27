@@ -11,8 +11,9 @@ module.exports = {
         const {groupName, appConfig} = data
         let groupLogDb = new DB(`${groupName}-log`)
         try {
-          let status = await groupLogDb.put({"_id":"foo"})
+          let doc = await groupLogDb.put({"_id":"foo"})
           log.info(`Init doc inserted into ${groupName}-log`)
+          await groupLogDb.remove(doc)
         } catch (error) {
           log.error(error)
         }
