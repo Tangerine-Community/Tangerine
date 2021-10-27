@@ -188,6 +188,44 @@ class CaseService {
     await this.save()
   }
 
+  async archive() {
+    const eventForms:Array<EventForm> = this.case.events.reduce((eventForms, event) => {
+      return Array.isArray(event.eventForms)
+        ? [...eventForms, ...event.eventForms]
+        : eventForms
+    }, [])
+    for (let eventForm of eventForms) {
+      if (eventForm.formResponseId) {
+        const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+        if (formResponse) {
+          formResponse.archived = true
+          await this.tangyFormService.saveResponse(formResponse)
+        }
+      }
+    }
+    this.case.archived=true
+    await this.save() 
+  }
+
+  async unarchive() {
+    const eventForms:Array<EventForm> = this.case.events.reduce((eventForms, event) => {
+      return Array.isArray(event.eventForms)
+        ? [...eventForms, ...event.eventForms]
+        : eventForms
+    }, [])
+    for (let eventForm of eventForms) {
+      if (eventForm.formResponseId) {
+        const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+        if (formResponse) {
+          formResponse.archived = false 
+          await this.tangyFormService.saveResponse(formResponse)
+        }
+      }
+    }
+    this.case.archived = false 
+    await this.save() 
+  }
+
   async delete() {
     const eventForms:Array<EventForm> = this.case.events.reduce((eventForms, event) => {
       return Array.isArray(event.eventForms)
@@ -750,7 +788,7 @@ class CaseService {
       }
       currentEvent = caseInstance.events.find(event => event.id === issue.eventId)
     }
-    let currentEventForm = currentEvent.find(eventForm => eventForm.id === issue.eventFormId)
+    let currentEventForm = currentEvent.eventForms.find(eventForm => eventForm.id === issue.eventFormId)
     if (!currentEventForm) {
       if (await this.hasProposedChange(issueId)) {
         const proposedRevisionIssueEvent = await this.getProposedChange(issueId)

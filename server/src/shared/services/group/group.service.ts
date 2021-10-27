@@ -156,6 +156,7 @@ export class GroupService {
     let groupName = label 
     await this.installViews(groupDb)
     await exec(`cp -r /tangerine/content-sets/default  /tangerine/groups/${groupId}`)
+    await exec(`cp /tangerine/translations/*.json /tangerine/groups/${groupId}/client/`)
     await exec(`mkdir /tangerine/groups/${groupId}/client/media`)
     // @TODO Create a symlink to the old group client directory until all the other APIs are updated and we have 
     // a proper upgrade script to migrate group directories.

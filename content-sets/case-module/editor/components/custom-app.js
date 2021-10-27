@@ -3,6 +3,9 @@ import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import PouchDb from 'pouchdb'
 import './cases-enrolled-type-1.js'
 import './cases-enrolled-type-2.js'
+import './bar-chart.js'
+import './bar-chart-from-json-file.js'
+import './cases-enrolled-bar-chart.js'
 
 class CustomApp extends LitElement {
 
@@ -125,11 +128,26 @@ class CustomApp extends LitElement {
         ${this.ready ? html`
           <table>
             <tr>
+              <td colspan="2">
+                <bar-chart class="widget"></bar-chart>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <bar-chart-from-json-file class="widget"></bar-chart-from-json-file>
+              </td>
+            </tr>
+            <tr>
               <td>
                 <cases-enrolled-type-1 dbUrl="${this.dbUrl}" class="widget"></cases-enrolled-type-1>
               </td>
               <td>
                 <cases-enrolled-type-2 dbUrl="${this.dbUrl}" class="widget"></cases-enrolled-type-2>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <cases-enrolled-bar-chart class="widget" dbUrl="${this.dbUrl}"></cases-enrolled-bar-chart>
               </td>
             </tr>
           </table>

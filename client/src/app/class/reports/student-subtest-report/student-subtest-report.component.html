@@ -21,13 +21,13 @@
       <ng-container *ngIf="!subtestReport.noCategories">
         <table class="subtest">
           <tr>
-            <th>Subtask</th>
+            <th>{{'Subtask'|translate}}</th>
             <th>&nbsp;</th>
             <th *ngFor="let category of subtestReport.categories">{{category}}</th>
           </tr>
           <tr>
             <th>&nbsp;</th>
-            <th>Totals</th>
+            <th>{{'Totals'|translate}}</th>
             <th *ngFor="let category of subtestReport.categories">{{subtestReport.totals[category]}}</th>
           </tr>
           <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">
@@ -63,7 +63,7 @@
       <ng-container *ngIf="subtestReport.noCategories">
         <table class="subtest">
           <tr>
-            <th>Subtask</th>
+            <th>{{'Subtask'|translate}}</th>
             <th *ngFor="let category of subtestReport.categories">{{category}}</th>
           </tr>
           <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">

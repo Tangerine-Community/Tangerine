@@ -1,11 +1,29 @@
 
+#case-actions {
+  float: right;
+  margin-left: 15px;
+}
+
+.archived {
+  font-style: italic;
+  color: red;
+}
 
 .confirm-correct-case-prompt {
     width: 100%;
     margin-top: 15px;
 }
-.confirm-correct-case-prompt .button {
+
+.button {
     background: var(--accent-color);
+    color: #FFF;
+}
+.button i {
+  color: #FFF;
+}
+
+#case-actions .button {
+  margin-left: 15px;
 }
 .cover-when-not-confirmed {
     position: absolute;

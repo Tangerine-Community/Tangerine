@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { _TRANSLATE } from '../../../../shared/_services/translation-marker';
@@ -10,9 +10,13 @@ import { WindowRef } from 'src/app/core/window-ref.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+
   errorMessage = '';
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '' };
+  @ViewChild('customLoginMarkup', {static: true}) customLoginMarkup: ElementRef;
+  ready = false
+
   constructor(
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
@@ -29,6 +33,8 @@ export class LoginComponent implements OnInit {
     if (window.location.pathname !== '/') { 
       window.location.pathname = '/'
     }
+    this.customLoginMarkup.nativeElement.innerHTML = await this.authenticationService.getCustomLoginMarkup()
+    this.ready = true
   }
   async loginUser() {
     try {
