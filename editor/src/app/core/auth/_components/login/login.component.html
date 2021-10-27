@@ -1,4 +1,7 @@
-<mat-card>
+<mat-card *ngIf="!ready">
+  Loading...
+</mat-card>
+<mat-card *ngIf="ready">
     <form role="form" #login='ngForm' novalidate>
       <img id="logo" src="/logo.png" width="100%">
       <mat-form-field>
@@ -23,3 +26,4 @@
       </span>
     </form>
 </mat-card>
+<span #customLoginMarkup></span>
