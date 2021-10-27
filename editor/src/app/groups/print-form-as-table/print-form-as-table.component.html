@@ -9,11 +9,15 @@
     display: none !important;
   }
 </style>
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div class="device-list-btn">
+  <button mat-raised-button color="warn" (click)="export()" [disabled]="isExporting">{{'Export Data Definition'|translate}}</button>
+</div>
 <div class="tangy-content tangy-full-width">
   <mat-card>
     <mat-card-title>
       <div id="container" #container></div>
-      <table class="card-title">
+      <table class="card-title" *ngIf="myForm">
         <tr>
           <td>{{'Group'|translate}}</td>
           <td>{{groupDetails?.label}}</td>
@@ -34,20 +38,20 @@
     </mat-card-title>
     <br>
     <div>
-      <div *ngFor="let section of meta?.items;let index= index">
-        <p>Section {{index+1}}</p>
-        <p>ID: {{section.id}}</p>
-        <table class="tangy-full-width">
-          <th>Variable Name</th>
-          <th>Prompt</th>
-          <th>Type</th>
-          <th>Hint Text</th>
-          <th>Options</th>
-          <th>Required</th>
-          <th>Disabled</th>
-          <th>Hidden</th>
-          <th></th>
+      <table class="tangy-full-width">
+        <th>Section ID</th>
+        <th>Variable Name</th>
+        <th>Prompt</th>
+        <th>Type</th>
+        <th>Hint Text</th>
+        <th>Options</th>
+        <th>Required</th>
+        <th>Disabled</th>
+        <th>Hidden</th>
+        <th></th>
+        <ng-container *ngFor="let section of meta?.items;let index= index">
           <tr *ngFor="let input of section.inputs">
+            <td>{{section.id}}</td>
             <td>{{input.name}}</td>
             <td>{{input.label}}</td>
             <td>
@@ -69,11 +73,11 @@
             <td>{{input.disabled}}</td>
             <td>{{input.hidden}}</td>
           </tr>
+        </ng-container>
         </table>
-        <br>
-        <hr>
-        <br><br>
-      </div>
+<!--        <br>-->
+<!--        <hr>-->
+<!--        <br><br>-->
     </div>
   </mat-card>
 </div>
