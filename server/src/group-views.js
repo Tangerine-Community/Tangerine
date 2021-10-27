@@ -116,6 +116,12 @@ module.exports.syncConflicts = function(doc) {
   }
 }
 
+module.exports.conflicts = function(doc) {
+  if (doc._conflicts) {
+    emit(doc._id, doc._conflicts.length)
+  }
+}
+
 module.exports.cases = function(doc) {
   if (doc.type === 'case') {
     emit(doc._id, true)
