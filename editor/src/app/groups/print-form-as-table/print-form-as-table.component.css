@@ -19,3 +19,14 @@ table {
 .card-title td {
   padding:5px
 }
+
+.device-list-btn {
+  position: absolute;
+  top: 135px;
+  right: 20px;
+}
+
+
+.tangy-content {
+  margin-top: 1em
+}

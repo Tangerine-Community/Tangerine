@@ -103,7 +103,6 @@ module.exports = {
               await saveFlatFormResponse(processedResult, SANITIZED_DB);
               // Index the view now.
               await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
-            }
           }
           if (doc.type === 'case') {
             let numInf = getItemValue(doc, 'numinf')
@@ -249,6 +248,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
+    archived: formResponse.archived,
     tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,

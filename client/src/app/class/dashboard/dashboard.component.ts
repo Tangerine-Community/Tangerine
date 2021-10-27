@@ -332,7 +332,7 @@ export class DashboardComponent implements OnInit {
   }
 
   /** Populate the querystring with the form info. */
-  selectCheckbox(column, itemId) {
+  async selectCheckbox(column, itemId) {
     // let el = this.selection.select(row);
     // this.selection.toggle(column)
     const formsArray = Object.values(column.forms);
@@ -344,8 +344,9 @@ export class DashboardComponent implements OnInit {
     const src = selectedForm['src'];
     const title = selectedForm['title'];
     let responseId = null;
-    if (selectedForm['response']) {
-      responseId = selectedForm['response']['_id'];
+    const curriculumResponse = await this.dashboardService.getCurriculumResponse(classId, curriculum, studentId)
+    if (curriculumResponse) {
+      responseId = curriculumResponse._id
     }
     this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId,

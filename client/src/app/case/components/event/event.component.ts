@@ -7,6 +7,8 @@ import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventForm } from '../../classes/event-form.class';
+import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 interface EventFormInfo {
   eventFormDefinition:EventFormDefinition
@@ -24,7 +26,8 @@ interface ParticipantInfo {
 @Component({
   selector: 'app-event',
   templateUrl: './event.component.html',
-  styleUrls: ['./event.component.css']
+  styleUrls: ['./event.component.css'],
+  providers: [ CaseService ]
 })
 export class EventComponent implements OnInit, AfterContentInit {
 
@@ -43,6 +46,7 @@ export class EventComponent implements OnInit, AfterContentInit {
     private route: ActivatedRoute,
     private router: Router,
     private caseService: CaseService,
+    private processMonitorService:ProcessMonitorService,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -53,6 +57,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   }
 
   async ngAfterContentInit() {
+    const process = this.processMonitorService.start('eventComponentInit', _TRANSLATE('Opening event...'))
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.caseService.setContext(params.eventId)
@@ -107,6 +112,7 @@ export class EventComponent implements OnInit, AfterContentInit {
       }
       this.loaded = true
       this.ref.detectChanges()
+      this.processMonitorService.stop(process.id)
     })
   }
 

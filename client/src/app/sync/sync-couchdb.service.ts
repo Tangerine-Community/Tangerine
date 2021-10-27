@@ -30,6 +30,7 @@ export class SyncCouchdbDetails {
   groupId:string
   deviceId:string
   deviceToken:string
+  usePouchDbLastSequenceTracking:boolean
   formInfos:Array<FormInfo> = []
   locationQueries:Array<LocationQuery> = []
   deviceSyncLocations:Array<LocationConfig>
@@ -41,21 +42,30 @@ export class SyncSessionInfo {
   deviceSyncLocations:Array<LocationConfig> 
 }
 
-function syncLocationsDontMatch(a:Array<LocationConfig>, b:Array<LocationConfig>) {
-  let syncLocationsDontMatch = false
+function syncLocationsDontMatch(locationConfigA:LocationConfig, locationConfigB:LocationConfig) {
+  const lowestANode = locationConfigA.value[locationConfigA.value.length-1]
+  const lowestBNode = locationConfigA.value[locationConfigA.value.length-1]
+  return lowestANode.value !== lowestBNode.value
+    ? true
+    : false
+}
+
+function syncLocationConfigsDontMatch(a:Array<LocationConfig>, b:Array<LocationConfig>) {
+  let syncLocationConfigsDontMatch = false
   for (let locationConfigA of a) {
-    const lowestLevel = locationConfigA.showLevels[locationConfigA.showLevels.length-1] 
-    if (!b.find(locationConfigB => locationConfigB.value.find(node => node.level === lowestLevel).value === locationConfigA.value.find(node => node.level === lowestLevel).value)) {
-      syncLocationsDontMatch = true
+    // If there isn't at least one matching sync location, then sync locations don't match.
+    if (b.some(locationConfigB => syncLocationsDontMatch(locationConfigB, locationConfigA))) {
+      syncLocationConfigsDontMatch = true
     }
   }
+  // And now the same, but the other way around.
   for (let locationConfigB of b) {
-    const lowestLevel = locationConfigB.showLevels[locationConfigB.showLevels.length-1] 
-    if (!a.find(locationConfigA => locationConfigA.value.find(node => node.level === lowestLevel).value === locationConfigB.value.find(node => node.level === lowestLevel).value)) {
-      syncLocationsDontMatch = true
+    // If there isn't at least one matching sync location, then sync locations don't match.
+    if (a.some(locationConfigA => syncLocationsDontMatch(locationConfigB, locationConfigA))) {
+      syncLocationConfigsDontMatch = true
     }
   }
-  return syncLocationsDontMatch
+  return syncLocationConfigsDontMatch
 } 
 
 @Injectable({
@@ -124,6 +134,9 @@ export class SyncCouchdbService {
       ? this.initialBatchSize
       : this.batchSize
     let replicationStatus:ReplicationStatus
+    syncDetails.usePouchDbLastSequenceTracking = appConfig.usePouchDbLastSequenceTracking || await this.variableService.get('usePouchDbLastSequenceTracking')
+      ? true
+      : false
     // Create sync session and instantiate remote database connection.
     let syncSessionUrl
     let remoteDb
@@ -172,7 +185,7 @@ export class SyncCouchdbService {
 
     // Sync Locations Change Detection. 
     const previousDeviceSyncLocations = await this.variableService.get('previousDeviceSyncLocations')
-    const syncLocationsDontMatchVar = previousDeviceSyncLocations ? syncLocationsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations) : true
+    const syncLocationsDontMatchVar = previousDeviceSyncLocations ? syncLocationConfigsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations) : true
     if (!isFirstSync && syncLocationsDontMatchVar) {
       this.fullSync = 'push'
       this.retryCount = 1
@@ -353,7 +366,7 @@ export class SyncCouchdbService {
     let failureDetected = false
     let pushed = 0
     let syncOptions = {
-      "since":push_last_seq,
+      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": push_last_seq },
       "batch_size": this.batchSize,
       "batches_limit": 1,
       "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null,
@@ -514,7 +527,7 @@ export class SyncCouchdbService {
      * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
      */
     let syncOptions = {
-      "since": pull_last_seq,
+      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": pull_last_seq },
       "batch_size": batchSize,
       "write_batch_size": this.writeBatchSize,
       "batches_limit": 1,

@@ -2,13 +2,16 @@ const DB = require("../../db.js");
 const {log} = require("tangy-log");
 const conflictsDdoc = require(`./conflicts_view.js`)
 const byConflictDocIdDdoc = require(`./byConflictDocId_view.js`)
+const { updateGroupSearchIndex } = require('../../scripts/update-group-search-index.js')
+const { updateGroupArchivedIndex } = require('../../scripts/update-group-archived-index.js')
 
 module.exports = {
   name: 'case',
   hooks: {
     groupNew: function(data) {
       return new Promise(async (resolve, reject) => {
-        const {groupName, appConfig} = data
+
+        const {groupName, groupId, appConfig} = data
         let groupLogDb = new DB(`${groupName}-log`)
         let doc
         try {
@@ -41,7 +44,11 @@ module.exports = {
         } catch (error) {
           log.error(error)
         }
-        
+        log("Creating indexes for search and archived.")
+        await updateGroupSearchIndex(groupId)
+        log(`archived-index updated for group: ${groupId}`)
+        await updateGroupArchivedIndex(groupId)
+        log(`archived-index updated for group: ${groupId}`)
         
         resolve(data)
       })

@@ -1,5 +1,39 @@
 # What's new
 
+## v3.20.0
+
+- Improve rendering of Device listing. PR: [#2924](https://github.com/Tangerine-Community/Tangerine/issues/2924) *Note* that you must run the update or else the Device view will fail.
+
+
+__Server upgrade instructions__
+
+Important upgrade: Please note that you must run update below (v3.20.0.js) to install the new listDevices view. If you don't the Devices listing will fail.
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.0
+./start.sh v3.20.0
+# Run the update to install the new listDevices view.
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.20.0.js
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.19.1
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.19.3
 
 __Fixes__
@@ -86,8 +120,6 @@ __Fixes__
 - Added archive/unarchive Case functionality and permission for "can delete" [#2954](https://github.com/Tangerine-Community/Tangerine/pull/2954)
 
 __Server upgrade instructions__
-
-Important upgrade: Please note that you must run update below (v3.19.1.js) to install the new listDevices view. If you don't the Devices listing will fail.
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 

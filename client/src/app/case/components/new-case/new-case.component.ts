@@ -3,11 +3,14 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseDefinitionsService } from '../../services/case-definitions.service'
 import { EventForm } from '../../classes/event-form.class';
+import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 @Component({
   selector: 'app-new-case',
   templateUrl: './new-case.component.html',
-  styleUrls: ['./new-case.component.css']
+  styleUrls: ['./new-case.component.css'],
+  providers: [ CaseService ]
 })
 export class NewCaseComponent implements AfterContentInit {
 
@@ -16,9 +19,11 @@ export class NewCaseComponent implements AfterContentInit {
     private activatedRoute: ActivatedRoute,
     private caseService:CaseService,
     private caseDefinitionsService:CaseDefinitionsService,
+    private processMonitorService:ProcessMonitorService
   ) { }
 
   async ngAfterContentInit() {
+    const process = this.processMonitorService.start('newCaseSaving', _TRANSLATE('Creating new case...'))
     this.activatedRoute.queryParams.subscribe(async params => {
       const formId = params['formId'];
       const caseDefinitions = await this.caseDefinitionsService.load();
@@ -31,6 +36,7 @@ export class NewCaseComponent implements AfterContentInit {
       } else {
         this.router.navigate(['case', this.caseService.case._id])
       }
+      this.processMonitorService.stop(process.id)
     })
   }
  
