@@ -9,7 +9,7 @@ import { ConfigController } from './config/config.controller';
 import { GroupResponsesController } from './group-responses/group-responses.controller';
 import isAuthenticated = require('../middleware/is-authenticated');
 import {GroupIssuesController} from "./group-issues/group-issues.controller";
-const {permit} = require('../middleware/permitted');
+const {permit, permitOnGroupIf} = require('../middleware/permitted');
 
 @Module({
   controllers: [
@@ -49,5 +49,8 @@ export class CoreModule implements NestModule {
     consumer
       .apply(isAuthenticated, permit(['can_create_group']))
       .forRoutes({path: 'nest/group/create', method: RequestMethod.POST});
+    consumer
+      .apply(isAuthenticated, permitOnGroupIf('can_administer_couchdb_server'))
+      .forRoutes({path: 'nest/group/start-session', method: RequestMethod.POST});
   }
 }
