@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from '../user/user.service';
 import {SyncSessionInfo} from "../../../modules/sync/services/sync-session/sync-session-v2.service";
 import axios from "axios";
+import {DbService} from "../db/db.service";
 const insertGroupViews = require('../../../insert-group-views.js')
 
 const DB = require('../../../db')
@@ -38,6 +39,7 @@ export class GroupService {
     private readonly configService: TangerineConfigService,
     private readonly userService: UserService,
     private readonly http:HttpService,
+    private readonly dbService:DbService
   ){}
 
   async initialize() {
@@ -344,6 +346,21 @@ export class GroupService {
       return {"dbUrlWithCredentials": `${config.protocol}://${adminUsername}:${adminPassword}@${config.hostName}/db/${groupId}`}
     } catch(e) {
       throw e
+    }
+  }
+
+  async expireAdminCouchdbSessions() {
+    // Expire all admin Couchdb sessions after 8 hours. This means if a admin Couchdb session takes longer than
+    // 8 hours then it will be interrupted.
+    const expireLimit = 8*60*60*1000
+    const _usersDb = this.dbService.instantiate(`_users`)
+    const expiredAdminCouchdbSessions = (await _usersDb.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
+      .filter(userDoc => userDoc._id.includes('org.couchdb.user:adminUser'))
+      .filter(userDoc => (Date.now() - parseInt(userDoc.name.split('-')[6])) > expireLimit)
+    for (const expiredAdminCouchdbSession of expiredAdminCouchdbSessions) {
+      await _usersDb.remove(expiredAdminCouchdbSession)
     }
   }
 

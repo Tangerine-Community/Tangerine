@@ -40,7 +40,7 @@ export class AppService {
     }
     await this.startModules()
     this.keepAliveReportingWorker()
-    this.keepAliveSyncSessionSweeper()
+    this.keepAliveSessionSweeper()
     
   }
 
@@ -132,12 +132,13 @@ export class AppService {
     }
   }
 
-  async keepAliveSyncSessionSweeper() {
+  async keepAliveSessionSweeper() {
     const config = await this.configService.config()
     if (config.enabledModules.includes('sync-protocol-2')) {
       setInterval(() => {
         try {
           this.syncSessionService.expireSyncSessions()
+          this.groupService.expireAdminCouchdbSessions()
         } catch (e) {
           log.error(e)
           console.log(e)
