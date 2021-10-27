@@ -1,4 +1,4 @@
-import { Controller, Body, All, Param, Req, Request } from '@nestjs/common';
+import { Controller, Body, All, Param, Req, Request, Post } from '@nestjs/common';
 import { GroupService } from '../../shared/services/group/group.service';
 import { Group } from '../../shared/classes/group';
 import { TangerineConfigService } from '../../shared/services/tangerine-config/tangerine-config.service';
@@ -48,7 +48,7 @@ export class GroupController {
     }
   }
 
-  @All('start-session')
+  @Post('start-session')
   async startSession(@Body('group') group, @Body('username') username, @Body('type') type) {
     console.log("started session for group: " + group + " username: " + username)
     let dbUrlWithCredentials = await this.groupService.startSession(group, username, type)

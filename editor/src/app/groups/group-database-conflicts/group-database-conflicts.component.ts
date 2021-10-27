@@ -37,7 +37,7 @@ export class GroupDatabaseConflictsComponent implements OnInit {
         const username = localStorage.getItem('user_id');
         try {
           const data = await this.http.post('/nest/group/start-session', {group: this.group._id, username: username, type: 'admin'}, {observe: 'response'}).toPromise();
-          if (data.status === 200) {
+          if (data.status === 201) {
             const dbUrlWithCredentials = data.body["dbUrlWithCredentials"]
             this.container.nativeElement.innerHTML = `
       <couchdb-conflict-manager dbUrl="${dbUrlWithCredentials}" username="${window['userId']}"></couchdb-conflict-manager>
@@ -47,6 +47,8 @@ export class GroupDatabaseConflictsComponent implements OnInit {
           }
         } catch (error) {
           console.log(error);
+          let errorMessage = error.error? error.error : JSON.stringify(error)
+          this.container.nativeElement.innerHTML = `<p>Unable to display database conflicts. Error: ${errorMessage}`
         }
       
     }
