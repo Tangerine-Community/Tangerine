@@ -15,9 +15,13 @@
 <div class="wrapper">
   <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
   <div *ngFor="let eventInfo of readableCaseEventsInfo">
-    <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
-      [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
-      [case]="caseService.case" routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
+    <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" 
+      [caseEvent]="caseEvent"
+      [caseDefinition]="caseService.caseDefinition"
+      [caseEventDefinition]="eventInfo.caseEventDefinition"
+      [case]="caseService.case"
+      [caseService]="caseService"
+      routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
     </app-case-event-list-item>
   </div>
   <div *ngFor="let eventInfo of unreadableCaseEventsInfo">
@@ -28,6 +32,7 @@
       [caseDefinition]="caseService.caseDefinition"
       [caseEventDefinition]="eventInfo.caseEventDefinition"
       [case]="caseService.case"
+      [caseService]="caseService"
     >
     </app-case-event-list-item>
   </div>

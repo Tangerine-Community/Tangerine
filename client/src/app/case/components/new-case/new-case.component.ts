@@ -9,7 +9,8 @@ import { _TRANSLATE } from 'src/app/shared/translation-marker';
 @Component({
   selector: 'app-new-case',
   templateUrl: './new-case.component.html',
-  styleUrls: ['./new-case.component.css']
+  styleUrls: ['./new-case.component.css'],
+  providers: [ CaseService ]
 })
 export class NewCaseComponent implements AfterContentInit {
 
