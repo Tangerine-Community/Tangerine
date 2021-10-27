@@ -19,7 +19,7 @@ function getAppConfig() {
 
 async function hasInstalledOnPouchDB() {
   // Some initial process of elimination.
-  if (await hasInstalledOnCryptoPouch() || !await hasInstalledOnSqlcipher()) {
+  if (await hasInstalledOnCryptoPouch() || await hasInstalledOnSqlcipher()) {
     return false
   }
   // See if the installed variable is set.
