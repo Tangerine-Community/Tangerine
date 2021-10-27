@@ -1,6 +1,5 @@
 import { sharedStyles } from './shared-styles.js'
 import { LitElement, html } from 'lit-element'
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import PouchDb from 'pouchdb'
 
 class CasesEnrolledType1 extends LitElement {

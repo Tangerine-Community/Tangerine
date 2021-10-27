@@ -37,6 +37,9 @@ export class AppConfig {
   batchSize:number
   initialBatchSize:number
   writeBatchSize:number
+  // EncryptionPlugin.sqlcipher is the default if this is not defined.
+  encryptionPlugin:EncryptionPlugin
+  turnOffAppLevelEncryption:boolean
   useCachedDbDumps:boolean
   calculateLocalDocsForLocation:boolean;
   findSelectorLimit: number;
@@ -49,5 +52,10 @@ export class AppConfig {
   // List of views to skip optimization of after a sync.
   doNotOptimize: Array<string>
   dbBackupSplitNumberFiles: number;
+  usePouchDbLastSequenceTracking:boolean
 }
 
+export enum EncryptionPlugin {
+  SqlCipher = 'SqlCipher',
+  CryptoPouch = 'CryptoPouch'
+}

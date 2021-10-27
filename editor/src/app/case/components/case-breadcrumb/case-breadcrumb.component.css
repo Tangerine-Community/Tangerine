@@ -30,11 +30,6 @@
     color: var(--primary-text-color-overlay) !important;
 }
 
-#delete-case {
-  padding-left: 1em;
-}
-
-.archived {
-  font-style: italic;
-  color: red;
+.back-to-cases {
+  cursor: pointer;
 }

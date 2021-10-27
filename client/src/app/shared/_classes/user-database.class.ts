@@ -40,7 +40,14 @@ export class UserDatabase {
   }
 
   async get(_id) {
-    return await this.db.get(_id);
+    const doc = await this.db.get(_id);
+    // @TODO Temporary workaround for CryptoPouch bug where it doesn't include the _rev when getting a doc.
+    if (this.db.cryptoPouchIsEnabled) {
+      const tmpDb = new PouchDB(this.db.name)
+      const encryptedDoc = await tmpDb.get(_id)
+      doc._rev = encryptedDoc._rev
+    }
+    return doc
   }
 
   async put(doc) {

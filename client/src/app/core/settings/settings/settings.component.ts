@@ -16,6 +16,7 @@ export class SettingsComponent implements AfterContentInit {
   translations:any
   window:any
   languageCode = 'en'
+  usePouchDbLastSequenceTracking = false
   selected = ''
   constructor(
     private http: HttpClient,
@@ -23,11 +24,9 @@ export class SettingsComponent implements AfterContentInit {
     private languagesService:LanguagesService,
   ) { }
 
-  async ngOnInit() {
-    this.languageCode = await this.variableService.get('languageCode')
-  }
-
   async ngAfterContentInit() {
+    this.languageCode = await this.variableService.get('languageCode')
+    this.usePouchDbLastSequenceTracking = await this.variableService.get('usePouchDbLastSequenceTracking')
     this.selected = this.languageCode;
     const translations = <Array<any>>await this.http.get('./assets/translations.json').toPromise();
     this.container.nativeElement.innerHTML = `
@@ -39,6 +38,13 @@ export class SettingsComponent implements AfterContentInit {
               <option value="${language.languageCode}">${t(language.label)}</option>
             `).join('')}
           </tangy-select>
+          <tangy-checkbox
+            value="${this.usePouchDbLastSequenceTracking ? 'on' : ''}"
+            name="usePouchDbLastSequenceTracking"
+            label="${t(`Use PouchDB's last sequence tracking when syncing.`)}"
+          >
+          </tangy-checkbox>
+
           <p>
             ${t('After submitting updated settings, you will be required to log in again.')}
           </p>
@@ -50,6 +56,10 @@ export class SettingsComponent implements AfterContentInit {
       const response = new TangyFormResponseModel(event.target.response)
       const selectedLanguageCode = response.inputsByName.language.value
       await this.languagesService.setLanguage(selectedLanguageCode, true)
+      const usePouchDbLastSequenceTracking = response.inputsByName.usePouchDbLastSequenceTracking.value
+        ? true
+        : false
+      await this.variableService.set('usePouchDbLastSequenceTracking', usePouchDbLastSequenceTracking)
       alert(t('Settings have been updated. You will now be redirected to log in.'))
       window.location.href = window.location.href.replace(window.location.hash, 'index.html')
     })

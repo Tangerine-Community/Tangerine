@@ -94,6 +94,7 @@ import { CsvDataSetDetailComponent } from './csv-data-set-detail/csv-data-set-de
 import { CsvTemplateComponent } from './csv-template/csv-template.component';
 import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-templates.component';
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
+import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 
 
 @NgModule({
@@ -193,7 +194,8 @@ import { GroupDatabaseConflictsComponent } from './group-database-conflicts/grou
     NewCsvDataSetComponent,
     CsvDataSetDetailComponent,
     GroupCsvTemplatesComponent,
-    GroupDatabaseConflictsComponent
+    GroupDatabaseConflictsComponent,
+    DownloadStatisticalFileComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

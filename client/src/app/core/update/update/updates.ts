@@ -401,5 +401,16 @@ export const updates = [
       await window['T'].search.createIndex()
       await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.2')) return
+      console.log('Updating to v3.19.2...')
+      console.log('Trying to update index again for tablets that may have failed on the last update and then incorrectly proceeded due to update flag getting set too early...')
+      await window['T'].search.createIndex()
+      await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
+      await variableService.set('ran-update-v3.19.2', 'true')
+    }
   }
 ]

@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { TangyFormsInfoService } from './tangy-forms/tangy-forms-info-service';
 import { TangyFormService } from './tangy-forms/tangy-form.service';
 import { MenuService } from './shared/_services/menu.service';
-import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
@@ -17,6 +17,10 @@ import { _TRANSLATE } from './shared/_services/translation-marker';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { CaseService } from './case/services/case.service';
 import { Get } from 'tangy-form/helpers.js'
+import {ProcessMonitorService} from "./shared/_services/process-monitor.service";
+import {LoadingUiComponent} from "./core/loading-ui.component";
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -36,9 +40,11 @@ export class AppComponent implements OnInit, OnDestroy {
   menuService: MenuService;
   sessionTimeoutCheckTimerID;
   isConfirmDialogActive = false;
+  dialogRef:any
 
   @ViewChild('snav', {static: true}) snav: MatSidenav;
-
+  @ViewChild('loadingUi', { static: true }) loadingUi: ElementRef<LoadingUiComponent>;
+  
   private _mobileQueryListener: () => void;
 
   constructor(
@@ -57,7 +63,9 @@ export class AppComponent implements OnInit, OnDestroy {
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
     private appConfigService: AppConfigService,
-    private permissionService: NgxPermissionsService
+    private permissionService: NgxPermissionsService,
+    private processMonitorService:ProcessMonitorService,
+    public dialog: MatDialog
   ) {
     translate.setDefaultLang('translation');
     translate.use('translation');
@@ -82,7 +90,8 @@ export class AppComponent implements OnInit, OnDestroy {
       case: caseService,
       cases: casesService,
       caseDefinition: caseDefinitionsService,
-      translate: window['t']
+      translate: window['t'],
+      process:processMonitorService
     }
   }
 
@@ -116,6 +125,21 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
     this.window.translation = await this.appConfigService.getTranslations();
+    this.processMonitorService.change.subscribe((isDone) => {
+      if (this.processMonitorService.processes.length === 0) {
+        this.dialog.closeAll()
+      } else {
+        this.dialog.closeAll()
+        this.dialogRef = this.dialog.open(ProcessMonitorDialogComponent, {
+          data: {
+            messages: this.processMonitorService.processes.map(process => process.description).reverse()
+          },
+          disableClose: true
+        })
+      }
+    })
+    let appStartProcess = this.processMonitorService.start('init', "App starting...")
+    setTimeout(() => this.processMonitorService.stop(appStartProcess.id), 1000)
   }
 
   ngOnDestroy(): void {

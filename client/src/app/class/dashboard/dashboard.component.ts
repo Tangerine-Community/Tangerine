@@ -12,6 +12,7 @@ import {ClassGroupingReport} from '../reports/student-grouping-report/class-grou
 import {TangyFormService} from '../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import {VariableService} from "../../shared/_services/variable.service";
+import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 
 export interface StudentResult {
   id: string;
@@ -82,6 +83,11 @@ export class DashboardComponent implements OnInit {
     private tangyFormsInfoService: TangyFormsInfoService,
     private variableService: VariableService
   ) { }
+
+  getClassTitle(classResponse:TangyFormResponse) {
+    const gradeInput = classResponse.items[0].inputs.find(input => input.name === 'grade')
+    return gradeInput.value
+  }
 
   async ngOnInit() {
     (<any>window).Tangy = {};
@@ -326,7 +332,7 @@ export class DashboardComponent implements OnInit {
   }
 
   /** Populate the querystring with the form info. */
-  selectCheckbox(column, itemId) {
+  async selectCheckbox(column, itemId) {
     // let el = this.selection.select(row);
     // this.selection.toggle(column)
     const formsArray = Object.values(column.forms);
@@ -338,8 +344,9 @@ export class DashboardComponent implements OnInit {
     const src = selectedForm['src'];
     const title = selectedForm['title'];
     let responseId = null;
-    if (selectedForm['response']) {
-      responseId = selectedForm['response']['_id'];
+    const curriculumResponse = await this.dashboardService.getCurriculumResponse(classId, curriculum, studentId)
+    if (curriculumResponse) {
+      responseId = curriculumResponse._id
     }
     this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId,

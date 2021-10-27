@@ -4,6 +4,7 @@
 
 - Improve rendering of Device listing. PR: [#2924](https://github.com/Tangerine-Community/Tangerine/issues/2924) *Note* that you must run the update or else the Device view will fail.
 
+
 __Server upgrade instructions__
 
 Important upgrade: Please note that you must run update below (v3.20.0.js) to install the new listDevices view. If you don't the Devices listing will fail.
@@ -33,10 +34,90 @@ docker rmi tangerine/tangerine:v3.19.1
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
+## v3.19.3
+
+__Fixes__
+
+- Fix issue where loading screen would not close after submitting a proposal on an Issue.
+- Fixes from v3.18.8 incorporated.
+- Fixes to how role based permission rules are applied on the schedule view. 
+- Fix CaseService.rebaseIssue from failing due to accessing eventForms incorrectly.
+
+__New Features__
+
+- Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever. (demo: https://youtu.be/RkoUN41jqr4)
+- Material design applied to loading indicator on the server. 
+- New cancel button on loading indicator on the server. Will warn that this may cause data corruption and data loss. (demo: https://youtu.be/da9cxG5w8c0)
+- Added ability to search archived cases. Issue: [#2977](https://github.com/Tangerine-Community/Tangerine/issues/2977)
+  *Important* : Run `docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js` to enable searching archived cases.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.19.3
+./start.sh v3.19.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.19.2
+# Run the v3.19.3.js update to enable indexing of archived documents.
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
+## v3.19.2
+
+__Fixes__
+
+- Added process indicator when archiving, un-archiving, or deleting a case. Issue: [#2974](https://github.com/Tangerine-Community/Tangerine/issues/2974)
+- Add v3.19.2 update to recover if v3.19.0 search indexing failed
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.19.2
+./start.sh v3.19.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.19.1
+# Perform additional upgrades.
+docker exec -it tangerine bash
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.19.1
 
 __Fixes__
+
 - Improved backup and restore file processing. Docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
+- Added archive/unarchive Case functionality and permission for "can delete" [#2954](https://github.com/Tangerine-Community/Tangerine/pull/2954)
 
 __Server upgrade instructions__
 
@@ -80,7 +161,7 @@ __New Features__
 9. __Form Developer writes code that can access Case's related Location metadata without writing asynchronous code.__ When working synchronously in forms, we don't currently have access to the related Location Node data without loading the Location List async and using T.case.case.location to search the hierarchy for the node we want. This PR loads all related Location Nodes into memory at T.case.location when the context of a Case is set. (Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2849) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2791)
 10. __Server Administrator configures substitutions for CSV output.__ This feature allows a Server Administrator to update the group's configuration in the app database to contains Regex string replacements for CSV output. This can be handy in situations where Data Analysts are having trouble parsing CSV data that contains line breaks and commas. An example configuration to remove line breaks and commas from data would be `"csvReplacementCharacters": [{"search": ",", "replace": "|"}, {"search": "\n", "replace": "___"}]`. (Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2787) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2788)
 11. __Server Administrator configures Tangerine to not auto-commit in groups' data directories to preserver manually managed git content repositories.__ When using git to manage group content in a git flow like manner, the automatic commit can result in unnintentional commits. System Administrators can now turn off this auto-commit by configuring Tangerine's `config.sh` with `T_AUTO_COMMIT="false"`. If set to true also include the frequency `T_AUTO_COMMIT_FREQUENCY="60000"`  (Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2614) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2748)
-12. __Data Collector proposes change to a Form on a Case.__ The issues feature that has been available on the server is now optionally also available on Devices by `"allowCreationOfIssues": true` to `client/app-config.json` for the group you want this enabled. Most of the features of Issues you are familiar with from the server are there, except for merging proposals which is not allowed. Issues from Devices are uploaded to the server where proposals can be merged by a Data Manager. We also streamlined the Issue creation and proposal process by skipping the page to fill out an issue title/description, and then forward them directly to creating a proposal. To aid in issue titles/descriptions that make sense, Content Developers can now add `templateIssueTitle` and `templateIssueDescription` to Case Definition files.  (Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2850) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2330)
+12. __Data Collector proposes change to a Form on a Case.__ The issues feature that has been available on the server is now optionally also available on Devices by `"allowCreationOfIssues": true` to `client/app-config.json` for the group you want this enabled. Most of the features of Issues you are familiar with from the server are there, except for merging proposals which is not allowed. Issues from Devices are uploaded to the server where proposals can be merged by a Data Manager. We also streamlined the Issue creation and proposal process by skipping the page to fill out an issue title/description, and then forward them directly to creating a proposal. To aid in issue titles/descriptions that make sense, Content Developers can now add `templateIssueTitle` and `templateIssueDescription` to Case Definition files.  (Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2850) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2330) ([Demo Video](https://youtu.be/xWXKubQNLog))
 13. __Data Manager updates Issue Title and Issue Description__ Data Managers will now find a metadata tab on an Issue where they can update the Title, Description, and new "Send to" settings. (Issue: https://github.com/Tangerine-Community/Tangerine/issues/2851) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2330)
 14. __Data Manager sends an Issue to all Devices in Sync Area or specific Device__ When create/configuring an Issue, Data Managers now have the option to send an Issue to a specific location in a Sync Area, or send it to a specific Device by Device ID. (Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2854) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2330)
 15. __Forms Developer defines custom logic for Device's search of Cases and Forms__ In some cases there are situations where the standard variables for searching do not cover all things we want searched, or there is a compound field we want to be searched. Adding a client/custom-search.js file allows the Forms Developer to hook into the map function used to generate the search index. (Ticket: https://github.com/Tangerine-Community/Tangerine/issues/2852) (PR: https://github.com/Tangerine-Community/Tangerine/pull/2740)
@@ -130,14 +211,62 @@ update-down-sync-doc-count-by-location-id-index '*'
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
 
+## v3.18.9
+
+__Fixes__
+
+- Backport: Restrict access to events by permissions when query by date on schedule view.
+- Fix issue where logging in as a different user shows the previously logged in users data (Multiuser/Tablet sharing https://github.com/Tangerine-Community/Tangerine/issues/2060)
+- Add additional translateables to Tangerine Teach components (Translatable feedback status text: https://github.com/Tangerine-Community/Tangerine/issues/2693) (Missing translatable strings: https://github.com/Tangerine-Community/Tangerine/issues/2987)
+- Allow class title to be anywhere on form [#2994](https://github.com/Tangerine-Community/Tangerine/pull/2994)
+
+## v3.18.8
+- Add support for skipping indexes in form's cycle sequences.
+- Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable. https://github.com/Tangerine-Community/Tangerine/issues/2947
+- On Tangerine Teach reports, fix calculating of "percentile", AKA percent correct grouping. https://github.com/Tangerine-Community/Tangerine/issues/2941
+
+
+## v3.18.7
+
+__Fixes__
+
+- Back-ported some fixes to the backup and restore feature from the v3.19.1 branch.
+- Fixed issue with Teach where third subtask would not open correctly.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.18.7
+./start.sh v3.18.7
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.18.6
+```
+
+
 ## v3.18.6
 
 __Updates__
+
 - Updated tangy-form lib from 4.25.11 to 4.25.14 ([Changelog](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v42514)), which provides:
   - A fix for photo-capture so that it de-activates the camera when going to the next page or leaving a form. 
   - Implemented a new 'before-submit' event to tangy-form in order to listen to events before the 'submit' event is dispatched.
   - A fix for User defined Cycle Sequences.
+
 __Fixes__
+
 - Remove incorrect exception classes for changes processing #2883 PR: [#2883](https://github.com/Tangerine-Community/Tangerine/pull/2883) Issue: [#2882](https://github.com/Tangerine-Community/Tangerine/issues/2882)
 - Added backup and restore feature for Tangerine databases using device encryption. Increase the appConfig.json parameter `dbBackupSplitNumberFiles` (default: 200) to speed up the backup/restore process if your database is large. You may also change that parameter in the Export Backup user interface. Updated docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
 
@@ -166,6 +295,7 @@ docker rmi tangerine/tangerine:v3.18.5
 ## v3.18.5
 
 __Fixes__
+
 - Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
 
 ## v3.18.4

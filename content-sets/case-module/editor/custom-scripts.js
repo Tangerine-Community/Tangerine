@@ -16008,7 +16008,6 @@ const sharedStyles = css`
 
 
 
-
 class CasesEnrolledType1 extends LitElement {
 
   static get styles() {
@@ -16121,7 +16120,449 @@ class CasesEnrolledType2 extends LitElement {
 
 customElements.define('cases-enrolled-type-2', CasesEnrolledType2);
 
+// CONCATENATED MODULE: ./components/plotly-styles.js
+
+
+const plotlyStyles = css`
+
+.js-plotly-plot .plotly, .js-plotly-plot .plotly div {
+  direction: ltr;
+  font-family: "Open Sans", verdana, arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.js-plotly-plot .plotly input, .js-plotly-plot .plotly button {
+  font-family: "Open Sans", verdana, arial, sans-serif;
+}
+.js-plotly-plot .plotly input:focus, .js-plotly-plot .plotly button:focus {
+  outline: none;
+}
+.js-plotly-plot .plotly a {
+  text-decoration: none;
+}
+.js-plotly-plot .plotly a:hover {
+  text-decoration: none;
+}
+.js-plotly-plot .plotly .crisp {
+  shape-rendering: crispEdges;
+}
+.js-plotly-plot .plotly .user-select-none {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.js-plotly-plot .plotly svg {
+  overflow: hidden;
+}
+.js-plotly-plot .plotly svg a {
+  fill: #447adb;
+}
+.js-plotly-plot .plotly svg a:hover {
+  fill: #3c6dc5;
+}
+.js-plotly-plot .plotly .main-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+.js-plotly-plot .plotly .main-svg .draglayer {
+  pointer-events: all;
+}
+.js-plotly-plot .plotly .cursor-default {
+  cursor: default;
+}
+.js-plotly-plot .plotly .cursor-pointer {
+  cursor: pointer;
+}
+.js-plotly-plot .plotly .cursor-crosshair {
+  cursor: crosshair;
+}
+.js-plotly-plot .plotly .cursor-move {
+  cursor: move;
+}
+.js-plotly-plot .plotly .cursor-col-resize {
+  cursor: col-resize;
+}
+.js-plotly-plot .plotly .cursor-row-resize {
+  cursor: row-resize;
+}
+.js-plotly-plot .plotly .cursor-ns-resize {
+  cursor: ns-resize;
+}
+.js-plotly-plot .plotly .cursor-ew-resize {
+  cursor: ew-resize;
+}
+.js-plotly-plot .plotly .cursor-sw-resize {
+  cursor: sw-resize;
+}
+.js-plotly-plot .plotly .cursor-s-resize {
+  cursor: s-resize;
+}
+.js-plotly-plot .plotly .cursor-se-resize {
+  cursor: se-resize;
+}
+.js-plotly-plot .plotly .cursor-w-resize {
+  cursor: w-resize;
+}
+.js-plotly-plot .plotly .cursor-e-resize {
+  cursor: e-resize;
+}
+.js-plotly-plot .plotly .cursor-nw-resize {
+  cursor: nw-resize;
+}
+.js-plotly-plot .plotly .cursor-n-resize {
+  cursor: n-resize;
+}
+.js-plotly-plot .plotly .cursor-ne-resize {
+  cursor: ne-resize;
+}
+.js-plotly-plot .plotly .cursor-grab {
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+.js-plotly-plot .plotly .modebar {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+.js-plotly-plot .plotly .ease-bg {
+  -webkit-transition: background-color 0.3s ease 0s;
+  -moz-transition: background-color 0.3s ease 0s;
+  -ms-transition: background-color 0.3s ease 0s;
+  -o-transition: background-color 0.3s ease 0s;
+  transition: background-color 0.3s ease 0s;
+}
+.js-plotly-plot .plotly .modebar--hover > :not(.watermark) {
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease 0s;
+  -moz-transition: opacity 0.3s ease 0s;
+  -ms-transition: opacity 0.3s ease 0s;
+  -o-transition: opacity 0.3s ease 0s;
+  transition: opacity 0.3s ease 0s;
+}
+.js-plotly-plot .plotly:hover .modebar--hover .modebar-group {
+  opacity: 1;
+}
+.js-plotly-plot .plotly .modebar-group {
+  float: left;
+  display: inline-block;
+  box-sizing: border-box;
+  padding-left: 8px;
+  position: relative;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.js-plotly-plot .plotly .modebar-btn {
+  position: relative;
+  font-size: 16px;
+  padding: 3px 4px;
+  height: 22px;
+  /* display: inline-block; including this breaks 3d interaction in .embed mode. Chrome bug? */
+  cursor: pointer;
+  line-height: normal;
+  box-sizing: border-box;
+}
+.js-plotly-plot .plotly .modebar-btn svg {
+  position: relative;
+  top: 2px;
+}
+.js-plotly-plot .plotly .modebar.vertical {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  max-height: 100%;
+}
+.js-plotly-plot .plotly .modebar.vertical svg {
+  top: -1px;
+}
+.js-plotly-plot .plotly .modebar.vertical .modebar-group {
+  display: block;
+  float: none;
+  padding-left: 0px;
+  padding-bottom: 8px;
+}
+.js-plotly-plot .plotly .modebar.vertical .modebar-group .modebar-btn {
+  display: block;
+  text-align: center;
+}
+.js-plotly-plot .plotly [data-title] {
+  /**
+   * tooltip body
+   */
+}
+.js-plotly-plot .plotly [data-title]:before, .js-plotly-plot .plotly [data-title]:after {
+  position: absolute;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  -o-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  display: none;
+  opacity: 0;
+  z-index: 1001;
+  pointer-events: none;
+  top: 110%;
+  right: 50%;
+}
+.js-plotly-plot .plotly [data-title]:hover:before, .js-plotly-plot .plotly [data-title]:hover:after {
+  display: block;
+  opacity: 1;
+}
+.js-plotly-plot .plotly [data-title]:before {
+  content: "";
+  position: absolute;
+  background: transparent;
+  border: 6px solid transparent;
+  z-index: 1002;
+  margin-top: -12px;
+  border-bottom-color: #69738a;
+  margin-right: -6px;
+}
+.js-plotly-plot .plotly [data-title]:after {
+  content: attr(data-title);
+  background: #69738a;
+  color: white;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 12px;
+  white-space: nowrap;
+  margin-right: -18px;
+  border-radius: 2px;
+}
+.js-plotly-plot .plotly .vertical [data-title]:before, .js-plotly-plot .plotly .vertical [data-title]:after {
+  top: 0%;
+  right: 200%;
+}
+.js-plotly-plot .plotly .vertical [data-title]:before {
+  border: 6px solid transparent;
+  border-left-color: #69738a;
+  margin-top: 8px;
+  margin-right: -30px;
+}
+.js-plotly-plot .plotly .select-outline {
+  fill: none;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.js-plotly-plot .plotly .select-outline-1 {
+  stroke: white;
+}
+.js-plotly-plot .plotly .select-outline-2 {
+  stroke: black;
+  stroke-dasharray: 2px 2px;
+}
+
+.plotly-notifier {
+  font-family: "Open Sans", verdana, arial, sans-serif;
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  z-index: 10000;
+  font-size: 10pt;
+  max-width: 180px;
+}
+.plotly-notifier p {
+  margin: 0;
+}
+.plotly-notifier .notifier-note {
+  min-width: 180px;
+  max-width: 250px;
+  border: 1px solid #fff;
+  z-index: 3000;
+  margin: 0;
+  background-color: #8c97af;
+  background-color: rgba(140, 151, 175, 0.9);
+  color: #fff;
+  padding: 10px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+.plotly-notifier .notifier-close {
+  color: #fff;
+  opacity: 0.8;
+  float: right;
+  padding: 0 5px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 20px;
+}
+.plotly-notifier .notifier-close:hover {
+  color: #444;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+`;
+// CONCATENATED MODULE: ./components/bar-chart.js
+/*
+ * This Example is adapted from Plotly's Bar Chart example.
+ * https://plotly.com/javascript/bar-charts/#basic-bar-chart
+ */
+
+
+
+
+class BarChart extends LitElement {
+
+  static get styles() {
+    return [
+      plotlyStyles
+    ]
+  }
+
+  render() {
+    return html`
+      <style>
+        #myDiv {
+          width: 800px;
+          height: 800px;
+        }
+      </style>
+      <paper-card heading="Animals">
+        <div class="card-content">
+          <div id="myDiv"></div>
+        </div>
+      </paper-card>
+    `
+  }
+
+  async updated() {
+    this.data = [
+      {
+        x: ['giraffes', 'orangutans', 'monkeys'],
+        y: [20, 14, 23],
+        type: 'bar'
+      }
+    ];
+    Plotly.newPlot(this.shadowRoot.querySelector('#myDiv'), this.data);
+  }
+
+}
+
+customElements.define('bar-chart', BarChart);
+
+// CONCATENATED MODULE: ./components/bar-chart-from-json-file.js
+
+
+
+class BarChartFromJsonFile extends LitElement {
+
+  static get styles() {
+    return [
+      plotlyStyles
+    ]
+  }
+
+  render() {
+    return html`
+      <style>
+        #myDiv {
+          width: 800px;
+          height: 800px;
+        }
+      </style>
+      <paper-card heading="Animals from JSON File">
+        <div class="card-content">
+          <div id="myDiv"></div>
+        </div>
+      </paper-card>
+    `
+  }
+
+  async updated() {
+    const response = await fetch('./files/editor/data/animal-counts-by-animal.json')
+    const animalCountsByAnimal = await response.json()
+    const animals = Object.keys(animalCountsByAnimal)
+    const axis = {
+      x: [],
+      y: []
+    }
+    for (let animal of animals) {
+      axis.x.push(animal)
+      axis.y.push(animalCountsByAnimal[animal])
+    }
+    this.data = [
+      {
+        ...axis,
+        type: 'bar'
+      }
+    ]
+    Plotly.newPlot(this.shadowRoot.querySelector('#myDiv'), this.data);
+  }
+
+}
+
+customElements.define('bar-chart-from-json-file', BarChartFromJsonFile);
+
+// CONCATENATED MODULE: ./components/cases-enrolled-bar-chart.js
+
+
+
+
+class CasesEnrolledBarChart extends LitElement {
+
+  static get properties(){
+    return {
+      dbUrl: { type: String }
+    };
+  }
+
+  static get styles() {
+    return [
+      plotlyStyles
+    ]
+  }
+
+  render() {
+    return html`
+      <style>
+        #myDiv {
+          width: 800px;
+          height: 800px;
+        }
+      </style>
+      <paper-card heading="Cases enrolled bar chart">
+        <div class="card-content">
+          <div id="myDiv"></div>
+        </div>
+      </paper-card>
+    `
+  }
+
+  async updated() {
+    this.db = new index_browser_es(this.dbUrl)
+    const casesEnrolledCaseType1Response = await this.db.query('dashboard/casesEnrolledCaseType1', { reduce: true })
+    const casesEnrolledCaseType1Count = casesEnrolledCaseType1Response.rows[0]?.value || 0
+    const casesEnrolledCaseType2Response = await this.db.query('dashboard/casesEnrolledCaseType2', { reduce: true })
+    const casesEnrolledCaseType2Count = casesEnrolledCaseType2Response.rows[0]?.value || 0
+    const data = [
+      {
+        x: ['case-type-1', 'case-type-2'],
+        y: [casesEnrolledCaseType1Count, casesEnrolledCaseType2Count],
+        type: 'bar'
+      }
+    ]
+    Plotly.newPlot(this.shadowRoot.querySelector('#myDiv'), data);
+  }
+
+}
+
+customElements.define('cases-enrolled-bar-chart', CasesEnrolledBarChart);
+
 // CONCATENATED MODULE: ./components/custom-app.js
+
+
+
 
 
 
@@ -16249,11 +16690,26 @@ class CustomApp extends LitElement {
         ${this.ready ? html`
           <table>
             <tr>
+              <td colspan="2">
+                <bar-chart class="widget"></bar-chart>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <bar-chart-from-json-file class="widget"></bar-chart-from-json-file>
+              </td>
+            </tr>
+            <tr>
               <td>
                 <cases-enrolled-type-1 dbUrl="${this.dbUrl}" class="widget"></cases-enrolled-type-1>
               </td>
               <td>
                 <cases-enrolled-type-2 dbUrl="${this.dbUrl}" class="widget"></cases-enrolled-type-2>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <cases-enrolled-bar-chart class="widget" dbUrl="${this.dbUrl}"></cases-enrolled-bar-chart>
               </td>
             </tr>
           </table>
@@ -16265,7 +16721,6 @@ class CustomApp extends LitElement {
 }
 
 customElements.define('custom-app', CustomApp)
-
 // CONCATENATED MODULE: ./index.js
 
 

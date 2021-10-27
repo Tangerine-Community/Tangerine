@@ -1,0 +1,37 @@
+name: Release Tangerine Preview
+on:
+  release:
+    types: [released]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - name: Set env
+        run: echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Test
+        run: |
+          echo $VERSION
+          echo "Building for $VERSION"
+          cd tangerine-preview
+          npm install
+          git clone https://github.com/tangerine-community/tangerine tmp
+          cd tmp 
+          git checkout $VERSION
+          cd client
+          npm install
+          npm run build
+          rm -fr ../../app
+          mv dist/tangerine-client ../../app
+          cd ../../
+          rm -rf tmp
+          npm version $VERSION
+          npm publish
+          cd ../
+
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}

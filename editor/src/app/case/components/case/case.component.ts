@@ -1,5 +1,5 @@
 import {Component, AfterContentInit, ChangeDetectorRef, OnDestroy, ViewChild, Input} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import * as moment from 'moment';
@@ -7,10 +7,12 @@ import { CaseEvent } from '../../classes/case-event.class';
 import {Issue} from "../../classes/issue.class";
 import {GroupIssuesService} from "../../../groups/services/group-issues.service";
 import axios from "axios";
-import {_TRANSLATE} from "../../../../../../client/src/app/shared/translation-marker";
 import {TangyFormService} from "../../../tangy-forms/tangy-form.service";
 import {TangyFormsPlayerComponent} from "../../../tangy-forms/tangy-forms-player/tangy-forms-player.component";
 import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
+import {ProcessMonitorService} from "../../../shared/_services/process-monitor.service";
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -33,6 +35,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
   caseService: CaseService
+  authenticationService: AuthenticationService
   issues:Array<Issue>
   conflictingEvents:Array<any>
   moment
@@ -41,21 +44,28 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   // @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
   @ViewChild('proposedFormResponseContainer', {static: false}) proposedFormResponseContainer:TangyFormsPlayerComponent
   hideFormPlayer = true
-  // @Input('response') response:TangyFormResponseModel
+  process: any;
+
   constructor(
     private route: ActivatedRoute,
     caseService: CaseService,
+    private router: Router,
     private ref: ChangeDetectorRef,
+    authenticationService: AuthenticationService,
     private groupIssuesService:GroupIssuesService,
-    private tangyFormService: TangyFormService
+    private tangyFormService: TangyFormService,
+    private processMonitorService: ProcessMonitorService
   ) {
     ref.detach()
     this.window = window
     this.caseService = caseService
+    this.authenticationService = authenticationService
     this.moment = moment
   }
 
   async ngAfterContentInit() {
+    const process = this.processMonitorService.start('caseOpen', 'Opening Case...')
+    this.groupId = window.location.pathname.split('/')[2]
     const caseId = window.location.hash.split('/')[2]
     this.groupId = window.location.pathname.split('/')[2]
     if (!this.caseService.case || caseId !== this.caseService.case._id) {
@@ -65,9 +75,22 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService.setContext()
     this.window.caseService = this.caseService
     this.onCaseOpen()
+
+    try {
+      let queryResults = await this.groupIssuesService.query(this.groupId, {
+        fun: "issuesByCaseId",
+        keys: [caseId],
+        include_docs: true,
+        descending: true
+      })
+      this.issues = queryResults.map(issue => issue.doc)
+    } catch (e) {
+      console.log("Error fetching issues: " + e)
+    }
     this.calculateTemplateData()
     await this.getIssuesAndConflicts(caseId)
     this.ready = true
+    this.processMonitorService.stop(process.id)
   }
 
   calculateTemplateData() {
@@ -182,6 +205,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   ngOnDestroy(){
     eval(this.caseService.caseDefinition.onCaseClose)
   }
+
   async onSubmit() {
     const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
     const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
@@ -235,6 +259,38 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
 
   scroll(el: HTMLElement) {
     el.scrollIntoView();
+  }
+
+  async archive() {
+    const confirmation = confirm(_TRANSLATE('Are you sure you want to archive this case?'))
+    if (confirmation) {
+      this.process = this.processMonitorService.start('archiving a case', 'Archiving a case.')
+      await this.caseService.archive()
+      this.processMonitorService.stop(this.process.id)
+      this.ref.detectChanges()
+    }
+  }
+
+  async unarchive() {
+    const confirmation = confirm(_TRANSLATE('Are you sure you want to unarchive this case?'))
+    if (confirmation) {
+      this.process = this.processMonitorService.start('unarchiving a case', 'Un-archiving a case.')
+      await this.caseService.unarchive()
+      this.processMonitorService.stop(this.process.id)
+      this.ref.detectChanges()
+    }
+  }
+
+  async delete() {
+    const confirmDelete = confirm(
+      _TRANSLATE('Are you sure you want to delete this case? You will not be able to undo the operation')
+    );
+    if (confirmDelete) {
+      this.process = this.processMonitorService.start('deleting a case', 'Deleting a case.')
+      await this.caseService.delete()
+      this.processMonitorService.stop(this.process.id)
+      this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
+    }
   }
 
 }

@@ -27,6 +27,9 @@ import { AppConfigService } from './shared/_services/app-config.service';
 import { SearchService } from './shared/_services/search.service';
 import { Get } from 'tangy-form/helpers.js'
 import { FIRST_SYNC_STATUS } from './device/components/device-sync/device-sync.component';
+import { ProcessMonitorService } from './shared/_services/process-monitor.service';
+import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -50,6 +53,7 @@ export class AppComponent implements OnInit {
   languagePath:string
   ready = false
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
+  dialogRef:any
 
   constructor(
     private userService: UserService,
@@ -73,6 +77,8 @@ export class AppComponent implements OnInit {
     private dashboardService:DashboardService,
     private variableService:VariableService,
     private syncCouchdbService:SyncCouchdbService,
+    private processMonitorService:ProcessMonitorService,
+    public dialog: MatDialog,
     private translate: TranslateService
   ) {
     this.window = window;
@@ -107,6 +113,20 @@ export class AppComponent implements OnInit {
   }
   
   async ngOnInit() {
+    this.processMonitorService.change.subscribe((isDone) => {
+      if (this.processMonitorService.processes.length === 0) {
+        this.dialog.closeAll()
+      } else {
+        this.dialog.closeAll()
+        this.dialogRef = this.dialog.open(ProcessMonitorDialogComponent, {
+          data: {
+            messages: this.processMonitorService.processes.map(process => process.description).reverse()
+          },
+          disableClose: true
+        })
+      }
+    })
+    let appStartProcess = this.processMonitorService.start('init', "App starting...")
     this.window.isPreviewContext = window.location.hostname === 'localhost'
       ? true
       : false
@@ -186,6 +206,7 @@ export class AppComponent implements OnInit {
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
       this.router.navigate(['/update']);
     }
+    this.processMonitorService.stop(appStartProcess.id)
   }
 
   async install() {
