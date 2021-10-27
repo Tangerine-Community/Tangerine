@@ -1,0 +1,18 @@
+<mat-dialog-content>
+  <div id="messages">
+    <span *ngIf="data.messages.length === 1">
+      {{data.messages[0]}}
+    </span>
+    <ul *ngIf="data.messages.length > 1">
+      <li *ngFor="let message of data.messages">{{message}}</li>
+    </ul>
+  </div>
+  <br>
+  <div id="progress-bar-container">
+    <paper-progress id="progress-bar" indeterminate></paper-progress>
+  </div>
+  <br>
+  <div id="actions">
+    <paper-button (click)="cancel()">Cancel</paper-button>
+  </div>
+</mat-dialog-content>
