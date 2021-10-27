@@ -18,7 +18,7 @@ Translations for specific languages are embedded in content, thus portable and s
 
 
 ## Application Translations
-In application code, instead of placing inline translations, a centrally managed JSON file is sourced for replacing strings. At `./client/default-assets/translation.fr.json` you will find the JSON file use for translations when the French language is selected.
+In application code, instead of placing inline translations, a centrally managed JSON file is sourced for replacing strings. At `./translations/translation.fr.json` you will find the JSON file use for translations when the French language is selected.
 
 ```
 {
@@ -30,7 +30,7 @@ In application code, instead of placing inline translations, a centrally managed
 }
 ```
 
-You'll also find the Russian translation at `./client/default-assets/translation.ru.json`.
+You'll also find the Russian translation at `./translations/translation.ru.json`.
 ```
 {
 	"Accuracy": "Аккуратность",
@@ -84,6 +84,15 @@ In Angular Components, the `translate` pipe is available in templates and _TRANS
 	const helloString = _TRANSLATE('Hello')
 ```
 
+### Application Translation Workflow 
+1. Add new translatable string(s) to `./translations/translation.en.json`.
+2. With develop.sh running, run `docker exec tangerine make-translations-consistent` to spread this translateable to the other translation json files. 
+3. With develop.sh running, run `docker exec tangerine export-translations-csvs` to spread this translateable to the other translation csv files. 
+4. Commit changes to the translations folder.
+5. Send the translations CSVs to corresponding translator.
+6. When all translation CSVs have been updated, with develop.sh running, run `docker exec tangerine import-translations-csvs` to convert translation CSVs to JSON files.
+7. Add instructions to CHANGELOG upgrade notes that `docker exec tangerine translations-update` will need to be run to update all groups with updated translation files.
+
 
 ## Other notes
 Mat-pagination needs a special service to enable use of translation.json - see class/_services/mat-pagination-intl.service.ts
@@ -116,5 +125,3 @@ th.mat-header-cell {
   text-align: right;
 }
 ```
-
-

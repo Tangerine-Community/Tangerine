@@ -44,7 +44,7 @@
         {{ "Download File" | translate }}
       </th>
       <td mat-cell *matCellDef="let dataSet">
-        <a [disabled]="!dataSet.complete" mat-icon-button [href]="dataSet.downloadUrl">
+        <a *ngIf="dataSet.complete&&dataSet.fileExists" mat-icon-button [href]="dataSet.downloadUrl">
           <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
         </a>
       </td>
@@ -56,6 +56,10 @@
   <mat-paginator [length]="csvDataSets[0]?.numberOfDocs" (page)="onPageChange($event)" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </div>
 
-<div class="tangy-full-width" *ngIf="csvDataSets?.length<1">
+<div class="tangy-full-width" *ngIf="csvDataSets?.length<1 && ready">
   <h2>{{'No Datasets available'|translate}}</h2>
+</div>
+
+<div class="tangy-full-width" *ngIf="!ready" style="margin: 15px">
+  {{'Loading...'|translate}}
 </div>

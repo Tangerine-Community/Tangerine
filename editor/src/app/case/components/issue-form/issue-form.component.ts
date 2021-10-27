@@ -9,6 +9,7 @@ import { EventForm } from '../../classes/event-form.class';
 import { CaseEvent } from '../../classes/case-event.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
+import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 @Component({
   selector: 'app-issue-form',
@@ -41,11 +42,13 @@ export class IssueFormComponent implements OnInit {
     private router: Router,
     private userService:UserService,
     private caseService: CaseService,
+    private pm: ProcessMonitorService 
   ) {
     this.window = window
   }
 
   async ngOnInit() {
+    const issueFormLoadingProcess = this.pm.start('issueFormLoadingProcess', 'Loading form...')
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
@@ -84,6 +87,7 @@ export class IssueFormComponent implements OnInit {
         if (!params.eventId) this.formPlayer.unlock()
       })
       this.formPlayer.$afterResubmit.subscribe(async () => {
+        const issueSaveProcess = this.pm.start('issue-save', 'Saving proposal...')
         setTimeout(async () => {
           const userId = await this.userService.getCurrentUser()
           // @TODO Look up the user's name.
@@ -91,9 +95,11 @@ export class IssueFormComponent implements OnInit {
 
           await this.caseService.saveProposedChange(this.formPlayer.formEl.response, this.caseService.case, this.issue._id, userId, userName)
           this.router.navigate([`../`], { relativeTo: this.route })
+          this.pm.stop(issueSaveProcess.id)
         }, 500)
       })
       this.loaded = true
+      this.pm.stop(issueFormLoadingProcess.id)
     })
   }
 

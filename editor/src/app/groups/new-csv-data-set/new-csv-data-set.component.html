@@ -29,12 +29,35 @@
         >{{ "Exclude PII?" | translate }}
       </mat-checkbox>
     </div>
-    <div class="form-list">
-      <div *ngFor="let form of forms" >
-        <mat-checkbox (change)="onFormCheckBoxChange(form.id, $event)">{{form.title}}</mat-checkbox>
-        <br>
-      </div>
-      <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit'|translate}}</button>
-    </div>
+    <table class="form-list materialish">
+      <tr class="table-header">
+        <td>
+
+        </td>
+        <td>
+          Form Title
+        </td>
+        <td>
+          CSV Template
+        </td>
+      </tr>
+      <tr *ngFor="let form of forms" >
+        <td>
+          <mat-checkbox (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox>
+        </td>
+        <td>
+          {{form.title}}
+        </td>
+        <td>
+          <mat-form-field class="csv-template-selection" appearance="fill" color="primary">
+            <mat-select name="template" [(ngModel)]="templateSelections[form.id]">
+              <mat-option value="" selected>{{ "All data" | translate }}</mat-option>
+              <mat-option *ngFor="let csvTemplate of form.csvTemplates" [value]="csvTemplate._id">{{csvTemplate.title}}</mat-option>
+            </mat-select>
+          </mat-form-field> 
+        </td>
+      </tr>
+    </table>
+    <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit'|translate}}</button>
   </form>
 </div>
