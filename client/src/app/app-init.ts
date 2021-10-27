@@ -94,10 +94,12 @@ async function hasNotInstalledOnAnything() {
 }
 
 async function startCryptoPouch() {
+  console.log('Starting CryptoPouch...')
   window['cryptoPouchRunning'] = true
 }
 
 async function startSqlcipher() {
+  console.log('Starting SqlCipher...')
   window['sqlCipherRunning'] = true
 }
 
