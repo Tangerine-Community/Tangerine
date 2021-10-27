@@ -26,6 +26,7 @@ echo "update-group-search-index(Required to run when forms.json search settings 
 echo "update-group-archived-index(Required to run when forms.json search settings change in a group)"
 echo "update-down-sync-doc-count-by-location-id-index (If forms.json couchdbSyncSetting.pull changes, this needs to be run)"
 echo "mysql-report             (Report on the data migration process to mysql)"
+echo "make-translations-consistent (Ensures all translation files have all known translateables.)"
 echo ""
 echo "Add --help option to any command for command specific documentation."
 

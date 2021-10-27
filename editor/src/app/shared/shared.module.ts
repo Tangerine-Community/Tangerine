@@ -5,7 +5,7 @@ import { LoginGuard } from './_guards/login-guard.service';
 import { ServerConfigService } from './_services/server-config.service';
 import { UnsanitizeHtmlPipe } from './../pipes/unsanitize.pipe';
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from "../shared/_services/app-config.service";
@@ -19,13 +19,17 @@ import { DynamicTableComponent } from './_components/dynamic-table/dynamic-table
 import { MatMenuModule } from '@angular/material/menu';
 import {ProcessMonitorService} from "./_services/process-monitor.service";
 import {ProcessGuard} from "./_guards/process-guard.service";
+import { ProcessMonitorDialogComponent } from './_components/process-monitor-dialog/process-monitor-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     MatTableModule,
     MatMenuModule,
     MatIconModule,
+    MatDialogModule,
     MatButtonModule
   ],
   providers: [
@@ -54,7 +58,8 @@ import {ProcessGuard} from "./_guards/process-guard.service";
     HasAPermissionDirective,
     HasSomePermissionsDirective,
     HasAllPermissionsDirective,
-    DynamicTableComponent
+    DynamicTableComponent,
+    ProcessMonitorDialogComponent
   ]
 })
 export class SharedModule { }

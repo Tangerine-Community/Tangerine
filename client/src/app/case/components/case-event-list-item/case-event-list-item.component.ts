@@ -6,6 +6,7 @@ import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment'
 import { CaseDefinition } from '../../classes/case-definition.class';
+import { CaseService } from '../../services/case.service';
 
 @Component({
   selector: 'app-case-event-list-item',
@@ -18,6 +19,7 @@ export class CaseEventListItemComponent implements AfterContentInit {
   @Input() caseEventDefinition:CaseEventDefinition
   @Input() caseEvent:CaseEvent
   @Input() case:Case
+  @Input() caseService:CaseService
   defaultTemplateListItemIcon = `\${caseEvent.complete ? 'event_available' : 'event_note'}`
   defaultTemplateListItemPrimary = `
       <span>\${caseEventDefinition.name}</span> (\${caseEvent.id.substr(0,6)})

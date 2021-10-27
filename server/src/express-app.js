@@ -139,6 +139,8 @@ app.get('/sitewidePermissionsByUsername/:username',
           isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getSitewidePermissionsByUsername);
 app.post('/permissions/updateUserSitewidePermissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
 
+app.get('/custom-login-markup', (request, response) => response.send(process.env.T_CUSTOM_LOGIN_MARKUP || ''));
+
 /*
  * User API
  */
@@ -219,6 +221,12 @@ app.use('/client', express.static('/tangerine/client/dev'));
 app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/media-list', require('./routes/group-media-list.js'));
+app.use('/app/:groupId/csv-headers/:formId', require('./routes/group-csv-headers.js'));
+app.use('/app/:groupId/csv-templates/list', require('./routes/group-csv-templates-list.js'));
+app.use('/app/:groupId/csv-templates/create', require('./routes/group-csv-templates-create.js'));
+app.use('/app/:groupId/csv-templates/read/:templateId', require('./routes/group-csv-templates-read.js'));
+app.use('/app/:groupId/csv-templates/update', require('./routes/group-csv-templates-update.js'));
+app.use('/app/:groupId/csv-templates/delete/:templateId', require('./routes/group-csv-templates-delete.js'));
 // @TODO Need isAdminUser middleware.
 app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
 app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));

@@ -17,6 +17,7 @@ import {Conflict} from "../../classes/conflict.class";
 import { conflictTemplate } from './conflict-template';
 import { diffString, diff } from 'json-diff';
 import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.component";
+import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
@@ -83,11 +84,12 @@ export class IssueComponent implements OnInit {
     private caseService:CaseService,
     private userService:UserService,
     private tangyFormService:TangyFormService,
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private pm: ProcessMonitorService
   ) { }
 
   ngOnInit() {
-    
+    let openIssueProcess = this.pm.start('issue-opening', "Opening issue...")
     this.route.params.subscribe(async params => {
       window['caseService'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
@@ -105,6 +107,7 @@ export class IssueComponent implements OnInit {
       await this.caseService.load(this.issue.caseId)
       await this.update()
       this.ready = true
+      this.pm.stop(openIssueProcess.id)
     })
   }
 
@@ -245,6 +248,7 @@ export class IssueComponent implements OnInit {
   }
 
   async onCommentFormSubmit() {
+    const process = this.pm.start('commentSubmitting', _TRANSLATE('Submitting comment...'))
     const userId = await this.userService.getCurrentUser()
     // @TODO Look up the user's name.
     const userName = userId
@@ -252,27 +256,33 @@ export class IssueComponent implements OnInit {
     this.commentForm.nativeElement.value = ''
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
+    this.pm.stop(process.id)
   }
 
   async onMergeClick() {
+    const process = this.pm.start('mergeSaving', _TRANSLATE('Saving merge...'))
     const userId = await this.userService.getCurrentUser()
     // @TODO Look up the user's name.
     const userName = userId
     await this.caseService.mergeProposedChange(this.issue._id, userId, userName)
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
+    this.pm.stop(process.id)
   }
 
   async onRebaseClick() {
+    const process = this.pm.start('rebasingIssue', _TRANSLATE('Rebasing issue...'))
     const userId = await this.userService.getCurrentUser()
     // @TODO Look up the user's name.
     const userName = userId
     await this.caseService.rebaseIssue(this.issue._id, userId, userName)
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
+    this.pm.stop(process.id)
   }
 
   async onOpenClick() {
+    const process = this.pm.start('openingIssue', _TRANSLATE('Opening issue...'))
     const userId = await this.userService.getCurrentUser()
     // @TODO Look up the user's name.
     const userName = userId
@@ -280,9 +290,11 @@ export class IssueComponent implements OnInit {
     this.commentForm.nativeElement.value = ''
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
+    this.pm.stop(process.id)
   }
 
   async onCloseClick() {
+    const process = this.pm.start('closingIssue', _TRANSLATE('Closing issue...'))
     const userId = await this.userService.getCurrentUser()
     // @TODO Look up the user's name.
     const userName = userId
@@ -290,6 +302,7 @@ export class IssueComponent implements OnInit {
     this.commentForm.nativeElement.value = ''
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
+    this.pm.stop(process.id)
   }
 
 }

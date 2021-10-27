@@ -193,6 +193,9 @@ RUN_OPTIONS="
   --env \"T_ARCHIVE_PWAS_TO_DISK=$T_ARCHIVE_PWAS_TO_DISK\" \
   --env \"T_PASSWORD_POLICY=$T_PASSWORD_POLICY\" \
   --env \"T_PASSWORD_RECIPE=$T_PASSWORD_RECIPE\" \
+  --env \"T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP\" \
+  --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
+  --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \

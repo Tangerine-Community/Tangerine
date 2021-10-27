@@ -8,6 +8,7 @@ import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {StudentResult} from '../student-grouping-report/student-result';
 import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 export class SubtestReport {
   curriculumId: any;
@@ -132,10 +133,10 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
       if (typeof this.categories === 'undefined' || this.categories.length === 0) {
         this.categories = [];
         subtestReport.noCategories = true;
-        categoryName = 'Results';
+        categoryName = _TRANSLATE('Results');
       } else {
         subtestReport.noCategories = false;
-        categoryName = 'Unassigned Category';
+        categoryName = _TRANSLATE('Unassigned Category');
       }
 
       this.categories.push(categoryName);
@@ -185,7 +186,7 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
           this.totals[category] = 0;
         }
         if (category === '') {
-          category = 'Unassigned Category';
+          category = _TRANSLATE('Unassigned Category');
         }
         const rawScore = parseInt(result.score).toString();
         // let percentage = rawScore

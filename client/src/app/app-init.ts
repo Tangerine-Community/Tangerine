@@ -1,5 +1,6 @@
 import { Injectable }  from '@angular/core';
-import { DB } from './shared/_factories/db.factory';
+import { EncryptionPlugin } from './shared/_classes/app-config.class';
+import { connectToCryptoPouchDb, connectToPouchDb, connectToSqlCipherDb, DB } from './shared/_factories/db.factory';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 function getAppConfig() {
@@ -16,6 +17,92 @@ function getAppConfig() {
   })
 }
 
+async function hasInstalledOnPouchDB() {
+  // Some initial process of elimination.
+  if (await hasInstalledOnCryptoPouch() || await hasInstalledOnSqlcipher()) {
+    return false
+  }
+  // See if the installed variable is set.
+  let hasInstalled = false
+  let db = connectToPouchDb('tangerine-variables')
+  try {
+    await db.get('installed')
+    hasInstalled = true
+  } catch(e) {
+    hasInstalled = false
+  }
+  return hasInstalled
+}
+
+async function hasInstalledOnSqlcipher() {
+  if (!window['isCordovaApp']) {
+    // Not a Cordova App? Definitely never installed using SqlCipher.
+    return false
+  }
+  let hasInstalled = false
+  // While this doesn't connect to an encrypted db, it will connect to a db in sqlite thus testing if
+  // sqlcipher has ever been installed on. Note that if we ever add support for unencrypted sqlite, this
+  // check won't work.
+  let db = connectToSqlCipherDb('tangerine-variables')
+  try {
+    await db.get('installed')
+    hasInstalled = true
+  } catch(e) {
+    hasInstalled = false
+  }
+  return hasInstalled
+}
+
+async function hasInstalledOnCryptoPouch() {
+  let hasInstalled = false
+  let db = connectToCryptoPouchDb('shared-user-database')
+  let results = await db.allDocs({limit: 1, include_docs: true})
+  // If CryptoPouch has been used, a doc will consist of only 3 properties: payload, _id, and _rev.
+  if (
+    results.rows[0]?.doc?.payload &&
+    results.rows[0].doc._id &&
+    results.rows[0].doc._rev &&
+    Object.keys(results.rows[0].doc).length === 3
+  ) {
+    hasInstalled = true
+  }
+  return hasInstalled
+}
+
+async function sqlcipherIsEnabled() {
+  const appConfig = await getAppConfig();
+  // If no encryption plugin is defined and app level encryption is not turned off, default to sqlCipher being enabled.
+  return appConfig['encryptionPlugin'] === EncryptionPlugin.SqlCipher ||
+    (!appConfig['encryptionPlugin'] && !appConfig['turnOffAppLevelEncryption'])
+      ? true
+      : false
+}
+
+async function cryptoPouchIsEnabled() {
+  const appConfig = await getAppConfig();
+  return appConfig['encryptionPlugin'] === EncryptionPlugin.CryptoPouch
+    ? true
+    : false
+}
+
+async function hasNotInstalledOnAnything() {
+  return !await hasInstalledOnPouchDB() &&
+    !await hasInstalledOnSqlcipher() &&
+    !await hasInstalledOnCryptoPouch()
+      ? true
+      : false 
+}
+
+async function startCryptoPouch() {
+  console.log('Starting CryptoPouch...')
+  window['cryptoPouchRunning'] = true
+}
+
+async function startSqlcipher() {
+  console.log('Starting SqlCipher...')
+  window['sqlCipherRunning'] = true
+}
+
 @Injectable()
 export class AppInit {
   constructor() {
@@ -26,40 +113,37 @@ export class AppInit {
       console.log("AppInitService.init() called");
       if (window['isCordovaApp']) {
         document.addEventListener('deviceready', async () => {
+          // Wait until sqlite is ready.
           while (!window['sqliteStorageFile']) {
             await sleep(1000)
           }
-          // Check if App is installed using SQLite.
-          let isInstalledOnSqlite
-          // This will connect to SQLite by default until we set window.turnOffAppLevelEncryption.
-          const tangerineVariablesDbInSqlite = DB('tangerine-variables')
-          try {
-            // See if we are installed using SQLite.
-            await tangerineVariablesDbInSqlite.get('installed')
-            isInstalledOnSqlite = true
-          } catch(e) {
-            isInstalledOnSqlite = false
+          // Determine if we should start an encryption plugin.
+          if (
+            await hasInstalledOnSqlcipher() || 
+            (await sqlcipherIsEnabled() && await hasNotInstalledOnAnything())
+          ) {
+            await startSqlcipher()
           }
-          // Check in app-config.json if we should turn off encryption.
+          if (
+            await hasInstalledOnCryptoPouch() ||
+            (await cryptoPouchIsEnabled() && await hasNotInstalledOnAnything())
+          ) {
+            await startCryptoPouch()
+          }
+          // If the above didn't start encryption, encryption won't be used.
           const appConfig = await getAppConfig();
-          // If the app is not installed and app config says we should turn off encryption, then set localStorage flag of turnOffEncryption.
-          // Note that checking if installed prevents app upgrading to an app-config.json that says turnOffAppLevelEncryption of doing so
-          // because that would appear to result in data loss.
-          if (isInstalledOnSqlite) {
-            localStorage.setItem('turnOffAppLevelEncryption', 'no')
-          } else if (appConfig['turnOffAppLevelEncryption']) {
-            localStorage.setItem('turnOffAppLevelEncryption', 'yes')
-          }
-          // If localStorage flag of turnOffAppLevelEncryption is set, then set window level variable to let the db.factory.ts DB function know.
-          if (localStorage.getItem('turnOffAppLevelEncryption') === 'yes') {
-            window['turnOffAppLevelEncryption'] = true
-          }
           if (appConfig['changes_batch_size']) {
             window['changes_batch_size'] = appConfig['changes_batch_size']
           }
           resolve()
         })
       } else {
+        if (
+          await hasInstalledOnCryptoPouch() ||
+          (await cryptoPouchIsEnabled() && await hasNotInstalledOnAnything())
+        ) {
+          await startCryptoPouch()
+        }
         // Enabling this setting for testing with a PWA.
         const appConfig = await getAppConfig();
         if (appConfig['changes_batch_size']) {

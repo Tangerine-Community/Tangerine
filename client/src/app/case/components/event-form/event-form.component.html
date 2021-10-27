@@ -11,6 +11,6 @@
 >
   <mwc-icon class="icon">chevron_left</mwc-icon> <span [innerHTML]="eventFormRedirectBackButtonText|unsanitizeHtml"></span>
 </div>
-<paper-button *ngIf="loaded && allowCreationOfIssues" class="new-issue-button" routerLink="/new-issue/{{caseId}}/{{caseEvent.id}}/{{eventForm.id}}/use-templates"><mwc-icon>playlist_add</mwc-icon> new issue</paper-button>
+<paper-button *ngIf="loaded && allowCreationOfIssues && isFormComplete" class="new-issue-button" routerLink="/new-issue/{{caseId}}/{{caseEvent.id}}/{{eventForm.id}}/use-templates"><mwc-icon>playlist_add</mwc-icon> {{'new issue'|translate}}</paper-button>
 <app-tangy-forms-player #formPlayer></app-tangy-forms-player>
 

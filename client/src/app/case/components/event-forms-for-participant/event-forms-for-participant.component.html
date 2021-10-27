@@ -21,6 +21,7 @@
     [caseEventDefinition]="caseEventDefinition"
     [eventForm]="eventFormInfo.eventForm"
     [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+    [caseService]="caseService"
     (formDeleted)="onFormDelete()"
     class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
   >
