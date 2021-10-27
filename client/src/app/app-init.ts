@@ -130,6 +130,7 @@ export class AppInit {
           ) {
             await startCryptoPouch()
           }
+          // If the above didn't start encryption, encryption won't be used.
           const appConfig = await getAppConfig();
           if (appConfig['changes_batch_size']) {
             window['changes_batch_size'] = appConfig['changes_batch_size']
