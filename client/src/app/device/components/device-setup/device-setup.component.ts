@@ -58,7 +58,7 @@ export class DeviceSetupComponent implements OnInit {
       // that's when language will be set and we go to the next step of setting up a password.
       if (!await this.languagesService.userHasSetLanguage()) {
         this.step = STEP_LANGUAGE_SELECT
-      } else if (window.location.protocol === 'https') {
+      } else if (window.location.protocol === 'https:') {
         this.step = STEP_DEVICE_PERMISSIONS 
       } else {
         this.step = STEP_DEVICE_PASSWORD
