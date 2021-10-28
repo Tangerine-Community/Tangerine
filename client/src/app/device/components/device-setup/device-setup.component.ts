@@ -1,6 +1,8 @@
 import { DeviceService } from './../../services/device.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { DevicePasswordComponent } from './../device-password/device-password.component';
+import { DevicePermissionsComponent } from './../device-permissions/device-permissions.component';
+
 import { Router } from '@angular/router';
 import { DeviceLanguageComponent } from './../device-language/device-language.component';
 import { DeviceSyncComponent } from './../device-sync/device-sync.component';
@@ -13,6 +15,7 @@ import { LockBoxContents } from 'src/app/shared/_classes/lock-box-contents.class
 import {ReplicationStatus} from "../../../sync/classes/replication-status.class";
 
 const STEP_LANGUAGE_SELECT = 'STEP_LANGUAGE_SELECT'
+const STEP_DEVICE_PERMISSIONS = 'STEP_DEVICE_PERMISSIONS'
 const STEP_DEVICE_PASSWORD = 'STEP_DEVICE_PASSWORD'
 const STEP_DEVICE_REGISTRATION = 'STEP_DEVICE_REGISTRATION'
 const STEP_SYNC = 'STEP_SYNC'
@@ -27,6 +30,7 @@ export class DeviceSetupComponent implements OnInit {
   ready$ = new Subject()
   step:string
   @ViewChild('stepLanguageSelect', {static: true}) stepLanguageSelect:DeviceLanguageComponent
+  @ViewChild('stepDevicePermissions', {static: true}) stepDevicePermissions:DevicePermissionsComponent
   @ViewChild('stepDevicePassword', {static: true}) stepDevicePassword:DevicePasswordComponent
   @ViewChild('stepDeviceRegistration', {static: true}) stepDeviceRegistration:DeviceRegistrationComponent
   @ViewChild('stepDeviceSync', {static: true}) stepDeviceSync:DeviceSyncComponent
@@ -54,6 +58,8 @@ export class DeviceSetupComponent implements OnInit {
       // that's when language will be set and we go to the next step of setting up a password.
       if (!await this.languagesService.userHasSetLanguage()) {
         this.step = STEP_LANGUAGE_SELECT
+      } else if (window.location.protocol === 'https') {
+        this.step = STEP_DEVICE_PERMISSIONS 
       } else {
         this.step = STEP_DEVICE_PASSWORD
       }
@@ -61,6 +67,10 @@ export class DeviceSetupComponent implements OnInit {
       this.stepLanguageSelect.done$.subscribe(value => {
         window.location.href = window.location.href.replace(window.location.hash, 'index.html')
       })
+      // On device admin password set.
+      this.stepDevicePermissions.done$.subscribe({next: ok => {
+        this.step = STEP_DEVICE_PASSWORD
+      }})
       // On device admin password set.
       this.stepDevicePassword.done$.subscribe({next: setPassword => {
         password = setPassword
