@@ -103,6 +103,7 @@ module.exports = {
               await saveFlatFormResponse(processedResult, SANITIZED_DB);
               // Index the view now.
               await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+            }
           }
           if (doc.type === 'case') {
             let numInf = getItemValue(doc, 'numinf')
