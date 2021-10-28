@@ -63,7 +63,6 @@ const updateGroupArchivedIndex = async function (GROUP_ID) {
     updatedArchivedDoc['_rev'] = existingArchivedDoc._rev
   } 
   catch (e) {
-    console.error("Error while fetching archived design doc. Message: " + JSON.stringify(e))
   }
   try {
       if (!existingArchivedDoc || (existingArchivedDoc && existingArchivedDoc.views.archived.map !== updatedArchivedDoc.views.archived.map)) {

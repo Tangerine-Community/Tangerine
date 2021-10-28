@@ -63,7 +63,6 @@ const updateGroupSearchIndex = async function (GROUP_ID) {
     updatedSearchDoc['_rev'] = existingSearchDoc._rev
   } 
   catch (e) {
-    console.error("Error while fetching search design doc. Message: " + JSON.stringify(e))
   }
   try {
     if (!existingSearchDoc || (existingSearchDoc && existingSearchDoc.views.search.map !== updatedSearchDoc.views.search.map)) {
