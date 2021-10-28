@@ -3,16 +3,18 @@
 ## v3.20.0
 
 __Fixes__
+
 - Improve rendering of Device listing. PR: [#2924](https://github.com/Tangerine-Community/Tangerine/issues/2924) *Note* that you must run the update or else the Device view will fail.
 - Converted print form view as a single table [#2927](https://github.com/Tangerine-Community/Tangerine/pull/2927)
 - Improvements to restoring a database from a backup PR: [#2938](https://github.com/Tangerine-Community/Tangerine/pull/2938)
   
 __New Features__
+
 - Data Manager restores Case Event stuck in Conflict Revision [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
 - Enable Data Conflict Manager for groups. [2997](https://github.com/Tangerine-Community/Tangerine/pull/2997) This is based on the [couchdb-conflict-manager](https://github.com/ICTatRTI/couchdb-conflict-manager) web component.
-- Port process monitor service to client. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
+- In Offline App, when submitting a form, opening a case, creating a case, etc., a new loading screen is shown. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
 - Enable back-up and restore on Device with OS level encryption [#2778](https://github.com/Tangerine-Community/Tangerine/issues/2778) This feature was back-ported to the v3.18 branch but was not noted in the Changelog. 
-- Instant switching of translations [#2643](https://github.com/Tangerine-Community/Tangerine/issues/2643)
+- In Online Survey, new support for switching language without interrupting the survey. [#2643](https://github.com/Tangerine-Community/Tangerine/issues/2643)
 
 __Server upgrade instructions__
 
