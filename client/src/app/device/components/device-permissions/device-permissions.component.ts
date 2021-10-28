@@ -15,10 +15,15 @@ export class DevicePermissionsComponent implements OnInit {
   constructor(
   ) { }
 
-
   async ngOnInit() {
     this.container.nativeElement.innerHTML = `
       <tangy-form id="device-permissions">
+        <tangy-form-item 
+          title="Device Permissions"
+          id="device-permissions-explanation"
+        >
+          ${_TRANSLATE('We will now prompt for a series of permissions. Click next and then allow each permission.')}
+        </tangy-form-item>
         <tangy-form-item 
           title="Device Permissions"
           id="device-permissions"
@@ -64,10 +69,10 @@ export class DevicePermissionsComponent implements OnInit {
 
           "
         >
-          <tangy-gate required name="notifications_permission" inProgress="Authorize notifications." success="Notifications authorized."></tangy-gate><br>
-          <tangy-gate required name="camera_permission" inProgress="Authorize camera." success="Camera authorized."></tangy-gate><br>
-          <tangy-gate required name="geolocation_permission" inProgress="Authorize geolocation." success="Geolocation authorized."></tangy-gate><br>
-          <tangy-gate required name="persistent_storage_permission" inProgress="Authorize peristent storage." success="Persistent storage authorized."></tangy-gate>
+          <tangy-gate required name="notifications_permission" inProgress="${_TRANSLATE('Authorize notifications.')}" success="${_TRANSLATE('Notifications authorized.')}"></tangy-gate><br>
+          <tangy-gate required name="camera_permission" inProgress="${_TRANSLATE('Authorize camera.')}" success="${_TRANSLATE('Camera authorized.')}"></tangy-gate><br>
+          <tangy-gate required name="geolocation_permission" inProgress="${_TRANSLATE('Authorize geolocation.')}" success="${_TRANSLATE('Geolocation authorized.')}"></tangy-gate><br>
+          <tangy-gate required name="persistent_storage_permission" inProgress="${_TRANSLATE('Authorize peristent storage.')}" success="${_TRANSLATE('Persistent storage authorized.')}"></tangy-gate>
         </tangy-form-item>
       </tangy-form>
     `
