@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
+import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 @Component({
   selector: 'app-add-role-to-group',
@@ -21,6 +22,7 @@ export class AddRoleToGroupComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
     private router: Router,
+    private processMonitorService:ProcessMonitorService,
     private errorHandler: TangyErrorHandler) { }
   async ngOnInit() {
     this.breadcrumbs = [
@@ -55,9 +57,11 @@ export class AddRoleToGroupComponent implements OnInit {
     }
   }
   async submit() {
+    const process = this.processMonitorService.start('addRoleSaving', 'Saving role...')
     const data = { role: this.newRole, permissions: this.groupPermissions };
-    this.authenticationService.addNewRoleToGroup(this.groupId, data);
+    await this.authenticationService.addNewRoleToGroup(this.groupId, data);
     this.errorHandler.handleError('Role Added to Group Successfully');
-    this.router.navigate([`groups/${this.groupId}/configure/security/configure-roles`]);
+    this.router.navigate([`groups/${this.groupId}/configure/security`]);
+    this.processMonitorService.stop(process.id)
   }
 }
