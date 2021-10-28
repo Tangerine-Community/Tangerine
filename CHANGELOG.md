@@ -7,9 +7,11 @@ __Fixes__
 - Improve rendering of Device listing. PR: [#2924](https://github.com/Tangerine-Community/Tangerine/issues/2924) *Note* that you must run the update or else the Device view will fail.
 - Converted print form view as a single table [#2927](https://github.com/Tangerine-Community/Tangerine/pull/2927)
 - Improvements to restoring a database from a backup PR: [#2938](https://github.com/Tangerine-Community/Tangerine/pull/2938)
+- On server group's security page, fix link to adding roles and show loading screen when saving role.
   
 __New Features__
 
+- Data Manger generates CSV with specific columns using CSV Templates.
 - Data Manager restores Case Event stuck in Conflict Revision [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
 - Enable Data Conflict Manager for groups. [2997](https://github.com/Tangerine-Community/Tangerine/pull/2997) This is based on the [couchdb-conflict-manager](https://github.com/ICTatRTI/couchdb-conflict-manager) web component.
 - In Offline App, when submitting a form, opening a case, creating a case, etc., a new loading screen is shown. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
