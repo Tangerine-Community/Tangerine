@@ -10,15 +10,35 @@ __Fixes__
 - On server group's security page, fix link to adding roles and show loading screen when saving role.
 - Data outputs for CSV's now include the 'archived' property. [#2988](https://github.com/Tangerine-Community/Tangerine/pull/2988)
 
-
 __New Features__
 
 - Data Manger generates CSV with specific columns using CSV Templates.
 - Data Manager restores Case Event stuck in Conflict Revision [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
 - Enable Data Conflict Manager for groups. [2997](https://github.com/Tangerine-Community/Tangerine/pull/2997) This is based on the [couchdb-conflict-manager](https://github.com/ICTatRTI/couchdb-conflict-manager) web component.
 - In Offline App, when submitting a form, opening a case, creating a case, etc., a new loading screen is shown. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
-- Enable back-up and restore on Device with OS level encryption [#2778](https://github.com/Tangerine-Community/Tangerine/issues/2778) This feature was back-ported to the v3.18 branch but was not noted in the Changelog. 
 - In Online Survey, new support for switching language without interrupting the survey. [#2643](https://github.com/Tangerine-Community/Tangerine/issues/2643)
+
+__Backports/Good to Know__
+
+When we add new features or fix issues in patch releases of Tangerine, those code changes usually get added automatically to any new 
+releases of Tangerine. To make sure users of new releases are aware of those changes, we will occasionally mention them in 
+this section in case they have missed them in the Changelog for the corresponding earlier release. Please note that when you 
+install or upgrade a new Tangerine release, please review the Changelog for any changes in minor or patch releases. 
+- Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
+- Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever. (demo: https://youtu.be/RkoUN41jqr4)
+- Enhancements to support for archiving cases:
+  - Added ability to search archived cases. Issue: [#2977](https://github.com/Tangerine-Community/Tangerine/issues/2977)
+  *Important* : Run `docker exec -it tangerine /tangerine/server/src/upgrade/v3.19.3.js` to enable searching archived cases.
+  - Added archive/unarchive Case functionality and permission for "can delete" [#2954](https://github.com/Tangerine-Community/Tangerine/pull/2954)
+- Added backup and restore feature for Tangerine databases using device encryption. Increase the appConfig.json parameter `dbBackupSplitNumberFiles` (default: 200) to speed up the backup/restore process if your database is large. You may also change that parameter in the Export Backup user interface. Updated docs: [Restoring from a Backup](./docs/system-administrator/restore-from-backup.md) PR: [#2910](https://github.com/Tangerine-Community/Tangerine/pull/2910)
+- Updates to tangy-form lib to 4.25.18 ([Changelog](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4280)), which provides:
+  - Support for changing a page content's language and number system without reloading the page.
+  - A fix for photo-capture so that it de-activates the camera when going to the next page or leaving a form. Also a new feature for configuring compression
+  - Implemented a new 'before-submit' event to tangy-form in order to listen to events before the 'submit' event is dispatched.
+  - A fix for User defined Cycle Sequences.
+- *Important* If your site uses csvReplacementCharacters to support search and replace configuration for CSV output, which was released v3.18.2, you must change the configuration string. See issue [#2804](https://github.com/Tangerine-Community/Tangerine/issues/2804) for information about the new schema.
+- Feature: Editor User downloads CSVs for multiple forms as a set Issue: [#2768](https://github.com/Tangerine-Community/Tangerine/issues/2768)  PR:[#2777](https://github.com/Tangerine-Community/Tangerine/pull/2777)
+- Feature: Remove configurable characters from CSV output [#2787](https://github.com/Tangerine-Community/Tangerine/issues/2787).
 
 __Server upgrade instructions__
 
@@ -239,7 +259,6 @@ __Fixes__
 - Add support for skipping indexes in form's cycle sequences.
 - Fix radio button scoring in Teach by only adding the final value of max to the totalMax variable. https://github.com/Tangerine-Community/Tangerine/issues/2947
 - On Tangerine Teach reports, fix calculating of "percentile", AKA percent correct grouping. https://github.com/Tangerine-Community/Tangerine/issues/2941
-
 
 ## v3.18.7
 
