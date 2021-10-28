@@ -15,6 +15,7 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatCardModule} from "@angular/material/card";
 import { RestoreBackupComponent } from './components/restore-backup/restore-backup.component';
 import { DeviceResyncComponent } from './components/device-resync/device-resync.component';
+import { DevicePermissionsComponent } from './components/device-permissions/device-permissions.component';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -24,6 +25,7 @@ import { DeviceResyncComponent } from './components/device-resync/device-resync.
     DeviceLanguageComponent,
     DeviceSyncComponent,
     DevicePasswordComponent,
+    DevicePermissionsComponent,
     RestoreBackupComponent,
     DeviceResyncComponent
   ],

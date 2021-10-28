@@ -4,6 +4,11 @@
   </app-device-language>
 </div>
 
+<div [hidden]="step !== 'STEP_DEVICE_PERMISSIONS'"> 
+  <app-device-permissions #stepDevicePermissions>
+  </app-device-permissions>
+</div>
+
 <div [hidden]="step !== 'STEP_DEVICE_PASSWORD'"> 
   <app-device-password #stepDevicePassword>
   </app-device-password>
