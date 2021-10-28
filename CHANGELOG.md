@@ -8,7 +8,9 @@ __Fixes__
 - Converted print form view as a single table [#2927](https://github.com/Tangerine-Community/Tangerine/pull/2927)
 - Improvements to restoring a database from a backup PR: [#2938](https://github.com/Tangerine-Community/Tangerine/pull/2938)
 - On server group's security page, fix link to adding roles and show loading screen when saving role.
-  
+- Data outputs for CSV's now include the 'archived' property. [#2988](https://github.com/Tangerine-Community/Tangerine/pull/2988)
+
+
 __New Features__
 
 - Data Manger generates CSV with specific columns using CSV Templates.
