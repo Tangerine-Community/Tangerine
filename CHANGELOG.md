@@ -9,6 +9,8 @@ __Fixes__
 - Improvements to restoring a database from a backup PR: [#2938](https://github.com/Tangerine-Community/Tangerine/pull/2938)
 - On server group's security page, fix link to adding roles and show loading screen when saving role.
 - Data outputs for CSV's now include the 'archived' property. [#2988](https://github.com/Tangerine-Community/Tangerine/pull/2988)
+- This one goes out to the coders: Prevent CaseService singleton injection into Case related components [#2948](https://github.com/Tangerine-Community/Tangerine/pull/2948). This is an important change in how cases are handled - they are no longer singletons. 
+  If you are developing scripts for a form and there are problems accessing T.case, see the comments in #2948 for a solution.
 
 __New Features__
 
@@ -18,6 +20,11 @@ __New Features__
 - Enable Data Conflict Manager for groups. [2997](https://github.com/Tangerine-Community/Tangerine/pull/2997) This is based on the [couchdb-conflict-manager](https://github.com/ICTatRTI/couchdb-conflict-manager) web component.
 - In Offline App, when submitting a form, opening a case, creating a case, etc., a new loading screen is shown. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
 - In Online Survey, new support for switching language without interrupting the survey. [#2643](https://github.com/Tangerine-Community/Tangerine/issues/2643)
+- For PWA's, there is a new device permissions step in device setup to guarantee persistent storage [#3002](https://github.com/Tangerine-Community/Tangerine/pull/3002)
+- The login screen may now have custom markup. [#2979](https://github.com/Tangerine-Community/Tangerine/pull/2979)
+- Statistical files are now available in Stata .do format for corresponding forms [#2971](https://github.com/Tangerine-Community/Tangerine/pull/2971)
+- The new `usePouchDbLastSequenceTracking` property in app-config.json and settings page enables the use of PouchDB's native last sequence tracking support when syncing. [#2999](https://github.com/Tangerine-Community/Tangerine/pull/2999)
+- The new `encryptionPlugin:'CryptoPouch'` property in app-config.json enables testing of the CryptoPouch extension currently in development. [#2998](https://github.com/Tangerine-Community/Tangerine/pull/2998) Please note that this feature is not yet ready for deployment.
 
 __Backports/Good to Know__
 
