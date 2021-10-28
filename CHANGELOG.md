@@ -12,7 +12,8 @@ __Fixes__
 
 __New Features__
 
-- Data Manger generates CSV with specific columns using CSV Templates.
+- Online Survey user is warned if they are using an unsupported web browser (Internet Explorer). https://github.com/Tangerine-Community/Tangerine/pull/3001 
+- Data Manager generates CSV with specific columns using CSV Templates.
 - Data Manager restores Case Event stuck in Conflict Revision [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
 - Enable Data Conflict Manager for groups. [2997](https://github.com/Tangerine-Community/Tangerine/pull/2997) This is based on the [couchdb-conflict-manager](https://github.com/ICTatRTI/couchdb-conflict-manager) web component.
 - In Offline App, when submitting a form, opening a case, creating a case, etc., a new loading screen is shown. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
