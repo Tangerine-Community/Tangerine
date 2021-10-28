@@ -47,6 +47,8 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService = caseService
   }
   async ngAfterContentInit() {
+    // take over T.case.
+    window["T"].case = this.caseService
     const process = this.processMonitorService.start('caseOpen', _TRANSLATE('Opening Case...'))
     this.userRoles = await this.userService.getRoles()
     const caseId = window.location.hash.split('/')[2]
