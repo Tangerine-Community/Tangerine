@@ -9,6 +9,14 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="mat-typography">
-  <app-root></app-root>
+  <script>
+    // padStart was added in ES2017. We want to check for evergreen browsers
+    if(''.padStart){
+      const elem = document.createElement("app-root");
+      document.body.appendChild(elem);
+    } else{
+      document.write('<h1 class="mat-typography">Please use a supported browser eg Chrome, Firefox, Safari or Edge</h1>');
+    }
+  </script>
 </body>
 </html>
