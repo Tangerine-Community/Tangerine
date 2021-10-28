@@ -30,13 +30,6 @@ module.exports = {
         
         let groupDb = new DB(`${groupName}`)
         log.info(`${groupName}-log database created.`)
-        let conflictsViewDDoc = Object.assign({}, conflictsDdoc)
-        try {
-          let status = await groupDb.post(conflictsViewDDoc)
-          log.info(`group conflictsViewDDoc inserted into ${groupName}-log`)
-        } catch (error) {
-          log.error(error)
-        }
         const dbConflictRev = new DB(`${groupName}-conflict-revs`)
         try {
           let status = await dbConflictRev.put(byConflictDocIdDdoc)
@@ -44,11 +37,11 @@ module.exports = {
         } catch (error) {
           log.error(error)
         }
-        log("Creating indexes for search and archived.")
+        log.info("Creating indexes for search and archived.")
         await updateGroupSearchIndex(groupId)
-        log(`archived-index updated for group: ${groupId}`)
+        log.info(`archived-index updated for group: ${groupId}`)
         await updateGroupArchivedIndex(groupId)
-        log(`archived-index updated for group: ${groupId}`)
+        log.info(`archived-index updated for group: ${groupId}`)
         
         resolve(data)
       })
