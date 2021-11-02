@@ -115,7 +115,7 @@ export class ExportDataComponent implements OnInit {
       }
       this.hideExportButton = false
     } else {
-      // APK's or PWA's that do not use in-app encryption - they are not window['sqlCipherRunning']
+      // APK's or PWA's that do not use sqlCypher - they are not window['sqlCipherRunning']
       if (this.window.isCordovaApp) {
         if (this.splitFiles.nativeElement.value && this.splitFiles.nativeElement.value.length > 0) {
           this.SPLIT = Number(this.splitFiles.nativeElement.value)
