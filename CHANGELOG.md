@@ -25,6 +25,8 @@ __New Features__
 - Statistical files are now available in Stata .do format for corresponding forms [#2971](https://github.com/Tangerine-Community/Tangerine/pull/2971)
 - The new `usePouchDbLastSequenceTracking` property in app-config.json and settings page enables the use of PouchDB's native last sequence tracking support when syncing. [#2999](https://github.com/Tangerine-Community/Tangerine/pull/2999)
 - The new `encryptionPlugin:'CryptoPouch'` property in app-config.json enables testing of the CryptoPouch extension currently in development. [#2998](https://github.com/Tangerine-Community/Tangerine/pull/2998) Please note that this feature is not yet ready for deployment.
+- We have changed how we determine which storage engine is being used. In the past we exposed a window['turnOffAppLevelEncryption']
+  global variable based on the same flag in app-config.json; however, now we are determining in app-init.ts which engine is running and exposing either `window['cryptoPouchRunning']` or `window['sqlCipherRunning']` to indicate which engine is running.
 
 __Backports/Good to Know__
 

@@ -71,7 +71,7 @@ export class ExportDataComponent implements OnInit {
       })
     }
 
-    if (this.window.isCordovaApp && window['turnOffAppLevelEncryption']) {
+    if (this.window.isCordovaApp && !window['sqlCipherRunning']) {
       this.shouldShow = true
     } else {
       this.shouldShow = false
@@ -79,7 +79,7 @@ export class ExportDataComponent implements OnInit {
   }
 
   async ngAfterViewInit() {
-    if (this.window.isCordovaApp && window['turnOffAppLevelEncryption']) {
+    if (this.window.isCordovaApp && !window['sqlCipherRunning']) {
       await this.calculateSplit()
       // this.splitFiles.nativeElement.value = String(this.SPLIT)
       this.splitFilesValue = String(this.SPLIT)
@@ -93,8 +93,8 @@ export class ExportDataComponent implements OnInit {
     this.hideExportButton = true
     this.hideLogs = false
     const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
-    // APK's that use in-app encryption
-    if (window['isCordovaApp'] && this.appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
+    // APK's that use in-app encryption via sqlCipher
+    if (window['isCordovaApp'] && this.appConfig.syncProtocol === '2' && window['sqlCipherRunning']) {
       const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
       for (const dbName of dbNames) {
         // copy the database
@@ -115,7 +115,7 @@ export class ExportDataComponent implements OnInit {
       }
       this.hideExportButton = false
     } else {
-      // APK's or PWA's that do not use in-app encryption - have turnOffAppLevelEncryption:true in app-config.json
+      // APK's or PWA's that do not use in-app encryption - they are not window['sqlCipherRunning']
       if (this.window.isCordovaApp) {
         if (this.splitFiles.nativeElement.value && this.splitFiles.nativeElement.value.length > 0) {
           this.SPLIT = Number(this.splitFiles.nativeElement.value)
