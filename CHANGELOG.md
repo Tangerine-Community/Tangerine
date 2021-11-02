@@ -24,9 +24,12 @@ __New Features__
 - The login screen may now have custom markup. [#2979](https://github.com/Tangerine-Community/Tangerine/pull/2979)
 - Statistical files are now available in Stata .do format for corresponding forms [#2971](https://github.com/Tangerine-Community/Tangerine/pull/2971)
 - The new `usePouchDbLastSequenceTracking` property in app-config.json and settings page enables the use of PouchDB's native last sequence tracking support when syncing. [#2999](https://github.com/Tangerine-Community/Tangerine/pull/2999)
-- The new `encryptionPlugin:'CryptoPouch'` property in app-config.json enables testing of the CryptoPouch extension currently in development. [#2998](https://github.com/Tangerine-Community/Tangerine/pull/2998) Please note that this feature is not yet ready for deployment.
+- The new `encryptionPlugin:'CryptoPouch'` property in app-config.json enables testing of the CryptoPouch extension currently in development. [#2998](https://github.com/Tangerine-Community/Tangerine/pull/2998) Please note that this feature is not yet ready for deployment. There are now three different possible storage configurations for Tangerine:
+  1. "encryptionPlugin":"CryptoPouch" - Configures the app to use CryptoPouch, which encrypts documents in the app's indexedb for storage.
+  2. "turnOffAppLevelEncryption": true - Configures the app without encryption, using the app's indexedb for storage instead of sqlite/sqlCypher.
+  3. "encryptionPlugin":"SqlCipher" - or without any additional configuration (SqlCipher is the default configuration.) - Configures the app to use SqlCipher, which encrypts documents in an external sqlLite database for storage.
 - We have changed how we determine which storage engine is being used. In the past we exposed a window['turnOffAppLevelEncryption']
-  global variable based on the same flag in app-config.json; however, now we are determining in app-init.ts which engine is running and exposing either `window['cryptoPouchRunning']` or `window['sqlCipherRunning']` to indicate which engine is running.
+  global variable based on the same flag in app-config.json; however, now we are determining in app-init.ts which engine is running and exposing either `window['cryptoPouchRunning']` or `window['sqlCipherRunning']` to indicate which engine is running. It is important to note that even the app is configured with `encryptionPlugin:'CryptoPouch'` in app-config.json, the app may have been installed without that setting and is actually running sqlCypher. This is why it is important to observe if either `window['cryptoPouchRunning']` or `window['sqlCipherRunning']` is set. 
 
 __Backports/Good to Know__
 
