@@ -14,6 +14,7 @@ __Fixes__
 
 __New Features__
 
+- New CSVs related to Cases now available for Case Participants, Case Events, and Case Event Forms.
 - Online Survey user is warned if they are using an unsupported web browser (Internet Explorer). https://github.com/Tangerine-Community/Tangerine/pull/3001 
 - Data Manager generates CSV with specific columns using CSV Templates.
 - Data Manager restores Case Event stuck in Conflict Revision [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
