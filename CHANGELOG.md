@@ -17,7 +17,7 @@ __New Features__
 - New CSVs related to Cases now available for Case Participants, Case Events, and Case Event Forms. https://github.com/Tangerine-Community/Tangerine/pull/2908
 - Online Survey user is warned if they are using an unsupported web browser (Internet Explorer). https://github.com/Tangerine-Community/Tangerine/pull/3001 
 - Data Manager generates CSV with specific columns using CSV Templates.
-- Data Manager restores Case Event stuck in Conflict Revision [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
+- Data Manager restores Case Event stuck in Conflict Revision. Add the `can_restore_conflict_event` permission to the users' role(s) to enable. [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
 - Enable Data Conflict Manager for groups. [2997](https://github.com/Tangerine-Community/Tangerine/pull/2997) This is based on the [couchdb-conflict-manager](https://github.com/ICTatRTI/couchdb-conflict-manager) web component.
 - In Offline App, when submitting a form, opening a case, creating a case, etc., a new loading screen is shown. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
 - In Online Survey, new support for switching language without interrupting the survey. [#2643](https://github.com/Tangerine-Community/Tangerine/issues/2643)
