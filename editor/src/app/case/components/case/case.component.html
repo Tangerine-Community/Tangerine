@@ -72,25 +72,27 @@
   </div>
 </div>
 
-<h2 *ngIf="conflictingEvents?.length > 0">Events in Conflict</h2>
-<div *ngFor="let conflict of conflictingEvents" class="icon-list-item conflict new-event">
-  <mwc-icon slot="item-icon">receipt</mwc-icon>
-  <div>
-    <div><strong>{{conflict.name}}</strong></div>
+<div *appHasAPermission="let i;group:groupId; permission:'can_restore_conflict_event'">
+  <h2 *ngIf="conflictingEvents?.length > 0">Events in Conflict</h2>
+  <div *ngFor="let conflict of conflictingEvents" class="icon-list-item conflict new-event">
+    <mwc-icon slot="item-icon">receipt</mwc-icon>
     <div>
-      <div secondary>
-        Complete: {{conflict.complete}}
-        <span *ngFor="let eventForm of conflict.eventForms">
-          ID: {{eventForm.formResponseId | slice:0:8}} Rev: {{conflict.conflictRevisionId| slice:0:8}}
-        </span>
-      </div>
-      <div class="text-right">
-<!--        <ng-container *ngFor="let eventForm of conflict.eventForms">-->
-<!--          <ng-container *ngIf="eventForm.formResponseId">-->
-<!--            <paper-button (click)="showConflictFormResponse(eventForm.formResponseId)" class="button-left">View</paper-button>-->
-<!--          </ng-container>-->
-<!--        </ng-container>-->
-        <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
+      <div><strong>{{conflict.name}}</strong></div>
+      <div>
+        <div secondary>
+          Complete: {{conflict.complete}}
+          <span *ngFor="let eventForm of conflict.eventForms">
+            ID: {{eventForm.formResponseId | slice:0:8}} Rev: {{conflict.conflictRevisionId| slice:0:8}}
+          </span>
+        </div>
+        <div class="text-right">
+  <!--        <ng-container *ngFor="let eventForm of conflict.eventForms">-->
+  <!--          <ng-container *ngIf="eventForm.formResponseId">-->
+  <!--            <paper-button (click)="showConflictFormResponse(eventForm.formResponseId)" class="button-left">View</paper-button>-->
+  <!--          </ng-container>-->
+  <!--        </ng-container>-->
+          <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
+        </div>
       </div>
     </div>
   </div>
