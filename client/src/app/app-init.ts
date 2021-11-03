@@ -132,7 +132,6 @@ export class AppInit {
           ) {
             await startCryptoPouch()
           }
-          console.log("Starting with un-encrypted Pouchdb.")
           // If the above didn't start encryption, encryption won't be used.
           const appConfig = await getAppConfig();
           if (appConfig['changes_batch_size']) {
