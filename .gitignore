@@ -5,6 +5,8 @@ tanerine-env-vars.sh
 .idea
 .history
 
+translations/*.csv
+
 tangerine-preview/app/
 client/src/media_assets/
 online-survey-app/src/assets
