@@ -47,7 +47,6 @@ async function hasInstalledOnSqlcipher() {
   let db = connectToSqlCipherDb('tangerine-variables')
   try {
     await db.get('installed')
-    // TODO: Do we need to test for const encryptionType = await db.get('encryptionType') ? 
     hasInstalled = true
   } catch(e) {
     hasInstalled = false
