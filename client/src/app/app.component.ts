@@ -216,6 +216,8 @@ export class AppComponent implements OnInit {
       await this.variableService.set('languageCode', config.languageCode ? config.languageCode : 'en')
       await this.variableService.set('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
       await this.variableService.set('installed', 'true')
+      let encryptionType:string = window['cryptoPouchRunning'] ? 'cryptoPouch' : window['sqlCipherRunning'] ? 'sqlCipher': 'un-encryptedPouchDb'
+      await this.variableService.set('encryptionType', encryptionType)
     } catch (e) {
       console.log('Error detected in install:')
       console.log(e)
