@@ -49,6 +49,9 @@ export function connectToCryptoPouchDb(name, key = ''):PouchDB {
       location: 'default',
       androidDatabaseImplementation: 2
     }
+    if (key) {
+      pouchDBOptions.key = key
+    }
   }
   if (window['changes_batch_size'] && name === 'shared-user-database') {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
