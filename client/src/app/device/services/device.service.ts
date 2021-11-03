@@ -56,7 +56,7 @@ export class DeviceService {
     const device = await this.getDevice()
     const locationList = await this.appConfigService.getLocationList();
     const flatLocationList = Loc.flatten(locationList)
-    const encryptionLevel = (window['isCordovaApp'] && window['sqliteStorageFile'] && !window['turnOffAppLevelEncryption'])
+    const encryptionLevel = (window['isCordovaApp'] && window['sqlCipherRunning'])
       ? _TRANSLATE('in-app')
       : 'OS'
     let assignedLocation
