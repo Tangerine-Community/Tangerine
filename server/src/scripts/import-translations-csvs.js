@@ -13,7 +13,10 @@ const TRANSLATIONS_PATH = __dirname + '/../../../translations'
 
 async function readCsvAsKeyValueColumns(path) {
   try {
-    const data = await fs.readFile(path, { encoding: 'utf8' })
+    // Read file and replace zero-width space characters that Excel will add at the beginning of a CSV file.
+    // See https://stackoverflow.com/questions/11305797/remove-zero-width-space-characters-from-a-javascript-string
+    const data = (await fs.readFile(path, { encoding: 'utf8' }))
+      .replace(/[\u200B-\u200D\uFEFF\u200E\u200F]/g, '')
     const csv = {}
     // Allow for extra columns, because when using cast to string, you need to be exact on the number of columns.
     let cast = []
