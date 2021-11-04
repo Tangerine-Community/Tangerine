@@ -185,7 +185,7 @@ export class SyncCouchdbService {
 
     // Sync Locations Change Detection. 
     const previousDeviceSyncLocations = await this.variableService.get('previousDeviceSyncLocations')
-    const syncLocationsDontMatchVar = previousDeviceSyncLocations ? syncLocationsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations) : true
+    const syncLocationsDontMatchVar = previousDeviceSyncLocations ? syncLocationConfigsDontMatch(syncDetails.deviceSyncLocations, previousDeviceSyncLocations) : true
     if (!isFirstSync && syncLocationsDontMatchVar) {
       this.fullSync = 'push'
       this.retryCount = 1

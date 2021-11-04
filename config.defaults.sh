@@ -124,6 +124,11 @@ T_JWT_ISSUER="Tangerine"
 # The validity period for a signed JWT Token - determines how long before a token is conidered invalid. Expressed in seconds or a string describing a time span as defined in https://github.com/zeit/ms
 T_JWT_EXPIRES_IN="1h"
 
+# Password Policy
+T_PASSWORD_POLICY="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})"
+T_PASSWORD_RECIPE="Password must contain at least 1 lowercase alphabetical character, at least 1 uppercase alphabetical character,
+at least 1 numeric character, at least one special character, and must be eight characters or longer"
+
 #
 # Development
 #
