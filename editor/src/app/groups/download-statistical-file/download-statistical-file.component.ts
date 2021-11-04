@@ -83,8 +83,8 @@ export class DownloadStatisticalFileComponent implements OnInit {
     const structure = await this.createFormDataStructure(formId)
     const labelDefines = structure.map(item=>{
       let optionString = ""
-      item?.options && item['options'].forEach(e=>optionString+=`${e.value} "${e.label}"`)
-      return item?.options && `label define ${item.name}_  ${optionString}\n`}).join('')
+      item['options'] && item['options'].forEach(e=>optionString+=`${e.value} "${e.label}"`)
+      return item['options'] && `label define ${item.name}_  ${optionString}\n`}).join('')
     const labelValues = structure.map( item => `label values ${item.name} ${item.name}_\n`).join('')
     const dateReplace = structure.map(item=>{
       if(item.type==='date'){

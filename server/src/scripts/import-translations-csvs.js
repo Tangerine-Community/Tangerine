@@ -15,7 +15,13 @@ async function readCsvAsKeyValueColumns(path) {
   try {
     const data = await fs.readFile(path, { encoding: 'utf8' })
     const csv = {}
-    new CSV(data, {cast: [String, String], headers: false}).forEach(function(row) {
+    // Allow for extra columns, because when using cast to string, you need to be exact on the number of columns.
+    let cast = []
+    new CSV(data, { headers: false}).forEach(function(row) {
+      cast = row.map(column => String)
+    })
+    // Now actually parse the CSV down to the CSV array.
+    new CSV(data, {cast, headers: false}).forEach(function(row) {
       csv[row[0]] = row[1]
     })
     return csv

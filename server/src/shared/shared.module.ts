@@ -1,6 +1,6 @@
 import { GroupResponsesService } from './services/group-responses/group-responses.service';
 import { GroupDeviceService } from './services/group-device/group-device.service';
-import { Module, HttpService } from '@nestjs/common';
+import {Module, HttpService, HttpModule} from '@nestjs/common';
 import { GroupService } from './services/group/group.service';
 import { TangerineConfigService } from './services/tangerine-config/tangerine-config.service';
 import { ClientUserService } from './services/client-user/client-user.service';
@@ -10,6 +10,7 @@ import { DbService } from './services/db/db.service';
 import {GroupIssuesService} from "./services/group-issues/group-issues.service";
 
 @Module({
+  imports: [ HttpModule ],
   exports: [
     DbService,
     ClientUserService,

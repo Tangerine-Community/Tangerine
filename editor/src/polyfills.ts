@@ -96,8 +96,9 @@ import * as Redux from 'redux';
 import * as _ from 'underscore';
 (window as any)._ = _;
 
+import './global-shim'
 import 'tangy-form-editor/tangy-form-editor.js'
-import 'couchdb-conflict-manager'
+import './app/couchdb-conflict-manager/src/couchdb-conflict-manager.js'
 // @TODO Remove this when this element has been added to tangy-form-editor.
 import 'tangy-form/input/tangy-ethio-date.js';
 import '@vaadin/vaadin-upload/vaadin-upload.js'
@@ -109,7 +110,6 @@ import '@polymer/paper-radio-group/paper-radio-group.js';
 // Also probably fixes other things that try to use node process global.
 //import process from 'process';
 //(window as any).process = process
-
 
 //import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';

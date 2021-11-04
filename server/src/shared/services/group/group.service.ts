@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {HttpService, Injectable} from '@nestjs/common';
 import { TangerineConfigService } from '../tangerine-config/tangerine-config.service';
 import { Group } from '../../classes/group';
 import PouchDB from 'pouchdb'
 import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from '../user/user.service';
+import {SyncSessionInfo} from "../../../modules/sync/services/sync-session/sync-session-v2.service";
+import axios from "axios";
+import {DbService} from "../db/db.service";
 const insertGroupViews = require('../../../insert-group-views.js')
 
 const DB = require('../../../db')
@@ -34,7 +37,9 @@ export class GroupService {
 
   constructor(
     private readonly configService: TangerineConfigService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly http:HttpService,
+    private readonly dbService:DbService
   ){}
 
   async initialize() {
@@ -308,6 +313,42 @@ export class GroupService {
     await groupDb.destroy()
     await exec(`rm -r /tangerine/groups/${group._id}`)
     await exec(`rm /tangerine/client/content/groups/${group._id}`)
+  }
+
+  async startSession(groupId:string, username:string, type: string):Promise<object> {
+    try {
+      // Create couchdb adminUser
+      const adminUsername = `adminUser-${UUID()}-${Date.now()}`
+      const adminPassword = UUID()
+      const config = await this.configService.config()
+      const adminUserDoc = {
+        "_id": `org.couchdb.user:${adminUsername}`,
+        "name": adminUsername,
+        "roles": [`admin-${groupId}`],
+        "type": "user",
+        "password": adminPassword
+      }
+      await this.http.post(`${config.couchdbEndpoint}/_users`, adminUserDoc).toPromise()
+      log.info(`Created admin account for user ${username} in group ${groupId}`)
+      return {"dbUrlWithCredentials": `${config.protocol}://${adminUsername}:${adminPassword}@${config.hostName}/db/${groupId}`}
+    } catch(e) {
+      throw e
+    }
+  }
+
+  async expireAdminCouchdbSessions() {
+    // Expire all admin Couchdb sessions after 8 hours. This means if a admin Couchdb session takes longer than
+    // 8 hours then it will be interrupted.
+    const expireLimit = 8*60*60*1000
+    const _usersDb = this.dbService.instantiate(`_users`)
+    const expiredAdminCouchdbSessions = (await _usersDb.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
+      .filter(userDoc => userDoc._id.includes('org.couchdb.user:adminUser'))
+      .filter(userDoc => (Date.now() - parseInt(userDoc.name.split('-')[6])) > expireLimit)
+    for (const expiredAdminCouchdbSession of expiredAdminCouchdbSessions) {
+      await _usersDb.remove(expiredAdminCouchdbSession)
+    }
   }
 
 }
