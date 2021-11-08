@@ -38,6 +38,7 @@ When we add new features or fix issues in patch releases of Tangerine, those cod
 releases of Tangerine. To make sure users of new releases are aware of those changes, we will occasionally mention them in 
 this section in case they have missed them in the Changelog for the corresponding earlier release. Please note that when you 
 install or upgrade a new Tangerine release, please review the Changelog for any changes in minor or patch releases. 
+
 - Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
 - Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever. (demo: https://youtu.be/RkoUN41jqr4)
 - Enhancements to support for archiving cases:
