@@ -14,6 +14,7 @@ module.exports = async function enableModule(moduleName) {
       }
     }
   } else {
-    throw new Error('Error: You must first enable that module via T_MODULES.')
+    throw new Error('Error: You must first enable ' + moduleName + ' via T_MODULES. tangyModules.modules are: ' + JSON.stringify(tangyModules.modules) + 
+    ' and process.env.T_MODULES is ' + process.env.T_MODULES)
   }
 }

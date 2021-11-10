@@ -26,6 +26,8 @@ const {
   REPORTING_WORKER_STATE,
   REPORTING_WORKER_RUNNING
 } = require('./constants')
+const Logger = require('@nestjs/common').Logger;
+
 
 /*
  * Getter and setters for worker state.
@@ -149,6 +151,8 @@ async function batch() {
       if (changes.results.length > 0) {
         for (let change of changes.results) {
           try {
+            const logger = new Logger("mysql-js reporting-worker changeprocessor");
+            logger.log("say solar.")
             await changeProcessor(change, db)
             processed++
           } catch (error) {
