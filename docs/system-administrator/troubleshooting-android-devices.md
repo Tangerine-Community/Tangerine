@@ -1,6 +1,6 @@
 # Troubleshooting Android Devices
 
-## Modify the app-config.json on an Android Device
+## Modify the app-config.json on a Tangerine APK Install
 If an Android device is having trouble, you may want to tweak the app-config.json settings on that specific device. Use the following commands to pull the app-config.json file off the device, modify it on your computer, and then push it back to the device.
 
 ```sh
