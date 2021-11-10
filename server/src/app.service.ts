@@ -1,10 +1,11 @@
 import { SyncSessionService } from './modules/sync/services/sync-session/sync-session.service';
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable, HttpService, Logger } from '@nestjs/common';
 const DB = require('./db')
 import { TangerineConfigService } from './shared/services/tangerine-config/tangerine-config.service';
 import { GroupService } from './shared/services/group/group.service';
 import { TangerineConfig } from './shared/classes/tangerine-config';
 import { ModulesDoc } from './shared/classes/modules-doc.class';
+import {spawn} from "child_process";
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
@@ -27,6 +28,7 @@ export class AppService {
   installed = false
   appDb = new DB('app')
   config:TangerineConfig
+
 
   async start() {
     this.config = this.configService.config()
@@ -56,7 +58,7 @@ export class AppService {
     } catch (e) {
       // Do nothing.
     }
-    const shouldBeEnabledModules = this.config.enabledModules 
+    const shouldBeEnabledModules = this.config.enabledModules
     const intersection = actuallyEnabledModules.filter(moduleName => shouldBeEnabledModules.includes(moduleName))
     const shouldEnable = shouldBeEnabledModules.filter(moduleName => !intersection.includes(moduleName))
     const shouldDisable = actuallyEnabledModules.filter(moduleName => !shouldBeEnabledModules.includes(moduleName))
@@ -112,11 +114,32 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        const result = await exec('reporting-worker-batch')
+        // console.log("Starting reporting-worker-batch")
+        log.info("Starting reporting-worker-batch ")
+        // const result = await exec('reporting-worker-batch', function(err, stdout, stderr){
+        //   console.log(stdout);
+        // })
+        const result = await spawn('reporting-worker-batch')
+        result.stdout.on('data', function(msg){
+          console.log(msg.toString())
+        });
+        result.on('error', async function (err) {
+          console.log('Oh noez, teh errurz: ' + err);
+          // log.error(result.stderr)
+          await sleep(3 * 1000)
+        });
+        result.stderr.on('data', (data) => {
+          console.error(`stderr: ${data}`);
+        });
+        // log.info(`whomp`)
+        // result.stdout.on('data', (data) => {
+        //   log.info(`${data}`)
+        // })
         if (result.stderr) {
-          log.error(result.stderr)
+          // log.error("There was an error: " + result.stderr)
           await sleep(3*1000)
         } else {
+          log.info(`whomp`)
           workerState = await reportingWorker.getWorkerState()
           if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
             await sleep(this.configService.config().reportingDelay)

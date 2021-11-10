@@ -13,7 +13,9 @@
 const PouchDB = require('pouchdb');
 const tangyModules = require('../modules/index.js')()
 const fs = require('fs-extra')
+const {Logger} = require("@nestjs/common");
 const CODE_SKIP = '999'
+const log = require('tangy-log').log
 
 let DB = PouchDB.defaults({
   prefix: process.env.T_COUCHDB_ENDPOINT
@@ -29,6 +31,8 @@ exports.changeProcessor = (change, sourceDb) => {
             if (process.env.T_PAID_ALLOWANCE !== 'unlimited' && !doc.paid) {
               resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
             } else {
+              const logger = new Logger("mysql-js cp");
+              logger.log("don't go changin'")
               processFormResponse(doc, sourceDb, change.seq)
                 .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
                 .catch(error => { reject(error) })
@@ -66,7 +70,10 @@ const processFormResponse = async (doc, sourceDb, sequence) => {
     }
   } catch (err) { }
   try {
+    console.log("tune in pleeeze? ")
+    log.info("tune in pleeeze? ")
     const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
+    console.log("hookResponse: " + hookResponse)
   } catch (error) {
     console.error(error)
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
