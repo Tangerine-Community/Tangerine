@@ -66,13 +66,13 @@ module.exports = {
       return data
     },
     reportingOutputs: async function(data) {
-      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions) {
+      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, connection) {
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
         } else {
           if (doc.type === 'case') {
             // output case
-            await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            await saveFlatResponse(doc, locationList, targetDb, sanitized, connection);
             let numInf = getItemValue(doc, 'numinf')
             let participant_id = getItemValue(doc, 'participant_id')
 
@@ -84,7 +84,7 @@ module.exports = {
                 caseId: doc._id,
                 numInf: participant.participant_id === participant_id ? numInf : '',
                 type: "participant"
-              }, targetDb);
+              }, targetDb, connection);
             }
           
             // output case-events
@@ -95,7 +95,7 @@ module.exports = {
                   // for (let index = 0; index < event['eventForms'].length; index++) {
                   // const eventForm = event['eventForms'][index]
                   try {
-                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb, connection);
                   } catch (e) {
                     if (e.status !== 404) {
                       console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
@@ -111,10 +111,11 @@ module.exports = {
               // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
               // since we are already serializing each event-form and have the parent caseEventId on each one.
               delete eventClone.eventForms
-              await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
+              await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb, connection)
             }
           } else {
-            await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            // non-case docs
+            await saveFlatResponse(doc, locationList, targetDb, sanitized, connection);
           }
         }
       }
@@ -131,16 +132,10 @@ module.exports = {
       
       // console.log("process.env.T_MYSQL_USER: " + process.env.T_MYSQL_USER + " process.env.T_MYSQL_PASSWORD: " + process.env.T_MYSQL_PASSWORD)
       const mysqlDbName = sourceDb.name.replace(/-/g,'')
-      let pool
-      try {
-        pool = await mysql.createPool({host: hostname, user: username, password: password, database: mysqlDbName});
-      } catch (e) {
-        log.error(e)
-      }
       // create the connection to database
       let connection
       try {
-        connection = await pool.getConnection();
+        connection = await mysql.createConnection({host: hostname, user: username, password: password, database: mysqlDbName});
         // console.log("connection.config: " + JSON.stringify(connection.config))
         // const [rows, fields] = await connection.query('show databases');
         // log.info(`rows: ${JSON.stringify(rows)}`)
@@ -186,17 +181,20 @@ module.exports = {
         console.log("Error creating db: " + JSON.stringify(e))
       }
       let sanitized = false;
-      await generateDatabase(sourceDb, mysqlDb, doc, locationList, sanitized, exclusions);
-      
-      // Then create the sanitized version
-      let mysqlSanitizedDb
       try {
-        mysqlSanitizedDb = await new DB(`${sourceDb.name}-mysql-sanitized`);
+        await generateDatabase(sourceDb, mysqlDb, doc, locationList, sanitized, exclusions, connection);
       } catch (e) {
-        console.log("Error creating db: " + JSON.stringify(e))
+        log.error(e)
+      } finally {
+        await connection.end(function (err) {
+          log.info("Ending mysql connection.")
+          // The connection is terminated now
+          if (err) {
+            log.error(err)
+          }
+        });
       }
-      sanitized = true;
-      await generateDatabase(sourceDb, mysqlSanitizedDb, doc, locationList, sanitized, exclusions);
+
       return data
     }
   }
@@ -366,8 +364,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   return flatFormResponse;
 };
 
-function pushResponse(doc, db) {
-  return new Promise((resolve, reject) => {
+async function pushResponse(doc, db, connection) {
+  // return new Promise((resolve, reject) => {
     // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
     if (doc.data && typeof doc.data === 'object') {
       doc.data = Object.keys(doc.data).reduce((acc, key) => {
@@ -383,35 +381,36 @@ function pushResponse(doc, db) {
         }
       }, {})
     }
-    db.get(doc._id)
-      .then(oldDoc => {
-        // Overrite the _rev property with the _rev in the db and save again.
-        const updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
-        db.put(updatedDoc)
-          .then(_ => {
-            sendToMysql(updatedDoc)
-            resolve(true)
-          })
-          .catch(error => reject(`mysql pushResponse could not overwrite ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
-      })
-      .catch(error => {
-        const docClone = Object.assign({}, doc);
-        // Make a clone of the doc so we can delete part of it but not lose it in other iterations of this code
-        // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
-        // delete the _rev property from the docClone
-        delete docClone._rev
-        db.put(docClone)
-          .then(_ => resolve(true))
-          .catch(error => reject(`mysql pushResponse could not save ${docClone._id} to ${docClone.name} because Error of ${JSON.stringify(error)}`))
-    });
-  })
+    // db.get(doc._id)
+    //   .then(oldDoc => {
+    //     // Overrite the _rev property with the _rev in the db and save again.
+    //     const updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
+    //     db.put(updatedDoc)
+    //       .then(_ => {
+    //         sendToMysql(updatedDoc)
+    //         resolve(true)
+    //       })
+    //       .catch(error => reject(`mysql pushResponse could not overwrite ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
+    //   })
+    //   .catch(error => {
+    //     const docClone = Object.assign({}, doc);
+    //     // Make a clone of the doc so we can delete part of it but not lose it in other iterations of this code
+    //     // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+    //     // delete the _rev property from the docClone
+    //     delete docClone._rev
+    //     db.put(docClone)
+    //       .then(_ => resolve(true))
+    //       .catch(error => reject(`mysql pushResponse could not save ${docClone._id} to ${docClone.name} because Error of ${JSON.stringify(error)}`))
+    // });
+    await sendToMysql(connection, doc)
+  // })
 }
 
-async function sendToMysql(doc) {
-  
+async function sendToMysql(connection, doc) {
+  console.log("doc: " + JSON.stringify(doc))
 }
 
-async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
+async function saveFlatResponse(doc, locationList, targetDb, sanitized, connection) {
   let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
   // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
   flatResponse = Object.keys(flatResponse).reduce((acc, key) => {
@@ -431,7 +430,7 @@ async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
   Object.entries(doc).forEach(([key, value]) => value === Object(value) ? null : topDoc[key] = value);
   await pushResponse({...topDoc,
     data: flatResponse
-  }, targetDb);
+  }, targetDb, connection);
 }
 
 function getLocationByKeys(keys, locationList) {
