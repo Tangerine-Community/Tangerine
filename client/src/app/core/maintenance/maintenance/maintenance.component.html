@@ -3,7 +3,7 @@
   <div class="action">
     <paper-button (click)="compact()">{{'Compact Database'|translate}}</paper-button>
   </div>
-  <div class="action">
+  <div class="action" *ngIf="isCordovaApp">
     <paper-button (click)="pruneFiles()">{{'Cleanup Files'|translate}}</paper-button>
   </div>
   <div class="action">

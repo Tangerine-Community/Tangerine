@@ -10,6 +10,8 @@ import { UserService } from 'src/app/shared/_services/user.service';
 })
 export class MaintenanceComponent implements OnInit {
 
+  isCordovaApp = false
+
   constructor(
     private userService: UserService,
     private processMonitorService: ProcessMonitorService
@@ -17,7 +19,7 @@ export class MaintenanceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.isCordovaApp = window['isCordovaApp']
   }
 
   async compact() {
@@ -29,12 +31,8 @@ export class MaintenanceComponent implements OnInit {
 
   async pruneFiles() {
     const process = this.processMonitorService.start('pruneFiles', _TRANSLATE('Pruning files...'))
-    if (window['isCordovaApp']) {
-      await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
-      await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
-    } else {
-      await this.pruneFilesInPath('backup')
-    }
+    await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
+    await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
     this.processMonitorService.stop(process.id)
   }
   
