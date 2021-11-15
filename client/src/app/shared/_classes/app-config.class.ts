@@ -19,6 +19,7 @@ export class AppConfig {
   barcodeSearchMapFunction:string
   showQueries:boolean
   showCaseReports:boolean
+  // Determines wether or not the Issues tab is shown on the case module's home screen.
   showIssues:boolean
   groupId:string
   groupName:string
@@ -44,6 +45,7 @@ export class AppConfig {
   calculateLocalDocsForLocation:boolean;
   findSelectorLimit: number;
   compareLimit: number;
+  // Determines if a "Create Issue" button appears when viewing submitted Event Forms.
   allowCreationOfIssues:boolean
   // By default, User Profiles (AKA Device Users) will sync down to devices given the Sync Settings and then filtered
   // by assignment when associating accounts on the Device. Setting this to true will ensure all User Profiles are
