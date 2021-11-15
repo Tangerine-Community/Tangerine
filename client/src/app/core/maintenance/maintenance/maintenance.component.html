@@ -6,7 +6,7 @@
   <div class="action" *ngIf="isCordovaApp">
     <paper-button (click)="pruneFiles()">{{'Cleanup Files'|translate}}</paper-button>
   </div>
-  <div class="action">
+  <div class="action" *ngIf="!isCordovaApp">
     <paper-button (click)="checkPermissions()">{{'Check Permissions'|translate}}</paper-button>
   </div>
 </div>
