@@ -1,0 +1,12 @@
+<div class="wrapper">
+  <h1>Maintenance</h1>
+  <div class="action">
+    <paper-button (click)="compact()">{{'Compact Database'|translate}}</paper-button>
+  </div>
+  <div class="action" *ngIf="isCordovaApp">
+    <paper-button (click)="pruneFiles()">{{'Cleanup Files'|translate}}</paper-button>
+  </div>
+  <div class="action" *ngIf="!isCordovaApp">
+    <paper-button (click)="checkPermissions()">{{'Check Permissions'|translate}}</paper-button>
+  </div>
+</div>
