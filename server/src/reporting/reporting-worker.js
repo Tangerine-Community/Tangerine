@@ -151,8 +151,8 @@ async function batch() {
       if (changes.results.length > 0) {
         for (let change of changes.results) {
           try {
-            const logger = new Logger("mysql-js reporting-worker changeprocessor");
-            logger.log("say solar.")
+            // const logger = new Logger("mysql-js reporting-worker changeprocessor");
+            // logger.log("say solar.")
             await changeProcessor(change, db)
             processed++
           } catch (error) {
