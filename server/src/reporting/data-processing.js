@@ -31,8 +31,8 @@ exports.changeProcessor = (change, sourceDb) => {
             if (process.env.T_PAID_ALLOWANCE !== 'unlimited' && !doc.paid) {
               resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
             } else {
-              const logger = new Logger("mysql-js cp");
-              logger.log("don't go changin'")
+              // const logger = new Logger("mysql-js cp");
+              // logger.log("don't go changin'")
               processFormResponse(doc, sourceDb, change.seq)
                 .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
                 .catch(error => { reject(error) })
@@ -70,10 +70,8 @@ const processFormResponse = async (doc, sourceDb, sequence) => {
     }
   } catch (err) { }
   try {
-    console.log("tune in pleeeze? ")
-    log.info("tune in pleeeze? ")
     const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
-    console.log("hookResponse: " + hookResponse)
+    // console.log("hookResponse: " + hookResponse)
   } catch (error) {
     console.error(error)
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)

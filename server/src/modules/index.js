@@ -13,7 +13,6 @@ class TangyModules {
     for (let module of this.modules) {
       if(module.hasOwnProperty('hooks') && module.hooks.hasOwnProperty(hookName)) {
         data = await module.hooks[hookName](data)
-        console.log("hookety hook book")
       }
     }
     return data;

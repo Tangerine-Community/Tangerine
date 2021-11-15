@@ -24,16 +24,19 @@ module.exports = {
     boot: async function(data) {
       const groups = await groupsList()
       const logger = new Logger("mysql-js");
-      logger.log("booting mysql-js module.")
+      logger.log("booting mysql-js module for groups: " + JSON.stringify(groups))
+      let groupId;
       for (groupId of groups) {
         const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-        startTangerineToMySQL(pathToStateFile)
-        // TODO: start mysql2 connection pool
+        await startTangerineToMySQL(pathToStateFile)
       }
+      // TODO: start mysql2 connection pool
       return data
     },
     enable: async function() {
       const groups = await groupsList()
+      log.info("enabling mysql-js module for groups: " + JSON.stringify(groups))
+      let groupId;
       for (groupId of groups) {
         await initializeGroupForMySQL(groupId)
       }
@@ -116,36 +119,33 @@ module.exports = {
         }
       }
       const logger = new Logger("mysql-js");
-      logger.log("say something.")
       const {doc, sourceDb} = data
       const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
       // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
       const groupsDb = await new DB(`groups`);
       const groupDoc = await groupsDb.get(`${sourceDb.name}`)
       const exclusions = groupDoc['exclusions']
-      // T_MYSQL_CONTAINER_NAME="mysql"
-      // T_MYSQL_USER="admin"
-      // T_MYSQL_PASSWORD="password"
-      // T_MYSQL_PHPMYADMIN="true"
       let hostname = process.env.T_MYSQL_CONTAINER_NAME
       let username = process.env.T_MYSQL_USER
       let password = process.env.T_MYSQL_PASSWORD
       
       // console.log("process.env.T_MYSQL_USER: " + process.env.T_MYSQL_USER + " process.env.T_MYSQL_PASSWORD: " + process.env.T_MYSQL_PASSWORD)
       const mysqlDbName = sourceDb.name.replace(/-/g,'')
+      let pool
+      try {
+        pool = await mysql.createPool({host: hostname, user: username, password: password, database: mysqlDbName});
+      } catch (e) {
+        log.error(e)
+      }
       // create the connection to database
       let connection
       try {
-        connection = await mysql.createConnection({host: hostname, user: username, password: password, database: mysqlDbName});
+        connection = await pool.getConnection();
         // console.log("connection.config: " + JSON.stringify(connection.config))
-        console.log('connected!');
-        const [rows, fields] = await connection.query('show databases');
-        console.log(rows);
-        // console.log(fields);
-        log.info(`rows: ${JSON.stringify(rows)}`)
-        // log.info(`rows: ${rows}`)
+        // const [rows, fields] = await connection.query('show databases');
+        // log.info(`rows: ${JSON.stringify(rows)}`)
       } catch (e) {
-        console.error(e)
+        log.error(e)
       }
 
       if (connection) {
@@ -154,32 +154,28 @@ module.exports = {
         });
 
 
-        try {
-          const [rows, fields] = await connection.query('SELECT * FROM `caseevent`');
-          if (rows) {
-            // console.log("result is : " + JSON.stringify(result))
-            console.log("mysql rows: " + rows); // results contains rows returned by server
-            // console.log(rows);
-            rows.forEach(row => {
-              console.log("row.name: " + row.name)
-              console.log("row: " + JSON.stringify(row))
-            })
-          }
-          if (fields) {
-            console.log("mysql fields: " + fields); // fields contains extra meta data about results, if available
-            // console.log(fields);
-            fields.forEach(field => {
-              console.log("field: " + field.name)
-            })
-
-          }
-          // if (errors) {
-          //   console.log("mysql errors: " + errors); 
-          // }
-        } catch (e) {
-          console.log('Error Babe: ' + e)
-          await loadMysqlScript(sourceDb.name)
-        }
+        // try {
+        //   const [rows, fields] = await connection.query('SELECT * FROM `caseevent`');
+        //   await connection.release();
+        //   if (rows) {
+        //     rows.forEach(row => {
+        //       log.info("row.name: " + row.name)
+        //       // console.log("row: " + JSON.stringify(row))
+        //     })
+        //   }
+        //   if (fields) {
+        //     fields.forEach(field => {
+        //       // console.log("field: " + field.name)
+        //     })
+        //
+        //   }
+        //   // if (errors) {
+        //   //   console.log("mysql errors: " + errors); 
+        //   // }
+        // } catch (e) {
+        //   log.error('Error: ' + e)
+        //   await loadMysqlScript(sourceDb.name)
+        // }
       }
       
       // First generate the full-cream database
@@ -217,11 +213,12 @@ async function removeGroupForMySQL(groupId) {
 
 async function initializeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
-  console.log(`Creating mysql db ${mysqlDbName}`)
-  await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
-  console.log(`Created mysql db ${mysqlDbName}`)
-  console.log('Creating tangerine to mysql state file...')
-  const state = `[TANGERINE]
+  log.info(`Checking if we need to create mysql db ${mysqlDbName}`)
+  try {
+    await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+    log.info(`Created mysql db ${mysqlDbName}`)
+    log.info('Creating tangerine to mysql state file...')
+    const state = `[TANGERINE]
 DatabaseURL = http://couchdb:5984/
 DatabaseName = ${groupId}-mysql
 DatabaseUserName = ${process.env.T_COUCHDB_USER_ADMIN_NAME} 
@@ -234,9 +231,16 @@ DatabaseName = ${mysqlDbName}
 UserName = ${process.env.T_MYSQL_USER} 
 Password = ${process.env.T_MYSQL_PASSWORD} 
   `
-  const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-  await fs.writeFile(pathToStateFile, state)
-  console.log('Created tangerine to mysql state file.')
+    const pathToStateFile = `/mysql-module-state/${groupId}.ini`
+    await fs.writeFile(pathToStateFile, state)
+    log.info('Created tangerine to mysql state file.')
+  } catch (e) {
+    if (e.toString().includes("ERROR 1007")) {
+      log.info(`mysql db ${mysqlDbName} already exists. Using previously created state file.`)
+    } else {
+      log.error("Error: " + JSON.stringify(e))
+    }
+  }
 }
 
 async function loadMysqlScript(groupId) {
@@ -249,7 +253,9 @@ async function loadMysqlScript(groupId) {
 async function startTangerineToMySQL(pathToStateFile) {
   try {
     const cmd = `python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile}`
-    const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile])
+    // const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile])
+    const args = ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile]
+    const script = spawn(`python3`, args)
     script.stdout.on('data', (data) => {
       log.info(`${cmd} -- ${data}`)
     })

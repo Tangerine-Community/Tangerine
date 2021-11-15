@@ -114,8 +114,7 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        // console.log("Starting reporting-worker-batch")
-        log.info("Starting reporting-worker-batch ")
+        // log.info("Starting reporting-worker-batch ")
         // const result = await exec('reporting-worker-batch', function(err, stdout, stderr){
         //   console.log(stdout);
         // })
