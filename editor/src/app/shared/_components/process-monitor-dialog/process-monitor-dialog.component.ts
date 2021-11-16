@@ -1,5 +1,6 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ProcessMonitorService } from '../../_services/process-monitor.service';
 import { _TRANSLATE } from '../../_services/translation-marker';
 
 interface DialogData {
@@ -13,13 +14,16 @@ interface DialogData {
 export class ProcessMonitorDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    public processMonitorService: ProcessMonitorService,
     public dialog: MatDialog
   ) {}
 
   cancel() {
     const confirmation = confirm(_TRANSLATE('Warning: Interrupting a process may lead to data corruption and data loss. Are you sure you want to continue?'))
     if (confirmation) {
-      this.dialog.closeAll()
+      this.processMonitorService
+        .processes
+        .forEach(process => this.processMonitorService.stop(process.id))
     }
   }
 
