@@ -44,6 +44,8 @@ export class MaintenanceComponent implements OnInit {
       // Do nothing.
       await sleep(1*1000)
     }
+    // Keep the progress bar up for a moment so the user knows something happened.
+    await sleep(1*1000)
     this.processMonitorService.stop(process.id)
     // Camera and Microphone API.
     process = this.processMonitorService.start('permissionCheck', _TRANSLATE('Checking camera permission...'))
@@ -58,6 +60,8 @@ export class MaintenanceComponent implements OnInit {
       )
       await sleep(1*1000)
     }
+    // Keep the progress bar up for a moment so the user knows something happened.
+    await sleep(1*1000)
     this.processMonitorService.stop(process.id)
     // Geolocation API.
     process = this.processMonitorService.start('permissionCheck', _TRANSLATE('Checking geolocation permission...'))
@@ -69,29 +73,39 @@ export class MaintenanceComponent implements OnInit {
       }
       await sleep(1*1000)
     }
+    // Keep the progress bar up for a moment so the user knows something happened.
+    await sleep(1*1000)
     this.processMonitorService.stop(process.id)
     // Persistent Storage API.
     process = this.processMonitorService.start('permissionCheck', _TRANSLATE('Checking permanent storage permission...'))
     while (!await navigator.storage.persist()) {
       await sleep(1*1000)
     }
+    // Keep the progress bar up for a moment so the user knows something happened.
+    await sleep(1*1000)
     this.processMonitorService.stop(process.id)
   }
 
   async compact() {
-    const process = this.processMonitorService.start('compact', _TRANSLATE('Compacting databases...'))
-    const db = await this.userService.getUserDatabase()
-    await db.db.compact()
-    this.processMonitorService.stop(process.id)
+    const confirmCheck = confirm(`${_TRANSLATE('This process may take a few minutes - and maybe even longer. Do you wish to continue?')}`);
+    if (confirmCheck) {
+      const process = this.processMonitorService.start('compact', _TRANSLATE('Compacting databases...'))
+      const db = await this.userService.getUserDatabase()
+      await db.db.compact()
+      this.processMonitorService.stop(process.id)
+    }
   }
 
   async pruneFiles() {
-    const process = this.processMonitorService.start('pruneFiles', _TRANSLATE('Pruning files...'))
-    await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
-    await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
-    await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/backups/')
-    await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/restore/')
-    this.processMonitorService.stop(process.id)
+    const confirmCheck = confirm(`${_TRANSLATE('Have you copied backups to another device? This process will delete any backups in the backups or restore directories. Do you wish to continue?')}`);
+    if (confirmCheck) {
+      const process = this.processMonitorService.start('pruneFiles', _TRANSLATE('Pruning files...'))
+      await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
+      await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
+      await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/backups/')
+      await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/restore/')
+      this.processMonitorService.stop(process.id)
+    }
   }
   
   pruneFilesInPath(path) {

@@ -42,3 +42,9 @@
   font-size: larger;
   font-weight: bold;
 }
+.maintenance-card {
+  max-width: 400px;
+}
+.stats {
+  margin-top:2em;
+}
