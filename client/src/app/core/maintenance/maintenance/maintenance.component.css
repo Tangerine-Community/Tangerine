@@ -13,6 +13,7 @@
   flex-wrap: wrap;
   margin: 0 0 3em 0;
   padding: 0;
+  max-width: 450px;
 }
 .Rtable-cell {
   box-sizing: border-box;
@@ -47,4 +48,8 @@
 }
 .stats {
   margin-top:2em;
+}
+.cell-header {
+  font-weight: bold;
+  font-size: larger;
 }

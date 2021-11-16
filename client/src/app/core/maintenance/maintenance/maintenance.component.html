@@ -42,8 +42,8 @@
     </div>
     <div class="Rtable Rtable--2cols">
 
-      <div class="Rtable-cell"><h3>Disk Space</h3></div>
-      <div [className]="isStorageThresholdExceeded ? 'Rtable-cell error' : 'Rtable-cell'"><h3>{{storageAvailable}}</h3></div>
+      <div class="Rtable-cell cell-header">{{'Available Disk Space' |translate}}</div>
+      <div [className]="isStorageThresholdExceeded ? 'Rtable-cell error' : 'Rtable-cell'">{{storageAvailable}} GB</div>
 
     </div>
   </div>
