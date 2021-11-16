@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { UserService } from 'src/app/shared/_services/user.service';
+import {SyncService} from "../../../sync/sync.service";
 
 @Component({
   selector: 'app-maintenance',
@@ -11,15 +12,28 @@ import { UserService } from 'src/app/shared/_services/user.service';
 export class MaintenanceComponent implements OnInit {
 
   isCordovaApp = false
-
+  storageAvailable
+  storageAvailableErrorThreshhold = 1
+  displayLowStorageWarning: boolean
+  isStorageThresholdExceeded: boolean
+  
   constructor(
     private userService: UserService,
-    private processMonitorService: ProcessMonitorService
+    private processMonitorService: ProcessMonitorService,
+    private syncService: SyncService
   ) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.isCordovaApp = window['isCordovaApp']
+    if (window['isCordovaApp']) {
+      const storageStats:any = await this.syncService.getStorageStats()
+      this.storageAvailable = storageStats ? (storageStats / (1024*1024)).toFixed(2) : ""
+      if (this.storageAvailable < this.storageAvailableErrorThreshhold) {
+        this.isStorageThresholdExceeded = true
+        this.displayLowStorageWarning = true
+      }
+    }
   }
 
   async checkPermissions() {
@@ -75,18 +89,38 @@ export class MaintenanceComponent implements OnInit {
     const process = this.processMonitorService.start('pruneFiles', _TRANSLATE('Pruning files...'))
     await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
     await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
+    await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/backups/')
+    await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/restore/')
     this.processMonitorService.stop(process.id)
   }
   
   pruneFilesInPath(path) {
     return new Promise((resolve, reject) => {
       window['resolveLocalFileSystemURL'](path, function (directory) {
-        var reader = directory.createReader();
+        const reader = directory.createReader();
         reader.readEntries(
           async function (entries) {
-            console.log(entries);
-            for (let entry in entries) {
-              await entry['removeEntry']()
+            for (let index = 0; index < entries.length; index++) {
+              const entry = entries[index]
+              if (entry.isFile) {
+                await entry['remove']()
+              } else {
+                const subdir = entry.createReader();
+                subdir.readEntries(
+                  async function (entries) {
+                    for (let index = 0; index < entries.length; index++) {
+                      const entry = entries[index]
+                      await entry['remove']()
+                    }
+                    resolve(true)
+                  },
+                  function (err) {
+                    reject(err)
+                    console.log(err);
+                  }
+                );
+                await entry['remove']()
+              }
             }
             resolve(true) 
           },
