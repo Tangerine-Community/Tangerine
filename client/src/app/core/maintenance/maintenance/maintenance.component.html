@@ -1,44 +1,51 @@
 <div class="wrapper">
   <h1>Maintenance</h1>
-  <div class="Rtable Rtable--2cols">
-
-    <div class="Rtable-cell">
-      <div class="action">
-        <paper-button (click)="compact()">{{'Compact Database'|translate}}</paper-button>
-      </div>
-    </div>
-    <div class="Rtable-cell">
-      {{'Compacting the database will take a while if there are many records in the database.'|translate}}
-    </div>
-
-    <div class="Rtable-cell" *ngIf="isCordovaApp">
-      <div class="action">
-        <paper-button (click)="pruneFiles()">{{'Cleanup Files'|translate}}</paper-button>
-      </div>
-    </div>
-    <div class="Rtable-cell">
-      {{'This will delete any backups on this tablet that are in the "backup" or "restore" directories. Be sure you have transferred them before doing this procedure.'|translate}}
-    </div>
-
-    <div class="Rtable-cell" *ngIf="!isCordovaApp">
-      <div class="action">
-        <paper-button (click)="checkPermissions()">{{'Check Permissions'|translate}}</paper-button>
-      </div>
-    </div>
-    <div class="Rtable-cell" *ngIf="!isCordovaApp">
-    </div>
-
-  </div>
   
-  <h2>Statistics</h2>
-    
-  <div *ngIf="displayLowStorageWarning" class="error">
-    <p>{{'Low Disk space!!!'|translate}}</p>
-  </div>
-  <div class="Rtable Rtable--2cols">
+  <mat-card class="maintenance-card">
+    <mat-card-title>{{'Compact Database'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'Compacting the database will take a while if there are many records in the database.'|translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-button (click)="compact()">COMPACT DATABASE</button>
+    </mat-card-actions>
+  </mat-card>
+  
+  <mat-card class="maintenance-card" *ngIf="isCordovaApp">
+    <mat-card-title>{{'Cleanup Files'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'This will delete any backups on this tablet that are in the "backup" or "restore" directories. Be sure you have transferred them before doing this procedure.'|translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-button (click)="pruneFiles()">CLEANUP FILES</button>
+    </mat-card-actions>
+  </mat-card>
+  
+  <mat-card class="maintenance-card" *ngIf="!isCordovaApp">
+    <mat-card-title>{{'Check Permissions'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'Confirms that the app has the correct permissions to support using the camera and location.' |translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-button (click)="checkPermissions()">CHECK PERMISSIONS</button>
+    </mat-card-actions>
+  </mat-card>
+  
+  <div class="stats">
+    <h2>Statistics</h2>
 
-    <div class="Rtable-cell"><h3>Disk Space</h3></div>
-    <div [className]="isStorageThresholdExceeded ? 'Rtable-cell error' : 'Rtable-cell'"><h3>{{storageAvailable}}</h3></div>
-    
+    <div *ngIf="displayLowStorageWarning" class="error">
+      <p>{{'Low Disk space!!!'|translate}}</p>
+    </div>
+    <div class="Rtable Rtable--2cols">
+
+      <div class="Rtable-cell"><h3>Disk Space</h3></div>
+      <div [className]="isStorageThresholdExceeded ? 'Rtable-cell error' : 'Rtable-cell'"><h3>{{storageAvailable}}</h3></div>
+
+    </div>
   </div>
+
 </div>
