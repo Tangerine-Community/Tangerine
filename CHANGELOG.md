@@ -1,5 +1,40 @@
 # What's new
 
+## v3.20.1
+
+__Fixes__
+
+- Address problem with overly-large databases by fixing database defaults when instantiating databases to ensure old revisions are pruned [#3058](https://github.com/Tangerine-Community/Tangerine/pull/3058)
+
+__New Features__
+
+- Add Maintenance page to client to enable app administration tasks and disk space statistics. [#3059](https://github.com/Tangerine-Community/Tangerine/pull/3059)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.1
+./start.sh v3.20.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.0
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.20.0
 
 __Fixes__
