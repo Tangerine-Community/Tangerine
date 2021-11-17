@@ -216,6 +216,7 @@ RUN_OPTIONS="
   --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
   --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
+  --env \"T_MYSQL_MULTI_PARTICIPANT_SCHEMA=$T_MYSQL_MULTI_PARTICIPANT_SCHEMA\" \
   --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
   $RUN_OPTIONS
 "
