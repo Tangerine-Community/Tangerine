@@ -14,7 +14,7 @@ export class CsvDataSetsComponent implements OnInit {
   title = _TRANSLATE('Download CSV Data Set')
   breadcrumbs: Array<Breadcrumb> = []
   csvDataSets;
-  displayedColumns = ['fileName', 'month', 'year', 'dateCreated', 'status', 'downloadUrl']
+  displayedColumns = ['fileName','description', 'month', 'year', 'dateCreated', 'status', 'downloadUrl']
   groupId
   pageIndex = 0
   pageSize = 10
