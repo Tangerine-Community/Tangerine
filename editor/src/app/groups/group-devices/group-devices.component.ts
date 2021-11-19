@@ -191,10 +191,6 @@ export class GroupDevicesComponent implements OnInit {
         if (device.replicationStatus) {
           replicationStatus = device.replicationStatus
         }
-        if (device.replicationStatuses?.length > 0) {
-          replicationStatus = device.replicationStatuses[device.replicationStatuses.length - 1]
-          device.replicationStatus = replicationStatus
-        }
         let errorFlag = false
         if (replicationStatus?.info?.errors?.length > 0) {
           errorFlag = true
@@ -236,13 +232,13 @@ export class GroupDevicesComponent implements OnInit {
         // Sometimes the locations change, and the location on the tab no longer shows up on the list
         let assignedLocation, syncLocations
         try {
-          assignedLocation = device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
+          assignedLocation = device.assignedLocation?.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         } catch (e) {
           assignedLocation = "Location lookup error with " + JSON.stringify(device.assignedLocation.value)
           console.log("Cannot coerce assignedLocation for " + JSON.stringify(device.assignedLocation.value))
         }
         try {
-          syncLocations = device.syncLocations.map(syncLocation => {
+          syncLocations = device.syncLocations?.map(syncLocation => {
             return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
           }).join('; ')
         } catch (e) {
@@ -257,7 +253,7 @@ export class GroupDevicesComponent implements OnInit {
         registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
         syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
         updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
-        assignedLocation: device.assignedLocation.value ? assignedLocation : '',
+        assignedLocation: device.assignedLocation?.value ? assignedLocation : '',
         duration: duration,
         versionTag: versionTag,
         tangerineVersion: tangerineVersion,

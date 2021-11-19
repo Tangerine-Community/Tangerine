@@ -171,3 +171,26 @@ module.exports.issuesOfTypeConflictByConflictingDocId = {
   },
   reduce: '_count'
 } 
+
+module.exports.listDevices =  {
+  database: 'devices',
+  map: function (doc) {
+    var replicationStatus
+    if (doc.replicationStatuses && doc.replicationStatuses.length > 0) {
+      replicationStatus = doc.replicationStatuses[doc.replicationStatuses.length - 1]
+    }
+    var status = {
+      _id: doc._id,
+      token: doc.token,
+      claimed:doc.claimed,
+      description: doc.description,
+      registeredOn: doc.registeredOn,
+      syncedOn: doc.syncedOn,
+      updatedOn: doc.updatedOn,
+      assignedLocation: doc.assignedLocation,
+      syncLocations: doc.syncLocations,
+      replicationStatus: replicationStatus
+    }
+    emit(doc._id, status);
+  }
+}
