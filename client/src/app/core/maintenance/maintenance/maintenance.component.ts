@@ -5,6 +5,13 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import {SyncService} from "../../../sync/sync.service";
 import * as moment from 'moment'
 import {VariableService} from "../../../shared/_services/variable.service";
+import PouchDB from 'pouchdb';
+// import MemDownPouch from 'pouchdb-adapter-memory';
+// import {MemoryPouchPlugin} from 'pouchdb-adapter-memory';
+// import * as PouchdbAdapterMemory from 'pouchdb-adapter-memory';
+import index from 'pouchdb-adapter-memory';
+import {DeviceService} from "../../../device/services/device.service";
+import {DB} from "../../../shared/_factories/db.factory";
 
 @Component({
   selector: 'app-maintenance',
@@ -23,7 +30,8 @@ export class MaintenanceComponent implements OnInit {
     private userService: UserService,
     private processMonitorService: ProcessMonitorService,
     private syncService: SyncService,
-    private variableService: VariableService
+    private variableService: VariableService,
+    private deviceService:DeviceService,
   ) {
   }
 
@@ -94,79 +102,109 @@ export class MaintenanceComponent implements OnInit {
    * @param db
    * @param since
    */
-  async deleteOldRevisions(db, since) {
-    return new Promise( (resolve, reject) => {
-      db.changes({since: since, limit: 200, include_docs: false})
-        .on('change', async function (change) {
-          try {
-            // const doc = await db.get(change.id)
-            const docInfo = await db.db.get(change.id, {revs: true, revs_info: true})
-            const mostRecentRev = docInfo._rev
-            const revs = []
-            docInfo._revs_info.forEach(revInfo => {
-              if (revInfo.status === 'available') {
-                if (revInfo.rev !== mostRecentRev) {
-                  revs.push(revInfo.rev)
-                }
+  async deleteOldRevisions(db, targetDb, startkey, update_seq) {
+    const docs = await db.allDocs({startkey: startkey, update_seq: update_seq, limit: 201, include_docs: false})
+    for (let i = 0; i < docs.length; i++) {
+      // skip the last one - it is for the next run's startKey
+      if (i < 201) {
+        const doc = docs[i]
+        try {
+          // const doc = await db.get(change.id)
+          const docInfo = await db.db.get(doc.id, {revs: true, revs_info: true})
+          const mostRecentRev = docInfo._rev
+          const revs = []
+          docInfo._revs_info.forEach(revInfo => {
+            if (revInfo.status === 'available') {
+              if (revInfo.rev !== mostRecentRev) {
+                revs.push(revInfo.rev)
               }
-            })
-            if (revs.length > 0) {
-                try {
-                  const deleted = await db.db.remove(change.id, mostRecentRev)
-                  console.log("Deleted rev: " + deleted.rev + " for _id: " + deleted.id)
-                } catch (e) {
-                  console.error(e)
-                }
-                // Now save it using the same id:
-              delete docInfo._revs_info
-              delete docInfo._revisions
-              delete docInfo._rev
-              
-                try {
-                  const document = await db.db.put(docInfo)
-                  console.log("Updated doc: " + document.rev + " for _id: " + document.id)
-                } catch (e) {
-                  console.error(e)
-                }
             }
-          } catch (error) {
-            console.error(error)
+          })
+          if (revs.length > 0) {
+            console.log("_id: " + docInfo._id)
+            console.log("_revs_info: " + JSON.stringify(docInfo._revs_info))
+
+            try {
+              const result = await db.db.replicate.to(targetDb, {doc_ids: [doc.id]});
+              console.log(result);
+            } catch (err) {
+              console.log(err);
+            }
+            try {
+              const deleted = await db.db.remove(doc.id, mostRecentRev)
+              console.log("Deleted rev: " + deleted.rev + " for _id: " + deleted.id)
+            } catch (e) {
+              console.error(e)
+            }
           }
-        })
-        .on('complete', async function (info) {
-          resolve(info)
-        })
-        .on('error', function (error) {
-          console.log(error);
-          reject(error)
-        })
-    })
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      
+    }
+    return docs
+  }
+  
+async copyDocsFromTargetDB(targetDb, sourceDB, startkey, update_seq) {
+    const docs = await targetDb.allDocs({startkey: startkey, update_seq: update_seq, limit: 201, include_docs: false})
+    for (let i = 0; i < docs.length; i++) {
+      // skip the last one - it is for the next run's startKey
+      if (i < 201) {
+        const doc = docs[i]
+        try {
+          // const doc = await db.get(change.id)
+          const docInfo = await targetDb.get(doc.id)
+          const mostRecentRev = docInfo._rev
+          console.log("_id: " + docInfo._id)
+            try {
+              const result = await targetDb.replicate.to(sourceDB, {doc_ids: [doc.id]});
+              console.log(result);
+            } catch (err) {
+              console.log(err);
+            }
+            try {
+              const deleted = await targetDb.remove(doc.id, mostRecentRev)
+              console.log("Deleted rev: " + deleted.rev + " for _id: " + deleted.id)
+            } catch (e) {
+              console.error(e)
+            }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      
+    }
+    return docs
   }
 
   async compact() {
     var sleep = function(delay) { return new Promise((resolve, reject) => setTimeout(resolve, delay))}
     const confirmCheck = confirm(`${_TRANSLATE('This process may take a few minutes - and maybe even longer. Do you wish to continue?')}`);
     if (confirmCheck) {
-      const db = await this.userService.getUserDatabase()
+      let db = await this.userService.getUserDatabase()
+      const device = await this.deviceService.getDevice()
+
+      // const targetDB = new PouchDB('temp', {revs_limit: 1});
+      const targetDB = DB('temp', device.key, {revs_limit: 1});
       const compactStartTime = new Date().toISOString()
       console.log("compactStartTime: " + compactStartTime)
-      // need to track last_seq
-      const compactLastSeq = await this.variableService.get('compact-last_seq')
-      const lastLocalSequence = (await db.changes({descending: true, limit: 1})).last_seq
-      let since = compactLastSeq ? compactLastSeq : 0
+      const update_seq = (await db.changes({descending: true, limit: 1})).last_seq
+      let docNum = 0 
+      let startkey = 0
       try {
         let processingChanges = true
-        while(processingChanges) {
-          const progressPercent = Math.round((since/lastLocalSequence)*100)
+        while (processingChanges) {
+          // const progressPercent = Math.round((since/lastLocalSequence)*100)
+          const progressPercent = ""
           let process = this.processMonitorService.start('compact', _TRANSLATE('Compacting database. Progress: ' + progressPercent + '% done.'))
-          const changes = await this.deleteOldRevisions(db, since)
-          const changesLastSeq = changes["last_seq"]
-          await this.variableService.set('compact-last_seq', changesLastSeq)
-          if (changes["results"].length > 0) {
-            const lastChangeInArray = changes["results"].slice(-1)[0].seq
-            const noMoreChanges = lastLocalSequence === lastChangeInArray
+          // startkey: startkey, update_seq: update_seq
+          const docs = await this.deleteOldRevisions(db, targetDB, startkey, update_seq)
+          if (docs.length > 0) {
+            docNum = docNum + (docs.length - 1)
+            startkey = docs.slice(-1)[0]._id
+            const noMoreChanges = docs.length < 201
             if (!noMoreChanges) {
-              since = lastChangeInArray
               processingChanges = true
             } else {
               processingChanges = false
@@ -177,10 +215,25 @@ export class MaintenanceComponent implements OnInit {
             processingChanges = false
           }
         }
+        let process = this.processMonitorService.start('compact', _TRANSLATE('Records transferred to target db. Now rebuilding source DB'))
+        await sleep(1*1000)
+        this.processMonitorService.stop(process.id)
+        try {
+          await db.db.destroy()
+        } catch (err) {
+          console.log(err);
+        }
+        
       } catch (e) {
         console.log(e)
       }
-
+      try {
+        await targetDB.destroy()
+      } catch (err) {
+        console.log(err);
+      }
+      db = await this.userService.getUserDatabase()
+      
       const compactStopTime = new Date().toISOString()
       console.log("compactStopTime: " + compactStopTime)
       const start = moment(compactStartTime)

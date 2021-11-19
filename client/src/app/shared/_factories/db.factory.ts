@@ -17,10 +17,12 @@ PouchDB.plugin({
   loadIt: PouchDBLoad.load
 });
 PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-const defaults = {revs_limit: 1}
+// const defaults = {revs_limit: 1}
+// const defaults = {auto_compaction:true}
+const defaults = {}
 PouchDB.plugin(CryptoPouch)
 
-export function connectToSqlCipherDb(name, key = ''):PouchDB {
+export function connectToSqlCipherDb(name, key = '', options):PouchDB {
   let pouchDBOptions = <any>{
     adapter: 'cordova-sqlite',
     location: 'default',
@@ -33,7 +35,7 @@ export function connectToSqlCipherDb(name, key = ''):PouchDB {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
   try {
-    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});
+    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions, ...options});
     return pouch
   } catch (e) {
     console.log("Database error: " + e);
@@ -41,7 +43,7 @@ export function connectToSqlCipherDb(name, key = ''):PouchDB {
   }
 }
 
-export function connectToCryptoPouchDb(name, key = ''):PouchDB {
+export function connectToCryptoPouchDb(name, key = '', options = {}):PouchDB {
   let pouchDBOptions = <any>{}
   if (window['isCordovaApp']) {
     pouchDBOptions = {
@@ -57,7 +59,7 @@ export function connectToCryptoPouchDb(name, key = ''):PouchDB {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
   try {
-    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});
+    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions, ...options});
     if (key) {
       pouch.crypto(key)
       pouch.cryptoPouchIsEnabled = true
@@ -69,13 +71,13 @@ export function connectToCryptoPouchDb(name, key = ''):PouchDB {
   }
 }
 
-export function connectToPouchDb(name):PouchDB {
+export function connectToPouchDb(name, options = {}):PouchDB {
   const pouchDBOptions = <any>{}
   if (window['changes_batch_size'] && name === 'shared-user-database') {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
   try {
-    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});
+    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions, ...options});
     return pouch
   } catch (e) {
     console.log("Database error: " + e);
@@ -83,12 +85,12 @@ export function connectToPouchDb(name):PouchDB {
   }
 }
 
-export function DB(name, key = ''):PouchDB {
+export function DB(name, key = '', options = {}):PouchDB {
   if (window['cryptoPouchRunning']) {
-    return connectToCryptoPouchDb(name, key)
+    return connectToCryptoPouchDb(name, key, options)
   } else if (window['sqlCipherRunning']) {
-    return connectToSqlCipherDb(name, key)
+    return connectToSqlCipherDb(name, key, options)
   } else {
-    return connectToPouchDb(name)
+    return connectToPouchDb(name, options)
   }
 }
