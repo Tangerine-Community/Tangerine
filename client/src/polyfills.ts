@@ -62,6 +62,11 @@ import 'date-carousel/date-carousel.js'
 import * as process from 'process';
 (window as any).process = process
 
+// Fixes pouchdb-adapter-memory: https://github.com/pouchdb/pouchdb/issues/8206
+import { Buffer } from "buffer"
+(window as any).Buffer = Buffer;
+// (window as any).global.Buffer = (window as any).global.Buffer || require('buffer').Buffer;
+
 
 //import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
