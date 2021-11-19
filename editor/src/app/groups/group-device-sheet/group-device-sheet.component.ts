@@ -40,6 +40,7 @@ export class GroupDeviceSheetComponent implements OnInit {
   group:any
 
   @Input('groupId') groupId:string
+  noUnclaimedDevices: boolean = false
 
   constructor(
     private route: ActivatedRoute,
@@ -63,6 +64,9 @@ export class GroupDeviceSheetComponent implements OnInit {
 
   async listDevices() {
     const devices = (await this.groupDevicesService.list(this.groupId)).filter(device => !device.claimed)
+    if (devices.length ===0) {
+      this.noUnclaimedDevices = true
+    }
     const countsByVersion = devices
       .reduce((countsByVersion, device) => {
         countsByVersion[device.version] = countsByVersion[device.version]

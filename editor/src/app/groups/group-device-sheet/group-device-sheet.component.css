@@ -9,3 +9,7 @@ table {
 @media print {
   table {page-break-after: always;}
 }
+
+.unclaimed {
+  padding-left: 2em;
+}

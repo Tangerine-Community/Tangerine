@@ -1,4 +1,5 @@
 <h1>{{'Devices'|translate}}</h1>
+<div *ngIf="noUnclaimedDevices" class="unclaimed">No unclaimed devices.</div>
 <div *ngFor="let devices of tableArray;let i = index;">
   <table mat-table [dataSource]="devices" class="mat-elevation-z8">
     <ng-container matColumnDef="desc">
