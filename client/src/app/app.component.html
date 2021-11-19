@@ -50,6 +50,10 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
       <span>{{'Check for Update'|translate}}</span>
     </button>
+    <button *ngIf="isLoggedIn" mat-menu-item routerLink="/maintenance">
+      <mat-icon class="material-icons menu-tangy-location-list-icon">build</mat-icon>
+      <span>{{'Maintenance'|translate}}</span>
+    </button>
     <button routerLink="about" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">info</mat-icon>
       <span>{{'About'|translate}}</span>

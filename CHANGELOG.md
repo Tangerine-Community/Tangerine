@@ -1,5 +1,40 @@
 # What's new
 
+## v3.20.1
+
+__Fixes__
+
+- Address problem with overly-large databases by fixing database defaults when instantiating databases to ensure old revisions are pruned [#3058](https://github.com/Tangerine-Community/Tangerine/pull/3058)
+
+__New Features__
+
+- Add Maintenance page to client to enable app administration tasks and disk space statistics. [#3059](https://github.com/Tangerine-Community/Tangerine/pull/3059)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.1
+./start.sh v3.20.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.0
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.20.0
 
 __Fixes__
@@ -38,6 +73,7 @@ When we add new features or fix issues in patch releases of Tangerine, those cod
 releases of Tangerine. To make sure users of new releases are aware of those changes, we will occasionally mention them in 
 this section in case they have missed them in the Changelog for the corresponding earlier release. Please note that when you 
 install or upgrade a new Tangerine release, please review the Changelog for any changes in minor or patch releases. 
+
 - Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
 - Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever. (demo: https://youtu.be/RkoUN41jqr4)
 - Enhancements to support for archiving cases:

@@ -24,7 +24,7 @@ async function hasInstalledOnPouchDB() {
   }
   // See if the installed variable is set.
   let hasInstalled = false
-  let db = connectToPouchDb('tangerine-variables')
+  let db = connectToPouchDb('tangerine-variables', null)
   try {
     await db.get('installed')
     hasInstalled = true
@@ -44,7 +44,7 @@ async function hasInstalledOnSqlcipher() {
   // While this doesn't connect to an encrypted db, it will connect to a db in sqlite thus testing if
   // sqlcipher has ever been installed on. Note that if we ever add support for unencrypted sqlite, this
   // check won't work.
-  let db = connectToSqlCipherDb('tangerine-variables')
+  let db = connectToSqlCipherDb('tangerine-variables', null, null)
   try {
     await db.get('installed')
     hasInstalled = true

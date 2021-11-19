@@ -1,0 +1,51 @@
+<div class="wrapper">
+  <h1>Maintenance</h1>
+  
+  <mat-card class="maintenance-card">
+    <mat-card-title>{{'Compact Database'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'Compacting the database will take a while if there are many records in the database.'|translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" (click)="compact()">COMPACT DATABASE</button>
+    </mat-card-actions>
+  </mat-card>
+  
+  <mat-card class="maintenance-card" *ngIf="isCordovaApp">
+    <mat-card-title>{{'Cleanup Files'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'This will delete any backups on this tablet that are in the "backup" or "restore" directories. Be sure you have transferred them before doing this procedure.'|translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" (click)="pruneFiles()">CLEANUP FILES</button>
+    </mat-card-actions>
+  </mat-card>
+  
+  <mat-card class="maintenance-card" *ngIf="!isCordovaApp">
+    <mat-card-title>{{'Check Permissions'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'Confirms that the app has the correct permissions to support using the camera and location.' |translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" (click)="checkPermissions()">CHECK PERMISSIONS</button>
+    </mat-card-actions>
+  </mat-card>
+  
+  <div class="stats">
+    <h2>Statistics</h2>
+
+    <div *ngIf="displayLowStorageWarning" class="error">
+      <p>{{'Low Disk space!!!'|translate}}</p>
+    </div>
+    <div class="Rtable Rtable--2cols">
+
+      <div class="Rtable-cell cell-header">{{'Available Disk Space' |translate}}</div>
+      <div [className]="isStorageThresholdExceeded ? 'Rtable-cell error' : 'Rtable-cell'">{{storageAvailable}} GB</div>
+
+    </div>
+  </div>
+
+</div>
