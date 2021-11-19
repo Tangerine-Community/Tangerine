@@ -10,7 +10,8 @@ __Fixes__
 
 __Server upgrade instructions__
 
-Important upgrade: Please note that you must run update below (v3.20.0.js) to install the new listDevices view. If you don't the Devices listing will fail.
+Important upgrade: Please note that you must run update below (v3.19.4.js) to install the new listDevices view. If you don't, 
+  the Devices listing will fail.
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
