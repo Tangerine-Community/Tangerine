@@ -1,16 +1,16 @@
 <div class="wrapper">
   <h1>Maintenance</h1>
   
-  <mat-card class="maintenance-card">
-    <mat-card-title>{{'Compact Database'|translate}}</mat-card-title>
-    <mat-card-content>
-      <p>{{'Compacting the database will take a while if there are many records in the database.'|translate}}</p>
-    </mat-card-content>
-    <mat-divider inset></mat-divider>
-    <mat-card-actions>
-      <button mat-stroked-button color="primary" (click)="compact()">COMPACT DATABASE</button>
-    </mat-card-actions>
-  </mat-card>
+<!--  <mat-card class="maintenance-card">-->
+<!--    <mat-card-title>{{'Compact Database'|translate}}</mat-card-title>-->
+<!--    <mat-card-content>-->
+<!--      <p>{{'Compacting the database will take a while if there are many records in the database.'|translate}}</p>-->
+<!--    </mat-card-content>-->
+<!--    <mat-divider inset></mat-divider>-->
+<!--    <mat-card-actions>-->
+<!--      <button mat-stroked-button color="primary" (click)="compact()">COMPACT DATABASE</button>-->
+<!--    </mat-card-actions>-->
+<!--  </mat-card>-->
   
   <mat-card class="maintenance-card" *ngIf="isCordovaApp">
     <mat-card-title>{{'Cleanup Files'|translate}}</mat-card-title>
