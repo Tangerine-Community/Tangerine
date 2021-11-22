@@ -4,11 +4,12 @@
 
 __Fixes__
 
-- Address problem with overly-large databases by fixing database defaults when instantiating databases to ensure old revisions are pruned [#3058](https://github.com/Tangerine-Community/Tangerine/pull/3058)
+- Fix Form Editor removes manually added on-resubmit logic in tangy-form [#3017](https://github.com/Tangerine-Community/Tangerine/issues/3017)
+- Support old PWAs that did not check for all permissions when installed in order to get permanent storage [#3084](https://github.com/Tangerine-Community/Tangerine/issues/3084)
 
 __New Features__
 
-- Add Maintenance page to client to enable app administration tasks and disk space statistics. [#3059](https://github.com/Tangerine-Community/Tangerine/pull/3059)
+- Add Maintenance page to client to enable app administration tasks (clear out old backups and fix permissions) and disk space statistics. [#3059](https://github.com/Tangerine-Community/Tangerine/pull/3059)
 
 __Server upgrade instructions__
 

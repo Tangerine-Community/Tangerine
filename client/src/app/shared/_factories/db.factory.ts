@@ -17,7 +17,7 @@ PouchDB.plugin({
   loadIt: PouchDBLoad.load
 });
 PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-const defaults = {revs_limit: 1}
+const defaults = {}
 PouchDB.plugin(CryptoPouch)
 
 export function connectToSqlCipherDb(name, key = ''):PouchDB {
