@@ -1,5 +1,13 @@
 # What's new
 
+## v3.20.2
+
+__Fixes__
+
+- Fix issue where Group User on server with permission to access database would not have access. (https://github.com/Tangerine-Community/Tangerine/commit/a10162d92642cf83ae43aa3ad96033691e5b0a76)
+- Add Amharic translation.
+
+
 ## v3.20.1
 
 __Fixes__
