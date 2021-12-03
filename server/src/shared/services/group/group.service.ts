@@ -85,10 +85,10 @@ export class GroupService {
   }
 
   // During account creation, this method is to be used.
-  async installViews(groupDb) {
-
-    log.info(`Installing views for ${groupDb.name}`)
-    insertGroupViews(groupDb.name)
+  async installViews(groupId) {
+    log.info(`Installing views for ${groupId}`)
+    insertGroupViews(groupId)
+    const groupDb = new DB(groupId)
     for (const moduleName in this._views) {
       for (const viewName in this._views[moduleName]) {
         await groupDb.put({
@@ -145,7 +145,30 @@ export class GroupService {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const config = await this.configService.config()
+    const security = {
+      admins: {
+        roles: [`admin-${groupId}`]
+      },
+      members: {
+        roles: [`member-${groupId}`]
+      }
+    }
+    // Create databases and corresponding security settings.
     await this.http.put(`${config.couchdbEndpoint}${groupId}`).toPromise()
+    await this.http.put(`${config.couchdbEndpoint}${groupId}/_security`, {
+      ...security,
+      members: {
+        roles: [
+          ...security.members.roles, 
+          `sync-${groupId}`
+        ]
+      }
+    }).toPromise()
+    await this.http.put(`${config.couchdbEndpoint}${groupId}-log`).toPromise()
+    await this.http.put(`${config.couchdbEndpoint}${groupId}-log/_security`, security).toPromise()
+    await this.http.put(`${config.couchdbEndpoint}${groupId}-conflict-revs`).toPromise()
+    await this.http.put(`${config.couchdbEndpoint}${groupId}-conflict-revs/_security`, security).toPromise()
+    // Add group to groups database.
     const created = new Date().toJSON()
     const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
     const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_forms', 'can_access_data', 'can_access_download_csv'] };
@@ -160,13 +183,7 @@ export class GroupService {
     }
     const groupDb = new DB(groupId)
     let groupName = label 
-    await this.installViews(groupDb)
-    // Add admin role that will be used for programatically created database users for a group.
-    await this.http.put(`${config.couchdbEndpoint}${groupId}/_security`, {
-      admins: {
-        roles: [`admin-${groupId}`]
-      }
-    }).toPromise()
+    await this.installViews(groupId)
     await exec(`cp -r /tangerine/content-sets/default  /tangerine/groups/${groupId}`)
     await exec(`cp /tangerine/translations/*.json /tangerine/groups/${groupId}/client/`)
     await exec(`mkdir /tangerine/groups/${groupId}/client/media`)
