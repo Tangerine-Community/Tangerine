@@ -6,7 +6,6 @@ import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from '../user/user.service';
 import {SyncSessionInfo} from "../../../modules/sync/services/sync-session/sync-session-v2.service";
-import axios from "axios";
 import {DbService} from "../db/db.service";
 const insertGroupViews = require('../../../insert-group-views.js')
 
@@ -145,6 +144,8 @@ export class GroupService {
   async create(label, username):Promise<Group> {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
+    const config = await this.configService.config()
+    await this.http.put(`${config.couchdbEndpoint}${groupId}`).toPromise()
     const created = new Date().toJSON()
     const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
     const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_forms', 'can_access_data', 'can_access_download_csv'] };
@@ -160,6 +161,12 @@ export class GroupService {
     const groupDb = new DB(groupId)
     let groupName = label 
     await this.installViews(groupDb)
+    // Add admin role that will be used for programatically created database users for a group.
+    await this.http.put(`${config.couchdbEndpoint}${groupId}/_security`, {
+      admins: {
+        roles: [`admin-${groupId}`]
+      }
+    }).toPromise()
     await exec(`cp -r /tangerine/content-sets/default  /tangerine/groups/${groupId}`)
     await exec(`cp /tangerine/translations/*.json /tangerine/groups/${groupId}/client/`)
     await exec(`mkdir /tangerine/groups/${groupId}/client/media`)
