@@ -94,7 +94,7 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   async getForms() {
     this.forms = (await this.tangerineForms.getFormsInfo(this.groupId)).map(formInfo => ({
       ...formInfo,
-      printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${this.groupId}/${formInfo.id}/print`
+      printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}#/tangy-form-editor/${this.groupId}/${formInfo.id}/print`
     }));;
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);

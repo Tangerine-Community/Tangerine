@@ -6,6 +6,11 @@ __Fixes__
 
 - Fix issue where Group User on server with permission to access database would not have access. (https://github.com/Tangerine-Community/Tangerine/commit/a10162d92642cf83ae43aa3ad96033691e5b0a76)
 - Add Amharic translation.
+- Fix issue when backup has never run, the Clean backups command in Maintenance on client fails, and the process alert 
+  does not go away. This PR also copies over a fix for clearing all progress messages from Editor. PR: [#3098](https://github.com/Tangerine-Community/Tangerine/pull/3098)
+
+
+
 
 
 ## v3.20.1
