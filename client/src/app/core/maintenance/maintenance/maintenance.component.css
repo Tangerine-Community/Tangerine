@@ -43,6 +43,11 @@
   font-size: larger;
   font-weight: bold;
 }
+.complete {
+  color: green;
+  font-size: larger;
+  font-weight: bold;
+}
 .maintenance-card {
   max-width: 400px;
 }
