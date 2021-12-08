@@ -57,7 +57,6 @@ module.exports = {
           
           if (doc.type !== 'issue') {
             if (doc.archived) {
-              debugger;
               // Delete from the -reporting db.
               console.log("Deleting: " + doc._id)
               try {

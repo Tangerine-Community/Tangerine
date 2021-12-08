@@ -309,33 +309,32 @@ def convert_response(resp_dict):
                 mysql_connection.commit()
  
 
-def delete_record(tangerine_database,id):
-    with cloudant.document.Document(tangerine_database, document_id=id) as document:
-        doc_dict = json.loads(document.json())
-        type = doc_dict.get('type')
-        # for deleted documents, the type element is no longer available
-        if (type.lower() == "case"):
-            # handle case type
-            cursor.execute("Delete from " + mysqlDatabaseName + ".case where CaseID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "participant"):
-            # pass
-            cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "event-form"):
-            # pass
-            cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "case-event"):
-            cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "response"):
-            response = doc_dict.get('data')
-            formID = response.get('formId').replace('-', '_')
-            cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
-            mysql_connection.commit()
-        else:
-            log("Unexpected document type")
+def delete_record(document):
+    doc_dict = json.loads(document.json())
+    type = doc_dict.get('type')
+    # for deleted documents, the type element is no longer available
+    if (type.lower() == "case"):
+        # handle case type
+        cursor.execute("Delete from " + mysqlDatabaseName + ".case where CaseID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "participant"):
+        # pass
+        cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "event-form"):
+        # pass
+        cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "case-event"):
+        cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "response"):
+        response = doc_dict.get('data')
+        formID = response.get('formId').replace('-', '_')
+        cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
+        mysql_connection.commit()
+    else:
+        log("Unexpected document type")
 
 
 def main_job():
@@ -376,22 +375,26 @@ def main_job():
               version = cng[0].get('rev')
               doc = change.get('doc')
               type = doc.get('type')
+              archived = doc.get('archived')
               if type is not None:
                   id = doc.get('_id')
                   log("Processing Seq: " + lastSequence + ", ID: " + id + ", type: " + type.lower())
-                  # There are 5 major types: case, participant, case-event, event-form and response
-                  if (type.lower() == "case"):
-                      convert_case(doc)
-                  elif (type.lower() == "participant"):
-                      convert_participant(doc)
-                  elif (type.lower() == "event-form"):
-                      convert_event_form(doc)
-                  elif (type.lower() == "case-event"):
-                      convert_case_event(doc)
-                  elif (type.lower() == "response"):
-                      convert_response(doc)
+                  if archived:
+                      delete_record(doc)
                   else:
-                      log("Unexpected document type: " + id)
+                      # There are 5 major types: case, participant, case-event, event-form and response
+                      if (type.lower() == "case"):
+                          convert_case(doc)
+                      elif (type.lower() == "participant"):
+                          convert_participant(doc)
+                      elif (type.lower() == "event-form"):
+                          convert_event_form(doc)
+                      elif (type.lower() == "case-event"):
+                          convert_case_event(doc)
+                      elif (type.lower() == "response"):
+                          convert_response(doc)
+                      else:
+                          log("Unexpected document type: " + id)
   
               # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
               config.set("TANGERINE","LastSequence",lastSequence)
