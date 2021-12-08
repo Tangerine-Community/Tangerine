@@ -74,7 +74,8 @@ module.exports = {
                 _id: participant.id,
                 caseId: doc._id,
                 numInf: participant.participant_id === participant_id ? numInf : '',
-                type: "participant"
+                type: "participant",
+                archived: doc.archived
               }, targetDb);
             }
           
@@ -86,7 +87,7 @@ module.exports = {
                   // for (let index = 0; index < event['eventForms'].length; index++) {
                   // const eventForm = event['eventForms'][index]
                   try {
-                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb);
+                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id, archived: doc.archived}, targetDb);
                   } catch (e) {
                     if (e.status !== 404) {
                       console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
@@ -102,7 +103,7 @@ module.exports = {
               // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
               // since we are already serializing each event-form and have the parent caseEventId on each one.
               delete eventClone.eventForms
-              await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb)
+              await pushResponse({...eventClone, _id: eventClone.id, type: "case-event", archived: doc.archived}, targetDb)
             }
           } else {
             await saveFlatResponse(doc, locationList, targetDb, sanitized);
@@ -225,7 +226,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
-    complete: formResponse.complete
+    complete: formResponse.complete,
+    archived: formResponse.archived
   };
   function set(input, key, value) {
     flatFormResponse[key.trim()] = input.skipped
