@@ -47,6 +47,7 @@ module.exports = {
         try {
           const {doc, sourceDb} = data
           const groupId = sourceDb.name
+          // TODO: Can't the fetch of the locationList be cached?
           const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
           console.log(doc.type)
           // @TODO Rename `-reporting` to `-csv`.
@@ -55,17 +56,14 @@ module.exports = {
           const SANITIZED_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
           
           if (doc.type !== 'issue') {
-            // TODO: Can't this be cached?
             if (doc.archived) {
               debugger;
               // Delete from the -reporting db.
               console.log("Deleting: " + doc._id)
               try {
-                // await REPORTING_DB.remove(doc._id, doc._rev)
-                await REPORTING_DB.get(doc._id).then(function (doc) {
-                  return REPORTING_DB.remove(doc._id, doc._rev);
-                });
-                console.log("Deleted from REPORTING_DB: " + doc._id + " rev: " + doc._rev)
+                const docToDelete = await REPORTING_DB.get(doc._id)
+                await REPORTING_DB.remove(docToDelete._id, docToDelete._rev);
+                console.log("Deleted from REPORTING_DB: " + docToDelete._id + " rev: " + docToDelete._rev)
               } catch (e) {
                 console.log("Error: " + JSON.stringify(e))
               }
@@ -249,6 +247,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
+    // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
     archived: formResponse.archived,
     tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
