@@ -375,26 +375,22 @@ def main_job():
               version = cng[0].get('rev')
               doc = change.get('doc')
               type = doc.get('type')
-              archived = doc.get('archived')
               if type is not None:
                   id = doc.get('_id')
                   log("Processing Seq: " + lastSequence + ", ID: " + id + ", type: " + type.lower())
-                  if archived:
-                      delete_record(doc)
+                  # There are 5 major types: case, participant, case-event, event-form and response
+                  if (type.lower() == "case"):
+                      convert_case(doc)
+                  elif (type.lower() == "participant"):
+                      convert_participant(doc)
+                  elif (type.lower() == "event-form"):
+                      convert_event_form(doc)
+                  elif (type.lower() == "case-event"):
+                      convert_case_event(doc)
+                  elif (type.lower() == "response"):
+                      convert_response(doc)
                   else:
-                      # There are 5 major types: case, participant, case-event, event-form and response
-                      if (type.lower() == "case"):
-                          convert_case(doc)
-                      elif (type.lower() == "participant"):
-                          convert_participant(doc)
-                      elif (type.lower() == "event-form"):
-                          convert_event_form(doc)
-                      elif (type.lower() == "case-event"):
-                          convert_case_event(doc)
-                      elif (type.lower() == "response"):
-                          convert_response(doc)
-                      else:
-                          log("Unexpected document type: " + id)
+                      log("Unexpected document type: " + id)
   
               # Write the last sequence number back to the INI file, the last sequence number won't work if descending is set to true.
               config.set("TANGERINE","LastSequence",lastSequence)
