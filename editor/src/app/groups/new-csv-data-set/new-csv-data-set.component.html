@@ -25,6 +25,16 @@
           }}</mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field>
+        <input
+            name="descriptionInput"
+            [(ngModel)]="description"
+            #groupNameInput="ngModel"
+            matInput
+            placeholder="{{'Description'|translate}}"
+            required
+        >
+    </mat-form-field>
       <mat-checkbox name="excludePII" [(ngModel)]="excludePII"
         >{{ "Exclude PII?" | translate }}
       </mat-checkbox>
@@ -32,7 +42,7 @@
     <table class="form-list materialish">
       <tr class="table-header">
         <td>
-
+          <mat-checkbox name="toggle-select-all-forms" (change)="toggleSelectAllForms($event)"></mat-checkbox>
         </td>
         <td>
           Form Title
@@ -43,7 +53,7 @@
       </tr>
       <tr *ngFor="let form of forms" >
         <td>
-          <mat-checkbox (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox>
+          <mat-checkbox [checked]="allFormsSelected" (change)="onFormCheckBoxChange(form.id, $event)"></mat-checkbox>
         </td>
         <td>
           {{form.title}}
@@ -58,6 +68,6 @@
         </td>
       </tr>
     </table>
-    <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit'|translate}}</button>
+    <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1||!description">{{'Submit'|translate}}</button>
   </form>
 </div>
