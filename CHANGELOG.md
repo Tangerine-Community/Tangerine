@@ -11,6 +11,10 @@ __Fixes__
 - Fix bad url for Print Content feature in Editor/Author. PR: [#3099](https://github.com/Tangerine-Community/Tangerine/pull/3099)
 - Clicking on unavailable form in Case should not open it Issue: [#3063](https://github.com/Tangerine-Community/Tangerine/issues/3063)
 - The csv and mysql outputs must carry over the 'archived' property from the group db. PR: [#3104](https://github.com/Tangerine-Community/Tangerine/pull/3104)
+- Bump tangy-form to v4.28.2 and tangy-form-editor to v7.9.5. Includes fix for tangy-input-groups change logic [#2728](https://github.com/Tangerine-Community/Tangerine/issues/2728)
+- Users should enter dataset description when creating a dataset in Editor [#3078](https://github.com/Tangerine-Community/Tangerine/pull/3078)
+- Avoid crashes when properties on the markup are accessed before being available to the component [#3080](https://github.com/Tangerine-Community/Tangerine/pull/3080)
+- Replace special chars with underscore in CSV output [#3003](https://github.com/Tangerine-Community/Tangerine/pull/3003/)
 
 __Upgrade notice__
 
@@ -21,7 +25,6 @@ Conflicts. Reset the group-uuid/editor directory with the content-sets/case-modu
 __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
-
 
 ```
 cd tangerine
