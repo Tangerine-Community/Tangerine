@@ -24,9 +24,11 @@ export class NewCsvDataSetComponent implements OnInit {
   templateSelections:any = {}
   months = []
   years = []
+  description
   selectedMonth = '*'
   selectedYear = '*'
   selectedForms = []
+  allFormsSelected = false
   groupId = ''
   forms
   activeForms
@@ -100,8 +102,7 @@ export class NewCsvDataSetComponent implements OnInit {
       return
     }
     try {
-      const result: any = await this.groupsService.downloadCSVDataSet(this.groupId, forms, this.selectedYear, this.selectedMonth, this.excludePII);
-      console.log(result)
+      const result: any = await this.groupsService.downloadCSVDataSet(this.groupId, forms, this.selectedYear, this.selectedMonth, this.description, this.excludePII);
       this.stateUrl = result.stateUrl;
       this.router.navigate([`../`], { relativeTo: this.route })
     } catch (error) {
@@ -114,6 +115,15 @@ export class NewCsvDataSetComponent implements OnInit {
       this.selectedForms = [...this.selectedForms, formId]
     } else{
       this.selectedForms = this.selectedForms.filter(e=>e!==formId)
+    }
+  }
+
+  toggleSelectAllForms(input){
+    this.allFormsSelected = !this.allFormsSelected
+    if(input.checked){
+      this.selectedForms = this.forms.map(form=>form.id)
+    } else{
+      this.selectedForms = []
     }
   }
 
