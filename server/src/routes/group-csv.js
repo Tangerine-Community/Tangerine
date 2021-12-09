@@ -41,17 +41,17 @@ const generateCSV = async (req, res) => {
       forms = [...forms, ...appendedForms]
   }
   const formInfo = forms.find(formInfo => formInfo.id === formId)
-  const title = formInfo.title.replace(/ /g, '_')
+  const title = formInfo.title.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
   // this.group = await this.groupsService.getGroupInfo(groupId);
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
-  const groupLabel = group.label.replace(/ /g, '_')
+  const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
   const options = {
     replacement: '_'
   }
   const groupFormname = sanitize(groupLabel + '-' + title, options)
-  const fileName = `${groupFormname}${sanitizedExtension}-${Date.now()}.csv`.replace(/'/g, "_")
-  let outputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
+  const fileName = `${groupFormname}${sanitizedExtension}-${Date.now()}.csv`.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
+  let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')}`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   // console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
 
@@ -79,13 +79,13 @@ const generateCSVDataSet = async (req, res) => {
   const {selectedYear:year, selectedMonth:month, description} = req.body
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
-  const groupLabel = group.label.replace(/ /g, '_')
+  const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
   const options = {
     replacement: '_'
   }
-  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/'/g, "_")
-  let outputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${year ? sanitize(year) : `'*'`} ${month ? sanitize(month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
+  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
+  let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')}`
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${req.params.year ? sanitize(req.params.year) : `'*'`} ${req.params.month ? sanitize(req.params.month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)}`)
