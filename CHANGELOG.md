@@ -1,5 +1,85 @@
 # What's new
 
+## v3.20.2
+
+__Fixes__
+
+- Fix issue where Group User on server with permission to access database would not have access. Commit: [a10162d9](https://github.com/Tangerine-Community/Tangerine/commit/a10162d92642cf83ae43aa3ad96033691e5b0a76)
+- Add Amharic translation.
+- Fix issue when backup has never run, the Clean backups command in Maintenance on client fails, and the process alert 
+  does not go away. This PR also copies over a fix for clearing all progress messages from Editor. PR: [#3098](https://github.com/Tangerine-Community/Tangerine/pull/3098)
+- Fix bad url for Print Content feature in Editor/Author. PR: [#3099](https://github.com/Tangerine-Community/Tangerine/pull/3099)
+- Clicking on unavailable form in Case should not open it Issue: [#3063](https://github.com/Tangerine-Community/Tangerine/issues/3063)
+- The csv and mysql outputs must carry over the 'archived' property from the group db. PR: [#3104](https://github.com/Tangerine-Community/Tangerine/pull/3104)
+
+__Upgrade notice__
+
+If your project was already using the Data Conflicts tools that were installed manually, you must remove those in order to 
+prevent a conflict with the Database Conflicts tool that is now automatically installed in Tangerine -> Deploy -> Database 
+Conflicts. Reset the group-uuid/editor directory with the content-sets/case-module/editor components or the content-sets/case-module-starter/editor/index.html file.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.2
+./start.sh v3.20.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.1
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
+## v3.20.1
+
+__Fixes__
+
+- Fix Form Editor removes manually added on-resubmit logic in tangy-form [#3017](https://github.com/Tangerine-Community/Tangerine/issues/3017)
+- Support old PWAs that did not check for all permissions when installed in order to get permanent storage [#3084](https://github.com/Tangerine-Community/Tangerine/issues/3084)
+
+__New Features__
+
+- Add Maintenance page to client to enable app administration tasks (clear out old backups and fix permissions) and disk space statistics. [#3059](https://github.com/Tangerine-Community/Tangerine/pull/3059)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.1
+./start.sh v3.20.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.0
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.20.0
 
 __Fixes__
@@ -14,9 +94,10 @@ __Fixes__
 
 __New Features__
 
+- New CSVs related to Cases now available for Case Participants, Case Events, and Case Event Forms. https://github.com/Tangerine-Community/Tangerine/pull/2908
 - Online Survey user is warned if they are using an unsupported web browser (Internet Explorer). https://github.com/Tangerine-Community/Tangerine/pull/3001 
 - Data Manager generates CSV with specific columns using CSV Templates.
-- Data Manager restores Case Event stuck in Conflict Revision [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
+- Data Manager restores Case Event stuck in Conflict Revision. Add the `can_restore_conflict_event` permission to the users' role(s) to enable. [#2949](https://github.com/Tangerine-Community/Tangerine/issues/2949)
 - Enable Data Conflict Manager for groups. [2997](https://github.com/Tangerine-Community/Tangerine/pull/2997) This is based on the [couchdb-conflict-manager](https://github.com/ICTatRTI/couchdb-conflict-manager) web component.
 - In Offline App, when submitting a form, opening a case, creating a case, etc., a new loading screen is shown. [#3000](https://github.com/Tangerine-Community/Tangerine/pull/3000)
 - In Online Survey, new support for switching language without interrupting the survey. [#2643](https://github.com/Tangerine-Community/Tangerine/issues/2643)
@@ -24,7 +105,12 @@ __New Features__
 - The login screen may now have custom markup. [#2979](https://github.com/Tangerine-Community/Tangerine/pull/2979)
 - Statistical files are now available in Stata .do format for corresponding forms [#2971](https://github.com/Tangerine-Community/Tangerine/pull/2971)
 - The new `usePouchDbLastSequenceTracking` property in app-config.json and settings page enables the use of PouchDB's native last sequence tracking support when syncing. [#2999](https://github.com/Tangerine-Community/Tangerine/pull/2999)
-- The new `encryptionPlugin:'CryptoPouch'` property in app-config.json enables testing of the CryptoPouch extension currently in development. [#2998](https://github.com/Tangerine-Community/Tangerine/pull/2998) Please note that this feature is not yet ready for deployment.
+- The new `encryptionPlugin:'CryptoPouch'` property in app-config.json enables testing of the CryptoPouch extension currently in development. [#2998](https://github.com/Tangerine-Community/Tangerine/pull/2998) Please note that this feature is not yet ready for deployment. There are now three different possible storage configurations for Tangerine:
+  1. "encryptionPlugin":"CryptoPouch" - Configures the app to use CryptoPouch, which encrypts documents in the app's indexedb for storage.
+  2. "turnOffAppLevelEncryption": true - Configures the app without encryption, using the app's indexedb for storage instead of sqlite/sqlCypher.
+  3. "encryptionPlugin":"SqlCipher" - or without any additional configuration (SqlCipher is the default configuration.) - Configures the app to use SqlCipher, which encrypts documents in an external sqlLite database for storage.
+- We have changed how we determine which storage engine is being used. In the past we exposed a window['turnOffAppLevelEncryption']
+  global variable based on the same flag in app-config.json; however, now we are determining in app-init.ts which engine is running and exposing either `window['cryptoPouchRunning']` or `window['sqlCipherRunning']` to indicate which engine is running. It is important to note that even the app is configured with `encryptionPlugin:'CryptoPouch'` in app-config.json, the app may have been installed without that setting and is actually running sqlCypher. This is why it is important to observe if either `window['cryptoPouchRunning']` or `window['sqlCipherRunning']` is set. 
 
 __Backports/Good to Know__
 
@@ -32,6 +118,7 @@ When we add new features or fix issues in patch releases of Tangerine, those cod
 releases of Tangerine. To make sure users of new releases are aware of those changes, we will occasionally mention them in 
 this section in case they have missed them in the Changelog for the corresponding earlier release. Please note that when you 
 install or upgrade a new Tangerine release, please review the Changelog for any changes in minor or patch releases. 
+
 - Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
 - Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever. (demo: https://youtu.be/RkoUN41jqr4)
 - Enhancements to support for archiving cases:

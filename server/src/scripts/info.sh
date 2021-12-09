@@ -27,6 +27,8 @@ echo "update-group-archived-index(Required to run when forms.json search setting
 echo "update-down-sync-doc-count-by-location-id-index (If forms.json couchdbSyncSetting.pull changes, this needs to be run)"
 echo "mysql-report             (Report on the data migration process to mysql)"
 echo "make-translations-consistent (Ensures all translation files have all known translateables.)"
+echo "export-translations-csvs (Exports translation JSON files to CSV format for sending to translators)"
+echo "import-translations-csvs (When translations come in as CSV, imports translation CSV files to JSON format)"
 echo ""
 echo "Add --help option to any command for command specific documentation."
 

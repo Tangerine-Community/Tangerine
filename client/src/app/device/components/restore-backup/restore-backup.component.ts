@@ -85,7 +85,7 @@ export class RestoreBackupComponent implements OnInit {
     }
     
     const appConfig = await this.appConfigService.getAppConfig()
-    if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && !window['turnOffAppLevelEncryption']) {
+    if (window['isCordovaApp'] && appConfig.syncProtocol === '2' && window['sqlCipherRunning']) {
       const len = this.dbNames.length
       let copiedDbs = []
       for (let index = 0; index < this.dbNames.length; index++) {

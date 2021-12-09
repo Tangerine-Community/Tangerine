@@ -1,8 +1,8 @@
 
 
-<div *ngIf="(this.response || (!this.response && !eventForm.formResponseId)) && this.canOpen" class="icon-list-item {{eventForm.required ? 'required' : ''}}" >
-	<mwc-icon routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}" [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
-	<div routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
+<div *ngIf="(this.response || (!this.response && !eventForm.formResponseId)) && this.canOpen" class="icon-list-item {{eventForm.required ? 'required' : ''}}" routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
+	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
+	<div>
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>

@@ -31,6 +31,7 @@ async function hasInstalledOnPouchDB() {
   } catch(e) {
     hasInstalled = false
   }
+  console.log("hasInstalledOnPouchDB: " + hasInstalled)
   return hasInstalled
 }
 
@@ -50,22 +51,22 @@ async function hasInstalledOnSqlcipher() {
   } catch(e) {
     hasInstalled = false
   }
+  console.log("hasInstalledOnSqlcipher: " + hasInstalled)
   return hasInstalled
 }
 
 async function hasInstalledOnCryptoPouch() {
   let hasInstalled = false
-  let db = connectToCryptoPouchDb('shared-user-database')
-  let results = await db.allDocs({limit: 1, include_docs: true})
-  // If CryptoPouch has been used, a doc will consist of only 3 properties: payload, _id, and _rev.
-  if (
-    results.rows[0]?.doc?.payload &&
-    results.rows[0].doc._id &&
-    results.rows[0].doc._rev &&
-    Object.keys(results.rows[0].doc).length === 3
-  ) {
-    hasInstalled = true
+  let db = connectToCryptoPouchDb('tangerine-variables')
+  try {
+    const result = await db.get('encryptionType')
+    if (result.value === 'cryptoPouch') {
+      hasInstalled = true
+    }
+  } catch(e) {
+    hasInstalled = false
   }
+  console.log("hasInstalledOnCryptoPouch: " + hasInstalled)
   return hasInstalled
 }
 
