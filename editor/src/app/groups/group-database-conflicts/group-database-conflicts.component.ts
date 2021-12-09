@@ -40,7 +40,7 @@ export class GroupDatabaseConflictsComponent implements OnInit {
           if (data.status === 201) {
             const dbUrlWithCredentials = data.body["dbUrlWithCredentials"]
             this.container.nativeElement.innerHTML = `
-      <couchdb-conflict-manager dbUrl="${dbUrlWithCredentials}" username="${window['userId']}"></couchdb-conflict-manager>
+      <couchdb-conflict-manager dbUrl="${dbUrlWithCredentials}" username="${username}"></couchdb-conflict-manager>
     `
           } else {
             // return false;

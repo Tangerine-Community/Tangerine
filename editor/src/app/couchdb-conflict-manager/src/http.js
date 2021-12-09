@@ -5,7 +5,7 @@ function parseDbUrl(dbUrl) {
   return {
     username: urlObject.username,
     password: urlObject.password,
-    url: `${urlObject.origin}${urlObject.pathname}` 
+    url: `${urlObject.protocol}//${dbUrl.split('@')[1]}` 
   }
 }
 
