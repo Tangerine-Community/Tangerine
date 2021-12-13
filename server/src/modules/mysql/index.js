@@ -65,17 +65,18 @@ module.exports = {
           if (doc.type === 'case') {
             // output case
             await saveFlatResponse(doc, locationList, targetDb, sanitized);
-            let participant_id = getItemValue(doc, 'participant_id')
-            if (participant_id && process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
-              participant_id = doc._id + '-' + participant_id
-            }
 
             // output participants
             for (const participant of doc.participants) {
+              let participant_id = participant.id
+              if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
+                participant_id = doc._id + '-' + participant.id
+              }
               await pushResponse({
                 ...participant,
                 _id: participant_id,
                 caseId: doc._id,
+                participantId: participant.id,
                 type: "participant",
                 archived: doc.archived||''
               }, targetDb);
