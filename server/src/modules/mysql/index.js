@@ -77,8 +77,8 @@ module.exports = {
                 ...participant,
                 _id: uuidv4(),
                 caseId: doc._id,
-                numInf: participant.participant_id === participant_id ? numInf : '',
-                type: "participant"
+                type: "participant",
+                archived: doc.archived||''
               }, targetDb);
             }
           
@@ -229,7 +229,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
-    complete: formResponse.complete
+    complete: formResponse.complete,
+    archived: formResponse.archived||''
   };
   function set(input, key, value) {
     flatFormResponse[key.trim()] = input.skipped
