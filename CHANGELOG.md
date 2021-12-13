@@ -9,12 +9,13 @@ __Fixes__
 - Fix issue when backup has never run, the Clean backups command in Maintenance on client fails, and the process alert 
   does not go away. This PR also copies over a fix for clearing all progress messages from Editor. PR: [#3098](https://github.com/Tangerine-Community/Tangerine/pull/3098)
 - Fix bad url for Print Content feature in Editor/Author. PR: [#3099](https://github.com/Tangerine-Community/Tangerine/pull/3099)
-- Clicking on unavailable form in Case should not open it Issue: [#3063](https://github.com/Tangerine-Community/Tangerine/issues/3063)
+- Clicking on unavailable form in Case should not open it. Issue: [#3063](https://github.com/Tangerine-Community/Tangerine/issues/3063)
 - The csv and mysql outputs must carry over the 'archived' property from the group db. PR: [#3104](https://github.com/Tangerine-Community/Tangerine/pull/3104)
-- Bump tangy-form to v4.28.2 and tangy-form-editor to v7.9.5. Includes fix for tangy-input-groups change logic [#2728](https://github.com/Tangerine-Community/Tangerine/issues/2728)
-- Users should enter dataset description when creating a dataset in Editor [#3078](https://github.com/Tangerine-Community/Tangerine/pull/3078)
+- Bump tangy-form to v4.28.2 and tangy-form-editor to v7.9.5. Includes fix for tangy-input-groups change logic Issue: [#2728](https://github.com/Tangerine-Community/Tangerine/issues/2728)
+- Users should enter dataset description when creating a dataset in Editor PR: [#3078](https://github.com/Tangerine-Community/Tangerine/pull/3078)
 - Avoid crashes when properties on the markup are accessed before being available to the component [#3080](https://github.com/Tangerine-Community/Tangerine/pull/3080)
-- Replace special chars with underscore in CSV output [#3003](https://github.com/Tangerine-Community/Tangerine/pull/3003/)
+- Replace special chars with underscore in CSV output. PR: [#3003](https://github.com/Tangerine-Community/Tangerine/pull/3003/)
+- Refresh global reference to T.case when using a case so most importantly the correct context is set PR: [#3108](https://github.com/Tangerine-Community/Tangerine/pull/3108)
 
 __Upgrade notice__
 
