@@ -72,6 +72,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
       await this.caseService.load(this.caseId)
       this.caseService.setContext(params.eventId, params.eventFormId)
       this.window.caseService = this.caseService
+      this.window.T.case = this.caseService
       this.caseEvent = this
         .caseService
         .case
