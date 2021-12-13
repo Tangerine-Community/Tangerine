@@ -108,6 +108,7 @@ def convert_participant(resp_dict):
         #check to see if we have any additional data elements that we need to convert and save to MySQL database
         del resp_dict["data"]
         del resp_dict["caseId"]
+        del resp_dict["participantId"]
         del resp_dict["_id"]
         del resp_dict["_rev"]
         del resp_dict["caseRoleId"]
