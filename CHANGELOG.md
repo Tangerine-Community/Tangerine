@@ -17,7 +17,8 @@ __Fixes__
 - Replace special chars with underscore in CSV output. PR: [#3003](https://github.com/Tangerine-Community/Tangerine/pull/3003/)
 - Refresh global reference to T.case when using a case so most importantly the correct context is set PR: [#3108](https://github.com/Tangerine-Community/Tangerine/pull/3108)
 - Link to download data set downloads a JSON file with headers and group config doc. Issue: [#3114](https://github.com/Tangerine-Community/Tangerine/issues/3114)
-
+- CSV template creation fails. Issue: [#3115](https://github.com/Tangerine-Community/Tangerine/issues/3115)
+- Restart couchdb container on failure [#3112](https://github.com/Tangerine-Community/Tangerine/pull/3112)
 __Upgrade notice__
 
 If your project was already using the Data Conflicts tools that were installed manually, you must remove those in order to 
