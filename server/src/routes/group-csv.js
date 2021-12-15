@@ -83,12 +83,12 @@ const generateCSVDataSet = async (req, res) => {
   const options = {
     replacement: '_'
   }
-  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
-  let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')}`
+  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')
+  let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')}`
   let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${req.params.year ? sanitize(req.params.year) : `'*'`} ${req.params.month ? sanitize(req.params.month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
-    log.info(`generate csv done: ${JSON.stringify(status)}`)
+    log.info(`generate csv done: ${JSON.stringify(status)} ${outputPath}`)
   }).catch(error => {
     log.error(error)
   })

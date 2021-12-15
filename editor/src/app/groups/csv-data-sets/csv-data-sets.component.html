@@ -6,11 +6,15 @@
     </button>
   </a>
 </div>
+
 <div class="tangy-full-width" *ngIf="csvDataSets?.length>0">
+  <div class="instructions">
+    <p>{{ "You may monitor the progress of CSV file generation by clicking the link in the 'Status' column. When the CSV Data Set download file is complete, a link will be available in the 'Download File' column." | translate }} </p>
+  </div>
   <table mat-table [dataSource]="csvDataSets" class="mat-elevation-z8 tangy-full-width">
     <ng-container matColumnDef="fileName">
       <th mat-header-cell *matHeaderCellDef>{{ "File Name" | translate }}</th>
-      <td class="tangy-foreground-secondary link" [routerLink]="dataSet._id" mat-cell *matCellDef="let dataSet">
+      <td mat-cell *matCellDef="let dataSet">
         {{ dataSet.fileName }}
       </td>
     </ng-container>
@@ -39,7 +43,7 @@
 
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let dataSet">
+      <td class="tangy-foreground-secondary link" [routerLink]="dataSet._id" mat-cell *matCellDef="let dataSet">
         {{ dataSet.complete ? "Complete" : ("In Progress" | translate) }}
       </td>
     </ng-container>
