@@ -8,6 +8,7 @@ const exec = util.promisify(require('child_process').exec)
 const { spawn } = require('child_process');
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
+const createGroupDatabase = require('../../create-group-database.js')
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
@@ -41,6 +42,8 @@ module.exports = {
       await initializeGroupForMySQL(groupId)
       const pathToStateFile = `/mysql-module-state/${groupId}.ini`
       startTangerineToMySQL(pathToStateFile)
+      await createGroupDatabase(groupName, '-mysql')
+      await createGroupDatabase(groupName, '-mysql-sanitized')
       return data
     },
     clearReportingCache: async function(data) {
@@ -51,8 +54,10 @@ module.exports = {
         console.log(`removing db ${groupName}-mysql`)
         let db = new DB(`${groupName}-mysql`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-mysql')
         db = new DB(`${groupName}-mysql-sanitized`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-mysql-sanitized')
       }
       return data
     },

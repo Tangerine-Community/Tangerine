@@ -5,6 +5,8 @@ const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
+const createGroupDatabase = require('../../create-group-database.js')
+
 
 module.exports = {
   name: 'logstash',
@@ -15,6 +17,7 @@ module.exports = {
         console.log(`removing db ${groupName}-logstash`)
         const db = new DB(`${groupName}-logstash`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-logstash')
       }
       return data
     },
@@ -67,6 +70,14 @@ module.exports = {
             'lon': processedResult['geoip.lon'] ? processedResult['geoip.lon'] : ''
           }
         }, logstashDb);
+        resolve(data)
+      })
+    },
+    groupNew: function(data) {
+      return new Promise(async (resolve, reject) => {
+        const {groupName, appConfig} = data
+        await createGroupDatabase(groupName, '-logstash')
+        await createGroupDatabase(groupName, '-logstash-sanitized')
         resolve(data)
       })
     }

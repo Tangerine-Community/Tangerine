@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from '../user/user.service';
 import {SyncSessionInfo} from "../../../modules/sync/services/sync-session/sync-session-v2.service";
 import {DbService} from "../db/db.service";
+import createGroupDatabase = require('src/create-group-database');
 const insertGroupViews = require('../../../insert-group-views.js')
 
 const DB = require('../../../db')
@@ -145,29 +146,9 @@ export class GroupService {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const config = await this.configService.config()
-    const security = {
-      admins: {
-        roles: [`admin-${groupId}`]
-      },
-      members: {
-        roles: [`member-${groupId}`]
-      }
-    }
-    // Create databases and corresponding security settings.
-    await this.http.put(`${config.couchdbEndpoint}${groupId}`).toPromise()
-    await this.http.put(`${config.couchdbEndpoint}${groupId}/_security`, {
-      ...security,
-      members: {
-        roles: [
-          ...security.members.roles, 
-          `sync-${groupId}`
-        ]
-      }
-    }).toPromise()
-    await this.http.put(`${config.couchdbEndpoint}${groupId}-log`).toPromise()
-    await this.http.put(`${config.couchdbEndpoint}${groupId}-log/_security`, security).toPromise()
-    await this.http.put(`${config.couchdbEndpoint}${groupId}-conflict-revs`).toPromise()
-    await this.http.put(`${config.couchdbEndpoint}${groupId}-conflict-revs/_security`, security).toPromise()
+    await createGroupDatabase(groupId, '', true)
+    await createGroupDatabase(groupId, '-log')
+    await createGroupDatabase(groupId, '-conflict-revs')
     // Add group to groups database.
     const created = new Date().toJSON()
     const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
