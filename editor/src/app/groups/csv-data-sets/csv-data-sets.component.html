@@ -9,7 +9,7 @@
 
 <div class="tangy-full-width" *ngIf="csvDataSets?.length>0">
   <div class="instructions">
-    <p>{{ "You may monitor the progress of CSV file generation by clicking the link in the 'Status' column. When the CSV Data Set download file is complete, a link will be available in the 'Download File' column." | translate }} </p>
+    <p>{{ "You may monitor the progress of CSV file generation by clicking the link in the 'Status' column; this listing does not refresh the Status of a CSV Data Set generation automatically. When the CSV Data Set download file is complete, a link will be available in the 'Download File' column and the Status column will be marked 'Complete'." | translate }} </p>
   </div>
   <table mat-table [dataSource]="csvDataSets" class="mat-elevation-z8 tangy-full-width">
     <ng-container matColumnDef="fileName">
