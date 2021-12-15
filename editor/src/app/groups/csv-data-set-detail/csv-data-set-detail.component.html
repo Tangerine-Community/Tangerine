@@ -2,7 +2,7 @@
 <div *ngIf="datasetDetail" class="tangy-full-width">
     <p><strong>{{'File Name'|translate}}</strong>: 
       <span *ngIf="!datasetDetail.complete">{{datasetDetail.fileName}}</span>
-      <a *ngIf="datasetDetail.complete&& datasetDetail.fileExists" 
+      <a *ngIf="datasetDetail.complete" 
           class="tangy-foreground-secondary" [href]="datasetDetail.downloadUrl">{{datasetDetail.fileName}}</a>
     </p>
     <p><strong>{{'Include PII'|translate}}</strong>: {{datasetDetail.includePii}}</p>
