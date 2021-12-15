@@ -8,6 +8,7 @@ const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 const CODE_SKIP = '999'
 const createGroupDatabase = require('../../create-group-database.js')
+const groupsList = require('/tangerine/server/src/groups-list.js')
 
 async function insertGroupReportingViews(groupName) {
   let designDoc = Object.assign({}, groupReportingViews)
@@ -32,6 +33,13 @@ async function insertGroupReportingViews(groupName) {
 module.exports = {
   name: 'csv',
   hooks: {
+    enable: async function() {
+      const groups = await groupsList()
+      for (groupId of groups) {
+        await createGroupDatabase(groupId, '-reporting')
+        await createGroupDatabase(groupId, '-reporting-sanitized')
+      }
+    },
     clearReportingCache: async function(data) {
       const { groupNames } = data
       for (let groupName of groupNames) {

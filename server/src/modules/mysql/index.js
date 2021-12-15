@@ -31,6 +31,8 @@ module.exports = {
       const groups = await groupsList()
       for (groupId of groups) {
         await initializeGroupForMySQL(groupId)
+        await createGroupDatabase(groupId, '-mysql')
+        await createGroupDatabase(groupId, '-mysql-sanitized')
       }
     },
     disable: function(data) {
