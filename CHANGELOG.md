@@ -16,6 +16,7 @@ __Fixes__
 - Avoid crashes when properties on the markup are accessed before being available to the component [#3080](https://github.com/Tangerine-Community/Tangerine/pull/3080)
 - Replace special chars with underscore in CSV output. PR: [#3003](https://github.com/Tangerine-Community/Tangerine/pull/3003/)
 - Refresh global reference to T.case when using a case so most importantly the correct context is set PR: [#3108](https://github.com/Tangerine-Community/Tangerine/pull/3108)
+- Link to download data set downloads a JSON file with headers and group config doc. Issue: [#3114](https://github.com/Tangerine-Community/Tangerine/issues/3114)
 
 __Upgrade notice__
 
