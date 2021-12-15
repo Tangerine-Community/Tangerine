@@ -7,6 +7,7 @@ const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 const CODE_SKIP = '999'
+const createGroupDatabase = require('../../create-group-database.js')
 
 async function insertGroupReportingViews(groupName) {
   let designDoc = Object.assign({}, groupReportingViews)
@@ -38,6 +39,8 @@ module.exports = {
         await db.destroy()
         db = DB(`${groupName}-reporting-sanitized`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-reporting')
+        await createGroupDatabase(groupName, '-reporting-sanitized')
         await insertGroupReportingViews(groupName)
       }
       return data
@@ -184,6 +187,8 @@ module.exports = {
     groupNew: function(data) {
       return new Promise(async (resolve, reject) => {
         const {groupName, appConfig} = data
+        await createGroupDatabase(groupName, '-reporting')
+        await createGroupDatabase(groupName, '-reporting-sanitized')
         await insertGroupReportingViews(groupName)
         resolve(data)
       })
