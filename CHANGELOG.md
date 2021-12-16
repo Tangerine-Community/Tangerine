@@ -4,6 +4,7 @@
 
 __Fixes__
 
+- Improve listing of items in the Data menu. Issue: [#3125](https://github.com/Tangerine-Community/Tangerine/issues/3125)
 - Fix issue where Group User on server with permission to access database would not have access. Commit: [a10162d9](https://github.com/Tangerine-Community/Tangerine/commit/a10162d92642cf83ae43aa3ad96033691e5b0a76)
 - Add Amharic translation.
 - Fix issue when backup has never run, the Clean backups command in Maintenance on client fails, and the process alert 
@@ -19,6 +20,7 @@ __Fixes__
 - Link to download data set downloads a JSON file with headers and group config doc. Issue: [#3114](https://github.com/Tangerine-Community/Tangerine/issues/3114)
 - CSV template creation fails. Issue: [#3115](https://github.com/Tangerine-Community/Tangerine/issues/3115)
 - Restart couchdb container on failure. PR: [#3112](https://github.com/Tangerine-Community/Tangerine/pull/3112)
+- APK and PWA Updates fail with User not logged in (every time) [#3111](https://github.com/Tangerine-Community/Tangerine/issues/3111)
 - Fix error when looping through input values for data dictionary. PR: [#3124](https://github.com/Tangerine-Community/Tangerine/pull/3124)
 
 __Upgrade notice__
