@@ -18,7 +18,9 @@ __Fixes__
 - Refresh global reference to T.case when using a case so most importantly the correct context is set PR: [#3108](https://github.com/Tangerine-Community/Tangerine/pull/3108)
 - Link to download data set downloads a JSON file with headers and group config doc. Issue: [#3114](https://github.com/Tangerine-Community/Tangerine/issues/3114)
 - CSV template creation fails. Issue: [#3115](https://github.com/Tangerine-Community/Tangerine/issues/3115)
-- Restart couchdb container on failure [#3112](https://github.com/Tangerine-Community/Tangerine/pull/3112)
+- Restart couchdb container on failure. PR: [#3112](https://github.com/Tangerine-Community/Tangerine/pull/3112)
+- Fix error when looping through input values for data dictionary. PR: [#3124](https://github.com/Tangerine-Community/Tangerine/pull/3124)
+
 __Upgrade notice__
 
 If your project was already using the Data Conflicts tools that were installed manually, you must remove those in order to 
