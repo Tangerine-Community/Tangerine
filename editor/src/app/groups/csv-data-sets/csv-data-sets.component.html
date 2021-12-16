@@ -2,14 +2,17 @@
 <div class="new-data-set-btn">
   <a routerLink="../csv-data-sets/new">
     <button mat-raised-button color="accent">
-      {{ "New Data Set" | translate }}
+      {{ "New CSV Data Set" | translate }}
     </button>
   </a>
 </div>
 
 <div class="tangy-full-width" *ngIf="csvDataSets?.length>0">
   <div class="instructions">
-    <p>{{ "You may monitor the progress of CSV file generation by clicking the link in the 'Status' column; this listing does not refresh the Status of a CSV Data Set generation automatically. When the CSV Data Set download file is complete, a link will be available in the 'Download File' column and the Status column will be marked 'Complete'." | translate }} </p>
+    <p>{{ "CSV Data sets are a collections of CSV files - one per form - that are downloaded via a zipped file. You may download a set of CSV's using the 'Download File' links below or configure a new CSV data set using the 'New CSV Data Set' link above. " | translate }} 
+    </p>
+    <p>{{ "You may monitor the progress of CSV file generation by clicking the link in the 'Status' column; this listing does not refresh the Status of a CSV Data Set generation automatically. When the CSV Data Set download file is complete, a link will be available in the 'Download File' column and the Status column will be marked 'Complete'. Clicking the link in the 'Status' column provides a listing of individual CSV files for download." | translate }} 
+    </p>
   </div>
   <table mat-table [dataSource]="csvDataSets" class="mat-elevation-z8 tangy-full-width">
     <ng-container matColumnDef="fileName">
