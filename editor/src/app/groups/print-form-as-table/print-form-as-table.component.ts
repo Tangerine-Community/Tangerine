@@ -29,6 +29,7 @@ export class PrintFormAsTableComponent implements OnInit {
   onChange: string;
   onOpen: string;
   sectionHooksArray
+  formId
   
   constructor(private route: ActivatedRoute,
     private http: HttpClient,
@@ -41,16 +42,16 @@ export class PrintFormAsTableComponent implements OnInit {
     const groupId = this.route.snapshot.paramMap.get('groupId');
     this.groupDetails = await this.groupsService.getGroupInfo(groupId);
     this.groupLabel = this.groupDetails.label;
-    const formId = this.route.snapshot.paramMap.get('formId');
+    this.formId = this.route.snapshot.paramMap.get('formId');
     this.breadcrumbs = [
       <Breadcrumb>{
-        label: formId,
-        url: formId
+        label: this.formId,
+        url: this.formId
       }
     ]
     
     const forms = await this.tangerineFormsService.getFormsInfo(groupId);
-    this.myForm = forms.find(e => e['id'] === formId);
+    this.myForm = forms.find(e => e['id'] === this.formId);
     const formHtml = await this.http.get(`/editor/${groupId}/content/${this.myForm.id}/form.html`, { responseType: 'text' }).toPromise();
     const container = this.container.nativeElement;
     container.innerHTML = `
@@ -112,7 +113,7 @@ export class PrintFormAsTableComponent implements OnInit {
         inputItem.inputType = inputType
         inputItem.dataType = input.type
         let options = ''
-        if (input.value.length>0) {
+        if (inputType && input.value.length>0) {
           input.value.forEach((option, index) => {
             const showComma = index+1===input.value.length?'':' ,'
             options += `${option.value} "${option.label}" ${showComma}`
@@ -122,6 +123,10 @@ export class PrintFormAsTableComponent implements OnInit {
         this.formsArray.push(inputItem)
       })
     })
+  }
+
+  isArray(obj : any ) {
+    return Array.isArray(obj)
   }
 
   async export() {
@@ -142,7 +147,9 @@ export class PrintFormAsTableComponent implements OnInit {
     XLSX.utils.book_append_sheet(workbook, worksheet2, 'form metadata');
     XLSX.utils.book_append_sheet(workbook, worksheet3, 'form hooks');
     XLSX.utils.book_append_sheet(workbook, worksheet4, 'section hooks');
-    XLSX.writeFile(workbook, 'data_dictionary.xlsx');
+    const sanitizedFileName = this.formId.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')
+    const fileName = 'data_dictionary-' + sanitizedFileName + '.xlsx' 
+    XLSX.writeFile(workbook, fileName);
     this.isExporting = false;
   }
 
