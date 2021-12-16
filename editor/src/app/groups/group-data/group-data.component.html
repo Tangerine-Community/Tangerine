@@ -39,7 +39,7 @@
       <mat-card-title>
         <a>{{'CSV Output'|translate}}</a>
       </mat-card-title>
-      <mat-card-subtitle>{{'Download or configure a CSV Data Set, which is a zipped collection of CSVs. Configure the fields included in the CSV data output of a form using CSV Templates.' |translate}}</mat-card-subtitle>
+      <mat-card-subtitle>{{'Download or configure a CSV Data Set, which is a zipped collection of CSVs. Configure the fields included in the CSV data output of a form using CSV Templates. The "Download individual CSVs" feature will be merged soon with the CSV Data Set feature soon since it has similar output.' |translate}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions>
       <button mat-stroked-button color="accent" routerLink="csv-data-sets">{{'Download CSV Data Set'|translate}}</button>
@@ -62,22 +62,7 @@
       </mat-card-header>
     </mat-card>
   </span>
-   
   
-  
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="download-statistical-files">
-    <mat-card-header>
-        <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">table_view</mwc-icon>
-        </div>
-        <mat-card-title>
-            <a>{{'Download Statistical Files'|translate}}</a>
-        </mat-card-title>
-        <mat-card-subtitle>{{'Download files of statistical packages.'|translate}}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-
-
   <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_uploads'" class="is-link mat-elevation-z3" routerLink="uploads">
     <mat-card-header>
       <div mat-card-avatar>
