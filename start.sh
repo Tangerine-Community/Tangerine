@@ -141,6 +141,7 @@ fi
 [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
 
 CMD="docker run -d \
+   --restart on-failure \
    -e COUCHDB_USER=\"$T_COUCHDB_USER_ADMIN_NAME\" \
    -e COUCHDB_PASSWORD=\"$T_COUCHDB_USER_ADMIN_PASS\" \
    $T_COUCHDB_PORT_MAPPING \
@@ -216,6 +217,7 @@ RUN_OPTIONS="
   --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
   --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
+  --env \"T_MYSQL_MULTI_PARTICIPANT_SCHEMA=$T_MYSQL_MULTI_PARTICIPANT_SCHEMA\" \
   --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
   $RUN_OPTIONS
 "
