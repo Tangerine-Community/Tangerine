@@ -310,33 +310,32 @@ def convert_response(resp_dict):
                 mysql_connection.commit()
  
 
-def delete_record(tangerine_database,id):
-    with cloudant.document.Document(tangerine_database, document_id=id) as document:
-        doc_dict = json.loads(document.json())
-        type = doc_dict.get('type')
-        # for deleted documents, the type element is no longer available
-        if (type.lower() == "case"):
-            # handle case type
-            cursor.execute("Delete from " + mysqlDatabaseName + ".case where CaseID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "participant"):
-            # pass
-            cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "event-form"):
-            # pass
-            cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "case-event"):
-            cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + id + "'")
-            mysql_connection.commit()
-        elif (type.lower() == "response"):
-            response = doc_dict.get('data')
-            formID = response.get('formId').replace('-', '_')
-            cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
-            mysql_connection.commit()
-        else:
-            log("Unexpected document type")
+def delete_record(document):
+    doc_dict = json.loads(document.json())
+    type = doc_dict.get('type')
+    # for deleted documents, the type element is no longer available
+    if (type.lower() == "case"):
+        # handle case type
+        cursor.execute("Delete from " + mysqlDatabaseName + ".case where CaseID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "participant"):
+        # pass
+        cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "event-form"):
+        # pass
+        cursor.execute("Delete from " + mysqlDatabaseName + ".eventform where EventFormID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "case-event"):
+        cursor.execute("Delete from " + mysqlDatabaseName + ".caseevent where CaseEventID='" + id + "'")
+        mysql_connection.commit()
+    elif (type.lower() == "response"):
+        response = doc_dict.get('data')
+        formID = response.get('formId').replace('-', '_')
+        cursor.execute("Delete from " + mysqlDatabaseName + "." + formID + " where ID='" + id + "'")
+        mysql_connection.commit()
+    else:
+        log("Unexpected document type")
 
 
 def main_job():

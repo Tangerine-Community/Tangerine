@@ -42,7 +42,7 @@ export class GroupCsvTemplatesComponent implements OnInit {
     this.csvTemplates = csvTemplates.map(csvTemplate => { return {
       "_id": csvTemplate._id,
       "Template Title": csvTemplate.title,
-      "Form": formsInfo.find(formInfo => formInfo.id === csvTemplate.formId).title,
+      "Form": formsInfo.find(formInfo => formInfo.id === csvTemplate.formId)?.title,
       "Columns": csvTemplate.headers
     }})
   }

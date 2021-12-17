@@ -141,6 +141,7 @@ fi
 [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
 
 CMD="docker run -d \
+   --restart on-failure \
    -e COUCHDB_USER=\"$T_COUCHDB_USER_ADMIN_NAME\" \
    -e COUCHDB_PASSWORD=\"$T_COUCHDB_USER_ADMIN_PASS\" \
    $T_COUCHDB_PORT_MAPPING \

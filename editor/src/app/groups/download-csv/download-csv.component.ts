@@ -1,7 +1,7 @@
 import { TangerineFormsService } from './../services/tangerine-forms.service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './download-csv.component.html',
   styleUrls: ['./download-csv.component.css']
 })
-export class DownloadCsvComponent implements OnInit {
+export class DownloadCsvComponent implements OnInit, OnDestroy {
 
   title = _TRANSLATE('Download CSV')
   breadcrumbs:Array<Breadcrumb> = []
@@ -94,4 +94,9 @@ export class DownloadCsvComponent implements OnInit {
       console.log(error);
     }
   }
+
+  ngOnDestroy(){
+    clearInterval(this.checkDownloadStatusInterval)
+  }
+  
 }
