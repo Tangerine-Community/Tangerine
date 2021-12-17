@@ -28,5 +28,10 @@
     "label": "Тоҷикӣ́",
     "languageCode": "tg",
     "languageDirection": "ltr"
+  },
+  {
+    "label": "አማርኛ (Amharic)",
+    "languageCode": "amh",
+    "languageDirection": "ltr"
   }
 ]
