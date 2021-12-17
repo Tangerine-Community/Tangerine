@@ -22,6 +22,7 @@ __Fixes__
 - Restart couchdb container on failure. PR: [#3112](https://github.com/Tangerine-Community/Tangerine/pull/3112)
 - APK and PWA Updates fail with User not logged in (every time) [#3111](https://github.com/Tangerine-Community/Tangerine/issues/3111)
 - Fix error when looping through input values for data dictionary. PR: [#3124](https://github.com/Tangerine-Community/Tangerine/pull/3124)
+- Add config to allow output of multiple participants in MySQL. Consult the PR for implementation details. If you wish to enable this feature, add `T_MYSQL_MULTI_PARTICIPANT_SCHEMA:true` to the config.sh script. PR: [#3110](https://github.com/Tangerine-Community/Tangerine/pull/3110/)
 
 __Upgrade notice__
 
