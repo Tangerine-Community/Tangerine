@@ -287,7 +287,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.1')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.9.1'))) return
       console.log('Updating to v3.9.1...')
       try {
         const view = await userDb.get('_design/case-events-by-all-days')
@@ -327,7 +327,7 @@ export const updates = [
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
       console.log('Updating to v3.14.0...')
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.14.0')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.14.0'))) return
       // Reset sync-push-last_seq
       await variableService.set('sync-push-last_seq', 0);
       await variableService.set('ran-update-v3.14.0', 'true')
@@ -336,7 +336,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.0')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.0'))) return
       console.log('Updating to v3.15.0...')
      // Remove old search indexes.
       const searchDb = new PouchDB(`${userDb.name}-index`)
@@ -349,7 +349,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.3')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.15.3'))) return
       console.log('Updating to v3.15.3...')
       // Build search index.
       await window['T'].search.createIndex()
@@ -362,7 +362,7 @@ export const updates = [
     message: 'Checking if this tablet needs a full sync.',
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService, syncService:SyncService, status) => {
       const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.0')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.0'))) return
       console.log('Updating to v3.16.0...')
       // Check if this instance is configured for this update
       if (appConfig.forceFullSync) {
@@ -380,7 +380,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.3')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.16.3'))) return
       console.log('Updating to v3.16.3...')
       // Install SyncForm index.
       await window['T'].sync.createSyncFormIndex()
@@ -391,7 +391,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.0')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.0'))) return
       console.log('Updating to v3.19.0...')
       console.log('Adding support for previousDeviceSyncLocations variable...')
       const device = await window['T'].device.getDevice()
@@ -405,7 +405,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
-      if (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.2')) return
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.19.2'))) return
       console.log('Updating to v3.19.2...')
       console.log('Trying to update index again for tablets that may have failed on the last update and then incorrectly proceeded due to update flag getting set too early...')
       await window['T'].search.createIndex()

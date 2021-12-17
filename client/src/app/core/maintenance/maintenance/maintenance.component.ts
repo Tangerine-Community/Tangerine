@@ -17,6 +17,7 @@ export class MaintenanceComponent implements OnInit {
   storageAvailable
   storageAvailableErrorThreshhold = 1
   displayLowStorageWarning: boolean
+  displayPruningComplete: boolean = false
   isStorageThresholdExceeded: boolean
   
   constructor(
@@ -29,6 +30,7 @@ export class MaintenanceComponent implements OnInit {
 
   async ngOnInit() {
     this.isCordovaApp = window['isCordovaApp']
+    this.displayPruningComplete = false
     if (window['isCordovaApp']) {
       const storageStats:any = await this.syncService.getStorageStats()
       this.storageAvailable = storageStats ? (storageStats / (1024*1024)).toFixed(2) : ""
@@ -40,6 +42,7 @@ export class MaintenanceComponent implements OnInit {
   }
 
   async checkPermissions() {
+    this.displayPruningComplete = false
     var sleep = function(delay) { return new Promise((resolve, reject) => setTimeout(resolve, delay))}
     // Notifications API.
     let process = this.processMonitorService.start('permissionCheck', _TRANSLATE('Checking notifications permission...'))
@@ -195,15 +198,39 @@ export class MaintenanceComponent implements OnInit {
     }
   }
 
+  /**
+   * Deleting any files in the specified paths. Should clean up any old backup files.
+   * If there has not been a backup yet, the directories may not have been created. This would throw an error.
+   * Does not log any errors. 
+   */
   async pruneFiles() {
     const confirmCheck = confirm(`${_TRANSLATE('Have you copied backups to another device? This process will delete any backups in the backups or restore directories. Do you wish to continue?')}`);
     if (confirmCheck) {
-      const process = this.processMonitorService.start('pruneFiles', _TRANSLATE('Pruning files...'))
-      await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
-      await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
-      await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/backups/')
-      await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/restore/')
+      // reset if running this again.
+      this.displayPruningComplete = false
+      const process = this.processMonitorService.start('pruneFiles', _TRANSLATE('Cleaning up files...'))
+      try {
+        await this.pruneFilesInPath(window['cordova'].file.externalDataDirectory)
+      } catch (e) {
+        // console.log("Error pruning files: " + e)
+      }
+      try {
+        await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Download/restore/')
+      } catch (e) {
+        // console.log("Error pruning files: " + e)
+      }
+      try {
+        await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/backups/')
+      } catch (e) {
+        // console.log("Error pruning files: " + e)
+      }
+      try {
+        await this.pruneFilesInPath(window['cordova'].file.externalRootDirectory + 'Documents/Tangerine/restore/')
+      } catch (e) {
+        // console.log("Error pruning files: " + e)
+      }
       this.processMonitorService.stop(process.id)
+      this.displayPruningComplete = true
     }
   }
   
@@ -239,10 +266,11 @@ export class MaintenanceComponent implements OnInit {
           },
           function (err) {
             reject(err)
-            console.log(err);
           }
         );
-      }, null);
+      }, function (err) {
+        reject(err)
+      });
     })
   }
 
