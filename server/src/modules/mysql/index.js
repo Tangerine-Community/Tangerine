@@ -8,6 +8,7 @@ const exec = util.promisify(require('child_process').exec)
 const { spawn } = require('child_process');
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
+const { v4: uuidv4 } = require('uuid');
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
@@ -64,18 +65,20 @@ module.exports = {
           if (doc.type === 'case') {
             // output case
             await saveFlatResponse(doc, locationList, targetDb, sanitized);
-            let numInf = getItemValue(doc, 'numinf')
-            let participant_id = getItemValue(doc, 'participant_id')
 
             // output participants
             for (const participant of doc.participants) {
+              let participant_id = participant.id
+              if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
+                participant_id = doc._id + '-' + participant.id
+              }
               await pushResponse({
                 ...participant,
-                _id: participant.id,
+                _id: participant_id,
                 caseId: doc._id,
-                numInf: participant.participant_id === participant_id ? numInf : '',
+                participantId: participant.id,
                 type: "participant",
-                archived: doc.archived
+                archived: doc.archived||''
               }, targetDb);
             }
           
@@ -227,7 +230,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
-    archived: formResponse.archived
+    archived: formResponse.archived||''
   };
   function set(input, key, value) {
     flatFormResponse[key.trim()] = input.skipped
