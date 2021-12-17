@@ -15,6 +15,13 @@ await userDb.query('search', { limit: 1 })
 
 This code will rebuild the index on client in order to return the correct results when running a search on a tablet that already has data collected on it.
 
+## Difference between Delete and Archive feature in Editor
+
+In Editor, the "Delete" and "Archive" buttons both add the `archived:true` flag to a document, but they do differ in the following ways:
+- Deleting a case creates "stub" documents with minimal properties. The case doc keeps its inputs so search works properly.
+- A case that has been archived can be un-archived. The only difference between an archived doc and a non-archived doc 
+  is the presence of the `archived:true` flag.
+
 ## Deleting a record in Tangerine manually on the server
 
 When using this manual method, deletions on the client do not follow deletions on the server.

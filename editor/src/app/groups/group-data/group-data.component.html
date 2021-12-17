@@ -2,7 +2,7 @@
 
 <ng-container *ngIf="groupId">
 
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_dashboard'" class="mat-elevation-z3" routerLink="../dashboard">
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_dashboard'" class="is-link mat-elevation-z3" routerLink="../dashboard">
     <mat-card-header>
         <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">dashboard</i>
         </div>
@@ -12,97 +12,44 @@
         <mat-card-subtitle>Dashboard with custom reports.</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_uploads'" class="is-link mat-elevation-z3" routerLink="uploads">
-    <mat-card-header>
-        <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
-        </div>
-        <mat-card-title>
-            <a>{{'Uploads'|translate}}</a>
-        </mat-card-title>
-        <mat-card-subtitle>{{'View uploaded form responses from devices.'|translate}}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-   
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="csv-templates">
-    <mat-card-header>
-        <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">view_module</mwc-icon>
-        </div>
-        <mat-card-title>
-            <a>{{'CSV Templates'|translate}}</a>
-        </mat-card-title>
-        <mat-card-subtitle>
-          {{'CSV Template are filters for CSV output that allow you to define which columns to include in our CSV file for specific forms. Define a CSV Template for a specific form and then when selecting which forms to include in a CSV Data Set, the CSV Templates will be available to apply to the CSV Data Set output.'|translate}}
-        </mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="download-csv">
-    <mat-card-header>
-        <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">table_chart</mwc-icon>
-        </div>
-        <mat-card-title>
-            <a>{{'Download CSV'|translate}}</a>
-        </mat-card-title>
-        <mat-card-subtitle>{{'Download CSVs of data.'|translate}}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="csv-data-sets">
-    <mat-card-header>
-        <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">table_view</mwc-icon>
-        </div>
-        <mat-card-title>
-            <a>{{'Download CSV Data Set'|translate}}</a>
-        </mat-card-title>
-        <mat-card-subtitle>{{'Download Multiple CSVs at once.'|translate}}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="is-link mat-elevation-z3" routerLink="download-statistical-files">
-    <mat-card-header>
-        <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">table_view</mwc-icon>
-        </div>
-        <mat-card-title>
-            <a>{{'Download Statistical Files'|translate}}</a>
-        </mat-card-title>
-        <mat-card-subtitle>{{'Download files of statistical packages.'|translate}}</mat-card-subtitle>
-    </mat-card-header>
-  </mat-card>
-
+  
   <span *ngIf="config.enabledModules.includes('case')">
-    <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_cases'"  class="is-link mat-elevation-z3" routerLink="cases">
+    <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_cases'"  class="mat-elevation-z3">
       <mat-card-header>
           <div mat-card-avatar>
             <mwc-icon class="tangy-foreground-secondary">folder</mwc-icon>
           </div>
           <mat-card-title>
-              <a>{{'Cases'|translate}}</a>
+              <a>{{'Case Management'|translate}}</a>
           </mat-card-title>
-          <mat-card-subtitle>{{'Review uploaded cases.'|translate}}</mat-card-subtitle>
+          <mat-card-subtitle>{{'Review uploaded cases and related issues.'|translate}}</mat-card-subtitle>
       </mat-card-header>
+      <mat-card-actions>
+      <button mat-stroked-button color="accent" routerLink="cases">{{'Cases'|translate}}</button>
+      <button mat-stroked-button color="accent" *appHasAPermission="let i;group:groupId; permission:'can_access_issues'" routerLink="issues">{{'Issues'|translate}}</button>
+    </mat-card-actions>
     </mat-card>
   </span>
-  
+
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="mat-elevation-z3">
+    <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">view_module</mwc-icon>
+      </div>
+      <mat-card-title>
+        <a>{{'CSV Output'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Download or configure a CSV Data Set, which is a zipped collection of CSVs. Configure the fields included in the CSV data output of a form using CSV Templates. The "Download individual CSVs" feature will be merged soon with the CSV Data Set feature soon since it has similar output.' |translate}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <button mat-stroked-button color="accent" routerLink="csv-data-sets">{{'Download CSV Data Set'|translate}}</button>
+      <button mat-stroked-button color="accent" routerLink="csv-templates">{{'CSV Templates for CSV Data Sets'|translate}}</button>
+      <button mat-stroked-button color="accent" routerLink="download-csv">{{'Download individual CSVs (deprecated)'|translate}}</button>
+    </mat-card-actions>
+
+  </mat-card>
+
   <span *ngIf="config.enabledModules.includes('case')">
-    <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_issues'" class="is-link mat-elevation-z3" routerLink="issues">
-      <mat-card-header>
-          <div mat-card-avatar>
-            <mwc-icon class="tangy-foreground-secondary">receipt</mwc-icon>
-          </div>
-          <mat-card-title>
-            <a>{{'Issues'|translate}}</a>
-          </mat-card-title>
-          <mat-card-subtitle>{{'Review issues.'|translate}}</mat-card-subtitle>
-      </mat-card-header>
-    </mat-card>
-  </span>
-   
-  <span>
     <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_database_conflicts'" class="is-link mat-elevation-z3" routerLink="database-conflicts">
       <mat-card-header>
           <div mat-card-avatar>
@@ -111,9 +58,21 @@
           <mat-card-title>
             <a>{{'Database Conflicts'|translate}}</a>
           </mat-card-title>
-          <mat-card-subtitle>{{'Review issues.'|translate}}</mat-card-subtitle>
+          <mat-card-subtitle>{{'Review Database Conflicts.'|translate}}</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
-  </span> 
+  </span>
+  
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_uploads'" class="is-link mat-elevation-z3" routerLink="uploads">
+    <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
+      </div>
+      <mat-card-title>
+        <a>{{'Uploads'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'View uploaded form responses from devices.'|translate}}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
 
 </ng-container>

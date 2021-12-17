@@ -58,6 +58,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     // }
     this.caseService.setContext()
     this.window.caseService = this.caseService
+    this.window.T.case = this.caseService
     this.onCaseOpen()
     this.calculateTemplateData()
     this.ready = true

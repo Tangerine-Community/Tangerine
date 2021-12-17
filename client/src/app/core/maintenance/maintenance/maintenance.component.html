@@ -16,6 +16,9 @@
     <mat-card-title>{{'Cleanup Files'|translate}}</mat-card-title>
     <mat-card-content>
       <p>{{'This will delete any backups on this tablet that are in the "backup" or "restore" directories. Be sure you have transferred them before doing this procedure.'|translate}}</p>
+      <div *ngIf="displayPruningComplete" class="complete">
+        <p>{{'Disk Cleanup complete.'|translate}}</p>
+      </div>
     </mat-card-content>
     <mat-divider inset></mat-divider>
     <mat-card-actions>
