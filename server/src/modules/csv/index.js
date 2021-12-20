@@ -242,7 +242,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
     _id: formResponse._id,
     formId: formResponse.form.id,
     cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replaceAll('\n','  '): '',
-    sequenceOrderMap: formResponse.form.sequenceOrderMap,
+    sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
     startUnixtime: formResponse.startUnixtime||'',
     endUnixtime: formResponse.endUnixtime||'',
     lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
