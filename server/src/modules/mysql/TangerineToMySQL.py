@@ -91,7 +91,7 @@ def convert_participant(resp_dict):
     type = resp_dict.get('type')
     if (type.lower() == "participant"):
         caseId = resp_dict.get('caseId')
-        participantId = resp_dict.get('_id')
+        participantId = resp_dict.get('participantId')
         dbRev = resp_dict.get('_rev')
         role = resp_dict.get("caseRoleId")
 
