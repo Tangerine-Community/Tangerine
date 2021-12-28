@@ -3,9 +3,9 @@ const permit = (allowedPermissions) => {
     const isAllowed = permissions => (allowedPermissions.filter(Set.prototype.has, new Set(permissions))).length > 0;
     return (req, res, next) => {
       if (isAllowed(req.user.sitewidePermissions)) {
-          next();
+        return next();
       } else {
-        res.status(403).send(`Access Denied at ${req.url}`);
+        return res.status(403).send(`Access Denied at ${req.url}`);
       }
     };
   };
@@ -18,12 +18,12 @@ const permitOnGroupIfAll = (permissions) => {
       const allGroupsPermissions = req.user.groupPermissions;
       const myGroupsPermissions = (allGroupsPermissions.find(g => g.groupName === group)).permissions;
       if (isAllowed(myGroupsPermissions)) {
-        next();
+        return next();
       } else {
-        res.status(403).send(`Access Denied at ${req.url}`);
+        return res.status(403).send(`Access Denied at ${req.url}`);
       }
     } catch (error) {
-      res.status(403).send(`Access Denied at ${req.url} with error: ${error}`);
+      return res.status(403).send(`Access Denied at ${req.url} with error: ${error}`);
     }
   };
 };
@@ -35,12 +35,12 @@ const permitOnGroupIfEither = (permissions) => {
       const allGroupsPermissions = req.user.groupPermissions;
       const myGroupsPermissions = (allGroupsPermissions.find(g => g.groupName === group)).permissions;
       if (isAllowed(myGroupsPermissions)) {
-        next();
+        return next();
       } else {
-        res.status(403).send(`Access Denied at ${req.url}`);
+        return res.status(403).send(`Access Denied at ${req.url}`);
       }
     } catch (error) {
-      res.status(403).send(`Access Denied at ${req.url}`);
+      return res.status(403).send(`Access Denied at ${req.url}`);
     }
   };
 };
@@ -49,20 +49,20 @@ const permitOnGroupIf = (permission) => {
   return (req, res, next) => {
     // log.warn("permission: |" + permission + "| permission type: " + Object.prototype.toString.call(permission))
     try {
-      const group = req.params.groupId || req.params.groupName || req.params.group || req.body.group;
+      const group = req.params.groupId || req.params.groupName || req.params.group || req.body.group || req.body.groupId
       const allGroupsPermissions = req.user.groupPermissions;
       const username = req.user.name;
       if (!group) {
-        res.status(403).send(`Access Denied at ${req.url}. Missing group parameter.`);
+        return res.status(403).send(`Access Denied at ${req.url}. Missing group parameter.`);
       }
       const myGroupsPermissions = (allGroupsPermissions.find(g => g.groupName === group)).permissions;
       if (isAllowed(myGroupsPermissions)) {
-        next();
+        return next();
       } else {
-        res.status(403).send(`Access Denied at ${req.url} for user: ${username}`);
+        return res.status(403).send(`Access Denied at ${req.url} for user: ${username}`);
       }
     } catch (error) {
-      res.status(403).send(`Access Denied at ${req.url} with error: ${error}`);
+      return res.status(403).send(`Access Denied at ${req.url} with error: ${error}`);
     }
   };
 };
