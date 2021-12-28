@@ -108,6 +108,7 @@ def convert_participant(resp_dict):
         #check to see if we have any additional data elements that we need to convert and save to MySQL database
         del resp_dict["data"]
         del resp_dict["caseId"]
+        del resp_dict["participantId"]
         del resp_dict["_id"]
         del resp_dict["_rev"]
         del resp_dict["caseRoleId"]
@@ -126,10 +127,10 @@ def convert_participant(resp_dict):
         #     3) Then the database doesn't exist! Just insert it.
         try:
             #delete the Participant if it already exists in table so we can add the new one
-            qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'"
+            qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId + "' AND CaseID='" + caseId + "'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
-                cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId+"'")
+                cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId + "' AND CaseID='" + caseId + "'")
                 mysql_connection.commit()
             # this will fail if there is a new column
             mysql_connection.commit()
