@@ -64,6 +64,12 @@ if (process.env.T_AUTO_COMMIT === 'true') {
 }
 module.exports = async function expressAppBootstrap(app) {
 
+// Enable CORS
+app.use(cors({
+  credentials: true,
+  origin: true
+}));
+
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
   app.use(function (req, res, next) {
@@ -95,12 +101,6 @@ app.use(mountpoint, function (req, res) {
     couchProxy;
   }
 });
-
-// Enable CORS
-app.use(cors({
-  credentials: true,
-}));
-app.options('*', cors()) // include before other routes
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '1gb' }))
