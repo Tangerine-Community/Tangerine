@@ -4,6 +4,7 @@
 
 __Fixes__
 
+- Improve listing of items in the Data menu. Issue: [#3125](https://github.com/Tangerine-Community/Tangerine/issues/3125)
 - Fix issue where Group User on server with permission to access database would not have access. Commit: [a10162d9](https://github.com/Tangerine-Community/Tangerine/commit/a10162d92642cf83ae43aa3ad96033691e5b0a76)
 - Add Amharic translation.
 - Fix issue when backup has never run, the Clean backups command in Maintenance on client fails, and the process alert 
@@ -16,6 +17,12 @@ __Fixes__
 - Avoid crashes when properties on the markup are accessed before being available to the component [#3080](https://github.com/Tangerine-Community/Tangerine/pull/3080)
 - Replace special chars with underscore in CSV output. PR: [#3003](https://github.com/Tangerine-Community/Tangerine/pull/3003/)
 - Refresh global reference to T.case when using a case so most importantly the correct context is set PR: [#3108](https://github.com/Tangerine-Community/Tangerine/pull/3108)
+- Link to download data set downloads a JSON file with headers and group config doc. Issue: [#3114](https://github.com/Tangerine-Community/Tangerine/issues/3114)
+- CSV template creation fails. Issue: [#3115](https://github.com/Tangerine-Community/Tangerine/issues/3115)
+- Restart couchdb container on failure. PR: [#3112](https://github.com/Tangerine-Community/Tangerine/pull/3112)
+- APK and PWA Updates fail with User not logged in (every time) [#3111](https://github.com/Tangerine-Community/Tangerine/issues/3111)
+- Fix error when looping through input values for data dictionary. PR: [#3124](https://github.com/Tangerine-Community/Tangerine/pull/3124)
+- Add config to allow output of multiple participants in MySQL. Consult the PR for implementation details. If you wish to enable this feature, add `T_MYSQL_MULTI_PARTICIPANT_SCHEMA:true` to the config.sh script. PR: [#3110](https://github.com/Tangerine-Community/Tangerine/pull/3110/)
 
 __Upgrade notice__
 

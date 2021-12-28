@@ -1,6 +1,7 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
 <div class="tangy-full-width" id="container">
+  <div class="configure-instructions">{{ "Configure the date range (optional), data set description, Personal Identifiable Information (PII) exclusion, and forms for the CSV data set." | translate }}</div>
   <form class="form">
     <div>
       <mat-form-field appearance="fill" color="primary">
@@ -39,8 +40,9 @@
         >{{ "Exclude PII?" | translate }}
       </mat-checkbox>
     </div>
+    <div class="select-instructions">{{ "Click the checkbox to the left of the 'Form title' column to select all forms. If there is a CSV Template available for a form, it will be displayed in the form's CSV Template dropdown." | translate }}</div>
     <table class="form-list materialish">
-      <tr class="table-header">
+      <tr class="table-header new-csv-header">
         <td>
           <mat-checkbox name="toggle-select-all-forms" (change)="toggleSelectAllForms($event)"></mat-checkbox>
         </td>

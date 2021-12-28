@@ -10,3 +10,6 @@
 .link {
   cursor: pointer;
 }
+.instructions {
+  margin: 1em;
+}
