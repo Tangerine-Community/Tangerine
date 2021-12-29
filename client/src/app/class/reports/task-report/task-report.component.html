@@ -48,7 +48,7 @@
           </ng-container>
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef title="status"> {{'Status'|translate}} </th>
-            <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.status|translate}} </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnsToDisplayGrouping"></tr>
           <tr mat-row *matRowDef="let element; columns: columnsToDisplayGrouping;" [ngClass]="element.colorClass"></tr>
