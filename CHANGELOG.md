@@ -4,7 +4,7 @@
 
 __Fixes__
 
-- Backport:  Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
+- Backport: Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
 - Backport: When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
 
 
