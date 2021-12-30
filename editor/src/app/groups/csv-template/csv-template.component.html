@@ -3,7 +3,7 @@
   <form class="form">
     <mat-form-field class="example-full-width">
       <mat-label>Title</mat-label>
-      <input matInput placeholder="Template Title" [(ngModel)]="csvTemplateTitle" name="title">
+      <input matInput placeholder="Template Title" [(ngModel)]="csvTemplateTitle" name="title" required>
     </mat-form-field>
     <mat-form-field appearance="fill">
       <mat-label>Form</mat-label>
@@ -12,7 +12,7 @@
         <option *ngFor="let formInfo of formsInfo" [value]="formInfo.id">{{formInfo.title}}</option>
       </select>
     </mat-form-field> 
-    <h2>Included Columns</h2>
+    <h2 *ngIf="formId">Included Columns</h2>
     <ol  class="headers">
       <li *ngFor="let header of headers">
         <table>

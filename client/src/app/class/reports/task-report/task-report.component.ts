@@ -10,6 +10,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {_TRANSLATE} from '../../../shared/translation-marker';
 import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
+import { tNumber } from 'src/app/t-number.util';
 
 @Component({
   selector: 'app-task-report',
@@ -43,6 +44,10 @@ export class TaskReportComponent implements OnInit {
     private tangyFormService: TangyFormService,
     private tangyFormsInfoService: TangyFormsInfoService
   ) { }
+
+  tNumber(fragment) {
+    return tNumber(fragment)
+  }
 
   async ngOnInit() {
     const currentUser = this.userService.getCurrentUser();
