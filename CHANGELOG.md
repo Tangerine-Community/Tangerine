@@ -1,5 +1,42 @@
 # What's new
 
+## v3.20.3
+
+__Fixes__
+
+- Editing Timed Grids on Forms: Capture at item and Duration are compared as strings leading to unexpected validation scenarios [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+- Fix CORs usage in Tangerine APIs when outside applications are using credentials.  [#3132](https://github.com/Tangerine-Community/Tangerine/pull/3132)
+- When Tangerine creates CouchDB users for Sync, DB Administration, and Reporting, restrict that users access to the databases for the group they are assigned. This is a tightening of security to support use cases where users of groups on the same server should be restricted from accessing other groups data on the same server when Sync Protocol 2 and Database Administrator features are being used. [#3118](https://github.com/Tangerine-Community/Tangerine/pull/3118)
+- Data Manager views in CSV which cycle sequence was used in each form response [#3128](https://github.com/Tangerine-Community/Tangerine/pull/3128).
+- Fix access denied message when using Tangerine APIs [#3133](https://github.com/Tangerine-Community/Tangerine/pull/3133)
+- Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
+- When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+- Fix database export when using Sync Protocol 1 by using the correct database names [#3120](https://github.com/Tangerine-Community/Tangerine/issues/3120)
+
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.3
+./start.sh v3.20.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.2
+```
+
+
 ## v3.20.2
 
 __Fixes__
@@ -351,6 +388,14 @@ update-down-sync-doc-count-by-location-id-index '*'
 # the project has a lot of data.
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
+
+## v3.18.10
+
+__Fixes__
+
+- Backport: Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
+- Backport: When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+
 
 ## v3.18.9
 

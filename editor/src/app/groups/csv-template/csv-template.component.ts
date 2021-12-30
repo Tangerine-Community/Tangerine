@@ -108,6 +108,18 @@ export class CsvTemplateComponent implements OnInit {
   }
 
   async onSubmit() {
+    if (!this.csvTemplateTitle && !this.formId) {
+      alert(_TRANSLATE('Please title this template and select a form to use it with.'))
+      return
+    }
+    else if (!this.csvTemplateTitle) {
+      alert(_TRANSLATE('Title is required.'))
+      return
+    }
+    else if (!this.formId) {
+      alert(_TRANSLATE('Please select a form to use as a template.'))
+      return
+    }
     await this.formsService.updateCsvTemplate(this.groupId, {
       ...this.csvTemplate,
       formId: this.formId,

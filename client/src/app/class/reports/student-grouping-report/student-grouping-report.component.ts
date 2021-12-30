@@ -30,6 +30,7 @@ export class StudentGroupingReportComponent implements OnInit {
   classGroupReport: ClassGroupingReport;
   checkFeedbackMessagePosition = false;
   clickPosition;
+  ready = false
 
   @ViewChild('container', {static: true}) container: ElementRef;
   @ViewChild('feedback') feedbackElement: ElementRef;
@@ -82,6 +83,7 @@ export class StudentGroupingReportComponent implements OnInit {
     // console.log("this.classGroupReport item: " + item + " classId: " + classId + " curriculumId: " + curriculumId + "results: "  + JSON.stringify(results))
     // console.log("this.classGroupReport feedback: " + JSON.stringify(this.classGroupReport.feedback))
     this.dataSource = new MatTableDataSource<StudentResult>(this.classGroupReport.allStudentResults);
+    this.ready = true
   }
 
   ngAfterViewChecked() {
