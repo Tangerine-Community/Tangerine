@@ -9,6 +9,9 @@ __Fixes__
 - When Tangerine creates CouchDB users for Sync, DB Administration, and Reporting, restrict that users access to the databases for the group they are assigned. This is a tightening of security to support use cases where users of groups on the same server should be restricted from accessing other groups data on the same server when Sync Protocol 2 and Database Administrator features are being used. [#3118](https://github.com/Tangerine-Community/Tangerine/pull/3118)
 - Data Manager views in CSV which cycle sequence was used in each form response [#3128](https://github.com/Tangerine-Community/Tangerine/pull/3128).
 - Fix access denied message when using Tangerine APIs [#3133](https://github.com/Tangerine-Community/Tangerine/pull/3133)
+- Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
+- When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+
 
 __Server upgrade instructions__
 
@@ -384,6 +387,14 @@ update-down-sync-doc-count-by-location-id-index '*'
 # the project has a lot of data.
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
+
+## v3.18.10
+
+__Fixes__
+
+- Backport: Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
+- Backport: When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+
 
 ## v3.18.9
 
