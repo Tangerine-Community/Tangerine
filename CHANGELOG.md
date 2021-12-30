@@ -11,6 +11,7 @@ __Fixes__
 - Fix access denied message when using Tangerine APIs [#3133](https://github.com/Tangerine-Community/Tangerine/pull/3133)
 - Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
 - When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+- Fix database export when using Sync Protocol 1 by using the correct database names [#3120](https://github.com/Tangerine-Community/Tangerine/issues/3120)
 
 
 __Server upgrade instructions__
