@@ -7,6 +7,8 @@ const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 const CODE_SKIP = '999'
+const createGroupDatabase = require('../../create-group-database.js')
+const groupsList = require('/tangerine/server/src/groups-list.js')
 
 async function insertGroupReportingViews(groupName) {
   let designDoc = Object.assign({}, groupReportingViews)
@@ -31,6 +33,13 @@ async function insertGroupReportingViews(groupName) {
 module.exports = {
   name: 'csv',
   hooks: {
+    enable: async function() {
+      const groups = await groupsList()
+      for (groupId of groups) {
+        await createGroupDatabase(groupId, '-reporting')
+        await createGroupDatabase(groupId, '-reporting-sanitized')
+      }
+    },
     clearReportingCache: async function(data) {
       const { groupNames } = data
       for (let groupName of groupNames) {
@@ -38,6 +47,8 @@ module.exports = {
         await db.destroy()
         db = DB(`${groupName}-reporting-sanitized`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-reporting')
+        await createGroupDatabase(groupName, '-reporting-sanitized')
         await insertGroupReportingViews(groupName)
       }
       return data
@@ -184,6 +195,8 @@ module.exports = {
     groupNew: function(data) {
       return new Promise(async (resolve, reject) => {
         const {groupName, appConfig} = data
+        await createGroupDatabase(groupName, '-reporting')
+        await createGroupDatabase(groupName, '-reporting-sanitized')
         await insertGroupReportingViews(groupName)
         resolve(data)
       })
@@ -217,6 +230,8 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
   let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
+    cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replaceAll('\n','  '): '',
+    sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
     startUnixtime: formResponse.startUnixtime||'',
     endUnixtime: formResponse.endUnixtime||'',
     lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
