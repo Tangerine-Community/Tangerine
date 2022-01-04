@@ -65,10 +65,21 @@ if (process.env.T_AUTO_COMMIT === 'true') {
 module.exports = async function expressAppBootstrap(app) {
 
 // Enable CORS
-app.use(cors({
-  credentials: true,
-  origin: true
-}));
+try {
+  if (process.env.T_CORS_ALLOWED_ORIGINS) {
+    const origin = JSON.parse(process.env.T_CORS_ALLOWED_ORIGINS)
+    app.use(cors({
+      credentials: true,
+      origin
+    }))
+    log.info(`CORS enabled for origins: ${origin}`)
+  } else {
+    log.info('CORS is disabled')
+  }
+} catch(e) {
+  log.error(`Error parsing T_CORS_ALLOWED_ORIGINS: ${process.env.T_CORS_ALLOWED_ORIGINS}`)
+  console.log(e)
+}
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
