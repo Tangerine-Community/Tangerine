@@ -12,6 +12,7 @@
 
 # Domain name of the Tangerine installation. If doing local development without ngrok, use 127.0.0.1, not localhost.
 T_HOST_NAME='example.com'
+T_MAINTAINER_EMAIL="do-not-reply@tangerinecentral.org"
 # Set to HTTPS for redirecting any requests to https. However you will need to put a reverse proxy with SSL in front.
 T_PROTOCOL="http"
 # Administrator User for logging into Tangerine -- Do not change the username until after the first login

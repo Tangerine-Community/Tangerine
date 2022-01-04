@@ -197,7 +197,6 @@ RUN_OPTIONS="
   --env \"T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP\" \
   --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
-  $T_PORT_MAPPING \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
@@ -210,6 +209,21 @@ RUN_OPTIONS="
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
+
+# Disable Tangerine claiming a port as it will be proxied by nginx.
+if [ $SSL_RUNNING ]; then
+  RUN_OPTIONS="
+    $RUN_OPTIONS \
+    -e "LETSENCRYPT_HOST=$T_HOST_NAME" \
+    -e "VIRTUAL_HOST=$T_HOST_NAME" \
+    -e "LETSENCRYPT_EMAIL=$T_MAINTAINER_EMAIL" \
+  "
+else
+  RUN_OPTIONS="
+    $RUN_OPTIONS \
+    $T_PORT_MAPPING \
+  "
+fi
 
 if echo "$T_MODULES" | grep mysql; then
 RUN_OPTIONS="
