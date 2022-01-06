@@ -31,6 +31,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   templateId:string
   formResponseId:string
   allowCreationOfIssues:boolean
+  publicCaseService:CaseService
 
   hasEventFormRedirect = false
   eventFormRedirectUrl = ''
@@ -59,6 +60,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   ) {
     ref.detach()
     this.window = window
+    this.publicCaseService = caseService
   }
 
   async ngOnInit() {
