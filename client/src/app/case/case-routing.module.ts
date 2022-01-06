@@ -46,10 +46,11 @@ export class CanDeactivateEventForm implements CanDeactivate<EventFormComponent>
   ): Promise<boolean> {
     if (!component.formResponseId && !component.eventForm.formResponseId && component.formPlayer.response && component.formPlayer.response.items && component.formPlayer.response.items[0] && component.formPlayer.response.items[0].inputs && component.formPlayer.response.items[0].inputs.length > 0) {
       component.eventForm.formResponseId = component.formPlayer.formResponseId
-      component.isSaving = true
-      await this.caseService.save()
-      component.isSaving = false
     }
+    component.isSaving = true
+    // This line need to change depending on wether the following PR makes it into the main branch. https://github.com/Tangerine-Community/Tangerine/pull/3153
+    await this.caseService.save()
+    component.isSaving = false
     return true
   }
 
