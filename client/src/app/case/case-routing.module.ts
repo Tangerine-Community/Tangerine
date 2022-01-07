@@ -48,8 +48,7 @@ export class CanDeactivateEventForm implements CanDeactivate<EventFormComponent>
       component.eventForm.formResponseId = component.formPlayer.formResponseId
     }
     component.isSaving = true
-    // This line need to change depending on wether the following PR makes it into the main branch. https://github.com/Tangerine-Community/Tangerine/pull/3153
-    await this.caseService.save()
+    await component.publicCaseService.save()
     component.isSaving = false
     return true
   }
