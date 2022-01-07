@@ -170,6 +170,11 @@ export class AppComponent implements OnInit {
     this.window.device = await this.deviceService.getDevice();
     this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
 
+    // Use experimental mode in Tangy Form that only captures the properties of inputs that have changed from their original state in the form.
+    if (this.appConfig.saveLessFormData) {
+      window['useShrinker'] = true
+    }
+
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
       this.router.navigate(['/update']);
