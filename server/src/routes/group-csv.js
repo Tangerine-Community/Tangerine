@@ -8,6 +8,7 @@ const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra')
 const axios = require('axios')
 const tangyModules = require('../modules/index.js')()
+const generateCsvDataSets = require('../scripts/generate-csv-data-sets/generate-csv-data-sets.js')
 
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
@@ -111,6 +112,18 @@ const generateCSVDataSet = async (req, res) => {
   })
 }
 
+const generateCSVDataSetsRoute = async (req, res) => {
+  const datasetsId = req.params.datasetsId
+  // Do not await, let it run in the background.
+  generateCsvDataSets(datasetsId)
+  const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${datasetsId}.json`
+  const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${datasetsId}.zip`
+  res.send({
+    stateUrl,
+    downloadUrl
+  })
+}
+
 const listCSVDataSets = async (req, res) => {
   try {
     const { groupId, pageIndex, pageSize } = req.params
@@ -155,5 +168,6 @@ module.exports = {
   generateCSV,
   generateCSVDataSet,
   getDatasetDetail,
+  generateCSVDataSetsRoute,
   listCSVDataSets
 }
