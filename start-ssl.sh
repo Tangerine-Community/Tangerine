@@ -20,6 +20,6 @@ docker run -d \
     --volumes-from nginx-proxy \
     jrcs/letsencrypt-nginx-proxy-companion
 
-SSL_RUNNING="true"
+export SSL_RUNNING="true"
 
 ./start.sh $1
