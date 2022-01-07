@@ -75,6 +75,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
       this.caseService.setContext(params.eventId, params.eventFormId)
       this.window.caseService = this.caseService
       this.window.T.case = this.caseService
+      this.caseService['instanceFrom'] = 'EventFormComponent'
+      const localT = {
+        ...window['T'],
+        case: this.caseService
+      }
+      this.formPlayer.inject('T', localT)
+      this.formPlayer.inject('caseService', this.caseService)
       this.caseEvent = this
         .caseService
         .case
