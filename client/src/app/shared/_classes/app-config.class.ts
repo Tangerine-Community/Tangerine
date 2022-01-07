@@ -55,6 +55,8 @@ export class AppConfig {
   doNotOptimize: Array<string>
   dbBackupSplitNumberFiles: number;
   usePouchDbLastSequenceTracking:boolean
+  // Use experimental mode in Tangy Form that only captures the properties of inputs that have changed from their original state in the form.
+  saveLessFormData:boolean
 }
 
 export enum EncryptionPlugin {
