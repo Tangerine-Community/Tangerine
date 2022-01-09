@@ -1,5 +1,37 @@
 # What's new
 
+## v3.20.4
+
+__Fixes__
+
+- Fixes resuming an unfinished Event Form. Commit [bf97492](https://github.com/Tangerine-Community/Tangerine/pull/3154/commits/bf9749247d4d0e8b7500bbd64433f6b5f9514426)
+
+__New Features__
+
+- Add support for running an SSL frontend. Issue: [#3147](https://github.com/Tangerine-Community/Tangerine/issues/3147)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.4
+./start.sh v3.20.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.3
+```
+
 ## v3.20.3
 
 __Fixes__
