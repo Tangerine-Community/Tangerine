@@ -60,7 +60,7 @@ export class SearchComponent implements OnInit {
     this.username = this.userService.getCurrentUser()
     this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
-      .pipe(debounceTime(300))
+      .pipe(debounceTime(1200))
       .subscribe((searchString:string) => {
         this.currentSearchId = UUID() 
         this.searchResults.nativeElement.innerHTML = 'Searching...'
