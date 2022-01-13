@@ -1,5 +1,11 @@
 # What's new
 
+## v3.18.11
+
+__Fixes__
+
+- Backport: Remove import of duplicate `<t-number>` element that was causing bootstrap to fail. 
+
 ## v3.18.10
 
 __Fixes__
