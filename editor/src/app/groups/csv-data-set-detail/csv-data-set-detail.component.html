@@ -5,7 +5,16 @@
       <a *ngIf="datasetDetail.complete" 
           class="tangy-foreground-secondary" [href]="datasetDetail.downloadUrl">{{datasetDetail.fileName}}</a>
     </p>
-    <p><strong>{{'Include PII'|translate}}</strong>: {{datasetDetail.includePii}}</p>
+    <p><strong>{{'Exclude PII'|translate}}</strong>: 
+      {{datasetDetail.hasOwnProperty('excludePii') && datasetDetail.excludePii ? 'true' : ''}}
+      {{datasetDetail.hasOwnProperty('excludePii') && !datasetDetail.excludePii ? 'false' : ''}}
+      <!-- 
+        If includes a includePii flaged, it was a previously mislabeled excludePii 
+        flag even though it was working as expected despite the confusing naming.
+      -->
+      {{datasetDetail.hasOwnProperty('includePii') && datasetDetail.includePii ? 'true' : ''}}
+      {{datasetDetail.hasOwnProperty('includePii') && !datasetDetail.includePii ? 'false' : ''}}
+    </p>
     <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail.complete? 'Complete':'In Progress' |translate}}</p>
     <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail.month?datasetDetail.month: '*'}}</p>
     <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail.year?datasetDetail.year: '*'}}</p>
