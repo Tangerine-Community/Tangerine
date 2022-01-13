@@ -8,6 +8,7 @@ import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Router } from '@angular/router';
 import { SearchBarcodeComponent } from './search-barcode/search-barcode.component';
 import { t } from 'tangy-form/util/t.js'
+import { v4 as UUID } from 'uuid';
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -44,6 +45,7 @@ export class SearchComponent implements OnInit {
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
   showScan = false
+  currentSearchId:string
 
   constructor(
     private searchService: SearchService,
@@ -60,8 +62,9 @@ export class SearchComponent implements OnInit {
     this.onSearch$
       .pipe(debounceTime(300))
       .subscribe((searchString:string) => {
+        this.currentSearchId = UUID() 
         this.searchResults.nativeElement.innerHTML = 'Searching...'
-        this.onSearch(searchString)
+        this.onSearch(searchString, `${this.currentSearchId}`)
       })
     this
       .searchBar
@@ -80,12 +83,16 @@ export class SearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
-    this.onSearch('')
+    this.currentSearchId = UUID()
+    this.onSearch('', `${this.currentSearchId}`)
   }
 
-  async onSearch(searchString) {
+  async onSearch(searchString:string, searchId:string) {
     this.searchResults.nativeElement.innerHTML = "Loading..."
     this.searchDocs = await this.searchService.search(this.username, searchString)
+    // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
+    // to wait for indexing... Or just bad luck.
+    if (this.currentSearchId !== searchId) return
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     if (this.searchDocs.length === 0) {
@@ -147,7 +154,8 @@ export class SearchComponent implements OnInit {
 
   onScanChange(scanSearchString) {
       this.showScan = false
-      this.onSearch(scanSearchString)
+      this.currentSearchId = UUID()
+      this.onSearch(scanSearchString, `${this.currentSearchId}`)
       this.searchBar.nativeElement.value = scanSearchString
   }
 
