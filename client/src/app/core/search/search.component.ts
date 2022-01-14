@@ -40,12 +40,17 @@ export class SearchComponent implements OnInit {
   didSearch$ = new Subject()
   searchReady$ = new Subject()
   navigatingTo$ = new Subject()
-  searchDocs:Array<SearchDoc>
+  searchDocs:Array<SearchDoc> = []
   username:string
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
   showScan = false
   currentSearchId:string
+  moreClickCount = 0
+  searchString = ''
+  resultsPerPage = 10
+  thereIsMore = true 
+  isLoading = false
 
   constructor(
     private searchService: SearchService,
@@ -70,26 +75,58 @@ export class SearchComponent implements OnInit {
       .searchBar
       .nativeElement
       .addEventListener('keyup', event => {
-        const searchString = event.target.value
-        if (searchString.length > 2) {
-          this.onSearch$.next(event.target.value)
-        } else {
-          this.searchResults.nativeElement.innerHTML = `
-            <span style="padding: 25px">
-              ${t('Enter more than two characters...')}
-            </span>
-          `
-        }
+        this.isLoading = true
+        this.searchResults.nativeElement.innerHTML = ``
+        this.onSearch$.next(event.target.value)
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
     this.currentSearchId = UUID()
+    this.isLoading = true
     this.onSearch('', `${this.currentSearchId}`)
   }
 
+  async loadMore() {
+    this.isLoading = true
+    const searchId = UUID()
+    this.currentSearchId = `${searchId}`
+    this.moreClickCount++
+    this.searchDocs = await this.searchService.search(this.username, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
+    // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
+    // to wait for indexing... Or just bad luck.
+    if (this.currentSearchId !== searchId) return
+    let searchResultsMarkup = ``
+    if (this.searchDocs.length < this.resultsPerPage) {
+      this.thereIsMore = false
+    }
+    for (const searchDoc of this.searchDocs) {
+      const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
+      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
+      const formId = formInfo.id
+      searchResultsMarkup += `
+      <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
+        <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
+        <div>
+          <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : searchDoc._id}\``)}</div>
+          <div secondary>
+          ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
+          </div>
+        </div>
+      </div>
+      `
+    }
+    const previousResults = `${this.searchResults.nativeElement.innerHTML}`
+    this.searchResults.nativeElement.innerHTML = `${previousResults}${searchResultsMarkup}`
+    this.isLoading = false
+    this.didSearch$.next(true)   
+  }
+
   async onSearch(searchString:string, searchId:string) {
-    this.searchResults.nativeElement.innerHTML = "Loading..."
-    this.searchDocs = await this.searchService.search(this.username, searchString)
+    this.moreClickCount = 0
+    this.thereIsMore = true 
+    this.searchString = searchString
+    this.searchResults.nativeElement.innerHTML = ""
+    this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
     // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
     // to wait for indexing... Or just bad luck.
     if (this.currentSearchId !== searchId) return
@@ -101,6 +138,10 @@ export class SearchComponent implements OnInit {
           ${t('No results.')}
         </span>
       `
+      this.thereIsMore = false
+    }
+    if (this.searchDocs.length < this.resultsPerPage) {
+      this.thereIsMore = false
     }
     for (const searchDoc of this.searchDocs) {
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
@@ -119,6 +160,7 @@ export class SearchComponent implements OnInit {
       `
     }
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup
+    this.isLoading = false
     this.didSearch$.next(true)
   }
 

@@ -31,5 +31,11 @@
 </div>
 
 <div id="search-results" #searchResults>
-  Loading...
+</div>
+
+<div id="more" *ngIf="thereIsMore && searchDocs.length > 0 && isLoading === false">
+  <paper-button raised (click)="loadMore()">{{'Load More'|translate}}</paper-button>
+</div>
+<div id="loading" [hidden]="isLoading === false">
+  <paper-progress id="progress-bar" indeterminate></paper-progress>
 </div>
