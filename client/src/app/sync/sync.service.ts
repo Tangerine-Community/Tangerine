@@ -236,44 +236,36 @@ export class SyncService {
       db = await this.userService.getUserDatabase()
     }
     
-    let exclude = [
-      'tangy-form/responsesLockedAndNotUploaded',
-      'tangy-form/responsesUnLockedAndNotUploaded',
-      'tangy-form/responsesLockedAndUploaded',
-      'tangy-form/responsesUnLockedAndUploaded',
-      'tangy-form/responseByUploadDatetime',
-      'responsesUnLockedAndNotUploaded',
-      'sync-queue',
-      'sync-conflicts',
-      'tangy-form',
-      'find-docs-by-form-id-pageable/find-docs-by-form-id-pageable'
+    let viewsToOptimize = [
+      'search',
+      'case-events-by-all-days'
     ]
-
+    try {
+      let queryJs = await this.http.get('./assets/queries.js', {responseType: 'text'}).toPromise()
+      let queries;
+      eval(`queries = ${queryJs}`)
+      for (const query of queries) {
+        viewsToOptimize.push('_design/' + query.id)
+      }
+    } catch (e) { }
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.doNotOptimize && Array.isArray(appConfig.doNotOptimize)) {
-      exclude = [
-        ...exclude,
-        ...appConfig.doNotOptimize
-      ]
+      viewsToOptimize = viewsToOptimize.filter(view => appConfig.doNotOptimize.includes(view))
     }
-
-    const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
-    console.log(`Indexing ${result.rows.length} views.`)
+    console.log(`Indexing ${viewsToOptimize.length} views.`)
     db.db.on('indexing', async (progress) => {
       this.syncMessage$.next({ indexing: (progress) })
     })
     let i = 0
-    for (let row of result.rows) {
-      if (row.doc.views) {
-        for (let viewId in row.doc.views) {
-          const viewPath = `${row.doc._id.replace('_design/', '')}/${viewId}`
-          if (!exclude.includes(viewPath)) {
-            console.log(`Indexing: ${viewPath}`)
-            await db.query(viewPath, { limit: 1 })
-          }
-        }
+    for (let view of viewsToOptimize) {
+      this.syncMessage$.next({ message: `${window['t']('Optimizing data. Please wait...')} ${Math.round((i/viewsToOptimize.length)*100)}%` })
+      console.log(`Indexing: ${view}`)
+      try {
+        await db.query(view, { limit: 1 })
+      } catch(e) {
+        console.log(e)
+        console.warn(`Error indexing ${view}`)
       }
-      this.syncMessage$.next({ message: `${window['t']('Optimizing data. Please wait...')} ${Math.round((i/result.rows.length)*100)}%` })
       i++
     }
   }
