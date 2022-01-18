@@ -50,7 +50,7 @@ export class SearchComponent implements OnInit {
   searchString = ''
   resultsPerPage = 10
   thereIsMore = true 
-  isLoading = false
+  isLoading = true 
 
   constructor(
     private searchService: SearchService,
@@ -82,7 +82,6 @@ export class SearchComponent implements OnInit {
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
     this.currentSearchId = UUID()
-    this.isLoading = true
     this.onSearch('', `${this.currentSearchId}`)
   }
 
