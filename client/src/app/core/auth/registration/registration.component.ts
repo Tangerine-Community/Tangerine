@@ -60,6 +60,21 @@ export class RegistrationComponent implements OnInit {
 
     async register() {
         this.disableSubmit = true
+        if (!this.userSignup.username) {
+            this.statusMessage = _TRANSLATE(`Username is required`)
+            this.disableSubmit = false
+            return
+        }
+        if (!this.userSignup.password) {
+            this.statusMessage = _TRANSLATE(`Password is required`) 
+            this.disableSubmit = false
+            return
+        }
+        if (!this.userSignup.confirmPassword) {
+            this.statusMessage = _TRANSLATE(`Confirm Password is required`) 
+            this.disableSubmit = false
+            return
+        }
         if (this.requiresAdminPassword && !this.userService.confirmPassword('admin', this.userSignup.adminPassword)) {
             this.statusMessage = this.devicePasswordDoesNotMatchMessage
             this.disableSubmit = false
