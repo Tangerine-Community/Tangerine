@@ -432,8 +432,8 @@ export const updates = [
           }
         }
       }
-      await window['T'].activityService.initialize()
       await variableService.set('activity', activity)
+      await window['T'].activityService.initialize()
       await variableService.set('ran-update-v3.21.0', 'true')
     }
   }
