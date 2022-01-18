@@ -412,5 +412,28 @@ export const updates = [
       await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
       await variableService.set('ran-update-v3.19.2', 'true')
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService: UserService, variableService:VariableService) => {
+      if (appConfig.syncProtocol === '1' || (appConfig.syncProtocol === '2' && await variableService.get('ran-update-v3.21.0'))) return
+      console.log('Updating to v3.21.0...')
+      // Scan changes feed for recent activity on device.
+      let activity = []
+      let page = 1
+      let resultsPerPage = 100
+      const deviceId = (await window['T'].device.getDevice())._id
+      while (activity.length < 50 && page < 50) {
+        const changes = await userDb.changes({limit: resultsPerPage, include_docs: true, descending: true,  skip: (page - 1) * resultsPerPage})
+        for (let change of changes.results) {
+          const formInfo = window['T'].tangyFormsInfo.formsInfo.find(formInfo => formInfo.id === change.doc.form.id)
+          if (formInfo.searchSettings?.shouldIndex && change.doc.tangerineModifiedByDeviceId === deviceId && !activity.includes(change.doc._id)) {
+            activity.push(change.doc._id)
+          }
+        }
+      }
+      await variableService.set('activity', activity)
+      await variableService.set('ran-update-v3.21.0', 'true')
+    }
   }
 ]
