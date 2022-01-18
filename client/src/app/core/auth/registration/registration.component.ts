@@ -75,6 +75,11 @@ export class RegistrationComponent implements OnInit {
             this.disableSubmit = false
             return
         }
+        if (!this.userSignup.securityQuestionResponse) {
+            this.statusMessage = _TRANSLATE(`Security question is required`) 
+            this.disableSubmit = false
+            return
+        }
         if (this.requiresAdminPassword && !this.userService.confirmPassword('admin', this.userSignup.adminPassword)) {
             this.statusMessage = this.devicePasswordDoesNotMatchMessage
             this.disableSubmit = false
