@@ -1,6 +1,7 @@
 import { CaseEventOperation, CaseEventPermissions } from './../classes/case-event-definition.class';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { AppConfigService, LocationNode } from 'src/app/shared/_services/app-config.service';
+import { ActivityService } from 'src/app/shared/_services/activity.service';
 import { EventFormDefinition, EventFormOperation } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
@@ -27,6 +28,7 @@ import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import {Conflict} from "../classes/conflict.class";
 import * as jsonpatch from "fast-json-patch";
 import * as CryptoJS from 'crypto-js';
+import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 
 @Injectable({
   providedIn: 'root'
@@ -110,7 +112,8 @@ class CaseService {
     private deviceService:DeviceService,
     private userService:UserService,
     private appConfigService:AppConfigService,
-    private http:HttpClient
+    private http:HttpClient,
+    private activityService:ActivityService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -255,6 +258,7 @@ class CaseService {
       await this.tangyFormService.saveResponse(this.case)
       await this.setCase(await this.tangyFormService.getResponse(this.case._id))
       this._caseHash = CryptoJS.SHA256(JSON.stringify(this.case)).toString()
+      await this.activityService.saveActivity(this.case)
     }
   }
 
