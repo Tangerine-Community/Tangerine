@@ -426,12 +426,13 @@ export const updates = [
       while (activity.length < 50 && page < 50) {
         const changes = await userDb.changes({limit: resultsPerPage, include_docs: true, descending: true,  skip: (page - 1) * resultsPerPage})
         for (let change of changes.results) {
-          const formInfo = window['T'].tangyFormsInfo.formsInfo.find(formInfo => formInfo.id === change.doc.form.id)
-          if (formInfo.searchSettings?.shouldIndex && change.doc.tangerineModifiedByDeviceId === deviceId && !activity.includes(change.doc._id)) {
+          const formInfo = window['T'].tangyFormsInfo.formsInfo.find(formInfo => formInfo.id === change.doc?.form?.id)
+          if (formInfo && formInfo.searchSettings?.shouldIndex && change.doc.tangerineModifiedByDeviceId === deviceId && !activity.includes(change.doc._id)) {
             activity.push(change.doc._id)
           }
         }
       }
+      await window['T'].activityService.initialize()
       await variableService.set('activity', activity)
       await variableService.set('ran-update-v3.21.0', 'true')
     }
