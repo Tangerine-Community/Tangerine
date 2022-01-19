@@ -47,8 +47,12 @@ export class SearchService {
   async search(username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
     const db = await this.userService.getUserDatabase(username)
     let result:any = {}
+    let activity = []
     if (phrase === '') {
-      const activity = await this.activityService.getActivity()
+      activity = await this.activityService.getActivity()
+    }
+    // Only show activity if they have enough activity to fill a page.
+    if (phrase === '' && activity.length >= 11) {
       const page = activity.slice(skip, skip + limit)
       result = await db.allDocs(
         { 
