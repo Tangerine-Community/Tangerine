@@ -36,6 +36,7 @@ export class RegistrationComponent implements OnInit {
     securityQuestionText: string;
     passwordPolicy: string
     passwordRecipe: string
+    noPassword = false
     constructor(
         private userService: UserService,
         private route: ActivatedRoute,
@@ -46,6 +47,7 @@ export class RegistrationComponent implements OnInit {
     }
     async ngOnInit() {
         const appConfig = await this.appConfigService.getAppConfig();
+        this.noPassword = appConfig.noPassword
         this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
         const homeUrl = appConfig.homeUrl;
         this.securityQuestionText = appConfig.securityQuestionText;
@@ -65,17 +67,17 @@ export class RegistrationComponent implements OnInit {
             this.disableSubmit = false
             return
         }
-        if (!this.userSignup.password) {
+        if (!this.noPassword && !this.userSignup.password) {
             this.statusMessage = _TRANSLATE(`Password is required`) 
             this.disableSubmit = false
             return
         }
-        if (!this.userSignup.confirmPassword) {
+        if (!this.noPassword && !this.userSignup.confirmPassword) {
             this.statusMessage = _TRANSLATE(`Confirm Password is required`) 
             this.disableSubmit = false
             return
         }
-        if (!this.userSignup.securityQuestionResponse) {
+        if (!this.noPassword && !this.userSignup.securityQuestionResponse) {
             this.statusMessage = _TRANSLATE(`Security question is required`) 
             this.disableSubmit = false
             return
@@ -85,14 +87,14 @@ export class RegistrationComponent implements OnInit {
             this.disableSubmit = false
             return
         }
-        if (this.userSignup.password!==this.userSignup.confirmPassword) {
+        if (!this.noPassword && this.userSignup.password!==this.userSignup.confirmPassword) {
             this.statusMessage = this.passwordsDoNotMatchMessage
             this.disableSubmit = false
             return
         }
       // const policy = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})');
         const policy = new RegExp(this.passwordPolicy)
-        if (!policy.test(this.userSignup.password)) {
+        if (!this.noPassword && !policy.test(this.userSignup.password)) {
           this.statusMessage = this.passwordIsNotStrong
           this.disableSubmit = false
           return
