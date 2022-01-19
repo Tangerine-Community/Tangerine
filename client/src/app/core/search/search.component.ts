@@ -96,13 +96,10 @@ export class SearchComponent implements OnInit {
   }
 
   async loadMore() {
+    const ticket = this.searchQueue.getTicket()
     this.isLoading = true
     this.moreClickCount++
-    const ticket = this.searchQueue.getTicket()
     this.searchDocs = await this.searchService.search(this.username, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
-    // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
-    // to wait for indexing... Or just bad luck.
-    if (ticket !== this.searchQueue.activeTicket) return
     let searchResultsMarkup = ``
     if (this.searchDocs.length < this.resultsPerPage) {
       this.thereIsMore = false
@@ -112,21 +109,19 @@ export class SearchComponent implements OnInit {
     }
     const el = document.createElement('div')
     el.innerHTML = searchResultsMarkup 
+    if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.append(el)
     this.isLoading = false
     this.didSearch$.next(true)   
   }
 
   async onSearch(searchString:string) {
+    const ticket = this.searchQueue.getTicket()
     this.moreClickCount = 0
     this.thereIsMore = true 
     this.searchString = searchString
     this.searchResults.nativeElement.innerHTML = ""
-    const ticket = this.searchQueue.getTicket()
     this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
-    // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
-    // to wait for indexing... Or just bad luck.
-    if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     if (this.searchDocs.length === 0) {
@@ -143,6 +138,7 @@ export class SearchComponent implements OnInit {
     for (const searchDoc of this.searchDocs) {
       searchResultsMarkup += this.templateSearchResult(searchDoc) 
     }
+    if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup
     this.isLoading = false
     this.didSearch$.next(true)
