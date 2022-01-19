@@ -26,6 +26,18 @@ export const FORM_TYPES_INFO = [
   }
 ]
 
+class Queue {
+
+  activeTicket:string
+
+  getTicket() {
+    const ticket = UUID()
+    this.activeTicket = ticket
+    return ticket
+  }
+
+}
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -45,12 +57,12 @@ export class SearchComponent implements OnInit {
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
   showScan = false
-  currentSearchId:string
   moreClickCount = 0
   searchString = ''
   resultsPerPage = 10
   thereIsMore = true 
   isLoading = true 
+  searchQueue:Queue = new Queue()
 
   constructor(
     private searchService: SearchService,
@@ -67,9 +79,8 @@ export class SearchComponent implements OnInit {
     this.onSearch$
       .pipe(debounceTime(1200))
       .subscribe((searchString:string) => {
-        this.currentSearchId = UUID() 
         this.searchResults.nativeElement.innerHTML = 'Searching...'
-        this.onSearch(searchString, `${this.currentSearchId}`)
+        this.onSearch(searchString)
       })
     this
       .searchBar
@@ -81,19 +92,17 @@ export class SearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
-    this.currentSearchId = UUID()
-    this.onSearch('', `${this.currentSearchId}`)
+    this.onSearch('')
   }
 
   async loadMore() {
     this.isLoading = true
-    const searchId = UUID()
-    this.currentSearchId = `${searchId}`
     this.moreClickCount++
+    const ticket = this.searchQueue.getTicket()
     this.searchDocs = await this.searchService.search(this.username, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
     // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
     // to wait for indexing... Or just bad luck.
-    if (this.currentSearchId !== searchId) return
+    if (ticket !== this.searchQueue.activeTicket) return
     let searchResultsMarkup = ``
     if (this.searchDocs.length < this.resultsPerPage) {
       this.thereIsMore = false
@@ -120,15 +129,16 @@ export class SearchComponent implements OnInit {
     this.didSearch$.next(true)   
   }
 
-  async onSearch(searchString:string, searchId:string) {
+  async onSearch(searchString:string) {
     this.moreClickCount = 0
     this.thereIsMore = true 
     this.searchString = searchString
     this.searchResults.nativeElement.innerHTML = ""
+    const ticket = this.searchQueue.getTicket()
     this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
     // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
     // to wait for indexing... Or just bad luck.
-    if (this.currentSearchId !== searchId) return
+    if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     if (this.searchDocs.length === 0) {
@@ -195,8 +205,7 @@ export class SearchComponent implements OnInit {
 
   onScanChange(scanSearchString) {
       this.showScan = false
-      this.currentSearchId = UUID()
-      this.onSearch(scanSearchString, `${this.currentSearchId}`)
+      this.onSearch(scanSearchString)
       this.searchBar.nativeElement.value = scanSearchString
   }
 
