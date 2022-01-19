@@ -25,21 +25,21 @@
         </mat-placeholder>
       </mat-form-field>
       <br>
-      <mat-form-field>
+      <mat-form-field *ngIf="!noPassword">
         <input name="password" matInput [(ngModel)]="userSignup.password" type="password" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}
         </mat-placeholder>
       </mat-form-field>
       <br>
-      <mat-form-field>
+      <mat-form-field *ngIf="!noPassword">
         <input name="confirmPassword" matInput [(ngModel)]="userSignup.confirmPassword" type="password" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}
         </mat-placeholder>
       </mat-form-field>
       <br>
-      <mat-form-field>
+      <mat-form-field *ngIf="!noPassword">
         <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="userSignup.securityQuestionResponse" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">security</i>{{securityQuestionText}}

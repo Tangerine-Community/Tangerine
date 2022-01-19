@@ -11,8 +11,6 @@ import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
-import { VARIABLE_FINISH_UPDATE_ON_LOGIN } from '../../update/update/update.component';
-import { FIRST_SYNC_STATUS } from 'src/app/device/components/device-sync/device-sync.component';
 
 @Component({
   selector: 'app-login',
@@ -31,6 +29,7 @@ export class LoginComponent implements OnInit {
   allUsernames;
   listUsernamesOnLoginScreen;
   requiresAdminPassword = false
+  noPassword = false
   passwordPolicy: string
   passwordRecipe: string
   constructor(
@@ -46,6 +45,7 @@ export class LoginComponent implements OnInit {
     this.installed = await this.variableService.get('installed') ? true : false
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
+    this.noPassword = appConfig.noPassword
     this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
     this.securityQuestionText = appConfig.securityQuestionText;
     this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
