@@ -808,6 +808,7 @@ class CaseService {
     await this.tangyFormService.saveResponse(issue)
     await this.openIssue(issue._id, comment, userId, userName)
     await this.updateIssueMeta(issue._id, label, comment, sendToAllDevices, sendToDeviceById, userName, userId)
+    await this.activityService.saveActivity(caseData)
     return await this.getIssue(issue._id)
   }
 
