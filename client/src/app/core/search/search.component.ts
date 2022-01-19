@@ -108,20 +108,7 @@ export class SearchComponent implements OnInit {
       this.thereIsMore = false
     }
     for (const searchDoc of this.searchDocs) {
-      const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      const formId = formInfo.id
-      searchResultsMarkup += `
-      <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
-        <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
-        <div>
-          <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : searchDoc._id}\``)}</div>
-          <div secondary>
-          ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
-          </div>
-        </div>
-      </div>
-      `
+      searchResultsMarkup += this.templateSearchResult(searchDoc) 
     }
     const previousResults = `${this.searchResults.nativeElement.innerHTML}`
     this.searchResults.nativeElement.innerHTML = `${previousResults}${searchResultsMarkup}`
@@ -153,10 +140,18 @@ export class SearchComponent implements OnInit {
       this.thereIsMore = false
     }
     for (const searchDoc of this.searchDocs) {
-      const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      const formId = formInfo.id
-      searchResultsMarkup += `
+      searchResultsMarkup += this.templateSearchResult(searchDoc) 
+    }
+    this.searchResults.nativeElement.innerHTML = searchResultsMarkup
+    this.isLoading = false
+    this.didSearch$.next(true)
+  }
+
+  templateSearchResult(searchDoc) {
+    const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
+    const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
+    const formId = formInfo.id
+    return `
       <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
         <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
         <div>
@@ -166,11 +161,7 @@ export class SearchComponent implements OnInit {
           </div>
         </div>
       </div>
-      `
-    }
-    this.searchResults.nativeElement.innerHTML = searchResultsMarkup
-    this.isLoading = false
-    this.didSearch$.next(true)
+    `
   }
 
   scan() {
