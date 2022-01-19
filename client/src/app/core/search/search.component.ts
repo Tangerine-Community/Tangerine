@@ -110,8 +110,9 @@ export class SearchComponent implements OnInit {
     for (const searchDoc of this.searchDocs) {
       searchResultsMarkup += this.templateSearchResult(searchDoc) 
     }
-    const previousResults = `${this.searchResults.nativeElement.innerHTML}`
-    this.searchResults.nativeElement.innerHTML = `${previousResults}${searchResultsMarkup}`
+    const el = document.createElement('div')
+    el.innerHTML = searchResultsMarkup 
+    this.searchResults.nativeElement.append(el)
     this.isLoading = false
     this.didSearch$.next(true)   
   }
