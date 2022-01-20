@@ -38,6 +38,7 @@ export class TangyFormsPlayerComponent {
   $afterResubmit = new Subject()
   $saved = new Subject()
   rendered = false
+  _inject = {}
 
   formInfo:FormInfo
   formTemplatesInContext:Array<FormTemplate>
@@ -53,6 +54,14 @@ export class TangyFormsPlayerComponent {
     private tangyFormService: TangyFormService,
   ) {
     this.window = window
+  }
+
+  inject(name, value) {
+    if (this.formEl) {
+      this.formEl.inject(name, value)
+    } else {
+      this._inject[name] = value
+    }
   }
 
   isDirty() {
@@ -123,6 +132,9 @@ export class TangyFormsPlayerComponent {
       container.innerHTML = formHtml
       let formEl = container.querySelector('tangy-form')
       this.formEl = formEl;
+      for (let name of Object.keys(this._inject)) {
+        this.formEl.inject(name, this._inject[name])
+      }
       // Put a response in the store by issuing the FORM_OPEN action.
       if (formResponse) {
         formEl.response = formResponse

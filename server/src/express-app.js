@@ -42,7 +42,7 @@ const exec = util.promisify(require('child_process').exec)
 const tangyModules = require('./modules/index.js')()
 const { extendSession, findUserByUsername,
    USERS_DB, login, getSitewidePermissionsByUsername,
-   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName, getAllRoles, updateRoleInGroup} = require('./auth');
+   updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName, getAllRoles, updateRoleInGroup, isSuperAdmin} = require('./auth');
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
@@ -57,7 +57,8 @@ const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
 const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
 const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
-const { generateCSV, generateCSVDataSet, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
+const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
+const allowIfUser1 = require('./middleware/allow-if-user1.js');
 
 if (process.env.T_AUTO_COMMIT === 'true') {
   setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
@@ -65,10 +66,21 @@ if (process.env.T_AUTO_COMMIT === 'true') {
 module.exports = async function expressAppBootstrap(app) {
 
 // Enable CORS
-app.use(cors({
-  credentials: true,
-  origin: true
-}));
+try {
+  if (process.env.T_CORS_ALLOWED_ORIGINS) {
+    const origin = JSON.parse(process.env.T_CORS_ALLOWED_ORIGINS)
+    app.use(cors({
+      credentials: true,
+      origin
+    }))
+    log.info(`CORS enabled for origins: ${origin}`)
+  } else {
+    log.info('CORS is disabled')
+  }
+} catch(e) {
+  log.error(`Error parsing T_CORS_ALLOWED_ORIGINS: ${process.env.T_CORS_ALLOWED_ORIGINS}`)
+  console.log(e)
+}
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
@@ -204,6 +216,7 @@ app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
 app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, generateCSV)
 app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
 app.post('/api/create/csvDataSet/:groupId', isAuthenticated, generateCSVDataSet)
+app.get('/api/create/csvDataSets/:datasetsId', allowIfUser1, generateCSVDataSetsRoute)
 app.post('/api/create/csvDataSet-sanitized/:groupId', isAuthenticated, generateCSVDataSet)
 app.get('/apis/listCSVDatasets/:groupId/:pageIndex/:pageSize', isAuthenticated, listCSVDataSets)
 app.get('/apis/CSVDatasetDetail/:datasetId', isAuthenticated, getDatasetDetail)

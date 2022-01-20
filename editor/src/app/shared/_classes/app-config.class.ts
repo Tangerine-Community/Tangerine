@@ -24,5 +24,7 @@ export class AppConfig {
   passwordPolicy:string
   passwordRecipe:string
   attachHistoryToDocs:boolean = false
+  // Use experimental mode in Tangy Form that only captures the properties of inputs that have changed from their original state in the form.
+  saveLessFormData:boolean
 }
 

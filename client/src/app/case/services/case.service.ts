@@ -26,6 +26,7 @@ import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import {Conflict} from "../classes/conflict.class";
 import * as jsonpatch from "fast-json-patch";
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,7 @@ import * as jsonpatch from "fast-json-patch";
 class CaseService {
 
   _case:Case
+  _caseHash:string
   caseDefinition:CaseDefinition
   location:Array<LocationNode>
 
@@ -199,6 +201,7 @@ class CaseService {
   }
 
   async setCase(caseInstance) {
+    this._caseHash = CryptoJS.SHA256(JSON.stringify(caseInstance)).toString()
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseInstance.caseDefinitionId)
@@ -248,9 +251,10 @@ class CaseService {
   }
 
   async save() {
-    if (this._shouldSave) {
+    if (this._shouldSave && CryptoJS.SHA256(JSON.stringify(this.case)).toString() !== this._caseHash) {
       await this.tangyFormService.saveResponse(this.case)
       await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+      this._caseHash = CryptoJS.SHA256(JSON.stringify(this.case)).toString()
     }
   }
 
