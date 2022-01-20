@@ -1,14 +1,51 @@
 # What's new
 
+## v3.21.0
+
+__Developers:Good to Know__
+
+- The master branch has been moved to the main branch. No development will happen on the master branch, which has been deleted. Also, please note the updates to the [Release Workflow](https://github.com/Tangerine-Community/Tangerine/blob/main/CONTRIBUTING.md#release-workflow)
+
+__Fixes__
+- Prevent unnecessary CaseService saves by comparing hashes [#3155](https://github.com/Tangerine-Community/Tangerine/pull/3155)
+- Prevent loss of case changes when leaving incomplete form by always saving the case [#3156](https://github.com/Tangerine-Community/Tangerine/pull/3156)
+- Inject `T` and `case` (caseService) variables into Tangy Form (formPlayer) from EventFormComponent. This will add `instanceFrom:  'EventFormComponent'` to the caseService (and also assigns `['instanceFrom'] = 'EventComponent'` in EventComponent). Commit: [716bc5e9](https://github.com/Tangerine-Community/Tangerine/commit/716bc5e90ec6fba59cbe55eb2bcf5ae244cf5fa8)
+- Bump tangy-form to v4.29.1 and tangy-form-editor to v7.10.2 Commit: [a3f785310](https://github.com/Tangerine-Community/Tangerine/pull/3159/commits/a3f7853105882a7d0960c64f11816c6fea7b2163)
+
+__New Features__
+
+- Add support for running an SSL frontend. Issue: [#3147](https://github.com/Tangerine-Community/Tangerine/issues/3147)
+- Make CORS settings configurable by T_CORS_ALLOWED_ORIGINS Commit: [1f448f7e](https://github.com/Tangerine-Community/Tangerine/pull/3159/commits/1f448f7efe8d55daeb6f63fa94cb29faaa0583c6)
+- Add ability to generate CSV datasets for all groups and all forms. This feature provides the new generate-csv-datasets command and csvDataSets route. [#3149](https://github.com/Tangerine-Community/Tangerine/pull/3149)
+- Add support for Tangy Form's useShrinker flag, implemented as AppConfig.saveLessFormData. This is an experimental mode in Tangy Form that only captures the properties of inputs that have changed from their original state in the form. This should lead to smaller formResponses and quicker sync data transfers. Commit: [35a05c2b](https://github.com/Tangerine-Community/Tangerine/commit/35a05c2b183b3df48e90073611d2631fac6eb8bd), Tangy-form pull: Add support for shrinking form responses [#209](https://github.com/Tangerine-Community/tangy-form/pull/209)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.21.0
+./start.sh v3.21.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.4
+```
+
 ## v3.20.4
 
 __Fixes__
 
 - Fixes resuming an unfinished Event Form. Commit [bf97492](https://github.com/Tangerine-Community/Tangerine/pull/3154/commits/bf9749247d4d0e8b7500bbd64433f6b5f9514426)
-
-__New Features__
-
-- Add support for running an SSL frontend. Issue: [#3147](https://github.com/Tangerine-Community/Tangerine/issues/3147)
 
 __Server upgrade instructions__
 
