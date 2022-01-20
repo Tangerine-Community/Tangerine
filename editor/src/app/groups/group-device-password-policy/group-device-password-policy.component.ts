@@ -22,7 +22,7 @@ export class GroupDevicePasswordPolicyComponent implements OnInit {
   @ViewChild('passwordPolicyDescriptionEl', {static: false}) passwordPolicyDescriptionEl:ElementRef
   @ViewChild('accountRecoveryQuestionEl', {static: false}) accountRecoveryQuestionEl:ElementRef
 
-  title = _TRANSLATE("Device Accounts Configuration")
+  title = _TRANSLATE("Password Policy for Device Accounts")
   breadcrumbs:Array<Breadcrumb> = []
 
   passwordPolicyCategory:string
@@ -39,8 +39,8 @@ export class GroupDevicePasswordPolicyComponent implements OnInit {
     const process = this.processMonitor.start('group-device-password-policy', 'Retrieving group device password policy...')
     this.breadcrumbs = [
       <Breadcrumb>{
-        label: _TRANSLATE('Device Accounts Configuration'),
-        url: `sync`
+        label: _TRANSLATE('Password Policy for Device Accounts'),
+        url: `device-password-policy`
       }
     ]
     const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
