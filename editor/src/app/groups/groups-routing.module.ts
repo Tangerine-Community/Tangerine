@@ -67,6 +67,7 @@ import { CsvTemplateComponent } from './csv-template/csv-template.component';
 import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-templates.component';
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
+import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -96,6 +97,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/device-password-policy', component: GroupDevicePasswordPolicyComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/case', component: CaseSettingsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security', component: ConfigureGroupSecurityComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security/assign-role', component: ListUsersComponent, canActivate: [LoginGuard] },

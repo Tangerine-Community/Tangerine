@@ -25,12 +25,23 @@
   <mat-card class="is-link mat-elevation-z3" routerLink="security" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
     <mat-card-header>
         <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">security</mwc-icon>
+          <mwc-icon class="tangy-foreground-secondary">people</mwc-icon>
         </div>
         <mat-card-title>
-            <a>{{'Security'|translate}}</a>
+            <a>{{'Users and Roles'|translate}}</a>
         </mat-card-title>
         <mat-card-subtitle>Manage who has server level access to this group.</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+  <mat-card class="is-link mat-elevation-z3" routerLink="device-password-policy" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
+    <mat-card-header>
+        <div mat-card-avatar>
+          <mwc-icon class="tangy-foreground-secondary">password</mwc-icon>
+        </div>
+        <mat-card-title>
+            <a>{{'Device Accounts Configuration'|translate}}</a>
+        </mat-card-title>
+        <mat-card-subtitle>Configure the password complexity required when creating accounts on Devices.</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
 </div>
