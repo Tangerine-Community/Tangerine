@@ -42,22 +42,19 @@ export class AppConfig {
   // Sync Protocol 2 configuration.
   //
 
-  couchdbPush4All:boolean
-  couchdbPullUsingDocIds:boolean
-  couchdbPushUsingDocIds:boolean
-  indexViewsOnlyOnFirstSync:boolean = false
+  // In a sync batch, control the number of database records read, sent over the network, and written to the database. Tweak this down when using the SqlCipher encryption plugin to avoid database crashes.
   batchSize:number
+  // On a Devices first sync. Control in a batch the number of database records read, sent over the network, and written to the database. Tweak this down when using the SqlCipher encryption plugin to avoid database crashes.
   initialBatchSize:number
+  // The max number of documents that will get written to disk during a sync. Tweak this down when using the SqlCipher encryption plugin to avoid database crashes.
   writeBatchSize:number
-  findSelectorLimit: number;
+  // The number of IDs to read from the database at a time when doing a Comparison Sync.
   compareLimit: number;
   // List of views to skip optimization of after a sync.
   doNotOptimize: Array<string>
-  // By default, User Profiles (AKA Device Users) will sync down to devices given the Sync Settings and then filtered
-  // by assignment when associating accounts on the Device. Setting this to true will ensure all User Profiles are
-  // Synced to all Devices and there will also be no filtering when associating Device Users to Accounts on Devices.
-  disableDeviceUserFilteringByAssignment:boolean
-
+  // Prevent database optimization after a sync other than the first sync. This is not recommended, will lead to performance issues when using Devices.
+  indexViewsOnlyOnFirstSync:boolean = false
+ 
   //
   // Account auth configuration.
   //
@@ -79,6 +76,9 @@ export class AppConfig {
   centrallyManagedUserProfile = false
   // Hides the user profile link to edit when on the Device.
   hideProfile = false
+  // When using Sync Protocol 2 and associating a new Device Account with a Device User, setting this to true will show them all Device Users synced
+  // down to the Device rather than filtering those Device Users based on the single Device Assignment.
+  disableDeviceUserFilteringByAssignment:boolean
 
   //
   // Encryption configuration.
