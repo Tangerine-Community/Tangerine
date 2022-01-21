@@ -49,7 +49,6 @@ export class SyncService {
   public readonly syncMessage$: Subject<any> = new Subject();
   public readonly onCancelled$: Subject<any> = new Subject();
   replicationStatus: ReplicationStatus
-  findSelectorLimit = 200
   syncCouchdbServiceStartTime:string
   syncCouchdbServiceEndime:string
   compareDocsStartTime: string
