@@ -1,8 +1,6 @@
-import { AppConfig } from './../../shared/_classes/app-config.class';
 import { ServerConfigService } from './../../shared/_services/server-config.service';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { ActivatedRoute } from '@angular/router';
-import { GroupsService } from './../services/groups.service';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/core/auth/_services/user.service';
 
