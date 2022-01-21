@@ -10,7 +10,7 @@ __Fixes__
 
 - Prevent unnecessary CaseService saves by comparing hashes [#3155](https://github.com/Tangerine-Community/Tangerine/pull/3155)
 - Prevent loss of case changes when leaving incomplete form by always saving the case [#3156](https://github.com/Tangerine-Community/Tangerine/pull/3156)
-- Inject `T` and `case` (caseService) variables into Tangy Form (formPlayer) from EventFormComponent. This will add `instanceFrom:  'EventFormComponent'` to the caseService (and also assigns `['instanceFrom'] = 'EventComponent'` in EventComponent). Commit: [716bc5e9](https://github.com/Tangerine-Community/Tangerine/commit/716bc5e90ec6fba59cbe55eb2bcf5ae244cf5fa8)
+- Prevent on-submit of a form running in one Case from being able to run in another case by navigating quickly to another Case. We inject `T` and `case` (caseService) variables into Tangy Form (formPlayer) from EventFormComponent. This will add `instanceFrom:  'EventFormComponent'` to the caseService (and also assigns `['instanceFrom'] = 'EventComponent'` in EventComponent). Note that if you have any use of `window.T` or `window.caseService`, you will need to make them `T` and `caseService` to take advantage of this fix. Commit: [716bc5e9](https://github.com/Tangerine-Community/Tangerine/commit/716bc5e90ec6fba59cbe55eb2bcf5ae244cf5fa8)
 - Bump tangy-form to v4.29.1 and tangy-form-editor to v7.10.2 Commit: [a3f785310](https://github.com/Tangerine-Community/Tangerine/pull/3159/commits/a3f7853105882a7d0960c64f11816c6fea7b2163)
 
 __New Features__
