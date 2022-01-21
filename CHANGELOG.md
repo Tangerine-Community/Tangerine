@@ -7,6 +7,7 @@ __Developers:Good to Know__
 - The master branch has been moved to the main branch. No development will happen on the master branch, which has been deleted. Also, please note the updates to the [Release Workflow](https://github.com/Tangerine-Community/Tangerine/blob/main/CONTRIBUTING.md#release-workflow)
 
 __Fixes__
+
 - Prevent unnecessary CaseService saves by comparing hashes [#3155](https://github.com/Tangerine-Community/Tangerine/pull/3155)
 - Prevent loss of case changes when leaving incomplete form by always saving the case [#3156](https://github.com/Tangerine-Community/Tangerine/pull/3156)
 - Inject `T` and `case` (caseService) variables into Tangy Form (formPlayer) from EventFormComponent. This will add `instanceFrom:  'EventFormComponent'` to the caseService (and also assigns `['instanceFrom'] = 'EventComponent'` in EventComponent). Commit: [716bc5e9](https://github.com/Tangerine-Community/Tangerine/commit/716bc5e90ec6fba59cbe55eb2bcf5ae244cf5fa8)
