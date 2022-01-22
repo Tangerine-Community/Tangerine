@@ -14,7 +14,7 @@ import { TangerineFormInfo } from 'src/app/shared/_classes/tangerine-form.class'
 })
 export class CsvTemplateComponent implements OnInit {
 
-  title = _TRANSLATE('CSV Template')
+  title = _TRANSLATE('Spreadsheet Template')
   breadcrumbs:Array<Breadcrumb> = []
 
   formId:string
@@ -54,7 +54,7 @@ export class CsvTemplateComponent implements OnInit {
       this.formsInfo = await this.formsService.getFormsInfo(this.groupId)
       this.breadcrumbs = [
         <Breadcrumb>{
-          label: _TRANSLATE('CSV Templates'),
+          label: 'Spreadsheet Templates',
           url: 'csv-templates'
         },
         <Breadcrumb>{
