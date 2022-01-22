@@ -15,7 +15,7 @@ import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.
 export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
   breadcrumbs: Array<Breadcrumb> = [
     <Breadcrumb>{
-      label: _TRANSLATE('Data Downloads'),
+      label: _TRANSLATE('Spreadsheets'),
       url: 'csv-data-sets'
     }]
   title = '' 

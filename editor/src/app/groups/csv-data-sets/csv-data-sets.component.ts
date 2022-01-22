@@ -11,10 +11,10 @@ import { GroupsService } from '../services/groups.service';
   styleUrls: ['./csv-data-sets.component.css']
 })
 export class CsvDataSetsComponent implements OnInit {
-  title = _TRANSLATE('Download CSV Data Set')
+  title = _TRANSLATE('Spreadsheet Requests')
   breadcrumbs: Array<Breadcrumb> = []
   csvDataSets;
-  displayedColumns = ['fileName','description', 'month', 'year', 'dateCreated', 'status', 'downloadUrl']
+  displayedColumns = ['dateCreated', 'description', 'month', 'year', 'status', 'numberOfSpreadsheets', 'details', 'downloadUrl']
   groupId
   pageIndex = 0
   pageSize = 10
@@ -27,7 +27,7 @@ export class CsvDataSetsComponent implements OnInit {
     this.groupId = this.route.snapshot.paramMap.get('groupId')
     this.breadcrumbs = [
       <Breadcrumb>{
-        label: _TRANSLATE('Download CSV Data Set'),
+        label: this.title,
         url: 'csv-data-sets'
       }
     ]
@@ -45,7 +45,13 @@ export class CsvDataSetsComponent implements OnInit {
 
   async getData(){
     try {
-      this.csvDataSets = await this.groupsService.listCSVDataSets(this.groupId, this.pageIndex, this.pageSize)
+      const csvDataSets = <any>await this.groupsService.listCSVDataSets(this.groupId, this.pageIndex, this.pageSize)
+      this.csvDataSets = csvDataSets.map(csvDataSet => {
+        csvDataSet.formIds = csvDataSet.formIds.split(',')
+        csvDataSet.month = csvDataSet.month === '*' ? 'All months' : csvDataSet.month
+        csvDataSet.year = csvDataSet.year === '*' ? 'All years' : csvDataSet.year
+        return csvDataSet
+      })
       this.ready = true
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'))
