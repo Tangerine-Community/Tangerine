@@ -29,6 +29,15 @@ button {
 .form-list{
   margin-top: 2rem;
 }
+#description, #year-and-month {
+  margin: 20px;
+}
+#description, #description input, #description mat-form-field {
+  width: 80%;
+}
+
+#description mat-form-field {
+}
 
 .csv-template-selection {
   position: relative;
@@ -45,6 +54,22 @@ table {
 
 .configure-instructions {
   margin: 1rem;
+}
+
+#submit-container {
+  position: sticky;
+  bottom: 0px;
+  right: 0px;
+  background: #CCC;
+  text-align: right;
+  padding: 0px 30px 10px;
+  border-top: solid 1px;
+}
+
+#submit-container button {
+  position: relative;
+  bottom: 15px;
+  right: 60px;
 }
 
 .select-instructions {
