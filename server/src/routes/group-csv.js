@@ -95,7 +95,7 @@ const generateCSVDataSet = async (req, res) => {
   })
   const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.zip', '.state.json')}`
   const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
-  await CSV_DATASETS.post({
+  const csvDataSetInfo = await CSV_DATASETS.post({
     groupId,
     formIds,
     fileName,
@@ -107,6 +107,7 @@ const generateCSVDataSet = async (req, res) => {
     dateCreated: Date.now()
   })
   res.send({
+    id: csvDataSetInfo.id,
     stateUrl,
     downloadUrl
   })
