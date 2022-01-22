@@ -1,6 +1,6 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
-<ng-container *ngIf="groupId">
+<ng-container *ngIf="ready">
 
   <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_dashboard'" class="is-link mat-elevation-z3" routerLink="../dashboard">
     <mat-card-header>
@@ -25,8 +25,8 @@
           <mat-card-subtitle>{{'Review uploaded cases and related issues.'|translate}}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-      <button mat-stroked-button color="accent" routerLink="cases">{{'Cases'|translate}}</button>
-      <button mat-stroked-button color="accent" *appHasAPermission="let i;group:groupId; permission:'can_access_issues'" routerLink="issues">{{'Issues'|translate}}</button>
+      <button mat-stroked-button color="accent" routerLink="cases"><mwc-icon class="tangy-foreground-secondary">folder</mwc-icon> {{'Cases'|translate}}</button>
+      <button mat-stroked-button color="accent" *appHasAPermission="let i;group:groupId; permission:'can_access_issues'" routerLink="issues"><mwc-icon>bug_report</mwc-icon> {{'Issues'|translate}}</button>
     </mat-card-actions>
     </mat-card>
   </span>
@@ -34,17 +34,17 @@
   <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_download_csv'" class="mat-elevation-z3">
     <mat-card-header>
       <div mat-card-avatar>
-        <mwc-icon class="tangy-foreground-secondary">view_module</mwc-icon>
+        <mwc-icon class="tangy-foreground-secondary">file_download</mwc-icon>
       </div>
       <mat-card-title>
-        <a>{{'CSV Output'|translate}}</a>
+        <a>{{'Data Downloads'|translate}}</a>
       </mat-card-title>
-      <mat-card-subtitle>{{'Download or configure a CSV Data Set, which is a zipped collection of CSVs. Configure the fields included in the CSV data output of a form using CSV Templates. The "Download individual CSVs" feature will be merged soon with the CSV Data Set feature soon since it has similar output.' |translate}}</mat-card-subtitle>
+      <mat-card-subtitle>{{"Create multiple Spreadsheets at once, view Spreadsheets you've generated in the past, and manage Spreadsheet Templates which you can use to control the order of columns and which variables show up on Spreadsheets." |translate}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions>
-      <button mat-stroked-button color="accent" routerLink="csv-data-sets">{{'Download CSV Data Set'|translate}}</button>
-      <button mat-stroked-button color="accent" routerLink="csv-templates">{{'CSV Templates for CSV Data Sets'|translate}}</button>
-      <button mat-stroked-button color="accent" routerLink="download-csv">{{'Download individual CSVs (deprecated)'|translate}}</button>
+      <button mat-stroked-button color="accent" routerLink="csv-data-sets/new"><mwc-icon>add</mwc-icon> {{'Create Spreadsheets'|translate}}</button>
+      <button mat-stroked-button color="accent" routerLink="csv-data-sets"><mwc-icon>list</mwc-icon> {{'List Spreadsheets'|translate}}</button>
+      <button mat-stroked-button color="accent" routerLink="csv-templates"><mwc-icon>table_view</mwc-icon> {{'Manage Spreadsheet Templates'|translate}}</button>
     </mat-card-actions>
 
   </mat-card>
@@ -63,7 +63,7 @@
     </mat-card>
   </span>
   
-  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_uploads'" class="is-link mat-elevation-z3" routerLink="uploads">
+  <mat-card *appHasAPermission="let i;group:groupId; permission:'can_access_uploads'" class="is-link mat-elevation-z3" routerLink="uploads" [hidden]="!showUploads">
     <mat-card-header>
       <div mat-card-avatar>
         <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
