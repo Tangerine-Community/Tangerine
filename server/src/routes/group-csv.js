@@ -156,6 +156,7 @@ const getDatasetDetail = async (req, res) => {
   const http = await getUser1HttpInterface()
   res.send({
      ...(await http.get(result.stateUrl)).data, 
+     description: result.description,
      month: result.month,
      year: result.year,
      downloadUrl: result.downloadUrl,

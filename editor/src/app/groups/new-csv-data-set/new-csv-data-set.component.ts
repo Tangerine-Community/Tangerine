@@ -17,7 +17,7 @@ export class NewCsvDataSetComponent implements OnInit {
   title = _TRANSLATE('Request Spreadsheets')
   breadcrumbs: Array<Breadcrumb> = [
     <Breadcrumb>{
-      label: _TRANSLATE('Spreadsheets'),
+      label: _TRANSLATE('Spreadsheet Requests'),
       url: 'csv-data-sets'
     }]
 

@@ -1,9 +1,11 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
-<div class="tangy-full-width" id="container">
-  <div class="configure-instructions">{{ "Configure the date range (optional), data set description, Personal Identifiable Information (PII) exclusion, and which forms to generate Spreadsheets for." | translate }}</div>
+<div class="full-width">
+  <div class="container">
+    <div class="configure-instructions">{{ "Configure the date range (optional), data set description, Personal Identifiable Information (PII) exclusion, and which forms to generate Spreadsheets for." | translate }}</div>
+  </div>
   <form class="form">
-    <div>
+    <div class="container">
       <div id="year-and-month">
         <mat-form-field appearance="fill" color="primary">
           <mat-label>{{ "Month" | translate }}</mat-label>
@@ -44,8 +46,8 @@
           >
         </mat-form-field>
       </div>
+      <div class="select-instructions">{{ "Click the checkbox to the left of the 'Form title' column to select all forms. If there is a Spreadsheet Template available for a form, it will be displayed in the form's Spreadsheet Template dropdown." | translate }}</div>
     </div>
-    <div class="select-instructions">{{ "Click the checkbox to the left of the 'Form title' column to select all forms. If there is a Spreadsheet Template available for a form, it will be displayed in the form's Spreadsheet Template dropdown." | translate }}</div>
     <table class="form-list materialish">
       <tr class="table-header new-csv-header">
         <td>
@@ -76,7 +78,7 @@
       </tr>
     </table>
     <div id="submit-container">
-      <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Create Spreadsheets'|translate}}</button>
+      <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit Request'|translate}}</button>
     </div>
   </form>
 </div>

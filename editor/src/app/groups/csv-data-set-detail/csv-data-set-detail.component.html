@@ -1,19 +1,19 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <div id="download-all-container">
-  <button mat-raised-button color="warn" [hidden]="!datasetDetail.complete">
+  <button mat-raised-button color="warn" [hidden]="!datasetDetail?.complete">
     <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
     {{'download all'|translate}}
   </button>
- <button mat-raised-button color="warn" [hidden]="datasetDetail.complete" disabled>
+ <button mat-raised-button color="warn" [hidden]="datasetDetail?.complete" disabled>
     <mat-spinner diameter=25></mat-spinner> {{'download all'|translate}}
   </button>
 </div>
 <div *ngIf="datasetDetail" class="tangy-full-width">
-    <p [hidden]="!datasetDetail.description"><strong>{{'Description'|translate}}</strong>: {{datasetDetail.description}}</p>
-    <p><strong>{{'Include PII'|translate}}</strong>: {{datasetDetail.includePii}}</p>
-    <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail.complete? 'Complete':'In Progress' |translate}}</p>
-    <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail.month === '*' ? 'All months' : datasetDetail.month }}</p>
-    <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail.year === '*' ? 'All years' : datasetDetail.year }}</p>
+    <p [hidden]="!datasetDetail?.description"><strong>{{'Description'|translate}}</strong>: {{datasetDetail?.description}}</p>
+    <p><strong>{{'Include PII'|translate}}</strong>: {{datasetDetail?.includePii}}</p>
+    <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail?.complete? 'Complete':'In Progress' |translate}}</p>
+    <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail?.month === '*' ? 'All months' : datasetDetail?.month }}</p>
+    <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail?.year === '*' ? 'All years' : datasetDetail?.year }}</p>
 </div>
 <table *ngIf="datasetDetail"
     mat-table
@@ -23,29 +23,29 @@
     <ng-container matColumnDef="formTitle">
       <th mat-header-cell *matHeaderCellDef>{{'Form'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
-        {{ dataSet.formTitle }}
+        {{ dataSet?.formTitle }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="csvTemplateTitle">
       <th mat-header-cell *matHeaderCellDef>{{'Spreadsheet Template'|translate}}</th>
-      <td mat-cell *matCellDef="let dataSet">{{ dataSet.csvTemplateTitle }}</td>
+      <td mat-cell *matCellDef="let dataSet">{{ dataSet?.csvTemplateTitle }}</td>
     </ng-container>
     
     <ng-container matColumnDef="inProgress">
       <th mat-header-cell *matHeaderCellDef>{{'Status'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
-        {{ dataSet.inProgress ? dataSet.skip : ''}} {{ dataSet.inProgress ? 'rows processed' : ''}}  
-        {{ dataSet.complete ? 'Complete' : '' | translate}}
-        {{ !dataSet.complete && !dataSet.inProgress ? 'Queued' : '' | translate}}
+        {{ dataSet?.inProgress ? dataSet?.skip : ''}} {{ dataSet?.inProgress ? 'rows processed' : ''}}  
+        {{ dataSet?.complete ? 'Complete' : '' | translate}}
+        {{ !dataSet?.complete && !dataSet?.inProgress ? 'Queued' : '' | translate}}
       </td>
     </ng-container>
     
     <ng-container matColumnDef="outputPath">
       <th mat-header-cell *matHeaderCellDef>{{'Download File'|translate}}</th>
       <td mat-cell *matCellDef="let dataSet">
-        <mat-spinner diameter=25 [hidden]="dataSet.complete || !dataSet.inProgress"></mat-spinner>
-        <a *ngIf="dataSet.complete" mat-icon-button [href]="datasetDetail.baseUrl+ dataSet.outputPath">
+        <mat-spinner diameter=25 [hidden]="dataSet?.complete || !dataSet?.inProgress"></mat-spinner>
+        <a *ngIf="dataSet?.complete" mat-icon-button [href]="datasetDetail?.baseUrl+ dataSet?.outputPath">
           <i class="material-icons mat-32 tangy-location-list-icon">get_app</i> download file
         </a>
       </td>
