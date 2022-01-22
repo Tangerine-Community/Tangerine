@@ -14,7 +14,7 @@ import { TangerineFormsService } from '../services/tangerine-forms.service';
   styleUrls: ['./new-csv-data-set.component.css']
 })
 export class NewCsvDataSetComponent implements OnInit {
-  title = _TRANSLATE('Create Spreadsheets')
+  title = _TRANSLATE('Request Spreadsheets')
   breadcrumbs: Array<Breadcrumb> = [
     <Breadcrumb>{
       label: _TRANSLATE('Spreadsheets'),
@@ -45,7 +45,7 @@ export class NewCsvDataSetComponent implements OnInit {
     this.breadcrumbs = [
       ...this.breadcrumbs,
       <Breadcrumb>{
-        label: _TRANSLATE('Create Spreadsheets'),
+        label: this.title,
         url: 'csv-data-sets/new'
       },
     ]
