@@ -66,6 +66,7 @@ import { GroupReleasesComponent } from './group-releases/group-releases.componen
 import { GroupFormsEditComponent } from './group-forms-edit/group-forms-edit.component';
 import { GroupLocationListComponent } from './group-location-list/group-location-list.component';
 import { GroupDeviceUsersComponent } from './group-device-users/group-device-users.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
 import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
 import { GroupReleaseApkTestComponent } from './group-release-apk-test/group-release-apk-test.component';
 import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
@@ -120,6 +121,7 @@ import { GroupDevicePasswordPolicyComponent } from './group-device-password-poli
     MatIconModule,
     MatMenuModule,
     MatTreeModule,
+    MatProgressSpinnerModule,
     MatGridListModule,
     MatSelectModule,
     MatFormFieldModule,
