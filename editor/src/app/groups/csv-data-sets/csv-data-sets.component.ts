@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -10,7 +10,7 @@ import { GroupsService } from '../services/groups.service';
   templateUrl: './csv-data-sets.component.html',
   styleUrls: ['./csv-data-sets.component.css']
 })
-export class CsvDataSetsComponent implements OnInit {
+export class CsvDataSetsComponent implements OnInit, OnDestroy {
   title = _TRANSLATE('Spreadsheet Requests')
   breadcrumbs: Array<Breadcrumb> = []
   csvDataSets;
@@ -18,6 +18,7 @@ export class CsvDataSetsComponent implements OnInit {
   groupId
   pageIndex = 0
   pageSize = 10
+  refreshTimeout:any
   ready = false
   constructor(
     private groupsService: GroupsService,
@@ -37,7 +38,12 @@ export class CsvDataSetsComponent implements OnInit {
     await this.getData()
   }
 
+  ngOnDestroy() {
+    clearTimeout(this.refreshTimeout)
+  }
+
   async onPageChange(event){
+    clearTimeout(this.refreshTimeout)
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
     await this.getData()
@@ -52,6 +58,9 @@ export class CsvDataSetsComponent implements OnInit {
         csvDataSet.year = csvDataSet.year === '*' ? 'All years' : csvDataSet.year
         return csvDataSet
       })
+      if (this.csvDataSets.find(csvDataSet => csvDataSet.complete === false)) {
+        this.refreshTimeout = setTimeout(() => this.getData(), 5000)
+      }
       this.ready = true
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'))
