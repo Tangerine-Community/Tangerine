@@ -69,10 +69,13 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
         formTitle: formsInfo.find(f => f.id === csv.formId)?.title || csv.formId
       }})
       this.datasetDetail = datasetDetail
-      if(!this.datasetDetail.complete && !this.stopPolling){
+      if(datasetDetail.status === 'In progress' && !this.stopPolling){
         setTimeout(() => this.getDatasetDetail(), 5*1000)
       }
     } 
+    else {
+      setTimeout(() => this.getDatasetDetail(), 5*1000)
+    }
   }
 
 }
