@@ -77,7 +77,7 @@ const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
   // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
   const formIds = req.body.formIds.split(',').map(formId => formId).join(',')
-  const {selectedYear:year, selectedMonth:month, description} = req.body
+  const {selectedYear, selectedMonth, description} = req.body
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
@@ -86,7 +86,7 @@ const generateCSVDataSet = async (req, res) => {
   }
   const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')
   let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')}`
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${req.params.year ? sanitize(req.params.year) : `'*'`} ${req.params.month ? sanitize(req.params.month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${selectedYear === '*' ? `'*'` : sanitize(selectedYear)} ${selectedMonth === '*' ? `'*'` : sanitize(selectedMonth)} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)} ${outputPath}`)
@@ -102,8 +102,8 @@ const generateCSVDataSet = async (req, res) => {
     stateUrl,
     downloadUrl,
     description,
-    year,
-    month,
+    year: selectedYear,
+    month: selectedMonth,
     dateCreated: Date.now()
   })
   res.send({
@@ -173,15 +173,15 @@ const getDataset = async (datasetId) => {
     dateCreated: result.dateCreated,
     baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
   }
-  if (csvDataSet.complete && csvDataSet.fileExists) {
+  if (csvDataSet.state.complete && csvDataSet.fileExists) {
     csvDataSet.status = 'Available'
-  } else if ((csvDataSet.complete && !csvDataSet.fileExists) || !csvDataSet.stateExists) {
-    csvDataSet.status = 'Unavailable'
+  } else if ((csvDataSet.state.complete && !csvDataSet.fileExists) || !csvDataSet.stateExists) {
+    csvDataSet.status = 'File removed'
   } else if (
-    (!csvDataSet.complete && (Date.now() - csvDataSet.state.updatedOn) > (1000 * 60 * 5)) ||
-    (!csvDataSet.complete && !csvDataSet.state.updatedOn)
+    (!csvDataSet.state.complete && (Date.now() - csvDataSet.state.updatedOn) > (1000 * 60 * 5)) ||
+    (!csvDataSet.state.complete && !csvDataSet.state.updatedOn)
   ) {
-    csvDataSet.status = 'Timed out'
+    csvDataSet.status = 'Stopped'
   } else {
     csvDataSet.status = 'In progress'
   }
