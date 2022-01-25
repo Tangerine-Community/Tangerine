@@ -25,6 +25,7 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
   displayedColumns = ['formTitle','csvTemplateTitle','inProgress','outputPath']
   detailInterval:any
   stopPolling = false
+  stateUnavailable = false
   constructor(
     private route: ActivatedRoute,
     private formService: TangerineFormsService,
@@ -47,6 +48,7 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
 
   async getDatasetDetail(){
     const datasetDetail = <any>await this.groupsService.getDatasetDetail(this.datasetId)
+    this.stateUnavailable = !datasetDetail.stateExists
     const datePipe = new DatePipe('en-US')
     if (!this.title) {
       this.title = `Spreadsheets requested on ${datePipe.transform(datasetDetail.dateCreated, 'medium')}`
@@ -58,17 +60,19 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
         }
       ]
     }
-    const csvTemplates = await this.formService.listCsvTemplates(this.groupId)
-    const formsInfo = await this.formService.getFormsInfo(this.groupId)
-    datasetDetail['csvs'] = datasetDetail['csvs'].map(csv =>{return {
-      ...csv,
-      csvTemplateTitle: csvTemplates.find(t => t._id === csv.csvTemplateId)?.title || _TRANSLATE('All data'),
-      formTitle: formsInfo.find(f => f.id === csv.formId)?.title || csv.formId
-    }})
-    this.datasetDetail = datasetDetail
-    if(!this.datasetDetail.complete && !this.stopPolling){
-      setTimeout(() => this.getDatasetDetail(), 5*1000)
-    }
+    if (!this.stateUnavailable) {
+      const csvTemplates = await this.formService.listCsvTemplates(this.groupId)
+      const formsInfo = await this.formService.getFormsInfo(this.groupId)
+      datasetDetail['csvs'] = datasetDetail.state?.csvs.map(csv =>{return {
+        ...csv,
+        csvTemplateTitle: csvTemplates.find(t => t._id === csv.csvTemplateId)?.title || _TRANSLATE('All data'),
+        formTitle: formsInfo.find(f => f.id === csv.formId)?.title || csv.formId
+      }})
+      this.datasetDetail = datasetDetail
+      if(!this.datasetDetail.complete && !this.stopPolling){
+        setTimeout(() => this.getDatasetDetail(), 5*1000)
+      }
+    } 
   }
 
 }

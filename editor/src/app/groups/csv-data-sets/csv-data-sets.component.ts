@@ -53,12 +53,12 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
     try {
       const csvDataSets = <any>await this.groupsService.listCSVDataSets(this.groupId, this.pageIndex, this.pageSize)
       this.csvDataSets = csvDataSets.map(csvDataSet => {
-        csvDataSet.formIds = csvDataSet.formIds.split(',')
+        csvDataSet.formIds = csvDataSet.state?.formIds || []
         csvDataSet.month = csvDataSet.month === '*' ? 'All months' : csvDataSet.month
         csvDataSet.year = csvDataSet.year === '*' ? 'All years' : csvDataSet.year
         return csvDataSet
       })
-      if (this.csvDataSets.find(csvDataSet => csvDataSet.complete === false)) {
+      if (this.csvDataSets.find(csvDataSet => csvDataSet.status === 'In progress')) {
         this.refreshTimeout = setTimeout(() => this.getData(), 5000)
       }
       this.ready = true

@@ -1,21 +1,21 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<div id="download-all-container">
-  <button mat-raised-button color="warn" [hidden]="!datasetDetail?.complete">
+<div id="download-all-container" >
+  <button mat-raised-button color="warn" [hidden]="!datasetDetail?.complete || stateUnavailable">
     <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
     {{'download all'|translate}}
   </button>
- <button mat-raised-button color="warn" [hidden]="datasetDetail?.complete" disabled>
+ <button mat-raised-button color="warn" [hidden]="datasetDetail?.complete || stateUnavailable" disabled>
     <mat-spinner diameter=25></mat-spinner> {{'download all'|translate}}
   </button>
 </div>
-<div *ngIf="datasetDetail" class="tangy-full-width">
+<div *ngIf="datasetDetail && !stateUnavailable" class="tangy-full-width">
     <p [hidden]="!datasetDetail?.description"><strong>{{'Description'|translate}}</strong>: {{datasetDetail?.description}}</p>
     <p><strong>{{'Include PII'|translate}}</strong>: {{datasetDetail?.includePii}}</p>
     <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail?.complete? 'Complete':'In Progress' |translate}}</p>
     <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail?.month === '*' ? 'All months' : datasetDetail?.month }}</p>
     <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail?.year === '*' ? 'All years' : datasetDetail?.year }}</p>
 </div>
-<table *ngIf="datasetDetail"
+<table *ngIf="datasetDetail && !stateUnavailable"
     mat-table
     [dataSource]="datasetDetail.csvs"
     class="mat-elevation-z8 full-width"
@@ -54,3 +54,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+
+<div *ngIf="stateUnavailable" class="tangy-full-width">
+  <p>{{'The state of this data set is unavailable.'|translate}}</p>
+</div>
