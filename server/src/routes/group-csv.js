@@ -131,41 +131,69 @@ const listCSVDataSets = async (req, res) => {
     CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
     const numberOfDocs = (await CSV_DATASETS.find({ selector: { groupId } })).docs.length
     const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:(+pageIndex)*(+pageSize),limit:+pageSize })
-    const http = await getUser1HttpInterface()
-    const data = result.docs.map(async e => {
-      let complete = false;
-      let fileExists = false;
-      try {
-        complete = (await http.get(e.stateUrl)).data.complete
-        fileExists = await fs.pathExists(`/csv/${e.fileName}`)
-      } catch (error) {
-        complete = false
-        fileExists = false
-      }
-      return ({ ...e, complete, fileExists, numberOfDocs })
-    })
-    res.send(await Promise.all(data))
+    const datasets = []
+    for (let doc of result.docs) {
+      const dataset = await getDataset(doc._id)
+      datasets.push(dataset)
+    }
+    res.send(datasets)
   } catch (error) {
     console.log(error)
   }
 }
 
-const getDatasetDetail = async (req, res) => {
-  const { datasetId } = req.params
+const getDataset = async (datasetId) => {
   const result = await CSV_DATASETS.get(datasetId)
   const http = await getUser1HttpInterface()
-  res.send({
-     ...(await http.get(result.stateUrl)).data, 
-     description: result.description,
-     month: result.month,
-     year: result.year,
-     downloadUrl: result.downloadUrl,
-     fileName: result.fileName,
-     dateCreated: result.dateCreated,
-     baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
-  })
-
+  let state = {}
+  let complete = false;
+  let fileExists = false;
+  let stateExists = false
+  try {
+    response = await http.get(result.stateUrl)
+    stateExists = true
+    complete = response.data.complete
+    state = response.data
+    fileExists = await fs.pathExists(`/csv/${result.fileName}`)
+  } catch (error) {
+    complete = false
+    fileExists = false
+    stateExists = false
+  }
+  const csvDataSet = {
+    id: datasetId,
+    state,
+    fileExists, 
+    stateExists,
+    description: result.description,
+    month: result.month,
+    year: result.year,
+    downloadUrl: result.downloadUrl,
+    fileName: result.fileName,
+    dateCreated: result.dateCreated,
+    baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
+  }
+  if (csvDataSet.complete && csvDataSet.fileExists) {
+    csvDataSet.status = 'Available'
+  } else if ((csvDataSet.complete && !csvDataSet.fileExists) || !csvDataSet.stateExists) {
+    csvDataSet.status = 'Unavailable'
+  } else if (
+    (!csvDataSet.complete && (Date.now() - csvDataSet.state.updatedOn) > (1000 * 60 * 5)) ||
+    (!csvDataSet.complete && !csvDataSet.state.updatedOn)
+  ) {
+    csvDataSet.status = 'Timed out'
+  } else {
+    csvDataSet.status = 'In progress'
+  }
+  return csvDataSet
 }
+
+const getDatasetDetail = async (req, res) => {
+  const { datasetId } = req.params
+  const dataset = await getDataset(datasetId)
+  res.send(dataset)
+}
+
 module.exports = {
   generateCSV,
   generateCSVDataSet,

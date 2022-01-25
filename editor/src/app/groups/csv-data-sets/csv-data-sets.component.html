@@ -40,9 +40,10 @@
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let dataSet">
-        {{ dataSet.complete ? "Complete" : ("In Progress" | translate) }}
+        {{ dataSet.status | translate }}
       </td>
     </ng-container>
+
 
     <ng-container matColumnDef="numberOfSpreadsheets">
       <th mat-header-cell *matHeaderCellDef>{{ "Spreadsheets" | translate }}</th>
@@ -51,7 +52,7 @@
  
     <ng-container matColumnDef="details">
       <th mat-header-cell *matHeaderCellDef></th>
-      <td class="tangy-foreground-secondary link" [routerLink]="dataSet._id" mat-cell *matCellDef="let dataSet">
+      <td class="tangy-foreground-secondary link" [routerLink]="dataSet.id" mat-cell *matCellDef="let dataSet">
         <mwc-icon>info</mwc-icon> More info 
       </td>
     </ng-container>
@@ -63,7 +64,7 @@
         <a *ngIf="dataSet.complete && dataSet.fileExists" mat-icon-button [href]="dataSet.downloadUrl">
           <i class="material-icons mat-32 tangy-location-list-icon">get_app</i> Download
         </a>
-        <mat-spinner diameter=25 [hidden]="dataSet.complete"></mat-spinner>
+        <mat-spinner diameter=25 [hidden]="dataSet.complete || dataSet.status === 'Timed out' || dataSet.status === 'Unavailable'"></mat-spinner>
       </td>
     </ng-container>
 
