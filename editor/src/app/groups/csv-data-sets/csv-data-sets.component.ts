@@ -20,6 +20,7 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   pageSize = 10
   refreshTimeout:any
   ready = false
+  stopPolling = false
   constructor(
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
@@ -39,6 +40,7 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.stopPolling = true
     clearTimeout(this.refreshTimeout)
   }
 
@@ -58,8 +60,8 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
         csvDataSet.year = csvDataSet.year === '*' ? 'All years' : csvDataSet.year
         return csvDataSet
       })
-      if (this.csvDataSets.find(csvDataSet => csvDataSet.status === 'In progress')) {
-        this.refreshTimeout = setTimeout(() => this.getData(), 5000)
+      if (this.csvDataSets.find(csvDataSet => csvDataSet.status === 'In progress') && !this.stopPolling) {
+        this.refreshTimeout = setTimeout(() => this.getData(), 10 * 1000)
       }
       this.ready = true
     } catch (error) {
