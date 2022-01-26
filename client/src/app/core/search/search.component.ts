@@ -26,6 +26,18 @@ export const FORM_TYPES_INFO = [
   }
 ]
 
+class Queue {
+
+  activeTicket:string
+
+  getTicket() {
+    const ticket = UUID()
+    this.activeTicket = ticket
+    return ticket
+  }
+
+}
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -45,12 +57,12 @@ export class SearchComponent implements OnInit {
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
   showScan = false
-  currentSearchId:string
   moreClickCount = 0
   searchString = ''
   resultsPerPage = 10
   thereIsMore = true 
-  isLoading = false
+  isLoading = true 
+  searchQueue:Queue = new Queue()
 
   constructor(
     private searchService: SearchService,
@@ -67,9 +79,8 @@ export class SearchComponent implements OnInit {
     this.onSearch$
       .pipe(debounceTime(1200))
       .subscribe((searchString:string) => {
-        this.currentSearchId = UUID() 
         this.searchResults.nativeElement.innerHTML = 'Searching...'
-        this.onSearch(searchString, `${this.currentSearchId}`)
+        this.onSearch(searchString)
       })
     this
       .searchBar
@@ -81,55 +92,36 @@ export class SearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
-    this.currentSearchId = UUID()
-    this.isLoading = true
-    this.onSearch('', `${this.currentSearchId}`)
+    this.onSearch('')
   }
 
   async loadMore() {
+    const ticket = this.searchQueue.getTicket()
     this.isLoading = true
-    const searchId = UUID()
-    this.currentSearchId = `${searchId}`
     this.moreClickCount++
     this.searchDocs = await this.searchService.search(this.username, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
-    // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
-    // to wait for indexing... Or just bad luck.
-    if (this.currentSearchId !== searchId) return
     let searchResultsMarkup = ``
     if (this.searchDocs.length < this.resultsPerPage) {
       this.thereIsMore = false
     }
     for (const searchDoc of this.searchDocs) {
-      const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      const formId = formInfo.id
-      searchResultsMarkup += `
-      <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
-        <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
-        <div>
-          <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : searchDoc._id}\``)}</div>
-          <div secondary>
-          ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
-          </div>
-        </div>
-      </div>
-      `
+      searchResultsMarkup += this.templateSearchResult(searchDoc) 
     }
-    const previousResults = `${this.searchResults.nativeElement.innerHTML}`
-    this.searchResults.nativeElement.innerHTML = `${previousResults}${searchResultsMarkup}`
+    const el = document.createElement('div')
+    el.innerHTML = searchResultsMarkup 
+    if (ticket !== this.searchQueue.activeTicket) return
+    this.searchResults.nativeElement.append(el)
     this.isLoading = false
     this.didSearch$.next(true)   
   }
 
-  async onSearch(searchString:string, searchId:string) {
+  async onSearch(searchString:string) {
+    const ticket = this.searchQueue.getTicket()
     this.moreClickCount = 0
     this.thereIsMore = true 
     this.searchString = searchString
     this.searchResults.nativeElement.innerHTML = ""
     this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
-    // Avoid race conditions where an earlier search call may come back after a more recent search call because the earlier search call had
-    // to wait for indexing... Or just bad luck.
-    if (this.currentSearchId !== searchId) return
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     if (this.searchDocs.length === 0) {
@@ -144,10 +136,19 @@ export class SearchComponent implements OnInit {
       this.thereIsMore = false
     }
     for (const searchDoc of this.searchDocs) {
-      const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      const formId = formInfo.id
-      searchResultsMarkup += `
+      searchResultsMarkup += this.templateSearchResult(searchDoc) 
+    }
+    if (ticket !== this.searchQueue.activeTicket) return
+    this.searchResults.nativeElement.innerHTML = searchResultsMarkup
+    this.isLoading = false
+    this.didSearch$.next(true)
+  }
+
+  templateSearchResult(searchDoc) {
+    const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
+    const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
+    const formId = formInfo.id
+    return `
       <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
         <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
         <div>
@@ -157,11 +158,7 @@ export class SearchComponent implements OnInit {
           </div>
         </div>
       </div>
-      `
-    }
-    this.searchResults.nativeElement.innerHTML = searchResultsMarkup
-    this.isLoading = false
-    this.didSearch$.next(true)
+    `
   }
 
   scan() {
@@ -196,8 +193,7 @@ export class SearchComponent implements OnInit {
 
   onScanChange(scanSearchString) {
       this.showScan = false
-      this.currentSearchId = UUID()
-      this.onSearch(scanSearchString, `${this.currentSearchId}`)
+      this.onSearch(scanSearchString)
       this.searchBar.nativeElement.value = scanSearchString
   }
 
