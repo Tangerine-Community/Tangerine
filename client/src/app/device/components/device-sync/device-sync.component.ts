@@ -124,7 +124,7 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           }
           if (progress.indexing) {
             this.indexing = progress.indexing
-            this.indexingMessage = 'Indexing ' + progress.indexing.view + ' Doc Count: ' + progress.indexing.countIndexedDocs
+            this.indexingMessage = progress.indexingMessage 
           }
           // console.log('Sync Progress: ' + JSON.stringify(progress))
         }

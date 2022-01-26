@@ -28,7 +28,7 @@
           <span>{{'Username'|translate}}</span>
         </mat-placeholder>
       </mat-form-field>
-      <mat-form-field *ngIf="!showRecoveryInput">
+      <mat-form-field *ngIf="!showRecoveryInput && !noPassword">
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>
@@ -68,7 +68,7 @@
       </span>
 
       <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
-      <button *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button color="accent">{{'RESET PASSWORD'|translate}}</button>
+      <button *ngIf="!showRecoveryInput && !noPassword" (click)="toggleRecoveryInput()" mat-raised-button color="accent">{{'RESET PASSWORD'|translate}}</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
         color="accent" name="action">{{'SUBMIT'|translate}}</button>
 
