@@ -429,10 +429,6 @@ export class SyncService {
         } else {
           status.pulled = pulled
         }
-        // We must set sync-push-last_seq now so that replication doesn't have to go through a bunch of sequences that we just pulled down.
-        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
         this.syncMessage$.next(status)
       } catch (e) {
         console.log("Error: " + e)
