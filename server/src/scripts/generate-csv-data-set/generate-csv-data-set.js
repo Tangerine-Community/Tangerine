@@ -49,7 +49,7 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
   })
 }
 
-async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', includePii = false) {
+async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', excludePii = false) {
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/ /g, '_')
@@ -57,12 +57,12 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     replacement: '_'
   }
   let state = {
-    dbName: `${groupId}-reporting${includePii ? '-sanitized' : ''}`,
+    dbName: `${groupId}-reporting${excludePii ? '-sanitized' : ''}`,
     formIds,
     outputPath,
     year,
     month,
-    includePii,
+    excludePii,
     csvs: formIds.map(formId => {
       return {
         formId: formId.includes(':') ? formId.split(':')[0] : formId,
@@ -86,7 +86,7 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
       ? formInfo.title.replace(/ /g, '_')
       : formId
     const groupFormname = sanitize(groupLabel + '-' + formTitle, options)
-    const fileName = `${groupFormname}${includePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
+    const fileName = `${groupFormname}${excludePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
     const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
     const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
     generateCsv(state.dbName, formId, csvOutputPath, year, month, csv.csvTemplateId)
