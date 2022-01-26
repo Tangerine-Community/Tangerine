@@ -96,6 +96,12 @@ import * as Redux from 'redux';
 import * as _ from 'underscore';
 (window as any)._ = _;
 
+import { Loc } from 'tangy-form/util/loc.js';
+(window as any).Loc = Loc
+
+import { t } from 'tangy-form/util/t.js';
+(window as any).t = t 
+
 import './global-shim'
 import 'tangy-form-editor/tangy-form-editor.js'
 import './app/couchdb-conflict-manager/src/couchdb-conflict-manager.js'
