@@ -4,6 +4,7 @@ import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.com
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { GroupsService } from '../services/groups.service';
+import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 @Component({
   selector: 'app-csv-data-sets',
@@ -17,7 +18,7 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   displayedColumns = ['dateCreated', 'description', 'month', 'year', 'status', 'numberOfSpreadsheets', 'details', 'downloadUrl']
   groupId
   pageIndex = 0
-  pageSize = 10
+  pageSize = 5
   refreshTimeout:any
   numberOfDatasets = 0
   ready = false
@@ -25,6 +26,7 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   constructor(
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
+    private processMonitorService: ProcessMonitorService,
     private route: ActivatedRoute
   ) {
     this.groupId = this.route.snapshot.paramMap.get('groupId')
@@ -37,7 +39,9 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    const process = this.processMonitorService.start('csv-data-sets', 'Loading Spreadsheet Requests...')
     await this.getData()
+    this.processMonitorService.stop(process.id)
   }
 
   ngOnDestroy() {
@@ -46,12 +50,14 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   }
 
   async onPageChange(event){
+    const process = this.processMonitorService.start('csv-data-sets', 'Loading Spreadsheet Requests...')
     this.ready = false
     clearTimeout(this.refreshTimeout)
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
     await this.getData()
     this.ready = true
+    this.processMonitorService.stop(process.id)
   }
 
   async getData(){
