@@ -20,7 +20,7 @@ async function getUser1HttpInterface() {
   return http
 }
 const writeState = async function (state) {
-  await writeFile(state.statePath, JSON.stringify(state, null, 2))
+  await writeFile(state.statePath, JSON.stringify({ ...state, updatedOn: Date.now() }, null, 2))
 }
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 

@@ -77,7 +77,7 @@ const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
   // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
   const formIds = req.body.formIds.split(',').map(formId => formId).join(',')
-  const {selectedYear:year, selectedMonth:month, description} = req.body
+  const {selectedYear, selectedMonth, description} = req.body
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
@@ -86,7 +86,7 @@ const generateCSVDataSet = async (req, res) => {
   }
   const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')
   let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')}`
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${req.params.year ? sanitize(req.params.year) : `'*'`} ${req.params.month ? sanitize(req.params.month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${selectedYear === '*' ? `'*'` : sanitize(selectedYear)} ${selectedMonth === '*' ? `'*'` : sanitize(selectedMonth)} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)} ${outputPath}`)
@@ -95,18 +95,19 @@ const generateCSVDataSet = async (req, res) => {
   })
   const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.zip', '.state.json')}`
   const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
-  await CSV_DATASETS.post({
+  const csvDataSetInfo = await CSV_DATASETS.post({
     groupId,
     formIds,
     fileName,
     stateUrl,
     downloadUrl,
     description,
-    year,
-    month,
+    year: selectedYear,
+    month: selectedMonth,
     dateCreated: Date.now()
   })
   res.send({
+    id: csvDataSetInfo.id,
     stateUrl,
     downloadUrl
   })
@@ -126,44 +127,87 @@ const generateCSVDataSetsRoute = async (req, res) => {
 
 const listCSVDataSets = async (req, res) => {
   try {
-    const { groupId, pageIndex, pageSize } = req.params
-    CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
-    const numberOfDocs = (await CSV_DATASETS.find({ selector: { groupId } })).docs.length
+    const groupId = req.params.groupId
+    const pageIndex = parseInt(req.params.pageIndex)
+    const pageSize = parseInt(req.params.pageSize)
+    CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] }, limit:987654321 })
+    // Iterate over the query to find out total number of docs given selector. Note, this was done without paging before but incorrectly always returned 25. Bug never found but paging is better for memory anyways, but ultimately not sure this will scale well, we may have to drop support for knowing the total number of docs.
+    let numberOfDatasets = 0
+    let moreDatasets = true
+    let page = 0
+    while (moreDatasets) {
+      const result = await CSV_DATASETS.find({ selector: { groupId }, skip: pageSize * page, limit: pageSize })
+      numberOfDatasets = numberOfDatasets + result.docs.length
+      moreDatasets = result.docs.length > 0 ? true : false
+      page++
+    }
     const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:(+pageIndex)*(+pageSize),limit:+pageSize })
-    const http = await getUser1HttpInterface()
-    const data = result.docs.map(async e => {
-      let complete = false;
-      let fileExists = false;
-      try {
-        complete = (await http.get(e.stateUrl)).data.complete
-        fileExists = await fs.pathExists(`/csv/${e.fileName}`)
-      } catch (error) {
-        complete = false
-        fileExists = false
-      }
-      return ({ ...e, complete, fileExists, numberOfDocs })
+    const datasets = []
+    for (let doc of result.docs) {
+      const dataset = await getDataset(doc._id)
+      datasets.push(dataset)
+    }
+    res.send({
+      numberOfDatasets,
+      datasets
     })
-    res.send(await Promise.all(data))
   } catch (error) {
     console.log(error)
   }
 }
 
-const getDatasetDetail = async (req, res) => {
-  const { datasetId } = req.params
+const getDataset = async (datasetId) => {
   const result = await CSV_DATASETS.get(datasetId)
   const http = await getUser1HttpInterface()
-  res.send({
-     ...(await http.get(result.stateUrl)).data, 
-     month: result.month,
-     year: result.year,
-     downloadUrl: result.downloadUrl,
-     fileName: result.fileName,
-     dateCreated: result.dateCreated,
-     baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
-  })
-
+  let state = {}
+  let complete = false;
+  let fileExists = false;
+  let stateExists = false
+  try {
+    response = await http.get(result.stateUrl)
+    stateExists = true
+    complete = response.data.complete
+    state = response.data
+    fileExists = await fs.pathExists(`/csv/${result.fileName}`)
+  } catch (error) {
+    complete = false
+    fileExists = false
+    stateExists = false
+  }
+  const csvDataSet = {
+    id: datasetId,
+    state,
+    fileExists, 
+    stateExists,
+    description: result.description,
+    month: result.month,
+    year: result.year,
+    downloadUrl: result.downloadUrl,
+    fileName: result.fileName,
+    dateCreated: result.dateCreated,
+    baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
+  }
+  if (csvDataSet.state.complete && csvDataSet.fileExists) {
+    csvDataSet.status = 'Available'
+  } else if ((csvDataSet.state.complete && !csvDataSet.fileExists) || !csvDataSet.stateExists) {
+    csvDataSet.status = 'File removed'
+  } else if (
+    (!csvDataSet.state.complete && (Date.now() - csvDataSet.state.updatedOn) > (1000 * 60 * 5)) ||
+    (!csvDataSet.state.complete && !csvDataSet.state.updatedOn)
+  ) {
+    csvDataSet.status = 'Stopped'
+  } else {
+    csvDataSet.status = 'In progress'
+  }
+  return csvDataSet
 }
+
+const getDatasetDetail = async (req, res) => {
+  const { datasetId } = req.params
+  const dataset = await getDataset(datasetId)
+  res.send(dataset)
+}
+
 module.exports = {
   generateCSV,
   generateCSVDataSet,
