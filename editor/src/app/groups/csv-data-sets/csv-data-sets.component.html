@@ -7,7 +7,7 @@
   </a>
 </div>
 
-<div class="tangy-full-width" *ngIf="csvDataSets?.length>0">
+<div class="tangy-full-width" [hidden]="!ready">
   <div class="instructions">
     <p>
       {{ "Spreadsheets generate in CSV format and may be opened in Excel, Google Sheets, or any other Spreadsheet program. " | translate }} 
@@ -71,7 +71,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
-  <mat-paginator [length]="csvDataSets[0]?.numberOfDocs" (page)="onPageChange($event)" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  <mat-paginator [length]="numberOfDatasets" (page)="onPageChange($event)" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </div>
 
 <div class="tangy-full-width" *ngIf="csvDataSets?.length<1 && ready">
