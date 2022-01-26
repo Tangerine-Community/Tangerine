@@ -14,7 +14,6 @@
     <div class="errorMessage" *ngIf="errorMessage">{{errorMessage}}</div>
     <div class="errorMessage" *ngIf="pullError">Pull Error: {{pullError}}</div>
     <div class="errorMessage" *ngIf="pushError">Push Error: {{pushError}}</div>
-    <div class="status">{{indexingMessage}}</div>
     <div><p>{{'Records in the local database'|translate}}: {{dbDocCount}}</p></div>
     <br>
     <paper-button (click)="onContinueClick()">{{'next'|translate}}</paper-button>

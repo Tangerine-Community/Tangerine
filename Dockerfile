@@ -71,15 +71,15 @@ ADD online-survey-app /tangerine/online-survey-app/
 RUN cd /tangerine/online-survey-app && \
     ./node_modules/.bin/ng build --base-href "./"
 
-# Build editor.
-ADD editor /tangerine/editor
-RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
-RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
-
 # build client.
 add client /tangerine/client
 run cd /tangerine/client && \
     ./node_modules/.bin/ng build --base-href "./"
+
+# Build editor.
+ADD editor /tangerine/editor
+RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \

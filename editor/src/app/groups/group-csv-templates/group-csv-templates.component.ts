@@ -11,10 +11,10 @@ import { CsvTemplate, TangerineFormsService } from '../services/tangerine-forms.
 })
 export class GroupCsvTemplatesComponent implements OnInit {
 
-  title = _TRANSLATE('CSV Templates')
+  title = _TRANSLATE('Spreadsheet Templates')
   breadcrumbs:Array<Breadcrumb> = [
     <Breadcrumb>{
-      label: _TRANSLATE('CSV Templates'),
+      label: _TRANSLATE('Spreadsheet Templates'),
       url: 'csv-templates'
     }
   ]
