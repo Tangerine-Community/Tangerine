@@ -1,46 +1,53 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
-<div class="tangy-full-width" id="container">
-  <div class="configure-instructions">{{ "Configure the date range (optional), data set description, Personal Identifiable Information (PII) exclusion, and forms for the CSV data set." | translate }}</div>
+<div class="full-width">
+  <div class="container">
+    <div class="configure-instructions">{{ "Configure the date range (optional), data set description, Personal Identifiable Information (PII) exclusion, and which forms to generate Spreadsheets for." | translate }}</div>
+  </div>
   <form class="form">
-    <div>
-      <mat-form-field appearance="fill" color="primary">
-        <mat-label>{{ "Month" | translate }}</mat-label>
-        <mat-select
-          name="selectedMonth"
-          class="month"
-          [(ngModel)]="selectedMonth"
-        >
-          <mat-option value="*" selected="selected">*</mat-option>
-          <mat-option *ngFor="let month of months" value="{{ month }}">{{
-            month
-          }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="fill" color="primary">
-        <mat-label>{{ "Year" | translate }}</mat-label>
-        <mat-select name="selectedYear" class="year" [(ngModel)]="selectedYear">
-          <mat-option value="*" selected="selected">*</mat-option>
-          <mat-option *ngFor="let year of years" value="{{ year }}">{{
-            year
-          }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <input
-            name="descriptionInput"
-            [(ngModel)]="description"
-            #groupNameInput="ngModel"
-            matInput
-            placeholder="{{'Description'|translate}}"
-            required
-        >
-    </mat-form-field>
-      <mat-checkbox name="excludePII" [(ngModel)]="excludePII"
-        >{{ "Exclude PII?" | translate }}
-      </mat-checkbox>
+    <div class="container">
+      <div id="year-and-month">
+        <mat-form-field appearance="fill" color="primary">
+          <mat-label>{{ "Month" | translate }}</mat-label>
+          <mat-select
+            name="selectedMonth"
+            class="month"
+            [(ngModel)]="selectedMonth"
+          >
+            <mat-option value="*" selected="selected">All months</mat-option>
+            <mat-option *ngFor="let month of months" value="{{ month }}">{{
+              month
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" color="primary">
+          <mat-label>{{ "Year" | translate }}</mat-label>
+          <mat-select name="selectedYear" class="year" [(ngModel)]="selectedYear">
+            <mat-option value="*" selected="selected">All years</mat-option>
+            <mat-option *ngFor="let year of years" value="{{ year }}">{{
+              year
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-checkbox name="excludePII" [(ngModel)]="excludePII"
+          >{{ "Exclude PII?" | translate }}
+        </mat-checkbox>
+      </div>
+      <div
+        id="description"
+      >
+        <mat-form-field>
+          <input
+              name="descriptionInput"
+              [(ngModel)]="description"
+              #groupNameInput="ngModel"
+              matInput
+              placeholder="{{'Description'|translate}}"
+          >
+        </mat-form-field>
+      </div>
+      <div class="select-instructions">{{ "Click the checkbox to the left of the 'Form title' column to select all forms. If there is a Spreadsheet Template available for a form, it will be displayed in the form's Spreadsheet Template dropdown." | translate }}</div>
     </div>
-    <div class="select-instructions">{{ "Click the checkbox to the left of the 'Form title' column to select all forms. If there is a CSV Template available for a form, it will be displayed in the form's CSV Template dropdown." | translate }}</div>
     <table class="form-list materialish">
       <tr class="table-header new-csv-header">
         <td>
@@ -50,7 +57,7 @@
           Form Title
         </td>
         <td>
-          CSV Template
+          Spreadsheet Template
         </td>
       </tr>
       <tr *ngFor="let form of forms" >
@@ -70,6 +77,8 @@
         </td>
       </tr>
     </table>
-    <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1||!description">{{'Submit'|translate}}</button>
+    <div id="submit-container">
+      <button mat-raised-button color="warn" (click)="process()" [disabled]="selectedForms.length<1">{{'Submit Request'|translate}}</button>
+    </div>
   </form>
 </div>
