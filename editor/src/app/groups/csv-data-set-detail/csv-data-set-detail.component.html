@@ -1,4 +1,5 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
 <div id="download-all-container" >
   <button mat-raised-button color="warn" *ngIf="datasetDetail?.status === 'Available' ">
     <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
@@ -10,8 +11,17 @@
 </div>
 <div *ngIf="datasetDetail && !stateUnavailable" class="tangy-full-width">
     <p><strong>{{"Status"|translate}}:</strong> {{datasetDetail?.status}}</p>
-    <p [hidden]="!datasetDetail?.description"><strong>{{'Description'|translate}}</strong>: {{datasetDetail?.description}}</p>
-    <p><strong>{{'Exclude PII'|translate}}</strong>: {{datasetDetail?.state?.excludePii ? 'Yes' : 'No'}}</p>
+    <p [hidden]="!datasetDetail?.description"><strong>{{'Description'|translate}}</strong>: {{datasetDetail?.description}}</p>    
+    <p><strong>{{'Exclude PII'|translate}}</strong>: 
+      {{datasetDetail.hasOwnProperty('excludePii') && datasetDetail.excludePii ? 'true' : ''}}
+      {{datasetDetail.hasOwnProperty('excludePii') && !datasetDetail.excludePii ? 'false' : ''}}
+      <!-- 
+        If includes a includePii flaged, it was a previously mislabeled excludePii 
+        flag even though it was working as expected despite the confusing naming.
+      -->
+      {{datasetDetail.hasOwnProperty('includePii') && datasetDetail.includePii ? 'true' : ''}}
+      {{datasetDetail.hasOwnProperty('includePii') && !datasetDetail.includePii ? 'false' : ''}}
+    </p>
     <p><strong>{{'Month'|translate}}:</strong> {{datasetDetail?.month === '*' ? 'All months' : datasetDetail?.month }}</p>
     <p><strong>{{'Year'|translate}}:</strong> {{datasetDetail?.year === '*' ? 'All years' : datasetDetail?.year }}</p>
 </div>
