@@ -19,6 +19,7 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   pageIndex = 0
   pageSize = 10
   refreshTimeout:any
+  numberOfDatasets = 0
   ready = false
   stopPolling = false
   constructor(
@@ -45,16 +46,19 @@ export class CsvDataSetsComponent implements OnInit, OnDestroy {
   }
 
   async onPageChange(event){
+    this.ready = false
     clearTimeout(this.refreshTimeout)
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
     await this.getData()
+    this.ready = true
   }
 
   async getData(){
     try {
-      const csvDataSets = <any>await this.groupsService.listCSVDataSets(this.groupId, this.pageIndex, this.pageSize)
-      this.csvDataSets = csvDataSets.map(csvDataSet => {
+      const datasetsInfo = <any>await this.groupsService.listCSVDataSets(this.groupId, this.pageIndex, this.pageSize)
+      this.numberOfDatasets = datasetsInfo.numberOfDatasets
+      this.csvDataSets = datasetsInfo.datasets.map(csvDataSet => {
         csvDataSet.formIds = csvDataSet.state?.formIds || []
         csvDataSet.month = csvDataSet.month === '*' ? 'All months' : csvDataSet.month
         csvDataSet.year = csvDataSet.year === '*' ? 'All years' : csvDataSet.year
