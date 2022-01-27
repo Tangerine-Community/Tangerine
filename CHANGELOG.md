@@ -1,5 +1,12 @@
 # What's new
 
+## v3.22.1
+
+__Fixes__
+
+- Style the download all button's icon as white.
+- Unify and fix the exclude pii label on spreadsheet requests.
+
 ## v3.22.0
 
 __Fixes__
