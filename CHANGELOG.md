@@ -1,5 +1,58 @@
 # What's new
 
+## v3.22.0
+
+__Fixes__
+
+- Device User should not be able to register Device Account without username [#3162](https://github.com/Tangerine-Community/Tangerine/issues/3162)
+- CSV Datasets are not filtering by month and year when a 'Month' and 'Year' is selected [#3181](https://github.com/Tangerine-Community/Tangerine/issues/3181)
+- Make Loc and t available on Editor's window object for consistency with Client environment [#3161](https://github.com/Tangerine-Community/Tangerine/pull/3161)
+- Fix messaging during data optimization and reduce number of view optimized that are never used [#3165](https://github.com/Tangerine-Community/Tangerine/pull/3165)
+- Prevent menu items from jumping around on Deploy page [#3169](https://github.com/Tangerine-Community/Tangerine/pull/3169)
+- Fix bug causing document updates to get skipped over in sync after a Comparison Sync [#3179](https://github.com/Tangerine-Community/Tangerine/pull/3179)
+
+__Deprecate single csv download in favor of Spreadsheet Requests__
+
+See [screenshots here](https://github.com/Tangerine-Community/Tangerine/pull/3182).
+
+- Change terminology referring to "CSV" to more commonly recognized "Spreadsheet" term.
+- "CSV Datasets" term changed to "Spreadsheet Requests".
+- Fix "CSV Datasets are not filtering by month and year when a 'Month' and 'Year' is selected #3181"
+- Request Spreadsheets page: Submit button now hovers and is sticky to bottom of page; "*" in Month/Year selection clarified as "All months"/"All years"; "Description" no longer required and given own line for better formatting; other formatting cleanup.
+- Data page: Removed deprecated CSV Download button; updated language; added "Request Spreadsheets" button for quick access to making a request for spreadsheets.
+- Spreadsheet Request Info page: Now dynamically updates as Spreadsheets are rendered with row counts and status; removed unnecessary filename to download all, instead it's a "download all" button; new types of status including "File removed", "Stopped", "Available", and "In progress"; Month and Year values of "*" now clarified as "All months" and "All years"; loading screen improvements; title of page now the date the spreadsheets were requested on.
+- Spreadsheet Requests page: Updated language; fixed total Spreadsheet Requests calculation in pagination; if status of Spreadsheet Request is "Available" the status shows in green; if the status of the Spreadsheet Request is "In progress" a spinner is shown where the Download button will be; labels of "More Info" and "Download" added to corresponding buttons; loading overlay now shown on initial load and when changing pages.
+- Spreadsheet Templates page: Updated terminology from CSV Templates to Spreadsheet Templates.
+
+__New Features__
+
+- Show recent activity as default search results [#3171](https://github.com/Tangerine-Community/Tangerine/pull/3171)
+- Make a cached version of the Device information available to form logic on T.device.device [#3183](https://github.com/Tangerine-Community/Tangerine/pull/3183)
+- Group Administrator configures Device Account password policy [#3172](https://github.com/Tangerine-Community/Tangerine/pull/3172)
+- On search UI: limit initial results to 10 for fast load, add a "Load More" button for pagination, and style improvements [#3164](https://github.com/Tangerine-Community/Tangerine/pull/3164)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.22.0
+./start.sh v3.22.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.21.0
+```
+
 ## v3.21.0
 
 __Developers:Good to Know__

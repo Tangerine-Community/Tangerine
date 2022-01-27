@@ -14,10 +14,10 @@ import { TangerineFormsService } from '../services/tangerine-forms.service';
   styleUrls: ['./new-csv-data-set.component.css']
 })
 export class NewCsvDataSetComponent implements OnInit {
-  title = _TRANSLATE('New CSV Data Set')
+  title = _TRANSLATE('Request Spreadsheets')
   breadcrumbs: Array<Breadcrumb> = [
     <Breadcrumb>{
-      label: _TRANSLATE('Download CSV Data Set'),
+      label: _TRANSLATE('Spreadsheet Requests'),
       url: 'csv-data-sets'
     }]
 
@@ -45,7 +45,7 @@ export class NewCsvDataSetComponent implements OnInit {
     this.breadcrumbs = [
       ...this.breadcrumbs,
       <Breadcrumb>{
-        label: _TRANSLATE('New CSV Data Set'),
+        label: this.title,
         url: 'csv-data-sets/new'
       },
     ]
@@ -104,7 +104,7 @@ export class NewCsvDataSetComponent implements OnInit {
     try {
       const result: any = await this.groupsService.downloadCSVDataSet(this.groupId, forms, this.selectedYear, this.selectedMonth, this.description, this.excludePII);
       this.stateUrl = result.stateUrl;
-      this.router.navigate([`../`], { relativeTo: this.route })
+      this.router.navigate(['../', result.id], { relativeTo: this.route })
     } catch (error) {
       console.log(error);
     }
