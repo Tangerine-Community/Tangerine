@@ -24,3 +24,6 @@ mat-spinner {
   left: -5px;
   top: -2px;
 }
+.download-all-button i {
+  color: white;
+}
