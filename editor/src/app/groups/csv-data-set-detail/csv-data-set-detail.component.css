@@ -5,3 +5,25 @@
 a{
     text-decoration: none;
 }
+
+mat-spinner {
+  margin-left: 3px;
+}
+
+#download-all-container {
+  position: relative;
+}
+#download-all-container button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+#download-all-container mat-spinner {
+  display: inline-block;
+  position: relative;
+  left: -5px;
+  top: -2px;
+}
+.download-all-button i {
+  color: white;
+}

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {DashboardService} from "../_services/dashboard.service";
 import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service";
-import {_TRANSLATE} from "../../../../../editor/src/app/shared/_services/translation-marker";
 import {ClassFormService} from "../_services/class-form.service";
 import {VariableService} from "../../shared/_services/variable.service";
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 @Component({
   selector: 'app-class-config',
