@@ -163,11 +163,19 @@ const getDataset = async (datasetId) => {
   let complete = false;
   let fileExists = false;
   let stateExists = false
+  let excludePii = false
   try {
     response = await http.get(result.stateUrl)
     stateExists = true
     complete = response.data.complete
     state = response.data
+    // Old state files used to have an includePii property that implied the reverse meaning of what it sounds, was actually excludePii.
+    // Find which property this has and set excludePii accordingly.
+    excludePii = state.hasOwnProperty('excludePii') 
+      ? state.excludePii 
+      : state.hasOwnProperty('includePii') 
+        ? state.includePii 
+        : undefined 
     fileExists = await fs.pathExists(`/csv/${result.fileName}`)
   } catch (error) {
     complete = false
@@ -179,6 +187,7 @@ const getDataset = async (datasetId) => {
     state,
     fileExists, 
     stateExists,
+    excludePii,
     description: result.description,
     month: result.month,
     year: result.year,
