@@ -77,7 +77,7 @@ export class SearchComponent implements OnInit {
     this.username = this.userService.getCurrentUser()
     this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
-      .pipe(debounceTime(1200))
+      .pipe(debounceTime(2500))
       .subscribe((searchString:string) => {
         this.searchResults.nativeElement.innerHTML = 'Searching...'
         this.onSearch(searchString)
