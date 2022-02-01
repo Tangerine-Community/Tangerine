@@ -4,7 +4,10 @@
 
 __Fixes__
 
-- Style the download all button's icon as white.
+- Fix: Case fails to open after selecting Case in search behind a "load more" button [#3194](https://github.com/Tangerine-Community/Tangerine/issues/3194)
+- Fix: Unable to scroll to last item in search list if there is not more button [#3195](https://github.com/Tangerine-Community/Tangerine/issues/3195)
+- Fix: After typing a search, "load more" button appears with no search results for a few seconds [#3196](https://github.com/Tangerine-Community/Tangerine/issues/3196)
+- On a Spreadsheet Request page, style the download all button's icon as white.
 - Unify and fix the exclude pii label on spreadsheet requests.
 
 ## v3.22.0
