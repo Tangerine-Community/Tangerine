@@ -122,8 +122,11 @@ export class SearchComponent implements OnInit {
     this.searchString = searchString
     this.searchResults.nativeElement.innerHTML = ""
     this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
+    if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.innerHTML = ""
+    if (ticket !== this.searchQueue.activeTicket) return
     let searchResultsMarkup = ``
+    if (ticket !== this.searchQueue.activeTicket) return
     if (this.searchDocs.length === 0) {
       searchResultsMarkup = `
         <span style="padding: 25px">
@@ -132,14 +135,17 @@ export class SearchComponent implements OnInit {
       `
       this.thereIsMore = false
     }
+    if (ticket !== this.searchQueue.activeTicket) return
     if (this.searchDocs.length < this.resultsPerPage) {
       this.thereIsMore = false
     }
+    if (ticket !== this.searchQueue.activeTicket) return
     for (const searchDoc of this.searchDocs) {
       searchResultsMarkup += this.templateSearchResult(searchDoc) 
     }
     if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup
+    if (ticket !== this.searchQueue.activeTicket) return
     this.isLoading = false
     this.didSearch$.next(true)
   }
