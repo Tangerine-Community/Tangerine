@@ -1,12 +1,17 @@
+
+
+#space {
+  height: 50px;
+}
+
 :host {
   display: block;
 }
 
 #more {
   text-align: center;
-  /* Prevent the button from being hidden by the bottom menu */
-  min-height: 123px;
 }
+
 
 #loading {
   text-align: center;
