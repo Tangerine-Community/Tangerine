@@ -2,7 +2,6 @@ import { GroupDashboardComponent } from './group-dashboard/group-dashboard.compo
 import { IssueFormComponent } from './../case/components/issue-form/issue-form.component';
 import { IssueComponent } from './../case/components/issue/issue.component';
 import { GroupIssuesComponent } from './group-issues/group-issues.component';
-import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
 import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
 import { GroupReleaseApkTestComponent } from './group-release-apk-test/group-release-apk-test.component';
@@ -68,6 +67,7 @@ import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-temp
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
+import {GroupSearchComponent} from "./group-search/group-search.component";
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -88,7 +88,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/database-conflicts', component: GroupDatabaseConflictsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-templates', component: GroupCsvTemplatesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-templates/:csvTemplateId', component: CsvTemplateComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/cases', component: GroupSearchComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId/form-revision', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId/form-revision/:eventId', component: IssueFormComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/issues/:issueId', component: IssueComponent, canActivate: [LoginGuard] },

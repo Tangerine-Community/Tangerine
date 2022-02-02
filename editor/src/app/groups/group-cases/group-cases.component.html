@@ -2,7 +2,7 @@
 <app-group-search #groupSearch></app-group-search>
 <div class="loading" *ngIf="loading">Loading...</div>
 <div class="no-cases-found" *ngIf="cases && cases.length === 0">No cases found.</div>
-<div [hidden]="loading || isSearching" class="search-results" #searchResults></div>
+<div id="search-results" #searchResults></div>
 <div id="paginator" [hidden]="loading || isSearching">
   <paper-icon-button icon="arrow-back" class="previous" (click)="onPreviousClick()" [disabled]="skip === 0 || loading === true"></paper-icon-button>
   <paper-icon-button icon="arrow-forward" class="next" (click)="onNextClick()" [disabled]="loading === true || (cases && cases.length !== limit)"></paper-icon-button>
