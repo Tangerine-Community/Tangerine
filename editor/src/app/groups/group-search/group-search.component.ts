@@ -94,6 +94,7 @@ export class GroupSearchComponent implements OnInit {
           this.isLoading = true
           this.onSearch$.next(event.target.value)
         } else {
+          this.thereIsMore = false
           this.searchResults.nativeElement.innerHTML = `
             <span style="padding: 25px">
               ${t('Enter more than two characters...')}
@@ -107,7 +108,14 @@ export class GroupSearchComponent implements OnInit {
       .addEventListener('change', async event => {
         this.searchType = this.viewArchived.nativeElement.hasAttribute('checked') ? 'archived' : 'search'
         this.isLoading = true
-        this.onSearch$.next("") 
+        const scanSearchString = this.searchBar.nativeElement.value
+        if (scanSearchString.length > 2) {
+          this.onSearch$.next(scanSearchString)
+        } else {
+          this.searchBar.nativeElement.value
+          this.onSearch$.next("")
+        }
+        
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
@@ -186,41 +194,6 @@ export class GroupSearchComponent implements OnInit {
       </div>
     `
   }
-
-  // private async searchAndRender(searchString) {
-  //   this.isSearching$.next(true)
-  //   this.searchResults.nativeElement.innerHTML = "Loading..."
-  //   this.searchDocs = <Array<any>>await this.httpClient.post(`/group-responses/search/${window.location.pathname.split('/')[2]}`, {
-  //     phrase: searchString,
-  //     index: searchType
-  //   }).toPromise()
-  //   this.searchResults.nativeElement.innerHTML = ""
-  //   let searchResultsMarkup = ``
-  //   if (this.searchDocs.length === 0) {
-  //     searchResultsMarkup = `
-  //       <span style="padding: 25px">
-  //         ${t('No results.')}
-  //       </span>
-  //     `
-  //   }
-  //   for (const searchDoc of this.searchDocs) {
-  //     const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-  //     const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-  //     searchResultsMarkup += `
-  //     <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
-  //       <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
-  //       <div>
-  //         <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : searchDoc._id}\``)}</div>
-  //         <div secondary>
-  //         ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
-  //         </div>
-  //       </div>
-  //     </div>
-  //     `
-  //   }
-  //   this.searchResults.nativeElement.innerHTML = searchResultsMarkup
-  //   this.didSearch$.next(true)
-  // }
 
   scan() {
     this.showScan = true
