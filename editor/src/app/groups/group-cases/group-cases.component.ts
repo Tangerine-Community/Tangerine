@@ -69,7 +69,7 @@ export class GroupCasesComponent implements OnInit {
     this.selector = {
       "type": "case"
     }
-    this.groupSearch.isSearching$.subscribe(() => this.isSearching = true) 
+    // this.groupSearch.isSearching$.subscribe(() => this.isSearching = true) 
     this.groupSearch.stoppedSearching$.subscribe(() => this.isSearching = false) 
     this.query()
   }
@@ -77,7 +77,7 @@ export class GroupCasesComponent implements OnInit {
   onNextClick() {
     this.skip = this.skip + this.limit
     this.query()
-  }
+  } 
 
   onPreviousClick() {
     this.skip = this.skip - this.limit

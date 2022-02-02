@@ -21,8 +21,8 @@ export class GroupResponsesController {
   }
 
   @All('search/:groupId')
-  async search(@Param('groupId') groupId, @Body('phrase') phrase, @Body('index') index) {
-    return await this.groupResponsesService.search(groupId, phrase, index)
+  async search(@Param('groupId') groupId, @Body('phrase') phrase, @Body('index') index, @Body('limit') limit, @Body('skip') skip) {
+    return await this.groupResponsesService.search(groupId, phrase, index, limit, skip)
   }
   
   @All('index/:groupId')

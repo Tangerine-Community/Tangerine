@@ -75,4 +75,22 @@
     --iron-icon-fill-color: var(--accent-text-color);
     --iron-icon-stroke-color: var(--accent-text-color);
   }
+
+
+#more {
+  text-align: center;
+  /* Prevent the button from being hidden by the bottom menu */
+  min-height: 123px;
+}
+
+#loading {
+  text-align: center;
+  min-height: 123px;
+  margin: 30px auto 0px;
+  width: 200px;
+}
+
+#instructions {
+  padding-left: 15px;
+}
   

@@ -122,6 +122,7 @@ export class SearchComponent implements OnInit {
     this.searchString = searchString
     this.searchResults.nativeElement.innerHTML = ""
     this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
+    // why again?
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     if (this.searchDocs.length === 0) {

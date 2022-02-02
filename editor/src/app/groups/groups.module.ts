@@ -74,7 +74,6 @@ import { GroupReleasePwaTestComponent } from './group-release-pwa-test/group-rel
 import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-release-pwa-live.component';
 import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
-import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
 import { ConfigureGroupSecurityComponent } from './configure-group-security/configure-group-security.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -178,7 +177,6 @@ import { GroupDevicePasswordPolicyComponent } from './group-device-password-poli
     GroupReleasePwaLiveComponent,
     GroupUploadsViewComponent,
     GroupDeviceUserComponent,
-    GroupCasesComponent,
     GroupIssuesComponent,
     CsvTemplateComponent,
     CaseSettingsComponent,

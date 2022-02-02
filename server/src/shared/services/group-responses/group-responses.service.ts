@@ -51,12 +51,18 @@ export class GroupResponsesService {
    * @param groupId
    * @param phrase
    * @param index - either 'search' or 'archived'
-   * @param limit
+   * @param limit - default: 50
    * @param skip
    */
-  async search(groupId, phrase:string, index:string, limit = 50, skip = 0) {
+  async search(groupId, phrase:string, index:string, limit, skip) {
     if (typeof index === 'undefined') {
       index = 'search'
+    }
+    if (typeof limit === 'undefined') {
+      limit = 50
+    }
+    if (typeof skip === 'undefined') {
+      skip = 0
     }
     if (index ==='archived') {
       await updateGroupArchivedIndex(groupId)
