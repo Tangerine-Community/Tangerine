@@ -132,7 +132,6 @@ export class UpdateComponent implements AfterContentInit {
       const deviceToken = device.token
       
       await this.deviceService.didUpdate(deviceId, deviceToken, replicationStatus)
-      this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
     
     if (afterCustomUpdates) {
@@ -142,6 +141,7 @@ export class UpdateComponent implements AfterContentInit {
       } catch (e) {
         console.log("Error: " + e)
       }
+      this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
 
     /*
