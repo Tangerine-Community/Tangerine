@@ -895,7 +895,20 @@ class CaseService {
       const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
       a = baseEvent.data.response
     }
-    const diff = this.diffFormResponses(a, b)
+    let diff 
+    try {
+      diff = this.diffFormResponses(a, b)
+    } catch(e) {
+      console.error(e)
+      diff = [
+        {
+          name: 'error',
+          error: 'Error calculating diff',
+          a: '',
+          b: '' 
+        }
+      ]
+    }
     // Create the ProposedChange event.
     issue.events.push(<IssueEvent>{
       id: UUID(),
