@@ -1,4 +1,4 @@
-# The Tangerine Form Editor's Cookbook
+# The Tangerine Form Developers' Cookbook
 Examples of various recipes for Tangerine Forms collected throughout the years. To create your own example, remix the [example](https://glitch.com/edit/#!/remix/tangy-form-example-template) on glitch.com.
 
 ## Skip a question based on input in another question
