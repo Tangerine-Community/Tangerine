@@ -54,6 +54,8 @@ export class AppConfig {
   doNotOptimize: Array<string>
   // Prevent database optimization after a sync other than the first sync. This is not recommended, will lead to performance issues when using Devices.
   indexViewsOnlyOnFirstSync:boolean = false
+  // @TODO Needs documentation.
+  changes_batch_size:number
  
   //
   // Account auth configuration.
