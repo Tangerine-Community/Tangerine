@@ -26,6 +26,8 @@ df -h
 docker stop tangerine couchdb
 # Create a backup of the data folder.
 cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
 # Fetch the updates.
 git fetch origin
 git checkout v3.22.1
