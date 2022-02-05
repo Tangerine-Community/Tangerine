@@ -1,5 +1,39 @@
 # What's new
 
+## v3.22.1
+
+__Fixes__
+
+- Fix: Tangy Template elements all say "false" if using environment variables like caseService and T [#3203](https://github.com/Tangerine-Community/Tangerine/issues/3203)
+- Make issue diffs less crash prone [#3200](https://github.com/Tangerine-Community/Tangerine/pull/3200)
+- Fix: Case fails to open after selecting Case in search behind a "load more" button [#3194](https://github.com/Tangerine-Community/Tangerine/issues/3194)
+- Fix: Unable to scroll to last item in search list if there is not more button [#3195](https://github.com/Tangerine-Community/Tangerine/issues/3195)
+- Fix: After typing a search, "load more" button appears with no search results for a few seconds [#3196](https://github.com/Tangerine-Community/Tangerine/issues/3196)
+- On a Spreadsheet Request page, style the download all button's icon as white.
+- Unify and fix the exclude pii label on spreadsheet requests.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.22.1
+./start.sh v3.22.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.22.0
+```
+
 ## v3.22.0
 
 __Fixes__
