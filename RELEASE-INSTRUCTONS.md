@@ -39,6 +39,7 @@ Once the release candidate (rc) has passed testing, it's time to roll the stable
 4. Make release on Github using the same tag pushed up to Github. Link to the appropriate release on ["What's New" page on docs.tangerinecentral.org](https://docs.tangerinecentral.org/whats-new/). Copy the release notes from the CHANGELOG to this release.
 5. Cancel the build in GitHub Actions for this tag.
 7. Cancel the Build Docs action if this is a patch release (hotfix)! Otherwise old docs will override the current ones.
+8. Verify that tangerine-preview has successfully published. You may want to install it and try it on a content set to spot check it.
 9. Announce on Teams we have a new release.
 
 ## Hotfixing a past minor release
