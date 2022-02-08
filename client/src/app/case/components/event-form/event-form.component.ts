@@ -153,9 +153,12 @@ export class EventFormComponent implements OnInit, OnDestroy {
           // @TODO This redirect may not be need now that we are not displaying form until `this.readyForDataEntry = true`.
           // @TODO Why do we have to redirect back to the case event page to avoid a database conflict error when redirecting
           // to another event form???
-          window.location.hash = `#/${['case', 'event', this.caseService.case._id, this.caseEvent.id].join('/')}`
           if (window['eventFormRedirect']) {
-            this.eventFormRedirect()
+            await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+            this.router.navigateByUrl(window['eventFormRedirect'])
+            window['eventFormRedirect'] = ''
+          } else {
+            this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
           }
           this.processMonitorService.stop(this.submitProcess.id)
         }, 500)
@@ -173,11 +176,6 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     eval(this.eventFormDefinition.onEventClose)
-  }
-  eventFormRedirect() {
-    window.location.hash = window['eventFormRedirect']
-    // Reset the event form redirect so it doesn't become permanent.
-    window['eventFormRedirect'] = ''
   }
 
 }
