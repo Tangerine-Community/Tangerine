@@ -78,4 +78,8 @@ export class CsvDataSetDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  download(url) {
+    window.location = url
+  }
+
 }
