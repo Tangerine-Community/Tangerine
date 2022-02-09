@@ -2,6 +2,8 @@
 
 ## Test on QA server
 * [ ] Clone production server to QA server.
+* [ ] Remove all cronjobs that may be pushing to remote git repositories.
+* [ ] Remove all CouchDB replications that may be pushing data to remote CouchDBs.
 * [ ] Update `T_HOSTNAME` in `tangerine/config.sh`.
 * [ ] Run `./start.sh <currently used version of tangerine>`. This puts the updated config in `config.sh` into the container.
 * [ ] Update `serverUrl` in all `app-config.json` files for each group in `tangerine/data/group/<your-group-id>/client/app-config.json`.  Find and replace from the tangerine folder by modifying the following command: `find ./data/groups/ -type f -name "app-config.json" -print0 | xargs -0 sed -i '' -e 's/production-server-hostname/qa-server-hostname/g'`
