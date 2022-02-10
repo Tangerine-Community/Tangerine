@@ -1,7 +1,7 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
 <div id="download-all-container" >
-  <button mat-raised-button color="warn" *ngIf="datasetDetail?.status === 'Available' " class="download-all-button">
+  <button mat-raised-button color="warn" *ngIf="datasetDetail?.status === 'Available' " class="download-all-button" (click)="download(datasetDetail.downloadUrl)">
     <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
     {{'download all'|translate}}
   </button>

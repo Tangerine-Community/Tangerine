@@ -1,4 +1,5 @@
 const util = require('util');
+const spawn = require('child_process').spawn
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra');
 const sanitize = require('sanitize-filename');
@@ -116,7 +117,19 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     state.csvs.find(csv => csv.formId === formId).inProgress = false
     await writeState(state)
   }
-  await exec(`zip ${outputPath} ${state.csvs.map(csvInfo => csvInfo.outputPath).join(' ')}`)
+  const child = await spawn(`zip`, [outputPath, ...state.csvs.map(csvInfo => csvInfo.outputPath)])
+  await new Promise((resolve, reject) => {
+    child.on('close', (code) => {
+      if (code !== 0) {
+        console.log(`zip process exited with code ${code}`);
+        reject()
+      }
+      resolve()
+    })
+    child.on('error', (error) => {
+      console.log(error)
+    })
+  })
   state.complete = true
   await writeState(state)
 }
