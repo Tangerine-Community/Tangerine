@@ -163,17 +163,28 @@ export class SyncCouchdbService {
     let hadPushSuccess = false
     this.retryCount = 1
     if (!isFirstSync) {
+      let docs_written = 0
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
-        if (!pushReplicationStatus.pushError) {
+        if (
+          !pushReplicationStatus.pushError &&
+          pushReplicationStatus.info.docs_written === 0 &&
+          pushReplicationStatus.info.doc_write_failures === 0
+        ) {
           hadPushSuccess = true
           pushReplicationStatus.hadPushSuccess = true
           await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
-        } else {
+        } else if (pushReplicationStatus.pushError || pushReplicationStatus.info.docs_write_failures > 0) {
+          docs_written += pushReplicationStatus.info.docs_written
           await sleep(retryDelay)
+          ++this.retryCount
+        } else {
+          docs_written += pushReplicationStatus.info.docs_written
           ++this.retryCount
         }
       }
+      pushReplicationStatus.info.docs_written = docs_written
+      pushReplicationStatus.pushed = docs_written
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
       this.syncMessage$.next(replicationStatus);
     }
