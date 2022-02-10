@@ -4,6 +4,8 @@
 
 __Fixes__
 
+- Download All button on Spreadsheet Request info page does not download [#3232](https://github.com/Tangerine-Community/Tangerine/issues/3232)
+- Spreadsheet Requests page does not load for new groups [#3233](https://github.com/Tangerine-Community/Tangerine/issues/3233)
 - Fix use of window.eventFormRedirect [#3211](https://github.com/Tangerine-Community/Tangerine/pull/3211)
 - Spreadsheet Request will fail to generate Download All zip if one form has specific characters in the title [#3217](https://github.com/Tangerine-Community/Tangerine/issues/3217)
 
