@@ -185,6 +185,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
           if (!isOldEvent) {
             // since we are putting events from different _revs in the same array, need to mark which _rev the event belongs to.
             event.conflictRevisionId = conflict._rev
+            event.mergedAtRevisionId = this.caseService.case._rev
             this.conflictingEvents.push(event)
           }
         })
@@ -228,7 +229,8 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
           eventFormId = event.eventForms[0].id
         }
         try {
-          await this.caseService.createIssue(`Conflict event merged on ${event.name}`, `conflictRevisionId:${event.conflictRevisionId}`, this.caseService.case._id, event.id, eventFormId, 'EDITOR', 'EDITOR', null)
+          // Some formatting of 2 spaces and a \n ("  \n") to force a line-break in the issue display
+          await this.caseService.createIssue(`Conflict event merged on ${event.name}`, `conflictRevisionId:${event.conflictRevisionId};  \nmergedAtRevisionId: ${event.mergedAtRevisionId}`, this.caseService.case._id, event.id, eventFormId, 'EDITOR', 'EDITOR', null)
         } catch (e) {
           console.log("Error: " + JSON.stringify(e))
         }

@@ -4,6 +4,7 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import {GroupsService} from "../services/groups.service";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
 import {HttpClient} from "@angular/common/http";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-group-database-conflicts',
@@ -16,15 +17,23 @@ export class GroupDatabaseConflictsComponent implements OnInit {
   @ViewChild('container', {static: true}) container: ElementRef;
   breadcrumbs:Array<Breadcrumb> = []
   group;
+  issueId:string
+  docId:string
 
   constructor(
     private http: HttpClient,
     private groupsService: GroupsService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private route:ActivatedRoute
   ) {}
 
   async ngOnInit() {
     this.group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
+    console.log("group: ", this.group)
+    this.route.params.subscribe(async params => {
+      this.issueId = params['issueId']
+      this.docId = params['docId']
+    })
     this.breadcrumbs = [
       <Breadcrumb>{
         label: _TRANSLATE('Database Conflicts'),
@@ -40,7 +49,7 @@ export class GroupDatabaseConflictsComponent implements OnInit {
           if (data.status === 201) {
             const dbUrlWithCredentials = data.body["dbUrlWithCredentials"]
             this.container.nativeElement.innerHTML = `
-      <couchdb-conflict-manager dbUrl="${dbUrlWithCredentials}" username="${username}"></couchdb-conflict-manager>
+      <couchdb-conflict-manager dbUrl="${dbUrlWithCredentials}" username="${username}" issueId="${(this.issueId)}" docId="${(this.docId)}"></couchdb-conflict-manager>
     `
           } else {
             // return false;

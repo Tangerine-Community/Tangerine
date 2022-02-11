@@ -86,6 +86,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/uploads/:responseId', component: GroupUploadsViewComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/database-conflicts', component: GroupDatabaseConflictsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/database-conflicts/:issueId/:docId', component: GroupDatabaseConflictsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-templates', component: GroupCsvTemplatesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-templates/:csvTemplateId', component: CsvTemplateComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/cases', component: GroupCasesComponent, canActivate: [LoginGuard] },
