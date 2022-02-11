@@ -3,7 +3,10 @@ import { LitElement, html } from 'lit-element'
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 import * as Jsondiffpatch from 'jsondiffpatch'
 import PouchDB from 'pouchdb'
+import {IssueEvent, IssueEventType, IssueStatus} from "../../case/classes/issue.class";
+import {AppContext} from "../../app-context.enum";
 var jsondiffpatch = Jsondiffpatch.create({});
+import { v4 as UUID } from 'uuid';
 
 async function archiveConflicts(dbUrl, docId) {
   try {
@@ -39,7 +42,9 @@ class ActiveConflicts extends LitElement {
       username: { type: String },
       selection: { type: Object },
       ready: { type: Boolean },
-      list: { type: Array }
+      list: { type: Array },
+      issueId: { type: String },
+      docId: { type: String }
     };
   }
 
@@ -51,6 +56,7 @@ class ActiveConflicts extends LitElement {
     this.conflictInfos = []
     this.matches = []
     this.selection = { conflicts:[] }
+    // this.id = localStorage.getItem('id') || ''
   }
 
   async connectedCallback() {
@@ -71,6 +77,9 @@ class ActiveConflicts extends LitElement {
         numberOfConflicts: row.value
       }
     })
+    if (this.docId !== ''){
+      await this.loadDoc(this.docId)
+    }
     this.ready = true
   }
 
@@ -126,7 +135,11 @@ class ActiveConflicts extends LitElement {
 				.no-border {
 					border: none;
 				}
+        #legend {
+          margin-top: 1em;
+        }
       </style>
+      <div id="messages"></div>
       <div id="container">
         ${!this.ready ? html`
           Loading... 
@@ -180,9 +193,20 @@ class ActiveConflicts extends LitElement {
                 ${this.selection.doc ? html`
                   <juicy-ace-editor mode="ace/mode/json" .value="${this.selection.JSON}"></juicy-ace-editor>
                   <paper-textarea id="comment" label="Comment"></paper-textarea>
-                  <paper-button @click="${() => this.onSubmit(true, false) }">MERGE</paper-button>
-                  <paper-button @click="${() => this.onSubmit(false, true)}">ARCHIVE CONFLICTS</paper-button>
-                  <paper-button @click="${() => this.onSubmit(true, true) }">MERGE AND ARCHIVE CONFLICTS</paper-button>
+                  <div>
+                    <paper-button @click="${() => this.onSubmit(true, false) }">MERGE</paper-button>
+                    <paper-button @click="${() => this.onSubmit(false, true)}">ARCHIVE CONFLICTS</paper-button>
+                    <paper-button @click="${() => this.onSubmit(true, true) }">MERGE AND ARCHIVE CONFLICTS</paper-button>
+                  </div>
+                  
+                  <div id="legend">
+                    Legend: 
+                    <ul>
+                      <li>Merge: Saves any changes you make in the editor, but keeps this conflict open.</li>
+                      <li>Archive Conflicts: Does not save any changes made in the editor, but closes the conflict.</li>
+                      <li>Merge and Archive Conflicts: Saves any changes you make in the editor and closes the conflict.</li>
+                    </ul>
+                  </div>
                 `: ``}
               </td>
             </tr>
@@ -191,7 +215,28 @@ class ActiveConflicts extends LitElement {
       </div>
     `
   }
-
+  async onSubmitTEST(shouldMerge = false, shouldArchive = false) {
+    console.log("Saving issueId: " + this.issueId)
+    const comment = this.shadowRoot.querySelector('#comment').value
+    if (this.issueId) {
+      const issue = await this.db.get(this.issueId)
+      issue.status = 'Closed'
+      const event = {
+        id: UUID(),
+        type: 'Close',
+        date: Date.now(),
+        userName: this.username,
+        userId: this.username,
+        createdAppContext:  'EDITOR',
+        data: {
+          comment
+        }
+      }
+      console.log("event: " + JSON.stringify(event))
+      issue.events.push(event);
+      await this.db.put(issue)
+    }
+  }
   async onSubmit(shouldMerge = false, shouldArchive = false) {
     const docId = this.selection.id
     const action = shouldMerge && shouldArchive
@@ -222,6 +267,27 @@ class ActiveConflicts extends LitElement {
     if (shouldArchive) {
       await archiveConflicts(this.dbUrl, docId)
     }
+    if (shouldMerge || shouldArchive) {
+      if (this.issueId) {
+        const issue = await this.db.get(this.issueId)
+        issue.status = 'Closed'
+        const event = {
+          id: UUID(),
+          type: 'Close',
+          date: Date.now(),
+          userName: this.username,
+          userId: this.username,
+          createdAppContext:  'EDITOR',
+          data: {
+            comment
+          }
+        }
+        console.log("event: " + JSON.stringify(event))
+        issue.events.push(event)
+        await this.db.put(issue)
+        this.shadowRoot.querySelector('#messages').innerHTML += `<p>Closed this issue.</p>`
+      }
+    }
     // Log.
     await this.logDb.post({
       action,
@@ -245,29 +311,34 @@ class ActiveConflicts extends LitElement {
   async loadDoc(docId) {
     this.ready = false
     const currentDoc = await this.db.get(docId, {conflicts: true})
-    const conflictRevisionIds = [...currentDoc._conflicts] 
-    delete currentDoc._conflicts
-    let conflicts = []
-    if (conflictRevisionIds) {
-      for (const conflictRevisionId of conflictRevisionIds) {
-        const conflictRevisionDoc = await this.db.get(docId, {rev: conflictRevisionId})
-        const comparison = jsondiffpatch.diff(currentDoc, conflictRevisionDoc)
-        const conflict = {
-          doc: conflictRevisionDoc,
-          rev: conflictRevisionDoc._rev,
-          diff: comparison
+    if ( currentDoc._conflicts) {
+      const conflictRevisionIds = [...currentDoc._conflicts]
+      delete currentDoc._conflicts
+      let conflicts = []
+      if (conflictRevisionIds) {
+        for (const conflictRevisionId of conflictRevisionIds) {
+          const conflictRevisionDoc = await this.db.get(docId, {rev: conflictRevisionId})
+          const comparison = jsondiffpatch.diff(currentDoc, conflictRevisionDoc)
+          const conflict = {
+            doc: conflictRevisionDoc,
+            rev: conflictRevisionDoc._rev,
+            diff: comparison
+          }
+          conflicts.push(conflict)
         }
-        conflicts.push(conflict)
       }
-    }
-    this.selection = {
-      id: currentDoc._id,
-      rev: currentDoc._rev,
-      doc: currentDoc,
-      JSON: JSON.stringify(currentDoc, null, 2),
-      conflicts 
+      this.selection = {
+        id: currentDoc._id,
+        rev: currentDoc._rev,
+        doc: currentDoc,
+        JSON: JSON.stringify(currentDoc, null, 2),
+        conflicts
+      }
+    } else {
+      this.shadowRoot.querySelector('#messages').innerHTML += `<h2>No conflicts for ${docId}</h2><p>They may have already been resolved.</p>`
     }
     this.ready = true
+    
   }
 
 }

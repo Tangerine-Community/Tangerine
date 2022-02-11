@@ -12,12 +12,13 @@ import { CaseService } from '../../services/case.service';
 import { Route } from '@angular/compiler/src/core';
 import moment from 'moment';
 import { diffTemplate } from './diff-template';
-import { Marked } from '@ts-stack/markdown';
+import { Marked, Renderer } from '@ts-stack/markdown';
 import {Conflict} from "../../classes/conflict.class";
 import { conflictTemplate } from './conflict-template';
 import { diffString, diff } from 'json-diff';
 import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.component";
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
+import {Case} from "../../classes/case.class";
 
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
@@ -47,6 +48,7 @@ interface EventInfo {
   date:string
   userName:string
   type:IssueEventType
+  caseId:string
 }
 
 @Component({
@@ -72,7 +74,7 @@ export class IssueComponent implements OnInit {
 
   tab = 'activity'
   ready = false
-  private conflict: Conflict;
+  conflict: Conflict;
   conflictMarkup:string
   private diffOutput: any;
   private merged: any;
@@ -80,6 +82,13 @@ export class IssueComponent implements OnInit {
   diffMergedMarkup: string;
   breadcrumbs:Array<Breadcrumb> = []
   title = 'Issue'
+  issueType = 'issue'
+  groupId:string
+  issueId:string
+  docId:string
+  caseId:string
+  case:Case
+  
   constructor(
     private caseService:CaseService,
     private userService:UserService,
@@ -91,8 +100,12 @@ export class IssueComponent implements OnInit {
   ngOnInit() {
     let openIssueProcess = this.pm.start('issue-opening', "Opening issue...")
     this.route.params.subscribe(async params => {
+      this.groupId = params['groupId']
+      this.issueId = params['issueId']
       window['caseService'] = this.caseService
-      this.issue = await this.caseService.getIssue(params.issueId)
+      this.issue = await this.caseService.getIssue(this.issueId)
+      this.caseId = this.issue.caseId
+      this.case = new Case(await this.tangyFormService.getResponse(this.caseId))
       this.title = this.issue.label
       this.breadcrumbs = [
         <Breadcrumb>{
@@ -112,6 +125,20 @@ export class IssueComponent implements OnInit {
   }
 
   async update() {
+    Marked.setOptions
+    ({
+      renderer: new Renderer,
+      breaks: true,
+      gfm: true,
+      tables: true,
+      pedantic: false,
+      sanitize: false,
+      smartLists: true,
+      smartypants: false
+    });
+    console.log(Marked.parse('I am using __markdown__. br for real'));
+    console.log(Marked.parse('# heading {my-custom-hash}'));
+
     this.isOpen = this.issue.status === IssueStatus.Open ? true : false
     this.eventInfos = this.issue.events.map(event => {
       return <EventInfo>{
@@ -121,6 +148,7 @@ export class IssueComponent implements OnInit {
         date: moment(event.date).format('dddd MMMM D, YYYY hh:mma'),
         type: event.type,
         userName: event.userName,
+        caseId: this.caseId,
         primary: `
           <style>
             /* We cannot put this CSS in issue.component.css because Angular will remove it because nothing in the template uses it. */
@@ -133,13 +161,16 @@ export class IssueComponent implements OnInit {
             ${Marked.parse(event.data.label)}
             <h3>Description</h3>
             ${Marked.parse(event.data.description)}
+
+            
             <h3>Send to Devices</h3>
             ${!event.data.sendToAllDevices && !event.data.sendToDeviceById ? `Do not send to devices.` : ''}
             ${event.data.sendToAllDevices ? `Send to all devices.` : ''}
             ${event.data.sendToDeviceById ? `Send to Device by ID: ${event.data.sendToDeviceById}` : ''}
           `: ``}
         ${event.data && event.data.comment ? Marked.parse(event.data.comment) : ``}
-         ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
+        ${event.data?.comment?.includes('conflictRevisionId') ? `Current rev: ${(this.case._rev)}<br/>\nCaseId: ${(this.caseId)}<br/>` : ''}
+        ${event.data && event.data.diff ? diffTemplate(event.data.diff) : ``}
         `
       }
     })
@@ -148,7 +179,13 @@ export class IssueComponent implements OnInit {
     // Conflicts that don't have diffInfo have a proposed change already - automerge does not handle formResponses.
     // @TODO There is more work to be done here so that we can cleanly detect what type of issue we have.
     if (this.issue.events[0] && this.issue.events[0]['data'] && this.issue.events[0]['data'].conflict && this.issue.events[0]['data'].conflict.diffInfo) {
+      this.issueType = 'conflict-resolved-in-client'
       await this.showConflictResolutionOptions()
+      // this.issue.events[0].data.comment
+    } else if (this.issue.events[0] && this.issue.events[0]['data'] && this.issue.events[0].data.comment && this.issue.events[0].data.comment.includes('conflictRevisionId')) {
+      this.issueType = 'conflict-resolved-in-editor'
+      // localStorage.setItem('id', this.issue.caseId)
+      this.docId = this.issue.caseId
     } else {
       await this.showProposedChange();
     }

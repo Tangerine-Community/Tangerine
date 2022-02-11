@@ -5,14 +5,15 @@
     <paper-button *ngIf="!issue.merged && !isOpen" class="status status-closed"><mwc-icon>check</mwc-icon>closed</paper-button>
     <paper-button *ngIf="isOpen" class="status status-open"><mwc-icon>list</mwc-icon>open</paper-button>
     <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review case</paper-button></a>
-    <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review form</paper-button></a>
+    <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}" *ngIf="issueType === 'issue'"><paper-button><mwc-icon>open_in_new</mwc-icon> review form</paper-button></a>
+    <a href="#groups/{{groupId}}/data/database-conflicts/{{issueId}}/{{docId}}" *ngIf="issueType === 'conflict-resolved-in-editor'"><paper-button><mwc-icon>open_in_new</mwc-icon> View and Resolve Conflict</paper-button></a>
   </div>
   <paper-tabs class="tabs" selected="0" *ngIf="!conflict">
     <paper-tab (click)="tab = 'activity'">Activity</paper-tab>
     <paper-tab (click)="tab = 'settings'">Settings</paper-tab>
-    <paper-tab (click)="tab = 'current'">Current</paper-tab>
-    <paper-tab (click)="tab = 'proposed'">Proposed</paper-tab>
-    <paper-tab (click)="tab = 'differences'">Differences</paper-tab>
+    <paper-tab *ngIf="issueType === 'issue'" (click)="tab = 'current'">Current</paper-tab>
+    <paper-tab *ngIf="issueType === 'issue'" (click)="tab = 'proposed'">Proposed</paper-tab>
+    <paper-tab *ngIf="issueType === 'issue'" (click)="tab = 'differences'">Differences</paper-tab>
   </paper-tabs>
 
   <paper-tabs class="tabs" selected="0" *ngIf="conflict">
@@ -70,7 +71,7 @@
       </div>
     </paper-card>
 
-    <paper-card class="issue-event issue-actions" *ngIf="!conflict && !canMergeProposedChange && isOpen">
+    <paper-card class="issue-event issue-actions" *ngIf="!conflict && !canMergeProposedChange && isOpen && issueType !== 'conflict-resolved-in-editor'">
       <div class="card-content">
         <div class="issue-event--label">
           <mwc-icon slot="item-icon">error</mwc-icon>

@@ -15,7 +15,10 @@ class CouchdbConflictManager extends LitElement {
       dbUrl: { type: String },
       username: { type: String },
       route: { type: String },
-      ready: { type: Boolean }
+      ready: { type: Boolean },
+      id: { type: String },
+      issueId: { type: String },
+      docId: { type: String }
     };
   }
 
@@ -96,7 +99,7 @@ class CouchdbConflictManager extends LitElement {
           <archived-conflicts dbUrl="${this.dbUrl}"></archived-conflicts>
         `: ``}
         ${this.route === 'active-conflicts' ? html`
-          <active-conflicts dbUrl="${this.dbUrl}" username="${this.username}"></active-conflicts>
+          <active-conflicts dbUrl="${this.dbUrl}" username="${this.username}"  issueId="${(this.issueId)}" docId="${(this.docId)}"></active-conflicts>
         `: ``}
         ${this.route === 'data-log' ? html`
           <data-log dbUrl="${this.dbUrl}"></data-log>
