@@ -129,8 +129,8 @@ const listCSVDataSets = async (req, res) => {
   try {
     const groupId = req.params.groupId
     const pageIndex = parseInt(req.params.pageIndex)
-    const pageSize = parseInt(req.params.pageSize)
-    CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] }, limit:987654321 })
+    const pageSize = parseInt(req.params.pageSize) || 5
+    await CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
     // Iterate over the query to find out total number of docs given selector. Note, this was done without paging before but incorrectly always returned 25. Bug never found but paging is better for memory anyways, but ultimately not sure this will scale well, we may have to drop support for knowing the total number of docs.
     let numberOfDatasets = 0
     let moreDatasets = true
@@ -141,7 +141,7 @@ const listCSVDataSets = async (req, res) => {
       moreDatasets = result.docs.length > 0 ? true : false
       page++
     }
-    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:(+pageIndex)*(+pageSize),limit:+pageSize })
+    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:pageIndex*pageSize,limit: pageSize })
     const datasets = []
     for (let doc of result.docs) {
       const dataset = await getDataset(doc._id)
