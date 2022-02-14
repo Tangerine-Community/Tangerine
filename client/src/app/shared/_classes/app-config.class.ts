@@ -102,12 +102,13 @@ export class AppConfig {
 
   showQueries:boolean
   showCaseReports:boolean
-  // Determines wether or not the Issues tab is shown on the case module's home screen.
+  // Determines whether the Issues tab should be shown on the case module's home screen.
   showIssues:boolean
   barcodeSearchMapFunction:string
   // Determines if a "Create Issue" button appears when viewing submitted Event Forms.
   allowCreationOfIssues:boolean
   filterCaseEventScheduleByDeviceAssignedLocation:boolean = false
+  syncCaseIfOnline:boolean = false
 
   //
   // Tangerine Coach configuration.

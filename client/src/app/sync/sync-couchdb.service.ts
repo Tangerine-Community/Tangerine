@@ -12,7 +12,6 @@ import {AppConfigService} from '../shared/_services/app-config.service';
 import { AppContext } from '../app-context.enum';
 import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
-import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import { SyncDirection } from './sync-direction.enum';
 import { UserService } from '../shared/_services/user.service';
@@ -91,7 +90,6 @@ export class SyncCouchdbService {
     private variableService: VariableService,
     private appConfigService: AppConfigService,
     private caseDefinitionsService: CaseDefinitionsService,
-    private caseService: CaseService,
     private userService: UserService,
     private deviceService: DeviceService,
     private tangyFormService: TangyFormService
@@ -564,6 +562,79 @@ export class SyncCouchdbService {
     
     this.syncMessage$.next(status)
     
+    return status;
+  }
+
+  async pullDoc(userDb, remoteDb, appConfig, syncDetails, batchSize, docId): Promise<ReplicationStatus> {
+    let status = <ReplicationStatus>{
+      pulled: 0,
+      pullError: '',
+      pullConflicts: [],
+      info: '',
+      remaining: 0,
+      direction: 'pull'
+    };
+    // let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
+    // if (typeof pull_last_seq === 'undefined') {
+    //   pull_last_seq = 0;
+    // }
+    // if (this.fullSync && this.fullSync === 'pull') {
+    //   pull_last_seq = 0;
+    // }
+    // const pullSelector = this.getPullSelector(syncDetails);
+    // let progress = {
+    //   'direction': 'pull',
+    //   'message': 'Received data from remote server.'
+    // }
+    // this.syncMessage$.next(progress)
+    let failureDetected = false
+    let error;
+    let pulled = 0
+
+    /**
+     * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet.
+     * From the pouchdb API doc:
+     * "Number of batches to process at a time. Defaults to 10. This (along wtih batch_size) controls how many docs
+     * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
+     */
+    let syncOptions = {
+      // ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": pull_last_seq },
+      "batch_size": batchSize,
+      "write_batch_size": this.writeBatchSize,
+      "batches_limit": 1,
+      "pulled": pulled,
+      "doc_ids": [docId],
+      // "checkpoint": 'target',
+      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null
+    }
+
+    syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
+
+    try {
+      status = <ReplicationStatus>await this._pull(userDb, remoteDb, syncOptions);
+      if (typeof status.pulled !== 'undefined') {
+        pulled = pulled + status.pulled
+        status.pulled = pulled
+      } else {
+        status.pulled = pulled
+      }
+      this.syncMessage$.next(status)
+    } catch (e) {
+      console.log("Error: " + e)
+      failureDetected = true
+      error = e
+    }
+
+    // status.initialPullLastSeq = pull_last_seq
+    // status.currentPushLastSeq = status.info.last_seq
+    status.batchSize = batchSize
+
+    if (failureDetected) {
+      status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
+    }
+
+    this.syncMessage$.next(status)
+
     return status;
   }
 
