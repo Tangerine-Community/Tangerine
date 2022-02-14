@@ -10,6 +10,9 @@ import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import {SyncCouchdbService} from "../../../sync/sync-couchdb.service";
+import {AppConfigService} from "../../../shared/_services/app-config.service";
+import {VariableService} from "../../../shared/_services/variable.service";
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -37,6 +40,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   window:any
   caseService: CaseService
   onOverlayCloseSubscription:Subscription
+  syncMessage: string
 
   constructor(
     private route: ActivatedRoute,
@@ -44,7 +48,9 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     caseService: CaseService,
     private processMonitorService:ProcessMonitorService,
     public dialog: MatDialog,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private appConfigService:AppConfigService,
+    private variableService: VariableService
   ) {
     ref.detach()
     this.window = window
@@ -53,9 +59,32 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   async ngAfterContentInit() {
     // take over T.case.
     window["T"].case = this.caseService
-    const process = this.processMonitorService.start('caseOpen', _TRANSLATE('Opening Case...'))
-    this.userRoles = await this.userService.getRoles()
     const caseId = window.location.hash.split('/')[2]
+    this.syncMessage = ''
+    let process;
+    let onlineSync = false
+    const syncCaseIfOnline = await this.variableService.get('syncCaseIfOnline')
+    const appConfig = await this.appConfigService.getAppConfig()
+    if (appConfig.syncCaseIfOnline && syncCaseIfOnline) {
+      const online = window.navigator.onLine;
+      if (online) {
+        process = this.processMonitorService.start('caseOpen', _TRANSLATE('Syncing and Opening Case...'))
+        this.caseService.syncMessage$.subscribe({
+          next: (progress) => {
+            if (progress) {
+              this.syncMessage = progress.syncMessage || this.syncMessage
+              console.log("progress", this.syncMessage)
+            }
+          }
+        })
+        const pullReplicationStatus = await this.caseService.syncDoc(caseId);
+      } else {
+        process = this.processMonitorService.start('caseOpen', _TRANSLATE('Opening Case...'))
+      }
+    } else {
+      process = this.processMonitorService.start('caseOpen', _TRANSLATE('Opening Case...'))
+    }
+    this.userRoles = await this.userService.getRoles()
     // if (!this.caseService.case || caseId !== this.caseService.case._id) {
     await this.caseService.load(caseId)
     this.caseService.openCaseConfirmed = false

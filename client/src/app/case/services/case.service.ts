@@ -29,6 +29,11 @@ import {Conflict} from "../classes/conflict.class";
 import * as jsonpatch from "fast-json-patch";
 import * as CryptoJS from 'crypto-js';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import {SyncCouchdbDetails, SyncCouchdbService, SyncSessionInfo} from "../../sync/sync-couchdb.service";
+import PouchDB from 'pouchdb'
+import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service";
+import {VariableService} from "../../shared/_services/variable.service";
+
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +70,9 @@ class CaseService {
   eventForm:EventForm
   eventFormDefinition:EventFormDefinition
   participant:CaseParticipant
+
+  public readonly syncMessage$: Subject<any> = new Subject();
+  public readonly onCancelled$: Subject<any> = new Subject();
 
   setContext(caseEventId = '', eventFormId = '') {
     window['caseInstance'] = this.case
@@ -113,7 +121,10 @@ class CaseService {
     private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient,
-    private activityService:ActivityService
+    private activityService:ActivityService,
+    private syncCouchdbService: SyncCouchdbService,
+    private tangyFormsInfoService:TangyFormsInfoService,
+    private variableService: VariableService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -1464,6 +1475,62 @@ class CaseService {
       ? await this.tangyFormService.getDocRevHistory(formResponseId)
       : (await this.tangyFormService.getResponse(formResponseId)).history
     return history
+  }
+  
+  async syncDoc(caseId) {
+    this.syncCouchdbService.syncMessage$.subscribe({
+      next: (replicationStatus) => {
+        this.syncMessage$.next(replicationStatus)
+      }
+    })
+
+    this.syncCouchdbService.onCancelled$.subscribe({
+      next: (replicationStatus) => {
+        this.onCancelled$.next(replicationStatus)
+      }
+    })
+    const username = window['T'].user.getCurrentUser()
+    const userDb = await window['T'].user.getUserDatabase(username)
+    // const appConfig = window['T'].appConfig
+    const appConfig = await this.appConfigService.getAppConfig()
+    let batchSize = appConfig.batchSize || 100
+    const device = await this.deviceService.getDevice()
+    const formInfos = await this.tangyFormsInfoService.getFormsInfo()
+    const syncDetails:SyncCouchdbDetails =  <SyncCouchdbDetails>{
+        serverUrl: appConfig.serverUrl,
+        groupId: appConfig.groupId,
+        deviceId: device._id,
+        deviceToken: device.token,
+        deviceSyncLocations: device.syncLocations,
+        formInfos,
+        disableDeviceUserFilteringByAssignment: appConfig.disableDeviceUserFilteringByAssignment
+      }
+    let syncSessionInfo = await this.variableService.get('syncSessionInfo')
+    if (syncSessionInfo) {
+      // check expiry
+      //         syncSessionUrl: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
+      // the syncUsername has the time created:  syncUsername = `syncUser-${UUID()}-${Date.now()}`
+      // need to parse syncSessionUrl.
+      const syncSessionUrl = syncSessionInfo.syncSessionUrl
+      const syncSessionUrlParts = syncSessionUrl.split('-')
+      const expiryTimestamp = syncSessionUrlParts[6].split(':')[0];
+      const timeLeftInToken = Date.now() - parseInt(expiryTimestamp)
+      const expiryWindow = 1000 * 60 * 60 * 2; // 2 hours in milliseconds
+      if (timeLeftInToken < expiryWindow) {
+        // token has expired
+        syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+      }
+    } else {
+      syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+      // Save syncSessionInfo
+      await this.variableService.set('syncSessionInfo', syncSessionInfo)
+    }
+    
+    syncDetails.deviceSyncLocations = syncSessionInfo.deviceSyncLocations
+    const remoteDb = new PouchDB(syncSessionInfo.syncSessionUrl)
+
+    const pullReplicationStatus = await this.syncCouchdbService.pullDoc(userDb, remoteDb, appConfig, syncDetails, batchSize, caseId);
+    return pullReplicationStatus;
   }
 
 }
