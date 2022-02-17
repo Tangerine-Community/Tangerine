@@ -40,7 +40,8 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   window:any
   caseService: CaseService
   onOverlayCloseSubscription:Subscription
-  syncMessage: string
+  syncMessage: string = ""
+  caseUpdated: string = ""
 
   constructor(
     private route: ActivatedRoute,
@@ -50,7 +51,8 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     public dialog: MatDialog,
     private ref: ChangeDetectorRef,
     private appConfigService:AppConfigService,
-    private variableService: VariableService
+    private variableService: VariableService,
+    private syncCouchdbService:SyncCouchdbService
   ) {
     ref.detach()
     this.window = window
@@ -68,16 +70,28 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     if (appConfig.syncCaseIfOnline && syncCaseIfOnline) {
       const online = window.navigator.onLine;
       if (online) {
-        process = this.processMonitorService.start('caseOpen', _TRANSLATE('Syncing and Opening Case...'))
-        this.caseService.syncMessage$.subscribe({
+        const opts = {
+          cancellable: false,
+          cancelButtonDisplayDelay: 10
+        }
+        process = this.processMonitorService.start('caseOpen', _TRANSLATE('Syncing and Opening Case...'), opts)
+        this.processMonitorService.change.subscribe((isDone) => {
+          if (isDone) {
+            // this.syncCouchdbService.cancel()
+          }
+        })
+        this.syncCouchdbService.syncMessage$.subscribe({
           next: (progress) => {
             if (progress) {
-              this.syncMessage = progress.syncMessage || this.syncMessage
-              console.log("progress", this.syncMessage)
+              // this.syncMessage = progress.message || this.syncMessage
+              console.log(`progress message:  ${progress.message} progress.pulled: ${progress.pulled}`)
+              if (progress.pulled) {
+                this.caseUpdated = "&nbsp;&nbsp;&nbsp;&nbsp; Case sync'd with server."
+              }
             }
           }
         })
-        const pullReplicationStatus = await this.caseService.syncDoc(caseId);
+        const pullReplicationStatus = await this.syncCouchdbService.syncDoc([caseId]);
       } else {
         process = this.processMonitorService.start('caseOpen', _TRANSLATE('Opening Case...'))
       }
@@ -101,6 +115,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
       window.scrollTo(0, 0)
       this.onOverlayCloseSubscription.unsubscribe()
     })
+    
     this.processMonitorService.stop(process.id)
   }
 

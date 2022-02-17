@@ -6,6 +6,8 @@ export interface Process {
   id:string
   name:string
   description:string
+  cancellable?:boolean
+  cancelButtonDisplayDelay?:number  // in seconds
 }
 
 @Injectable({
@@ -30,11 +32,16 @@ class ProcessMonitorService {
     ? true
     : false
 
-  start(name, description):Process {
+  start(name: { alpha: number, type: string } | string, description: string, opts?: {
+    cancellable?: boolean;
+    cancelButtonDisplayDelay?: number;
+  }) {
     const process = <Process>{
       id: UUID(),
       name,
-      description
+      description,
+      cancellable:  opts?.cancellable === false ? false : true,
+      cancelButtonDisplayDelay:  opts?.cancelButtonDisplayDelay? opts?.cancelButtonDisplayDelay : null,
     }
 
     this.processes.push(process)

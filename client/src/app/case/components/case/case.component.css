@@ -175,3 +175,7 @@ app-case-breadcrumb {
 .text-right {
     text-align: right;
 }
+
+.sync-status {
+  color:yellow;
+}
