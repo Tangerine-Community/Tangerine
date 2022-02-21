@@ -91,7 +91,8 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
             }
           }
         })
-        const pullReplicationStatus = await this.syncCouchdbService.syncDoc([caseId]);
+        const pullReplicationStatus = await this.syncCouchdbService.pullStaleDocs([caseId], appConfig.groupId);
+        // this.processMonitorService.stop(process)
       } else {
         process = this.processMonitorService.start('caseOpen', _TRANSLATE('Opening Case...'))
       }
