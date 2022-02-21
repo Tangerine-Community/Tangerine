@@ -564,53 +564,39 @@ export class SyncCouchdbService {
     
     return status;
   }
+  
+  async pullStaleDocs(docIds: string[], groupId) {
+    const staleDocs = await this.identifyStaleDocs(docIds, groupId)
+    if (staleDocs.length > 0) {
+      const replicationStatus = await this.pullDocs(staleDocs)
+      return replicationStatus
+    }
+  }
+  
+  async identifyStaleDocs(docIds: string[], groupId) {
+    let staleDocs = []
+    for (let docId of docIds) {
+      let etag;
+      const doc = await this.tangyFormService.getResponse(docId)
+      let syncSessionInfo = await this.getRemoteDbLoginToken()
+      const url = syncSessionInfo.syncSessionUrl + '/' + docId
+      const remoteDocHeader = await window['T'].http.head(url, {observe: 'response'}).toPromise()
+      etag = remoteDocHeader.headers.get('etag')
+      etag = etag.replace(/"/g, '');
+      if (doc && etag && doc._rev !== etag) {
+        staleDocs.push(docId)
+      }
+    }
+    return staleDocs
+  }
 
-  async syncDoc(docIds: string[]): Promise<ReplicationStatus> {
+  async pullDocs(docIds: string[]): Promise<ReplicationStatus> {
+
     const username = window['T'].user.getCurrentUser()
     const userDb = await window['T'].user.getUserDatabase(username)
     // const appConfig = window['T'].appConfig
     const appConfig = await this.appConfigService.getAppConfig()
-    let batchSize = appConfig.batchSize || 100
-    const device = await this.deviceService.getDevice()
-    const syncDetails:SyncCouchdbDetails =  <SyncCouchdbDetails>{
-      serverUrl: appConfig.serverUrl,
-      groupId: appConfig.groupId,
-      deviceId: device._id,
-      deviceToken: device.token,
-    }
-    let syncSessionInfo = await this.variableService.get('syncSessionInfo')
-    if (syncSessionInfo) {
-      // Confirm that the session will not expire in the next hour.
-      //         syncSessionUrl: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
-      // the syncUsername has the time created:  syncUsername = `syncUser-${UUID()}-${Date.now()}`
-      // need to parse syncSessionUrl.
-      const syncSessionUrl = syncSessionInfo.syncSessionUrl
-      const syncSessionUrlParts = syncSessionUrl.split('-')
-      const syncSessionCreationTime = syncSessionUrlParts[6].split(':')[0];
-      const timeLeftInToken = 24 - Date.now() - parseInt(syncSessionCreationTime)
-      const expiryWindow = 1000 * 60 * 60 * 1; // 1 hour in milliseconds
-      if (timeLeftInToken < expiryWindow) {
-        // token has expired
-        let progress = {
-          'direction': 'pull',
-          'message': 'Initiating remote sync session.'
-        }
-        this.syncMessage$.next(progress)
-        syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
-        // Save syncSessionInfo
-        progress = {
-          'direction': 'pull',
-          'message': 'Received sync session credentials.'
-        }
-        this.syncMessage$.next(progress)
-        await this.variableService.set('syncSessionInfo', syncSessionInfo)
-      }
-    } else {
-      syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
-      // Save syncSessionInfo
-      await this.variableService.set('syncSessionInfo', syncSessionInfo)
-    }
-
+    let syncSessionInfo = await this.getRemoteDbLoginToken();
     const remoteDb = new PouchDB(syncSessionInfo.syncSessionUrl)
     
     let status = <ReplicationStatus>{
@@ -625,6 +611,8 @@ export class SyncCouchdbService {
     let failureDetected = false
     let error;
     let pulled = 0
+
+    let batchSize = appConfig.batchSize || 100
 
     /**
      * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet.
@@ -677,6 +665,53 @@ export class SyncCouchdbService {
 
     return status;
     // return pullReplicationStatus;
+  }
+
+  /**
+   * returns syncSessionInfo, which has the URL that can be used to login in the format:
+   * syncSessionUrl: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
+   * @private
+   */
+  private async getRemoteDbLoginToken() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const device = await this.deviceService.getDevice()
+    const syncDetails: SyncCouchdbDetails = <SyncCouchdbDetails>{
+      serverUrl: appConfig.serverUrl,
+      groupId: appConfig.groupId,
+      deviceId: device._id,
+      deviceToken: device.token,
+    }
+    let syncSessionInfo = await this.variableService.get('syncSessionInfo')
+    if (syncSessionInfo) {
+      // Confirm that the session will not expire in the next hour.
+      // the syncUsername has the time created:  syncUsername = `syncUser-${UUID()}-${Date.now()}`
+      const syncSessionUrl = syncSessionInfo.syncSessionUrl
+      const syncSessionUrlParts = syncSessionUrl.split('-')
+      const syncSessionCreationTime = syncSessionUrlParts[6].split(':')[0];
+      const timeLeftInToken = 24 - Date.now() - parseInt(syncSessionCreationTime)
+      const expiryWindow = 1000 * 60 * 60 * 1; // 1 hour in milliseconds
+      if (timeLeftInToken < expiryWindow) {
+        // token has expired
+        let progress = {
+          'direction': 'pull',
+          'message': 'Initiating remote sync session.'
+        }
+        this.syncMessage$.next(progress)
+        syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+        // Save syncSessionInfo
+        progress = {
+          'direction': 'pull',
+          'message': 'Received sync session credentials.'
+        }
+        this.syncMessage$.next(progress)
+        await this.variableService.set('syncSessionInfo', syncSessionInfo)
+      }
+    } else {
+      syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+      // Save syncSessionInfo
+      await this.variableService.set('syncSessionInfo', syncSessionInfo)
+    }
+    return syncSessionInfo;
   }
 
   getPullSelector(syncDetails:SyncCouchdbDetails) {
