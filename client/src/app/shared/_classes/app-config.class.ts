@@ -48,9 +48,9 @@ export class AppConfig {
   initialBatchSize:number
   // The max number of documents that will get written to disk during a sync. Tweak this down when using the SqlCipher encryption plugin to avoid database crashes.
   writeBatchSize:number
-  // The number of IDs to read from the database at a time when doing a Comparison Sync.
+  // The number of documents processed in the changes feed per batch. This setting helps sites that experience crashes when indexing documents. Using this setting *will* slow sync optimization times. 
   changes_batch_size:number
-  // Enables support for reducing the number of documents processed in the changed feed when syncing using the 'changes_batch_size' property in app-config.json. This setting helps sites that experience crashes when syncing or indexing documents. Using this setting *will* slow sync times. 
+  // The number of IDs to read from the database at a time when doing a Comparison Sync.
   compareLimit: number;
   // List of views to skip optimization of after a sync.
   doNotOptimize: Array<string>
