@@ -1,4 +1,4 @@
-## Creating Clean Development Content
+# Creating Clean Development Content
 If you are trying to fix an issue, it is helpful to begin development using content that is known to support common Tangerine features. This can be more reliable than using a project's content because that content may have missing forms that create bugs that have nothing to do with the issue you are trying to resolve. 
 
 
@@ -14,7 +14,7 @@ cp ../translations/translation* src/assets/
 npm start
 ```
 
-### Server
+## Server
 
 The `create-group` command to the rescue!
 
