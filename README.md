@@ -185,13 +185,28 @@ T_PROTOCOL="https"
 
 The [Bullet points for Tangerine Development](./docs/developer/development-bullet-points.md) document has an example of how to get started with Tangerine development.
 
-### Develop for Client 
-Prereqs include node and `npm install -g @angular/cli`. 
+### Develop for Client (AKA Device, AKA Tablet) 
+
+Prereqs includes [node](https://nodejs.org/en/). Before setting up your sandbox, see the decide which Content Set you would like to set it up with. Content Sets are configuration and forms for Tangerine that serve as starting places and examples of the different ways Tangerine Client can be used. See the list of Content Sets in the `content-sets` folder and note which one you will be installing with which will be referenced in the commands below.
+
 ```
+# Install Angular CLI globally. This is useful for using the `ng generate` subcommand for templating out new Components, Modules, etc.
+npm install -g @angular/cli
+# Clone the repository.
 git clone git@github.com:tangerine-community/tangerine
+# Navigate to the client codebase in the repository.
 cd tangerine/client/
-cp -r default-assets src/assets
+# Install client dependencies.
 npm install
+# Remove the existing Angular Assets folder as we will populate it with a Content Set.
+rm -rf src/assets
+# Copy the client folder of a Content Set into the Angular Assets folder.
+cp -r ../content-sets/<your pick>/client src/assets
+# Set up an app-config.json file. You won't have to modify anything in this file for development, it just needs to be a copy.
+cp src/assets/app-config.defaults.json src/assets/app-config.json
+# Copy the latest translations into the Angular Assets folder.
+cp ../translations/translation* src/assets/
+# Start the Angular development server.
 npm start
 ```
 
