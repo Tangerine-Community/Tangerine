@@ -50,7 +50,7 @@ __Step 2__: [Install Docker](https://docs.docker.com/install/linux/docker-ce/ubu
 __Step 3__: Configure Docker to not fill up the hard drive with logs.
 
 Create `/etc/docker/daemon.json` with the following contents.
-```
+```json
 {
   "log-driver": "json-file",
   "log-opts": {
@@ -75,7 +75,7 @@ Now visit your Tangerine installation at the IP address or hostname of your inst
 __Step 5__: Install Tangerine
 
 You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases), note the release number and use it to replace all instances of `<version tag>` in the commands below.
-```
+```bash
 # Get the software.
 git clone https://github.com/tangerine-community/tangerine.git
 cd tangerine
@@ -121,7 +121,7 @@ When you start Tangerine, it creates two containers that need upgrades over time
 Monitor <https://github.com/Tangerine-Community/Tangerine/releases> for new stable releases. Note that a "Pre-release" may not be stable, might corrupt your data, and there will not be an upgrade path for you.
 
 SSH into your server and run the following commands.
-```
+```bash
 cd Tangerine
 git fetch origin
 git checkout <version tag>
@@ -149,7 +149,7 @@ Note that if you have created groups already and you are now updating `T_HOST_NA
 ### CouchDB Upgrades
 Periodically CouchDB will issue security vulnerability fixes. Subscribe to their blog to be notified of releases (<http://blog.couchdb.org>) and then run the following commands.
 
-```
+```bash
 docker pull couchdb
 cd tangerine
 ./start.sh
@@ -166,7 +166,7 @@ We use a tool called `tangerine-preview` to do local content development. Note t
 ### Develop for Editor and Server 
 Docker and git is required for local development. For Mac, download and install [Docker for Desktop](https://www.docker.com/products/docker-desktop). For Windows you will also use Docker for Desktop, but we suggest using the instructions [here](https://docs.docker.com/docker-for-windows/wsl/) which will also point you towards documentation for installing WSL2 on Windows.
 
-```
+```bash
 git clone git@github.com:tangerine-community/tangerine
 cd tangerine
 cp config.defaults.sh config.sh
@@ -178,7 +178,7 @@ Now open <http://localhost/> in your web browser. To debug the node.js server, i
 __Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox publicly accessible at a URL. Tangerine Developers have had good luck using [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL that NGROK gives you. It can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
 
 Example config.sh when using ngrok:
-```
+```bash
 T_HOST_NAME='123random.ngrok.io'
 T_PROTOCOL="https"
 ```
@@ -189,7 +189,7 @@ The [Bullet points for Tangerine Development](./docs/developer/development-bulle
 
 Prereqs includes [node](https://nodejs.org/en/). Before setting up your sandbox, see the decide which Content Set you would like to set it up with. Content Sets are configuration and forms for Tangerine that serve as starting places and examples of the different ways Tangerine Client can be used. See the list of Content Sets in the `content-sets` folder and note which one you will be installing with which will be referenced in the commands below.
 
-```
+```bash
 # Install Angular CLI globally. This is useful for using the `ng generate` subcommand for templating out new Components, Modules, etc.
 npm install -g @angular/cli
 # Clone the repository.
@@ -214,7 +214,7 @@ View the app at <http://localhost:4200>.
 
 __Optional__: If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
 
-```
+```bash
 rm -r node_modules/tangy-form
 ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/node_modules/tangy-form
 ```
