@@ -6,6 +6,7 @@ import { GroupService } from './shared/services/group/group.service';
 import { TangerineConfig } from './shared/classes/tangerine-config';
 import { ModulesDoc } from './shared/classes/modules-doc.class';
 import {spawn} from "child_process";
+import createSitewideDatabase = require('./create-sitewide-database');
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
@@ -82,7 +83,10 @@ export class AppService {
     log.info('Installing...')
     log.info('Creating _users database...')
     log.info(`${this.config.couchdbEndpoint}/_users`)
-    await this.httpClient.put(`${this.config.couchdbEndpoint}/_users`).toPromise()
+    await createSitewideDatabase('_users')
+    await createSitewideDatabase('app')
+    await createSitewideDatabase('groups')
+    await createSitewideDatabase('users')
     await this.appDb.put({_id: 'installed', value: true})
     await this.appDb.put({_id: 'version', value: process.env.TANGERINE_VERSION})
     await exec('git config --system user.name "tangerine"')

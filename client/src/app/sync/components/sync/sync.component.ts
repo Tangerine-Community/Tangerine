@@ -93,8 +93,8 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.subscription = this.syncService.syncMessage$.subscribe({
       next: (progress) => {
         if (progress) {
+          this.syncMessage = progress.syncMessage || this.syncMessage
           let pendingMessage = '', docPulled = ''
-          // this.syncMessage = ''
           if (typeof progress.message !== 'undefined') {
             // this.otherMessage = progress.message
             if (progress.type == 'checkpoint') {
@@ -158,8 +158,9 @@ export class SyncComponent implements OnInit, OnDestroy {
           }
           if (progress.indexing) {
             this.indexing = progress.indexing
-            this.indexingMessage = 'Indexing ' + progress.indexing.view
+            this.indexingMessage = progress.indexingMessage 
           } else {
+            this.indexing = false
             this.indexingMessage = ''
           }
           // console.log('Sync Progress: ' + JSON.stringify(progress))

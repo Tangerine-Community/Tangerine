@@ -1,5 +1,355 @@
 # What's new
 
+## v3.22.3
+
+__Fixes__
+
+- Fix all Tangy Templates are missing when reviewing completed form responses.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.22.3
+./start.sh v3.22.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.22.2
+```
+
+## v3.22.2
+
+__Fixes__
+
+- Download All button on Spreadsheet Request info page does not download [#3232](https://github.com/Tangerine-Community/Tangerine/issues/3232)
+- Spreadsheet Requests page does not load for new groups [#3233](https://github.com/Tangerine-Community/Tangerine/issues/3233)
+- Fix use of window.eventFormRedirect [#3211](https://github.com/Tangerine-Community/Tangerine/pull/3211)
+- Spreadsheet Request will fail to generate Download All zip if one form has specific characters in the title [#3217](https://github.com/Tangerine-Community/Tangerine/issues/3217)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.22.2
+./start.sh v3.22.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.22.1
+```
+
+## v3.22.1
+
+__Fixes__
+
+- Fix: Tangy Template elements all say "false" if using environment variables like caseService and T [#3203](https://github.com/Tangerine-Community/Tangerine/issues/3203)
+- Make issue diffs less crash prone [#3200](https://github.com/Tangerine-Community/Tangerine/pull/3200)
+- Fix: Case fails to open after selecting Case in search behind a "load more" button [#3194](https://github.com/Tangerine-Community/Tangerine/issues/3194)
+- Fix: Unable to scroll to last item in search list if there is not more button [#3195](https://github.com/Tangerine-Community/Tangerine/issues/3195)
+- Fix: After typing a search, "load more" button appears with no search results for a few seconds [#3196](https://github.com/Tangerine-Community/Tangerine/issues/3196)
+- On a Spreadsheet Request page, style the download all button's icon as white.
+- Unify and fix the exclude pii label on spreadsheet requests.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.22.1
+./start.sh v3.22.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.22.0
+```
+
+## v3.22.0
+
+__Fixes__
+
+- Device User should not be able to register Device Account without username [#3162](https://github.com/Tangerine-Community/Tangerine/issues/3162)
+- CSV Datasets are not filtering by month and year when a 'Month' and 'Year' is selected [#3181](https://github.com/Tangerine-Community/Tangerine/issues/3181)
+- Make Loc and t available on Editor's window object for consistency with Client environment [#3161](https://github.com/Tangerine-Community/Tangerine/pull/3161)
+- Fix messaging during data optimization and reduce number of view optimized that are never used [#3165](https://github.com/Tangerine-Community/Tangerine/pull/3165)
+- Prevent menu items from jumping around on Deploy page [#3169](https://github.com/Tangerine-Community/Tangerine/pull/3169)
+- Fix bug causing document updates to get skipped over in sync after a Comparison Sync [#3179](https://github.com/Tangerine-Community/Tangerine/pull/3179)
+
+__Deprecate single csv download in favor of Spreadsheet Requests__
+
+See [screenshots here](https://github.com/Tangerine-Community/Tangerine/pull/3182).
+
+- Change terminology referring to "CSV" to more commonly recognized "Spreadsheet" term.
+- "CSV Datasets" term changed to "Spreadsheet Requests".
+- Fix "CSV Datasets are not filtering by month and year when a 'Month' and 'Year' is selected #3181"
+- Request Spreadsheets page: Submit button now hovers and is sticky to bottom of page; "*" in Month/Year selection clarified as "All months"/"All years"; "Description" no longer required and given own line for better formatting; other formatting cleanup.
+- Data page: Removed deprecated CSV Download button; updated language; added "Request Spreadsheets" button for quick access to making a request for spreadsheets.
+- Spreadsheet Request Info page: Now dynamically updates as Spreadsheets are rendered with row counts and status; removed unnecessary filename to download all, instead it's a "download all" button; new types of status including "File removed", "Stopped", "Available", and "In progress"; Month and Year values of "*" now clarified as "All months" and "All years"; loading screen improvements; title of page now the date the spreadsheets were requested on.
+- Spreadsheet Requests page: Updated language; fixed total Spreadsheet Requests calculation in pagination; if status of Spreadsheet Request is "Available" the status shows in green; if the status of the Spreadsheet Request is "In progress" a spinner is shown where the Download button will be; labels of "More Info" and "Download" added to corresponding buttons; loading overlay now shown on initial load and when changing pages.
+- Spreadsheet Templates page: Updated terminology from CSV Templates to Spreadsheet Templates.
+
+__New Features__
+
+- Show recent activity as default search results [#3171](https://github.com/Tangerine-Community/Tangerine/pull/3171)
+- Make a cached version of the Device information available to form logic on T.device.device [#3183](https://github.com/Tangerine-Community/Tangerine/pull/3183)
+- Group Administrator configures Device Account password policy [#3172](https://github.com/Tangerine-Community/Tangerine/pull/3172)
+- On search UI: limit initial results to 10 for fast load, add a "Load More" button for pagination, and style improvements [#3164](https://github.com/Tangerine-Community/Tangerine/pull/3164)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.22.0
+./start.sh v3.22.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.21.0
+```
+
+## v3.21.0
+
+__Developers:Good to Know__
+
+- The master branch has been moved to the main branch. No development will happen on the master branch, which has been deleted. Also, please note the updates to the [Release Workflow](https://github.com/Tangerine-Community/Tangerine/blob/main/CONTRIBUTING.md#release-workflow)
+
+__Fixes__
+
+- Prevent unnecessary CaseService saves by comparing hashes [#3155](https://github.com/Tangerine-Community/Tangerine/pull/3155)
+- Prevent loss of case changes when leaving incomplete form by always saving the case [#3156](https://github.com/Tangerine-Community/Tangerine/pull/3156)
+- Prevent on-submit of a form running in one Case from being able to run in another case by navigating quickly to another Case. We inject `T` and `case` (caseService) variables into Tangy Form (formPlayer) from EventFormComponent. This will add `instanceFrom:  'EventFormComponent'` to the caseService (and also assigns `['instanceFrom'] = 'EventComponent'` in EventComponent). Note that if you have any use of `window.T` or `window.caseService`, you will need to make them `T` and `caseService` to take advantage of this fix. Commit: [716bc5e9](https://github.com/Tangerine-Community/Tangerine/commit/716bc5e90ec6fba59cbe55eb2bcf5ae244cf5fa8)
+- Bump tangy-form to v4.29.1 and tangy-form-editor to v7.10.2 Commit: [a3f785310](https://github.com/Tangerine-Community/Tangerine/pull/3159/commits/a3f7853105882a7d0960c64f11816c6fea7b2163)
+
+__New Features__
+
+- Add support for running an SSL frontend. Issue: [#3147](https://github.com/Tangerine-Community/Tangerine/issues/3147)
+- Make CORS settings configurable by T_CORS_ALLOWED_ORIGINS Commit: [1f448f7e](https://github.com/Tangerine-Community/Tangerine/pull/3159/commits/1f448f7efe8d55daeb6f63fa94cb29faaa0583c6)
+- Add ability to generate CSV datasets for all groups and all forms. This feature provides the new generate-csv-datasets command and csvDataSets route. [#3149](https://github.com/Tangerine-Community/Tangerine/pull/3149)
+- Add support for Tangy Form's useShrinker flag, implemented as AppConfig.saveLessFormData. This is an experimental mode in Tangy Form that only captures the properties of inputs that have changed from their original state in the form. This should lead to smaller formResponses and quicker sync data transfers. Commit: [35a05c2b](https://github.com/Tangerine-Community/Tangerine/commit/35a05c2b183b3df48e90073611d2631fac6eb8bd), Tangy-form pull: Add support for shrinking form responses [#209](https://github.com/Tangerine-Community/tangy-form/pull/209)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.21.0
+./start.sh v3.21.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.4
+```
+
+## v3.20.4
+
+__Fixes__
+
+- Fixes resuming an unfinished Event Form. Commit [bf97492](https://github.com/Tangerine-Community/Tangerine/pull/3154/commits/bf9749247d4d0e8b7500bbd64433f6b5f9514426)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.4
+./start.sh v3.20.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.3
+```
+
+## v3.20.3
+
+__Fixes__
+
+- Editing Timed Grids on Forms: Capture at item and Duration are compared as strings leading to unexpected validation scenarios [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+- Fix CORs usage in Tangerine APIs when outside applications are using credentials.  [#3132](https://github.com/Tangerine-Community/Tangerine/pull/3132)
+- When Tangerine creates CouchDB users for Sync, DB Administration, and Reporting, restrict that users access to the databases for the group they are assigned. This is a tightening of security to support use cases where users of groups on the same server should be restricted from accessing other groups data on the same server when Sync Protocol 2 and Database Administrator features are being used. [#3118](https://github.com/Tangerine-Community/Tangerine/pull/3118)
+- Data Manager views in CSV which cycle sequence was used in each form response [#3128](https://github.com/Tangerine-Community/Tangerine/pull/3128).
+- Fix access denied message when using Tangerine APIs [#3133](https://github.com/Tangerine-Community/Tangerine/pull/3133)
+- Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
+- When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+- Fix database export when using Sync Protocol 1 by using the correct database names [#3120](https://github.com/Tangerine-Community/Tangerine/issues/3120)
+
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.3
+./start.sh v3.20.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.2
+```
+
+
+## v3.20.2
+
+__Fixes__
+
+- Improve listing of items in the Data menu. Issue: [#3125](https://github.com/Tangerine-Community/Tangerine/issues/3125)
+- Fix issue where Group User on server with permission to access database would not have access. Commit: [a10162d9](https://github.com/Tangerine-Community/Tangerine/commit/a10162d92642cf83ae43aa3ad96033691e5b0a76)
+- Add Amharic translation.
+- Fix issue when backup has never run, the Clean backups command in Maintenance on client fails, and the process alert 
+  does not go away. This PR also copies over a fix for clearing all progress messages from Editor. PR: [#3098](https://github.com/Tangerine-Community/Tangerine/pull/3098)
+- Fix bad url for Print Content feature in Editor/Author. PR: [#3099](https://github.com/Tangerine-Community/Tangerine/pull/3099)
+- Clicking on unavailable form in Case should not open it. Issue: [#3063](https://github.com/Tangerine-Community/Tangerine/issues/3063)
+- The csv and mysql outputs must carry over the 'archived' property from the group db. PR: [#3104](https://github.com/Tangerine-Community/Tangerine/pull/3104)
+- Bump tangy-form to v4.28.2 and tangy-form-editor to v7.9.5. Includes fix for tangy-input-groups change logic Issue: [#2728](https://github.com/Tangerine-Community/Tangerine/issues/2728)
+- Users should enter dataset description when creating a dataset in Editor PR: [#3078](https://github.com/Tangerine-Community/Tangerine/pull/3078)
+- Avoid crashes when properties on the markup are accessed before being available to the component [#3080](https://github.com/Tangerine-Community/Tangerine/pull/3080)
+- Replace special chars with underscore in CSV output. PR: [#3003](https://github.com/Tangerine-Community/Tangerine/pull/3003/)
+- Refresh global reference to T.case when using a case so most importantly the correct context is set PR: [#3108](https://github.com/Tangerine-Community/Tangerine/pull/3108)
+- Link to download data set downloads a JSON file with headers and group config doc. Issue: [#3114](https://github.com/Tangerine-Community/Tangerine/issues/3114)
+- CSV template creation fails. Issue: [#3115](https://github.com/Tangerine-Community/Tangerine/issues/3115)
+- Restart couchdb container on failure. PR: [#3112](https://github.com/Tangerine-Community/Tangerine/pull/3112)
+- APK and PWA Updates fail with User not logged in (every time) [#3111](https://github.com/Tangerine-Community/Tangerine/issues/3111)
+- Fix error when looping through input values for data dictionary. PR: [#3124](https://github.com/Tangerine-Community/Tangerine/pull/3124)
+- Add config to allow output of multiple participants in MySQL. Consult the PR for implementation details. If you wish to enable this feature, add `T_MYSQL_MULTI_PARTICIPANT_SCHEMA:true` to the config.sh script. PR: [#3110](https://github.com/Tangerine-Community/Tangerine/pull/3110/)
+
+__Upgrade notice__
+
+If your project was already using the Data Conflicts tools that were installed manually, you must remove those in order to 
+prevent a conflict with the Database Conflicts tool that is now automatically installed in Tangerine -> Deploy -> Database 
+Conflicts. Reset the group-uuid/editor directory with the content-sets/case-module/editor components or the content-sets/case-module-starter/editor/index.html file.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.2
+./start.sh v3.20.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.1
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
+## v3.20.1
+
+__Fixes__
+
+- Fix Form Editor removes manually added on-resubmit logic in tangy-form [#3017](https://github.com/Tangerine-Community/Tangerine/issues/3017)
+- Support old PWAs that did not check for all permissions when installed in order to get permanent storage [#3084](https://github.com/Tangerine-Community/Tangerine/issues/3084)
+
+__New Features__
+
+- Add Maintenance page to client to enable app administration tasks (clear out old backups and fix permissions) and disk space statistics. [#3059](https://github.com/Tangerine-Community/Tangerine/pull/3059)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Fetch the updates.
+git fetch origin
+git checkout v3.20.1
+./start.sh v3.20.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.20.0
+# This will index all database views in all groups. It may take many hours if 
+# the project has a lot of data.
+wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
+```
+
 ## v3.20.0
 
 __Fixes__
@@ -38,6 +388,7 @@ When we add new features or fix issues in patch releases of Tangerine, those cod
 releases of Tangerine. To make sure users of new releases are aware of those changes, we will occasionally mention them in 
 this section in case they have missed them in the Changelog for the corresponding earlier release. Please note that when you 
 install or upgrade a new Tangerine release, please review the Changelog for any changes in minor or patch releases. 
+
 - Server admin can configure regex-based password policy for Editor. Instructions in the PR: [#2858](https://github.com/Tangerine-Community/Tangerine/pull/2858) Issue: [#2844](https://github.com/Tangerine-Community/Tangerine/issues/2844)
 - Show loading screen in more places that typically hang such as the Case loading screen, issue loading, issue commenting, and many other places when working with Issues on the sever. (demo: https://youtu.be/RkoUN41jqr4)
 - Enhancements to support for archiving cases:
@@ -259,6 +610,14 @@ update-down-sync-doc-count-by-location-id-index '*'
 # the project has a lot of data.
 wedge pre-warm-views --target $T_COUCHDB_ENDPOINT
 ```
+
+## v3.18.10
+
+__Fixes__
+
+- Backport: Make status translateable on Tangerine Teach Task Report. [#3089](https://github.com/Tangerine-Community/Tangerine/issues/3089)
+- Backport: When editing Timed Grids on Forms, "Capture at Time" and "Duration" are compared as strings leading to unexpected validation scenarios. [#3130](https://github.com/Tangerine-Community/Tangerine/issues/3130)
+
 
 ## v3.18.9
 

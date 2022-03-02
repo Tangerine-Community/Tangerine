@@ -141,6 +141,7 @@ fi
 [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
 
 CMD="docker run -d \
+   --restart on-failure \
    -e COUCHDB_USER=\"$T_COUCHDB_USER_ADMIN_NAME\" \
    -e COUCHDB_PASSWORD=\"$T_COUCHDB_USER_ADMIN_PASS\" \
    $T_COUCHDB_PORT_MAPPING \
@@ -178,6 +179,7 @@ RUN_OPTIONS="
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_REPORTING_DELAY=$T_REPORTING_DELAY\" \
   --env \"T_MODULES=$T_MODULES\" \
+  --env \"T_CORS_ALLOWED_ORIGINS=$T_CORS_ALLOWED_ORIGINS\" \
   --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
   --env \"T_PAID_MODE=$T_PAID_MODE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
@@ -196,7 +198,6 @@ RUN_OPTIONS="
   --env \"T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP\" \
   --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
-  $T_PORT_MAPPING \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
@@ -210,12 +211,28 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
+# Disable Tangerine claiming a port as it will be proxied by nginx.
+if [ $SSL_RUNNING ]; then
+  RUN_OPTIONS="
+    $RUN_OPTIONS \
+    -e "LETSENCRYPT_HOST=$T_HOST_NAME" \
+    -e "VIRTUAL_HOST=$T_HOST_NAME" \
+    -e "LETSENCRYPT_EMAIL=$T_MAINTAINER_EMAIL" \
+  "
+else
+  RUN_OPTIONS="
+    $RUN_OPTIONS \
+    $T_PORT_MAPPING \
+  "
+fi
+
 if echo "$T_MODULES" | grep mysql; then
 RUN_OPTIONS="
   --link $T_MYSQL_CONTAINER_NAME:mysql \
   --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
   --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
+  --env \"T_MYSQL_MULTI_PARTICIPANT_SCHEMA=$T_MYSQL_MULTI_PARTICIPANT_SCHEMA\" \
   --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
   $RUN_OPTIONS
 "

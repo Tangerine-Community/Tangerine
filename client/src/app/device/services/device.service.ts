@@ -29,6 +29,7 @@ export interface AppInfo {
 })
 export class DeviceService {
 
+  device:Device
   username:string
   password:string
   rawBuildChannel:string
@@ -154,7 +155,8 @@ export class DeviceService {
         }
       }
       const locker = this.lockBoxService.getOpenLockBox()
-      return locker.contents.device
+      this.device = locker.contents.device
+      return this.device 
     } catch (e) {
       return new Device()
     }

@@ -2,6 +2,7 @@
     border-left: red solid 4px;
 }
 .disabled {
+  pointer-events: none;
 	opacity: .5;
 }
 

@@ -1,6 +1,20 @@
-## Creating Clean Development Content
-
+# Creating Clean Development Content
 If you are trying to fix an issue, it is helpful to begin development using content that is known to support common Tangerine features. This can be more reliable than using a project's content because that content may have missing forms that create bugs that have nothing to do with the issue you are trying to resolve. 
+
+
+## Client
+
+```bash
+cd client
+npm install
+rm -rf client/src/assets
+cp -r ../content-sets/<your pick>/client src/assets
+cp src/assets/app-config.defaults.json src/assets/app-config.json
+cp ../translations/translation* src/assets/
+npm start
+```
+
+## Server
 
 The `create-group` command to the rescue!
 

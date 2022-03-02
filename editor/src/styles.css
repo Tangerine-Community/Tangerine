@@ -58,6 +58,10 @@ table.materialish td {
   color: #777;
 }
 
+.full-width {
+  width: 100%;
+}
+
 
 .container {
   margin: 15px;

@@ -9,6 +9,7 @@ import {StudentResult} from '../student-grouping-report/student-result';
 import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
+import { tNumber } from 'src/app/t-number.util';
 
 export class SubtestReport {
   curriculumId: any;
@@ -52,6 +53,10 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
     private tangyFormService: TangyFormService,
     private tangyFormsInfoService: TangyFormsInfoService
   ) { }
+
+  tNumber(fragment) {
+    return tNumber(fragment)
+  }
 
   async ngOnInit() {
     const currentUser = this.userService.getCurrentUser();

@@ -1,0 +1,60 @@
+.wrapper {
+  margin: 15px;
+}
+.action {
+  margin: 15px;
+}
+/* Variables
+================================== */
+/* Tables
+================================== */
+.Rtable {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 3em 0;
+  padding: 0;
+  max-width: 450px;
+}
+.Rtable-cell {
+  box-sizing: border-box;
+  flex-grow: 1;
+  width: 100%;
+  padding: 0.8em 1.2em;
+  overflow: hidden;
+  list-style: none;
+  border: solid 3px white;
+  background: rgba(112, 128, 144, 0.2);
+}
+.Rtable-cell > h1,
+.Rtable-cell > h2,
+.Rtable-cell > h3,
+.Rtable-cell > h4,
+.Rtable-cell > h5,
+.Rtable-cell > h6 {
+  margin: 0;
+}
+/* Table column sizing
+================================== */
+.Rtable--2cols > .Rtable-cell {
+  width: 50%;
+}
+.error {
+  color: red;
+  font-size: larger;
+  font-weight: bold;
+}
+.complete {
+  color: green;
+  font-size: larger;
+  font-weight: bold;
+}
+.maintenance-card {
+  max-width: 400px;
+}
+.stats {
+  margin-top:2em;
+}
+.cell-header {
+  font-weight: bold;
+  font-size: larger;
+}

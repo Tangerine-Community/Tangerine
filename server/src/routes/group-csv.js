@@ -8,6 +8,7 @@ const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra')
 const axios = require('axios')
 const tangyModules = require('../modules/index.js')()
+const generateCsvDataSets = require('../scripts/generate-csv-data-sets/generate-csv-data-sets.js')
 
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
@@ -41,17 +42,17 @@ const generateCSV = async (req, res) => {
       forms = [...forms, ...appendedForms]
   }
   const formInfo = forms.find(formInfo => formInfo.id === formId)
-  const title = formInfo.title.replace(/ /g, '_')
+  const title = formInfo.title.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
   // this.group = await this.groupsService.getGroupInfo(groupId);
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
-  const groupLabel = group.label.replace(/ /g, '_')
+  const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
   const options = {
     replacement: '_'
   }
   const groupFormname = sanitize(groupLabel + '-' + title, options)
-  const fileName = `${groupFormname}${sanitizedExtension}-${Date.now()}.csv`.replace(/'/g, "_")
-  let outputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
+  const fileName = `${groupFormname}${sanitizedExtension}-${Date.now()}.csv`.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')
+  let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%.'":*?<>^{}_ ]+/g, '_')}`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   // console.log("req.originalUrl " + req.originalUrl + " outputPath: " + outputPath + " dbName: " + dbName);
 
@@ -75,35 +76,49 @@ const generateCSV = async (req, res) => {
 const generateCSVDataSet = async (req, res) => {
   const groupId = sanitize(req.params.groupId)
   // A list of formIds will be too long for sanitize's limit of 256 bytes so we split, map with sanitize, and join.
-  const formIds = req.params.formIds.split(',').map(formId => formId).join(',')
-  const { year, month } = req.params
+  const formIds = req.body.formIds.split(',').map(formId => formId).join(',')
+  const {selectedYear, selectedMonth, description} = req.body
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
-  const groupLabel = group.label.replace(/ /g, '_')
+  const groupLabel = group.label.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, '')
   const options = {
     replacement: '_'
   }
-  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/'/g, "_")
-  let outputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
-  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${req.params.year ? sanitize(req.params.year) : `'*'`} ${req.params.month ? sanitize(req.params.month) : `'*'`} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
+  const fileName = `${sanitize(groupLabel, options)}-${Date.now()}.zip`.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')
+  let outputPath = `/csv/${fileName.replace(/[&\/\\#,+()$~%'":*?<>^{}_ ]+/g, '_')}`
+  let cmd = `cd /tangerine/server/src/scripts/generate-csv-data-set/ && ./bin.js ${groupId} ${formIds} ${outputPath} ${selectedYear === '*' ? `'*'` : sanitize(selectedYear)} ${selectedMonth === '*' ? `'*'` : sanitize(selectedMonth)} ${req.originalUrl.includes('-sanitized') ? '--sanitized': ''}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
-    log.info(`generate csv done: ${JSON.stringify(status)}`)
+    log.info(`generate csv done: ${JSON.stringify(status)} ${outputPath}`)
   }).catch(error => {
     log.error(error)
   })
   const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.zip', '.state.json')}`
   const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
-  await CSV_DATASETS.post({
+  const csvDataSetInfo = await CSV_DATASETS.post({
     groupId,
     formIds,
     fileName,
     stateUrl,
     downloadUrl,
-    year,
-    month,
+    description,
+    year: selectedYear,
+    month: selectedMonth,
     dateCreated: Date.now()
   })
+  res.send({
+    id: csvDataSetInfo.id,
+    stateUrl,
+    downloadUrl
+  })
+}
+
+const generateCSVDataSetsRoute = async (req, res) => {
+  const datasetsId = req.params.datasetsId
+  // Do not await, let it run in the background.
+  generateCsvDataSets(datasetsId)
+  const stateUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${datasetsId}.json`
+  const downloadUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${datasetsId}.zip`
   res.send({
     stateUrl,
     downloadUrl
@@ -112,47 +127,100 @@ const generateCSVDataSet = async (req, res) => {
 
 const listCSVDataSets = async (req, res) => {
   try {
-    const { groupId, pageIndex, pageSize } = req.params
-    CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
-    const numberOfDocs = (await CSV_DATASETS.find({ selector: { groupId } })).docs.length
-    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:(+pageIndex)*(+pageSize),limit:+pageSize })
-    const http = await getUser1HttpInterface()
-    const data = result.docs.map(async e => {
-      let complete = false;
-      let fileExists = false;
-      try {
-        complete = (await http.get(e.stateUrl)).data.complete
-        fileExists = await fs.pathExists(`/csv/${e.fileName}`)
-      } catch (error) {
-        complete = false
-        fileExists = false
-      }
-      return ({ ...e, complete, fileExists, numberOfDocs })
+    const groupId = req.params.groupId
+    const pageIndex = parseInt(req.params.pageIndex)
+    const pageSize = parseInt(req.params.pageSize) || 5
+    await CSV_DATASETS.createIndex({ index: { fields: ['groupId', 'dateCreated'] } })
+    // Iterate over the query to find out total number of docs given selector. Note, this was done without paging before but incorrectly always returned 25. Bug never found but paging is better for memory anyways, but ultimately not sure this will scale well, we may have to drop support for knowing the total number of docs.
+    let numberOfDatasets = 0
+    let moreDatasets = true
+    let page = 0
+    while (moreDatasets) {
+      const result = await CSV_DATASETS.find({ selector: { groupId }, skip: pageSize * page, limit: pageSize })
+      numberOfDatasets = numberOfDatasets + result.docs.length
+      moreDatasets = result.docs.length > 0 ? true : false
+      page++
+    }
+    const result = await CSV_DATASETS.find({ selector: { groupId }, sort: [{ dateCreated: 'desc' }], skip:pageIndex*pageSize,limit: pageSize })
+    const datasets = []
+    for (let doc of result.docs) {
+      const dataset = await getDataset(doc._id)
+      datasets.push(dataset)
+    }
+    res.send({
+      numberOfDatasets,
+      datasets
     })
-    res.send(await Promise.all(data))
   } catch (error) {
     console.log(error)
   }
 }
 
-const getDatasetDetail = async (req, res) => {
-  const { datasetId } = req.params
+const getDataset = async (datasetId) => {
   const result = await CSV_DATASETS.get(datasetId)
   const http = await getUser1HttpInterface()
-  res.send({
-     ...(await http.get(result.stateUrl)).data, 
-     month: result.month,
-     year: result.year,
-     downloadUrl: result.downloadUrl,
-     fileName: result.fileName,
-     dateCreated: result.dateCreated,
-     baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
-  })
-
+  let state = {}
+  let complete = false;
+  let fileExists = false;
+  let stateExists = false
+  let excludePii = false
+  try {
+    response = await http.get(result.stateUrl)
+    stateExists = true
+    complete = response.data.complete
+    state = response.data
+    // Old state files used to have an includePii property that implied the reverse meaning of what it sounds, was actually excludePii.
+    // Find which property this has and set excludePii accordingly.
+    excludePii = state.hasOwnProperty('excludePii') 
+      ? state.excludePii 
+      : state.hasOwnProperty('includePii') 
+        ? state.includePii 
+        : undefined 
+    fileExists = await fs.pathExists(`/csv/${result.fileName}`)
+  } catch (error) {
+    complete = false
+    fileExists = false
+    stateExists = false
+  }
+  const csvDataSet = {
+    id: datasetId,
+    state,
+    fileExists, 
+    stateExists,
+    excludePii,
+    description: result.description,
+    month: result.month,
+    year: result.year,
+    downloadUrl: result.downloadUrl,
+    fileName: result.fileName,
+    dateCreated: result.dateCreated,
+    baseUrl:`${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
+  }
+  if (csvDataSet.state.complete && csvDataSet.fileExists) {
+    csvDataSet.status = 'Available'
+  } else if ((csvDataSet.state.complete && !csvDataSet.fileExists) || !csvDataSet.stateExists) {
+    csvDataSet.status = 'File removed'
+  } else if (
+    (!csvDataSet.state.complete && (Date.now() - csvDataSet.state.updatedOn) > (1000 * 60 * 5)) ||
+    (!csvDataSet.state.complete && !csvDataSet.state.updatedOn)
+  ) {
+    csvDataSet.status = 'Stopped'
+  } else {
+    csvDataSet.status = 'In progress'
+  }
+  return csvDataSet
 }
+
+const getDatasetDetail = async (req, res) => {
+  const { datasetId } = req.params
+  const dataset = await getDataset(datasetId)
+  res.send(dataset)
+}
+
 module.exports = {
   generateCSV,
   generateCSVDataSet,
   getDatasetDetail,
+  generateCSVDataSetsRoute,
   listCSVDataSets
 }

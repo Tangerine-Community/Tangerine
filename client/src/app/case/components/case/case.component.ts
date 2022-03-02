@@ -8,6 +8,8 @@ import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 class CaseEventInfo {
   caseEvents:Array<CaseEvent>;
@@ -34,12 +36,14 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   private inputSelectedDate = moment().format('YYYY-MM-DD')
   window:any
   caseService: CaseService
+  onOverlayCloseSubscription:Subscription
 
   constructor(
     private route: ActivatedRoute,
     private userService:UserService,
     caseService: CaseService,
     private processMonitorService:ProcessMonitorService,
+    public dialog: MatDialog,
     private ref: ChangeDetectorRef
   ) {
     ref.detach()
@@ -58,9 +62,16 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     // }
     this.caseService.setContext()
     this.window.caseService = this.caseService
+    this.window.T.case = this.caseService
     this.onCaseOpen()
     this.calculateTemplateData()
     this.ready = true
+    this.onOverlayCloseSubscription = this.dialog.afterAllClosed.subscribe(() => {
+      // Due to the cover element's height, the scroll position is not reset after loading a case from deep in the search list so we must scroll to the top when the 
+      // overlay of the process monitor closes.
+      window.scrollTo(0, 0)
+      this.onOverlayCloseSubscription.unsubscribe()
+    })
     this.processMonitorService.stop(process.id)
   }
 
@@ -119,7 +130,9 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
 
   ngOnDestroy(){
     eval(this.caseService.caseDefinition.onCaseClose)
+    this.onOverlayCloseSubscription?.unsubscribe()
   }
+
   async onSubmit() {
     const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
     if (this.selectedNewEventType !== '') {

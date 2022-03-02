@@ -4,6 +4,7 @@ server/users
 tanerine-env-vars.sh
 .idea
 .history
+certs
 
 translations/*.csv
 

@@ -33,8 +33,7 @@ const MOCK_REMOTE_DB_CONNECT_STRING = 'MOCK_REMOTE_DB_CONNECT_STRING'
 const MOCK_LOCAL_DB_CONNECT_STRING = 'MOCK_LOCAL_DB_CONNECT_STRING'
 
 const MOCK_APP_CONFIG = <AppConfig><unknown>{
-  "sharedUserDatabase": true,
-  "couchdbPushUsingDocIds": true,
+  "sharedUserDatabase": true
 }
 
 const MOCK_LOCATION_LIST = {

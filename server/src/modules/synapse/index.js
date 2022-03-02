@@ -5,18 +5,29 @@ const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
+const createGroupDatabase = require('../../create-group-database.js')
+const groupsList = require('/tangerine/server/src/groups-list.js')
 
 module.exports = {
   name: 'synapse',
   hooks: {
+    enable: async function() {
+      const groups = await groupsList()
+      for (groupId of groups) {
+        await createGroupDatabase(groupId, '-synapse')
+        await createGroupDatabase(groupId, '-synapse-sanitized')
+      }
+    },
     clearReportingCache: async function(data) {
       const { groupNames } = data
       for (let groupName of groupNames) {
         console.log(`removing db ${groupName}-synapse`)
         let db = new DB(`${groupName}-synapse`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-synapse')
         db = new DB(`${groupName}-synapse-sanitized`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-synapse-sanitized')
       }
       return data
     },
@@ -131,6 +142,12 @@ module.exports = {
       }
       sanitized = true;
       await generateDatabase(sourceDb, synapseSanitizedDb, doc, locationList, sanitized, exclusions, substitutions, pii);
+      return data
+    },
+    groupNew: async function(data) {
+      const {groupName} = data
+      await createGroupDatabase(groupName, '-synapse')
+      await createGroupDatabase(groupName, '-synapse-sanitized')
       return data
     }
   }

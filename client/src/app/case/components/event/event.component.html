@@ -13,7 +13,6 @@
       [eventFormDefinition]="eventFormInfo.eventFormDefinition"
       [caseService]="caseService"
       class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
-      routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
     >
     </app-event-form-list-item>
     <app-event-forms-for-participant

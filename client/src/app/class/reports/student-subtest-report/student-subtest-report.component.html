@@ -41,7 +41,7 @@
               <td>&nbsp;</td>
               <td *ngFor="let res of generateArray(item.value)">
                 <!--<span *ngFor="let res of generateArray(item.value)">-->
-                <span *ngIf="res.value">({{res.value.rawScore}}/{{res.value.totalGridAnswers}}) {{res.value.percentage}}
+                <span *ngIf="res.value">({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}}) {{tNumber(res.value.percentage)}}
                </span>
                 <!--</span>-->
               </td>
@@ -75,10 +75,10 @@
               <span *ngFor="let res of generateArray(item.value)">
                <ng-container *ngIf="res.value">
                  <ng-container *ngIf="res.value.percentage">
-                 ({{res.value.rawScore}}/{{res.value.totalGridAnswers}}) {{res.value.percentage}}
+                 ({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}}) {{tNumber(res.value.percentage)}}
                  </ng-container>
                  <ng-container *ngIf="!res.value.percentage">
-                 ({{res.value.rawScore}}/{{res.value.totalGridAnswers}})
+                 ({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}})
                  </ng-container>
                  <!--<span *ngIf="res.value.totalCorrect">{{res.value.totalCorrect}}</span>-->
                </ng-container>

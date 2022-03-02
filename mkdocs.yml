@@ -1,6 +1,7 @@
 site_name: Tangerine Documentation
 repo_url: https://github.com/Tangerine-Community/Tangerine
 site_author: Tangerine Community
+edit_uri: blob/main/docs/
 theme:
   name: material
   language: en

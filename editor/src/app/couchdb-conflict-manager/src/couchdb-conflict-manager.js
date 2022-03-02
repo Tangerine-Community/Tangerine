@@ -15,8 +15,7 @@ class CouchdbConflictManager extends LitElement {
       dbUrl: { type: String },
       username: { type: String },
       route: { type: String },
-      ready: { type: Boolean },
-      needsInstall: { type: Boolean }
+      ready: { type: Boolean }
     };
   }
 
@@ -24,20 +23,12 @@ class CouchdbConflictManager extends LitElement {
     super()
     window.App = this
     this.ready = false
-    this.needsInstall = false
     this.route = window.route || localStorage.getItem('route') || ''
   }
 
   async connectedCallback() {
     super.connectedCallback()
-    try {
-      await get(`${this.dbUrl}-log`)
-    } catch(err) {
-      this.needsInstall = true
-    }
-    if (!this.needsInstall) {
-      this.ready = true
-    }
+    this.ready = true
   }
 
   setRoute(route) {
@@ -87,11 +78,7 @@ class CouchdbConflictManager extends LitElement {
           z-index: 98765456789876545678;
         }
       </style>
-      ${!this.ready && !this.needsInstall ? html`Loading...`:``}
-      ${this.needsInstall === true ? html`
-        Installation is needed. Click install button. <br>
-        <paper-button @click="${() => this.install()}">install</paper-button> 
-      `: ''}
+      ${!this.ready ? html`Loading...`:``}
       ${this.ready ? html`
         ${this.route === '' ? html`
           <h1 style="margin-left: 15px;">CouchDB Conflict Manager</h1>

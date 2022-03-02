@@ -1,6 +1,7 @@
 import { CaseEventOperation, CaseEventPermissions } from './../classes/case-event-definition.class';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { AppConfigService, LocationNode } from 'src/app/shared/_services/app-config.service';
+import { ActivityService } from 'src/app/shared/_services/activity.service';
 import { EventFormDefinition, EventFormOperation } from './../classes/event-form-definition.class';
 import { Subject } from 'rxjs';
 import { NotificationStatus, Notification, NotificationType } from './../classes/notification.class';
@@ -26,6 +27,8 @@ import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import {Conflict} from "../classes/conflict.class";
 import * as jsonpatch from "fast-json-patch";
+import * as CryptoJS from 'crypto-js';
+import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +36,7 @@ import * as jsonpatch from "fast-json-patch";
 class CaseService {
 
   _case:Case
+  _caseHash:string
   caseDefinition:CaseDefinition
   location:Array<LocationNode>
 
@@ -108,7 +112,8 @@ class CaseService {
     private deviceService:DeviceService,
     private userService:UserService,
     private appConfigService:AppConfigService,
-    private http:HttpClient
+    private http:HttpClient,
+    private activityService:ActivityService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -199,6 +204,7 @@ class CaseService {
   }
 
   async setCase(caseInstance) {
+    this._caseHash = CryptoJS.SHA256(JSON.stringify(caseInstance)).toString()
     // Note the order of setting caseDefinition before case matters because the setter for case expects caseDefinition to be the current one.
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseInstance.caseDefinitionId)
@@ -248,9 +254,11 @@ class CaseService {
   }
 
   async save() {
-    if (this._shouldSave) {
+    if (this._shouldSave && CryptoJS.SHA256(JSON.stringify(this.case)).toString() !== this._caseHash) {
       await this.tangyFormService.saveResponse(this.case)
       await this.setCase(await this.tangyFormService.getResponse(this.case._id))
+      this._caseHash = CryptoJS.SHA256(JSON.stringify(this.case)).toString()
+      await this.activityService.saveActivity(this.case)
     }
   }
 
@@ -800,6 +808,7 @@ class CaseService {
     await this.tangyFormService.saveResponse(issue)
     await this.openIssue(issue._id, comment, userId, userName)
     await this.updateIssueMeta(issue._id, label, comment, sendToAllDevices, sendToDeviceById, userName, userId)
+    await this.activityService.saveActivity(caseData)
     return await this.getIssue(issue._id)
   }
 

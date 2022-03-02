@@ -10,3 +10,13 @@
 .link {
   cursor: pointer;
 }
+.instructions {
+  margin: 1em;
+}
+
+.available {
+  color: green;
+}
+paper-progress {
+  margin: 15px auto;
+}

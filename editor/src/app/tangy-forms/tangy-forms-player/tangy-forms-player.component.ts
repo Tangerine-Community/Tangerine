@@ -143,6 +143,12 @@ export class TangyFormsPlayerComponent {
       formEl.addEventListener('before-submit', async (event) => {
         if (this.preventSubmit) event.preventDefault()
         this.process = this.processMonitorService.start('saving-a-tangy-form', 'Updating a form response.')
+        if (this.preventSubmit) {
+          while (this.throttledSaveFiring === true) {
+            await sleep(1000)
+          }
+          this.processMonitorService.stop(this.process.id)
+        }
         this.$submit.next(true)
       })
       formEl.addEventListener('submit', async (event) => {

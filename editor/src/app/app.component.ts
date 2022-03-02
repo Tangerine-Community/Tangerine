@@ -139,7 +139,17 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     })
     let appStartProcess = this.processMonitorService.start('init', "App starting...")
-    setTimeout(() => this.processMonitorService.stop(appStartProcess.id), 1000)
+    if (window.location.href.includes('/app/group')) {
+      const appConfig = await this.appConfigService.getAppConfig(window.location.pathname.split('/')[2]);
+      // Use experimental mode in Tangy Form that only captures the properties of inputs that have changed from their original state in the form.
+      if (appConfig.saveLessFormData) {
+        window['useShrinker'] = true
+      }
+      this.processMonitorService.stop(appStartProcess.id)
+    } else {
+      // Animate the start of the app.
+      setTimeout(() => this.processMonitorService.stop(appStartProcess.id), 500)
+    }
   }
 
   ngOnDestroy(): void {

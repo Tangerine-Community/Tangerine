@@ -1,8 +1,14 @@
-const tangyModules = require('./index.js')()
-
 module.exports = async function disableModule(moduleName) {
-  const module = require(`/tangerine/server/src/modules/${moduleName}/index.js`)
-  if (module.disable) {
+  let module
+  try {
+    module = require(`/tangerine/server/src/modules/${moduleName}/index.js`)
+  } catch (e) {
+    console.log(`require failed for ${moduleName}`)
+    return {
+      message: `${moduleName} is disabled but note that ${moduleName} module does not exit on the file system so this command did nothing.`
+    }
+  }
+  if (module && module.disable) {
     await module.disable()
     return {
       message: `${moduleName} disabled.`

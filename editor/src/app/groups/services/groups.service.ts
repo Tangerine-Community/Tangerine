@@ -109,25 +109,17 @@ export class GroupsService {
       }
     }
   }
-  async downloadCSVDataSet(groupName: string, formIds: string, selectedYear = '*', selectedMonth = '*', excludePII: boolean) {
-    let sanitized = ''
-    if (excludePII) {
-      sanitized = '-sanitized'
-    }
+  async downloadCSVDataSet(groupName: string, formIds: string, selectedYear = '*', selectedMonth = '*', description: string,excludePII: boolean) {
     try {
-      if (selectedMonth === '*' || selectedYear === '*') {
-        const result = await this.httpClient
-          .get(`/api/csvDataSet${sanitized}/${groupName}/${formIds}`)
+      let sanitized = excludePII? '-sanitized' : ''
+      const result = await this.httpClient
+          .post(`/api/create/csvDataSet${sanitized}/${groupName}`, {formIds, description,selectedMonth,selectedYear})
           .toPromise();
+          console.log(result)
         return result;
-      } else {
-        const result = await this.httpClient
-          .get(`/api/csvDataSet${sanitized}/${groupName}/${formIds}/${selectedYear}/${selectedMonth}`)
-          .toPromise();
-        return result;
-      }
-    } catch (error) {
-      if (typeof error.status === 'undefined') {
+      } catch (error) {
+        console.log(error)
+        if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
       }
     }

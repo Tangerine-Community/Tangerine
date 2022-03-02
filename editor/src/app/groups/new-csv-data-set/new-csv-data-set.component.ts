@@ -14,19 +14,21 @@ import { TangerineFormsService } from '../services/tangerine-forms.service';
   styleUrls: ['./new-csv-data-set.component.css']
 })
 export class NewCsvDataSetComponent implements OnInit {
-  title = _TRANSLATE('New CSV Data Set')
+  title = _TRANSLATE('Request Spreadsheets')
   breadcrumbs: Array<Breadcrumb> = [
     <Breadcrumb>{
-      label: _TRANSLATE('Download CSV Data Set'),
+      label: _TRANSLATE('Spreadsheet Requests'),
       url: 'csv-data-sets'
     }]
 
   templateSelections:any = {}
   months = []
   years = []
+  description
   selectedMonth = '*'
   selectedYear = '*'
   selectedForms = []
+  allFormsSelected = false
   groupId = ''
   forms
   activeForms
@@ -43,7 +45,7 @@ export class NewCsvDataSetComponent implements OnInit {
     this.breadcrumbs = [
       ...this.breadcrumbs,
       <Breadcrumb>{
-        label: _TRANSLATE('New CSV Data Set'),
+        label: this.title,
         url: 'csv-data-sets/new'
       },
     ]
@@ -100,10 +102,9 @@ export class NewCsvDataSetComponent implements OnInit {
       return
     }
     try {
-      const result: any = await this.groupsService.downloadCSVDataSet(this.groupId, forms, this.selectedYear, this.selectedMonth, this.excludePII);
-      console.log(result)
+      const result: any = await this.groupsService.downloadCSVDataSet(this.groupId, forms, this.selectedYear, this.selectedMonth, this.description, this.excludePII);
       this.stateUrl = result.stateUrl;
-      this.router.navigate([`../`], { relativeTo: this.route })
+      this.router.navigate(['../', result.id], { relativeTo: this.route })
     } catch (error) {
       console.log(error);
     }
@@ -114,6 +115,15 @@ export class NewCsvDataSetComponent implements OnInit {
       this.selectedForms = [...this.selectedForms, formId]
     } else{
       this.selectedForms = this.selectedForms.filter(e=>e!==formId)
+    }
+  }
+
+  toggleSelectAllForms(input){
+    this.allFormsSelected = !this.allFormsSelected
+    if(input.checked){
+      this.selectedForms = this.forms.map(form=>form.id)
+    } else{
+      this.selectedForms = []
     }
   }
 

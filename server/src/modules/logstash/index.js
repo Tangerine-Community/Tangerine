@@ -5,16 +5,26 @@ const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
+const createGroupDatabase = require('../../create-group-database.js')
+const groupsList = require('/tangerine/server/src/groups-list.js')
+
 
 module.exports = {
   name: 'logstash',
   hooks: {
+    enable: async function() {
+      const groups = await groupsList()
+      for (groupId of groups) {
+        await createGroupDatabase(groupId, '-logstash')
+      }
+    },
     clearReportingCache: async function(data) {
       const { groupNames } = data
       for (let groupName of groupNames) {
         console.log(`removing db ${groupName}-logstash`)
         const db = new DB(`${groupName}-logstash`)
         await db.destroy()
+        await createGroupDatabase(groupName, '-logstash')
       }
       return data
     },
@@ -67,6 +77,13 @@ module.exports = {
             'lon': processedResult['geoip.lon'] ? processedResult['geoip.lon'] : ''
           }
         }, logstashDb);
+        resolve(data)
+      })
+    },
+    groupNew: function(data) {
+      return new Promise(async (resolve, reject) => {
+        const {groupName, appConfig} = data
+        await createGroupDatabase(groupName, '-logstash')
         resolve(data)
       })
     }

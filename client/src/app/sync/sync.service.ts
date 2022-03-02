@@ -49,7 +49,6 @@ export class SyncService {
   public readonly syncMessage$: Subject<any> = new Subject();
   public readonly onCancelled$: Subject<any> = new Subject();
   replicationStatus: ReplicationStatus
-  findSelectorLimit = 200
   syncCouchdbServiceStartTime:string
   syncCouchdbServiceEndime:string
   compareDocsStartTime: string
@@ -236,46 +235,66 @@ export class SyncService {
       db = await this.userService.getUserDatabase()
     }
     
-    let exclude = [
-      'tangy-form/responsesLockedAndNotUploaded',
-      'tangy-form/responsesUnLockedAndNotUploaded',
-      'tangy-form/responsesLockedAndUploaded',
-      'tangy-form/responsesUnLockedAndUploaded',
-      'tangy-form/responseByUploadDatetime',
-      'responsesUnLockedAndNotUploaded',
-      'sync-queue',
-      'sync-conflicts',
-      'tangy-form',
-      'find-docs-by-form-id-pageable/find-docs-by-form-id-pageable'
-    ]
-
+    let viewsToOptimize = []
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.doNotOptimize && Array.isArray(appConfig.doNotOptimize)) {
-      exclude = [
-        ...exclude,
-        ...appConfig.doNotOptimize
-      ]
-    }
-
-    const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
-    console.log(`Indexing ${result.rows.length} views.`)
-    db.db.on('indexing', async (progress) => {
-      this.syncMessage$.next({ indexing: (progress) })
-    })
-    let i = 0
-    for (let row of result.rows) {
-      if (row.doc.views) {
-        for (let viewId in row.doc.views) {
-          const viewPath = `${row.doc._id.replace('_design/', '')}/${viewId}`
-          if (!exclude.includes(viewPath)) {
-            console.log(`Indexing: ${viewPath}`)
-            await db.query(viewPath, { limit: 1 })
+    if (appConfig.homeUrl === 'case-home') {
+      // Optimize views used on case home page.
+      viewsToOptimize.push('search')
+      viewsToOptimize.push('case-events-by-all-days')
+      // This one is used for finding user profiles to associate an account with.
+      viewsToOptimize.push('tangy-form/responsesByFormId')
+      // Optimize all custom views.
+      try {
+        let queryJs = await this.http.get('./assets/queries.js', {responseType: 'text'}).toPromise()
+        let queries;
+        eval(`queries = ${queryJs}`)
+        for (const query of queries) {
+          viewsToOptimize.push(query.id)
+        }
+      } catch (e) { }
+    } else {
+      // Not using case-home? We'll optimize everything and expect the Content Developer to add views they don't need to the AppConfig.doNotOptimize array.
+      const result = await db.allDocs({start_key: "_design/", end_key: "_design0", include_docs: true}) 
+      for (let row of result.rows) {
+        if (row.doc.views) {
+          for (let viewId in row.doc.views) {
+            viewsToOptimize.push(`${row.doc._id.replace('_design/', '')}/${viewId}`)
           }
         }
       }
-      this.syncMessage$.next({ message: `${window['t']('Optimizing data. Please wait...')} ${Math.round((i/result.rows.length)*100)}%` })
+    }
+    if (appConfig.doNotOptimize && Array.isArray(appConfig.doNotOptimize)) {
+      viewsToOptimize = viewsToOptimize.filter(view => appConfig.doNotOptimize.includes(view))
+    }
+    console.log(`Indexing ${viewsToOptimize.length} views.`)
+    let i = 0
+    const numberOfSequencesInDb = (await db.db.changes({descending: true, limit: 1})).last_seq
+    db.db.on('indexing', async (progress) => {
+      const percentComplete = Math.round( 
+        ( 
+          (i * numberOfSequencesInDb) + ( progress.last_seq ? progress.last_seq : 0 )
+        ) 
+        /
+        ( 
+          viewsToOptimize.length * numberOfSequencesInDb
+        )
+        * 100
+      )
+      this.syncMessage$.next({ syncMessage: `${window['t']('Optimizing data. Please wait...')} ${percentComplete}%` })
+      this.syncMessage$.next({ indexing: true, indexingMessage: `${window['t']('Optimizing data. Please wait...')} ${percentComplete}%` })
+    })
+    for (let view of viewsToOptimize) {
+      console.log(`Indexing: ${view}`)
+      try {
+        await db.query(view, { limit: 1 })
+      } catch(e) {
+        console.log(e)
+        console.warn(`Error indexing ${view}`)
+      }
       i++
     }
+    this.syncMessage$.next({ syncMessage: `` })
+    this.syncMessage$.next({ indexing: false, indexingMessage: `` })
   }
 
   async createSyncFormIndex(username:string = '') {
@@ -430,10 +449,6 @@ export class SyncService {
         } else {
           status.pulled = pulled
         }
-        // We must set sync-push-last_seq now so that replication doesn't have to go through a bunch of sequences that we just pulled down.
-        const lastLocalSequence = (await userDb.changes({descending: true, limit: 1})).last_seq
-        await this.variableService.set('sync-push-last_seq', lastLocalSequence)
-        console.log("Setting sync-push-last_seq to " + lastLocalSequence)
         this.syncMessage$.next(status)
       } catch (e) {
         console.log("Error: " + e)

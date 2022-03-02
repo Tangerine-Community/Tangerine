@@ -1,5 +1,23 @@
+
+
+#space {
+  height: 50px;
+}
+
 :host {
   display: block;
+}
+
+#more {
+  text-align: center;
+}
+
+
+#loading {
+  text-align: center;
+  min-height: 123px;
+  margin: 30px auto 0px;
+  width: 200px;
 }
 
 #cases-header {
@@ -42,7 +60,7 @@
 }
 
 #search-results {
-  margin: 0px 15px 64px 0px;
+  margin: 0px 15px 15px 0px;
 }
 
 #bottom-nav {

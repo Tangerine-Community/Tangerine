@@ -66,6 +66,7 @@ import { GroupReleasesComponent } from './group-releases/group-releases.componen
 import { GroupFormsEditComponent } from './group-forms-edit/group-forms-edit.component';
 import { GroupLocationListComponent } from './group-location-list/group-location-list.component';
 import { GroupDeviceUsersComponent } from './group-device-users/group-device-users.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
 import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
 import { GroupReleaseApkTestComponent } from './group-release-apk-test/group-release-apk-test.component';
 import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
@@ -95,6 +96,7 @@ import { CsvTemplateComponent } from './csv-template/csv-template.component';
 import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-templates.component';
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
+import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
 
 
 @NgModule({
@@ -119,6 +121,7 @@ import { DownloadStatisticalFileComponent } from './download-statistical-file/do
     MatIconModule,
     MatMenuModule,
     MatTreeModule,
+    MatProgressSpinnerModule,
     MatGridListModule,
     MatSelectModule,
     MatFormFieldModule,
@@ -195,7 +198,8 @@ import { DownloadStatisticalFileComponent } from './download-statistical-file/do
     CsvDataSetDetailComponent,
     GroupCsvTemplatesComponent,
     GroupDatabaseConflictsComponent,
-    DownloadStatisticalFileComponent
+    DownloadStatisticalFileComponent,
+    GroupDevicePasswordPolicyComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

@@ -118,7 +118,15 @@ export class GroupResponsesService {
 
   async read(groupId, responseId) {
     const groupDb = this.getGroupsDb(groupId)
-    const response = <Group>await groupDb.get(responseId)
+    let response
+    try {
+      response = <Group>await groupDb.get(responseId)
+    } catch (e) {
+      // Eat the error if it is a 404 - this is probably happening while viewing a form.
+      if (e.status !== 404) {
+        log.error(e)
+      }
+    }
     return response
   }
 

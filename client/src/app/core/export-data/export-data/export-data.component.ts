@@ -92,7 +92,9 @@ export class ExportDataComponent implements OnInit {
     this.errorMessage = ''
     this.hideExportButton = true
     this.hideLogs = false
-    const dbNames = [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+    const dbNames = this.appConfig.syncProtocol === '2'
+      ? [SHARED_USER_DATABASE_NAME, USERS_DATABASE_NAME, LOCKBOX_DATABASE_NAME, VARIABLES_DATABASE_NAME]
+      : (await this.userService.getAllUserAccounts()).map(user => user.username)
     // APK's that use in-app encryption via sqlCipher
     if (window['isCordovaApp'] && this.appConfig.syncProtocol === '2' && window['sqlCipherRunning']) {
       const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
