@@ -1,4 +1,5 @@
 const util = require('util');
+const spawn = require('child_process').spawn
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra');
 const sanitize = require('sanitize-filename');
@@ -20,7 +21,7 @@ async function getUser1HttpInterface() {
   return http
 }
 const writeState = async function (state) {
-  await writeFile(state.statePath, JSON.stringify(state, null, 2))
+  await writeFile(state.statePath, JSON.stringify({ ...state, updatedOn: Date.now() }, null, 2))
 }
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -49,7 +50,7 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
   })
 }
 
-async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', includePii = false) {
+async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', excludePii = false) {
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/ /g, '_')
@@ -57,12 +58,12 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     replacement: '_'
   }
   let state = {
-    dbName: `${groupId}-reporting${includePii ? '-sanitized' : ''}`,
+    dbName: `${groupId}-reporting${excludePii ? '-sanitized' : ''}`,
     formIds,
     outputPath,
     year,
     month,
-    includePii,
+    excludePii,
     csvs: formIds.map(formId => {
       return {
         formId: formId.includes(':') ? formId.split(':')[0] : formId,
@@ -86,7 +87,7 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
       ? formInfo.title.replace(/ /g, '_')
       : formId
     const groupFormname = sanitize(groupLabel + '-' + formTitle, options)
-    const fileName = `${groupFormname}${includePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
+    const fileName = `${groupFormname}${excludePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
     const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
     const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
     generateCsv(state.dbName, formId, csvOutputPath, year, month, csv.csvTemplateId)
@@ -116,7 +117,19 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     state.csvs.find(csv => csv.formId === formId).inProgress = false
     await writeState(state)
   }
-  await exec(`zip ${outputPath} ${state.csvs.map(csvInfo => csvInfo.outputPath).join(' ')}`)
+  const child = await spawn(`zip`, [outputPath, ...state.csvs.map(csvInfo => csvInfo.outputPath)])
+  await new Promise((resolve, reject) => {
+    child.on('close', (code) => {
+      if (code !== 0) {
+        console.log(`zip process exited with code ${code}`);
+        reject()
+      }
+      resolve()
+    })
+    child.on('error', (error) => {
+      console.log(error)
+    })
+  })
   state.complete = true
   await writeState(state)
 }

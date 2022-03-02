@@ -6,8 +6,8 @@ import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from '../user/user.service';
 import {SyncSessionInfo} from "../../../modules/sync/services/sync-session/sync-session-v2.service";
-import axios from "axios";
 import {DbService} from "../db/db.service";
+import createGroupDatabase = require('src/create-group-database');
 const insertGroupViews = require('../../../insert-group-views.js')
 
 const DB = require('../../../db')
@@ -86,10 +86,10 @@ export class GroupService {
   }
 
   // During account creation, this method is to be used.
-  async installViews(groupDb) {
-
-    log.info(`Installing views for ${groupDb.name}`)
-    insertGroupViews(groupDb.name)
+  async installViews(groupId) {
+    log.info(`Installing views for ${groupId}`)
+    insertGroupViews(groupId)
+    const groupDb = new DB(groupId)
     for (const moduleName in this._views) {
       for (const viewName in this._views[moduleName]) {
         await groupDb.put({
@@ -145,6 +145,11 @@ export class GroupService {
   async create(label, username):Promise<Group> {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
+    const config = await this.configService.config()
+    await createGroupDatabase(groupId, '', true)
+    await createGroupDatabase(groupId, '-log')
+    await createGroupDatabase(groupId, '-conflict-revs')
+    // Add group to groups database.
     const created = new Date().toJSON()
     const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
     const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_forms', 'can_access_data', 'can_access_download_csv'] };
@@ -159,7 +164,7 @@ export class GroupService {
     }
     const groupDb = new DB(groupId)
     let groupName = label 
-    await this.installViews(groupDb)
+    await this.installViews(groupId)
     await exec(`cp -r /tangerine/content-sets/default  /tangerine/groups/${groupId}`)
     await exec(`cp /tangerine/translations/*.json /tangerine/groups/${groupId}/client/`)
     await exec(`mkdir /tangerine/groups/${groupId}/client/media`)

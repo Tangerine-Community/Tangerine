@@ -30,6 +30,7 @@ import { FIRST_SYNC_STATUS } from './device/components/device-sync/device-sync.c
 import { ProcessMonitorService } from './shared/_services/process-monitor.service';
 import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivityService } from './shared/_services/activity.service';
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -78,6 +79,7 @@ export class AppComponent implements OnInit {
     private variableService:VariableService,
     private syncCouchdbService:SyncCouchdbService,
     private processMonitorService:ProcessMonitorService,
+    private activityService:ActivityService,
     public dialog: MatDialog,
     private translate: TranslateService
   ) {
@@ -108,6 +110,7 @@ export class AppComponent implements OnInit {
       variable: variableService,
       classForm: classFormService,
       classDashboard: dashboardService,
+      activityService: activityService,
       translate: window['t']
     }
   }
@@ -163,12 +166,18 @@ export class AppComponent implements OnInit {
     // Initialize services.
     await this.deviceService.initialize()
     await this.userService.initialize();
+    await this.activityService.initialize()
 
     // Get globally exposed config.
     this.appConfig = await this.appConfigService.getAppConfig();
     this.window.appConfig = this.appConfig;
     this.window.device = await this.deviceService.getDevice();
     this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
+
+    // Use experimental mode in Tangy Form that only captures the properties of inputs that have changed from their original state in the form.
+    if (this.appConfig.saveLessFormData) {
+      window['useShrinker'] = true
+    }
 
     // Redirect code for upgrading from a version prior to v3.8.0 when VAR_UPDATE_IS_RUNNING variable was not set before upgrading.
     if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {

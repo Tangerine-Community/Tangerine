@@ -49,7 +49,7 @@ The restore feature logs the process for each database. After the databases have
 
 ![Restore backup prompt](./assets/restore-optimizing.jpg )
 
-When restoring an encrypted database, indexing is *not* run due to the state of the application at this point of the installtion. In this case, prepare to wait a few minutes or longer after restarting the app and logging in to allow it to index the home page. Once the home page is displayed, do a Sync to upload/download any updated files; this will also kick off indexing.
+When restoring an encrypted database, indexing is *not* run due to the state of the application at this point of the installation. In this case, prepare to wait a few minutes or longer after restarting the app and logging in to allow it to index the home page. Once the home page is displayed, do a Sync to upload/download any updated files; this will also kick off indexing.
 
 ![backup-files-listing](./assets/restore-encrypted.jpg )
 

@@ -51,6 +51,7 @@ export class IssueFormComponent implements OnInit {
       window['caseService'] = this.caseService
       this.issue = await this.caseService.getIssue(params.issueId)
       this.window.caseService = this.caseService
+      this.window.T.case = this.caseService
       this.window.isRevision = true
       let caseInstance:any
       if (params.eventId) {

@@ -55,16 +55,16 @@ There is no template for this one but make sure to add the `technical` label.
 
 
 ## Release Workflow
-- Maintainer prepares for a new version by creating a Milestone and adding a place for the release in the `CHANGELOG.md` in the `next` branch.
+- Maintainer prepares for a new version by creating a Milestone and adding a place for the release in the `CHANGELOG.md` in the `develop` branch.
 - Issues are assigned to the Milestone. 
-- When you are assigned an issue, create a branch based on the `next` branch named after the issue number and description, something like `1325-fix-some-bug`. Put the PR in the milestone, link to the corresponding issue from the PR and mark issue as "in progress".
-- As time progresses while developing your feature, keep your code up-to-date with changes in the next and (after feature freeze) release/v-feature-number branches. The [Gitflow docs](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) explain this process in greater detail. (Main difference - we call the Git Flow 'dev' branch - in our nomenclature - the 'next'branch.)
+- When you are assigned an issue, create a branch based on the `develop` branch named after the issue number and description, something like `1325-fix-some-bug`. Put the PR in the milestone, link to the corresponding issue from the PR and mark issue as "in progress".
+- As time progresses while developing your feature, keep your code up-to-date with changes in the next and (after feature freeze) release/v-feature-number branches. The [Gitflow docs](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) explain this process in greater detail. 
   
   Git commands to keep your branch in-sync:
   ```shell script
     git fetch origin
     git merge origin/release/v3.x.x # (if currently in feature freeze)
-    git merge origin/next  
+    git merge origin/develop  
   ```
 - When your PR is ready, add notes to the `CHANGELOG.md` file in your branch and request a review.
 - After code review, if code is merged, the Maintainer will tag the next branch with a prerelease tag and mark corresponding issue with "review" tag for QA.

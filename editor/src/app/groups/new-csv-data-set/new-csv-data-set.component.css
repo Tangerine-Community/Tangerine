@@ -14,7 +14,7 @@ button {
   padding-top: 0px;
 }
 
-#container {
+.container {
     margin: 15px;
   }
   
@@ -27,7 +27,16 @@ button {
   height: 20px;
 }
 .form-list{
-  margin-top: 3rem;
+  margin-top: 2rem;
+}
+#description, #year-and-month {
+  margin: 20px;
+}
+#description, #description input, #description mat-form-field {
+  width: 80%;
+}
+
+#description mat-form-field {
 }
 
 .csv-template-selection {
@@ -42,3 +51,34 @@ h2.table-header {
 table {
   /* margin-top: 5px !important; */
 }
+
+.configure-instructions {
+  margin: 1rem;
+}
+
+#submit-container {
+  position: sticky;
+  bottom: 0px;
+  right: 0px;
+  background: #CCC;
+  text-align: right;
+  padding: 0px 30px 10px;
+  border-top: solid 1px;
+}
+
+#submit-container button {
+  position: relative;
+  bottom: 15px;
+  right: 60px;
+}
+
+.select-instructions {
+  margin-top: 2rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.new-csv-header {
+  background-color: lightgray;
+}
+

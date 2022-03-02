@@ -17,7 +17,7 @@ PouchDB.plugin({
   loadIt: PouchDBLoad.load
 });
 PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-PouchDB.defaults({auto_compaction: true, revs_limit: 1});
+const defaults = {}
 PouchDB.plugin(CryptoPouch)
 
 export function connectToSqlCipherDb(name, key = ''):PouchDB {
@@ -33,7 +33,7 @@ export function connectToSqlCipherDb(name, key = ''):PouchDB {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
   try {
-    const pouch = new PouchDB(name, pouchDBOptions);
+    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});
     return pouch
   } catch (e) {
     console.log("Database error: " + e);
@@ -57,7 +57,7 @@ export function connectToCryptoPouchDb(name, key = ''):PouchDB {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
   try {
-    const pouch = new PouchDB(name, pouchDBOptions);
+    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});
     if (key) {
       pouch.crypto(key)
       pouch.cryptoPouchIsEnabled = true
@@ -75,7 +75,7 @@ export function connectToPouchDb(name):PouchDB {
     pouchDBOptions.changes_batch_size = window['changes_batch_size']
   }
   try {
-    const pouch = new PouchDB(name, pouchDBOptions);
+    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});
     return pouch
   } catch (e) {
     console.log("Database error: " + e);

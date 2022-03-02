@@ -200,3 +200,11 @@ module.exports.listDevices =  {
     emit(doc._id, status);
   }
 }
+
+module.exports.byConflictDocId =  {
+  database: 'conflict-revs',
+  map: function(doc) {
+    emit(doc.conflictDocId, doc.conflictRev);
+  }.toString(),
+  reduce: '_count'
+}

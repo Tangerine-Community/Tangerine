@@ -1,0 +1,11 @@
+.mat-button {
+  font-size: 18px;
+}
+
+mat-card-actions {
+  margin-left: 55px;
+}
+/*button {*/
+/*  background: var(--mdc-theme-secondary);*/
+/*  color: var(--accent-text-color);*/
+/*}*/
