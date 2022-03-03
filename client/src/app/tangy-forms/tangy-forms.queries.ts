@@ -21,21 +21,21 @@ export const TangyFormsQueries = {
   // @TODO These views are for Sync Protocol 1 only. We should move these to another module specific to SP1.
   responsesLockedAndNotUploaded: {
     map: function (doc) {
-      if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === true && (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesUnLockedAndNotUploaded: {
     map: function (doc) {
-      if (doc.collection === 'TangyFormResponse' && doc.complete === false && !doc.uploadDatetime) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === false && (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesLockedAndUploaded: {
     map: function (doc) {
-      if (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === true && (doc.uploadDatetime && doc.uploadDatetime > doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
