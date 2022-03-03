@@ -30,8 +30,22 @@ As you make content changes, they will be synced to the app. Reload your web bro
 ## Update `tangerine-preview`
 When new releases come out for tangerine, `tangerine-preview` will also be updated. To update, open a command prompt and run the install command again.
 
+If you have installed `tangerine-preview` in the past, you'll need to uninstall it first.
+
 ```
 npm install -g tangerine-preview
+```
+
+The following will install tangerine-preview at the most recent version.
+
+```
+npm install -g tangerine-preview
+```
+
+If you need a specific version of tangerine-preview, you can specify the version when installing. For example...
+
+```
+npm install -g tangerine-preview@3.18.5
 ```
 
 ## Check your currently install version
