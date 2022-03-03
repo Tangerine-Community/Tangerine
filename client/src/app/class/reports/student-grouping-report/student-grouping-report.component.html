@@ -17,9 +17,9 @@
         <div>
           <p>
             {{'Students Assessed'|translate}}:
-            <t-number [innerHTML]="classGroupReport?.studentsAssessed"></t-number>
+            {{tNumber(classGroupReport?.studentsAssessed)}}
             / 
-            <t-number [innerHTML]="classGroupReport?.classSize"></t-number>
+            {{tNumber(classGroupReport?.classSize)}}
           </p>
           <p *ngIf="classGroupReport?.studentsToWatch.length > 0">{{'Students to watch'|translate}}:
             <span *ngFor="let student of classGroupReport?.studentsToWatch">
@@ -30,17 +30,17 @@
         <div *ngIf="classGroupReport?.studentsAssessed > 0">
           <p *ngIf="classGroupReport?.max">
             {{'Average Correct'|translate}}: 
-              <t-number [innerHTML]="classGroupReport?.aveCorrect"></t-number>
+              {{tNumber(classGroupReport?.aveCorrect)}}
               /
-              <t-number [innerHTML]="classGroupReport?.max"></t-number>
-              (<t-number [innerHTML]="classGroupReport?.aveCorrectPerc"></t-number>%)
+              {{tNumber(classGroupReport?.max)}}
+              ({{tNumber(classGroupReport?.aveCorrectPerc)}}%)
           </p>
           <p *ngIf="!classGroupReport?.max">
             {{'Average Correct'|translate}}: 
-            <t-number [innerHTML]="classGroupReport?.aveCorrect"></t-number>
+            {{tNumber(classGroupReport?.aveCorrect)}}
             / 
-            <t-number [innerHTML]="classGroupReport?.attempted"></t-number>
-            (<t-number [innerHTML]="classGroupReport?.aveCorrectPerc"></t-number>%)
+            {{tNumber(classGroupReport?.attempted)}}
+            ({{tNumber(classGroupReport?.aveCorrectPerc)}}%)
           </p>
         </div>
       </div>
@@ -63,9 +63,9 @@
             <th mat-header-cell *matHeaderCellDef title="{{'Score'|translate}}"> {{'Score'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
               <span *ngIf="element.score !== undefined">
-                <t-number [innerHTML]="element.score"></t-number>
+                {{tNumber(element.score)}}
                 /
-                <t-number [innerHTML]="element.maxValueAnswer"></t-number>
+                {{tNumber(element.maxValueAnswer)}}
               </span>
             </td>
           </ng-container>
@@ -74,7 +74,7 @@
           <ng-container matColumnDef="score">
             <th mat-header-cell *matHeaderCellDef title="{{'Percentile'|translate}}"> {{'Percentile'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
-              <span *ngIf="element.scorePercentageCorrect > -1"><t-number [innerHTML]="element.scorePercentageCorrect"></t-number> % </span>
+              <span *ngIf="element.scorePercentageCorrect > -1">{{tNumber(element.scorePercentageCorrect)}} % </span>
             </td>
           </ng-container>
 
@@ -95,7 +95,7 @@
           <mat-card  *ngIf="classGroupReport?.feedback">
             <mat-card-title>{{'Feedback'|translate}}</mat-card-title>
             <mat-card-content>
-              <h3><t-number [innerHTML]="classGroupReport?.feedback?.percentileRange"></t-number> {{'Percentile'|translate}}</h3>
+              <h3>{{tNumber(classGroupReport?.feedback?.percentileRange)}} {{'Percentile'|translate}}</h3>
               <span [innerHTML]="classGroupReport?.feedback?.message"></span>
             </mat-card-content>
           </mat-card>
