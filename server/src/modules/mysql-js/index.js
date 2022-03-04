@@ -21,6 +21,51 @@ const exec = async function(cmd) {
 module.exports = {
   name: 'mysql-js',
   hooks: {
+    foo: "bar",
+    injected: null,
+    reportingWorkerBatchStart: async function(config, inject, injected) {
+      console.log('mysql-js reportingWorkerBatchStart creating a mysql connection. ')
+      // TODO: Make this a connection pool.
+      // console.log('mysql-js reportingWorkerBatch ', injected.foo)
+      // console.log('mysql-js reportingWorkerBatch ',config)
+      // if (injected.connection) {
+        // const mysqlDbName = sourceDb.name.replace(/-/g,'')
+        // create the connection to database
+        let connection
+        try {
+          let hostname = process.env.T_MYSQL_CONTAINER_NAME
+          let username = process.env.T_MYSQL_USER
+          let password = process.env.T_MYSQL_PASSWORD
+          // connection = await mysql.createConnection({host: hostname, user: username, password: password, database: mysqlDbName});
+          connection = await mysql.createConnection({host: hostname, user: username, password: password});
+          // console.log("connection.config: " + JSON.stringify(connection.config))
+          // const [rows, fields] = await connection.query('show databases');
+          // log.info(`rows: ${JSON.stringify(rows)}`)
+        } catch (e) {
+          log.error(e)
+        }
+        if (connection) {
+          inject('connection', connection, config)
+          console.log("injected connection in reportingWorkerBatch hook in mysql-js module")
+        }
+        inject('foo', true)
+      // }
+    },
+    reportingWorkerBatchEnd: async function(config, inject, injected) {
+      console.log('mysql-js reportingWorkerBatchEnd ',injected.foo)
+      // console.log('mysql-js reportingWorkerBatchEnd ')
+      if (injected.connection) {
+        injected.foo = "WHOA!"
+        await injected.connection.end(function (err) {
+          log.info("Ending mysql connection.")
+          // The connection is terminated now
+          if (err) {
+            log.error(err)
+          }
+        });
+      }
+      console.log('mysql-js reportingWorkerBatchEnd ',injected.foo)
+    },
     boot: async function(data) {
       const groups = await groupsList()
       const logger = new Logger("mysql-js");
@@ -28,9 +73,8 @@ module.exports = {
       let groupId;
       for (groupId of groups) {
         const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-        await startTangerineToMySQL(pathToStateFile)
+        // await startTangerineToMySQL(pathToStateFile)
       }
-      // TODO: start mysql2 connection pool
       return data
     },
     enable: async function() {
@@ -66,135 +110,159 @@ module.exports = {
       return data
     },
     reportingOutputs: async function(data) {
-      async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, connection) {
-        if (exclusions && exclusions.includes(doc.form.id)) {
-          // skip!
-        } else {
-          if (doc.type === 'case') {
-            // output case
-            await saveFlatResponse(doc, locationList, targetDb, sanitized, connection);
-            let numInf = getItemValue(doc, 'numinf')
-            let participant_id = getItemValue(doc, 'participant_id')
+        // const {doc, sourceDb, injected} = data
+      const {doc, sourceDb, sequence, reportingConfig, injected} = data
+      console.log("reportingOutputs hook in mysql-js module", injected.foo)
+      if (injected.connection) {
+        const connection = injected.connection
+        const mysqlDbName = sourceDb.name.replace(/-/g, '')
 
-            // output participants
-            for (const participant of doc.participants) {
-              await pushResponse({
-                ...participant,
-                _id: participant.id,
-                caseId: doc._id,
-                numInf: participant.participant_id === participant_id ? numInf : '',
-                type: "participant"
-              }, targetDb, connection);
-            }
-          
-            // output case-events
-            for (const event of doc.events) {
-              // output event-forms
-              if (event['eventForms']) {
-                for (const eventForm of event['eventForms']) {
-                  // for (let index = 0; index < event['eventForms'].length; index++) {
-                  // const eventForm = event['eventForms'][index]
-                  try {
-                    await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb, connection);
-                  } catch (e) {
-                    if (e.status !== 404) {
-                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+        connection.changeUser({
+          database: mysqlDbName
+        }, (err) => {
+          if (err) {
+            console.log('Error in changing database', err);
+            return;
+          }
+          // Do another query
+        })
+
+        async function generateDatabase(sourceDb, targetDb, doc, locationList, sanitized, exclusions, connection) {
+          if (exclusions && exclusions.includes(doc.form.id)) {
+            // skip!
+          } else {
+            if (doc.type === 'case') {
+              // output case
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, connection);
+              let numInf = getItemValue(doc, 'numinf')
+              let participant_id = getItemValue(doc, 'participant_id')
+
+              // output participants
+              for (const participant of doc.participants) {
+                await pushResponse({
+                  ...participant,
+                  _id: participant.id,
+                  caseId: doc._id,
+                  numInf: participant.participant_id === participant_id ? numInf : '',
+                  type: "participant"
+                }, targetDb, connection);
+              }
+
+              // output case-events
+              for (const event of doc.events) {
+                // output event-forms
+                if (event['eventForms']) {
+                  for (const eventForm of event['eventForms']) {
+                    // for (let index = 0; index < event['eventForms'].length; index++) {
+                    // const eventForm = event['eventForms'][index]
+                    try {
+                      await pushResponse({...eventForm, type: "event-form", _id: eventForm.id}, targetDb, connection);
+                    } catch (e) {
+                      if (e.status !== 404) {
+                        console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                      }
                     }
                   }
+                } else {
+                  console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " + sourceDb.name + " event: " + JSON.stringify(event))
                 }
-              } else {
-                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
+                // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
+                const eventClone = Object.assign({}, event);
+                // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
+                // since we are already serializing each event-form and have the parent caseEventId on each one.
+                delete eventClone.eventForms
+                await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb, connection)
               }
-              // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
-              // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
-              const eventClone = Object.assign({}, event);
-              // Delete the eventForms array from the case-event object - we don't want this duplicate structure 
-              // since we are already serializing each event-form and have the parent caseEventId on each one.
-              delete eventClone.eventForms
-              await pushResponse({...eventClone, _id: eventClone.id, type: "case-event"}, targetDb, connection)
+            } else {
+              // non-case docs
+              await saveFlatResponse(doc, locationList, targetDb, sanitized, connection);
             }
-          } else {
-            // non-case docs
-            await saveFlatResponse(doc, locationList, targetDb, sanitized, connection);
           }
         }
-      }
-      const logger = new Logger("mysql-js");
-      const {doc, sourceDb} = data
-      const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-      // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
-      const groupsDb = await new DB(`groups`);
-      const groupDoc = await groupsDb.get(`${sourceDb.name}`)
-      const exclusions = groupDoc['exclusions']
-      let hostname = process.env.T_MYSQL_CONTAINER_NAME
-      let username = process.env.T_MYSQL_USER
-      let password = process.env.T_MYSQL_PASSWORD
-      
-      // console.log("process.env.T_MYSQL_USER: " + process.env.T_MYSQL_USER + " process.env.T_MYSQL_PASSWORD: " + process.env.T_MYSQL_PASSWORD)
-      const mysqlDbName = sourceDb.name.replace(/-/g,'')
-      // create the connection to database
-      let connection
-      try {
-        connection = await mysql.createConnection({host: hostname, user: username, password: password, database: mysqlDbName});
-        // console.log("connection.config: " + JSON.stringify(connection.config))
-        // const [rows, fields] = await connection.query('show databases');
-        // log.info(`rows: ${JSON.stringify(rows)}`)
-      } catch (e) {
-        log.error(e)
-      }
 
-      if (connection) {
-        connection.on('error', function(err) {
-          log.info(`err: ${JSON.stringify(err)}`)
-        });
+        const logger = new Logger("mysql-js");
+        const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+        // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
+        const groupsDb = await new DB(`groups`);
+        const groupDoc = await groupsDb.get(`${sourceDb.name}`)
+        const exclusions = groupDoc['exclusions']
+        // let hostname = process.env.T_MYSQL_CONTAINER_NAME
+        // let username = process.env.T_MYSQL_USER
+        // let password = process.env.T_MYSQL_PASSWORD
+        // console.log("injected: " + JSON.stringify(injected))
 
-
+        // console.log("process.env.T_MYSQL_USER: " + process.env.T_MYSQL_USER + " process.env.T_MYSQL_PASSWORD: " + process.env.T_MYSQL_PASSWORD)
+        // const mysqlDbName = sourceDb.name.replace(/-/g,'')
+        // // create the connection to database
+        // let connection
         // try {
-        //   const [rows, fields] = await connection.query('SELECT * FROM `caseevent`');
-        //   await connection.release();
-        //   if (rows) {
-        //     rows.forEach(row => {
-        //       log.info("row.name: " + row.name)
-        //       // console.log("row: " + JSON.stringify(row))
-        //     })
-        //   }
-        //   if (fields) {
-        //     fields.forEach(field => {
-        //       // console.log("field: " + field.name)
-        //     })
-        //
-        //   }
-        //   // if (errors) {
-        //   //   console.log("mysql errors: " + errors); 
-        //   // }
+        //   connection = await mysql.createConnection({host: hostname, user: username, password: password, database: mysqlDbName});
+        //   // console.log("connection.config: " + JSON.stringify(connection.config))
+        //   // const [rows, fields] = await connection.query('show databases');
+        //   // log.info(`rows: ${JSON.stringify(rows)}`)
         // } catch (e) {
-        //   log.error('Error: ' + e)
-        //   await loadMysqlScript(sourceDb.name)
+        //   log.error(e)
         // }
-      }
-      
-      // First generate the full-cream database
-      let mysqlDb
-      try {
-        mysqlDb = await new DB(`${sourceDb.name}-mysql`);
-      } catch (e) {
-        console.log("Error creating db: " + JSON.stringify(e))
-      }
-      let sanitized = false;
-      try {
-        await generateDatabase(sourceDb, mysqlDb, doc, locationList, sanitized, exclusions, connection);
-      } catch (e) {
-        log.error(e)
-      } finally {
-        await connection.end(function (err) {
-          log.info("Ending mysql connection.")
-          // The connection is terminated now
-          if (err) {
-            log.error(err)
-          }
-        });
-      }
 
+        if (connection) {
+          console.log("We have a connection.  Let's process the data!")
+          connection.on('error', function (err) {
+            log.info(`mysql connection error: ${JSON.stringify(err)}`)
+          });
+
+          try {
+            const [rows, fields] = await connection.query('SELECT * FROM `caseevent`');
+            await connection.release();
+            if (rows) {
+              rows.forEach(row => {
+                log.info("row.name: " + row.name)
+                // console.log("row: " + JSON.stringify(row))
+              })
+            }
+            if (fields) {
+              fields.forEach(field => {
+                // console.log("field: " + field.name)
+              })
+
+            }
+            // if (errors) {
+            //   console.log("mysql errors: " + errors); 
+            // }
+          } catch (e) {
+            log.error('Error: ' + e)
+            try {
+              await loadMysqlScript(sourceDb.name)
+            } catch (e) {
+              log.error(e)
+            }
+          }
+        }
+
+        // First generate the full-cream database
+        let mysqlDb
+        try {
+          mysqlDb = await new DB(`${sourceDb.name}-mysql`);
+        } catch (e) {
+          console.log("Error creating db: " + JSON.stringify(e))
+        }
+        let sanitized = false;
+        try {
+          await generateDatabase(sourceDb, mysqlDb, doc, locationList, sanitized, exclusions, connection);
+        } catch (e) {
+          log.error(e)
+        } finally {
+          // await connection.end(function (err) {
+          //   log.info("Ending mysql connection.")
+          //   // The connection is terminated now
+          //   if (err) {
+          //     log.error(err)
+          //   }
+          // });
+        }
+      } else {
+        log.error("No mysql connection!")
+      }
       return data
     }
   }
@@ -407,7 +475,7 @@ async function pushResponse(doc, db, connection) {
 }
 
 async function sendToMysql(connection, doc) {
-  console.log("doc: " + JSON.stringify(doc))
+  console.log("Sending to mysql, doc: " + JSON.stringify(doc))
 }
 
 async function saveFlatResponse(doc, locationList, targetDb, sanitized, connection) {

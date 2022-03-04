@@ -27,6 +27,7 @@ const {
   REPORTING_WORKER_RUNNING
 } = require('./constants')
 const Logger = require('@nestjs/common').Logger;
+const tangyModules = require('../modules/index.js')()
 
 
 /*
@@ -132,6 +133,7 @@ async function addGroup(group) {
  */
 
 async function batch() {
+  let workerState;
   try {
     // Something may have paused the process like clearing cache.
     while (await isPaused()) {
@@ -140,20 +142,27 @@ async function batch() {
     await setWorkingFlag()
     // Now it's safe to get the state.
     workerState = await getWorkerState()
-    workerState = Object.assign({} , defaultState, workerState)
+    workerState = Object.assign({}, defaultState, workerState)
     const DB = PouchDB.defaults(workerState.pouchDbDefaults)
     const startTime = new Date().toISOString()
     let processed = 0
     // Process batch.
-    for (let database of workerState.databases) { 
+    await tangyModules.hook('reportingWorkerBatchStart', {workerState})
+    console.log(`reporting-worker tangyModules: ${tangyModules.injected.foo}`)
+
+    for (let database of workerState.databases) {
       const db = new DB(database.name)
-      const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
+      const changes = await db.changes({
+        since: database.sequence,
+        limit: workerState.batchSizePerDatabase,
+        include_docs: false
+      })
       if (changes.results.length > 0) {
         for (let change of changes.results) {
           try {
             // const logger = new Logger("mysql-js reporting-worker changeprocessor");
             // logger.log("say solar.")
-            await changeProcessor(change, db)
+            await changeProcessor(change, db, tangyModules.injected)
             processed++
           } catch (error) {
             let errorMessage = JSON.stringify(error)
@@ -165,17 +174,18 @@ async function batch() {
               errorMessageText = JSON.stringify(error.message)
             }
             if (errorMessage === '{}') {
-              errorMessage = "Error : " +  " message: " + errorMessageText
+              errorMessage = "Error : " + " message: " + errorMessageText
             } else {
-              errorMessage = "Error : " +  " message: " + errorMessageText + " errorMessage: " + errorMessage
+              errorMessage = "Error : " + " message: " + errorMessageText + " errorMessage: " + errorMessage
             }
             log.error(`Error on change sequence ${change.seq} with id ${change.id} - Error: ${errorMessage} ::::: `)
           }
         }
         // Even if an error was thrown, continue on with the next sequences.
-        database.sequence = changes.results[changes.results.length-1].seq
+        database.sequence = changes.results[changes.results.length - 1].seq
       }
     }
+    await tangyModules.hook('reportingWorkerBatchEnd', {workerState})
     // Persist state to disk.
     await setWorkerState(Object.assign({}, workerState, {
       tally: workerState.tally + processed,
@@ -184,8 +194,8 @@ async function batch() {
       startTime
     }))
     await unsetWorkingFlag()
-    return 
-  } catch(e) {
+    return
+  } catch (e) {
     console.error(e)
   }
 }

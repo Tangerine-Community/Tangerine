@@ -22,7 +22,7 @@ let DB = PouchDB.defaults({
 });
 
 // Function to pass to PouchDbChangesFeedWorker.
-exports.changeProcessor = (change, sourceDb) => {
+exports.changeProcessor = (change, sourceDb, injected) => {
   return new Promise((resolve, reject) => {
     sourceDb.get(change.id)
       .then(doc => {
@@ -33,7 +33,7 @@ exports.changeProcessor = (change, sourceDb) => {
             } else {
               // const logger = new Logger("mysql-js cp");
               // logger.log("don't go changin'")
-              processFormResponse(doc, sourceDb, change.seq)
+              processFormResponse(doc, sourceDb, change.seq, injected)
                 .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
                 .catch(error => { reject(error) })
             }
@@ -57,7 +57,8 @@ exports.changeProcessor = (change, sourceDb) => {
  * @returns {object} - saved document
  */
 
-const processFormResponse = async (doc, sourceDb, sequence) => {
+const processFormResponse = async (doc, sourceDb, sequence, injected) => {
+  console.log("processFormResponse injected: " + JSON.stringify(injected.foo))
   reportingConfig = {
     exclusions: [],
     substitutions: {},
@@ -70,7 +71,7 @@ const processFormResponse = async (doc, sourceDb, sequence) => {
     }
   } catch (err) { }
   try {
-    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
+    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig, injected})
     // console.log("hookResponse: " + hookResponse)
   } catch (error) {
     console.error(error)
