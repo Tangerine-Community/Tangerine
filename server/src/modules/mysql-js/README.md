@@ -4,3 +4,5 @@ CreateTable.sql script needs to be run in each MySQL database so that the 4 basi
 The js code updates the database tables (schema and data) on the fly.
 Delete is currently not supported.
 It pulls on CouchDB changes on a set time intervals and process the changes only after the initial synchronization.
+
+
