@@ -171,7 +171,9 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
 
       // let results = (await this.getResultsByClass(classId, curriculumId, curriculumFormsList))
       //   .filter(result => studentIds.indexOf(result.studentId) !== -1)
-      const responses = await this.classFormService.getResponsesByStudentId(studentId);
+      const responses = (await this.classFormService.getResponsesByStudentId(studentId)).reduce((acc, curr) => {
+        return curr.doc.form.id === curriculumId ? acc.concat(curr) : acc;
+      }, [])
       const data = await this.dashboardService.transformResultSet(responses, curriculumFormsList, null);
       // clean the array
       const results: Array<StudentResult> = this.dashboardService.clean(data, undefined);
