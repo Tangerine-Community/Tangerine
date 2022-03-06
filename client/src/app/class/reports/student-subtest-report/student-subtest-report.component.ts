@@ -40,6 +40,7 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
   curriculums: any;
   subtestReports: any;
   revealReport = false;
+  today:string 
 
   @ViewChild('subTestReport', {static: true}) subTestReport: ElementRef;
   @ViewChild('curriculumSelectPara', {static: true}) curriculumSelect: ElementRef;
@@ -59,6 +60,8 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
   }
 
   async ngOnInit() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.today = this.tNumber(window['moment'](Date.now()).format(appConfig.dateFormat))
     const currentUser = this.userService.getCurrentUser();
     if (currentUser) {
       this.classUtils = new ClassUtils();
