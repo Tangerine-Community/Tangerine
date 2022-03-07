@@ -10,6 +10,7 @@ import {DbService} from "../db/db.service";
 import createGroupDatabase = require('src/create-group-database');
 const insertGroupViews = require('../../../insert-group-views.js')
 
+const { spawn } = require('promisify-child-process');
 const DB = require('../../../db')
 const log = require('tangy-log').log
 const fs = require('fs-extra')
@@ -142,7 +143,12 @@ export class GroupService {
     }
   }
 
-  async create(label, username):Promise<Group> {
+  async create(label, contentSet, username):Promise<Group> {
+    if (contentSet) {
+      const p = await spawn(`create-group`, [label, contentSet], {encoding: 'utf8'})
+      const group = <Group>JSON.parse(p.stdout)
+      return group 
+    }
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
     const config = await this.configService.config()
@@ -302,6 +308,17 @@ export class GroupService {
     this.groupDatabases.push(groupDb)
     this.groups$.next(group)
     return group
+  }
+
+  async contentSets() {
+    try {
+      //const enabledContentSets = process.env.T_ENABLED_CONTENT_SETS.split(',')
+      const contentSetsInfo = await fs.readJson(`/tangerine/content-sets/content-sets.json`) 
+      //return contentSetsInfo.filter(contentSet => enabledContentSets.includes(contentSet.id))
+      return contentSetsInfo
+    } catch (e) {
+      return []
+    }
   }
 
   async read(groupId:string):Promise<Group> {
