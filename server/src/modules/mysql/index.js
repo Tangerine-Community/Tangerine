@@ -232,6 +232,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     formId: formResponse.form.id,
     formTitle: formResponse.form.title,
     startUnixtime: formResponse.startUnixtime,
+    endUnixtime: formResponse.endUnixtime||'',
     buildId: formResponse.buildId||'',
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
