@@ -148,7 +148,7 @@ async function batch() {
     let processed = 0
     // Process batch.
     await tangyModules.hook('reportingWorkerBatchStart', {workerState})
-    console.log(`reporting-worker tangyModules: ${tangyModules.injected.foo}`)
+    // console.log(`reporting-worker tangyModules: ${tangyModules.injected.foo}`)
 
     for (let database of workerState.databases) {
       const db = new DB(database.name)
