@@ -5,4 +5,6 @@ The js code updates the database tables (schema and data) on the fly.
 Delete is currently not supported.
 It pulls on CouchDB changes on a set time intervals and process the changes only after the initial synchronization.
 
+The reportingWorkerBatchStart and reportingWorkerBatchEnd hooks create and end mysql connections. For each batch, the inject function enables the hooks to share objects.
+
 
