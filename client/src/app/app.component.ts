@@ -47,6 +47,7 @@ export class AppComponent implements OnInit {
   installed = false
   isLoggedIn = false
   isAdmin = false
+  kioskModeEnabled = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
