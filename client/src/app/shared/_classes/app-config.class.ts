@@ -67,6 +67,8 @@ export class AppConfig {
   passwordRecipe:string
   // Disregard password functionality.
   noPassword = false
+  // Prevent users from logging out and accessing menu. Useful when used in conjunction with a kiosk mode app.
+  kioskMode = false
 
   //
   // Profile configuration.
