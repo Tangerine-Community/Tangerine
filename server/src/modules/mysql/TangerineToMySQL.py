@@ -96,8 +96,13 @@ def convert_participant(resp_dict):
         role = resp_dict.get("caseRoleId")
 
         participantData = resp_dict.get('data')
-        if 'ParticipantID' not in participantData:
+#         log("participantData: {}".format(participantData))
+        if 'participantID' in participantData:
+            log('Already have participantID: ' + participantId)
+        elif 'ParticipantID' not in participantData:
+            log('Adding ParticipantID: ' + participantId)
             participantData.update({'ParticipantID': participantId})
+            
         if 'CaseID' not in participantData:
             participantData.update({'CaseID': caseId})
         if 'caseRoleId' not in participantData:
@@ -114,11 +119,14 @@ def convert_participant(resp_dict):
         del resp_dict["caseRoleId"]
         del resp_dict["id"]
         del resp_dict["type"]
+        
+        # Really need to get rid of participantId
+        resp_dict.pop('participantId', None)
 
         if resp_dict is not None:
             for key in resp_dict:
                 participantData.update({key: resp_dict.get(key)})
-
+        log("Updated participantData: {}".format(participantData))
         df = pd.DataFrame([participantData])
         # RJ: Do we need a df.rename() like we do on other types of data?
         # Try 3 things to insert data...
@@ -193,10 +201,10 @@ def convert_case_event(resp_dict):
 #convert a Tangerine event form document to MySQL event_form table
 def convert_event_form(resp_dict):
     eventFormId = resp_dict.get('_id')
-    log(eventFormId)
+    log('convert_event_form eventFormId:' + eventFormId)
     data = resp_dict.get('data')
     type = resp_dict.get('return')
-    del resp_dict["id"]
+    del resp_dict["id"] 
     del resp_dict["type"]
     if resp_dict.get("data"):
         del resp_dict["data"]
