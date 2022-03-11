@@ -18,6 +18,8 @@ export class AppConfig {
   languageDirection  = "ltr"
   languageCode = "en"
   useEthiopianCalendar:boolean
+  // Format of the date to be displayed in the application. Use Moment's Format standard. https://momentjs.com/docs/#/displaying/format/
+  dateFormat = "M/D/YYYY"
 
   //
   // Sync configuration
