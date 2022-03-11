@@ -38,8 +38,6 @@ async function createGroup() {
   const serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
   const groupLabel = process.argv[2]
   const group = (await http.post('/nest/group/create', {label: groupLabel}))['data']
-  console.log('Created group:')
-  console.log(group)
   if (process.argv[3]) {
     const contentSet = process.argv[3].includes('.git')
       ? process.argv[3]
@@ -85,6 +83,7 @@ async function createGroup() {
       groupName: groupLabel,
       serverUrl
     })
+    console.log(JSON.stringify(group, null, 2))
   }
 }
 
