@@ -8,6 +8,7 @@ import {ClassUtils} from '../../class-utils';
 import {ClassGroupingReport} from './class-grouping-report';
 import {StudentResult} from './student-result';
 import {Feedback} from '../../feedback';
+import { tNumber } from 'src/app/t-number.util';
 
 @Component({
   selector: 'app-student-grouping-report',
@@ -160,6 +161,10 @@ export class StudentGroupingReportComponent implements OnInit {
     }
     this.clickPosition = this.getPosition(event.target);
     this.checkFeedbackMessagePosition = true;
+  }
+
+  tNumber(fragment) {
+    return tNumber(fragment)
   }
 
   // Helper function to get an element's exact position
