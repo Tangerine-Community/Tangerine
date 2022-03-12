@@ -121,6 +121,12 @@ export class AppConfig {
   categories = []
 
   //
+  // Custom App configuration
+  //
+
+  goHomeAfterFormSubmit = false
+
+  //
   // Backup configuration.
   //
 
