@@ -290,7 +290,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               set(input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
             }
           }
-        } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+        } else if (input.tagName === 'TANGY-RADIO-BUTTONS' || input.name === 'TANGY-RADIO-BLOCKS') {
           // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
           set(input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
             ? input.value.find(input => input.value == 'on')
