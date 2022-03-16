@@ -27,6 +27,7 @@ import 'tangy-form/tangy-form.js'
 import 'tangy-form/input/tangy-box.js'
 import 'tangy-form/input/tangy-gate.js'
 import 'tangy-form/input/tangy-input.js'
+import 'tangy-form/input/tangy-keyboard-input.js'
 import 'tangy-form/input/tangy-timed.js'
 import 'tangy-form/input/tangy-untimed-grid.js'
 import 'tangy-form/input/tangy-checkbox.js'
@@ -45,6 +46,7 @@ import 'tangy-form/input/tangy-partial-date.js';
 import 'tangy-form/input/tangy-ethio-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
+import 'tangy-form/input/tangy-radio-blocks.js';
 
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc
