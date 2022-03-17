@@ -2,6 +2,11 @@
 
 ## v3.22.4
 
+__New Features__
+
+- Feature: Tangerine CLI for dropping mysql tables and resetting mysql .ini files. PR: [#3281](https://github.com/Tangerine-Community/Tangerine/issues/3281)
+  Usage: `docker exec tangerine module-cache-clear mysql`
+
 __Fixes__
 
 - Error when mysql module creates a table with duplicate participantId PR: [#3279](https://github.com/Tangerine-Community/Tangerine/pull/3280) 
