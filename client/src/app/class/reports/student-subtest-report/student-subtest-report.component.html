@@ -1,6 +1,6 @@
 <mat-card class="tangy-card-content-container">
   <div class="subtest-report-header">
-    <h1>{{'Subtest Report'|translate}}</h1>
+    <h1>{{'Subtest Report'|translate}} ({{ today }})</h1>
     <p>
       <mat-select id="studentSelect" placeholder="{{'Select Student'|translate}}" (selectionChange)="onStudentSelect($event)">
         <mat-option value="none" selected>---</mat-option>
