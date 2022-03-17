@@ -1,5 +1,54 @@
 # What's new
 
+## v3.22.4
+
+__New Features__
+
+- Feature: Tangerine CLI for dropping mysql tables and resetting mysql .ini files. PR: [#3281](https://github.com/Tangerine-Community/Tangerine/issues/3281)
+  Usage: `docker exec tangerine module-cache-clear mysql`
+
+__Fixes__
+
+- Error when mysql module creates a table with duplicate participantId PR: [#3279](https://github.com/Tangerine-Community/Tangerine/pull/3280) 
+- New languages - Bengali, Dari, Hindi, Pashto, Portuguese, Updated Russian, Swahili, Urdu [#3263](https://github.com/Tangerine-Community/Tangerine/pull/3263)
+- Filter archived case events out of Schedule View [#3267](https://github.com/Tangerine-Community/Tangerine/pull/3267)
+- Many fixes to Teach:
+  - Add Current Date to Teach Subtest Report [#3273](https://github.com/Tangerine-Community/Tangerine/pull/3273)
+  - Remove some appended Teach CSV columns [#3271](https://github.com/Tangerine-Community/Tangerine/pull/3271)
+  - Fix student subtest report failing by transforming data only for related curriculum [#3272](https://github.com/Tangerine-Community/Tangerine/pull/3272)
+  - Student subtask report is failing with error [#3270](https://github.com/Tangerine-Community/Tangerine/issues/3270)
+  - CSV file contains tangy-input metadata and displaces all inputs [#3227](https://github.com/Tangerine-Community/Tangerine/issues/3227)
+  - Fix summary upload [#3265](https://github.com/Tangerine-Community/Tangerine/pull/3265)
+  - Records should be one doc per Student per Curriculum per Class. Not per Student per Curriculum per Class per Item. [#3264](https://github.com/Tangerine-Community/Tangerine/pull/3264)
+  - Provide Bengali number translation in Student Grouping Report [#3255](https://github.com/Tangerine-Community/Tangerine/pull/3255)
+  - Bengali numbers are not being replaced in Class Grouping report [#3228](https://github.com/Tangerine-Community/Tangerine/issues/3228)
+
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.22.4
+./start.sh v3.22.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.22.3
+```
+
+
 ## v3.22.3
 
 __Fixes__

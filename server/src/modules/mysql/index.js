@@ -187,7 +187,7 @@ Password = ${process.env.T_MYSQL_PASSWORD}
 async function startTangerineToMySQL(pathToStateFile) {
   try {
     const cmd = `python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile}`
-    const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile])
+    const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile],{ env: { ...process.env, PYTHONIOENCODING: 'utf8' } })
     script.stdout.on('data', (data) => {
       log.info(`${cmd} -- ${data}`)
     })
