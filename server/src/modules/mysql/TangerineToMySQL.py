@@ -110,23 +110,23 @@ def convert_participant(resp_dict):
         if 'dbRevision' not in participantData:
             participantData.update({'dbRevision': dbRev})
 
-        #check to see if we have any additional data elements that we need to convert and save to MySQL database
-        del resp_dict["data"]
-        del resp_dict["caseId"]
-        del resp_dict["participantId"]
-        del resp_dict["_id"]
-        del resp_dict["_rev"]
-        del resp_dict["caseRoleId"]
-        del resp_dict["id"]
-        del resp_dict["type"]
-        
-        # Really need to get rid of participantId
+        # Delete the following keys; if empty, replace with None. this prevents a KeyError.
+        resp_dict.pop('data', None)
+        resp_dict.pop('caseId', None)
         resp_dict.pop('participantId', None)
+        resp_dict.pop('_id', None)
+        resp_dict.pop('_rev', None)
+        resp_dict.pop('caseRoleId', None)
+        resp_dict.pop('id', None)
+        resp_dict.pop('type', None)
 
+        # Check to see if we have any additional data elements that we need to convert and save to MySQL database.
         if resp_dict is not None:
             for key in resp_dict:
                 participantData.update({key: resp_dict.get(key)})
+        
         log("Updated participantData: {}".format(participantData))
+       
         df = pd.DataFrame([participantData])
         # RJ: Do we need a df.rename() like we do on other types of data?
         # Try 3 things to insert data...
