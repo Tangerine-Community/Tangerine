@@ -163,7 +163,12 @@ async function removeGroupForMySQL(groupId) {
 async function initializeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
   console.log(`Creating mysql db ${mysqlDbName}`)
-  await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+  try {
+    await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+  } catch (e) {
+    console.log(`Error creating mysql db ${mysqlDbName}`)
+    console.log(e)
+  }
   console.log(`Created mysql db ${mysqlDbName}`)
   console.log('Creating tangerine to mysql state file...')
   const state = `[TANGERINE]
