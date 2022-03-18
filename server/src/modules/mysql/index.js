@@ -10,12 +10,33 @@ const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
 const createGroupDatabase = require('../../create-group-database.js')
 const { v4: uuidv4 } = require('uuid');
+const groupReportingViews = require(`./views.js`)
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
   console.log(cmd)
 }
 */
+
+async function insertGroupReportingViews(groupName) {
+  let designDoc = Object.assign({}, groupReportingViews)
+  let groupDb = new DB(`${groupName}-mysql`)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`group reporting views inserted into ${groupName}-reporting`)
+  } catch (error) {
+    log.error(error)
+  }
+
+  // sanitized
+  groupDb = new DB(`${groupName}-mysql-sanitized`)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`group reporting views inserted into ${groupName}-reporting-sanitized`)
+  } catch (error) {
+    log.error(error)
+  }
+}
 
 module.exports = {
   name: 'mysql',
@@ -47,6 +68,7 @@ module.exports = {
       startTangerineToMySQL(pathToStateFile)
       await createGroupDatabase(groupName, '-mysql')
       await createGroupDatabase(groupName, '-mysql-sanitized')
+      await insertGroupReportingViews(groupName)
       return data
     },
     clearReportingCache: async function(data) {
@@ -61,6 +83,7 @@ module.exports = {
         db = new DB(`${groupName}-mysql-sanitized`)
         await db.destroy()
         await createGroupDatabase(groupName, '-mysql-sanitized')
+        await insertGroupReportingViews(groupName)
       }
       return data
     },
