@@ -59,6 +59,9 @@ T_PAID_ALLOWANCE="unlimited"
 # Reporting delay determines how quickly uploads will get processed and show up in reporting outputs such as CSV. Time is in milliseconds and default is 5 minutes.
 T_REPORTING_DELAY="300000"
 
+# Limit  the rebuild-mysql-db script to certain group dbs. Omit to rebuild all.
+T_REBUILD_MYSQL_DBS=""
+
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50
 

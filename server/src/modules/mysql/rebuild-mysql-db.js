@@ -1,8 +1,5 @@
 const groupsList = require('../../groups-list.js')
-const {REPORTING_WORKER_PAUSE, REPORTING_WORKER_RUNNING} = require("../../reporting/constants");
-const {pathExists} = require("fs-extra");
 const DB = require(`../../db.js`)
-const {spawn} = require("child_process");
 const {log} = require("tangy-log");
 const util = require("util");
 const exec = util.promisify(require('child_process').exec)
@@ -73,7 +70,7 @@ async function convert_participant(knex, doc, tableName) {
           participantData[key] = value
         } catch (e) {
           log.info(`ERROR: key: ${key}; value: ${value}`)
-          console.error(e)
+          log.error(e)
         }
       }
     }
@@ -109,14 +106,14 @@ async function convert_participant(knex, doc, tableName) {
         log.info(`Adding column ${e} to table ${tableName}`)
         try {
           await knex.schema.alterTable(tableName, function (t) {
-            t.string(e)
+            t.text(e)
           })
           schemaUpdated = true
         } catch (e) {
           if (e.code && e.code === 'ER_DUP_FIELDNAME') {
-            console.error(`Column ${e} already exists in table ${tableName}`)
+            log.error(`Column ${e} already exists in table ${tableName}`)
           } else {
-            console.error(e)
+            log.error(e)
           }
         }
       }
@@ -127,9 +124,9 @@ async function convert_participant(knex, doc, tableName) {
       await knex(tableName).insert(participantData).onConflict('ParticipantID').merge()
     } catch (e) {
       if (e.code && e.code === 'ER_DUP_ENTRY') {
-        console.error(`Duplicate record for ParticipantID ${participantId}`)
+        log.error(`Duplicate record for ParticipantID ${participantId}`)
       } else {
-        console.error(e)
+        log.error(e)
       }
     }
     if (schemaUpdated) {
@@ -197,9 +194,23 @@ async function generateDatabase(groupId, tableName) {
 
 }
 
+/**
+ * T_REBUILD_MYSQL_DBS
+ * @returns {Promise<void>}
+ */
 async function rebuildMysqlDb() {
-  log.info('Rebuilding Mysql db')
-  const groupNames = await groupsList()
+  log.info('Rebuilding Mysql db') 
+  let groupNames;
+  
+  if (process.env.T_REBUILD_MYSQL_DBS && process.env.T_REBUILD_MYSQL_DBS !== '') {
+    // groupNames = process.env.T_REBUILD_MYSQL_DBS.split(',')
+    groupNames = process.env.T_REBUILD_MYSQL_DBS
+      ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g,`"`))
+      : []
+    log.info('groupNames from T_REBUILD_MYSQL_DBS: ' + groupNames)
+  } else {
+    groupNames = await groupsList()
+  }
   for (let groupId of groupNames) {
     try {
       await dropTable(groupId, 'participant_test')
