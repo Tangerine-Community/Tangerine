@@ -171,14 +171,14 @@ async function generateDatabase(groupId, tableName) {
       database: mysqlDbName
     }
   });
-  // Do an alldocs query and create the table
+  // Do a byParticipant query and create the table
   const reportingDb = DB(`${groupId}-mysql`)
   try {
-    const allDocs = await reportingDb.get(`_all_docs`)
-    log.info("allDocs.rows.length: " + allDocs.rows.length)
-    for (let i = 0; i < allDocs.rows.length; i++) {
+    const docs = await reportingDb.query(`byParticipant`)
+    log.info("byParticipant.rows.length: " + docs.rows.length)
+    for (let i = 0; i < docs.rows.length; i++) {
       // log.info("Processing doc: " + i + " of " + allDocs.rows.length)
-      const entry = allDocs.rows[i]
+      const entry = docs.rows[i]
       const doc = await reportingDb.get(entry.id)
       // log.info("Got doc: " + doc.id)
       if ( doc._id.startsWith('_design') ) {
