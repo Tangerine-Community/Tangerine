@@ -6,28 +6,15 @@ const exec = util.promisify(require('child_process').exec)
 
 async function dropTable(groupId, tableName) {
   const mysqlDbName = groupId.replace(/-/g, '')
-  await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p${process.env.T_MYSQL_PASSWORD} -e "DROP TABLE ${mysqlDbName}.${tableName};"`)
-  log.info(`Dropped ${tableName} for ${groupId}`)
+  try {
+    await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p${process.env.T_MYSQL_PASSWORD} -e "DROP TABLE ${mysqlDbName}.${tableName};"`)
+    log.info(`Dropped ${tableName} for ${groupId}`)
+  } catch (e) {
+    log.error(`Error dropping table ${tableName} in group ${groupId}`, e)
+  }
 }
 
-/**
- * Credit: https://bobbyhadz.com/blog/javascript-lowercase-object-keys
- * @param obj
- * @returns {{[p: string]: *}}
- */
-function toLowerKeys(obj) {
-  // 👇️ [ ['NAME', 'Tom'], ['AGE', 30] ]
-  const entries = Object.entries(obj);
-
-  return Object.fromEntries(
-    entries.map(([key, value]) => {
-      return [key.toLowerCase(), value];
-    }),
-  );
-}
-
-
-async function convert_participant(knex, doc, tableName) {
+async function convert_participant(knex, doc, groupId, tableName) {
   if (!tableName) {
     tableName = 'participant'
   }
@@ -80,65 +67,161 @@ async function convert_participant(knex, doc, tableName) {
 // #     1) Insert the data as a new or updated row. If that fails...
 // #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
 // #     3) Then the database doesn't exist! Just insert it.
-  const tableExists = await knex.schema.hasTable(tableName)
-  
-  if (!tableExists) {
-    log.info(`Table ${tableName} does not exist. Creating...`)
-    const results = await knex.schema.createTable(tableName, function (t) {
-      t.engine('InnoDB')
-      t.string('ParticipantID', 36).notNullable().primary();
-    });
-    log.info("Table create results: " + JSON.stringify(results))
-  }
+
+  // })
+
+  // const tableExists = knex.schema.withSchema(groupId.replace(/-/g, '')).hasTable(tableName)
+  // console.log("tableExists: " + tableExists)
+
+  // if (!tableExists) {
+  //  
+  // }
   // look at the schema and see if it matches the data we're inserting.
   // if it does, then we can just insert the data.
   let schemaUpdated = false;
-  let infoOriginal = await knex(tableName).columnInfo();
-  if (infoOriginal) {
-    // info: {"ParticipantID":{"defaultValue":null,"type":"varchar","maxLength":36,"nullable":false}}
-    const infoKeys = Object.keys(infoOriginal)
-    const infoKeysLower = infoKeys.map(e => e.toLowerCase())
-    // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
-    const participantDataKeys = Object.keys(participantData)
-    for (let i = 0; i < participantDataKeys.length; i++) {
-      const e = participantDataKeys[i]
-      if (!infoKeysLower.includes(e.toLowerCase())) {
-        log.info(`Adding column ${e} to table ${tableName}`)
-        try {
-          await knex.schema.alterTable(tableName, function (t) {
-            t.text(e)
-          })
-          schemaUpdated = true
-        } catch (e) {
-          if (e.code && e.code === 'ER_DUP_FIELDNAME') {
-            log.error(`Column ${e} already exists in table ${tableName}`)
-          } else {
-            log.error(e)
-          }
+  const mysqlDbName = groupId.replace(/-/g, '')
+  // let infoOriginal = await knex(mysqlDbName + '.' + tableName).columnInfo();
+  // const results = await knex.raw('USE ' + mysqlDbName + ';' + 'SHOW COLUMNS IN ? FROM ? ', [tableName])
+  let infoOriginal = []
+  const results = await knex.raw('SHOW COLUMNS IN ' + tableName + ' FROM ' + mysqlDbName)
+  // const values = results[0][0]
+  if (results) {
+    const fieldsArray = results[0]
+    // console.log('fieldsArray: ' + JSON.stringify(fieldsArray))
+    infoOriginal = fieldsArray.reduce((acc, item) => {
+      acc[item.Field] = item
+      return acc
+    }, {})
+  }
+  const infoKeys = Object.keys(infoOriginal)
+  const infoKeysLower = infoKeys.map(e => e.toLowerCase())
+  // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
+  const participantDataKeys = Object.keys(participantData)
+  for (let i = 0; i < participantDataKeys.length; i++) {
+    const e = participantDataKeys[i]
+    if (!infoKeysLower.includes(e.toLowerCase())) {
+      log.info(`Adding column ${e} to table ${tableName}`)
+      try {
+        await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
+          t.text(e)
+        })
+        schemaUpdated = true
+      } catch (e) {
+        if (e.code && e.code === 'ER_DUP_FIELDNAME') {
+          log.error(`Column ${e} already exists in table ${tableName}`)
+        } else {
+          log.error(e)
         }
       }
     }
-    // Now insert the data
-    try {
-      log.info("Inserting the data - or upserting -  for participant: " + participantId)
-      await knex(tableName).insert(participantData).onConflict('ParticipantID').merge()
-    } catch (e) {
-      if (e.code && e.code === 'ER_DUP_ENTRY') {
-        log.error(`Duplicate record for ParticipantID ${participantId}`)
-      } else {
-        log.error(e)
+  }
+  // Now insert the data
+  try {
+    log.info("Inserting the data - or upserting -  for participant: " + participantId)
+    const mysqlDbName = groupId.replace(/-/g, '')
+    await knex(mysqlDbName + '.' + tableName).insert(participantData).onConflict('ParticipantID').merge()
+  } catch (e) {
+    if (e.code && e.code === 'ER_DUP_ENTRY') {
+      log.error(`Duplicate record for ParticipantID ${participantId}`)
+    } else {
+      log.error(e)
+    }
+  }
+  if (schemaUpdated) {
+    log.info(`Schema updated for table ${tableName}`)
+    log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
+    const infoUpdated = await knex(tableName).columnInfo()
+    log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
+    log.info(`participantData: ${JSON.stringify(participantData)}`)
+  }
+
+}
+
+async function convert_case(knex, doc, groupId, tableName) {
+  const caseDefID = doc.caseDefinitionId
+  const caseId = doc._id
+  const dbRev = doc._rev
+  const collection = doc.collection
+  const startDatetime = doc.startDatetime
+  const uploadDatetime = doc.uploadDatetime
+  const data = doc.data
+
+  let newRecord = false
+
+  if (!data['caseDefinitionId']) {
+    data['caseDefinitionId'] = caseDefID
+  }
+  if (!data['dbRevision']) {
+    data['dbRevision'] = dbRev
+  }
+  if (!data['collection']) {
+    data['collection'] = collection
+  }
+  if (!data['startDatetime']) {
+    data['startDatetime'] = startDatetime
+  }
+  if (!data['uploadDatetime']) {
+    data['uploadDatetime'] = uploadDatetime
+  }
+  if (!data['CaseID']) {
+    data['CaseID'] = caseId
+  }
+
+  // look at the schema and see if it matches the data we're inserting.
+  // if it does, then we can just insert the data.
+  let schemaUpdated = false;
+  const mysqlDbName = groupId.replace(/-/g, '')
+  let infoOriginal = []
+  const results = await knex.raw('SHOW COLUMNS IN ' + tableName + ' FROM ' + mysqlDbName)
+  // const values = results[0][0]
+  if (results) {
+    const fieldsArray = results[0]
+    // console.log('fieldsArray: ' + JSON.stringify(fieldsArray))
+    infoOriginal = fieldsArray.reduce((acc, item) => {
+      acc[item.Field] = item
+      return acc
+    }, {})
+  }
+  const infoKeys = Object.keys(infoOriginal)
+  const infoKeysLower = infoKeys.map(e => e.toLowerCase())
+  // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
+  const dataKeys = Object.keys(data)
+  for (let i = 0; i < dataKeys.length; i++) {
+    const e = dataKeys[i]
+    if (!infoKeysLower.includes(e.toLowerCase())) {
+      log.info(`Adding column ${e} to table ${tableName}`)
+      try {
+        await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
+          t.text(e)
+        })
+        schemaUpdated = true
+      } catch (e) {
+        if (e.code && e.code === 'ER_DUP_FIELDNAME') {
+          log.error(`Column ${e} already exists in table ${tableName}`)
+        } else {
+          log.error(e)
+        }
       }
     }
-    if (schemaUpdated) {
-      log.info(`Schema updated for table ${tableName}`)
-      log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
-      const infoUpdated = await knex(tableName).columnInfo()
-      log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
-      log.info(`participantData: ${JSON.stringify(participantData)}`)
+  }
+  // Now insert the data
+  try {
+    log.info("Inserting the data - or upserting -  for caseId: " + caseId)
+    const mysqlDbName = groupId.replace(/-/g, '')
+    await knex(mysqlDbName + '.' + tableName).insert(data).onConflict('caseId').merge()
+  } catch (e) {
+    if (e.code && e.code === 'ER_DUP_ENTRY') {
+      log.error(`Duplicate record for ParticipantID ${participantId}`)
+    } else {
+      log.error(e)
     }
-    
-  } else {
-    log.info(`ERROR: Unable to get schema.`)
+  }
+  if (schemaUpdated) {
+    log.info(`Schema updated for table ${tableName}`)
+    log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
+    const infoUpdated = await knex(tableName).columnInfo()
+    log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
+    log.info(`data: ${JSON.stringify(data)}`)
   }
 
 }
@@ -149,47 +232,81 @@ async function generateMysqlRecord(conn, pathToStateFile, groupId, tableName, do
   // log.info(`type: ${type}`)
   if (type) {
     if (type === 'participant') {
-      await convert_participant(conn, doc, 'participant_test')
+      await convert_participant(conn, doc, groupId, tableName)
+    } else if (type.toLowerCase() === 'case') {
+      await convert_case(conn, doc, groupId, tableName)
     }
   }
 }
 
 
-async function generateDatabase(groupId, tableName) {
-  const mysqlDbName = groupId.replace(/-/g, '')
+async function generateDatabase(knex, groupId, tableName, viewName) {
   // await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "DROP TABLE ${mysqlDbName}.${tableName};"`)
   // log.info(`Dropped ${tableName} for ${groupId}`)
   const pathToStateFile = `/mysql-module-state/${groupId}.ini`
   // user : `${process.env.T_MYSQL_USER} ` ,
-  const knex = require('knex')({
-    client: 'mysql2',
-    connection: {
-      host: 'mysql',
-      port: 3306,
-      user: 'root',
-      password: `${process.env.T_MYSQL_PASSWORD}`,
-      database: mysqlDbName
+  const mysqlTableName = groupId.replace(/-/g, '');
+  const results = await knex.raw('SELECT COUNT(*) AS CNT \n' +
+    'FROM information_schema.tables\n' +
+    'WHERE table_schema = ? \n' +
+    '    AND table_name = ? \n' +
+    'LIMIT 1;', [mysqlTableName, tableName])
+  const values = results[0][0]
+  const cnt = values['CNT']
+  // console.log("results: " + JSON.stringify(results) + " type: " + typeof results)
+  // console.log("values: " + JSON.stringify(values) + " type: " + typeof values)
+  let tableExists = false
+  if (cnt === 1) {
+    tableExists = true;
+  }
+
+  // const tableExists = await knex.schema.hasTable(groupId.replace(/-/g, '') + '.' + tableName)
+
+  // await knex.schema.hasTable(groupId.replace(/-/g, '') + '.' + tableName).then(async function (exists) {
+  log.info("tableExists: " + tableExists)
+  if (!tableExists) {
+    log.info(`Table ${tableName} does not exist. Creating...`)
+    // const results = await knex.schema.withSchema(groupId.replace(/-/g, '')).createTable(tableName, function (t) {
+    let createFunction;
+    if (tableName.startsWith('participant')) {
+      createFunction = function (t) {
+        t.engine('InnoDB')
+        t.string('ParticipantID', 36).notNullable().primary();
+        t.string('CaseID', 36).index('CaseID_IDX');
+      }
+    } else if (tableName.startsWith('case_instances')) {
+      createFunction = function (t) {
+        t.engine('InnoDB')
+        t.string('ParticipantID', 36).index('ParticipantID_IDX');
+        t.string('CaseID', 36).notNullable().primary();
+      }
     }
-  });
-  // Do a byParticipant query and create the table
+    try {
+      const results = await knex.schema.createTable(groupId.replace(/-/g, '') + '.' + tableName, createFunction);
+      log.info("Table create results: " + JSON.stringify(results))
+    } catch (e) {
+      log.error(`Error creating table ${tableName} Error: ${e}`)
+    }
+  }
+
+  // Do a query and create the table
   const reportingDb = DB(`${groupId}-mysql`)
   try {
-    const docs = await reportingDb.query(`byParticipant`)
-    log.info("byParticipant.rows.length: " + docs.rows.length)
+    const docs = await reportingDb.query(viewName)
+    log.info("db.rows.length: " + docs.rows.length)
     for (let i = 0; i < docs.rows.length; i++) {
       // log.info("Processing doc: " + i + " of " + allDocs.rows.length)
       const entry = docs.rows[i]
       const doc = await reportingDb.get(entry.id)
       // log.info("Got doc: " + doc.id)
-      if ( doc._id.startsWith('_design') ) {
+      if (doc._id.startsWith('_design')) {
         // log.info("Skipping design doc: " + JSON.stringify(doc))
       } else {
         await generateMysqlRecord(knex, pathToStateFile, groupId, tableName, doc)
       }
-      // await generateMysqlRecord(knex, pathToStateFile, groupId, tableName, doc)
     }
   } catch (err) {
-    log.info("error: " + err)
+    log.info("error: " + JSON.stringify(err))
   }
 
 }
@@ -199,25 +316,44 @@ async function generateDatabase(groupId, tableName) {
  * @returns {Promise<void>}
  */
 async function rebuildMysqlDb() {
-  log.info('Rebuilding Mysql db') 
+  log.info('Rebuilding Mysql db')
   let groupNames;
-  
+  const knex = require('knex')({
+    client: 'mysql2',
+    connection: {
+      host: 'mysql',
+      port: 3306,
+      user: 'root',
+      password: `${process.env.T_MYSQL_PASSWORD}`
+    }
+  });
+
   if (process.env.T_REBUILD_MYSQL_DBS && process.env.T_REBUILD_MYSQL_DBS !== '') {
     // groupNames = process.env.T_REBUILD_MYSQL_DBS.split(',')
     groupNames = process.env.T_REBUILD_MYSQL_DBS
-      ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g,`"`))
+      ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g, `"`))
       : []
     log.info('groupNames from T_REBUILD_MYSQL_DBS: ' + groupNames)
   } else {
     groupNames = await groupsList()
   }
   for (let groupId of groupNames) {
-    try {
-      await dropTable(groupId, 'participant_test')
-    } catch (e) {
-      log.info(e)
-    }
-    await generateDatabase(groupId)
+    let tableName, viewName;
+    // const mysqlDbName = groupId.replace(/-/g, '')
+
+    tableName = 'participant_test';
+    viewName = 'byParticipant';
+    await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
+    await generateDatabase(knex, groupId, tableName, viewName)
+
+    log.info('Finished processing: ' + tableName)
+
+    tableName = 'case_instances_test';
+    viewName = 'byCase';
+    await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
+    await generateDatabase(knex, groupId, tableName, viewName)
+
+    log.info('Finished processing: ' + tableName)
   }
 }
 
