@@ -67,12 +67,12 @@ async function convert_participant(knex, doc, groupId, tableName) {
 // #     1) Insert the data as a new or updated row. If that fails...
 // #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
 // #     3) Then the database doesn't exist! Just insert it.
-  
+
   // })
-  
+
   // const tableExists = knex.schema.withSchema(groupId.replace(/-/g, '')).hasTable(tableName)
   // console.log("tableExists: " + tableExists)
-  
+
   // if (!tableExists) {
   //  
   // }
@@ -80,53 +80,59 @@ async function convert_participant(knex, doc, groupId, tableName) {
   // if it does, then we can just insert the data.
   let schemaUpdated = false;
   const mysqlDbName = groupId.replace(/-/g, '')
-  let infoOriginal = await knex(mysqlDbName + '.' + tableName).columnInfo();
-  if (infoOriginal) {
-    // info: {"ParticipantID":{"defaultValue":null,"type":"varchar","maxLength":36,"nullable":false}}
-    const infoKeys = Object.keys(infoOriginal)
-    const infoKeysLower = infoKeys.map(e => e.toLowerCase())
-    // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
-    const participantDataKeys = Object.keys(participantData)
-    for (let i = 0; i < participantDataKeys.length; i++) {
-      const e = participantDataKeys[i]
-      if (!infoKeysLower.includes(e.toLowerCase())) {
-        log.info(`Adding column ${e} to table ${tableName}`)
-        try {
-          await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
-            t.text(e)
-          })
-          schemaUpdated = true
-        } catch (e) {
-          if (e.code && e.code === 'ER_DUP_FIELDNAME') {
-            log.error(`Column ${e} already exists in table ${tableName}`)
-          } else {
-            log.error(e)
-          }
+  // let infoOriginal = await knex(mysqlDbName + '.' + tableName).columnInfo();
+  // const results = await knex.raw('USE ' + mysqlDbName + ';' + 'SHOW COLUMNS IN ? FROM ? ', [tableName])
+  let infoOriginal = []
+  const results = await knex.raw('SHOW COLUMNS IN ' + tableName + ' FROM ' + mysqlDbName)
+  // const values = results[0][0]
+  if (results) {
+    const fieldsArray = results[0]
+    // console.log('fieldsArray: ' + JSON.stringify(fieldsArray))
+    infoOriginal = fieldsArray.reduce((acc, item) => {
+      acc[item.Field] = item
+      return acc
+    }, {})
+  }
+  const infoKeys = Object.keys(infoOriginal)
+  const infoKeysLower = infoKeys.map(e => e.toLowerCase())
+  // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
+  const participantDataKeys = Object.keys(participantData)
+  for (let i = 0; i < participantDataKeys.length; i++) {
+    const e = participantDataKeys[i]
+    if (!infoKeysLower.includes(e.toLowerCase())) {
+      log.info(`Adding column ${e} to table ${tableName}`)
+      try {
+        await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
+          t.text(e)
+        })
+        schemaUpdated = true
+      } catch (e) {
+        if (e.code && e.code === 'ER_DUP_FIELDNAME') {
+          log.error(`Column ${e} already exists in table ${tableName}`)
+        } else {
+          log.error(e)
         }
       }
     }
-    // Now insert the data
-    try {
-      log.info("Inserting the data - or upserting -  for participant: " + participantId)
-      const mysqlDbName = groupId.replace(/-/g, '')
-      await knex(mysqlDbName + '.' + tableName).insert(participantData).onConflict('ParticipantID').merge()
-    } catch (e) {
-      if (e.code && e.code === 'ER_DUP_ENTRY') {
-        log.error(`Duplicate record for ParticipantID ${participantId}`)
-      } else {
-        log.error(e)
-      }
+  }
+  // Now insert the data
+  try {
+    log.info("Inserting the data - or upserting -  for participant: " + participantId)
+    const mysqlDbName = groupId.replace(/-/g, '')
+    await knex(mysqlDbName + '.' + tableName).insert(participantData).onConflict('ParticipantID').merge()
+  } catch (e) {
+    if (e.code && e.code === 'ER_DUP_ENTRY') {
+      log.error(`Duplicate record for ParticipantID ${participantId}`)
+    } else {
+      log.error(e)
     }
-    if (schemaUpdated) {
-      log.info(`Schema updated for table ${tableName}`)
-      log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
-      const infoUpdated = await knex(tableName).columnInfo()
-      log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
-      log.info(`participantData: ${JSON.stringify(participantData)}`)
-    }
-    
-  } else {
-    log.info(`ERROR: Unable to get schema.`)
+  }
+  if (schemaUpdated) {
+    log.info(`Schema updated for table ${tableName}`)
+    log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
+    const infoUpdated = await knex(tableName).columnInfo()
+    log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
+    log.info(`participantData: ${JSON.stringify(participantData)}`)
   }
 
 }
@@ -141,7 +147,7 @@ async function convert_case(knex, doc, groupId, tableName) {
   const data = doc.data
 
   let newRecord = false
-  
+
   if (!data['caseDefinitionId']) {
     data['caseDefinitionId'] = caseDefID
   }
@@ -160,66 +166,62 @@ async function convert_case(knex, doc, groupId, tableName) {
   if (!data['CaseID']) {
     data['CaseID'] = caseId
   }
-  // log.info(`data: ${JSON.stringify(data)}`)
-  // log.info(`doc: ${JSON.stringify(doc)}`)
-  
-// # RJ: Do we need a df.rename() like we do on other types of data?
-// # Try 3 things to insert data...
-// #     1) Insert the data as a new or updated row. If that fails...
-// #     2) There may be a schema update so try pulling out all the data from the database, appending what we're inserting, and then overwrite the table. If that fails...
-// #     3) Then the database doesn't exist! Just insert it.
 
   // look at the schema and see if it matches the data we're inserting.
   // if it does, then we can just insert the data.
   let schemaUpdated = false;
   const mysqlDbName = groupId.replace(/-/g, '')
-  let infoOriginal = await knex(mysqlDbName + '.' + tableName).columnInfo();
-  if (infoOriginal) {
-    // info: {"ParticipantID":{"defaultValue":null,"type":"varchar","maxLength":36,"nullable":false}}
-    const infoKeys = Object.keys(infoOriginal)
-    const infoKeysLower = infoKeys.map(e => e.toLowerCase())
-    // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
-    const dataKeys = Object.keys(data)
-    for (let i = 0; i < dataKeys.length; i++) {
-      const e = dataKeys[i]
-      if (!infoKeysLower.includes(e.toLowerCase())) {
-        log.info(`Adding column ${e} to table ${tableName}`)
-        try {
-          await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
-            t.text(e)
-          })
-          schemaUpdated = true
-        } catch (e) {
-          if (e.code && e.code === 'ER_DUP_FIELDNAME') {
-            // log.error(`Column ${e} already exists in table ${tableName}`)
-          } else {
-            log.error(e)
-          }
+  let infoOriginal = []
+  const results = await knex.raw('SHOW COLUMNS IN ' + tableName + ' FROM ' + mysqlDbName)
+  // const values = results[0][0]
+  if (results) {
+    const fieldsArray = results[0]
+    // console.log('fieldsArray: ' + JSON.stringify(fieldsArray))
+    infoOriginal = fieldsArray.reduce((acc, item) => {
+      acc[item.Field] = item
+      return acc
+    }, {})
+  }
+  const infoKeys = Object.keys(infoOriginal)
+  const infoKeysLower = infoKeys.map(e => e.toLowerCase())
+  // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
+  const dataKeys = Object.keys(data)
+  for (let i = 0; i < dataKeys.length; i++) {
+    const e = dataKeys[i]
+    if (!infoKeysLower.includes(e.toLowerCase())) {
+      log.info(`Adding column ${e} to table ${tableName}`)
+      try {
+        await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
+          t.text(e)
+        })
+        schemaUpdated = true
+      } catch (e) {
+        if (e.code && e.code === 'ER_DUP_FIELDNAME') {
+          log.error(`Column ${e} already exists in table ${tableName}`)
+        } else {
+          log.error(e)
         }
       }
     }
-    // Now insert the data
-    try {
-      log.info("Inserting the data - or upserting -  for caseId: " + caseId)
-      const mysqlDbName = groupId.replace(/-/g, '')
-      await knex(mysqlDbName + '.' + tableName).insert(data).onConflict('caseId').merge()
-    } catch (e) {
-      if (e.code && e.code === 'ER_DUP_ENTRY') {
-        log.error(`Duplicate record for ParticipantID ${participantId}`)
-      } else {
-        log.error(e)
-      }
+  }
+  // Now insert the data
+  try {
+    log.info("Inserting the data - or upserting -  for caseId: " + caseId)
+    const mysqlDbName = groupId.replace(/-/g, '')
+    await knex(mysqlDbName + '.' + tableName).insert(data).onConflict('caseId').merge()
+  } catch (e) {
+    if (e.code && e.code === 'ER_DUP_ENTRY') {
+      log.error(`Duplicate record for ParticipantID ${participantId}`)
+    } else {
+      log.error(e)
     }
-    if (schemaUpdated) {
-      log.info(`Schema updated for table ${tableName}`)
-      log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
-      const infoUpdated = await knex(tableName).columnInfo()
-      log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
-      log.info(`data: ${JSON.stringify(data)}`)
-    }
-    
-  } else {
-    log.info(`ERROR: Unable to get schema.`)
+  }
+  if (schemaUpdated) {
+    log.info(`Schema updated for table ${tableName}`)
+    log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
+    const infoUpdated = await knex(tableName).columnInfo()
+    log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
+    log.info(`data: ${JSON.stringify(data)}`)
   }
 
 }
@@ -286,7 +288,7 @@ async function generateDatabase(knex, groupId, tableName, viewName) {
       log.error(`Error creating table ${tableName} Error: ${e}`)
     }
   }
-  
+
   // Do a query and create the table
   const reportingDb = DB(`${groupId}-mysql`)
   try {
@@ -297,7 +299,7 @@ async function generateDatabase(knex, groupId, tableName, viewName) {
       const entry = docs.rows[i]
       const doc = await reportingDb.get(entry.id)
       // log.info("Got doc: " + doc.id)
-      if ( doc._id.startsWith('_design') ) {
+      if (doc._id.startsWith('_design')) {
         // log.info("Skipping design doc: " + JSON.stringify(doc))
       } else {
         await generateMysqlRecord(knex, pathToStateFile, groupId, tableName, doc)
@@ -314,7 +316,7 @@ async function generateDatabase(knex, groupId, tableName, viewName) {
  * @returns {Promise<void>}
  */
 async function rebuildMysqlDb() {
-  log.info('Rebuilding Mysql db') 
+  log.info('Rebuilding Mysql db')
   let groupNames;
   const knex = require('knex')({
     client: 'mysql2',
@@ -325,11 +327,11 @@ async function rebuildMysqlDb() {
       password: `${process.env.T_MYSQL_PASSWORD}`
     }
   });
-  
+
   if (process.env.T_REBUILD_MYSQL_DBS && process.env.T_REBUILD_MYSQL_DBS !== '') {
     // groupNames = process.env.T_REBUILD_MYSQL_DBS.split(',')
     groupNames = process.env.T_REBUILD_MYSQL_DBS
-      ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g,`"`))
+      ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g, `"`))
       : []
     log.info('groupNames from T_REBUILD_MYSQL_DBS: ' + groupNames)
   } else {
@@ -338,12 +340,12 @@ async function rebuildMysqlDb() {
   for (let groupId of groupNames) {
     let tableName, viewName;
     // const mysqlDbName = groupId.replace(/-/g, '')
-    
+
     tableName = 'participant_test';
     viewName = 'byParticipant';
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await generateDatabase(knex, groupId, tableName, viewName)
-    
+
     tableName = 'case_instances_test';
     viewName = 'byCase';
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
