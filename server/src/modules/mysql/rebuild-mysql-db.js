@@ -346,10 +346,14 @@ async function rebuildMysqlDb() {
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await generateDatabase(knex, groupId, tableName, viewName)
 
+    log.info('Finished processing: ' + tableName)
+
     tableName = 'case_instances_test';
     viewName = 'byCase';
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await generateDatabase(knex, groupId, tableName, viewName)
+
+    log.info('Finished processing: ' + tableName)
   }
 }
 
