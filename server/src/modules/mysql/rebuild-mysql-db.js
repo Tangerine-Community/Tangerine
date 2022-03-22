@@ -191,7 +191,7 @@ async function convert_case(knex, doc, groupId, tableName) {
           schemaUpdated = true
         } catch (e) {
           if (e.code && e.code === 'ER_DUP_FIELDNAME') {
-            log.error(`Column ${e} already exists in table ${tableName}`)
+            // log.error(`Column ${e} already exists in table ${tableName}`)
           } else {
             log.error(e)
           }
@@ -304,7 +304,7 @@ async function generateDatabase(knex, groupId, tableName, viewName) {
       }
     }
   } catch (err) {
-    log.info("error: " + err)
+    log.info("error: " + JSON.stringify(err))
   }
 
 }
