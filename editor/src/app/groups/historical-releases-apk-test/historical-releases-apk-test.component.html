@@ -42,6 +42,14 @@
       <td mat-cell *matCellDef="let data"> {{data.releaseNotes}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="qrCode">
+      <th mat-header-cell *matHeaderCellDef> {{'QR Code'|translate}} </th>
+      <td mat-cell *matCellDef="let data">
+        <button mat-button (click)="getReleaseCode(event)" 
+                [href]="'/releases/qa/apks/archive/'+groupId+'/'+groupId+'-'+data.versionTag+'.apk'">{{'QR Code'|translate}}</button>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
