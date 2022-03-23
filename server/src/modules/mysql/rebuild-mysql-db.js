@@ -4,7 +4,7 @@ const {log} = require("tangy-log");
 const util = require("util");
 // const exec = util.promisify(require('child_process').exec)
 const sanitize = require('sanitize-filename');
-
+const SqlString = require('sqlstring');
 async function getColumns(knex, tableName, mysqlDbName) {
   let infoOriginal = []
   const results = await knex.raw('SHOW COLUMNS IN ' + tableName + ' FROM ' + mysqlDbName)
@@ -33,9 +33,13 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
   // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
   const dataKeys = Object.keys(data)
   for (let i = 0; i < dataKeys.length; i++) {
-    const e = sanitize(dataKeys[i])
+    const e = dataKeys[i]
+    // const e = sanitize(dataKeys[i])
+    // const oldKeyName = dataKeys[i]
+    // const e = SqlString.escapeId(dataKeys[i], true)
+    // dataKeys[i] = e
     if (!infoKeysLower.includes(e.toLowerCase())) {
-      log.info(`Adding column ${e} to table ${tableName}`)
+      log.info(`Adding column ${e} new name: ${dataKeys[i]} to table ${tableName}`)
       try {
         await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
           t.text(e)
@@ -72,6 +76,18 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
 }
 
 function populateDataFromDocument(doc, data) {
+  const cleanData = {}
+  // data.forEach(e => {
+  //   cleanData[e]
+  // })
+  // const infoKeys = Object.keys(data)
+  for (let [key, value] of Object.entries(data)) {
+    const sanitizedKey = sanitize(key)
+    let keySafe = SqlString.escapeId(sanitizedKey, true)
+    keySafe = keySafe.replace(/\./g,'_')
+    // log.info(`key: ${key}; keySafe: ${keySafe}; value: ${value}`)
+    cleanData[keySafe] = value
+  }
 // # Check to see if we have any additional data elements that we need to convert and save to MySQL database.
   if (doc) {
     for (let [key, value] of Object.entries(doc)) {
@@ -79,17 +95,21 @@ function populateDataFromDocument(doc, data) {
         // log.info(`key: ${key}; value: ${value}`)
         try {
           // thanks to https://stackoverflow.com/a/14822579
-          const find = '.'
-          const replace = '_'
+          // const find = '.'
+          // const replace = '_'
           // key = key.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
-          const keySafe = sanitize(key)
-          data[keySafe] = value
+          const sanitizedKey = sanitize(key)
+          let keySafe = SqlString.escapeId(sanitizedKey, true)
+          keySafe = keySafe.replace(/\./g,'_')
+          // log.info(`key: ${key}; keySafe: ${keySafe}; value: ${value}`)
+          cleanData[keySafe] = value
         } catch (e) {
           log.info(`ERROR: key: ${key}; value: ${value}; e: ${e}`)
         }
       }
     }
   }
+  return cleanData
 }
 
 async function convert_participant(knex, doc, groupId, tableName) {
@@ -100,35 +120,35 @@ async function convert_participant(knex, doc, groupId, tableName) {
   const participantId = doc._id
   const dbRev = doc._rev
   const role = doc.caseRoleId
-  const participantData = doc.data
+  const data = doc.data
   let newRecord = false
-  if (participantData['participantID']) {
+  if (data['participantID']) {
     // log.info('Already have participantID: ' + participantId)
   } else {
     // log.info('Adding record for ParticipantID: ' + participantId)
-    participantData['participantID'] = participantId
+    data['participantID'] = participantId
   }
-  if (!participantData['CaseID']) {
-    participantData['CaseID'] = caseId
+  if (!data['CaseID']) {
+    data['CaseID'] = caseId
   }
-  if (!participantData['caseRoleId']) {
-    participantData['caseRoleId'] = role
+  if (!data['caseRoleId']) {
+    data['caseRoleId'] = role
   }
-  if (!participantData['dbRevision']) {
-    participantData['dbRevision'] = dbRev
+  if (!data['dbRevision']) {
+    data['dbRevision'] = dbRev
   }
-  // log.info(`participantData: ${JSON.stringify(participantData)}`)
+  // log.info(`data: ${JSON.stringify(data)}`)
   // log.info(`doc: ${JSON.stringify(doc)}`)
 
   // # Delete the following keys;
   const valuesToRemove = ['data', 'caseId', 'participantId', '_id', '_rev', 'caseRoleId', 'id', 'type']
-  // const filteredParticipantData = participantData.filter(item => !valuesToRemove.includes(item))
+  // const filteredParticipantData = data.filter(item => !valuesToRemove.includes(item))
   valuesToRemove.forEach(e => delete doc[e]);
   // log.info(`doc: ${JSON.stringify(doc)}`)
 
-  populateDataFromDocument(doc, participantData);
+  const cleanData = populateDataFromDocument(doc, data);
 
-  return participantData
+  return cleanData
 }
 
 async function convert_case(knex, doc, groupId, tableName) {
@@ -168,8 +188,8 @@ async function convert_case_event(knex, doc, groupId, tableName) {
   // # Delete the following keys;
   const valuesToRemove = ['id', 'type','_id', '_rev']
   valuesToRemove.forEach(e => delete doc[e]);
-  populateDataFromDocument(doc, data);
-  return data
+  const cleanData = populateDataFromDocument(doc, data);
+  return cleanData
 }
 
 async function convert_event_form(knex, doc, groupId, tableName) {
@@ -182,8 +202,8 @@ async function convert_event_form(knex, doc, groupId, tableName) {
   // # Delete the following keys;
   const valuesToRemove = ['id', 'type','_id', '_rev']
   valuesToRemove.forEach(e => delete doc[e]);
-  populateDataFromDocument(doc, data);
-  return data
+  const cleanData = populateDataFromDocument(doc, data);
+  return cleanData
 }
 
 async function convert_response(knex, doc, groupId, tableName) {
@@ -253,13 +273,27 @@ async function convert_response(knex, doc, groupId, tableName) {
   // # Delete the following keys;
   const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime']
   valuesToRemove.forEach(e => delete doc[e]);
-  populateDataFromDocument(doc, data);
-  return data
+  const cleanData = populateDataFromDocument(doc, data);
+  return cleanData
 }
 
-async function queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction) {
+/**
+ * Queries the server for list of documents to process and insert.
+ * Forms of type 'response' use "dynamic" table names based upon doc.formId. 
+ * If the form is type 'response' then it will create the table if needed. 
+ * @param groupId
+ * @param docType
+ * @param knex
+ * @param pathToStateFile
+ * @param tableName
+ * @param primaryKey
+ * @param createFunction
+ * @returns {Promise<void>}
+ */
+async function queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction) {
   // Do a query, alter table, and insert data.
   const reportingDb = DB(`${groupId}-mysql`)
+  const tables = []
   try {
     // const docs = await reportingDb.query(viewName)
     const docs = await reportingDb.query('byType', {
@@ -286,9 +320,14 @@ async function queryAndConvertDocument(groupId, docType, knex, pathToStateFile, 
         } else if (type.toLowerCase() === 'response') {
           // log.info(`Converting: ${doc._id}`)
           data = await convert_response(knex, doc, groupId, tableName)
-          tableName = data['formID_sanitized'] + '_test'
+          tableName = data['`formID_sanitized`'] + '_test'
           log.info(`Checking tableName: ${tableName}`)
-          await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+          if (!tables.includes(tableName)) {
+            // now delete it. 
+            await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
+            tables.push(tableName)
+            await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+          }
         }
         // log.info(`data to insert: ${JSON.stringify(data)}`)
         try {
@@ -303,6 +342,16 @@ async function queryAndConvertDocument(groupId, docType, knex, pathToStateFile, 
   }
 }
 
+/**
+ * Checks if tableName exists in information_schema and creates it if needed.
+ * @param knex
+ * @param groupId
+ * @param tableName
+ * @param docType
+ * @param createFunction
+ * @param primaryKey
+ * @returns {Promise<void>}
+ */
 async function createTable(knex, groupId, tableName, docType, createFunction, primaryKey) {
   const mysqlTableName = groupId.replace(/-/g, '');
   const results = await knex.raw('SELECT COUNT(*) AS CNT \n' +
@@ -316,7 +365,7 @@ async function createTable(knex, groupId, tableName, docType, createFunction, pr
   if (cnt === 1) {
     tableExists = true;
   }
-  log.info("tableExists: " + tableExists)
+  // log.info("tableExists: " + tableExists)
   if (!tableExists) {
     log.info(`Table ${tableName} does not exist. Creating...`)
     try {
@@ -363,16 +412,16 @@ async function rebuildMysqlDb() {
 
     tableName = 'participant_test';
     docType = 'participant';
-    primaryKey = 'ParticipantID'
+    primaryKey = '`ParticipantID`'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('CaseID', 36).index('participant_CaseID_IDX');
-      t.double('inactive');
+      t.string('`CaseID`', 36).index('participant_CaseID_IDX');
+      t.double('`inactive`');
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
     log.info('Finished processing: ' + tableName)
 
     tableName = 'case_instances_test';
@@ -387,56 +436,56 @@ async function rebuildMysqlDb() {
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
     log.info('Finished processing: ' + tableName)
     
     tableName = 'caseevent_test';
     docType = 'case-event';
-    primaryKey = 'CaseEventID'
+    primaryKey = '`CaseEventID`'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('caseId', 36).index('caseevent_caseId_IDX');
-      t.integer('complete');
-      t.integer('estimate');
-      t.integer('startDate');
+      t.string('`caseId`', 36).index('caseevent_caseId_IDX');
+      t.integer('`complete`');
+      t.integer('`estimate`');
+      t.integer('`startDate`');
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
     log.info('Finished processing: ' + tableName)
     
     tableName = 'eventform_test';
     docType = 'event-form';
-    primaryKey = 'EventFormID'
+    primaryKey = '`EventFormID`'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('caseId', 36).index('eventform_caseId_IDX');
-      t.string('caseEventId', 36).index('eventform_caseEventId_IDX');
-      t.integer('complete');
-      t.integer('required');
+      t.string('`caseId`', 36).index('eventform_caseId_IDX');
+      t.string('`caseEventId`', 36).index('eventform_caseEventId_IDX');
+      t.integer('`complete`');
+      t.integer('`required`');
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
     
     log.info('Finished processing: ' + tableName)
     
     tableName = null;
     docType = 'response';
-    primaryKey = 'ID'
+    primaryKey = '`ID`'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('caseId', 36) // .index('response_caseId_IDX');
-      t.string('ParticipantID', 36) //.index('case_instances_ParticipantID_IDX');
-      t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
-      t.tinyint('complete');
-      t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
+      t.string('`caseId`', 36) // .index('response_caseId_IDX');
+      t.string('`ParticipantID`', 36) //.index('case_instances_ParticipantID_IDX');
+      t.string('`caseEventId`', 36) // .index('eventform_caseEventId_IDX');
+      t.tinyint('`complete`');
+      t.string('`archived`', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
     }
     // await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
-    await queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction);
     log.info('Finished processing: ' + tableName)
   }
 }
