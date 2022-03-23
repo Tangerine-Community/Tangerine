@@ -1,11 +1,13 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import {MatButtonModule} from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { BuildInfo } from '../build-info';
 import { GroupsService } from '../services/groups.service';
 import {_TRANSLATE} from "../../shared/_services/translation-marker";
 import {Breadcrumb} from "../../shared/_components/breadcrumb/breadcrumb.component";
+import * as qrcode from 'qrcode-generator-es6';
 
 @Component({
   selector: 'app-historical-releases-apk-test',
@@ -16,7 +18,7 @@ export class HistoricalReleasesApkTestComponent implements OnInit {
   
   title = _TRANSLATE('APK Test Archives')
   breadcrumbs:Array<Breadcrumb> = []
-  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date','buildId', 'tangerineVersion', 'releaseNotes'];
+  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date','buildId', 'tangerineVersion', 'releaseNotes', 'QR Code'];
   groupsData;
   groupId;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -39,6 +41,19 @@ export class HistoricalReleasesApkTestComponent implements OnInit {
     this.groupsData = new MatTableDataSource<BuildInfo>(result.releases.
       filter(e => e.releaseType === 'qa' && e.build === 'APK').map( e => ({...e, dateString: new Date(e.date)})).sort((a, b) => b.date - a.date));
     this.groupsData.paginator = this.paginator;
+  }
+
+  getReleaseCode(event:Event) {
+    const eventId = (event.target as HTMLInputElement).id;
+    if (eventId) {
+      const url = eventId
+      const qr = new qrcode.default(0, 'H')
+      qr.addData(`{"id":"${eventId}"}`)
+      qr.make()
+      window['dialog'].innerHTML = `<div style="width:${Math.round((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth) *.6)}px" id="qr"></div>`
+      window['dialog'].open()
+      window['dialog'].querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
+    }
   }
 
   applyFilter(event: Event) {
