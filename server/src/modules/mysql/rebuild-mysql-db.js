@@ -2,7 +2,8 @@ const groupsList = require('../../groups-list.js')
 const DB = require(`../../db.js`)
 const {log} = require("tangy-log");
 const util = require("util");
-const exec = util.promisify(require('child_process').exec)
+// const exec = util.promisify(require('child_process').exec)
+const sanitize = require('sanitize-filename');
 
 async function getColumns(knex, tableName, mysqlDbName) {
   let infoOriginal = []
@@ -32,7 +33,7 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
   // log.info(`infoKeys: ${JSON.stringify(infoKeysLower)}`)
   const dataKeys = Object.keys(data)
   for (let i = 0; i < dataKeys.length; i++) {
-    const e = dataKeys[i]
+    const e = sanitize(dataKeys[i])
     if (!infoKeysLower.includes(e.toLowerCase())) {
       log.info(`Adding column ${e} to table ${tableName}`)
       try {
@@ -73,11 +74,16 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
 function populateDataFromDocument(doc, data) {
 // # Check to see if we have any additional data elements that we need to convert and save to MySQL database.
   if (doc) {
-    for (const [key, value] of Object.entries(doc)) {
+    for (let [key, value] of Object.entries(doc)) {
       if (doc.hasOwnProperty(key) && key !== 'data') {
         // log.info(`key: ${key}; value: ${value}`)
         try {
-          data[key] = value
+          // thanks to https://stackoverflow.com/a/14822579
+          const find = '.'
+          const replace = '_'
+          // key = key.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
+          const keySafe = sanitize(key)
+          data[keySafe] = value
         } catch (e) {
           log.info(`ERROR: key: ${key}; value: ${value}; e: ${e}`)
         }
@@ -197,7 +203,10 @@ async function convert_response(knex, doc, groupId, tableName) {
 
   let formID = data['formid']
   if (formID) {
-    formID = formID.replaceAll('-', '_')
+    // thanks to https://stackoverflow.com/a/14822579
+    const find = '-'
+    const replace = '_'
+    formID = formID.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
   } else {
     log.error(`ERROR: formID is null for response: ${JSON.stringify(doc)}`)
   }
@@ -234,15 +243,15 @@ async function convert_response(knex, doc, groupId, tableName) {
     data['startdatetime'] = startDatetime
   }
   // adding formID to the data object
-  if (!data['formID']) {
-    data['formID'] = formID
+  if (!data['formID_sanitized']) {
+    data['formID_sanitized'] = formID
   }
   
   doc.ID = doc._id
   doc.dbRevision = doc._rev
 
   // # Delete the following keys;
-  const valuesToRemove = ['_id', '_rev']
+  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime']
   valuesToRemove.forEach(e => delete doc[e]);
   populateDataFromDocument(doc, data);
   return data
@@ -275,8 +284,10 @@ async function queryAndConvertDocument(groupId, docType, knex, pathToStateFile, 
         } else if (type.toLowerCase() === 'event-form') {
           data = await convert_event_form(knex, doc, groupId, tableName)
         } else if (type.toLowerCase() === 'response') {
+          // log.info(`Converting: ${doc._id}`)
           data = await convert_response(knex, doc, groupId, tableName)
-          tableName = data['formID']
+          tableName = data['formID_sanitized'] + '_test'
+          log.info(`Checking tableName: ${tableName}`)
           await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
         }
         // log.info(`data to insert: ${JSON.stringify(data)}`)
@@ -409,6 +420,7 @@ async function rebuildMysqlDb() {
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
     await queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    
     log.info('Finished processing: ' + tableName)
     
     tableName = null;
@@ -421,7 +433,7 @@ async function rebuildMysqlDb() {
       t.string('ParticipantID', 36) //.index('case_instances_ParticipantID_IDX');
       t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
       t.tinyint('complete');
-      t.tinyint('archived');
+      t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
     }
     // await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await queryAndConvertDocument(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction);
