@@ -4,7 +4,7 @@ const {log} = require("tangy-log");
 const util = require("util");
 // const exec = util.promisify(require('child_process').exec)
 const sanitize = require('sanitize-filename');
-const SqlString = require('sqlstring');
+// const SqlString = require('sqlstring');
 async function getColumns(knex, tableName, mysqlDbName) {
   let infoOriginal = []
   const results = await knex.raw('SHOW COLUMNS IN ' + tableName + ' FROM ' + mysqlDbName)
@@ -18,6 +18,19 @@ async function getColumns(knex, tableName, mysqlDbName) {
     }, {})
   }
   return infoOriginal;
+}
+
+/**
+ * Escapes special characters in the replace param.
+ * thanks to https://stackoverflow.com/a/14822579
+ * @param key
+ * @returns {*}
+ */
+function sanitizeMysql(key) {
+  const find = '.'
+  const replace = '_'
+  const sanitizedKey = key.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
+  return sanitizedKey
 }
 
 async function insertDocument(groupId, knex, tableName, data, primaryKey) {
@@ -69,9 +82,10 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
   }
   if (schemaUpdated) {
     log.info(`Schema updated for table ${tableName}`)
-    log.info(`Original schema: ${JSON.stringify(infoOriginal)}`)
+    log.info(`Original keys: ${JSON.stringify(infoKeys)}`)
     const infoUpdated = await getColumns(knex, tableName, mysqlDbName);
-    log.info(`Updated schema: ${JSON.stringify(infoUpdated)}`)
+    const infoUpdatedKeys = Object.keys(infoUpdated)
+    log.info(`Updated keys: ${JSON.stringify(infoUpdatedKeys)}`)
     // log.info(`data: ${JSON.stringify(data)}`)
   }
 }
@@ -84,8 +98,9 @@ function populateDataFromDocument(doc, data) {
   // const infoKeys = Object.keys(data)
   for (let [key, value] of Object.entries(data)) {
     const sanitizedKey = sanitize(key)
-    let keySafe = SqlString.escapeId(sanitizedKey, true)
-    keySafe = keySafe.replace(/\./g,'_')
+    // let keySafe = SqlString.escapeId(sanitizedKey, true)
+    // const keySafe = sanitizedKey.replace(/\./g,'_')
+    const keySafe = sanitizeMysql(sanitizedKey)
     // log.info(`key: ${key}; keySafe: ${keySafe}; value: ${value}`)
     cleanData[keySafe] = value
   }
@@ -100,8 +115,9 @@ function populateDataFromDocument(doc, data) {
           // const replace = '_'
           // key = key.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
           const sanitizedKey = sanitize(key)
-          let keySafe = SqlString.escapeId(sanitizedKey, true)
-          keySafe = keySafe.replace(/\./g,'_')
+          // let keySafe = SqlString.escapeId(sanitizedKey, true)
+          // const keySafe = sanitizedKey.replace(/\./g,'_')
+          const keySafe = sanitizeMysql(sanitizedKey)
           // log.info(`key: ${key}; keySafe: ${keySafe}; value: ${value}`)
           cleanData[keySafe] = value
         } catch (e) {
@@ -321,7 +337,7 @@ async function queryAndConvertDocuments(groupId, docType, knex, pathToStateFile,
         } else if (type.toLowerCase() === 'response') {
           // log.info(`Converting: ${doc._id}`)
           data = await convert_response(knex, doc, groupId, tableName)
-          tableName = data['`formID_sanitized`'] + '_test'
+          tableName = data['formID_sanitized'] + '_test'
           // log.info(`Checking tableName: ${tableName}`)
           if (!tables.includes(tableName)) {
             // now delete it. 
@@ -386,6 +402,7 @@ async function createTable(knex, groupId, tableName, docType, createFunction, pr
 async function rebuildMysqlDb() {
   log.info('Rebuilding Mysql db')
   const startTime = new Date()
+  const startTimeMs = startTime.getTime()
   let groupNames;
   const knex = require('knex')({
     client: 'mysql2',
@@ -414,12 +431,12 @@ async function rebuildMysqlDb() {
 
     tableName = 'participant_test';
     docType = 'participant';
-    primaryKey = '`participantID`'
+    primaryKey = 'participantID'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('`CaseID`', 36).index('participant_CaseID_IDX');
-      t.double('`inactive`');
+      t.string('CaseID', 36).index('participant_CaseID_IDX');
+      t.double('inactive');
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
@@ -442,14 +459,14 @@ async function rebuildMysqlDb() {
     
     tableName = 'caseevent_test';
     docType = 'case-event';
-    primaryKey = '`CaseEventID`'
+    primaryKey = 'CaseEventID'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('`caseId`', 36).index('caseevent_caseId_IDX');
-      t.integer('`complete`');
-      t.integer('`estimate`');
-      t.integer('`startDate`');
+      t.string('caseId', 36).index('caseevent_caseId_IDX');
+      t.integer('complete');
+      t.integer('estimate');
+      t.integer('startDate');
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
@@ -458,14 +475,14 @@ async function rebuildMysqlDb() {
     
     tableName = 'eventform_test';
     docType = 'event-form';
-    primaryKey = '`EventFormID`'
+    primaryKey = 'EventFormID'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('`caseId`', 36).index('eventform_caseId_IDX');
-      t.string('`caseEventId`', 36).index('eventform_caseEventId_IDX');
-      t.integer('`complete`');
-      t.integer('`required`');
+      t.string('caseId', 36).index('eventform_caseId_IDX');
+      t.string('caseEventId', 36).index('eventform_caseEventId_IDX');
+      t.integer('complete');
+      t.integer('required');
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
@@ -475,26 +492,47 @@ async function rebuildMysqlDb() {
     
     tableName = null;
     docType = 'response';
-    primaryKey = '`ID`'
+    primaryKey = 'ID'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('`caseId`', 36) // .index('response_caseId_IDX');
-      t.string('`participantID`', 36) //.index('case_instances_ParticipantID_IDX');
-      t.string('`caseEventId`', 36) // .index('eventform_caseEventId_IDX');
-      t.tinyint('`complete`');
-      t.string('`archived`', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
+      t.string('caseId', 36) // .index('response_caseId_IDX');
+      t.string('participantID', 36) //.index('case_instances_ParticipantID_IDX');
+      t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
+      t.tinyint('complete');
+      t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
     }
     // await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction);
     log.info('Finished processing responses.')
   }
+
+  /**
+   * credit: http://www.4codev.com/javascript/convert-seconds-to-time-value-hours-minutes-seconds-idpx6943853585885165320.html
+   * @param value
+   * @returns {string}
+   */
+  function convertHMS(value) {
+    const sec = parseInt(value, 10); // convert value to number if it's string
+    let hours   = Math.floor(sec / 3600); // get hours
+    let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
+    let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
+    // add 0 if value < 10; Example: 2 => 02
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
+  }
+  
   const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
-  await sleep(60* 1000)
-  const endTime = new Date();
-  const diffMs = endTime - startTime;
-  const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
-  log.info('Started: ' + endTime + ' Ended: ' + endTime + ' Finished converting all documents in ' + diffMins + ' minutes');
+  // await sleep(60* 1000)
+  const endTime = new Date()
+  const endTimeMs = endTime.getTime()
+  const diffMs = endTimeMs - startTimeMs;
+  log.info(' Finished converting all documents in ' + diffMs + ' milliSeconds or ' + (diffMs / 1000) + ' seconds.')
+  // const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+  const duration = convertHMS((diffMs / 1000))
+  log.info('Started: ' + startTime + ' Ended: ' + endTime + ' Duration (HH:MM:SS): ' + duration);
 }
 
 module.exports = rebuildMysqlDb
