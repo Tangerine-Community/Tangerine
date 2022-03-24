@@ -122,12 +122,15 @@ export class AppComponent implements OnInit {
         this.dialog.closeAll()
       } else {
         this.dialog.closeAll()
-        this.dialogRef = this.dialog.open(ProcessMonitorDialogComponent, {
+        const config = {
           data: {
-            messages: this.processMonitorService.processes.map(process => process.description).reverse()
+            messages: this.processMonitorService.processes.map(process => process.description).reverse(),
+            cancellable: this.processMonitorService.processes.find(process => process.cancellable === false)?.cancellable,
+            cancelButtonDisplayDelay: this.processMonitorService.processes.find(process => process.cancelButtonDisplayDelay)?.cancelButtonDisplayDelay
           },
           disableClose: true
-        })
+        }
+        this.dialogRef = this.dialog.open(ProcessMonitorDialogComponent, config)
       }
     })
     let appStartProcess = this.processMonitorService.start('init', "App starting...")

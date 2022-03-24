@@ -29,6 +29,11 @@ import {Conflict} from "../classes/conflict.class";
 import * as jsonpatch from "fast-json-patch";
 import * as CryptoJS from 'crypto-js';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import {SyncCouchdbDetails, SyncCouchdbService, SyncSessionInfo} from "../../sync/sync-couchdb.service";
+import PouchDB from 'pouchdb'
+import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service";
+import {VariableService} from "../../shared/_services/variable.service";
+
 
 @Injectable({
   providedIn: 'root'
@@ -113,7 +118,10 @@ class CaseService {
     private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient,
-    private activityService:ActivityService
+    private activityService:ActivityService,
+    private syncCouchdbService: SyncCouchdbService,
+    private tangyFormsInfoService:TangyFormsInfoService,
+    private variableService: VariableService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -1465,6 +1473,8 @@ class CaseService {
       : (await this.tangyFormService.getResponse(formResponseId)).history
     return history
   }
+  
+  
 
 }
 

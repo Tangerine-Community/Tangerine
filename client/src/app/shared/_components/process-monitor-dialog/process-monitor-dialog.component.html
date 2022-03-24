@@ -13,6 +13,6 @@
   </div>
   <br>
   <div id="actions">
-    <paper-button (click)="cancel()">Cancel</paper-button>
+    <paper-button (click)="cancel()" *ngIf="data.cancellable">Cancel</paper-button>
   </div>
 </mat-dialog-content>

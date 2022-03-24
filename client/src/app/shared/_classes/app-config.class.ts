@@ -50,6 +50,8 @@ export class AppConfig {
   initialBatchSize:number
   // The max number of documents that will get written to disk during a sync. Tweak this down when using the SqlCipher encryption plugin to avoid database crashes.
   writeBatchSize:number
+  // The number of documents processed in the changes feed per batch. This setting helps sites that experience crashes when indexing documents. Using this setting *will* slow sync optimization times. 
+  changes_batch_size:number
   // The number of IDs to read from the database at a time when doing a Comparison Sync.
   compareLimit: number;
   // List of views to skip optimization of after a sync.
@@ -106,12 +108,13 @@ export class AppConfig {
 
   showQueries:boolean
   showCaseReports:boolean
-  // Determines wether or not the Issues tab is shown on the case module's home screen.
+  // Determines whether the Issues tab should be shown on the case module's home screen.
   showIssues:boolean
   barcodeSearchMapFunction:string
   // Determines if a "Create Issue" button appears when viewing submitted Event Forms.
   allowCreationOfIssues:boolean
   filterCaseEventScheduleByDeviceAssignedLocation:boolean = false
+  syncCaseIfOnline:boolean = false
 
   //
   // Tangerine Coach configuration.

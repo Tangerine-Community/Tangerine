@@ -3,7 +3,7 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { DeviceService } from './../device/services/device.service';
 import { SyncCustomService, SyncCustomDetails } from './sync-custom.service';
-import {SyncCouchdbService, SyncCouchdbDetails, LocationQuery} from './sync-couchdb.service';
+import {SyncCouchdbService, SyncCouchdbDetails, LocationQuery, SyncSessionInfo} from './sync-couchdb.service';
 import { UserDatabase } from 'src/app/shared/_classes/user-database.class';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClient } from '@angular/common/http';
@@ -20,6 +20,7 @@ import {FormInfo} from "../tangy-forms/classes/form-info.class";
 import {createSearchIndex} from "../shared/_services/create-search-index";
 import { createSyncFormIndex } from './create-sync-form-index';
 import PouchDB from 'pouchdb'
+import {_TRANSLATE} from "../shared/translation-marker";
 
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'

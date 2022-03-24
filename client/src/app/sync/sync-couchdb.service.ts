@@ -12,7 +12,6 @@ import {AppConfigService} from '../shared/_services/app-config.service';
 import { AppContext } from '../app-context.enum';
 import {CaseDefinition} from "../case/classes/case-definition.class";
 import {CaseDefinitionsService} from "../case/services/case-definitions.service";
-import {CaseService} from "../case/services/case.service";
 import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import { SyncDirection } from './sync-direction.enum';
 import { UserService } from '../shared/_services/user.service';
@@ -91,7 +90,6 @@ export class SyncCouchdbService {
     private variableService: VariableService,
     private appConfigService: AppConfigService,
     private caseDefinitionsService: CaseDefinitionsService,
-    private caseService: CaseService,
     private userService: UserService,
     private deviceService: DeviceService,
     private tangyFormService: TangyFormService
@@ -565,6 +563,155 @@ export class SyncCouchdbService {
     this.syncMessage$.next(status)
     
     return status;
+  }
+  
+  async pullStaleDocs(docIds: string[], groupId) {
+    const staleDocs = await this.identifyStaleDocs(docIds, groupId)
+    if (staleDocs.length > 0) {
+      const replicationStatus = await this.pullDocs(staleDocs)
+      return replicationStatus
+    }
+  }
+  
+  async identifyStaleDocs(docIds: string[], groupId) {
+    let staleDocs = []
+    for (let docId of docIds) {
+      let etag;
+      const doc = await this.tangyFormService.getResponse(docId)
+      let syncSessionInfo = await this.getRemoteDbLoginToken()
+      const url = syncSessionInfo.syncSessionUrl + '/' + docId
+      const remoteDocHeader = await window['T'].http.head(url, {observe: 'response'}).toPromise()
+      etag = remoteDocHeader.headers.get('etag')
+      etag = etag.replace(/"/g, '');
+      if (doc && etag && doc._rev !== etag) {
+        staleDocs.push(docId)
+      }
+    }
+    return staleDocs
+  }
+
+  async pullDocs(docIds: string[]): Promise<ReplicationStatus> {
+
+    const username = window['T'].user.getCurrentUser()
+    const userDb = await window['T'].user.getUserDatabase(username)
+    // const appConfig = window['T'].appConfig
+    const appConfig = await this.appConfigService.getAppConfig()
+    let syncSessionInfo = await this.getRemoteDbLoginToken();
+    const remoteDb = new PouchDB(syncSessionInfo.syncSessionUrl)
+    
+    let status = <ReplicationStatus>{
+      pulled: 0,
+      pullError: '',
+      pullConflicts: [],
+      info: '',
+      remaining: 0,
+      direction: 'pull'
+    };
+
+    let failureDetected = false
+    let error;
+    let pulled = 0
+
+    let batchSize = appConfig.batchSize || 100
+
+    /**
+     * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet.
+     * From the pouchdb API doc:
+     * "Number of batches to process at a time. Defaults to 10. This (along with batch_size) controls how many docs
+     * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
+     */
+    let syncOptions = {
+      // ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": pull_last_seq },
+      "batch_size": batchSize,
+      "write_batch_size": this.writeBatchSize,
+      "batches_limit": 1,
+      "pulled": pulled,
+      "doc_ids": docIds,
+      // "checkpoint": 'target',
+      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null
+    }
+
+    syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
+
+    let progress = {
+      'direction': 'pull',
+      'message': 'Initiating pull replication.'
+    }
+    this.syncMessage$.next(progress)
+    try {
+      status = <ReplicationStatus>await this._pull(userDb, remoteDb, syncOptions);
+      if (typeof status.pulled !== 'undefined') {
+        pulled = pulled + status.pulled
+        status.pulled = pulled
+      } else {
+        status.pulled = pulled
+      }
+      this.syncMessage$.next(status)
+    } catch (e) {
+      console.log("Error: " + e)
+      failureDetected = true
+      error = e
+    }
+
+    // status.initialPullLastSeq = pull_last_seq
+    // status.currentPushLastSeq = status.info.last_seq
+    status.batchSize = batchSize
+
+    if (failureDetected) {
+      status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
+    }
+
+    this.syncMessage$.next(status)
+
+    return status;
+    // return pullReplicationStatus;
+  }
+
+  /**
+   * returns syncSessionInfo, which has the URL that can be used to login in the format:
+   * syncSessionUrl: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
+   * @private
+   */
+  private async getRemoteDbLoginToken() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const device = await this.deviceService.getDevice()
+    const syncDetails: SyncCouchdbDetails = <SyncCouchdbDetails>{
+      serverUrl: appConfig.serverUrl,
+      groupId: appConfig.groupId,
+      deviceId: device._id,
+      deviceToken: device.token,
+    }
+    let syncSessionInfo = await this.variableService.get('syncSessionInfo')
+    if (syncSessionInfo) {
+      // Confirm that the session will not expire in the next hour.
+      // the syncUsername has the time created:  syncUsername = `syncUser-${UUID()}-${Date.now()}`
+      const syncSessionUrl = syncSessionInfo.syncSessionUrl
+      const syncSessionUrlParts = syncSessionUrl.split('-')
+      const syncSessionCreationTime = syncSessionUrlParts[6].split(':')[0];
+      const timeLeftInToken = 24 - Date.now() - parseInt(syncSessionCreationTime)
+      const expiryWindow = 1000 * 60 * 60 * 1; // 1 hour in milliseconds
+      if (timeLeftInToken < expiryWindow) {
+        // token has expired
+        let progress = {
+          'direction': 'pull',
+          'message': 'Initiating remote sync session.'
+        }
+        this.syncMessage$.next(progress)
+        syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+        // Save syncSessionInfo
+        progress = {
+          'direction': 'pull',
+          'message': 'Received sync session credentials.'
+        }
+        this.syncMessage$.next(progress)
+        await this.variableService.set('syncSessionInfo', syncSessionInfo)
+      }
+    } else {
+      syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
+      // Save syncSessionInfo
+      await this.variableService.set('syncSessionInfo', syncSessionInfo)
+    }
+    return syncSessionInfo;
   }
 
   getPullSelector(syncDetails:SyncCouchdbDetails) {
