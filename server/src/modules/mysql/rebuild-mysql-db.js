@@ -56,12 +56,13 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
   }
   // Now insert the data
   try {
-    log.info("Inserting the data - or upserting -  for id: " + data[primaryKey])
+    log.info("Inserting the data - or upserting - to " + tableName + "  for id: " + data[primaryKey])
+    // log.info("Inserting the data - or upserting - to " + tableName + "  for id: " + data[primaryKey] + " primaryKey: " + primaryKey + " data: " + JSON.stringify(data))
     const mysqlDbName = groupId.replace(/-/g, '')
     await knex(mysqlDbName + '.' + tableName).insert(data).onConflict(primaryKey).merge()
   } catch (e) {
     if (e.code && e.code === 'ER_DUP_ENTRY') {
-      log.error(`Duplicate record for ParticipantID ${participantId}`)
+      log.error(`Duplicate record for participantID ${participantId}`)
     } else {
       log.error(e)
     }
@@ -125,7 +126,7 @@ async function convert_participant(knex, doc, groupId, tableName) {
   if (data['participantID']) {
     // log.info('Already have participantID: ' + participantId)
   } else {
-    // log.info('Adding record for ParticipantID: ' + participantId)
+    // log.info('Adding record for participantID: ' + participantId)
     data['participantID'] = participantId
   }
   if (!data['CaseID']) {
@@ -321,7 +322,7 @@ async function queryAndConvertDocuments(groupId, docType, knex, pathToStateFile,
           // log.info(`Converting: ${doc._id}`)
           data = await convert_response(knex, doc, groupId, tableName)
           tableName = data['`formID_sanitized`'] + '_test'
-          log.info(`Checking tableName: ${tableName}`)
+          // log.info(`Checking tableName: ${tableName}`)
           if (!tables.includes(tableName)) {
             // now delete it. 
             await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
@@ -384,6 +385,7 @@ async function createTable(knex, groupId, tableName, docType, createFunction, pr
  */
 async function rebuildMysqlDb() {
   log.info('Rebuilding Mysql db')
+  const startTime = new Date()
   let groupNames;
   const knex = require('knex')({
     client: 'mysql2',
@@ -412,7 +414,7 @@ async function rebuildMysqlDb() {
 
     tableName = 'participant_test';
     docType = 'participant';
-    primaryKey = '`ParticipantID`'
+    primaryKey = '`participantID`'
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
@@ -430,7 +432,6 @@ async function rebuildMysqlDb() {
     createFunction = function (t) {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
-      t.string('ParticipantID', 36).index('case_instances_ParticipantID_IDX');
       t.integer('complete');
       t.bigint('startunixtime');//TODO: is this being set properly in mysql?
     }
@@ -479,15 +480,21 @@ async function rebuildMysqlDb() {
       t.engine('InnoDB')
       t.string(primaryKey, 36).notNullable().primary();
       t.string('`caseId`', 36) // .index('response_caseId_IDX');
-      t.string('`ParticipantID`', 36) //.index('case_instances_ParticipantID_IDX');
+      t.string('`participantID`', 36) //.index('case_instances_ParticipantID_IDX');
       t.string('`caseEventId`', 36) // .index('eventform_caseEventId_IDX');
       t.tinyint('`complete`');
       t.string('`archived`', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
     }
     // await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction);
-    log.info('Finished processing: ' + tableName)
+    log.info('Finished processing responses.')
   }
+  const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+  await sleep(60* 1000)
+  const endTime = new Date();
+  const diffMs = endTime - startTime;
+  const diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+  log.info('Started: ' + endTime + ' Ended: ' + endTime + ' Finished converting all documents in ' + diffMins + ' minutes');
 }
 
 module.exports = rebuildMysqlDb
