@@ -1,5 +1,11 @@
 # What's new
 
+## v3.22.5
+
+__New Features__
+
+- Feature: New version of mysql module, which is coded in javascript instead of python, exports records much faster than previous version. It should also use much less memory and provide more flexibility in terms of column data types and (eventually) support of different types of databases. Issue: [#3047](https://github.com/Tangerine-Community/Tangerine/issues/3047)
+- 
 ## v3.22.4
 
 __New Features__
