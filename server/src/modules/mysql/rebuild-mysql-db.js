@@ -20,6 +20,7 @@ async function getColumns(knex, tableName, mysqlDbName) {
   return infoOriginal;
 }
 
+
 /**
  * Escapes special characters in the replace param.
  * thanks to https://stackoverflow.com/a/14822579
@@ -307,7 +308,7 @@ async function convert_response(knex, doc, groupId, tableName) {
  * @param createFunction
  * @returns {Promise<void>}
  */
-async function queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction) {
+async function queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction, tablenameSuffix) {
   // Do a query, alter table, and insert data.
   const reportingDb = DB(`${groupId}-mysql`)
   const tables = []
@@ -337,7 +338,7 @@ async function queryAndConvertDocuments(groupId, docType, knex, pathToStateFile,
         } else if (type.toLowerCase() === 'response') {
           // log.info(`Converting: ${doc._id}`)
           data = await convert_response(knex, doc, groupId, tableName)
-          tableName = data['formID_sanitized'] + '_test'
+          tableName = data['formID_sanitized'] + tablenameSuffix
           // log.info(`Checking tableName: ${tableName}`)
           if (!tables.includes(tableName)) {
             // now delete it. 
@@ -399,8 +400,13 @@ async function createTable(knex, groupId, tableName, docType, createFunction, pr
  * T_REBUILD_MYSQL_DBS
  * @returns {Promise<void>}
  */
-async function rebuildMysqlDb() {
-  log.info('Rebuilding Mysql db')
+async function rebuildMysqlDb(tablenameSuffix) {
+  if (tablenameSuffix === undefined) {
+    tablenameSuffix = ''
+    log.info('Rebuilding Mysql db')
+  } else {
+    log.info('Rebuilding Mysql db with table name suffix: ' + tablenameSuffix)
+  }
   const startTime = new Date()
   const startTimeMs = startTime.getTime()
   let groupNames;
@@ -429,8 +435,8 @@ async function rebuildMysqlDb() {
     // const mysqlDbName = groupId.replace(/-/g, '')
     const pathToStateFile = `/mysql-module-state/${groupId}.ini`
 
-    tableName = 'participant_test';
-    docType = 'participant';
+    tableName = 'participant' + tablenameSuffix
+    docType = 'participant'
     primaryKey = 'participantID'
     createFunction = function (t) {
       t.engine('InnoDB')
@@ -440,11 +446,11 @@ async function rebuildMysqlDb() {
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
     log.info('Finished processing: ' + tableName)
 
-    tableName = 'case_instances_test';
-    docType = 'case';
+    tableName = 'case_instances' + tablenameSuffix
+    docType = 'case'
     primaryKey = 'CaseID'
     createFunction = function (t) {
       t.engine('InnoDB')
@@ -454,11 +460,11 @@ async function rebuildMysqlDb() {
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
     log.info('Finished processing: ' + tableName)
     
-    tableName = 'caseevent_test';
-    docType = 'case-event';
+    tableName = 'caseevent' + tablenameSuffix
+    docType = 'case-event'
     primaryKey = 'CaseEventID'
     createFunction = function (t) {
       t.engine('InnoDB')
@@ -470,11 +476,11 @@ async function rebuildMysqlDb() {
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
     log.info('Finished processing: ' + tableName)
     
-    tableName = 'eventform_test';
-    docType = 'event-form';
+    tableName = 'eventform' + tablenameSuffix
+    docType = 'event-form'
     primaryKey = 'EventFormID'
     createFunction = function (t) {
       t.engine('InnoDB')
@@ -486,7 +492,7 @@ async function rebuildMysqlDb() {
     }
     await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
     await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
     
     log.info('Finished processing: ' + tableName)
     
@@ -503,7 +509,7 @@ async function rebuildMysqlDb() {
       t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
     }
     // await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
-    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction);
+    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, createFunction, tablenameSuffix);
     log.info('Finished processing responses.')
   }
 
