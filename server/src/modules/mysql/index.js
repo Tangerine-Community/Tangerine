@@ -45,7 +45,7 @@ module.exports = {
       const groups = await groupsList()
       for (groupId of groups) {
         const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-        startTangerineToMySQL(pathToStateFile)
+        // startTangerineToMySQL(pathToStateFile)
       }
       return data
     },
@@ -65,7 +65,7 @@ module.exports = {
       const groupId = groupName
       await initializeGroupForMySQL(groupId)
       const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-      startTangerineToMySQL(pathToStateFile)
+      // startTangerineToMySQL(pathToStateFile)
       await createGroupDatabase(groupName, '-mysql')
       await createGroupDatabase(groupName, '-mysql-sanitized')
       await insertGroupReportingViews(groupName)
