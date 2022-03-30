@@ -43,7 +43,8 @@
     "import-translations-csvs": "./src/scripts/import-translations-csvs.js",
     "mysql-report": "./src/scripts/mysql-report.js",
     "module-cache-clear": "./src/scripts/module-cache-clear.js",
-    "rebuild-mysql-db": "./src/scripts/rebuild-mysql-db.js"
+    "rebuild-mysql-db": "./src/scripts/rebuild-mysql-db.js",
+    "sync-couchdb-to-mysql": "./src/scripts/sync-couchdb-to-mysql.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
