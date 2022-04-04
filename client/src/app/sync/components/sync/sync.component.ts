@@ -39,6 +39,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   rewindDisabled = false;
   indexing: any
   indexingMessage: string
+  reduceBatchSize = false;
 
   @Input() fullSync: string;
   currentCheckedValue: boolean = null

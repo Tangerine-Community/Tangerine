@@ -66,7 +66,7 @@ export class SyncService {
     })
   }
   
-  async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
+  async sync(isFirstSync = false, fullSync?:SyncDirection, reduceBatchSize = false):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
@@ -100,7 +100,8 @@ export class SyncService {
       },
       null,
       isFirstSync,
-      fullSync
+      fullSync,
+      reduceBatchSize
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
