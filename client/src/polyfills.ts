@@ -47,6 +47,7 @@ import 'tangy-form/input/tangy-ethio-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 import 'tangy-form/input/tangy-radio-blocks.js';
+import 'tangy-form/input/tangy-video-capture.js';
 
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc
