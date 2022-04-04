@@ -105,7 +105,7 @@
     <p>{{'If Comparison or Rewind sync fail due to memory issues, check the box below to reduce the number of documents processed during ' +
          'synchronization and indexing which may workaround the issue.' | translate }}</p>
 
-    <mat-checkbox id="reduce-batch-size-checkbox">{{'Reduce Batch Size' | translate }}</mat-checkbox>
+    <mat-checkbox id="reduce-batch-size-checkbox" (click)="toggleReduceBatchSize()">{{'Reduce Batch Size' | translate }}</mat-checkbox>
     <p></p>
     
     <h3>Comparison Sync</h3>

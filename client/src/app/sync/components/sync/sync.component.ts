@@ -176,21 +176,21 @@ export class SyncComponent implements OnInit, OnDestroy {
         // Pull comparison
         this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."
         // force a sync to make sure all docs have been pushed. 
-        this.replicationStatus = await this.syncService.sync(false, null)
-        this.replicationStatus = await this.syncService.compareDocs('pull')
+        this.replicationStatus = await this.syncService.sync(false, null, this.reduceBatchSize)
+        this.replicationStatus = await this.syncService.compareDocs('pull', this.reduceBatchSize)
       } else if (this.runComparison === 'push') {
         // Push comparison
-        this.replicationStatus = await this.syncService.compareDocs('push')
+        this.replicationStatus = await this.syncService.compareDocs('push', this.reduceBatchSize)
       } else if (this.fullSync === 'pull') {
         // Pull Rewind Full Sync
         this.otherMessage = "Forcing a sync before the Rewind Sync to make sure that all docs have been uploaded from the tablet."
         // force a sync to make sure all docs have been pushed. 
-        this.replicationStatus = await this.syncService.sync(false, null)
+        this.replicationStatus = await this.syncService.sync(false, null, this.reduceBatchSize)
         // Rewind sync is activated when you provide the 'fullSync' variable - push or pull:
-        this.replicationStatus = await this.syncService.sync(false, SyncDirection.pull)
+        this.replicationStatus = await this.syncService.sync(false, SyncDirection.pull, this.reduceBatchSize)
       } else if (this.fullSync === 'push') {
         // Push Rewind Full Sync
-        this.replicationStatus = await this.syncService.sync(false, SyncDirection.push)
+        this.replicationStatus = await this.syncService.sync(false, SyncDirection.push, this.reduceBatchSize)
       }
       
       this.dbDocCount = this.replicationStatus.dbDocCount
@@ -243,11 +243,17 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.runComparison = null
   }
 
+  toggleReduceBatchSize() {
+    this.reduceBatchSize = !this.reduceBatchSize
+    console.log(`Reduced batch size is: ${this.reduceBatchSize ? 'on' : 'off'}`)
+  }
+
   reset() {
     this.runComparison = null
     this.fullSync = null
     this.comparisonDisabled = false
     this.rewindDisabled = false
+    this.reduceBatchSize = false
   }
 
   checkState(el, direction, action) {
