@@ -151,6 +151,10 @@ export class TangyFormsPlayerComponent {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
         })
+        formEl.addEventListener('TANGY_MEDIA_UPDATE', _ => {
+          // _.preventDefault()
+          console.log("Caught TANGY_MEDIA_UPDATE event at: " + _.target.name)
+        }, true)
       }
       formEl.addEventListener('before-submit', (event) => {
         this.$beforeSubmit.next(true)
