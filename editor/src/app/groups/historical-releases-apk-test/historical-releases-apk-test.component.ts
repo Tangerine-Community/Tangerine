@@ -3,6 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
+import { WindowRef } from 'src/app/core/window-ref.service';
 import { BuildInfo } from '../build-info';
 import { GroupsService } from '../services/groups.service';
 import {_TRANSLATE} from "../../shared/_services/translation-marker";
@@ -18,12 +19,12 @@ export class HistoricalReleasesApkTestComponent implements OnInit {
   
   title = _TRANSLATE('APK Test Archives')
   breadcrumbs:Array<Breadcrumb> = []
-  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date','buildId', 'tangerineVersion', 'releaseNotes', 'QR Code'];
+  displayedColumns = [ 'versionTag', 'build', 'releaseType', 'date','buildId', 'tangerineVersion', 'releaseNotes', 'qrCode'];
   groupsData;
   groupId;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
+  constructor(private groupsService: GroupsService, private route: ActivatedRoute, private windowRef: WindowRef) { }
 
   async ngOnInit() {
     this.breadcrumbs = [
@@ -43,12 +44,11 @@ export class HistoricalReleasesApkTestComponent implements OnInit {
     this.groupsData.paginator = this.paginator;
   }
 
-  getReleaseCode(event:Event) {
-    const eventId = (event.target as HTMLInputElement).id;
-    if (eventId) {
-      const url = eventId
+  getReleaseCode(data) {
+    if (data) {
+      const url = `${this.windowRef.nativeWindow.location.origin}/releases/qa/apks/archive/${this.groupId}/${this.groupId}-${data}.apk`
       const qr = new qrcode.default(0, 'H')
-      qr.addData(`{"id":"${eventId}"}`)
+      qr.addData(`${url}`)
       qr.make()
       window['dialog'].innerHTML = `<div style="width:${Math.round((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth) *.6)}px" id="qr"></div>`
       window['dialog'].open()
