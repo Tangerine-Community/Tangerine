@@ -157,7 +157,7 @@ export class GroupService {
     await createGroupDatabase(groupId, '-conflict-revs')
     // Add group to groups database.
     const created = new Date().toJSON()
-    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_manage_group_roles' && permission !== 'can_access_dashboard') };
+    const adminRole = { role: 'Admin', permissions: permissionsList.groupPermissions.filter(permission => permission !== 'can_access_dashboard' && permission !== 'can_delete_cases') };
     const memberRole = { role: 'Member', permissions: ['can_access_author', 'can_access_forms', 'can_access_data', 'can_access_download_csv'] };
     const group = <Group>{_id: groupId, label, created, roles :[
       adminRole, memberRole
