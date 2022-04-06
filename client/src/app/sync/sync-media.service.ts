@@ -70,80 +70,16 @@ export class SyncMediaService {
       const fileName = entry.name + '.webm'
       console.log("processing file: " + fileName)
       this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + entry.name + "</p>"
-      // let fileObj
-      // if (this.window.isCordovaApp) {
-      //   fileObj = await new Promise(resolve => {
-      //     entry.file(resolve);
-      //   })
-      // } else {
-      //   fileObj = entry
-      // }
-      // const arrayBuffer = await new Response(fileObj).arrayBuffer();
-      // const arrayBuffer = await new Promise((resolve, reject) => {
-      //   entry.file((file) => {
-      //     const reader = new FileReader();
-      //     reader.onloadend = (event) => {
-      //       console.log("reader.onloadend") 
-      //       resolve(event.target.result)
-      //     }
-      //     reader.onerror = (error) => reject(error);
-      //     reader.readAsArrayBuffer(file);
-      //   })
-      // })
-      //   const reader = new FileReader();
-      //   reader.onloadend = (e) => {
-      //     resolve(e.target.result)
-      //   };
-      //   reader.readAsArrayBuffer(fileObj)
-      // })
-
-      // const blob = new Blob([new Uint8Array(<ArrayBuffer>arrayBuffer)], { type: "video/webm;codecs=vp9,opus" });
-      //
-      // if (blob) {
-      //   const formData = new FormData();
-      //   formData.append('video', blob, fileName);
-      //   // /app/:group/media-upload
-      //   const url =  `${appConfig.serverUrl}app/${appConfig.groupId}/client-media-upload`
-      //   const upload$ = this.http.post(url, formData, {
-      //     headers: new HttpHeaders({
-      //       'Authorization': appConfig.uploadToken
-      //     }),
-      //     reportProgress: true,
-      //     observe: 'events'
-      //   })
-      //     .pipe(
-      //       finalize(() => this.reset())
-      //     );
-      //
-      //   this.uploadSub = upload$.subscribe(event => {
-      //     if (event.type == HttpEventType.UploadProgress) {
-      //       this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-      //     }
-      //   })
-      // }
-      // this.window.resolveLocalFileSystemURL(path, resolve)
-      // this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
+      
       this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, async dirEntry => {
-      // this.window.requestFileSystem(this.window.LocalFileSystem.PERSISTENT, 0, async fs => {
-        console.log('file system open: ' + dirEntry.name);
-        // this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir + entry.name, async dirEntry => {
-        //   fs.root.getFile(cordova.file.externalRootDirectory + this.mediaFilesDir + entry.name, { create: true, exclusive: false }, function (fileEntry) {
+        // console.log('file system open: ' + dirEntry.name);
         dirEntry.getFile(entry.name, { create: true, exclusive: false },  (fileEntry) => {
-          // dirEntry.getFile(path + entry.name, {create: true, exclusive: false}, fileEntry => {
             fileEntry.file( (file) => {
               // const reader = new FileReader();
               let reader = this.getFileReader();
               reader.onloadend = (e) => {
                 // Create a blob based on the FileReader "result", which we asked to be retrieved as an ArrayBuffer
-                // const blob = new Blob([new Uint8Array(<ArrayBuffer>this.result)], {type: "image/png"});
                 const blob = new Blob([new Uint8Array(<ArrayBuffer>e.target.result)], {type: "image/png"});
-                // var oReq = new XMLHttpRequest();
-                // oReq.open("POST", "http://mysweeturl.com/upload_handler", true);
-                // oReq.onload = function (oEvent) {
-                //   // all done!
-                // };
-                // // Pass the blob in to XHR's send method
-                // oReq.send(blob);
                 const formData = new FormData();
                 formData.append('video', blob, fileName);
                 // /app/:group/media-upload
@@ -175,9 +111,6 @@ export class SyncMediaService {
       }, function (err) {
         console.error('error getting filesystem!' + err);
       });
-
-      
-      
     }
     return this.replicationStatus
   }
