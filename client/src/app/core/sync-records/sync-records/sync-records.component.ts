@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../../shared/_services/user.service';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
+import {SyncMediaService} from "../../../sync/sync-media.service";
 
 @Component({
   selector: 'app-sync-records',
@@ -24,7 +25,8 @@ export class SyncRecordsComponent implements OnInit {
   constructor(
     private syncingService: SyncingService,
     private userService: UserService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private syncMediaService: SyncMediaService
   ) {
     this.window = window;
   }
@@ -87,6 +89,13 @@ export class SyncRecordsComponent implements OnInit {
         console.error(error);
         this.isSyncSuccesful = false;
         this.getUploadProgress();
+      }
+
+      try {
+        await this.syncMediaService.sync()
+        console.log('Media Sync Completed')
+      } catch (e) {
+        console.log(e)
       }
     });
   }
