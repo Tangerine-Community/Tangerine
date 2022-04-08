@@ -41,11 +41,12 @@ export class PeersComponent implements OnInit, AfterContentInit {
   async init() {
     this.endpoints = [];
     if (this.window.isCordovaApp) {
-      if (window['cordova'].getAppVersion) {
-        window['cordova'].getAppVersion.getVersionNumber().then(function (version) {
-          document.querySelector('#p2p-results').innerHTML += 'App version: ' + version + '<br/>';
-        });
-      }
+      // After installing the @types for cordova, Property 'getAppVersion' does not exist on type 'Cordova'.
+      // if (window['cordova'].getAppVersion) {
+      //   window['cordova'].getAppVersion.getVersionNumber().then(function (version) {
+      //     document.querySelector('#p2p-results').innerHTML += 'App version: ' + version + '<br/>';
+      //   });
+      // }
     }
   }
 

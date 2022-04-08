@@ -14,6 +14,8 @@ import {ReplicationStatus} from "./classes/replication-status.class";
 import {UserDatabase} from "../shared/_classes/user-database.class";
 import {_TRANSLATE} from "../shared/translation-marker";
 import {finalize} from "rxjs/operators";
+import * as SparkMD5 from 'spark-md5';
+import {AppConfig} from "../shared/_classes/app-config.class";
 
 declare const cordova: any;
 
@@ -43,18 +45,19 @@ export class SyncMediaService {
   syncMediaServiceEndTime:string
   mediaFilesDir: string = 'Documents/Tangerine/media/'
   mediaFilesDirEntry: any
-  uploadProgress:number;
+  uploadProgress:any = {};
   uploadSub: Subscription;
   statusMessage: string;
+  private lastEntry: boolean;
 
 
-  async sync():Promise<ReplicationStatus> {
+  async sync():Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
     
     this.syncMediaServiceStartTime = new Date().toISOString()
-    this.replicationStatus = new ReplicationStatus()
+    // this.replicationStatus = new ReplicationStatus()
 
     const path = cordova.file.externalRootDirectory + this.mediaFilesDir
     this.mediaFilesDirEntry = await new Promise(resolve =>
@@ -66,53 +69,120 @@ export class SyncMediaService {
     });
 
     for (var i = 0; i < mediaDirEntries.length; i++) {
+      this.lastEntry = (i+1) === mediaDirEntries.length
       const entry = mediaDirEntries[i]
       const fileName = entry.name + '.webm'
       console.log("processing file: " + fileName)
-      this.statusMessage += "<p>" + _TRANSLATE("Processing Directory: ") + entry.name + "</p>"
-      
-      this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, async dirEntry => {
-        // console.log('file system open: ' + dirEntry.name);
-        dirEntry.getFile(entry.name, { create: true, exclusive: false },  (fileEntry) => {
-            fileEntry.file( (file) => {
-              // const reader = new FileReader();
-              let reader = this.getFileReader();
-              reader.onloadend = (e) => {
-                // Create a blob based on the FileReader "result", which we asked to be retrieved as an ArrayBuffer
-                const blob = new Blob([new Uint8Array(<ArrayBuffer>e.target.result)], {type: "image/png"});
-                const formData = new FormData();
-                formData.append('video', blob, fileName);
-                // /app/:group/media-upload
-                const url = `${appConfig.serverUrl}app/${appConfig.groupId}/client-media-upload`
-                const upload$ = this.http.post(url, formData, {
-                  headers: new HttpHeaders({
-                    'Authorization': appConfig.uploadToken
-                  }),
-                  reportProgress: true,
-                  observe: 'events'
-                })
-                  .pipe(
-                    finalize(() => this.reset())
-                  );
+      this.statusMessage =  _TRANSLATE("Uploading file: ") + fileName + "; " + (i+1) + _TRANSLATE(" of ") + mediaDirEntries.length + _TRANSLATE(" to upload")
 
-                this.uploadSub = upload$.subscribe(event => {
-                  if (event.type == HttpEventType.UploadProgress) {
-                    this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-                  }
-                })
-              };
-              // Read the file as an ArrayBuffer
-              reader.readAsArrayBuffer(file);
-            }, function (err) {
-              console.error('error getting fileentry file!' + err);
-            })
-          // })
-        })
-      }, function (err) {
-        console.error('error getting filesystem!' + err);
+      const dirEntry = await new Promise(resolve =>
+        this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
+      );
+      const fileEntry = await new Promise(resolve => {
+        (dirEntry as DirectoryEntry).getFile(entry.name, {create: true, exclusive: false}, resolve);
+        }
+      );
+      const file:File = await new Promise(resolve => {
+        (fileEntry as FileEntry).file(resolve)
       });
+
+      const md5 = await this.computeChecksumMd5(file)
+      console.log("md5: " + md5)
+      
+      const statusMessage = await this.uploadFile(file, appConfig)
+      console.log("statusMessage: " + statusMessage)
     }
-    return this.replicationStatus
+  }
+  
+  async uploadFile(file: File, appConfig:AppConfig): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let reader = this.getFileReader();
+      reader.onloadend = (e) => {
+        // Create a blob based on the FileReader "result", which we asked to be retrieved as an ArrayBuffer
+        const blob = new Blob([new Uint8Array(<ArrayBuffer>e.target.result)], {type: "video/webm"});
+        const fileName = file.name + '.webm'
+        const formData = new FormData();
+        formData.append('video', blob, fileName);
+        // /app/:group/media-upload
+        const url = `${appConfig.serverUrl}app/${appConfig.groupId}/client-media-upload`
+        const upload$ = this.http.post(url, formData, {
+          headers: new HttpHeaders({
+            'Authorization': appConfig.uploadToken
+          }),
+          reportProgress: true,
+          observe: 'events'
+        })
+          .pipe(
+            finalize(() => this.reset())
+          );
+
+        this.uploadSub = upload$.subscribe(event => {
+          if (event.type == HttpEventType.UploadProgress) {
+            const progress = Math.round(100 * (event.loaded / event.total));
+            if (this.lastEntry && progress === 100) {
+              this.statusMessage = _TRANSLATE("Upload complete")
+              resolve(this.statusMessage)
+            }
+            this.uploadProgress = {
+              progress: progress,
+              message:this.statusMessage
+            }
+            this.syncMessage$.next(this.uploadProgress)
+          }
+        })
+      };
+      // Read the file as an ArrayBuffer
+      reader.readAsArrayBuffer(file);
+    })
+  }
+
+  /**
+   * Credit: https://dev.to/qortex/compute-md5-checksum-for-a-file-in-typescript-59a4
+   * @param file
+   */
+  computeChecksumMd5(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const chunkSize = 2097152; // Read in chunks of 2MB
+      const spark = new SparkMD5.ArrayBuffer();
+      const fileReader = this.getFileReader();
+
+      let cursor = 0; // current cursor in file
+
+      fileReader.onerror = function(): void {
+        reject('MD5 computation failed - error reading the file');
+      };
+
+      // read chunk starting at `cursor` into memory
+      function processChunk(chunk_start: number): void {
+        const chunk_end = Math.min(file.size, chunk_start + chunkSize);
+        fileReader.readAsArrayBuffer(file.slice(chunk_start, chunk_end));
+      }
+
+      // when it's available in memory, process it
+      // If using TS >= 3.6, you can use `FileReaderProgressEvent` type instead 
+      // of `any` for `e` variable, otherwise stick with `any`
+      // See https://github.com/Microsoft/TypeScript/issues/25510
+      fileReader.onload = function(e: any): void {
+        spark.append(e.target.result); // Accumulate chunk to md5 computation
+        cursor += chunkSize; // Move past this chunk
+
+        if (cursor < file.size) {
+          // Enqueue next chunk to be accumulated
+          processChunk(cursor);
+        } else {
+          // Computation ended, last chunk has been processed. Return as Promise value.
+          // This returns the base64 encoded md5 hash, which is what
+          // Rails ActiveStorage or cloud services expect
+          resolve(btoa(spark.end(true)));
+
+          // If you prefer the hexdigest form (looking like
+          // '7cf530335b8547945f1a48880bc421b2'), replace the above line with:
+          // resolve(spark.end());
+        }
+      };
+
+      processChunk(0);
+    });
   }
 
   getFileReader(): FileReader {
