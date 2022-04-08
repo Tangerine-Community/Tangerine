@@ -4,6 +4,8 @@ import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../../shared/_services/user.service';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import {SyncMediaService} from "../../../sync/sync-media.service";
+import {Subscription} from "rxjs";
+import {HttpEventType} from "@angular/common/http";
 
 @Component({
   selector: 'app-sync-records',
@@ -21,6 +23,10 @@ export class SyncRecordsComponent implements OnInit {
   contentVersion = '';
   window: any;
   peerList = [];
+  uploadProgress: any = {};
+  progress: number;
+  uploadSub: Subscription;
+  statusMessage: string;
 
   constructor(
     private syncingService: SyncingService,
@@ -78,6 +84,14 @@ export class SyncRecordsComponent implements OnInit {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
     const appConfig = await this.appConfigService.getAppConfig();
+
+    this.syncMediaService.syncMessage$.subscribe({
+      next: (progress) => {
+        this.uploadProgress = progress;
+        this.progress = progress.progress;
+        this.statusMessage = progress.message;
+      }
+    });
     usernames.map(async username => {
       try {
         const result = await this.syncingService.sync(username);

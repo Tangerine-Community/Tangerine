@@ -15,6 +15,19 @@
         <p>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</p>
         <p>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</p>
       </div>
+      <div *ngIf="uploadProgress">
+        {{statusMessage}}
+      </div>
+      <div class="progress">
+
+        <mat-progress-bar class="progress-bar" mode="determinate"
+                          [value]="progress" *ngIf="uploadProgress">
+        </mat-progress-bar>
+
+<!--        <mat-icon class="cancel-upload" (click)="cancelUpload()"-->
+<!--                  *ngIf="uploadProgress">delete_forever</mat-icon>-->
+
+      </div>
 
     </mat-card-content>
     <mat-card-actions>
