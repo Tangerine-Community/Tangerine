@@ -173,35 +173,20 @@ export class TangyFormsPlayerComponent implements OnInit {
         })
         formEl.addEventListener('TANGY_MEDIA_UPDATE', async _ => {
           // _.preventDefault()
-          const filename = _.target.name
+          const filename = _.target.name + '_' + this.response?._id
           const domString = _.target.value
           console.log("Caught TANGY_MEDIA_UPDATE event at: " + filename)
           if (this.window.isCordovaApp) {
-            // const fileLocation = cordova.file.externalRootDirectory + this.mediaFilesDir;
-
-            // const file = new File(domString, filename)
-
             async function getBlob() {
               return new Promise((resolve, reject) => {
                 function reqListener () {
                   console.log(this.response);
                   resolve(this.response)
                 }
-                // oReq = new XMLHttpRequest();
-                // oReq.addEventListener("load", reqListener);
-                // oReq.open("GET", "./assets/app-config.json");
-                // oReq.send();
-
                 const xhr = new XMLHttpRequest();
                 xhr.open('GET', domString, true);
                 xhr.addEventListener("load", reqListener);
                 xhr.responseType = 'blob';
-                // xhr.onload = function(e) {
-                //   if (this.status == 200) {
-                //     const myBlob = this.response;
-                //     // myBlob is now the blob that the object URL pointed to.
-                //   }
-                // };
                 xhr.send();
               })
             }
