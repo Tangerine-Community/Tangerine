@@ -330,6 +330,11 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
+        } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
+              : ""
+          )
         } else if (input.tagName === 'TANGY-EFTOUCH') {
           let elementKeys = Object.keys(input.value);
           for (let key of elementKeys) {

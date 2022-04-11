@@ -29,6 +29,11 @@ module.exports = async (req, res) => {
       const data = value.replace('data:image/png;base64,', '')
       const buffer = Buffer.from(data, 'base64')
       return res.send(buffer)
+    } else if (value.includes('blob:file')) {
+      const filePath = `/tangerine/client/content/groups/${req.params.groupId}/client-uploads/${variableName}_${responseId}.webm`
+      console.log("filePath", filePath)
+      res.type('webm')
+      return res.sendFile(filePath)
     } else {
       res.send(value)
     }
