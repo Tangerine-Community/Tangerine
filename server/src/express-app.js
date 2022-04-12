@@ -240,6 +240,7 @@ app.use('/app/:groupId/csv-templates/update', require('./routes/group-csv-templa
 app.use('/app/:groupId/csv-templates/delete/:templateId', require('./routes/group-csv-templates-delete.js'));
 // @TODO Need isAdminUser middleware.
 app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
+app.use('/app/:group/client-media-upload', hasUploadToken, upload.any(), require('./routes/group-client-upload.js'));
 app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   let contentPath = `/tangerine/groups/${req.params.group}/client`
