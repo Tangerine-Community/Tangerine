@@ -2,14 +2,7 @@ import {Injectable} from "@angular/core";
 import {HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders} from "@angular/common/http";
 import {DeviceService} from "../device/services/device.service";
 import {AppConfigService} from "../shared/_services/app-config.service";
-import {UserService} from "../shared/_services/user.service";
-import {TangyFormsInfoService} from "../tangy-forms/tangy-forms-info-service";
-import {CaseService} from "../case/services/case.service";
-import {CaseDefinitionsService} from "../case/services/case-definitions.service";
-import {TangyFormService} from "../tangy-forms/tangy-form.service";
-import {VariableService} from "../shared/_services/variable.service";
 import {Subject, Subscription, throwError} from "rxjs";
-import {SyncDirection} from "./sync-direction.enum";
 import {ReplicationStatus} from "./classes/replication-status.class";
 import {UserDatabase} from "../shared/_classes/user-database.class";
 import {_TRANSLATE} from "../shared/translation-marker";
@@ -28,10 +21,6 @@ export class SyncMediaService {
     private http: HttpClient,
     private deviceService: DeviceService,
     private appConfigService: AppConfigService,
-    private userService: UserService,
-    private tangyFormsInfoService: TangyFormsInfoService,
-    private tangyFormService: TangyFormService,
-    private variableService: VariableService
   ) {
     this.window = window;
   }
@@ -49,12 +38,13 @@ export class SyncMediaService {
   uploadSub: Subscription;
   statusMessage: string;
   private lastEntry: boolean;
+  mediaFilesToSync:boolean = false;
 
 
   async sync(): Promise<any> {
+    this.mediaFilesToSync = false
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
-    const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
 
     this.syncMediaServiceStartTime = new Date().toISOString()
     // this.replicationStatus = new ReplicationStatus()
@@ -67,6 +57,10 @@ export class SyncMediaService {
       const reader = this.mediaFilesDirEntry.createReader();
       reader.readEntries((entries) => resolve(entries))
     });
+    
+    if (mediaDirEntries.length > 0) {
+      this.mediaFilesToSync = true
+    }
 
     for (var i = 0; i < mediaDirEntries.length; i++) {
       this.lastEntry = (i + 1) === mediaDirEntries.length

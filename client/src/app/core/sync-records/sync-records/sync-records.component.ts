@@ -27,6 +27,7 @@ export class SyncRecordsComponent implements OnInit {
   progress: number;
   uploadSub: Subscription;
   statusMessage: string;
+  syncComplete:boolean = false;
 
   constructor(
     private syncingService: SyncingService,
@@ -83,7 +84,6 @@ export class SyncRecordsComponent implements OnInit {
   async sync() {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
-    const appConfig = await this.appConfigService.getAppConfig();
 
     this.syncMediaService.syncMessage$.subscribe({
       next: (progress) => {
@@ -104,6 +104,8 @@ export class SyncRecordsComponent implements OnInit {
         this.isSyncSuccesful = false;
         this.getUploadProgress();
       }
+      
+      this.syncComplete = true;
 
       try {
         await this.syncMediaService.sync()
