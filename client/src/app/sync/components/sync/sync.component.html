@@ -94,13 +94,19 @@
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Advanced Options
+        {{'Advanced Options' | translate }}
       </mat-panel-title>
     </mat-expansion-panel-header>
     
     <p>{{'Please note that these options should not be done routinely. Choose one of the following options and then ' +
     'click the "Start" button above. To cancel your selection, click it again. If the Sync direction is "Pull", ' +
     'the app will first do a normal Sync to make sure all local docs have been pushed to the server.' | translate }}</p>
+
+    <p>{{'If Comparison or Rewind sync fail due to memory issues, check the box below to reduce the number of documents processed during ' +
+         'synchronization and indexing which may workaround the issue.' | translate }}</p>
+
+    <mat-checkbox id="reduce-batch-size-checkbox" (click)="toggleReduceBatchSize()">{{'Reduce Batch Size' | translate }}</mat-checkbox>
+    <p></p>
     
     <h3>Comparison Sync</h3>
     

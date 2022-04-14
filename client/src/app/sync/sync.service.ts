@@ -55,6 +55,9 @@ export class SyncService {
   compareLimit: number = 150
   batchSize: number = 200
   writeBatchSize: number = 50
+  reducedBatchSize: number = 50
+  reducedWriteBatchSize: number = 20
+  reducedCompareLimit: number = 50
 
   cancel() {
     this.syncCouchdbService.cancel()
@@ -66,7 +69,7 @@ export class SyncService {
     })
   }
   
-  async sync(isFirstSync = false, fullSync?:SyncDirection):Promise<ReplicationStatus> {
+  async sync(isFirstSync = false, fullSync?:SyncDirection, reduceBatchSize = false):Promise<ReplicationStatus> {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
@@ -100,7 +103,8 @@ export class SyncService {
       },
       null,
       isFirstSync,
-      fullSync
+      fullSync,
+      reduceBatchSize
     )
     console.log('Finished syncCouchdbService sync: ' + JSON.stringify(this.syncMessage))
 
@@ -316,7 +320,7 @@ export class SyncService {
    * Indexes views.
    * @param direction
    */
-  async compareDocs(direction: string):Promise<ReplicationStatus> {
+  async compareDocs(direction: string, reduceBatchSize = false):Promise<ReplicationStatus> {
     
     let status = <ReplicationStatus>{
       pulled: 0,
@@ -327,18 +331,10 @@ export class SyncService {
     }
     
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.batchSize) {
-      this.batchSize = appConfig.batchSize
-      console.log("this.batchSize: " + this.batchSize)
-    }
-    if (appConfig.writeBatchSize) {
-      this.writeBatchSize = appConfig.writeBatchSize
-      console.log("this.writeBatchSize: " + this.writeBatchSize)
-    }
-    if (appConfig.compareLimit) {
-      this.compareLimit = appConfig.compareLimit
-      console.log("this.compareLimit: " + this.compareLimit)
-    }
+    this.batchSize = reduceBatchSize ? this.reducedBatchSize : appConfig.batchSize || this.batchSize
+    this.writeBatchSize = reduceBatchSize ? this.reducedWriteBatchSize : appConfig.writeBatchSize || this.writeBatchSize
+    this.compareLimit = reduceBatchSize ? this.reducedCompareLimit : appConfig.compareLimit || this.compareLimit
+
     const device = await this.deviceService.getDevice()
     let userDb: UserDatabase = await this.userService.getUserDatabase()
 
