@@ -90,7 +90,7 @@ export class SyncMediaService {
           (fileEntry as FileEntry).remove(resolve)
         });
       } catch (e) {
-        this.statusMessage = _TRANSLATE("ERROR: Upload failed") + " : " + e.error
+        this.statusMessage = _TRANSLATE("ERROR: Upload failed") + " : " + JSON.stringify(e.error)
         console.log(e)
       }
       console.log("statusMessage: " + this.statusMessage)
@@ -124,10 +124,25 @@ export class SyncMediaService {
         formData.append('md5', md5);
         // /app/:group/media-upload
         const url = `${appConfig.serverUrl}app/${appConfig.groupId}/client-media-upload`
-        const upload$ = await this.http.post(url, formData, {
-          headers: new HttpHeaders({
+        let headers;
+        if (appConfig.syncProtocol === '2') {
+          // get token
+          const device = await this.deviceService.getDevice()
+          // formData.append('deviceId', device._id);
+          // formData.append('deviceToken', device.token);
+          // formData.append('groupId', appConfig.groupId);
+          headers = new HttpHeaders({
+            'deviceId': device._id,
+            'deviceToken': device.token,
+            'groupId': appConfig.groupId
+          })
+        } else {
+          headers = new HttpHeaders({
             'Authorization': appConfig.uploadToken
-          }),
+          })
+        }
+        const upload$ = await this.http.post(url, formData, {
+          headers: headers,
           reportProgress: true,
           observe: 'events'
         })
