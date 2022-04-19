@@ -23,9 +23,10 @@ Go into the nginx container and execute the below commands
 ```
 docker exec -it nginx bash
 
- apt-get update
- apt-get install certbot python-certbot-nginx
- apt-get install vim
+add-apt-repository ppa:certbot/certbot
+apt-get update
+apt-get install certbot python-certbot-nginx
+apt-get install vim
 ```
 
 Now execute and follow the promtps for cerbot. It will fail but that's ok
