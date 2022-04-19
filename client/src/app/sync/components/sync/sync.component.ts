@@ -3,6 +3,7 @@ import { SyncService } from './../../sync.service';
 import {Component, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
 import { SyncDirection } from '../../sync-direction.enum';
+import {SyncMediaService} from "../../sync-media.service";
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
 const STATUS_IN_PROGRESS = 'STATUS_IN_PROGRESS'
@@ -39,6 +40,9 @@ export class SyncComponent implements OnInit, OnDestroy {
   rewindDisabled = false;
   indexing: any
   indexingMessage: string
+  mediaSyncStatusMessage: string;
+  uploadProgress: any = {};
+  mediaSyncProgress: number;
 
   @Input() fullSync: string;
   currentCheckedValue: boolean = null
@@ -46,7 +50,8 @@ export class SyncComponent implements OnInit, OnDestroy {
   constructor(
     private syncService: SyncService,
     private userService: UserService,
-    private ren: Renderer2
+    private ren: Renderer2,
+    private syncMediaService: SyncMediaService
   ) { }
 
   async ngOnInit() {
@@ -206,6 +211,21 @@ export class SyncComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
     this.isSyncing = false
+
+    this.syncMediaService.syncMessage$.subscribe({
+      next: (progress) => {
+        this.uploadProgress = progress;
+        this.mediaSyncProgress = progress.progress;
+        this.mediaSyncStatusMessage = progress.message;
+      }
+    });
+
+    try {
+      await this.syncMediaService.sync()
+      console.log('Media Sync Completed')
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   cancel() {
