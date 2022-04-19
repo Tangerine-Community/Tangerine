@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
   const uploadedMd5 = req.body['md5']
   for (let file of req.files) {
     const fileMd5 = await md5File(file.path)
-    const fileMd5Base64 = Buffer.from(fileMd5, 'binary').toString('base64')
+    // const fileMd5Base64 = Buffer.from(fileMd5, 'binary').toString('base64')
     // console.log("uploadedMd5: " + uploadedMd5 + " fileMd5Base64: " + fileMd5Base64 + " file.path: " + file.path)
     // console.log("uploadedMd5: " + uploadedMd5 + " fileMd5: " + fileMd5 + " file.path: " + file.path)
     if (fileMd5 !== uploadedMd5) {

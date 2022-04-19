@@ -13,7 +13,7 @@ const { v4: uuidv4 } = require('uuid');
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
-  console.log(cmd)
+  console.log(cmd) 
 }
 */
 
@@ -278,6 +278,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         let selectedOption = input.value.find(option => !!option.value) 
         set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
       } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
+        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+      } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
         set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
