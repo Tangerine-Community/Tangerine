@@ -198,6 +198,7 @@ RUN_OPTIONS="
   --env \"T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP\" \
   --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
+  --env \"T_REBUILD_MYSQL_DBS=$T_REBUILD_MYSQL_DBS\" \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
