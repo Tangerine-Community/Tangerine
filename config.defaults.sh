@@ -97,7 +97,7 @@ T_TAG=""
 T_ORIENTATION="any"
 
 # In CSV output, set cell value to this when something is disabled or hidden. Set to "ORIGINAL_VALUE" if you want the actual value stored.
-T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH="999"
+T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH="ORIGINAL_VALUE"
 
 # Set to false if you would like to use the skip-if functionality in editor. You would want to use skip-if as opposed to show-if if your form developers are stashing values in hidden fields.
 T_HIDE_SKIP_IF="true"
