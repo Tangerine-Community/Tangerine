@@ -77,9 +77,9 @@ https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ConsoleAlarms.htm
 
 ### Custom namespaces
 
-Go to CloudWatch -> Metrics -> All Metrics and scroll to Custom namespaces to see the CWAgent namespace.
+The default namespace for metrics collected by the CloudWatch agent is CWAgent, although you can specify a different namespace when you configure the agent. CWAgent provides useful data such as disk utilization which can be used on a dashboard or for an alert.
 
-The default namespace for metrics collected by the CloudWatch agent is CWAgent, although you can specify a different namespace when you configure the agent.
+Go to CloudWatch -> Metrics -> All Metrics and scroll to Custom namespaces to see the CWAgent namespace.
 
 List of data collected by CWAgent here: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html
 
