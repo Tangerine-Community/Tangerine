@@ -54,14 +54,14 @@ RUN cd /tangerine/client/ && \
     npm install
 
 # Install PWA tools.
-RUN git config --global url."git://".insteadOf https://
+RUN git config --global url."https://".insteadOf git://
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
 ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
 RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
     npm install
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
 ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
-RUN git config --global url."git://".insteadOf https://
+RUN git config --global url."https://".insteadOf git://
 RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root
