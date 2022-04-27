@@ -219,6 +219,7 @@ async function go() {
           formResponse.caseEventId = caseEventId
           formResponse.caseId = caseId
           formResponse.eventFormId = eventForm.id
+          formResponse.groupId = groupId
           if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
             formResponse.participantId = participantUuid
           }

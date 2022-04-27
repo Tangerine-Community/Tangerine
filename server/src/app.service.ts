@@ -14,6 +14,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 const tangyModules = require('./modules/index.js')()
 const enableModule = require('./modules/enable-module.js')
 const disableModule = require('./modules/disable-module.js')
+import {spawn} from "child_process";
 
 @Injectable()
 export class AppService {
@@ -116,18 +117,29 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        const result = await exec('reporting-worker-batch')
-        if (result.stderr) {
-          log.error(result.stderr)
-          await sleep(3*1000)
+        const result = await spawn('reporting-worker-batch')
+        result.stdout.on('data', function(msg){
+          console.log(msg.toString())
+        });
+        result.on('error', async function (err) {
+          console.log('Oh noez, teh errurz: ' + err);
+          // log.error(result.stderr)
+          await sleep(3 * 1000)
+        });
+        result.stderr.on('data', (data) => {
+          console.error(`stderr: ${data}`);
+        });
+        // if (result.stderr) {
+        //   log.error(result.stderr)
+        //   await sleep(3*1000)
+        // } else {
+        workerState = await reportingWorker.getWorkerState()
+        if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+          await sleep(this.configService.config().reportingDelay)
         } else {
-          workerState = await reportingWorker.getWorkerState()
-          if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-            await sleep(this.configService.config().reportingDelay)
-          } else {
-            log.info(`Processed ${workerState.processed} changes.`)
-          }
+          log.info(`Processed ${workerState.processed} changes.`)
         }
+        // }
       } catch (error) {
         log.error('Reporting process had an error.')
         console.log(error)

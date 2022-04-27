@@ -26,6 +26,7 @@ const {
   REPORTING_WORKER_STATE,
   REPORTING_WORKER_RUNNING
 } = require('./constants')
+const tangyModules = require('../modules/index.js')()
 
 /*
  * Getter and setters for worker state.
@@ -143,13 +144,17 @@ async function batch() {
     const startTime = new Date().toISOString()
     let processed = 0
     // Process batch.
+    debugger;
+    await tangyModules.hook('reportingWorkerBatchStart', {workerState})
     for (let database of workerState.databases) { 
       const db = new DB(database.name)
       const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
       if (changes.results.length > 0) {
         for (let change of changes.results) {
           try {
-            await changeProcessor(change, db)
+            log.debug(`reporting-worker started processing change: ${change.id}`)
+            await changeProcessor(change, db, tangyModules.injected)
+            log.debug(`reporting-worker finished processing change: ${change.id}`)
             processed++
           } catch (error) {
             let errorMessage = JSON.stringify(error)
@@ -172,6 +177,7 @@ async function batch() {
         database.sequence = changes.results[changes.results.length-1].seq
       }
     }
+    await tangyModules.hook('reportingWorkerBatchEnd', {workerState})
     // Persist state to disk.
     await setWorkerState(Object.assign({}, workerState, {
       tally: workerState.tally + processed,
@@ -181,7 +187,7 @@ async function batch() {
     }))
     await unsetWorkingFlag()
     return 
-  } catch(e) {
+  } catch (e) {
     console.error(e)
   }
 }
