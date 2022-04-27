@@ -13,6 +13,7 @@
 const PouchDB = require('pouchdb');
 const tangyModules = require('../modules/index.js')()
 const fs = require('fs-extra')
+const log = require('tangy-log').log
 const CODE_SKIP = '999'
 
 let DB = PouchDB.defaults({
@@ -20,7 +21,7 @@ let DB = PouchDB.defaults({
 });
 
 // Function to pass to PouchDbChangesFeedWorker.
-exports.changeProcessor = (change, sourceDb) => {
+exports.changeProcessor = (change, sourceDb, injected) => {
   return new Promise((resolve, reject) => {
     sourceDb.get(change.id)
       .then(doc => {
@@ -29,9 +30,12 @@ exports.changeProcessor = (change, sourceDb) => {
             if (process.env.T_PAID_ALLOWANCE !== 'unlimited' && !doc.paid) {
               resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
             } else {
-              processFormResponse(doc, sourceDb, change.seq)
+              processFormResponse(doc, sourceDb, change.seq, injected)
                 .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
-                .catch(error => { reject(error) })
+                .catch(error => {
+                  log.error(`Error in processFormResponse for doc id: ${doc._id}`)
+                  return reject(error) 
+                })
             }
             break
           default:
@@ -53,8 +57,9 @@ exports.changeProcessor = (change, sourceDb) => {
  * @returns {object} - saved document
  */
 
-const processFormResponse = async (doc, sourceDb, sequence) => {
-  reportingConfig = {
+const processFormResponse = async (doc, sourceDb, sequence, injected) => {
+  console.log("processFormResponse injected: " + JSON.stringify(injected.foo))
+  let reportingConfig = {
     exclusions: [],
     substitutions: {},
     pii: []
@@ -66,7 +71,7 @@ const processFormResponse = async (doc, sourceDb, sequence) => {
     }
   } catch (err) { }
   try {
-    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
+    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig, injected})
   } catch (error) {
     console.error(error)
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
