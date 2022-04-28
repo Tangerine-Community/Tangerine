@@ -127,7 +127,7 @@ export class AppService {
           await sleep(3 * 1000)
         });
         result.stderr.on('data', (data) => {
-          console.error(`stderr: ${data}`);
+          console.error(`stderr reporting-worker-batch: ${data}`);
         });
         // if (result.stderr) {
         //   log.error(result.stderr)

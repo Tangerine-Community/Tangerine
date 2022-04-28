@@ -58,6 +58,7 @@ module.exports = {
       // if (injected.connection) {
       // const mysqlDbName = sourceDb.name.replace(/-/g,'')
       // create the connection to database
+
       let connection
       try {
         let hostname = process.env.T_MYSQL_CONTAINER_NAME
@@ -65,7 +66,7 @@ module.exports = {
         let password = process.env.T_MYSQL_PASSWORD
         // connection = await mysql.createConnection({host: hostname, user: username, password: password, database: mysqlDbName});
         // connection = await mysql.createConnection({host: hostname, user: username, password: password});
-        connection = knex({
+        connection = await knex({
           client: 'mysql2',
           connection: {
             host: 'mysql',
@@ -83,7 +84,7 @@ module.exports = {
       if (connection) {
         inject('connection', connection, workerState)
         inject('foo', 'bar', workerState)
-        console.log("injected connection in reportingWorkerBatch hook in mysql-js module")
+        console.log("injected connection in reportingWorkerBatch hook in mysql module")
       }
       // inject('foo', true)
       // }
