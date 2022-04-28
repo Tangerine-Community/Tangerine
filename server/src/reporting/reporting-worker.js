@@ -145,11 +145,11 @@ async function batch() {
     let processed = 0
     // Process batch.
     debugger;
-    await tangyModules.hook('reportingWorkerBatchStart', {workerState})
     for (let database of workerState.databases) { 
       const db = new DB(database.name)
       const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
       if (changes.results.length > 0) {
+        await tangyModules.hook('reportingWorkerBatchStart', {workerState})
         for (let change of changes.results) {
           try {
             log.debug(`reporting-worker started processing change: ${change.id}`)
@@ -173,11 +173,11 @@ async function batch() {
             log.error(`Error on change sequence ${change.seq} with id ${change.id} - Error: ${errorMessage} ::::: `)
           }
         }
+        await tangyModules.hook('reportingWorkerBatchEnd', {workerState})
         // Even if an error was thrown, continue on with the next sequences.
         database.sequence = changes.results[changes.results.length-1].seq
       }
     }
-    await tangyModules.hook('reportingWorkerBatchEnd', {workerState})
     // Persist state to disk.
     await setWorkerState(Object.assign({}, workerState, {
       tally: workerState.tally + processed,
