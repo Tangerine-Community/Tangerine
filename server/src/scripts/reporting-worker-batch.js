@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const log = require('tangy-log').log
 const reportingWorker = require('../reporting/reporting-worker.js')
 if (process.argv[2] === '--help') {
   console.log('Starts a batch process and passes the moduleName to the reporting worker')
@@ -7,9 +8,9 @@ if (process.argv[2] === '--help') {
   process.exit()
 }
 async function go(moduleName) {
-  console.log("Starting batch process for module: " + moduleName)
+  log.debug("Starting batch process for module: " + moduleName)
   await reportingWorker.batch(moduleName)
 }
-// console.log("process.argv: " + process.argv)
-// console.log("args: " + args)
+// log.debug("process.argv: " + process.argv)
+// log.debug("args: " + args)
 go(process.argv[2])

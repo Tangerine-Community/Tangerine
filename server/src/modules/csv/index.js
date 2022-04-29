@@ -60,7 +60,7 @@ module.exports = {
           const groupId = sourceDb.name
           // TODO: Can't the fetch of the locationList be cached?
           const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-          console.log(doc.type)
+          // log.debug(doc.type)
           // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
           // @TODO Rename `-reporting` to `-csv-sanitized`.
@@ -152,12 +152,12 @@ module.exports = {
                     await SANITIZED_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
                   } catch (e) {
                     if (e.status !== 404) {
-                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                      log.debug("CSV: Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
                     }
                   }
                 }
               } else {
-                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                log.debug("CSV: NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
               }
               // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
               // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
@@ -458,7 +458,7 @@ function saveFormInfo(flatResponse, db) {
         const firstOccurenceIndex = safeKey.indexOf('.')
         const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
         let keyArray = key.split('.')
-        // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+        // log.debug("key: " + key + " keyArray: " + JSON.stringify(keyArray))
         // Preserve the namespacing of user-profile
         if (keyArray[0] === 'user-profile') {
           formDoc.columnHeaders.push({ key, header: safeKey })
@@ -505,25 +505,25 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
       let userProfileId = doc.tangerineModifiedByUserId
       if (!userProfileId) {
         // try an older profileId
-        console.log("CSV generation - using older userProfileId as key instead of tangerineModifiedByUserId: " + userProfileId)
+        log.debug("CSV generation - using older userProfileId as key instead of tangerineModifiedByUserId: " + userProfileId)
         // Find the key that points to user profile ID.
         const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
         userProfileId = doc[userProfileIdKey]
       }
-      console.log("CSV generation for doc _id: " + doc._id + "; adding userProfile to doc with userProfileId: " + userProfileId + " ")
+      log.debug("CSV generation for doc _id: " + doc._id + "; adding userProfile to doc with userProfileId: " + userProfileId + " ")
       let userProfileDoc;
       if (userProfileId !== 'Editor') {
         // Get the user profile.
         try {
           userProfileDoc = await reportingDb.get(userProfileId)
         } catch (e) {
-          // console.log("Info: CSV reportingDb " + reportingDb.name + " does not yet have userProfileId: " + userProfileId + " doc id: " + doc._id + " Error: " + JSON.stringify(e))
+          // log.debug("Info: CSV reportingDb " + reportingDb.name + " does not yet have userProfileId: " + userProfileId + " doc id: " + doc._id + " Error: " + JSON.stringify(e))
           // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
           try {
             let userProfileDocOriginal = await sourceDb.get(userProfileId)
             userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false, sourceDb.name);
           } catch (e) {
-            console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
+            log.debug("Error processing CSV -reporting db: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
           }
         }
 
@@ -531,7 +531,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
           let docNamespaced;
           let keyArray = key.split('.')
-          // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+          // log.debug("key: " + key + " keyArray: " + JSON.stringify(keyArray))
           if (keyArray[0] === 'user-profile') {
             docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
           } else {
@@ -567,13 +567,13 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         return docWithProfile
       } else {
         // No user profile for editor
-        console.log("Returning doc instead of docWithProfile since this is Editor.")
+        log.debug("CSV: Returning doc instead of docWithProfile since this is Editor.")
         return doc
       }
       
     } catch (error) {
       // There must not be a user profile yet doc uploaded yet.
-      console.log("Returning doc instead of docWithProfile because user profile not uploaded yet.")
+      log.debug("CSV: Returning doc instead of docWithProfile because user profile not uploaded yet.")
       return doc
     }
 }
