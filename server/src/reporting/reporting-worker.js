@@ -49,6 +49,7 @@ async function getCustomConfig() {
     const file = await readFile(CUSTOM_DATABASE_CONFIGURATION, 'utf-8')
     return JSON.parse(file)
   } catch (e) {
+    log.debug(`No custom database configuration found.`)
     return JSON.parse([])
   }
 }
@@ -160,18 +161,24 @@ async function batch(moduleName) {
     workerState = Object.assign({} , defaultState, workerState)
     const customConfig = await getCustomConfig()
     workerState.customConfigurations = customConfig
-    const customConfigurations = workerState.customConfigurations
+    let customConfigurations = workerState.customConfigurations
     const customModuleConfig = customConfigurations[moduleName]
+    log.debug("Custom config for " + moduleName + ": " + JSON.stringify(customModuleConfig))
     const DB = PouchDB.defaults(workerState.pouchDbDefaults)
     const startTime = new Date().toISOString()
     let processed = 0
     // Process batch.
     for (let database of workerState.databases) {
       let dbSequence;
+      log.debug("database.name: " + database.name)
       if (customModuleConfig) {
         const customDbConfig = customModuleConfig.databases.find(db => db.name === database.name)
-        dbSequence = customDbConfig.sequence
-        log.debug("Using custom configuration for " + moduleName + " database " + customDbConfig.name + " sequence " + customDbConfig.sequence)
+        if (customDbConfig) {
+          dbSequence = customDbConfig.sequence
+          log.debug("Using custom configuration for " + moduleName + " database " + customDbConfig.name + " sequence " + dbSequence)
+        } else {
+          log.debug("No customDbConfig for " + moduleName + " database " + database.name)
+        }
       } else {
         log.debug("Using default configuration for " + moduleName)
         dbSequence = database.sequence
@@ -211,9 +218,14 @@ async function batch(moduleName) {
       processed,
       startTime
     }))
-    const updatedCustomConfig = {}
-    updatedCustomConfig[moduleName] = workerState.databases
-    await setCustomConfig(updatedCustomConfig)
+    log.debug("workerState.databases: " + JSON.stringify(workerState.databases))
+    if (!customConfigurations) {
+      customConfigurations = {}
+    }
+    customConfigurations[moduleName] = {
+      databases: workerState.databases
+    }
+    await setCustomConfig(customConfigurations)
     try {
       await unsetWorkingFlag()
     } catch (e) {
