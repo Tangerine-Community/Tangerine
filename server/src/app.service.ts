@@ -14,7 +14,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 const tangyModules = require('./modules/index.js')()
 const enableModule = require('./modules/enable-module.js')
 const disableModule = require('./modules/disable-module.js')
-const { spawn } = require('child_process');
+const spawn = require('await-spawn')
 
 @Injectable()
 export class AppService {
@@ -97,12 +97,12 @@ export class AppService {
   }
   
   async checkForNewGroups(){
-    console.log("Checking for new groups...")
+    log.debug("Checking for new groups...")
     const newGroupQueue = []
     this.groupService.groups$.subscribe({
       next: (group) => {
-        console.log('Queueing report database(s) processing for ' + group._id + ': ')
-        console.log(group)
+        log.debug('Queueing report database(s) processing for ' + group._id + ': ')
+        log.debug(group)
         newGroupQueue.push(group)
       }
     })
@@ -112,7 +112,7 @@ export class AppService {
       while (newGroupQueue.length > 0) {
         const newGroup = newGroupQueue.pop()
         await reportingWorker.addGroup(newGroup)
-        console.log('Adding group ' + newGroup + ' to reporting worker queue')
+        log.debug('Adding group ' + newGroup + ' to reporting worker queue')
         // groupsList = await this.groupService.listGroups()
         await sleep(5*1000)
       }
@@ -121,7 +121,7 @@ export class AppService {
   }
 
   async keepAliveReportingWorker() {
-    console.log("Loading the reporting worker...")
+    log.debug("Loading the reporting worker...")
     let groupsList = await this.groupService.listGroups()
     await reportingWorker.prepare(groupsList)
     let workerState = await reportingWorker.getWorkerState()
@@ -132,7 +132,7 @@ export class AppService {
       ? JSON.parse(process.env.T_MODULES_USING_CHANGES_FEED.replace(/\'/g,`"`))
       : []
     let modulesUsingChangesFeedEnabled = modulesUsingChangesFeed.filter(moduleName => enabledModules.includes(moduleName))
-    console.log('modulesUsingChangesFeedEnabled.length: ' + modulesUsingChangesFeedEnabled.length + ' modulesUsingChangesFeedEnabled: ' + modulesUsingChangesFeedEnabled)
+    log.debug('modulesUsingChangesFeedEnabled.length: ' + modulesUsingChangesFeedEnabled.length + ' modulesUsingChangesFeedEnabled: ' + modulesUsingChangesFeedEnabled)
     
       // Keep alive.
       while (true) {
@@ -146,7 +146,7 @@ export class AppService {
   }
 
   private async runBatchModule(moduleName, modulesUsingChangesFeedEnabled) {
-    console.log('Enabling changes feed for ' + moduleName + ' out of ' + modulesUsingChangesFeedEnabled)
+    log.debug('Enabling changes feed for ' + moduleName)
     try {
       // const workerState = await reportingWorker.getWorkerState()
     // , {
@@ -154,28 +154,40 @@ export class AppService {
     //       stdio: 'ignore'
     //   }
     //   const result = await spawn(`reporting-worker-batch, [${moduleName}]`)
-      const child = await spawn(`reporting-worker-batch ${moduleName}`, {
-        stdio: 'inherit',
-        shell: true
-      });
-      child.on('data', async (data) => {
-        log.error(`log child data:\n${data}`);
-        console.error(`console child data:\n${data}`);
-        await sleep(3 * 1000)
-      });
-      child.on('error', (data) => {
-        console.error(`child error:\n${data}`);
-      });
-      child.on('close', async (code) => {
-        console.log(`reporting-worker-batch ${moduleName} exited with code ${code}`);
-      });
+    //   const child = await spawn(`reporting-worker-batch ${moduleName}`, {
+    //     stdio: 'inherit',
+    //     shell: true
+    //   });
+    //   child.on('data', async (data) => {
+    //     log.error(`log child data:\n${data}`);
+    //     console.error(`console child data:\n${data}`);
+    //     await sleep(3 * 1000)
+    //   });
+    //   child.on('error', (data) => {
+    //     console.error(`child error:\n${data}`);
+    //   });
+    //   child.on('close', async (code) => {
+    //     log.debug(`reporting-worker-batch ${moduleName} exited with code ${code}`);
+    //   });
+
+      try {
+        const child = await spawn(`reporting-worker-batch ${moduleName}`, {
+          stdio: 'inherit',
+          shell: true
+        });
+        log.debug(child.toString())
+        // log.debug(`Sleeping 1 second after completing batch.`)
+        // await sleep(1 * 1000)
+      } catch (e) {
+        log.error(e.stderr.toString())
+      }
 
       const workerState = await reportingWorker.getWorkerState()
       if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-        console.log('No documents processed, restarting reporting worker after delay: ' + this.configService.config().reportingDelay + ' seconds')
+        log.debug(`No documents processed for ${moduleName} module; restarting reporting worker after ${this.configService.config().reportingDelay/1000} second delay`)
         await sleep(this.configService.config().reportingDelay)
       } else {
-        log.info(`Processed ${workerState.processed} changes.`)
+        log.info(`Processed ${workerState.processed} changes for ${moduleName} module.`)
       }
       // if (result.stderr) {
       //   log.error(result.stderr)
@@ -190,13 +202,13 @@ export class AppService {
       // }
     } catch (error) {
       log.error('Reporting process had an error:' + error)
-      // console.log(error)
+      // log.debug(error)
       await sleep(3 * 1000)
     }
   }
 
   async keepAliveSessionSweeper() {
-    console.log("Loading the session sweeper...")
+    log.debug("Loading the session sweeper...")
     const config = await this.configService.config()
     if (config.enabledModules.includes('sync-protocol-2')) {
       setInterval(() => {
@@ -205,7 +217,6 @@ export class AppService {
           this.groupService.expireAdminCouchdbSessions()
         } catch (e) {
           log.error(e)
-          console.log(e)
         }
       }, 60*60*1000)
     }

@@ -11,7 +11,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 const { 
   REPORTING_WORKER_PAUSE, 
   REPORTING_WORKER_STATE,
-  REPORTING_WORKER_RUNNING
+  REPORTING_WORKER_RUNNING, CUSTOM_DATABASE_CONFIGURATION
 } = require('./constants')
 
 async function clearReportingCache() {
@@ -34,6 +34,7 @@ async function clearReportingCache() {
     databases: state.databases.map(({name, sequence}) => { return {name, sequence: 0}})
   })
   await writeFile(REPORTING_WORKER_STATE, JSON.stringify(newState), 'utf-8')
+  await writeFile(CUSTOM_DATABASE_CONFIGURATION, JSON.stringify({}), 'utf-8')
   await unlink(REPORTING_WORKER_PAUSE)
   console.log('Done!')
   return newState

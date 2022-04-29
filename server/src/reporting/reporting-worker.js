@@ -50,7 +50,7 @@ async function getCustomConfig() {
     return JSON.parse(file)
   } catch (e) {
     log.debug(`No custom database configuration found.`)
-    return JSON.parse([])
+    return JSON.parse({})
   }
 }
 
@@ -163,7 +163,11 @@ async function batch(moduleName) {
     workerState.customConfigurations = customConfig
     let customConfigurations = workerState.customConfigurations
     const customModuleConfig = customConfigurations[moduleName]
-    log.debug("Custom config for " + moduleName + ": " + JSON.stringify(customModuleConfig))
+    if (customModuleConfig) {
+      log.debug("Custom config for " + moduleName + ": " + JSON.stringify(customModuleConfig))
+    } else {
+      log.debug("No custom config for " + moduleName)
+    }
     const DB = PouchDB.defaults(workerState.pouchDbDefaults)
     const startTime = new Date().toISOString()
     let processed = 0
@@ -240,6 +244,8 @@ async function batch(moduleName) {
 
 module.exports.getWorkerState = getWorkerState
 module.exports.setWorkerState = setWorkerState
+module.exports.getCustomConfig = getCustomConfig
+module.exports.setCustomConfig = setCustomConfig
 module.exports.prepare = prepare
 module.exports.addGroup = addGroup
 module.exports.batch = batch
