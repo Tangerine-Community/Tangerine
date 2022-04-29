@@ -129,7 +129,8 @@ async function addGroup(group) {
  * Run a reporting worker batch.
  */
 
-async function batch() {
+async function batch(moduleName) {
+  log.debug("Running reporting worker batch for " + moduleName)
   try {
     // Something may have paused the process like clearing cache.
     while (await isPaused()) {
@@ -179,10 +180,15 @@ async function batch() {
       processed,
       startTime
     }))
-    await unsetWorkingFlag()
+    try {
+      await unsetWorkingFlag()
+    } catch (e) {
+      // log.error(`Error unsetting working flag: ${e}`)
+    }
+    log.info(`Reporting worker batch for ${moduleName} complete.`)
     return 
   } catch(e) {
-    console.error(e)
+    console.error("Error: " + e)
   }
 }
 

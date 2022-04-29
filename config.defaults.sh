@@ -38,6 +38,9 @@ T_MYSQL_PHPMYADMIN="FALSE"
 # T_MODULES="['csv','class','logstash','sync-protocol-2']"
 T_MODULES="['csv']"
 
+# Identify modules that use the changes feed:
+T_MODULES_USING_CHANGES_FEED="['csv','rshiny','mysql']"
+
 # Don't want the default container name of tangerine? Specify that here.
 T_CONTAINER_NAME="tangerine"
 
