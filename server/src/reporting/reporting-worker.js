@@ -18,13 +18,14 @@ const defaultState = {
   "databases": [],
   "pouchDbDefaults": {
     "prefix": "/tangerine/db/"
-  }
+  },
+  "customConfigurations": []
 }
 const { 
   REPORTING_WORKER_PAUSE_LENGTH, 
   REPORTING_WORKER_PAUSE, 
   REPORTING_WORKER_STATE,
-  REPORTING_WORKER_RUNNING
+  REPORTING_WORKER_RUNNING, CUSTOM_DATABASE_CONFIGURATION
 } = require('./constants')
 
 /*
@@ -37,6 +38,23 @@ async function getWorkerState() {
 
 async function setWorkerState(workerState) {
   await writeFile(REPORTING_WORKER_STATE, JSON.stringify(workerState), 'utf-8')
+}
+
+/*
+ * Getter and setters for custom database configuration.
+ */
+
+async function getCustomConfig() {
+  try {
+    const file = await readFile(CUSTOM_DATABASE_CONFIGURATION, 'utf-8')
+    return JSON.parse(file)
+  } catch (e) {
+    return JSON.parse([])
+  }
+}
+
+async function setCustomConfig(customConfig) {
+  await writeFile(CUSTOM_DATABASE_CONFIGURATION, JSON.stringify(customConfig), 'utf-8')
 }
 
 /*
@@ -138,15 +156,28 @@ async function batch(moduleName) {
     }
     await setWorkingFlag()
     // Now it's safe to get the state.
-    workerState = await getWorkerState()
+    let workerState = await getWorkerState()
     workerState = Object.assign({} , defaultState, workerState)
+    const customConfig = await getCustomConfig()
+    workerState.customConfigurations = customConfig
+    const customConfigurations = workerState.customConfigurations
+    const customModuleConfig = customConfigurations[moduleName]
     const DB = PouchDB.defaults(workerState.pouchDbDefaults)
     const startTime = new Date().toISOString()
     let processed = 0
     // Process batch.
-    for (let database of workerState.databases) { 
+    for (let database of workerState.databases) {
+      let dbSequence;
+      if (customModuleConfig) {
+        const customDbConfig = customModuleConfig.databases.find(db => db.name === database.name)
+        dbSequence = customDbConfig.sequence
+        log.debug("Using custom configuration for " + moduleName + " database " + customDbConfig.name + " sequence " + customDbConfig.sequence)
+      } else {
+        log.debug("Using default configuration for " + moduleName)
+        dbSequence = database.sequence
+      }
       const db = new DB(database.name)
-      const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
+      const changes = await db.changes({ since: dbSequence, limit: workerState.batchSizePerDatabase, include_docs: false })
       if (changes.results.length > 0) {
         for (let change of changes.results) {
           try {
@@ -180,6 +211,9 @@ async function batch(moduleName) {
       processed,
       startTime
     }))
+    const updatedCustomConfig = {}
+    updatedCustomConfig[moduleName] = workerState.databases
+    await setCustomConfig(updatedCustomConfig)
     try {
       await unsetWorkingFlag()
     } catch (e) {

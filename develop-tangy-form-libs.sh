@@ -202,6 +202,7 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/data/archives:/archives/:delegated \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json:delegated \
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json:delegated \
+  --volume $(pwd)/data/custom-database-configuration.json:/custom-database-configuration.json:delegated \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/:delegated \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups:delegated \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets:delegated \
