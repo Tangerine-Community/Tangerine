@@ -204,6 +204,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
+  --volume $(pwd)/data/custom-database-configuration.json:/custom-database-configuration.json:delegated \
   --volume $(pwd)/data/id_rsa:/root/.ssh/id_rsa:delegated \
   --volume $(pwd)/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
