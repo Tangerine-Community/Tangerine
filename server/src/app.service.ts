@@ -14,6 +14,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 const tangyModules = require('./modules/index.js')()
 const enableModule = require('./modules/enable-module.js')
 const disableModule = require('./modules/disable-module.js')
+const { spawn } = require('child_process');
 
 @Injectable()
 export class AppService {
@@ -40,9 +41,9 @@ export class AppService {
       this.installed = true
     }
     await this.startModules()
+    this.checkForNewGroups()
     this.keepAliveReportingWorker()
     this.keepAliveSessionSweeper()
-    
   }
 
   async startModules() {
@@ -94,9 +95,9 @@ export class AppService {
     await exec(`chmod 600 /root/.ssh/id_rsa`)
     log.info('Installed')
   }
-
-  async keepAliveReportingWorker() {
-    let groupsList = await this.groupService.listGroups()
+  
+  async checkForNewGroups(){
+    console.log("Checking for new groups...")
     const newGroupQueue = []
     this.groupService.groups$.subscribe({
       next: (group) => {
@@ -105,38 +106,97 @@ export class AppService {
         newGroupQueue.push(group)
       }
     })
+
+    // Add new groups if there are entries in the newGroupQueue array.
+    while (true) {
+      while (newGroupQueue.length > 0) {
+        const newGroup = newGroupQueue.pop()
+        await reportingWorker.addGroup(newGroup)
+        console.log('Adding group ' + newGroup + ' to reporting worker queue')
+        // groupsList = await this.groupService.listGroups()
+        await sleep(5*1000)
+      }
+      await sleep(5*1000)
+    }
+  }
+
+  async keepAliveReportingWorker() {
+    console.log("Loading the reporting worker...")
+    let groupsList = await this.groupService.listGroups()
     await reportingWorker.prepare(groupsList)
     let workerState = await reportingWorker.getWorkerState()
-    // Keep alive.
-    while (true) {
-      try {
-        workerState = await reportingWorker.getWorkerState()
-        // Add new groups if there are entries in the newGroupQueue array.
-        while (newGroupQueue.length > 0) {
-          await reportingWorker.addGroup(newGroupQueue.pop())
-          groupsList = await this.groupService.listGroups()
-        }
-        const result = await exec('reporting-worker-batch')
-        if (result.stderr) {
-          log.error(result.stderr)
+    let enabledModules = process.env.T_MODULES
+      ? JSON.parse(process.env.T_MODULES.replace(/\'/g,`"`))
+      : []
+    let modulesUsingChangesFeed = process.env.T_MODULES_USING_CHANGES_FEED
+      ? JSON.parse(process.env.T_MODULES_USING_CHANGES_FEED.replace(/\'/g,`"`))
+      : []
+    let modulesUsingChangesFeedEnabled = modulesUsingChangesFeed.filter(moduleName => enabledModules.includes(moduleName))
+    console.log('modulesUsingChangesFeedEnabled.length: ' + modulesUsingChangesFeedEnabled.length + ' modulesUsingChangesFeedEnabled: ' + modulesUsingChangesFeedEnabled)
+    
+      // Keep alive.
+      while (true) {
+        for (let i = 0; i < modulesUsingChangesFeedEnabled.length; i++) {
+          const moduleName = modulesUsingChangesFeedEnabled[i]
+          await this.runBatchModule(moduleName, modulesUsingChangesFeedEnabled);
           await sleep(3*1000)
-        } else {
-          workerState = await reportingWorker.getWorkerState()
-          if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-            await sleep(this.configService.config().reportingDelay)
-          } else {
-            log.info(`Processed ${workerState.processed} changes.`)
-          }
         }
-      } catch (error) {
-        log.error('Reporting process had an error.')
-        console.log(error)
-        await sleep(3*1000)
       }
+      // await sleep(3*1000)
+  }
+
+  private async runBatchModule(moduleName, modulesUsingChangesFeedEnabled) {
+    console.log('Enabling changes feed for ' + moduleName + ' out of ' + modulesUsingChangesFeedEnabled)
+    try {
+      // const workerState = await reportingWorker.getWorkerState()
+    // , {
+    //     detached: true,
+    //       stdio: 'ignore'
+    //   }
+    //   const result = await spawn(`reporting-worker-batch, [${moduleName}]`)
+      const child = await spawn(`reporting-worker-batch ${moduleName}`, {
+        stdio: 'inherit',
+        shell: true
+      });
+      child.on('data', async (data) => {
+        log.error(`log child data:\n${data}`);
+        console.error(`console child data:\n${data}`);
+        await sleep(3 * 1000)
+      });
+      child.on('error', (data) => {
+        console.error(`child error:\n${data}`);
+      });
+      child.on('close', async (code) => {
+        console.log(`reporting-worker-batch ${moduleName} exited with code ${code}`);
+      });
+
+      const workerState = await reportingWorker.getWorkerState()
+      if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+        console.log('No documents processed, restarting reporting worker after delay: ' + this.configService.config().reportingDelay + ' seconds')
+        await sleep(this.configService.config().reportingDelay)
+      } else {
+        log.info(`Processed ${workerState.processed} changes.`)
+      }
+      // if (result.stderr) {
+      //   log.error(result.stderr)
+      //   await sleep(3 * 1000)
+      // } else {
+      //   const workerState = await reportingWorker.getWorkerState()
+      //   if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+      //     await sleep(this.configService.config().reportingDelay)
+      //   } else {
+      //     log.info(`Processed ${workerState.processed} changes.`)
+      //   }
+      // }
+    } catch (error) {
+      log.error('Reporting process had an error:' + error)
+      // console.log(error)
+      await sleep(3 * 1000)
     }
   }
 
   async keepAliveSessionSweeper() {
+    console.log("Loading the session sweeper...")
     const config = await this.configService.config()
     if (config.enabledModules.includes('sync-protocol-2')) {
       setInterval(() => {
