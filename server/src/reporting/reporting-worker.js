@@ -192,7 +192,7 @@ async function batch(moduleName) {
       if (changes.results.length > 0) {
         for (let change of changes.results) {
           try {
-            await changeProcessor(change, db)
+            await changeProcessor(change, db, moduleName)
             processed++
           } catch (error) {
             let errorMessage = JSON.stringify(error)
@@ -235,7 +235,7 @@ async function batch(moduleName) {
     } catch (e) {
       // log.error(`Error unsetting working flag: ${e}`)
     }
-    log.info(`Reporting worker batch for ${moduleName} complete.`)
+    log.debug(`Reporting worker batch for ${moduleName} complete.`)
     return 
   } catch(e) {
     console.error("Error: " + e)
