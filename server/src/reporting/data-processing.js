@@ -14,13 +14,14 @@ const PouchDB = require('pouchdb');
 const tangyModules = require('../modules/index.js')()
 const fs = require('fs-extra')
 const CODE_SKIP = '999'
+const log = require('tangy-log').log
 
 let DB = PouchDB.defaults({
   prefix: process.env.T_COUCHDB_ENDPOINT
 });
 
 // Function to pass to PouchDbChangesFeedWorker.
-exports.changeProcessor = (change, sourceDb) => {
+exports.changeProcessor = (change, sourceDb, module) => {
   return new Promise((resolve, reject) => {
     sourceDb.get(change.id)
       .then(doc => {
@@ -29,7 +30,7 @@ exports.changeProcessor = (change, sourceDb) => {
             if (process.env.T_PAID_ALLOWANCE !== 'unlimited' && !doc.paid) {
               resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
             } else {
-              processFormResponse(doc, sourceDb, change.seq)
+              processFormResponse(doc, sourceDb, change.seq, module)
                 .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
                 .catch(error => { reject(error) })
             }
@@ -53,11 +54,12 @@ exports.changeProcessor = (change, sourceDb) => {
  * @returns {object} - saved document
  */
 
-const processFormResponse = async (doc, sourceDb, sequence) => {
+const processFormResponse = async (doc, sourceDb, sequence, module) => {
   reportingConfig = {
     exclusions: [],
     substitutions: {},
-    pii: []
+    pii: [],
+    module: module
   }
   try {
     reportingConfig = {
@@ -66,7 +68,7 @@ const processFormResponse = async (doc, sourceDb, sequence) => {
     }
   } catch (err) { }
   try {
-    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
+    const hookResponse = await tangyModules.hook('reportingOutputs',  {doc, sourceDb, sequence, reportingConfig})
   } catch (error) {
     console.error(error)
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)

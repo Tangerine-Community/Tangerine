@@ -132,21 +132,27 @@ export class AppService {
       ? JSON.parse(process.env.T_MODULES_USING_CHANGES_FEED.replace(/\'/g,`"`))
       : []
     let modulesUsingChangesFeedEnabled = modulesUsingChangesFeed.filter(moduleName => enabledModules.includes(moduleName))
-    log.debug('modulesUsingChangesFeedEnabled.length: ' + modulesUsingChangesFeedEnabled.length + ' modulesUsingChangesFeedEnabled: ' + modulesUsingChangesFeedEnabled)
+    // log.debug('modulesUsingChangesFeedEnabled.length: ' + modulesUsingChangesFeedEnabled.length + ' modulesUsingChangesFeedEnabled: ' + modulesUsingChangesFeedEnabled)
     
       // Keep alive.
       while (true) {
         for (let i = 0; i < modulesUsingChangesFeedEnabled.length; i++) {
           const moduleName = modulesUsingChangesFeedEnabled[i]
-          await this.runBatchModule(moduleName, modulesUsingChangesFeedEnabled);
-          await sleep(3*1000)
+          if (moduleName === 'mysql') {
+            await this.runBatchModule(moduleName, modulesUsingChangesFeedEnabled);
+            await sleep(3*1000)
+          } else {
+            await sleep(3*1000)
+          }
+          // await this.runBatchModule(moduleName, modulesUsingChangesFeedEnabled);
+          // await sleep(3*1000)
         }
       }
       // await sleep(3*1000)
   }
 
   private async runBatchModule(moduleName, modulesUsingChangesFeedEnabled) {
-    log.debug('Enabling changes feed for ' + moduleName)
+    log.info('Enabling changes feed for ' + moduleName)
     try {
       // const workerState = await reportingWorker.getWorkerState()
     // , {
@@ -175,7 +181,7 @@ export class AppService {
           stdio: 'inherit',
           shell: true
         });
-        log.debug(child.toString())
+        log.debug('Output from completion of reporting-worker-batch: ' + child.toString())
         // log.debug(`Sleeping 1 second after completing batch.`)
         // await sleep(1 * 1000)
       } catch (e) {
@@ -184,7 +190,7 @@ export class AppService {
 
       const workerState = await reportingWorker.getWorkerState()
       if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-        log.debug(`No documents processed for ${moduleName} module; restarting reporting worker after ${this.configService.config().reportingDelay/1000} second delay`)
+        log.info(`No documents processed for ${moduleName} module; restarting reporting worker after ${this.configService.config().reportingDelay/1000} second delay`)
         await sleep(this.configService.config().reportingDelay)
       } else {
         log.info(`Processed ${workerState.processed} changes for ${moduleName} module.`)
