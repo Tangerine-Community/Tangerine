@@ -67,7 +67,7 @@ async function runPaidWorker() {
   state.groups = processedGroups
   state.batchMarkedPaid = state.groups.reduce((batchMarkedPaid, groupEntry) => batchMarkedPaid + groupEntry.batchMarkedPaid, 0)
   state.totalMarkedPaid = state.groups.reduce((totalMarkedPaid, groupEntry) => totalMarkedPaid + groupEntry.totalMarkedPaid, 0)
-  log.debug(`Saving Paid worker state: ${JSON.stringify(state)}`)
+  // log.debug(`Saving Paid worker state: ${JSON.stringify(state)}`)
   await writeFile('/paid-worker-state.json', JSON.stringify(state), 'utf-8')
   return state
 
