@@ -18,7 +18,9 @@ const defaultState = {
 }
 
 async function runPaidWorker() {
+  log.debug(`Opening paid-worker-state.json`)
   let currentState = JSON.parse(await readFile('/paid-worker-state.json', 'utf-8'))
+  log.debug(`Opened paid-worker-state: ${JSON.stringify(currentState)}`)
   let state = Object.assign({}, defaultState, currentState)
   const groupNames = await groupsList()
   // Ensure all groups are accounted for in state.groups array.
@@ -53,6 +55,7 @@ async function runPaidWorker() {
   state.groups = processedGroups
   state.batchMarkedPaid = state.groups.reduce((batchMarkedPaid, groupEntry) => batchMarkedPaid + groupEntry.batchMarkedPaid, 0)
   state.totalMarkedPaid = state.groups.reduce((totalMarkedPaid, groupEntry) => totalMarkedPaid + groupEntry.totalMarkedPaid, 0)
+  log.debug(`Saving Paid worker state: ${JSON.stringify(state)}`)
   await writeFile('/paid-worker-state.json', JSON.stringify(state), 'utf-8')
   return state
 
