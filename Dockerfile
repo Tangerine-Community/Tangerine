@@ -113,6 +113,7 @@ ADD ./ /tangerine
 RUN mkdir /csv
 RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
+RUN echo {} > /custom-database-configuration.json
 
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && npm start 
