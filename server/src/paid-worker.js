@@ -18,7 +18,7 @@ const defaultState = {
 }
 
 async function runPaidWorker() {
-  log.debug(`Opening paid-worker-state.json`)
+  // log.debug(`Opening paid-worker-state.json`)
   let file
   try {
     file = await readFile('/paid-worker-state.json', 'utf-8')
@@ -26,13 +26,13 @@ async function runPaidWorker() {
     log.debug(`Error while reading paid-worker-state.json: ${e}`)
   }
   if (file.toString() === '') {
-    log.debug(`No paid-worker-state.json found. Creating default state.`)
+    // log.debug(`No paid-worker-state.json found. Creating default state.`)
     // file = JSON.stringify(defaultState)
     file = "{}"
   }
-  log.debug(`paid-worker-state.json: ${JSON.stringify(file)}`)
+  // log.debug(`paid-worker-state.json: ${JSON.stringify(file)}`)
   let currentState = JSON.parse(file)
-  log.debug(`Opened paid-worker-state: ${JSON.stringify(currentState)}`)
+  // log.debug(`Opened paid-worker-state: ${JSON.stringify(currentState)}`)
   let state = Object.assign({}, defaultState, currentState)
   const groupNames = await groupsList()
   // Ensure all groups are accounted for in state.groups array.
