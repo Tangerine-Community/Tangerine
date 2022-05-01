@@ -50,7 +50,7 @@ async function getCustomConfig() {
     return JSON.parse(file)
   } catch (e) {
     log.debug(`No custom database configuration found.`)
-    return JSON.parse({})
+    return JSON.parse("{}")
   }
 }
 
