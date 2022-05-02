@@ -16,6 +16,7 @@ if (process.argv[2] === '--help') {
 const moduleName = process.argv[2]
 const group = process.argv[3]
 const sequence = process.argv[4]
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 async function go(module, groupId, sequence) {
   log.debug(`Resetting sequence for group ${groupId} and module ${module} and sequence ${sequence}`)
