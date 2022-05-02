@@ -400,12 +400,15 @@ async function createTable(knex, groupId, tableName, docType, createFunction, pr
  * T_REBUILD_MYSQL_DBS
  * @returns {Promise<void>}
  */
-async function rebuildMysqlDb(tablenameSuffix) {
+async function rebuildMysqlDb(tablenameSuffix, tableOnly) {
   if (tablenameSuffix === undefined) {
     tablenameSuffix = ''
     log.info('Rebuilding Mysql db')
   } else {
     log.info('Rebuilding Mysql db with table name suffix: ' + tablenameSuffix)
+  }
+  if (tableOnly !== undefined) {
+    log.info('Rebuilding only this table name: ' + tableOnly)
   }
   const startTime = new Date()
   const startTimeMs = startTime.getTime()
@@ -430,39 +433,43 @@ async function rebuildMysqlDb(tablenameSuffix) {
     groupNames = await groupsList()
   }
   
+  
+  
   for (let groupId of groupNames) {
     let tableName, docType, createFunction, primaryKey
     // const mysqlDbName = groupId.replace(/-/g, '')
     const pathToStateFile = `/mysql-module-state/${groupId}.ini`
 
-    tableName = 'participant' + tablenameSuffix
-    docType = 'participant'
-    primaryKey = 'participantID'
-    createFunction = function (t) {
-      t.engine('InnoDB')
-      t.string(primaryKey, 36).notNullable().primary();
-      t.string('CaseID', 36).index('participant_CaseID_IDX');
-      t.double('inactive');
+    if (tablename && tablename === 'participant') {
+      tableName = 'participant' + tablenameSuffix
+      docType = 'participant'
+      primaryKey = 'participantID'
+      createFunction = function (t) {
+        t.engine('InnoDB')
+        t.string(primaryKey, 36).notNullable().primary();
+        t.string('CaseID', 36).index('participant_CaseID_IDX');
+        t.double('inactive');
+      }
+      await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
+      await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+      await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
+      log.info('Finished processing: ' + tableName)
     }
-    await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
-    await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
-    log.info('Finished processing: ' + tableName)
-
-    tableName = 'case_instances' + tablenameSuffix
-    docType = 'case'
-    primaryKey = 'CaseID'
-    createFunction = function (t) {
-      t.engine('InnoDB')
-      t.string(primaryKey, 36).notNullable().primary();
-      t.integer('complete');
-      t.bigint('startunixtime');//TODO: is this being set properly in mysql?
+    if (tablename && tablename === 'case_instances') {
+      tableName = 'case_instances' + tablenameSuffix
+      docType = 'case'
+      primaryKey = 'CaseID'
+      createFunction = function (t) {
+        t.engine('InnoDB')
+        t.string(primaryKey, 36).notNullable().primary();
+        t.integer('complete');
+        t.bigint('startunixtime');//TODO: is this being set properly in mysql?
+      }
+      await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
+      await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+      await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
+      log.info('Finished processing: ' + tableName)
     }
-    await knex.schema.withSchema(groupId.replace(/-/g, '')).dropTableIfExists(tableName)
-    await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    await queryAndConvertDocuments(groupId, docType, knex, pathToStateFile, tableName, primaryKey, undefined, tablenameSuffix);
-    log.info('Finished processing: ' + tableName)
-    
     tableName = 'caseevent' + tablenameSuffix
     docType = 'case-event'
     primaryKey = 'CaseEventID'
