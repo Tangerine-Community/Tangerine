@@ -44,6 +44,7 @@
     "mysql-report": "./src/scripts/mysql-report.js",
     "module-cache-clear": "./src/scripts/module-cache-clear.js",
     "rebuild-mysql-db": "./src/scripts/rebuild-mysql-db.js",
+    "rebuild-mysql-participant-table": "./src/scripts/rebuild-mysql-participant-table.js",
     "sync-couchdb-to-mysql": "./src/scripts/sync-couchdb-to-mysql.js"
   },
   "scripts": {
