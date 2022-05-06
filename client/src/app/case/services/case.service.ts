@@ -283,7 +283,7 @@ class CaseService {
   // @TODO Add EventForm.permissions to interface and pass in eventForm in every usage of hasEventFormPermission.
   hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition, eventForm?:EventForm) {
     if (
-      (
+      ((
         eventForm &&
         eventForm.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
       ) ||
@@ -291,7 +291,8 @@ class CaseService {
         !eventFormDefinition.permissions ||
         !eventFormDefinition.permissions[operation] ||
         eventFormDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
-      )
+      )) &&
+      !eventForm.inactive
     ) {
       return true
     } else {
@@ -301,9 +302,11 @@ class CaseService {
 
   hasCaseEventPermission(operation:CaseEventOperation, eventDefinition:CaseEventDefinition) {
     if (
-        !eventDefinition.permissions ||
+        (!eventDefinition.permissions ||
         !eventDefinition.permissions[operation] ||
-        eventDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+        eventDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0)
+        &&
+        !this.caseEvent.inactive
     ) {
       return true
     } else {
@@ -398,6 +401,34 @@ class CaseService {
   disableEventDefinition(eventDefinitionId) {
     if (this.case.disabledEventDefinitionIds.indexOf(eventDefinitionId) === -1) {
       this.case.disabledEventDefinitionIds.push(eventDefinitionId)
+    }
+  }
+
+  activateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: false
+          }
+          : event
+      })
+    }
+  }
+
+  deactivateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: true
+          }
+          : event
+      })
     }
   }
 
@@ -547,6 +578,44 @@ class CaseService {
     }
   }
 
+  activateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: false
+            }
+          )
+        }
+      )
+    }
+  }
+
+  deactivateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: true
+            }
+          )
+        }
+      )
+    }
+  }
+
   /*
    * Participant API
    */
@@ -613,7 +682,7 @@ class CaseService {
     }
   }
 
-  async activateParticipant(participantId:string) {
+  activateParticipant(participantId:string) {
     this.case = {
       ...this.case,
       participants: this.case.participants.map(participant => {
@@ -627,7 +696,7 @@ class CaseService {
     }
   }
 
-  async deactivateParticipant(participantId:string) {
+  deactivateParticipant(participantId:string) {
     this.case = {
       ...this.case,
       participants: this.case.participants.map(participant => {
