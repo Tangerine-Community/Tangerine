@@ -313,9 +313,11 @@ async function queryAndConvertDocuments(groupId, docType, knex, pathToStateFile,
   const reportingDb = DB(`${groupId}-mysql`)
   const tables = []
   try {
+    log.info("Querying byType for " + docType)
     // const docs = await reportingDb.query(viewName)
     const docs = await reportingDb.query('byType', {
-      key: docType
+      key: docType,
+      stale: 'update_after'
     })
     log.info("db.rows.length: " + docs.rows.length)
     for (let i = 0; i < docs.rows.length; i++) {
