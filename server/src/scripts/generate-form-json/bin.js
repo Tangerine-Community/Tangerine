@@ -121,8 +121,24 @@ for (let index = 0; index < forms.length; index++) {
           if (typeof input !== 'undefined') {
             // console.log("typeof input: " + typeof input)
             const root = await XMLParser.parse(window.document, input.toString());
+            // console.log("childNodes: " + root.childNodes[0])
             const name = root.childNodes[0].getAttribute('name')
             const label = root.childNodes[0].getAttribute('label')
+            const children = root.childNodes[0].children
+            const childArray = []
+            if (children.length > 0) {
+              // const options = children.getAttribute('option')
+              // console.log("options: " + options)
+              for (let i = 0; i < children.length; i++) {
+                const child = children[i]
+                console.log("child attributes: " + JSON.stringify(child.attributes))
+                let inputDefinition = {
+                  name: child.innerHTML,
+                  value: child.getAttribute('value')
+                }
+                childArray.push(inputDefinition)
+              }
+            }
             // const identifier = root.childNodes[0].getAttribute('identifier')
             const identifier = root.childNodes[0].getAttribute('identifier') === "" ? true : false
             if (identifier === true) {
@@ -137,6 +153,9 @@ for (let index = 0; index < forms.length; index++) {
               identifier: identifier,
               required: required,
               tagName: tagName
+            }
+            if (childArray.length > 0) {
+              inputDefinition.options = childArray
             }
             itemDefinition.inputEls.push(inputDefinition)
           }
