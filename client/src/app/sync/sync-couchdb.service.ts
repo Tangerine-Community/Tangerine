@@ -81,8 +81,8 @@ export class SyncCouchdbService {
   initialBatchSize = 1000
   writeBatchSize = 50
   changesBatchSize = 25
-  reducedBatchSize = 50
-  reducedWriteBatchSize = 20
+  reducedBatchSize = 10
+  reducedWriteBatchSize = 10
   reducedChangesBatchSize = 1
   pullSyncOptions;
   pushSyncOptions;
