@@ -1,5 +1,20 @@
 # What's new
 
+## v3.23.0
+
+__New Features__
+
+- Enabled video upload feature which uses the new tangy-form input `<tangy-video-capture>`. There is a new video file upload section in the sync feature for both sync-protocol 1 and 2. implementation details in this PR: [3327](https://github.com/Tangerine-Community/Tangerine/pull/3327/files). Issue: [#3212](https://github.com/Tangerine-Community/Tangerine/issues/3212) The new tangy-form input `<tangy-video-capture>` takes the following properties:
+  - frontCamera: Boolean. Whether to use the front camera or the back camera. Default is `true`.
+  - noVideoConstraints: Boolean. Whether to force use of front or back camera. If true, chooses the first available source.  Default is `true`.
+  - codec: String. The codec to use. Default is 'video/webm;codecs=vp9,opus' - AKA webm vp9. It is possible the device may not support all of these codecs. Other potential codecs include `video/webm;codecs=vp8,opus` and `video/webm;codecs=h264,opus`.
+  - videoWidth: Number. The width of the video. Default is `1280` and videoHeight: Number. The height of the video. Default is `720`.
+- Bump tangy-form lib to 4.34.3, tangy-form-editor to 7.14.1. 
+
+__Fixes__
+
+- Add postfix property to tangy-keyboard-input. Also add highlight to value entered. Issue: [3321](https://github.com/Tangerine-Community/Tangerine/issues/3321)
+
 ## v3.22.4
 
 __New Features__
