@@ -16,6 +16,7 @@
   <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
   <div *ngFor="let eventInfo of readableCaseEventsInfo">
     <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" 
+      [style.display]="caseEvent.inactive?'none':'inherit'"
       [caseEvent]="caseEvent"
       [caseDefinition]="caseService.caseDefinition"
       [caseEventDefinition]="eventInfo.caseEventDefinition"
@@ -28,6 +29,7 @@
     <app-case-event-list-item
       *ngFor="let caseEvent of eventInfo.caseEvents" 
       disabled
+      [style.display]="caseEvent.inactive?'none':'inherit'"
       [caseEvent]="caseEvent"
       [caseDefinition]="caseService.caseDefinition"
       [caseEventDefinition]="eventInfo.caseEventDefinition"
