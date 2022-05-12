@@ -69,10 +69,5 @@
     "label": "Urdu",
     "languageCode": "ur",
     "languageDirection": "rtl"
-  },
-  {
-    "label": "Vietnamese",
-    "languageCode": "vn",
-    "languageDirection": "ltr"
   }
 ]
