@@ -42,6 +42,9 @@ export class SyncMediaService {
 
 
   async sync(): Promise<any> {
+    if (!window['isCordovaApp']) {
+      alert('Media sync does not work in PWAs. Please use an APK.');
+    }
     this.mediaFilesToSync = false
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
