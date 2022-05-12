@@ -290,7 +290,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               set(input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
             }
           }
-        } else if (input.tagName === 'TANGY-RADIO-BUTTONS' || input.name === 'TANGY-RADIO-BLOCKS') {
+        } else if (input.tagName === 'TANGY-RADIO-BUTTONS' || input.tagName === 'TANGY-RADIO-BLOCKS') {
           // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
           set(input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
             ? input.value.find(input => input.value == 'on')
@@ -330,6 +330,11 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
+        } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
+          set(input, `${formID}.${item.id}.${input.name}`, input.value
+              ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
+              : ""
+          )
         } else if (input.tagName === 'TANGY-EFTOUCH') {
           let elementKeys = Object.keys(input.value);
           for (let key of elementKeys) {

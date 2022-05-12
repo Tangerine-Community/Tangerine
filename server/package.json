@@ -87,6 +87,7 @@
     "junk": "^2.1.0",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.10",
+    "md5-file": "^5.0.0",
     "memorystream": "^0.3.1",
     "multer": "^1.4.1",
     "mysql": "github:mysqljs/mysql",

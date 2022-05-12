@@ -79,12 +79,14 @@ import 'tangy-form/input/tangy-gps.js';
 import 'tangy-form/input/tangy-acasi.js';
 import 'tangy-form/input/tangy-eftouch.js';
 import 'tangy-form/input/tangy-photo-capture.js';
+import 'tangy-form/input/tangy-video-capture.js';
 import 'tangy-form/input/tangy-qr.js';
 import 'tangy-form/input/tangy-consent.js';
 import 'tangy-form/input/tangy-partial-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 import 'translation-web-component/t-select.js'
+
 
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc;
