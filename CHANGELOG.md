@@ -1,5 +1,28 @@
 # What's new
 
+## v3.24.0
+
+__New Features__
+
+- Client Case Service API:
+  - Case Event and Event Form (De)activation [3334](https://github.com/Tangerine-Community/Tangerine/pull/3334)
+    - activateCaseEvent:  Marks a Case Event as 'active' and shows it in the Case Event list
+    - deactivateCaseEvent: Marks a Case Event as 'inactive' and hides it in the Case Event list
+    - activateEventForm:  Marks an Event Form as 'active' and shows it in the Event Form list
+    - deactivateEventForm: Marks an Event Form as 'inactive' and hides it in the Event Form list
+- Editor Case Service API:
+  - Add useful APIs used in the client Case Service API to the editor Case Service API [3325](https://github.com/Tangerine-Community/Tangerine/pull/3325/files)
+- Option to sync a case before viewing it [3237](https://github.com/Tangerine-Community/Tangerine/pull/3237)
+- Support for showing photo and signatures is Issues
+
+__Fixes__
+
+- Fix after update messaging and async issues
+
+__Translations__
+- Include Vietnamese translations
+
+
 ## v3.23.0
 
 __New Features__
