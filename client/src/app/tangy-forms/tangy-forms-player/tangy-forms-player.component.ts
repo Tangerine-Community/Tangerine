@@ -3,18 +3,19 @@ import { FormInfo, FormTemplate } from 'src/app/tangy-forms/classes/form-info.cl
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Subject } from 'rxjs';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { Component, ViewChild, ElementRef, Input } from '@angular/core';
+import {Component, ViewChild, ElementRef, Input, OnInit} from '@angular/core';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
+declare const cordova: any;
 
 @Component({
   selector: 'app-tangy-forms-player',
   templateUrl: './tangy-forms-player.component.html',
   styleUrls: ['./tangy-forms-player.component.css']
 })
-export class TangyFormsPlayerComponent {
+export class TangyFormsPlayerComponent implements OnInit {
 
   // Use one of three to do different things.
   // 1. Use this to have the component load the response for you. 
@@ -46,7 +47,9 @@ export class TangyFormsPlayerComponent {
 
   throttledSaveLoaded;
   throttledSaveFiring;
-
+  mediaFilesDir: string = 'Documents/Tangerine/media/'
+  mediaFilesDirEntry
+  
   window:any;
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
@@ -54,6 +57,23 @@ export class TangyFormsPlayerComponent {
     private tangyFormService: TangyFormService,
   ) {
     this.window = window
+  }
+
+  async ngOnInit() {
+    if (this.window.isCordovaApp) {
+      this.mediaFilesDir = 'Documents/Tangerine/media/'
+    } else {
+      this.mediaFilesDir = `${_TRANSLATE('Click button to start download to desired directory.')} `
+    }
+
+    if (this.window.isCordovaApp) {
+      this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Documents', (directoryEntry) => {
+        directoryEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
+          dirEntry.getDirectory('media', {create: true}, (subDirEntry) => {
+          }, this.onErrorGetDir);
+        }, this.onErrorGetDir);
+      })
+    }
   }
 
   inject(name, value) {
@@ -151,6 +171,45 @@ export class TangyFormsPlayerComponent {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
         })
+        formEl.addEventListener('TANGY_MEDIA_UPDATE', async _ => {
+          // _.preventDefault()
+          const filename = _.target.name + '_' + this.response?._id
+          const domString = _.target.value
+          console.log("Caught TANGY_MEDIA_UPDATE event at: " + filename)
+          if (this.window.isCordovaApp) {
+            async function getBlob() {
+              return new Promise((resolve, reject) => {
+                function reqListener () {
+                  console.log(this.response);
+                  resolve(this.response)
+                }
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', domString, true);
+                xhr.addEventListener("load", reqListener);
+                xhr.responseType = 'blob';
+                xhr.send();
+              })
+            }
+            
+            let blob = await getBlob()
+            
+            this.mediaFilesDirEntry = await new Promise(resolve =>
+              this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
+            );
+            this.mediaFilesDirEntry.getFile(filename, {create: true, exclusive: false}, (fileEntry) => {
+              fileEntry.createWriter((fileWriter) => {
+                fileWriter.onwriteend = (data) => {
+                  console.log(`Media file stored at ${this.mediaFilesDir}/${filename}`)
+                };
+                fileWriter.onerror = (e) => {
+                  alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                };
+                fileWriter.write(blob);
+
+              });
+            });
+          }
+        }, true)
       }
       formEl.addEventListener('before-submit', (event) => {
         this.$beforeSubmit.next(true)
@@ -231,6 +290,18 @@ export class TangyFormsPlayerComponent {
 
   print() {
     window.print();
+  }
+
+  onErrorGetDir(e) {
+    console.log("Error: " + e)
+    let errorMessage
+    if (e && e.code && e.code === 1) {
+      errorMessage = "File or directory not found."
+    } else {
+      errorMessage = e
+    }
+    const message = `<p>${_TRANSLATE('Error creating directory. Error: ')} ${errorMessage}</p>`
+    console.log(message)
   }
 
 }
