@@ -13,13 +13,10 @@ Make sure to assign a security group to your instance that allows you to access 
 
 
 ## Set up SSL
-
 Prerequisites:
-
 - An SSL Certificate. If you don't yet have one, we recommend using AWS's Certificate Manager (found under "Security, Identity, and Compliance").
 
 Create and Configure an Elastic Load Balancer (ELB):
-
 - Go to EC2, click "Load Balancers" in the left column, click "Create Load Balancer", and then select "Classic Load Balancer". 
 - Step 1: Define Load Balancer 
   - Set a Load Balancer name to what you want.
