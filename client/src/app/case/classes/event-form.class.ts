@@ -7,6 +7,7 @@ class EventForm {
   formResponseId?:string;
   participantId?:string
   complete?:boolean = false
+  inactive?:boolean = false
   required?:boolean = false
   caseId?:string;
   caseEventId?:string;
