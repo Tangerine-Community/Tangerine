@@ -55,9 +55,9 @@ export class SyncService {
   compareLimit: number = 150
   batchSize: number = 200
   writeBatchSize: number = 50
-  reducedBatchSize: number = 50
-  reducedWriteBatchSize: number = 20
-  reducedCompareLimit: number = 50
+  reducedBatchSize: number = 10
+  reducedWriteBatchSize: number = 10
+  reducedCompareLimit: number = 10
 
   cancel() {
     this.syncCouchdbService.cancel()
