@@ -1,5 +1,12 @@
 # Configuring Nginx as SSL proxy server for Tangerine
 
+## Update
+
+Issue [#3147](https://github.com/Tangerine-Community/Tangerine/pull/3147) describes the start-ssl.sh script that automates installation of the SSL certificates 
+as well as the letsencrypt-nginx-proxy-companion and nginx-proxy containers. The first time it runs it may error out - do a `docker logs -f letsencrypt-nginx-proxy-companion` to see error. If it does, restart the container (`docker restart letsencrypt-nginx-proxy-companion`). 
+
+You may disregard the following notes - the new script supersedes them; however, they may have some useful information. 
+
 ## Initial configuration
 
 First open config.sh and change the port mapping of Tangerine 

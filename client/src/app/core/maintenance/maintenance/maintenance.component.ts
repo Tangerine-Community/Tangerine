@@ -1,3 +1,4 @@
+/// <reference types="cordova-plugin-file" />
 import { Component, OnInit } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
@@ -19,6 +20,7 @@ export class MaintenanceComponent implements OnInit {
   displayLowStorageWarning: boolean
   displayPruningComplete: boolean = false
   isStorageThresholdExceeded: boolean
+  window: any;
   
   constructor(
     private userService: UserService,
@@ -26,6 +28,7 @@ export class MaintenanceComponent implements OnInit {
     private syncService: SyncService,
     private variableService: VariableService
   ) {
+    this.window = window;
   }
 
   async ngOnInit() {
@@ -234,23 +237,23 @@ export class MaintenanceComponent implements OnInit {
     }
   }
   
-  pruneFilesInPath(path) {
+  async pruneFilesInPath(path) {
     return new Promise((resolve, reject) => {
-      window['resolveLocalFileSystemURL'](path, function (directory) {
-        const reader = directory.createReader();
+      window['resolveLocalFileSystemURL'](path, (directory) => {
+        const reader = (directory as DirectoryEntry).createReader();
         reader.readEntries(
           async function (entries) {
             for (let index = 0; index < entries.length; index++) {
-              const entry = entries[index]
+              const entry:Entry = entries[index]
               if (entry.isFile) {
-                await entry['remove']()
+                await (entry as DirectoryEntry).remove(null, null)
               } else {
-                const subdir = entry.createReader();
+                const subdir = (entry as DirectoryEntry).createReader();
                 subdir.readEntries(
                   async function (entries) {
                     for (let index = 0; index < entries.length; index++) {
                       const entry = entries[index]
-                      await entry['remove']()
+                      await (entry as DirectoryEntry).remove(null, null)
                     }
                     resolve(true)
                   },
@@ -259,10 +262,10 @@ export class MaintenanceComponent implements OnInit {
                     console.log(err);
                   }
                 );
-                await entry['remove']()
+                await (entry as DirectoryEntry).remove(null, null)
               }
             }
-            resolve(true) 
+            resolve(true)
           },
           function (err) {
             reject(err)

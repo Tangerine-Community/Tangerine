@@ -91,6 +91,22 @@
   <div class="errorMessage" *ngIf="pullError">{{pullError}}</div>
   <div class="errorMessage" *ngIf="pushError">{{pushError}}</div>
 
+  <div *ngIf="status === 'STATUS_COMPLETED'">
+    <h3>{{'Video File Upload Progress'|translate}}</h3>
+    <div *ngIf="!syncMediaService.mediaFilesToSync">
+      <p>{{'No Video files to upload.'|translate}}</p>
+    </div>
+    {{mediaSyncStatusMessage}}
+    <div class="progress">
+      <mat-progress-bar class="progress-bar" mode="determinate"
+                        [value]="mediaSyncProgress" *ngIf="uploadProgress">
+      </mat-progress-bar>
+
+      <!--        <mat-icon class="cancel-upload" (click)="cancelUpload()"-->
+      <!--                  *ngIf="uploadProgress">delete_forever</mat-icon>-->
+    </div>
+  </div>
+
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
