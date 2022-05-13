@@ -22,6 +22,36 @@ __Fixes__
 __Translations__
 - Include Vietnamese translations
 
+## v3.23.1
+
+__Fixes__
+
+- Fixed bug in sync on PWA's. Also, do note that video file upload using the new tangy-form input `<tangy-video-capture>` only works for APKs Issue: [#3338] https://github.com/Tangerine-Community/Tangerine/issues/3338
+- Fixed tangy-form-editor to 7.14.2 to fix bug with input widget for tangy-keyboard-input (postfix field).
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.23.1
+./start.sh v3.23.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.23.0
+```
 
 ## v3.23.0
 
@@ -37,6 +67,30 @@ __New Features__
 __Fixes__
 
 - Add postfix property to tangy-keyboard-input. Also add highlight to value entered. Issue: [3321](https://github.com/Tangerine-Community/Tangerine/issues/3321)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.23.0
+./start.sh v3.23.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.22.4
+```
 
 ## v3.22.4
 

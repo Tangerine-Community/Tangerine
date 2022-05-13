@@ -220,13 +220,17 @@ export class SyncComponent implements OnInit, OnDestroy {
         this.mediaSyncStatusMessage = progress.message;
       }
     });
-
-    try {
-      await this.syncMediaService.sync()
-      console.log('Media Sync Completed')
-    } catch (e) {
-      console.log(e)
+    if (window['isCordovaApp']) {
+      try {
+        await this.syncMediaService.sync()
+        console.log('Media Sync Completed')
+      } catch (e) {
+        console.log(e)
+      }
+    } else {
+      console.log('Not a Cordova App - no media uploads')
     }
+    
   }
 
   cancel() {
