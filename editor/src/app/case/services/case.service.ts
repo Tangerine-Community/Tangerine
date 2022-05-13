@@ -453,6 +453,34 @@ class CaseService {
     }
   }
 
+  activateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: false
+          }
+          : event
+      })
+    }
+  }
+
+  deactivateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: true
+          }
+          : event
+      })
+    }
+  }
+
   /*
    * Event Form API
    */
@@ -592,6 +620,44 @@ class CaseService {
             : {
               ...eventForm,
               complete: true
+            }
+          )
+        }
+      )
+    }
+  }
+
+  activateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: false
+            }
+          )
+        }
+      )
+    }
+  }
+
+  deactivateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: true
             }
           )
         }
