@@ -178,7 +178,7 @@ export class SyncCouchdbService {
           hadPushSuccess = true
           pushReplicationStatus.hadPushSuccess = true
           await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
-        } else if (pushReplicationStatus.pushError || pushReplicationStatus.info.docs_write_failures > 0) {
+        } else if (pushReplicationStatus.pushError || pushReplicationStatus.info.doc_write_failures > 0) {
           docs_written += pushReplicationStatus.info.docs_written
           await sleep(retryDelay)
           ++this.retryCount
