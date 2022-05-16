@@ -118,12 +118,13 @@
     'click the "Start" button above. To cancel your selection, click it again. If the Sync direction is "Pull", ' +
     'the app will first do a normal Sync to make sure all local docs have been pushed to the server.' | translate }}</p>
 
-    <p>{{'If Comparison or Rewind sync fail due to memory issues, check the box below to reduce the number of documents processed during ' +
+    <p>{{'If Rewind Sync fails due to memory issues, check the box below to reduce the number of documents processed during ' +
          'synchronization and indexing which may workaround the issue.' | translate }}</p>
 
     <mat-checkbox id="reduce-batch-size-checkbox" (click)="toggleReduceBatchSize()">{{'Reduce Batch Size' | translate }}</mat-checkbox>
     <p></p>
     
+    <!--
     <h3>Comparison Sync</h3>
     
     <p>{{'Comparison Sync compares the document ids between the local device and the server. Press the appropriate Sync ' +
@@ -138,10 +139,11 @@
       </mat-radio-group>
       <br/>
     </div>
+    -->
     
     <h3>Rewind Sync</h3>
     
-    <p>{{'Rewind sync will reset the sync "placeholder" and start from the beginning, checking replication data for each document. It is more thorough than Comparison Sync and takes much longer than the typical sync.'|translate}}</p>
+    <p>{{'Rewind sync will reset the sync "placeholder" and start from the beginning, checking replication data for each document.Note, it takes much longer than the typical sync.'|translate}}</p>
     <div>
       <mat-radio-group aria-label="Select an option" aria-labelledby="sync-radio-group-label" [disabled]="rewindDisabled">
         <label id="sync-radio-group-label">Sync Direction:</label>
