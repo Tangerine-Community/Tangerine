@@ -117,12 +117,6 @@
     <p>{{'Please note that these options should not be done routinely. Choose one of the following options and then ' +
     'click the "Start" button above. To cancel your selection, click it again. If the Sync direction is "Pull", ' +
     'the app will first do a normal Sync to make sure all local docs have been pushed to the server.' | translate }}</p>
-
-    <p>{{'If Rewind Sync fails due to memory issues, check the box below to reduce the number of documents processed during ' +
-         'synchronization and indexing which may workaround the issue.' | translate }}</p>
-
-    <mat-checkbox id="reduce-batch-size-checkbox" (click)="toggleReduceBatchSize()">{{'Reduce Batch Size' | translate }}</mat-checkbox>
-    <p></p>
     
     <!--
     <h3>Comparison Sync</h3>
@@ -151,6 +145,12 @@
         <mat-radio-button #pullButtonS value="pull" (click)="checkState(pullButtonS, 'pull', 'rewind')">Pull</mat-radio-button>
       </mat-radio-group>
     </div>
+
+    <p>{{'If Rewind Sync fails due to memory issues, check the box below to reduce the number of documents processed during ' +
+      'synchronization and indexing which may workaround the issue.' | translate }}</p>
+
+    <mat-checkbox id="reduce-batch-size-checkbox" (click)="toggleReduceBatchSize()">{{'Reduce Batch Size' | translate }}</mat-checkbox>
+    <p></p>
     
   </mat-expansion-panel>
   
