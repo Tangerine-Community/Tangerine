@@ -54,6 +54,7 @@ export class UpdatePersonalProfileComponent implements OnInit {
     this.passwordIsNotStrong.message = this.passwordIsNotStrong.message + ' ' + this.passwordRecipe
   }
   async editUser() {
+    this.statusMessage = { type: '', message: '' };
     try {
       if (!this.updateUserPassword) {
         this.user.password = null;
