@@ -9,6 +9,8 @@ import debugPouch from 'pouchdb-debug';
 PouchDB.plugin(debugPouch);
 import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
+import * as PouchIndexedDb from 'pouchdb-adapter-indexeddb';
+PouchDB.plugin(PouchIndexedDb)
 PouchDB.plugin(PouchDBUpsert);
 PouchDB.plugin(cordovaSqlitePlugin);
 PouchDB.plugin(window['PouchReplicationStream'].plugin);
@@ -45,12 +47,51 @@ export function connectToCryptoPouchDb(name, key = ''):PouchDB {
   let pouchDBOptions = <any>{}
   if (window['isCordovaApp']) {
     pouchDBOptions = {
-      view_adapter: 'cordova-sqlite',
+      adaptor: 'indexeddb',
       location: 'default',
       androidDatabaseImplementation: 2
     }
     if (key) {
       pouchDBOptions.key = key
+    }
+  } else {
+    pouchDBOptions = {
+      adaptor: 'indexeddb',
+      location: 'default'
+    }
+  }
+  if (window['changes_batch_size'] && name === 'shared-user-database') {
+    pouchDBOptions.changes_batch_size = window['changes_batch_size']
+  }
+  try {
+    const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});
+    if (key) {
+      pouch.crypto(key)
+      pouch.cryptoPouchIsEnabled = true
+    }
+    return pouch
+  } catch (e) {
+    console.log("Database error: " + e);
+    console.trace();
+  }
+}
+
+export function connectToIndexedDb(name, key = ''):PouchDB {
+  let pouchDBOptions = <any>{}
+  if (window['isCordovaApp']) {
+    pouchDBOptions = {
+      adaptor: 'indexeddb',
+      location: 'default',
+      androidDatabaseImplementation: 2
+    }
+    if (key) {
+      pouchDBOptions.key = key
+    }
+  } else  {
+    pouchDBOptions = {
+      adaptor: 'indexeddb',
+      location: 'default',
+      androidDatabaseImplementation: 2
     }
   }
   if (window['changes_batch_size'] && name === 'shared-user-database') {
@@ -88,6 +129,8 @@ export function DB(name, key = ''):PouchDB {
     return connectToCryptoPouchDb(name, key)
   } else if (window['sqlCipherRunning']) {
     return connectToSqlCipherDb(name, key)
+  } else if (window['indexedDbRunning']) {
+    return connectToIndexedDb(name, key)
   } else {
     return connectToPouchDb(name)
   }
