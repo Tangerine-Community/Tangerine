@@ -3,7 +3,7 @@
 The default password policy is in config.defaults.sh. Although you can change it, it is recommended that you have a strong password policy. 
 
 Relevant variables:
-- T_PASSWORD_POLICY - The policy, codedin the form of a regular expression.
+- T_PASSWORD_POLICY - The policy, coded in the form of a regular expression.
 - T_PASSWORD_RECIPE - Description of the policy, to enable user to create a password that will pass the policy. 
 
 Ideally a password policy should include the following specifications:
@@ -14,6 +14,11 @@ Ideally a password policy should include the following specifications:
 - at least one numeral
 
 Each group can have a unique password policy. When a group is created, the default policy and recipe from config.sh are copied over to the passwordPolicy and passwordRecipe variables in app-config.json.
+
+For some groups, it may be more useful to have a simpler password policy on client than on editor. Here is an example:
+
+- "passwordPolicy": "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}",
+- "passwordRecipe": "Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters",
 
 Editor on the server uses the T_PASSWORD_POLICY and T_PASSWORD_RECIPE variables.
 
