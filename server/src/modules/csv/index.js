@@ -227,10 +227,11 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
+  const cycleSequencesReplacer = new RegExp('\n', 'g')
   let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
-    cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replaceAll('\n','  '): '',
+    cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
     sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
     startUnixtime: formResponse.startUnixtime||'',
     endUnixtime: formResponse.endUnixtime||'',
