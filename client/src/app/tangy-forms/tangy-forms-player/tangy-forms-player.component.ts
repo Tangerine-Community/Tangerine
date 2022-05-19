@@ -218,6 +218,7 @@ export class TangyFormsPlayerComponent {
         let r = await this.tangyFormService.saveResponse(state)
         stateDoc = await this.tangyFormService.getResponse(state._id)
       }
+      stateDoc["uploadDatetime"] = ""
       await this.tangyFormService.saveResponse({
         ...state,
         _rev: stateDoc['_rev'],
