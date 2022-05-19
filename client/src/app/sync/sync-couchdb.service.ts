@@ -80,7 +80,10 @@ export class SyncCouchdbService {
   batchSize = 200
   initialBatchSize = 1000
   writeBatchSize = 50
-  streamBatchSize = 25
+  changesBatchSize = 25
+  reducedBatchSize = 10
+  reducedWriteBatchSize = 10
+  reducedChangesBatchSize = 1
   pullSyncOptions;
   pushSyncOptions;
   fullSync: string;
@@ -121,15 +124,17 @@ export class SyncCouchdbService {
     syncDetails:SyncCouchdbDetails,
     caseDefinitions:CaseDefinition[] = null,
     isFirstSync = false,
-    fullSync?:SyncDirection
+    fullSync?:SyncDirection,
+    reduceBatchSize = false
   ): Promise<ReplicationStatus> {
     // set fullSync
     this.fullSync = fullSync
     // Prepare config.
     const appConfig = await this.appConfigService.getAppConfig()
-    this.batchSize = appConfig.batchSize || this.batchSize
+    this.batchSize = reduceBatchSize ? this.reducedBatchSize : appConfig.batchSize || this.batchSize
     this.initialBatchSize = appConfig.initialBatchSize || this.initialBatchSize
-    this.writeBatchSize = appConfig.writeBatchSize || this.writeBatchSize
+    this.writeBatchSize = reduceBatchSize ? this.reducedBatchSize : appConfig.writeBatchSize || this.writeBatchSize
+    this.changesBatchSize = reduceBatchSize ? this.reducedChangesBatchSize : appConfig.changesBatchSize || this.changesBatchSize
     let batchSize = (isFirstSync || fullSync === SyncDirection.pull)
       ? this.initialBatchSize
       : this.batchSize
@@ -138,7 +143,6 @@ export class SyncCouchdbService {
       ? true
       : false
     // Create sync session and instantiate remote database connection.
-    let syncSessionUrl
     let remoteDb
     try {
       const syncSessionInfo = <SyncSessionInfo>await this.http.get(`${syncDetails.serverUrl}sync-session-v2/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`).toPromise()
@@ -163,17 +167,28 @@ export class SyncCouchdbService {
     let hadPushSuccess = false
     this.retryCount = 1
     if (!isFirstSync) {
+      let docs_written = 0
       while (!hadPushSuccess && !this.cancelling) {
         pushReplicationStatus = await this.push(userDb, remoteDb, appConfig, syncDetails);
-        if (!pushReplicationStatus.pushError) {
+        if (
+          !pushReplicationStatus.pushError &&
+          pushReplicationStatus.info.docs_written === 0 &&
+          pushReplicationStatus.info.doc_write_failures === 0
+        ) {
           hadPushSuccess = true
           pushReplicationStatus.hadPushSuccess = true
           await this.variableService.set('sync-push-last_seq', pushReplicationStatus.info.last_seq)
-        } else {
+        } else if (pushReplicationStatus.pushError || pushReplicationStatus.info.doc_write_failures > 0) {
+          docs_written += pushReplicationStatus.info.docs_written
           await sleep(retryDelay)
+          ++this.retryCount
+        } else {
+          docs_written += pushReplicationStatus.info.docs_written
           ++this.retryCount
         }
       }
+      pushReplicationStatus.info.docs_written = docs_written
+      pushReplicationStatus.pushed = docs_written
       replicationStatus = {...replicationStatus, ...pushReplicationStatus}
       this.syncMessage$.next(replicationStatus);
     }
@@ -534,7 +549,7 @@ export class SyncCouchdbService {
       "pulled": pulled,
       "selector": pullSelector,
       "checkpoint": 'target',
-      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null
+      "changes_batch_size": this.changesBatchSize
     }
     
     syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
