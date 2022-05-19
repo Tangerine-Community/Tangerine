@@ -46,7 +46,7 @@ module.exports = {
       for (groupId of groups) {
 
         const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-        startTangerineToMySQL(pathToStateFile)
+        // startTangerineToMySQL(pathToStateFile)
       }
       return data
     },
