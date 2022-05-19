@@ -32,7 +32,9 @@ class CaseService {
   caseDefinition:CaseDefinition
   location:Array<LocationNode>
 
+  // Opening a case confirmation semaphore.
   openCaseConfirmed = false
+  // Query properties.
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
@@ -403,6 +405,14 @@ class CaseService {
     return caseEvent
   }
 
+  setEventName(eventId, name:string) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ name } }
+        : event
+    })
+  }
+
   setEventEstimatedDay(eventId, timeInMs: number) {
     const estimatedDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
@@ -420,7 +430,7 @@ class CaseService {
     })
   }
   setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
-    const windowStartDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    const windowStartDay = moment((new Date(windowStartDayTimeInMs))).format('YYYY-MM-DD')
     const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
@@ -440,6 +450,34 @@ class CaseService {
   disableEventDefinition(eventDefinitionId) {
     if (this.case.disabledEventDefinitionIds.indexOf(eventDefinitionId) === -1) {
       this.case.disabledEventDefinitionIds.push(eventDefinitionId)
+    }
+  }
+
+  activateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: false
+          }
+          : event
+      })
+    }
+  }
+
+  deactivateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: true
+          }
+          : event
+      })
     }
   }
 
@@ -589,6 +627,44 @@ class CaseService {
     }
   }
 
+  activateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: false
+            }
+          )
+        }
+      )
+    }
+  }
+
+  deactivateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: true
+            }
+          )
+        }
+      )
+    }
+  }
+
   /*
    * Participant API
    */
@@ -629,6 +705,133 @@ class CaseService {
 
   getParticipantData(participantId:string, key:string) {
     return this.case.participants.find(participant => participant.id === participantId).data[key]
+  }
+
+  addParticipant(caseParticipant:CaseParticipant) {
+    this.case.participants.push(caseParticipant)
+    for (let caseEvent of this.case.events) {
+      const caseEventDefinition = this
+        .caseDefinition
+        .eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (
+          eventFormDefinition.forCaseRole.split(',').map(e=>e.trim()).includes(caseParticipant.caseRoleId)
+          && 
+          (
+            eventFormDefinition.autoPopulate || 
+            (eventFormDefinition.autoPopulate === undefined && eventFormDefinition.required === true)
+          )
+        ) {
+          this.createEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
+  }
+
+  async activateParticipant(participantId:string) {
+    this.case = {
+      ...this.case,
+      participants: this.case.participants.map(participant => {
+        return participant.id === participantId
+          ? {
+            ...participant,
+            inactive: false 
+          }
+          : participant
+      })
+    }
+  }
+
+  async deactivateParticipant(participantId:string) {
+    this.case = {
+      ...this.case,
+      participants: this.case.participants.map(participant => {
+        return participant.id === participantId
+          ? {
+            ...participant,
+            inactive: true 
+          }
+          : participant
+      })
+    }
+  }
+
+
+  async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    const sourceCase = this.case
+    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+      sourceParticipant.id === sourceParticipantId)
+      
+    await this.load(currCaseId)
+
+    return sourceParticipant
+  }
+
+  async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
+    const currCaseId = this.case._id
+
+    await this.load(sourceCaseId)
+    this.case.participants = this.case.participants.filter(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    await this.save()
+
+    await this.load(currCaseId)
+  }
+
+  async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+    }
+  }
+
+  async moveParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
+    const caseParticipant = await this.getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId)
+    if (caseParticipant !== undefined) {
+      this.addParticipant(caseParticipant)
+
+      // Only delete the participant from the other case after adding it to this case is successful
+      await this.deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId)
+    }
+  }
+
+  async searchForParticipant(username:string, phrase:string, limit = 50, skip = 0, unique = true):Promise<Array<any>> {
+    const db = await window['T'].user.getUserDatabase(username)
+    const result = await db.query(
+      'participantSearch',
+      phrase
+        ? { 
+          startkey: `${phrase}`.toLocaleLowerCase(),
+          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+          include_docs: true,
+          limit,
+          skip
+        }
+        : {
+          include_docs: true,
+          limit,
+          skip
+        } 
+    )
+    const searchResults = result.rows.map(row => {
+      return {
+        ...row.value,
+        case: row.doc,
+        participant: row.doc.participants.find(p => p.id === row.value.participantId)
+      }
+    })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return unique
+      ? searchResults.reduce((uniqueResults, result) => {
+        return uniqueResults.find(x => x.participantId === result.participantId)
+          ? uniqueResults
+          : [ ...uniqueResults, result ]
+      }, [])
+      : searchResults
   }
 
   /*
