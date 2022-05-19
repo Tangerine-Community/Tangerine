@@ -4,7 +4,7 @@
 
 __New Features__
 
-- Feature: New version of mysql module, which is coded in javascript instead of python, exports records much faster than previous version. It should also use much less memory and provide more flexibility in terms of column data types and (eventually) support of different types of databases. Issue: [#3047](https://github.com/Tangerine-Community/Tangerine/issues/3047)
+- Feature: New version of mysql module, called mysql-js, which is coded in javascript instead of python. This module exports records much faster than previous version. It should also use much less memory and provide more flexibility in terms of column data types and (eventually) support of different types of databases. Issue: [#3047](https://github.com/Tangerine-Community/Tangerine/issues/3047)
 
 __Fixes__
 - The default password policy (T_PASSWORD_POLICY in config.sh) has been improved to support most special characters and the T_PASSWORD_RECIPE description has been updated to list the permitted special characters. Issue: https://github.com/Tangerine-Community/Tangerine/issues/3299
