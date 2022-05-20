@@ -296,7 +296,7 @@ export class SyncCouchdbService {
         this.syncMessage$.next(progress);
       }).on('checkpoint', (info) => {
         if (info) {
-          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
             checkpointProgress = checkpointProgress + 1
@@ -305,25 +305,25 @@ export class SyncCouchdbService {
               'type': 'checkpoint',
               'direction': direction
             };
-          } else if (info.diffing) {
+          } else if (info.revs_diff) {
             diffingProgress = diffingProgress + 1
             progress = {
               'message': diffingProgress,
-              'type': 'diffing',
+              'type': 'revs_diff',
               'direction': direction
             };
-          } else if (info.startNextBatch) {
+          } else if (info.start_next_batch) {
             startBatchProgress = startBatchProgress + 1
             progress = {
               'message': startBatchProgress,
-              'type': 'startNextBatch',
+              'type': 'start_next_batch',
               'direction': direction
             };
-          } else if (info.pendingBatch) {
+          } else if (info.pending_batch) {
             pendingBatchProgress = pendingBatchProgress + 1
             progress = {
               'message': pendingBatchProgress,
-              'type': 'pendingBatch',
+              'type': 'pending_batch',
               'direction': direction
             };
           } else {
