@@ -79,7 +79,7 @@ async function hasInstalledOnIndexedDB() {
   } catch(e) {
     hasInstalled = false
   }
-  console.log("hasInstalledOnCryptoPouch: " + hasInstalled)
+  console.log("hasInstalledOnIndexedDB: " + hasInstalled)
   return hasInstalled
 }
 
