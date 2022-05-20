@@ -665,6 +665,77 @@ class CaseService {
     }
   }
 
+  async archiveFormResponse(caseEventId:string, eventFormId:string) {
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    if (caseEvent) {
+      var eventForm = caseEvent.eventForms.find(form => form.id === eventFormId)
+      if (eventForm && eventForm.formResponseId) {
+          const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+          if (formResponse) {
+            formResponse.archived = true
+            await this.tangyFormService.saveResponse(formResponse)
+          }
+          eventForm.archived = true
+          await this.save()
+        }
+    }
+  }
+
+  async unarchiveFormResponse(caseEventId:string, eventFormId:string) {
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    if (caseEvent) {
+      var eventForm = caseEvent.eventForms.find(form => form.id === eventFormId)
+      if (eventForm && eventForm.formResponseId) {
+          const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+          if (formResponse) {
+            formResponse.archived = false
+            await this.tangyFormService.saveResponse(formResponse)
+          }
+          eventForm.archived = false
+          await this.save()
+        }
+    }
+  }
+
+  async deleteFormResponse(caseEventId:string, eventFormId:string) {
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    if (caseEvent) {
+      var eventForm = caseEvent.eventForms.find(form => form.id === eventFormId)
+      if (eventForm && eventForm.formResponseId) {
+        const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+        if (formResponse) {
+          const archivedFormResponse = new TangyFormResponseModel(
+            {
+              archived:true,
+              _rev : formResponse._rev,
+              _id : formResponse._id,
+              form : {
+                id: formResponse.form.id,
+                title: formResponse.form.title,
+                tagName: formResponse.form.tagName,
+                complete: formResponse.form.complete
+              },
+              items : [],
+              events : [],
+              location : formResponse.location,
+              type : "response",
+              caseId: formResponse.caseId,
+              eventId: formResponse.eventId,
+              eventFormId: formResponse.eventFormId,
+              participantId: formResponse.participantId,
+              groupId: formResponse.groupId,
+              complete: formResponse.complete,
+              tangerineModifiedOn: new Date().getTime()
+            }
+          )
+          await this.tangyFormService.saveResponse(archivedFormResponse)
+        }
+        this.deleteEventForm(caseEventId, eventFormId)
+        await this.save()
+      }
+    }
+  }
+
   /*
    * Participant API
    */
