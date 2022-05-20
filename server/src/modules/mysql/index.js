@@ -73,6 +73,7 @@ module.exports = {
       return data
     },
     clearReportingCache: async function(data) {
+      console.log("clearReportingCache hook")
       const { groupNames } = data
       for (let groupName of groupNames) {
         await removeGroupForMySQL(groupName)
