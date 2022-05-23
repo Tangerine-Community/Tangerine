@@ -87,6 +87,7 @@ export class SyncCouchdbService {
   pullSyncOptions;
   pushSyncOptions;
   fullSync: string;
+  isFirstSync: boolean;
   retryCount: number
   
   constructor(
@@ -127,6 +128,8 @@ export class SyncCouchdbService {
     fullSync?:SyncDirection,
     reduceBatchSize = false
   ): Promise<ReplicationStatus> {
+    // set isFirstSync
+    this.isFirstSync = isFirstSync
     // set fullSync
     this.fullSync = fullSync
     // Prepare config.
@@ -440,10 +443,8 @@ export class SyncCouchdbService {
       try {
         userDb.db['replicate'].from(remoteDb, syncOptions).on('complete', async (info) => {
           // console.log("info.last_seq: " + info.last_seq)
-          const conflictsQuery = await userDb.query('sync-conflicts')
           status = <ReplicationStatus>{
             pulled: info.docs_written,
-            pullConflicts: conflictsQuery.rows.map(row => row.id),
             info: info,
             direction: direction
           }
@@ -522,7 +523,7 @@ export class SyncCouchdbService {
     if (typeof pull_last_seq === 'undefined') {
       pull_last_seq = 0;
     }
-    if (this.fullSync && this.fullSync === 'pull') {
+    if (!this.isFirstSync && this.fullSync && this.fullSync === 'pull') {
       pull_last_seq = 0;
     }
     const pullSelector = this.getPullSelector(syncDetails);
