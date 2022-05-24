@@ -1,14 +1,9 @@
 import { UserService } from './../../../shared/_services/user.service';
-import { SyncService } from './../../../sync/sync.service';
+import { SyncService, FIRST_SYNC_STATUS } from './../../../sync/sync.service';
 import { Subject } from 'rxjs';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { VariableService } from 'src/app/shared/_services/variable.service';
 import { Router } from '@angular/router';
-
-export enum FIRST_SYNC_STATUS {
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETE = 'COMPLETE'
-}
 
 
 @Component({

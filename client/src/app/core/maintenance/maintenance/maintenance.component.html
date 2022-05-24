@@ -25,6 +25,17 @@
       <button mat-stroked-button color="primary" (click)="pruneFiles()">CLEANUP FILES</button>
     </mat-card-actions>
   </mat-card>
+
+  <mat-card class="maintenance-card" *ngIf="allowForceOptimize">
+    <mat-card-title>{{'Force Optimization'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'This will force optimization of all views. You will be logged out.'|translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" (click)="forceOptimization()">Re-Optimize</button>
+    </mat-card-actions>
+  </mat-card>
   
   <mat-card class="maintenance-card" *ngIf="!isCordovaApp">
     <mat-card-title>{{'Check Permissions'|translate}}</mat-card-title>
