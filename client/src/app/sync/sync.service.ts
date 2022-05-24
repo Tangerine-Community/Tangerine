@@ -21,6 +21,10 @@ import {createSearchIndex} from "../shared/_services/create-search-index";
 import { createSyncFormIndex } from './create-sync-form-index';
 import PouchDB from 'pouchdb'
 
+export enum FIRST_SYNC_STATUS {
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETE = 'COMPLETE'
+}
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
@@ -74,7 +78,6 @@ export class SyncService {
     const device = await this.deviceService.getDevice()
     const formInfos = await this.tangyFormsInfoService.getFormsInfo()
     const userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
-    const initialPushLastSeq = await this.variableService.get('sync-push-last_seq')
     
     this.syncCouchdbService.syncMessage$.subscribe({
       next: (replicationStatus) => {
