@@ -92,9 +92,9 @@
   <div class="errorMessage" *ngIf="pushError">{{pushError}}</div>
 
   <div *ngIf="status === 'STATUS_COMPLETED'">
-    <h3>{{'Video File Upload Progress'|translate}}</h3>
+    <h3>{{'File Upload Progress'|translate}}</h3>
     <div *ngIf="!syncMediaService.mediaFilesToSync">
-      <p>{{'No Video files to upload.'|translate}}</p>
+      <p>{{'No files to upload.'|translate}}</p>
     </div>
     {{mediaSyncStatusMessage}}
     <div class="progress">
