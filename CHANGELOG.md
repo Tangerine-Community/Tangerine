@@ -5,10 +5,14 @@
 __New Features__
 
 - Feature: New version of mysql module, called mysql-js, which is coded in javascript instead of python. This module exports records much faster than previous version. It should also use much less memory and provide more flexibility in terms of column data types and (eventually) support of different types of databases. Issue: [#3047](https://github.com/Tangerine-Community/Tangerine/issues/3047)
-- Feature: Enable upload of media files, including photos. PR: [#3354](https://github.com/Tangerine-Community/Tangerine/pull/3354)
+- Feature: Enable upload of image files created by the tangy-photo-capture input. PR: [#3354](https://github.com/Tangerine-Community/Tangerine/pull/3354)
+  Note:  In order to cause minimal negative impact upon current projects, the default behavior will be to save image files created by the tangy-photo-capture input to the database, instead of saving to a file and uploading. That being said, it is preferable to save to save as a file and upload. To over-ride this default, set the new `mediaFileStorageLocation` property to 'file' in the group's app-config.json. The default is 'database'. If this property is not defined, it will save to the database. New groups will be created with
+  `mediaFileStorageLocation` set to 'file'. Videos created using the tangy-video-capture input will always be uploaded to the server due to their large file size. 
 
 __Fixes__
 - The default password policy (T_PASSWORD_POLICY in config.sh) has been improved to support most special characters and the T_PASSWORD_RECIPE description has been updated to list the permitted special characters. Issue: https://github.com/Tangerine-Community/Tangerine/issues/3299
+- Enable forms without location to be viewed in visits listing. PR: [#3347](https://github.com/Tangerine-Community/Tangerine/pull/3347)
+- Fix results with cycle sequences do not generate a CSV file. Issue: [#3249](https://github.com/Tangerine-Community/Tangerine/issues/3249)
 
 ```shell
 (\` ~ ! @ # $ % ^ & * ( ) \ - _ = + < > , . ; : \ | [ ] { } )
