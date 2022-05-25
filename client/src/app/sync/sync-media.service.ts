@@ -68,7 +68,7 @@ export class SyncMediaService {
     for (var i = 0; i < mediaDirEntries.length; i++) {
       this.lastEntry = (i + 1) === mediaDirEntries.length
       const entry = mediaDirEntries[i]
-      const fileName = entry.name + '.webm'
+      const fileName = entry.name
       console.log("processing file: " + fileName)
       this.statusMessage = _TRANSLATE("Uploading file: ") + fileName + "; " + (i + 1) + _TRANSLATE(" of ") + mediaDirEntries.length + _TRANSLATE(" to upload")
 
@@ -120,10 +120,10 @@ export class SyncMediaService {
       let reader = this.getFileReader();
       reader.onloadend = async (e) => {
         // Create a blob based on the FileReader "result", which we asked to be retrieved as an ArrayBuffer
-        const blob = new Blob([new Uint8Array(<ArrayBuffer>e.target.result)], {type: "video/webm"});
-        const fileName = file.name + '.webm'
+        const blob = new Blob([new Uint8Array(<ArrayBuffer>e.target.result)], {type: file.type});
+        const fileName = file.name
         const formData = new FormData();
-        formData.append('video', blob, fileName);
+        formData.append('media', blob, fileName);
         formData.append('md5', md5);
         // /app/:group/media-upload
         const url = `${appConfig.serverUrl}app/${appConfig.groupId}/client-media-upload`
