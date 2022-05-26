@@ -1,5 +1,35 @@
 # What's new
 
+## v3.24.0
+
+__New Features__
+
+- App user can reduce the batch size as a workaround when experiencing 'out-of-memory' errors with Rewind Sync
+  - On occasion Rewind Sync will fail to complete due to 'out-of-memory' issues. The Advanced Sync section of the Sync page now shows a checkbox that when checked will reduce the batch sizes used to perform the Rewind Sync. As noted in the UI, the Rewind Sync will take longer to process however in most cases it will be able to complete the process. The batch size reduction will be reverted once the Rewind Sync is complete or the user unchecks the box.
+- System Admin can scan a QR code to download an APK or PWA release
+  - When deploying Tangerine, it can be a long process to download and install the APK or PWA on multiple devices. To improve the deployment process, the Release tables now show a QR code that when scanned will download the release directly to a new device without the need to type in the URL.
+- Improvements to Sync: In case of false positives on push, keep pushing until nothing is pushed
+- Client Case Service API:
+  - Case Event and Event Form (De)activation [3334](https://github.com/Tangerine-Community/Tangerine/pull/3334)
+    - activateCaseEvent:  Marks a Case Event as 'active' and shows it in the Case Event list
+    - deactivateCaseEvent: Marks a Case Event as 'inactive' and hides it in the Case Event list
+    - activateEventForm:  Marks an Event Form as 'active' and shows it in the Event Form list
+    - deactivateEventForm: Marks an Event Form as 'inactive' and hides it in the Event Form list
+- Editor Case Service API:
+  - Add useful APIs used in the client Case Service API to the editor Case Service API [3325](https://github.com/Tangerine-Community/Tangerine/pull/3325/files)
+- Option to sync a case before viewing it [3237](https://github.com/Tangerine-Community/Tangerine/pull/3237)
+- Support for showing photo and signatures in Issues
+
+__Fixes__
+
+- Fix after update messaging and async issues
+
+__Translations__
+- Include Vietnamese translations
+
+__Deprecations__
+- Comparison Sync has been removed from this release to reduce confusion reported by Tangerine users. The Rewind Sync functionality out-performs Comparison Sync and is recommended for use when needed on all deployments.
+
 ## v3.23.1
 
 __Fixes__
