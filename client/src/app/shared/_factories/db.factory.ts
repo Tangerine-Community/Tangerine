@@ -46,7 +46,7 @@ export function connectToSqlCipherDb(name, key = ''):PouchDB {
 export function connectToCryptoPouchDb(name, key = ''):PouchDB {
   let pouchDBOptions = <any>{}
   pouchDBOptions = {
-    view_adapter: 'indexeddb'
+    adapter: 'indexeddb'
   }
   if (key) {
     pouchDBOptions.key = key
@@ -71,12 +71,6 @@ export function connectToIndexedDb(name, key = ''):PouchDB {
   let pouchDBOptions = <any>{}
   pouchDBOptions = {
     adapter: 'indexeddb'
-  }
-  if (key) {
-    pouchDBOptions.key = key
-  }
-  if (window['changes_batch_size'] && name === 'shared-user-database') {
-    pouchDBOptions.view_update_changes_batch_size  = window['changes_batch_size']
   }
   try {
     const pouch = new PouchDB(name, {...defaults, ...pouchDBOptions});

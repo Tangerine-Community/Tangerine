@@ -4,12 +4,16 @@ import { Injectable } from '@angular/core';
 import { LockBox } from './../_classes/lock-box.class'
 import { DB } from '../_factories/db.factory';
 
+import PouchDB from 'pouchdb';
+import PouchIndexedDb from 'pouchdb-adapter-indexeddb';
+PouchDB.plugin(PouchIndexedDb)
+
 @Injectable({
   providedIn: 'root'
 })
 export class LockBoxService {
 
-  db = DB('tangerine-lock-boxes')
+  db = new PouchDB('tangerine-lock-boxes', {adapter: 'indexeddb'})
   _openLockBoxes = []
 
   constructor() { }
