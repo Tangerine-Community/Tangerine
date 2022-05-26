@@ -21,13 +21,17 @@ import { LockBoxContents } from '../_classes/lock-box-contents.class';
 import { DB } from '../_factories/db.factory';
 import {VariableService} from "./variable.service";
 
+import PouchDB from 'pouchdb';
+import PouchIndexedDb from 'pouchdb-adapter-indexeddb';
+PouchDB.plugin(PouchIndexedDb)
+
 export type UserRole = string
 
 @Injectable()
 export class UserService {
 
   userData = {};
-  usersDb = DB('users');
+  usersDb = new PouchDB('users', {adapter: 'indexeddb'})
   userDatabases: Array<UserDatabase> = []
   config: AppConfig
   _currentUser = ''

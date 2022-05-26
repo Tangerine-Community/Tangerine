@@ -4,6 +4,9 @@ import PouchDB from 'pouchdb';
 import { DB } from '../_factories/db.factory';
 import * as jsonpatch from "fast-json-patch";
 
+import PouchIndexedDb from 'pouchdb-adapter-indexeddb';
+PouchDB.plugin(PouchIndexedDb)
+
 export class UserDatabase {
 
   userId: string;
@@ -26,9 +29,9 @@ export class UserDatabase {
     this.groupId = groupId 
     this.attachHistoryToDocs = attachHistoryToDocs 
     if (shared) {
-      this.db = DB(SHARED_USER_DATABASE_NAME, key)
+      this.db = new PouchDB(SHARED_USER_DATABASE_NAME, {adapter: 'indexeddb'})
     } else {
-      this.db = DB(username, key)
+      this.db = new PouchDB(username, {adapter: 'indexeddb'})
     }
   }
 
