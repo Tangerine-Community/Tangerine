@@ -175,27 +175,76 @@ export class TangyFormsPlayerComponent implements OnInit {
           this.throttledSaveResponse(response)
         })
         formEl.addEventListener('TANGY_MEDIA_UPDATE', async _ => {
-          if (this.appConfig.mediaFileStorageLocation && this.appConfig.mediaFileStorageLocation === 'file') {
 
-            const filename = _.target.name + '_' + this.response?._id
-            const domString = _.target.value
-            console.log("Caught TANGY_MEDIA_UPDATE event at: " + filename)
-            if (this.window.isCordovaApp) {
-              async function getBlob() {
-                return new Promise((resolve, reject) => {
-                  function reqListener () {
-                    console.log(this.response);
-                    resolve(this.response)
+          // _.preventDefault()
+         if (this.appConfig.mediaFileStorageLocation && this.appConfig.mediaFileStorageLocation === 'file') {
+          let filename = _.target.name + '_' + this.response?._id
+          const domString = _.target.value
+          console.log("Caught TANGY_MEDIA_UPDATE event at: " + filename)
+          if (this.window.isCordovaApp) {
+            async function getBlob() {
+              return new Promise((resolve, reject) => {
+                function reqListener () {
+                  console.log(`this.response type: ${this.response?.type} size: ${this.response?.size} `);
+                  let extension
+                  if (this.response.type === 'image/jpeg') {
+                    extension = '.jpg'
+                  } else if (this.response.type === 'image/png') {
+                    extension = '.png'
+                  } else if (this.response.type === 'audio/mpeg') {
+                    extension = '.mp3'
+                  } else if (this.response.type === 'video/mp4') {
+                    extension = '.mp4'
+                  } else if (this.response.type === 'text/csv') {
+                    extension = '.csv'
+                  } else if (this.response.type === 'application/pdf') {
+                    extension = '.pdf'
+                  } else if (this.response.type === 'application/msword') {
+                    extension = '.doc'
+                  } else if (this.response.type === 'application/vnd.ms-excel') {
+                    extension = '.xls'
+                  } else if (this.response.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                    extension = '.xlsx'
+                  } else if (this.response.type === 'application/zip') {
+                    extension = '.zip'
+                  } else if (this.response.type === 'application/json') {
+                    extension = '.json'
+                  } else if (this.response.type === 'application/xml') {
+                    extension = '.xml'
+                  } else if (this.response.type === 'image/svg+xml') {
+                    extension = '.svg'
+                  } else if (this.response.type === 'audio/wav') {
+                    extension = '.wav'
+                  } else if (this.response.type === 'video/webm') {
+                    extension = '.webm'
+                  } else if (this.response.type === 'audio/webm') {
+                    extension = '.weba'
                   }
-                  const xhr = new XMLHttpRequest();
-                  xhr.open('GET', domString, true);
-                  xhr.addEventListener("load", reqListener);
-                  xhr.responseType = 'blob';
-                  xhr.send();
-                })
-              }
-
-              let blob = await getBlob()
+                  filename = filename + extension
+                  resolve(this.response)
+                }
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', domString, true);
+                xhr.addEventListener("load", reqListener);
+                xhr.responseType = 'blob';
+                xhr.send();
+              })
+            }
+            
+            let blob = await getBlob()
+            
+            this.mediaFilesDirEntry = await new Promise(resolve =>
+              this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
+            );
+            this.mediaFilesDirEntry.getFile(filename, {create: true, exclusive: false}, (fileEntry) => {
+              fileEntry.createWriter((fileWriter) => {
+                fileWriter.onwriteend = (data) => {
+                  console.log(`Media file stored at ${this.mediaFilesDir}${filename}`)
+                };
+                fileWriter.onerror = (e) => {
+                  alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                };
+                fileWriter.write(blob);
 
               this.mediaFilesDirEntry = await new Promise(resolve =>
                 this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
