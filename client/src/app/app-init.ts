@@ -102,7 +102,7 @@ async function cryptoPouchIsEnabled() {
 
 async function indexedDbIsEnabled() {
   const appConfig = await getAppConfig();
-  return appConfig['indexedDb']
+  return appConfig['useCustomAdapter']
     ? true
     : false
 }
