@@ -4,7 +4,7 @@ import { AppConfigService } from './../_services/app-config.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { VariableService } from '../_services/variable.service';
-import { FIRST_SYNC_STATUS } from './../../sync/sync.service';
+import { FIRST_SYNC_STATUS } from 'src/app/device/components/device-sync/device-sync.component';
 
 @Injectable()
 export class LoginGuard implements CanActivate {

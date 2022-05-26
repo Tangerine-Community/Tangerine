@@ -2,7 +2,7 @@ import { SyncCouchdbService } from './sync/sync-couchdb.service';
 import { LockBoxService } from './shared/_services/lock-box.service';
 import { ClassFormService } from './class/_services/class-form.service';
 import { DashboardService } from './class/_services/dashboard.service';
-import { SyncService, FIRST_SYNC_STATUS } from './sync/sync.service';
+import { SyncService } from './sync/sync.service';
 import { SyncingService } from './core/sync-records/_services/syncing.service';
 import { FormTypesService } from './shared/_services/form-types.service';
 import { LanguagesService } from './shared/_services/languages.service';
@@ -26,6 +26,7 @@ import { AppConfig } from './shared/_classes/app-config.class';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { SearchService } from './shared/_services/search.service';
 import { Get } from 'tangy-form/helpers.js'
+import { FIRST_SYNC_STATUS } from './device/components/device-sync/device-sync.component';
 import { ProcessMonitorService } from './shared/_services/process-monitor.service';
 import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
 import { MatDialog } from '@angular/material/dialog';

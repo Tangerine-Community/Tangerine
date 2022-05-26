@@ -56,8 +56,6 @@ export class AppConfig {
   compareLimit: number;
   // List of views to skip optimization of after a sync.
   doNotOptimize: Array<string>
-  // Force a full re-optimization
-  forceOptimize:boolean = false
   // Prevent database optimization after a sync other than the first sync. This is not recommended, will lead to performance issues when using Devices.
   indexViewsOnlyOnFirstSync:boolean = false
   // Enables support for reducing the number of documents processed in the changed feed when syncing by passing this value to pouchDBOptions used when instantiating a db connection in db.factory.ts. This setting can help sites that experience crashes when syncing or indexing documents. Using this setting *will* slow sync times. (default: 50) 

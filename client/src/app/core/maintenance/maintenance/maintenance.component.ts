@@ -3,11 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { AppConfigService } from 'src/app/shared/_services/app-config.service';
-import { SyncService, FIRST_SYNC_STATUS} from "../../../sync/sync.service";
+import {SyncService} from "../../../sync/sync.service";
 import * as moment from 'moment'
 import {VariableService} from "../../../shared/_services/variable.service";
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-maintenance',
@@ -21,7 +19,6 @@ export class MaintenanceComponent implements OnInit {
   storageAvailableErrorThreshhold = 1
   displayLowStorageWarning: boolean
   displayPruningComplete: boolean = false
-  allowForceOptimize: boolean = false
   isStorageThresholdExceeded: boolean
   window: any;
   
@@ -29,8 +26,7 @@ export class MaintenanceComponent implements OnInit {
     private userService: UserService,
     private processMonitorService: ProcessMonitorService,
     private syncService: SyncService,
-    private variableService: VariableService,
-    private router: Router
+    private variableService: VariableService
   ) {
     this.window = window;
   }
@@ -38,7 +34,6 @@ export class MaintenanceComponent implements OnInit {
   async ngOnInit() {
     this.isCordovaApp = window['isCordovaApp']
     this.displayPruningComplete = false
-    this.allowForceOptimize = window['appConfig']?.forceOptimize
     if (window['isCordovaApp']) {
       const storageStats:any = await this.syncService.getStorageStats()
       this.storageAvailable = storageStats ? (storageStats / (1024*1024)).toFixed(2) : ""
@@ -280,12 +275,6 @@ export class MaintenanceComponent implements OnInit {
         reject(err)
       });
     })
-  }
-
-  async forceOptimization() {
-    this.variableService.set('FIRST_SYNC_STATUS', FIRST_SYNC_STATUS.IN_PROGRESS)
-    this.userService.logout();
-    this.router.navigate(['login']);
   }
 
 }
