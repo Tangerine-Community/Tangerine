@@ -6,6 +6,7 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import {Component, ViewChild, ElementRef, Input, OnInit} from '@angular/core';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
+import {AppConfigService} from "../../shared/_services/app-config.service";
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 declare const cordova: any;
@@ -49,17 +50,19 @@ export class TangyFormsPlayerComponent implements OnInit {
   throttledSaveFiring;
   mediaFilesDir: string = 'Documents/Tangerine/media/'
   mediaFilesDirEntry
-  
+  appConfig
   window:any;
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private tangyFormsInfoService:TangyFormsInfoService,
     private tangyFormService: TangyFormService,
+    private appConfigService: AppConfigService,
   ) {
     this.window = window
   }
 
   async ngOnInit() {
+    this.appConfig = await this.appConfigService.getAppConfig();
     if (this.window.isCordovaApp) {
       this.mediaFilesDir = 'Documents/Tangerine/media/'
     } else {
@@ -172,7 +175,9 @@ export class TangyFormsPlayerComponent implements OnInit {
           this.throttledSaveResponse(response)
         })
         formEl.addEventListener('TANGY_MEDIA_UPDATE', async _ => {
+
           // _.preventDefault()
+         if (this.appConfig.mediaFileStorageLocation && this.appConfig.mediaFileStorageLocation === 'file') {
           let filename = _.target.name + '_' + this.response?._id
           const domString = _.target.value
           console.log("Caught TANGY_MEDIA_UPDATE event at: " + filename)
@@ -241,8 +246,25 @@ export class TangyFormsPlayerComponent implements OnInit {
                 };
                 fileWriter.write(blob);
 
+              this.mediaFilesDirEntry = await new Promise(resolve =>
+                this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
+              );
+              this.mediaFilesDirEntry.getFile(filename, {create: true, exclusive: false}, (fileEntry) => {
+                fileEntry.createWriter((fileWriter) => {
+                  fileWriter.onwriteend = (data) => {
+                    console.log(`Media file stored at ${this.mediaFilesDir}/${filename}`)
+                  };
+                  fileWriter.onerror = (e) => {
+                    alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                  };
+                  fileWriter.write(blob);
+
+                });
               });
-            });
+            }
+          } else {
+            console.log("Saving media files to database.")
+            _.preventDefault()
           }
         }, true)
       }
