@@ -32,7 +32,16 @@ const {
  */
 
 async function getWorkerState() {
-  return JSON.parse(await readFile(REPORTING_WORKER_STATE, 'utf-8'))
+  let stateFile = await readFile(REPORTING_WORKER_STATE, 'utf-8');
+  if (stateFile) {
+    let state
+    try {
+      state = JSON.parse(stateFile);
+    } catch (e) {
+      console.log("stateFile: " + stateFile + " Error: " + e)
+    }
+    return state
+  }
 }
 
 async function setWorkerState(workerState) {
@@ -54,7 +63,10 @@ async function isWorking() {
 
 async function unsetWorkingFlag() {
   // Remove semaphore.
-  await unlink(REPORTING_WORKER_RUNNING)
+  try {
+    await unlink(REPORTING_WORKER_RUNNING)
+  } catch (e) {
+  }
 }
 
 /*

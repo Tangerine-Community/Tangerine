@@ -6,6 +6,7 @@ import { GroupService } from './shared/services/group/group.service';
 import { TangerineConfig } from './shared/classes/tangerine-config';
 import { ModulesDoc } from './shared/classes/modules-doc.class';
 import createSitewideDatabase = require('./create-sitewide-database');
+import {spawn} from "child_process";
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
@@ -116,17 +117,41 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        const result = await exec('reporting-worker-batch')
-        if (result.stderr) {
-          log.error(result.stderr)
-          await sleep(3*1000)
-        } else {
-          workerState = await reportingWorker.getWorkerState()
+        // const result = await exec('reporting-worker-batch')
+        // if (result.stderr) {
+        //   log.error(result.stderr)
+        //   await sleep(3*1000)
+        // } else {
+        //   workerState = await reportingWorker.getWorkerState()
+        //   if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+        //     await sleep(this.configService.config().reportingDelay)
+        //   } else {
+        //     log.info(`Processed ${workerState.processed} changes.`)
+        //   }
+        // }
+        try {
+          const child = await spawn(`reporting-worker-batch`, {
+            stdio: 'inherit',
+            shell: true
+          });
           if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+            // log.debug(`No documents processed; restarting reporting worker after ${this.configService.config().reportingDelay/1000} second delay`)
             await sleep(this.configService.config().reportingDelay)
           } else {
             log.info(`Processed ${workerState.processed} changes.`)
           }
+          if (child.stdout) {
+            log.debug('Output from completion of reporting-worker-batch: ' + JSON.stringify(child))
+          }
+          // log.debug(`Sleeping 1 second after completing batch.`)
+          // await sleep(1 * 1000)
+        } catch (e) {
+          if (e.stderr) {
+            log.error("Error from reporting-worker-batch: " + e.stderr.toString())
+          } else {
+            log.error("Error from reporting-worker-batch: " + e)
+          }
+          await sleep(3*1000)
         }
       } catch (error) {
         log.error('Reporting process had an error.')

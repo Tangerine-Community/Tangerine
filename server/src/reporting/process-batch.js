@@ -49,7 +49,11 @@ const processBatch = async () => {
   // Persist state to disk.
   await writeFile(REPORTING_WORKER_STATE, JSON.stringify(workerState), 'utf-8')
   // Remove semaphore.
-  await unlink(REPORTING_WORKER_RUNNING)
+  try {
+    await unlink(REPORTING_WORKER_RUNNING)
+  } catch (e) {
+    log.error("Unlink error: " + e)
+  }
   return 
 }
 
