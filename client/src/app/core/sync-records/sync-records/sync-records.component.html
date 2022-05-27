@@ -9,18 +9,18 @@
       <h3>{{'Record Sync Progress'|translate}}</h3>
       <span *ngIf="isSyncSuccesful">{{'Sync Successful'|translate}}</span>
       <span
-        *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined">{{'Sync unsuccessful, please retry.'|translate}}</span>
-      <br />
-      <br>
+        *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined" class="error">{{'Sync unsuccessful, please retry.'|translate}}</span>
       <div *ngIf="syncProtocol != 'replication'">
-        <p>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</p>
-        <p>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</p>
-        <p>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</p>
+        <ul>
+        <li>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</li>
+        <li>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</li>
+        <li>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</li>
+        </ul>
       </div>
       <div *ngIf="syncComplete">
-        <h3>{{'Video File Upload Progress'|translate}}</h3>
+        <h3>{{'File Upload Progress'|translate}}</h3>
         <div *ngIf="!syncMediaService.mediaFilesToSync">
-          <p>{{'No Video files to upload.'|translate}}</p>
+          <p>{{'No files to upload.'|translate}}</p>
         </div>
         {{statusMessage}}
         <div class="progress">
