@@ -28,10 +28,13 @@ export class UserDatabase {
     this.buildChannel = buildChannel
     this.groupId = groupId 
     this.attachHistoryToDocs = attachHistoryToDocs 
+
+    var changes_batch_size = window['changes_batch_size'] ? window['changes_batch_size'] : 50
+
     if (shared) {
-      this.db = new PouchDB(SHARED_USER_DATABASE_NAME, {adapter: 'indexeddb'})
+      this.db = new PouchDB(SHARED_USER_DATABASE_NAME, {adapter: 'indexeddb', view_update_changes_batch_size: changes_batch_size})
     } else {
-      this.db = new PouchDB(username, {adapter: 'indexeddb'})
+      this.db = new PouchDB(username, {adapter: 'indexeddb', view_update_changes_batch_size: changes_batch_size})
     }
   }
 
