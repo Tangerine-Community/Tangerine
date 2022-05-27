@@ -134,22 +134,25 @@ export class AppService {
             stdio: 'inherit',
             shell: true
           });
+          // const child = await spawn(`reporting-worker-batch`);
           if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
             // log.debug(`No documents processed; restarting reporting worker after ${this.configService.config().reportingDelay/1000} second delay`)
             await sleep(this.configService.config().reportingDelay)
           } else {
             log.info(`Processed ${workerState.processed} changes.`)
           }
-          if (child.stdout) {
-            log.debug('Output from completion of reporting-worker-batch: ' + JSON.stringify(child))
-          }
+          // if (child.stdout) {
+          //   log.debug('Output from completion of reporting-worker-batch: ' + JSON.stringify(child.stdout))
+          // }
           // log.debug(`Sleeping 1 second after completing batch.`)
-          // await sleep(1 * 1000)
+          await sleep(1 * 1000)
         } catch (e) {
           if (e.stderr) {
             log.error("Error from reporting-worker-batch: " + e.stderr.toString())
+            log.error(e.stack)
           } else {
             log.error("Error from reporting-worker-batch: " + e)
+            log.error(e.stack)
           }
           await sleep(3*1000)
         }
