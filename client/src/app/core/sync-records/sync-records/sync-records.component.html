@@ -22,6 +22,10 @@
         <div *ngIf="!syncMediaService.mediaFilesToSync">
           <p>{{'No files to upload.'|translate}}</p>
         </div>
+        <div *ngIf="showDirectoryDialog">
+          <label for="folder">{{'Select folder'|translate}}</label>
+          <input type="file" id="folder" webkitdirectory multiple (change)="restoreBackups($event.target.files)"/>
+        </div>
         {{statusMessage}}
         <div class="progress">
           <mat-progress-bar class="progress-bar" mode="determinate"

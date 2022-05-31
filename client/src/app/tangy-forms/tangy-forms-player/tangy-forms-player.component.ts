@@ -47,9 +47,9 @@ export class TangyFormsPlayerComponent implements OnInit {
   formTemplatesInContext: Array<FormTemplate>
   formEl: any
 
-  throttledSaveLoaded;
-  throttledSaveFiring;
-  mediaFilesDir: string = 'Documents/Tangerine/media/'
+  throttledSaveLoaded
+  throttledSaveFiring
+  mediaFilesDir: string
   mediaFilesDirEntry
   appConfig
   window: any;
@@ -65,8 +65,9 @@ export class TangyFormsPlayerComponent implements OnInit {
 
   async ngOnInit() {
     this.appConfig = await this.appConfigService.getAppConfig();
+    const groupId = this.appConfig.groupId
     if (this.window.isCordovaApp) {
-      this.mediaFilesDir = 'Documents/Tangerine/media/'
+      this.mediaFilesDir = cordova.file.externalRootDirectory + 'Documents/Tangerine/media/' + groupId + '/'
     } else {
       this.mediaFilesDir = `${_TRANSLATE('Click button to start download to desired directory.')} `
     }
@@ -74,7 +75,9 @@ export class TangyFormsPlayerComponent implements OnInit {
     if (this.window.isCordovaApp) {
       this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Documents', (directoryEntry) => {
         directoryEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
-          dirEntry.getDirectory('media', {create: true}, (subDirEntry) => {
+          dirEntry.getDirectory('media', {create: true}, (dirEntry) => {
+            dirEntry.getDirectory(groupId, {create: true}, (subDirEntry) => {
+            }, this.onErrorGetDir);
           }, this.onErrorGetDir);
         }, this.onErrorGetDir);
       })
@@ -236,20 +239,31 @@ export class TangyFormsPlayerComponent implements OnInit {
 
               let blob = await getBlob()
 
-              this.mediaFilesDirEntry = await new Promise(resolve =>
-                this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
-              );
-              this.mediaFilesDirEntry.getFile(filename, {create: true, exclusive: false}, (fileEntry) => {
-                fileEntry.createWriter((fileWriter) => {
-                  fileWriter.onwriteend = (data) => {
-                    console.log(`Media file stored at ${this.mediaFilesDir}${filename}`)
-                  };
-                  fileWriter.onerror = (e) => {
-                    alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-                  };
-                  fileWriter.write(blob);
+              try {
+                this.mediaFilesDirEntry = await new Promise((resolve, reject) =>
+                  this.window.resolveLocalFileSystemURL(this.mediaFilesDir, resolve, reject)
+                );
+              } catch (e) {
+                let message = "Unable to access " + this.mediaFilesDir + " Error: " + JSON.stringify(e);
+                console.error(message)
+                alert(message)
+              }
+              if (this.mediaFilesDirEntry) {
+                this.mediaFilesDirEntry.getFile(filename, {create: true, exclusive: false}, (fileEntry) => {
+                  fileEntry.createWriter((fileWriter) => {
+                    fileWriter.onwriteend = (data) => {
+                      console.log(`Media file stored at ${this.mediaFilesDir}${filename}`)
+                    };
+                    fileWriter.onerror = (e) => {
+                      alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                    };
+                    fileWriter.write(blob);
+                  });
+                },(error) => {
+                  alert("Error: " + error)
+                  console.error(error)
                 });
-              });
+              }
             }
           } else {
             console.log("Saving media files to database.")
