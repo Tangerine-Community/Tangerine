@@ -13,6 +13,8 @@ __Fixes__
 - The default password policy (T_PASSWORD_POLICY in config.sh) has been improved to support most special characters and the T_PASSWORD_RECIPE description has been updated to list the permitted special characters. Issue: https://github.com/Tangerine-Community/Tangerine/issues/3299
 - Enable forms without location to be viewed in visits listing. PR: [#3347](https://github.com/Tangerine-Community/Tangerine/pull/3347)
 - Fix results with cycle sequences do not generate a CSV file. Issue: [#3249](https://github.com/Tangerine-Community/Tangerine/issues/3249)
+- Enable grids to be hidden based on skip logic [#1391](https://github.com/Tangerine-Community/Tangerine/issues/1391)
+- Add confirmation to consent form if 'No' selected before the form is closed [#3025](https://github.com/Tangerine-Community/Tangerine/issues/3025). Activate this feature using the new property: `confirm-no="true"`.
 
 ```shell
 (\` ~ ! @ # $ % ^ & * ( ) \ - _ = + < > , . ; : \ | [ ] { } )
