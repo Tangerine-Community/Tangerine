@@ -7,6 +7,7 @@ RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/$GROUP"
 BUILD_ID="$4"
 UUID="$4"
 VERSION_TAG="$5"
+APP_NAME="$6"
 ARCHIVE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/archive/$GROUP/$BUILD_ID-$VERSION_TAG"
 
 echo "RELEASE_DIRECTORY: $RELEASE_DIRECTORY"
@@ -39,6 +40,16 @@ else
     echo "releasing in the configured orientation: $T_ORIENTATION."
     # modify the orientation per configuration settings
     sed -i -e "s#T_ORIENTATION#"$T_ORIENTATION"#g" builds/pwa/manifest.json
+fi
+
+if [ -z "$APP_NAME" ]
+then
+    echo "releasing in the default app name."
+    sed -i -e "s#APP_NAME#Tangerine" builds/pwa/manifest.json
+else
+    echo "releasing in the configured app name: $APP_NAME."
+    # modify the orientation per configuration settings
+    sed -i -e "s#APP_NAME#"$APP_NAME"#g" builds/pwa/manifest.json
 fi
 
 # Create a temporary PWA folder that we'll move to the secret.
