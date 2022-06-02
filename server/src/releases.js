@@ -49,7 +49,9 @@ const releasePWA = async (req, res)=>{
 	try {
 		const group = sanitize(req.params.group)
 		const {releaseType, versionTag, releaseNotes, buildId} = req.body;
-		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)} ${sanitize(versionTag)}`
+		const config = JSON.parse(await fs.readFile(`/tangerine/groups/${group}/client/app-config.json`, "utf8"));
+		const appName = config.appName ? config.appName: APPNAME
+		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)} ${sanitize(versionTag)} ${sanitize(appName)}}`
 		log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
 		log.info(`RELEASING PWA: ${cmd}`)
         await exec(cmd)
