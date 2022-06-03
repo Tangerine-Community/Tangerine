@@ -28,7 +28,8 @@ export class SyncRecordsComponent implements OnInit {
   uploadSub: Subscription;
   statusMessage: string;
   syncComplete:boolean = false;
-
+  showDirectoryDialog: boolean
+  
   constructor(
     private syncingService: SyncingService,
     private userService: UserService,
@@ -43,7 +44,7 @@ export class SyncRecordsComponent implements OnInit {
     this.syncProtocol = appConfig.syncProtocol ? appConfig.syncProtocol : '1'
     if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === '2') {
     } else {
-      this.getUploadProgress();
+      await this.getUploadProgress();
     }
     if (this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') !== -1) {
       this.contentVersion = this.window.location.href.split('/')[this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') + 1];
@@ -97,12 +98,12 @@ export class SyncRecordsComponent implements OnInit {
         const result = await this.syncingService.sync(username);
         if (result) {
           this.isSyncSuccesful = true;
-          this.getUploadProgress();
+          await this.getUploadProgress();
         }
       } catch (error) {
         console.error(error);
         this.isSyncSuccesful = false;
-        this.getUploadProgress();
+        await this.getUploadProgress();
       }
       
       this.syncComplete = true;
@@ -115,6 +116,8 @@ export class SyncRecordsComponent implements OnInit {
           console.log(e)
         }
       } else {
+        // TODO: Need to sort out the PWA workflow. 
+        // this.showDirectoryDialog = true
         console.log('Not a Cordova App - no media uploads')
       }
       

@@ -13,6 +13,7 @@
 const PouchDB = require('pouchdb');
 const tangyModules = require('../modules/index.js')()
 const fs = require('fs-extra')
+const log = require('tangy-log').log
 const CODE_SKIP = '999'
 
 let DB = PouchDB.defaults({
@@ -68,7 +69,7 @@ const processFormResponse = async (doc, sourceDb, sequence) => {
   try {
     const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
   } catch (error) {
-    console.error(error)
+    log.error(error)
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
   }
 };

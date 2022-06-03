@@ -60,7 +60,7 @@ module.exports = {
           const groupId = sourceDb.name
           // TODO: Can't the fetch of the locationList be cached?
           const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-          console.log(doc.type)
+          // console.log(doc.type)
           // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
           // @TODO Rename `-reporting` to `-csv-sanitized`.
@@ -227,10 +227,11 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
+  const cycleSequencesReplacer = new RegExp('\n', 'g')
   let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
-    cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replaceAll('\n','  '): '',
+    cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
     sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
     startUnixtime: formResponse.startUnixtime||'',
     endUnixtime: formResponse.endUnixtime||'',
@@ -515,7 +516,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
         userProfileId = doc[userProfileIdKey]
       }
-      console.log("CSV generation for doc _id: " + doc._id + "; adding userProfile to doc with userProfileId: " + userProfileId + " ")
+      // console.log("CSV generation for doc _id: " + doc._id + "; adding userProfile to doc with userProfileId: " + userProfileId + " ")
       let userProfileDoc;
       if (userProfileId !== 'Editor') {
         // Get the user profile.
@@ -528,7 +529,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
             let userProfileDocOriginal = await sourceDb.get(userProfileId)
             userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false, sourceDb.name);
           } catch (e) {
-            console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
+            // console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
           }
         }
 
@@ -578,7 +579,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
       
     } catch (error) {
       // There must not be a user profile yet doc uploaded yet.
-      console.log("Returning doc instead of docWithProfile because user profile not uploaded yet.")
+      // console.log("Returning doc instead of docWithProfile because user profile not uploaded yet.")
       return doc
     }
 }
