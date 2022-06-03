@@ -268,7 +268,7 @@ export class SyncService {
       }
     }
     if (appConfig.doNotOptimize && Array.isArray(appConfig.doNotOptimize)) {
-      viewsToOptimize = viewsToOptimize.filter(view => appConfig.doNotOptimize.includes(view))
+      viewsToOptimize = viewsToOptimize.filter(view => !appConfig.doNotOptimize.includes(view))
     }
     console.log(`Indexing ${viewsToOptimize.length} views.`)
     let i = 0

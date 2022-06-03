@@ -14,6 +14,6 @@ module.exports = async function enableModule(moduleName) {
       }
     }
   } else {
-    throw new Error('Error: You must first enable that module via T_MODULES.')
+    throw new Error('Error: You must first enable the module: ' + moduleName + ' via T_MODULES or set module.exports.name in the module.')
   }
 }

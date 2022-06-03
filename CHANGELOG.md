@@ -1,5 +1,53 @@
 # What's new
 
+## v3.24.1
+
+__New Features__
+
+- Feature: New version of mysql module, called mysql-js, which is coded in javascript instead of python. This module exports records much faster than previous version. It should also use much less memory and provide more flexibility in terms of column data types and (eventually) support of different types of databases. Issue: [#3047](https://github.com/Tangerine-Community/Tangerine/issues/3047)
+- Feature: Enable upload of files created by the tangy-photo-capture and tangy-video-capture inputs. PR: [#3354](https://github.com/Tangerine-Community/Tangerine/pull/3354)
+  Note:  In order to cause minimal negative impact upon current projects, the default behavior will be to save image files created by the tangy-photo-capture input to the database, instead of saving to a file and uploading. That being said, it is preferable to save as a file and upload. To over-ride this default, set the new `mediaFileStorageLocation` property to 'file' in the group's app-config.json. The default is 'database'. If this property is not defined, it will save to the database. New groups will be created with
+  `mediaFileStorageLocation` set to 'file'. Videos created using the tangy-video-capture input will always be uploaded to the server due to their large file size. 
+
+__Fixes__
+- The default password policy (T_PASSWORD_POLICY in config.sh) has been improved to support most special characters and the T_PASSWORD_RECIPE description has been updated to list the permitted special characters. Issue: https://github.com/Tangerine-Community/Tangerine/issues/3299
+
+  Example:
+
+```shell
+(\` ~ ! @ # $ % ^ & * ( ) \ - _ = + < > , . ; : \ | [ ] { } )
+```
+
+- Enable forms without location to be viewed in visits listing. PR: [#3347](https://github.com/Tangerine-Community/Tangerine/pull/3347)
+- Fix results with cycle sequences that do not generate a CSV file. Issue: [#3249](https://github.com/Tangerine-Community/Tangerine/issues/3249) PR: [3345](https://github.com/Tangerine-Community/Tangerine/pull/3345)
+- Enable grids to be hidden based on skip logic [#1391](https://github.com/Tangerine-Community/Tangerine/issues/1391)
+- Add confirmation to consent form if 'No' selected before the form is closed [#3025](https://github.com/Tangerine-Community/Tangerine/issues/3025). Activate this feature using the new property: `confirm-no="true"`.
+- Fix app config doNotOptimize logic PR: [#3358](https://github.com/Tangerine-Community/Tangerine/pull/3358)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.24.1
+./start.sh v3.24.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.24.0
+```
+
 ## v3.24.0
 
 __New Features__
@@ -75,30 +123,6 @@ __New Features__
 __Fixes__
 
 - Add postfix property to tangy-keyboard-input. Also add highlight to value entered. Issue: [3321](https://github.com/Tangerine-Community/Tangerine/issues/3321)
-
-__Server upgrade instructions__
-
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
-
-```
-cd tangerine
-# Check the size of the data folder.
-du -sh data
-# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
-df -h
-# Turn off tangerine and database.
-docker stop tangerine couchdb
-# Create a backup of the data folder.
-cp -r data ../data-backup-$(date "+%F-%T")
-# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
-docker logs --since=60m tangerine
-# Fetch the updates.
-git fetch origin
-git checkout v3.23.0
-./start.sh v3.23.0
-# Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.22.4
-```
 
 ## v3.22.4
 
