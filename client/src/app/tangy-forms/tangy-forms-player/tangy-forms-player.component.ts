@@ -182,7 +182,8 @@ export class TangyFormsPlayerComponent implements OnInit {
         formEl.addEventListener('TANGY_MEDIA_UPDATE', async _ => {
 
           // _.preventDefault()
-          if (this.appConfig.mediaFileStorageLocation && this.appConfig.mediaFileStorageLocation === 'file') {
+          // Always save TANGY-VIDEO-CAPTURE to file; probably would be better to create a property for the input to declare 'always save as file'
+          if (_.target.tagName === 'TANGY-VIDEO-CAPTURE' || (this.appConfig.mediaFileStorageLocation && this.appConfig.mediaFileStorageLocation === 'file')) {
             let filename = _.target.name + '_' + this.response?._id
             const domString = _.target.value
             console.log("Caught TANGY_MEDIA_UPDATE event at: " + filename)
