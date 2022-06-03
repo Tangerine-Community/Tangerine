@@ -19,6 +19,9 @@ module.exports = async (req, res) => {
     const value = inputs.find(i => i.name === variableName)
       ? inputs.find(i => i.name === variableName).value
       : 'undefined'
+    const dataType = inputs.find(i => i.name === variableName)
+      ? inputs.find(i => i.name === variableName).dataType
+      : 'undefined'
     if (value.includes('data:image/jpeg')) {
       res.type('jpeg')
       const data = value.replace('data:image/jpeg;base64,', '')
@@ -30,9 +33,13 @@ module.exports = async (req, res) => {
       const buffer = Buffer.from(data, 'base64')
       return res.send(buffer)
     } else if (value.includes('blob:file')) {
-      const filePath = `/tangerine/client/content/groups/${req.params.groupId}/client-uploads/${variableName}_${responseId}.webm`
+      let extension = 'jpg'
+      if (dataType && dataType === 'video') {
+        extension = 'webm'
+      }
+      const filePath = `/tangerine/client/content/groups/${req.params.groupId}/client-uploads/${variableName}_${responseId}.${extension}`
       console.log("filePath", filePath)
-      res.type('webm')
+      res.type(extension)
       return res.sendFile(filePath)
     } else {
       res.send(value)

@@ -10,7 +10,8 @@ const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
 const createGroupDatabase = require('../../create-group-database.js')
 const { v4: uuidv4 } = require('uuid');
-const groupReportingViews = require(`./views.js`)
+const byParticipantView = require(`./byParticipant.js`)
+const byTypeViews = require(`./byType.js`)
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
@@ -19,34 +20,49 @@ const exec = async function(cmd) {
 */
 
 async function insertGroupReportingViews(groupName) {
-  let designDoc = Object.assign({}, groupReportingViews)
   let groupDb = new DB(`${groupName}-mysql`)
+  let designDoc = Object.assign({}, byParticipantView)
   try {
     let status = await groupDb.post(designDoc)
-    log.info(`group reporting views inserted into ${groupName}-reporting`)
+    log.info(`byParticipant View inserted into ${groupName}-mysql`)
+  } catch (error) {
+    log.error(error)
+  }
+  designDoc = Object.assign({}, byTypeViews)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`byType View inserted into ${groupName}-mysql`)
   } catch (error) {
     log.error(error)
   }
 
   // sanitized
   groupDb = new DB(`${groupName}-mysql-sanitized`)
+  designDoc = Object.assign({}, byParticipantView)
   try {
     let status = await groupDb.post(designDoc)
-    log.info(`group reporting views inserted into ${groupName}-reporting-sanitized`)
+    log.info(`byParticipant View inserted into ${groupName}-mysql-sanitized`)
+  } catch (error) {
+    log.error(error)
+  }
+  designDoc = Object.assign({}, byTypeViews)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`byType View inserted into ${groupName}-mysql-sanitized`)
   } catch (error) {
     log.error(error)
   }
 }
 
 module.exports = {
-  name: 'mysql',
+  name: 'mysql-js',
   hooks: {
     boot: async function(data) {
       const groups = await groupsList()
       for (groupId of groups) {
 
         const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-        startTangerineToMySQL(pathToStateFile)
+        // startTangerineToMySQL(pathToStateFile)
       }
       return data
     },
@@ -73,7 +89,6 @@ module.exports = {
       return data
     },
     clearReportingCache: async function(data) {
-      console.log("clearReportingCache hook")
       const { groupNames } = data
       for (let groupName of groupNames) {
         await removeGroupForMySQL(groupName)

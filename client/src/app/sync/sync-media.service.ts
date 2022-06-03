@@ -39,23 +39,34 @@ export class SyncMediaService {
   statusMessage: string;
   private lastEntry: boolean;
   mediaFilesToSync:boolean = false;
-
-
+  appConfig:AppConfig
+  
   async sync(): Promise<any> {
     if (!window['isCordovaApp']) {
       alert('Media sync does not work in PWAs. Please use an APK.');
     }
     this.mediaFilesToSync = false
-    const appConfig = await this.appConfigService.getAppConfig()
+
+    this.appConfig = await this.appConfigService.getAppConfig()
+    const groupId = this.appConfig.groupId
+    if (window['isCordovaApp']) {
+      this.mediaFilesDir = cordova.file.externalRootDirectory + 'Documents/Tangerine/media/'+ groupId + '/'
+    }
+    
     const device = await this.deviceService.getDevice()
 
     this.syncMediaServiceStartTime = new Date().toISOString()
     // this.replicationStatus = new ReplicationStatus()
 
-    const path = cordova.file.externalRootDirectory + this.mediaFilesDir
-    this.mediaFilesDirEntry = await new Promise(resolve =>
-      this.window.resolveLocalFileSystemURL(path, resolve)
-    );
+    try {
+      this.mediaFilesDirEntry = await new Promise((resolve, reject) =>
+        this.window.resolveLocalFileSystemURL(this.mediaFilesDir, resolve, reject)
+      );
+    } catch (e) {
+      let message = "Unable to access " + this.mediaFilesDir + " Error: " + JSON.stringify(e);
+      console.error(message)
+      alert(message)
+    }
     const mediaDirEntries: any[] = await new Promise(resolve => {
       const reader = this.mediaFilesDirEntry.createReader();
       reader.readEntries((entries) => resolve(entries))
@@ -68,12 +79,12 @@ export class SyncMediaService {
     for (var i = 0; i < mediaDirEntries.length; i++) {
       this.lastEntry = (i + 1) === mediaDirEntries.length
       const entry = mediaDirEntries[i]
-      const fileName = entry.name + '.webm'
+      const fileName = entry.name
       console.log("processing file: " + fileName)
       this.statusMessage = _TRANSLATE("Uploading file: ") + fileName + "; " + (i + 1) + _TRANSLATE(" of ") + mediaDirEntries.length + _TRANSLATE(" to upload")
 
       const dirEntry = await new Promise(resolve =>
-        this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + this.mediaFilesDir, resolve)
+        this.window.resolveLocalFileSystemURL(this.mediaFilesDir, resolve)
       );
       const fileEntry = await new Promise(resolve => {
           (dirEntry as DirectoryEntry).getFile(entry.name, {create: true, exclusive: false}, resolve);
@@ -88,7 +99,7 @@ export class SyncMediaService {
 
       let statusMessage
       try {
-        statusMessage = await this.uploadFile(file, appConfig, md5)
+        statusMessage = await this.uploadFile(file, this.appConfig, md5)
         await new Promise(resolve => {
           (fileEntry as FileEntry).remove(resolve)
         });
@@ -120,10 +131,10 @@ export class SyncMediaService {
       let reader = this.getFileReader();
       reader.onloadend = async (e) => {
         // Create a blob based on the FileReader "result", which we asked to be retrieved as an ArrayBuffer
-        const blob = new Blob([new Uint8Array(<ArrayBuffer>e.target.result)], {type: "video/webm"});
-        const fileName = file.name + '.webm'
+        const blob = new Blob([new Uint8Array(<ArrayBuffer>e.target.result)], {type: file.type});
+        const fileName = file.name
         const formData = new FormData();
-        formData.append('video', blob, fileName);
+        formData.append('media', blob, fileName);
         formData.append('md5', md5);
         // /app/:group/media-upload
         const url = `${appConfig.serverUrl}app/${appConfig.groupId}/client-media-upload`
