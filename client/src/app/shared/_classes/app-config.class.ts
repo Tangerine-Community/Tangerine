@@ -136,6 +136,9 @@ export class AppConfig {
 
   useCachedDbDumps:boolean
   dbBackupSplitNumberFiles: number;
+  
+  // Media files configuration
+  mediaFileStorageLocation:string  // Options: 'database' (default) or 'file'. If undefined, will save to database.
 
   //
   // Experimental configuration.
