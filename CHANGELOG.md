@@ -1,5 +1,35 @@
 # What's new
 
+## v3.24.3
+
+__Fixes__
+- Separate Archived and Active forms in Request Spreadsheet screen [#3222](https://github.com/Tangerine-Community/Tangerine/issues/3222)
+- When incomplete results upload is enabled on a group, do not save empty record when using sync-protocol 1. [#3360](https://github.com/Tangerine-Community/Tangerine/issues/3360)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.24.3
+./start.sh v3.24.3
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.24.2
+```
+
 ## v3.24.2
 
 __Fixes__
