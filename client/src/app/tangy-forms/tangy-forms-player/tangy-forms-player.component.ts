@@ -170,7 +170,7 @@ export class TangyFormsPlayerComponent implements OnInit {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
         formEl.response.formVersionId = this.formInfo.formVersionId
-        if (this.appConfig.syncProtocol !== '1') {
+        if (this.appConfig.syncProtocol === '2') {
           this.throttledSaveResponse(formEl.response)
         }
       }
