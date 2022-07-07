@@ -73,13 +73,19 @@ export class TangyFormsPlayerComponent implements OnInit {
     }
 
     if (this.window.isCordovaApp) {
-      this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Documents', (directoryEntry) => {
-        directoryEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
-          dirEntry.getDirectory('media', {create: true}, (dirEntry) => {
-            dirEntry.getDirectory(groupId, {create: true}, (subDirEntry) => {
+      const entry = await new Promise<Entry>((resolve, reject) => {
+        this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, resolve, reject);
+      });
+      // We know this path is a directory
+      const directory = entry as DirectoryEntry;
+      await new Promise((resolve, reject) => {
+        directory.getDirectory('Documents', {create: true}, (dirEntry) => {
+          dirEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
+            dirEntry.getDirectory('media', {create: true}, (dirEntry) => {
+              dirEntry.getDirectory(groupId, {create: true}, resolve, reject);
             }, this.onErrorGetDir);
           }, this.onErrorGetDir);
-        }, this.onErrorGetDir);
+        })
       })
     }
   }
