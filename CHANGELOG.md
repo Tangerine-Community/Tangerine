@@ -5,6 +5,8 @@
 __Fixes__
 - Separate Archived and Active forms in Request Spreadsheet screen [#3222](https://github.com/Tangerine-Community/Tangerine/issues/3222)
 - When incomplete results upload is enabled on a group, do not save empty record when using sync-protocol 1. [#3360](https://github.com/Tangerine-Community/Tangerine/issues/3360)
+- Enable editing the "No" confirmation alert for tangy-consent [#3025](https://github.com/Tangerine-Community/Tangerine/issues/3025)
+- Fix Sync error caused by async directory error when creating media directories [#3374](https://github.com/Tangerine-Community/Tangerine/issues/3374)
 
 __Server upgrade instructions__
 
