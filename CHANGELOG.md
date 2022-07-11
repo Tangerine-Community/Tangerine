@@ -10,6 +10,9 @@ __Fixes__
 - When incomplete results upload is enabled on a group, do not save empty record when using sync-protocol 1. [#3360](https://github.com/Tangerine-Community/Tangerine/issues/3360)
 - Enable editing the "No" confirmation alert for tangy-consent [#3025](https://github.com/Tangerine-Community/Tangerine/issues/3025)
 - Fix Sync error caused by async directory error when creating media directories [#3374](https://github.com/Tangerine-Community/Tangerine/issues/3374)
+- Exclude client-uploads folder from APK and PWA releases [#3371](https://github.com/Tangerine-Community/Tangerine/issues/3371)
+- Remove ordering of inputs when creating spreadsheets [#3252](https://github.com/Tangerine-Community/Tangerine/issues/3252)
+
 
 __Server upgrade instructions__
 
