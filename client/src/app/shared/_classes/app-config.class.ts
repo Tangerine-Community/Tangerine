@@ -129,6 +129,7 @@ export class AppConfig {
   //
 
   goHomeAfterFormSubmit = false
+  forceCompleteForms = false
 
   //
   // Backup configuration.

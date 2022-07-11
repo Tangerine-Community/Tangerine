@@ -7,6 +7,7 @@ import {Component, ViewChild, ElementRef, Input, OnInit} from '@angular/core';
 import {_TRANSLATE} from '../../shared/translation-marker';
 import {TangyFormService} from '../tangy-form.service';
 import {AppConfigService} from "../../shared/_services/app-config.service";
+import {VariableService} from "../../shared/_services/variable.service";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -59,6 +60,7 @@ export class TangyFormsPlayerComponent implements OnInit {
     private tangyFormsInfoService: TangyFormsInfoService,
     private tangyFormService: TangyFormService,
     private appConfigService: AppConfigService,
+    private variableService: VariableService
   ) {
     this.window = window
   }
@@ -183,6 +185,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       this.response = formEl.response
       // Listen up, save in the db.
       if (!this.skipSaving) {
+        await this.variableService.set('current-form-id', this.formId);
         formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
@@ -346,7 +349,10 @@ export class TangyFormsPlayerComponent implements OnInit {
         let r = await this.tangyFormService.saveResponse(state)
         stateDoc = await this.tangyFormService.getResponse(state._id)
       }
+      // reset some values.
       stateDoc["uploadDatetime"] = ""
+      await this.variableService.set('current-form-id', null);
+      // now save the responseDoc.
       await this.tangyFormService.saveResponse({
         ...state,
         _rev: stateDoc['_rev'],

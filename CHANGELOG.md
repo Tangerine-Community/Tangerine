@@ -2,6 +2,9 @@
 
 ## v3.24.3
 
+__New Feature__
+- To force user to stay on form until submission, set `"forceCompleteForms":true' in the group app-config.json. Issue: [#3215](https://github.com/Tangerine-Community/Tangerine/issues/3215)
+
 __Fixes__
 - Separate Archived and Active forms in Request Spreadsheet screen [#3222](https://github.com/Tangerine-Community/Tangerine/issues/3222)
 - When incomplete results upload is enabled on a group, do not save empty record when using sync-protocol 1. [#3360](https://github.com/Tangerine-Community/Tangerine/issues/3360)
