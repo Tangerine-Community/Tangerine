@@ -52,6 +52,10 @@ mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 # Install content into PWA.
 rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
+
+echo "RELEASE PWA: removing client-uploads dir"
+rm -rf .pwa-temporary/$UUID/app/assets/client-uploads
+
 echo $BUILD_ID > .pwa-temporary/$UUID/app/assets/tangerine-build-id
 echo $RELEASE_TYPE > .pwa-temporary/$UUID/app/assets/tangerine-build-channel
 echo $VERSION_TAG > .pwa-temporary/$UUID/app/assets/tangerine-version-tag 
