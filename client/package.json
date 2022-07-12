@@ -48,6 +48,7 @@
     "crypto-pouch": "github:garbados/crypto-pouch#garbados-refactor-fix/transform-dep",
     "date-carousel": "^5.2.1",
     "fast-json-patch": "^3.0.0-1",
+    "flexsearch": "^0.7.21",
     "fs-extra": "^6.0.1",
     "js-uuid": "0.0.6",
     "lit-element": "^2.3.1",

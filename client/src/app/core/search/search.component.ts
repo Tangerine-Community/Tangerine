@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { SearchBarcodeComponent } from './search-barcode/search-barcode.component';
 import { t } from 'tangy-form/util/t.js'
 import { v4 as UUID } from 'uuid';
+import { Index, Document, Worker } from 'flexsearch'
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -76,6 +77,7 @@ export class SearchComponent implements OnInit {
     this.formsInfo = await this.formsInfoService.getFormsInfo()
     this.username = this.userService.getCurrentUser()
     this.formTypesInfo = FORM_TYPES_INFO
+    // const worker = new Worker(options);
     this.onSearch$
       .pipe(debounceTime(4*1000))
       .subscribe((searchString:string) => {
