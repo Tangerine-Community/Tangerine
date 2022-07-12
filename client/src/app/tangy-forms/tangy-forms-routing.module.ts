@@ -29,8 +29,13 @@ export class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponen
       return confirm(_TRANSLATE('There is unsaved data. Are you sure you would like to exit the form?'));
     } else if (!component.isComplete()) {
       if (this.window.T.appConfig.config.forceCompleteForms === true) {
-        alert(_TRANSLATE('You must complete this form.'));
-        return false
+        const link = nextState.url
+        if (link === '/login') {
+          return true;
+        } else {
+          alert(_TRANSLATE('You must complete this form.'));
+          return false
+        }
       } else {
         return confirm(_TRANSLATE('The form is not yet complete. Are you sure you would like to exit the form?'));
       }
