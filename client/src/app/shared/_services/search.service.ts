@@ -129,7 +129,7 @@ export class SearchService {
         }
         : variablesToIndexByFormId
     }, {})
-    const index = new Index({tokenize: "forward"});
+    const index = new Index({tokenize: "full"});
     const options = {limit: this.compareLimit, include_docs: true, selector: null}
     const database = userDb.db
     const dbName = "local device"
@@ -193,15 +193,18 @@ export class SearchService {
                 }, {})
                 const variablesToIndex = variablesToIndexByFormId[doc.form.id]
                 if (variablesToIndex && variablesToIndex.length > 0) {
+                  // TODO - assemble values for all vars and concatenate and only add a single k/v pair
+                  const key = id
+                  let concatedValues = ""
                   for (let j = 0; j < variablesToIndex.length; j++) {
                     const variableToIndex = variablesToIndex[j]
-                    const key = id+'_'+j
                     const value = allInputsValueByName[variableToIndex]
                     if (value) {
-                      await index.addAsync(key, value);
-                      console.log("Added: " + key + ":" + value)
+                      concatedValues = concatedValues + " " + value
                     }
                   }
+                  await index.addAsync(key, concatedValues);
+                  console.log("Added: " + key + ":" + concatedValues)
                 }
               }
             }

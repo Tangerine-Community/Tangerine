@@ -14,12 +14,19 @@
       <td (click)="scan()">
         <iron-icon icon="image:filter-center-focus"></iron-icon>
       </td>
+      <td (click)="updateSearchIndex()">
+        <iron-icon icon="icons:update"></iron-icon>
+      </td>
+      <td (click)="loadSearchIndex()">
+        <iron-icon icon="icons:restore-page"></iron-icon>
+      </td>
     </tr>
     <tr>
       <td (click)="focusOnFind()">{{'Find Case'|translate}}</td>
       <td routerLink="/new-form-response">{{'New Case'|translate}}</td>
       <td (click)="scan()">{{'Scan Code'|translate}}</td>
       <td (click)="updateSearchIndex()">{{'Update Search'|translate}}</td>
+      <td (click)="loadSearchIndex()">{{'Load Index'|translate}}</td>
     </tr>
   </table>
 </div>
