@@ -64,6 +64,7 @@ export class SearchComponent implements OnInit {
   thereIsMore = true 
   isLoading = true 
   searchQueue:Queue = new Queue()
+  index
 
   constructor(
     private searchService: SearchService,
@@ -212,5 +213,10 @@ export class SearchComponent implements OnInit {
   onScanCancel() {
     this.showScan = false
 
+  }
+
+  async updateSearchIndex() {
+    const index = await this.searchService.indexDocs()
+    this.index = index
   }
 }
