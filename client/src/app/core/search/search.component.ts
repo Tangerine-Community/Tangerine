@@ -224,139 +224,15 @@ export class SearchComponent implements OnInit {
 
   async updateSearchIndex() {
     const index = await this.searchService.indexDocs()
-    const appConfig = await this.appConfigService.getAppConfig()
-    const groupId = appConfig.groupId
-    let indexesDir, indexesDirEntry
-    // this.index = index
-
-    if (this.window.isCordovaApp) {
-      const entry = await new Promise<Entry>((resolve, reject) => {
-        this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, resolve, reject);
-      });
-      // We know this path is a directory
-      const directory = entry as DirectoryEntry;
-      await new Promise((resolve, reject) => {
-        directory.getDirectory('Documents', {create: true}, (dirEntry) => {
-          dirEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
-            dirEntry.getDirectory('indexes', {create: true}, (dirEntry) => {
-              dirEntry.getDirectory(groupId, {create: true}, resolve, reject);
-            }, this.onErrorGetDir);
-          }, this.onErrorGetDir);
-        })
-      })
-      indexesDir = cordova.file.externalRootDirectory + 'Documents/Tangerine/indexes/'+ groupId + '/'
-      try {
-        indexesDirEntry = await new Promise((resolve, reject) =>
-          this.window.resolveLocalFileSystemURL(indexesDir, resolve, reject)
-        );
-      } catch (e) {
-        let message = "Unable to access " + indexesDir + " Error: " + JSON.stringify(e);
-        console.error(message)
-        alert(message)
-      }
-      
-      await index.export(function (key, data) {
-        return new Promise(async function (resolve) {
-          // do the saving as async
-          // const fileEntry:FileEntry = await new Promise(resolve => {
-          //   const fileEntry = indexesDirEntry.getFile(key, {create: true})
-          //   resolve(fileEntry)
-          // });
-          indexesDirEntry.getFile(key, {create: true}, (fileEntry) => {
-            fileEntry.createWriter((fileWriter) => {
-              fileWriter.onwriteend = (data) => {
-                console.log(`Index stored at ${groupId}/${key}`)
-              }
-              fileWriter.onerror = (e) => {
-                alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-              }
-              fileWriter.write(data);
-            })
-          })
-          resolve()
-        })
-      })
-    }
+    console.log("Index is complete.")
+    // const appConfig = await this.appConfigService.getAppConfig()
+    // const groupId = appConfig.groupId
+    // await this.searchService.exportSearchIndex(groupId, index);
   }
 
-  onErrorGetDir(e) {
-    console.log("Error: " + e)
-    let errorMessage
-    if (e && e.code && e.code === 1) {
-      errorMessage = "File or directory not found."
-    } else {
-      errorMessage = e
-    }
-    const message = `<p>${_TRANSLATE('Error creating directory. Error: ')} ${errorMessage}</p>`
-    console.log(message)
-  }
-  
   async loadSearchIndex() {
-    const appConfig = await this.appConfigService.getAppConfig()
-    const groupId = appConfig.groupId
-    let indexesDir, indexesDirEntry
-    const index = new Index({tokenize: "full"});
-
-    if (this.window.isCordovaApp) {
-      indexesDir = cordova.file.externalRootDirectory + 'Documents/Tangerine/indexes/'+ groupId + '/'
-      try {
-        indexesDirEntry = await new Promise((resolve, reject) =>
-          this.window.resolveLocalFileSystemURL(indexesDir, resolve, reject)
-        );
-      } catch (e) {
-        let message = "Unable to access " + indexesDir + " Error: " + JSON.stringify(e);
-        console.error(message)
-        alert(message)
-      }
-      const indexDirEntries: any[] = await new Promise(resolve => {
-        const reader = indexesDirEntry.createReader();
-        reader.readEntries((entries) => resolve(entries))
-      });
-
-      if (indexDirEntries.length > 0) {
-        this.indexFilesToSync = true
-      }
-      const indexes = []
-      for (let i = 0; i < indexDirEntries.length; i++) {
-        const entry = indexDirEntries[i]
-        const fileName = entry.name
-        let key = fileName
-        const fileNameArray = fileName.split('.')
-        if (fileNameArray[2] === 'map') {
-          key = 'map'
-        }
-          // const key = fileNameArray[0]
-        // const indexExists = indexes.find(index => index === key)
-        // if (!indexExists) {
-        //   console.log("Found index: " + key)
-        //   indexes.push(key)
-        // }
-        
-        const fileEntry = await new Promise(resolve => {
-            (indexesDirEntry as DirectoryEntry).getFile(fileName, {create: true, exclusive: false}, resolve);
-          }
-        );
-        const file: File = await new Promise(resolve => {
-          (fileEntry as FileEntry).file(resolve)
-        });
-        let reader = this.getFileReader();
-        reader.onloadend = function() {
-          console.log("Successful file read: " + this.result)
-          // displayFileData(fileEntry.fullPath + ": " + this.result);
-          index.import(key, this.result)
-          console.log("Index loaded the file " + fileName)
-        }
-        reader.readAsText(file);
-      }
-      
-    }
-    
-    
-  }
-
-  getFileReader(): FileReader {
-    const fileReader = new FileReader();
-    const zoneOriginalInstance = (fileReader as any)["__zone_symbol__originalInstance"];
-    return zoneOriginalInstance || fileReader;
+    const index = await this.searchService.loadSearchIndex()
+    console.log("Index is loaded.")
+    // return index
   }
 }
