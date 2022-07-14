@@ -138,7 +138,49 @@ export class SyncCouchdbService {
     let batchSize = (isFirstSync || fullSync === SyncDirection.pull)
       ? this.initialBatchSize
       : this.batchSize
-    let replicationStatus:ReplicationStatus
+    let replicationStatus:ReplicationStatus = {
+      batchSize: undefined,
+      cancelled: false,
+      compareDocsDirection: "",
+      compareDocsEndTime: "",
+      compareDocsStartTime: "",
+      compareSyncDuration: 0,
+      currentPullLastSeq: undefined,
+      currentPushLastSeq: undefined,
+      dbDocCount: undefined,
+      deletedArchivedDocs: 0,
+      deviceInfo: undefined,
+      direction: undefined,
+      effectiveConnectionType: "",
+      error: undefined,
+      forcePushed: 0,
+      fullSync: "",
+      hadPullSuccess: false,
+      hadPushSuccess: false,
+      idsToSyncCount: 0,
+      info: undefined,
+      initialPullLastSeq: undefined,
+      initialPushLastSeq: undefined,
+      localDocsCount: 0,
+      localDocsForLocation: undefined,
+      message: "",
+      networkDownlinkMax: "",
+      networkDownlinkSpeed: "",
+      pullConflicts: undefined,
+      pullError: undefined,
+      pulled: 0,
+      pushConflicts: undefined,
+      pushError: undefined,
+      pushed: 0,
+      remaining: undefined,
+      remoteDocsCount: 0,
+      storageAvailable: 0,
+      syncCouchdbServiceDuration: 0,
+      syncCouchdbServiceEndime: "",
+      syncCouchdbServiceStartTime: "",
+      tangerineVersion: undefined,
+      userAgent: ""
+    }
     syncDetails.usePouchDbLastSequenceTracking = appConfig.usePouchDbLastSequenceTracking || await this.variableService.get('usePouchDbLastSequenceTracking')
       ? true
       : false
