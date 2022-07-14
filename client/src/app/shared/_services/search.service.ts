@@ -168,12 +168,6 @@ export class SearchService {
               options[pagerKeyName] = pagerKey
             }
           }
-          const time = new Date().toISOString()
-          let message = time + ' : Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for indexing.';
-          if (options.selector) {
-            message = time + ': Collected ' + allDocs.length + ' docs from the ' + dbName + ' for indexing.';
-          }
-          console.log(message)
           // this.syncMessage$.next({
           //   message: window['t'](message)
           // })
@@ -201,17 +195,25 @@ export class SearchService {
                   let concatedValues = ""
                   for (let j = 0; j < variablesToIndex.length; j++) {
                     const variableToIndex = variablesToIndex[j]
-                    const value = allInputsValueByName[variableToIndex]
-                    if (value) {
+                    const value = allInputsValueByName[variableToIndex].trim()
+                    if (value && value !== '') {
                       concatedValues = concatedValues + " " + value
                     }
+                  } 
+                  if (concatedValues.trim() !== '') {
+                    await index.addAsync(key, concatedValues.trim());
+                    console.log("Added: " + key + ":" + concatedValues)
                   }
-                  await index.addAsync(key, concatedValues);
-                  console.log("Added: " + key + ":" + concatedValues)
                 }
               }
             }
           }
+          const time = new Date().toISOString()
+          let message = time + ' : Indexed ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + '.';
+          if (options.selector) {
+            message = time + ': Indexed ' + allDocs.length + ' docs from the ' + dbName + '.';
+          }
+          console.log(message)
         } else {
           remaining = false
         }
