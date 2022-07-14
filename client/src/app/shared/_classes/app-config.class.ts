@@ -150,6 +150,12 @@ export class AppConfig {
   p2pSync = 'false'
   attachHistoryToDocs:boolean = false
   usePouchDbLastSequenceTracking:boolean
+  
+  //
+  // Search Indexing params
+  //
+
+  indexQueryLimit: number
 
   //
   // @TODO Sort these.
