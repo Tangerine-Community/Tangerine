@@ -138,7 +138,7 @@ export class SearchService {
         }
         : variablesToIndexByFormId
     }, {})
-    const index = new Index({tokenize: "strict"});
+    const index = new Worker({tokenize: "strict"});
     const options = {limit: this.indexQueryLimit, include_docs: true, selector: null}
     const database = userDb.db
     const dbName = "local device"
