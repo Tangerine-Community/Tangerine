@@ -143,10 +143,10 @@ export class SearchService {
     const index = {};
     let add = async (id, seq, content) => {
       if (index[seq]) {
-        index[seq].addAsync(id, content);
+        await index[seq].addAsync(id, content);
       } else {
-        index[seq] = new Worker({tokenize: "forward"})
-        index[seq].addAsync(id, content);
+        index[seq] = new Index({tokenize: "forward"})
+        await index[seq].addAsync(id, content);
         const previousSeq = seq - 1
         if (previousSeq > 0) {
           // export
@@ -229,7 +229,7 @@ export class SearchService {
                       if (cnt > this.indexItemSize) {
                         seq++
                       }
-                      add(key, seq, value.trim())
+                      await add(key, seq, value.trim())
                     }
                   } 
                   // if (concatedValues.trim() !== '') {
@@ -240,13 +240,12 @@ export class SearchService {
               }
             }
           }
-          // clear out alldocs
-          allDocs.length = 0
+          currentDocsProcessed = currentDocsProcessed + allDocs.length
           const time = new Date().toISOString()
           // await this.exportSearchIndex(groupId, index);
-          let message = time + ' : Indexed ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + '.';
+          let message = time + ' : Indexed ' + currentDocsProcessed + ' out of ' + total_rows + ' docs from the ' + dbName + '.';
           if (options.selector) {
-            message = time + ': Indexed ' + allDocs.length + ' docs from the ' + dbName + '.';
+            message = time + ': Indexed ' + currentDocsProcessed + ' docs from the ' + dbName + '.';
           }
           console.log(message)
         } else {
@@ -255,6 +254,8 @@ export class SearchService {
       } catch (e) {
         console.log("Error getting allDocs: " + e)
       }
+      // clear out alldocs
+      allDocs.length = 0
     }
     const time = new Date().toISOString()
     await this.exportSearchIndex(groupId, index[seq], seq);
