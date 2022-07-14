@@ -541,10 +541,10 @@ export class SyncService {
               options[pagerKeyName] = pagerKey
             }
           }
-          
-          let message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
+          const time = new Date().toISOString()
+          let message = time + ': Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for comparison.';
           if (options.selector) {
-            message = 'Collected ' + allDocs.length + ' docs from the ' + dbName + ' for comparison.';
+            message = time + ': Collected ' + allDocs.length + ' docs from the ' + dbName + ' for comparison.';
           }
           this.syncMessage$.next({
             message: window['t'](message)

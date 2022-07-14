@@ -168,10 +168,10 @@ export class SearchService {
               options[pagerKeyName] = pagerKey
             }
           }
-
-          let message = 'Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for indexing.';
+          const time = new Date().toISOString()
+          let message = time + ' : Collected ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + ' for indexing.';
           if (options.selector) {
-            message = 'Collected ' + allDocs.length + ' docs from the ' + dbName + ' for indexing.';
+            message = time + ': Collected ' + allDocs.length + ' docs from the ' + dbName + ' for indexing.';
           }
           console.log(message)
           // this.syncMessage$.next({
