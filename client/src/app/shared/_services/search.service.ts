@@ -230,6 +230,7 @@ export class SearchService {
                       cnt++
                       if (cnt > this.indexItemSize) {
                         seq++
+                        cnt = 0
                       }
                       await add(key, seq, value.trim())
                     }
