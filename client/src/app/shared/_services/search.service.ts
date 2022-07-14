@@ -144,9 +144,11 @@ export class SearchService {
     let add = async (id, seq, content) => {
       if (index[seq]) {
         await index[seq].addAsync(id, content);
+        console.log("Added: " + id + ":" + content + " to seq: " + seq)
       } else {
         index[seq] = new Index({tokenize: "forward"})
         await index[seq].addAsync(id, content);
+        console.log("Added: " + id + ":" + content + " to seq: " + seq)
         const previousSeq = seq - 1
         if (previousSeq > 0) {
           // export
