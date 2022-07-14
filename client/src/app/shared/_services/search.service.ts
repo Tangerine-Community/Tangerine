@@ -8,6 +8,7 @@ import {UserDatabase} from "../_classes/user-database.class";
 import { Index, Document, Worker } from 'flexsearch'
 import {SyncService} from "../../sync/sync.service";
 import {AppConfigService} from "./app-config.service";
+import * as moment from "moment";
 
 export class SearchDoc {
   _id: string
@@ -119,6 +120,8 @@ export class SearchService {
   }
 
   async indexDocs() {
+    const startTime = new Date().toISOString()
+    console.log("indexing startTime: " + startTime)
     let userDb: UserDatabase = await this.userService.getUserDatabase()
     const formsInfo = await this.formsInfoService.getFormsInfo()
     const variablesToIndexByFormId = formsInfo.reduce((variablesToIndexByFormId, formInfo) => {
@@ -217,6 +220,13 @@ export class SearchService {
       }
     }
     console.log("total_rows: " + total_rows)
+    const endTime = new Date().toISOString()
+    console.log("indexing endTime: " + endTime)
+    const start = moment(startTime)
+    const end = moment(endTime)
+    const diff = end.diff(start)
+    const duration = moment.duration(diff).as('milliseconds')
+    console.log("Indexing duration: " + duration + " milliseconds")
     return index;
   }
 
