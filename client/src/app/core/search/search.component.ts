@@ -102,7 +102,7 @@ export class SearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
-    this.onSearch('')
+    // this.onSearch('')
   }
 
   async loadMore() {

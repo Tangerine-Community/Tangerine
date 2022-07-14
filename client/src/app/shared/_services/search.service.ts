@@ -39,6 +39,7 @@ export class SearchService {
 
   window: any;
   indexQueryLimit: number = 150
+  indexItemSize:number = 5000
 
   async createIndex(username:string = '') {
     const appConfig = await this.appConfigService.getAppConfig()
@@ -138,13 +139,32 @@ export class SearchService {
         }
         : variablesToIndexByFormId
     }, {})
-    const index = new Worker({tokenize: "strict"});
+    // const index = new Worker({tokenize: "strict"});
+    const index = {};
+    let add = async (id, seq, content) => {
+      if (index[seq]) {
+        index[seq].addAsync(id, content);
+      } else {
+        index[seq] = new Worker({tokenize: "forward"})
+        index[seq].addAsync(id, content);
+        const previousSeq = seq - 1
+        if (previousSeq > 0) {
+          // export
+          const time = new Date().toISOString()
+          await this.exportSearchIndex(groupId, index[previousSeq], previousSeq);
+          let message = time + ' : Saved ' + previousSeq + ' index.';
+          console.log(message)
+        }
+      }
+
+    }
     const options = {limit: this.indexQueryLimit, include_docs: true, selector: null}
     const database = userDb.db
     const dbName = "local device"
     let allDocs = []
     let remaining = true
     let total_rows = 0
+    let currentDocsProcessed = 0
     let queryFunction = "allDocs"
     let responseArrayName = "rows"
     let pagerKeyName = "startkey"
@@ -153,6 +173,8 @@ export class SearchService {
       responseArrayName = "docs"
       pagerKeyName = "bookmark"
     }
+    let cnt = 0
+    let seq = 1
     while (remaining === true) {
       try {
         const response = await database[queryFunction](options)
@@ -196,26 +218,32 @@ export class SearchService {
                 }, {})
                 const variablesToIndex = variablesToIndexByFormId[doc.form.id]
                 if (variablesToIndex && variablesToIndex.length > 0) {
-                  // TODO - assemble values for all vars and concatenate and only add a single k/v pair
                   const key = id
                   let concatedValues = ""
                   for (let j = 0; j < variablesToIndex.length; j++) {
                     const variableToIndex = variablesToIndex[j]
                     const value = allInputsValueByName[variableToIndex]
                     if (value && value !== '') {
-                      concatedValues = concatedValues + " " + value.trim()
+                      // concatedValues = concatedValues + " " + value.trim()
+                      cnt++
+                      if (cnt > this.indexItemSize) {
+                        seq++
+                      }
+                      add(key, seq, value.trim())
                     }
                   } 
-                  if (concatedValues.trim() !== '') {
-                    await index.addAsync(key, concatedValues.trim());
-                    console.log("Added: " + key + ":" + concatedValues)
-                  }
+                  // if (concatedValues.trim() !== '') {
+                  //   await index.addAsync(key, concatedValues.trim());
+                  //   console.log("Added: " + key + ":" + concatedValues)
+                  // }
                 }
               }
             }
           }
+          // clear out alldocs
+          allDocs.length = 0
           const time = new Date().toISOString()
-          await this.exportSearchIndex(groupId, index);
+          // await this.exportSearchIndex(groupId, index);
           let message = time + ' : Indexed ' + allDocs.length + ' out of ' + total_rows + ' docs from the ' + dbName + '.';
           if (options.selector) {
             message = time + ': Indexed ' + allDocs.length + ' docs from the ' + dbName + '.';
@@ -228,6 +256,10 @@ export class SearchService {
         console.log("Error getting allDocs: " + e)
       }
     }
+    const time = new Date().toISOString()
+    await this.exportSearchIndex(groupId, index[seq], seq);
+    let message = time + ' : Saved ' + seq + ' index.';
+    console.log(message)
     console.log("total_rows: " + total_rows)
     const endTime = new Date().toISOString()
     console.log("indexing endTime: " + endTime)
@@ -239,7 +271,7 @@ export class SearchService {
     return index;
   }
 
-  async exportSearchIndex(groupId: string, index) {
+  async exportSearchIndex(groupId: string, index, seq: number) {
     let indexesDir, indexesDirEntry
     if (this.window.isCordovaApp) {
       const entry = await new Promise<Entry>((resolve, reject) => {
@@ -274,10 +306,11 @@ export class SearchService {
           //   const fileEntry = indexesDirEntry.getFile(key, {create: true})
           //   resolve(fileEntry)
           // });
-          indexesDirEntry.getFile(key, {create: true}, (fileEntry) => {
+          const indexFileName = key + "-" + seq
+          indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
             fileEntry.createWriter((fileWriter) => {
               fileWriter.onwriteend = (data) => {
-                console.log(`Index stored at ${groupId}/${key}`)
+                console.log(`Index stored at ${groupId}/${indexFileName}`)
               }
               fileWriter.onerror = (e) => {
                 alert(`${_TRANSLATE('Write Failed')}` + e.toString());
