@@ -138,7 +138,7 @@ export class SearchService {
         }
         : variablesToIndexByFormId
     }, {})
-    const index = new Index({tokenize: "full"});
+    const index = new Index({tokenize: "strict"});
     const options = {limit: this.indexQueryLimit, include_docs: true, selector: null}
     const database = userDb.db
     const dbName = "local device"
@@ -201,9 +201,9 @@ export class SearchService {
                   let concatedValues = ""
                   for (let j = 0; j < variablesToIndex.length; j++) {
                     const variableToIndex = variablesToIndex[j]
-                    const value = allInputsValueByName[variableToIndex].trim()
+                    const value = allInputsValueByName[variableToIndex]
                     if (value && value !== '') {
-                      concatedValues = concatedValues + " " + value
+                      concatedValues = concatedValues + " " + value.trim()
                     }
                   } 
                   if (concatedValues.trim() !== '') {
