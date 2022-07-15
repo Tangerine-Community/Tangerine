@@ -37,6 +37,22 @@
     </mat-card-actions>
   </mat-card>
   
+  <mat-card class="search-index-card" *ngIf="!isCordovaApp">
+    <mat-card-title>{{'Check Permissions'|translate}}</mat-card-title>
+    <mat-card-content>
+      <p>{{'Confirms that the app has the correct permissions to support using the camera and location.' |translate}}</p>
+    </mat-card-content>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" (click)="updateSearchIndex()">
+        <iron-icon icon="icons:update"></iron-icon>
+        {{'Update Search'|translate}}</button>
+      <button mat-stroked-button color="primary" (click)="loadSearchIndex()">
+        <iron-icon icon="icons:restore-page"></iron-icon>
+        {{'Load Index'|translate}}</button>
+    </mat-card-actions>
+  </mat-card>
+  
   <div class="stats">
     <h2>Statistics</h2>
 

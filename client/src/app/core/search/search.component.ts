@@ -50,6 +50,7 @@ export class SearchComponent implements OnInit {
 
   @ViewChild('searchBar', {static: true}) searchBar: ElementRef
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
+  @ViewChild('indexProgress', {static: true}) indexProgress: ElementRef
   @ViewChild('scanner', {static: true}) scanner: SearchBarcodeComponent
   onSearch$ = new Subject()
   didSearch$ = new Subject()
@@ -69,6 +70,8 @@ export class SearchComponent implements OnInit {
   index
   window: any;
   indexFilesToSync: boolean;
+  subscription: any
+  indexingMessage = ""
   
   constructor(
     private searchService: SearchService,
@@ -102,6 +105,8 @@ export class SearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
+    this.indexProgress.nativeElement.innerHTML = _TRANSLATE('Update Search')
+    this.indexProgress.nativeElement.addEventListener('click', (event) => this.indexProgress.nativeElement.innerHTML = _TRANSLATE('Updating Search'))
     // this.onSearch('')
     this.isLoading = false
     this.didSearch$.next(true)
@@ -225,11 +230,18 @@ export class SearchComponent implements OnInit {
   }
 
   async updateSearchIndex() {
+    this.subscription = this.searchService.indexingMessage$.subscribe({
+      next: (progress) => {
+        this.indexingMessage = progress.message || this.indexingMessage
+        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+      }
+    })
     const index = await this.searchService.indexDocs()
     console.log("Index is complete.")
     // const appConfig = await this.appConfigService.getAppConfig()
     // const groupId = appConfig.groupId
     // await this.searchService.exportSearchIndex(groupId, index);
+    this.subscription.unsubscribe();
   }
 
   async loadSearchIndex() {
