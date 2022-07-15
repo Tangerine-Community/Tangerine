@@ -50,7 +50,7 @@
     "rxjs": "~6.5.5",
     "rxjs-compat": "^6.5.5",
     "tangy-form": "4.36.1",
-    "tangy-form-editor": "7.14.7",
+    "tangy-form-editor": "7.14.8",
     "translation-web-component": "0.0.3",
     "tslib": "^1.11.2",
     "ua-parser-js": "^0.7.24",
