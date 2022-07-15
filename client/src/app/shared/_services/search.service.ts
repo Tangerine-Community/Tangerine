@@ -10,6 +10,7 @@ import {SyncService} from "../../sync/sync.service";
 import {AppConfigService} from "./app-config.service";
 import * as moment from "moment";
 import {_TRANSLATE} from "../translation-marker";
+import {Subject} from "rxjs";
 
 export class SearchDoc {
   _id: string
@@ -40,6 +41,9 @@ export class SearchService {
   window: any;
   indexQueryLimit: number = 50
   indexItemSize:number = 5000
+
+  searchMessage: any = {};
+  public readonly indexingMessage$: Subject<any> = new Subject();
 
   async createIndex(username:string = '') {
     const appConfig = await this.appConfigService.getAppConfig()
@@ -204,7 +208,7 @@ export class SearchService {
               options[pagerKeyName] = pagerKey
             }
           }
-          // this.syncMessage$.next({
+          // this.searchMessage$.next({
           //   message: window['t'](message)
           // })
           if (allDocs.length > 0) {
@@ -258,6 +262,9 @@ export class SearchService {
             message = time + ': Indexed ' + currentDocsProcessed + ' docs from the ' + dbName + '.';
           }
           console.log(message)
+          this.indexingMessage$.next({
+            message: currentDocsProcessed + '/' + total_rows
+          })
         } else {
           remaining = false
         }
@@ -279,6 +286,9 @@ export class SearchService {
     const diff = end.diff(start)
     const duration = moment.duration(diff).as('milliseconds')
     console.log("Indexing duration: " + duration + " milliseconds")
+    this.indexingMessage$.next({
+      message: "Indexing Complete."
+    })
     return index;
   }
 

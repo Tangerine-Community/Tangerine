@@ -6,6 +6,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import {SyncService} from "../../../sync/sync.service";
 import * as moment from 'moment'
 import {VariableService} from "../../../shared/_services/variable.service";
+import {SearchService} from "../../../shared/_services/search.service";
 
 @Component({
   selector: 'app-maintenance',
@@ -26,7 +27,8 @@ export class MaintenanceComponent implements OnInit {
     private userService: UserService,
     private processMonitorService: ProcessMonitorService,
     private syncService: SyncService,
-    private variableService: VariableService
+    private variableService: VariableService,
+    private searchService: SearchService
   ) {
     this.window = window;
   }
@@ -275,6 +277,20 @@ export class MaintenanceComponent implements OnInit {
         reject(err)
       });
     })
+  }
+
+  async updateSearchIndex() {
+    const index = await this.searchService.indexDocs()
+    console.log("Index is complete.")
+    // const appConfig = await this.appConfigService.getAppConfig()
+    // const groupId = appConfig.groupId
+    // await this.searchService.exportSearchIndex(groupId, index);
+  }
+
+  async loadSearchIndex() {
+    const index = await this.searchService.loadSearchIndex()
+    console.log("Index is loaded.")
+    // return index
   }
 
 }
