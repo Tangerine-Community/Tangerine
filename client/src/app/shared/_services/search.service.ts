@@ -38,7 +38,7 @@ export class SearchService {
   }
 
   window: any;
-  indexQueryLimit: number = 150
+  indexQueryLimit: number = 50
   indexItemSize:number = 5000
 
   async createIndex(username:string = '') {
@@ -226,10 +226,11 @@ export class SearchService {
                 }, {})
                 const variablesToIndex = variablesToIndexByFormId[doc.form.id]
                 if (variablesToIndex && variablesToIndex.length > 0) {
-                  const key = id
+                  // const key = id
                   let concatedValues = ""
                   for (let j = 0; j < variablesToIndex.length; j++) {
                     const variableToIndex = variablesToIndex[j]
+                    const key = id+'_'+j
                     const value = allInputsValueByName[variableToIndex]
                     if (value && value !== '') {
                       // concatedValues = concatedValues + " " + value.trim()
