@@ -140,15 +140,13 @@ export class SearchService {
         : variablesToIndexByFormId
     }, {})
     // const index = new Worker({tokenize: "strict"});
-    const index = {};
+    const indexes = {};
+    let index = new Index({tokenize: "forward"})
     let add = async (id, seq, content) => {
-      if (index[seq]) {
-        await index[seq].addAsync(id, content);
+      if (indexes[seq]) {
+        await index.addAsync(id, content);
         console.log("Added: " + id + ":" + content + " to seq: " + seq)
       } else {
-        index[seq] = new Index({tokenize: "forward"})
-        await index[seq].addAsync(id, content);
-        console.log("Added: " + id + ":" + content + " to seq: " + seq)
         const previousSeq = seq - 1
         if (previousSeq > 0) {
           // export
@@ -157,6 +155,10 @@ export class SearchService {
           let message = time + ' : Saved ' + previousSeq + ' index.';
           console.log(message)
         }
+        indexes[seq] = true
+        index = new Index({tokenize: "forward"})
+        await index.addAsync(id, content);
+        console.log("Added: " + id + ":" + content + " to new seq: " + seq)
       }
 
     }
@@ -261,7 +263,7 @@ export class SearchService {
       allDocs.length = 0
     }
     const time = new Date().toISOString()
-    await this.exportSearchIndex(groupId, index[seq], seq);
+    await this.exportSearchIndex(groupId, index, seq);
     let message = time + ' : Saved ' + seq + ' index.';
     console.log(message)
     console.log("total_rows: " + total_rows)
