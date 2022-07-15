@@ -149,12 +149,16 @@ export class SearchService {
       } else {
         const previousSeq = seq - 1
         if (previousSeq > 0) {
-          // export
-          const time = new Date().toISOString()
-          await this.exportSearchIndex(groupId, index[previousSeq], previousSeq);
-          let message = time + ' : Saved ' + previousSeq + ' index.';
+          // export previous index
+          let time = new Date().toISOString()
+          let message = time + ' : About to save index ' + previousSeq;
+          console.log(message)
+          await this.exportSearchIndex(groupId, index, previousSeq);
+          time = new Date().toISOString()
+          message = time + ' : Saved index ' + previousSeq;
           console.log(message)
         }
+        // Create a new index
         indexes[seq] = true
         index = new Index({tokenize: "forward"})
         await index.addAsync(id, content);
