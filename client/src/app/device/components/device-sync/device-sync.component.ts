@@ -1,14 +1,9 @@
 import { UserService } from './../../../shared/_services/user.service';
-import { SyncService } from './../../../sync/sync.service';
+import { SyncService, FIRST_SYNC_STATUS } from './../../../sync/sync.service';
 import { Subject } from 'rxjs';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { VariableService } from 'src/app/shared/_services/variable.service';
 import { Router } from '@angular/router';
-
-export enum FIRST_SYNC_STATUS {
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETE = 'COMPLETE'
-}
 
 
 @Component({
@@ -79,11 +74,11 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           if (typeof progress.message !== 'undefined') {
             if (progress.type == 'checkpoint') {
               this.checkpointMessage = progress.message
-            } else if (progress.type == 'diffing') {
+            } else if (progress.type == 'revs_diff') {
               this.diffMessage = progress.message
-            } else if (progress.type == 'startNextBatch') {
+            } else if (progress.type == 'start_next_batch') {
               this.startNextBatchMessage = progress.message
-            } else if (progress.type == 'pendingBatch') {
+            } else if (progress.type == 'pending_batch') {
               this.pendingBatchMessage = progress.message
             } else {
               this.otherMessage = progress.message
