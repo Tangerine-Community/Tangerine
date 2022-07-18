@@ -67,6 +67,10 @@ echo "RELEASE APK: removing cordova-android package symlink"
 rm -rf $RELEASE_DIRECTORY/node_modules/cordova-android
 rm -rf $RELEASE_DIRECTORY/package-lock.json
 
+echo "RELEASE APK: removing client-uploads dir"
+rm -rf $RELEASE_DIRECTORY/client-uploads
+rm -rf $RELEASE_DIRECTORY/www/shell/assets/client-uploads
+
 echo "RELEASE APK: removing Android platform"
 cordova platform rm android --no-telemetry
 

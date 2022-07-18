@@ -13,17 +13,32 @@ import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@ang
 
 @Injectable()
 export class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
-  constructor() {}
+  window:any;
+  constructor() {
+    this.window = window;
+  }
+  
   canDeactivate(
     component: TangyFormsPlayerComponent,
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
   ): Observable<boolean>|Promise<boolean>|boolean {
+    
     if (component.isDirty()) {
       return confirm(_TRANSLATE('There is unsaved data. Are you sure you would like to exit the form?'));
     } else if (!component.isComplete()) {
-      return confirm(_TRANSLATE('The form is not yet complete. Are you sure you would like to exit the form?'));
+      if (this.window.T.appConfig.config.forceCompleteForms === true) {
+        const link = nextState.url
+        if (link === '/login') {
+          return true;
+        } else {
+          alert(_TRANSLATE('You must complete this form.'));
+          return false
+        }
+      } else {
+        return confirm(_TRANSLATE('The form is not yet complete. Are you sure you would like to exit the form?'));
+      }
     } else {
       return true;
     }
