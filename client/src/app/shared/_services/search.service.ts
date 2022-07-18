@@ -64,9 +64,10 @@ export class SearchService {
     await createSearchIndex(db, formsInfo, customSearchJs) 
   }
 
-  async search(username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
+  async search(indexArray:Index[], username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
     const db = await this.userService.getUserDatabase(username)
     let result:any = {}
+    const indexSet = new Set()
     let activity = []
     if (phrase === '') {
       activity = await this.activityService.getActivity()
@@ -74,58 +75,84 @@ export class SearchService {
     // Only show activity if they have enough activity to fill a page.
     if (phrase === '' && activity.length >= 11) {
       const page = activity.slice(skip, skip + limit)
-      result = await db.allDocs(
-        { 
-          keys: page,
-          include_docs: true
-        }
-      )
+      // result = await db.allDocs(
+      //   { 
+      //     keys: page,
+      //     include_docs: true
+      //   }
+      // )
+      for (let i = 0; i < indexArray.length; i++) {
+        const index = indexArray[i]
+        const result = index.search(phrase)
+        const resultArray = result.split('_')
+        indexSet.add(resultArray[0])
+      }
       // Sort it because the order of the docs returned is not guaranteed by the order of the keys parameter.
       result.rows = page.map(id => result.rows.find(row => row.id === id))
     } else {
-      result = await db.query(
-        'search',
-        { 
-          startkey: `${phrase}`.toLocaleLowerCase(),
-          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
-          include_docs: true,
-          limit,
-          skip
-        }
-      )
+      // result = await db.query(
+      //   'search',
+      //   { 
+      //     startkey: `${phrase}`.toLocaleLowerCase(),
+      //     endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+      //     include_docs: true,
+      //     limit,
+      //     skip
+      //   }
+      // )
+      for (let i = 0; i < indexArray.length; i++) {
+        const index = indexArray[i]
+        const results = index.search(phrase)
+        results.forEach(result => {
+          const resultArray = result.split('_')
+          indexSet.add(resultArray[0])
+        })
+      }
     }
+    const indexResults = Array.from(indexSet)
+    
+    // return indexResults
+    result = await db.allDocs(
+      { 
+        keys: indexResults,
+        include_docs: true
+      }
+    )
     const searchResults = result.rows.map(row => {
-      const variables = row.doc.items.reduce((variables, item) => {
+      if (row.error !== 'not_found') {
+        const variables = row.doc.items.reduce((variables, item) => {
+          return {
+            ...variables,
+            ...item.inputs.reduce((variables, input) => {
+              return {
+                ...variables,
+                [input.name] : input.value
+              }
+            }, {})
+          }
+        }, {})
         return {
-          ...variables,
-          ...item.inputs.reduce((variables, input) => {
-            return {
-              ...variables,
-              [input.name] : input.value
-            }
-          }, {})
+          _id: row.doc._id,
+          matchesOn: row.value,
+          formId: row.doc.form.id,
+          formType: row.doc.type,
+          lastModified: row.doc.lastModified,
+          doc: row.doc,
+          variables
         }
-      }, {})
-      return {
-        _id: row.doc._id,
-        matchesOn: row.value,
-        formId: row.doc.form.id,
-        formType: row.doc.type,
-        lastModified: row.doc.lastModified,
-        doc: row.doc,
-        variables
       }
     })
+    return searchResults
     // Deduplicate the search results since the same case may match on multiple variables.
-    let uniqueResults = searchResults.reduce((uniqueResults, result) => {
-      return uniqueResults.find(x => x._id === result._id)
-        ? uniqueResults
-        : [ ...uniqueResults, result ]
-    }, [])
-
-    return uniqueResults.sort(function (a, b) {
-        return b.lastModified - a.lastModified;
-      })
+    // let uniqueResults = searchResults.reduce((uniqueResults, result) => {
+    //   return uniqueResults.find(x => x._id === result._id)
+    //     ? uniqueResults
+    //     : [ ...uniqueResults, result ]
+    // }, [])
+    //
+    // return uniqueResults.sort(function (a, b) {
+    //     return b.lastModified - a.lastModified;
+    //   })
   }
 
   async indexDocs() {
@@ -361,7 +388,6 @@ export class SearchService {
     const appConfig = await this.appConfigService.getAppConfig()
     const groupId = appConfig.groupId
     let indexesDir, indexesDirEntry
-    const index = new Index({tokenize: "full"});
 
     if (this.window.isCordovaApp) {
       indexesDir = cordova.file.externalRootDirectory + 'Documents/Tangerine/indexes/'+ groupId + '/'
@@ -382,15 +408,26 @@ export class SearchService {
       // if (indexDirEntries.length > 0) {
       //   this.indexFilesToSync = true
       // }
-      // const indexes = []
-      for (let i = 0; i < indexDirEntries.length; i++) {
-        const entry = indexDirEntries[i]
+      // Find all of the indexes, get the sequence number
+      const indexSet = new Set()
+      for (let j = 0; j < indexDirEntries.length; j++) {
+        const entry = indexDirEntries[j]
         const fileName = entry.name
-        let key = fileName
-        const fileNameArray = fileName.split('.')
-        if (fileNameArray[2] === 'map') {
-          key = 'map'
-        }
+        const sequence = fileName.split('-')
+        indexSet.add(sequence[1])
+      }
+      const indexSequences = Array.from(indexSet)
+      const indexes:Index[] = []
+      for (let i = 0; i < indexSequences.length; i++) {
+        const index = new Index({tokenize: "forward"});
+        const seq = indexSequences[i]
+        // const fileName = entry.name
+        
+        // let key = fileName
+        // const fileNameArray = fileName.split('.')
+        // if (fileNameArray[2] === 'map') {
+        //   key = 'map'
+        // }
         // const key = fileNameArray[0]
         // const indexExists = indexes.find(index => index === key)
         // if (!indexExists) {
@@ -398,26 +435,46 @@ export class SearchService {
         //   indexes.push(key)
         // }
 
-        const fileEntry = await new Promise(resolve => {
-            (indexesDirEntry as DirectoryEntry).getFile(fileName, {create: true, exclusive: false}, resolve);
-          }
-        );
-        const file: File = await new Promise(resolve => {
-          (fileEntry as FileEntry).file(resolve)
-        });
-        let reader = this.getFileReader();
-        reader.onloadend = function() {
-          console.log("Successful file read: " + this.result)
-          // displayFileData(fileEntry.fullPath + ": " + this.result);
-          index.import(key, this.result)
-          console.log("Index loaded the file " + fileName)
-        }
-        reader.readAsText(file);
+        let key = 'map'
+        let fileName = 'reg.cfg.map-' + seq
+        const mapFile:string = await this.getFile(indexesDirEntry, fileName);
+        index.import(key, mapFile)
+        console.log("Index loaded the file " + fileName)
+        key = 'reg'
+        fileName = 'reg-' + seq
+        const registerFile:string = await this.getFile(indexesDirEntry, fileName);
+        index.import(key, registerFile)
+        console.log("Index loaded the file " + fileName)
+        indexes.push(index)
       }
-
+      return indexes
     }
   }
-  
+
+  private async getFile(indexesDirEntry: DirectoryEntry, fileName: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const fileEntry = await new Promise(resolve => {
+          (indexesDirEntry as DirectoryEntry).getFile(fileName, {create: false, exclusive: false}, resolve);
+        }
+      );
+      const file: File = await new Promise(resolve => {
+        (fileEntry as FileEntry).file(resolve)
+      });
+      const reader = this.getFileReader();
+      let result: string | ArrayBuffer = ""
+      reader.onloadend = function () {
+        console.log("Successful file read: " + this.result)
+        result = this.result
+        // displayFileData(fileEntry.fullPath + ": " + this.result);
+        // index.import(key, this.result)
+        // console.log("Index loaded the file " + fileName)
+        // indexes.push(index)
+        resolve(result)
+      }
+      reader.readAsText(file);
+    })
+  }
+
   getFileReader(): FileReader {
     const fileReader = new FileReader();
     const zoneOriginalInstance = (fileReader as any)["__zone_symbol__originalInstance"];

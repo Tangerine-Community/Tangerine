@@ -89,6 +89,7 @@ export class SearchComponent implements OnInit {
     this.username = this.userService.getCurrentUser()
     this.formTypesInfo = FORM_TYPES_INFO
     // const worker = new Worker(options);
+    this.index = await this.loadSearchIndex()
     this.onSearch$
       .pipe(debounceTime(4*1000))
       .subscribe((searchString:string) => {
@@ -116,7 +117,7 @@ export class SearchComponent implements OnInit {
     const ticket = this.searchQueue.getTicket()
     this.isLoading = true
     this.moreClickCount++
-    this.searchDocs = await this.searchService.search(this.username, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
+    this.searchDocs = await this.searchService.search(this.index, this.username, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
     let searchResultsMarkup = ``
     if (this.searchDocs.length < this.resultsPerPage) {
       this.thereIsMore = false
@@ -138,7 +139,7 @@ export class SearchComponent implements OnInit {
     this.thereIsMore = true 
     this.searchString = searchString
     this.searchResults.nativeElement.innerHTML = ""
-    this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
+    this.searchDocs = await this.searchService.search(this.index, this.username, searchString, this.resultsPerPage, 0)
     if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.innerHTML = ""
     if (ticket !== this.searchQueue.activeTicket) return
@@ -247,6 +248,7 @@ export class SearchComponent implements OnInit {
   async loadSearchIndex() {
     const index = await this.searchService.loadSearchIndex()
     console.log("Index is loaded.")
+    return index;
     // return index
   }
 }
