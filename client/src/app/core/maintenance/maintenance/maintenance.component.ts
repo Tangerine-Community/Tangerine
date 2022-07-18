@@ -1,5 +1,5 @@
 /// <reference types="cordova-plugin-file" />
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { UserService } from 'src/app/shared/_services/user.service';
@@ -15,6 +15,7 @@ import {SearchService} from "../../../shared/_services/search.service";
 })
 export class MaintenanceComponent implements OnInit {
 
+  @ViewChild('indexProgress', {static: true}) indexProgress: ElementRef
   isCordovaApp = false
   storageAvailable
   storageAvailableErrorThreshhold = 1
@@ -22,6 +23,8 @@ export class MaintenanceComponent implements OnInit {
   displayPruningComplete: boolean = false
   isStorageThresholdExceeded: boolean
   window: any;
+  subscription: any
+  indexingMessage = ""
   
   constructor(
     private userService: UserService,
@@ -280,11 +283,18 @@ export class MaintenanceComponent implements OnInit {
   }
 
   async updateSearchIndex() {
+    this.subscription = this.searchService.indexingMessage$.subscribe({
+      next: (progress) => {
+        this.indexingMessage = progress.message || this.indexingMessage
+        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+      }
+    })
     const index = await this.searchService.indexDocs()
     console.log("Index is complete.")
     // const appConfig = await this.appConfigService.getAppConfig()
     // const groupId = appConfig.groupId
     // await this.searchService.exportSearchIndex(groupId, index);
+    this.subscription.unsubscribe();
   }
 
   async loadSearchIndex() {
