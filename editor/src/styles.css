@@ -26,6 +26,7 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   background: var(--document-background-color);
   color: var(--primary-text-color);
+  overflow-y: scroll; /* Show vertical scrollbar */
 }
 
 h1 {
@@ -54,7 +55,7 @@ table.materialish tr {
   border-style: solid;
 }
 table.materialish td {
-  padding: 15px;
+  padding: 7px;
   color: #777;
 }
 
