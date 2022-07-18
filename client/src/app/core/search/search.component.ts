@@ -134,6 +134,12 @@ export class SearchComponent implements OnInit {
   }
 
   async onSearch(searchString:string) {
+    this.subscription = this.searchService.indexingMessage$.subscribe({
+      next: (progress) => {
+        this.indexingMessage = progress.message || this.indexingMessage
+        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+      }
+    })
     const ticket = this.searchQueue.getTicket()
     this.moreClickCount = 0
     this.thereIsMore = true 
@@ -246,6 +252,12 @@ export class SearchComponent implements OnInit {
   }
 
   async loadSearchIndex() {
+    this.subscription = this.searchService.indexingMessage$.subscribe({
+      next: (progress) => {
+        this.indexingMessage = progress.message || this.indexingMessage
+        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+      }
+    })
     const index = await this.searchService.loadSearchIndex()
     console.log("Index is loaded.")
     return index;

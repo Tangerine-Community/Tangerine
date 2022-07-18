@@ -480,7 +480,7 @@ export class SearchService {
       const reader = this.getFileReader();
       let result: string | ArrayBuffer = ""
       reader.onloadend = function () {
-        console.log("Successful file read: " + this.result)
+        // console.log("Successful file read: " + this.result)
         result = this.result
         // displayFileData(fileEntry.fullPath + ": " + this.result);
         // index.import(key, this.result)
