@@ -72,6 +72,9 @@ export class SearchService {
     if (phrase === '') {
       activity = await this.activityService.getActivity()
     }
+    this.indexingMessage$.next({
+      message: 'Starting search'
+    })
     // Only show activity if they have enough activity to fill a page.
     if (phrase === '' && activity.length >= 11) {
       const page = activity.slice(skip, skip + limit)
@@ -83,7 +86,7 @@ export class SearchService {
       // )
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
-        const result = index.search(phrase)
+        const result = index.search(phrase, limit)
         const resultArray = result.split('_')
         indexSet.add(resultArray[0])
       }
@@ -102,7 +105,7 @@ export class SearchService {
       // )
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
-        const results = index.search(phrase)
+        const results = index.search(phrase, limit)
         results.forEach(result => {
           const resultArray = result.split('_')
           indexSet.add(resultArray[0])
@@ -110,6 +113,11 @@ export class SearchService {
       }
     }
     const indexResults = Array.from(indexSet)
+    if (indexResults.length > 0) {
+      this.indexingMessage$.next({
+        message: indexResults.length + ' Index results.'
+      })
+    }
     
     // return indexResults
     result = await db.allDocs(
@@ -118,6 +126,9 @@ export class SearchService {
         include_docs: true
       }
     )
+    this.indexingMessage$.next({
+      message: result?.rows?.length + ' results from DB.'
+    })
     const searchResults = result.rows.map(row => {
       if (row.error !== 'not_found') {
         const variables = row.doc.items.reduce((variables, item) => {
@@ -141,6 +152,9 @@ export class SearchService {
           variables
         }
       }
+    })
+    this.indexingMessage$.next({
+      message: searchResults?.length + ' search results.'
     })
     return searchResults
     // Deduplicate the search results since the same case may match on multiple variables.
@@ -446,6 +460,9 @@ export class SearchService {
         index.import(key, registerFile)
         console.log("Index loaded the file " + fileName)
         indexes.push(index)
+        this.indexingMessage$.next({
+          message: ' Loaded index ' + i
+        })
       }
       return indexes
     }
