@@ -84,11 +84,17 @@ export class SearchService {
       //     include_docs: true
       //   }
       // )
+      let currentSearchArraySize = 0
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
-        const result = index.search(phrase, limit)
-        const resultArray = result.split('_')
-        indexSet.add(resultArray[0])
+        const results = index.search(phrase, limit)
+        results.forEach(result => {
+          if (currentSearchArraySize <= limit) {
+            const resultArray = result.split('_')
+            indexSet.add(resultArray[0])
+            currentSearchArraySize++
+          }
+        })
       }
       // Sort it because the order of the docs returned is not guaranteed by the order of the keys parameter.
       result.rows = page.map(id => result.rows.find(row => row.id === id))
@@ -103,12 +109,16 @@ export class SearchService {
       //     skip
       //   }
       // )
+      let currentSearchArraySize = 0
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
         const results = index.search(phrase, limit)
         results.forEach(result => {
-          const resultArray = result.split('_')
-          indexSet.add(resultArray[0])
+          if (currentSearchArraySize <= limit) {
+            const resultArray = result.split('_')
+            indexSet.add(resultArray[0])
+            currentSearchArraySize++
+          }
         })
       }
     }
@@ -153,10 +163,14 @@ export class SearchService {
         }
       }
     })
+    // Remove undefined elements
+    const filteredSearchResults = searchResults.filter(function (el) {
+      return el != null;
+    });
     this.indexingMessage$.next({
-      message: searchResults?.length + ' search results.'
+      message: filteredSearchResults?.length + ' search results.'
     })
-    return searchResults
+    return filteredSearchResults
     // Deduplicate the search results since the same case may match on multiple variables.
     // let uniqueResults = searchResults.reduce((uniqueResults, result) => {
     //   return uniqueResults.find(x => x._id === result._id)

@@ -106,8 +106,8 @@ export class SearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
-    this.indexProgress.nativeElement.innerHTML = _TRANSLATE('Update Search')
-    this.indexProgress.nativeElement.addEventListener('click', (event) => this.indexProgress.nativeElement.innerHTML = _TRANSLATE('Updating Search'))
+    this.indexProgress.nativeElement.innerHTML = ''
+    // this.indexProgress.nativeElement.addEventListener('click', (event) => this.indexProgress.nativeElement.innerHTML = _TRANSLATE('Updating Search'))
     // this.onSearch('')
     this.isLoading = false
     this.didSearch$.next(true)
