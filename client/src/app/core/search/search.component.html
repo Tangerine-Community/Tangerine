@@ -14,9 +14,7 @@
       <td (click)="scan()">
         <iron-icon icon="image:filter-center-focus"></iron-icon>
       </td>
-      <td (click)="updateSearchIndex()">
-        <iron-icon icon="icons:update"></iron-icon>
-      </td>
+      <td>&nbsp;</td>
 <!--      <td (click)="loadSearchIndex()">-->
 <!--        <iron-icon icon="icons:restore-page"></iron-icon>-->
 <!--      </td>-->
@@ -25,7 +23,7 @@
       <td (click)="focusOnFind()">{{'Find Case'|translate}}</td>
       <td routerLink="/new-form-response">{{'New Case'|translate}}</td>
       <td (click)="scan()">{{'Scan Code'|translate}}</td>
-      <td (click)="updateSearchIndex()" #indexProgress></td>
+      <td #indexProgress></td>
 <!--      {{'Update Search'|translate}}-->
 <!--      <td (click)="loadSearchIndex()">{{'Load Index'|translate}}</td>-->
     </tr>
