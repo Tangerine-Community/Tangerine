@@ -203,7 +203,7 @@ export class SearchService {
     }, {})
     // const index = new Worker({tokenize: "strict"});
     const indexes = {};
-    let index = new Index({tokenize: "forward"})
+    let index = new Index({tokenize: "full"})
     let add = async (id, seq, content) => {
       if (indexes[seq]) {
         await index.addAsync(id, content);
@@ -222,7 +222,7 @@ export class SearchService {
         }
         // Create a new index
         indexes[seq] = true
-        index = new Index({tokenize: "forward"})
+        index = new Index({tokenize: "full"})
         await index.addAsync(id, content);
         console.log("Added: " + id + ":" + content + " to new seq: " + seq)
       }
@@ -293,15 +293,42 @@ export class SearchService {
                   for (let j = 0; j < variablesToIndex.length; j++) {
                     const variableToIndex = variablesToIndex[j]
                     const key = id+'_'+j
-                    const value = allInputsValueByName[variableToIndex]
+                    let value = allInputsValueByName[variableToIndex]
                     if (value && value !== '') {
                       // concatedValues = concatedValues + " " + value.trim()
+
+                      // const searchResults = doc.rows.map(row => {
+                      //   if (row.error !== 'not_found') {
+                          const variables = doc.items.reduce((variables, item) => {
+                            return {
+                              ...variables,
+                              ...item.inputs.reduce((variables, input) => {
+                                return {
+                                  ...variables,
+                                  [input.name] : input.value
+                                }
+                              }, {})
+                            }
+                          }, {})
+                      const searchResult =  {
+                            _id: doc._id,
+                            matchesOn: value,
+                            formId: doc.form.id,
+                            formType: doc.type,
+                            lastModified: doc.lastModified,
+                            variables
+                          }
+                        // }
+                      // })
+                      
+                      const content = JSON.stringify(searchResult)
+                      
                       cnt++
                       if (cnt > this.indexItemSize) {
                         seq++
                         cnt = 0
                       }
-                      await add(key, seq, value.trim())
+                      await add(key, seq, content)
                     }
                   } 
                   // if (concatedValues.trim() !== '') {
@@ -450,7 +477,7 @@ export class SearchService {
       const indexSequences = Array.from(indexSet)
       const indexes:Index[] = []
       for (let i = 0; i < indexSequences.length; i++) {
-        const index = new Index({tokenize: "forward"});
+        const index = new Index({tokenize: "full"});
         const seq = indexSequences[i]
         // const fileName = entry.name
         
