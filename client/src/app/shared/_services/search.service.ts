@@ -65,6 +65,9 @@ export class SearchService {
   }
 
   async search(indexArray:Index[], username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
+    this.indexingMessage$.next({
+      message: ''
+    })
     const db = await this.userService.getUserDatabase(username)
     let result:any = {}
     const indexSet = new Set()

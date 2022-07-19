@@ -14,7 +14,7 @@
       <td (click)="scan()">
         <iron-icon icon="image:filter-center-focus"></iron-icon>
       </td>
-      <td>&nbsp;</td>
+<!--      <td>&nbsp;</td>-->
 <!--      <td (click)="loadSearchIndex()">-->
 <!--        <iron-icon icon="icons:restore-page"></iron-icon>-->
 <!--      </td>-->
@@ -23,7 +23,7 @@
       <td (click)="focusOnFind()">{{'Find Case'|translate}}</td>
       <td routerLink="/new-form-response">{{'New Case'|translate}}</td>
       <td (click)="scan()">{{'Scan Code'|translate}}</td>
-      <td #indexProgress></td>
+<!--      <td #indexProgress></td>-->
 <!--      {{'Update Search'|translate}}-->
 <!--      <td (click)="loadSearchIndex()">{{'Load Index'|translate}}</td>-->
     </tr>
@@ -44,6 +44,7 @@
   <paper-button raised (click)="loadMore()"><mwc-icon>expand_more</mwc-icon>{{'Load More'|translate}}</paper-button>
 </div>
 <div id="loading" [hidden]="isLoading === false">
+  <div #indexProgress></div>
   <paper-progress id="progress-bar" indeterminate></paper-progress>
 </div>
 <div id="space">
