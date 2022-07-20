@@ -50,7 +50,7 @@ export class SearchComponent implements OnInit {
 
   @ViewChild('searchBar', {static: true}) searchBar: ElementRef
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
-  @ViewChild('indexProgress', {static: true}) indexProgress: ElementRef
+  @ViewChild('searchProgress', {static: true}) searchProgress: ElementRef
   @ViewChild('scanner', {static: true}) scanner: SearchBarcodeComponent
   onSearch$ = new Subject()
   didSearch$ = new Subject()
@@ -71,7 +71,7 @@ export class SearchComponent implements OnInit {
   window: any;
   indexFilesToSync: boolean;
   subscription: any
-  indexingMessage = ""
+  searchMessage = ""
   
   constructor(
     private searchService: SearchService,
@@ -89,7 +89,11 @@ export class SearchComponent implements OnInit {
     this.username = this.userService.getCurrentUser()
     this.formTypesInfo = FORM_TYPES_INFO
     // const worker = new Worker(options);
-    this.index = await this.loadSearchIndex()
+    try {
+      this.index = await this.loadSearchIndex()
+    } catch (e) {
+      this.searchResults.nativeElement.innerHTML = `${t('Error: Go to Maintenance and create the index.')}`
+    }
     this.onSearch$
       .pipe(debounceTime(4*1000))
       .subscribe((searchString:string) => {
@@ -106,8 +110,8 @@ export class SearchComponent implements OnInit {
       })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
-    this.indexProgress.nativeElement.innerHTML = ''
-    // this.indexProgress.nativeElement.addEventListener('click', (event) => this.indexProgress.nativeElement.innerHTML = _TRANSLATE('Updating Search'))
+    this.searchProgress.nativeElement.innerHTML = ''
+    // this.searchProgress.nativeElement.addEventListener('click', (event) => this.searchProgress.nativeElement.innerHTML = _TRANSLATE('Updating Search'))
     // this.onSearch('')
     this.isLoading = false
     this.didSearch$.next(true)
@@ -134,10 +138,10 @@ export class SearchComponent implements OnInit {
   }
 
   async onSearch(searchString:string) {
-    this.subscription = this.searchService.indexingMessage$.subscribe({
+    this.subscription = this.searchService.searchMessage$.subscribe({
       next: (progress) => {
-        this.indexingMessage = progress.message || this.indexingMessage
-        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+        this.searchMessage = progress.message || this.searchMessage
+        this.searchProgress.nativeElement.innerHTML = this.searchMessage
       }
     })
     const ticket = this.searchQueue.getTicket()
@@ -237,10 +241,10 @@ export class SearchComponent implements OnInit {
   }
 
   async updateSearchIndex() {
-    this.subscription = this.searchService.indexingMessage$.subscribe({
+    this.subscription = this.searchService.searchMessage$.subscribe({
       next: (progress) => {
-        this.indexingMessage = progress.message || this.indexingMessage
-        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+        this.searchMessage = progress.message || this.searchMessage
+        this.searchProgress.nativeElement.innerHTML = this.searchMessage
       }
     })
     const index = await this.searchService.indexDocs()
@@ -252,10 +256,10 @@ export class SearchComponent implements OnInit {
   }
 
   async loadSearchIndex() {
-    this.subscription = this.searchService.indexingMessage$.subscribe({
+    this.subscription = this.searchService.searchMessage$.subscribe({
       next: (progress) => {
-        this.indexingMessage = progress.message || this.indexingMessage
-        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+        this.searchMessage = progress.message || this.searchMessage
+        this.searchProgress.nativeElement.innerHTML = this.searchMessage
       }
     })
     const index = await this.searchService.loadSearchIndex()

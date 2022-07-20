@@ -286,7 +286,7 @@ export class MaintenanceComponent implements OnInit {
     this.subscription = this.searchService.indexingMessage$.subscribe({
       next: (progress) => {
         this.indexingMessage = progress.message || this.indexingMessage
-        this.indexProgress.nativeElement.innerHTML = this.indexingMessage
+        // this.indexProgress.nativeElement.innerHTML = this.indexingMessage
       }
     })
     const index = await this.searchService.indexDocs()

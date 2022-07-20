@@ -44,6 +44,7 @@ export class SearchService {
 
   searchMessage: any = {};
   public readonly indexingMessage$: Subject<any> = new Subject();
+  public readonly searchMessage$: Subject<any> = new Subject();
 
   async createIndex(username:string = '') {
     const appConfig = await this.appConfigService.getAppConfig()
@@ -65,7 +66,7 @@ export class SearchService {
   }
 
   async search(indexArray:Index[], username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
-    this.indexingMessage$.next({
+    this.searchMessage$.next({
       message: ''
     })
     const db = await this.userService.getUserDatabase(username)
@@ -75,7 +76,7 @@ export class SearchService {
     if (phrase === '') {
       activity = await this.activityService.getActivity()
     }
-    this.indexingMessage$.next({
+    this.searchMessage$.next({
       message: 'Starting search'
     })
     // Only show activity if they have enough activity to fill a page.
@@ -90,17 +91,17 @@ export class SearchService {
       let currentSearchArraySize = 0
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
-        const results = index.search(phrase, limit)
-        results.forEach(result => {
-          if (currentSearchArraySize <= limit) {
-            const resultArray = result.split('_')
-            indexSet.add(resultArray[0])
-            currentSearchArraySize++
-          }
-        })
+        result = index.search(phrase, { enrich: true });
+        // results.forEach(result => {
+        //   if (currentSearchArraySize <= limit) {
+        //     const resultArray = result.split('_')
+        //     indexSet.add(resultArray[0])
+        //     currentSearchArraySize++
+        //   }
+        // })
       }
       // Sort it because the order of the docs returned is not guaranteed by the order of the keys parameter.
-      result.rows = page.map(id => result.rows.find(row => row.id === id))
+      // result.rows = page.map(id => result.rows.find(row => row.id === id))
     } else {
       // result = await db.query(
       //   'search',
@@ -115,62 +116,66 @@ export class SearchService {
       let currentSearchArraySize = 0
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
-        const results = index.search(phrase, limit)
-        results.forEach(result => {
-          if (currentSearchArraySize <= limit) {
-            const resultArray = result.split('_')
-            indexSet.add(resultArray[0])
-            currentSearchArraySize++
-          }
-        })
+        result = index.search(phrase, { enrich: true })
+        // results.forEach(result => {
+        //   if (currentSearchArraySize <= limit) {
+        //     const resultArray = result.split('_')
+        //     indexSet.add(resultArray[0])
+        //     currentSearchArraySize++
+        //   }
+        // })
       }
     }
-    const indexResults = Array.from(indexSet)
-    if (indexResults.length > 0) {
-      this.indexingMessage$.next({
-        message: indexResults.length + ' Index results.'
-      })
-    }
+    // const indexResults = Array.from(indexSet)
+    // if (result.length > 0) {
+    //   this.searchMessage$.next({
+    //     message: result.length + ' Index results.'
+    //   })
+    // }
     
     // return indexResults
-    result = await db.allDocs(
-      { 
-        keys: indexResults,
-        include_docs: true
-      }
-    )
-    this.indexingMessage$.next({
-      message: result?.rows?.length + ' results from DB.'
-    })
-    const searchResults = result.rows.map(row => {
-      if (row.error !== 'not_found') {
-        const variables = row.doc.items.reduce((variables, item) => {
-          return {
-            ...variables,
-            ...item.inputs.reduce((variables, input) => {
-              return {
-                ...variables,
-                [input.name] : input.value
-              }
-            }, {})
-          }
-        }, {})
-        return {
-          _id: row.doc._id,
-          matchesOn: row.value,
-          formId: row.doc.form.id,
-          formType: row.doc.type,
-          lastModified: row.doc.lastModified,
-          doc: row.doc,
-          variables
-        }
-      }
+    // result = await db.allDocs(
+    //   { 
+    //     keys: indexResults,
+    //     include_docs: true
+    //   }
+    // )
+    // this.searchMessage$.next({
+    //   message: result?.rows?.length + ' results from DB.'
+    // })
+    const searchResults = []
+      result.forEach(row => {
+      // if (row.error !== 'not_found') {
+        // const variables = row.doc.items.reduce((variables, item) => {
+        //   return {
+        //     ...variables,
+        //     ...item.inputs.reduce((variables, input) => {
+        //       return {
+        //         ...variables,
+        //         [input.name] : input.value
+        //       }
+        //     }, {})
+        //   }
+        // }, {})
+      const results = row.result
+        results.forEach(row => {
+          searchResults.push(row.doc)
+        })
+        // return {
+        //   _id: row.id,
+        //   matchesOn: row.matchesOn,
+        //   formId: row.formId,
+        //   formType: row.formType,
+        //   lastModified: row.lastModified,
+        //   variables: row.variables,
+        // }
+      // }
     })
     // Remove undefined elements
     const filteredSearchResults = searchResults.filter(function (el) {
       return el != null;
     });
-    this.indexingMessage$.next({
+    this.searchMessage$.next({
       message: filteredSearchResults?.length + ' search results.'
     })
     return filteredSearchResults
@@ -203,11 +208,25 @@ export class SearchService {
     }, {})
     // const index = new Worker({tokenize: "strict"});
     const indexes = {};
-    let index = new Index({tokenize: "full"})
-    let add = async (id, seq, content) => {
+    let index = new Document({
+      document: {
+        id: "id",
+        index: "matchesOn",
+        store: ["matchesOn", "formId","formType","lastModified","variables"]
+      }
+    })
+    let add = async (id, seq, searchResult) => {
       if (indexes[seq]) {
-        await index.addAsync(id, content);
-        console.log("Added: " + id + ":" + content + " to seq: " + seq)
+        // await index.addAsync(id, content);
+        index.addAsync({
+          id: id,
+          matchesOn: searchResult.matchesOn,
+          formId: searchResult.formId,
+          formType: searchResult.formType,
+          lastModified: searchResult.lastModified,
+          variables: searchResult.variables,
+        });
+        console.log("Added: " + id + ":" + searchResult.matchesOn + " to seq: " + seq)
       } else {
         const previousSeq = seq - 1
         if (previousSeq > 0) {
@@ -222,9 +241,23 @@ export class SearchService {
         }
         // Create a new index
         indexes[seq] = true
-        index = new Index({tokenize: "full"})
-        await index.addAsync(id, content);
-        console.log("Added: " + id + ":" + content + " to new seq: " + seq)
+        // index = new Index({tokenize: "full"})
+        index = new Document({
+          document: {
+            id: "id",
+            index: "matchesOn",
+            store: ["matchesOn", "formId","formType","lastModified","variables"]
+          }
+        })
+        index.addAsync({
+          id: id,
+          matchesOn: searchResult.matchesOn,
+          formId: searchResult.formId,
+          formType: searchResult.formType,
+          lastModified: searchResult.lastModified,
+          variables: searchResult.variables,
+        });
+        console.log("Added: " + id + ":" + searchResult.matchesOn + " to new seq: " + seq)
       }
 
     }
@@ -266,9 +299,7 @@ export class SearchService {
               options[pagerKeyName] = pagerKey
             }
           }
-          // this.searchMessage$.next({
-          //   message: window['t'](message)
-          // })
+
           if (allDocs.length > 0) {
             for (let i = 0; i < allDocs.length; i++) {
               const doc = allDocs[i].doc
@@ -321,14 +352,14 @@ export class SearchService {
                         // }
                       // })
                       
-                      const content = JSON.stringify(searchResult)
+                      // const content = JSON.stringify(searchResult)
                       
                       cnt++
                       if (cnt > this.indexItemSize) {
                         seq++
                         cnt = 0
                       }
-                      await add(key, seq, content)
+                      await add(key, seq, searchResult)
                     }
                   } 
                   // if (concatedValues.trim() !== '') {
@@ -477,34 +508,104 @@ export class SearchService {
       const indexSequences = Array.from(indexSet)
       const indexes:Index[] = []
       for (let i = 0; i < indexSequences.length; i++) {
-        const index = new Index({tokenize: "full"});
+        // const index = new Index({tokenize: "full"});
+        let index = new Document({
+          document: {
+            id: "id",
+            index: "matchesOn",
+            store: ["matchesOn", "formId","formType","lastModified","variables"]
+          }
+        })
         const seq = indexSequences[i]
         // const fileName = entry.name
         
-        // let key = fileName
-        // const fileNameArray = fileName.split('.')
-        // if (fileNameArray[2] === 'map') {
-        //   key = 'map'
-        // }
-        // const key = fileNameArray[0]
-        // const indexExists = indexes.find(index => index === key)
-        // if (!indexExists) {
-        //   console.log("Found index: " + key)
-        //   indexes.push(key)
+        // import register
+        let key = 'reg'
+        let fileName = 'reg-' + seq
+        let file:string
+        try {
+          file = await this.getFile(indexesDirEntry, fileName);
+          index.import(key, file)
+          console.log("Index loaded the file " + fileName)
+        } catch (e) {
+          console.log(e)
+          this.searchMessage$.next({
+            message: ' Error: ' + e
+          })
+        }
+
+        // import cfg
+        // key = 'cfg'
+        // fileName = 'reg.cfg-' + seq
+        // try {
+        //   file = await this.getFile(indexesDirEntry, fileName);
+        //   index.import(key, file)
+        //   console.log("Index loaded the file " + fileName)
+        // } catch (e) {
+        //   console.log(e)
+        //   this.searchMessage$.next({
+        //     message: ' Error: ' + e
+        //   })
         // }
 
-        let key = 'map'
-        let fileName = 'reg.cfg.map-' + seq
-        const mapFile:string = await this.getFile(indexesDirEntry, fileName);
-        index.import(key, mapFile)
-        console.log("Index loaded the file " + fileName)
-        key = 'reg'
-        fileName = 'reg-' + seq
-        const registerFile:string = await this.getFile(indexesDirEntry, fileName);
-        index.import(key, registerFile)
-        console.log("Index loaded the file " + fileName)
+        // // import map
+        // key = 'map'
+        // fileName = 'reg.cfg.map-' + seq
+        // try {
+        //   file = await this.getFile(indexesDirEntry, fileName);
+        //   index.import(key, file)
+        //   console.log("Index loaded the file " + fileName)
+        // } catch (e) {
+        //   console.log(e)
+        //   this.searchMessage$.next({
+        //     message: ' Error: ' + e
+        //   })
+        // }
+
+        // import ctx
+        // key = 'ctx'
+        // fileName = 'reg.cfg.map.ctx-' + seq
+        // try {
+        //   file = await this.getFile(indexesDirEntry, fileName);
+        //   index.import(key, file)
+        //   console.log("Index loaded the file " + fileName)
+        // } catch (e) {
+        //   console.log(e)
+        //   this.searchMessage$.next({
+        //     message: ' Error: ' + e
+        //   })
+        // }
+        
+        // import store
+        key = 'store'
+        fileName = 'store-' + seq
+        try {
+          file = await this.getFile(indexesDirEntry, fileName);
+          index.import(key, file)
+          console.log("Index loaded the file " + fileName)
+        } catch (e) {
+          console.log(e)
+          this.searchMessage$.next({
+            message: ' Error: ' + e
+          })
+        }
+        
+        // import store
+        key = 'matchesOn.map'
+        fileName = 'matchesOn.map-' + seq
+        try {
+          file = await this.getFile(indexesDirEntry, fileName);
+          index.import(key, file)
+          console.log("Index loaded the file " + fileName)
+        } catch (e) {
+          console.log(e)
+          this.searchMessage$.next({
+            message: ' Error: ' + e
+          })
+        }
+        
         indexes.push(index)
-        this.indexingMessage$.next({
+        this.searchMessage$.next({
           message: ' Loaded index ' + i
         })
       }
@@ -514,25 +615,30 @@ export class SearchService {
 
   private async getFile(indexesDirEntry: DirectoryEntry, fileName: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      const fileEntry = await new Promise(resolve => {
-          (indexesDirEntry as DirectoryEntry).getFile(fileName, {create: false, exclusive: false}, resolve);
+      const fileEntry = await new Promise((resolve, reject) => {
+          (indexesDirEntry as DirectoryEntry).getFile(fileName, {create: false, exclusive: false}, resolve, reject);
         }
-      );
-      const file: File = await new Promise(resolve => {
-        (fileEntry as FileEntry).file(resolve)
-      });
-      const reader = this.getFileReader();
-      let result: string | ArrayBuffer = ""
-      reader.onloadend = function () {
-        // console.log("Successful file read: " + this.result)
-        result = this.result
-        // displayFileData(fileEntry.fullPath + ": " + this.result);
-        // index.import(key, this.result)
-        // console.log("Index loaded the file " + fileName)
-        // indexes.push(index)
-        resolve(result)
+      ).catch(error => reject(error))
+      if (fileEntry) {
+        const file: File = await new Promise((resolve, reject) => {
+          (fileEntry as FileEntry).file(resolve, reject)
+        })
+        const reader = this.getFileReader();
+        let result: string | ArrayBuffer = ""
+        reader.onloadend = function () {
+          // console.log("Successful file read: " + this.result)
+          result = this.result
+          // displayFileData(fileEntry.fullPath + ": " + this.result);
+          // index.import(key, this.result)
+          // console.log("Index loaded the file " + fileName)
+          // indexes.push(index)
+          resolve(result)
+        }
+        reader.readAsText(file);
+      } else {
+        reject('Unable to get file.')
       }
-      reader.readAsText(file);
+      
     })
   }
 
