@@ -70,7 +70,7 @@ export class SearchService {
       message: ''
     })
     const db = await this.userService.getUserDatabase(username)
-    let result:any = {}
+    // let result:any = {}
     const indexSet = new Set()
     let activity = []
     if (phrase === '') {
@@ -79,99 +79,37 @@ export class SearchService {
     this.searchMessage$.next({
       message: 'Starting search'
     })
-    const results = []
+    const indexResults = []
     // Only show activity if they have enough activity to fill a page.
     if (phrase === '' && activity.length >= 11) {
       const page = activity.slice(skip, skip + limit)
-      // result = await db.allDocs(
-      //   { 
-      //     keys: page,
-      //     include_docs: true
-      //   }
-      // )
       let currentSearchArraySize = 0
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
-        result = index.search(phrase, { enrich: true });
-        // results.forEach(result => {
-        //   if (currentSearchArraySize <= limit) {
-        //     const resultArray = result.split('_')
-        //     indexSet.add(resultArray[0])
-        //     currentSearchArraySize++
-        //   }
-        // })
+        const result = index.search(phrase, { enrich: true });
       }
       // Sort it because the order of the docs returned is not guaranteed by the order of the keys parameter.
       // result.rows = page.map(id => result.rows.find(row => row.id === id))
     } else {
-      // result = await db.query(
-      //   'search',
-      //   { 
-      //     startkey: `${phrase}`.toLocaleLowerCase(),
-      //     endkey: `${phrase}\uffff`.toLocaleLowerCase(),
-      //     include_docs: true,
-      //     limit,
-      //     skip
-      //   }
-      // )
       let currentSearchArraySize = 0
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
-        result = index.search(phrase, { enrich: true })
-        results.push(result)
-        // results.forEach(result => {
-        //   if (currentSearchArraySize <= limit) {
-        //     const resultArray = result.split('_')
-        //     indexSet.add(resultArray[0])
-        //     currentSearchArraySize++
-        //   }
-        // })
+        const result = index.search(phrase, { enrich: true })
+        indexResults.push(result)
       }
     }
     // const indexResults = Array.from(indexSet)
-    // if (result.length > 0) {
-    //   this.searchMessage$.next({
-    //     message: result.length + ' Index results.'
-    //   })
-    // }
     
-    // return indexResults
-    // result = await db.allDocs(
-    //   { 
-    //     keys: indexResults,
-    //     include_docs: true
-    //   }
-    // )
-    // this.searchMessage$.next({
-    //   message: result?.rows?.length + ' results from DB.'
-    // })
     const searchResults = []
-      result.forEach(row => {
-      // if (row.error !== 'not_found') {
-        // const variables = row.doc.items.reduce((variables, item) => {
-        //   return {
-        //     ...variables,
-        //     ...item.inputs.reduce((variables, input) => {
-        //       return {
-        //         ...variables,
-        //         [input.name] : input.value
-        //       }
-        //     }, {})
-        //   }
-        // }, {})
-      const results = row.result
-        results.forEach(row => {
-          searchResults.push(row.doc)
+    indexResults.forEach(indexResult => {
+      if (indexResult.length > 0) {
+        indexResult.forEach(row => {
+          const results = row.result
+          results.forEach(row => {
+            searchResults.push(row.doc)
+          })
         })
-        // return {
-        //   _id: row.id,
-        //   matchesOn: row.matchesOn,
-        //   formId: row.formId,
-        //   formType: row.formType,
-        //   lastModified: row.lastModified,
-        //   variables: row.variables,
-        // }
-      // }
+      }
     })
     // Remove undefined elements
     const filteredSearchResults = searchResults.filter(function (el) {
