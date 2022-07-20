@@ -40,7 +40,7 @@ export class SearchService {
 
   window: any;
   indexQueryLimit: number = 50
-  indexItemSize:number = 250
+  indexItemSize:number = 150
 
   searchMessage: any = {};
   public readonly indexingMessage$: Subject<any> = new Subject();
@@ -389,34 +389,39 @@ export class SearchService {
 
       try {
         new Promise((resolve, reject) => {
-          return index.export(async (key, data): Promise<any> => {
-            const indexFileName = key + "-" + seq
-            console.log("Exporting: " + indexFileName)
-            try {
-              await new Promise((resolve, reject) => {
-                indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
-                  fileEntry.createWriter((fileWriter) => {
-                    fileWriter.onwriteend = (data) => {
-                      console.log(`Index stored at ${groupId}/${indexFileName}`)
-                    }
-                    fileWriter.onerror = (e) => {
-                      alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-                    }
-                    fileWriter.write(data);
+
+          try {
+            return index.export(async (key, data): Promise<any> => {
+              const indexFileName = key + "-" + seq
+              console.log("Exporting: " + indexFileName)
+              try {
+                await new Promise((resolve, reject) => {
+                  indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
+                    fileEntry.createWriter((fileWriter) => {
+                      fileWriter.onwriteend = (data) => {
+                        console.log(`Index stored at ${groupId}/${indexFileName}`)
+                      }
+                      fileWriter.onerror = (e) => {
+                        alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                      }
+                      fileWriter.write(data);
+                    })
+                    resolve()
+                  }, (e) => {
+                    console.log(e)
+                    reject(e)
                   })
-                  resolve()
-                }, (e) => {
-                  console.log(e)
-                  reject(e)
                 })
-              })
-            } catch (e) {
-              console.log("error exporting" + indexFileName + " Error: " + e)
-            }
-            if (key === 'store') {
-              resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
-            }
-          }).catch((e) => reject(e))
+              } catch (e) {
+                console.log("error exporting" + indexFileName + " Error: " + e)
+              }
+              if (key === 'store') {
+                resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
+              }
+            })
+          } catch (e) {
+            reject(e);
+          }
         })
         
       } catch (e) {
