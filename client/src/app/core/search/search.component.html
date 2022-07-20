@@ -44,7 +44,7 @@
   <paper-button raised (click)="loadMore()"><mwc-icon>expand_more</mwc-icon>{{'Load More'|translate}}</paper-button>
 </div>
 <div id="loading" [hidden]="isLoading === false">
-  <div #indexProgress></div>
+  <div #searchProgress></div>
   <paper-progress id="progress-bar" indeterminate></paper-progress>
 </div>
 <div id="space">
