@@ -40,7 +40,7 @@ export class SearchService {
 
   window: any;
   indexQueryLimit: number = 50
-  indexItemSize:number = 150
+  indexItemSize:number = 100
 
   searchMessage: any = {};
   public readonly indexingMessage$: Subject<any> = new Subject();
@@ -282,23 +282,24 @@ export class SearchService {
 
                       // const searchResults = doc.rows.map(row => {
                       //   if (row.error !== 'not_found') {
-                      //     const variables = doc.items.reduce((variables, item) => {
-                      //       return {
-                      //         ...variables,
-                      //         ...item.inputs.reduce((variables, input) => {
-                      //           return {
-                      //             ...variables,
-                      //             [input.name] : input.value
-                      //           }
-                      //         }, {})
-                      //       }
-                      //     }, {})
+                          const variables = doc.items.reduce((variables, item) => {
+                            return {
+                              ...variables,
+                              ...item.inputs.reduce((variables, input) => {
+                                return {
+                                  ...variables,
+                                  [input.name] : input.value
+                                }
+                              }, {})
+                            }
+                          }, {})
                       const searchResult =  {
-                            id: doc._id,
+                            _id: doc._id,
                             matchesOn: value,
                             formId: doc.form.id,
                             formType: doc.type,
                             lastModified: doc.lastModified,
+                            variables
                           }
                         // }
                       // })
