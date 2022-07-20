@@ -40,7 +40,7 @@ export class SearchService {
 
   window: any;
   indexQueryLimit: number = 50
-  indexItemSize:number = 2500
+  indexItemSize:number = 1000
 
   searchMessage: any = {};
   public readonly indexingMessage$: Subject<any> = new Subject();
@@ -79,6 +79,7 @@ export class SearchService {
     this.searchMessage$.next({
       message: 'Starting search'
     })
+    const results = []
     // Only show activity if they have enough activity to fill a page.
     if (phrase === '' && activity.length >= 11) {
       const page = activity.slice(skip, skip + limit)
@@ -117,6 +118,7 @@ export class SearchService {
       for (let i = 0; i < indexArray.length; i++) {
         const index = indexArray[i]
         result = index.search(phrase, { enrich: true })
+        results.push(result)
         // results.forEach(result => {
         //   if (currentSearchArraySize <= limit) {
         //     const resultArray = result.split('_')
@@ -234,7 +236,11 @@ export class SearchService {
           let time = new Date().toISOString()
           let message = time + ' : About to save index ' + previousSeq;
           console.log(message)
-          await this.exportSearchIndex(groupId, index, previousSeq);
+          try {
+            await this.exportSearchIndex(groupId, index, previousSeq);
+          } catch (e) {
+            console.log(e)
+          }
           time = new Date().toISOString()
           message = time + ' : Saved index ' + previousSeq;
           console.log(message)
@@ -408,7 +414,7 @@ export class SearchService {
     return index;
   }
 
-  async exportSearchIndex(groupId: string, index, seq: number) {
+  async exportSearchIndex(groupId: string, index:Index, seq: number) {
     let indexesDir, indexesDirEntry
     if (this.window.isCordovaApp) {
       const entry = await new Promise<Entry>((resolve, reject) => {
@@ -436,28 +442,30 @@ export class SearchService {
         alert(message)
       }
 
-      await index.export(function (key, data) {
-        return new Promise(async function (resolve) {
-          // do the saving as async
-          // const fileEntry:FileEntry = await new Promise(resolve => {
-          //   const fileEntry = indexesDirEntry.getFile(key, {create: true})
-          //   resolve(fileEntry)
-          // });
-          const indexFileName = key + "-" + seq
-          indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
-            fileEntry.createWriter((fileWriter) => {
-              fileWriter.onwriteend = (data) => {
-                console.log(`Index stored at ${groupId}/${indexFileName}`)
-              }
-              fileWriter.onerror = (e) => {
-                alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-              }
-              fileWriter.write(data);
-            })
+      try {
+        await index.export(function (key, data): Promise<any> {
+          return new Promise(async (resolve, reject) => {
+            const indexFileName = key + "-" + seq
+            indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
+              fileEntry.createWriter((fileWriter) => {
+                fileWriter.onwriteend = (data) => {
+                  console.log(`Index stored at ${groupId}/${indexFileName}`)
+                }
+                fileWriter.onerror = (e) => {
+                  alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                }
+                fileWriter.write(data);
+              })
+              resolve()
+            }, reject('Could not get index.' + key))
           })
-          resolve()
         })
-      })
+      } catch (e) {
+        console.log('Error getting index seq: ' + seq + ' message' + e)
+        this.indexingMessage$.next({
+          message: ' Error: ' + e
+        })
+      }
     }
   }
   
@@ -528,53 +536,11 @@ export class SearchService {
           index.import(key, file)
           console.log("Index loaded the file " + fileName)
         } catch (e) {
-          console.log(e)
+          console.log('Error getting file: ' + fileName + ' message' + e)
           this.searchMessage$.next({
             message: ' Error: ' + e
           })
         }
-
-        // import cfg
-        // key = 'cfg'
-        // fileName = 'reg.cfg-' + seq
-        // try {
-        //   file = await this.getFile(indexesDirEntry, fileName);
-        //   index.import(key, file)
-        //   console.log("Index loaded the file " + fileName)
-        // } catch (e) {
-        //   console.log(e)
-        //   this.searchMessage$.next({
-        //     message: ' Error: ' + e
-        //   })
-        // }
-
-        // // import map
-        // key = 'map'
-        // fileName = 'reg.cfg.map-' + seq
-        // try {
-        //   file = await this.getFile(indexesDirEntry, fileName);
-        //   index.import(key, file)
-        //   console.log("Index loaded the file " + fileName)
-        // } catch (e) {
-        //   console.log(e)
-        //   this.searchMessage$.next({
-        //     message: ' Error: ' + e
-        //   })
-        // }
-
-        // import ctx
-        // key = 'ctx'
-        // fileName = 'reg.cfg.map.ctx-' + seq
-        // try {
-        //   file = await this.getFile(indexesDirEntry, fileName);
-        //   index.import(key, file)
-        //   console.log("Index loaded the file " + fileName)
-        // } catch (e) {
-        //   console.log(e)
-        //   this.searchMessage$.next({
-        //     message: ' Error: ' + e
-        //   })
-        // }
         
         // import store
         key = 'store'
@@ -584,7 +550,7 @@ export class SearchService {
           index.import(key, file)
           console.log("Index loaded the file " + fileName)
         } catch (e) {
-          console.log(e)
+          console.log('Error getting file: ' + fileName + ' message' + e)
           this.searchMessage$.next({
             message: ' Error: ' + e
           })
@@ -598,7 +564,7 @@ export class SearchService {
           index.import(key, file)
           console.log("Index loaded the file " + fileName)
         } catch (e) {
-          console.log(e)
+          console.log('Error getting file: ' + fileName + ' message' + e)
           this.searchMessage$.next({
             message: ' Error: ' + e
           })
