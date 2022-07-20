@@ -151,8 +151,13 @@ export class SearchService {
     let index = new Document({
       document: {
         id: "id",
-        index: "matchesOn",
-        store: ["matchesOn", "formId","formType","lastModified","variables"]
+        index: [{
+          field: "matchesOn",
+          tokenize: "forward",
+          optimize: true,
+          resolution: 9
+        }],
+        store: ["id","matchesOn", "formId","formType","lastModified"]
       }
     })
     let add = async (id, seq, searchResult) => {
@@ -164,7 +169,6 @@ export class SearchService {
           formId: searchResult.formId,
           formType: searchResult.formType,
           lastModified: searchResult.lastModified,
-          variables: searchResult.variables,
         });
         console.log("Added: " + id + ":" + searchResult.matchesOn + " to seq: " + seq)
       } else {
@@ -189,8 +193,13 @@ export class SearchService {
         index = new Document({
           document: {
             id: "id",
-            index: "matchesOn",
-            store: ["matchesOn", "formId","formType","lastModified","variables"]
+            index: [{
+              field: "matchesOn",
+              tokenize: "forward",
+              optimize: true,
+              resolution: 9
+            }],
+            store: ["id","matchesOn", "formId","formType","lastModified"]
           }
         })
         index.addAsync({
@@ -199,7 +208,6 @@ export class SearchService {
           formId: searchResult.formId,
           formType: searchResult.formType,
           lastModified: searchResult.lastModified,
-          variables: searchResult.variables,
         });
         console.log("Added: " + id + ":" + searchResult.matchesOn + " to new seq: " + seq)
       }
@@ -274,24 +282,23 @@ export class SearchService {
 
                       // const searchResults = doc.rows.map(row => {
                       //   if (row.error !== 'not_found') {
-                          const variables = doc.items.reduce((variables, item) => {
-                            return {
-                              ...variables,
-                              ...item.inputs.reduce((variables, input) => {
-                                return {
-                                  ...variables,
-                                  [input.name] : input.value
-                                }
-                              }, {})
-                            }
-                          }, {})
+                      //     const variables = doc.items.reduce((variables, item) => {
+                      //       return {
+                      //         ...variables,
+                      //         ...item.inputs.reduce((variables, input) => {
+                      //           return {
+                      //             ...variables,
+                      //             [input.name] : input.value
+                      //           }
+                      //         }, {})
+                      //       }
+                      //     }, {})
                       const searchResult =  {
-                            _id: doc._id,
+                            id: doc._id,
                             matchesOn: value,
                             formId: doc.form.id,
                             formType: doc.type,
                             lastModified: doc.lastModified,
-                            variables
                           }
                         // }
                       // })
@@ -458,8 +465,13 @@ export class SearchService {
         let index = new Document({
           document: {
             id: "id",
-            index: "matchesOn",
-            store: ["matchesOn", "formId","formType","lastModified","variables"]
+            index: [{
+              field: "matchesOn",
+              tokenize: "forward",
+              optimize: true,
+              resolution: 9
+            }],
+            store: ["id","matchesOn", "formId","formType","lastModified"]
           }
         })
         const seq = indexSequences[i]
@@ -474,7 +486,7 @@ export class SearchService {
           index.import(key, file)
           console.log("Index loaded the file " + fileName)
         } catch (e) {
-          console.log('Error getting file: ' + fileName + ' message' + e)
+          console.log('Error getting file: ' + fileName)
           this.searchMessage$.next({
             message: ' Error: ' + e
           })
@@ -488,7 +500,7 @@ export class SearchService {
           index.import(key, file)
           console.log("Index loaded the file " + fileName)
         } catch (e) {
-          console.log('Error getting file: ' + fileName + ' message' + e)
+          console.log('Error getting file: ' + fileName)
           this.searchMessage$.next({
             message: ' Error: ' + e
           })
@@ -502,7 +514,7 @@ export class SearchService {
           index.import(key, file)
           console.log("Index loaded the file " + fileName)
         } catch (e) {
-          console.log('Error getting file: ' + fileName + ' message' + e)
+          console.log('Error getting file: ' + fileName)
           this.searchMessage$.next({
             message: ' Error: ' + e
           })
