@@ -40,7 +40,7 @@ export class SearchService {
 
   window: any;
   indexQueryLimit: number = 50
-  indexItemSize:number = 1000
+  indexItemSize:number = 500
 
   searchMessage: any = {};
   public readonly indexingMessage$: Subject<any> = new Subject();
@@ -388,21 +388,27 @@ export class SearchService {
       }
 
       try {
-        await index.export(function (key, data): Promise<any> {
+        await index.export(async (key, data): Promise<any> => {
           return new Promise(async (resolve, reject) => {
             const indexFileName = key + "-" + seq
-            indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
-              fileEntry.createWriter((fileWriter) => {
-                fileWriter.onwriteend = (data) => {
-                  console.log(`Index stored at ${groupId}/${indexFileName}`)
-                }
-                fileWriter.onerror = (e) => {
-                  alert(`${_TRANSLATE('Write Failed')}` + e.toString());
-                }
-                fileWriter.write(data);
-              })
-              resolve()
-            }, reject('Could not get index.' + key))
+            console.log("Exporting: " + indexFileName)
+            await new Promise((resolve, reject) => {
+              indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
+                fileEntry.createWriter((fileWriter) => {
+                  fileWriter.onwriteend = (data) => {
+                    console.log(`Index stored at ${groupId}/${indexFileName}`)
+                  }
+                  fileWriter.onerror = (e) => {
+                    alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+                  }
+                  fileWriter.write(data);
+                })
+                resolve()
+              }, reject('Could not get index.' + key))
+              if (key === 'store') {
+                resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
+              }
+            })
           })
         })
       } catch (e) {
