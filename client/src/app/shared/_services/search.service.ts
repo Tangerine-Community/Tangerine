@@ -388,8 +388,8 @@ export class SearchService {
       }
 
       try {
-        await index.export(async (key, data): Promise<any> => {
-          return new Promise(async (resolve, reject) => {
+        new Promise((resolve, reject) => {
+          return index.export(async (key, data): Promise<any> => {
             const indexFileName = key + "-" + seq
             console.log("Exporting: " + indexFileName)
             try {
@@ -409,15 +409,16 @@ export class SearchService {
                   console.log(e)
                   reject(e)
                 })
-                if (key === 'store') {
-                  resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
-                }
               })
             } catch (e) {
               console.log("error exporting" + indexFileName + " Error: " + e)
             }
-          })
+            if (key === 'store') {
+              resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
+            }
+          }).catch((e) => reject(e))
         })
+        
       } catch (e) {
         console.log('Error getting index seq: ' + seq + ' message' + e)
         this.indexingMessage$.next({
