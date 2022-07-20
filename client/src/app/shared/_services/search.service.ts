@@ -40,7 +40,7 @@ export class SearchService {
 
   window: any;
   indexQueryLimit: number = 50
-  indexItemSize:number = 5000
+  indexItemSize:number = 2500
 
   searchMessage: any = {};
   public readonly indexingMessage$: Subject<any> = new Subject();
