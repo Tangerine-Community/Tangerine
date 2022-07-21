@@ -397,8 +397,7 @@ export class SearchService {
       }
 
       // try {
-        return new Promise((resolve, reject) => {
-
+        const promise = new Promise((resolve, reject) => {
           let pkg = [];
           const expected = new Set([
             "reg-" + seq,
@@ -440,7 +439,7 @@ export class SearchService {
                           this.indexingMessage$.next({
                             message: message
                           })
-                          resolve(JSON.stringify(pkg));
+                          resolve();
                         }
                       }
                       fileWriter.onerror = (e) => {
@@ -457,15 +456,15 @@ export class SearchService {
               } catch (e) {
                 console.log("error exporting" + indexFileName + " Error: " + e)
               }
-              // if (key === 'store') {
-              //   resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
-              // }
-              
+              console.log("Completed export.")
             })
           } catch (e) {
             reject(e);
           }
+          console.log("Promise export complete..")
         })
+      console.log("Files exported for seq: " + seq)
+      return promise
         
       // } catch (e) {
       //   console.log('Error getting index seq: ' + seq + ' message' + e)
@@ -473,7 +472,6 @@ export class SearchService {
       //     message: ' Error: ' + e
       //   })
       // }
-      console.log("Files exported for seq: " + seq)
     }
   }
   
