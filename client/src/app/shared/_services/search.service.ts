@@ -132,6 +132,9 @@ export class SearchService {
   }
 
   async indexDocs() {
+    this.indexingMessage$.next({
+      message: "Started Indexing."
+    })
     const startTime = new Date().toISOString()
     console.log("indexing startTime: " + startTime)
     const appConfig = await this.appConfigService.getAppConfig()
@@ -234,6 +237,9 @@ export class SearchService {
     let seq = 1
     while (remaining === true) {
       try {
+        this.indexingMessage$.next({
+          message: "Querying database. Docs processed: " + currentDocsProcessed + '/' + total_rows
+        })
         const response = await database[queryFunction](options)
         if (response && response[responseArrayName].length > 0) {
           if (options.selector) {
@@ -333,7 +339,7 @@ export class SearchService {
           }
           console.log(message)
           this.indexingMessage$.next({
-            message: currentDocsProcessed + '/' + total_rows
+            message: 'Docs processed: ' + currentDocsProcessed + '/' + total_rows
           })
         } else {
           remaining = false
@@ -396,6 +402,7 @@ export class SearchService {
           let pkg = [];
           const expected = new Set([
             "reg-" + seq,
+            "matchesOn.ctx-" + seq,
             "matchesOn.cfg-" + seq,
             "matchesOn.map-" + seq,
             "store-" + seq,
@@ -421,7 +428,20 @@ export class SearchService {
                   indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
                     fileEntry.createWriter((fileWriter) => {
                       fileWriter.onwriteend = (data) => {
-                        console.log(`Index stored at ${groupId}/${indexFileName}`)
+                        received.add(indexFileName);
+                        const msg = `Index stored at ${groupId}/${indexFileName} for seq ${seq}; Saved ${received.size} of ${expected.size}.`
+                        console.log(msg)
+                        this.indexingMessage$.next({
+                          message: msg
+                        })
+                        if (setsEq(expected, received)) {
+                          const message = "All index files generated for seq: " + seq
+                          console.log(message)
+                          this.indexingMessage$.next({
+                            message: message
+                          })
+                          resolve(JSON.stringify(pkg));
+                        }
                       }
                       fileWriter.onerror = (e) => {
                         alert(`${_TRANSLATE('Write Failed')}` + e.toString());
@@ -440,15 +460,7 @@ export class SearchService {
               // if (key === 'store') {
               //   resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
               // }
-              pkg.push([
-                indexFileName,
-                data
-              ]);
-              received.add(indexFileName);
-              if (setsEq(expected, received)) {
-                console.log("All index files generated for seq: " + seq)
-                resolve(JSON.stringify(pkg));
-              }
+              
             })
           } catch (e) {
             reject(e);
@@ -461,7 +473,7 @@ export class SearchService {
       //     message: ' Error: ' + e
       //   })
       // }
-      console.log("File exported for seq: " + seq)
+      console.log("Files exported for seq: " + seq)
     }
   }
   
