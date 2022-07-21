@@ -157,7 +157,7 @@ export class SearchService {
           optimize: true,
           resolution: 9
         }],
-        store: ["id","matchesOn", "formId","formType","lastModified"]
+        store: ["id","matchesOn", "formId","formType","lastModified","variables"]
       }
     })
     let add = async (id, seq, searchResult) => {
@@ -169,6 +169,7 @@ export class SearchService {
           formId: searchResult.formId,
           formType: searchResult.formType,
           lastModified: searchResult.lastModified,
+          variables: searchResult.variables
         });
         console.log("Added: " + id + ":" + searchResult.matchesOn + " to seq: " + seq)
       } else {
@@ -199,7 +200,7 @@ export class SearchService {
               optimize: true,
               resolution: 9
             }],
-            store: ["id","matchesOn", "formId","formType","lastModified"]
+            store: ["id","matchesOn", "formId","formType","lastModified","variables"]
           }
         })
         index.addAsync({
@@ -208,6 +209,7 @@ export class SearchService {
           formId: searchResult.formId,
           formType: searchResult.formType,
           lastModified: searchResult.lastModified,
+          variables: searchResult.variables
         });
         console.log("Added: " + id + ":" + searchResult.matchesOn + " to new seq: " + seq)
       }
@@ -388,14 +390,33 @@ export class SearchService {
         alert(message)
       }
 
-      try {
-        new Promise((resolve, reject) => {
+      // try {
+        return new Promise((resolve, reject) => {
 
+          let pkg = [];
+          const expected = new Set([
+            "reg-" + seq,
+            "matchesOn.cfg-" + seq,
+            "matchesOn.map-" + seq,
+            "store-" + seq,
+            "tag-" + seq
+          ]);
+          const received = new Set();
+
+          const setsEq = (a, b) => {
+            if (a.size != b.size) {
+              return false;
+            }
+
+            return Array.from(a).every(el => b.has(el));
+          };
           try {
             return index.export(async (key, data): Promise<any> => {
               const indexFileName = key + "-" + seq
               console.log("Exporting: " + indexFileName)
               try {
+                // TODO: This Promise needs to sit tight and wait until the last file is output by the export. 
+                // Credit: https://github.com/nextapps-de/flexsearch/issues/274#issuecomment-1088024152
                 await new Promise((resolve, reject) => {
                   indexesDirEntry.getFile(indexFileName, {create: true}, (fileEntry) => {
                     fileEntry.createWriter((fileWriter) => {
@@ -416,8 +437,17 @@ export class SearchService {
               } catch (e) {
                 console.log("error exporting" + indexFileName + " Error: " + e)
               }
-              if (key === 'store') {
-                resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
+              // if (key === 'store') {
+              //   resolve(); // store is the last to go, but this relies on internals and assumes no error occurs in the process :(
+              // }
+              pkg.push([
+                indexFileName,
+                data
+              ]);
+              received.add(indexFileName);
+              if (setsEq(expected, received)) {
+                console.log("All index files generated for seq: " + seq)
+                resolve(JSON.stringify(pkg));
               }
             })
           } catch (e) {
@@ -425,12 +455,12 @@ export class SearchService {
           }
         })
         
-      } catch (e) {
-        console.log('Error getting index seq: ' + seq + ' message' + e)
-        this.indexingMessage$.next({
-          message: ' Error: ' + e
-        })
-      }
+      // } catch (e) {
+      //   console.log('Error getting index seq: ' + seq + ' message' + e)
+      //   this.indexingMessage$.next({
+      //     message: ' Error: ' + e
+      //   })
+      // }
       console.log("File exported for seq: " + seq)
     }
   }
@@ -493,7 +523,7 @@ export class SearchService {
               optimize: true,
               resolution: 9
             }],
-            store: ["id","matchesOn", "formId","formType","lastModified"]
+            store: ["id","matchesOn", "formId","formType","lastModified","variables"]
           }
         })
         const seq = indexSequences[i]
