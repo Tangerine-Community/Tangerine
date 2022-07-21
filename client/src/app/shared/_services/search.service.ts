@@ -397,7 +397,7 @@ export class SearchService {
       }
 
       // try {
-        const promise = new Promise((resolve, reject) => {
+        const promise = new Promise((res, rej) => {
           let pkg = [];
           const expected = new Set([
             "reg-" + seq,
@@ -413,11 +413,10 @@ export class SearchService {
             if (a.size != b.size) {
               return false;
             }
-
             return Array.from(a).every(el => b.has(el));
           };
           try {
-            return index.export(async (key, data): Promise<any> => {
+             index.export(async (key, data) => {
               const indexFileName = key + "-" + seq
               console.log("Exporting: " + indexFileName)
               try {
@@ -439,7 +438,7 @@ export class SearchService {
                           this.indexingMessage$.next({
                             message: message
                           })
-                          resolve();
+                          res();
                         }
                       }
                       fileWriter.onerror = (e) => {
@@ -456,10 +455,10 @@ export class SearchService {
               } catch (e) {
                 console.log("error exporting" + indexFileName + " Error: " + e)
               }
-              console.log("Completed export.")
+              // console.log("Completed export.")
             })
           } catch (e) {
-            reject(e);
+            rej(e);
           }
           console.log("Promise export complete..")
         })
