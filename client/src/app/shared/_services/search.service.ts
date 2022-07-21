@@ -465,6 +465,7 @@ export class SearchService {
       }
       const indexDirEntries: any[] = await new Promise(resolve => {
         const reader = indexesDirEntry.createReader();
+        // TODO: exclude dotfiles - example: .trashed-1660946950-store-10"
         reader.readEntries((entries) => resolve(entries))
       });
 
@@ -509,7 +510,7 @@ export class SearchService {
         } catch (e) {
           console.log('Error getting file: ' + fileName)
           this.searchMessage$.next({
-            message: ' Error: ' + e
+            message: 'Error getting file: ' + fileName
           })
         }
         
@@ -523,7 +524,7 @@ export class SearchService {
         } catch (e) {
           console.log('Error getting file: ' + fileName)
           this.searchMessage$.next({
-            message: ' Error: ' + e
+            message: 'Error getting file: ' + fileName
           })
         }
         
@@ -537,7 +538,7 @@ export class SearchService {
         } catch (e) {
           console.log('Error getting file: ' + fileName)
           this.searchMessage$.next({
-            message: ' Error: ' + e
+            message: 'Error getting file: ' + fileName
           })
         }
         
