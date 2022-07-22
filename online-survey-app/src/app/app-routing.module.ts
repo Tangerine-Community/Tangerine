@@ -5,10 +5,8 @@ import { FormsListComponent } from './forms-list/forms-list.component';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
 
 const routes: Routes = [
-  //{ path: '', component: FormsListComponent },
-  { path: 'form-submitted-success', component: FormSubmittedSuccessComponent },
-  { path: 'form/:id', component: TangyFormsPlayerComponent },
-  { path: 'form/option/:formId/:option', component: TangyFormsPlayerComponent }
+  { path: '', component: TangyFormsPlayerComponent},
+  { path: 'form-submitted-success', component: FormSubmittedSuccessComponent},
 ];
 
 @NgModule({
