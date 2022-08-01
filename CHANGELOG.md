@@ -1,6 +1,8 @@
 # What's new
 
-## v3.24.3
+## v3.24.3-final
+
+Please note that this release is tagged v3.24.3-final, not v3.24.3. This is a deviation from our usual format; we will resume the previous format in the next release.
 
 __New Feature__
 - To force user to stay on form until submission, set `"forceCompleteForms":true' in the group app-config.json. Issue: [#3215](https://github.com/Tangerine-Community/Tangerine/issues/3215)
@@ -34,8 +36,8 @@ cp -r data ../data-backup-$(date "+%F-%T")
 docker logs --since=60m tangerine
 # Fetch the updates.
 git fetch origin
-git checkout v3.24.3
-./start.sh v3.24.3
+git checkout v3.24.3-final
+./start.sh v3.24.3-final
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.24.2
 ```
