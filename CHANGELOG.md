@@ -13,6 +13,8 @@ __Fixes__
 - Exclude client-uploads folder from APK and PWA releases [#3371](https://github.com/Tangerine-Community/Tangerine/issues/3371)
 - Remove ordering of inputs when creating spreadsheets [#3252](https://github.com/Tangerine-Community/Tangerine/issues/3252)
 - Bumped tangy-form-editor to v7.14.8 to add Video Capture input warning text [#3376](https://github.com/Tangerine-Community/Tangerine/issues/3376)
+- Bumped tangy-form to [4.36.3](https://github.com/Tangerine-Community/tangy-form/releases/tag/v4.36.3).
+- Updated the online-survey-app routing to route to a specific form, and also adds an optional routing option. PR:[#3387](https://github.com/Tangerine-Community/Tangerine/pull/3387)
 
 __Server upgrade instructions__
 
