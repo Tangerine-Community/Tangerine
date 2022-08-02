@@ -349,9 +349,12 @@ export class TangyFormsPlayerComponent implements OnInit {
         let r = await this.tangyFormService.saveResponse(state)
         stateDoc = await this.tangyFormService.getResponse(state._id)
       }
+      // only reset current-form-id when the form is complete. If the form is abandoned midway, do not reset current-form-id.
+      if (stateDoc && stateDoc['complete'] && state.complete) {
+        await this.variableService.set('current-form-id', null);
+      }
       // reset some values.
       stateDoc["uploadDatetime"] = ""
-      await this.variableService.set('current-form-id', null);
       // now save the responseDoc.
       await this.tangyFormService.saveResponse({
         ...state,
