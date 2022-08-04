@@ -23,9 +23,9 @@ export class RedirectToDefaultRouteComponent implements OnInit {
   async ngOnInit() {
     const defaultUrl = '/forms-list';
     
-    const currentFormId = await this.variableService.get('current-form-id')
-    if (this.window.T.appConfig.config.forceCompleteForms === true && currentFormId && currentFormId !== 'user-profile') {
-      this.router.navigate([`/tangy-forms/new/${currentFormId}`]);
+    const incompleteResponseId = await this.variableService.get('incomplete-response-id')
+    if (this.window.T.appConfig.config.forceCompleteForms === true && incompleteResponseId) {
+      this.router.navigate([`/tangy-forms/resume/${incompleteResponseId}`]);
     } else {
       const home_url = await this.appConfigService.getDefaultURL();
       this.router.navigate([home_url]).then(data => {
