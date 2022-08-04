@@ -185,7 +185,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       this.response = formEl.response
       // Listen up, save in the db.
       if (!this.skipSaving) {
-        await this.variableService.set('current-form-id', this.formId);
+        await this.variableService.set('incomplete-response-id', this.response._id);
         formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
@@ -349,9 +349,9 @@ export class TangyFormsPlayerComponent implements OnInit {
         let r = await this.tangyFormService.saveResponse(state)
         stateDoc = await this.tangyFormService.getResponse(state._id)
       }
-      // only reset current-form-id when the form is complete. If the form is abandoned midway, do not reset current-form-id.
+      // only reset incomplete-response-id when the form is complete. If the form is abandoned midway, do not reset incomplete-response-id.
       if (stateDoc && stateDoc['complete'] && state.complete) {
-        await this.variableService.set('current-form-id', null);
+        await this.variableService.set('incomplete-response-id', null);
       }
       // reset some values.
       stateDoc["uploadDatetime"] = ""
