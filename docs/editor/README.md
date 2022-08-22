@@ -1,5 +1,6 @@
 # Editor Quick Links
 ## Form Development Guides
+- [Getting Started with Editor](../editor/getting-started-editor/editor-overview.md)
 - [Tangerine Form Developer's Cookbook](form-developers-cookbook/README.md)
 - [Local Content Development with Tangerine Preview](local-content-development.md)
 - [Configuration Guide](configuration.md)
