@@ -5,6 +5,7 @@
 __Fixes__
 
 - User is forced to stay on form until submission [#3215] - changed current-form-id to incomplete-response-id
+- Bumped tangy-form to 4.37.0 and tangy-form-editor to 7.14.10.
 
 __Server upgrade instructions__
 
