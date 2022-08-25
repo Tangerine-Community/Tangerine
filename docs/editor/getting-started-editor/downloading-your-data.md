@@ -71,6 +71,17 @@ Once the CSV has been downloaded, you can find it in your Downloads folder.
 
 ### Metadata included in CSV ###
 
+To correctly interpret your data you need to know each variable and the corresponding values for the answer option. Please use the form's metadata print function under the form listing (go to Author->Forms). Access the metadata by clicking the print icon next to the form name and then select metadata.
+
+<img src="../media/meta01.png" width="570">
+
+
+Each CSV file includes all data from the form responses. We can think of these data as data and metadata. Each line of the data file represents one data entry for your instrument.  The values displayed under each variable correspond to the values you have assigned to each response option when designing your instrument.
+
+For each variable in Tangerine you will see a column or columns in the csv file. Some outputs like checkboxes and grids spread across multiple columns. For checkboxes you will see a column named using a this pattern "VariableName_Value". This means that for each option value pair for the checkbox group there will be a column . Similarly grids provide columns named ""GridVariableName_ItemPosition" meaning that for each item in the grid you will see a column with the item position.
+
+
+
 Each csv output from data collected by Tangerine has a set of metadata variables that are automatically output. Here is the current list:
 
 |Variable Name |	Meaning |
