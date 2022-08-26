@@ -2,6 +2,11 @@
 
 ## v3.24.4
 
+__NEW Features__
+
+- Ability to add scoring from the interface (24 hours) [#1021](https://github.com/Tangerine-Community/Tangerine/issues/1021)
+
+
 __Fixes__
 
 - User is forced to stay on form until submission [#3215] - changed current-form-id to incomplete-response-id
