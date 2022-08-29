@@ -92,7 +92,7 @@ export class IssueComponent implements OnInit {
     this.isOpen = this.issue.status === IssueStatus.Open ? true : false
     this.canMergeProposedChange = await this.caseService.canMergeProposedChange(this.issue._id)
     this.hasProposedChange = await this.caseService.hasProposedChange(this.issue._id)
-    this.hasMergeChangePermission = await this.caseService.hasMergeChangePermission()
+    this.hasMergeChangePermission = await this.caseService.hasMergeChangePermission(this.issue._id)
 
     this.eventInfos = this.issue.events.map(event => {
       return <EventInfo>{
