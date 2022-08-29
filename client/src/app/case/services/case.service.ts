@@ -1068,6 +1068,11 @@ class CaseService {
     return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
   }
 
+  async hasMergeChangePermission() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    return appConfig.allowMergeOfIssues ? appConfig.allowMergeOfIssues : false
+  }
+
   async issueDiff(issueId) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const firstOpenEvent = issue.events.find(event => event.type === IssueEventType.Open)
@@ -1109,7 +1114,7 @@ class CaseService {
   }
 
   isIssueContext() {
-    return window.location.hash.includes('/issues/')
+    return window.location.hash.includes('/issues/') || window.location.hash.includes('/issue/')
       ? true
       : false
   }
