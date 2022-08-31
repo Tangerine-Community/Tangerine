@@ -92,8 +92,8 @@ __Step 6__: Keep Tangerine alive, clear CSV downloads, and Ubuntu up to date wit
 
 The following crontab entries keep Tangerine and your server healthy and alive. Enter crontab for root with `sudo su && crontab -e` and add the following lines. 
 ```
-# Clear CSV download folder every week on Saturday. Adjust this command according to the location of your tangerine directory.
-0 0 * * SAT sudo rm /home/ubuntu/tangerine/data/csv/*
+# Clear CSV download folder. Only remove files older then 30 days. Adjust the +30 to increase or decrease the amount of days. 
+0 5 * * * find /home/ubuntu/tangerine/data/csv/*  -type f -name '*' -mtime +30 -exec rm {} \;
 # Update ubuntu every week on Saturday.
 0 0 * * SAT sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y && sudo reboot
 # Restart Tangerine to clear in memory caches.
