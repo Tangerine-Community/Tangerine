@@ -150,6 +150,7 @@ export class AppConfig {
   p2pSync = 'false'
   attachHistoryToDocs:boolean = false
   usePouchDbLastSequenceTracking:boolean
+  forceNewEventFormConfirmation:boolean = false
 
   //
   // @TODO Sort these.
