@@ -18,6 +18,7 @@ import { conflictTemplate } from './conflict-template';
 import { diffString, diff } from 'json-diff';
 import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.component";
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
+import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 
 const IssueEventTypeIconMap = {
   [IssueEventType.Comment]: 'comment',
@@ -74,6 +75,7 @@ export class IssueComponent implements OnInit {
   ready = false
   private conflict: Conflict;
   conflictMarkup:string
+  authenticationService: AuthenticationService
   private diffOutput: any;
   private merged: any;
   mergedMarkup: string;
@@ -85,8 +87,11 @@ export class IssueComponent implements OnInit {
     private userService:UserService,
     private tangyFormService:TangyFormService,
     private route:ActivatedRoute,
-    private pm: ProcessMonitorService
-  ) { }
+    private pm: ProcessMonitorService,
+    authenticationService: AuthenticationService
+  ) {
+    this.authenticationService = authenticationService
+  }
 
   ngOnInit() {
     let openIssueProcess = this.pm.start('issue-opening', "Opening issue...")
@@ -300,6 +305,41 @@ export class IssueComponent implements OnInit {
     const userName = userId
     await this.caseService.closeIssue(this.issue._id, this.commentForm.nativeElement.value, userId, userName)
     this.commentForm.nativeElement.value = ''
+    this.issue = await this.caseService.getIssue(this.issue._id)
+    this.update()
+    this.pm.stop(process.id)
+  }
+
+  async onArchiveClick() {
+    const process = this.pm.start('archivingForm', _TRANSLATE('Archiving form response...'))
+    await this.caseService.archiveFormResponse(this.issue.eventId, this.issue.eventFormId)
+    this.commentForm.nativeElement.value = ''
+    const userId = await this.userService.getCurrentUser()
+    // @TODO Look up the user's name.
+    const userName = userId
+    await this.caseService.closeIssue(this.issue._id, this.commentForm.nativeElement.value, userId, userName)
+    this.issue = await this.caseService.getIssue(this.issue._id)
+    this.update()
+    this.pm.stop(process.id)
+  }
+
+  async onUnArchiveClick() {
+    const process = this.pm.start('unarchivingForm', _TRANSLATE('Unarchiving form response...'))
+    await this.caseService.unarchiveFormResponse(this.issue.eventId, this.issue.eventFormId)
+    this.commentForm.nativeElement.value = ''
+    this.issue = await this.caseService.getIssue(this.issue._id)
+    this.update()
+    this.pm.stop(process.id)
+  }
+
+  async onDeleteClick() {
+    const process = this.pm.start('deletingForm', _TRANSLATE('Deleting form response...'))
+    await this.caseService.deleteFormResponse(this.issue.eventId, this.issue.eventFormId)
+    this.commentForm.nativeElement.value = ''
+    const userId = await this.userService.getCurrentUser()
+    // @TODO Look up the user's name.
+    const userName = userId
+    await this.caseService.closeIssue(this.issue._id, this.commentForm.nativeElement.value, userId, userName)
     this.issue = await this.caseService.getIssue(this.issue._id)
     this.update()
     this.pm.stop(process.id)

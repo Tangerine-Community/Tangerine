@@ -6,6 +6,20 @@
     <paper-button *ngIf="isOpen" class="status status-open"><mwc-icon>list</mwc-icon>open</paper-button>
     <a href="#/case/{{issue.caseId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review case</paper-button></a>
     <a href="#/case/event/form/{{issue.caseId}}/{{issue.eventId}}/{{issue.eventFormId}}"><paper-button><mwc-icon>open_in_new</mwc-icon> review form</paper-button></a>
+    <span id="case-actions" >
+      <span *ngIf="isOpen" class="archived">
+        [ Archived ]
+        <paper-button class="button" mat-icon-button (click)="onUnarchiveClick()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_unarchive_cases')">
+          <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i> Unarchive
+        </paper-button>
+      </span>
+      <paper-button class="button" mat-icon-button (click)="onDeleteClick()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_delete_cases') && !caseService.case.archived">
+        <i class="material-icons mat-32 tangy-location-list-icon">delete</i> Delete
+      </paper-button>
+      <paper-button class="button" mat-icon-button (click)="onArchiveClick()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_archive_cases') && !caseService.case.archived">
+        <i class="material-icons mat-32 tangy-location-list-icon">archive</i>  Archive
+      </paper-button>
+    </span>
   </div>
   <paper-tabs class="tabs" selected="0" *ngIf="!conflict">
     <paper-tab (click)="tab = 'activity'">Activity</paper-tab>
