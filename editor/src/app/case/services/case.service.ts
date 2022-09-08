@@ -8,6 +8,7 @@ import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseDefinitionsService } from './case-definitions.service';
 import { HttpClient } from '@angular/common/http';
+import { UserService } from 'src/app/core/auth/_services/user.service';
 // Classes.
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Case } from '../classes/case.class'
@@ -102,6 +103,7 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient
   ) {
@@ -266,6 +268,8 @@ class CaseService {
         }
       }
     }
+    await this.closeIssuesForCase(this.case._id, "Case Deletion")
+
     this.case.archived=true
     // Keeping inputs so that the case show up in searches *on the server*
     const archivedCase = new Case(
@@ -295,6 +299,42 @@ class CaseService {
       archivedCase.items[0].inputs = this.case.items[0].inputs
     }
     await this.tangyFormService.saveResponse(archivedCase)
+  }
+
+  async closeIssuesForCase(caseId, comment) {
+    const userId = window['userId']
+    const username = window['username']
+    const db = await window['T'].user.getUserDatabase(username)
+    const results = await db.query('issuesByCaseId',
+      {
+        startkey: `${caseId}`,
+        endkey: `${caseId}\uffff`
+      }
+    )
+    if (results?.rows.length > 0) {
+      var issues = results.rows
+      for (const issue of issues) {
+        await this.closeIssue(issue.id, comment, username, userId)
+      }
+    }
+  }
+
+  async closeIssuesForFormResponse(formResponseId, comment) {
+    const userId = window['userId']
+    const username = window['username']
+    const db = await window['T'].user.getUserDatabase(username)
+    const results = await db.query('issuesByFormResponseId',
+      {
+        startkey: `${formResponseId}`,
+        endkey: `${formResponseId}\uffff`
+      }
+    )
+    if (results?.rows.length > 0) {
+      var issues = results.rows
+      for (const issue of issues) {
+        await this.closeIssue(issue.id, comment, username, userId)
+      }
+    }
   }
   
   async setCase(caseInstance) {
@@ -729,6 +769,8 @@ class CaseService {
             }
           )
           await this.tangyFormService.saveResponse(archivedFormResponse)
+
+          await this.closeIssuesForFormResponse(archivedFormResponse.id, "Closed for Form Response Deletion")
         }
         this.deleteEventForm(caseEventId, eventFormId)
         await this.save()
@@ -1100,6 +1142,10 @@ class CaseService {
 
   async closeIssue(issueId:string, comment:string, userId:string, userName:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    if (issue.status == IssueStatus.Closed) {
+      return issue
+    }
+
     issue.events.push(<IssueEvent>{
       id: UUID(),
       type: IssueEventType.Close,
