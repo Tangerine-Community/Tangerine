@@ -118,6 +118,7 @@ export class AppConfig {
   // Determines if a "Merge Issue" button appears in the Issues Revision page.
   allowMergeOfIssues:boolean
   filterCaseEventScheduleByDeviceAssignedLocation:boolean = false
+  pullFormsModifiedOnServer:boolean = false
 
 
   //

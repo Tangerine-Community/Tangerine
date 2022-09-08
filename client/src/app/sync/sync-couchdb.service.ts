@@ -523,7 +523,7 @@ export class SyncCouchdbService {
     if (this.fullSync && this.fullSync === 'pull') {
       pull_last_seq = 0;
     }
-    const pullSelector = this.getPullSelector(syncDetails);
+    const pullSelector = this.getPullSelector(userDb, syncDetails);
     let progress = {
       'direction': 'pull',
       'message': 'Received data from remote server.'
@@ -580,7 +580,9 @@ export class SyncCouchdbService {
     return status;
   }
 
-  getPullSelector(syncDetails:SyncCouchdbDetails) {
+  async getPullSelector(userDb:UserDatabase, syncDetails:SyncCouchdbDetails) {
+    const forms = await userDb.allDocs({options: {selector: {"type": "form"}}})
+    const config = await this.appConfigService.getAppConfig()
     const pullSelector = {
       "$or": [
         ...syncDetails.formInfos.reduce(($or, formInfo) => {
@@ -638,7 +640,16 @@ export class SyncCouchdbService {
               "resolveOnAppContext": AppContext.Client,
               "type": "issue"
             }
-          ]
+          ],
+          ...config.pullFormsModifiedOnServer
+          ? [
+              {
+                "_id": {
+                  "$in": forms
+                }
+              }
+            ]
+          : []
       ]
     }
     return pullSelector;
