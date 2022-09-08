@@ -523,7 +523,7 @@ export class SyncCouchdbService {
     if (this.fullSync && this.fullSync === 'pull') {
       pull_last_seq = 0;
     }
-    const pullSelector = this.getPullSelector(userDb, syncDetails);
+    const pullSelector = this.getPullSelector(syncDetails, userDb);
     let progress = {
       'direction': 'pull',
       'message': 'Received data from remote server.'
@@ -580,9 +580,18 @@ export class SyncCouchdbService {
     return status;
   }
 
-  async getPullSelector(userDb:UserDatabase, syncDetails:SyncCouchdbDetails) {
-    const forms = await userDb.allDocs({options: {selector: {"type": "form"}}})
+  async getPullSelector(syncDetails:SyncCouchdbDetails, userDb:UserDatabase) {
     const config = await this.appConfigService.getAppConfig()
+    var forms = []
+    if (config.pullFormsModifiedOnServer) {
+      try {
+        // filter out the _design docs with a start_key and end_key
+        const results = await userDb.allDocs({start_key: "0", end_key: "_", "inclusive_end": false})
+        forms = results.rows.reduce((forms, row) => {return [...forms,row.id]}, forms)
+      } catch (err) {
+        console.error("Failed to get local docs for pull selector")
+      }
+    }
     const pullSelector = {
       "$or": [
         ...syncDetails.formInfos.reduce(($or, formInfo) => {
@@ -641,7 +650,7 @@ export class SyncCouchdbService {
               "type": "issue"
             }
           ],
-          ...config.pullFormsModifiedOnServer
+          ...config.pullFormsModifiedOnServer && forms.length > 0
           ? [
               {
                 "_id": {

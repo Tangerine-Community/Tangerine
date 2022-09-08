@@ -355,7 +355,7 @@ export class SyncService {
     const remoteDb = new PouchDB(syncSessionUrl)
     const pushOptions = {limit: this.compareLimit}
     const localDocs = await this.pageThroughAlldocsOrSelector(userDb.db, pushOptions, "local device");
-    const pullSelector = this.syncCouchdbService.getPullSelector(syncDetails);
+    const pullSelector = this.syncCouchdbService.getPullSelector(syncDetails, userDb);
     const pullOptions = {
       limit: this.compareLimit,
       selector: pullSelector,
