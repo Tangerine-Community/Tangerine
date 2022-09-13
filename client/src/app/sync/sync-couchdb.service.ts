@@ -17,6 +17,7 @@ import {TangyFormService} from "../tangy-forms/tangy-form.service";
 import { SyncDirection } from './sync-direction.enum';
 import { UserService } from '../shared/_services/user.service';
 import { DeviceService } from '../device/services/device.service';
+
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const retryDelay = 5*1000
 
@@ -254,9 +255,44 @@ export class SyncCouchdbService {
     replicationStatus = {...replicationStatus, ...pullReplicationStatus}
     this.syncMessage$.next(replicationStatus);
 
-    // Whatever we pulled, even if there was an error, we don't need to push so set last push sequence again.
-    const localSequenceAfterPull = (await userDb.changes({descending: true, limit: 1})).last_seq
-    await this.variableService.set('sync-push-last_seq', localSequenceAfterPull)
+    // Pull Form Response Ids Assigned to the Device
+    // get the list of docs assigned to the device from the server device database
+    const deviceDoc = await this.deviceService.getRemoteDeviceInfo(syncDetails.deviceId, syncDetails.deviceToken)
+    const assignedFormResponseIds = deviceDoc?.assignedFormResponseIds ? deviceDoc.assignedFormResponseIds : []
+
+    /*
+    // Alternative implementation: Use a query on the server group database
+    // Why: Removes the need to manage saving form response ids to the devices group
+    // To implement, we need to make the 'deviceId' assigned to the form response perminent
+    const results = await pouch.query("changedFormResponsesByDeviceId", {
+      key          : syncDetails.deviceId,
+      include_docs : false
+    }).then(function (result) {
+      // handle result
+    }).catch(function (err) {
+      // handle errors
+    });
+    */
+
+    let pullIssueFormsReplicationStatus
+    let hadPullIssueFormsSuccess = false
+    while (!hadPullIssueFormsSuccess && !this.cancelling) {
+      try {
+        pullIssueFormsReplicationStatus = await this.pullFormResponses(userDb, remoteDb, assignedFormResponseIds, appConfig, syncDetails, batchSize);
+        if (!pullIssueFormsReplicationStatus.pullError) {
+          hadPullIssueFormsSuccess = true
+          pullIssueFormsReplicationStatus.hadPullSuccess = true
+        } else {
+          await sleep(retryDelay)
+          ++this.retryCount
+        }
+      } catch (e) {
+        console.error(e)
+        await sleep(retryDelay)
+      }
+    }
+    replicationStatus = {...replicationStatus, ...pullIssueFormsReplicationStatus}
+    this.syncMessage$.next(replicationStatus);
 
     if (this.cancelling) {
       this.finishCancelling(replicationStatus)
@@ -523,7 +559,7 @@ export class SyncCouchdbService {
     if (this.fullSync && this.fullSync === 'pull') {
       pull_last_seq = 0;
     }
-    const pullSelector = this.getPullSelector(syncDetails, userDb);
+    const pullSelector = this.getPullSelector(syncDetails);
     let progress = {
       'direction': 'pull',
       'message': 'Received data from remote server.'
@@ -580,18 +616,7 @@ export class SyncCouchdbService {
     return status;
   }
 
-  async getPullSelector(syncDetails:SyncCouchdbDetails, userDb:UserDatabase) {
-    const config = await this.appConfigService.getAppConfig()
-    var forms = []
-    if (config.pullFormsModifiedOnServer) {
-      try {
-        // filter out the _design docs with a start_key and end_key
-        const results = await userDb.allDocs({start_key: "0", end_key: "_", "inclusive_end": false})
-        forms = results.rows.reduce((forms, row) => {return [...forms,row.id]}, forms)
-      } catch (err) {
-        console.error("Failed to get local docs for pull selector")
-      }
-    }
+  getPullSelector(syncDetails:SyncCouchdbDetails) {
     const pullSelector = {
       "$or": [
         ...syncDetails.formInfos.reduce(($or, formInfo) => {
@@ -649,19 +674,81 @@ export class SyncCouchdbService {
               "resolveOnAppContext": AppContext.Client,
               "type": "issue"
             }
-          ],
-          ...config.pullFormsModifiedOnServer && forms.length > 0
-          ? [
-              {
-                "_id": {
-                  "$in": forms
-                }
-              }
-            ]
-          : []
+          ]
       ]
     }
     return pullSelector;
   }
+
+  async pullFormResponses(userDb, remoteDb, changedFormDocs, appConfig, syncDetails, batchSize): Promise<ReplicationStatus> {
+    let status = <ReplicationStatus>{
+      pulled: 0,
+      pullError: '',
+      pullConflicts: [],
+      info: '',
+      remaining: 0,
+      direction: 'pull' 
+    };
+    let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
+    if (typeof pull_last_seq === 'undefined') {
+      pull_last_seq = 0;
+    }
+    if (this.fullSync && this.fullSync === 'pull') {
+      pull_last_seq = 0;
+    }
+
+    let progress = {
+      'direction': 'pull',
+      'message': 'Received data from remote server.'
+    }
+    this.syncMessage$.next(progress)
+    let failureDetected = false
+    let error;
+    let pulled = 0
+
+    /**
+     * The sync option batches_limit is set to 1 in order to reduce the memory load on the tablet. 
+     * From the pouchdb API doc:      
+     * "Number of batches to process at a time. Defaults to 10. This (along wtih batch_size) controls how many docs 
+     * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
+     */
+    let syncOptions = {
+      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": pull_last_seq },
+      "batch_size": batchSize,
+      "write_batch_size": this.writeBatchSize,
+      "batches_limit": 1,
+      "pulled": pulled,
+      "doc_ids": changedFormDocs,
+      "checkpoint": 'target',
+      "changes_batch_size": this.changesBatchSize
+    }
+    syncOptions = this.pullSyncOptions ? this.pullSyncOptions : syncOptions
+
+    try {
+      status = <ReplicationStatus>await this._pull(userDb, remoteDb, syncOptions);
+      if (typeof status.pulled !== 'undefined') {
+        pulled = pulled + status.pulled
+        status.pulled = pulled
+      } else {
+        status.pulled = pulled
+      }
+      this.syncMessage$.next(status)
+    } catch (e) {
+      console.log("Error: " + e)
+      failureDetected = true
+      error = e
+    }
     
+    status.initialPullLastSeq = pull_last_seq
+    status.currentPushLastSeq = status.info.last_seq
+    status.batchSize = batchSize
+
+    if (failureDetected) {
+      status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
+    } 
+    
+    this.syncMessage$.next(status)
+    
+    return status;
+  }
 }
