@@ -22,19 +22,18 @@ Should an administration be interrupted, or to be completed at a later
 stage, navigate to "**Visits**" on the top of the tablet screen.
 
 !!! warning 
-    You have to have a location section and location list loaded for your instrument to be able to access the resume feature in Tangerine. Make up a location list, even if it only has one column header entry and one item underneath (e.g. column A header is "site", row 2 entry is "test site". Without a location list loaded, you will not have a "Visits" tab on the tablet from which to resume the instrument.
+    The visits tab groups all forms by location. Without a location list loaded and a location input on your form, your forms will be availalbe under the noLocation group.
 
 
-<img src="../media/image94.png" width="570">
+<img src="../media/visitsTab1.png.png" width="570">
 
 
 Select the appropriate location and date (as applicable) from the menu. Tangerine will automatically return the user to the last, incomplete section/page of the instrument.
 
-<img src="../media/image95.png" width="570">
+<img src="../media/visitsTab1.png.png" width="570">
 
 
 
 You can return from the "Visits" page to the main screen by hitting the
-Tangerine icon.
+Tangerine icon on the top left corner
 
-<img src="../media/image83.png" width="270">
