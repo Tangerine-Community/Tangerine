@@ -84,7 +84,11 @@ module.exports = {
             password: `${process.env.T_MYSQL_PASSWORD}`
           }
         })
-        await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
+        try {
+          await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
+        } catch (e) {
+          log.debug(e)
+        }
         await knex.destroy()
       }
     },
