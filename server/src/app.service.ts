@@ -6,6 +6,7 @@ import { GroupService } from './shared/services/group/group.service';
 import { TangerineConfig } from './shared/classes/tangerine-config';
 import { ModulesDoc } from './shared/classes/modules-doc.class';
 import createSitewideDatabase = require('./create-sitewide-database');
+import {spawn} from "child_process";
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
@@ -116,9 +117,13 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        const result = await exec('reporting-worker-batch')
+        const result = await spawn('reporting-worker-batch')
+        result.stdout.on('data', function(msg){
+          console.log(msg.toString())
+        });
+        // result.stdout?.pipe(process.stdout);
         if (result.stderr) {
-          log.error(result.stderr)
+          // log.error(result.stderr)
           await sleep(3*1000)
         } else {
           workerState = await reportingWorker.getWorkerState()
