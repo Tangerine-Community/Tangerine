@@ -1,5 +1,39 @@
 # What's new
 
+## v3.25.0
+
+__NEW Features__
+
+- Improvements to Issues on the client and server
+
+__Fixes__
+
+- Apply isIssueContext on the client
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.24.4
+./start.sh v3.24.4
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.24.3-final
+```
+
 ## v3.24.4
 
 __NEW Features__
