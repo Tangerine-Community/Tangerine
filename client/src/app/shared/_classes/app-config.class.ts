@@ -115,7 +115,11 @@ export class AppConfig {
   barcodeSearchMapFunction:string
   // Determines if a "Create Issue" button appears when viewing submitted Event Forms.
   allowCreationOfIssues:boolean
+  // Determines if a "Merge Issue" button appears in the Issues Revision page.
+  allowMergeOfIssues:boolean
   filterCaseEventScheduleByDeviceAssignedLocation:boolean = false
+  pullFormsModifiedOnServer:boolean = false
+
 
   //
   // Tangerine Coach configuration.

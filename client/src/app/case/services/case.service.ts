@@ -284,7 +284,7 @@ class CaseService {
   hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition, eventForm?:EventForm) {
     if (
       (
-        eventForm && !eventForm.inactive &&
+        eventForm && !eventForm.inactive && eventForm.permissions &&
         eventForm.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
       ) ||
       (
@@ -1068,6 +1068,32 @@ class CaseService {
     return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
   }
 
+  async hasMergeChangePermission(issueId:string) {
+    var allowed = false
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    if (issue && issue.caseId && issue.eventId) {
+      const caseEvent = this.events.find(event => event.id === issue.eventId)
+      const caseEventDefinition = this.caseDefinition.eventDefinitions.find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+
+      const eventForm = caseEvent.eventForms.find(form => form.id === issue.eventFormId)
+      const eventFormDefinition = caseEventDefinition.eventFormDefinitions.find(formDefinition => formDefinition.id === eventForm.eventFormDefinitionId)
+
+      const caseEventUpdatePermission = this.hasCaseEventPermission(CaseEventOperation.UPDATE, caseEventDefinition)
+
+      const eventFormUpdatePermission = this.hasEventFormPermission(EventFormOperation.UPDATE, eventFormDefinition)
+
+      const appConfig = await this.appConfigService.getAppConfig()
+
+      if (caseEventUpdatePermission && eventFormUpdatePermission) {
+        allowed = true
+      } else if (appConfig.allowMergeOfIssues) {
+        allowed = true
+      }
+    }
+
+    return allowed
+  }
+
   async issueDiff(issueId) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
     const firstOpenEvent = issue.events.find(event => event.type === IssueEventType.Open)
@@ -1109,7 +1135,7 @@ class CaseService {
   }
 
   isIssueContext() {
-    return window.location.hash.includes('/issues/')
+    return window.location.hash.includes('/issues/') || window.location.hash.includes('/issue/')
       ? true
       : false
   }
