@@ -233,9 +233,10 @@ export class SyncCouchdbService {
     let pullReplicationStatus
     let hadPullSuccess = false
     this.retryCount = 1
+    let prePullLastSeq = await this.variableService.get('sync-pull-last_seq')
     while (!hadPullSuccess && !this.cancelling) {
       try {
-        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize);
+        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize, prePullLastSeq);
         if (!pullReplicationStatus.pullError) {
           await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
           hadPullSuccess = true
@@ -278,7 +279,7 @@ export class SyncCouchdbService {
     let hadPullIssueFormsSuccess = false
     while (!hadPullIssueFormsSuccess && !this.cancelling) {
       try {
-        pullIssueFormsReplicationStatus = await this.pullFormResponses(userDb, remoteDb, assignedFormResponseIds, appConfig, syncDetails, batchSize);
+        pullIssueFormsReplicationStatus = await this.pullFormResponses(userDb, remoteDb, assignedFormResponseIds, appConfig, syncDetails, batchSize, prePullLastSeq);
         if (!pullIssueFormsReplicationStatus.pullError) {
           hadPullIssueFormsSuccess = true
           pullIssueFormsReplicationStatus.hadPullSuccess = true
@@ -543,7 +544,7 @@ export class SyncCouchdbService {
     })
   }
 
-  async pull(userDb, remoteDb, appConfig, syncDetails, batchSize): Promise<ReplicationStatus> {
+  async pull(userDb, remoteDb, appConfig, syncDetails, batchSize, prePullLastSeq): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
       pullError: '',
@@ -552,12 +553,11 @@ export class SyncCouchdbService {
       remaining: 0,
       direction: 'pull' 
     };
-    let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
-    if (typeof pull_last_seq === 'undefined') {
-      pull_last_seq = 0;
+    if (typeof prePullLastSeq === 'undefined') {
+      prePullLastSeq = 0;
     }
     if (this.fullSync && this.fullSync === 'pull') {
-      pull_last_seq = 0;
+      prePullLastSeq = 0;
     }
     const pullSelector = this.getPullSelector(syncDetails);
     let progress = {
@@ -576,7 +576,7 @@ export class SyncCouchdbService {
      * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
      */
     let syncOptions = {
-      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": pull_last_seq },
+      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": prePullLastSeq },
       "batch_size": batchSize,
       "write_batch_size": this.writeBatchSize,
       "batches_limit": 1,
@@ -603,7 +603,7 @@ export class SyncCouchdbService {
       error = e
     }
     
-    status.initialPullLastSeq = pull_last_seq
+    status.initialPullLastSeq = prePullLastSeq
     status.currentPushLastSeq = status.info.last_seq
     status.batchSize = batchSize
 
@@ -680,7 +680,7 @@ export class SyncCouchdbService {
     return pullSelector;
   }
 
-  async pullFormResponses(userDb, remoteDb, changedFormDocs, appConfig, syncDetails, batchSize): Promise<ReplicationStatus> {
+  async pullFormResponses(userDb, remoteDb, docIds, appConfig, syncDetails, batchSize, prePullLastSeq): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
       pullError: '',
@@ -689,12 +689,11 @@ export class SyncCouchdbService {
       remaining: 0,
       direction: 'pull' 
     };
-    let pull_last_seq = await this.variableService.get('sync-pull-last_seq')
-    if (typeof pull_last_seq === 'undefined') {
-      pull_last_seq = 0;
+    if (typeof prePullLastSeq === 'undefined') {
+      prePullLastSeq = await this.variableService.get('sync-pull-last_seq')
     }
     if (this.fullSync && this.fullSync === 'pull') {
-      pull_last_seq = 0;
+      prePullLastSeq = await this.variableService.get('sync-pull-last_seq')
     }
 
     let progress = {
@@ -713,12 +712,12 @@ export class SyncCouchdbService {
      * are kept in memory at a time, so the maximum docs in memory at once would equal batch_size × batches_limit."
      */
     let syncOptions = {
-      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": pull_last_seq },
+      ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": prePullLastSeq },
       "batch_size": batchSize,
       "write_batch_size": this.writeBatchSize,
       "batches_limit": 1,
       "pulled": pulled,
-      "doc_ids": changedFormDocs,
+      "doc_ids": docIds,
       "checkpoint": 'target',
       "changes_batch_size": this.changesBatchSize
     }
@@ -739,7 +738,7 @@ export class SyncCouchdbService {
       error = e
     }
     
-    status.initialPullLastSeq = pull_last_seq
+    status.initialPullLastSeq = prePullLastSeq
     status.currentPushLastSeq = status.info.last_seq
     status.batchSize = batchSize
 
