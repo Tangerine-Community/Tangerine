@@ -23,6 +23,7 @@ import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import { GroupDevicesService } from '../../groups/services/group-devices.service'
+import { GroupIssuesService } from 'src/app/groups/services/group-issues.service';
 
 @Injectable({
   providedIn: 'root'
@@ -105,7 +106,8 @@ class CaseService {
     private deviceService:DeviceService,
     private appConfigService:AppConfigService,
     private http:HttpClient,
-    private groupDevicesService:GroupDevicesService
+    private groupDevicesService:GroupDevicesService,
+    private groupIssuesService:GroupIssuesService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -953,6 +955,23 @@ class CaseService {
 
   async getIssue(issueId) {
     return new Issue(await this.tangyFormService.getResponse(issueId))
+  }
+
+  async findIssuesByFormResponseId(caseId:string, formResponseId:string) {
+    var issues = undefined
+    try {
+      let queryResults = await this.groupIssuesService.query(this.groupId, {
+        fun: "issuesByCaseId",
+        keys: [caseId],
+        include_docs: true,
+        descending: true
+      })
+      var resultDocs = queryResults.map(issue => issue.doc)
+      issues = resultDocs.filter(issue => issue.formResponseId === formResponseId)
+    } catch (e) {
+      console.log("Error fetching issues: " + e)
+    }
+    return issues
   }
 
   async openIssue(issueId:string, comment:string, userId:string, userName:string) {
