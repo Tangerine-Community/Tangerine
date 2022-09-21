@@ -27,6 +27,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
   caseId:string
 
   loaded = false
+  issueExistsForFormResponse = false
 
   window:any
 
@@ -38,7 +39,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private hostElementRef: ElementRef,
     private router: Router,
-    private caseService: CaseService,
+    private caseService: CaseService
   ) {
     this.window = window
   }
@@ -86,10 +87,13 @@ export class EventFormComponent implements OnInit, OnDestroy {
 
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
+      // If it exists, check for issues
       this.formPlayer.$rendered.subscribe(async () => {
         if (!this.formResponseId) {
           this.eventForm.formResponseId = this.formPlayer.formResponseId
           await this.caseService.save()
+        } else {
+          this.issueExistsForFormResponse = !!await this.caseService.findIssuesByFormResponseId(this.caseId, this.formResponseId)
         }
       })
       this.formPlayer.$submit.subscribe(async () => {
