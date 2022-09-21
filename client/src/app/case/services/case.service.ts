@@ -1056,7 +1056,9 @@ class CaseService {
 
   async hasProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    return !!issue.events.find(event => event.type === IssueEventType.ProposedChange)
+    const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const indexOfBaseEvent = issue.events.findIndex(event => event.id === baseEvent.id)
+    return !!issue.events.find((event, i) => event.type === IssueEventType.ProposedChange && i > indexOfBaseEvent)
   }
 
   async canMergeProposedChange(issueId:string) {
