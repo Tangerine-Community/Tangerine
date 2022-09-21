@@ -261,20 +261,6 @@ export class SyncCouchdbService {
     const deviceDoc = await this.deviceService.getRemoteDeviceInfo(syncDetails.deviceId, syncDetails.deviceToken)
     const assignedFormResponseIds = deviceDoc?.assignedFormResponseIds ? deviceDoc.assignedFormResponseIds : []
 
-    /*
-    // Alternative implementation: Use a query on the server group database
-    // Why: Removes the need to manage saving form response ids to the devices group
-    // To implement, we need to make the 'deviceId' assigned to the form response perminent
-    const results = await pouch.query("changedFormResponsesByDeviceId", {
-      key          : syncDetails.deviceId,
-      include_docs : false
-    }).then(function (result) {
-      // handle result
-    }).catch(function (err) {
-      // handle errors
-    });
-    */
-
     let pullIssueFormsReplicationStatus
     let hadPullIssueFormsSuccess = false
     while (!hadPullIssueFormsSuccess && !this.cancelling) {
