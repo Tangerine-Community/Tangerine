@@ -145,6 +145,10 @@ class CaseService {
     }, [])
   }
 
+  get groupId() {
+    return this._case.groupId
+  }
+
   get roleDefinitions() {
     return this.caseDefinition.caseRoles
   }
