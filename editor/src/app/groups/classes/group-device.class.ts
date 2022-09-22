@@ -15,6 +15,7 @@ export class GroupDevice {
   replicationStatus: ReplicationStatus // deprecated - migrate to replicationStatuses
   replicationStatuses: Array<ReplicationStatus>
   description:string
+  assignedFormResponseIds:Array<string> = []
 }
 
 class LocationInfo {
