@@ -4,11 +4,17 @@
 
 __NEW Features__
 
-- Improvements to Issues on the client and server
+- Improvements to Issues on the Client and Server [3413](https://github.com/Tangerine-Community/Tangerine/pull/3413)
+-- Add app-config flag to allow client users to Commit changes to Issues
+-- Add user-role permissions to select which events or forms Issue changes can be commited on the client
+-- Pull form responses changed in Issues on the server down to the client
+- Add parameter to CSV Dataset Generation that allows exclusion of archived form definitions
+- Add app-config flag to force confirmation of each form response created on the client 
 
 __Fixes__
 
-- Apply isIssueContext on the client
+- Apply isIssueContext correctly on the client
+- Add protection when using Case APIs that load other cases than the currently active case
 
 __Server upgrade instructions__
 
