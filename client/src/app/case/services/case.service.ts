@@ -145,6 +145,10 @@ class CaseService {
     }, [])
   }
 
+  get groupId() {
+    return this._case.groupId
+  }
+
   get roleDefinitions() {
     return this.caseDefinition.caseRoles
   }
@@ -284,7 +288,7 @@ class CaseService {
   hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition, eventForm?:EventForm) {
     if (
       (
-        eventForm && !eventForm.inactive &&
+        eventForm && !eventForm.inactive && eventForm.permissions &&
         eventForm.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
       ) ||
       (
@@ -856,7 +860,8 @@ class CaseService {
   async createIssuesInQueue() {
     const userProfile = await this.userService.getUserProfile()
     for (let queuedIssue of this.queuedIssuesForCreation) {
-      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, '')
+      const device = await this.deviceService.getDevice()
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, device._id)
     }
     this.queuedIssuesForCreation = []
   }
@@ -1063,7 +1068,9 @@ class CaseService {
 
   async hasProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    return !!issue.events.find(event => event.type === IssueEventType.ProposedChange)
+    const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const indexOfBaseEvent = issue.events.findIndex(event => event.id === baseEvent.id)
+    return !!issue.events.find((event, i) => event.type === IssueEventType.ProposedChange && i > indexOfBaseEvent)
   }
 
   async canMergeProposedChange(issueId:string) {
@@ -1074,6 +1081,32 @@ class CaseService {
     const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
     return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
+  }
+
+  async hasMergeChangePermission(issueId:string) {
+    var allowed = false
+    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+    if (issue && issue.caseId && issue.eventId) {
+      const caseEvent = this.events.find(event => event.id === issue.eventId)
+      const caseEventDefinition = this.caseDefinition.eventDefinitions.find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+
+      const eventForm = caseEvent.eventForms.find(form => form.id === issue.eventFormId)
+      const eventFormDefinition = caseEventDefinition.eventFormDefinitions.find(formDefinition => formDefinition.id === eventForm.eventFormDefinitionId)
+
+      const caseEventUpdatePermission = this.hasCaseEventPermission(CaseEventOperation.UPDATE, caseEventDefinition)
+
+      const eventFormUpdatePermission = this.hasEventFormPermission(EventFormOperation.UPDATE, eventFormDefinition)
+
+      const appConfig = await this.appConfigService.getAppConfig()
+
+      if (caseEventUpdatePermission && eventFormUpdatePermission) {
+        allowed = true
+      } else if (appConfig.allowMergeOfIssues) {
+        allowed = true
+      }
+    }
+
+    return allowed
   }
 
   async issueDiff(issueId) {
@@ -1117,7 +1150,7 @@ class CaseService {
   }
 
   isIssueContext() {
-    return window.location.hash.includes('/issues/')
+    return window.location.hash.includes('/issues/') || window.location.hash.includes('/issue/')
       ? true
       : false
   }
