@@ -145,6 +145,10 @@ class CaseService {
     }, [])
   }
 
+  get groupId() {
+    return this._case.groupId
+  }
+
   get roleDefinitions() {
     return this.caseDefinition.caseRoles
   }
@@ -712,13 +716,17 @@ class CaseService {
 
   async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
-
-    await this.load(sourceCaseId)
-    const sourceCase = this.case
-    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
-      sourceParticipant.id === sourceParticipantId)
-      
-    await this.load(currCaseId)
+    var sourceParticipant = undefined
+    try {
+      await this.load(sourceCaseId)
+      const sourceCase = this.case
+      sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      await this.load(currCaseId)
+    }
 
     return sourceParticipant
   }
@@ -726,12 +734,16 @@ class CaseService {
   async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
 
-    await this.load(sourceCaseId)
-    this.case.participants = this.case.participants.filter(sourceParticipant =>
-        sourceParticipant.id === sourceParticipantId)
-    await this.save()
-
-    await this.load(currCaseId)
+    try {
+      await this.load(sourceCaseId)
+      this.case.participants = this.case.participants.filter(sourceParticipant =>
+          sourceParticipant.id === sourceParticipantId)
+      await this.save()
+    } catch (err) {
+      console.log(err)
+    } finally {
+      await this.load(currCaseId)
+    }
   }
 
   async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
@@ -848,7 +860,8 @@ class CaseService {
   async createIssuesInQueue() {
     const userProfile = await this.userService.getUserProfile()
     for (let queuedIssue of this.queuedIssuesForCreation) {
-      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, '')
+      const device = await this.deviceService.getDevice()
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, device._id)
     }
     this.queuedIssuesForCreation = []
   }
@@ -1055,7 +1068,9 @@ class CaseService {
 
   async hasProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    return !!issue.events.find(event => event.type === IssueEventType.ProposedChange)
+    const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const indexOfBaseEvent = issue.events.findIndex(event => event.id === baseEvent.id)
+    return !!issue.events.find((event, i) => event.type === IssueEventType.ProposedChange && i > indexOfBaseEvent)
   }
 
   async canMergeProposedChange(issueId:string) {
