@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { UserService } from 'src/app/shared/_services/user.service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
@@ -16,7 +15,6 @@ export class ActivityService {
   private activityLimit = 100
 
   constructor(
-    private userService: UserService,
     private tangyFormsInfoService:TangyFormsInfoService,
     private variableService: VariableService
   ) { }

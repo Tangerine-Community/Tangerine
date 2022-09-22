@@ -54,6 +54,7 @@ export class SearchComponent implements OnInit {
   navigatingTo$ = new Subject()
   searchDocs:Array<SearchDoc> = []
   username:string
+  userDb:any
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
   showScan = false
@@ -75,6 +76,8 @@ export class SearchComponent implements OnInit {
   async ngOnInit() {
     this.formsInfo = await this.formsInfoService.getFormsInfo()
     this.username = this.userService.getCurrentUser()
+    this.userDb = await this.userService.getUserDatabase(this.username);
+
     this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
       .pipe(debounceTime(4*1000))
@@ -99,7 +102,7 @@ export class SearchComponent implements OnInit {
     const ticket = this.searchQueue.getTicket()
     this.isLoading = true
     this.moreClickCount++
-    this.searchDocs = await this.searchService.search(this.username, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
+    this.searchDocs = await this.searchService.search(this.userDb, this.searchString, this.resultsPerPage, this.resultsPerPage * this.moreClickCount)
     let searchResultsMarkup = ``
     if (this.searchDocs.length < this.resultsPerPage) {
       this.thereIsMore = false
@@ -121,7 +124,7 @@ export class SearchComponent implements OnInit {
     this.thereIsMore = true 
     this.searchString = searchString
     this.searchResults.nativeElement.innerHTML = ""
-    this.searchDocs = await this.searchService.search(this.username, searchString, this.resultsPerPage, 0)
+    this.searchDocs = await this.searchService.search(this.userDb, searchString, this.resultsPerPage, 0)
     if (ticket !== this.searchQueue.activeTicket) return
     this.searchResults.nativeElement.innerHTML = ""
     if (ticket !== this.searchQueue.activeTicket) return

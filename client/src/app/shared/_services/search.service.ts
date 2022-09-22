@@ -1,6 +1,5 @@
 import { createSearchIndex } from './create-search-index';
 import { Injectable } from '@angular/core';
-import { UserService } from './user.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { HttpClient } from '@angular/common/http';
 import { ActivityService } from 'src/app/shared/_services/activity.service';
@@ -21,19 +20,12 @@ export class SearchDoc {
 export class SearchService {
 
   constructor(
-    private readonly userService:UserService,
     private readonly http:HttpClient,
     private readonly formsInfoService:TangyFormsInfoService,
     private readonly activityService:ActivityService
   ) { }
 
-  async createIndex(username:string = '') {
-    let db
-    if (!username) {
-      db = await this.userService.getUserDatabase()
-    } else {
-      db = await this.userService.getUserDatabase(username)
-    }
+  async createIndex(userDb:any) {
     let customSearchJs = ''
     try {
       customSearchJs = await this.http.get('./assets/custom-search.js', {responseType: 'text'}).toPromise()
@@ -41,11 +33,10 @@ export class SearchService {
       // No custom-search.js, no problem.
     }
     const formsInfo = await this.formsInfoService.getFormsInfo()
-    await createSearchIndex(db, formsInfo, customSearchJs) 
+    await createSearchIndex(userDb, formsInfo, customSearchJs) 
   }
 
-  async search(username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
-    const db = await this.userService.getUserDatabase(username)
+  async search(userDb:any, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
     let result:any = {}
     let activity = []
     if (phrase === '') {
@@ -54,7 +45,7 @@ export class SearchService {
     // Only show activity if they have enough activity to fill a page.
     if (phrase === '' && activity.length >= 11) {
       const page = activity.slice(skip, skip + limit)
-      result = await db.allDocs(
+      result = await userDb.allDocs(
         { 
           keys: page,
           include_docs: true
@@ -63,7 +54,7 @@ export class SearchService {
       // Sort it because the order of the docs returned is not guaranteed by the order of the keys parameter.
       result.rows = page.map(id => result.rows.find(row => row.id === id))
     } else {
-      result = await db.query(
+      result = await userDb.query(
         'search',
         { 
           startkey: `${phrase}`.toLocaleLowerCase(),

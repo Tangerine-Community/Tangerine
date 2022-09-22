@@ -399,7 +399,7 @@ export const updates = [
       await variableService.set('ran-update-v3.19.0', 'true')
       console.log('Adding support for archived flags in search index...')
       await window['T'].search.createIndex()
-      await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
+      await window['T'].search.search(userDb, '', 1, 0)
     }
   },
   {
@@ -409,7 +409,7 @@ export const updates = [
       console.log('Updating to v3.19.2...')
       console.log('Trying to update index again for tablets that may have failed on the last update and then incorrectly proceeded due to update flag getting set too early...')
       await window['T'].search.createIndex()
-      await window['T'].search.search(userService.getCurrentUser(), '', 1, 0)
+      await window['T'].search.search(userDb, '', 1, 0)
       await variableService.set('ran-update-v3.19.2', 'true')
     }
   }
