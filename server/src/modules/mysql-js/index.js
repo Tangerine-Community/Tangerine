@@ -300,7 +300,11 @@ module.exports = {
 
 async function removeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
-  await exec(`mysql -u ${process.env.T_MYSQL_USER} -h ${process.env.T_MYSQL_CONTAINER_NAME} -p"${process.env.T_MYSQL_PASSWORD}" -e "DROP DATABASE ${mysqlDbName};"`)
+  try {
+    await exec(`mysql -u ${process.env.T_MYSQL_USER} -h ${process.env.T_MYSQL_CONTAINER_NAME} -p"${process.env.T_MYSQL_PASSWORD}" -e "DROP DATABASE ${mysqlDbName};"`)
+  } catch (e) {
+    log.error(e)
+  }
   const pathToStateFile = `/mysql-module-state/${groupId}.ini`
   await fs.unlink(pathToStateFile)
   console.log(`Removed state file and database for ${groupId}`)
