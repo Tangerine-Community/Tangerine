@@ -131,9 +131,9 @@ module.exports = {
           const knex = require('knex')({
             client: 'mysql2',
             connection: {
-              host: 'mysql',
+              host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
               port: 3306,
-              user: 'root',
+              user: `${process.env.T_MYSQL_USER}`,
               password: `${process.env.T_MYSQL_PASSWORD}`
             }
           });
@@ -328,25 +328,6 @@ Password = ${process.env.T_MYSQL_PASSWORD}
   const pathToStateFile = `/mysql-module-state/${groupId}.ini`
   await fs.writeFile(pathToStateFile, state)
   console.log('Created tangerine to mysql state file.')
-}
-
-async function startTangerineToMySQL(pathToStateFile) {
-  try {
-    const cmd = `python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile}`
-    const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile],{ env: { ...process.env, PYTHONIOENCODING: 'utf8' } })
-    script.stdout.on('data', (data) => {
-      log.info(`${cmd} -- ${data}`)
-    })
-    script.stderr.on('data', (data) => {
-      log.error(`${cmd} -- ${data}`)
-    });
-    script.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-    });
-    log.info(`Running: ${cmd}`)
-  } catch(e) {
-    console.error(e)
-  }
 }
 
 const getItemValue = (doc, variableName) => {
