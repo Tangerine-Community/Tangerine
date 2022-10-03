@@ -74,13 +74,13 @@ module.exports = {
         await initializeGroupForMySQL(groupId)
         await createGroupDatabase(groupId, '-mysql')
         await createGroupDatabase(groupId, '-mysql-sanitized')
-        // MySQL
+        // MySQL T_MYSQL_CONTAINER_NAME
         const knex = require('knex')({
           client: 'mysql2',
           connection: {
-            host: 'mysql',
+            host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
             port: 3306,
-            user: 'root',
+            user: `${process.env.T_MYSQL_USER}`,
             password: `${process.env.T_MYSQL_PASSWORD}`
           }
         })
