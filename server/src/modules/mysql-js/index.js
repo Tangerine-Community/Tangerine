@@ -247,6 +247,23 @@ module.exports = {
               const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
+          } else if (doc.type === 'issue') {
+            const uploadedDoc = await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            // issue doc
+            tableName = 'issue' + tablenameSuffix
+            docType = 'issue'
+            primaryKey = 'ID'
+            createFunction = function (t) {
+              t.engine('InnoDB')
+              t.string(primaryKey, 36).notNullable().primary();
+              t.string('caseId', 36) // .index('response_caseId_IDX');
+              t.string('participantID', 36) //.index('case_instances_ParticipantID_IDX');
+              t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
+              t.tinyint('complete');
+              t.string('archived', 36); // 
+            }
+            const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            log.info('Processed: ' + JSON.stringify(result))
           } else {
             const uploadedDoc = await saveFlatResponse(doc, locationList, targetDb, sanitized);
             tableName = null;
@@ -748,6 +765,68 @@ async function convert_response(knex, doc, groupId, tableName) {
   return cleanData
 }
 
+async function convert_issue(knex, doc, groupId, tableName) {
+  let data = doc.data
+  if (!data) {
+    data = {}
+  }
+
+  const id= doc._id
+  const startDatetime = doc.startDatetime
+  const geoIp = doc.geoip
+  const caseId = doc.caseId
+  const eventId = doc.eventId
+  const eventFormId=  doc.eventFormId
+  const participantId = doc.participantId
+  const caseEventId = doc.caseEventId
+  const formID = 'issue'
+  
+// append geoIP to the data object
+  if (geoIp) {
+    for (const key in geoIp) {
+      if (geoIp.hasOwnProperty(key)) {
+        const value = geoIp[key]
+        data[`geoip_${key}`] = value
+      }
+    }
+  }
+
+  if (!data['_id']) {
+    data['_id'] = id
+  }
+  if (!data['caseid']) {
+    data['caseId'] = caseId
+  }
+  if (!data['participantid']) {
+    data['participantid'] = participantId
+  }
+  if (!data['eventid']) {
+    data['eventid'] = eventId
+  }
+  if (!data['eventformid']) {
+    data['eventformid'] = eventFormId
+  }
+  if (!data['caseeventid']) {
+    data['caseeventid'] = caseEventId
+  }
+  if (!data['startdatetime']) {
+    data['startdatetime'] = startDatetime
+  }
+  // adding formID to the data object
+  if (!data['formID_sanitized']) {
+    data['formID_sanitized'] = formID
+  }
+
+  doc.ID = doc._id
+  doc.dbRevision = doc._rev
+
+  // # Delete the following keys;
+  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime']
+  valuesToRemove.forEach(e => delete doc[e]);
+  const cleanData = populateDataFromDocument(doc, data);
+  return cleanData
+}
+
 async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, primaryKey, createFunction) {
   let data;
   let result = {id: doc._id, tableName, docType}
@@ -759,7 +838,11 @@ async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, prima
   }
   // Docs of type response must be flattened first to get the table name.
   if (doc.type.toLowerCase() !== 'response') {
-    await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+    try {
+      await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+    } catch (e) {
+      log.error("Error creating table: " + e)
+    }
   }
   switch (doc.type.toLowerCase()) {
     case 'case':
@@ -773,6 +856,9 @@ async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, prima
       break;
     case 'event-form':
       data = await convert_event_form(knex, doc, groupId, tableName)
+      break;
+    case 'issue':
+      data = await convert_issue(knex, doc, groupId, tableName)
       break;
     case 'response':
       data = await convert_response(knex, doc, groupId, tableName)
