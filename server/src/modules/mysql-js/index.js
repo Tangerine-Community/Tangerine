@@ -128,15 +128,21 @@ module.exports = {
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
         } else {
-          const knex = require('knex')({
-            client: 'mysql2',
-            connection: {
-              host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
-              port: 3306,
-              user: `${process.env.T_MYSQL_USER}`,
-              password: `${process.env.T_MYSQL_PASSWORD}`
-            }
-          });
+          let knex
+          try {
+            knex = require('knex')({
+              client: 'mysql2',
+              connection: {
+                host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
+                port: 3306,
+                user: `${process.env.T_MYSQL_USER}`,
+                password: `${process.env.T_MYSQL_PASSWORD}`
+              }
+            });
+          } catch (e) {
+            log.debug(`Error connecting to database: ${process.env.T_MYSQL_CONTAINER_NAME} using ${process.env.T_MYSQL_USER}: ${e}`)
+            throw new Error(e)
+          }
           let tableName, docType, createFunction, primaryKey
           if (doc.type === 'case') {
             // output case
