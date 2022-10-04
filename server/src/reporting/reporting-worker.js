@@ -186,7 +186,7 @@ async function batch() {
               let errorMessageText = error.message
 
               // Sometimes JSON.stringify wipes out the error.
-              console.log("typeof error message: " + typeof error.message + " errorMessage: " + errorMessage + " errorMessageText: " + errorMessageText)
+              console.log(" errorMessage: " + errorMessage + " errorMessageText: " + errorMessageText)
               if (typeof error.message === 'object') {
                 errorMessageText = JSON.stringify(error.message)
               }
