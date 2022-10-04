@@ -158,7 +158,7 @@ module.exports = {
                     flatDoc = stringifyObjects(eventFormDoc)
                   } catch (e) {
                     if (e.status !== 404) {
-                      console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
+                      console.log("Error processing eventForm. caseID:  " + doc.caseId + " Error: " + JSON.stringify(e) + " e: " + e)
                     }
                   }
                   // log.info("flatDoc eventForm: " + JSON.stringify(flatDoc))
@@ -809,7 +809,7 @@ async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, prima
     log.error(message2)
     throw new Error(message2)
   }
-  log.info('Finished processing: ' + tableName)
+  // log.info('Finished processing: ' + data._id + " type: " + tableName)
   return result
 }
 
