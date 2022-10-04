@@ -716,13 +716,17 @@ class CaseService {
 
   async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
-
-    await this.load(sourceCaseId)
-    const sourceCase = this.case
-    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
-      sourceParticipant.id === sourceParticipantId)
-      
-    await this.load(currCaseId)
+    var sourceParticipant = undefined
+    try {
+      await this.load(sourceCaseId)
+      const sourceCase = this.case
+      sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      await this.load(currCaseId)
+    }
 
     return sourceParticipant
   }
@@ -730,12 +734,16 @@ class CaseService {
   async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
 
-    await this.load(sourceCaseId)
-    this.case.participants = this.case.participants.filter(sourceParticipant =>
-        sourceParticipant.id === sourceParticipantId)
-    await this.save()
-
-    await this.load(currCaseId)
+    try {
+      await this.load(sourceCaseId)
+      this.case.participants = this.case.participants.filter(sourceParticipant =>
+          sourceParticipant.id === sourceParticipantId)
+      await this.save()
+    } catch (err) {
+      console.log(err)
+    } finally {
+      await this.load(currCaseId)
+    }
   }
 
   async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
