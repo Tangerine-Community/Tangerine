@@ -1050,8 +1050,8 @@ class CaseService {
       userId
     })
     const proposedFormResponse = await this.getProposedChange(issueId)
-    this.tangyFormService.saveResponse(proposedFormResponse.response)
-    this.tangyFormService.saveResponse(proposedFormResponse.case)
+    await this.tangyFormService.saveResponse(proposedFormResponse.response)
+    await this.tangyFormService.saveResponse(proposedFormResponse.case)
     return await this.tangyFormService.saveResponse({
       ...issue,
       status: IssueStatus.Merged
