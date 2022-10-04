@@ -1,6 +1,5 @@
 const DB = require('../../db.js')
 const log = require('tangy-log').log
-const clog = require('tangy-log').clog
 const fs = require('fs-extra');
 const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
@@ -20,57 +19,22 @@ const exec = async function(cmd) {
 }
 */
 
-async function insertGroupReportingViews(groupName) {
-  let groupDb = new DB(`${groupName}-mysql`)
-  let designDoc = Object.assign({}, byParticipantView)
-  try {
-    let status = await groupDb.post(designDoc)
-    log.info(`byParticipant View inserted into ${groupName}-mysql`)
-  } catch (error) {
-    log.error(error)
-  }
-  designDoc = Object.assign({}, byTypeViews)
-  try {
-    let status = await groupDb.post(designDoc)
-    log.info(`byType View inserted into ${groupName}-mysql`)
-  } catch (error) {
-    log.error(error)
-  }
-
-  // sanitized
-  groupDb = new DB(`${groupName}-mysql-sanitized`)
-  designDoc = Object.assign({}, byParticipantView)
-  try {
-    let status = await groupDb.post(designDoc)
-    log.info(`byParticipant View inserted into ${groupName}-mysql-sanitized`)
-  } catch (error) {
-    log.error(error)
-  }
-  designDoc = Object.assign({}, byTypeViews)
-  try {
-    let status = await groupDb.post(designDoc)
-    log.info(`byType View inserted into ${groupName}-mysql-sanitized`)
-  } catch (error) {
-    log.error(error)
-  }
-}
-
 module.exports = {
   name: 'mysql-js',
   connection: null,
   hooks: {
     boot: async function(data) {
-      const groups = await groupsList()
-      for (groupId of groups) {
-
-        const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-        // startTangerineToMySQL(pathToStateFile)
-      }
+      // const groups = await groupsList()
+      // for (groupId of groups) {
+      //   const pathToStateFile = `/mysql-module-state/${groupId}.ini`
+      //   // startTangerineToMySQL(pathToStateFile)
+      // }
       return data
     },
     enable: async function() {
       const groups = await groupsList()
-      for (groupId of groups) {
+      for (let i = 0; i < groups.length; i++) {
+        const groupId = groups[i]
         await initializeGroupForMySQL(groupId)
         await createGroupDatabase(groupId, '-mysql')
         await createGroupDatabase(groupId, '-mysql-sanitized')
@@ -99,31 +63,19 @@ module.exports = {
       const {groupName} = data
       const groupId = groupName
       await initializeGroupForMySQL(groupId)
-      const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-      // startTangerineToMySQL(pathToStateFile)
-      await createGroupDatabase(groupName, '-mysql')
-      await createGroupDatabase(groupName, '-mysql-sanitized')
-      await insertGroupReportingViews(groupName)
       return data
     },
     clearReportingCache: async function(data) {
       const { groupNames } = data
-      for (let groupName of groupNames) {
+      for (let i = 0; i < groupNames.length; i++) {
+        const groupName = groupNames[i]
         await removeGroupForMySQL(groupName)
         await initializeGroupForMySQL(groupName)
-        console.log(`removing db ${groupName}-mysql`)
-        let db = new DB(`${groupName}-mysql`)
-        await db.destroy()
-        await createGroupDatabase(groupName, '-mysql')
-        db = new DB(`${groupName}-mysql-sanitized`)
-        await db.destroy()
-        await createGroupDatabase(groupName, '-mysql-sanitized')
-        await insertGroupReportingViews(groupName)
       }
       return data
     },
     reportingOutputs: async function(data) {
-      async function addDocument(sourceDb, targetDb, doc, locationList, sanitized, exclusions) {
+      async function addDocument(sourceDb, doc, locationList, sanitized, exclusions) {
         const tablenameSuffix = ''
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
@@ -146,7 +98,7 @@ module.exports = {
           let tableName, docType, createFunction, primaryKey
           if (doc.type === 'case') {
             // output case
-            const uploadedDoc = await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            const flatDoc = await prepareFlatData(doc, locationList, sanitized);
             log.info("Saving case_instance to MySQL" + doc._id)
             // case doc
             tableName = 'case_instances' + tablenameSuffix
@@ -158,16 +110,17 @@ module.exports = {
               t.integer('complete');
               t.bigint('startunixtime');//TODO: is this being set properly in mysql?
             }
-            const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
             
             // output participants
-            for (const participant of doc.participants) {
+            for (let i = 0; i < doc.participants.length; i++) {
+              const participant = doc.participants[i]
               let participant_id = participant.id
               if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
                 participant_id = doc._id + '-' + participant.id
               }
-              const uploadedDoc = await pushResponseToCouchdb({
+              const flatDoc = stringifyObjects({
                 ...participant,
                 _id: participant_id,
                 caseId: doc._id,
@@ -175,7 +128,7 @@ module.exports = {
                 type: "participant",
                 groupId: doc.groupId,
                 archived: doc.archived||''
-              }, targetDb);
+              })
 
               tableName = 'participant' + tablenameSuffix
               docType = 'participant'
@@ -186,26 +139,29 @@ module.exports = {
                 t.string('CaseID', 36).index('participant_CaseID_IDX');
                 t.double('inactive');
               }
-              const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+              const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
           
-            for (const event of doc.events) {
+            for (let j = 0; j < doc.events; j++) {
+              const event = doc.events[j]
               // output event-forms
               if (event['eventForms']) {
-                for (const eventForm of event['eventForms']) {
+                // for (const eventForm of event['eventForms']) {
+                for (let k = 0; k < event['eventForms'].length; k++) {
+                  const eventForm = doc.events[k]
                   // for (let index = 0; index < event['eventForms'].length; index++) {
                   // const eventForm = event['eventForms'][index]
-                  let uploadedDoc;
+                  let flatDoc;
                   const eventFormDoc = {...eventForm, type: "event-form", _id: eventForm.id, groupId: doc.groupId, archived: doc.archived}
                   try {
-                    uploadedDoc = await pushResponseToCouchdb(eventFormDoc, targetDb);
+                    flatDoc = stringifyObjects(eventFormDoc)
                   } catch (e) {
                     if (e.status !== 404) {
                       console.log("Error processing eventForm: " + JSON.stringify(e) + " e: " + e)
                     }
                   }
-                  // log.info("uploadedDoc eventForm: " + JSON.stringify(uploadedDoc))
+                  // log.info("flatDoc eventForm: " + JSON.stringify(flatDoc))
                   tableName = 'eventform' + tablenameSuffix
                   docType = 'event-form'
                   primaryKey = 'EventFormID'
@@ -217,7 +173,7 @@ module.exports = {
                     t.integer('complete');
                     t.integer('required');
                   }
-                  const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+                  const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
                   log.info('Processed: ' + JSON.stringify(result))
                 }
               } else {
@@ -232,7 +188,7 @@ module.exports = {
               // since we are already serializing each event-form and have the parent caseEventId on each one.
               delete eventClone.eventForms
               const caseEventDoc = {...eventClone, _id: eventClone.id, type: "case-event", groupId: doc.groupId, archived: doc.archived}
-              const uploadedDoc = await pushResponseToCouchdb(caseEventDoc, targetDb)
+              const flatDoc = stringifyObjects(caseEventDoc)
               tableName = 'caseevent' + tablenameSuffix
               docType = 'case-event'
               primaryKey = 'CaseEventID'
@@ -244,11 +200,11 @@ module.exports = {
                 t.integer('estimate');
                 t.integer('startDate');
               }
-              const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+              const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
           } else if (doc.type === 'issue') {
-            const uploadedDoc = await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            const flatDoc = await prepareFlatData(doc, locationList, sanitized);
             // issue doc
             tableName = 'issue' + tablenameSuffix
             docType = 'issue'
@@ -262,10 +218,10 @@ module.exports = {
               t.tinyint('complete');
               t.string('archived', 36); // 
             }
-            const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           } else {
-            const uploadedDoc = await saveFlatResponse(doc, locationList, targetDb, sanitized);
+            const flatDoc = await prepareFlatData(doc, locationList, sanitized);
             tableName = null;
             docType = 'response';
             primaryKey = 'ID'
@@ -278,7 +234,7 @@ module.exports = {
               t.tinyint('complete');
               t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
             }
-            const result = await saveToMysql(knex, uploadedDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           }
           await knex.destroy()
@@ -291,25 +247,8 @@ module.exports = {
       const groupsDb = await new DB(`groups`);
       const groupDoc = await groupsDb.get(`${sourceDb.name}`)
       const exclusions = groupDoc['exclusions']
-      // First generate the full-cream database
-      let mysqlDb
-      try {
-        mysqlDb = await new DB(`${sourceDb.name}-mysql`);
-      } catch (e) {
-        console.log("Error creating db: " + JSON.stringify(e))
-      }
       let sanitized = false;
-      await addDocument(sourceDb, mysqlDb, doc, locationList, sanitized, exclusions);
-      
-      // Then create the sanitized version
-      let mysqlSanitizedDb
-      try {
-        mysqlSanitizedDb = await new DB(`${sourceDb.name}-mysql-sanitized`);
-      } catch (e) {
-        console.log("Error creating db: " + JSON.stringify(e))
-      }
-      sanitized = true;
-      await addDocument(sourceDb, mysqlSanitizedDb, doc, locationList, sanitized, exclusions)
+      await addDocument(sourceDb, doc, locationList, sanitized, exclusions);
       return data
     }
   }
@@ -455,45 +394,28 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   return flatFormResponse;
 };
 
-function pushResponseToCouchdb(doc, db) {
-  return new Promise((resolve, reject) => {
-    // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
-    if (doc.data && typeof doc.data === 'object') {
-      doc.data = Object.keys(doc.data).reduce((acc, key) => {
-        return {
-          ...acc,
-          ...key === ''
-            ? {}
-            : {
-                [key.toLowerCase()]: typeof doc.data[key] === 'object'
-                  ? JSON.stringify(doc.data[key])
-                  : doc.data[key]
-              }
-        }
-      }, {})
-    }
-    db.get(doc._id)
-      .then(oldDoc => {
-        // Overrite the _rev property with the _rev in the db and save again.
-        const updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
-        db.put(updatedDoc)
-          .then(_ => resolve(updatedDoc))
-          .catch(error => reject(`mysql pushResponseToCouchdb could not overwrite ${doc._id} to ${db.name} because Error of ${JSON.stringify(error)}`))
-      })
-      .catch(error => {
-        const docClone = Object.assign({}, doc);
-        // Make a clone of the doc so we can delete part of it but not lose it in other iterations of this code
-        // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
-        // delete the _rev property from the docClone
-        delete docClone._rev
-        db.put(docClone)
-          .then(_ => resolve(docClone))
-          .catch(error => reject(`mysql pushResponseToCouchdb could not save ${docClone._id} to ${docClone.name} because Error of ${JSON.stringify(error)}`))
-    });
-  })
+function stringifyObjects(doc) {
+  // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase 
+  // to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading 
+  // attempting to create duplicate column names of id and ID).
+  if (doc.data && typeof doc.data === 'object') {
+    doc.data = Object.keys(doc.data).reduce((acc, key) => {
+      return {
+        ...acc,
+        ...key === ''
+          ? {}
+          : {
+            [key.toLowerCase()]: typeof doc.data[key] === 'object'
+              ? JSON.stringify(doc.data[key])
+              : doc.data[key]
+          }
+      }
+    }, {})
+  }
+  return doc
 }
 
-async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
+async function prepareFlatData(doc, locationList, sanitized) {
   let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
   // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
   flatResponse = Object.keys(flatResponse).reduce((acc, key) => {
@@ -511,11 +433,11 @@ async function saveFlatResponse(doc, locationList, targetDb, sanitized) {
   // make sure the top-level properties of doc are copied.
   const topDoc = {}
   Object.entries(doc).forEach(([key, value]) => value === Object(value) ? null : topDoc[key] = value);
-  const uploadedDoc = await pushResponseToCouchdb({
+  const flatDoc = stringifyObjects({
     ...topDoc,
     data: flatResponse
-  }, targetDb);
-  return uploadedDoc
+  })
+  return flatDoc
 }
 
 function getLocationByKeys(keys, locationList) {
@@ -716,7 +638,9 @@ async function convert_response(knex, doc, groupId, tableName) {
     const replace = '_'
     formID = formID.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
   } else {
-    log.error(`ERROR: formID is null for response: ${JSON.stringify(doc)}`)
+    let message = `ERROR: formID is null for response: ${JSON.stringify(doc)}`;
+    log.error(message)
+    throw new Error(message)
   }
 
 // append geoIP to the data object
@@ -841,7 +765,9 @@ async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, prima
     try {
       await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
     } catch (e) {
-      log.error("Error creating table: " + e)
+      let message = "Error creating table: " + e;
+      log.error(message)
+      throw new Error(message)
     }
   }
   switch (doc.type.toLowerCase()) {
@@ -872,12 +798,16 @@ async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, prima
       }
       break;
     default:
-      log.error("No case for this type: " + doc.type)
+      let message1 = "No case for this type: " + doc.type;
+      log.error(message1)
+      throw new Error(message1)
   }
   try {
     await insertDocument(groupId, knex, tableName, data, primaryKey);
   } catch (e) {
-    log.error(`Error inserting document: ${JSON.stringify(e)}`)
+    let message2 = `Error inserting document: ${JSON.stringify(e)}`;
+    log.error(message2)
+    throw new Error(message2)
   }
   log.info('Finished processing: ' + tableName)
   return result
@@ -913,7 +843,9 @@ async function createTable(knex, groupId, tableName, docType, createFunction, pr
       const results = await knex.schema.createTable(groupId.replace(/-/g, '') + '.' + tableName, createFunction);
       log.info("Table create results: " + JSON.stringify(results))
     } catch (e) {
-      log.error(`Error creating table ${tableName} Error: ${e}`)
+      let message = `Error creating table ${tableName} Error: ${e}`;
+      log.error(message)
+      throw new Error(message)
     }
   }
 }
@@ -963,6 +895,7 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
           log.error(`Column ${e} already exists in table ${tableName}`)
         } else {
           log.error(e)
+          throw new Error(e)
         }
       }
     }
@@ -978,6 +911,7 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
       log.error(`Duplicate record for participantID ${participantId}`)
     } else {
       log.error(e)
+      throw new Error(`Error inserting/upserting doc to ${tableName} for id: ${data[primaryKey]}`, e)
     }
   }
   if (schemaUpdated) {
