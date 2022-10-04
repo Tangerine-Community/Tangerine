@@ -6,10 +6,10 @@
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
-
+ 
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button (click)="unPublishSurvey(form.id)">
-        <i class="material-icons mat-32 tangy-location-list-icon">unpublished</i>
+        <i class="material-icons mat-32 tangy-location-list-icon">unpublish</i>
     </button>
     </span>
 
