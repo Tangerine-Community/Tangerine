@@ -1058,8 +1058,8 @@ class CaseService {
       userId
     })
     const proposedFormResponse = await this.getProposedChange(issueId)
-    this.tangyFormService.saveResponse(proposedFormResponse.response)
-    this.tangyFormService.saveResponse(proposedFormResponse.case)
+    await this.tangyFormService.saveResponse(proposedFormResponse.response)
+    await this.tangyFormService.saveResponse(proposedFormResponse.case)
     return await this.tangyFormService.saveResponse({
       ...issue,
       status: IssueStatus.Merged
@@ -1084,29 +1084,28 @@ class CaseService {
   }
 
   async hasMergeChangePermission(issueId:string) {
-    var allowed = false
-    const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    if (issue && issue.caseId && issue.eventId) {
-      const caseEvent = this.events.find(event => event.id === issue.eventId)
-      const caseEventDefinition = this.caseDefinition.eventDefinitions.find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+    const appConfig = await this.appConfigService.getAppConfig()
 
-      const eventForm = caseEvent.eventForms.find(form => form.id === issue.eventFormId)
-      const eventFormDefinition = caseEventDefinition.eventFormDefinitions.find(formDefinition => formDefinition.id === eventForm.eventFormDefinitionId)
+    var enabled = appConfig.allowMergeOfIssues ? appConfig.allowMergeOfIssues : false
+    if (enabled) {
+      const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+      if (issue && issue.caseId && issue.eventId) {
+        const caseEvent = this.events.find(event => event.id === issue.eventId)
+        const caseEventDefinition = this.caseDefinition.eventDefinitions.find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
 
-      const caseEventUpdatePermission = this.hasCaseEventPermission(CaseEventOperation.UPDATE, caseEventDefinition)
+        const eventForm = caseEvent.eventForms.find(form => form.id === issue.eventFormId)
+        const eventFormDefinition = caseEventDefinition.eventFormDefinitions.find(formDefinition => formDefinition.id === eventForm.eventFormDefinitionId)
 
-      const eventFormUpdatePermission = this.hasEventFormPermission(EventFormOperation.UPDATE, eventFormDefinition)
+        const caseEventUpdatePermission = this.hasCaseEventPermission(CaseEventOperation.UPDATE, caseEventDefinition)
 
-      const appConfig = await this.appConfigService.getAppConfig()
-
-      if (caseEventUpdatePermission && eventFormUpdatePermission) {
-        allowed = true
-      } else if (appConfig.allowMergeOfIssues) {
-        allowed = true
+        const eventFormUpdatePermission = this.hasEventFormPermission(EventFormOperation.UPDATE, eventFormDefinition)
+        if (caseEventUpdatePermission && eventFormUpdatePermission) {
+          enabled = true
+        }
       }
     }
 
-    return allowed
+    return enabled
   }
 
   async issueDiff(issueId) {
