@@ -212,6 +212,7 @@ async function batch() {
       processed,
       startTime
     }))
+    log.info("Finished batch.")
     await unsetWorkingFlag()
     return 
   } catch(e) {
