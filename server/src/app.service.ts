@@ -131,7 +131,7 @@ export class AppService {
         })
         monitor.on('stdout', function(msg){
           console.log(msg.toString())
-          if (msg.toString() === 'Finished batch.') {
+          if (msg.toString().includes('Finished batch.')) {
             log.debug("Restarting batch process.")
             monitor.stop(function() {
               monitor.start()
