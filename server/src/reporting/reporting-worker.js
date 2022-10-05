@@ -212,9 +212,10 @@ async function batch() {
       processed,
       startTime
     }))
-    log.info("Finished batch.")
+    let message = "Finished batch.";
+    log.info(message)
     await unsetWorkingFlag()
-    return 
+    return message
   } catch(e) {
     console.error(e)
   }
