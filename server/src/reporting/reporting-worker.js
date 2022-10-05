@@ -37,6 +37,7 @@ async function getWorkerState() {
     let state
     try {
       state = JSON.parse(stateFile);
+      // log.debug("state: " + state)
     } catch (e) {
       log.error("stateFile: " + stateFile + " Error: " + e)
     }
