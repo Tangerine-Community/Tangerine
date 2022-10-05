@@ -110,7 +110,7 @@ export class AppService {
     await reportingWorker.prepare(groupsList)
     let workerState = await reportingWorker.getWorkerState()
     // Keep alive.
-    // while (true) {
+    while (true) {
       try {
         // workerState = await reportingWorker.getWorkerState()
         // Add new groups if there are entries in the newGroupQueue array.
@@ -188,7 +188,7 @@ export class AppService {
         console.log(error)
         await sleep(3*1000)
       }
-    // }
+    }
   }
 
   async keepAliveSessionSweeper() {
