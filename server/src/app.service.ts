@@ -169,7 +169,7 @@ export class AppService {
               // log.debug("Delay after processing: " + this.configService.config().reportingDelay)
               await sleep(this.configService.config().reportingDelay)
             } else {
-              log.info(`Processed ${workerState.processed} changes.`)
+              log.info(`Processed ${workerState.processed} changes. reporting-worker-batch status: ${monitor.status}`)
             }
           } else {
             log.error(`Weird - no workerState. Gonna take a slight pause.`)
