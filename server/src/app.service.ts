@@ -130,7 +130,7 @@ export class AppService {
           kill:30000,            // wait 30s before force killing after stopping
         })
         monitor.on('stdout', function(msg){
-          console.log(msg.toString())
+          console.log('stdout: ' + msg.toString())
         });
         let didError = false
         monitor.on('stderr', async (err) => {
