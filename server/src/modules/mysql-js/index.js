@@ -756,7 +756,7 @@ async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, prima
   let result = {id: doc._id, tableName, docType}
   const tables = []
   const groupId = doc.groupId
-  console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
+  // console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
   if (!groupId) {
     log.info("doc without groupId: " + JSON.stringify(doc))
   }
@@ -902,7 +902,7 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
   }
   // Now insert the data
   try {
-    log.info("Inserting the data - or upserting - to " + tableName + "  for id: " + data[primaryKey])
+    log.info("Inserting the data - or upserting - to " + tableName + "  for id: " + data[primaryKey] + " groupId: " + groupId)
     // log.info("Inserting the data - or upserting - to " + tableName + "  for id: " + data[primaryKey] + " primaryKey: " + primaryKey + " data: " + JSON.stringify(data))
     const mysqlDbName = groupId.replace(/-/g, '')
     await knex(mysqlDbName + '.' + tableName).insert(data).onConflict(primaryKey).merge()
