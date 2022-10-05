@@ -131,6 +131,11 @@ export class AppService {
         })
         monitor.on('stdout', function(msg){
           console.log('stdout: ' + msg.toString())
+          if (msg.toString() === 'Finished batch.') {
+            monitor.stop(function() {
+              monitor.start()
+            })
+          }
         });
         let didError = false
         monitor.on('stderr', async (err) => {
