@@ -14,7 +14,7 @@ const defaultState = {
   "processed": 0,
   "startTime": 0,
   "endTime": 0,
-  "batchSizePerDatabase": 100,
+  "batchSizePerDatabase": 20,
   "databases": [],
   "pouchDbDefaults": {
     "prefix": "/tangerine/db/"
@@ -171,6 +171,7 @@ async function batch() {
         // log.debug("Excluding group: " + database.name + " from mysql processing.")
       }
       if (processGroup) {
+        log.debug("Processing a new batch from " + database.sequence + " with a batchSizePerDatabase of " + workerState.batchSizePerDatabase)
         const db = new DB(database.name)
         const changes = await db.changes({
           since: database.sequence,
