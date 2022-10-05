@@ -15,6 +15,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 const tangyModules = require('./modules/index.js')()
 const enableModule = require('./modules/enable-module.js')
 const disableModule = require('./modules/disable-module.js')
+const respawn = require('respawn')
 
 @Injectable()
 export class AppService {
@@ -109,36 +110,62 @@ export class AppService {
     await reportingWorker.prepare(groupsList)
     let workerState = await reportingWorker.getWorkerState()
     // Keep alive.
-    while (true) {
+    // while (true) {
       try {
-        workerState = await reportingWorker.getWorkerState()
+        // workerState = await reportingWorker.getWorkerState()
         // Add new groups if there are entries in the newGroupQueue array.
         while (newGroupQueue.length > 0) {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        const result = await spawn('reporting-worker-batch')
-        result.stdout.on('data', function(msg){
+        console.log("Spawning new process")
+        // const result = await spawn('reporting-worker-batch')
+        const monitor = respawn(['reporting-worker-batch', ''], {
+          name: 'reporting-worker-batch',          // set monitor name
+          env: {ENV_VAR:'reporting-worker-batch'}, // set env vars
+          cwd: '.',              // set cwd
+          maxRestarts:-1,        // how many restarts are allowed within 60s
+                                 // or -1 for infinite restarts
+          sleep:1000,            // time to sleep between restarts,
+          kill:30000,            // wait 30s before force killing after stopping
+        })
+        monitor.on('stdout', function(msg){
           console.log(msg.toString())
         });
+        let didError = false
+        monitor.on('stderr', async (err) => {
+          console.log('Error: ' + err);
+          didError = true
+          await sleep(3 * 1000)
+        });
+        monitor.start() // spawn and watch
         // result.stdout?.pipe(process.stdout);
-        if (result.stderr) {
-          // log.error(result.stderr)
-          await sleep(3*1000)
-        } else {
+        // if (result.stderr) {
+        //   // log.error(result.stderr)
+        //   await sleep(3*1000)
+        // } else {
+        if (!didError) {
           workerState = await reportingWorker.getWorkerState()
-          if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-            await sleep(this.configService.config().reportingDelay)
+          if (workerState) {
+            if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+              // log.debug("Delay after processing: " + this.configService.config().reportingDelay)
+              await sleep(this.configService.config().reportingDelay)
+            } else {
+              log.info(`Processed ${workerState.processed} changes.`)
+            }
           } else {
-            log.info(`Processed ${workerState.processed} changes.`)
+            log.error(`Weird - no workerState. Gonna take a slight pause.`)
+            await sleep(this.configService.config().reportingDelay)
           }
+          
         }
+        // }
       } catch (error) {
         log.error('Reporting process had an error.')
         console.log(error)
         await sleep(3*1000)
       }
-    }
+    // }
   }
 
   async keepAliveSessionSweeper() {
