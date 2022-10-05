@@ -7,7 +7,7 @@ const defaultState = {
   "processed": 0,
   "startTime": 0,
   "endTime": 0,
-  "batchSizePerDatabase": 100,
+  "batchSizePerDatabase": 5,
   "databases": [],
   "pouchDbDefaults": {
     "prefix": "/tangerine/db/"
