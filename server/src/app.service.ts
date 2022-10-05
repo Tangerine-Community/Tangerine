@@ -138,8 +138,11 @@ export class AppService {
           didError = true
           await sleep(3 * 1000)
         });
-        monitor.on('stop', function(msg){
-          log.info('respawn stopped: ' + msg)
+        monitor.on('start', function(){
+          log.info('respawn started. ')
+        });
+        monitor.on('stop', function(){
+          log.info('respawn stopped. ')
         });
         monitor.on('crash', function(msg){
           log.info('respawn crash: ' + msg)
