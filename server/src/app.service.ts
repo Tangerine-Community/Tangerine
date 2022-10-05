@@ -138,6 +138,24 @@ export class AppService {
           didError = true
           await sleep(3 * 1000)
         });
+        monitor.on('stop', function(msg){
+          log.info('respawn stopped: ' + msg)
+        });
+        monitor.on('crash', function(msg){
+          log.info('respawn crash: ' + msg)
+        });
+        monitor.on('sleep', function(){
+          log.info('respawn sleep. ')
+        });
+        monitor.on('spawn', function(){
+          log.info('respawn spawn new child process. ')
+        });
+        monitor.on('exit', function(code){
+          log.info('respawn exit. Code: ' + code)
+        });
+        monitor.on('warn', function(err){
+          log.info('respawn warn. err: ' + err)
+        });
         monitor.start() // spawn and watch
         // result.stdout?.pipe(process.stdout);
         // if (result.stderr) {
