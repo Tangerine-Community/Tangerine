@@ -130,8 +130,9 @@ export class AppService {
           kill:30000,            // wait 30s before force killing after stopping
         })
         monitor.on('stdout', function(msg){
-          console.log('stdout: ' + msg.toString())
+          console.log(msg.toString())
           if (msg.toString() === 'Finished batch.') {
+            log.debug("Restarting batch process.")
             monitor.stop(function() {
               monitor.start()
             })
