@@ -171,7 +171,6 @@ async function batch() {
         // log.debug("Excluding group: " + database.name + " from mysql processing.")
       }
       if (processGroup) {
-        log.debug("Processing a new batch from " + database.sequence + " with a batchSizePerDatabase of " + workerState.batchSizePerDatabase)
         const db = new DB(database.name)
         const changes = await db.changes({
           since: database.sequence,
@@ -179,6 +178,7 @@ async function batch() {
           include_docs: false
         })
         if (changes.results.length > 0) {
+          log.debug("Processing a batch from change seq: " + database.sequence + " with a batchSizePerDatabase of " + workerState.batchSizePerDatabase)
           for (let change of changes.results) {
             try {
               await changeProcessor(change, db)
@@ -202,20 +202,21 @@ async function batch() {
           }
           // Even if an error was thrown, continue on with the next sequences.
           database.sequence = changes.results[changes.results.length - 1].seq
+          // Persist state to disk.
+          await setWorkerState(Object.assign({}, workerState, {
+            tally: workerState.tally + processed,
+            endTime: new Date().toISOString(),
+            processed,
+            startTime
+          }))
+          let message = "Finished batch.";
+          log.info(message)
+          await unsetWorkingFlag()
+          return message
         }
       }
     }
-    // Persist state to disk.
-    await setWorkerState(Object.assign({}, workerState, {
-      tally: workerState.tally + processed,
-      endTime: new Date().toISOString(),
-      processed,
-      startTime
-    }))
-    let message = "Finished batch.";
-    log.info(message)
-    await unsetWorkingFlag()
-    return message
+    
   } catch(e) {
     console.error(e)
   }

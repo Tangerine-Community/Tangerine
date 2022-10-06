@@ -99,7 +99,7 @@ module.exports = {
           if (doc.type === 'case') {
             // output case
             const flatDoc = await prepareFlatData(doc, locationList, sanitized);
-            log.info("Saving case_instance to MySQL" + doc._id)
+            log.info("Saving case_instance to MySQL doc _id: " + doc._id)
             // case doc
             tableName = 'case_instances' + tablenameSuffix
             docType = 'case'
@@ -120,7 +120,7 @@ module.exports = {
               if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
                 participant_id = doc._id + '-' + participant.id
               }
-              const flatDoc = stringifyObjects({
+              const flatDoc = stringifyDocDataObjects({
                 ...participant,
                 _id: participant_id,
                 caseId: doc._id,
@@ -155,7 +155,7 @@ module.exports = {
                   let flatDoc;
                   const eventFormDoc = {...eventForm, type: "event-form", _id: eventForm.id, groupId: doc.groupId, archived: doc.archived}
                   try {
-                    flatDoc = stringifyObjects(eventFormDoc)
+                    flatDoc = stringifyDocDataObjects(eventFormDoc)
                   } catch (e) {
                     if (e.status !== 404) {
                       console.log("Error processing eventForm. caseID:  " + doc.caseId + " Error: " + JSON.stringify(e) + " e: " + e)
@@ -188,7 +188,7 @@ module.exports = {
               // since we are already serializing each event-form and have the parent caseEventId on each one.
               delete eventClone.eventForms
               const caseEventDoc = {...eventClone, _id: eventClone.id, type: "case-event", groupId: doc.groupId, archived: doc.archived}
-              const flatDoc = stringifyObjects(caseEventDoc)
+              const flatDoc = stringifyDocDataObjects(caseEventDoc)
               tableName = 'caseevent' + tablenameSuffix
               docType = 'case-event'
               primaryKey = 'CaseEventID'
@@ -379,14 +379,26 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
       } else if (input && typeof input.value === 'number') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && Array.isArray(input.value)) {
+        let i = 0
         for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.name}`, group.value)
+          i++
+          let keyName = group.name
+          if (!group.name) {
+            keyName = i
+          }
+          set(input, `${firstIdSegment}${input.name}_${keyName}`, group.value)
         }
       } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
+        let i = 0
         for (let key of elementKeys) {
-          set(input, `${firstIdSegment}${input.name}.${key}`, input.value[key])
-        };
+          i++
+          let keyName = key
+          if (!key) {
+            keyName = i
+          }
+          set(input, `${firstIdSegment}${input.name}_${keyName}`, input.value[key])
+        }
       }
       } // sanitize
     }
@@ -394,7 +406,12 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   return flatFormResponse;
 };
 
-function stringifyObjects(doc) {
+/**
+ * Stringifies objects in doc.data
+ * @param doc
+ * @returns {{data}|*}
+ */
+function stringifyDocDataObjects(doc) {
   // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase 
   // to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading 
   // attempting to create duplicate column names of id and ID).
@@ -433,7 +450,7 @@ async function prepareFlatData(doc, locationList, sanitized) {
   // make sure the top-level properties of doc are copied.
   const topDoc = {}
   Object.entries(doc).forEach(([key, value]) => value === Object(value) ? null : topDoc[key] = value);
-  const flatDoc = stringifyObjects({
+  const flatDoc = stringifyDocDataObjects({
     ...topDoc,
     data: flatResponse
   })
