@@ -118,7 +118,7 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        console.log("Spawning new process")
+        log.info("Spawning new reporting-worker node process")
         // const result = await spawn('reporting-worker-batch')
         const monitor = respawn(['reporting-worker-batch', ''], {
           name: 'reporting-worker-batch',          // set monitor name
@@ -127,7 +127,7 @@ export class AppService {
           maxRestarts:-1,        // how many restarts are allowed within 60s
                                  // or -1 for infinite restarts
           sleep:100,            // time to sleep between restarts,
-          kill:30000,            // wait 30s before force killing after stopping
+          kill:10000,            // wait 10s before force killing after stopping
         })
         monitor.on('stdout', function(msg){
           console.log(msg.toString())
@@ -147,9 +147,9 @@ export class AppService {
         // monitor.on('start', function(){
         //   log.info('respawn started. ')
         // });
-        // monitor.on('stop', function(){
-        //   log.info('respawn stopped. ')
-        // });
+        monitor.on('stop', function(){
+          log.info('respawn stopped. ')
+        });
         monitor.on('crash', function(msg){
           log.info('respawn crash: ' + msg)
         });
