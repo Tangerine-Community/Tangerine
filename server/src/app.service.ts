@@ -175,7 +175,7 @@ export class AppService {
           workerState = await reportingWorker.getWorkerState()
           if (workerState) {
             if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-              log.debug("Delay after processing: " + this.configService.config().reportingDelay)
+              // log.debug("Delay after processing: " + this.configService.config().reportingDelay)
               await sleep(this.configService.config().reportingDelay)
             } else {
               log.info(`Processed ${workerState.processed} changes. reporting-worker-batch status: ${monitor.status}`)
