@@ -132,7 +132,7 @@ export class AppService {
         monitor.on('stdout', function(msg){
           console.log(msg.toString())
           if (msg.toString().includes('Finished batch.')) {
-            log.debug("Restarting batch process.")
+            // log.debug("Restarting batch process.")
             monitor.stop(function() {
               monitor.start()
             })
@@ -144,27 +144,27 @@ export class AppService {
           didError = true
           await sleep(3 * 1000)
         });
-        monitor.on('start', function(){
-          log.info('respawn started. ')
-        });
-        monitor.on('stop', function(){
-          log.info('respawn stopped. ')
-        });
+        // monitor.on('start', function(){
+        //   log.info('respawn started. ')
+        // });
+        // monitor.on('stop', function(){
+        //   log.info('respawn stopped. ')
+        // });
         monitor.on('crash', function(msg){
           log.info('respawn crash: ' + msg)
         });
-        monitor.on('sleep', function(){
-          log.info('respawn sleep. ')
-        });
-        monitor.on('spawn', function(){
-          log.info('respawn spawn new child process. ')
-        });
-        monitor.on('exit', function(code){
-          log.info('respawn exit. Code: ' + code)
-        });
-        monitor.on('warn', function(err){
-          log.info('respawn warn. err: ' + err)
-        });
+        // monitor.on('sleep', function(){
+        //   log.info('respawn sleep. ')
+        // });
+        // monitor.on('spawn', function(){
+        //   log.info('respawn spawn new child process. ')
+        // });
+        // monitor.on('exit', function(code){
+        //   log.info('respawn exit. Code: ' + code)
+        // });
+        // monitor.on('warn', function(err){
+        //   log.info('respawn warn. err: ' + err)
+        // });
         monitor.start() // spawn and watch
         // result.stdout?.pipe(process.stdout);
         // if (result.stderr) {
