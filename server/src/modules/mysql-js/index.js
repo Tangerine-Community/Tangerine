@@ -142,12 +142,14 @@ module.exports = {
               const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
-          
-            for (let j = 0; j < doc.events; j++) {
+            // log.debug("doc.events.length: " + doc.events.length)
+            for (let j = 0; j < doc.events.length; j++) {
               const event = doc.events[j]
+              // log.debug("Event: " + JSON.stringify(event))
               // output event-forms
               if (event['eventForms']) {
                 // for (const eventForm of event['eventForms']) {
+                // log.debug("event['eventForms'].length: " + event['eventForms'].length)
                 for (let k = 0; k < event['eventForms'].length; k++) {
                   const eventForm = doc.events[k]
                   // for (let index = 0; index < event['eventForms'].length; index++) {
