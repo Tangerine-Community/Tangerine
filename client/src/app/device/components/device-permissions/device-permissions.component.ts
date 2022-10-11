@@ -28,6 +28,7 @@ export class DevicePermissionsComponent implements OnInit {
           title="Device Permissions"
           id="device-permissions"
           on-open="
+            debugger;
           (async () => {
             var sleep = function(delay) { return new Promise((resolve, reject) => setTimeout(resolve, delay))}
             // Notifications API.
