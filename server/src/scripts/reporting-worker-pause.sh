@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 if [ "$2" = "--help" ]; then
   echo "Usage:"
   echo "  reporting-worker-pause"
