@@ -14,7 +14,7 @@ const defaultState = {
   "processed": 0,
   "startTime": 0,
   "endTime": 0,
-  "batchSizePerDatabase": 5,
+  "batchSizePerDatabase": 200,
   "databases": [],
   "pouchDbDefaults": {
     "prefix": "/tangerine/db/"
@@ -37,6 +37,7 @@ async function getWorkerState() {
     let state
     try {
       state = JSON.parse(stateFile);
+      // log.debug("state: " + state)
     } catch (e) {
       log.error("stateFile: " + stateFile + " Error: " + e)
     }
@@ -154,45 +155,68 @@ async function batch() {
     const DB = PouchDB.defaults(workerState.pouchDbDefaults)
     const startTime = new Date().toISOString()
     let processed = 0
+    let onlyProcessTheseGroups = []
+    if (process.env.T_REBUILD_MYSQL_DBS && process.env.T_REBUILD_MYSQL_DBS !== '') {
+      onlyProcessTheseGroups = process.env.T_REBUILD_MYSQL_DBS
+        ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g, `"`))
+        : []
+      // log.info('onlyProcessTheseGroups from T_REBUILD_MYSQL_DBS: ' + onlyProcessTheseGroups)
+    }
     // Process batch.
     for (let database of workerState.databases) { 
-      const db = new DB(database.name)
-      const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
-      if (changes.results.length > 0) {
-        for (let change of changes.results) {
-          try {
-            await changeProcessor(change, db)
-            processed++
-          } catch (error) {
-            let errorMessage = JSON.stringify(error)
-            let errorMessageText = error.message
+      let processGroup = false
+      if (onlyProcessTheseGroups.length === 0 || onlyProcessTheseGroups.includes(database.name)) {
+        processGroup = true
+      } else {
+        // log.debug("Excluding group: " + database.name + " from mysql processing.")
+      }
+      if (processGroup) {
+        const db = new DB(database.name)
+        const changes = await db.changes({
+          since: database.sequence,
+          limit: workerState.batchSizePerDatabase,
+          include_docs: false
+        })
+        if (changes.results.length > 0) {
+          log.debug("Processing a batch from change seq: " + database.sequence + " with a batchSizePerDatabase of " + workerState.batchSizePerDatabase)
+          for (let change of changes.results) {
+            try {
+              await changeProcessor(change, db)
+              processed++
+            } catch (error) {
+              let errorMessage = JSON.stringify(error)
+              let errorMessageText = error.message
 
-            // Sometimes JSON.stringify wipes out the error.
-            console.log("typeof error message: " + typeof error.message + " errorMessage: " + errorMessage + " errorMessageText: " + errorMessageText)
-            if (typeof error.message === 'object') {
-              errorMessageText = JSON.stringify(error.message)
+              // Sometimes JSON.stringify wipes out the error.
+              console.log(" errorMessage: " + errorMessage + " errorMessageText: " + errorMessageText)
+              if (typeof error.message === 'object') {
+                errorMessageText = JSON.stringify(error.message)
+              }
+              if (errorMessage === '{}') {
+                errorMessage = "Error : " + " message: " + errorMessageText
+              } else {
+                errorMessage = "Error : " + " message: " + errorMessageText + " errorMessage: " + errorMessage
+              }
+              log.error(`Error on change sequence ${change.seq} with id ${change.id} - Error: ${errorMessage} ::::: `)
             }
-            if (errorMessage === '{}') {
-              errorMessage = "Error : " +  " message: " + errorMessageText
-            } else {
-              errorMessage = "Error : " +  " message: " + errorMessageText + " errorMessage: " + errorMessage
-            }
-            log.error(`Error on change sequence ${change.seq} with id ${change.id} - Error: ${errorMessage} ::::: `)
           }
+          // Even if an error was thrown, continue on with the next sequences.
+          database.sequence = changes.results[changes.results.length - 1].seq
+          // Persist state to disk.
+          await setWorkerState(Object.assign({}, workerState, {
+            tally: workerState.tally + processed,
+            endTime: new Date().toISOString(),
+            processed,
+            startTime
+          }))
+          let message = "Finished batch.";
+          log.info(message)
+          await unsetWorkingFlag()
+          return message
         }
-        // Even if an error was thrown, continue on with the next sequences.
-        database.sequence = changes.results[changes.results.length-1].seq
       }
     }
-    // Persist state to disk.
-    await setWorkerState(Object.assign({}, workerState, {
-      tally: workerState.tally + processed,
-      endTime: new Date().toISOString(),
-      processed,
-      startTime
-    }))
-    await unsetWorkingFlag()
-    return 
+    
   } catch(e) {
     console.error(e)
   }
