@@ -1151,7 +1151,7 @@ class CaseService {
     await this.tangyFormService.saveResponse(proposedFormResponse.caseInstance)
     if (issue.sendToDeviceById) {
       const device = await this.groupDevicesService.getDevice(this.groupId, issue.sendToDeviceById)
-      device.assignedFormResponseIds = [...new Set([...device.assignedFormResponseIds, ...[proposedFormResponse.response._id]])];
+      device.assignedFormResponseIds = [...new Set([...(device.assignedFormResponseIds ? device.assignedFormResponseIds : []), ...[proposedFormResponse.response._id]])];
       await this.groupDevicesService.updateDevice(this.groupId, device)
     }
     await this.load(proposedFormResponse.caseInstance._id)
