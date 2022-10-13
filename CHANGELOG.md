@@ -1,5 +1,43 @@
 # What's new
 
+## v3.26.0
+
+__NEW Features__
+
+- MySQL JS Module: 
+-- Track and output changes through the CouchDB Changes Feed
+-- Connect to a MySQL Server of your choice via a url and credentials
+- Add app-config flag to force confirmation of each form response created on the client
+
+
+__Fixes__
+
+- Add protection when using Case APIs that load other cases than the currently active case
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.26.0
+./start.sh v3.26.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.26.0
+```
+
 ## v3.25.1
 
 __Fixes__
@@ -40,12 +78,10 @@ __NEW Features__
 -- Add user-role permissions to select which events or forms Issue changes can be commited on the client
 -- Pull form responses changed in Issues on the server down to the client
 - Add parameter to CSV Dataset Generation that allows exclusion of archived form definitions
-- Add app-config flag to force confirmation of each form response created on the client 
 
 __Fixes__
 
 - Apply isIssueContext correctly on the client
-- Add protection when using Case APIs that load other cases than the currently active case
 
 __Server upgrade instructions__
 
