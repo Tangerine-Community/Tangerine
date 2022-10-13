@@ -1099,9 +1099,7 @@ class CaseService {
         const caseEventUpdatePermission = this.hasCaseEventPermission(CaseEventOperation.UPDATE, caseEventDefinition)
 
         const eventFormUpdatePermission = this.hasEventFormPermission(EventFormOperation.UPDATE, eventFormDefinition)
-        if (caseEventUpdatePermission && eventFormUpdatePermission) {
-          enabled = true
-        }
+        enabled = (caseEventUpdatePermission && eventFormUpdatePermission)
       }
     }
 
