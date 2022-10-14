@@ -241,7 +241,6 @@ fi
 
 if echo "$T_MODULES" | grep mysql; then
 RUN_OPTIONS="
-  --link $T_MYSQL_CONTAINER_NAME:mysql \
   --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
   --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
