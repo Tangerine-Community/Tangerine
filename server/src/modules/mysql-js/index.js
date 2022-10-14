@@ -151,7 +151,7 @@ module.exports = {
                 // for (const eventForm of event['eventForms']) {
                 // log.debug("event['eventForms'].length: " + event['eventForms'].length)
                 for (let k = 0; k < event['eventForms'].length; k++) {
-                  const eventForm = doc.events[k]
+                  const eventForm = event['eventForms'][k]
                   // for (let index = 0; index < event['eventForms'].length; index++) {
                   // const eventForm = event['eventForms'][index]
                   let flatDoc;
@@ -772,7 +772,7 @@ async function convert_issue(knex, doc, groupId, tableName) {
 
 async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, primaryKey, createFunction) {
   let data;
-  let result = {id: doc._id, tableName, docType}
+  let result = {id: doc._id, tableName, docType, caseId: doc.caseId}
   const tables = []
   const groupId = doc.groupId
   // console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
