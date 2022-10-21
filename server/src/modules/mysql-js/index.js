@@ -678,9 +678,6 @@ async function convert_response(knex, doc, groupId, tableName) {
   if (!data['caseid']) {
     data['caseId'] = caseId
   }
-  if (!data['participantid']) {
-    data['participantid'] = participantId
-  }
   if (!data['eventid']) {
     data['eventid'] = eventId
   }
@@ -697,9 +694,13 @@ async function convert_response(knex, doc, groupId, tableName) {
   if (!data['formID_sanitized']) {
     data['formID_sanitized'] = formID
   }
-
+  
+  // Always overwrite data.participantid with doc.participantId
+  data['participantid'] = participantId
+  
   doc.ID = doc._id
   doc.dbRevision = doc._rev
+
 
   // # Delete the following keys;
   const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime']
@@ -740,9 +741,6 @@ async function convert_issue(knex, doc, groupId, tableName) {
   if (!data['caseid']) {
     data['caseId'] = caseId
   }
-  if (!data['participantid']) {
-    data['participantid'] = participantId
-  }
   if (!data['eventid']) {
     data['eventid'] = eventId
   }
@@ -759,7 +757,10 @@ async function convert_issue(knex, doc, groupId, tableName) {
   if (!data['formID_sanitized']) {
     data['formID_sanitized'] = formID
   }
-
+  
+  // Always overwrite data.participantid with doc.participantId
+  data['participantid'] = participantId
+  
   doc.ID = doc._id
   doc.dbRevision = doc._rev
 
