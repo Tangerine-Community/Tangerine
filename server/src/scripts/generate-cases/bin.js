@@ -219,9 +219,8 @@ async function go() {
           formResponse.caseEventId = caseEventId
           formResponse.caseId = caseId
           formResponse.eventFormId = eventForm.id
-          if (eventForm.eventFormDefinitionId !== "enrollment-screening-form") {
-            formResponse.participantId = participantUuid
-          }
+          formResponse.participantId = participantUuid
+          formResponse.groupId = groupId
         }
       }
     }
