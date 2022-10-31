@@ -189,9 +189,11 @@ export class DashboardService {
     let usingScorefield = null;
     const formItemTalley = {};
     let totalMax = 0;
+    let customScore = ''
 
     if (item) {
       itemCount = item.inputs.length;
+      customScore = item.customScore? item.customScore: ''
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -367,7 +369,8 @@ export class DashboardService {
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
         scorePercentageCorrect: scorePercentageCorrect,
-        duration: duration
+        duration: duration,
+        customScore: customScore
       };
 
       if (prototype) {
@@ -448,6 +451,7 @@ export class DashboardService {
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
           const maxValueAnswer = studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
+          studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
 
           aveCorrect += totalCorrect;
@@ -634,6 +638,5 @@ export class DashboardService {
       return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
     }
   };
-
 }
 

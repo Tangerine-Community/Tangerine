@@ -13,5 +13,6 @@ export class StudentResult {
   formTitle:string;
   studentId:string;
   category:string;
+  customScore: Number
   results:Array<StudentResult>;
 }
