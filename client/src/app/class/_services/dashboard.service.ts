@@ -189,11 +189,11 @@ export class DashboardService {
     let usingScorefield = null;
     const formItemTalley = {};
     let totalMax = 0;
-    let customScore = ''
+    let customScore = null
 
     if (item) {
       itemCount = item.inputs.length;
-      customScore = item.customScore? item.customScore: ''
+      customScore = item.customScore? item.customScore: null
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -441,15 +441,15 @@ export class DashboardService {
             studentResults.score = score;
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          const max = studentResponse.max;
+          const max = studentResponse.customScore? 100: studentResponse.max;
           if (max) {
             studentResults.max = max;
             classGroupReportMax = max;
           }
-          const totalCorrect = studentResponse.totalCorrect;
-          const scorePercentageCorrect = studentResponse.scorePercentageCorrect;
+          const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
+          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore :studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
-          const maxValueAnswer = studentResponse.maxValueAnswer;
+          const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
           studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
