@@ -9,7 +9,7 @@ __NEW Features__
 -- Connect to a MySQL Server of your choice via a url and credentials
 - Add app-config flag to force confirmation of each form response created on the client
 - Update to tangy-form and tangy-form-editor which enables configuration of automatic scoring in Editor for groups using Class. Issue: [#1021](https://github.com/Tangerine-Community/Tangerine/issues/1021)
-- Documented a list of  [Reserved words in Tangerine](./docs/reserved-words.md)
+- Documented a list of  [Reserved words in Tangerine](./docs/editor/reserved-words.md)
 - Bump tangy-form to 4.38.2 and tangy-form-editor to 7.15.4.
 
 __Fixes__
