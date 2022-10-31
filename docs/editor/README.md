@@ -7,6 +7,7 @@
 - [The Tangerine Preview tool for advanced users writing forms in HTML and using Git for version control](tangerine-preview-tool.md)
 - [Form Versions](form-versions.md)
 - [Password Policy](password-policy.md)
+- [Reserved words in Tangerine](reserved-words.md)
 ## Case Module
   - [Case Management Data Model](case-module/case-data-model.md)
   - [Case Module Cookbook](case-module/case-module-cookbook.md)
