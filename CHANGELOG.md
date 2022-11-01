@@ -10,12 +10,13 @@ __NEW Features__
 - Add app-config flag to force confirmation of each form response created on the client
 - Update to tangy-form and tangy-form-editor which enables configuration of automatic scoring in Editor for groups using Class. Issue: [#1021](https://github.com/Tangerine-Community/Tangerine/issues/1021)
 - Documented a list of  [Reserved words in Tangerine](./docs/editor/reserved-words.md)
-- Bump tangy-form to 4.38.2 and tangy-form-editor to 7.15.4.
+- Bump tangy-form to 4.38.3 and tangy-form-editor to 7.15.4.
 
 __Fixes__
 
 - Add protection when using Case APIs that load other cases than the currently active case
 - feat(custom-scoring): If customScore exists, use it [#3450](https://github.com/Tangerine-Community/Tangerine/pull/3450
+- fix(record-audio): Request audio permissions [#3451](https://github.com/Tangerine-Community/Tangerine/pull/3451)
 
 __Server upgrade instructions__
 
