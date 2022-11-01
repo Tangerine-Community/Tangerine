@@ -189,11 +189,9 @@ export class DashboardService {
     let usingScorefield = null;
     const formItemTalley = {};
     let totalMax = 0;
-    let customScore = null
 
     if (item) {
       itemCount = item.inputs.length;
-      customScore = item.customScore? item.customScore: null
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -369,8 +367,7 @@ export class DashboardService {
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
         scorePercentageCorrect: scorePercentageCorrect,
-        duration: duration,
-        customScore: customScore
+        duration: duration
       };
 
       if (prototype) {
@@ -441,17 +438,16 @@ export class DashboardService {
             studentResults.score = score;
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          const max = studentResponse.customScore? 100: studentResponse.max;
+          const max = studentResponse.max;
           if (max) {
             studentResults.max = max;
             classGroupReportMax = max;
           }
-          const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
-          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore :studentResponse.scorePercentageCorrect;
+          const totalCorrect = studentResponse.totalCorrect;
+          const scorePercentageCorrect = studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
-          const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
+          const maxValueAnswer = studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
-          studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
 
           aveCorrect += totalCorrect;
@@ -638,5 +634,6 @@ export class DashboardService {
       return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
     }
   };
+
 }
 
