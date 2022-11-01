@@ -62,7 +62,7 @@ export class MaintenanceComponent implements OnInit {
       navigator.getUserMedia(
         {
             video: true,
-            audio: false
+            audio: true
         },
         function() { },
         function() { }
