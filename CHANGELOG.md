@@ -15,6 +15,7 @@ __NEW Features__
 __Fixes__
 
 - Add protection when using Case APIs that load other cases than the currently active case
+- feat(custom-scoring): If customScore exists, use it [#3450](https://github.com/Tangerine-Community/Tangerine/pull/3450
 
 __Server upgrade instructions__
 
