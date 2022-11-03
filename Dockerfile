@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v3.7.3
+FROM tangerine/docker-tangerine-base-image:v3.7.4-rc-3
 
 RUN git config --global url."https://".insteadOf git://
 
