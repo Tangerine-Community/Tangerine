@@ -50,6 +50,18 @@ export class DevicePermissionsComponent implements OnInit {
               await sleep(1*1000)
             }
             inputs.camera_permission.value = true
+            while ((await navigator.permissions.query({name:'microphone'})).state !== 'granted') {
+              navigator.getUserMedia(
+                {
+                   video: true,
+                   audio: true
+                },
+                function() { },
+                function() { }
+              )
+              await sleep(1*1000)
+            }
+            inputs.microphone_permission.value = true
             // Geolocation API.
             while ((await navigator.permissions.query({name:'geolocation'})).state !== 'granted') {
               try {
@@ -72,6 +84,7 @@ export class DevicePermissionsComponent implements OnInit {
         >
           <tangy-gate required name="notifications_permission" inProgress="${_TRANSLATE('Authorize notifications.')}" success="${_TRANSLATE('Notifications authorized.')}"></tangy-gate><br>
           <tangy-gate required name="camera_permission" inProgress="${_TRANSLATE('Authorize camera.')}" success="${_TRANSLATE('Camera authorized.')}"></tangy-gate><br>
+          <tangy-gate required name="microphone_permission" inProgress="${_TRANSLATE('Authorize the microphone.')}" success="${_TRANSLATE('Microphone authorized.')}"></tangy-gate><br>
           <tangy-gate required name="geolocation_permission" inProgress="${_TRANSLATE('Authorize geolocation.')}" success="${_TRANSLATE('Geolocation authorized.')}"></tangy-gate><br>
           <tangy-gate required name="persistent_storage_permission" inProgress="${_TRANSLATE('Authorize peristent storage.')}" success="${_TRANSLATE('Persistent storage authorized.')}"></tangy-gate>
         </tangy-form-item>
