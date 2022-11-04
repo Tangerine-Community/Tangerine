@@ -289,6 +289,7 @@ export class DashboardService {
                   totalIncorrect = value.reduce(reducer, 0);
                   totalCorrect = maxValueAnswer - totalIncorrect;
                   score = totalCorrect;
+                  formItemTalley['totalMax'] = 100
                   scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
                   alreadyAnswered = true;
                 }
