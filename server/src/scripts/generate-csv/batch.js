@@ -14,6 +14,7 @@ const writeFile = util.promisify(fs.writeFile);
 const appendFile = util.promisify(fs.appendFile);
 const CSV = require('comma-separated-values')
 const dbDefaults = require('../../db-defaults.js')
+const log = require('tangy-log').log
 
 const params = {
   statePath: process.argv[2],
@@ -43,11 +44,11 @@ function getData(dbName, formId, skip, batchSize, year, month) {
 }
 
 async function batch() {
-  console.log("in batch.")
+  log.debug("in batch.")
   const state = JSON.parse(await readFile(params.statePath))
   console.log("state.skip: " + state.skip)
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
-  // console.log("docs: " + JSON.stringify(docs))
+  log.debug("docs: " + JSON.stringify(docs))
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
   console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
   let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
