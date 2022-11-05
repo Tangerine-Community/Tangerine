@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const log = require('tangy-log').log
 const generateCsvDataSet = require('./generate-csv-data-set.js')
 
 if (process.argv[2] === '--help') {
@@ -23,6 +24,7 @@ const params = {
 
 async function go(params) {
   try {
+    log.debug("generateCsvDataSet bin.js")
     await generateCsvDataSet(params.dbName, params.formIds, params.outputPath, params.year, params.month, params.excludePii, params.excludeArchivedForms)
     process.exit()
   } catch (error) {

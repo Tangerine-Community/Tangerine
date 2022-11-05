@@ -118,7 +118,7 @@ export class AppService {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        log.info("Spawning new reporting-worker node process")
+        log.info("Spawning new reporting-worker node process. Sleep set to : " + this.config.reportingDelay)
         // const result = await spawn('reporting-worker-batch')
         const monitor = respawn(['reporting-worker-batch', ''], {
           name: 'reporting-worker-batch',          // set monitor name
@@ -126,7 +126,7 @@ export class AppService {
           cwd: '.',              // set cwd
           maxRestarts:-1,        // how many restarts are allowed within 60s
                                  // or -1 for infinite restarts
-          sleep:100,            // time to sleep between restarts,
+          sleep:this.config.reportingDelay,            // time to sleep between restarts,
           kill:10000,            // wait 10s before force killing after stopping
         })
         monitor.on('stdout', function(msg){
@@ -147,7 +147,24 @@ export class AppService {
         // monitor.on('start', function(){
         //   log.info('respawn started. ')
         // });
-        monitor.on('stop', function(){
+        monitor.on('stop', async () => {
+          if (!didError) {
+            workerState = await reportingWorker.getWorkerState()
+            if (workerState) {
+              if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+                // log.debug("Delay after processing: " + this.configService.config().reportingDelay)
+                await sleep(this.configService.config().reportingDelay)
+              } else {
+                log.info(`Processed ${workerState.processed} changes. reporting-worker-batch status: ${monitor.status}`)
+                // monitor.stop(function() {
+                //   monitor.start()
+                // })
+              }
+            } else {
+              log.error(`Weird - no workerState. Gonna take a slight pause.`)
+              await sleep(this.configService.config().reportingDelay)
+            }
+          }
           log.info('respawn stopped. ')
         });
         monitor.on('crash', function(msg){
@@ -171,23 +188,7 @@ export class AppService {
         //   // log.error(result.stderr)
         //   await sleep(3*1000)
         // } else {
-        if (!didError) {
-          workerState = await reportingWorker.getWorkerState()
-          if (workerState) {
-            if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-              // log.debug("Delay after processing: " + this.configService.config().reportingDelay)
-              await sleep(this.configService.config().reportingDelay)
-            } else {
-              log.info(`Processed ${workerState.processed} changes. reporting-worker-batch status: ${monitor.status}`)
-              // monitor.stop(function() {
-              //   monitor.start()
-              // })
-            }
-          } else {
-            log.error(`Weird - no workerState. Gonna take a slight pause.`)
-            await sleep(this.configService.config().reportingDelay)
-          }
-        }
+        
         // }
       } catch (error) {
         log.error('Reporting process had an error.')
