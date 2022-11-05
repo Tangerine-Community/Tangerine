@@ -189,9 +189,11 @@ export class DashboardService {
     let usingScorefield = null;
     const formItemTalley = {};
     let totalMax = 0;
+    let customScore = null
 
     if (item) {
       itemCount = item.inputs.length;
+      customScore = item.customScore? item.customScore: null
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -287,6 +289,7 @@ export class DashboardService {
                   totalIncorrect = value.reduce(reducer, 0);
                   totalCorrect = maxValueAnswer - totalIncorrect;
                   score = totalCorrect;
+                  formItemTalley['totalMax'] = 100
                   scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
                   alreadyAnswered = true;
                 }
@@ -367,7 +370,8 @@ export class DashboardService {
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
         scorePercentageCorrect: scorePercentageCorrect,
-        duration: duration
+        duration: duration,
+        customScore: customScore
       };
 
       if (prototype) {
@@ -438,16 +442,17 @@ export class DashboardService {
             studentResults.score = score;
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          const max = studentResponse.max;
+          const max = studentResponse.customScore? 100: studentResponse.max;
           if (max) {
             studentResults.max = max;
             classGroupReportMax = max;
           }
-          const totalCorrect = studentResponse.totalCorrect;
-          const scorePercentageCorrect = studentResponse.scorePercentageCorrect;
+          const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
+          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore :studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
-          const maxValueAnswer = studentResponse.maxValueAnswer;
+          const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
+          studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
 
           aveCorrect += totalCorrect;
@@ -634,6 +639,5 @@ export class DashboardService {
       return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
     }
   };
-
 }
 

@@ -1,4 +1,4 @@
-import { EventFormsForParticipantComponent } from './../event-forms-for-participant/event-forms-for-participant.component';
+import { Router } from '@angular/router';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
@@ -51,7 +51,9 @@ export class EventFormListItemComponent implements OnInit {
   constructor(
     private formService: TangyFormService,
     private ref: ChangeDetectorRef,
-    private userService:UserService
+    private userService:UserService,
+    private router:Router,
+    private appConfig:AppConfigService
   ) {
     ref.detach();
   }
@@ -118,5 +120,22 @@ export class EventFormListItemComponent implements OnInit {
       this.formDeleted.emit('formDeleted');
       this.ref.detectChanges();
     }
+  }
+
+  async navigateToEventForm() {
+    // Bail if there is a form response for this event form but the coresponding Form Response is not available.
+    if (!this.response && this.eventForm.formResponseId) {
+      return
+    }
+
+    const appConfig = await this.appConfig.getAppConfig()
+    if (appConfig.forceNewEventFormConfirmation) {
+      if (!this.eventForm.formResponseId) {
+        if (!confirm(_TRANSLATE('This Event Form has not yet started. Opening it will modify data and may lead to merge conflicts. Are you sure you want to proceed?'))) {
+          return
+        }
+      }
+    }
+    this.router.navigateByUrl(`/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`)
   }
 }

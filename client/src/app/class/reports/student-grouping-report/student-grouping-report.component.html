@@ -63,7 +63,7 @@
             <th mat-header-cell *matHeaderCellDef title="{{'Score'|translate}}"> {{'Score'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
               <span *ngIf="element.score !== undefined">
-                {{tNumber(element.score)}}
+                {{element.customScore?element.customScore:tNumber(element.score)}}
                 /
                 {{tNumber(element.maxValueAnswer)}}
               </span>
