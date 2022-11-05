@@ -6,6 +6,7 @@ import { GroupService } from './shared/services/group/group.service';
 import { TangerineConfig } from './shared/classes/tangerine-config';
 import { ModulesDoc } from './shared/classes/modules-doc.class';
 import createSitewideDatabase = require('./create-sitewide-database');
+import {spawn} from "child_process";
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
@@ -14,6 +15,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 const tangyModules = require('./modules/index.js')()
 const enableModule = require('./modules/enable-module.js')
 const disableModule = require('./modules/disable-module.js')
+const respawn = require('respawn')
 
 @Injectable()
 export class AppService {
@@ -108,32 +110,92 @@ export class AppService {
     await reportingWorker.prepare(groupsList)
     let workerState = await reportingWorker.getWorkerState()
     // Keep alive.
-    while (true) {
+    // while (true) {
       try {
-        workerState = await reportingWorker.getWorkerState()
+        // workerState = await reportingWorker.getWorkerState()
         // Add new groups if there are entries in the newGroupQueue array.
         while (newGroupQueue.length > 0) {
           await reportingWorker.addGroup(newGroupQueue.pop())
           groupsList = await this.groupService.listGroups()
         }
-        const result = await exec('reporting-worker-batch')
-        if (result.stderr) {
-          log.error(result.stderr)
-          await sleep(3*1000)
-        } else {
-          workerState = await reportingWorker.getWorkerState()
-          if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
-            await sleep(this.configService.config().reportingDelay)
-          } else {
-            log.info(`Processed ${workerState.processed} changes.`)
+        log.info("Spawning new reporting-worker node process. Sleep set to : " + this.config.reportingDelay)
+        // const result = await spawn('reporting-worker-batch')
+        const monitor = respawn(['reporting-worker-batch', ''], {
+          name: 'reporting-worker-batch',          // set monitor name
+          env: {ENV_VAR:'reporting-worker-batch'}, // set env vars
+          cwd: '.',              // set cwd
+          maxRestarts:-1,        // how many restarts are allowed within 60s
+                                 // or -1 for infinite restarts
+          sleep:this.config.reportingDelay,            // time to sleep between restarts,
+          kill:10000,            // wait 10s before force killing after stopping
+        })
+        monitor.on('stdout', function(msg){
+          console.log(msg.toString())
+          if (msg.toString().includes('Finished batch.')) {
+            // log.debug("Restarting batch process.")
+            monitor.stop(function() {
+              monitor.start()
+            })
           }
-        }
+        });
+        let didError = false
+        monitor.on('stderr', async (err) => {
+          console.log('Error: ' + err);
+          didError = true
+          await sleep(3 * 1000)
+        });
+        // monitor.on('start', function(){
+        //   log.info('respawn started. ')
+        // });
+        monitor.on('stop', async () => {
+          if (!didError) {
+            workerState = await reportingWorker.getWorkerState()
+            if (workerState) {
+              if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+                // log.debug("Delay after processing: " + this.configService.config().reportingDelay)
+                await sleep(this.configService.config().reportingDelay)
+              } else {
+                log.info(`Processed ${workerState.processed} changes. reporting-worker-batch status: ${monitor.status}`)
+                // monitor.stop(function() {
+                //   monitor.start()
+                // })
+              }
+            } else {
+              log.error(`Weird - no workerState. Gonna take a slight pause.`)
+              await sleep(this.configService.config().reportingDelay)
+            }
+          }
+          log.info('respawn stopped. ')
+        });
+        monitor.on('crash', function(msg){
+          log.info('respawn crash: ' + msg)
+        });
+        // monitor.on('sleep', function(){
+        //   log.info('respawn sleep. ')
+        // });
+        // monitor.on('spawn', function(){
+        //   log.info('respawn spawn new child process. ')
+        // });
+        // monitor.on('exit', function(code){
+        //   log.info('respawn exit. Code: ' + code)
+        // });
+        // monitor.on('warn', function(err){
+        //   log.info('respawn warn. err: ' + err)
+        // });
+        monitor.start() // spawn and watch
+        // result.stdout?.pipe(process.stdout);
+        // if (result.stderr) {
+        //   // log.error(result.stderr)
+        //   await sleep(3*1000)
+        // } else {
+        
+        // }
       } catch (error) {
         log.error('Reporting process had an error.')
         console.log(error)
         await sleep(3*1000)
       }
-    }
+    // }
   }
 
   async keepAliveSessionSweeper() {

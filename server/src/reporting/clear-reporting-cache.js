@@ -33,6 +33,7 @@ async function clearReportingCache() {
   const newState = Object.assign({}, state, {
     databases: state.databases.map(({name, sequence}) => { return {name, sequence: 0}})
   })
+  console.log("newState: " + JSON.stringify(newState))
   await writeFile(REPORTING_WORKER_STATE, JSON.stringify(newState), 'utf-8')
   await unlink(REPORTING_WORKER_PAUSE)
   console.log('Done!')
