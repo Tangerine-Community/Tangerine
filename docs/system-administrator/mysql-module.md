@@ -1,6 +1,8 @@
-# MySQL Module
+# MySQL Module (Legacy)
 
 ## Enabling MySQL module
+
+This module is the legacy module starting with the release of Tangerine v3.26.0. If you are running a version prior to v3.26.0, you should consider switching to the new [MySQL-JS Module](https://github.com/Tangerine-Community/Tangerine/blob/main/docs/system-administrator/mysql-js.md) for improved performance. 
 
 Important! If __reenabling__ the mysql module, remove the mysql folder: `rm -r data/mysql`
 
