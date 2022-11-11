@@ -72,7 +72,8 @@ export class ClassFormsPlayerComponent implements OnInit {
         } else {
           const directoryHandle = await this.window.showDirectoryPicker()
           await this.variableService.set('media-directory', directoryHandle)
-          const msg = `Stored directory handle for "${directoryHandle.name}" in IndexedDB.`
+          this.browserMediaFilesDirHandle = directoryHandle
+          const msg = `Stored directory handle for "${directoryHandle.name}" in variableService.`
           console.log(msg)
         }
       } catch (error) {
