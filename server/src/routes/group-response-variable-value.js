@@ -1,6 +1,7 @@
 const DB = require('../db.js')
 const clog = require('tangy-log').clog
 const log = require('tangy-log').log
+const fs = require('fs');
 
 module.exports = async (req, res) => {
   try {
@@ -34,16 +35,21 @@ module.exports = async (req, res) => {
       const data = value.replace('data:image/png;base64,', '')
       const buffer = Buffer.from(data, 'base64')
       return res.send(buffer)
-    } else if (value.includes('blob:file')) {
+    } else if (value.includes('blob:file') || value.includes('blob:http') || value.includes('blob:https')) {
       log.debug("image from file.")
       let extension = 'jpg'
       if (dataType && dataType === 'video') {
         extension = 'webm'
       }
       const filePath = `/tangerine/client/content/groups/${req.params.groupId}/client-uploads/${variableName}_${responseId}.${extension}`
-      console.log("filePath", filePath)
-      res.type(extension)
-      return res.sendFile(filePath)
+      if (fs.existsSync(filePath)) {
+        res.type(extension)
+        return res.sendFile(filePath)
+      } else {
+        console.log("filePath", filePath)
+        res.send({ statusCode: 404, data: "Media file not found."})
+      }
+      
     } else {
       res.send(value)
     }
