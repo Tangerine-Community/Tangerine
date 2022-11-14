@@ -59,8 +59,8 @@ T_PAID_ALLOWANCE="unlimited"
 # Reporting delay determines how quickly uploads will get processed and show up in reporting outputs such as CSV. Time is in milliseconds and default is 5 minutes.
 T_REPORTING_DELAY="300000"
 
-# Limit mysql processing to certain group dbs.
-T_REBUILD_MYSQL_DBS=""
+# Limit processing to certain group dbs.
+T_ONLY_PROCESS_THESE_GROUPS=""
 
 # Enter "true" if using a mysql container instead of an external database service such as AWS RDS. This will launch a mysql container.
 T_USE_MYSQL_CONTAINER=""
