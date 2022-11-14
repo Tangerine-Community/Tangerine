@@ -3,7 +3,7 @@
 ## v3.26.1
 
 __NEW Features__
-- New configuratiuon parameter: `T_LIMIT_NUMBER_OF_CHANGES` - Number of change docs from the Couchdb changes feed queried 
+- New configuration parameter: `T_LIMIT_NUMBER_OF_CHANGES` - Number of change docs from the Couchdb changes feed queried 
   by reporting-worker (i.e. use as the limit parameter). Default: 200.
 
 __Fixes__
