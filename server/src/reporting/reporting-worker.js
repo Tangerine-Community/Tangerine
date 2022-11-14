@@ -156,11 +156,11 @@ async function batch() {
     const startTime = new Date().toISOString()
     let processed = 0
     let onlyProcessTheseGroups = []
-    if (process.env.T_REBUILD_MYSQL_DBS && process.env.T_REBUILD_MYSQL_DBS !== '') {
-      onlyProcessTheseGroups = process.env.T_REBUILD_MYSQL_DBS
-        ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g, `"`))
+    if (process.env.T_ONLY_PROCESS_THESE_GROUPS && process.env.T_ONLY_PROCESS_THESE_GROUPS !== '') {
+      onlyProcessTheseGroups = process.env.T_ONLY_PROCESS_THESE_GROUPS
+        ? JSON.parse(process.env.T_ONLY_PROCESS_THESE_GROUPS.replace(/\'/g, `"`))
         : []
-      // log.info('onlyProcessTheseGroups from T_REBUILD_MYSQL_DBS: ' + onlyProcessTheseGroups)
+      // log.info('onlyProcessTheseGroups from T_ONLY_PROCESS_THESE_GROUPS: ' + onlyProcessTheseGroups)
     }
     // Process batch.
     for (let database of workerState.databases) { 

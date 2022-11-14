@@ -16,12 +16,12 @@ async function compareRevs(tablenameSuffix) {
     }
   });
 
-  if (process.env.T_REBUILD_MYSQL_DBS && process.env.T_REBUILD_MYSQL_DBS !== '') {
-    // groupNames = process.env.T_REBUILD_MYSQL_DBS.split(',')
-    groupNames = process.env.T_REBUILD_MYSQL_DBS
-      ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g, `"`))
+  if (process.env.T_ONLY_PROCESS_THESE_GROUPS && process.env.T_ONLY_PROCESS_THESE_GROUPS !== '') {
+    // groupNames = process.env.T_ONLY_PROCESS_THESE_GROUPS.split(',')
+    groupNames = process.env.T_ONLY_PROCESS_THESE_GROUPS
+      ? JSON.parse(process.env.T_ONLY_PROCESS_THESE_GROUPS.replace(/\'/g, `"`))
       : []
-    log.info('groupNames from T_REBUILD_MYSQL_DBS: ' + groupNames)
+    log.info('groupNames from T_ONLY_PROCESS_THESE_GROUPS: ' + groupNames)
   } else {
     groupNames = await groupsList()
   }
