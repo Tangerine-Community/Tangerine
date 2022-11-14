@@ -2,6 +2,10 @@
 
 ## v3.26.1
 
+__NEW Features__
+- New configuratiuon parameter: `T_LIMIT_NUMBER_OF_CHANGES` - Number of change docs from the Couchdb changes feed queried 
+  by reporting-worker (i.e. use as the limit parameter). Default: 200.
+
 __Fixes__
 - Student subtest report incorrect for custom logic inputs [#3464](https://github.com/Tangerine-Community/Tangerine/issues/3464)
 - Init paid-worker file when server restarted. 
