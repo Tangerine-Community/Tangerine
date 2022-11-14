@@ -59,6 +59,9 @@ T_PAID_ALLOWANCE="unlimited"
 # Reporting delay determines how quickly uploads will get processed and show up in reporting outputs such as CSV. Time is in milliseconds and default is 5 minutes.
 T_REPORTING_DELAY="300000"
 
+# Number of change docs from the Couchdb changes feed queried by reporting-worker (i.e. use as the limit parameter)
+T_LIMIT_NUMBER_OF_CHANGES=200
+
 # Limit processing to certain group dbs.
 T_ONLY_PROCESS_THESE_GROUPS=""
 
