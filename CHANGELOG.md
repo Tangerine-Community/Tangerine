@@ -5,6 +5,9 @@
 __Fixes__
 - Student subtest report incorrect for custom logic inputs [#3464](https://github.com/Tangerine-Community/Tangerine/issues/3464)
 - Init paid-worker file when server restarted. 
+- Fix bug in start.sh script for --link option
+- Rename T_REBUILD_MYSQL_DBS to T_ONLY_PROCESS_THESE_GROUPS. Configure T_REBUILD_MYSQL_DBS to list group databases to be 
+  skipped when processing data through modules such as mysql and csv.
 
 __Server upgrade instructions__
 
