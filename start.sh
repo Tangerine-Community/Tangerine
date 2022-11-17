@@ -215,6 +215,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/archives:/archives/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
+  --volume $(pwd)/translations:/tangerine/translations:delegated \
 " 
 
 # Disable Tangerine claiming a port as it will be proxied by nginx.
