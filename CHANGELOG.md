@@ -5,6 +5,7 @@
 __NEW Features__
 - New configuration parameter: `T_LIMIT_NUMBER_OF_CHANGES` - Number of change docs from the Couchdb changes feed queried 
   by reporting-worker (i.e. use as the limit parameter). Default: 200.
+- Added volume mapping for translations dir in start script. 
 
 __Fixes__
 - Student subtest report incorrect for custom logic inputs [#3464](https://github.com/Tangerine-Community/Tangerine/issues/3464)
