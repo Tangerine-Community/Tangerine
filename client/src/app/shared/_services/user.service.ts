@@ -71,7 +71,15 @@ export class UserService {
   async installSharedUserDatabase(device) {
     this.sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
     const formsInfo = await this.formsInfoService.getFormsInfo()
-    await createSearchIndex(this.sharedUserDatabase, formsInfo)
+
+    let customSearchJs = ''
+    try {
+      customSearchJs = await this.http.get('./assets/custom-search.js', {responseType: 'text'}).toPromise()
+    } catch (err) {
+      // No custom-search.js, no problem.
+    }
+
+    await createSearchIndex(this.sharedUserDatabase, formsInfo, customSearchJs)
     await this.installDefaultUserDocs(this.sharedUserDatabase)
     // install any extra views
     try {
@@ -130,7 +138,15 @@ export class UserService {
     const userDb = new UserDatabase(username, userId, device.key, device._id)
     this.installDefaultUserDocs(userDb)
     const formsInfo = await this.formsInfoService.getFormsInfo()
-    await createSearchIndex(userDb, formsInfo)
+
+    let customSearchJs = ''
+    try {
+      customSearchJs = await this.http.get('./assets/custom-search.js', {responseType: 'text'}).toPromise()
+    } catch (err) {
+      // No custom-search.js, no problem.
+    }
+
+    await createSearchIndex(userDb, formsInfo, customSearchJs)
     this.userDatabases.push(userDb)
     return userDb
   }
