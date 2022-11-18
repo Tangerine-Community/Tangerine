@@ -46,7 +46,12 @@ export class EventComponent implements OnInit, AfterContentInit {
     this.window = window
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await eval(this.caseEventDefinition.onEventOpen)
+  }
+
+  async ngOnDestroy() {
+    await eval(this.caseEventDefinition.onEventClose)
   }
 
   async ngAfterContentInit() {
