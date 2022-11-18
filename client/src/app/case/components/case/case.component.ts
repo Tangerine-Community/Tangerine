@@ -124,20 +124,18 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
     this.caseService.openCaseConfirmed = true
     this.ref.detectChanges()
   }
-  onCaseOpen(){
-    eval(this.caseService.caseDefinition.onCaseOpen)
+
+  async onCaseOpen(){
+    await eval(this.caseService.caseDefinition.onCaseOpen)
   }
 
   ngOnDestroy(){
-    eval(this.caseService.caseDefinition.onCaseClose)
     this.onOverlayCloseSubscription?.unsubscribe()
   }
 
   async onSubmit() {
     const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
     if (this.selectedNewEventType !== '') {
-      const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
-      const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
       await this.caseService.save()
       this.calculateTemplateData()
       this.processMonitorService.stop(process.id)
