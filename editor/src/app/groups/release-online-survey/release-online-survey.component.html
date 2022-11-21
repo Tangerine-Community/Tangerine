@@ -1,5 +1,17 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div style="margin-left: 15px;">
+  <p>
+    Instructions: <br/>
+    Click the
+    <span>
+      <button class="unpublish-button">
+        <i class="material-icons tangy-location-list-icon">unpublish</i>
+      </button>
+    </span>
+    button to "Un-publish" an online survey.
+  </p>
 
+</div>
 <h2 class="tangy-foreground-secondary">{{'Published Surveys'|translate}}</h2>
 <mat-list class="drag-list">
   <mat-list-item class="drag-item" *ngFor="let form of publishedSurveys; let index=index">
@@ -7,15 +19,16 @@
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
  
-    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button (click)="unPublishSurvey(form.id)">
-        <i class="material-icons mat-32 tangy-location-list-icon">unpublish</i>
-    </button>
+
+    <span>{{form.updatedOn|date :'medium'}}
     </span>
 
-    <span >{{form.updatedOn|date :'medium'}}
+    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'" style="width: 5em">
+      <button mat-icon-button (click)="unPublishSurvey(form.id)">
+        <i class="material-icons mat-32 tangy-location-list-icon">unpublish</i>
+      </button>
     </span>
-    <span class="link"><a href="/releases/prod/online-survey-apps/{{group._id}}/{{form.id}}/#/form/{{form.id}}" target="_new"> <i class="material-icons mat-32 tangy-location-list-icon">link</i>link</a></span>
+    <span class="link"><a href="/releases/prod/online-survey-apps/{{group._id}}/{{form.id}}/#/form/{{form.id}}" target="_new"> <i class="material-icons mat-32 tangy-location-list-icon">link</i></a></span>
   </mat-list-item>
 </mat-list>
 
