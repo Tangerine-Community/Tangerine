@@ -6,6 +6,14 @@ __NEW Features__
 - New configuration parameter: `T_LIMIT_NUMBER_OF_CHANGES` - Number of change docs from the Couchdb changes feed queried 
   by reporting-worker (i.e. use as the limit parameter). Default: 200.
 - Added volume mapping for translations dir in start script. 
+- A new `mysql-js` module replaces the old `mysql` module. The new `mysql-js` module is faster and more accurate than 
+  the old `mysql` module. It no longer uses an intermediate "group-uuid-mysql" couchdb; instead, it reads from the _changes feed and writes directly to a 
+  MySql database. To use the new module, add `mysql-js` to the T_MODULES list of modules and configure the following settings:
+  - T_MYSQL_CONTAINER_NAME="mysql" # Either the name of the mysql Docker container or the hostname of a mysql server or AWS RDS Mysql instance.
+  - T_MYSQL_USER="admin" # Username for mysql credentials
+  - T_MYSQL_PASSWORD="password" # Password for mysql credentials
+  - T_USE_MYSQL_CONTAINER="true" # If using a Docker container, set to true. This will automatically start a mysql container 
+    when using a Tangerine launch script.
 
 __Fixes__
 - Student subtest report incorrect for custom logic inputs [#3464](https://github.com/Tangerine-Community/Tangerine/issues/3464)
