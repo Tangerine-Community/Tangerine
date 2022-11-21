@@ -6,7 +6,11 @@ span.mat-icon-button{
     margin: 0px 15px;
 }
 
-.unpublish-button{
+.unpublished-button {
+  margin-left: 2rem;
+}
+
+.info-button{
   /*width:5rem !important;*/
   padding: 0;
   min-width: 0;
@@ -15,4 +19,7 @@ span.mat-icon-button{
   line-height: 40px;
   border:none;
   background-color: transparent;
+}
+mat-list {
+  margin-bottom: 10px;
 }
