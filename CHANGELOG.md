@@ -1,5 +1,52 @@
 # What's new
 
+## v3.26.1
+
+__NEW Features__
+- New configuration parameter: `T_LIMIT_NUMBER_OF_CHANGES` - Number of change docs from the Couchdb changes feed queried 
+  by reporting-worker (i.e. use as the limit parameter). Default: 200.
+- Added volume mapping for translations dir in start script. 
+- A new `mysql-js` module replaces the old `mysql` module. Documentation is [here](https://docs.tangerinecentral.org/system-administrator/mysql-js/). 
+  The new `mysql-js` module is faster and more accurate than the old `mysql` module. It no longer uses an intermediate 
+  "group-uuid-mysql" couchdb; instead, it reads from the _changes feed and writes directly to a 
+  MySql database. To use the new module, add `mysql-js` to the T_MODULES list of modules and configure the following settings:
+  - T_MYSQL_CONTAINER_NAME="mysql" # Either the name of the mysql Docker container or the hostname of a mysql server or AWS RDS Mysql instance.
+  - T_MYSQL_USER="admin" # Username for mysql credentials
+  - T_MYSQL_PASSWORD="password" # Password for mysql credentials
+  - T_USE_MYSQL_CONTAINER="true" # If using a Docker container, set to true. This will automatically start a mysql container 
+    when using a Tangerine launch script.
+
+__Fixes__
+- Student subtest report incorrect for custom logic inputs [#3464](https://github.com/Tangerine-Community/Tangerine/issues/3464)
+- Init paid-worker file when server restarted. 
+- Fix bug in start.sh script for --link option
+- Rename T_REBUILD_MYSQL_DBS to T_ONLY_PROCESS_THESE_GROUPS. Configure T_REBUILD_MYSQL_DBS to list group databases to be 
+  skipped when processing data through modules such as mysql and csv.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.26.1
+./start.sh v3.26.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.26.0
+```
+
 ## v3.26.0
 
 __NEW Features__
