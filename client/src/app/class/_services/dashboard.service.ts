@@ -183,7 +183,7 @@ export class DashboardService {
     let totalIncorrect = 0;
     let totalCorrect = 0;
     let maxValueAnswer = 0;
-    let scorePercentageCorrect = 0;
+    let scorePercentageCorrect;
     let duration = 0;
     let prototype = 0;
     let usingScorefield = null;
@@ -258,7 +258,12 @@ export class DashboardService {
             totalMax = ++totalMax;
           }
           data[input.name] = value;
-
+          if (!score) {
+            score = 0
+          }
+          if (!max) {
+            max = 0
+          }
           data['score'] = score;
           data['max'] = max;
           answeredQuestions.push(data);
@@ -320,7 +325,7 @@ export class DashboardService {
 
           if (typeof scorePercentageCorrect === 'undefined') {
             // Auto-calculate scores for tangy form items that don't use _score or are not tangy-timed grids.
-            const totalAnswers = item.inputs.length;
+            // const totalAnswers = item.inputs.length;
             // calculate the total score manually.
             for (const answer of answeredQuestions) {
               // let value = answer[element.name];
@@ -330,7 +335,10 @@ export class DashboardService {
               maxValueAnswer = maxValueAnswer + max;
             }
             score = totalCorrect;
-            scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
+            scorePercentageCorrect = customScore ? customScore : Math.round(totalCorrect / maxValueAnswer * 100);
+            if (customScore) {
+              maxValueAnswer = 100
+            }
           }
         }
       }
@@ -448,7 +456,7 @@ export class DashboardService {
             classGroupReportMax = max;
           }
           const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
-          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore :studentResponse.scorePercentageCorrect;
+          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
           const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
