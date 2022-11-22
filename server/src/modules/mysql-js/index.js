@@ -24,11 +24,6 @@ module.exports = {
   connection: null,
   hooks: {
     boot: async function(data) {
-      // const groups = await groupsList()
-      // for (groupId of groups) {
-      //   const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-      //   // startTangerineToMySQL(pathToStateFile)
-      // }
       return data
     },
     enable: async function() {
@@ -36,9 +31,6 @@ module.exports = {
       for (let i = 0; i < groups.length; i++) {
         const groupId = groups[i]
         await initializeGroupForMySQL(groupId)
-        await createGroupDatabase(groupId, '-mysql')
-        await createGroupDatabase(groupId, '-mysql-sanitized')
-        // MySQL T_MYSQL_CONTAINER_NAME
         const knex = require('knex')({
           client: 'mysql2',
           connection: {
@@ -279,23 +271,6 @@ async function initializeGroupForMySQL(groupId) {
     console.log(e)
   }
   console.log(`Created mysql db ${mysqlDbName}`)
-  console.log('Creating tangerine to mysql state file...')
-  const state = `[TANGERINE]
-DatabaseURL = http://couchdb:5984/
-DatabaseName = ${groupId}-mysql
-DatabaseUserName = ${process.env.T_COUCHDB_USER_ADMIN_NAME} 
-DatabasePassword = ${process.env.T_COUCHDB_USER_ADMIN_PASS} 
-LastSequence = 0
-
-[MySQL]
-HostName = mysql 
-DatabaseName = ${mysqlDbName} 
-UserName = ${process.env.T_MYSQL_USER} 
-Password = ${process.env.T_MYSQL_PASSWORD} 
-  `
-  const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-  await fs.writeFile(pathToStateFile, state)
-  console.log('Created tangerine to mysql state file.')
 }
 
 const getItemValue = (doc, variableName) => {
