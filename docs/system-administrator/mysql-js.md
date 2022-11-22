@@ -8,10 +8,11 @@ Important! If __reenabling__ the mysql module, remove the mysql folder: `rm -r d
 Ensure the variables from the `MySQL` section are in your customized `config.sh` file. 
 
 # Mysql
-#T_MYSQL_CONTAINER_NAME="mysql"
-#T_MYSQL_CONTAINER_NAME=""
-#T_MYSQL_USER=""
-#T_MYSQL_PASSWORD=""
+- T_MYSQL_CONTAINER_NAME="mysql" # Either the name of the mysql Docker container or the hostname of a mysql server or AWS RDS MySQL instance.
+- T_MYSQL_USER="admin" # Username for mysql credentials
+- T_MYSQL_PASSWORD="password" # Password for mysql credentials
+- T_USE_MYSQL_CONTAINER="true" # If using a Docker container, set to true. This will automatically start a mysql container
+  when using a Tangerine launch script.
 
 ### Step 2
 Ensure the `T_MYSQL_PASSWORD` variable is set to a sufficiently secure string. Failure to properly secure this password will __without a doubt__ result in ransomware bots hacking your database.
