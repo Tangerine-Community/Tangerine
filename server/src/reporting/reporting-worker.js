@@ -127,6 +127,7 @@ async function addGroup(group) {
   log.info(`Add group to reporting worker state: ${group._id}`)
   // Something may have paused the process like clearing cache.
   while (await isPaused()) {
+    log.info(`Pausing reporting-worker for ${REPORTING_WORKER_PAUSE_LENGTH} ms.`)
     await sleep(REPORTING_WORKER_PAUSE_LENGTH)
   }
   await setWorkingFlag()
@@ -143,6 +144,7 @@ async function addGroup(group) {
  */
 
 async function batch() {
+  let workerState;
   try {
     // Something may have paused the process like clearing cache.
     while (await isPaused()) {
@@ -151,19 +153,22 @@ async function batch() {
     await setWorkingFlag()
     // Now it's safe to get the state.
     workerState = await getWorkerState()
-    workerState = Object.assign({} , defaultState, workerState)
+    workerState = Object.assign({}, defaultState, workerState)
+    if (process.env.T_LIMIT_NUMBER_OF_CHANGES) {
+      workerState.batchSizePerDatabase = process.env.T_LIMIT_NUMBER_OF_CHANGES
+    }
     const DB = PouchDB.defaults(workerState.pouchDbDefaults)
     const startTime = new Date().toISOString()
     let processed = 0
     let onlyProcessTheseGroups = []
-    if (process.env.T_REBUILD_MYSQL_DBS && process.env.T_REBUILD_MYSQL_DBS !== '') {
-      onlyProcessTheseGroups = process.env.T_REBUILD_MYSQL_DBS
-        ? JSON.parse(process.env.T_REBUILD_MYSQL_DBS.replace(/\'/g, `"`))
+    if (process.env.T_ONLY_PROCESS_THESE_GROUPS && process.env.T_ONLY_PROCESS_THESE_GROUPS !== '') {
+      onlyProcessTheseGroups = process.env.T_ONLY_PROCESS_THESE_GROUPS
+        ? JSON.parse(process.env.T_ONLY_PROCESS_THESE_GROUPS.replace(/\'/g, `"`))
         : []
-      // log.info('onlyProcessTheseGroups from T_REBUILD_MYSQL_DBS: ' + onlyProcessTheseGroups)
+      // log.info('onlyProcessTheseGroups from T_ONLY_PROCESS_THESE_GROUPS: ' + onlyProcessTheseGroups)
     }
     // Process batch.
-    for (let database of workerState.databases) { 
+    for (let database of workerState.databases) {
       let processGroup = false
       if (onlyProcessTheseGroups.length === 0 || onlyProcessTheseGroups.includes(database.name)) {
         processGroup = true
@@ -178,7 +183,7 @@ async function batch() {
           include_docs: false
         })
         if (changes.results.length > 0) {
-          log.debug("Processing a batch from change seq: " + database.sequence + " with a batchSizePerDatabase of " + workerState.batchSizePerDatabase)
+          log.debug("Processing a batch of " + changes.results.length + " changes from seq: " + database.sequence + " with a batchSizePerDatabase of " + workerState.batchSizePerDatabase)
           for (let change of changes.results) {
             try {
               await changeProcessor(change, db)
@@ -216,8 +221,8 @@ async function batch() {
         }
       }
     }
-    
-  } catch(e) {
+
+  } catch (e) {
     console.error(e)
   }
 }
