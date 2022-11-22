@@ -72,7 +72,7 @@ export class CaseBreadcrumbComponent implements OnInit {
   }
 
   async onCloseClick() {
-    this.caseService.onCaseClose()
+    await this.caseService.onCaseClose()
     this.router.navigate(['/'])
   }
 
