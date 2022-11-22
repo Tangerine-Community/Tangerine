@@ -28,8 +28,8 @@ export class EventFormDefinition {
   allowDeleteIfFormNotCompleted?:string
   allowDeleteIfFormNotStarted?:string
 
-  onEventOpen?:string
-  onEventClose?:string
+  onEventFormOpen?:string
+  onEventFormClose?:string
 
   constructor() {
   }
