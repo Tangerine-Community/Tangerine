@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const PouchDB = require('pouchdb')
 const log = require('tangy-log').log
-const changeProcessor = require('./data-processing').changeProcessor;
+const changeProcessor = require('../data-processing').changeProcessor;
 const defaultState = { 
   "tally": 0, 
   "processed": 0,
