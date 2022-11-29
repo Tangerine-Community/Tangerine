@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v3.7.3
+FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-1
 
 RUN git config --global url."https://".insteadOf git://
 
@@ -30,15 +30,15 @@ ENV T_PROTOCOL http
 ENV T_RUN_MODE production
 
 # Install mysql integration dependencies.
-RUN apt-get update && apt-get install -y python3-pip
-ADD ./server/src/modules/mysql/install-dependencies.sh /tangerine/server/src/modules/mysql/install-dependencies.sh
-RUN cd /tangerine/server/src/modules/mysql && \
-    ./install-dependencies.sh
+#RUN apt-get update && apt-get install -y python3-pip
+#ADD ./server/src/modules/mysql/install-dependencies.sh /tangerine/server/src/modules/mysql/install-dependencies.sh
+#RUN cd /tangerine/server/src/modules/mysql && \
+#    ./install-dependencies.sh
 
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
-    npm install
+    npm install --omit=dev
 
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json
@@ -48,22 +48,22 @@ RUN cd /tangerine/server && \
 # Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \
-    npm install
+    npm install --omit=dev
 
 # Install client.
 ADD client/package.json /tangerine/client/package.json
 RUN cd /tangerine/client/ && \
-    npm install
+    npm install --omit=dev
 
 # Install PWA tools.
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
 ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
 RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
-    npm install
+    npm install --omit=dev
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
 ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
 RUN cd /tangerine/client/pwa-tools/updater-app && \
-    npm install && \
+    npm install --omit=dev && \
     ./node_modules/.bin/bower install --allow-root
 
 # Build online-survey-app.
