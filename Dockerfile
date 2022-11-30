@@ -40,6 +40,15 @@ ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
     npm install --omit=dev
 
+# Install phantomjs
+COPY ./server/phantomjs-1.9.8-linux-x86_64.tar.bz2 /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2
+ENV PHANTOM_JS phantomjs-1.9.8-linux-x86_64
+RUN cd /tmp/ && tar xvjf $PHANTOM_JS.tar.bz2 && \
+    mv $PHANTOM_JS /usr/local/sbin/ && ln -sf /usr/local/sbin/$PHANTOM_JS/bin/phantomjs /usr/local/bin
+
+# This is a hack to make this old phantomjs work. But we probably don't need it, so considering commenting this out.
+ENV OPENSSL_CONF /dev/null
+
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
@@ -79,7 +88,7 @@ run cd /tangerine/client && \
 # Build editor.
 ADD editor /tangerine/editor
 RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
-RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
@@ -105,7 +114,7 @@ RUN cd /tangerine/server && \
 
 
 #
-# Wrap up 
+# Wrap up
 #
 
 ADD ./ /tangerine
@@ -115,4 +124,5 @@ RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
 
 EXPOSE 80
-ENTRYPOINT cd /tangerine/server/ && npm start 
+ENTRYPOINT cd /tangerine/server/ && npm start
+#CMD ["/bin/bash"]
