@@ -38,7 +38,7 @@ ENV T_RUN_MODE production
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
-    npm install --omit=dev
+    npm install
 
 # Install phantomjs
 COPY ./server/phantomjs-1.9.8-linux-x86_64.tar.bz2 /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -57,22 +57,22 @@ RUN cd /tangerine/server && \
 # Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \
-    npm install --omit=dev
+    npm install
 
 # Install client.
 ADD client/package.json /tangerine/client/package.json
 RUN cd /tangerine/client/ && \
-    npm install --omit=dev
+    npm install
 
 # Install PWA tools.
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
 ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
 RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
-    npm install --omit=dev
+    npm install
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
 ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
 RUN cd /tangerine/client/pwa-tools/updater-app && \
-    npm install --omit=dev && \
+    npm install && \
     ./node_modules/.bin/bower install --allow-root
 
 # Build online-survey-app.
