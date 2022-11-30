@@ -35,9 +35,12 @@ ENV T_RUN_MODE production
 #RUN cd /tangerine/server/src/modules/mysql && \
 #    ./install-dependencies.sh
 
+# workaround for "Error: error:0308010C:digital envelope routines::unsupported"
+# NODE_OPTIONS=--openssl-legacy-provider (below)
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
+    export NODE_OPTIONS=--openssl-legacy-provider && \
     npm install
 
 # Install phantomjs
@@ -78,11 +81,12 @@ RUN cd /tangerine/client/pwa-tools/updater-app && \
 # Build online-survey-app.
 ADD online-survey-app /tangerine/online-survey-app/
 RUN cd /tangerine/online-survey-app && \
+    export NODE_OPTIONS=--openssl-legacy-provider && \
     ./node_modules/.bin/ng build --base-href "./"
 
 # build client.
-add client /tangerine/client
-run cd /tangerine/client && \
+ADD client /tangerine/client
+RUN cd /tangerine/client && \
     ./node_modules/.bin/ng build --base-href "./"
 
 # Build editor.
