@@ -1,4 +1,3 @@
-/// <reference types="cordova-plugin-file" />
 import { Component, OnInit } from '@angular/core';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
@@ -58,14 +57,13 @@ export class MaintenanceComponent implements OnInit {
     this.processMonitorService.stop(process.id)
     // Camera and Microphone API.
     process = this.processMonitorService.start('permissionCheck', _TRANSLATE('Checking camera permission...'))
-    while ((await navigator.permissions.query({name:'camera'})).state !== 'granted') {
-      navigator.getUserMedia(
+    const permissionName = "camera" as PermissionName;
+    while ((await navigator.permissions.query({name:permissionName})).state !== 'granted') {
+      await navigator.mediaDevices.getUserMedia(
         {
-            video: true,
-            audio: true
-        },
-        function() { },
-        function() { }
+          video: true,
+          audio: true
+        }
       )
       await sleep(1*1000)
     }

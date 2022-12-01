@@ -29,7 +29,7 @@ import { Get } from 'tangy-form/helpers.js'
 import { FIRST_SYNC_STATUS } from './device/components/device-sync/device-sync.component';
 import { ProcessMonitorService } from './shared/_services/process-monitor.service';
 import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ActivityService } from './shared/_services/activity.service';
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
@@ -382,7 +382,7 @@ export class AppComponent implements OnInit {
       enableHighAccuracy: true
     };
     const queue = JSON.parse(localStorage.getItem('gpsQueue')) ? (JSON.parse(localStorage.getItem('gpsQueue'))) : null;
-    navigator.geolocation.getCurrentPosition((position: Position) => {
+    navigator.geolocation.getCurrentPosition((position) => {
       // Accuracy is in meters, a lower reading is better
       if (!queue || (typeof queue !== 'undefined' && ((position.timestamp - queue.timestamp) / 1000) >= 30) ||
         queue.accuracy >= position.coords.accuracy) {

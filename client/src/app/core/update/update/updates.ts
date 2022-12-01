@@ -15,7 +15,7 @@ export const updates = [
   {
     requiresViewsUpdate: true,
     script: (userDb) => {
-      return new Promise(resolve => {
+      return new Promise<void>(resolve => {
         console.log(`This update will never run :-).`);
         resolve();
       })
@@ -25,7 +25,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: (userDb) => {
-      return new Promise(async resolve => {
+      return new Promise<void>(async resolve => {
         let res = await userDb.allDocs({include_docs: true})
         let responseDocs = res.rows
           .map(row => row.doc )
@@ -91,7 +91,7 @@ export const updates = [
   {
     requiresViewsUpdate: false,
     script: (userDb) => {
-      return new Promise(async resolve => {
+      return new Promise<void>(async resolve => {
         let res = await userDb.allDocs({include_docs: true})
         let responseDocs = res.rows
           .map(row => row.doc )

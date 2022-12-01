@@ -2,7 +2,7 @@ import { VariableService } from './_services/variable.service';
 import { LockBoxService } from './_services/lock-box.service';
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { AppConfigService } from './_services/app-config.service';
 import { UserService } from './_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -25,10 +25,10 @@ import { CreateProfileGuardService } from './_guards/create-profile-guard.servic
 import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
 import { SearchService } from './_services/search.service';
 import { FormTypesService } from './_services/form-types.service';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { ProcessMonitorDialogComponent } from './_components/process-monitor-dialog/process-monitor-dialog.component';
 import { ProcessMonitorService } from './_services/process-monitor.service';
-import { MatButtonModule } from '@angular/material/button';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
