@@ -39,7 +39,7 @@ export class PeersService {
   }
 
   sleep(milliseconds) {
-    return new Promise((res, rej) => {
+    return new Promise<void>((res, rej) => {
       setTimeout(() => {
         res()
         console.log('done')

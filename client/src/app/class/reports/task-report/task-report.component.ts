@@ -6,7 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {DashboardService} from '../../_services/dashboard.service';
 import {StudentResult} from '../student-grouping-report/student-result';
 import {ClassGroupingReport} from '../student-grouping-report/class-grouping-report';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import {_TRANSLATE} from '../../../shared/translation-marker';
 import {TangyFormService} from '../../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';

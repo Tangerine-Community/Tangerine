@@ -1,8 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "skipLibCheck": true,
     "outDir": "../out-tsc/app",
-    "types": [ "cordova", "cordova-plugin-file"]
+    "types": ["cordova", "cordova-plugin-file"]
   },
   "files": [
     "main.ts",

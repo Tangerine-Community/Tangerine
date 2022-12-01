@@ -118,7 +118,7 @@ export class SyncMediaService {
       let statusMessage
       try {
         statusMessage = await this.uploadFile(file, this.appConfig, md5)
-        await new Promise(resolve => {
+        await new Promise<void>(resolve => {
           (fileEntry as FileEntry).remove(resolve)
         });
       } catch (e) {

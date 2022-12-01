@@ -10,7 +10,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CasesService } from './../../services/cases.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CaseService } from '../../services/case.service';
-import { Route } from '@angular/compiler/src/core';
 import * as moment from 'moment';
 import { diffTemplate } from './diff-template';
 import { Marked } from '@ts-stack/markdown';

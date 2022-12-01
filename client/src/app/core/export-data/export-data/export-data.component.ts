@@ -101,7 +101,7 @@ export class ExportDataComponent implements OnInit {
       for (const dbName of dbNames) {
         // copy the database
         console.log(`copying ${dbName} db over to the user accessible fs`)
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         this.window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory + 'databases/' + dbName, (fileEntry) => {
           this.window.resolveLocalFileSystemURL(backupLocation, (directory) => {
             fileEntry.copyTo(directory, dbName, () => {

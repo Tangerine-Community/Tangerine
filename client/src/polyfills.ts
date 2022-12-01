@@ -59,8 +59,8 @@ import 'date-carousel/date-carousel.js'
 
 // Fix for the way Angular builds pouchdb https://github.com/pouchdb/pouchdb/issues/7299
 // Also probably fixes other things that try to use node process global.
-import * as process from 'process';
-(window as any).process = process
+// https://github.com/pouchdb/pouchdb/issues/7263#issuecomment-388871626
+(window as any).process = {};
 
 
 //import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';

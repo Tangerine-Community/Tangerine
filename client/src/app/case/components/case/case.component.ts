@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import { CaseEvent } from '../../classes/case-event.class';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Subscription } from 'rxjs';
 
 class CaseEventInfo {
