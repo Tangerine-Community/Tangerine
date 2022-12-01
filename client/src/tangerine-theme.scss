@@ -4,8 +4,15 @@
 
 @include mat.core();
 
-
-$tangerine-app-theme: mat.define-light-theme($tangerine-app-primary, $tangerine-app-accent, $tangerine-app-warn);
-
+//$tangerine-app-theme: mat.define-light-theme($tangerine-app-primary, $tangerine-app-accent, $tangerine-app-warn);
+$tangerine-app-theme: mat.define-light-theme(
+    (
+      color: (
+        primary:$tangerine-app-primary,
+        accent:$tangerine-app-accent,
+        warn:$tangerine-app-warn
+      )
+    )
+);
 
 @include mat.all-component-themes($tangerine-app-theme);

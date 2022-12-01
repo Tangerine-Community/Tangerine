@@ -23,7 +23,8 @@
               "immediate",
               "uuid",
               "argsarray",
-              "vuvuzela"
+              "vuvuzela",
+              "events"
             ],
             "aot": true,
             "outputPath": "dist/tangerine-client",
@@ -78,7 +79,18 @@
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
             },
             "development": {
               "buildOptimizer": false,
@@ -100,7 +112,7 @@
               "browserTarget": "tangerine-client:build:production"
             },
             "development": {
-              "browserTarget": "hello-world-project:build:development"
+              "browserTarget": "tangerine-client:build:development"
             }
           }
         },
