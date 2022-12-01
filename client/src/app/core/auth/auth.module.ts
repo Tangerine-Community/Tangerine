@@ -9,19 +9,21 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { SharedModule } from '../../shared/shared.module';
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AuthRoutingModule,
-    SharedModule
-  ],
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatButtonModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        AuthRoutingModule,
+        SharedModule,
+        MatIconModule
+    ],
   declarations: [LoginComponent, RegistrationComponent]
 })
 export class AuthModule { }

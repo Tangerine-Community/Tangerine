@@ -14,26 +14,20 @@
 <div *ngIf="installed" class="login-app-content container">
   <div class="group content-inner">
     <form role="form" #login='ngForm' novalidate>
-      <mat-form-field *ngIf="listUsernamesOnLoginScreen">
+      <mat-form-field *ngIf="listUsernamesOnLoginScreen" appearance="fill">
         <mat-label>{{'Select your Username'|translate}}</mat-label>
         <select matNativeControl [(ngModel)]="user.username" name="user">
           <option value="" selected></option>
           <option *ngFor="let username of allUsernames" [value]="username">{{username}}</option>
         </select>
       </mat-form-field>
-      <mat-form-field *ngIf="!listUsernamesOnLoginScreen">
+      <mat-form-field *ngIf="!listUsernamesOnLoginScreen" appearance="fill">
+        <mat-label><mat-icon matSuffix>face</mat-icon>  {{'Username'|translate}}</mat-label>
         <input matInput type="text" required [(ngModel)]="enteredPassword" id="username" name="username">
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">face</i>
-          <span>{{'Username'|translate}}</span>
-        </mat-placeholder>
       </mat-form-field>
-      <mat-form-field *ngIf="!showRecoveryInput && !noPassword">
+      <mat-form-field *ngIf="!showRecoveryInput && !noPassword" appearance="fill">
+        <mat-label><mat-icon matSuffix>lock_open</mat-icon>  {{'Password'|translate}}</mat-label>
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>
-          <span>{{'Password'|translate}}</span>
-        </mat-placeholder>
       </mat-form-field>
       <div *ngIf="showRecoveryInput">
         <mat-form-field *ngIf="requiresAdminPassword === true">

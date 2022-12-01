@@ -18,32 +18,36 @@
           <i class="material-icons app-input-icon">lock_open</i>{{'Admin Password'|translate}}
         </mat-placeholder>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field appearance="fill" floatLabel="always">
+        <mat-label><mat-icon matSuffix>face</mat-icon>  {{'Username'|translate}}</mat-label>
         <input name="username" type="text" matInput [(ngModel)]="userSignup.username" (blur)="doesUserExist(userSignup.username)" required>
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">face</i>{{'Username'|translate}}
-        </mat-placeholder>
+<!--        <mat-placeholder>-->
+<!--          <i class="material-icons app-input-icon">face</i>{{'Username'|translate}}-->
+<!--        </mat-placeholder>-->
       </mat-form-field>
       <br>
-      <mat-form-field *ngIf="!noPassword">
+      <mat-form-field *ngIf="!noPassword" appearance="fill" floatLabel="always">
+        <mat-label><mat-icon matSuffix>lock_open</mat-icon>  {{'Password'|translate}}</mat-label>
         <input name="password" matInput [(ngModel)]="userSignup.password" type="password" required>
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}
-        </mat-placeholder>
+<!--        <mat-placeholder>-->
+<!--          <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}-->
+<!--        </mat-placeholder>-->
       </mat-form-field>
       <br>
-      <mat-form-field *ngIf="!noPassword">
+      <mat-form-field *ngIf="!noPassword" appearance="fill" floatLabel="always">
+        <mat-label><mat-icon matSuffix>lock_open</mat-icon>  {{'Confirm Password'|translate}}</mat-label>
         <input name="confirmPassword" matInput [(ngModel)]="userSignup.confirmPassword" type="password" required>
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}
-        </mat-placeholder>
+<!--        <mat-placeholder>-->
+<!--          <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}-->
+<!--        </mat-placeholder>-->
       </mat-form-field>
       <br>
-      <mat-form-field *ngIf="!noPassword">
+      <mat-form-field *ngIf="!noPassword" appearance="fill" floatLabel="always">
+        <mat-label><mat-icon matSuffix>security</mat-icon>  {{securityQuestionText}}</mat-label>
         <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="userSignup.securityQuestionResponse" required>
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">security</i>{{securityQuestionText}}
-        </mat-placeholder>
+<!--        <mat-placeholder>-->
+<!--          <i class="material-icons app-input-icon">security</i>{{securityQuestionText}}-->
+<!--        </mat-placeholder>-->
       </mat-form-field>
       <br>
       <button [disabled]="disableSubmit" mat-raised-button color="accent" (click)="register()">{{'SUBMIT'|translate}}</button>

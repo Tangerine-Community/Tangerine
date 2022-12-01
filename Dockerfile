@@ -91,7 +91,9 @@ RUN cd /tangerine/client && \
 
 # Build editor.
 ADD editor /tangerine/editor
-RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+RUN cd /tangerine/editor && \
+    export NODE_OPTIONS=--openssl-legacy-provider && \
+    ./node_modules/.bin/ng build --base-href "./"
 RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 
 # Build PWA tools.
@@ -126,7 +128,7 @@ ADD ./ /tangerine
 RUN mkdir /csv
 RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
-
+ENV NODE_OPTIONS "--openssl-legacy-provider"
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && npm start
 #CMD ["/bin/bash"]
