@@ -12,7 +12,7 @@
 <!--    </mat-card-actions>-->
 <!--  </mat-card>-->
   
-  <mat-card class="maintenance-card" *ngIf="isCordovaApp">
+  <mat-card appearance="outlined" class="maintenance-card" *ngIf="isCordovaApp">
     <mat-card-title>{{'Cleanup Files'|translate}}</mat-card-title>
     <mat-card-content>
       <p>{{'This will delete any backups on this tablet that are in the "backup" or "restore" directories. Be sure you have transferred them before doing this procedure.'|translate}}</p>
@@ -26,7 +26,7 @@
     </mat-card-actions>
   </mat-card>
   
-  <mat-card class="maintenance-card" *ngIf="!isCordovaApp">
+  <mat-card appearance="outlined" class="maintenance-card" *ngIf="!isCordovaApp">
     <mat-card-title>{{'Check Permissions'|translate}}</mat-card-title>
     <mat-card-content>
       <p>{{'Confirms that the app has the correct permissions to support using the camera and location.' |translate}}</p>

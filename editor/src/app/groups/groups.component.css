@@ -7,6 +7,7 @@
 span.tangy-foreground-secondary {
   padding-top: 0.3rem;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
 mat-card {
   width: 70%;
 }
@@ -18,6 +19,7 @@ mat-card {
 .group-avatar {
   font-size: 350%;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
 mat-card-title a {
   text-decoration: none;
   color: var(--tertiary-color);
@@ -25,7 +27,8 @@ mat-card-title a {
 .tangy-page-title {
   margin-left: 2%;
 }
-mat-card.mat-card {
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+mat-card.mat-mdc-card {
   background-color: var(--accent-text-color);
 }
 .tangy-foreground-secondary {

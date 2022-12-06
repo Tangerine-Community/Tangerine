@@ -1,4 +1,4 @@
-.mat-table-sticky:last-child {
+.mat-mdc-table-sticky:last-child {
   border-left: 1px solid #e0e0e0;
   width:50px;
 }
@@ -28,11 +28,11 @@ mat-cell, mat-header-cell {
   overflow-x: scroll;
 }
 
-.mat-table {
+.mat-mdc-table {
   width: 100%;
   /*margin-left: 5px;*/
 }
 
-.mat-header-cell, .mat-cell {
+.mat-mdc-header-cell, .mat-mdc-cell {
   padding-left: 5px;
 }

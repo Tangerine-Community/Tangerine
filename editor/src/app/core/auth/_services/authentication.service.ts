@@ -73,13 +73,13 @@ export class AuthenticationService {
     const jwtData = jwt_decode(token);
     document.cookie = "Authorization=;max-age=-1";
     localStorage.setItem('token', token);
-    localStorage.setItem('user_id', jwtData.username);
-    localStorage.setItem('permissions', JSON.stringify(jwtData.permissions));
+    localStorage.setItem('user_id', jwtData['username']);
+    localStorage.setItem('permissions', JSON.stringify(jwtData['permissions']));
     document.cookie = `Authorization=${token}`;
     const user = await this.userService.getMyUser();
     window['userProfile'] = user;
     window['userId'] = user._id;
-    window['username'] = jwtData.username;
+    window['username'] = jwtData['username'];
   }
   async getPermissionsList() {
     try {

@@ -1,21 +1,18 @@
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { UserService } from './../../../core/auth/_services/user.service';
-import { CommonModule } from '@angular/common';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { IssueEventType, IssueStatus } from './../../classes/issue.class';
 import { Issue } from '../../classes/issue.class';
-import { Router, ActivatedRoute } from '@angular/router';
-import { CasesService } from './../../services/cases.service';
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CaseService } from '../../services/case.service';
-import { Route } from '@angular/compiler/src/core';
 import moment from 'moment';
 import { diffTemplate } from './diff-template';
 import { Marked } from '@ts-stack/markdown';
 import {Conflict} from "../../classes/conflict.class";
 import { conflictTemplate } from './conflict-template';
-import { diffString, diff } from 'json-diff';
+import { diff } from 'json-diff';
 import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.component";
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 

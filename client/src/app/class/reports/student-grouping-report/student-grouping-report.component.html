@@ -10,7 +10,7 @@
 </mat-menu>
 </mat-toolbar>
 
-  <mat-card class="tangy-card-content-container" *ngIf="ready">
+  <mat-card appearance="outlined" class="tangy-card-content-container" *ngIf="ready">
     <div id="overview">
       <h2 title="{{'Student Grouping'|translate}}">{{'Student Grouping'|translate}}: {{classGroupReport?.subtestName}}</h2>
       <div class="flexbox-horizontal-container">
@@ -92,7 +92,7 @@
       </div>
       <div #feedback id="feedback" *ngIf="classGroupReport?.studentsAssessed > 0">
         <div #feedbackMessage id="feedback-message">
-          <mat-card  *ngIf="classGroupReport?.feedback">
+          <mat-card appearance="outlined"  *ngIf="classGroupReport?.feedback">
             <mat-card-title>{{'Feedback'|translate}}</mat-card-title>
             <mat-card-content>
               <h3>{{tNumber(classGroupReport?.feedback?.percentileRange)}} {{'Percentile'|translate}}</h3>
@@ -101,7 +101,7 @@
           </mat-card>
         </div>
         <div id="feedback-instructions">
-          <mat-card  *ngIf="!classGroupReport?.feedback">
+          <mat-card appearance="outlined"  *ngIf="!classGroupReport?.feedback">
             <mat-card-title>{{'Feedback'|translate}}</mat-card-title>
             <mat-card-content>
               <span>{{'Click on a percentile to view related feedback.'|translate}}</span>

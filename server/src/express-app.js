@@ -1,32 +1,16 @@
 /* jshint esversion: 6 */
 
-const util = require('util');
-const http = require('axios');
-const read = require('read-yaml')
 const express = require('express')
-var session = require("express-session")
 const bodyParser = require('body-parser');
 const path = require('path')
 const fs = require('fs-extra')
-const pathExists = require('fs-extra').pathExists
 const fsc = require('fs')
-const readFile = util.promisify(fsc.readFile);
-const writeFile = util.promisify(fsc.writeFile);
-const unlink = util.promisify(fsc.unlink)
-const sanitize = require('sanitize-filename');
-const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pouchRepStream = require('pouchdb-replication-stream');
 PouchDB.plugin(require('pouchdb-find'));
 PouchDB.plugin(pouchRepStream.plugin);
 PouchDB.adapter('writableStream', pouchRepStream.adapters.writableStream);
-const pako = require('pako')
 const compression = require('compression')
-const chalk = require('chalk');
-const pretty = require('pretty')
-const flatten = require('flat')
-const json2csv = require('json2csv')
-const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
@@ -34,11 +18,7 @@ const multer = require('multer')
 const upload = multer({ dest: '/tmp-uploads/' })
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 var newGroupQueue = []
-let crypto = require('crypto');
-const junk = require('junk');
 const cors = require('cors')
-const sep = path.sep;
-const exec = util.promisify(require('child_process').exec)
 const tangyModules = require('./modules/index.js')()
 const { extendSession, findUserByUsername,
    USERS_DB, login, getSitewidePermissionsByUsername,
@@ -50,11 +30,7 @@ const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, ge
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 const cookieParser = require('cookie-parser');
-const MemoryStream = require("memorystream");
 const { getPermissionsList } = require('./permissions-list.js');
-const {AppContext} = require("../../editor/src/app/app-context.enum");
-const PACKAGENAME = "org.rti.tangerine"
-const APPNAME = "Tangerine"
 const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
 const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
 const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');

@@ -1,6 +1,6 @@
 <div *ngIf="ready">
   <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-  <mat-card *appHasAPermission="let i;group:group._id; permission:'can_access_author'" class="mat-elevation-z3" routerLink="author">
+  <mat-card appearance="outlined" *appHasAPermission="let i;group:group._id; permission:'can_access_author'" class="mat-elevation-z3" routerLink="author">
     <mat-card-header>
         <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">edit</i>
         </div>
@@ -10,7 +10,7 @@
         <mat-card-subtitle>Manage forms, case definitions, and media assets.</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-  <mat-card *appHasAPermission="let i;group:group._id; permission:'can_access_data'" class="mat-elevation-z3" routerLink="data">
+  <mat-card appearance="outlined" *appHasAPermission="let i;group:group._id; permission:'can_access_data'" class="mat-elevation-z3" routerLink="data">
     <mat-card-header>
         <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">list_alt</i>
         </div>
@@ -20,7 +20,7 @@
         <mat-card-subtitle>Browse uploaded data, download CSVs.</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-  <mat-card *appHasAllPermissions="let i;group:group._id; permissions:['can_access_configure']" class="mat-elevation-z3" routerLink="configure">
+  <mat-card appearance="outlined" *appHasAllPermissions="let i;group:group._id; permissions:['can_access_configure']" class="mat-elevation-z3" routerLink="configure">
     <mat-card-header>
         <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">settings_applications</i>
         </div>
@@ -30,7 +30,7 @@
         <mat-card-subtitle>Configure location information, sync settings, and more.</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-  <mat-card *appHasAllPermissions="let i;group:group._id; permissions:['can_access_deploy']" class="mat-elevation-z3" routerLink="deploy">
+  <mat-card appearance="outlined" *appHasAllPermissions="let i;group:group._id; permissions:['can_access_deploy']" class="mat-elevation-z3" routerLink="deploy">
     <mat-card-header>
         <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">phonelink_ring</i>
         </div>

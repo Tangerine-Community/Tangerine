@@ -1,4 +1,5 @@
-import {HttpService, Injectable} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
+import {HttpService} from "@nestjs/axios";
 const PouchDB = require('pouchdb')
 const dbDefaults = require('../../../../db-defaults')
 const replicationStream = require('pouchdb-replication-stream');

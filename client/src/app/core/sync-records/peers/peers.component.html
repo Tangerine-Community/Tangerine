@@ -13,11 +13,11 @@
     <div id="transferProgress"></div>
     <div id="direction"></div>
     <div id="progress"></div>
-    <mat-chip-list class="mat-chip-list-stacked" aria-label="Endpoint selection">
-      <mat-chip id="endpoints" *ngFor="let endpoint of endpoints" (click)="connectToEndpoint(endpoint.id, endpoint.endpointName)">
+    <mat-chip-listbox class="mat-chip-list-stacked" aria-label="Endpoint selection">
+      <mat-chip-option id="endpoints" *ngFor="let endpoint of endpoints" (click)="connectToEndpoint(endpoint.id, endpoint.endpointName)">
         {{endpoint.endpointName}} : {{endpoint.status}}
-      </mat-chip>
-    </mat-chip-list>
+      </mat-chip-option>
+    </mat-chip-listbox>
   </div>
 
   <p>&nbsp;</p>

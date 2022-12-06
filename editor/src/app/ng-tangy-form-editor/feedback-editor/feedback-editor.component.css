@@ -8,6 +8,7 @@
   width: 100%;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
 form,
 mat-card-content > * {
   width: 80%;
@@ -19,13 +20,15 @@ mat-card-content > * {
   margin: 1em;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 #form-settings.mat-tab-label-active {
   background-color: #f1a167;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 #form-settings.mat-tab-labels {
   background-color: #64738c;
 }
-#form-settings.mat-dialog-container {
+#form-settings.mat-mdc-dialog-container {
   display: block;
    padding: 0px;
   border-radius: 4px;
@@ -40,16 +43,16 @@ mat-card-content > * {
 .add-feedback-button {
   margin: 1em;
 }
-.mat-table {
+.mat-mdc-table {
   width:100%;
 }
-tr.mat-header-row {
+tr.mat-mdc-header-row {
   height: 20px;
 }
-td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, th.mat-header-cell:first-of-type {
+td.mat-mdc-cell:first-of-type, td.mat-mdc-footer-cell:first-of-type, th.mat-mdc-header-cell:first-of-type {
    padding-left: 2px;
 }
-th.mat-header-cell:first-of-type {
+th.mat-mdc-header-cell:first-of-type {
   text-align: center;
 }
 .mat-column-operations {
@@ -76,6 +79,7 @@ th.mat-header-cell:first-of-type {
   vertical-align: top;
   padding-left: 5px;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .mat-tab-body-content {
   height: 100%;
    overflow: revert;

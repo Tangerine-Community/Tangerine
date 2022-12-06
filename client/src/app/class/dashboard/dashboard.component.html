@@ -59,7 +59,7 @@
   </span>
 </mat-toolbar>
 
-<mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
+<mat-card appearance="outlined" class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
     <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
 

@@ -5,9 +5,7 @@ import { debounceTime } from 'rxjs/operators';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Router } from '@angular/router';
-//import { SearchBarcodeComponent } from './search-barcode/search-barcode.component';
 import { t } from 'tangy-form/util/t.js'
-import { subscribeToPromise } from 'rxjs/internal-compatibility';
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [

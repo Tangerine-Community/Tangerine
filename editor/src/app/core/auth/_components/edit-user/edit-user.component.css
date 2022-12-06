@@ -2,8 +2,7 @@ form {
   margin: 20px;
 }
 
-:host() {
-
+:host {
   display: block;
   padding-right: 45px;
 }

@@ -14,7 +14,7 @@
   <button mat-raised-button color="warn" (click)="export()" [disabled]="isExporting">{{'Export Data Definition'|translate}}</button>
 </div>
 <div class="tangy-content tangy-full-width">
-  <mat-card>
+  <mat-card appearance="outlined">
     <mat-card-title>
       <div id="container" #container></div>
       <table class="card-title" *ngIf="myForm">

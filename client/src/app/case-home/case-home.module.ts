@@ -2,7 +2,7 @@ import { CaseReportsComponent } from './components/case-reports/case-reports.com
 import { CaseHomeDocs } from './case-home.docs';
 import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { SharedModule } from './../shared/shared.module';
 import { CaseHomeComponent } from './components/case-home/case-home.component';
 import { CaseHomeRoutingModule } from './case-home-routing.module';

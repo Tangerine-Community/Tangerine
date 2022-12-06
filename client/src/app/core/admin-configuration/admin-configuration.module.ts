@@ -6,7 +6,7 @@ import { AdminConfigurationComponent } from './admin-configuration/admin-configu
 import {SharedModule} from "../../shared/shared.module";
 import {HttpClientModule} from "@angular/common/http";
 import {SyncModule} from "../../sync/sync.module";
-import {MatLegacyCardModule as MatCardModule} from "@angular/material/legacy-card";
+import {MatCardModule} from "@angular/material/card";
 
 
 @NgModule({

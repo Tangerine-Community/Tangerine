@@ -1,5 +1,5 @@
 import { SyncSessionService } from './modules/sync/services/sync-session/sync-session.service';
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 const DB = require('./db')
 import { TangerineConfigService } from './shared/services/tangerine-config/tangerine-config.service';
 import { GroupService } from './shared/services/group/group.service';
@@ -7,6 +7,7 @@ import { TangerineConfig } from './shared/classes/tangerine-config';
 import { ModulesDoc } from './shared/classes/modules-doc.class';
 import createSitewideDatabase = require('./create-sitewide-database');
 import {spawn} from "child_process";
+import {HttpService} from "@nestjs/axios";
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
@@ -23,8 +24,8 @@ export class AppService {
   constructor(
     private readonly groupService:GroupService,
     private readonly configService: TangerineConfigService,
-    private readonly syncSessionService:SyncSessionService,
-    private readonly httpClient:HttpService
+    private readonly syncSessionService: SyncSessionService,
+    private readonly httpClient: HttpService,
   ) { }
 
   installed = false

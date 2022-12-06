@@ -6,10 +6,12 @@
   margin-left: 0px;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card {
   margin-top: 1em;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 .mat-card-header-text {
   margin: 1em 0;
   font-size: 24px;
@@ -19,7 +21,7 @@ mat-card {
 /*button {*/
 /*  margin-left: 1em;*/
 /*}*/
-.mat-progress-bar {
+.mat-mdc-progress-bar {
   margin-top: 1em;
   width: 50%
 }
@@ -38,15 +40,17 @@ div {
   font-weight: bold;
   color: red;
 }
+/*TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.*/
 mat-checkbox {
   margin-right: 2em;
 }
 mat-expansion-panel {
   width: 600px
 }
+/*TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.*/
 mat-radio-button {
   padding-left: 1em;
 }
-.mat-raised-button {
+.mat-mdc-raised-button {
   margin-left: 1em;
 }

@@ -43,11 +43,11 @@
 
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   height: 20px;
   padding-right: 1em
 }
 
-.mat-select {
+.mat-mdc-select {
   height: 20px;
 }

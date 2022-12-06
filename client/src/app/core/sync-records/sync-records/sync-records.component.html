@@ -2,9 +2,9 @@
   <app-sync-menu></app-sync-menu>
 </div>
 <div *ngIf="syncProtocol === '1' ">
-  <mat-card>
+  <mat-card appearance="outlined">
     <mat-card-content>
-      <p class="mat-headline">{{'Syncing Status Summary'|translate}}</p>
+      <p class="mat-headline-5">{{'Syncing Status Summary'|translate}}</p>
       <p>{{'This page will sync records first and any video files afterwards.'|translate}}</p>
       <h3>{{'Record Sync Progress'|translate}}</h3>
       <span *ngIf="isSyncSuccesful">{{'Sync Successful'|translate}}</span>
@@ -46,7 +46,7 @@
   </mat-card>
   <br>
   <br>
-  <p class="mat-headline">{{'Syncing Status By User'|translate}}</p>
+  <p class="mat-headline-5">{{'Syncing Status By User'|translate}}</p>
   <mat-accordion>
     <mat-expansion-panel *ngFor="let syncData of allUsersSyncData">
       <mat-expansion-panel-header>

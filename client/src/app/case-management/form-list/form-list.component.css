@@ -9,7 +9,7 @@
     font-weight: 700;
     font-size: 3rem;
   }
-  .mat-title {
+  .mat-headline-6 {
     color: #3c5b8d;
     font-size: 1.75em;
     font-weight: 400;
@@ -23,6 +23,7 @@
     top: 5px;
   }
   
+  /* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
   mat-list {
     display:block;
     width: 100%;

@@ -63,6 +63,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/axios": "^1.0.0",
     "@nestjs/common": "^9.2.1",
     "@nestjs/core": "^9.2.1",
     "axios": "^1.2.0",

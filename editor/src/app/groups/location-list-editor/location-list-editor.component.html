@@ -1,9 +1,9 @@
 <div class="header">
   <div>
-    <mat-chip-list>
-      <mat-chip [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
-        *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip>
-    </mat-chip-list>
+    <mat-chip-listbox>
+      <mat-chip-option [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
+        *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip-option>
+    </mat-chip-listbox>
   </div>
   <div class="button-row">
     <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!showLocationForm"

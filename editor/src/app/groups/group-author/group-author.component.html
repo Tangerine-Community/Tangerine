@@ -1,5 +1,5 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<mat-card class="is-link mat-elevation-z3" routerLink="forms" *appHasAPermission="let i;group:groupId; permission:'can_access_forms'">
+<mat-card appearance="outlined" class="is-link mat-elevation-z3" routerLink="forms" *appHasAPermission="let i;group:groupId; permission:'can_access_forms'">
   <mat-card-header>
       <div mat-card-avatar>
         <i class="material-icons tangy-foreground-secondary group-avatar">assignment</i>
@@ -11,7 +11,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="media-library" *appHasAPermission="let i;group:groupId; permission:'can_access_media'">
+<mat-card appearance="outlined" class="is-link mat-elevation-z3" routerLink="media-library" *appHasAPermission="let i;group:groupId; permission:'can_access_media'">
   <mat-card-header>
       <div mat-card-avatar>
         <i class="material-icons tangy-foreground-secondary group-avatar">perm_media</i>

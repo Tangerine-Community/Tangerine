@@ -1,10 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { NestExpressApplication } from '@nestjs/platform-express';
 const expressAppBootstrap = require('./express-app');
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create(AppModule);
   const httpAdapter = app.getHttpAdapter();
   const expressInstance = httpAdapter.getInstance()
   await expressAppBootstrap(expressInstance)

@@ -2,7 +2,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {DashboardService} from '../../_services/dashboard.service';
 import {_TRANSLATE} from '../../../shared/translation-marker';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ClassUtils} from '../../class-utils';
 import {ClassGroupingReport} from './class-grouping-report';
