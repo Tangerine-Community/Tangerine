@@ -1,4 +1,4 @@
-span.mat-icon-button{
+span.mat-mdc-icon-button{
     cursor: pointer;
 }
 
@@ -20,6 +20,7 @@ span.mat-icon-button{
   border:none;
   background-color: transparent;
 }
+/*TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.*/
 mat-list {
   margin-bottom: 10px;
 }

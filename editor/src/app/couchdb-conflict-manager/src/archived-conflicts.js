@@ -3,8 +3,8 @@ import * as Jsondiffpatch from 'jsondiffpatch'
 var jsondiffpatch = Jsondiffpatch.create({});
 
 
-import { LitElement, html } from 'lit-element'
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { LitElement, html } from 'lit'
+import { unsafeHTML } from 'lit/directives/unsafe-html';
 import { get } from './http.js';
 class ArchivedConflicts extends LitElement {
 

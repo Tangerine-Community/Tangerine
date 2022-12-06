@@ -1,10 +1,11 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SyncSession } from '../../classes/sync-session.class';
 import { TangerineConfigService } from '../../../../shared/services/tangerine-config/tangerine-config.service';
 import {v4 as UUID} from 'uuid'
 import { GroupService } from '../../../../shared/services/group/group.service';
 import { ClientUserService } from '../../../../shared/services/client-user/client-user.service';
 import { DbService } from '../../../../shared/services/db/db.service';
+import {HttpService} from "@nestjs/axios";
 const log = require('tangy-log').log
 
 interface HttpError {
@@ -16,7 +17,7 @@ interface HttpError {
 export class SyncSessionService {
 
   constructor(
-    private readonly http:HttpService,
+    private readonly http: HttpService,
     private readonly dbService:DbService,
     private readonly configService:TangerineConfigService,
     private readonly groupConfig:GroupService,

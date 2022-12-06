@@ -11,9 +11,19 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "form-data",
+              "json-diff",
+              "ua-parser-js",
+              "rangen"
+            ],
             "aot": true,
+            "customWebpackConfig": {
+              "path": "./custom-webpack.config.js",
+              "replaceDuplicatePlugins": true
+            },
             "outputPath": "dist/tangerine-editor",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -90,7 +100,7 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": false
             }
           }
         },

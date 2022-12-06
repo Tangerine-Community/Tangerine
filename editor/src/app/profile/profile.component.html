@@ -12,7 +12,7 @@
     <div class="mat-cell mat-cell--9-col mat-cell--12-col-tablet mat-cell--12-col-phone r-content">
         <div class="body-content">
             <div *ngIf="profile">
-                <mat-card mat-shadow="4" *ngIf="isPaid">
+                <mat-card appearance="outlined" mat-shadow="4" *ngIf="isPaid">
                     <mat-card-title [class.payment-highlight]="isPaid">
                         <h2 mat-card-title-text>Welcome!</h2>
                     </mat-card-title>
@@ -22,7 +22,7 @@
                         </div>
                     </mat-card-subtitle>
                 </mat-card>
-                <mat-card mat-shadow="4">
+                <mat-card appearance="outlined" mat-shadow="4">
                     <mat-card-title>
                         <h2 mat-card-title-text>Member</h2>
                     </mat-card-title>
@@ -39,7 +39,7 @@
                     </mat-card-subtitle>
                 </mat-card>
 
-                <mat-card mat-shadow="4">
+                <mat-card appearance="outlined" mat-shadow="4">
                     <mat-card-title>
                         <h2 mat-card-title-text>Site</h2>
                     </mat-card-title>
@@ -50,7 +50,7 @@
                     </div>
                     </mat-card-subtitle>
                 </mat-card>
-                <mat-card mat-shadow="4">
+                <mat-card appearance="outlined" mat-shadow="4">
                     <mat-card-title>
                         <h2 mat-card-title-text>Plan</h2>
                     </mat-card-title>

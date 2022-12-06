@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const util = require('util');
-const junk = require('junk');
+import junk from 'junk'
 const {
   doesUserExist,
   hashPassword,

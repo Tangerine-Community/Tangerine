@@ -9,6 +9,7 @@ h2 {
   margin: 0px 0px 20px 20px;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 mat-table {
   margin-bottom: 20px;
 }

@@ -59,3 +59,4 @@ scripts/apk-build.sh
 /site
 
 /.vscode
+editor/.angular

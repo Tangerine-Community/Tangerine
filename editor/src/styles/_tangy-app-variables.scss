@@ -1,4 +1,4 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
 
 /* For use in src/lib/core/theming/_palette.scss */
 // Generated color palettes at http://mcg.mbitson.com
@@ -68,6 +68,6 @@ $md-tangy-orange: (
   )
 );
 
-$tangerine-app-primary: mat-palette($md-tangy-blue, 500);
-$tangerine-app-accent: mat-palette($md-tangy-orange, 500);
-$tangerine-app-warn: mat-palette($mat-red);
+$tangerine-app-primary: mat.define-palette($md-tangy-blue, 500);
+$tangerine-app-accent: mat.define-palette($md-tangy-orange, 500);
+$tangerine-app-warn: mat.define-palette(mat.$red-palette);

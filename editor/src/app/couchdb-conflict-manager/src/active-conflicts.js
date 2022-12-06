@@ -1,9 +1,9 @@
 import { sharedStyles } from './shared-styles.js'
-import { LitElement, html } from 'lit-element'
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { LitElement, html } from 'lit'
 import * as Jsondiffpatch from 'jsondiffpatch'
 import PouchDB from 'pouchdb'
-var jsondiffpatch = Jsondiffpatch.create({});
+import {unsafeHTML} from "lit/directives/unsafe-html";
+const jsondiffpatch = Jsondiffpatch.create({});
 
 async function archiveConflicts(dbUrl, docId) {
   try {

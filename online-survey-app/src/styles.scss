@@ -207,7 +207,7 @@ div.more {
   font-weight: 700;
 }
 
-.mat-menu-item span {
+.mat-mdc-menu-item span {
   position:relative;
   bottom:8px;
   text-align: left;
@@ -225,32 +225,36 @@ div.more {
 .mat-focused .mat-form-field-placeholder span i {
   font-size: 21px;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
 .mat-form-field-ripple {
   background-color: var(--primary-color) !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .mat-tab-labels {
   background-color: var(--primary-color);
   color: var(--primary-text-color-overlay);
   font-weight: 700;
 }
-.mat-tab-label, .mat-tab-link {
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
+.mat-tab-label, .mat-mdc-tab-link {
   color: var(--primary-text-color-overlay) !important;
   font-weight: 700 !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
 .mat-tab-label-active {
   background-color: var(--accent-color) !important;
   opacity: 1.0 !important;
   color: var(--accent-text-color) !important;
   font-weight: 700;
 }
-.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+.mat-mdc-tab-group.mat-primary .mat-ink-bar, .mat-mdc-tab-nav-bar.mat-primary .mat-ink-bar {
   background-color: var(--accent-color-dark) !important;
   height: 5px;
 }
 
-.mat-tab-header {
+.mat-mdc-tab-header {
   margin-left: -10px;
 }
 

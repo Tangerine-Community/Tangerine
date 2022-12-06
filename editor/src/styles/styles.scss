@@ -46,6 +46,7 @@ mat-toolbar {
 .tangy-app-name {
   color: var(--document-background-color);
 }
+/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.*/
 mat-list {
   margin-bottom: 100px;
 }
@@ -136,7 +137,7 @@ div.more {
   font-weight: 700;
 }
 
-.mat-menu-item span {
+.mat-mdc-menu-item span {
   position: relative;
   bottom: 8px;
   text-align: left;
@@ -150,33 +151,37 @@ div.more {
 .mat-focused .mat-form-field-placeholder span i {
   font-size: 21px;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
 .mat-form-field-ripple {
   background-color: var(--primary-color) !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
 .mat-tab-labels {
   background-color: white;
   color: var(--primary-text-color);
   font-weight: 700;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
 .mat-tab-label,
-.mat-tab-link {
+.mat-mdc-tab-link {
   color: var(--primary-text-color) !important;
   font-weight: 700 !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
 .mat-tab-label-active {
   opacity: 1 !important;
   color: var(--primary-text-color);
   font-weight: 700;
 }
-.mat-tab-group.mat-primary .mat-ink-bar,
-.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+.mat-mdc-tab-group.mat-primary .mat-ink-bar,
+.mat-mdc-tab-nav-bar.mat-primary .mat-ink-bar {
   background-color: var(--accent-color) !important;
   height: 5px;
 }
 
-.mat-tab-header {
+.mat-mdc-tab-header {
   padding-top: 3px;
   margin-left: -10px;
   margin-right: -10px;
@@ -184,17 +189,21 @@ div.more {
   padding-left: 31px;
 
 }
+/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
 .mat-tab-label-content {
   text-transform: uppercase;
 }
-mat-card.mat-card {
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
+mat-card.mat-mdc-card {
   background-color: white;
 }
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card {
   margin: 15px 15px 15px;
   background: white;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card-content > * {
   width: 220px;
   margin: 4em auto;

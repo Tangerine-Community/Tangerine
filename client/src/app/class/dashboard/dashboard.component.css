@@ -6,7 +6,7 @@ html {
   display:none;
 }
 
-.mat-table {
+.mat-mdc-table {
   width:100%;
 }
 
@@ -18,7 +18,7 @@ html {
   padding-right:5px;
 }
 
-th.mat-header-cell {
+th.mat-mdc-header-cell {
   text-align: right;
 }
 
@@ -27,6 +27,7 @@ th.mat-header-cell {
   margin-right: 8px;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
 .mat-tab-label-active {
   background-color: greenyellow;
 }
@@ -35,6 +36,7 @@ th.mat-header-cell {
   /*background-color: greenyellow;*/
 /*}*/
 
+/*TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
 ::ng-deep .tangy-tab-curriculum .mat-tab-labels {
   background-color: #05608d;
   color: #fff;
@@ -44,6 +46,7 @@ th.mat-header-cell {
   font-size:12px;
 }
 
+/*TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
 ::ng-deep .tangy-tab-curriculum .mat-tab-label-active {
   background-color: #f29d38;
 }
@@ -150,18 +153,22 @@ input[type=checkbox]:not(:checked) {
 .d2 {
   width: 50%;
 }
+/*TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card.card-feedback {
   background-color: #f29d38;
   padding: 16px 10px 10px;
   border-radius:unset;
 }
+/*TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card-header {
   font-size: 10px;
 }
+/*TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card-content {
   background-color: white;
   padding:1em;
 }
+/*TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card-title {
   color: white;
   font: 400 14px/20px Roboto, "Helvetica Neue", sans-serif;

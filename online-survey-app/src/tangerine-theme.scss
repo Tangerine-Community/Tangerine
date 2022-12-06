@@ -1,10 +1,16 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
 @import '_tangy-app-variables.scss';
 
-@include mat-core();
+@include mat.core();
 
+$tangerine-app-theme: mat.define-light-theme(
+    (
+      color: (
+        primary:$tangerine-app-primary,
+        accent:$tangerine-app-accent,
+        warn:$tangerine-app-warn
+      )
+    )
+);
 
-$tangerine-app-theme: mat-light-theme($tangerine-app-primary, $tangerine-app-accent, $tangerine-app-warn);
-
-
-@include angular-material-theme($tangerine-app-theme);
+@include mat.all-component-themes($tangerine-app-theme);

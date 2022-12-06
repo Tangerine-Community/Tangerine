@@ -93,8 +93,13 @@ RUN cd /tangerine/client && \
 ADD editor /tangerine/editor
 RUN cd /tangerine/editor && \
     export NODE_OPTIONS=--openssl-legacy-provider && \
+    npm dedupe
+RUN cd /tangerine/editor && \
+    export NODE_OPTIONS=--openssl-legacy-provider && \
     ./node_modules/.bin/ng build --base-href "./"
-RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
+
+# Disabling building service worker for editor.
+#RUN cd /tangerine/editor && ./node_modules/.bin/workbox generateSW
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
@@ -119,9 +124,8 @@ RUN cd /tangerine/server && \
     npm link
 
 
-#
+
 # Wrap up
-#
 
 ADD ./ /tangerine
 
@@ -131,4 +135,6 @@ RUN echo {} > /paid-worker-state.json
 ENV NODE_OPTIONS "--openssl-legacy-provider"
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && npm start
+
+# Used for testing...
 #CMD ["/bin/bash"]

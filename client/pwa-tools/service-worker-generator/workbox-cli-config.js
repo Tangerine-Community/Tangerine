@@ -1,3 +1,4 @@
+
 module.exports = {
   "maximumFileSizeToCacheInBytes": 9915000000,
   "globDirectory": ".pwa-temporary",
@@ -7,7 +8,7 @@ module.exports = {
   "swDest": ".pwa-temporary/sw.js",
   "skipWaiting": true,
   "globIgnores": [
-    "../workbox-cli-config.js",
+    "../workbox-cli-config.js",  
     "release-uuid.txt"
   ]
 };

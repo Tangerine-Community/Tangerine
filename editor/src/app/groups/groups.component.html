@@ -6,7 +6,7 @@
 <div id="content">
 <mat-grid-list [cols]="breakpoint" rowHeight="120" (window:resize)="onResize($event.target)">
     <mat-grid-tile *ngFor="let group of groups">
-            <mat-card class="mat-elevation-z3 group-card" (click)="navigateToGroup(group._id)">
+            <mat-card appearance="outlined" class="mat-elevation-z3 group-card" (click)="navigateToGroup(group._id)">
                 <mat-card-header>
                     <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">supervisor_account</i>
                     </div>
