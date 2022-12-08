@@ -8,11 +8,13 @@ if (process.argv[2] === '--help') {
 
 const pako = require('pako')
 const axios = require('axios')
-const uuidv1 = require('uuid/v1');
+// const uuidv1 = require('uuid/v1');
+const {v1: uuidv1}= require('uuid')
 const random_name = require('node-random-name');
 const numberOfUploads = parseInt(process.argv[2])
 const groupName = process.argv[3];
-const url = `http://localhost/api/${process.argv[3]}/upload`
+const port = 80
+const url = `http://localhost:${port}/api/${process.argv[3]}/upload`
 const delay = process.argv[4] ? parseInt(process.argv[4]) : 2000
 const defaultBatchSize =  numberOfUploads < 100 ? numberOfUploads : 100
 let batchSize = process.argv[5] ? parseInt(process.argv[5]) : defaultBatchSize
@@ -65,9 +67,9 @@ async function go() {
           day = d.getDate(),
           year = d.getFullYear()
         let lessonStartDate = [year, month, day].join('-')
-        templateDoc.items[0].inputs[6].value = lessonStartDate
+        // templateDoc.items[0].inputs[6].value = lessonStartDate
         let userProfileId = 'user-' + uuidv1();
-        templateDoc.items[0].inputs[5].value = userProfileId
+        // templateDoc.items[0].inputs[5].value = userProfileId
         doc = Object.assign({}, templateDoc, {
           _id: uuidv1()
         })
@@ -82,12 +84,23 @@ async function go() {
       linkedRecords1.push(linkedRecord)
     }
     // Upload the profiles first
-    let batchlinkedRecords1 = linkedRecords1.map((linkedRecord) => axios({method: 'post', url, data: `${linkedRecord}`, headers: { 'content-type': 'text/plain', 'Authorization': `${process.env.T_UPLOAD_TOKEN}` },}))
+    // console.log("Upload the profiles first")
+    // try {
+    //   let batchlinkedRecords1 = linkedRecords1.map((linkedRecord) => axios({
+    //     method: 'post',
+    //     url,
+    //     data: `${linkedRecord}`,
+    //     headers: {'content-type': 'text/plain', 'Authorization': `${process.env.T_UPLOAD_TOKEN}`},
+    //   }))
+    // } catch (e) {
+    //   console.log(e);
+    // }
     // now upload the others
+    // console.log("now upload the others")
     let batch = bodies.map((body) => {
       axios({method: 'post', url, data: `${body}`, headers: { 'content-type': 'text/plain', 'Authorization': `${process.env.T_UPLOAD_TOKEN}` },})
           .then(function (response) {
-            // console.log(response);
+            // console.log("Upload successful!");
           })
     })
     // Don't await, the world doesn't wait. We're trying to cause stress at the rate defined.
