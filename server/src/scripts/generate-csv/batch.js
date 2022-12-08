@@ -47,16 +47,24 @@ async function batch() {
   log.debug("in batch.")
   const state = JSON.parse(await readFile(params.statePath))
   console.log("state.skip: " + state.skip)
-  const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
-  log.debug("docs: " + JSON.stringify(docs))
+
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
   console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
   let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
   console.log("csvReplacementCharacters: " + JSON.stringify(csvReplacementCharacters))
   // let csvReplacement = csvReplacementCharacters? JSON.parse(csvReplacementCharacters) : false
+  
+  let docs
+  try {
+    docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
+  } catch (e) {
+    log.debug("Error: " + e)
+  }
+  
   if (docs.length === 0) {
     state.complete = true
   } else {
+    log.debug("Number of docs: " + docs.length)
     // Order each datum's properties by the headers for consistent columns.
     try {
       const rows = docs.map(doc => {
