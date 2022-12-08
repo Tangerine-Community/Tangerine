@@ -1,0 +1,4 @@
+[mysqld]
+innodb-strict-mode=OFF
+innodb-page-size=32K
+innodb-log-buffer-size=128M
