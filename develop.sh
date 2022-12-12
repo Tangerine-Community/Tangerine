@@ -243,6 +243,7 @@ OPTIONS="
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
   --env \"T_MYSQL_MULTI_PARTICIPANT_SCHEMA=$T_MYSQL_MULTI_PARTICIPANT_SCHEMA\" \
   --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
+  --volume $(pwd)/server/src/modules/mysql-js/conf.d:/etc/mysql/conf.d:delegated \
   $OPTIONS
 "
 fi
