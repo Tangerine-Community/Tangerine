@@ -67,9 +67,8 @@ const processFormResponse = async (doc, sourceDb, sequence) => {
     }
   } catch (err) { }
   try {
-    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
+    await tangyModules.hook('reportingOutputs', {doc, sourceDb, sequence, reportingConfig})
   } catch (error) {
-    // log.error(error)
     // NOT throwing an error to keep processing to continue.
     // throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
     log.error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
