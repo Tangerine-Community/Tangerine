@@ -9,7 +9,6 @@ import { Device } from 'src/app/device/classes/device.class';
 import { LockBoxService } from './lock-box.service';
 import { UserAccount } from './../_classes/user-account.class';
 import { UserDatabase } from './../_classes/user-database.class';
-import * as CryptoJS from 'crypto-js'
 import { Injectable, Inject } from '@angular/core';
 import { AppConfigService } from './app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
@@ -232,6 +231,8 @@ export class UserService {
   async createAdmin(password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
     // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+    const appInfo = await this.deviceService.getAppInfo()
+    userProfile.groupId = appInfo.groupId
     userProfile.items = [
       {
         id: 'item1',

@@ -776,56 +776,57 @@ async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, prima
   const groupId = doc.groupId
   // console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
   if (!groupId) {
-    log.info("doc without groupId: " + JSON.stringify(doc))
-  }
-  // Docs of type response must be flattened first to get the table name.
-  if (doc.type.toLowerCase() !== 'response') {
-    try {
-      await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    } catch (e) {
-      let message = "Error creating table: " + e;
-      log.error(message)
-      throw new Error(message)
-    }
-  }
-  switch (doc.type.toLowerCase()) {
-    case 'case':
-      data = await convert_case(knex, doc, groupId, tableName)
-      break;
-    case 'participant':
-      data = await convert_participant(knex, doc, groupId, tableName)
-      break;
-    case 'case-event':
-      data = await convert_case_event(knex, doc, groupId, tableName)
-      break;
-    case 'event-form':
-      data = await convert_event_form(knex, doc, groupId, tableName)
-      break;
-    case 'issue':
-      data = await convert_issue(knex, doc, groupId, tableName)
-      break;
-    case 'response':
-      data = await convert_response(knex, doc, groupId, tableName)
-      // Check if table exists and create if needed:
-      tableName = data['formID_sanitized'] + tablenameSuffix
-      result.tableName = tableName
-      // log.info(`Checking tableName: ${tableName}`)
-      if (!tables.includes(tableName)) {
-        tables.push(tableName)
+    log.error("Unable to save a doc without groupId: " + JSON.stringify(doc))
+  } else {
+    // Docs of type response must be flattened first to get the table name.
+    if (doc.type.toLowerCase() !== 'response') {
+      try {
         await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+      } catch (e) {
+        let message = "Error creating table: " + e;
+        log.error(message)
+        throw new Error(message)
       }
-      break;
-    default:
-      let message1 = "No case for this type: " + doc.type;
-      log.error(message1)
-      throw new Error(message1)
-  }
-  try {
-    await insertDocument(groupId, knex, tableName, data, primaryKey);
-  } catch (e) {
-    let message2 = `Error inserting document: ${JSON.stringify(e)}`;
-    log.error(message2)
-    throw new Error(message2)
+    }
+    switch (doc.type.toLowerCase()) {
+      case 'case':
+        data = await convert_case(knex, doc, groupId, tableName)
+        break;
+      case 'participant':
+        data = await convert_participant(knex, doc, groupId, tableName)
+        break;
+      case 'case-event':
+        data = await convert_case_event(knex, doc, groupId, tableName)
+        break;
+      case 'event-form':
+        data = await convert_event_form(knex, doc, groupId, tableName)
+        break;
+      case 'issue':
+        data = await convert_issue(knex, doc, groupId, tableName)
+        break;
+      case 'response':
+        data = await convert_response(knex, doc, groupId, tableName)
+        // Check if table exists and create if needed:
+        tableName = data['formID_sanitized'] + tablenameSuffix
+        result.tableName = tableName
+        // log.info(`Checking tableName: ${tableName}`)
+        if (!tables.includes(tableName)) {
+          tables.push(tableName)
+          await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+        }
+        break;
+      default:
+        let message1 = "No case for this type: " + doc.type;
+        log.error(message1)
+        throw new Error(message1)
+    }
+    try {
+      await insertDocument(groupId, knex, tableName, data, primaryKey);
+    } catch (e) {
+      let message2 = `Error inserting document: ${JSON.stringify(e)}`;
+      log.error(message2)
+      throw new Error(message2)
+    }
   }
   // log.info('Finished processing: ' + data._id + " type: " + tableName)
   return result
