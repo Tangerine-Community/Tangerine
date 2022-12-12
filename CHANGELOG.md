@@ -10,13 +10,14 @@ and reliable that the output of the mysql module. We recommend switching to the 
 See the [MySQL-JS Module doc](./docs/system-administrator/mysql-js.md) for upgrade and configuration information.
 
 __Fixes__
-- Fix for Mysql tables not populating; ER_TOO_BIG_ROWSIZE error in tangerine logs [#3488](https://github.com/Tangerine-Community/Tangerine/issues/3488)
+- Fix for Class listing breaks if you archive all classes in Teach; unable to add new classes. Issue: [#3491](https://github.com/Tangerine-Community/Tangerine/issues/3491)
+- Fix for Mysql tables not populating; ER_TOO_BIG_ROWSIZE error in Tangerine logs. Issue: [#3488](https://github.com/Tangerine-Community/Tangerine/issues/3488)
 - Changed location of mysql-js config file to point to the mysql-js directory. Also increased memory parameters in conf.d/config-file.cnf. 
 - If you are using the mysql container and are having errors with very large forms, the new settings in ./server/src/mysql-js/conf.d/config-file.js
   should help. You will need to completely rebuild the mysql database. See the "Resetting MySQL databases" section in the [MySQL-JS Module docs](./docs/systems-administrator/mysql-js.md).
 - Important: If you already have a mysql instance running and don't want to rebuild the mysql database, delete the `innodb-page-size=64K`
   line from ./server/src/mysql-js/conf.d/config-file.js; otherwise, your mysql instance will not start. 
-- Fix for CSV Download fails with larger forms [#3483](https://github.com/Tangerine-Community/Tangerine/issues/3483)
+- Fix for CSV Download fails with larger forms/ Issue: [#3483](https://github.com/Tangerine-Community/Tangerine/issues/3483)
 
 __Server upgrade instructions__
 
