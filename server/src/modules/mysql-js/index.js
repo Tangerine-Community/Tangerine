@@ -31,21 +31,21 @@ module.exports = {
       for (let i = 0; i < groups.length; i++) {
         const groupId = groups[i]
         await initializeGroupForMySQL(groupId)
-        const knex = require('knex')({
-          client: 'mysql2',
-          connection: {
-            host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
-            port: 3306,
-            user: `${process.env.T_MYSQL_USER}`,
-            password: `${process.env.T_MYSQL_PASSWORD}`
-          }
-        })
-        try {
-          await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
-        } catch (e) {
-          log.debug(e)
-        }
-        await knex.destroy()
+        // const knex = require('knex')({
+        //   client: 'mysql2',
+        //   connection: {
+        //     host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
+        //     port: 3306,
+        //     user: `${process.env.T_MYSQL_USER}`,
+        //     password: `${process.env.T_MYSQL_PASSWORD}`
+        //   }
+        // })
+        // try {
+        //   await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
+        // } catch (e) {
+        //   log.debug(e)
+        // }
+        // await knex.destroy()
       }
     },
     disable: function(data) {
@@ -271,13 +271,28 @@ async function removeGroupForMySQL(groupId) {
 
 async function initializeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
-  console.log(`Creating mysql db ${mysqlDbName}`)
+  // console.log(`Creating mysql db ${mysqlDbName}`)
+  // try {
+  //   await exec(`mysql -u ${process.env.T_MYSQL_USER} -h ${process.env.T_MYSQL_CONTAINER_NAME} -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+  // } catch (e) {
+  //   console.log(`Error creating mysql db ${mysqlDbName}`)
+  //   console.log(e)
+  // }
+  const knex = require('knex')({
+    client: 'mysql2',
+    connection: {
+      host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
+      port: 3306,
+      user: `${process.env.T_MYSQL_USER}`,
+      password: `${process.env.T_MYSQL_PASSWORD}`
+    }
+  })
   try {
-    await exec(`mysql -u ${process.env.T_MYSQL_USER} -h ${process.env.T_MYSQL_CONTAINER_NAME} -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+    await knex.raw('CREATE DATABASE ' + mysqlDbName)
   } catch (e) {
-    console.log(`Error creating mysql db ${mysqlDbName}`)
-    console.log(e)
+    log.debug(e)
   }
+  await knex.destroy()
   console.log(`Created mysql db ${mysqlDbName}`)
 }
 
