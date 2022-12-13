@@ -193,10 +193,10 @@ app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, save
 
 app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
-  if (process.env.T_UPLOAD_WITHOUT_UPDATING_REV === "true") {
-    app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload-without-get-rev.js'))
-  } else {
+  if (process.env.T_UPLOAD_WITHOUT_UPDATING_REV === "false") {
     app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
+  } else {
+    app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload-without-get-rev.js'))
   }
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
 app.get('/app/:groupId/response-variable-value/:responseId/:variableName', isAuthenticated, require('./routes/group-response-variable-value.js'))
