@@ -59,6 +59,7 @@ const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp
 const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
 const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
 const allowIfUser1 = require('./middleware/allow-if-user1.js');
+const hasUploadToken = require("./middleware/has-upload-token");
 
 if (process.env.T_AUTO_COMMIT === 'true') {
   setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
@@ -192,7 +193,11 @@ app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, save
 
 app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
-app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
+  if (process.env.T_UPLOAD_WITHOUT_UPDATING_REV === "false") {
+    app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
+  } else {
+    app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload-without-get-rev.js'))
+  }
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
 app.get('/app/:groupId/response-variable-value/:responseId/:variableName', isAuthenticated, require('./routes/group-response-variable-value.js'))
 app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))

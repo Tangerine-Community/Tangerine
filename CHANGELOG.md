@@ -19,6 +19,17 @@ __Fixes__
   line from ./server/src/mysql-js/conf.d/config-file.js; otherwise, your mysql instance will not start. 
 - Fix for CSV Download fails with larger forms/ Issue: [#3483](https://github.com/Tangerine-Community/Tangerine/issues/3483)
 
+__Backports__
+
+The following feature was backported from v3.24.6 patch release:
+
+- T_UPLOAD_WITHOUT_UPDATING_REV : A new config.sh setting for use in high-load instances using sync-protocol-1.
+  *** Using this setting COULD CAUSE DATA LOSS. ***
+  This setting uses a different function to process uploads that does not do a GET before the PUT in order to upload a document.
+  Please note that if there is a conflict it try to POST the doc which will create a new id and copy the _id to originalId.
+  If that fails, it will log the error and not upload the document to the server, but still send an 'OK' status to client.
+  The failure would result in data loss.
+
 __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
@@ -200,6 +211,17 @@ git checkout v3.25.0
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.25.0
 ```
+
+## v3.24.6
+
+__NEW Features__
+
+- T_UPLOAD_WITHOUT_UPDATING_REV : A new config.sh setting for use in high-load instances using sync-protocol-1. 
+  *** Using this setting COULD CAUSE DATA LOSS. ***
+  This setting uses a different function to process uploads that does not do a GET before the PUT in order to upload a document. 
+  Please note that if there is a conflict it try to POST the doc which will create a new id and copy the _id to originalId. 
+  If that fails, it will log the error and not upload the document to the server, but still send an 'OK' status to client. 
+  The failure would result in data loss.
 
 ## v3.24.4
 
