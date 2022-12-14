@@ -164,8 +164,9 @@ const getDataset = async (datasetId) => {
   let fileExists = false;
   let stateExists = false
   let excludePii = false
+  const stateUrl = encodeURI(result.stateUrl)
   try {
-    response = await http.get(result.stateUrl)
+    const response = await http.get(stateUrl)
     stateExists = true
     complete = response.data.complete
     state = response.data
