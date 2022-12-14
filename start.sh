@@ -204,6 +204,7 @@ RUN_OPTIONS="
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
   --env \"T_ONLY_PROCESS_THESE_GROUPS=$T_ONLY_PROCESS_THESE_GROUPS\" \
   --env \"T_LIMIT_NUMBER_OF_CHANGES=$T_LIMIT_NUMBER_OF_CHANGES\" \
+  --env \"T_UPLOAD_WITHOUT_UPDATING_REV=$T_UPLOAD_WITHOUT_UPDATING_REV\" \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
