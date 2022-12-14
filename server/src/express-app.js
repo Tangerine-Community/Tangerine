@@ -60,6 +60,8 @@ const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
 const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
 const allowIfUser1 = require('./middleware/allow-if-user1.js');
 const hasUploadToken = require("./middleware/has-upload-token");
+const winston = require('winston'), expressWinston = require('express-winston');
+require('winston-daily-rotate-file');
 
 if (process.env.T_AUTO_COMMIT === 'true') {
   setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
@@ -119,6 +121,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '1gb' }))
 app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
+
+const transport = new winston.transports.DailyRotateFile({
+  level: 'debug',
+  filename: 'application-%DATE%.log',
+  dirname: '../client/releases/',
+  datePattern: 'YYYY-MM-DD-HH',
+  zippedArchive: true,
+  maxSize: '20m',
+  maxFiles: '14d'
+});  
+  
+// Request logging  
+app.use(expressWinston.logger({
+  transports: [
+    transport
+  ],
+  meta: false, // optional: control whether you want to log the meta data about the request (default to true)
+  msg: "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+  expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
+  colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
+}));
+
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
 var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
