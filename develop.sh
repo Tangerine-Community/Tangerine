@@ -133,15 +133,18 @@ fi
 [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
 
-docker run -d \
-   -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
-   -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
-   -p 5984:5984 \
+CMD="docker run -d \
+   --restart on-failure \
+   -e COUCHDB_USER=\"$T_COUCHDB_USER_ADMIN_NAME\" \
+   -e COUCHDB_PASSWORD=\"$T_COUCHDB_USER_ADMIN_PASS\" \
+   $T_COUCHDB_PORT_MAPPING \
    -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
    -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
-   --name $T_COUCHDB_CONTAINER_NAME \
+   --name \"$T_COUCHDB_CONTAINER_NAME\" \
    couchdb:2
-
+"
+echo $CMD
+eval "$CMD"
 sleep 10
 
 #
