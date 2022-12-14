@@ -8,7 +8,7 @@ module.exports = async function groupUpload(req, res) {
   // try {
     const payload = pako.inflate(req.body, { to: 'string' })
     const packet = JSON.parse(payload)
-    // log.debug("PUTting the payload without doing a GET first. doc._id: " + packet.doc._id + " doc.rev: " + packet.doc._rev)
+  // log.debug("PUTting the payload without doing a GET first. doc._id: " + packet.doc._id + " doc.rev: " + packet.doc._rev)
     // await db.put(packet.doc).catch(async err => {
     await db.put(packet.doc, {force:true}).catch(async err => {
       log.error("PUTting the payload without doing a GET first FAILED. doc._id: " + packet.doc._id + " doc.rev: " + packet.doc._rev)

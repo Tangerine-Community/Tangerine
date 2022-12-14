@@ -84,8 +84,8 @@ T_REGISTRATION_REQUIRES_SERVER_USER="false"
 # This setting only works with new groups being created.
 T_CENTRALLY_MANAGED_USER_PROFILE="false"
 
-# Sync Protocol 1 Only: Don't do a GET before a PUT when uploading.
-T_UPLOAD_WITHOUT_UPDATING_REV="true"
+# Sync Protocol 1 Only: Set to "true" if you don't want to do a GET before a PUT when uploading.
+T_UPLOAD_WITHOUT_UPDATING_REV="false"
 
 # Auto Commit will make a commit in every group's content folder at a specified frequency. Changes are only committed if there is a change.
 T_AUTO_COMMIT="true"
