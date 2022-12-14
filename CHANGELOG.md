@@ -221,8 +221,8 @@ __NEW Features__
 
 - T_UPLOAD_WITHOUT_UPDATING_REV : A new config.sh setting for use in high-load instances using sync-protocol-1. 
   *** Using this setting COULD CAUSE DATA LOSS. ***
-  This setting uses a different function to process uploads that does not do a GET before the PUT in order to upload a document.
-  Please note that if there is a conflict it will try to POST the doc which will create a new id and copy the _id to originalId. 
+  This setting uses a different function to process uploads that does not do a GET before the PUT in order to upload a document. 
+  Please note that if there is a conflict it will copy the _id to originalId and POST the doc, which will create a new id. 
   If that fails, it will log the error and not upload the document to the server, but still send an 'OK' status to client. 
   The failure would result in data loss.
 
