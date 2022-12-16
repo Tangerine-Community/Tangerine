@@ -6,7 +6,7 @@ __DEPRECATION NOTICE AND UPCOMING MODULE DELETION__
 
 The mysql module is deprecated; it will be removed *soon* from this source code in the v3.28.0 release. 
 We have been using the mysql-js in production for a few months and it is more performant 
-and reliable that the output of the mysql module. We recommend switching to the mysql-js module. 
+and reliable than the output of the mysql module. We recommend switching to the mysql-js module. 
 See the [MySQL-JS Module doc](./docs/system-administrator/mysql-js.md) for upgrade and configuration information.
 
 __New Features__
