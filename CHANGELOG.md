@@ -20,7 +20,7 @@ __Fixes__
   should help. You will need to completely rebuild the mysql database. See the "Resetting MySQL databases" section in the [MySQL-JS Module docs](./docs/systems-administrator/mysql-js.md).
 - Important: If you already have a mysql instance running and don't want to rebuild the mysql database, delete the `innodb-page-size=64K`
   line from ./server/src/mysql-js/conf.d/config-file.js; otherwise, your mysql instance will not start. 
-- Fix for CSV Download fails with larger forms/ Issue: [#3483](https://github.com/Tangerine-Community/Tangerine/issues/3483)
+- Fix for CSV Download fails with larger forms. Issue: [#3483](https://github.com/Tangerine-Community/Tangerine/issues/3483)
 
 __Backports__
 
