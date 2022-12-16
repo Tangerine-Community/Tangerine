@@ -9,6 +9,9 @@ We have been using the mysql-js in production for a few months and it is more pe
 and reliable that the output of the mysql module. We recommend switching to the mysql-js module. 
 See the [MySQL-JS Module doc](./docs/system-administrator/mysql-js.md) for upgrade and configuration information.
 
+__New Features__
+- New group content-set dropdown: PR 3275 - https://github.com/Tangerine-Community/Tangerine/pull/3275 - enables a content-set dropdown and is already in main. Modify the template (content-sets-example.json) and rename to content-sets.json to enable the dropdown.
+
 __Fixes__
 - Fix for Class listing breaks if you archive all classes in Teach; unable to add new classes. Issue: [#3491](https://github.com/Tangerine-Community/Tangerine/issues/3491)
 - Fix for Mysql tables not populating; ER_TOO_BIG_ROWSIZE error in Tangerine logs. Issue: [#3488](https://github.com/Tangerine-Community/Tangerine/issues/3488)
