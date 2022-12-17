@@ -22,10 +22,9 @@ const respawn = require('respawn')
 export class AppService {
 
   constructor(
-    private readonly groupService:GroupService,
+    private readonly groupService: GroupService,
     private readonly configService: TangerineConfigService,
     private readonly syncSessionService: SyncSessionService,
-    private readonly httpClient: HttpService,
   ) { }
 
   installed = false

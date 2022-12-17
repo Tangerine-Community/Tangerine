@@ -2,7 +2,7 @@ import { sharedStyles } from './shared-styles.js'
 import * as Jsondiffpatch from 'jsondiffpatch'
 var jsondiffpatch = Jsondiffpatch.create({});
 import { LitElement, html } from 'lit'
-import { unsafeHTML } from 'lit/directives/unsafe-html';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import { get } from './http.js';
 
 class DataLog extends LitElement {

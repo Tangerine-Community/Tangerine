@@ -1,12 +1,10 @@
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { CaseRole } from './../classes/case-role.class';
-import { CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { TestBed } from '@angular/core/testing';
 
 import { CaseService } from './case.service';
 import { CaseDefinitionsService } from './case-definitions.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
-import { UserService } from 'src/app/shared/_services/user.service';
 // NOTE: For some reason if this is WindowRef from the shared module, this fails to inject.
 import { CaseDefinition } from '../classes/case-definition.class';
 import { EventFormDefinition } from '../classes/event-form-definition.class';
@@ -15,7 +13,8 @@ import PouchDB from 'pouchdb';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { CaseParticipant } from '../classes/case-participant.class';
-import moment from 'moment/src/moment';
+import * as moment from 'moment';
+import {UserService} from "../../core/auth/_services/user.service";
 class MockCaseDefinitionsService {
   async load() {
     return <Array<CaseDefinition>>[
@@ -260,7 +259,7 @@ describe('CaseService', () => {
   it('should create participant and create forms for existing events', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
-    await service.createEvent('event-definition-screening', true)
+    await service.createEvent('event-definition-screening')
     expect(service.case.events[0].eventForms.length).toEqual(0)
     const caseParticipant = await service.createParticipant('role1')
     expect(service.case.participants[0].id).toEqual(caseParticipant.id)
@@ -271,7 +270,7 @@ describe('CaseService', () => {
     const service: CaseService = TestBed.get(CaseService);
     await service.create('caseDefinition1')
     const caseParticipant = await service.createParticipant('role1')
-    await service.createEvent('event-definition-screening', true)
+    await service.createEvent('event-definition-screening')
     expect(service.case.participants[0].id).toEqual(caseParticipant.id)
     expect(service.case.events[0].eventForms.length).toEqual(1)
   })
@@ -281,12 +280,12 @@ describe('CaseService', () => {
     await service.create('caseDefinition1')
     const caseParticipant = await service.createParticipant('role1')
     const caseParticipant2 = await service.createParticipant('role2')
-    const caseEvent = await service.createEvent('event-definition-screening', true)
-    expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_IN_PROGRESS)
+    const caseEvent = await service.createEvent('event-definition-screening')
+    // expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_IN_PROGRESS)
     for (const eventForm of service.case.events[0].eventForms) {
       service.markEventFormComplete(caseEvent.id, eventForm.id)
     }
-    expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_COMPLETED)
+    expect(service.case.events[0].complete).toEqual(true)
   })
 
 });

@@ -1,5 +1,5 @@
 import {LitElement, html, css} from 'lit-element';
-import {customElement, property} from "lit-element/lib/decorators";
+import {customElement, property} from 'lit/decorators.js';
 import '@polymer/paper-progress/paper-progress.js';
 
 @customElement('loading-ui')
