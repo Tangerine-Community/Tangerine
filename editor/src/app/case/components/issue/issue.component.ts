@@ -12,7 +12,7 @@ import { diffTemplate } from './diff-template';
 import { Marked } from '@ts-stack/markdown';
 import {Conflict} from "../../classes/conflict.class";
 import { conflictTemplate } from './conflict-template';
-import { diff } from 'json-diff';
+// import { diff } from 'json-diff';
 import {Breadcrumb} from "../../../shared/_components/breadcrumb/breadcrumb.component";
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
@@ -193,22 +193,22 @@ export class IssueComponent implements OnInit {
         a = this.conflict.diffInfo.a
         b = this.conflict.diffInfo.b
       }
-      const output = diff(a, b)
-      let diffArray = []
-      Object.keys(output).forEach(function (diff) {
-        let value = output[diff]
-        let newValue = value.__new
-        let oldValue = value.__old
-        let diffObject = {
-          name: diff,
-          newValue: newValue,
-          oldValue: oldValue,
-          value: value
-        }
-        diffArray.push(diffObject)
-      });
-      this.diffOutput = diffArray
-      this.conflictMarkup = conflictTemplate(this.diffOutput, false)
+      // const output = diff(a, b)
+      // let diffArray = []
+      // Object.keys(output).forEach(function (diff) {
+      //   let value = output[diff]
+      //   let newValue = value.__new
+      //   let oldValue = value.__old
+      //   let diffObject = {
+      //     name: diff,
+      //     newValue: newValue,
+      //     oldValue: oldValue,
+      //     value: value
+      //   }
+      //   diffArray.push(diffObject)
+      // });
+      // this.diffOutput = diffArray
+      // this.conflictMarkup = conflictTemplate(this.diffOutput, false)
       let mergedClone;
       if (merged) {
         mergedClone = JSON.parse(JSON.stringify(merged))
@@ -219,14 +219,14 @@ export class IssueComponent implements OnInit {
       // remove some noise
       delete mergedClone.form
       let diffMergedArray = []
-      Object.keys(output).forEach(function (prop) {
-        let value = mergedClone[prop]
-        let diffObject = {
-          name: prop,
-          value: value
-        }
-        diffMergedArray.push(diffObject)
-      });
+      // Object.keys(output).forEach(function (prop) {
+      //   let value = mergedClone[prop]
+      //   let diffObject = {
+      //     name: prop,
+      //     value: value
+      //   }
+      //   diffMergedArray.push(diffObject)
+      // });
       let mergedArray = []
       Object.keys(mergedClone).forEach(function (prop) {
         let value = mergedClone[prop]

@@ -3,9 +3,8 @@ import axios from 'axios'
 import * as Jsondiffpatch from 'jsondiffpatch'
 var jsondiffpatch = Jsondiffpatch.create({});
 
-
-import { LitElement, html } from 'lit-element'
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+import { LitElement, html } from 'lit'
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 class SearchActiveConflicts extends LitElement {
 
   static get styles() {
