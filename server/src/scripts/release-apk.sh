@@ -58,7 +58,7 @@ fi
 
 echo "RELEASE APK: copying cordova dir to release dir"
 # Populate with the Cordova project from $CORDOVA_DIRECTORY
-cp -r $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
+cp -R $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
 
 #sleep 10
 
@@ -66,7 +66,7 @@ cp -r $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
 rm -rf $RELEASE_DIRECTORY/www/shell/assets
 #sleep 10
 #echo "RELEASE APK: Copy content dir to $RELEASE_DIRECTORY"
-cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
+cp -R $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
 #sleep 10
 cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 
@@ -116,7 +116,7 @@ echo "RELEASE APK: Create the chcp manifest."
 echo '{"processing":true,"step":"Compiling APK"}' > $STATUS_FILE
 #sleep 10
 echo "RELEASE APK: adding Android platform"
-cordova platform add $CORDOVA_ANDROID_DIRECTORY --no-telemetry
+cordova platform add android@10 --no-telemetry
 
 echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android

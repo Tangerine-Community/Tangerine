@@ -96,10 +96,10 @@ RUN cd /tangerine/editor && \
     npm dedupe
 RUN cd /tangerine/editor && \
     export NODE_OPTIONS=--openssl-legacy-provider && \
-    ./node_modules/.bin/ng build --base-href "./"
+    ./node_modules/.bin/ng build --base-href "./" -c production
 
 # Disabling building service worker for editor.
-#RUN cd /tangerine/editor && ./node_modules/.bin/workbox generateSW
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generateSW
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \

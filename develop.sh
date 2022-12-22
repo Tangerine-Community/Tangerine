@@ -248,6 +248,12 @@ OPTIONS="
 "
 fi
 
+function trapperkeeper {
+  echo "Exiting - testing if we find the exit."
+}
+
+trap trapperkeeper EXIT
+
 CMD="docker run -it --name $T_CONTAINER_NAME \
   $OPTIONS
 "

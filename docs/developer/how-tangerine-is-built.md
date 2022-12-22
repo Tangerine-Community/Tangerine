@@ -14,7 +14,7 @@ When Dockerfile is complete, it runs entrypoint-development.sh and watches for c
 
 If you need to make an apk using the updated code, run the following script:
 
-```javascript
+```shell
 cd /tangerine/client && \
 rm -rf builds/apk/www/shell && \
 rm -rf builds/pwa/release-uuid/app && \
