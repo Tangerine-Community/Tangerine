@@ -65,7 +65,7 @@ echo $T_VERSION > .pwa-temporary/$UUID/app/assets/tangerine-version
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
 
 # Generate service worker.
-./node_modules/.bin/workbox generate:sw
+./node_modules/.bin/workbox generateSW
 
 mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
 echo $UUID > .pwa-temporary/release-uuid.txt
@@ -79,3 +79,5 @@ mv .pwa-temporary $RELEASE_DIRECTORY
 
 
 echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE, versionTag of $VERSION_TAG"
+
+#exit 1

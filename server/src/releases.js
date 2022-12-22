@@ -3,6 +3,9 @@ const GROUPS_DB = new DB('groups');
 const util = require('util')
 const fs = require('fs-extra')
 const exec = util.promisify(require('child_process').exec)
+const spawnAsync = util.promisify(require('child_process').spawn)
+const spawn = require('child_process').spawn
+const spawnSync = require('child_process').spawnSync
 const sanitize = require('sanitize-filename');
 const PACKAGENAME = "org.rti.tangerine"
 const APPNAME = "Tangerine"
@@ -50,11 +53,29 @@ const releasePWA = async (req, res)=>{
 		const group = sanitize(req.params.group)
 		const {releaseType, versionTag, releaseNotes, buildId} = req.body;
 		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)} ${sanitize(versionTag)}`
+		const cmdArray = [`${group}`,`/tangerine/groups/${group}/client`, `${sanitize(releaseType)} `,`${sanitize(buildId)}`,`${sanitize(versionTag)}`]
 		log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
-		log.info(`RELEASING PWA: ${cmd}`)
-        await exec(cmd)
-		await saveReleaseInfo(group, 'PWA',sanitize(releaseType), sanitize(buildId), sanitize(versionTag), sanitize(releaseNotes))
-		res.send({ statusCode: 200, data: 'ok', buildId})
+		log.info(`RELEASING PWA: ${cmdArray}`)
+    const child = spawn('release-pwa', cmdArray, {stdio: ['ignore', 'inherit', 'inherit'],
+      shell: true})
+    child.stdout?.on('data', function(data){
+      console.log(`child stdout:\n${data}`);
+      log.debug(`child stdout:\n${data}`)
+    });
+    child.stderr?.on('data', function(data){
+      console.log(`child stderr:\n${data}`)
+      log.debug(`child stdout:\n${data}`)
+    });
+    child.on('close', async (code) => {
+      console.log(`child process closed with code ${code}`);
+    });
+    child.on('exit', async (code) => {
+      console.log(`child process exited with code ${code}`);
+      await saveReleaseInfo(group, 'PWA', sanitize(releaseType), sanitize(buildId), sanitize(versionTag), sanitize(releaseNotes))
+      res.send({statusCode: 200, data: 'ok', buildId})
+    });
+    // await child.kill()
+    
 	} catch (error) {
 		console.error(error)
 		res.send({ statusCode: 500, data: error })

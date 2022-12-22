@@ -41,7 +41,7 @@ export class ReleasePwaComponent implements OnInit {
       this.errorGeneratingPWA = true;
       this.buildPwaIsComplete = false;
       console.error(error);
-      this.errorHandler.handleError(_TRANSLATE('Release took too long. Please try again.'));
+      this.errorHandler.handleError(_TRANSLATE('Release took too long. Please try again.') + error);
     }
   }
 
