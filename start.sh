@@ -202,7 +202,8 @@ RUN_OPTIONS="
   --env \"T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP\" \
   --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
-  --env \"T_REBUILD_MYSQL_DBS=$T_REBUILD_MYSQL_DBS\" \
+  --env \"T_ONLY_PROCESS_THESE_GROUPS=$T_ONLY_PROCESS_THESE_GROUPS\" \
+  --env \"T_LIMIT_NUMBER_OF_CHANGES=$T_LIMIT_NUMBER_OF_CHANGES\" \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
@@ -214,6 +215,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/archives:/archives/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
+  --volume $(pwd)/translations:/tangerine/translations:delegated \
 " 
 
 # Disable Tangerine claiming a port as it will be proxied by nginx.
@@ -233,9 +235,9 @@ fi
 
 if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
   echo "Linking mysql container ..."
-  OPTIONS="
+  RUN_OPTIONS="
     --link $T_MYSQL_CONTAINER_NAME:mysql \
-    $OPTIONS
+    $RUN_OPTIONS
   "
 fi
 
