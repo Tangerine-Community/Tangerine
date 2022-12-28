@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-1
+FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-2
 
 RUN git config --global url."https://".insteadOf git://
 
@@ -29,11 +29,13 @@ ENV T_PROTOCOL http
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
 
-# Install mysql integration dependencies.
 #RUN apt-get update && apt-get install -y python3-pip
+
+# Install mysql integration dependencies.
 #ADD ./server/src/modules/mysql/install-dependencies.sh /tangerine/server/src/modules/mysql/install-dependencies.sh
 #RUN cd /tangerine/server/src/modules/mysql && \
 #    ./install-dependencies.sh
+RUN apt-get update && apt-get install -y default-mysql-client
 
 # workaround for "Error: error:0308010C:digital envelope routines::unsupported"
 # NODE_OPTIONS=--openssl-legacy-provider (below)
@@ -51,6 +53,10 @@ RUN cd /tmp/ && tar xvjf $PHANTOM_JS.tar.bz2 && \
 
 # This is a hack to make this old phantomjs work. But we probably don't need it, so considering commenting this out.
 ENV OPENSSL_CONF /dev/null
+
+# TODO Move this to docker -tangerine-base-image
+#RUN apt-get update && apt-get -y install python2
+RUN npm config set python /usr/bin/python3
 
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json
@@ -122,8 +128,6 @@ ADD server /tangerine/server
 # Link up global commands.
 RUN cd /tangerine/server && \
     npm link
-
-
 
 # Wrap up
 
