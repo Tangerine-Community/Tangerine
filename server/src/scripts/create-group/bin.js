@@ -17,6 +17,7 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs-extra')
 const axios = require('axios')
+const log = require('tangy-log').log
 
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
@@ -28,7 +29,8 @@ async function getUser1HttpInterface() {
     headers: {
       authorization: token 
     },
-    baseUrl: 'http://localhost'
+    baseURL: 'http://localhost',
+    method: 'post'
   })
   return http
 }

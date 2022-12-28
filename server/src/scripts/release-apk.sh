@@ -116,7 +116,7 @@ echo "RELEASE APK: Create the chcp manifest."
 echo '{"processing":true,"step":"Compiling APK"}' > $STATUS_FILE
 #sleep 10
 echo "RELEASE APK: adding Android platform"
-cordova platform add android@10 --no-telemetry
+cordova platform add android@11 --no-telemetry
 
 echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android

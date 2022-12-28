@@ -88,11 +88,11 @@ async function getUser1HttpInterface() {
     headers: {
       authorization: token
     },
-    baseUrl: `${localAppUrl}`
+    baseURL: `${localAppUrl}`
   }
 
   if (appUrl) {
-    options.baseUrl = `${appUrl}`
+    options.baseURL = `${appUrl}`
   }
   
   let http = axios.create(options)
@@ -117,11 +117,11 @@ async function getDbHttpInterface() {
     headers: {
       authorization: token
     },
-    baseUrl: `${localAppUrl}`
+    baseURL: `${localAppUrl}`
   }
 
   if (appUrl) {
-    options.baseUrl = `${appUrl}`
+    options.baseURL = `${appUrl}`
   }
   
   let http = axios.create(options)
@@ -146,9 +146,9 @@ async function getPermissionsForGroup(http) {
   }
 
   if (appUrl) {
-    options.baseUrl = `${appUrl}`
+    options.baseURL = `${appUrl}`
   } else {
-    options.baseUrl = `${localAppUrl}`
+    options.baseURL = `${localAppUrl}`
   }
   // console.log("options: " + JSON.stringify(options))
   let http2 = axios.create(options)

@@ -17,7 +17,7 @@ async function getUser1HttpInterface() {
     headers: {
       authorization: token
     },
-    baseUrl: 'http://localhost'
+    baseURL: 'http://localhost'
   })
   return http
 }
