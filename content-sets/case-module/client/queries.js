@@ -1,6 +1,6 @@
 [
   {
-    id: '_design/participantSearch',
+    id: 'participantSearch',
     view: {
       map: function (doc) {
         if (doc.type === 'case' && doc.participants && Array.isArray(doc.participants)) {

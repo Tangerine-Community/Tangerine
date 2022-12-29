@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const PouchDB = require('pouchdb')
 const log = require('tangy-log').log
-const changeProcessor = require('./data-processing').changeProcessor;
+const changeProcessor = require('../data-processing').changeProcessor;
 const defaultState = { 
   "tally": 0, 
   "processed": 0,
@@ -49,7 +49,11 @@ const processBatch = async () => {
   // Persist state to disk.
   await writeFile(REPORTING_WORKER_STATE, JSON.stringify(workerState), 'utf-8')
   // Remove semaphore.
-  await unlink(REPORTING_WORKER_RUNNING)
+  try {
+    await unlink(REPORTING_WORKER_RUNNING)
+  } catch (e) {
+    log.error("Unlink error: " + e)
+  }
   return 
 }
 

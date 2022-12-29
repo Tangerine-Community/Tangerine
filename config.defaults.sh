@@ -23,7 +23,7 @@ T_UPLOAD_TOKEN="password"
 # The database username and password. Please make this extrememly secure.
 T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
-# Mysql
+# Mysql - Enter container name - usually "mysql" or the ip address or server name for an external service.
 T_MYSQL_CONTAINER_NAME="mysql"
 T_MYSQL_USER="admin"
 T_MYSQL_PASSWORD="password"
@@ -58,6 +58,15 @@ T_PAID_ALLOWANCE="unlimited"
 
 # Reporting delay determines how quickly uploads will get processed and show up in reporting outputs such as CSV. Time is in milliseconds and default is 5 minutes.
 T_REPORTING_DELAY="300000"
+
+# Number of change docs from the Couchdb changes feed queried by reporting-worker (i.e. use as the limit parameter)
+T_LIMIT_NUMBER_OF_CHANGES=200
+
+# Limit processing to certain group dbs.
+T_ONLY_PROCESS_THESE_GROUPS=""
+
+# Enter "true" if using a mysql container instead of an external database service such as AWS RDS. This will launch a mysql container.
+T_USE_MYSQL_CONTAINER=""
 
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50
@@ -126,9 +135,10 @@ T_JWT_ISSUER="Tangerine"
 T_JWT_EXPIRES_IN="1h"
 
 # Password Policy
-T_PASSWORD_POLICY="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})"
+T_PASSWORD_POLICY="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[~!@#$%^&\*()\-_=+<>,.;:|[\]{}])(?=.{8,})"
 T_PASSWORD_RECIPE="Password must contain at least 1 lowercase alphabetical character, at least 1 uppercase alphabetical character,
-at least 1 numeric character, at least one special character, and must be eight characters or longer"
+at least 1 numeric character, at least one special character ( ~ ! @ # $ % ^ & \* ( ) - _ = + < > , . ; : | [ ] { } ),
+and must be eight characters or longer"
 
 # Array of origins that are allowed to make requests to this server. Useful if you have an outside browser based app on a different origin that needs to make calls back to this server. See Express Cors Options Origin setting for possible values. https://expressjs.com/en/resources/middleware/cors.html#configuration-options
 # Example usage. Note the forward slashes before double quotes are required otherwise bash filters them out and it won't be valid JSON.

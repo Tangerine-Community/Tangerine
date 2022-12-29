@@ -18,6 +18,7 @@ const exec = util.promisify(require('child_process').exec)
 const fs = require('fs')
 const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
+const log = require('tangy-log').log
 
 const params = {
   dbName: process.argv[2],
@@ -76,7 +77,7 @@ async function go(state) {
     await writeFile(state.statePath, JSON.stringify(state), 'utf-8')
     //  Run batches.
     while (state.complete === false) {
-      console.log(`Run batch at skip of ${state.skip} at statePath: ${state.statePath}`)
+      log.debug(`Run batch at skip of ${state.skip} at statePath: ${state.statePath}`)
       const response = await exec(`./batch.js '${state.statePath}'`)
       if (response.stderr) console.error(response.stderr)
       if (process.env.NODE_ENV === 'development') console.log(response)

@@ -10,12 +10,33 @@ const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
 const createGroupDatabase = require('../../create-group-database.js')
 const { v4: uuidv4 } = require('uuid');
+const groupReportingViews = require(`./views.js`)
 
 /* Enable this if you want to run commands manually when debugging.
 const exec = async function(cmd) {
-  console.log(cmd)
+  console.log(cmd) 
 }
 */
+
+async function insertGroupReportingViews(groupName) {
+  let designDoc = Object.assign({}, groupReportingViews)
+  let groupDb = new DB(`${groupName}-mysql`)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`group reporting views inserted into ${groupName}-reporting`)
+  } catch (error) {
+    log.error(error)
+  }
+
+  // sanitized
+  groupDb = new DB(`${groupName}-mysql-sanitized`)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`group reporting views inserted into ${groupName}-reporting-sanitized`)
+  } catch (error) {
+    log.error(error)
+  }
+}
 
 module.exports = {
   name: 'mysql',
@@ -23,6 +44,7 @@ module.exports = {
     boot: async function(data) {
       const groups = await groupsList()
       for (groupId of groups) {
+
         const pathToStateFile = `/mysql-module-state/${groupId}.ini`
         startTangerineToMySQL(pathToStateFile)
       }
@@ -44,12 +66,14 @@ module.exports = {
       const groupId = groupName
       await initializeGroupForMySQL(groupId)
       const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-      startTangerineToMySQL(pathToStateFile)
+      // startTangerineToMySQL(pathToStateFile)
       await createGroupDatabase(groupName, '-mysql')
       await createGroupDatabase(groupName, '-mysql-sanitized')
+      await insertGroupReportingViews(groupName)
       return data
     },
     clearReportingCache: async function(data) {
+      console.log("clearReportingCache hook")
       const { groupNames } = data
       for (let groupName of groupNames) {
         await removeGroupForMySQL(groupName)
@@ -61,6 +85,7 @@ module.exports = {
         db = new DB(`${groupName}-mysql-sanitized`)
         await db.destroy()
         await createGroupDatabase(groupName, '-mysql-sanitized')
+        await insertGroupReportingViews(groupName)
       }
       return data
     },
@@ -163,7 +188,12 @@ async function removeGroupForMySQL(groupId) {
 async function initializeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
   console.log(`Creating mysql db ${mysqlDbName}`)
-  await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+  try {
+    await exec(`mysql -u ${process.env.T_MYSQL_USER} -h mysql -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+  } catch (e) {
+    console.log(`Error creating mysql db ${mysqlDbName}`)
+    console.log(e)
+  }
   console.log(`Created mysql db ${mysqlDbName}`)
   console.log('Creating tangerine to mysql state file...')
   const state = `[TANGERINE]
@@ -187,7 +217,7 @@ Password = ${process.env.T_MYSQL_PASSWORD}
 async function startTangerineToMySQL(pathToStateFile) {
   try {
     const cmd = `python3 /tangerine/server/src/modules/mysql/TangerineToMySQL.py ${pathToStateFile}`
-    const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile])
+    const script = spawn(`python3`, ['/tangerine/server/src/modules/mysql/TangerineToMySQL.py', pathToStateFile],{ env: { ...process.env, PYTHONIOENCODING: 'utf8' } })
     script.stdout.on('data', (data) => {
       log.info(`${cmd} -- ${data}`)
     })
@@ -232,6 +262,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     formId: formResponse.form.id,
     formTitle: formResponse.form.title,
     startUnixtime: formResponse.startUnixtime,
+    endUnixtime: formResponse.endUnixtime||'',
     buildId: formResponse.buildId||'',
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
@@ -278,6 +309,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         let selectedOption = input.value.find(option => !!option.value) 
         set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
       } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
+        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+      } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
         set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
