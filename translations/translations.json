@@ -20,6 +20,11 @@
     "languageDirection": "ltr"
   },
   {
+    "label": "Español (GT)",
+    "languageCode": "es_gt",
+    "languageDirection": "ltr"
+  },
+  {
     "label": "French",
     "languageCode": "fr",
     "languageDirection": "ltr"
@@ -69,10 +74,5 @@
     "label": "Urdu",
     "languageCode": "ur",
     "languageDirection": "rtl"
-  },
-  {
-    "label": "Vietnamese",
-    "languageCode": "vn",
-    "languageDirection": "ltr"
   }
 ]
