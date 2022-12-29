@@ -3,6 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../../shared/_services/user.service';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
+import {SyncMediaService} from "../../../sync/sync-media.service";
+import {Subscription} from "rxjs";
+import {HttpEventType} from "@angular/common/http";
 
 @Component({
   selector: 'app-sync-records',
@@ -20,11 +23,18 @@ export class SyncRecordsComponent implements OnInit {
   contentVersion = '';
   window: any;
   peerList = [];
-
+  uploadProgress: any = {};
+  progress: number;
+  uploadSub: Subscription;
+  statusMessage: string;
+  syncComplete:boolean = false;
+  showDirectoryDialog: boolean
+  
   constructor(
     private syncingService: SyncingService,
     private userService: UserService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private syncMediaService: SyncMediaService
   ) {
     this.window = window;
   }
@@ -34,7 +44,7 @@ export class SyncRecordsComponent implements OnInit {
     this.syncProtocol = appConfig.syncProtocol ? appConfig.syncProtocol : '1'
     if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === '2') {
     } else {
-      this.getUploadProgress();
+      await this.getUploadProgress();
     }
     if (this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') !== -1) {
       this.contentVersion = this.window.location.href.split('/')[this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') + 1];
@@ -75,19 +85,42 @@ export class SyncRecordsComponent implements OnInit {
   async sync() {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
-    const appConfig = await this.appConfigService.getAppConfig();
+
+    this.syncMediaService.syncMessage$.subscribe({
+      next: (progress) => {
+        this.uploadProgress = progress;
+        this.progress = progress.progress;
+        this.statusMessage = progress.message;
+      }
+    });
     usernames.map(async username => {
       try {
         const result = await this.syncingService.sync(username);
         if (result) {
           this.isSyncSuccesful = true;
-          this.getUploadProgress();
+          await this.getUploadProgress();
         }
       } catch (error) {
         console.error(error);
         this.isSyncSuccesful = false;
-        this.getUploadProgress();
+        await this.getUploadProgress();
       }
+      
+      this.syncComplete = true;
+
+      if (window['isCordovaApp']) {
+        try {
+          await this.syncMediaService.sync()
+          console.log('Media Sync Completed')
+        } catch (e) {
+          console.log(e)
+        }
+      } else {
+        // TODO: Need to sort out the PWA workflow. 
+        // this.showDirectoryDialog = true
+        console.log('Not a Cordova App - no media uploads')
+      }
+      
     });
   }
 }

@@ -110,6 +110,10 @@ export class CaseEventScheduleComponent implements OnInit {
     for (const caseId of uniqueCaseIds) {
       cases.push(await userDb.get(caseId))
     }
+    const unarchivedCaseIds = cases
+      .filter(caseInstance => !caseInstance['archived'])
+      .map(caseInstance => caseInstance._id)
+    caseEvents = caseEvents.filter(caseEvent => unarchivedCaseIds.includes(caseEvent.caseId) && !(caseEvent.inactive === true))
     if (appConfig.filterCaseEventScheduleByDeviceAssignedLocation) {
       const deviceInfo = await this.deviceService.getDevice()
       const lowestLevelOfLocation = deviceInfo.assignedLocation.value[deviceInfo.assignedLocation.value.length-1]

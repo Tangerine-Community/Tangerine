@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<mat-toolbar *ngIf="installed" dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
+<mat-toolbar *ngIf="installed && !kioskModeEnabled" dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
   <span class="home-icon" *ngIf="isLoggedIn">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
       <app-tangy-svg-logo [tangyLogoStyle]="{'height':'45px'}"></app-tangy-svg-logo>
@@ -22,6 +22,10 @@
 
   <paper-icon-button icon="more-vert" [matMenuTriggerFor]="appMenu" class="hamburger-menu"></paper-icon-button>
   <mat-menu #appMenu="matMenu">
+    <button *ngIf="ready && appConfig && appConfig.kioskMode" (click)="kioskModeEnabled = true" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">screen_lock_landscape</mat-icon>
+      <span>{{'Kiosk Mode'|translate}}</span>
+    </button>
     <button *ngIf="ready && !appConfig.hideProfile" routerLink="manage-user-profile" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
       <span>{{'Manage Profile'|translate}}</span>
@@ -66,6 +70,6 @@
   </mat-menu>
 
 </mat-toolbar>
-<div class="tangerine-app-content mat-typography">
+<div class="tangerine-app-content mat-typography " [ngClass]="{'has-topbar': !kioskModeEnabled}">
   <router-outlet *ngIf="ready"></router-outlet>
 </div>

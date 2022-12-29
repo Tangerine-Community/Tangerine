@@ -1,6 +1,8 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
 FROM tangerine/docker-tangerine-base-image:v3.7.3
 
+RUN git config --global url."https://".insteadOf git://
+
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -54,14 +56,12 @@ RUN cd /tangerine/client/ && \
     npm install
 
 # Install PWA tools.
-RUN git config --global url."git://".insteadOf https://
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
 ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
 RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
     npm install
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
 ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
-RUN git config --global url."git://".insteadOf https://
 RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root

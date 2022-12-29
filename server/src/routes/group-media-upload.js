@@ -13,7 +13,9 @@ module.exports = async (req, res) => {
   } catch (e) {
     await exec(`mkdir /tangerine/client/content/groups/${req.params.group}/media`)
   }
+  console.log("Uploads? Anybody???", req.files)
   for (let file of req.files) {
+    console.log("File: ", file)
     await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/media/${file.originalname.replace(/(\s+)/g, '\\$1')}`)
   }
   res.send()

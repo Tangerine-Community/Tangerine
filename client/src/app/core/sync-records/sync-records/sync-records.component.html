@@ -5,16 +5,39 @@
   <mat-card>
     <mat-card-content>
       <p class="mat-headline">{{'Syncing Status Summary'|translate}}</p>
+      <p>{{'This page will sync records first and any video files afterwards.'|translate}}</p>
+      <h3>{{'Record Sync Progress'|translate}}</h3>
       <span *ngIf="isSyncSuccesful">{{'Sync Successful'|translate}}</span>
       <span
-        *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined">{{'Sync unsuccessful, please retry.'|translate}}</span>
-      <br />
-      <br>
+        *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined" class="error">{{'Sync unsuccessful, please retry.'|translate}}</span>
       <div *ngIf="syncProtocol != 'replication'">
-        <p>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</p>
-        <p>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</p>
-        <p>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</p>
+        <ul>
+        <li>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</li>
+        <li>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</li>
+        <li>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</li>
+        </ul>
       </div>
+      <div *ngIf="syncComplete">
+        <h3>{{'File Upload Progress'|translate}}</h3>
+        <div *ngIf="!syncMediaService.mediaFilesToSync">
+          <p>{{'No files to upload.'|translate}}</p>
+        </div>
+        <div *ngIf="showDirectoryDialog">
+          <label for="folder">{{'Select folder'|translate}}</label>
+          <input type="file" id="folder" webkitdirectory multiple (change)="restoreBackups($event.target.files)"/>
+        </div>
+        {{statusMessage}}
+        <div class="progress">
+          <mat-progress-bar class="progress-bar" mode="determinate"
+                            [value]="progress" *ngIf="uploadProgress">
+          </mat-progress-bar>
+
+          <!--        <mat-icon class="cancel-upload" (click)="cancelUpload()"-->
+          <!--                  *ngIf="uploadProgress">delete_forever</mat-icon>-->
+        </div>
+      </div>
+      
+
 
     </mat-card-content>
     <mat-card-actions>

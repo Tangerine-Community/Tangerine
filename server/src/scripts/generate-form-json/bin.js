@@ -121,8 +121,53 @@ for (let index = 0; index < forms.length; index++) {
           if (typeof input !== 'undefined') {
             // console.log("typeof input: " + typeof input)
             const root = await XMLParser.parse(window.document, input.toString());
+            // console.log("childNodes: " + root.childNodes[0])
             const name = root.childNodes[0].getAttribute('name')
             const label = root.childNodes[0].getAttribute('label')
+            const childArray = []
+            let text = ""
+            let tag = root.childNodes[0].nodeName
+            let rawHtml = ""
+            console.log("tag: " + tag)
+            if (root.childNodes[0].nodeName === 'TANGY-BOX') {
+              console.log("childNodes: " + root.childNodes[0])
+              text = root.childNodes[0].innerHTML
+              rawHtml = root.childNodes[0].toString()
+            } else if (root.childNodes[0].nodeName === 'DIV') {
+              console.log("childNodes: " + root.childNodes[0])
+              text = root.childNodes[0].innerHTML
+              rawHtml = root.childNodes[0].toString()
+            } else if (root.childNodes[0].nodeName === 'TANGY-TEMPLATE') {
+              console.log("childNodes: " + root.childNodes[0])
+              text = root.childNodes[0].innerHTML
+              rawHtml = root.childNodes[0].toString()
+            } else if (root.childNodes[0].nodeName === 'TANGY-GPS') {
+              console.log("childNodes: " + root.childNodes[0])
+              text = root.childNodes[0].innerHTML
+              rawHtml = root.childNodes[0].toString()
+            } else if (root.childNodes[0].nodeName === 'TANGY-LOCATION') {
+              console.log("childNodes: " + root.childNodes[0])
+              text = root.childNodes[0].innerHTML
+              rawHtml = root.childNodes[0].toString()
+            } else {
+              text = root.childNodes[0].innerHTML
+              rawHtml = root.childNodes[0].toString()
+              const children = root.childNodes[0].children
+              if (children.length > 0) {
+                // const options = children.getAttribute('option')
+                // console.log("options: " + options)
+                for (let i = 0; i < children.length; i++) {
+                  const child = children[i]
+                  console.log("child attributes: " + JSON.stringify(child.attributes))
+                  let inputDefinition = {
+                    name: child.innerHTML,
+                    value: child.getAttribute('value')
+                  }
+                  childArray.push(inputDefinition)
+                }
+              }
+            }
+            
             // const identifier = root.childNodes[0].getAttribute('identifier')
             const identifier = root.childNodes[0].getAttribute('identifier') === "" ? true : false
             if (identifier === true) {
@@ -136,7 +181,12 @@ for (let index = 0; index < forms.length; index++) {
               label: label,
               identifier: identifier,
               required: required,
-              tagName: tagName
+              tagName: tagName,
+              text: text,
+              rawHtml: rawHtml
+            }
+            if (childArray.length > 0) {
+              inputDefinition.options = childArray
             }
             itemDefinition.inputEls.push(inputDefinition)
           }

@@ -18,6 +18,8 @@ export class AppConfig {
   languageDirection  = "ltr"
   languageCode = "en"
   useEthiopianCalendar:boolean
+  // Format of the date to be displayed in the application. Use Moment's Format standard. https://momentjs.com/docs/#/displaying/format/
+  dateFormat = "M/D/YYYY"
 
   //
   // Sync configuration
@@ -48,12 +50,16 @@ export class AppConfig {
   initialBatchSize:number
   // The max number of documents that will get written to disk during a sync. Tweak this down when using the SqlCipher encryption plugin to avoid database crashes.
   writeBatchSize:number
+  // The max number of documents that will indexed at a time. Tweak this down when using the SqlCipher encryption plugin to avoid database crashes.
+  changesBatchSize:number
   // The number of IDs to read from the database at a time when doing a Comparison Sync.
   compareLimit: number;
   // List of views to skip optimization of after a sync.
   doNotOptimize: Array<string>
   // Prevent database optimization after a sync other than the first sync. This is not recommended, will lead to performance issues when using Devices.
   indexViewsOnlyOnFirstSync:boolean = false
+  // Enables support for reducing the number of documents processed in the changed feed when syncing by passing this value to pouchDBOptions used when instantiating a db connection in db.factory.ts. This setting can help sites that experience crashes when syncing or indexing documents. Using this setting *will* slow sync times. (default: 50) 
+  changes_batch_size:number
  
   //
   // Account auth configuration.
@@ -67,6 +73,8 @@ export class AppConfig {
   passwordRecipe:string
   // Disregard password functionality.
   noPassword = false
+  // Prevent users from logging out and accessing menu. Useful when used in conjunction with a kiosk mode app.
+  kioskMode = false
 
   //
   // Profile configuration.
@@ -107,7 +115,10 @@ export class AppConfig {
   barcodeSearchMapFunction:string
   // Determines if a "Create Issue" button appears when viewing submitted Event Forms.
   allowCreationOfIssues:boolean
+  // Determines if a "Merge Issue" button appears in the Issues Revision page.
+  allowMergeOfIssues:boolean
   filterCaseEventScheduleByDeviceAssignedLocation:boolean = false
+
 
   //
   // Tangerine Coach configuration.
@@ -117,11 +128,21 @@ export class AppConfig {
   categories = []
 
   //
+  // Custom App configuration
+  //
+
+  goHomeAfterFormSubmit = false
+  forceCompleteForms = false
+
+  //
   // Backup configuration.
   //
 
   useCachedDbDumps:boolean
   dbBackupSplitNumberFiles: number;
+  
+  // Media files configuration
+  mediaFileStorageLocation:string  // Options: 'database' (default) or 'file'. If undefined, will save to database.
 
   //
   // Experimental configuration.
@@ -132,6 +153,7 @@ export class AppConfig {
   p2pSync = 'false'
   attachHistoryToDocs:boolean = false
   usePouchDbLastSequenceTracking:boolean
+  forceNewEventFormConfirmation:boolean = false
 
   //
   // @TODO Sort these.

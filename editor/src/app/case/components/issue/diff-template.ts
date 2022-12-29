@@ -82,6 +82,10 @@ function valueTemplate(input) {
           .join(', ')
     } else if (
       input.tagName === 'TANGY-SIGNATURE' || 
+      input.tagName === 'TANGY-PHOTO-CAPTURE'
+    ) {
+      return '<img src="' + input.value + '" />'
+    } else if (
       input.tagName === 'TANGY-TIMED' || 
       input.tagName === 'TANGY-LOCATION' ||
       input.value === 'object'

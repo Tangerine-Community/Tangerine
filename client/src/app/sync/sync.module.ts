@@ -19,6 +19,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatRadioModule} from "@angular/material/radio";
+import {SyncMediaService} from "./sync-media.service";
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -32,8 +33,8 @@ import {MatRadioModule} from "@angular/material/radio";
     },
     SyncService,
     SyncCustomService,
-    SyncCouchdbService
-
+    SyncCouchdbService,
+    SyncMediaService
   ],
   imports: [
     CommonModule,

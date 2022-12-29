@@ -1,21 +1,31 @@
 <h1>
     {{'New Group'|translate}}
 </h1>
-<form novalidate (ngSubmit)="createGroup()" #newGroupForm="ngForm">
+<div *ngIf="!ready">
+  Loading...
+</div>
+<form novalidate (ngSubmit)="createGroup()" #newGroupForm="ngForm" *ngIf="ready">
     <mat-form-field>
-        <input
-            name="groupNameInput"
-            [(ngModel)]="groupName"
-            #groupNameInput="ngModel"
-            matInput
-            placeholder="{{'Group Name'|translate}}"
-            required
-        >
-        <mat-error
-            *ngIf="(groupNameInput.invalid||groupNameInput.errors) && (groupNameInput.dirty || groupNameInput.touched)"
-        >
-            {{'This Field is Required'|translate}}
-        </mat-error>
+      <input
+          name="groupNameInput"
+          [(ngModel)]="groupName"
+          #groupNameInput="ngModel"
+          matInput
+          placeholder="{{'Group Name'|translate}}"
+          required
+      >
+      <mat-error
+          *ngIf="(groupNameInput.invalid||groupNameInput.errors) && (groupNameInput.dirty || groupNameInput.touched)"
+      >
+          {{'This Field is Required'|translate}}
+      </mat-error>
+    </mat-form-field>
+    <br>
+    <mat-form-field appearance="fill" *ngIf="contentSets.length > 0">
+      <mat-label>Content Set</mat-label>
+      <select matNativeControl required name="contentSetSelect" [(ngModel)]="contentSet">
+        <option *ngFor="let contentSet of contentSets" value="{{contentSet.id}}">{{contentSet.label}}</option>
+      </select>
     </mat-form-field>
     <br>
     <br>

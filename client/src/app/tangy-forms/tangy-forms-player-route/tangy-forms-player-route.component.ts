@@ -2,6 +2,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { TangyFormsPlayerComponent } from './../tangy-forms-player/tangy-forms-player.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 @Component({
   selector: 'app-tangy-forms-player-route',
@@ -20,10 +21,19 @@ export class TangyFormsPlayerRouteComponent implements OnInit {
 
   constructor(
     private route:ActivatedRoute,
+    private router:Router,
+    private appConfigService: AppConfigService,
     private userService:UserService 
   ) { }
 
   ngOnInit() {
+    this.appConfigService.getAppConfig().then(appConfig => {
+      if (appConfig.goHomeAfterFormSubmit) {
+        this.formPlayer.$afterSubmit.subscribe(() => {
+          this.router.navigateByUrl('/')
+        })
+      }
+    })
     this.sub = this.route.params.subscribe(async params => {
       this.formPlayer.location = await this.userService.getUserLocation()
       if (params['templateId']) {
@@ -35,6 +45,7 @@ export class TangyFormsPlayerRouteComponent implements OnInit {
         this.formPlayer.formId = params['formId']
         this.formPlayer.render()
       }
+
     });
   }
 

@@ -21,21 +21,21 @@ export const TangyFormsQueries = {
   // @TODO These views are for Sync Protocol 1 only. We should move these to another module specific to SP1.
   responsesLockedAndNotUploaded: {
     map: function (doc) {
-      if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === true && (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesUnLockedAndNotUploaded: {
     map: function (doc) {
-      if (doc.collection === 'TangyFormResponse' && doc.complete === false && !doc.uploadDatetime) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === false && (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesLockedAndUploaded: {
     map: function (doc) {
-      if (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === true && (doc.uploadDatetime && doc.uploadDatetime > doc.tangerineModifiedOn)) {
         emit(doc.form.id, true)
       }
     }.toString()
@@ -59,6 +59,8 @@ export const TangyFormsQueries = {
         if (location) {
           let lowestLevelLocation = location.value.pop()
           emit(lowestLevelLocation.value, true);
+        } else {
+          emit('noLocation', true);
         }
       }
     }.toString()
@@ -76,6 +78,8 @@ export const TangyFormsQueries = {
           const lowestLevelLocation = location.value.pop()
           const thisLocationId = lowestLevelLocation.value;
           emit(`${thisLocationId}-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
+        } else {
+          emit(`noLocation-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
         }
       }
     }.toString()

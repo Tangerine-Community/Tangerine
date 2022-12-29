@@ -29,6 +29,7 @@ import { ProcessMonitorDialogComponent } from './shared/_components/process-moni
 })
 export class AppComponent implements OnInit, OnDestroy {
 
+
   loggedIn = false;
   validSession: boolean;
   user_id: string = localStorage.getItem('user_id');

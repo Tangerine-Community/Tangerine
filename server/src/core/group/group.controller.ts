@@ -14,8 +14,8 @@ export class GroupController {
   ) { }
 
   @All('create')
-  async create(@Body('label') label:string, @Req() request: Request):Promise<Group> {
-    return await this.groupService.create(label, request['user']['name']);
+  async create(@Body('label') label:string, @Body('contentSet') contentSet:string, @Req() request: Request):Promise<Group> {
+    return await this.groupService.create(label, contentSet, request['user']['name']);
   }
 
   @All('read/:groupId')
@@ -46,6 +46,11 @@ export class GroupController {
         return user.groups.reduce((foundMembership, groupMembership) => foundMembership ? true : groupMembership.groupName === group._id, false)
       })
     }
+  }
+
+  @All('content-sets')
+  async contentSets() {
+    return await this.groupService.contentSets()
   }
 
   @Post('start-session')

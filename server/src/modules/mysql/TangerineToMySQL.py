@@ -96,8 +96,13 @@ def convert_participant(resp_dict):
         role = resp_dict.get("caseRoleId")
 
         participantData = resp_dict.get('data')
-        if 'ParticipantID' not in participantData:
+#         log("participantData: {}".format(participantData))
+        if 'participantID' in participantData:
+            log('Already have participantID: ' + participantId)
+        elif 'ParticipantID' not in participantData:
+            log('Adding ParticipantID: ' + participantId)
             participantData.update({'ParticipantID': participantId})
+            
         if 'CaseID' not in participantData:
             participantData.update({'CaseID': caseId})
         if 'caseRoleId' not in participantData:
@@ -105,20 +110,23 @@ def convert_participant(resp_dict):
         if 'dbRevision' not in participantData:
             participantData.update({'dbRevision': dbRev})
 
-        #check to see if we have any additional data elements that we need to convert and save to MySQL database
-        del resp_dict["data"]
-        del resp_dict["caseId"]
-        del resp_dict["participantId"]
-        del resp_dict["_id"]
-        del resp_dict["_rev"]
-        del resp_dict["caseRoleId"]
-        del resp_dict["id"]
-        del resp_dict["type"]
+        # Delete the following keys; if empty, replace with None. this prevents a KeyError.
+        resp_dict.pop('data', None)
+        resp_dict.pop('caseId', None)
+        resp_dict.pop('participantId', None)
+        resp_dict.pop('_id', None)
+        resp_dict.pop('_rev', None)
+        resp_dict.pop('caseRoleId', None)
+        resp_dict.pop('id', None)
+        resp_dict.pop('type', None)
 
+        # Check to see if we have any additional data elements that we need to convert and save to MySQL database.
         if resp_dict is not None:
             for key in resp_dict:
                 participantData.update({key: resp_dict.get(key)})
-
+        
+#         log("Updated participantData: {}".format(participantData))
+       
         df = pd.DataFrame([participantData])
         # RJ: Do we need a df.rename() like we do on other types of data?
         # Try 3 things to insert data...
@@ -130,6 +138,7 @@ def convert_participant(resp_dict):
             qry = "SELECT * FROM " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId + "' AND CaseID='" + caseId + "'"
             cursor.execute(qry)
             if cursor.rowcount >= 1:
+                log("Deleting participant in order to update it: " +  participantId + " dbRev: " + dbRev + " caseId: " + caseId)
                 cursor.execute("Delete from " + mysqlDatabaseName + ".participant where ParticipantID='" + participantId + "' AND CaseID='" + caseId + "'")
                 mysql_connection.commit()
             # this will fail if there is a new column
@@ -138,12 +147,15 @@ def convert_participant(resp_dict):
             mysql_connection.commit()
         except:
             try:
+                log("Rebuilding participant table for: " +  participantId + " dbRev: " + dbRev + " caseId: " + caseId)
+                log("participantData: {}".format(participantData))
                 data = pd.read_sql('SELECT * FROM ' + mysqlDatabaseName + '.participant', engine)
                 df2 = pd.concat([data, df], sort=False)
                 mysql_connection.commit()
                 df2.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
             except:
+                log("Failure! Rebuilding participant table for: " +  participantId + " dbRev: " + dbRev + " caseId: " + caseId)
                 mysql_connection.commit()
                 df.to_sql(name='participant', con=engine, if_exists='replace', index=False)
                 mysql_connection.commit()
@@ -193,10 +205,10 @@ def convert_case_event(resp_dict):
 #convert a Tangerine event form document to MySQL event_form table
 def convert_event_form(resp_dict):
     eventFormId = resp_dict.get('_id')
-    log(eventFormId)
+    log('convert_event_form eventFormId:' + eventFormId)
     data = resp_dict.get('data')
     type = resp_dict.get('return')
-    del resp_dict["id"]
+    del resp_dict["id"] 
     del resp_dict["type"]
     if resp_dict.get("data"):
         del resp_dict["data"]

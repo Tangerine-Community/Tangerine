@@ -11,10 +11,7 @@ module.exports = {
           if (formResponse.metadata && formResponse.metadata.studentRegistrationDoc && formResponse.metadata.studentRegistrationDoc.classId) {
             let studentRegistrationDoc = formResponse.metadata.studentRegistrationDoc
             flatFormResponse[`sr_classId`] = studentRegistrationDoc.classId;
-            flatFormResponse[`sr_student_name`] = studentRegistrationDoc.student_name;
             flatFormResponse[`sr_student_id`] = studentRegistrationDoc.id;
-            flatFormResponse[`sr_age`] = studentRegistrationDoc.age;
-            flatFormResponse[`sr_gender`] = studentRegistrationDoc.gender;
           }
           resolve({flatFormResponse, formResponse})
       })

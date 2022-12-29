@@ -40,6 +40,7 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
   curriculums: any;
   subtestReports: any;
   revealReport = false;
+  today:string 
 
   @ViewChild('subTestReport', {static: true}) subTestReport: ElementRef;
   @ViewChild('curriculumSelectPara', {static: true}) curriculumSelect: ElementRef;
@@ -59,6 +60,8 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
   }
 
   async ngOnInit() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.today = this.tNumber(window['moment'](Date.now()).format(appConfig.dateFormat))
     const currentUser = this.userService.getCurrentUser();
     if (currentUser) {
       this.classUtils = new ClassUtils();
@@ -171,7 +174,9 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
 
       // let results = (await this.getResultsByClass(classId, curriculumId, curriculumFormsList))
       //   .filter(result => studentIds.indexOf(result.studentId) !== -1)
-      const responses = await this.classFormService.getResponsesByStudentId(studentId);
+      const responses = (await this.classFormService.getResponsesByStudentId(studentId)).reduce((acc, curr) => {
+        return curr.doc.form.id === curriculumId ? acc.concat(curr) : acc;
+      }, [])
       const data = await this.dashboardService.transformResultSet(responses, curriculumFormsList, null);
       // clean the array
       const results: Array<StudentResult> = this.dashboardService.clean(data, undefined);

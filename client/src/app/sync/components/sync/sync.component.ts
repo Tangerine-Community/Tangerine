@@ -3,6 +3,7 @@ import { SyncService } from './../../sync.service';
 import {Component, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {ReplicationStatus} from "../../classes/replication-status.class";
 import { SyncDirection } from '../../sync-direction.enum';
+import {SyncMediaService} from "../../sync-media.service";
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
 const STATUS_IN_PROGRESS = 'STATUS_IN_PROGRESS'
@@ -39,6 +40,10 @@ export class SyncComponent implements OnInit, OnDestroy {
   rewindDisabled = false;
   indexing: any
   indexingMessage: string
+  reduceBatchSize = false;
+  mediaSyncStatusMessage: string;
+  uploadProgress: any = {};
+  mediaSyncProgress: number;
 
   @Input() fullSync: string;
   currentCheckedValue: boolean = null
@@ -46,7 +51,8 @@ export class SyncComponent implements OnInit, OnDestroy {
   constructor(
     private syncService: SyncService,
     private userService: UserService,
-    private ren: Renderer2
+    private ren: Renderer2,
+    private syncMediaService: SyncMediaService
   ) { }
 
   async ngOnInit() {
@@ -175,21 +181,21 @@ export class SyncComponent implements OnInit, OnDestroy {
         // Pull comparison
         this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."
         // force a sync to make sure all docs have been pushed. 
-        this.replicationStatus = await this.syncService.sync(false, null)
-        this.replicationStatus = await this.syncService.compareDocs('pull')
+        this.replicationStatus = await this.syncService.sync(false, null, this.reduceBatchSize)
+        this.replicationStatus = await this.syncService.compareDocs('pull', this.reduceBatchSize)
       } else if (this.runComparison === 'push') {
         // Push comparison
-        this.replicationStatus = await this.syncService.compareDocs('push')
+        this.replicationStatus = await this.syncService.compareDocs('push', this.reduceBatchSize)
       } else if (this.fullSync === 'pull') {
         // Pull Rewind Full Sync
         this.otherMessage = "Forcing a sync before the Rewind Sync to make sure that all docs have been uploaded from the tablet."
         // force a sync to make sure all docs have been pushed. 
-        this.replicationStatus = await this.syncService.sync(false, null)
+        this.replicationStatus = await this.syncService.sync(false, null, this.reduceBatchSize)
         // Rewind sync is activated when you provide the 'fullSync' variable - push or pull:
-        this.replicationStatus = await this.syncService.sync(false, SyncDirection.pull)
+        this.replicationStatus = await this.syncService.sync(false, SyncDirection.pull, this.reduceBatchSize)
       } else if (this.fullSync === 'push') {
         // Push Rewind Full Sync
-        this.replicationStatus = await this.syncService.sync(false, SyncDirection.push)
+        this.replicationStatus = await this.syncService.sync(false, SyncDirection.push, this.reduceBatchSize)
       }
       
       this.dbDocCount = this.replicationStatus.dbDocCount
@@ -206,6 +212,25 @@ export class SyncComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
     this.isSyncing = false
+
+    this.syncMediaService.syncMessage$.subscribe({
+      next: (progress) => {
+        this.uploadProgress = progress;
+        this.mediaSyncProgress = progress.progress;
+        this.mediaSyncStatusMessage = progress.message;
+      }
+    });
+    if (window['isCordovaApp']) {
+      try {
+        await this.syncMediaService.sync()
+        console.log('Media Sync Completed')
+      } catch (e) {
+        console.log(e)
+      }
+    } else {
+      console.log('Not a Cordova App - no media uploads')
+    }
+    
   }
 
   cancel() {
@@ -242,11 +267,17 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.runComparison = null
   }
 
+  toggleReduceBatchSize() {
+    this.reduceBatchSize = !this.reduceBatchSize
+    console.log(`Reduced batch size is: ${this.reduceBatchSize ? 'on' : 'off'}`)
+  }
+
   reset() {
     this.runComparison = null
     this.fullSync = null
     this.comparisonDisabled = false
     this.rewindDisabled = false
+    this.reduceBatchSize = false
   }
 
   checkState(el, direction, action) {

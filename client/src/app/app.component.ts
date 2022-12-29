@@ -47,6 +47,7 @@ export class AppComponent implements OnInit {
   installed = false
   isLoggedIn = false
   isAdmin = false
+  kioskModeEnabled = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
@@ -243,6 +244,8 @@ export class AppComponent implements OnInit {
           permissions.ACCESS_COARSE_LOCATION,
           permissions.ACCESS_FINE_LOCATION,
           permissions.CAMERA,
+          permissions.RECORD_AUDIO,
+          permissions.MODIFY_AUDIO_SETTINGS,
           permissions.READ_EXTERNAL_STORAGE,
           permissions.WRITE_EXTERNAL_STORAGE,
           permissions.WAKE_LOCK

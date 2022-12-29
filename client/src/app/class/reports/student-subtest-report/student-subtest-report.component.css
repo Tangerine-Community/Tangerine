@@ -15,8 +15,11 @@
   padding: 6px 13px;
   border: 1px solid #dfe2e5;
 }
-.subtest-report-header {
+
+.subtest-report-header mat-select {
   width:300px;
+}
+.subtest-report-header {
   padding-top:20px;
   margin-bottom:10px;
   margin-left:5px;

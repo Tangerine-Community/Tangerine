@@ -14,6 +14,13 @@ export class GroupsService {
     private errorHandler: TangyErrorHandler
   ) { }
 
+  async getContentSets() {
+    return <any>await this
+      .httpClient
+      .get(`/nest/group/content-sets`)
+      .toPromise();
+  }
+
   async getGroupInfo(groupId) {
     return <any>await this
       .httpClient
@@ -41,9 +48,9 @@ export class GroupsService {
     }
   }
 
-  async createGroup(groupName: string) {
+  async createGroup(groupName: string, contentSet:string) {
     try {
-      const result = await this.httpClient.post('/nest/group/create', { label: groupName }).toPromise();
+      const result = await this.httpClient.post('/nest/group/create', { label: groupName, contentSet }).toPromise();
       return result;
     } catch (error) {
       console.error(error);

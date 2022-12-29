@@ -15,6 +15,7 @@
   </div>
   <app-event-form-list-item (formDeleted)="updateFormList($event)"
     *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
+    [style.display]="eventFormInfo.eventForm.inactive?'none':'inherit'"
     [case]="caseService.case"
     [caseDefinition]="caseService.caseDefinition"
     [caseEvent]="caseEvent"

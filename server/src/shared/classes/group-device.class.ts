@@ -11,6 +11,7 @@ export class GroupDevice {
   version:string
   syncLocations:Array<LocationConfig> = []
   assignedLocation:LocationConfig = new LocationConfig()
+  assignedFormResponseIds:Array<string> = []
 }
 
 export class SyncLocation {

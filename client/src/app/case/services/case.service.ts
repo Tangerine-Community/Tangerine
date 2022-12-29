@@ -145,6 +145,10 @@ class CaseService {
     }, [])
   }
 
+  get groupId() {
+    return this._case.groupId
+  }
+
   get roleDefinitions() {
     return this.caseDefinition.caseRoles
   }
@@ -284,7 +288,7 @@ class CaseService {
   hasEventFormPermission(operation:EventFormOperation, eventFormDefinition:EventFormDefinition, eventForm?:EventForm) {
     if (
       (
-        eventForm &&
+        eventForm && !eventForm.inactive && eventForm.permissions &&
         eventForm.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
       ) ||
       (
@@ -299,11 +303,13 @@ class CaseService {
     }
   }
 
-  hasCaseEventPermission(operation:CaseEventOperation, eventDefinition:CaseEventDefinition) {
+  hasCaseEventPermission(operation:CaseEventOperation, eventDefinition:CaseEventDefinition, caseEvent?:CaseEvent) {
     if (
-        !eventDefinition.permissions ||
+        (!eventDefinition.permissions ||
         !eventDefinition.permissions[operation] ||
-        eventDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0
+        eventDefinition.permissions[operation].filter(op => this.userService.roles.includes(op)).length > 0)
+        ||
+        caseEvent && !caseEvent.inactive
     ) {
       return true
     } else {
@@ -398,6 +404,34 @@ class CaseService {
   disableEventDefinition(eventDefinitionId) {
     if (this.case.disabledEventDefinitionIds.indexOf(eventDefinitionId) === -1) {
       this.case.disabledEventDefinitionIds.push(eventDefinitionId)
+    }
+  }
+
+  activateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: false
+          }
+          : event
+      })
+    }
+  }
+
+  deactivateCaseEvent(caseEventId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => {
+        return event.id === caseEventId
+          ? {
+            ...event,
+            inactive: true
+          }
+          : event
+      })
     }
   }
 
@@ -547,6 +581,44 @@ class CaseService {
     }
   }
 
+  activateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: false
+            }
+          )
+        }
+      )
+    }
+  }
+
+  deactivateEventForm(caseEventId:string, eventFormId:string) {
+    this.case = {
+      ...this.case,
+      events: this.case.events.map(event => event.id !== caseEventId
+        ? event
+        : {
+          ...event,
+          eventForms: event.eventForms.map(eventForm => eventForm.id !== eventFormId
+            ? eventForm
+            : {
+              ...eventForm,
+              inactive: true
+            }
+          )
+        }
+      )
+    }
+  }
+
   /*
    * Participant API
    */
@@ -613,7 +685,7 @@ class CaseService {
     }
   }
 
-  async activateParticipant(participantId:string) {
+  activateParticipant(participantId:string) {
     this.case = {
       ...this.case,
       participants: this.case.participants.map(participant => {
@@ -627,7 +699,7 @@ class CaseService {
     }
   }
 
-  async deactivateParticipant(participantId:string) {
+  deactivateParticipant(participantId:string) {
     this.case = {
       ...this.case,
       participants: this.case.participants.map(participant => {
@@ -644,13 +716,17 @@ class CaseService {
 
   async getParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
-
-    await this.load(sourceCaseId)
-    const sourceCase = this.case
-    const sourceParticipant = sourceCase.participants.find(sourceParticipant =>
-      sourceParticipant.id === sourceParticipantId)
-      
-    await this.load(currCaseId)
+    var sourceParticipant = undefined
+    try {
+      await this.load(sourceCaseId)
+      const sourceCase = this.case
+      sourceParticipant = sourceCase.participants.find(sourceParticipant =>
+        sourceParticipant.id === sourceParticipantId)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      await this.load(currCaseId)
+    }
 
     return sourceParticipant
   }
@@ -658,12 +734,16 @@ class CaseService {
   async deleteParticipantInAnotherCase(sourceCaseId, sourceParticipantId) {
     const currCaseId = this.case._id
 
-    await this.load(sourceCaseId)
-    this.case.participants = this.case.participants.filter(sourceParticipant =>
-        sourceParticipant.id === sourceParticipantId)
-    await this.save()
-
-    await this.load(currCaseId)
+    try {
+      await this.load(sourceCaseId)
+      this.case.participants = this.case.participants.filter(sourceParticipant =>
+          sourceParticipant.id === sourceParticipantId)
+      await this.save()
+    } catch (err) {
+      console.log(err)
+    } finally {
+      await this.load(currCaseId)
+    }
   }
 
   async copyParticipantFromAnotherCase(sourceCaseId, sourceParticipantId) {
@@ -780,7 +860,8 @@ class CaseService {
   async createIssuesInQueue() {
     const userProfile = await this.userService.getUserProfile()
     for (let queuedIssue of this.queuedIssuesForCreation) {
-      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, '')
+      const device = await this.deviceService.getDevice()
+      await this.createIssue(queuedIssue.label, queuedIssue.comment, this.case._id, this.getCurrentCaseEventId(), this.getCurrentEventFormId(), userProfile._id, this.userService.getCurrentUser(), false, device._id)
     }
     this.queuedIssuesForCreation = []
   }
@@ -977,8 +1058,8 @@ class CaseService {
       userId
     })
     const proposedFormResponse = await this.getProposedChange(issueId)
-    this.tangyFormService.saveResponse(proposedFormResponse.response)
-    this.tangyFormService.saveResponse(proposedFormResponse.case)
+    await this.tangyFormService.saveResponse(proposedFormResponse.response)
+    await this.tangyFormService.saveResponse(proposedFormResponse.caseInstance)
     return await this.tangyFormService.saveResponse({
       ...issue,
       status: IssueStatus.Merged
@@ -987,7 +1068,9 @@ class CaseService {
 
   async hasProposedChange(issueId:string) {
     const issue = new Issue(await this.tangyFormService.getResponse(issueId))
-    return !!issue.events.find(event => event.type === IssueEventType.ProposedChange)
+    const baseEvent = [...issue.events].reverse().find(event => event.type === IssueEventType.Open || event.type === IssueEventType.Rebase)
+    const indexOfBaseEvent = issue.events.findIndex(event => event.id === baseEvent.id)
+    return !!issue.events.find((event, i) => event.type === IssueEventType.ProposedChange && i > indexOfBaseEvent)
   }
 
   async canMergeProposedChange(issueId:string) {
@@ -998,6 +1081,29 @@ class CaseService {
     const currentFormResponse = await this.tangyFormService.getResponse(issue.formResponseId)
     const currentCaseInstance = await this.tangyFormService.getResponse(issue.caseId)
     return currentFormResponse._rev === eventBase.data.response._rev && currentCaseInstance._rev === eventBase.data.caseInstance._rev ? true : false
+  }
+
+  async hasMergeChangePermission(issueId:string) {
+    const appConfig = await this.appConfigService.getAppConfig()
+
+    var enabled = appConfig.allowMergeOfIssues ? appConfig.allowMergeOfIssues : false
+    if (enabled) {
+      const issue = new Issue(await this.tangyFormService.getResponse(issueId))
+      if (issue && issue.caseId && issue.eventId) {
+        const caseEvent = this.events.find(event => event.id === issue.eventId)
+        const caseEventDefinition = this.caseDefinition.eventDefinitions.find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+
+        const eventForm = caseEvent.eventForms.find(form => form.id === issue.eventFormId)
+        const eventFormDefinition = caseEventDefinition.eventFormDefinitions.find(formDefinition => formDefinition.id === eventForm.eventFormDefinitionId)
+
+        const caseEventUpdatePermission = this.hasCaseEventPermission(CaseEventOperation.UPDATE, caseEventDefinition)
+
+        const eventFormUpdatePermission = this.hasEventFormPermission(EventFormOperation.UPDATE, eventFormDefinition)
+        enabled = (caseEventUpdatePermission && eventFormUpdatePermission)
+      }
+    }
+
+    return enabled
   }
 
   async issueDiff(issueId) {
@@ -1041,7 +1147,7 @@ class CaseService {
   }
 
   isIssueContext() {
-    return window.location.hash.includes('/issues/')
+    return window.location.hash.includes('/issues/') || window.location.hash.includes('/issue/')
       ? true
       : false
   }

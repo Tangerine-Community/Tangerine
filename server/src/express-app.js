@@ -122,6 +122,7 @@ app.use(compression())
 var isAuthenticated = require('./middleware/is-authenticated.js')
 var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
+var hasDeviceOrUploadToken = require('./middleware/has-device-token-or-has-upload-token.js')
 var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
 var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
@@ -240,6 +241,7 @@ app.use('/app/:groupId/csv-templates/update', require('./routes/group-csv-templa
 app.use('/app/:groupId/csv-templates/delete/:templateId', require('./routes/group-csv-templates-delete.js'));
 // @TODO Need isAdminUser middleware.
 app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
+app.use('/app/:group/client-media-upload', hasDeviceOrUploadToken, upload.any(), require('./routes/group-client-upload.js'));
 app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   let contentPath = `/tangerine/groups/${req.params.group}/client`

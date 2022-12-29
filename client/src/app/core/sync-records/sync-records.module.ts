@@ -13,6 +13,8 @@ import { SyncRecordsComponent } from './sync-records/sync-records.component';
 import { SharedModule } from '../../shared/shared.module';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   imports: [
@@ -27,7 +29,9 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatExpansionModule,
     MatChipsModule,
     MatButtonToggleModule,
-    SharedModule
+    SharedModule,
+    MatProgressBarModule,
+    MatIconModule
   ],
   declarations: [SyncRecordsComponent],
   providers: [SyncingService, HttpClientModule],

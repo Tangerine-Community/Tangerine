@@ -4,9 +4,46 @@
     
     ==TODO: Link to the page that describes how to enable the case service==
 
-The caseService class allows the form developer to programmatically interact with the case from within the form. 
+The caseService class allows the form developer to programmatically interact with the case from within the form. The Case Service is activated in Tangerine when the user opens a view associated with a Case. Given a case's unique identifier, the Case Service loads into memory both the case document and the case definition document associated with the case. The Case Service also sets some reference variables for easy access to the most used case items like the participants, events and event forms.
+
+Unless otherwise noted, the Case Service APIs that operate on the version of the case in memory.  When programming within forms, any changes to the case document are saved to couchdb when the `on-submit` logic completes.  In more advanced programming workflows, the `load()` and `save()` APIs can be used to specify when case documents are loaded into memory or saved to couchdb.
 
 ## Case APIs
+
+---
+### id
+
+Returns the unique identifier of the currently loaded case.
+
+---
+### participants
+
+Returns the list of participants associated with the case or an empty array if none exist.
+
+---
+### events
+
+Returns the list of events associated with the case or an empty array if none exist.
+
+---
+### forms
+
+Returns the list of forms for all Case Events associated with the case or an empty array if none exist.
+
+---
+### roleDefinitions
+
+Returns the list of Case Roles associated with this case from the Case Definition.
+
+---
+### eventFormDefinitions
+
+Returns the list of Event Form Definitions associated with this case type form the Case Definition.
+
+---
+### caseEventDefinitions
+
+Returns the list of Case Event Definitions associated with this case type form the Case Definition.
 
 ---
 ### changeLocation
@@ -55,7 +92,7 @@ Get a Case level variable in a Case.
 | variableName | <code>string</code> | The variable name. |
 
 #### Returns
-The value requested. Many be any data type that was set
+The value requested. May be any data type that was set.
 
 #### Example
 ```javascript
@@ -64,6 +101,43 @@ if (!caseService.getVariable('status')) {
 }
 ```
 - [example code](https://github.com/Tangerine-Community/Tangerine/blob/master/content-sets/case-module/registration-role-1/form.html#L4)
+
+
+---
+### getCurrentCaseEventId
+
+Returns the unique identifier for the Case Event currently loaded in memory. This is a useful function for safely getting the Case Event Id for use in other APIs that take caseEventId as a parameter.
+
+#### Parameters
+None
+
+#### Returns
+The unique identifier for the currently loaded Case Event. Returns `undefined` if a Case Event is not currently in view.
+
+#### Example
+```javascript
+if (caseService.getCurrentCaseEventId()) {
+  caseService.setEventEstimatedDay(caseService.getCurrentCaseEventId(), moment())
+}
+```
+
+---
+### getCurrentEventFormId 
+
+Returns the unique identifier for the Case Event currently loaded in memory. This is a useful function for safely getting the Event Form Id for use in other APIs that take eventFormId as a parameter.
+
+#### Parameters
+None
+
+#### Returns
+The unique identifier for the currently loaded Event Form. Returns `undefined` if an Event Form is not currently in view.
+
+#### Example
+```javascript
+if (caseService.getCurrentCaseEventId() && caseService.getCurrentEventFormId()) {
+  caseService.markEventFormRequired(caseService.getCurrentCaseEventId(), caseService.getCurrentEventFormId())
+}
+```
 
 
 ## Case Event API 
@@ -89,6 +163,22 @@ const event2 = caseService.createEvent('event-definition-682ca6', true)
 ```
 
 ---
+### setEventName
+
+Set a custom name for the Case Event to be displayed in the Case Event list for the current case. The string value passed as the **name** parameter can be resolved from any javascript that returns a string.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| eventId      | <code>string</code>   | (UUID) Event Instance ID from the Case |
+| name         | <code>string</code>   | Name for the event    |
+
+#### Example
+```typescript
+caseService.setEventEstimatedDay(caseService.getCurrentCaseEventId(), "First Visit")
+```
+
+---
 ### setEventEstimatedDay
 
 Set the **estimated** day of expected date completion. This is used by the calendar for displaying events. 
@@ -103,7 +193,7 @@ Set the **estimated** day of expected date completion. This is used by the calen
 #### Example
 ```typescript
 caseService.setEventEstimatedDay(event1.id, now)
-caseService.setEventEstimatedDay('f9a25042-b03e-11ea-b3de-0242ac130004', 1592359411)
+caseService.setEventEstimatedDay(caseService.getCurrentCaseEventId(), 1592359411)
 ```
 
 ---
@@ -121,7 +211,7 @@ Set the **scheduled** day of expected date completion. This is used by the calen
 #### Example
 ```typescript
 caseService.setEventScheduledDay(event1.id, now)
-caseService.setEventScheduledDay('f9a25042-b03e-11ea-b3de-0242ac130004', 1592359411)
+caseService.setEventScheduledDay(caseService.getCurrentCaseEventId(), 1592359411)
 ```
 
 ---
@@ -140,7 +230,7 @@ Set the expected event completion.
 #### Example
 ```typescript
 caseService.setEventWindow(event1.id, 1592359411, 1592618611)
-caseService.setEventWindow('f9a25042-b03e-11ea-b3de-0242ac130004', 1592359411, 1592618611)
+caseService.setEventWindow(caseService.getCurrentCaseEventId(), 1592359411, 1592618611)
 ```
 
 ---
@@ -158,9 +248,10 @@ Set the date in which the event occurred
 #### Example
 ```typescript
 caseService.setEventOccurredOn(event1.id, now)
-caseService.setEventOccurredOn('f9a25042-b03e-11ea-b3de-0242ac130004', 1592359411)
+caseService.setEventOccurredOn(caseService.getCurrentCaseEventId(), 1592359411)
 ```
 
+---
 ### disableEventDefinition
 
 Prevent creation of an via the new event menu.
@@ -175,6 +266,42 @@ Prevent creation of an via the new event menu.
 caseService.disableEventDefinition('event-definition-1')
 ```
 
+---
+### activateCaseEvent
+
+The `inactive` flag on Case Event controls its appearance in the Case Event list. When a Case Event is created, the `inactive` flag is not set on the Case Event. This API adds the `inactive` flag to the Case Event and marks the flag as `false`. The inverse API `deactivateCaseEvent` sets the flag to `true`. Case Event with no `inactive` flag or having the flag set to `false` will appear in the Case Event list.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| eventId      | <code>string</code>   | (UUID) Event Instance ID from the Case |
+
+#### Example
+```typescript
+// All currently hidden (inactive) case events in the case with the event-definition of 'optional-event-dev' will be shown in the Case Event list
+for (let caseEvent in caseService.case.caseEvents.filter(event => event.caseEventDefinitionId === 'optional-event-def')) {
+  if (caseEvent.inactive) {
+    caseService.activateCaseEvent(caseEvent.id)
+  }
+}
+```
+
+### deactivateCaseEvent
+
+The `inactive` flag on Case Event controls its appearance in the Case Event list. When a Case Event is created, the `inactive` flag is not set on the Case Event. This API adds the `inactive` flag to the Case Event and marks the flag as `true`. The inverse API `activateCaseEvent` sets the flag to `false`. Case Event with the flag set to `true` will appear in the Case Event list.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| eventId      | <code>string</code>   | (UUID) Event Instance ID from the Case |
+
+#### Example
+```typescript
+// All case events in the case with the event-definition of 'optional-event-dev' will be hidden in the Case Event list
+for (let caseEvent in caseService.case.caseEvents.filter(event => event.caseEventDefinitionId === 'optional-event-def')) {
+  caseService.deactivateCaseEvent(caseEvent.id)
+}
+```
 
 ## Event Form API
 
@@ -301,6 +428,55 @@ Mark and event form as not required.
 caseService.markEventFormRequired(caseEvent.id, eventForm.id)
 ```
 
+---
+### markEventFormComplete
+
+Mark an event form as complete. In some case workflows a form may no longer need to be filled. This API marks an Event Form as `complete` so that the data collector does does not attempt to complete the form.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| caseEventId  | <code>string</code>   | Event ID of the Event the Event Form lives in |
+| eventFormId | <code>string</code>  | Event Form ID of the Event Form you want to mark not required |
+
+#### Example
+```javascript
+// Mark EventForm as required.
+caseService.markEventFormRequired(caseEvent.id, eventForm.id)
+```
+
+---
+### activateEventForm
+
+The `inactive` flag on Event Form controls its appearance in the Event Form list. When a Event Form is created, the `inactive` flag is not set on the Event Form. This API adds the `inactive` flag to the Event Form and marks the flag as `false`. The inverse API `deactivateEventForm` sets the flag to `true`. Event Form with no `inactive` flag or having the flag set to `false` will appear in the Event Form list.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| caseEventId  | <code>string</code>   | Event ID of the Event the Event Form lives in |
+| eventFormId | <code>string</code>  | Event Form ID of the Event Form you want to mark active |
+
+#### Example
+```typescript
+caseService.activateEventForm(caseEventId, eventFormId)
+```
+
+---
+### deactivateEventForm
+
+The `inactive` flag on Event Form controls its appearance in the Event Form list. When a Event Form is created, the `inactive` flag is not set on the Event Form. This API adds the `inactive` flag to the Event Form and marks the flag as `true`. The inverse API `activateEventForm` sets the flag to `false`. Event Form with the flag set to `true` will appear in the Event Form list.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| caseEventId  | <code>string</code>   | Event ID of the Event the Event Form lives in |
+| eventFormId | <code>string</code>  | Event Form ID of the Event Form you want to mark inactive |
+
+#### Example
+```typescript
+caseService.deactivateEventForm(caseEventId, eventFormId)
+```
+
 
 ## Participant API
 
@@ -387,3 +563,71 @@ caseService.getParticipantData(participant.id, 'first_name')
 ```
 
 - [example code](https://github.com/Tangerine-Community/Tangerine/blob/9e5d2d55e17d122280769893fffc16470c916371/content-sets/case-module/registration-role-1/form.html#L40)
+
+
+## Notification API
+
+Notifications appear in the Case view to provide instructions or extra information to the users who are filling out forms. The programmer uses the following APIs to create notifications in teh Case interface. Notifications can be persistant or dismisable depending on the use case.
+
+---
+### createNotification
+
+Create a notificaiton and display it in the Case view
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| label        | <code>string</code>   | Short text used for the title |
+| description  | <code>string</code>   | Longer text description |
+| link         | <code>string</code>   | Url link internal or external |
+| icon         | <code>string</code>   | Text name of a system icon |
+| color        | <code>string</code>   | Hexadecimal value of a color (e.g. #CCC) |
+| enforceAttention | <code>boolean</code> | If true, change focus to the notification when it is displayed |
+| persist | <code>boolean</code> | If true, notification can only be dismissed programatically |
+
+#### Example
+```javascript
+caseService.createNotification('Alert: Case Needs you attention', 'The Case needs review with a supervisor.', '', 'notification_important', '#CCC', true, false)
+```
+
+---
+### openNotification
+
+Sets the status of a notificaiton to `Open` so it will display to the user.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| notificationId        | <code>string</code>   | Short text used for the title |
+
+#### Example
+This code re-opens any Closed notifications that have a label that starts with 'Alert'.
+```javascript
+if (case.notifications) {
+  const notifications = case.notifications.filter(n => n.label.startsWith('Alert') && n.status === NotificationStatus.Closed)
+  for (let notification in notifications) {
+    caseService.openNotificaiton(notification.id)
+  }
+}
+```
+
+---
+### closeNotification
+
+Sets the status of a notificaiton to `Closed` so it will be hidden from the user.
+
+#### Parameters
+| Param        | Type         | Description  |
+| ------------ | ------------ | ------------ |
+| notificationId        | <code>string</code>   | Short text used for the title |
+
+#### Example
+This code closes notifications that have a label that starts with 'Alert'.
+```javascript
+if (case.notifications) {
+  const notifications = case.notifications.filter(n => n.label.startsWith('Alert') && n.status === NotificationStatus.Open)
+  for (let notification in notifications) {
+    caseService.closeNotificaiton(notification.id)
+  }
+}
+```
