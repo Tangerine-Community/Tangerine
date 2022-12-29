@@ -44,6 +44,12 @@ export class ClassFormsPlayerComponent {
         ...formResponse,
         items: formResponse.items.filter(item => item.id === itemId)
       }
+    } else if (formResponse) {
+      formResponse.items = [{
+        id: itemId,
+        inputs: []
+      }]
+      formEl.response = formResponse
     } else {
       formEl.newResponse()
     }

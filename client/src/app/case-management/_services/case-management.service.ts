@@ -126,6 +126,7 @@ export class CaseManagementService {
       return {
         formTitle,
         startDatetime: observation.doc.startUnixtime,
+        complete: observation.doc.complete,
         formIndex: index,
         _id: observation.doc._id,
         columns

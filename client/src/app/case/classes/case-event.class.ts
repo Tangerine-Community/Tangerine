@@ -6,6 +6,7 @@ class CaseEvent {
   caseEventDefinitionId:string
   eventForms: Array<EventForm> = []
   complete?:boolean = false
+  inactive?:boolean = false
   caseId?: string
   // @TODO Remove estimate. Not used.
   estimate? = true

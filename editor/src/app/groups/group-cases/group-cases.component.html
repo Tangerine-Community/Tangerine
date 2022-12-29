@@ -5,5 +5,5 @@
 <div [hidden]="loading || isSearching" class="search-results" #searchResults></div>
 <div id="paginator" [hidden]="loading || isSearching">
   <paper-icon-button icon="arrow-back" class="previous" (click)="onPreviousClick()" [disabled]="skip === 0 || loading === true"></paper-icon-button>
-  <paper-icon-button icon="arrow-forward" class="next" (click)="onNextClick()" [disabled]="loading === true || (cases && cases.length !== limit)"></paper-icon-button>
+  <paper-icon-button icon="arrow-forward" class="next" (click)="onNextClick()" [disabled]="loading === true || (cases && cases.length < limit)"></paper-icon-button>
 </div>

@@ -11,6 +11,9 @@ import {UserService} from '../../core/auth/_services/user.service';
   styleUrls: ['./new-group.component.css']
 })
 export class NewGroupComponent implements OnInit {
+  contentSet:string
+  contentSets: any = [];
+  ready = false
 
   groupName = '';
   constructor(
@@ -20,14 +23,18 @@ export class NewGroupComponent implements OnInit {
     private userService: UserService
   ) { }
 
-  ngOnInit() {
-
+  async ngOnInit() {
+      this.contentSets = await this.groupsService.getContentSets();
+      if (this.contentSets.length > 0) {
+        this.contentSet = this.contentSets[0]['id']
+      }
+      this.ready = true
   }
 
   async createGroup() {
     try {
       const username = await this.userService.getCurrentUser();
-      const result: any = await this.groupsService.createGroup(this.groupName);
+      const result: any = await this.groupsService.createGroup(this.groupName, this.contentSet);
       this.window.nativeWindow.location = `${this.window.nativeWindow.location.origin}/app/${result._id}/index.html#/groups/${result._id}`
       if (result && result.statusCode && result.statusCode === 200) {
         this.groupName = '';

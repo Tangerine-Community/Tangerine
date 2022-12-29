@@ -4,6 +4,10 @@ The starting point for Tangerine is dependent on what your role with the product
 
 Since Tangerine is an open-source platform, you are welcome to develop off of our code if you wish. Go to the [Tangerine Community](https://github.com/Tangerine-Community/Tangerine/) to see the code or navigate to our [Developer Guide](developer/class-docs.md).
 
+# Moodle Courses
+
+Try one of our moodle course available at [Moodle courses](https://moodle.tangerinecentral.org/course/index.php?categoryid=14)
+
 
 ## Roles
 | Role         | Function     | Skill Set  | User Guide   |

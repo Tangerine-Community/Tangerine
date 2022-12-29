@@ -18,7 +18,19 @@ const defaultState = {
 }
 
 async function runPaidWorker() {
-  let currentState = JSON.parse(await readFile('/paid-worker-state.json', 'utf-8'))
+  let currentState
+  try {
+    currentState = JSON.parse(await readFile('/paid-worker-state.json', 'utf-8'))
+  } catch (e) {
+    // Server restarted and created an empty /paid-worker-state.json file.
+    currentState = {}
+    try {
+      await writeFile('/paid-worker-state.json', JSON.stringify(currentState), 'utf-8')
+      console.log("Initialized /paid-worker-state.json")
+    } catch (e) {
+      console.log("Failed to initialize /paid-worker-state.json")
+    }
+  }
   let state = Object.assign({}, defaultState, currentState)
   const groupNames = await groupsList()
   // Ensure all groups are accounted for in state.groups array.
