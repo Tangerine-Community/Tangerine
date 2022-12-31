@@ -117,39 +117,48 @@ export class ExportDataComponent implements OnInit {
       if (typeof permissionsPlugin !== 'undefined') {
         permissionsPlugin.checkPermission('permissions.WRITE_EXTERNAL_STORAGE,', successCb, errorCb);
       }
-      let backupLocation = cordova.file.externalRootDirectory + this.backupDir;
+      // let backupLocation = cordova.file.externalRootDirectory + this.backupDir;
       const files = []
-      for (const dbName of dbNames) {
-        // copy the database
-        console.log(`copying ${dbName} db over to the user accessible fs`)
-        // eslint-disable-next-line max-len
-        this.window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory + 'databases/' + dbName, (fileEntry) => {
-          files.push(cordova.file.applicationStorageDirectory + 'databases/' + dbName)
-          // this.window.resolveLocalFileSystemURL(backupLocation, (directory) => {
-          //   fileEntry.copyTo(directory, dbName, () => {
-          //     console.log('DB Copied!');
-          //     // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${dbName}`);
-          //     this.statusMessage += `<p>${_TRANSLATE('DB Copied to ')} ${backupLocation}${dbName}</p>`
-          //   }, (e) => {
-          //     console.log(`Unable to copy DB: ${JSON.stringify(e)}`);
-          //     alert(`${_TRANSLATE('Write Failed: ')}` + JSON.stringify(e));
-          //   });
-          // }, (e) => {
-          //   let resolveDbErrorMessage = "resolveLocalFileSystemURL error when resolving backup location: ";
-          //   console.error(resolveDbErrorMessage + backupLocation + " Error: " + JSON.stringify(e))
-          //   alert(`${_TRANSLATE(resolveDbErrorMessage)}` + backupLocation + " Error: " + JSON.stringify(e));
-          // });
-        }, (e) => {
-          let resolveDbErrorMessage = "resolveLocalFileSystemURL error when resolving database location: ";
-          console.error(resolveDbErrorMessage + JSON.stringify(e))
-          alert(`${_TRANSLATE(resolveDbErrorMessage)}` + JSON.stringify(e));
-        });
+      // for (const dbName of dbNames) {
+      for (let i = 0; i < dbNames.length; i++) {
+        const dbName = dbNames[i]
+        files.push(cordova.file.applicationStorageDirectory + 'databases/' + dbName)
+        // new Promise((resolve, reject) => {
+        //   console.log(`copying ${dbName} db over to the user accessible fs`)
+        //   // eslint-disable-next-line max-len
+        //   this.window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory + 'databases/' + dbName, (fileEntry) => {
+        //     files.push(cordova.file.applicationStorageDirectory + 'databases/' + dbName)
+        //   }, (e) => {
+        //     let resolveDbErrorMessage = "resolveLocalFileSystemURL error when resolving database location: ";
+        //     console.error(resolveDbErrorMessage + JSON.stringify(e))
+        //     alert(`${_TRANSLATE(resolveDbErrorMessage)}` + JSON.stringify(e));
+        //   })
+        // })
       }
-      this.window.plugins.socialsharing.share(
-        'Save these files.',
-        'Tangerine backups',
-        files,
-        null);
+
+      // }
+      // this.window.plugins.socialsharing.share(
+      //   'Save these files.',
+      //   'Tangerine backups',
+      //   files,
+      //   null);
+      let options = {
+        message: 'Save these files.', // not supported on some apps (Facebook, Instagram)
+        subject: 'Tangerine backups', // fi. for email
+        files: files, // an array of filenames either locally or remotely
+        chooserTitle: 'Pick an app', // Android only, you can override the default share sheet title
+      };
+      // appPackageName: 'com.boxhead.android.sharetofilesystem', // Android only, you can provide id of the App you want to share with
+
+      const onSuccess = (result) => {
+        console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+        console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+      };
+
+      const onError = (msg) => {
+        console.log("Sharing failed with message: " + msg);
+      };
+      this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
       this.hideExportButton = false
     } else {
       // APK's or PWA's that do not use sqlCypher - they are not window['sqlCipherRunning']
