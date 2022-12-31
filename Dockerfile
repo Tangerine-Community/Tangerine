@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-2
+FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-4
 
 RUN git config --global url."https://".insteadOf git://
 
@@ -75,7 +75,7 @@ RUN cd /tangerine/client/ && \
 
 # Install PWA tools.
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
-ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
+ADD client/pwa-tools/service-worker-generator/workbox-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-config.js
 RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
     npm install
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
@@ -93,7 +93,7 @@ RUN cd /tangerine/online-survey-app && \
 # build client.
 ADD client /tangerine/client
 RUN cd /tangerine/client && \
-    ./node_modules/.bin/ng build --base-href "./"
+    ./node_modules/.bin/ng build --base-href "./" -c production
 
 # Build editor.
 ADD editor /tangerine/editor

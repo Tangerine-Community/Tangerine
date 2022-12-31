@@ -11,7 +11,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "allowedCommonJsDependencies": [
               "crypto-js",
@@ -26,6 +26,9 @@
               "vuvuzela",
               "events"
             ],
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            },
             "outputPath": "dist/tangerine-client",
             "index": "src/index.html",
             "main": "src/main.ts",

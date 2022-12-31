@@ -12,11 +12,11 @@ echo "Building client dev instance"
 cd /tangerine/client
 ./node_modules/.bin/ng build --watch --poll 100 --base-href ./ -c production --output-path ./dev &
 
-function trapperkeeper {
-  echo "Exiting - testing if we find the exit in entrypoint-development."
-}
-
-trap trapperkeeper EXIT
+#function trapperkeeper {
+#  echo "Exiting - testing if we find the exit in entrypoint-development."
+#}
+#
+#trap trapperkeeper EXIT
 echo "Running editor dockerdev"
 cd /tangerine/editor
 npm run dockerdev

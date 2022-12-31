@@ -45,6 +45,7 @@ export class DeviceSetupComponent implements OnInit {
   async ngOnInit() {
     const isSandbox = window.location.hostname === 'localhost' ? true : false
     if (isSandbox) {
+      console.log(`Warning: This device is running in sandbox mode. If this is not intentional, debug why hostname === localhost.`)
       const device = await this.deviceService.register('test', 'test', true)
       await this.userService.installSharedUserDatabase(device)
       await this.userService.createAdmin('password', <LockBoxContents>{

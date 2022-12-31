@@ -12,7 +12,7 @@ module.exports = {
 		/^utm_source=web_app_manifest/
 	],
   "globIgnores": [
-    "../workbox-cli-config.js",
+    "../workbox-config.js",
     "release-uuid.txt"
   ]
 };

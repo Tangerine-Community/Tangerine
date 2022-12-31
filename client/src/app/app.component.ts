@@ -248,25 +248,27 @@ export class AppComponent implements OnInit {
           permissions.MODIFY_AUDIO_SETTINGS,
           permissions.READ_EXTERNAL_STORAGE,
           permissions.WRITE_EXTERNAL_STORAGE,
+          permissions.MANAGE_EXTERNAL_STORAGE,
           permissions.WAKE_LOCK
         ];
 
-        window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
-        function error() {
-          console.warn('Camera or Storage permission is not turned on');
-        }
-        function success( status ) {
+        const error = (e) => {
+          console.warn(`A permission request failed: ${JSON.stringify(e)}`);
+        };
+        const success = status => {
           if ( !status.hasPermission ) {
+            // console.warn(`Failed permissions check; Requesting permissions`);
             permissions.requestPermissions(
               list,
               function(statusRequest) {
                 if ( !statusRequest.hasPermission ) {
-                  error();
+                  // error(`${status} does not have permission`);
                 }
               },
               error);
           }
-        }
+        };
+        window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
       }
     }
   }

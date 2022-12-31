@@ -21,7 +21,7 @@ export class LoginGuard implements CanActivate {
     if (this.userService.isLoggedIn()) {
       if (appConfig.syncProtocol === '2') {
         if (await this.variableService.get('FIRST_SYNC_STATUS') === FIRST_SYNC_STATUS.IN_PROGRESS) {
-          this.router.navigate(['device-resync']);
+          await this.router.navigate(['device-resync']);
         } else {
           return true
         }
@@ -32,12 +32,12 @@ export class LoginGuard implements CanActivate {
       if (appConfig.syncProtocol === '2') {
         const deviceIsRegistered = await this.deviceService.isRegistered()
         if (deviceIsRegistered) {
-          this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
+          await this.router.navigate(['login'], {queryParams: {returnUrl: state.url}});
         } else {
-          this.router.navigate(['device-setup'], { queryParams: { returnUrl: state.url } });
+          await this.router.navigate(['device-setup'], {queryParams: {returnUrl: state.url}});
         }
       } else {
-        this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
+        await this.router.navigate(['login'], {queryParams: {returnUrl: state.url}});
       }
     }
     return false;
