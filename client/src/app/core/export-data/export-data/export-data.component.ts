@@ -97,24 +97,59 @@ export class ExportDataComponent implements OnInit {
       : (await this.userService.getAllUserAccounts()).map(user => user.username)
     // APK's that use in-app encryption via sqlCipher
     if (window['isCordovaApp'] && this.appConfig.syncProtocol === '2' && window['sqlCipherRunning']) {
-      const backupLocation = cordova.file.externalRootDirectory + this.backupDir;
+      const errorCb = (e) => {
+        console.warn(`A permission request failed: ${JSON.stringify(e)}`);
+      }
+      const successCb = status => {
+        if ( !status.hasPermission ) {
+          // console.warn(`Failed permissions check; Requesting permissions`);
+          permissionsPlugin.requestPermission(
+            'permissions.WRITE_EXTERNAL_STORAGE,',
+            function(statusRequest) {
+              if ( !statusRequest.hasPermission ) {
+                errorCb(`Does not have permission for WRITE_EXTERNAL_STORAGE`);
+              }
+            },
+            errorCb);
+        }
+      };
+      const permissionsPlugin = window['cordova']['plugins']['permissions'];
+      if (typeof permissionsPlugin !== 'undefined') {
+        permissionsPlugin.checkPermission('permissions.WRITE_EXTERNAL_STORAGE,', successCb, errorCb);
+      }
+      let backupLocation = cordova.file.externalRootDirectory + this.backupDir;
+      const files = []
       for (const dbName of dbNames) {
         // copy the database
         console.log(`copying ${dbName} db over to the user accessible fs`)
         // eslint-disable-next-line max-len
         this.window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory + 'databases/' + dbName, (fileEntry) => {
-          this.window.resolveLocalFileSystemURL(backupLocation, (directory) => {
-            fileEntry.copyTo(directory, dbName, () => {
-              console.log('DB Copied!');
-              // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${dbName}`);
-              this.statusMessage += `<p>${_TRANSLATE('DB Copied to ')} ${backupLocation}${dbName}</p>`
-            }, (e) => {
-              console.log('Unable to copy DB');
-              alert(`${_TRANSLATE('Write Failed: ')}` + e.toString());
-            });
-          }, null);
-        }, null);
+          files.push(cordova.file.applicationStorageDirectory + 'databases/' + dbName)
+          // this.window.resolveLocalFileSystemURL(backupLocation, (directory) => {
+          //   fileEntry.copyTo(directory, dbName, () => {
+          //     console.log('DB Copied!');
+          //     // alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${dbName}`);
+          //     this.statusMessage += `<p>${_TRANSLATE('DB Copied to ')} ${backupLocation}${dbName}</p>`
+          //   }, (e) => {
+          //     console.log(`Unable to copy DB: ${JSON.stringify(e)}`);
+          //     alert(`${_TRANSLATE('Write Failed: ')}` + JSON.stringify(e));
+          //   });
+          // }, (e) => {
+          //   let resolveDbErrorMessage = "resolveLocalFileSystemURL error when resolving backup location: ";
+          //   console.error(resolveDbErrorMessage + backupLocation + " Error: " + JSON.stringify(e))
+          //   alert(`${_TRANSLATE(resolveDbErrorMessage)}` + backupLocation + " Error: " + JSON.stringify(e));
+          // });
+        }, (e) => {
+          let resolveDbErrorMessage = "resolveLocalFileSystemURL error when resolving database location: ";
+          console.error(resolveDbErrorMessage + JSON.stringify(e))
+          alert(`${_TRANSLATE(resolveDbErrorMessage)}` + JSON.stringify(e));
+        });
       }
+      this.window.plugins.socialsharing.share(
+        'Save these files.',
+        'Tangerine backups',
+        files,
+        null);
       this.hideExportButton = false
     } else {
       // APK's or PWA's that do not use sqlCypher - they are not window['sqlCipherRunning']

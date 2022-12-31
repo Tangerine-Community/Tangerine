@@ -13,7 +13,8 @@ export class CreateProfileGuardService implements CanActivate {
   ) { }
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
+    const user = this.userService.getCurrentUser()
+    const userAccount = await this.userService.getUserAccount(user)
     if (userAccount.initialProfileComplete) {
       return true
     } else {
@@ -30,7 +31,7 @@ export class CreateProfileGuardService implements CanActivate {
         // We are already at that route, prevent infinite loops.
         return true
       }
-      this.router.navigate([navigateUrl], { queryParams: { returnUrl: state.url } });
+      await this.router.navigate([navigateUrl], {queryParams: {returnUrl: state.url}});
     }
   }
 
