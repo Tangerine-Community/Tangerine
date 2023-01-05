@@ -23,6 +23,7 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
+import { GroupDevicesService } from '../../groups/services/group-devices.service'
 
 @Injectable({
   providedIn: 'root'
@@ -105,7 +106,8 @@ class CaseService {
     private deviceService:DeviceService,
     private userService:UserService,
     private appConfigService:AppConfigService,
-    private http:HttpClient
+    private http:HttpClient,
+    private groupDevicesService:GroupDevicesService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -135,6 +137,10 @@ class CaseService {
         ...forms
       ]
     }, [])
+  }
+
+  get groupId() {
+    return this._case.groupId
   }
 
   get roleDefinitions() {
@@ -1260,6 +1266,11 @@ class CaseService {
     const proposedFormResponse = await this.getProposedChange(issueId)
     await this.tangyFormService.saveResponse(proposedFormResponse.response)
     await this.tangyFormService.saveResponse(proposedFormResponse.caseInstance)
+    if (issue.sendToDeviceById) {
+      const device = await this.groupDevicesService.getDevice(this.groupId, issue.sendToDeviceById)
+      device.assignedFormResponseIds = [...new Set([...(device.assignedFormResponseIds ? device.assignedFormResponseIds : []), ...[proposedFormResponse.response._id]])];
+      await this.groupDevicesService.updateDevice(this.groupId, device)
+    }
     await this.load(proposedFormResponse.caseInstance._id)
     return await this.tangyFormService.saveResponse({
       ...issue,

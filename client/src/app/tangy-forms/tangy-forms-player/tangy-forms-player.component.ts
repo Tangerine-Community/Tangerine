@@ -7,6 +7,7 @@ import {Component, ViewChild, ElementRef, Input, OnInit} from '@angular/core';
 import {_TRANSLATE} from '../../shared/translation-marker';
 import {TangyFormService} from '../tangy-form.service';
 import {AppConfigService} from "../../shared/_services/app-config.service";
+import {VariableService} from "../../shared/_services/variable.service";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -59,6 +60,7 @@ export class TangyFormsPlayerComponent implements OnInit {
     private tangyFormsInfoService: TangyFormsInfoService,
     private tangyFormService: TangyFormService,
     private appConfigService: AppConfigService,
+    private variableService: VariableService
   ) {
     this.window = window
   }
@@ -73,13 +75,19 @@ export class TangyFormsPlayerComponent implements OnInit {
     }
 
     if (this.window.isCordovaApp) {
-      this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'Documents', (directoryEntry) => {
-        directoryEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
-          dirEntry.getDirectory('media', {create: true}, (dirEntry) => {
-            dirEntry.getDirectory(groupId, {create: true}, (subDirEntry) => {
+      const entry = await new Promise<Entry>((resolve, reject) => {
+        this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, resolve, reject);
+      });
+      // We know this path is a directory
+      const directory = entry as DirectoryEntry;
+      await new Promise((resolve, reject) => {
+        directory.getDirectory('Documents', {create: true}, (dirEntry) => {
+          dirEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
+            dirEntry.getDirectory('media', {create: true}, (dirEntry) => {
+              dirEntry.getDirectory(groupId, {create: true}, resolve, reject);
             }, this.onErrorGetDir);
           }, this.onErrorGetDir);
-        }, this.onErrorGetDir);
+        })
       })
     }
   }
@@ -170,11 +178,14 @@ export class TangyFormsPlayerComponent implements OnInit {
         formEl.newResponse()
         this.formResponseId = formEl.response._id
         formEl.response.formVersionId = this.formInfo.formVersionId
-        this.throttledSaveResponse(formEl.response)
+        if (this.appConfig.syncProtocol === '2') {
+          this.throttledSaveResponse(formEl.response)
+        }
       }
       this.response = formEl.response
       // Listen up, save in the db.
       if (!this.skipSaving) {
+        await this.variableService.set('incomplete-response-id', this.response._id);
         formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
@@ -338,7 +349,13 @@ export class TangyFormsPlayerComponent implements OnInit {
         let r = await this.tangyFormService.saveResponse(state)
         stateDoc = await this.tangyFormService.getResponse(state._id)
       }
+      // only reset incomplete-response-id when the form is complete. If the form is abandoned midway, do not reset incomplete-response-id.
+      if (stateDoc && stateDoc['complete'] && state.complete) {
+        await this.variableService.set('incomplete-response-id', null);
+      }
+      // reset some values.
       stateDoc["uploadDatetime"] = ""
+      // now save the responseDoc.
       await this.tangyFormService.saveResponse({
         ...state,
         _rev: stateDoc['_rev'],

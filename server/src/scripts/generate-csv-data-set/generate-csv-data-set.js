@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const sanitize = require('sanitize-filename');
 const axios = require('axios')
 const writeFile = util.promisify(fs.writeFile);
+const log = require('tangy-log').log
 
 async function getUser1HttpInterface() {
   const body = await axios.post('http://localhost/login', {
@@ -41,16 +42,17 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
       cmd += ` '' '' `
     }
     cmd = `${cmd} ${csvTemplate ? `"${csvTemplate.headers.join(',')}"` : ''}`
+    log.debug("generate-csv: " + cmd)
     exec(cmd).then(status => {
       resolve(status)
     }).catch(error => {
-      console.error(error)
+      log.error("Error when exec-ing generate-csv: " + error)
       reject(error)
     })
   })
 }
 
-async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', excludePii = false) {
+async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', excludePii = false, excludeArchivedForms = false) {
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/ /g, '_')
@@ -79,10 +81,15 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
   await writeState(state)
   for (let csv of state.csvs) {
     const formId = csv.formId
-    state.csvs.find(csv => csv.formId === formId).inProgress = true
-    await writeState(state)
     const forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
     const formInfo = forms.find(formInfo => formInfo.id === formId)
+
+    if (formInfo.archived && excludeArchivedForms) {
+      continue
+    }
+
+    state.csvs.find(csv => csv.formId === formId).inProgress = true
+    await writeState(state)
     const formTitle = formInfo
       ? formInfo.title.replace(/ /g, '_')
       : formId
@@ -90,6 +97,7 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     const fileName = `${groupFormname}${excludePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
     const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
     const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
+    log.debug("About to generateCsv in generate-csv-data-set.js")
     generateCsv(state.dbName, formId, csvOutputPath, year, month, csv.csvTemplateId)
     while (!await fs.pathExists(csvStatePath)) {
       await sleep(1*1000)

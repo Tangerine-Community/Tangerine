@@ -523,7 +523,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         try {
           userProfileDoc = await reportingDb.get(userProfileId)
         } catch (e) {
-          // console.log("Info: CSV reportingDb " + reportingDb.name + " does not yet have userProfileId: " + userProfileId + " doc id: " + doc._id + " Error: " + JSON.stringify(e))
+          // log.debug("Info: CSV reportingDb " + reportingDb.name + " does not yet have userProfileId: " + userProfileId + " doc id: " + doc._id + " Error: " + JSON.stringify(e))
           // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
           try {
             let userProfileDocOriginal = await sourceDb.get(userProfileId)

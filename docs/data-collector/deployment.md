@@ -1,16 +1,21 @@
 Deploying Tangerine for Offline (or Online) Data Collection 
 ===========================================================
 
-Once the user is done creating the instruments/forms the next step is to
-deploy the instrument to an Android device for data collection. To
-release your instruments or instrument updates, select the "Release" tab
-in the top menu of the main group page.
+Reffer to [Update the App](update-app.md) to see how to update an app that is already installed
 
+After you have rendered your forms it is time to deploy them. A deployment means that you will create a version of the forms to be installed(or updated) on a tablet. Tangerine offers different type of deployment releases available under your group's Deploy tab.
+
+Note that we use a release for both to create a new installation but also to create an update for tablets that have the app installed already.
+
+Release Offline (require installation)
+APK (Android package file) creates a link with an APK file that can be downloaded and installed on an Android device in offline mode.
+Browser (PWA) creates a link to the app to be installed inside the Chrome browser on Window, Linux, or Mac but also on Android Chrome mobile app. The installation requires internet connection but the application can be used offline once installed
+Release Online Survey - deploys a single form to be used by a user in a browser without installation but requires internet connection
 
 <img src="../media/image75.png" width="570">
 
 
-Upon selecting "Release", you will see the screen below.
+Upon selecting "Release Offline App", you will see the screen below.
 
 <img src="../media/image76.png" width="570">
 
@@ -20,7 +25,7 @@ Tangerine offers two deployment types, test release and live release:
 1.  **Test Release** -- This release option ("release to QA") is
     recommended for testing the instruments. When you make changes and
     updates to the instruments and release your changes as "Test
-    Release", tablets that have the "real" version of Tangerine
+    Release", tablets that have the "live" version of Tangerine
     installed will NOT receive this update. HOWEVER, any data synced
     from the tablet devices even in a "Test Release" deployment goes
     into the main database (thus mark your tests clearly as "TESTS" to
@@ -51,26 +56,30 @@ installation or web browser installation:
 output before releasing them! To test your instrument use the Test Release mode.
 
 
+
 # Using standard installation 
 
 
 Android Installation
 --------------------
 
-This deployment strategy creates an APK file which can be installed on
-an Android tablet or smartphone. Click on Android Installation Test
-Release/Live Release as shown in the screen above. **Wait.**
+Creating a deployment release is the last step before your app can be used on a tablet. Go to your group and click Deploy->Release Offline App and click the Generate Live Release under Android installation. On the next screen you can enter some additional information of your deployment. The Version tag is what the tablet user can use to make sure they have updated their tablet (this can be seen under the About page on the tablet)
+
+You can change the default release tag and add some description to it. If your group has the historical APK feature enabled, this information will be visible in the listing of historical releases. I will leave the default date and time as my version tag. Now click Release APK 
+
+**Wait.**
 
 
 <img src="../media/image77.png" width="570">
 
 
-Once Tangerine has compiled the apk, click on "Download your APK here",
-as shown below. This will download an apk file into your computer's
-downloads folder.
+The process of building the apk can take a couple of minutes. Please be patient and don't navigate away from the page. Once it has completed you will see a screen like the one below presenting a link for you to download. YOu can now download this APK file and install it on a tablet. 
 
 
 <img src="../media/image78.png" width="570">
+
+
+Using the same steps you can create a Test release. We recommend that you use Test releases only for testing purposes and always install live releases on data collection tablets. This is true even for your assessor's training. Once you install a Live release on the data collector's tablet you will be able to push updates to this tablet.
 
 
 !!! Warning 
@@ -84,47 +93,156 @@ This deployment strategy creates a link/URL to a "progressive web app"
 smartphone. Click on Web Browser Installation Test Release/Live Release.
 **Wait.**
 
-Once Tangerine has compiled the PWA, it will show an installation URL
-like in the screen below.
+Creating a deployment release is the last step before your app can be used on a tablet. Go to your group and click Deploy->Release Offline App and click the Generate Live Release under Browser installation. On the next screen you can enter some additional information of your deployment. The Version tag is what the tablet user can use to make sure they have updated their tablet (this can be seen under the About page on the tablet)
+
+Note that you should only install 1 application in 1 browser otherwise unexpected conditions may be created. We use the Chrome's Persons option to create a profile for each group that we have in Tangerine. Doing this ensures that your group's data stays isolated and your app always works. [Learn how to create Chrome Persons here](https://support.google.com/a/users/answer/9310144?hl=en)
+
+You can change the default release tag and add some description to it. If your group has the historical APK feature enabled, this information will be visible in the listing of historical releases. I will leave the default date and time as my version tag. Now click Release PWA
 
 
 <img src="../media/image79.png" width="570">
 
 
-Use this URL from the **Chrome browser on the tablet** to install the
-PWA on the tablet devices.
+The process of building the PWA is very quick. Once it has completed you will see a screen like the one below presenting a link for you to copy. You can use this link and install the Browser Release on a tablet, or inside the Chrome or Edge browsers on any Operating System 
 
-You can also copy the URL and open a new browser tab with this URL on
-your computer to test your instruments online. The browser window may
-require you to confirm that you want to apply the updates.
-
-
-<img src="../media/image80.png" width="570">
-
-
-After "**Click here to proceed**", Tangerine will show an online data
-collection version of your instruments with a similar look and function
-as on a tablet/smartphone.
+We will discuss how to install the browser release in Browser/PWA Installation topic
 
 
 <img src="../media/image81.png" width="570">
 
+Using the same steps you can create a Test release. We recommend that you use Test releases only for testing purposes and always install live releases on data collection tablets. This is true even for your assessor's training. Once you install a Live release on the data collector's tablet you will be able to push updates to this tablet.
 
+!!! Warning
+    Please keep in mind that the Browser/PWA release requires an internet connection to be installed on a tablet or browser on a computer. The installation must be done correctly for the app to be accessible offline. Refer to our Browser/PWA Installation for more information. 
 
 !!! Warning 
      Every time an instrument/form is changed, added, or deleted from the group, it is necessary to release the apk/pwa again, but **NO NEW INSTALLATION is necessary** on the tablets. Instead, instruct Tangerine tablet users to connect their tablets, select their profile page (3 vertical white dots on top right of tablet screen).
-
-Select "**Check for Update**" and proceed to install the update.
-
-
-<img src="../media/image83.png" width="200">
 
 
 !!! Warning 
     This update approach will not only apply any instrument/form edits, new forms, or form deletions, but also any **updates to the Tangerine application** made in the meantime and applied to your group (if any).
 
 
-# Using Device Setup Installation
+Create an Online Release
+------------------------
+Creating a deployment release is the last step before your form can be filled in on a tablet or a computer. Go to your group and click Deploy->Release Online Survey. Here you will see a list of forms that have been publish and those that can be published. On the image below we see that one form is listed under Published Surveys and other forms are under Unpublished Surveys. 
+
+
+<img src="../media/image801.png" width="570">
+
+
+
+
+
+To publish a form click the check mark icon beside it on any of the forms under Unpublished Surveys. 
+
+Clicking on this icon brings that form up to the Published Surveys section and you can see the form's name plus some other info and actions on the right hand side. Those are: an icon to unpublished the form, the date of publishing, and the link to this form
+
+Right after you publish a form you will also see a message at the bottom of the screen confirming your action. 
+
+<img src="../media/image802.png" width="570">
+
+ 
+
+
+To unpublish a form, click the icon beside it. This will take the form down to Unpublished forms and the link will no longer be available for this form to be filled in. 
+
+!!! Warning 
+    If you have made any changes on your form, you must unpublish it and re-publish it in order for those changes to be visible in the form's link. 
+
+To share your form for data entry, copy the link from the Published Survey listing and send it to your data accessors
+Note that the online survey can be opened only on Chrome, Edge, Safari, and later versions of Firefox. 
+
+
+# Creating Releases Video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/I--BSoYm5ic?cc_load_policy=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+
+# Using APK Device Setup Installation
+1. Connect the tablet to WiFi (or connect direct to network using a SIM card)
+
+Note: here you can also copy the file from your computer to the tablet using a cable 
+
+2. Download the APK file to your tablet and tap it to install. You can also copy the APK file to the tablet with a cable
+
+Note that here you may get a warning for enabling Unknown Sources. This setting allows you to install an app coming from outside the Play store. Please allow this in your settings. 
+
+The instructions below are generic and they may differ for your version of Android.
+
+3. If you receive the blocked install message like in the image below click Settings to enable Unknown Sources. Tap the Settings button
+
+<img src="../media/apk1.png" width="400">
+
+Make sure you select the Unknown sources
+
+
+<img src="../media/apk2.png" width="400">
+
+
+
+Click OK to Confirm
+
+<img src="../media/apk3.png" width="400">
+
+
+
+To continue with the installation  note all different permission Tangerine needs. We are making user of the GPS location, and contents on device – this one is for data export.
+
+SMS is used only if configured in your forms to send an sms
+
+Taking pictures is also used only when configured in your forms
+
+Click Next
+
+
+<img src="../media/apk4.png" width="400">
+
+
+
+Click Install
+
+
+<img src="../media/apk5.png" width="400">
+
+
+
+Wait for the installation to complete
+
+
+<img src="../media/apk6.png" width="400">
+
+
+
+Now you have the app installed. you can find it in the app drawer or your main screen. 
+
+To open the app click Open
+
+<img src="../media/apk7.png" width="400">
+
+
+The app is now installed. You can proceed and Register a user. In general we let the data assessor go through the registration process and create their username and password. Note that more than one users can share a tablet.
+
+<img src="../media/apk8.png" width="400">
+
+Fill in your information and click Submit
+<img src="../media/apk9.png" width="400">
+
+
+
+The next step is to create your assessor profile. All of the data on the user profile(Assessor/ Enumerator profile) is attached to each form collected on this device
+
+<img src="../media/apk10.png" width="400">
+
+
+
+Enter the information presented on the user profile page and tap Submit
+
+You are now free to use the app
+
+
+
+# Using Device Setup Installation - 2 way sync setup
 
 
 Installation 
