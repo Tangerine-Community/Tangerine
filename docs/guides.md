@@ -10,4 +10,7 @@ Welcome to the Tangerine Documentation site. Find the source for this in the [Ta
 - [System Administrator Guide](system-administrator/README.md)
 - [Developer Guide](developer/README.md)
 
+# Moodle Courses
+
+Try one of our moodle course available at [Moodle courses](https://moodle.tangerinecentral.org/course/index.php?categoryid=14)
 

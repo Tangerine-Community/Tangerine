@@ -23,7 +23,7 @@ T_UPLOAD_TOKEN="password"
 # The database username and password. Please make this extrememly secure.
 T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
-# Mysql
+# Mysql - Enter container name - usually "mysql" or the ip address or server name for an external service.
 T_MYSQL_CONTAINER_NAME="mysql"
 T_MYSQL_USER="admin"
 T_MYSQL_PASSWORD="password"
@@ -59,8 +59,14 @@ T_PAID_ALLOWANCE="unlimited"
 # Reporting delay determines how quickly uploads will get processed and show up in reporting outputs such as CSV. Time is in milliseconds and default is 5 minutes.
 T_REPORTING_DELAY="300000"
 
-# Limit  the rebuild-mysql-db script to certain group dbs. Omit to rebuild all.
-T_REBUILD_MYSQL_DBS=""
+# Number of change docs from the Couchdb changes feed queried by reporting-worker (i.e. use as the limit parameter)
+T_LIMIT_NUMBER_OF_CHANGES=200
+
+# Limit processing to certain group dbs.
+T_ONLY_PROCESS_THESE_GROUPS=""
+
+# Enter "true" if using a mysql container instead of an external database service such as AWS RDS. This will launch a mysql container.
+T_USE_MYSQL_CONTAINER=""
 
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50

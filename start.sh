@@ -72,10 +72,14 @@ else
 fi
 
 if echo "$T_MODULES" | grep mysql; then
-  ./mysql-start.sh
-  echo "Waiting 60 seconds for myql to start..."
-  sleep 60
-  ./mysql-setup.sh
+  ./mysql-create-dirs.sh
+fi
+
+if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
+    ./mysql-start-container.sh
+    echo "Waiting 60 seconds for mysql container to start..."
+        sleep 60
+        ./mysql-setup.sh
 fi
 
 if echo "$T_MYSQL_PHPMYADMIN" | grep "TRUE"; then
@@ -198,7 +202,8 @@ RUN_OPTIONS="
   --env \"T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP\" \
   --env \"T_JWT_ISSUER=$T_JWT_ISSUER\" \
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
-  --env \"T_REBUILD_MYSQL_DBS=$T_REBUILD_MYSQL_DBS\" \
+  --env \"T_ONLY_PROCESS_THESE_GROUPS=$T_ONLY_PROCESS_THESE_GROUPS\" \
+  --env \"T_LIMIT_NUMBER_OF_CHANGES=$T_LIMIT_NUMBER_OF_CHANGES\" \
   --volume $(pwd)/content-sets:/tangerine/content-sets:delegated \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
@@ -210,6 +215,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/archives:/archives/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
+  --volume $(pwd)/translations:/tangerine/translations:delegated \
 " 
 
 # Disable Tangerine claiming a port as it will be proxied by nginx.
@@ -227,9 +233,16 @@ else
   "
 fi
 
+if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
+  echo "Linking mysql container ..."
+  RUN_OPTIONS="
+    --link $T_MYSQL_CONTAINER_NAME:mysql \
+    $RUN_OPTIONS
+  "
+fi
+
 if echo "$T_MODULES" | grep mysql; then
 RUN_OPTIONS="
-  --link $T_MYSQL_CONTAINER_NAME:mysql \
   --env \"T_MYSQL_CONTAINER_NAME=$T_MYSQL_CONTAINER_NAME\" \
   --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \

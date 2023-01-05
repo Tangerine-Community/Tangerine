@@ -30,108 +30,68 @@ Go into the nginx container and execute the below commands
 ```
 docker exec -it nginx bash
 
-add-apt-repository ppa:certbot/certbot
-apt-get update
-apt-get install certbot python-certbot-nginx
-apt-get install vim
+apt-get update && apt-get install certbot vim python3-certbot-nginx -y
+
 ```
+
+Open the config file
+
+```
+vi /etc/nginx/conf.d/default.conf
+
+```
+Adjust the server_name to your domain and the size of the client body
+
+```
+server_name My.Domain.com;
+client_max_body_size 0; 
+
+```
+
+Replace the location directive with the one below:
+```
+location / {
+            # First attempt to serve request as file, then
+            # as directory, then fall back to displaying a 404.
+            proxy_pass_header  Server;
+            proxy_set_header   Host $http_host;
+            proxy_redirect     off;
+            proxy_set_header   X-Real-IP $remote_addr;
+            proxy_set_header   X-Scheme $scheme;
+            proxy_set_header X-Forwarded-Host $host:$server_port;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_pass         http://tangerine;
+        }
+
+```
+Save the file and exit vi
 
 Now execute and follow the promtps for cerbot. It will fail but that's ok
 ```
 certbot --nginx
 ```
-The above will generate the ertificate according to the DOMAIN.org name given. Modify the DOMAIN.ORG with your domain name in the file below and replace it with the content of the config
+The above will generate the certificate according to My.Domain.com name given. Select options 1. My.Domain.com
 
+Reload the config by running
 ```
-vi /etc/nginx/conf.d/default.conf 
-```
-
-```
-server {
-    listen       80;
-    listen  [::]:80;
-    server_name  _;
-    client_max_body_size 0;
-    #charset koi8-r;
-    #access_log  /var/log/nginx/host.access.log  main;
-
-	location / {
-                # First attempt to serve request as file, then
-                # as directory, then fall back to displaying a 404.
-            proxy_pass_header  Server;
-            proxy_set_header   Host $http_host;
-            proxy_redirect     off;
-            proxy_set_header   X-Real-IP $remote_addr;
-            proxy_set_header   X-Scheme $scheme;
-            proxy_set_header X-Forwarded-Host $host:$server_port;
-            proxy_set_header X-Forwarded-Proto https;
-            proxy_pass         http://tangerine;
-        }
-
-
-    #error_page  404              /404.html;
-
-    # redirect server error pages to the static page /50x.html
-    #
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   /usr/share/nginx/html;
-    }
-}
-
-server {
-server_name DOMAIN.ORG
-client_max_body_size 0;
-
-        location / {
-                # First attempt to serve request as file, then
-                # as directory, then fall back to displaying a 404.
-            proxy_pass_header  Server;
-            proxy_set_header   Host $http_host;
-            proxy_redirect     off;
-            proxy_set_header   X-Real-IP $remote_addr;
-            proxy_set_header   X-Scheme $scheme;
-            proxy_set_header X-Forwarded-Host $host:$server_port;
-            proxy_set_header X-Forwarded-Proto https;
-            proxy_pass         http://tangerine;
-        }
-
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html {
-        root   /usr/share/nginx/html;
-    }
-listen [::]:443 ssl ipv6only=on; # managed by Certbot
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/DOMAIN.ORG/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/DOMAIN.ORG/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-}
-server {
-    if ($host = DOMAIN.ORG) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-        listen 80 ;
-        listen [::]:80 ;
-    server_name DOMAIN.ORG;
-    return 404; # managed by Certbot
-
-
-}
+nginx -s reload
 ```
 
-Reload the config
+
+Exit the nginx container and add some configuration for autmatic updates of certificates
+Execute crontab –e and add the line below
+        
 ```
-service nginx reload
+ 0 3 * * * docker exec -it nginx certbot renew --post-hook "service nginx reload"
 ```
 
-Exit the docker container and add the below entry to the root's crontab
-Add this like to cron (crontab -e)
+Optionally save your image to your docker images
 ```
-crontab -e
-0 8 * * * docker exec -it nginx certbot renew --post-hook "service nginx reload"
+docker commit nginx nginx/nginx:configuredNginx
+
 ```
+
+### Note that your nginx container is now linked to your tangerine container. Every time you execute start.sh for tangerine you have to start a new nginx continer to udpate the link. TO recreate using the saved image run 'docker run -p 80:80 -p 443:443 --link tangerine:tangerine --restart always --name nginx -d nginx/nginx:configuredNginx'
 
 
 Point your DNS to the actual server 

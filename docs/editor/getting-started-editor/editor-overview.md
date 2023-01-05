@@ -7,8 +7,6 @@ Tangerine contains an extremely extensible foundational framework that allows th
 -	[Create New Form](create-new-form.md) 
 -	[Editing the Form](edit-form.md)
 -	[Adding Sections and Questions](add-sections.md)
--	Section Editor
--	Copying Items
 -	[Different Input Types](input-types.md)
 -   [Location list import](../input-types/#location)
 -	[Skip Logic](skip-logic.md)

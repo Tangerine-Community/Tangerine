@@ -20,8 +20,8 @@ Make sure the -mysql db's have the byType view.
 
 One way to populate them is to use `docker exec tangerine reporting-cache-clear` however that will clear the -mysql db as well.
 
-## T_REBUILD_MYSQL_DBS
+## T_ONLY_PROCESS_THESE_GROUPS
 
-If you want only certain db's to be populated, use T_REBUILD_MYSQL_DBS.
+If you want only certain db's to be populated, use T_ONLY_PROCESS_THESE_GROUPS.
 
 

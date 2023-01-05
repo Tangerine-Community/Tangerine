@@ -8,6 +8,7 @@ export class Device {
   version:string
   syncLocations:Array<LocationConfig> = []
   assignedLocation:LocationConfig
+  assignedFormResponseIds:Array<string> = []
 }
 
 export interface LocationConfig {

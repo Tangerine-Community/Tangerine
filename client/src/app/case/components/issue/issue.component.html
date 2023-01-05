@@ -42,7 +42,7 @@
       </div>
       <div class="card-actions">
         <paper-button routerLink="form-revision"><mwc-icon>call_split</mwc-icon>{{'Propose'|translate}}</paper-button>
-        <!-- Not showing this on client for now paper-button *ngIf="hasProposedChange" (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Merge</paper-button -->
+        <paper-button *ngIf="hasProposedChange && hasMergeChangePermission" (click)="onMergeClick()"><mwc-icon>call_merge</mwc-icon>Commit</paper-button>
       </div>
     </paper-card>
 

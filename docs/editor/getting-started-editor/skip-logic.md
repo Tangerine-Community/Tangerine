@@ -23,25 +23,75 @@ getValue('repeatedgrade') == '1' && getValue('age') >= 1
 Negate a condition using the ! (NOT) operator
 getValue('repeatedgrade') != '1' Or !getValue('grades_taught').includes('1') </b>
 
-## Logic at item level
+## Logic at Question/ Input level
 
-You want to skip an item question:
+When we tap the Conditional Display tab, we see that here we can enter logic to hide or show a question based on previous input on that or other previous sections. 
 
-Navigate to the "Show if" in the Item Editor.
+<img src="../media/skip01.png" width="570">
 
-![show_if](media/showif.png)
+In the above screenshot we see that there is a "Skip if" input a "Show if" input. The skip if condition will skip the question if the condition is true. The show if condition will show the question if the condition is true. For example:
 
-In this example this item (e.g., "Which grade did you repeat?" will ONLY be shown if the response to the previous item (e.g., asking about whether the person ever repeated a grade) was "yes" (data value 1).
+To skip a question when the value of a previous question is not equal to 777, use the skip if condition
+To show a question when the value of a previous question is equal to 777, use the show if condition
+You can see how the two possible ways of skipping are opposites of one another. We can use either logic for each scenario but sometimes it is easier to think in a positive condition and other times it is easier to think in a negative condition. 
 
-<b>getValue('repeatedgrade') == '1' </b>
+In all skip logic conditions, except for those based on grids (timed input), we use the getValue() function. To write the conditions from above in terms of skip logic we need:
 
-Alternatively, for a preceding question that had "Other" as an answer option, the logic here might look like this:
+The value(s) to be used in the condition
+The variable name
+Here is how the above condition looks in skip logic:
 
-<b>getValue('q10') == '9'</b>
+To skip a question when the value of question with variable homework is not equal 777
+To show a question when the value of question with variable homework is equal 777
 
-Other examples might include a specific value of a preceding item. Use the below example for questions of type checkbox group, where more than one answer can be selected.
 
-<b>getValue('q12').includes('5')</b>
+This logic can be used to compare the values of Text, Number, Email, Radio Buttons, Dropdown select input types. 
+
+Here is the actual skip logic. 
+
+Skip if: getValue('homework') != '777'
+Show if: getValue('homework') == '777'
+You can see how similar the logic is. The == sign above means "equal" and the != sign means "not equal"
+
+You can enter only one Show-if or Skip-if condition per question. You can also use the && (AND) and || (OR) logical operators to combine conditions. We will not look into that here. 
+
+The above use of the function applies to all input types except for Checkbox group, Timed Grid, Untimed Grid, and Location
+
+To build logic based on the answers of a Checkbox group question, we use the getValue function but in a different way. Here we check if one of the selected options is the desired one.
+To skip a question when ONE of the values of a Checkbox question with variable homework is not equal 777
+To show a question when ONE of the values of a Checkbox question with variable homework is equal 777
+Here is how this condition will look
+
+
+Skip if: !getValue('homework').includes('777')
+Show if: getValue('homework').includes('777')
+Note how above we are asking if one of the selected options is 777 or if it isn't 777 - this is done with the ! (NOT) operator in front of the function. 
+
+Take a look at how these examples look in Tangerine:
+
+For radio button question similar to below, where we want to show up the Other Specify input only when Other is selected:
+
+<img src="../media/skip02.png" width="570">
+
+
+Use this logic in the homework_other question
+
+
+<img src="../media/skip03.png" width="570">
+
+
+
+For a checkbox group question similar to the one below
+
+<img src="../media/skip04.png" width="570">
+
+
+
+
+Use this logic to show to show a question in the stu_language_other
+
+<img src="../media/skip05.png" width="570">
+
 
 
 !!! Warning

@@ -27,6 +27,15 @@ Other helper function are available:
 - T.user: userService
 - T.case: caseService
 
+## Development in Tangerine Preview
+
+Developers can use [Tangerine-Preview]([url](https://github.com/Tangerine-Community/Tangerine/tree/main/tangerine-preview)
+) as a test environment when developing custom case reports.  When updating the version of a query in the queries.js file, run the following commands in the Chrome Dev Console to make Tangerine-Preview run the documents through the new version of the query:
+
+```
+var userdb = await T.user.getUserDatabase()
+await T.update.updateCustomViews(userDb)
+```
 
 
 

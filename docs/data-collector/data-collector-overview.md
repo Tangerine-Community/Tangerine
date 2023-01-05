@@ -1,9 +1,9 @@
 # Tangerine Data Collection
 
 - [Deploying Tangerine for Offline Data Collection](deployment.md)
-- [Check for Tangerine Updates](update.md)
 - [Data Collection](data-collector.md)
 - [Data Synchronization](data-sync.md)
+- [Update the App - Check for Updates](update-app.md)
 	
 ## Quality Management 
 -	Forms 

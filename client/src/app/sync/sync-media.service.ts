@@ -49,6 +49,24 @@ export class SyncMediaService {
 
     this.appConfig = await this.appConfigService.getAppConfig()
     const groupId = this.appConfig.groupId
+
+    if (this.window.isCordovaApp) {
+      const entry = await new Promise<Entry>((resolve, reject) => {
+        this.window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, resolve, reject);
+      });
+      // We know this path is a directory
+      const directory = entry as DirectoryEntry;
+        await new Promise((resolve, reject) => {
+          directory.getDirectory('Documents', {create: true}, (dirEntry) => {
+            dirEntry.getDirectory('Tangerine', {create: true}, (dirEntry) => {
+              dirEntry.getDirectory('media', {create: true}, (dirEntry) => {
+                dirEntry.getDirectory(groupId, {create: true}, resolve, reject);
+            }, this.onErrorGetDir);
+          }, this.onErrorGetDir);
+        })
+      })
+    }
+    
     if (window['isCordovaApp']) {
       this.mediaFilesDir = cordova.file.externalRootDirectory + 'Documents/Tangerine/media/'+ groupId + '/'
     }
@@ -269,5 +287,17 @@ export class SyncMediaService {
   reset() {
     this.uploadProgress = null;
     this.uploadSub = null;
+  }
+
+  onErrorGetDir(e) {
+    console.log("Error: " + e)
+    let errorMessage
+    if (e && e.code && e.code === 1) {
+      errorMessage = "File or directory not found."
+    } else {
+      errorMessage = e
+    }
+    const message = `<p>${_TRANSLATE('Error creating directory. Error: ')} ${errorMessage}</p>`
+    console.log(message)
   }
 }

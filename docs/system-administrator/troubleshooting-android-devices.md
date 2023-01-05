@@ -7,8 +7,8 @@ If an Android device is having trouble, you may want to tweak the app-config.jso
 adb shell
 run-as org.rti.tangerine
 # Discover what the path to the release is (will be a datetime), then use for subsequent paths.
-ls /data/user/0/org.rti.tangerine/files/cordova-hot-code-push-plugin/
-cd /data/user/0/org.rti.tangerine/files/cordova-hot-code-push-plugin/2021.09.14-18.12.15/www/shell/assets
+ls files/cordova-hot-code-push-plugin/
+cd files/cordova-hot-code-push-plugin/2021.09.14-18.12.15/www/shell/assets
 cp app-config.json /sdcard/Download/
 exit
 adb pull /sdcard/Download/app-config.json

@@ -2,7 +2,44 @@
 
 Tangerine provides the option to check the validity of an input field. Navigate to the "Valid if" field in the Item Editor.
 
-## Field Validation Examples
+When we tap the Validation tab, we see that here we can enter logic to validate a question based on previous or current input. For the number input type we can also directly enter min and max values. For all validation we also have the option to specify a default error message. 
+
+Inputs that are common for all validation screens are:
+
+Warn-if: this input allows you to define logic to issue a warning if the condition is true. A warning validation means that clicking Next or Submit will fail the first time the user clicks it but will allow the user to continue on the second trial
+
+Warning Text: this is the text displayed to the user when a warning condition is triggered
+
+Valid if: this input allows you to define logic to issue an error if the condition is true. A valid if logic means that clicking Next or Submit will fail when the condition is met and the user is forced to correct the input
+
+Error text: this is the text displayed to the user when a validation error is triggered
+
+All warning and validation logic can make use of the getValue function but also you can access the current input's value by referring to  input.value. In many cases we also use the parseInt function to convert the text input to a number. 
+
+In the below example you see an input defined which will trigger a validation if the value is great then 5, Between 5 and 7 it is only a warning message, meaning that the user can proceed if they click Next/Submit again but if the value is greater then 7 the user has to correct the input. 
+
+<img src="../media/validation01.png" width="570">
+
+
+
+
+The easiest validation is for number type of inputs. There we can directly specify the minimum and maximum values for the number that we can accept. 
+
+I will add an age input of type number. Then on the Validation tab i have defined min and max values, as well as error text. 
+
+
+<img src="../media/validation02.png" width="570">
+
+
+
+I want to add one more validation to my stu_number variable, making sure it is exactly 6 characters long. For this I will use input.value.length == 6 
+
+Here is how this looks in student number input. 
+<img src="../media/validation03.png" width="570">
+
+
+
+## Question/ Input Validation Examples
 If, for example, the value entered into an "INPUT-NUMBER" field should have 9 or more characters, enter the following into "Valid if" for this item:
     
     :::javascript

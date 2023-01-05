@@ -183,15 +183,17 @@ export class DashboardService {
     let totalIncorrect = 0;
     let totalCorrect = 0;
     let maxValueAnswer = 0;
-    let scorePercentageCorrect = 0;
+    let scorePercentageCorrect;
     let duration = 0;
     let prototype = 0;
     let usingScorefield = null;
     const formItemTalley = {};
     let totalMax = 0;
+    let customScore = null
 
     if (item) {
       itemCount = item.inputs.length;
+      customScore = item.customScore? item.customScore: null
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -256,7 +258,12 @@ export class DashboardService {
             totalMax = ++totalMax;
           }
           data[input.name] = value;
-
+          if (!score) {
+            score = 0
+          }
+          if (!max) {
+            max = 0
+          }
           data['score'] = score;
           data['max'] = max;
           answeredQuestions.push(data);
@@ -287,6 +294,7 @@ export class DashboardService {
                   totalIncorrect = value.reduce(reducer, 0);
                   totalCorrect = maxValueAnswer - totalIncorrect;
                   score = totalCorrect;
+                  formItemTalley['totalMax'] = 100
                   scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
                   alreadyAnswered = true;
                 }
@@ -317,7 +325,7 @@ export class DashboardService {
 
           if (typeof scorePercentageCorrect === 'undefined') {
             // Auto-calculate scores for tangy form items that don't use _score or are not tangy-timed grids.
-            const totalAnswers = item.inputs.length;
+            // const totalAnswers = item.inputs.length;
             // calculate the total score manually.
             for (const answer of answeredQuestions) {
               // let value = answer[element.name];
@@ -327,7 +335,10 @@ export class DashboardService {
               maxValueAnswer = maxValueAnswer + max;
             }
             score = totalCorrect;
-            scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
+            scorePercentageCorrect = customScore ? customScore : Math.round(totalCorrect / maxValueAnswer * 100);
+            if (customScore) {
+              maxValueAnswer = 100
+            }
           }
         }
       }
@@ -367,7 +378,8 @@ export class DashboardService {
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
         scorePercentageCorrect: scorePercentageCorrect,
-        duration: duration
+        duration: duration,
+        customScore: customScore
       };
 
       if (prototype) {
@@ -438,16 +450,17 @@ export class DashboardService {
             studentResults.score = score;
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          const max = studentResponse.max;
+          const max = studentResponse.customScore? 100: studentResponse.max;
           if (max) {
             studentResults.max = max;
             classGroupReportMax = max;
           }
-          const totalCorrect = studentResponse.totalCorrect;
-          const scorePercentageCorrect = studentResponse.scorePercentageCorrect;
+          const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
+          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
-          const maxValueAnswer = studentResponse.maxValueAnswer;
+          const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
+          studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
 
           aveCorrect += totalCorrect;
@@ -634,6 +647,5 @@ export class DashboardService {
       return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
     }
   };
-
 }
 
