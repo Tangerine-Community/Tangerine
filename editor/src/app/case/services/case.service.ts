@@ -779,7 +779,7 @@ class CaseService {
           )
           await this.tangyFormService.saveResponse(archivedFormResponse)
 
-          await this.closeIssuesForFormResponse(archivedFormResponse.id, "Closed for Form Response Deletion")
+          await this.closeIssuesForFormResponse(formResponse.id, "Closed for Form Response Deletion")
         }
         this.deleteEventForm(caseEventId, eventFormId)
         await this.save()
