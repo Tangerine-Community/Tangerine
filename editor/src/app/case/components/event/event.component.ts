@@ -1,6 +1,6 @@
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 
-import { Component, OnInit, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
@@ -25,7 +25,7 @@ interface ParticipantInfo {
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css']
 })
-export class EventComponent implements OnInit, AfterContentInit {
+export class EventComponent implements OnInit {
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
@@ -47,14 +47,6 @@ export class EventComponent implements OnInit, AfterContentInit {
   }
 
   async ngOnInit() {
-    await eval(this.caseEventDefinition.onEventOpen)
-  }
-
-  async ngOnDestroy() {
-    await eval(this.caseEventDefinition.onEventClose)
-  }
-
-  async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
       this.caseService.setContext(params.eventId)
@@ -85,9 +77,20 @@ export class EventComponent implements OnInit, AfterContentInit {
               .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
           }
         })
+
+      this.onEventOpen() 
+
       this.loaded = true
       this.ref.detectChanges()
     })
+  }
+
+  async onEventOpen(){
+    await eval(this.caseEventDefinition.onEventOpen)
+  }
+
+  async ngOnDestroy() {
+    await eval(this.caseEventDefinition.onEventClose)
   }
 
 }
