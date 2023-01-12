@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from '../../shared/shared.module';
 import { AuthRoutingModule } from './auth-routing.module';
@@ -42,8 +43,8 @@ import { UpdateUserRoleComponent } from './_components/update-user-role/update-u
         MatAutocompleteModule,
         SharedModule,
         MatTableModule,
-        MatCheckboxModule
-
+        MatCheckboxModule,
+        MatIconModule
     ],
   declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent, ManageSitewidePermissionsComponent, EditUserComponent, UpdatePersonalProfileComponent, AddRoleToGroupComponent, UpdateGroupRolesComponent, AddUserToAGroupComponent, UpdateUserRoleComponent],
   providers: [AuthenticationService, LoginGuard, SuperAdminUserGuard, UserService]

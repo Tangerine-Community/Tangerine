@@ -250,7 +250,7 @@ OPTIONS="
 fi
 
 function trapperkeeper {
-  echo "Exiting - testing if we find the exit."
+  echo "Exiting - Tangerine has stopped."
 }
 
 trap trapperkeeper EXIT

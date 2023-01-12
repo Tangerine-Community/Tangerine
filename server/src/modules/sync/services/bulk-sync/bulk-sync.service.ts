@@ -2,11 +2,11 @@ import {Injectable} from '@nestjs/common';
 import {HttpService} from "@nestjs/axios";
 const PouchDB = require('pouchdb')
 const dbDefaults = require('../../../../db-defaults')
-const replicationStream = require('pouchdb-replication-stream');
+// const replicationStream = require('pouchdb-replication-stream');
 PouchDB.defaults(dbDefaults, {timeout: 50000})
 // register pouch-replication-stream as a plugin
-PouchDB.plugin(replicationStream.plugin);
-PouchDB.adapter('writableStream', replicationStream.adapters.writableStream);
+// PouchDB.plugin(replicationStream.plugin);
+// PouchDB.adapter('writableStream', replicationStream.adapters.writableStream);
 
 @Injectable()
 export class BulkSyncService {
