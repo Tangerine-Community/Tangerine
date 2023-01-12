@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+#set -e
 
 #
 # Set up data folders.
@@ -105,7 +105,7 @@ echo "Setting T_TAG to: $T_TAG"
 
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
 
-docker build -t tangerine/tangerine:local .
+docker build -f ./Dockerfile-M1 -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
@@ -137,6 +137,8 @@ fi
 [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
 
+echo "Re-arranging Couchdb deck chairs. "
+
 docker run -d \
    -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
    -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
@@ -148,13 +150,15 @@ docker run -d \
 
 sleep 10
 
+echo "Couchdb is all sorted."
+
 #
 # Start Tangerine.
 #
 
-if [ -x "$(command -v say)" ]; then
-  say 'go go gadget tangerine'
-fi
+#if [ -x "$(command -v say)" ]; then
+#  say 'go go gadget tangerine'
+#fi
 
 OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
@@ -230,6 +234,8 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   tangerine/tangerine:local
  "
 
+echo "Populated OPTIONS"
+
 if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
   echo "Linking mysql container ..."
   OPTIONS="
@@ -254,6 +260,10 @@ function trapperkeeper {
 }
 
 trap trapperkeeper EXIT
+
+echo "About to run the container."
+
+#--platform linux/amd64
 
 CMD="docker run -it --name $T_CONTAINER_NAME \
   $OPTIONS

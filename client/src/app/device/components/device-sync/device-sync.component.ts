@@ -79,11 +79,11 @@ export class DeviceSyncComponent implements OnInit, OnDestroy {
           if (typeof progress.message !== 'undefined') {
             if (progress.type == 'checkpoint') {
               this.checkpointMessage = progress.message
-            } else if (progress.type == 'diffing') {
+            } else if (progress.type == 'revs_diff') {
               this.diffMessage = progress.message
-            } else if (progress.type == 'startNextBatch') {
+            } else if (progress.type == 'start_next_batch') {
               this.startNextBatchMessage = progress.message
-            } else if (progress.type == 'pendingBatch') {
+            } else if (progress.type == 'pending_batch') {
               this.pendingBatchMessage = progress.message
             } else {
               this.otherMessage = progress.message

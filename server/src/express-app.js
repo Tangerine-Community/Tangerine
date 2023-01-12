@@ -7,10 +7,10 @@ const path = require('path')
 const fs = require('fs-extra')
 const fsc = require('fs')
 const PouchDB = require('pouchdb')
-const pouchRepStream = require('pouchdb-replication-stream');
+// const pouchRepStream = require('pouchdb-replication-stream');
 PouchDB.plugin(require('pouchdb-find'));
-PouchDB.plugin(pouchRepStream.plugin);
-PouchDB.adapter('writableStream', pouchRepStream.adapters.writableStream);
+// PouchDB.plugin(pouchRepStream.plugin);
+// PouchDB.adapter('writableStream', pouchRepStream.adapters.writableStream);
 const compression = require('compression')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog

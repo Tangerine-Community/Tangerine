@@ -2,22 +2,17 @@
   Loading...
 </mat-card>
 <mat-card appearance="outlined" *ngIf="ready">
+  <div class="group content-inner form-div-margin">
     <form role="form" #login='ngForm' novalidate>
       <img id="logo" src="/logo.png" width="100%">
-      <mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label><mat-icon matSuffix>face</mat-icon>  {{'Username'|translate}}</mat-label>
         <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">face</i>
-          <span>{{'Username'|translate}}</span>
-        </mat-placeholder>
       </mat-form-field>
       <br>
-      <mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label><mat-icon matSuffix>lock_open</mat-icon>  {{'Password'|translate}}</mat-label>
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
-        <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>
-          <span>{{'Password'|translate}}</span>
-        </mat-placeholder>
       </mat-form-field>
       <br>
       <button (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
@@ -25,5 +20,6 @@
         <small>{{errorMessage}}</small>
       </span>
     </form>
+  </div>
 </mat-card>
 <span #customLoginMarkup></span>
