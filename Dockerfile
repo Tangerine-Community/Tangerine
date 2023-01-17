@@ -1,6 +1,7 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-4
-
+FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:v4.0.0-rc-5
+ARG TARGETARCH
+RUN echo "I'm building for $TARGETARCH"
 RUN git config --global url."https://".insteadOf git://
 
 # Never ask for confirmations
@@ -42,7 +43,7 @@ RUN apt-get update && apt-get install -y default-mysql-client
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
-    export NODE_OPTIONS=--openssl-legacy-provider && \
+#    export NODE_OPTIONS=--openssl-legacy-provider && \
     npm install
 
 # Install phantomjs
@@ -87,7 +88,7 @@ RUN cd /tangerine/client/pwa-tools/updater-app && \
 # Build online-survey-app.
 ADD online-survey-app /tangerine/online-survey-app/
 RUN cd /tangerine/online-survey-app && \
-    export NODE_OPTIONS=--openssl-legacy-provider && \
+#    export NODE_OPTIONS=--openssl-legacy-provider && \
     ./node_modules/.bin/ng build --base-href "./"
 
 # build client.
@@ -98,10 +99,10 @@ RUN cd /tangerine/client && \
 # Build editor.
 ADD editor /tangerine/editor
 RUN cd /tangerine/editor && \
-    export NODE_OPTIONS=--openssl-legacy-provider && \
+#    export NODE_OPTIONS=--openssl-legacy-provider && \
     npm dedupe
 RUN cd /tangerine/editor && \
-    export NODE_OPTIONS=--openssl-legacy-provider && \
+#    export NODE_OPTIONS=--openssl-legacy-provider && \
     ./node_modules/.bin/ng build --base-href "./" -c production
 
 # Disabling building service worker for editor.
