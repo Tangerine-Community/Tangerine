@@ -5,14 +5,18 @@
 The Export Backup feature is available from the right-hand menu by selecting "Export Data." 
 
 Backups come in two types:
-- tabs with in-app scryption: a single file per database
+- tabs with in-app encryption: a single file per database
 - tabs with device encryption: one directory per database, each of which contain many files.
 
 The Export Backup screen displays the backup location, and if the device uses device encryption, an input where the user may modify the "Docs per backup file" parameter. 
 
 Press "Export Data for all Users" to initiate export.
 
-It will display a status message after each database backup is saved. The backup files will be saved in the `Documents/Tangerine/backups` directory. Use [Android File transfer tool](https://www.android.com/filetransfer/) to transfer the files. Save *all* of the database backup files or directories. There should be four databases backed up:
+For Tangerine v3.x, It will display a status message after each database backup is saved. The backup files will be saved in the `Documents/Tangerine/backups` directory. Use [Android File transfer tool](https://www.android.com/filetransfer/) to transfer the files. Save *all* of the database backup files or directories. 
+For Tangerine v4.x, a "Share to" message will be displayed. Choose Gmail if you wish to mail the database. The [Share to File System](https://play.google.com/store/apps/details?id=com.boxhead.android.sharetofilesystem&hl=en_US&gl=US&pli=1) 
+extension enables the user to save the file to the tablet.
+
+There should be four databases backed up:
 
 - shared-user-database
 - users
