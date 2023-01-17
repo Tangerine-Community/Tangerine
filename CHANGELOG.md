@@ -1,5 +1,38 @@
 # What's new
 
+## v4.0.0
+
+__NEW Features__
+- Upgrades to Angular, Nest, and Cordova frameworks.
+
+__Server upgrade instructions__
+
+If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins. 
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v4.0.0
+./start.sh v4.0.0
+# If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins. 
+./server/src/upgrade/v4.0.0.sh
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.26.1
+```
+
 ## v3.26.1
 
 __NEW Features__
