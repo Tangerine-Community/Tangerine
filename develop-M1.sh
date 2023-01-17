@@ -105,7 +105,10 @@ echo "Setting T_TAG to: $T_TAG"
 
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
 
-docker build -f ./Dockerfile-M1 -t tangerine/tangerine:local .
+export DOCKER_DEFAULT_PLATFORM=linux/arm64
+
+#docker build -f ./Dockerfile-M1 -t tangerine/tangerine:local .
+docker build --platform linux/arm64 -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
@@ -263,7 +266,7 @@ trap trapperkeeper EXIT
 
 echo "About to run the container."
 
-#--platform linux/amd64
+#--platform linux/arm64
 
 CMD="docker run -it --name $T_CONTAINER_NAME \
   $OPTIONS
