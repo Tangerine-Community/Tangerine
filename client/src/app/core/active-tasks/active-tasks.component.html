@@ -1,0 +1,22 @@
+<div [hidden]="activeTasks.length === 0" type="button" cdkOverlayOrigin #originOverlay="cdkOverlayOrigin" (click)="showActiveTasks()">
+    <button class="flat-button">
+      <mat-icon *ngIf="activeTasks.length > 0" class="fa-spin" color="accent">data_usage</mat-icon>
+    </button>
+  </div>
+
+
+<!-- This template displays the overlay content and is connected to the button -->
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="originOverlay"
+  [cdkConnectedOverlayOpen]="isOpen"
+>
+  <div class="active-tasks-container">
+    {{'Active Database Tasks:'|translate}}
+    <ul>
+      <ng-template ngFor let-task [ngForOf]="activeTasks">
+        <li class="icon-list-item bulletti">{{task.name}}
+      </ng-template>
+    </ul>
+  </div>
+</ng-template>
