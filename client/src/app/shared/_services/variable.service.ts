@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { DB } from '../_factories/db.factory';
 
+import PouchDB from 'pouchdb';
+import PouchIndexedDb from 'pouchdb-adapter-indexeddb';
+PouchDB.plugin(PouchIndexedDb)
+
 @Injectable({
   providedIn: 'root'
 })
@@ -10,7 +14,7 @@ import { DB } from '../_factories/db.factory';
  */
 export class VariableService {
 
-  db = DB('tangerine-variables')
+  db = new PouchDB('tangerine-variables', {adapter: 'indexeddb'})
 
   constructor() { }
 
