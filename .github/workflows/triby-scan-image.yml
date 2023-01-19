@@ -18,6 +18,7 @@ jobs:
           image-ref: 'docker.io/tangerine/tangerine:v3.28.0-rc-6@sha256:eab7918ca15b1e5115e1b130eff635e9a7f223c7bfdd18bd112c8f8a72ccf898'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          timeout: 10m
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
