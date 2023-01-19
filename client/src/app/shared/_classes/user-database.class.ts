@@ -4,6 +4,9 @@ import PouchDB from 'pouchdb';
 import { DB } from '../_factories/db.factory';
 import * as jsonpatch from "fast-json-patch";
 
+import PouchIndexedDb from 'pouchdb-adapter-indexeddb';
+PouchDB.plugin(PouchIndexedDb)
+
 export class UserDatabase {
 
   userId: string;
@@ -25,10 +28,13 @@ export class UserDatabase {
     this.buildChannel = buildChannel
     this.groupId = groupId 
     this.attachHistoryToDocs = attachHistoryToDocs 
+
+    var changes_batch_size = window['changes_batch_size'] ? window['changes_batch_size'] : 50
+
     if (shared) {
-      this.db = DB(SHARED_USER_DATABASE_NAME, key)
+      this.db = new PouchDB(SHARED_USER_DATABASE_NAME, {adapter: 'indexeddb', view_update_changes_batch_size: changes_batch_size})
     } else {
-      this.db = DB(username, key)
+      this.db = new PouchDB(username, {adapter: 'indexeddb', view_update_changes_batch_size: changes_batch_size})
     }
   }
 

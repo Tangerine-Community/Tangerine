@@ -1,6 +1,6 @@
 import { Injectable }  from '@angular/core';
 import { EncryptionPlugin } from './shared/_classes/app-config.class';
-import { connectToCryptoPouchDb, connectToPouchDb, connectToSqlCipherDb, DB } from './shared/_factories/db.factory';
+import { connectToCryptoPouchDb, connectToIndexedDb, connectToPouchDb, connectToSqlCipherDb, DB } from './shared/_factories/db.factory';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 function getAppConfig() {
@@ -70,6 +70,20 @@ async function hasInstalledOnCryptoPouch() {
   return hasInstalled
 }
 
+async function hasInstalledOnIndexedDB() {
+  let hasInstalled = false
+  let db = connectToIndexedDb('tangerine-variables')
+  try {
+    await db.get('installed')
+    hasInstalled = true
+  } catch(e) {
+    hasInstalled = false
+  }
+  console.log("hasInstalledOnIndexedDB: " + hasInstalled)
+  return hasInstalled
+}
+
+
 async function sqlcipherIsEnabled() {
   const appConfig = await getAppConfig();
   // If no encryption plugin is defined and app level encryption is not turned off, default to sqlCipher being enabled.
@@ -82,6 +96,13 @@ async function sqlcipherIsEnabled() {
 async function cryptoPouchIsEnabled() {
   const appConfig = await getAppConfig();
   return appConfig['encryptionPlugin'] === EncryptionPlugin.CryptoPouch
+    ? true
+    : false
+}
+
+async function indexedDbIsEnabled() {
+  const appConfig = await getAppConfig();
+  return appConfig['useCustomAdapter']
     ? true
     : false
 }
@@ -102,6 +123,11 @@ async function startCryptoPouch() {
 async function startSqlcipher() {
   console.log('Starting SqlCipher...')
   window['sqlCipherRunning'] = true
+}
+
+async function startIndexedDb() {
+  console.log('Starting IndexedDB...')
+  window['indexedDbRunning'] = true
 }
 
 @Injectable()
@@ -131,6 +157,12 @@ export class AppInit {
           ) {
             await startCryptoPouch()
           }
+          if (
+            await hasInstalledOnIndexedDB() ||
+            (await indexedDbIsEnabled() && await hasNotInstalledOnAnything())
+          ) {
+            await startIndexedDb()
+          }
           // If the above didn't start encryption, encryption won't be used.
           const appConfig = await getAppConfig();
           if (appConfig['changes_batch_size']) {
@@ -144,6 +176,9 @@ export class AppInit {
           (await cryptoPouchIsEnabled() && await hasNotInstalledOnAnything())
         ) {
           await startCryptoPouch()
+        }
+        else if (await indexedDbIsEnabled()) {
+          await startIndexedDb()
         }
         // Enabling this setting for testing with a PWA.
         const appConfig = await getAppConfig();
