@@ -15,7 +15,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'docker.io/tangerine/tangerine:eab7918ca15b1e5115e1b130eff635e9a7f223c7bfdd18bd112c8f8a72ccf898'
+          image-ref: 'docker.io/tangerine/tangerine:v3.28.0-rc-6'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
