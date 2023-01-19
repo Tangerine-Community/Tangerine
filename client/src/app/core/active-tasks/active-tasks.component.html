@@ -1,0 +1,51 @@
+<div [hidden]="activeTasks.length === 0" type="button" cdkOverlayOrigin #originOverlay="cdkOverlayOrigin" (click)="showActiveTasks()">
+    <button class="flat-button">
+      <mat-icon *ngIf="activeTasks.length > 0" class="fa-spin" color="accent">data_usage</mat-icon>
+    </button>
+  </div>
+
+
+<!-- This template displays the overlay content and is connected to the button -->
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="originOverlay"
+  [cdkConnectedOverlayOpen]="isOpen"
+>
+  <div class="active-tasks-container">
+    <div mat-dialog-title class="dialog-title">
+      <h2>{{'Active Database Tasks'|translate}}</h2>
+      <button mat-icon-button aria-label="close dialog" mat-dialog-close (click)="onCloseClick()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- created_at Column -->
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef> {{'Started'|translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.created_at | date:'h:mm:ss'}} </td>
+      </ng-container>
+      <!-- updated_at Column -->
+      <ng-container matColumnDef="updated_at">
+        <th mat-header-cell *matHeaderCellDef> {{'Updated'|translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.updated_at | date:'h:mm:ss'}} </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> {{'Name'|translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+      <!-- completed_items Column -->
+      <ng-container matColumnDef="completed_items">
+        <th mat-header-cell *matHeaderCellDef> {{'Number Completed'|translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.completed_items}} </td>
+      </ng-container>
+      <!-- completed_items Column -->
+      <ng-container matColumnDef="total_items">
+        <th mat-header-cell *matHeaderCellDef> {{'Total'|translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_items}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</ng-template>

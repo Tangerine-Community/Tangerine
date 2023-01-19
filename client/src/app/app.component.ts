@@ -55,6 +55,7 @@ export class AppComponent implements OnInit {
   languagePath:string
   ready = false
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
+  @ViewChild('activeTasks')
   dialogRef:any
 
   constructor(
