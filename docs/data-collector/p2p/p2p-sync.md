@@ -1,3 +1,10 @@
+## The p2p Feature is no longer functioning.
+
+The p2p feature has been removed from Tangerine. It was never widely used in our deployments. Since one of the 
+library dependencies was outdated and included some delendencies that could have security issues, we decided to remove this feature.
+
+This information remain in case there is interest in restoring this feature.
+
 # Using P2P Sync for Offline Data Transfer
 
 Use the P2P sync feature to transfer data between two or more tablets without an Internet connection.

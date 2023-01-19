@@ -35,6 +35,9 @@ import { NewFormResponseModule } from './core/new-form-response/new-form-respons
 import {AppInit} from './app-init';
 import {AdminConfigurationModule} from "./core/admin-configuration/admin-configuration.module";
 import { MaintenanceModule } from './core/maintenance/maintenance.module';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { ActiveTasksComponent } from './core/active-tasks/active-tasks.component';
+import {MatTableModule} from "@angular/material/table";
 export { AppComponent }
 
 export function initializeApp1(appInit: AppInit) {
@@ -45,37 +48,40 @@ export function initializeApp1(appInit: AppInit) {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ActiveTasksComponent
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule,
-    TangyFormsModule,
-    AuthModule,
-    CaseManagementModule,
-    ClassModule,
-    DeviceModule,
-    SearchModule,
-    CaseModule,
-    CaseHomeModule,
-    SyncModule,
-    NewFormResponseModule,
-    UserProfileModule,
-    SettingsModule,
-    MaintenanceModule,
-    AboutModule,
-    UpdateModule,
-    SyncRecordsModule,
-    AdminConfigurationModule,
-    ExportDataModule,
-    // Make sure any new modules with route are placed above AppRoutingModule.
-    AppRoutingModule,
-    SharedModule
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, 
+        MatProgressBarModule, MatTableModule,
+        OverlayModule,
+        TangyFormsModule,
+        AuthModule,
+        CaseManagementModule,
+        ClassModule,
+        DeviceModule,
+        SearchModule,
+        CaseModule,
+        CaseHomeModule,
+        SyncModule,
+        NewFormResponseModule,
+        UserProfileModule,
+        SettingsModule,
+        MaintenanceModule,
+        AboutModule,
+        UpdateModule,
+        SyncRecordsModule,
+        AdminConfigurationModule,
+        ExportDataModule,
+        // Make sure any new modules with route are placed above AppRoutingModule.
+        AppRoutingModule,
+        SharedModule
+    ],
   providers: [AppInit,
     { provide: APP_INITIALIZER, useFactory: initializeApp1, deps: [AppInit], multi: true},
     {

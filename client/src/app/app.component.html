@@ -19,7 +19,7 @@
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="home"></a>
   </span>
   <span class="tangy-spacer"></span>
-
+  <app-active-tasks></app-active-tasks>
   <paper-icon-button icon="more-vert" [matMenuTriggerFor]="appMenu" class="hamburger-menu"></paper-icon-button>
   <mat-menu #appMenu="matMenu">
     <button *ngIf="ready && appConfig && appConfig.kioskMode" (click)="kioskModeEnabled = true" mat-menu-item>
