@@ -15,8 +15,10 @@
   "dependencies": {
     "bower": "^1.8.14",
     "polymer": "^0.5.0",
-    "polymer-cli": "^1.9.11",
     "uuid": "^9.0.0",
     "workbox-cli": "^6.5.4"
+  },
+  "devDependencies": {
+    "polymer-cli": "^1.9.11"
   }
 }
