@@ -201,7 +201,7 @@ class CaseService {
     await this.setCase(this.case)
     this.case.caseDefinitionId = caseDefinitionId;
     if (this.caseDefinition.startFormOnOpen && this.caseDefinition.startFormOnOpen.eventFormId) {
-      const caseEvent = this.createEvent(this.caseDefinition.startFormOnOpen.eventId)
+      const caseEvent = await this.createEvent(this.caseDefinition.startFormOnOpen.eventId)
       this.createEventForm(caseEvent.id, this.caseDefinition.startFormOnOpen.eventFormId) 
     }
     await this.save()
@@ -224,6 +224,11 @@ class CaseService {
     this._shouldSave = true 
   }
 
+  async onCaseClose() {
+    if (this.case) {
+      await eval(this.caseDefinition.onCaseClose)
+    }
+  }
 
   async loadInMemory(caseData:Case) {
     await this.setCase(new Case(caseData))
@@ -323,7 +328,7 @@ class CaseService {
    * Case Event API
    */
 
-  createEvent(eventDefinitionId:string): CaseEvent {
+  async createEvent(eventDefinitionId:string): Promise<CaseEvent> {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -356,6 +361,9 @@ class CaseService {
         }
       }
     }
+
+    await eval(caseEventDefinition.onEventCreate)
+
     return caseEvent
   }
 
@@ -1182,7 +1190,7 @@ class CaseService {
 
     if (caseEvent === undefined) {
         const newDate = moment(new Date(), 'YYYY-MM-DD').unix() * 1000;
-        caseEvent = this.createEvent(this.queryCaseEventDefinitionId);
+        caseEvent = await this.createEvent(this.queryCaseEventDefinitionId);
         await this.save();
       } else {
         caseEvent = this.case.events
@@ -1631,7 +1639,8 @@ export const markQualifyingEventsAsComplete = ({caseInstance, caseDefinition}:Ca
                 (
                   eventFormDefinition.required === false &&
                   event.eventForms
-                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id && !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive)
+                    .filter(eventForm => 
+                      eventForm.eventFormDefinitionId === eventFormDefinition.id && (!eventForm.participantId || !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive))
                     .some(eventForm => !eventForm.complete && eventForm.required)
                 )
             })
