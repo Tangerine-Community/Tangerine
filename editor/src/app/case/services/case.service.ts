@@ -375,7 +375,7 @@ class CaseService {
    * Case Event API
    */
 
-  createEvent(eventDefinitionId:string): CaseEvent {
+  async createEvent(eventDefinitionId:string): Promise<CaseEvent> {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -408,6 +408,9 @@ class CaseService {
         }
       }
     }
+
+    await eval(caseEventDefinition.onEventCreate)
+
     return caseEvent
   }
 
@@ -1266,7 +1269,7 @@ class CaseService {
 
     if (caseEvent === undefined) {
         const newDate = moment(new Date(), 'YYYY-MM-DD').unix() * 1000;
-        caseEvent = this.createEvent(this.queryCaseEventDefinitionId);
+        caseEvent = await this.createEvent(this.queryCaseEventDefinitionId);
         await this.save();
       } else {
         caseEvent = this.case.events
