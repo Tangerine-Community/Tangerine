@@ -47,17 +47,17 @@ RUN cd /tangerine/online-survey-app/ && \
     npm install
 
 # Install phantomjs
-COPY ./server/phantomjs-1.9.8-linux-x86_64.tar.bz2 /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2
-ENV PHANTOM_JS phantomjs-1.9.8-linux-x86_64
-RUN cd /tmp/ && tar xvjf $PHANTOM_JS.tar.bz2 && \
-    mv $PHANTOM_JS /usr/local/sbin/ && ln -sf /usr/local/sbin/$PHANTOM_JS/bin/phantomjs /usr/local/bin
+#COPY ./server/phantomjs-1.9.8-linux-x86_64.tar.bz2 /tmp/phantomjs-1.9.8-linux-x86_64.tar.bz2
+#ENV PHANTOM_JS phantomjs-1.9.8-linux-x86_64
+#RUN cd /tmp/ && tar xvjf $PHANTOM_JS.tar.bz2 && \
+#    mv $PHANTOM_JS /usr/local/sbin/ && ln -sf /usr/local/sbin/$PHANTOM_JS/bin/phantomjs /usr/local/bin
 
 # This is a hack to make this old phantomjs work. But we probably don't need it, so considering commenting this out.
-ENV OPENSSL_CONF /dev/null
+#ENV OPENSSL_CONF /dev/null
 
 # TODO Move this to docker -tangerine-base-image
 #RUN apt-get update && apt-get -y install python2
-RUN npm config set python /usr/bin/python3
+#RUN npm config set python /usr/bin/python3
 
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json

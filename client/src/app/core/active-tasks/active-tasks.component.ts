@@ -39,7 +39,6 @@ export class ActiveTasksComponent implements OnInit {
     this.isOpen = !this.isOpen
     if (this.isOpen) {
       this.getActiveTasks()
-      this.dataSource = this.activeTasks
     }
     
   }
@@ -60,6 +59,7 @@ export class ActiveTasksComponent implements OnInit {
       const activeTask = new ActiveTask(task)
       return activeTask
     })
+    this.dataSource = this.activeTasks
     // console.log("this.activeTasks: " + this.activeTasks.length)
   }
 

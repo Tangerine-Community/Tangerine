@@ -258,9 +258,6 @@ echo "Running $T_CONTAINER_NAME at version $T_TAG"
 echo "$CMD"
 eval ${CMD}
 
-echo "Installing missing plugin..."
-docker exec ${T_CONTAINER_NAME} bash -c "cd /tangerine/client/builds/apk/ && cordova --no-telemetry plugin add cordova-plugin-whitelist --save"
-echo ""
 echo ""
 echo ""
 echo "🍊  Woohoo! Tangerine is running! 🍊"
