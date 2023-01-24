@@ -29,12 +29,16 @@ export class NewCsvDataSetComponent implements OnInit {
   selectedYear = '*'
   selectedForms = []
   allFormsSelected = false
+  allActiveFormsSelected = false
+  allArchivedFormsSelected = false
   groupId = ''
   forms
   activeForms
   archivedForms
   excludePII
   stateUrl
+  displayedColumns: string[] = ['toggle', 'title', 'template'];
+  dataSource
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -118,10 +122,18 @@ export class NewCsvDataSetComponent implements OnInit {
     }
   }
 
-  toggleSelectAllForms(input){
-    this.allFormsSelected = !this.allFormsSelected
+  toggleSelectAllForms(input, formType){
+    if (formType === 'active') {
+      this.allActiveFormsSelected = !this.allActiveFormsSelected
+    } else {
+      this.allArchivedFormsSelected = !this.allArchivedFormsSelected
+    }
     if(input.checked){
-      this.selectedForms = this.forms.map(form=>form.id)
+      if (formType === 'active') {
+        this.selectedForms = this.activeForms.map(form=>form.id)
+      } else {
+        this.selectedForms = this.archivedForms.map(form=>form.id)
+      }
     } else{
       this.selectedForms = []
     }
