@@ -1,13 +1,13 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { CouchdbSyncSettings, TangerineForm, TangerineFormInfo } from './../../shared/_classes/tangerine-form.class';
+// import { CouchdbSyncSettings, TangerineForm, TangerineFormInfo } from './../../shared/_classes/tangerine-form.class';
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
-import { HttpParams } from '@angular/common/http';
+// import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import {v4 as uuidv4} from 'uuid';;
+// import {v4 as uuidv4} from 'uuid';;
 import { WindowRef } from 'src/app/core/window-ref.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
@@ -169,5 +169,8 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
         this.errorHandler.handleError(_TRANSLATE('Could not change order of forms.'));
       }
     }
+  }
+  printContent(printUrl){
+    console.log("print: " + printUrl)
   }
 }

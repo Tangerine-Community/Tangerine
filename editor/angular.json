@@ -50,7 +50,8 @@
               "src/styles.css",
               "src/styles/_tangy-app-variables.scss",
               "src/styles/styles.scss",
-              "src/styles/tangerine-theme.scss"
+              "src/styles/tangerine-theme.scss",
+              "./node_modules/material-design-icons/iconfont/material-icons.css"
             ],
             "scripts": []
           },
