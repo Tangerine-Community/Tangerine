@@ -170,7 +170,4 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
       }
     }
   }
-  printContent(printUrl){
-    console.log("print: " + printUrl)
-  }
 }
