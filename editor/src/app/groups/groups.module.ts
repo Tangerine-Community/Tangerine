@@ -123,7 +123,6 @@ import { GroupDevicePasswordPolicyComponent } from './group-device-password-poli
         MatTreeModule,
         MatProgressSpinnerModule,
         MatGridListModule,
-        MatSelectModule,
         MatFormFieldModule,
         MatSlideToggleModule,
         TangyFormsModule,
