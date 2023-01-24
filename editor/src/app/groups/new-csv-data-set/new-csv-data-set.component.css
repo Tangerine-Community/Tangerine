@@ -19,7 +19,6 @@ button {
   }
   
 .mat-mdc-form-field {
-  height: 20px;
   padding-right: 1em;
 }
 
@@ -28,9 +27,6 @@ button {
 }
 .form-list{
   margin-top: 2rem;
-}
-#description, #year-and-month {
-  margin: 20px;
 }
 #description, #description input, #description mat-form-field {
   width: 80%;
@@ -73,11 +69,15 @@ table {
 }
 
 .select-instructions {
-  margin-top: 2rem;
+  margin-top: .5rem;
   margin-left: 1rem;
   margin-right: 1rem;
 }
 
 .new-csv-header {
   background-color: lightgray;
+}
+
+h2 {
+  padding-left: 1rem;
 }
