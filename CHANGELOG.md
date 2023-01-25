@@ -9,8 +9,8 @@ __Fixes__
  - Editor:Spreadsheet Templates - If you choose a form that does not yet have any data, the application pops up an alert 
    that there is no data available yet for this form. When data is synced to the server, the CSV module will generate the 
    template file on the group-uuid-reporting database for that form. Issue: [#3519](https://github.com/Tangerine-Community/Tangerine/issues/3519)
- - Security: removed package-lock.json for generate-form-json [#3524](https://github.com/Tangerine-Community/Tangerine/issues/3524)
- - Security: removed package-lock.json from custom-app content set [#3525](https://github.com/Tangerine-Community/Tangerine/issues/3525)
+ - Security: removed package-lock.json for generate-form-json. Issue: [#3524](https://github.com/Tangerine-Community/Tangerine/issues/3524) PR: [#3526](https://github.com/Tangerine-Community/Tangerine/pull/3526)
+ - Security: removed package-lock.json from custom-app content set. Issue: [#3525](https://github.com/Tangerine-Community/Tangerine/issues/3525) PR: [#3526](https://github.com/Tangerine-Community/Tangerine/pull/3526)
 
 __Server upgrade instructions__
 
