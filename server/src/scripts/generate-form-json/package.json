@@ -9,9 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@happy-dom/server-rendering": "^2.13.0",
-    "@polymer/polymer": "^3.4.1",
-    "tangy-form": "^4.24.0"
+    "@happy-dom/server-rendering": "^2.46.3",
+    "@polymer/polymer": "^3.5.1",
+    "tangy-form": "^4.39.3"
   },
   "type": "module"
 }
