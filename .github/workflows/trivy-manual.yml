@@ -11,7 +11,7 @@ on:
       sha:
         description: 'Enter sha from docker CI build'
         required: true
-        default: 'v3.28.0-rc-6@sha256:eab7918ca15b1e5115e1b130eff635e9a7f223c7bfdd18bd112c8f8a72ccf898'
+        default: 'v3.28.0-rc-6@sha256:d9e7adfab71b5970fb507097c4a65f55524a8c5be0f607c30ee243d0614acdf2'
 
 permissions:
   contents: read
@@ -33,7 +33,7 @@ jobs:
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          timeout: 10m
+          timeout: 15m
           security-checks: vuln
 
       - name: Upload Trivy scan results to GitHub Security tab
