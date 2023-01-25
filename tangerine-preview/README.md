@@ -1,7 +1,6 @@
 ## Tangerine Preview
-Tangerine Preview is a command line tool for previewing the Tangerine content you are working on your local computer. It work on Windows, Mac, and Linux. 
-
-Current version of Tangerine: v3.6.0
+Tangerine Preview is a command line tool for previewing the Tangerine content you are working on your local computer. 
+It works on Windows, Mac, and Linux.
 
 ## Install
 To install on macOS, you can follow the video [here](https://youtu.be/WV3U7AABjXA). 
@@ -36,6 +35,12 @@ When new releases come out for tangerine, `tangerine-preview` will also be updat
 
 ```
 npm install -g tangerine-preview
+```
+
+## Check the version of tangerine-preview on your computer
+
+```
+npm list -g tangerine-preview
 ```
 
 
