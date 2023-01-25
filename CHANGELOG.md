@@ -5,6 +5,11 @@
 __NEW Features__
 - Upgrades to Angular, Nest, and Cordova frameworks.
 
+__Fixes__
+ - Editor:Spreadsheet Templates - If you choose a form that does not yet have any data, the application pops up an alert 
+   that there is no data available yet for this form. When data is synced to the server, the CSV module will generate the 
+   template file on the group-uuid-reporting database for that form. Issue: [#3519](https://github.com/Tangerine-Community/Tangerine/issues/3519)
+
 __Server upgrade instructions__
 
 If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins. 
