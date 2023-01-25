@@ -48,8 +48,14 @@ export class CsvTemplateComponent implements OnInit {
       this.formId = this.csvTemplate.formId
       this.headers = this.csvTemplate.headers
       if (this.formId) {
-        const allHeaders = (await this.formsService.getCsvHeaders(this.groupId, this.formId)).map(headerInfo => headerInfo.header)
-        this.removedHeaders = allHeaders.filter(header => !this.headers.includes(header))
+        try {
+          let headerInfos = await this.formsService.getCsvHeaders(this.groupId, this.formId);
+          const allHeaders = headerInfos.map(headerInfo => headerInfo.header)
+          this.removedHeaders = allHeaders.filter(header => !this.headers.includes(header))
+        } catch (e) {
+          console.log("No header doc for this form. ")
+        }
+        
       }
       this.formsInfo = await this.formsService.getFormsInfo(this.groupId)
       this.breadcrumbs = [
@@ -104,9 +110,14 @@ export class CsvTemplateComponent implements OnInit {
   }
 
   async onFormIdSelect($event) {
-    this.headers = (await this.formsService.getCsvHeaders(this.groupId, this.formId)).map(headerInfo => headerInfo.header)
+    try {
+      let headerInfos = await this.formsService.getCsvHeaders(this.groupId, this.formId);
+      this.headers = headerInfos.map(headerInfo => headerInfo.header)
+    } catch (e) {
+      alert(_TRANSLATE('No headers for this form - may be no records uploaded yet.'))
+    }
   }
-
+  
   async onSubmit() {
     if (!this.csvTemplateTitle && !this.formId) {
       alert(_TRANSLATE('Please title this template and select a form to use it with.'))
