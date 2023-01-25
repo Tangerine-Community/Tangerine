@@ -7,9 +7,11 @@
 </div>
 <mat-list>
     <mat-list-item class="tangy-location-list">
+      <span class="list-header">
         <span class="tangy-foreground-primary">{{'Fields'|translate}}</span>
         <span class="tangy-spacer"></span>
         <span class="tangy-foreground-primary">{{'Mapped to CSV Column'|translate}}</span>
+      </span>
     </mat-list-item>
 </mat-list>
 
@@ -18,6 +20,7 @@
         {{locationLevel}}
     </mat-list-item>
     <mat-list-item role="listitem" class="gray-bottom-border">
+      <span class="list-header">
         <span class="text-indent-3 tangy-foreground-secondary ">{{'Label'|translate}}</span>
         <span class="tangy-spacer"></span>
         <span>
@@ -32,8 +35,10 @@
                 </mat-form-field>
             </div>
         </span>
+      </span>
     </mat-list-item>
     <mat-list-item role="listitem" class="gray-bottom-border">
+      <span class="list-header">
         <span class="text-indent-3 tangy-foreground-secondary ">{{'ID'|translate}}</span>
         <span class="tangy-spacer"></span>
         <span>
@@ -48,9 +53,11 @@
                 </mat-form-field>
             </div>
         </span>
+      </span>
     </mat-list-item>
     <mat-list-item role="listitem" class="gray-bottom-border"
         *ngFor="let metadata of locationList.metadata[locationLevel]">
+      <span class="list-header">
         <span class="text-indent-3 tangy-foreground-secondary ">{{metadata.label}}</span>
         <span class="tangy-spacer"></span>
         <span>
@@ -67,6 +74,7 @@
             </div>
         </span>
         <span></span>
+      </span>
     </mat-list-item>
 </mat-list>
 <br /><br />
