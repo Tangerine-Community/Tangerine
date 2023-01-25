@@ -19,7 +19,10 @@
 .headers li {
   background: #DEDEDE;
   margin: 15px;
-  padding: 25px 15px;
+}
+
+li::marker {
+  font-size: 32px;
 }
 
 .actions-column {
