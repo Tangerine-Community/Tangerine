@@ -1,5 +1,6 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
 FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:v4.0.0-rc-5
+#FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:local1
 ARG TARGETARCH
 RUN echo "I'm building for $TARGETARCH"
 RUN git config --global url."https://".insteadOf git://
@@ -81,6 +82,7 @@ RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
     npm install
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
 ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
+ADD client/pwa-tools/updater-app/build /tangerine/client/pwa-tools/updater-app/build
 RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root

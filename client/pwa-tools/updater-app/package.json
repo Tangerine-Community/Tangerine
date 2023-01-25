@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "./node_modules/.bin/polymer build --bundle && cp manifest.json build/default/manifest.json && cp -r assets build/default/",
+    "build": "cp manifest.json build/default/manifest.json && cp -r assets build/default/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,8 +17,7 @@
     "polymer": "^0.5.0",
     "uuid": "^9.0.0",
     "workbox-cli": "^6.5.4"
-  },
-  "devDependencies": {
-    "polymer-cli": "^1.9.11"
   }
 }
+
+

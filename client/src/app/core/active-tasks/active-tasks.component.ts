@@ -40,7 +40,6 @@ export class ActiveTasksComponent implements OnInit {
     if (this.isOpen) {
       this.getActiveTasks()
     }
-    
   }
 
   private getActiveTasks() {

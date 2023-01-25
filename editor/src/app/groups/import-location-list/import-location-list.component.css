@@ -25,3 +25,6 @@ a.faux-anchor {
   margin-left: 15px;
   margin-bottom: 15px;
 }
+.list-header {
+  display: flex
+}

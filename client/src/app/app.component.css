@@ -40,3 +40,7 @@ mat-toolbar.mat-tangy-custom-toolbar {
 #update-in-progress img {
   width: 40%;
 }
+
+.mat-mdc-menu-item span {
+  bottom:unset;
+}
