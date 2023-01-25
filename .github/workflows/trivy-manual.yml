@@ -11,7 +11,7 @@ on:
       sha:
         description: 'Enter sha from docker CI build'
         required: true
-        default: 'v3.28.0-rc-6@sha256:d9e7adfab71b5970fb507097c4a65f55524a8c5be0f607c30ee243d0614acdf2'
+        default: 'v3.28.0-rc-10@sha256:d9e7adfab71b5970fb507097c4a65f55524a8c5be0f607c30ee243d0614acdf2'
 
 permissions:
   contents: read
