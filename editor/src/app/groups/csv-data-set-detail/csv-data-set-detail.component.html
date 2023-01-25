@@ -49,7 +49,7 @@
       <td mat-cell *matCellDef="let dataSet">
         <mat-spinner diameter=25 [hidden]="dataSet?.complete || !dataSet?.inProgress"></mat-spinner>
         <a *ngIf="dataSet?.complete" mat-icon-button [href]="datasetDetail?.baseUrl+ dataSet?.outputPath">
-          <i class="material-icons mat-32 tangy-location-list-icon">get_app</i> download file
+          <i class="material-icons mat-32 tangy-location-list-icon">get_app</i><span class="download-text">download file</span>
         </a>
       </td>
     </ng-container>
