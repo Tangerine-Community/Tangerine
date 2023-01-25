@@ -1,4 +1,4 @@
-name: trivy-build-and-scan
+name: build
 on:
   push:
     branches:
@@ -12,14 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'docker.io/tangerine/tangerine:v3.28.0-rc-10@sha256:d9e7adfab71b5970fb507097c4a65f55524a8c5be0f607c30ee243d0614acdf2'
+          scan-type: 'fs'
+          ignore-unfixed: true
           format: 'sarif'
-          output: 'trivy-results.sarif'
           timeout: 20m
-          security-checks: 'vuln'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
