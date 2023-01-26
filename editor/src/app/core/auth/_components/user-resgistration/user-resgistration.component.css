@@ -1,3 +1,8 @@
 .tangy-full-width {
   width: 98%;
 }
+
+.mat-mdc-card-header {
+  padding-top: 16px;
+  padding-left: unset;
+}
