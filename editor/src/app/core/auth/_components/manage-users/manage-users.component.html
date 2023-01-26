@@ -16,27 +16,30 @@
   </ng-container>
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> {{'Actions'|translate}} </mat-header-cell>
-    <mat-cell *matCellDef="let user">
+    <mat-cell *matCellDef="let user" >
       <a
         class="tangy-foreground-primary"
         *ngxPermissionsOnly="['can_manage_users_site_wide_permissions']"
         [routerLink]="['/manage-users/sitewide-permissions',  user.username]"
+        title="{{'Security'|translate}}"
       >
-        <i class="material-icons mat-18 tangy-location-list-icon">security</i>
+        <i class="material-icons mat-24 tangy-location-list-icon">security</i>
       </a>
       <a
         class="tangy-foreground-primary"
         *ngxPermissionsOnly="['can_edit_users']"
         [routerLink]="['/manage-users/users/edit/',  user.username]"
+        title="{{'Edit'|translate}}"
       >
-        <i class="material-icons mat-18 tangy-location-list-icon">edit</i>
+        <i class="material-icons mat-24 tangy-location-list-icon">edit</i>
       </a>
       <span
         class="tangy-foreground-primary"
         *ngxPermissionsOnly="['can_edit_users']"
         (click)="deleteUser(user.username)"
+        title="{{'Delete'|translate}}"
       >
-        <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
+        <i class="material-icons mat-24 tangy-location-list-icon">delete</i>
       </span>
     </mat-cell>
   </ng-container>
