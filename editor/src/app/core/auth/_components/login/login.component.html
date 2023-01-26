@@ -5,14 +5,16 @@
   <div class="group content-inner form-div-margin">
     <form role="form" #login='ngForm' novalidate>
       <img id="logo" src="/logo.png" width="100%">
-      <mat-form-field appearance="outline">
-        <mat-label><mat-icon matSuffix>face</mat-icon>  {{'Username'|translate}}</mat-label>
+      <mat-form-field appearance="fill">
+        <mat-label>{{'Username'|translate}}</mat-label>
         <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
+        <mat-icon matSuffix>face</mat-icon>
       </mat-form-field>
       <br>
-      <mat-form-field appearance="outline">
-        <mat-label><mat-icon matSuffix>lock_open</mat-icon>  {{'Password'|translate}}</mat-label>
+      <mat-form-field appearance="fill">
+        <mat-label>{{'Password'|translate}}</mat-label>
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
+        <mat-icon matSuffix>lock_open</mat-icon>
       </mat-form-field>
       <br>
       <button (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
