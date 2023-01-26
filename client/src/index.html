@@ -31,12 +31,30 @@
   <script src="./libs/bcrypt.min.js"></script>
   <script src="./libs/SQLitePlugin.js"></script>
   <script src="./libs/plotly-latest.min.js"></script>
-  <script src="./app/core/sync-records/peers/memorystream-standalone.js"></script>
-  <script src="./app/core/sync-records/peers/pouchdb.replication-stream.min.js"></script>
-  <script src="./app/core/sync-records/peers/pouchdb.load.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" type="text/css" href="./assets/custom-styles.css">
+  <custom-style>
+    <style>
+      html {
+        --document-background-color: #FAFAFA;
+        --primary-color-dark: #3c5b8d;
+        --primary-text-color: var(--light-theme-text-color);
+        --primary-color: #3c5b8d;
+        --accent-color: #f26f10;
+        --accent-text-color: #FFF;
+        --error-color: var(--paper-red-500);
+        --warn-color: #993f0b;
+        --warn-background-color: #f4e688;
+        --disabled-color: #BBB;
+      }
+      h1, h2, h3, h4, h5 {
+        @apply --paper-font-common-base;
+        color: var(--primary-text-color);
+        margin: 25px 0px 5px 15px;
+      }
+    </style>
+  </custom-style>
 </head>
 <body id="client">
   <app-root>
