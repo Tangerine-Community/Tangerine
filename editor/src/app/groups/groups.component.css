@@ -8,9 +8,9 @@ span.tangy-foreground-secondary {
   padding-top: 0.3rem;
 }
 /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card {
-  width: 70%;
-}
+/*mat-card {*/
+/*  width: 70%;*/
+/*}*/
 
 .group-card {
   cursor: pointer;
@@ -20,17 +20,17 @@ mat-card {
   font-size: 350%;
 }
 /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card-title a {
-  text-decoration: none;
-  color: var(--tertiary-color);
-}
+/*mat-card-title a {*/
+/*  text-decoration: none;*/
+/*  color: var(--tertiary-color);*/
+/*}*/
 .tangy-page-title {
   margin-left: 2%;
 }
 /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
-mat-card.mat-mdc-card {
-  background-color: var(--accent-text-color);
-}
+/*mat-card.mat-mdc-card {*/
+/*  background-color: var(--accent-text-color);*/
+/*}*/
 .tangy-foreground-secondary {
   color: var(--lighter-accent-color);
 }
@@ -40,3 +40,24 @@ mat-card.mat-mdc-card {
   bottom: 25px;
   right: 25px;
 }
+
+/*.mat-mdc-card-header {*/
+/*  padding-bottom: 16px;*/
+/*}*/
+
+mat-card-title {
+  padding-left: 1em;
+}
+
+mat-card-header mat-card-title {
+  margin-left: .5rem;
+}
+
+.mat-mdc-card-subtitle {
+  font-size:small;
+}
+
+mat-card-header mat-card-subtitle {
+  margin-left: .5rem;
+}
+

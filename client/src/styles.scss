@@ -249,29 +249,29 @@ div.more {
   font-size: 21px;
 }
 /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
-.mat-form-field-ripple {
-  background-color: var(--primary-color) !important;
-}
+//.mat-form-field-ripple {
+//  background-color: var(--primary-color) !important;
+//}
 
 /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
-.mat-tab-labels {
-  background-color: var(--primary-color);
-  color: var(--primary-text-color-overlay);
-  font-weight: 700;
-}
+//.mat-tab-labels {
+//  background-color: var(--primary-color);
+//  color: var(--primary-text-color-overlay);
+//  font-weight: 700;
+//}
 /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
-.mat-tab-label, .mat-mdc-tab-link {
-  color: var(--primary-text-color-overlay) !important;
-  font-weight: 700 !important;
-}
+//.mat-tab-label, .mat-mdc-tab-link {
+//  color: var(--primary-text-color-overlay) !important;
+//  font-weight: 700 !important;
+//}
 
 /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
-.mat-tab-label-active {
-  background-color: var(--accent-color) !important;
-  opacity: 1.0 !important;
-  color: var(--accent-text-color) !important;
-  font-weight: 700;
-}
+//.mat-tab-label-active {
+//  background-color: var(--accent-color) !important;
+//  opacity: 1.0 !important;
+//  color: var(--accent-text-color) !important;
+//  font-weight: 700;
+//}
 .mat-mdc-tab-group.mat-primary .mat-ink-bar, .mat-mdc-tab-nav-bar.mat-primary .mat-ink-bar {
   background-color: var(--accent-color-dark) !important;
   height: 5px;
