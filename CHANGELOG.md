@@ -11,6 +11,8 @@ __Fixes__
    template file on the group-uuid-reporting database for that form. Issue: [#3519](https://github.com/Tangerine-Community/Tangerine/issues/3519)
  - Security: removed package-lock.json for generate-form-json. Issue: [#3524](https://github.com/Tangerine-Community/Tangerine/issues/3524) PR: [#3526](https://github.com/Tangerine-Community/Tangerine/pull/3526)
  - Security: removed package-lock.json from custom-app content set. Issue: [#3525](https://github.com/Tangerine-Community/Tangerine/issues/3525) PR: [#3526](https://github.com/Tangerine-Community/Tangerine/pull/3526)
+ - Editor: Updated Login UI. Issue: [3531](https://github.com/Tangerine-Community/Tangerine/issues/3531)
+ - Tangerine theme CSS rules are not being executed in client. Issue: [#3529](https://github.com/Tangerine-Community/Tangerine/issues/3529)
 
 __Server upgrade instructions__
 
