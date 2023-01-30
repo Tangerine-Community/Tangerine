@@ -8,7 +8,112 @@ services:
     image: "test:latest"
     ports:
       - "80:80"
+    restart: unless-stopped
+    environment:
+      - "NODE_ENV=development"
+      - "T_VERSION=$T_TAG"
+      - "T_PROTOCOL=$T_PROTOCOL"
+      - "T_USER1=$T_USER1"
+      - "T_USER1_PASSWORD=$T_USER1_PASSWORD"
+      - "T_HOST_NAME=$T_HOST_NAME"
+      - "T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN"
+      - "T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT"
+      - "T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME"
+      - "T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS"
+      - "T_USER1_MANAGED_SERVER_USERS=$T_USER1_MANAGED_SERVER_USERS"
+      - "T_HIDE_PROFILE=$T_HIDE_PROFILE"
+      - "T_AUTO_COMMIT=$T_AUTO_COMMIT"
+      - "T_AUTO_COMMIT_FREQUENCY=$T_AUTO_COMMIT_FR EQUENCY"
+      - "T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE"
+      - "T_REPORTING_DELAY=$T_REPORTING_DELAY"
+      - "T_MODULES=$T_MODULES"
+      - "T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE"
+      - "T_PAID_MODE=$T_PAID_MODE"
+      - "T_CATEGORIES=$T_CATEGORIES"
+      - "T_LEGACY=$T_LEGACY"
+      - "T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER"
+      - "T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE"
+      - "T_ORIENTATION=$T_ORIENTATION"
+      - "T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH"
+      - "T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH"
+      - "T_REPORTING_MARK_UNDEFINED_WITH=$T_REPORTING_MARK_UNDEFINED_WITH"
+      - "T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF"
+      - "T_ARCHIVE_APKS_TO_DISK=$T_ARCHIVE_APKS_TO_DISK"
+      - "T_ARCHIVE_PWAS_TO_DISK=$T_ARCHIVE_PWAS_TO_DISK"
+      - "T_PASSWORD_POLICY=$T_PASSWORD_POLICY"
+      - "T_PASSWORD_RECIPE=$T_PASSWORD_RECIPE"
+      - "T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP"
+      - "T_JWT_ISSUER=$T_JWT_ISSUER"
+      - "T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN"
+      - "LETSENCRYPT_HOST=$T_HOST_NAME"
+      - "VIRTUAL_HOST=$T_HOST_NAME"
+      - "LETSENCRYPT_EMAIL=$T_MAINTAINER_EMAIL"
+    volumes:
+      - ../tangerine/content-sets:/tangerine/content-sets:delegated
+      - ../tangerine/data/dat-output:/dat-output/
+      - ../tangerine/data/reporting-worker-state.json:/reporting-worker-state.json
+      - ../tangerine/data/paid-worker-state.json:/paid-worker-state.json
+      - ../tangerine/data/id_rsa:/root/.ssh/id_rsa:delegated
+      - ../tangerine/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated
+      - ../tangerine/data/client/releases:/tangerine/client/releases/
+      - ../tangerine/data/csv:/csv/
+      - ../tangerine/data/archives:/archives/
+      - ../tangerine/data/groups:/tangerine/groups/
+      - ../tangerine/data/client/content/groups:/tangerine/client/content/groups
   editor:
     image: "editor:latest"
     ports:
       - "80:81"
+    restart: unless-stopped
+    environment:
+      - "NODE_ENV=development"
+      - "T_VERSION=$T_TAG"
+      - "T_PROTOCOL=$T_PROTOCOL"
+      - "T_USER1=$T_USER1"
+      - "T_USER1_PASSWORD=$T_USER1_PASSWORD"
+      - "T_HOST_NAME=$T_HOST_NAME"
+      - "T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN"
+      - "T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT"
+      - "T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME"
+      - "T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS"
+      - "T_USER1_MANAGED_SERVER_USERS=$T_USER1_MANAGED_SERVER_USERS"
+      - "T_HIDE_PROFILE=$T_HIDE_PROFILE"
+      - "T_AUTO_COMMIT=$T_AUTO_COMMIT"
+      - "T_AUTO_COMMIT_FREQUENCY=$T_AUTO_COMMIT_FR EQUENCY"
+      - "T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE"
+      - "T_REPORTING_DELAY=$T_REPORTING_DELAY"
+      - "T_MODULES=$T_MODULES"
+      - "T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE"
+      - "T_PAID_MODE=$T_PAID_MODE"
+      - "T_CATEGORIES=$T_CATEGORIES"
+      - "T_LEGACY=$T_LEGACY"
+      - "T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER"
+      - "T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE"
+      - "T_ORIENTATION=$T_ORIENTATION"
+      - "T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH"
+      - "T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH"
+      - "T_REPORTING_MARK_UNDEFINED_WITH=$T_REPORTING_MARK_UNDEFINED_WITH"
+      - "T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF"
+      - "T_ARCHIVE_APKS_TO_DISK=$T_ARCHIVE_APKS_TO_DISK"
+      - "T_ARCHIVE_PWAS_TO_DISK=$T_ARCHIVE_PWAS_TO_DISK"
+      - "T_PASSWORD_POLICY=$T_PASSWORD_POLICY"
+      - "T_PASSWORD_RECIPE=$T_PASSWORD_RECIPE"
+      - "T_CUSTOM_LOGIN_MARKUP=$T_CUSTOM_LOGIN_MARKUP"
+      - "T_JWT_ISSUER=$T_JWT_ISSUER"
+      - "T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN"
+      - "LETSENCRYPT_HOST=$T_HOST_NAME"
+      - "VIRTUAL_HOST=$T_HOST_NAME"
+      - "LETSENCRYPT_EMAIL=$T_MAINTAINER_EMAIL"
+    volumes:
+      - ../tangerine/content-sets:/tangerine/content-sets:delegated
+      - ../tangerine/data/dat-output:/dat-output/
+      - ../tangerine/data/reporting-worker-state.json:/reporting-worker-state.json
+      - ../tangerine/data/paid-worker-state.json:/paid-worker-state.json
+      - ../tangerine/data/id_rsa:/root/.ssh/id_rsa:delegated
+      - ../tangerine/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated
+      - ../tangerine/data/client/releases:/tangerine/client/releases/
+      - ../tangerine/data/csv:/csv/
+      - ../tangerine/data/archives:/archives/
+      - ../tangerine/data/groups:/tangerine/groups/
+      - ../tangerine/data/client/content/groups:/tangerine/client/content/groups
+
