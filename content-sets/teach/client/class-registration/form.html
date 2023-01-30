@@ -51,7 +51,6 @@
       });
       let tcsEl = document.querySelector('tangy-checkboxes[name=\'curriculum\']')
       let cbDiv = tcsEl.$.checkboxes;
-     debugger
       cbDiv.innerHTML = ''
       data.forEach(function(el) {
         if ((typeof el.archived == 'undefined' || el.archived == false) 
