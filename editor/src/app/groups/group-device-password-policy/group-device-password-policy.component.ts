@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { AppConfig } from '../../../../../client/src/app/shared/_classes/app-config.class';
+import { AppConfig } from 'src/app/shared/_classes/app-config.class';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
