@@ -106,6 +106,8 @@ RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm run build && \
     cp logo.svg build/default/
 
+RUN mkdir -p /tangerine/client/builds/apk/www
+
 # Package release sources for APK and PWA.
 RUN cd /tangerine/client && \
     cp -r dist/tangerine-client builds/apk/www/shell && \
