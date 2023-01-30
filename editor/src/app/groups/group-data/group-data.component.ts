@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/core/auth/_services/user.service';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { HttpClient } from '@angular/common/http';
-import { AppConfig } from '../../../../../client/src/app/shared/_classes/app-config.class';
+import { AppConfig } from 'src/app/shared/_classes/app-config.class';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 
 @Component({
