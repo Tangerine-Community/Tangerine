@@ -1,5 +1,5 @@
 import { UserService } from 'src/app/shared/_services/user.service';
-import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {DashboardService} from '../../_services/dashboard.service';
 import {_TRANSLATE} from '../../../shared/translation-marker';
 import { MatTableDataSource } from '@angular/material/table';
@@ -9,6 +9,7 @@ import {ClassGroupingReport} from './class-grouping-report';
 import {StudentResult} from './student-result';
 import {Feedback} from '../../feedback';
 import { tNumber } from 'src/app/t-number.util';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-student-grouping-report',
@@ -29,7 +30,7 @@ export class StudentGroupingReportComponent implements OnInit {
   feedbackViewInited = false;
   curriculumFormsList;  // list of all curriculum forms
   classGroupReport: ClassGroupingReport;
-  checkFeedbackMessagePosition = false;
+  // checkFeedbackMessagePosition = false;
   clickPosition;
   ready = false
 
@@ -43,6 +44,7 @@ export class StudentGroupingReportComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private renderer: Renderer2,
+    public dialog: MatDialog
   )  {
     // subscribe to the router events - storing the subscription so
     // we can unsubscribe later.
@@ -92,20 +94,20 @@ export class StudentGroupingReportComponent implements OnInit {
       this.initFeedbackStyles();
       // this.feedbackViewInited = true
     // }
-    if (this.checkFeedbackMessagePosition) {
-      const feedbackMessageHeight = this.feedbackMessage.nativeElement.clientHeight;
-      const parentPositionTop = this.getPosition(this.feedbackElement.nativeElement);
-      // console.log("feedbackMessageHeight: " + feedbackMessageHeight + " parentPositionTop y: " + parentPositionTop.y)
-      let finalPosition =  (this.clickPosition.y - parentPositionTop.y) - feedbackMessageHeight;
-      if (finalPosition < 0) {
-        finalPosition = 0;
-      }
-      // console.log("yPositionEvent: " + yPositionEvent + " parentPosition: " + parentPositionTop.y + " clickPosition.y: " + clickPosition.y + " yPosition: " + yPosition + " finalPosition: " + finalPosition)
-      this.renderer.setStyle(this.feedbackMessage.nativeElement, 'position',  'relative');
-      this.renderer.setStyle(this.feedbackMessage.nativeElement, 'top',  finalPosition + 'px');
-      this.initFeedbackStyles();
-      this.checkFeedbackMessagePosition = false;
-    }
+    // if (this.checkFeedbackMessagePosition) {
+    //   const feedbackMessageHeight = this.feedbackMessage.nativeElement.clientHeight;
+    //   const parentPositionTop = this.getPosition(this.feedbackElement.nativeElement);
+    //   // console.log("feedbackMessageHeight: " + feedbackMessageHeight + " parentPositionTop y: " + parentPositionTop.y)
+    //   let finalPosition =  (this.clickPosition.y - parentPositionTop.y) - feedbackMessageHeight;
+    //   if (finalPosition < 0) {
+    //     finalPosition = 0;
+    //   }
+    //   // console.log("yPositionEvent: " + yPositionEvent + " parentPosition: " + parentPositionTop.y + " clickPosition.y: " + clickPosition.y + " yPosition: " + yPosition + " finalPosition: " + finalPosition)
+    //   this.renderer.setStyle(this.feedbackMessage.nativeElement, 'position',  'relative');
+    //   this.renderer.setStyle(this.feedbackMessage.nativeElement, 'top',  finalPosition + 'px');
+    //   this.initFeedbackStyles();
+    //   this.checkFeedbackMessagePosition = false;
+    // }
   }
 
   private initFeedbackStyles() {
@@ -152,15 +154,21 @@ export class StudentGroupingReportComponent implements OnInit {
     }
   }
 
-  async getFeedbackForPercentile(event, percentile, curriculumId, itemId) {
+  async getFeedbackForPercentile(percentile, curriculumId, itemId, name) {
     // console.log("Get feedback for " + JSON.stringify(element))
     const feedback: Feedback = await this.dashboardService.getFeedback(percentile, curriculumId, itemId);
     if (feedback) {
       feedback.percentileRange = this.dashboardService.calculatePercentileRange(percentile);
       this.classGroupReport.feedback = feedback;
     }
-    this.clickPosition = this.getPosition(event.target);
-    this.checkFeedbackMessagePosition = true;
+    // this.checkFeedbackMessagePosition = true;
+    const dialogRef = this.dialog.open(FeedbackDialog, {
+      data: {classGroupReport: this.classGroupReport, name: name},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.classGroupReport.feedback = result
+    });
   }
 
   tNumber(fragment) {
@@ -194,4 +202,28 @@ export class StudentGroupingReportComponent implements OnInit {
     };
   }
 
+}
+
+export interface DialogData {
+  classGroupReport: ClassGroupingReport;
+  name: string;
+}
+
+@Component({
+  selector: 'feedback-dialog',
+  templateUrl: 'feedback-dialog.html',
+})
+export class FeedbackDialog {
+  constructor(
+    public dialogRef: MatDialogRef<FeedbackDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {
+  }
+
+  tNumber(fragment) {
+    return tNumber(fragment)
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }
