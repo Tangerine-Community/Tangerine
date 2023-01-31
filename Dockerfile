@@ -1,7 +1,7 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-#FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-6
+FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-6
 #FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:v4.0.0-rc-6
-FROM --platform=linux/amd64 tangerine/docker-tangerine-base-image:v4.0.0-rc-6
+#FROM --platform=linux/amd64 tangerine/docker-tangerine-base-image:v4.0.0-rc-6
 #FROM --platform=$BUILDPLATFORM tangerine/docker-tangerine-base-image:v4.0.0-rc-6
 #FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:local1
 ARG TARGETARCH
@@ -145,7 +145,7 @@ ADD ./ /tangerine
 RUN mkdir /csv
 RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
-ENV NODE_OPTIONS "--openssl-legacy-provider"
+#ENV NODE_OPTIONS "--openssl-legacy-provider"
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && npm start
 
