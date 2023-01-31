@@ -60,3 +60,4 @@ scripts/apk-build.sh
 
 /.vscode
 editor/.angular
+.secrets
