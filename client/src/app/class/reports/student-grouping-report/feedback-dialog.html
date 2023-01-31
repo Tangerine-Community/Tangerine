@@ -1,0 +1,12 @@
+<div #feedback id="feedback">
+  <div #feedbackMessage id="feedback-message">
+    <mat-card  *ngIf="data.classGroupReport?.feedback" (click)="onNoClick()">
+      <mat-card-title>{{'Feedback'|translate}}</mat-card-title>
+      <mat-card-content>
+        <h2>{{'Student'|translate}}: {{data.name}}</h2>
+        <h3>{{tNumber(data.classGroupReport?.feedback?.percentileRange)}} {{'Percentile'|translate}}</h3>
+        <span [innerHTML]="data.classGroupReport?.feedback?.message"></span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
