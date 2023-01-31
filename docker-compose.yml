@@ -1,11 +1,8 @@
 version: "3.9"
 services:
-  web:
-    build: .
-    ports:
-      - "8000:5000"
   server:
     image: "test:latest"
+    container_name: "server"
     ports:
       - "80:80"
     restart: unless-stopped
@@ -13,6 +10,7 @@ services:
     environment:
       - T_COUCHDB_USER_ADMIN_NAME=/run/secrets/couchdb_admin_name
       - T_COUCHDB_USER_ADMIN_PASS=/run/secrets/couchdb_admin_password
+      - T_COUCHDB_ENDPOINT=http://admin:password@couchdb:5984/
       - "NODE_ENV=development"
     volumes:
       - ../tangerine/content-sets:/tangerine/content-sets:delegated
@@ -28,13 +26,15 @@ services:
       - ../tangerine/data/client/content/groups:/tangerine/client/content/groups
   editor:
     image: "editor:latest"
+    container_name: "editor"
     ports:
-      - "80:81"
+      - "81:81"
     restart: unless-stopped
     env_file: config.env
     environment:
       - T_COUCHDB_USER_ADMIN_NAME=/run/secrets/couchdb_admin_name
       - T_COUCHDB_USER_ADMIN_PASS=/run/secrets/couchdb_admin_password
+      - T_COUCHDB_ENDPOINT=http://admin:password@couchdb:5984/
       - "NODE_ENV=development"
     volumes:
       - ../tangerine/content-sets:/tangerine/content-sets:delegated
