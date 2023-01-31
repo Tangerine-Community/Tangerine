@@ -13,6 +13,7 @@ __New Features__
 - New group content-set dropdown: PR 3275 - https://github.com/Tangerine-Community/Tangerine/pull/3275 - enables a content-set dropdown and is already in main. Modify the template (content-sets-example.json) and rename to content-sets.json to enable the dropdown.
 
 __Fixes__
+- Created Feedback dialog to resolve layout issue on mobile devices PR: [#3533](https://github.com/Tangerine-Community/Tangerine/pull/3533)
 - Fix for Class listing breaks if you archive all classes in Teach; unable to add new classes. Issue: [#3491](https://github.com/Tangerine-Community/Tangerine/issues/3491)
 - Fix for Mysql tables not populating; ER_TOO_BIG_ROWSIZE error in Tangerine logs. Issue: [#3488](https://github.com/Tangerine-Community/Tangerine/issues/3488)
 - Changed location of mysql-js config file to point to the mysql-js directory. Also increased memory parameters in conf.d/config-file.cnf. 
