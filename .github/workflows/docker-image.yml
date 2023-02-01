@@ -11,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    -
+      name: Checkout
+      uses: actions/checkout@v3
+
     -
         name: Docker meta
         id: meta
@@ -24,7 +27,7 @@ jobs:
           tags: |
             type=semver,pattern={{raw}}
     -
-        name: install
+        name: install apps
         uses: bahmutov/npm-install@v1
         with:
           useRollingCache: true
@@ -36,45 +39,40 @@ jobs:
             client/pwa-tools/service-worker-generator
             client/pwa-tools/updater-app
     -
-        name: install
+        name: Install updater-app
         uses: bahmutov/npm-install@v1
         with:
           useRollingCache: true
           working-directory: client/pwa-tools/updater-app
           install-command: ./node_modules/.bin/bower install --allow-root
-
     -
-      name: install
+      name: Install online-survey-app
       uses: bahmutov/npm-install@v1
       with:
         useRollingCache: true
         working-directory:  online-survey-app
         run: ./node_modules/.bin/ng build --base-href "./"
-
     -
-      name: install
+      name: Install client
       uses: bahmutov/npm-install@v1
       with:
         useRollingCache: true
         working-directory:  client
         run: ./node_modules/.bin/ng build --base-href "./" -c production
-
     -
-      name: install
+      name: Install editor
       uses: bahmutov/npm-install@v1
       with:
         useRollingCache: true
         working-directory:  editor
         run: ./node_modules/.bin/ng build --base-href "./" -c production
-
     -
-      name: install
+      name: Install updater-app
       uses: bahmutov/npm-install@v1
       with:
         useRollingCache: true
         working-directory:  client/pwa-tools/updater-app
         run: npm run build
-
     -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -98,7 +96,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: {context}/Dockerfile-unitary-GH
+          file: ${{context}}/Dockerfile-unitary-GH
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
