@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     -
         name: Docker meta
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           # list of Docker images to use as base name for tags
           images: |
@@ -24,26 +24,81 @@ jobs:
           tags: |
             type=semver,pattern={{raw}}
     -
+        name: install
+        uses: bahmutov/npm-install@v1
+        with:
+          useRollingCache: true
+          working-directory:  |
+            online-survey-app
+            server
+            editor
+            client
+            client/pwa-tools/service-worker-generator
+            client/pwa-tools/updater-app
+    -
+        name: install
+        uses: bahmutov/npm-install@v1
+        with:
+          useRollingCache: true
+          working-directory: client/pwa-tools/updater-app
+          install-command: ./node_modules/.bin/bower install --allow-root
+
+    -
+      name: install
+      uses: bahmutov/npm-install@v1
+      with:
+        useRollingCache: true
+        working-directory:  online-survey-app
+        run: ./node_modules/.bin/ng build --base-href "./"
+
+    -
+      name: install
+      uses: bahmutov/npm-install@v1
+      with:
+        useRollingCache: true
+        working-directory:  client
+        run: ./node_modules/.bin/ng build --base-href "./" -c production
+
+    -
+      name: install
+      uses: bahmutov/npm-install@v1
+      with:
+        useRollingCache: true
+        working-directory:  editor
+        run: ./node_modules/.bin/ng build --base-href "./" -c production
+
+    -
+      name: install
+      uses: bahmutov/npm-install@v1
+      with:
+        useRollingCache: true
+        working-directory:  client/pwa-tools/updater-app
+        run: npm run build
+
+    -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'amd64'
     -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
         with:
-          version: v0.6.0-rc1
-          driver-opts: image=moby/buildkit:v0.9.0-rc2
+          driver-opts: |
+            network=host
     -
         name: Login to DockerHub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
     -
         name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
+          file: {context}/Dockerfile-unitary-GH
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
