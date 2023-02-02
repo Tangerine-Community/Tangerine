@@ -130,19 +130,19 @@ ADD editor /tangerine/editor
 #RUN cd /tangerine/editor && ./node_modules/.bin/workbox generateSW
 
 # Build PWA tools.
-RUN cd /tangerine/client/pwa-tools/updater-app && \
-#    npm run build && \
-    cp logo.svg build/default/
+#RUN cd /tangerine/client/pwa-tools/updater-app && \
+##    npm run build && \
+#    cp logo.svg build/default/
 
 # Package release sources for APK and PWA.
-RUN cd /tangerine/client && \
-    cp -r dist/tangerine-client builds/apk/www/shell && \
-    cp -r pwa-tools/updater-app/build/default builds/pwa && \
-    mkdir builds/pwa/release-uuid && \
-    cp -r dist/tangerine-client builds/pwa/release-uuid/app
+#RUN cd /tangerine/client && \
+#    cp -r dist/tangerine-client builds/apk/www/shell && \
+#    cp -r pwa-tools/updater-app/build/default builds/pwa && \
+#    mkdir builds/pwa/release-uuid && \
+#    cp -r dist/tangerine-client builds/pwa/release-uuid/app
 
 # Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
-RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
+RUN #sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
 
 # Add the rest of server.
 ADD server /tangerine/server
