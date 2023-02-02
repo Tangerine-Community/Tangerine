@@ -1,5 +1,5 @@
 <div class="primary">
-  <iron-icon icon="clear" routerLink="/"></iron-icon>
+  <iron-icon icon="clear" (click)="onCloseClick()"></iron-icon>
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
 </div>
 <div class="secondary" *ngIf="secondaryText">
