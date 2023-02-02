@@ -4,11 +4,11 @@ FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-6
 #FROM --platform=linux/amd64 tangerine/docker-tangerine-base-image:v4.0.0-rc-6
 #FROM --platform=$BUILDPLATFORM tangerine/docker-tangerine-base-image:v4.0.0-rc-6
 #FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:local1
-ARG TARGETARCH
-RUN echo "I'm building for $TARGETARCH"
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
+#ARG TARGETARCH
+#RUN echo "I'm building for $TARGETARCH"
+#ARG TARGETPLATFORM
+#ARG BUILDPLATFORM
+#RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
 RUN git config --global url."https://".insteadOf git://
 
 # Never ask for confirmations
