@@ -4,6 +4,9 @@ import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { WindowRef } from '../../../app/core/window-ref.service';
 import {UserService} from '../../core/auth/_services/user.service';
+import {ProcessMonitorService} from "../../shared/_services/process-monitor.service";
+
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
   selector: 'app-new-group',
@@ -20,7 +23,9 @@ export class NewGroupComponent implements OnInit {
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
     private window: WindowRef,
-    private userService: UserService
+    private userService: UserService,
+    private processMonitorService:ProcessMonitorService,
+
   ) { }
 
   async ngOnInit() {
@@ -32,16 +37,26 @@ export class NewGroupComponent implements OnInit {
   }
 
   async createGroup() {
+    let process = this.processMonitorService.start('createNewGroup', 'Creating new group...')
     try {
-      const username = await this.userService.getCurrentUser();
       const result: any = await this.groupsService.createGroup(this.groupName, this.contentSet);
-      this.window.nativeWindow.location = `${this.window.nativeWindow.location.origin}/app/${result._id}/index.html#/groups/${result._id}`
-      if (result && result.statusCode && result.statusCode === 200) {
+      if (result && result._id) {
+        this.processMonitorService.stop(process.id)
+        await sleep(500)
+        process = this.processMonitorService.start('newGroupCreated', 'New Group created; forwarding you shortly...')
+        await sleep(2000)
+        this.processMonitorService.stop(process.id)
+        this.window.nativeWindow.location = `${this.window.nativeWindow.location.origin}/app/${result._id}/index.html#/groups/${result._id}`
         this.groupName = '';
-        this.errorHandler.handleError(_TRANSLATE('Group Created Succesfully'));
+      } else {
+        this.processMonitorService.stop(process.id)
+        process = this.processMonitorService.start('waitForNewGroup', 'Error creating group...')
+        await sleep(3000)
+        this.processMonitorService.stop(process.id)
       }
     } catch (error) {
       console.log(error);
+      this.processMonitorService.stop(process.id)
       this.errorHandler.handleError(_TRANSLATE('Could not create Group'));
     }
   }
