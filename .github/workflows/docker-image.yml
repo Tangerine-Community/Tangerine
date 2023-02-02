@@ -49,31 +49,19 @@ jobs:
           install-command: ./node_modules/.bin/bower install --allow-root
     -
       name: Install online-survey-app
-      uses: bahmutov/npm-install@v1
-      with:
-        useRollingCache: true
-        working-directory:  online-survey-app
+      working-directory:  online-survey-app
       run: ./node_modules/.bin/ng build --base-href "./"
     -
       name: Install client
-      uses: bahmutov/npm-install@v1
-      with:
-        useRollingCache: true
-        working-directory:  client
+      working-directory:  client
       run: ./node_modules/.bin/ng build --base-href "./" -c production
     -
       name: Install editor
-      uses: bahmutov/npm-install@v1
-      with:
-        useRollingCache: true
-        working-directory:  editor
+      working-directory:  editor
       run: ./node_modules/.bin/ng build --base-href "./" -c production
     -
       name: Install updater-app
-      uses: bahmutov/npm-install@v1
-      with:
-        useRollingCache: true
-        working-directory:  client/pwa-tools/updater-app
+      working-directory:  client/pwa-tools/updater-app
       run: npm run build
     -
         name: Set up QEMU
