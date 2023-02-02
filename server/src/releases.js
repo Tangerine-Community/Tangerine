@@ -50,7 +50,7 @@ const releasePWA = async (req, res)=>{
 		const group = sanitize(req.params.group)
 		const {releaseType, versionTag, releaseNotes, buildId} = req.body;
 		const cmd = `release-pwa ${group} /tangerine/groups/${group}/client ${sanitize(releaseType)} ${sanitize(buildId)} ${sanitize(versionTag)}`
-		log.info("in release-pws, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
+		log.info("in release-pwa, group: " + group + " releaseType: " + releaseType + ` The command: ${cmd}`)
 		log.info(`RELEASING PWA: ${cmd}`)
         await exec(cmd)
 		await saveReleaseInfo(group, 'PWA',sanitize(releaseType), sanitize(buildId), sanitize(versionTag), sanitize(releaseNotes))
