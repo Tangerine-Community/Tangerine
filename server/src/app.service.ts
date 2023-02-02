@@ -102,8 +102,8 @@ export class AppService {
     const newGroupQueue = []
     this.groupService.groups$.subscribe({
       next: (group) => {
-        console.log('Queueing report database(s) processing for ' + group._id + ': ')
-        console.log(group)
+        log.debug('Queueing report database(s) processing for ' + group._id + ': ')
+        // console.log(group)
         newGroupQueue.push(group)
       }
     })

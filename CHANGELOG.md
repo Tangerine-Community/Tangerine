@@ -69,6 +69,64 @@ git fetch origin
 git checkout v3.27.0
 ./start.sh v3.27.0
 # Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.26.2
+```
+
+## v3.26.2
+
+__DEPRECATION NOTICE AND UPCOMING MODULE DELETION__
+
+The mysql module is deprecated; it will be removed *soon* from this source code in the v3.28.0 release. 
+We have been using the mysql-js in production for a few months and it is more performant 
+and reliable than the output of the mysql module. We recommend switching to the mysql-js module. 
+See the [MySQL-JS Module doc](./docs/system-administrator/mysql-js.md) for upgrade and configuration information.
+
+__New Features__
+- New group content-set dropdown: PR 3275 - https://github.com/Tangerine-Community/Tangerine/pull/3275 - enables a content-set dropdown and is already in main. Modify the template (content-sets-example.json) and rename to content-sets.json to enable the dropdown.
+
+__Fixes__
+- Created Feedback dialog to resolve layout issue on mobile devices PR: [#3533](https://github.com/Tangerine-Community/Tangerine/pull/3533)
+- Fix for Class listing breaks if you archive all classes in Teach; unable to add new classes. Issue: [#3491](https://github.com/Tangerine-Community/Tangerine/issues/3491)
+- Fix for Mysql tables not populating; ER_TOO_BIG_ROWSIZE error in Tangerine logs. Issue: [#3488](https://github.com/Tangerine-Community/Tangerine/issues/3488)
+- Changed location of mysql-js config file to point to the mysql-js directory. Also increased memory parameters in conf.d/config-file.cnf. 
+- If you are using the mysql container and are having errors with very large forms, the new settings in ./server/src/mysql-js/conf.d/config-file.js
+  should help. You will need to completely rebuild the mysql database. See the "Resetting MySQL databases" section in the [MySQL-JS Module docs](./docs/systems-administrator/mysql-js.md).
+- Important: If you already have a mysql instance running and don't want to rebuild the mysql database, delete the `innodb-page-size=64K`
+  line from ./server/src/mysql-js/conf.d/config-file.js; otherwise, your mysql instance will not start. 
+- Fix for CSV Download fails with larger forms. Issue: [#3483](https://github.com/Tangerine-Community/Tangerine/issues/3483)
+
+__Backports__
+
+The following feature was backported from v3.24.6 patch release:
+
+- T_UPLOAD_WITHOUT_UPDATING_REV : A new config.sh setting for use in high-load instances using sync-protocol-1.
+  *** Using this setting COULD CAUSE DATA LOSS. ***
+  This setting uses a different function to process uploads that does not do a GET before the PUT in order to upload a document.
+  Please note that if there is a conflict it try to POST the doc which will create a new id and copy the _id to originalId.
+  If that fails, it will log the error and not upload the document to the server, but still send an 'OK' status to client.
+  The failure would result in data loss.
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.26.2
+./start.sh v3.26.2
+# Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.26.1
 ```
 
@@ -229,6 +287,17 @@ git checkout v3.25.0
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.25.0
 ```
+
+## v3.24.6
+
+__NEW Features__
+
+- T_UPLOAD_WITHOUT_UPDATING_REV : A new config.sh setting for use in high-load instances using sync-protocol-1. 
+  *** Using this setting COULD CAUSE DATA LOSS. ***
+  This setting uses a different function to process uploads that does not do a GET before the PUT in order to upload a document. 
+  Please note that if there is a conflict it will copy the _id to originalId and POST the doc, which will create a new id. 
+  If that fails, it will log the error and not upload the document to the server, but still send an 'OK' status to client. 
+  The failure would result in data loss.
 
 ## v3.24.4
 
