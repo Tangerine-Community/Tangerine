@@ -37,29 +37,31 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { ClassFormComponent } from './class-form/class-form.component';
 import {TangyFormsModule} from "../tangy-forms/tangy-forms.module";
 import {ClassFormsPlayerComponent} from "./class-forms-player.component";
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    ClassRoutingModule,
-    MatTabsModule,
-    MatInputModule,
-    MatMenuModule,
-    MatListModule,
-    MatCardModule,
-    CdkTableModule,
-    MatTableModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonToggleModule,
-    MatSlideToggleModule,
-    TangyFormsModule
-  ],
+    imports: [
+        CommonModule,
+        SharedModule,
+        ClassRoutingModule,
+        MatTabsModule,
+        MatInputModule,
+        MatMenuModule,
+        MatListModule,
+        MatCardModule,
+        CdkTableModule,
+        MatTableModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonToggleModule,
+        MatSlideToggleModule,
+        TangyFormsModule,
+        MatDialogModule
+    ],
   declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent],
   providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,

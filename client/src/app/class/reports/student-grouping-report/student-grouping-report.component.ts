@@ -164,6 +164,8 @@ export class StudentGroupingReportComponent implements OnInit {
     // this.checkFeedbackMessagePosition = true;
     const dialogRef = this.dialog.open(FeedbackDialog, {
       data: {classGroupReport: this.classGroupReport, name: name},
+      width: '95vw',
+      maxWidth: '95vw',
     });
 
     dialogRef.afterClosed().subscribe(result => {
