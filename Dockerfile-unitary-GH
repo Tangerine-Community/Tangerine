@@ -1,14 +1,27 @@
-# Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-6
-#FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:v4.0.0-rc-6
-#FROM --platform=linux/amd64 tangerine/docker-tangerine-base-image:v4.0.0-rc-6
-#FROM --platform=$BUILDPLATFORM tangerine/docker-tangerine-base-image:v4.0.0-rc-6
-#FROM --platform=linux/arm64 tangerine/docker-tangerine-base-image:local1
-#ARG TARGETARCH
-#RUN echo "I'm building for $TARGETARCH"
-#ARG TARGETPLATFORM
-#ARG BUILDPLATFORM
-#RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
+FROM node:18-bullseye
+
+# Same as "export TERM=dumb"; prevents error "Could not open terminal for stdout: $TERM not set"
+ENV TERM linux
+
+# Doing this in a separate stage due to cdn errors.
+RUN apt-get update && apt-get -y install \
+    software-properties-common
+
+# Doing this in a separate stage due to cdn errors.
+RUN apt-get update && apt-get -y install \
+    bzip2 unzip zip \
+    openssh-client \
+    curl \
+    wget \
+    vim \
+    nano
+
+# Doing this in a separate stage due to cdn errors.
+RUN apt-get update && apt-get -y install \
+    git \
+    git-core \
+    apt-transport-https
+
 RUN git config --global url."https://".insteadOf git://
 
 # Never ask for confirmations
