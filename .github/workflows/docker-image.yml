@@ -27,6 +27,8 @@ jobs:
         useLockFile: false
         useRollingCache: true
         working-directory:  online-survey-app
+    - name: List files in online-survey-app
+      run: ls ./online-survey-app
     - name: npm install server
       uses: bahmutov/npm-install@v1
       with:
@@ -76,6 +78,8 @@ jobs:
     - name: Build updater-app
       working-directory:  client/pwa-tools/updater-app
       run: npm run build
+    - name: List files in root
+      run: ls
 
   push_to_docker_hub:
     runs-on: ubuntu-latest
@@ -83,6 +87,10 @@ jobs:
     steps:
 #    - name: checkout repo
 #      uses: actions/checkout@v3
+    - name: Reset dockerignore
+      run: |
+        echo "*" > .dockerignore
+        echo "!dist" >> .dockerignore
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
