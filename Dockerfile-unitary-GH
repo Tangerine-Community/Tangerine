@@ -160,7 +160,7 @@ RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
 #ENV NODE_OPTIONS "--openssl-legacy-provider"
 EXPOSE 80
-#ENTRYPOINT cd /tangerine/server/ && npm start
+ENTRYPOINT cd /tangerine/server/ && npm start
 
 # Used for testing...
-CMD ["/bin/bash"]
+#CMD ["/bin/bash"]
