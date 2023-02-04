@@ -12,8 +12,10 @@ jobs:
       uses: actions/checkout@v3
     - name: List $GITHUB_WORKSPACE
       run: ls -la $GITHUB_WORKSPACE
-    - name: List /home/runner/work/_temp/_github_home
-      run: ls -la /home/runner/work/_temp/_github_home
+    - name: Show pwd
+      run: pwd
+    - name: List /home/runner/work/_temp/
+      run: ls -la /home/runner/work/_temp/
     - name: npm install online-survey-app
       uses: bahmutov/npm-install@v1
       with:
