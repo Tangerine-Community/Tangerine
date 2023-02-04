@@ -116,8 +116,7 @@ jobs:
     - name: Reset dockerignore
       run: |
         echo "" > ./dist/dockerignore
-#        echo "!dist" >> .dockerignore
-        echo ./dist/dockerignore
+        echo "Contents of dist/dockerignore: $(cat ./dist/dockerignore)"
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
