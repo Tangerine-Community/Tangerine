@@ -106,23 +106,23 @@ RUN apt-get update && apt-get install -y default-mysql-client
 #    npm install && \
 #    ./node_modules/.bin/bower install --allow-root
 
-RUN echo "PWD is: $PWD"
+RUN echo "GITHUB_WORKSPACE is: $GITHUB_WORKSPACE"
 
-RUN dir -s
+RUN cd $GITHUB_WORKSPACE
 
 # Build online-survey-app.
-ADD online-survey-app /tangerine/online-survey-app/
+ADD ./online-survey-app /tangerine/online-survey-app/
 #RUN cd /tangerine/online-survey-app && \
 ##    export NODE_OPTIONS=--openssl-legacy-provider && \
 #    ./node_modules/.bin/ng build --base-href "./"
 
 # build client.
-ADD client /tangerine/client
+ADD ./client /tangerine/client
 #RUN cd /tangerine/client && \
 #    ./node_modules/.bin/ng build --base-href "./" -c production
 
 # Build editor.
-ADD editor /tangerine/editor
+ADD ./editor /tangerine/editor
 #RUN cd /tangerine/editor && \
 ##    export NODE_OPTIONS=--openssl-legacy-provider && \
 #    npm dedupe
