@@ -70,13 +70,6 @@ jobs:
     - name: Build updater-app
       working-directory:  client/pwa-tools/updater-app
       run: npm run build
-
-  push_to_docker_hub:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-#    - name: checkout repo
-#      uses: actions/checkout@v3
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v4
@@ -106,6 +99,8 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: List files in online-survey-app, again.
+      run: ls ./online-survey-app/node_modules
     - name: Build and push
       uses: docker/build-push-action@v3
       with:
