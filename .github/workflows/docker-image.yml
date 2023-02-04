@@ -8,10 +8,14 @@ jobs:
   build-unified-docker-image:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout current branch
+      uses: actions/checkout@v3
+    - name: Checkout release/v3.28.0
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+        ref: release/v3.28.0
+        path: dist
     - name: List $GITHUB_WORKSPACE
       run: ls -la $GITHUB_WORKSPACE
     - name: Show pwd
@@ -23,14 +27,13 @@ jobs:
       with:
         useLockFile: false
         useRollingCache: true
-        working-directory:  online-survey-app
+        working-directory:  dist/online-survey-app
     - uses: EndBug/add-and-commit@v9
       name: Add and commit online-survey-app/package-lock.json
       with:
-        cwd: './online-survey-app'
+        cwd: './dist/online-survey-app'
         message: 'Commit from GH Action; Add and commit online-survey-app/package-lock.json'
         add: 'package-lock.json --force'
-        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: List files in online-survey-app
       run: ls ./online-survey-app
     - name: List files in online-survey-app node_modules
@@ -39,35 +42,33 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        working-directory: server
+        working-directory: dist/server
     - uses: EndBug/add-and-commit@v9
       name: Add and commit server/package-lock.json
       with:
-        cwd: './server'
+        cwd: './dist/server'
         message: 'Commit from GH Action; Add and commit server/package-lock.json'
         add: 'package-lock.json --force'
-        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install editor
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        working-directory: editor
+        working-directory: dist/editor
     - uses: EndBug/add-and-commit@v9
       name: Add and commit editor/package-lock.json
       with:
-        cwd: './editor'
+        cwd: './dist/editor'
         message: 'Commit from GH Action; Add and commit editor/package-lock.json'
         add: 'package-lock.json --force'
-        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install client
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        working-directory: client
+        working-directory: dist/client
     - uses: EndBug/add-and-commit@v9
       name: Add and commit client/package-lock.json
       with:
-        cwd: './client'
+        cwd: './dist/client'
         message: 'Commit from GH Action; Add and commit client/package-lock.json'
         add: 'package-lock.json --force'
         push: 'origin release/v3.28.0 --set-upstream --force'
@@ -75,11 +76,11 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        working-directory: client/pwa-tools/service-worker-generator
+        working-directory: dist/client/pwa-tools/service-worker-generator
     - uses: EndBug/add-and-commit@v9
       name: Add and commit client/pwa-tools/service-worker-generator/package-lock.json
       with:
-        cwd: './client/pwa-tools/service-worker-generator'
+        cwd: './dist/client/pwa-tools/service-worker-generator'
         message: 'Commit from GH Action; Add and commit client/pwa-tools/service-worker-generator/package-lock.json'
         add: 'package-lock.json --force'
         push: 'origin release/v3.28.0 --set-upstream --force'
@@ -87,11 +88,11 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        working-directory: client/pwa-tools/updater-app
+        working-directory: dist/client/pwa-tools/updater-app
     - uses: EndBug/add-and-commit@v9
       name: Add and commit client/pwa-tools/updater-app/package-lock.json
       with:
-        cwd: './client/pwa-tools/updater-app'
+        cwd: './dist/client/pwa-tools/updater-app'
         message: 'Commit from GH Action; Add and commit client/pwa-tools/updater-app/package-lock.json'
         add: 'package-lock.json --force'
         push: 'origin release/v3.28.0 --set-upstream --force'
@@ -99,19 +100,19 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        working-directory: client/pwa-tools/updater-app
+        working-directory: dist/client/pwa-tools/updater-app
         install-command: ./node_modules/.bin/bower install --allow-root
     - name: Build online-survey-app
-      working-directory:  online-survey-app
+      working-directory:  dist/online-survey-app
       run: ./node_modules/.bin/ng build --base-href "./"
     - name: Build client
-      working-directory:  client
+      working-directory:  dist/client
       run: ./node_modules/.bin/ng build --base-href "./" -c production
     - name: Build editor
-      working-directory:  editor
+      working-directory:  dist/editor
       run: ./node_modules/.bin/ng build --base-href "./" -c production
     - name: Build updater-app
-      working-directory:  client/pwa-tools/updater-app
+      working-directory:  dist/client/pwa-tools/updater-app
       run: npm run build
     - name: Docker meta
       id: meta
@@ -143,11 +144,11 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: List files in online-survey-app, again.
-      run: ls ./online-survey-app/node_modules
+      run: ls ./dist/online-survey-app/node_modules
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
-        context: .
+        context: ./dist
         file: Dockerfile-unitary-GH
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
