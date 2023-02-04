@@ -99,7 +99,6 @@ jobs:
     - name: List files in online-survey-app, again.
       run: ls ./online-survey-app/node_modules
     - name: Build and push
-      working-directory: .
       uses: docker/build-push-action@v3
       with:
         context: .
