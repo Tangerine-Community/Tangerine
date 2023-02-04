@@ -27,7 +27,7 @@ jobs:
       with:
         cwd: './online-survey-app'
         message: 'Commit from GH Action; Add and commit online-survey-app/package-lock.json'
-        add: 'package-lock.json'
+        add: 'package-lock.json --force'
     - name: List files in online-survey-app
       run: ls ./online-survey-app
     - name: List files in online-survey-app node_modules
