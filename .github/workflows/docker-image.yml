@@ -22,7 +22,7 @@ jobs:
         useLockFile: false
         useRollingCache: true
         working-directory:  online-survey-app
-    - uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
+    - uses: EndBug/add-and-commit@v9
       name: Add and commit online-survey-app/package-lock.json
       with:
         cwd: './online-survey-app'
@@ -37,26 +37,56 @@ jobs:
       with:
         useLockFile: false
         working-directory: server
+    - uses: EndBug/add-and-commit@v9
+      name: Add and commit server/package-lock.json
+      with:
+        cwd: './server'
+        message: 'Commit from GH Action; Add and commit server/package-lock.json'
+        add: 'package-lock.json --force'
     - name: npm install editor
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
         working-directory: editor
+    - uses: EndBug/add-and-commit@v9
+      name: Add and commit editor/package-lock.json
+      with:
+        cwd: './editor'
+        message: 'Commit from GH Action; Add and commit editor/package-lock.json'
+        add: 'package-lock.json --force'
     - name: npm install client
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
         working-directory: client
+    - uses: EndBug/add-and-commit@v9
+      name: Add and commit client/package-lock.json
+      with:
+        cwd: './client'
+        message: 'Commit from GH Action; Add and commit client/package-lock.json'
+        add: 'package-lock.json --force'
     - name: npm install client/pwa-tools/service-worker-generator
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
         working-directory: client/pwa-tools/service-worker-generator
+    - uses: EndBug/add-and-commit@v9
+      name: Add and commit client/pwa-tools/service-worker-generator/package-lock.json
+      with:
+        cwd: './client/pwa-tools/service-worker-generator'
+        message: 'Commit from GH Action; Add and commit client/pwa-tools/service-worker-generator/package-lock.json'
+        add: 'package-lock.json --force'
     - name: npm install client/pwa-tools/updater-app
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
         working-directory: client/pwa-tools/updater-app
+    - uses: EndBug/add-and-commit@v9
+      name: Add and commit client/pwa-tools/updater-app/package-lock.json
+      with:
+        cwd: './client/pwa-tools/updater-app'
+        message: 'Commit from GH Action; Add and commit client/pwa-tools/updater-app/package-lock.json'
+        add: 'package-lock.json --force'
     - name: Install updater-app
       uses: bahmutov/npm-install@v1
       with:
