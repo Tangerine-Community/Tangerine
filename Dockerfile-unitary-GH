@@ -106,6 +106,10 @@ RUN apt-get update && apt-get install -y default-mysql-client
 #    npm install && \
 #    ./node_modules/.bin/bower install --allow-root
 
+RUN echo "PWD is: $PWD"
+
+RUN dir -s
+
 # Build online-survey-app.
 ADD online-survey-app /tangerine/online-survey-app/
 #RUN cd /tangerine/online-survey-app && \
@@ -142,7 +146,7 @@ ADD editor /tangerine/editor
 #    cp -r dist/tangerine-client builds/pwa/release-uuid/app
 
 # Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
-RUN #sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
+#RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
 
 # Add the rest of server.
 ADD server /tangerine/server
