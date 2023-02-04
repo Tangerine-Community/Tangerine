@@ -35,9 +35,9 @@ jobs:
         message: 'Commit from GH Action; Add and commit online-survey-app/package-lock.json'
         add: 'package-lock.json --force'
     - name: List files in online-survey-app
-      run: ls ./online-survey-app
+      run: ls ./dist/online-survey-app
     - name: List files in online-survey-app node_modules
-      run: ls ./online-survey-app/node_modules
+      run: ls ./dist/online-survey-app/node_modules
     - name: npm install server
       uses: bahmutov/npm-install@v1
       with:
@@ -71,7 +71,6 @@ jobs:
         cwd: './dist/client'
         message: 'Commit from GH Action; Add and commit client/package-lock.json'
         add: 'package-lock.json --force'
-        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install client/pwa-tools/service-worker-generator
       uses: bahmutov/npm-install@v1
       with:
@@ -83,7 +82,6 @@ jobs:
         cwd: './dist/client/pwa-tools/service-worker-generator'
         message: 'Commit from GH Action; Add and commit client/pwa-tools/service-worker-generator/package-lock.json'
         add: 'package-lock.json --force'
-        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install client/pwa-tools/updater-app
       uses: bahmutov/npm-install@v1
       with:
@@ -95,7 +93,6 @@ jobs:
         cwd: './dist/client/pwa-tools/updater-app'
         message: 'Commit from GH Action; Add and commit client/pwa-tools/updater-app/package-lock.json'
         add: 'package-lock.json --force'
-        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: Install updater-app
       uses: bahmutov/npm-install@v1
       with:
@@ -126,8 +123,8 @@ jobs:
           type=semver,pattern={{raw}}
     - name: Reset dockerignore
       run: |
-        echo "*" > .dockerignore
-        echo "!dist" >> .dockerignore
+        echo "" > ./dist/dockerignore
+#        echo "!dist" >> .dockerignore
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
