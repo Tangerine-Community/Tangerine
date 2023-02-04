@@ -5,12 +5,15 @@ on:
     types: [created]
 
 jobs:
-
-  build:
+  build-unified-docker-image:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: List $GITHUB_WORKSPACE
+      run: ls -la $GITHUB_WORKSPACE
+    - name: List /home/runner/work/_temp/_github_home
+      run: ls -la /home/runner/work/_temp/_github_home
     - name: npm install online-survey-app
       uses: bahmutov/npm-install@v1
       with:
@@ -25,37 +28,31 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        useRollingCache: true
         working-directory: server
     - name: npm install editor
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        useRollingCache: true
         working-directory: editor
     - name: npm install client
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        useRollingCache: true
         working-directory: client
     - name: npm install client/pwa-tools/service-worker-generator
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        useRollingCache: true
         working-directory: client/pwa-tools/service-worker-generator
     - name: npm install client/pwa-tools/updater-app
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        useRollingCache: true
         working-directory: client/pwa-tools/updater-app
     - name: Install updater-app
       uses: bahmutov/npm-install@v1
       with:
         useLockFile: false
-        useRollingCache: true
         working-directory: client/pwa-tools/updater-app
         install-command: ./node_modules/.bin/bower install --allow-root
     - name: Build online-survey-app
@@ -102,6 +99,7 @@ jobs:
     - name: List files in online-survey-app, again.
       run: ls ./online-survey-app/node_modules
     - name: Build and push
+      working-directory: .
       uses: docker/build-push-action@v3
       with:
         context: .
