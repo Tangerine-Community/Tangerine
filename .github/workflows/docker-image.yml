@@ -10,6 +10,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: List $GITHUB_WORKSPACE
       run: ls -la $GITHUB_WORKSPACE
     - name: Show pwd
@@ -28,6 +30,7 @@ jobs:
         cwd: './online-survey-app'
         message: 'Commit from GH Action; Add and commit online-survey-app/package-lock.json'
         add: 'package-lock.json --force'
+        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: List files in online-survey-app
       run: ls ./online-survey-app
     - name: List files in online-survey-app node_modules
@@ -43,6 +46,7 @@ jobs:
         cwd: './server'
         message: 'Commit from GH Action; Add and commit server/package-lock.json'
         add: 'package-lock.json --force'
+        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install editor
       uses: bahmutov/npm-install@v1
       with:
@@ -54,6 +58,7 @@ jobs:
         cwd: './editor'
         message: 'Commit from GH Action; Add and commit editor/package-lock.json'
         add: 'package-lock.json --force'
+        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install client
       uses: bahmutov/npm-install@v1
       with:
@@ -65,6 +70,7 @@ jobs:
         cwd: './client'
         message: 'Commit from GH Action; Add and commit client/package-lock.json'
         add: 'package-lock.json --force'
+        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install client/pwa-tools/service-worker-generator
       uses: bahmutov/npm-install@v1
       with:
@@ -76,6 +82,7 @@ jobs:
         cwd: './client/pwa-tools/service-worker-generator'
         message: 'Commit from GH Action; Add and commit client/pwa-tools/service-worker-generator/package-lock.json'
         add: 'package-lock.json --force'
+        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: npm install client/pwa-tools/updater-app
       uses: bahmutov/npm-install@v1
       with:
@@ -87,6 +94,7 @@ jobs:
         cwd: './client/pwa-tools/updater-app'
         message: 'Commit from GH Action; Add and commit client/pwa-tools/updater-app/package-lock.json'
         add: 'package-lock.json --force'
+        push: 'origin release/v3.28.0 --set-upstream --force'
     - name: Install updater-app
       uses: bahmutov/npm-install@v1
       with:
