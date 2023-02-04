@@ -117,6 +117,7 @@ jobs:
       run: |
         echo "" > ./dist/dockerignore
 #        echo "!dist" >> .dockerignore
+        echo ./dist/dockerignore
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
@@ -138,7 +139,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: ./dist
-        file: Dockerfile-unitary-GH
+        file: ./dist/Dockerfile-unitary-GH
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}

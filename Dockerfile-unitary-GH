@@ -111,18 +111,18 @@ RUN echo "GITHUB_WORKSPACE is: $GITHUB_WORKSPACE"
 RUN cd $GITHUB_WORKSPACE
 
 # Build online-survey-app.
-COPY dist/online-survey-app /tangerine/online-survey-app/
+COPY online-survey-app /tangerine/online-survey-app/
 #RUN cd /tangerine/online-survey-app && \
 ##    export NODE_OPTIONS=--openssl-legacy-provider && \
 #    ./node_modules/.bin/ng build --base-href "./"
 
 # build client.
-COPY dist/client /tangerine/client
+COPY client /tangerine/client
 #RUN cd /tangerine/client && \
 #    ./node_modules/.bin/ng build --base-href "./" -c production
 
 # Build editor.
-COPY dist/editor /tangerine/editor
+COPY editor /tangerine/editor
 #RUN cd /tangerine/editor && \
 ##    export NODE_OPTIONS=--openssl-legacy-provider && \
 #    npm dedupe
@@ -149,7 +149,7 @@ COPY dist/editor /tangerine/editor
 #RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
 
 # Add the rest of server.
-COPY dist/server /tangerine/server
+COPY server /tangerine/server
 
 # Link up global commands.
 RUN cd /tangerine/server && \
@@ -157,7 +157,7 @@ RUN cd /tangerine/server && \
 
 # Wrap up
 
-ADD ./dist/ /tangerine
+ADD ./ /tangerine
 
 RUN mkdir /csv
 RUN mkdir /groups
