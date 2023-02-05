@@ -5,118 +5,21 @@ on:
     types: [created]
 
 jobs:
-  build-unified-docker-image:
+  build-editor:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout current branch
       uses: actions/checkout@v3
-    - name: Checkout release/v3.28.0
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        ref: release/v3.28.0
-        path: dist
-    - name: List $GITHUB_WORKSPACE
-      run: ls -la $GITHUB_WORKSPACE
-    - name: Show pwd
-      run: pwd
-    - name: List /home/runner/work/_temp/
-      run: ls -la /home/runner/work/_temp/
-    - name: npm install online-survey-app
-      uses: bahmutov/npm-install@v1
-      with:
-        working-directory:  dist/online-survey-app
-    - uses: EndBug/add-and-commit@v9
-      name: Add and commit online-survey-app/package-lock.json
-      with:
-        cwd: './dist/online-survey-app'
-        message: 'Commit from GH Action; Add and commit online-survey-app/package-lock.json'
-        add: 'package-lock.json --force'
-    - name: List files in online-survey-app
-      run: ls ./dist/online-survey-app
-    - name: List files in online-survey-app node_modules
-      run: ls ./dist/online-survey-app/node_modules
-    - name: npm install server
-      uses: bahmutov/npm-install@v1
-      with:
-        working-directory: dist/server
-    - uses: EndBug/add-and-commit@v9
-      name: Add and commit server/package-lock.json
-      with:
-        cwd: './dist/server'
-        message: 'Commit from GH Action; Add and commit server/package-lock.json'
-        add: 'package-lock.json --force'
-    - name: npm install editor
-      uses: bahmutov/npm-install@v1
-      with:
-        working-directory: dist/editor
-    - uses: EndBug/add-and-commit@v9
-      name: Add and commit editor/package-lock.json
-      with:
-        cwd: './dist/editor'
-        message: 'Commit from GH Action; Add and commit editor/package-lock.json'
-        add: 'package-lock.json --force'
-    - name: npm install client
-      uses: bahmutov/npm-install@v1
-      with:
-        working-directory: dist/client
-    - uses: EndBug/add-and-commit@v9
-      name: Add and commit client/package-lock.json
-      with:
-        cwd: './dist/client'
-        message: 'Commit from GH Action; Add and commit client/package-lock.json'
-        add: 'package-lock.json --force'
-    - name: npm install client/pwa-tools/service-worker-generator
-      uses: bahmutov/npm-install@v1
-      with:
-        working-directory: dist/client/pwa-tools/service-worker-generator
-    - uses: EndBug/add-and-commit@v9
-      name: Add and commit client/pwa-tools/service-worker-generator/package-lock.json
-      with:
-        cwd: './dist/client/pwa-tools/service-worker-generator'
-        message: 'Commit from GH Action; Add and commit client/pwa-tools/service-worker-generator/package-lock.json'
-        add: 'package-lock.json --force'
-    - name: npm install client/pwa-tools/updater-app
-      uses: bahmutov/npm-install@v1
-      with:
-        working-directory: dist/client/pwa-tools/updater-app
-    - uses: EndBug/add-and-commit@v9
-      name: Add and commit client/pwa-tools/updater-app/package-lock.json
-      with:
-        cwd: './dist/client/pwa-tools/updater-app'
-        message: 'Commit from GH Action; Add and commit client/pwa-tools/updater-app/package-lock.json'
-        add: 'package-lock.json --force'
-    - name: Install updater-app
-      uses: bahmutov/npm-install@v1
-      with:
-        working-directory: dist/client/pwa-tools/updater-app
-        install-command: ./node_modules/.bin/bower install --allow-root
-    - name: Build online-survey-app
-      working-directory:  dist/online-survey-app
-      run: ./node_modules/.bin/ng build --base-href "./"
-    - name: Build client
-      working-directory:  dist/client
-      run: ./node_modules/.bin/ng build --base-href "./" -c production
-    - name: Build editor
-      working-directory:  dist/editor
-      run: ./node_modules/.bin/ng build --base-href "./" -c production
-    - name: Build updater-app
-      working-directory:  dist/client/pwa-tools/updater-app
-      run: npm run build
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v4
       with:
         # list of Docker images to use as base name for tags
         images: |
-          tangerine/tangerine
+          tangerine/tangerine-editor
         # generate Docker tags based on the following events/attributes
         tags: |
           type=semver,pattern={{raw}}
-    - name: Reset dockerignore
-      run: |
-        echo "" > ./dist/dockerignore
-        echo "Contents of dist/dockerignore: $(cat ./dist/dockerignore)"
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
@@ -132,14 +35,53 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: List files in online-survey-app, again.
-      run: ls ./dist/online-survey-app/node_modules
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
-        context: ./dist
-        file: ./dist/Dockerfile-unitary-GH
+        context: .
+        file: ./Dockerfile-editor
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        no-cache: true
+        cache-from: type=gha
+        cache-to: type=gha
+  build-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v3
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            tangerine/tangerine-server
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=semver,pattern={{raw}}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'amd64'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: |
+            network=host
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile-server
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha
