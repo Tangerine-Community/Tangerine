@@ -1,5 +1,5 @@
 #FROM --platform=linux/amd64 node:18-alpine
-FROM --platform=linux/amd64 node:18-alpine
+FROM node:18-alpine
 ARG TARGETARCH
 RUN echo "I'm building for $TARGETARCH"
 ARG TARGETPLATFORM
@@ -21,9 +21,9 @@ RUN git config --global url."https://".insteadOf git://
 
 # Install global node dependencies
 # set unsafe-perm true allows it to work on ARM Macs(M1)
-RUN npm config set unsafe-perm true
-RUN #npm install -g uuid couchdb-wedge
-RUN npm config set unsafe-perm false
+#RUN npm config set unsafe-perm true
+#RUN #npm install -g uuid couchdb-wedge
+#RUN npm config set unsafe-perm false
 
 # Install helpful JSON utility.
 RUN apk update && apk add jq
