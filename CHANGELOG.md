@@ -430,6 +430,8 @@ __Fixes__
 - Enable grids to be hidden based on skip logic [#1391](https://github.com/Tangerine-Community/Tangerine/issues/1391)
 - Add confirmation to consent form if 'No' selected before the form is closed [#3025](https://github.com/Tangerine-Community/Tangerine/issues/3025). Activate this feature using the new property: `confirm-no="true"`.
 - Fix app config doNotOptimize logic PR: [#3358](https://github.com/Tangerine-Community/Tangerine/pull/3358)
+- Those using the `doNotOptimize` flag **must** reverse the logic in the `appConfig.sh` file when updating to this version
+
 
 __Server upgrade instructions__
 
