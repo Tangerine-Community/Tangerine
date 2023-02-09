@@ -1,4 +1,18 @@
-
+<div  class="subject-header">
+  <span id="event-actions">
+    <span *ngIf="rendered && response && response.archived" class="archived">
+      [ Archived ]
+      <paper-button class="button" mat-icon-button (click)="onUnarchive()">
+        <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i> Unarchive
+      </paper-button>
+    </span>
+    <span *ngIf="rendered && response && !response.archived" class="unarchived">
+      <paper-button class="button" mat-icon-button (click)="onArchive()">
+        <i class="material-icons mat-32 tangy-location-list-icon">archive</i>  Archive
+      </paper-button>
+    </span>
+  </span>
+</div>
 <div id="menu-container" *ngIf="rendered && formInfo && formInfo.templates && formInfo.templates.length > 0 && response && response.complete">
   <mwc-icon (click)="print()" class="print">print</mwc-icon>
   <mwc-icon [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>

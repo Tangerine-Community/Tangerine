@@ -1,0 +1,13 @@
+.button {
+    background: var(--accent-color);
+    color: #FFF;
+}
+.button i {
+  color: #FFF;
+}
+
+.event .button {
+    position: absolute;
+    top: 17px;
+    right: 10px;
+}

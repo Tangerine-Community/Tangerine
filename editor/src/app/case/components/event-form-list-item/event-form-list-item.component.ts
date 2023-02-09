@@ -42,6 +42,7 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemPrimary = '';
   renderedTemplateListItemSecondary = '';
   canUserDeleteForms: boolean;
+  canUserArchiveForms: boolean;
   response:any
 
   constructor(
@@ -56,6 +57,7 @@ export class EventFormListItemComponent implements OnInit {
   async ngOnInit() {
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
+    this.canUserArchiveForms = true
     const response = await this.formService.getResponse(this.eventForm.formResponseId);
     this.response = response
     const getValue = (variableName) => {
@@ -91,12 +93,25 @@ export class EventFormListItemComponent implements OnInit {
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``);
     this.ref.detectChanges();
   }
+
   async deleteItem() {
     const confirmDelete = confirm(
       _TRANSLATE('Are you sure you want to delete this form instance? You will not be able to undo the operation')
       );
     if (confirmDelete) {
       this.caseService.deleteEventForm(this.eventForm.caseEventId, this.eventForm.id);
+      await this.caseService.save();
+      this.formDeleted.emit('formDeleted');
+      this.ref.detectChanges();
+    }
+  }
+
+  async archiveItem() {
+    const confirmArchive = confirm(
+      _TRANSLATE('Are you sure you want to archive this form instance? You will not be able to undo the operation')
+      );
+    if (confirmArchive) {
+      this.caseService.archiveFormResponse(this.eventForm.caseEventId, this.eventForm.id);
       await this.caseService.save();
       this.formDeleted.emit('formDeleted');
       this.ref.detectChanges();
