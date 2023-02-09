@@ -432,7 +432,8 @@ class CaseService {
       occurredOnDay: undefined,
       scheduledDay: undefined,
       eventForms: [],
-      startDate: 0
+      startDate: 0,
+      archived: false
     }
     this.case.events.push(caseEvent)
     for (const caseParticipant of this.case.participants) {
@@ -527,6 +528,44 @@ class CaseService {
           }
           : event
       })
+    }
+  }
+
+  async archiveCaseEvent(caseEventId:string) {
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    if (caseEvent && !caseEvent.archived) {
+      var unarchivedEventForms = caseEvent.eventForms.filter(form => !form.archived)
+      for (var eventForm of unarchivedEventForms) {
+        if (eventForm.formResponseId) {
+          const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+          if (formResponse) {
+            formResponse.archived = true
+            await this.tangyFormService.saveResponse(formResponse)
+          }
+        }
+        eventForm.archived = true
+      }
+      caseEvent.archived = true
+      await this.save()
+    }
+  }
+
+  async unarchiveCaseEvent(caseEventId:string) {
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    if (caseEvent && !caseEvent.archived) {
+      var archivedEventForms = caseEvent.eventForms.filter(form => form.archived)
+      for (var eventForm of archivedEventForms) {
+        if (eventForm.formResponseId) {
+          const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+          if (formResponse) {
+            formResponse.archived = false
+            await this.tangyFormService.saveResponse(formResponse)
+          }
+        }
+        eventForm.archived = false
+      }
+      caseEvent.archived = false
+      await this.save()
     }
   }
 

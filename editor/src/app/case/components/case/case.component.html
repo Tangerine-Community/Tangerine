@@ -73,7 +73,7 @@
 </div>
 
 <div *appHasAPermission="let i;group:groupId; permission:'can_restore_conflict_event'">
-  <h2 *ngIf="conflictingEvents?.length > 0">Events in Conflict</h2>
+  <h2 *ngIf="conflictingEvents?.length > 0 || archivedEvents?.length > 0">Archived and Conflicting Events</h2>
   <div *ngFor="let conflict of conflictingEvents" class="icon-list-item conflict new-event">
     <mwc-icon slot="item-icon">receipt</mwc-icon>
     <div>
@@ -86,17 +86,23 @@
           </span>
         </div>
         <div class="text-right">
-  <!--        <ng-container *ngFor="let eventForm of conflict.eventForms">-->
-  <!--          <ng-container *ngIf="eventForm.formResponseId">-->
-  <!--            <paper-button (click)="showConflictFormResponse(eventForm.formResponseId)" class="button-left">View</paper-button>-->
-  <!--          </ng-container>-->
-  <!--        </ng-container>-->
           <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div>
-  <app-tangy-forms-player [skipSaving]="true" #proposedFormResponseContainer></app-tangy-forms-player>
-</div>
+  <div *ngFor="let archivedEvent of archivedEvents" class="icon-list-item archive new-event">
+    <mwc-icon slot="item-icon">archive</mwc-icon>
+    <div>
+      <div><strong>{{archivedEvent.name}}</strong></div>
+      <div>
+        <div secondary>
+          Complete: {{archivedEvent.complete}}
+        </div>
+        <div class="text-right">
+          <paper-button (click)="onUnarchiveEvent(archivedEvent)" [hidden]="hideRestore" class="button">{{'Unarchive'|translate}}</paper-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  

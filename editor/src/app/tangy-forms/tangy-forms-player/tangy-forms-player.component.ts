@@ -7,6 +7,7 @@ import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
 import {ProcessMonitorService} from "../../shared/_services/process-monitor.service";
+import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -31,6 +32,8 @@ export class TangyFormsPlayerComponent {
   @Input('preventSubmit') preventSubmit = false
   @Input('metadata') metadata:any
 
+  authenticationService: AuthenticationService
+
   $rendered = new Subject()
   $submit = new Subject()
   $afterSubmit = new Subject()
@@ -53,8 +56,10 @@ export class TangyFormsPlayerComponent {
     private tangyFormsInfoService:TangyFormsInfoService,
     private tangyFormService: TangyFormService,
     private processMonitorService: ProcessMonitorService,
+    authenticationService: AuthenticationService
   ) {
     this.window = window
+    this.authenticationService = authenticationService
   }
 
   isDirty() {
@@ -231,6 +236,18 @@ export class TangyFormsPlayerComponent {
 
   print() {
     window.print();
+  }
+
+  async onArchive() {
+    const archiveConfirm = confirm(_TRANSLATE('Archive this form response?'));
+    if (archiveConfirm) {
+      if (this.response.archived) {
+        alert("Already unarchived.")
+      } else {
+        this.response.archived = false
+        this.throttledSaveResponse(this.response)
+      }
+    }
   }
 
 }
