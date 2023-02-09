@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
