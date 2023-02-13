@@ -33,6 +33,8 @@ import './core/loading-ui.component'
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
+import {APP_BASE_HREF} from '@angular/common';
+
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
@@ -75,7 +77,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     BrowserAnimationsModule
   ],
   providers: [httpInterceptorProviders, TangyErrorHandler,
-    WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
+    WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true },{provide: APP_BASE_HREF, useValue: './'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

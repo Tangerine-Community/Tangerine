@@ -17,7 +17,10 @@ export class FilesService {
   ) { }
 
   async get(groupId: string, filePath:string) {
-    return await this.httpClient.get(`/app/${groupId}/assets/${filePath}`).toPromise()
+    const url = `/app/${groupId}/assets/${filePath}`
+    console.log("url: " + url )
+    return await this.httpClient.get(url).toPromise()
+    // return await this.httpClient.get(`/app/${groupId}/assets/forms.json`).toPromise()
   }
 
   async save(groupId: string, filePath, fileContents) {
