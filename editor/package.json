@@ -50,7 +50,7 @@
     "rxjs": "~6.5.5",
     "rxjs-compat": "^6.5.5",
     "tangy-form": "github:Tangerine-Community/tangy-form#add-archived-to-tangy-form-response-model",
-    "tangy-form-editor": "7.15.4",
+    "tangy-form-editor": "^7.16.0",
     "translation-web-component": "0.0.3",
     "tslib": "^1.11.2",
     "ua-parser-js": "^0.7.24",

@@ -1639,7 +1639,8 @@ export const markQualifyingEventsAsComplete = ({caseInstance, caseDefinition}:Ca
                 (
                   eventFormDefinition.required === false &&
                   event.eventForms
-                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id && !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive)
+                    .filter(eventForm => 
+                      eventForm.eventFormDefinitionId === eventFormDefinition.id && (!eventForm.participantId || !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive))
                     .some(eventForm => !eventForm.complete && eventForm.required)
                 )
             })
