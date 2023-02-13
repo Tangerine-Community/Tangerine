@@ -250,7 +250,7 @@ export class GroupService {
         ? [
           {
             id:'reports',
-            src: './reports/form.html',
+            src: './assets/reports/form.html',
             title: 'Reports',
             listed: false,
             ...tangyModules.enabledModules.includes('case') 

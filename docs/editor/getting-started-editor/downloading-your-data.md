@@ -10,7 +10,7 @@ Spreadsheet Requests - here you will find a historical of generated requests tha
 Manage Spreadsheet templates - this links allows you to name and create a template with only selected columns for your csv export
 
 
-<img src="../media/downloadCsv.png" width="570">
+<img src="./media/downloadCsv.png" width="570">
 
 
 
@@ -21,11 +21,11 @@ Under the form selection area, you will see that you can select multiple form re
 In the below example, we have 3 forms selected and no filters for month/year. Click the Submit Request button to start the export generation. Note that while the generation of the file is in progress you can mouse away and do other actions in Tangerine. We will see how to get to a previously generated request further down.
 
 
-<img src="../media/image85.png" width="570">
+<img src="./media/image85.png" width="570">
 
 While the files are being generated you will see their status updated.Below I see that there are 3 forms in the queue, the first one is starting, and the other two are queued. You can also see. on the top right the "download all" button is greyed out
 
-<img src="../media/downloadGeneration.png" width="570">
+<img src="./media/downloadGeneration.png" width="570">
 
 Once the files are generated and the request completed you can download them. On the below screenshot we see:
 
@@ -33,7 +33,7 @@ We can download each of the files individually by clicking Download file link on
 We can download all files in a zip but clicking the Download all button on the top right.
 
 
-<img src="../media/downloadLIsting.png" width="570">
+<img src="./media/downloadLIsting.png" width="570">
 
 
 Now let's go back to the Data tab. This time under the Data Download option click the Spreadsheet Request button. This will bring you to all historically generated spreadsheet requests. On the below screenshot I see that there are 12 pages of previous/historical requests. On the most recent page, which is the one that loads by default, I see that the top file is with status Available, meaning that I can download it and the rest of the requests on this page have already been removed, since they are older than 1 month. The status for those is File removed and there is no link. From this screen, you can hit the download button beside the request to get the zip file containing all form results. Or, you can click the More info link to go to the same screen that we saw earlier during the file generation and download the files individually. 
@@ -49,7 +49,7 @@ Now let's go back to the Data tab. This time under the Data Download option clic
 
 To correctly interpret your data you need to know each variable and the corresponding values for the answer option. Please use the form's metadata print function under the form listing (go to Author->Forms). Access the metadata by clicking the print icon next to the form name and then select metadata.
 
-<img src="../media/interpretMetadata.png" width="570">
+<img src="./media/interpretMetadata.png" width="570">
 
 Each CSV file includes all data from the form responses. We can think of these data as data and metadata. Each line of the data file represents one data entry for your instrument.  The values displayed under each variable correspond to the values you have assigned to each response option when designing your instrument.
 
@@ -63,7 +63,7 @@ For each variable in Tangerine you will see a column or columns in the csv file.
 If the CSV generation was successful, the following screen will present the group name, Form id , Start time and progress of the CSV download. 
 Click **Download** to download the file.
 
-<img src="../media/downloadCsvFile.png" width="570">
+<img src="./media/downloadCsvFile.png" width="570">
 
 
 Once the CSV has been downloaded, you can find it in your Downloads folder.
@@ -73,7 +73,7 @@ Once the CSV has been downloaded, you can find it in your Downloads folder.
 
 To correctly interpret your data you need to know each variable and the corresponding values for the answer option. Please use the form's metadata print function under the form listing (go to Author->Forms). Access the metadata by clicking the print icon next to the form name and then select metadata.
 
-<img src="../media/meta01.png" width="570">
+<img src="./media/meta01.png" width="570">
 
 
 Each CSV file includes all data from the form responses. We can think of these data as data and metadata. Each line of the data file represents one data entry for your instrument.  The values displayed under each variable correspond to the values you have assigned to each response option when designing your instrument.
