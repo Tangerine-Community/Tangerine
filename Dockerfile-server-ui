@@ -1,11 +1,10 @@
-#FROM --platform=linux/amd64 node:18-alpine
-FROM node:18-alpine
+FROM --platform=linux/amd64 node:18-alpine
+#FROM node:18-alpine
 ARG TARGETARCH
 RUN echo "I'm building for $TARGETARCH"
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
-
 #RUN apk update
 #RUN apk add git
 
@@ -46,7 +45,7 @@ RUN #apt-get update && apt-get install -y default-mysql-client
 # workaround for "Error: error:0308010C:digital envelope routines::unsupported"
 # NODE_OPTIONS=--openssl-legacy-provider (below)
 # Install online-survey-app.
-ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
+#ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 #RUN cd /tangerine/online-survey-app/ && \
 ##    export NODE_OPTIONS=--openssl-legacy-provider && \
 #    npm install
@@ -59,6 +58,12 @@ ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 ## Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \
+    npm install
+#
+
+## Install server-ui.
+ADD ./server-ui/package.json /tangerine/server-ui/package.json
+RUN cd /tangerine/server-ui && \
     npm install
 #
 ## Install client.
@@ -91,9 +96,9 @@ RUN cd /tangerine/editor && \
 
 ## Build editor.
 ADD editor /tangerine/editor
-RUN cd /tangerine/editor && \
-#    export NODE_OPTIONS=--openssl-legacy-provider && \
-    npm dedupe
+#RUN cd /tangerine/editor && \
+##    export NODE_OPTIONS=--openssl-legacy-provider && \
+#    npm dedupe
 RUN cd /tangerine/editor && \
 #    export NODE_OPTIONS=--openssl-legacy-provider && \
     ./node_modules/.bin/ng build --base-href "./" -c production
@@ -118,23 +123,22 @@ RUN cd /tangerine/editor && ./node_modules/.bin/workbox generateSW
 # Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
 #RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
 #
-## Add the rest of server.
-#ADD server /tangerine/server
-#
-## Link up global commands.
-#RUN cd /tangerine/server && \
-#    npm link
+# Add the rest of server.
+ADD server-ui /tangerine/server-ui
+
+# Link up global commands.
+RUN cd /tangerine/server-ui && \
+    npm link
 
 # Wrap up
 
-ADD server /tangerine
-
 RUN mkdir /csv
 RUN mkdir /groups
-RUN echo {} > /paid-worker-state.json
-ENV NODE_OPTIONS "--openssl-legacy-provider"
+#RUN echo {} > /paid-worker-state.json
+#ENV NODE_OPTIONS "--openssl-legacy-provider"
 EXPOSE 80
-ENTRYPOINT cd /tangerine/editor/ && npm start
-
+#ENTRYPOINT cd /tangerine/server-ui/ && npm start
+ADD entrypoint-server-ui.sh /tangerine
+CMD ["/tangerine/entrypoint-server-ui.sh"]
 # Used for testing...
-#CMD ["/bin/bash"]
+#CMD ["/bin/sh"]

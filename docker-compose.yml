@@ -1,10 +1,12 @@
 version: "3.9"
 services:
   server:
-    image: "test:latest"
+    build:
+      context: .
+      dockerfile: ./Dockerfile-server
     container_name: "server"
     ports:
-      - "80:80"
+      - "82:80"
     restart: unless-stopped
     env_file: config.env
     environment:
@@ -12,23 +14,42 @@ services:
       - T_COUCHDB_USER_ADMIN_PASS=/run/secrets/couchdb_admin_password
       - T_COUCHDB_ENDPOINT=http://admin:password@couchdb:5984/
       - "NODE_ENV=development"
+      - NPM_DEV_MODE
+    entrypoint: "/bin/sh -c \"cd /tangerine/server/ && npm run start$${NPM_DEV_MODE}\""
     volumes:
-      - ../tangerine/content-sets:/tangerine/content-sets:delegated
-      - ../tangerine/data/dat-output:/dat-output/
-      - ../tangerine/data/reporting-worker-state.json:/reporting-worker-state.json
-      - ../tangerine/data/paid-worker-state.json:/paid-worker-state.json
-      - ../tangerine/data/id_rsa:/root/.ssh/id_rsa:delegated
-      - ../tangerine/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated
-      - ../tangerine/data/client/releases:/tangerine/client/releases/
-      - ../tangerine/data/csv:/csv/
-      - ../tangerine/data/archives:/archives/
-      - ../tangerine/data/groups:/tangerine/groups/
-      - ../tangerine/data/client/content/groups:/tangerine/client/content/groups
-  editor:
-    image: "editor:latest"
-    container_name: "editor"
+      - ./data/groups:/tangerine/groups/:delegated
+      - ./data/csv:/csv/:delegated
+      - ./data/archives:/archives/:delegated
+      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
+      - ./data/paid-worker-state.json:/paid-worker-state.json:delegated
+      - ./data/client/releases:/tangerine/client/releases/:delegated
+      - ./data/client/content/groups:/tangerine/client/content/groups:delegated
+      - ./data/client/content/assets:/tangerine/client/content/assets:delegated
+      - ./content-sets:/tangerine/content-sets:delegated
+      - ./server/package.json:/tangerine/server/package.json:delegated
+      - ./server/src:/tangerine/server/src:delegated
+      - ./client/src:/tangerine/client/src:delegated \
+      - ./client/dist:/tangerine/client/dist:delegated \
+      - ./server/reporting:/tangerine/server/reporting:delegated \
+      - ./upgrades:/tangerine/upgrades:delegated \
+      - ./scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
+      - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
+      - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
+      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
+      - ./editor/src:/tangerine/editor/src:delegated \
+      - ./translations:/tangerine/translations:delegated \
+      - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+      - ./server/entrypoint-server.sh:/tangerine/server/entrypoint-server.sh:delegated
+
+
+  server-ui:
+    container_name: "server-ui"
+    tty: true
+    build:
+      context: .
+      dockerfile: ./Dockerfile-server-ui
     ports:
-      - "81:81"
+      - "81:80"
     restart: unless-stopped
     env_file: config.env
     environment:
@@ -36,17 +57,37 @@ services:
       - T_COUCHDB_USER_ADMIN_PASS=/run/secrets/couchdb_admin_password
       - T_COUCHDB_ENDPOINT=http://admin:password@couchdb:5984/
       - "NODE_ENV=development"
+      - NPM_DEV_MODE
+      - TANGY_PRE_ENTRYPOINT
+#    entrypoint: "/bin/sh -c \"$${TANGY_PRE_ENTRYPOINT} cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
+#    entrypoint: "/bin/sh -c \"cd /tangerine/editor && npm run dockerdev && cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
+    entrypoint: "/bin/sh -c \"cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     volumes:
-      - ../tangerine/content-sets:/tangerine/content-sets:delegated
-      - ../tangerine/data/reporting-worker-state.json:/reporting-worker-state.json
-      - ../tangerine/data/paid-worker-state.json:/paid-worker-state.json
-      - ../tangerine/data/id_rsa:/root/.ssh/id_rsa:delegated
-      - ../tangerine/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated
-      - ../tangerine/data/client/releases:/tangerine/client/releases/
-      - ../tangerine/data/csv:/csv/
-      - ../tangerine/data/archives:/archives/
-      - ../tangerine/data/groups:/tangerine/groups/
-      - ../tangerine/data/client/content/groups:/tangerine/client/content/groups
+      - ./data/groups:/tangerine/groups/:delegated
+      - ./data/csv:/csv/:delegated
+      - ./data/archives:/archives/:delegated
+      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
+      - ./data/paid-worker-state.json:/paid-worker-state.json:delegated
+      - ./data/client/releases:/tangerine/client/releases/:delegated
+      - ./data/client/content/groups:/tangerine/client/content/groups:delegated
+      - ./data/client/content/assets:/tangerine/client/content/assets:delegated
+      - ./content-sets:/tangerine/content-sets:delegated
+      - ./editor/package.json:/tangerine/editor/package.json:delegated
+      - ./editor/package-lock.json:/tangerine/editor/package-lock.json:delegated
+      - ./editor/src:/tangerine/editor/src:delegated
+      - ./server-ui/package.json:/tangerine/server-ui/package.json:delegated
+      - ./server-ui/package-lock.json:/tangerine/server-ui/package-lock.json:delegated
+      - ./server-ui/src:/tangerine/server-ui/src:delegated
+      - ./server/entrypoint-server-ui.sh:/tangerine/server/entrypoint-server-ui.sh:delegated
+
+  nginx:
+    image: 'nginx:alpine'
+    container_name: nginx
+    volumes:
+      - './nginx/default.conf:/etc/nginx/conf.d/default.conf'
+    ports:
+      - '80:80'
+
   couchdb:
     image: "couchdb:2"
     container_name: "couchdb"
@@ -56,8 +97,10 @@ services:
       - COUCHDB_USER=/run/secrets/couchdb_admin_name
       - COUCHDB_PASSWORD=/run/secrets/couchdb_admin_password
     volumes:
-      - ../tangerine/data/couchdb/data:/opt/couchdb/data
-      - ../tangerine/data/couchdb/local.d:/opt/couchdb/etc/local.d
+      - ./data/couchdb/data:/opt/couchdb/data
+      - ./data/couchdb/local.d:/opt/couchdb/etc/local.d
+    logging:
+      driver: none
 
 secrets:
   couchdb_admin_name:

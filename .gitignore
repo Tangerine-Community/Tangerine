@@ -1,7 +1,9 @@
 server/app
 server/groups
 server/users
-tanerine-env-vars.sh
+server-ui/groups
+server-ui/users
+tangerine-env-vars.sh
 .idea
 .history
 certs
