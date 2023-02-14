@@ -98,7 +98,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
         .eventFormDefinitions
         .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
       this.formId = this.eventFormDefinition.formId
-      this.onEventFormOpen()
+      this.onEventOpen()
       this.formResponseId = this.eventForm.formResponseId || ''
       this.formPlayer.formId = this.formId
       this.formPlayer.formResponseId = this.formResponseId
@@ -170,14 +170,12 @@ export class EventFormComponent implements OnInit, OnDestroy {
     })
   }
   
-  async onEventFormOpen(){
-    await eval(this.eventFormDefinition.onEventFormOpen)
+  onEventOpen(){
+    eval(this.eventFormDefinition.onEventOpen)
   }
 
-  async ngOnDestroy(){
-    if (this.eventFormDefinition) {
-      await eval(this.eventFormDefinition.onEventFormClose)
-    }
+  ngOnDestroy(){
+    eval(this.eventFormDefinition.onEventClose)
   }
 
 }

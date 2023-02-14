@@ -17,6 +17,7 @@ import {VariableService} from "../shared/_services/variable.service";
 import * as moment from 'moment'
 import {AppConfig} from "../shared/_classes/app-config.class";
 import {FormInfo} from "../tangy-forms/classes/form-info.class";
+import {createSearchIndex} from "../shared/_services/create-search-index";
 import { createSyncFormIndex } from './create-sync-form-index';
 import PouchDB from 'pouchdb'
 
