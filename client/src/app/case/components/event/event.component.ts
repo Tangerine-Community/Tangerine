@@ -29,11 +29,10 @@ interface ParticipantInfo {
   styleUrls: ['./event.component.css'],
   providers: [ CaseService ]
 })
-export class EventComponent implements OnInit {
+export class EventComponent implements OnInit, AfterContentInit {
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
-  caseId:string
   participantInfos:Array<ParticipantInfo>
   noRoleEventFormInfos: Array<EventFormInfo>
   loaded = false
@@ -54,7 +53,10 @@ export class EventComponent implements OnInit {
     this.window = window
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+  }
+
+  async ngAfterContentInit() {
     const process = this.processMonitorService.start('eventComponentInit', _TRANSLATE('Opening event...'))
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
@@ -110,23 +112,10 @@ export class EventComponent implements OnInit {
              : canExitToRoute
           }, [])
       }
-
-      this.onEventOpen()
-
       this.loaded = true
       this.ref.detectChanges()
       this.processMonitorService.stop(process.id)
     })
-  }
-
-  async onEventOpen(){
-    await eval(this.caseEventDefinition.onEventOpen)
-  }
-
-  async ngOnDestroy() {
-    if (this.caseEventDefinition) {
-      await eval(this.caseEventDefinition.onEventClose)
-    }
   }
 
   exitRoutes() {

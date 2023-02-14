@@ -19,10 +19,6 @@ class CaseEventDefinition {
   estimatedTimeFromCaseOpening:number
   estimatedTimeWindow:number
   eventFormDefinitions:Array<EventFormDefinition> = []
-  onEventOpen:string
-  onEventClose:string
-  onEventCreate:string
-
   constructor() {
   }
 

@@ -19,10 +19,6 @@ class CaseEventDefinition {
   templateEventFormListItemIcon?:string
   templateEventFormListItemPrimary?:string
   templateEventFormListItemSecondary?:string
-  onEventCreate?:string
-  onEventOpen?:string
-  onEventClose?:string
-
   constructor() {
   }
 

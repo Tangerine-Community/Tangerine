@@ -1,7 +1,6 @@
 import { NotificationStatus } from './../../classes/notification.class';
 import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { CaseService } from '../../services/case.service'
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-case-breadcrumb',
@@ -20,9 +19,7 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   constructor(
     private caseService: CaseService,
-    private ref: ChangeDetectorRef,
-    private router: Router
-
+    private ref: ChangeDetectorRef
   ) {
     ref.detach()
   }
@@ -69,11 +66,6 @@ export class CaseBreadcrumbComponent implements OnInit {
     `)
     this.evaluateHasActiveNotifications()
     this.ref.detectChanges()
-  }
-
-  async onCloseClick() {
-    await this.caseService.onCaseClose()
-    this.router.navigate(['/'])
   }
 
   evaluateHasActiveNotifications() {
