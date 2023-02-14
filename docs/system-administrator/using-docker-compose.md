@@ -11,6 +11,16 @@ The docker-compose.yml file builds and launches several containers:
 - couchdb - database server for server
   - Data persisted at ./data/couchdb/data
 
+TODO: APK container.
+
+# Configuration
+
+Copy config.defaults.env to config.env and change T_HOST_NAME.
+
+# Testing
+
+At the moment you may login (user1/password - configurable in config.env) and browse groups - if you already have them. Group creation is probably not functioning at this point; same for Form editing. 
+
 # Networking
 
 We originally used the older docker network for Tangerine, relying upon the --link property to bridge shared containers. 
@@ -22,23 +32,25 @@ The containers `server` and `server-ui` launch using the entrypoint `npm start` 
 
 ## Server-ui
 
-The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver-ui%2Fsrc%2Fapp.module.ts)). 
+The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver-ui%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server-ui/src/express-app.js.
 
 If you need to develop the editor app, docker exec into server-ui, cd to editor, and npm run dockerdev to watch the editor dirs.
 
 ## Server
 
-The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server/src/express-app.js. 
+The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server/src/express-app.js. Notice that these routes are mostly different from the routes in server-ui/src/express-app.js.
 
 # Useful commands:
 
-`docker-compose up 2> /dev/null` - filters out verbose logs from couchdb. Wait a few minutes for the logs to show the server-ui route mappings.
+`docker-compose build` - builds the containers.
 
-To launch server and server-ui in dev mode (watch files for changes), prepend `NPM_START_OPTS=":dev"` to docker-compose up command:
+`docker-compose up 2> /dev/null` - Starts the containers and filters out verbose logs from couchdb. Wait a few minutes for the logs to show the server-ui route mappings; then it is ready to use.
 
-`npm run dockerdev" NPM_DEV_MODE=":dev" docker-compose up 2> /dev/null`
+To launch server and server-ui in dev mode (watch files for changes), prepend `NPM_DEV_MODE=":dev"` to docker-compose up command:
 
-`docker exec -it nginx sh` - shell to nginx (or server or server-ui). The base image is Alpine, and Alpine ships with sh instead of bash.
+`NPM_DEV_MODE=":dev" docker-compose up 2> /dev/null`
+
+`docker exec -it nginx sh` - shell to nginx (or substitute 'nginx' for server or server-ui to access those container shells). The base image is Alpine; Alpine ships with sh instead of bash.
 
 `docker network ls` - list the network ip addresses. Sample output:
 
