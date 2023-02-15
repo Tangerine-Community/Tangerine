@@ -1,23 +1,5 @@
 <div *ngIf="loaded">
   <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
-  <div  class="subject-header">
-    <span id="event-actions">
-      <span *ngIf="caseEvent.archived" class="archived">
-        [ Archived ]
-        <paper-button class="button" mat-icon-button (click)="unarchive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_unarchive_cases')">
-          <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i> Unarchive 
-        </paper-button>
-      </span>
-      <!--
-      <paper-button class="button" mat-icon-button (click)="delete()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_delete_cases') && !caseEvent.archived">
-        <i class="material-icons mat-32 tangy-location-list-icon">delete</i> Delete
-      </paper-button>
-      -->
-      <paper-button class="button" mat-icon-button (click)="archive()" *ngIf="authenticationService.doesUserHaveAPermission(groupId, 'can_archive_cases') && !caseEvent.archived">
-        <i class="material-icons mat-32 tangy-location-list-icon">archive</i>  Archive
-      </paper-button>
-    </span>
-  </div>
   <app-case-notifications></app-case-notifications>
   <div class="wrapper">
     <div class="screen" *ngIf="hasNotificationEnforcingAttention"></div>
