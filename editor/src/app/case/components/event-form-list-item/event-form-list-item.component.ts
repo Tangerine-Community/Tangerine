@@ -108,7 +108,7 @@ export class EventFormListItemComponent implements OnInit {
 
   async archiveItem() {
     const confirmArchive = confirm(
-      _TRANSLATE('Are you sure you want to archive this form instance? You will not be able to undo the operation')
+      _TRANSLATE('Are you sure you want to archive this form instance?')
       );
     if (confirmArchive) {
       this.caseService.archiveFormResponse(this.eventForm.caseEventId, this.eventForm.id);

@@ -120,3 +120,121 @@ button[type="submit"] {
 :host {
     position: relative;
 }
+
+.new-event form {
+    display: flex;
+    flex-direction: row;
+}
+.new-event .one-third {
+    width: 33%;
+    padding: 0 15px;
+    display: inline-block;
+}
+.new-event .one-third:first-child {
+    padding-left: 0;
+}
+.new-event .one-third:last-child {
+    padding-right: 0;
+}
+
+.new-event {
+    position: relative;
+}
+.new-event form {
+    display: flex;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-container:after {
+    position: absolute;
+    top: 0.75em;
+    right: 0.5em;
+    width: 0;
+    height: 0;
+    padding: 0;
+    content: '';
+    border-left: .25em solid transparent;
+    border-right: .25em solid transparent;
+    border-top: 0.375em solid #737373;
+    pointer-events: none;
+}
+.dropdown-container select,
+.dropdown-container input[type="date"] {
+    font-family: inherit;
+    background-color: transparent;
+    width: 100%;
+    padding: 4px 0;
+    font-size: 16px;
+    color: #000;
+    border: none;
+    border-bottom: 1px solid #737373;
+}
+.dropdown-container select {
+    appearance: none;
+}
+.dropdown-container option:disabled {
+    color: rgba(0,0,0, 0.26);
+}
+.dropdown-container input[type="date"] {
+    padding-bottom: 3px;
+}
+.dropdown-container input[type="date"]::-webkit-inner-spin-button {
+    display: none;
+}
+.dropdown-container input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
+.new-event form {
+    display: flex;
+    flex-direction: row;
+}
+.new-event .one-third {
+    width: 33%;
+    padding: 0 15px;
+    display: inline-block;
+}
+.new-event .one-third:first-child {
+    padding-left: 0;
+}
+.new-event .one-third:last-child {
+    padding-right: 0;
+}
+
+.new-event {
+    position: relative;
+}
+.new-event form {
+    display: flex;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.new-event form > div, .new-event form > paper-button {
+    flex-basis: 0;
+    flex-grow: 1;
+    max-width: 33%;
+    padding: 0 15px;
+}
+
+.new-event .button {
+    position: absolute;
+    top: 17px;
+    right: 10px;
+}
+
+.text-right {
+    text-align: right;
+}
+
+
+.new-event .button-left {
+  position: absolute;
+  top: 17px;
+  right: 80px;
+}
