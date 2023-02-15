@@ -6,6 +6,7 @@ import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment'
 import { CaseDefinition } from '../../classes/case-definition.class';
+import { CaseService } from '../../services/case.service';
 
 @Component({
   selector: 'app-case-event-list-item',
@@ -30,7 +31,14 @@ export class CaseEventListItemComponent implements AfterContentInit {
   renderedTemplateListItemPrimary = ''
   renderedTemplateListItemSecondary = ''
 
-  constructor(private ref: ChangeDetectorRef) {
+  canUserArchiveForms: boolean;
+
+  constructor(
+    private ref: ChangeDetectorRef,
+    private caseService: CaseService
+  ) {
+    this.canUserArchiveForms = true
+
     ref.detach()
   }
 
@@ -53,6 +61,18 @@ export class CaseEventListItemComponent implements AfterContentInit {
     eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateCaseEventListItemPrimary ? \`${this.caseDefinition.templateCaseEventListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateCaseEventListItemSecondary ? \`${this.caseDefinition.templateCaseEventListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
     this.ref.detectChanges()
+  }
+
+  async archiveItem() {
+    const confirmArchive = confirm(
+      _TRANSLATE('Are you sure you want to archive this event?')
+      );
+    if (confirmArchive) {
+      this.caseService.archiveCaseEvent(this.caseEvent.id);
+      await this.caseService.save();
+
+      this.ref.detectChanges();
+    }
   }
 
 }

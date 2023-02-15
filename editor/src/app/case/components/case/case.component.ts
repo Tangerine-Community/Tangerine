@@ -107,7 +107,7 @@ export class CaseComponent implements AfterContentInit {
       .map(caseEventDefinition => {
         return {
           caseEventDefinition,
-          caseEvents: this.caseService.case.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
+          caseEvents: this.caseService.case.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id && !caseEvent.archived)
         }
       })
     this.creatableCaseEventsInfo = this.caseEventsInfo

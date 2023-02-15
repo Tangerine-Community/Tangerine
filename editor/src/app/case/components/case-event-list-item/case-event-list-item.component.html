@@ -4,4 +4,8 @@
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
+	<span class="tangy-spacer"></span>
+	<span *ngIf="canUserArchiveForms">
+		<paper-button (click)="archiveItem()" class="button"><mwc-icon>archive</mwc-icon></paper-button>
+	</span>
 </div>
