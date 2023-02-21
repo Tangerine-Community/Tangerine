@@ -6,6 +6,7 @@ import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import {v4 as uuidv4} from 'uuid';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class FilesService {
@@ -17,9 +18,21 @@ export class FilesService {
   ) { }
 
   async get(groupId: string, filePath:string) {
-    const url = `/app/${groupId}/assets/${filePath}`
+    let PREFIX = './'
+    let file$
+    if (filePath.startsWith(PREFIX)) {
+      filePath = filePath.slice(PREFIX.length);
+    }
+    let url = `/files/${groupId}/assets/${filePath}`
     console.log("url: " + url )
-    return await this.httpClient.get(url).toPromise()
+    const extension = url.split('.').pop();
+    if (extension === 'json') {
+      file$ = this.httpClient.get(url,  {responseType: 'json'})
+    } else {
+      file$ = this.httpClient.get(url,  {responseType: 'text'})
+    }
+    const file = await lastValueFrom(file$)
+    return file
     // return await this.httpClient.get(`/app/${groupId}/assets/forms.json`).toPromise()
   }
 

@@ -78,5 +78,5 @@ Output:
 "couchdb:172.18.0.4/16"
 ```
 
-`docker exec -it nginx nginx -s reload` - reload the nginx config after making changes
+`docker exec -it nginx nginx -s reload` - reload the nginx config (default.conf) after making changes
 
