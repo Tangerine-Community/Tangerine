@@ -6,6 +6,8 @@ import { MatTabChangeEvent } from "@angular/material/tabs";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {FormMetadata} from "../feedback-editor/form-metadata";
 import {Feedback} from "../feedback-editor/feedback";
+import {TangerineFormsService} from "../../groups/services/tangerine-forms.service";
+import {FilesService} from "../../groups/services/files.service";
 
 @Component({
   selector: 'app-ng-tangy-form-editor',
@@ -32,7 +34,9 @@ export class NgTangyFormEditorComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private appConfigService: AppConfigService,
-    private serverConfigService:ServerConfigService
+    private serverConfigService:ServerConfigService,
+    private tangerineForms: TangerineFormsService,
+    private filesService: FilesService
   ) { }
 
   async ngOnInit() {
@@ -46,9 +50,15 @@ export class NgTangyFormEditorComponent implements OnInit {
     this.groupId = pathArray[2];
     let groupName = this.groupId;
     this.groupName = groupName;
-    let formJson = <any>await this.http.get(`./assets/forms.json`).toPromise()
-    const formSrc = formJson.find(formInfo => formInfo.id === this.formId).src
-    let formHtml = await this.http.get(formSrc, {responseType: 'text'}).toPromise()
+    // let formJson = <any>await this.http.get(`./assets/forms.json`).toPromise()
+    let formJson = await this.tangerineForms.getFormsInfo(this.groupId)
+    let formSrc = formJson.find(formInfo => formInfo.id === this.formId).src
+    // let formHtml = await this.http.get(formSrc, {responseType: 'text'}).toPromise()
+    let PREFIX = './assets/'
+    if (formSrc.startsWith(PREFIX)) {
+      formSrc = formSrc.slice(PREFIX.length);
+    }
+    let formHtml = await this.filesService.get(this.groupId, formSrc)
 
     const serverConfig = await this.serverConfigService.getServerConfig()
     const appConfig = await this.appConfigService.getAppConfig(groupName);

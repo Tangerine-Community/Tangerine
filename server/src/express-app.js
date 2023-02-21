@@ -220,7 +220,9 @@ app.use('/app/:groupId/csv-templates/delete/:templateId', require('./routes/grou
 app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
 app.use('/app/:group/client-media-upload', hasDeviceOrUploadToken, upload.any(), require('./routes/group-client-upload.js'));
 app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
-app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
+
+app.use('/files/:group/assets', isAuthenticated, function (req, res, next) {
+  console.log("server assets: " + req.url)
   let contentPath = `/tangerine/groups/${req.params.group}/client`
   return express.static(contentPath).apply(this, arguments);
 });

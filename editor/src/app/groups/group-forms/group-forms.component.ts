@@ -71,7 +71,9 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
       // @todo
       this.canManageForms = true
     } catch (error) {
-      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      let errorMessage = _TRANSLATE('Could Not Contact Server.');
+      console.error(`${errorMessage} : ${error}`)
+      this.errorHandler.handleError(errorMessage);
     }
   }
 

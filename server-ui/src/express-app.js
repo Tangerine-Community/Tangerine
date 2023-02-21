@@ -214,10 +214,12 @@ app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'
 // app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
 // app.use('/app/:group/client-media-upload', hasDeviceOrUploadToken, upload.any(), require('./routes/group-client-upload.js'));
 // app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
-app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
-  let contentPath = `/tangerine/groups/${req.params.group}/client`
-  return express.static(contentPath).apply(this, arguments);
-});
+// app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
+// app.use('/app/:group/assets', function (req, res, next) {
+//   console.log("server-ui assets: " + req.url)
+//   let contentPath = `/tangerine/groups/${req.params.group}/client`
+//   return express.static(contentPath).apply(this, arguments);
+// });
 app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
   let contentPath = `/tangerine/groups/${req.params.group}/`
   return express.static(contentPath).apply(this, arguments);

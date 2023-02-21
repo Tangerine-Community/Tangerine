@@ -7,6 +7,8 @@ import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.
 import { HttpClient } from '@angular/common/http';
 import { AppConfig } from 'src/app/shared/_classes/app-config.class';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
+import {TangerineFormsService} from "../services/tangerine-forms.service";
+import {FilesService} from "../services/files.service";
 
 @Component({
   selector: 'app-group-data',
@@ -27,15 +29,20 @@ export class GroupDataComponent implements OnInit {
     private userService:UserService,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private processMonitor:ProcessMonitorService
+    private processMonitor:ProcessMonitorService,
+    private tangerineForms: TangerineFormsService,
+    private filesService: FilesService
   ) { }
 
   async ngOnInit() {
     const process = this.processMonitor.start('group-data', 'Loading...')
     this.config = await this.serverConfig.getServerConfig()
     this.groupId = this.route.snapshot.paramMap.get('groupId');
-    const forms = <Array<FormInfo>>await this.http.get('./assets/forms.json').toPromise()
-    const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
+    // const forms = <Array<FormInfo>>await this.http.get('./assets/forms.json').toPromise()
+    // const forms =  <Array<FormInfo>>await this.filesService.get(this.groupId, 'forms.json')
+    const forms =  <Array<FormInfo>>await this.tangerineForms.getFormsInfo(this.groupId)
+    // const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
+    const appConfig = <AppConfig>await this.filesService.get(this.groupId, 'app-config.json')
     // Show uploads if this is not a Case module group or if it is a Case module group and there is a form listed for being created independent of a Case.
     if (
       appConfig.homeUrl !== 'case-home' ||
