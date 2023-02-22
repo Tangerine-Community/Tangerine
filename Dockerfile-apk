@@ -1,0 +1,67 @@
+FROM alvrme/alpine-android:android-32-jdk11
+
+RUN apk add --update nodejs npm
+# Install Cordova and other useful globals
+RUN npm update && \
+    npm install -g cordova@11.0.0
+
+RUN mkdir -p /tangerine/client/builds/apk
+
+ADD cordova /tangerine/client/builds/apk/
+
+WORKDIR /tangerine/client/builds/apk
+
+RUN cordova platform add android@11 && sleep 5
+
+RUN cordova plugin add cordova-plugin-geolocation@4.1.0 --save && sleep 5
+RUN cordova plugin add cordova-plugin-camera@6.0.0 --save && sleep 5
+RUN cordova plugin add cordova-plugin-file@7.0.0 --save && sleep 5
+RUN cordova plugin add cordova-plugin-androidx --save && sleep 5
+RUN cordova plugin add cordova-plugin-androidx-adapter --save && sleep 5
+RUN cordova plugin add github:Tangerine-Community/cordova-hot-code-push --save && sleep 5
+RUN cordova plugin add cordova-plugin-nearby-connections@0.6.1 --save && sleep 5
+RUN cordova plugin add cordova-sms-plugin --save && sleep 5
+RUN cordova plugin add cordova-plugin-android-permissions --save && sleep 5
+RUN cordova plugin add github:brodybits/cordova-plugin-sqlcipher-crypto-batch-connection-manager-core-pro-free#unstable-build-2020-07-15-01 --save && sleep 5
+RUN cordova plugin add cordova-sqlite-storage-file --save && sleep 5
+RUN cordova plugin add cordova-plugin-x-socialsharing --save && sleep 5
+
+#RUN echo "export JAVA_HOME=$(dirname $(dirname $(readlink -f $(type -P java))))" > /etc/profile.d/javahome.sh
+
+# Install Gradle
+#ENV GRADLE_URL https://services.gradle.org/distributions/gradle-7.3.3-all.zip
+#RUN wget -q $GRADLE_URL -O gradle.zip \
+# && unzip -qq gradle.zip \
+# && mv gradle-7.3.3 gradle \
+# && mkdir /root/.gradle
+#
+## Support Gradle
+#ENV GRADLE_HOME /opt/gradle
+#ENV PATH="${PATH}:${GRADLE_HOME}/bin"
+#ENV JAVA_OPTS "-Xms512m -Xmx1536m"
+#ENV CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL=file:///opt/gradle.zip
+
+RUN apk add --update bash vim curl wget jq git tar unzip bash-completion gradle
+
+RUN #cordova build
+
+## Install editor.
+ADD ./apk-generator/package.json /tangerine/apk-generator/package.json
+RUN cd /tangerine/apk-generator && \
+    npm install
+
+## Build editor.
+ADD apk-generator /tangerine/apk-generator
+
+RUN cd /tangerine/apk-generator && \
+    npm link
+
+WORKDIR /tangerine/apk-generator
+
+EXPOSE 80
+
+ADD entrypoint-apk-generator.sh /tangerine
+CMD ["/tangerine/entrypoint-apk-generator.sh"]
+
+# Used for testing...
+#CMD ["/bin/bash"]
