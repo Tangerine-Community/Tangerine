@@ -104,6 +104,9 @@ RUN cd /tangerine/client && \
 # Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
 RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
 
+# Copy the logo
+ADD logo.svg /tangerine/logo.svg
+
 WORKDIR /tangerine/apk-generator
 
 EXPOSE 80
