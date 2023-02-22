@@ -171,7 +171,7 @@ export class GroupsService {
 
   async releasePWA(groupName: string, releaseType: string, versionTag: string, releaseNotes: string) {
     try {
-      const result = await this.httpClient.post(`/editor/release-pwa/${groupName}`,
+      const result = await this.httpClient.post(`/apk-generator/release-pwa/${groupName}`,
       {releaseType, versionTag, releaseNotes, buildId: UUID()}).toPromise();
       return result;
     } catch (error) {
@@ -183,7 +183,7 @@ export class GroupsService {
 
   async releaseDat(groupName: string, releaseType: string) {
     try {
-      const result = await this.httpClient.get(`/editor/release-dat/${groupName}/${releaseType}`).toPromise();
+      const result = await this.httpClient.get(`/apk-generator/release-dat/${groupName}/${releaseType}`).toPromise();
       return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {
@@ -206,7 +206,7 @@ export class GroupsService {
 
   async releaseAPK(groupName: string, releaseType: string, versionTag: string, releaseNotes: string) {
     try {
-      const result = await this.httpClient.post(`/editor/release-apk/${groupName}`,
+      const result = await this.httpClient.post(`/apk-generator/release-apk/${groupName}`,
       {releaseType, versionTag, releaseNotes, buildId: UUID()}).toPromise();
       return result;
     } catch (error) {
@@ -355,7 +355,7 @@ export class GroupsService {
   async publishSurvey(groupId, formId, releaseType = 'prod', appName) {
     try {
       const response = await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
-      await this.httpClient.get(`/editor/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}/${response.body['uploadKey']}`).toPromise()
+      await this.httpClient.get(`/apk-generator/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}/${response.body['uploadKey']}`).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
@@ -363,7 +363,7 @@ export class GroupsService {
   async unPublishSurvey(groupId, formId) {
     try {
       await this.httpClient.put(`/onlineSurvey/unpublish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
-      await this.httpClient.get(`/editor/unrelease-online-survey-app/${groupId}/${formId}/prod`).toPromise()
+      await this.httpClient.get(`/apk-generator/unrelease-online-survey-app/${groupId}/${formId}/prod`).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

@@ -34,7 +34,9 @@ The containers `server` and `server-ui` launch using the entrypoint `npm start` 
 
 The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver-ui%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server-ui/src/express-app.js.
 
-If you need to develop the editor app, docker exec into server-ui, cd to editor, and npm run dockerdev to watch the editor dirs.
+### Modifying the editor UI
+
+If you need to develop the editor app, docker exec into server-ui, cd to editor, and `npm run dockerdev` to watch the editor dirs.
 
 ## Server
 
