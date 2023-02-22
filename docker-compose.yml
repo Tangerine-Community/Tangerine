@@ -80,6 +80,47 @@ services:
       - ./server-ui/src:/tangerine/server-ui/src:delegated
       - ./server/entrypoint-server-ui.sh:/tangerine/server/entrypoint-server-ui.sh:delegated
 
+  apk-generator:
+    container_name: "apk-generator"
+    tty: true
+    build:
+      context: .
+      dockerfile: ./Dockerfile-apk
+    ports:
+      - "83:80"
+    restart: unless-stopped
+    env_file: config.env
+    environment:
+      - T_COUCHDB_USER_ADMIN_NAME=/run/secrets/couchdb_admin_name
+      - T_COUCHDB_USER_ADMIN_PASS=/run/secrets/couchdb_admin_password
+      - T_COUCHDB_ENDPOINT=http://admin:password@couchdb:5984/
+      - "NODE_ENV=development"
+      - NPM_DEV_MODE
+    entrypoint: "/bin/sh -c \"cd /tangerine/apk-generator/ && npm run start$${NPM_DEV_MODE}\""
+    volumes:
+      - ./data/groups:/tangerine/groups/:delegated
+      - ./data/csv:/csv/:delegated
+      - ./data/archives:/archives/:delegated
+      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
+      - ./data/paid-worker-state.json:/paid-worker-state.json:delegated
+      - ./data/client/releases:/tangerine/client/releases/:delegated
+      - ./data/client/content/groups:/tangerine/client/content/groups:delegated
+      - ./data/client/content/assets:/tangerine/client/content/assets:delegated
+      - ./content-sets:/tangerine/content-sets:delegated
+      - ./apk-generator/package.json:/tangerine/apk-generator/package.json:delegated
+      - ./apk-generator/src:/tangerine/apk-generator/src:delegated
+      - ./client/src:/tangerine/client/src:delegated \
+      - ./client/dist:/tangerine/client/dist:delegated \
+      - ./server/reporting:/tangerine/server/reporting:delegated \
+      - ./upgrades:/tangerine/upgrades:delegated \
+      - ./scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
+      - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
+      - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
+      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
+      - ./editor/src:/tangerine/editor/src:delegated \
+      - ./translations:/tangerine/translations:delegated \
+      - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+
   nginx:
     image: 'nginx:alpine'
     container_name: nginx
