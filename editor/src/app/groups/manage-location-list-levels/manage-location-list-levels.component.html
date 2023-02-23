@@ -1,27 +1,21 @@
-<div *ngIf="isFormShown">
-  <form class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
-    <mat-form-field class="tangy-full-width">
-      <input name="locationLabel" [(ngModel)]="locationLabel" matInput placeholder="{{'Label'|translate}}"
-        required>
-    </mat-form-field>
-    <mat-form-field class="tangy-full-width">
-      <mat-select name="parentLevel" placeholder="Parent Level" [(ngModel)]="parentLevel">
-        <mat-option *ngFor="let location of locationsLevels" [value]="location">
-          {{location}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addLocationLevel()">{{'Submit'|translate}}</button>
-  </form>
-</div>
-<mat-list role="list">
-  <mat-list-item role="listitem" *ngFor="let location of locationsLevels">
-    <a class="tangy-foreground-primary" [routerLink]="['/groups/', groupId,'configure', 'location-list', 'manage-location-list-metadata',location]">
-      <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-    </a>
-    <span class="tangy-foreground-secondary">{{location}}</span>
-  </mat-list-item>
-</mat-list>
-
-<paper-fab *ngIf="!isFormShown" (click)="isFormShown=!isFormShown" mat-raised-button icon="add" color="accent" class="action">
-</paper-fab>
+<mat-tab-group animationDuration="0" [selectedIndex]="selected" (selectedIndexChange)="setSelected($event)">
+  <mat-tab *ngFor="let tab of locationsLevels; let index = index" [label]="tab">
+      <app-manage-location-list-metadata></app-manage-location-list-metadata>
+  </mat-tab>
+  <mat-tab label="Add Level">
+    <form class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
+      <mat-form-field class="tangy-full-width">
+        <input name="locationLabel" [(ngModel)]="locationLabel" matInput placeholder="{{'Label'|translate}}"
+          required>
+      </mat-form-field>
+      <mat-form-field class="tangy-full-width">
+        <mat-select name="parentLevel" placeholder="Parent Level" [(ngModel)]="parentLevel">
+          <mat-option *ngFor="let location of locationsLevels" [value]="location">
+            {{location}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addLocationLevel()">{{'Submit'|translate}}</button>
+    </form>
+  </mat-tab>
+</mat-tab-group>
