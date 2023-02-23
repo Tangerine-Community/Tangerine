@@ -21,7 +21,6 @@ services:
       - ./data/csv:/csv/:delegated
       - ./data/archives:/archives/:delegated
       - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
-      - ./data/paid-worker-state.json:/paid-worker-state.json:delegated
       - ./data/client/releases:/tangerine/client/releases/:delegated
       - ./data/client/content/groups:/tangerine/client/content/groups:delegated
       - ./data/client/content/assets:/tangerine/client/content/assets:delegated
