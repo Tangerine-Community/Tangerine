@@ -15,9 +15,11 @@ export class ManageLocationListLevelsComponent implements OnInit {
   isFormShown = false;
   locationLabel;
   parentLevel;
+  selectedLevel;
   locationListData;
-  constructor(private http: HttpClient, private window: WindowRef, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
+  selected = 0;
 
+  constructor(private http: HttpClient, private window: WindowRef, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
@@ -64,8 +66,10 @@ export class ManageLocationListLevelsComponent implements OnInit {
         this.errorHandler.handleError('Error Saving Location Lits File to disk');
       }
     }
+  }
 
-
+  setSelected(event: number) {
+    this.selected = event
   }
 }
 

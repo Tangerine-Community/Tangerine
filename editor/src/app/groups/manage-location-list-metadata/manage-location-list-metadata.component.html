@@ -1,5 +1,6 @@
-<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-
+<div>
+  <h3>Level Metadata</h3>
+</div>
 <div *ngIf="isFormShown">
   <span *ngIf="isItemMarkedForUpdate">Editing {{itemToUpdate.label}}</span>
   <form class="tangy-full-width" novalidate #newMetadataItemForm="ngForm">

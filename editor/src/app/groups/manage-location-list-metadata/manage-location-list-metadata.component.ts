@@ -1,6 +1,6 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -14,8 +14,9 @@ import snakeCase from '@queso/snake-case'
 })
 export class ManageLocationListMetadataComponent implements OnInit {
 
+  @Input() level: string;
+
   title = _TRANSLATE('Location List Metadata')
-  breadcrumbs:Array<Breadcrumb> = []
  
   groupName;
   locationLevel;
@@ -27,28 +28,20 @@ export class ManageLocationListMetadataComponent implements OnInit {
   currentMetadata;
   isItemMarkedForUpdate = false;
   itemToUpdate;
+  
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private errorHandler: TangyErrorHandler,
     private groupsService: GroupsService) { }
+
   async ngOnInit() {
 
     this.form = this.defaultFormState;
     this.route.params.subscribe(params => {
       this.groupName = params.groupId;
-      this.locationLevel = params.locationLevel;
-      this.breadcrumbs = [
-        <Breadcrumb>{
-          label: _TRANSLATE('Location List'),
-          url: 'location-list'
-        },
-        <Breadcrumb>{
-          label: _TRANSLATE('Location List Metadata'),
-          url: `location-list/manage-location-list-metadata/${params.locationLevel}`
-        }
-      ]
     });
+    this.locationLevel = this.level;
     try {
       this.locationListData = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
       this.locationListData['metadata'] = this.locationListData.metadata || {};
@@ -64,6 +57,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
     this.isFormShown = !this.isFormShown;
     this.form = {...this.defaultFormState};
   }
+
   async addMetadataItem() {
 
     let levelMetadata = this.currentMetadata;
