@@ -10,4 +10,7 @@
     </button>
   </mat-menu>
 </div>
+<div id="fullscreen-button-container" *ngIf="fullscreen">
+  <button  mat-icon-button aria-label="Fullscreen button with fullscreen icon" (click)="enableFullscreen()"><mwc-icon>fullscreen</mwc-icon></button>
+</div>
 <div #container> </div>

@@ -14,7 +14,7 @@ import { CaseService } from 'src/app/case/services/case.service';
 import { VariableService } from './shared/_services/variable.service';
 import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
-import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
+import {Component, ElementRef, OnInit, QueryList, ViewChild} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
@@ -56,6 +56,7 @@ export class AppComponent implements OnInit {
   ready = false
   @ViewChild(MatSidenav, {static: true}) sidenav: QueryList<MatSidenav>;
   dialogRef:any
+  @ViewChild('toolbar', {static: true}) toolbar: ElementRef;
 
   constructor(
     private userService: UserService,
@@ -217,6 +218,13 @@ export class AppComponent implements OnInit {
       this.router.navigate(['/update']);
     }
     this.processMonitorService.stop(appStartProcess.id)
+
+    // this.toolbar
+    this.window.document.documentElement.addEventListener('enter-fullscreen', _ => {
+      // document.querySelector('mat-toolbar').style.display = "none"
+      this.toolbar.nativeElement.style.display = "none"
+    })
+    
   }
 
   async install() {
