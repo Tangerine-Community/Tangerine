@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<mat-toolbar *ngIf="installed && !kioskModeEnabled" dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
+<mat-toolbar #toolbar *ngIf="installed && !kioskModeEnabled" dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
   <span class="home-icon" *ngIf="isLoggedIn">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
       <app-tangy-svg-logo [tangyLogoStyle]="{'height':'45px'}"></app-tangy-svg-logo>

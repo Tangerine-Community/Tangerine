@@ -55,6 +55,7 @@ export class TangyFormsPlayerComponent implements OnInit {
   appConfig
   window: any;
   @ViewChild('container', {static: true}) container: ElementRef;
+  fullscreen: boolean;
 
   constructor(
     private tangyFormsInfoService: TangyFormsInfoService,
@@ -182,6 +183,11 @@ export class TangyFormsPlayerComponent implements OnInit {
           this.throttledSaveResponse(formEl.response)
         }
       }
+      
+      if (this.formEl.fullscreen) {
+        this.fullscreen = true
+      }
+      
       this.response = formEl.response
       // Listen up, save in the db.
       if (!this.skipSaving) {
@@ -381,6 +387,31 @@ export class TangyFormsPlayerComponent implements OnInit {
     }
     const message = `<p>${_TRANSLATE('Error creating directory. Error: ')} ${errorMessage}</p>`
     console.log(message)
+  }
+
+  enableFullscreen() {
+    // If fullscreen inline is enabled, don't use Fulscreen API.
+    // let el = this.formEl
+    let el = this.container.nativeElement
+    if (el.fullscreenInline) return
+    if(el.requestFullscreen) {
+      el.requestFullscreen()
+        .then(message => {
+          el.fullScreenGranted = true;
+        })
+        .catch(err => {
+          console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+          el.fullScreenGranted = false;
+          el.dispatchEvent(new CustomEvent('fullscreen-rejected'))
+        });
+    } else if(el.mozRequestFullScreen) {
+      el.mozRequestFullScreen();
+    } else if(el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    } else if(el.msRequestFullscreen) {
+      el.msRequestFullscreen();
+    }
+
   }
 
 }
