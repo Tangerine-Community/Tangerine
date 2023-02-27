@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "Running entrypoint-server.sh"
+
 cd /tangerine/server-ui/
 
 echo "DEBUG = $DEBUG";

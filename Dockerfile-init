@@ -1,0 +1,9 @@
+FROM alpine:latest
+
+RUN mkdir /tangerine
+COPY ./init/id_rsa /tangerine/
+COPY ./init/id_rsa.pub /tangerine/
+COPY ./init/reporting-worker-state.json /tangerine/
+COPY ./init/paid-worker-state.json /tangerine/
+ENTRYPOINT ["sh"]
+#CMD ["/bin/sh"]

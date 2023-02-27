@@ -1,0 +1,3 @@
+FROM couchdb
+
+COPY couchdb/local.ini /opt/couchdb/etc/
