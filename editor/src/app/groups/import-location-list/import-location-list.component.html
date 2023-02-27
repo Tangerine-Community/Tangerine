@@ -1,73 +1,82 @@
 <div class="header">
     <p [style.color]="'red'" *ngIf="locationListLevels.length === 0">Note: Define location levels before importing.</p>
-    <p [style.color]="'red'" *ngIf="locationListLevels.length > 0">Note: Importing Location List will overwrite changes to locations made through the Web Interface. Also, if any data has been collected using the current location list, that data's location information may become orphaned.</p>
-    <input type="file" #file style="display: none" [disabled]="locationListLevels.length === 0" (change)="importLocationListFile($event.target)"
-        accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.ms-excel" />
-    <button mat-raised-button color="warn" (click)="file.click()">{{'Import CSV'|translate}}</button>
+    <p [style.color]="'red'" *ngIf="locationListLevels.length > 0">Note: Importing the Location List from a file will overwrite changes to locations made through the Web Interface. If any data has been collected using the current location list, that data's location information may become orphaned.</p>
 </div>
-<mat-list>
-    <mat-list-item class="tangy-location-list">
-        <span class="tangy-foreground-primary">{{'Fields'|translate}}</span>
-        <span class="tangy-spacer"></span>
-        <span class="tangy-foreground-primary">{{'Mapped to CSV Column'|translate}}</span>
-    </mat-list-item>
+<span class="import-div" *ngIf="!csvImported && !jsonImported">
+    <input type="file" #csvFile style="display: none" [disabled]="locationListLevels.length === 0" (change)="importLocationListFile($event.target)"
+        accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.ms-excel" />
+    <button mat-raised-button color="primary" (click)="csvFile.click()">{{'Import CSV'|translate}}</button>
+</span>
+<span class="import-div" *ngIf="!csvImported && !jsonImported">
+    <input type="file" #jsonFile style="display: none" [disabled]="locationListLevels.length === 0" (change)="importJSONFile($event.target)"
+        accept=".json" />
+    <button mat-raised-button color="primary" (click)="jsonFile.click()">{{'Import JSON'|translate}}</button>
+</span>
+<mat-list class="tangy-location-list" *ngIf="csvImported">
+    <span class="tangy-foreground-primary">{{'Fields'|translate}}</span>
+    <span class="tangy-spacer"></span>
+    <span class="tangy-foreground-primary">{{'Mapped to CSV Column'|translate}}</span>
+    <ng-container role="list" *ngFor="let locationLevel of locationListLevels">
+        <mat-list-item role="listitem">
+            {{locationLevel}}
+        </mat-list-item>
+        <mat-list-item role="listitem" class="gray-bottom-border">
+            <span class="text-indent-3 tangy-foreground-secondary ">{{'Label'|translate}}</span>
+            <span class="tangy-spacer"></span>
+            <span>
+                <div *ngIf="CSVHeaders">
+                    <mat-form-field class="tangy-full-width">
+                        <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel]"
+                            (selectionChange)="onSelectLocationLevelsMapping(locationLevel,$event.value)">
+                            <mat-option *ngFor="let column of CSVHeaders" [value]="column">
+                                {{column}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </span>
+        </mat-list-item>
+        <mat-list-item role="listitem" class="gray-bottom-border">
+            <span class="text-indent-3 tangy-foreground-secondary ">{{'ID'|translate}}</span>
+            <span class="tangy-spacer"></span>
+            <span>
+                <div *ngIf="CSVHeaders">
+                    <mat-form-field class="tangy-full-width">
+                        <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel+'_id']"
+                            (selectionChange)="onSelectLocationLevelsMapping(locationLevel+'_id',$event.value)">
+                            <mat-option *ngFor="let column of CSVHeaders" [value]="column">
+                                {{column}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </span>
+        </mat-list-item>
+        <mat-list-item role="listitem" class="gray-bottom-border"
+            *ngFor="let metadata of locationList.metadata[locationLevel]">
+            <span class="text-indent-3 tangy-foreground-secondary ">{{metadata.label}}</span>
+            <span class="tangy-spacer"></span>
+            <span>
+                <div *ngIf="CSVHeaders">
+                    <mat-form-field class="tangy-full-width">
+                        <mat-select name="mapping" placeholder=""
+                            [(ngModel)]="metadataModel[locationLevel+'_'+metadata.variableName]"
+                            (selectionChange)="onSelectMetadataMapping(locationLevel,metadata.variableName,$event.value)">
+                            <mat-option *ngFor="let column of CSVHeaders" [value]="column">
+                                {{column}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </span>
+            <span></span>
+        </mat-list-item>
+    </ng-container>
+    <br /><br />
+    <button mat-raised-button color="primary" (click)="onBackClick()">{{'Back'|translate}}</button>
+    <button class="submit" mat-raised-button [disabled]="!CSVHeaders" color="accent" (click)="processLocationListData()">{{'Process CSV'|translate}}</button>
 </mat-list>
-
-<mat-list role="list" *ngFor="let locationLevel of locationListLevels">
-    <mat-list-item role="listitem">
-        {{locationLevel}}
-    </mat-list-item>
-    <mat-list-item role="listitem" class="gray-bottom-border">
-        <span class="text-indent-3 tangy-foreground-secondary ">{{'Label'|translate}}</span>
-        <span class="tangy-spacer"></span>
-        <span>
-            <div *ngIf="CSVHeaders">
-                <mat-form-field class="tangy-full-width">
-                    <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel]"
-                        (selectionChange)="onSelectLocationLevelsMapping(locationLevel,$event.value)">
-                        <mat-option *ngFor="let column of CSVHeaders" [value]="column">
-                            {{column}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </span>
-    </mat-list-item>
-    <mat-list-item role="listitem" class="gray-bottom-border">
-        <span class="text-indent-3 tangy-foreground-secondary ">{{'ID'|translate}}</span>
-        <span class="tangy-spacer"></span>
-        <span>
-            <div *ngIf="CSVHeaders">
-                <mat-form-field class="tangy-full-width">
-                    <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel+'_id']"
-                        (selectionChange)="onSelectLocationLevelsMapping(locationLevel+'_id',$event.value)">
-                        <mat-option *ngFor="let column of CSVHeaders" [value]="column">
-                            {{column}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </span>
-    </mat-list-item>
-    <mat-list-item role="listitem" class="gray-bottom-border"
-        *ngFor="let metadata of locationList.metadata[locationLevel]">
-        <span class="text-indent-3 tangy-foreground-secondary ">{{metadata.label}}</span>
-        <span class="tangy-spacer"></span>
-        <span>
-            <div *ngIf="CSVHeaders">
-                <mat-form-field class="tangy-full-width">
-                    <mat-select name="mapping" placeholder=""
-                        [(ngModel)]="metadataModel[locationLevel+'_'+metadata.variableName]"
-                        (selectionChange)="onSelectMetadataMapping(locationLevel,metadata.variableName,$event.value)">
-                        <mat-option *ngFor="let column of CSVHeaders" [value]="column">
-                            {{column}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </span>
-        <span></span>
-    </mat-list-item>
-</mat-list>
-<br /><br />
-<button class="submit" mat-raised-button [disabled]="!CSVHeaders" color="warn" (click)="processLocationListData()">{{'Process CSV'|translate}}</button>
+<div *ngIf="jsonImported">
+    <button mat-raised-button color="primary" (click)="onBackClick()">{{'Back'|translate}}</button>
+    <button class="submit" mat-raised-button color="accent" [disabled]="!generatedLocationList" (click)="saveLocationListToDisk()">{{'Save Location List'|translate}}</button>
+</div>
