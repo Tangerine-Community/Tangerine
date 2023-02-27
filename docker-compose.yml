@@ -44,6 +44,8 @@ services:
   server-ui:
     container_name: "server-ui"
     tty: true
+    depends_on:
+      - server
     build:
       context: .
       dockerfile: ./Dockerfile-server-ui
@@ -81,6 +83,8 @@ services:
   apk-generator:
     container_name: "apk-generator"
     tty: true
+    depends_on:
+      - server
     build:
       context: .
       dockerfile: ./Dockerfile-apk
@@ -121,14 +125,24 @@ services:
   nginx:
     image: 'nginx:alpine'
     container_name: nginx
+    depends_on:
+      - server
+      - server-ui
+      - apk-generator
+      - couchdb
     volumes:
       - './nginx/default.conf:/etc/nginx/conf.d/default.conf'
     ports:
       - '80:80'
 
+
   couchdb:
-    image: "couchdb:2"
     container_name: "couchdb"
+#    depends_on:
+#      - init
+    build:
+      context: .
+      dockerfile: ./Dockerfile-couchdb
     ports:
       - "5984:5984"
     environment:
@@ -139,6 +153,25 @@ services:
       - ./data/couchdb/local.d:/opt/couchdb/etc/local.d
     logging:
       driver: none
+
+#  init:
+#    container_name: "init"
+#    tty: true
+#    build:
+#      context: .
+#      dockerfile: ./Dockerfile-init
+##    entrypoint: [ "sh", "-c",  "./entrypoint-init.sh"]
+#    volumes:
+#      - ./entrypoint-init.sh:/entrypoint-init.sh:delegated
+#      - ./data/:/tangerine/:delegated
+##      - ./data/csv:/tangerine/csv/:delegated
+##      - ./data/archives:/tangerine/archives/:delegated
+##      - ./data/client:/tangerine/client/:delegated
+##      - ./data/client/releases:/tangerine/client/releases:delegated
+##      - ./data/client/releases/prod:/tangerine/client/releases/prod:delegated
+#      - ./data/id_rsa:/tangerine/id_rsa:delegated
+#      - ./data/id_rsa.pub:/tangerine/id_rsa.pub:delegated
+#      - ./data/reporting-worker-state.json:/tangerine/reporting-worker-state.json:delegated
 
 secrets:
   couchdb_admin_name:
