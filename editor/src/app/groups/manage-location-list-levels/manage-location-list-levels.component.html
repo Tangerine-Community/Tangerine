@@ -1,6 +1,11 @@
 <mat-tab-group animationDuration="0" [selectedIndex]="selected" (selectedIndexChange)="setSelected($event)">
-  <mat-tab *ngFor="let tab of locationsLevels; let index = index" [label]="tab">
-      <app-manage-location-list-metadata></app-manage-location-list-metadata>
+  <mat-tab *ngFor="let level of locationsLevels; let index = index" [label]="level">
+    <mat-tab-body>
+      <ng-content *ngTemplateOutlet="metadata; context: level" metadata-tab-content></ng-content>
+      <ng-template #metadata>
+        <app-manage-location-list-metadata [level]="level"></app-manage-location-list-metadata>
+      </ng-template>
+    </mat-tab-body>
   </mat-tab>
   <mat-tab label="Add Level">
     <form class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
