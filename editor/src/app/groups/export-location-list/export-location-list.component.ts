@@ -12,16 +12,17 @@ import * as XLSX from 'xlsx';
 export class ExportLocationListComponent implements OnInit {
   locationEntries = [];
   locationObject = {};
-  nextLevelProcessed = '';
   locationLevels = [];
   coreProperties = ['level', 'label', 'id', 'children', 'parent', 'descendantsCount'];
-  isExporting = false;
+  isExportingCSV = false;
+  isExportingJSON = false;
   constructor(private groupService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
   }
-  async export() {
-    this.isExporting = true;
+
+  async exportAsCSV() {
+    this.isExportingCSV = true;
     const data = await this.groupService.getLocationList(this.route.snapshot.paramMap.get('groupId'));
     this.locationLevels = data['locationsLevels'] as [];
     Object.values(data['locations']).forEach(e => {
@@ -37,8 +38,7 @@ export class ExportLocationListComponent implements OnInit {
   resetValues() {
     this.locationEntries = [];
     this.locationObject = {};
-    this.nextLevelProcessed = '';
-    this.isExporting = false;
+    this.isExportingCSV = false;
   }
   /**
    *
@@ -59,5 +59,19 @@ export class ExportLocationListComponent implements OnInit {
     } else {
       this.locationEntries.push(this.locationObject);
     }
+  }
+
+  async exportAsJSON() {
+    this.isExportingJSON = true;
+    const groupId = this.route.snapshot.paramMap.get('groupId')
+    const data = await this.groupService.getLocationList(groupId);
+    const jsonData = JSON.stringify(data)
+    const fileName = `${groupId}-location-list.json`
+    var downloader = document.createElement('a');
+    downloader.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(jsonData));
+    downloader.setAttribute('download', fileName);
+    downloader.click();
+
+    this.isExportingJSON = false;
   }
 }
