@@ -2,16 +2,19 @@
     <p [style.color]="'red'" *ngIf="locationListLevels.length === 0">Note: Define location levels before importing.</p>
     <p [style.color]="'red'" *ngIf="locationListLevels.length > 0">Note: Importing the Location List from a file will overwrite changes to locations made through the Web Interface. If any data has been collected using the current location list, that data's location information may become orphaned.</p>
 </div>
-<span class="import-div" *ngIf="!csvImported && !jsonImported">
+<div class="import-div" *ngIf="!csvImported && !jsonImported">
     <input type="file" #csvFile style="display: none" [disabled]="locationListLevels.length === 0" (change)="importLocationListFile($event.target)"
         accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.ms-excel" />
     <button mat-raised-button color="primary" (click)="csvFile.click()">{{'Import CSV'|translate}}</button>
-</span>
-<span class="import-div" *ngIf="!csvImported && !jsonImported">
+    <p>Import a CSV file with headers of location level and unique identifier pairs.</p>
+    <p>After import you will be able to assign the labels and identifiers to the existing location levels.</p>
+</div>
+<div class="import-div" *ngIf="!csvImported && !jsonImported">
     <input type="file" #jsonFile style="display: none" [disabled]="locationListLevels.length === 0" (change)="importJSONFile($event.target)"
         accept=".json" />
     <button mat-raised-button color="primary" (click)="jsonFile.click()">{{'Import JSON'|translate}}</button>
-</span>
+    <p>Import the Location List from a JSON file exported from another Tangerine group.</p>
+</div>
 <mat-list class="tangy-location-list" *ngIf="csvImported">
     <span class="tangy-foreground-primary">{{'Fields'|translate}}</span>
     <span class="tangy-spacer"></span>
