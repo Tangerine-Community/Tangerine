@@ -49,27 +49,27 @@ export class TangerineFormsService {
   }
 
   async listCsvTemplates(groupId) {
-   return <Array<CsvTemplate>>await this.httpClient.get(`/app/${groupId}/csv-templates/list`).toPromise()
+   return <Array<CsvTemplate>>await this.httpClient.get(`/api/${groupId}/csv-templates/list`).toPromise()
   }
 
   async createCsvTemplate(groupId) {
-    return <CsvTemplate>await this.httpClient.get(`/app/${groupId}/csv-templates/create`).toPromise()
+    return <CsvTemplate>await this.httpClient.get(`/api/${groupId}/csv-templates/create`).toPromise()
   }
 
   async readCsvTemplate(groupId, templateId) {
-    return <CsvTemplate>await this.httpClient.get(`/app/${groupId}/csv-templates/read/${templateId}`).toPromise()
+    return <CsvTemplate>await this.httpClient.get(`/api/${groupId}/csv-templates/read/${templateId}`).toPromise()
   }
 
   async updateCsvTemplate(groupId, csvTemplate:CsvTemplate) {
-    return <CsvTemplate>await this.httpClient.post(`/app/${groupId}/csv-templates/update`,  csvTemplate).toPromise()
+    return <CsvTemplate>await this.httpClient.post(`/api/${groupId}/csv-templates/update`,  csvTemplate).toPromise()
   }
 
   async deleteCsvTemplate(groupId, templateId) {
-    return <CsvTemplate>await this.httpClient.get(`/app/${groupId}/csv-templates/delete/${templateId}`).toPromise()
+    return <CsvTemplate>await this.httpClient.get(`/api/${groupId}/csv-templates/delete/${templateId}`).toPromise()
   }
 
   async getCsvHeaders(groupId, formId) {
-   return <Array<HeaderInfo>>await this.httpClient.get(`/app/${groupId}/csv-headers/${formId}`).toPromise()
+   return <Array<HeaderInfo>>await this.httpClient.get(`/api/${groupId}/csv-headers/${formId}`).toPromise()
   }
 
   async createForm(groupId, formTitle = 'New Form', formContents = '') {
