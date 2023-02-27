@@ -18,7 +18,6 @@ export class LocationListEditorComponent implements OnInit {
   breadcrumbs = [];
   levelHasMetadata = false;
   locationsLevels;
-  locationListData;
   locationsLevelsLength;
   newItemLabel;
   newItemId;
@@ -33,8 +32,6 @@ export class LocationListEditorComponent implements OnInit {
   isItemMarkedForUpdate = false;
   isLoading = false;
   form: any = { label: '', id: '' };
-  selected = 0
-
   @ViewChild('container', {static: true}) container: ElementRef;
   constructor(
     private http: HttpClient,
@@ -49,17 +46,15 @@ export class LocationListEditorComponent implements OnInit {
     });
     try {
       const data: any = await this.groupsService.getLocationList(this.groupId);
-      this.locationListData = data;
+      const flatLocationList = Loc.flatten(data);
+      // TODO Why do we need zoneLevelLocations???
+      const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone');
       this.locationsLevels = data.locationsLevels;
       this.locationsLevelsLength = data.locationsLevels.length;
       await this.setLocationList(data);
     } catch (error) {
       this.errorHandler.handleError('Could Not Load Location List Data');
     }
-  }
-
-  setSelected(event: number) {
-    this.selected = event
   }
 
   async setLocationList(locationList) {
