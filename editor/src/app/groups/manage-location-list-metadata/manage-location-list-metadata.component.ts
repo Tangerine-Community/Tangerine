@@ -16,8 +16,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
 
   @Input() level: string;
 
-  title = _TRANSLATE('Location List Metadata')
- 
+  title; 
   groupName;
   locationLevel;
   locationListFileName = 'location-list.json';
@@ -42,6 +41,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
       this.groupName = params.groupId;
     });
     this.locationLevel = this.level;
+    this.title = `${this.level} Metadata`
     try {
       this.locationListData = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
       this.locationListData['metadata'] = this.locationListData.metadata || {};
@@ -80,6 +80,13 @@ export class ManageLocationListMetadataComponent implements OnInit {
 
   onChangeVariableName(event) {
     this.form.variableName = createVariableName(event.target.value);
+  }
+
+  cancelMetadataChange() {
+    this.isItemMarkedForUpdate = false;
+    this.form = this.defaultFormState;;
+    this.itemToUpdate = {};
+    this.isFormShown = false;
   }
 
   async deleteItem(item) {

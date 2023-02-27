@@ -4,6 +4,9 @@
 :host /deep/ .mat-tab-header {
   border-bottom: none;
 }
+:host /deep/ .mat-tab-body {
+  margin-left: 8px;
+}
 :host /deep/ .mat-tab-header-pagination {
   display: none !important;
 }
