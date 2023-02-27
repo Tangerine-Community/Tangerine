@@ -31,11 +31,11 @@
         </mat-select>
       </mat-form-field>
       <button type="button" [hidden]="isItemMarkedForUpdate" [disabled]="newMetadataItemForm.invalid"
-        mat-raised-button color="warn" (click)="addMetadataItem()">{{'Submit'|translate}}</button>
+        mat-raised-button color="accent" (click)="addMetadataItem()">{{'Submit'|translate}}</button>
       <button type="button" *ngIf="isItemMarkedForUpdate" [disabled]="newMetadataItemForm.invalid"
-        mat-raised-button color="warn" (click)="updateItem()">{{'Update Record'|translate}}</button>
+        mat-raised-button color="accent" (click)="updateItem()">{{'Update Record'|translate}}</button>
       <button type="button"
-        mat-raised-button color="warn" (click)="cancelMetadataChange()">{{'Cancel'|translate}}</button>
+        mat-raised-button (click)="cancelMetadataChange()">{{'Cancel'|translate}}</button>
     </form>
   </div>
 
@@ -49,8 +49,6 @@
       <span class="tangy-spacer"></span>
       <span class="tangy-foreground-primary">{{'Actions'|translate}}</span>
     </mat-list-item>
-  </mat-list>
-  <mat-list>
     <mat-list-item class="tangy-location-list" *ngFor="let item of currentMetadata">
       <span class="tangy-foreground-secondary">{{item.label}}</span>
       <span class="tangy-spacer"></span>
