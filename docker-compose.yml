@@ -146,8 +146,8 @@ services:
     ports:
       - "5984:5984"
     environment:
-      - COUCHDB_USER=/run/secrets/couchdb_admin_name
-      - COUCHDB_PASSWORD=/run/secrets/couchdb_admin_password
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
     volumes:
       - ./data/couchdb/data:/opt/couchdb/data
       - ./data/couchdb/local.d:/opt/couchdb/etc/local.d
