@@ -3,17 +3,18 @@
     <p [style.color]="'red'" *ngIf="locationListLevels.length > 0">Note: Importing the Location List from a file will overwrite changes to locations made through the Web Interface. If any data has been collected using the current location list, that data's location information may become orphaned.</p>
 </div>
 <div class="import-div" *ngIf="!csvImported && !jsonImported">
+    <h3> {{'Import CSV'|translate}} </h3>
+    <p>Import a CSV file with headers of location level and unique identifier pairs. After import you will be able to assign the labels and identifiers to the existing location levels.</p>
     <input type="file" #csvFile style="display: none" [disabled]="locationListLevels.length === 0" (change)="importLocationListFile($event.target)"
         accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.ms-excel" />
     <button mat-raised-button color="primary" (click)="csvFile.click()">{{'Import CSV'|translate}}</button>
-    <p>Import a CSV file with headers of location level and unique identifier pairs.</p>
-    <p>After import you will be able to assign the labels and identifiers to the existing location levels.</p>
 </div>
 <div class="import-div" *ngIf="!csvImported && !jsonImported">
+    <h3> {{'Import JSON'|translate}} </h3>
+    <p>Import the Location List from a JSON file exported from another Tangerine group.</p>
     <input type="file" #jsonFile style="display: none" [disabled]="locationListLevels.length === 0" (change)="importJSONFile($event.target)"
         accept=".json" />
     <button mat-raised-button color="primary" (click)="jsonFile.click()">{{'Import JSON'|translate}}</button>
-    <p>Import the Location List from a JSON file exported from another Tangerine group.</p>
 </div>
 <mat-list class="tangy-location-list" *ngIf="csvImported">
     <span class="tangy-foreground-primary">{{'Fields'|translate}}</span>
@@ -80,6 +81,19 @@
     <button class="submit" mat-raised-button [disabled]="!CSVHeaders" color="accent" (click)="processLocationListData()">{{'Process CSV'|translate}}</button>
 </mat-list>
 <div *ngIf="jsonImported">
+    <table mat-table tangy-full-width [dataSource]="jsonLocationData" class="mat-elevation-z8">
+        <ng-container matColumnDef="levels">
+          <th mat-header-cell *matHeaderCellDef> {{'Levels'|translate}} </th>
+          <td mat-cell *matCellDef="let data"> {{data.level}} </td>
+        </ng-container>
+        <ng-container matColumnDef="counts">
+            <th mat-header-cell *matHeaderCellDef> {{'Counts'|translate}} </th>
+            <td mat-cell *matCellDef="let data"> {{data.count}} </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
     <button mat-raised-button color="primary" (click)="onBackClick()">{{'Back'|translate}}</button>
     <button class="submit" mat-raised-button color="accent" [disabled]="!generatedLocationList" (click)="saveLocationListToDisk()">{{'Save Location List'|translate}}</button>
 </div>
