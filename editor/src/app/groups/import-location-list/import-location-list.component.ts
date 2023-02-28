@@ -1,6 +1,6 @@
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
@@ -8,8 +8,6 @@ import * as XLSX from 'xlsx';
 import { GroupsService } from '../services/groups.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import { _ } from 'underscore';
-import { prettyPrintJson } from 'pretty-print-json';
-
 type AOA = any[][];
 @Component({
   selector: 'app-import-location-list',
@@ -23,9 +21,6 @@ export class ImportLocationListComponent implements OnInit {
     private errorHandler: TangyErrorHandler,
     private groupsService: GroupsService
   ) { }
-
-
-  @ViewChild('jsonEditor', {static: false}) container;
 
   title = _TRANSLATE("Location List Import")
   breadcrumbs:Array<Breadcrumb> = []
@@ -45,7 +40,6 @@ export class ImportLocationListComponent implements OnInit {
   generatedLocationList: any;
   csvImported = false;
   jsonImported = false;
-  jsonFileHtml: any;
 
   async ngOnInit() {
     this.breadcrumbs = [
@@ -108,13 +102,7 @@ export class ImportLocationListComponent implements OnInit {
       const reader: FileReader = new FileReader();
       reader.onload = (e: any) => {
         const binaryString: string = e.target.result;
-        const data = JSON.parse(binaryString)
-        this.generatedLocationList = data
-        this.jsonFileHtml = prettyPrintJson.toHtml(data);
-
-        const conatinerEl = this.container.nativeElement
-        const preEl = conatinerEl.querySelector('pre');
-        preEl.innerHTML = this.jsonFileHtml
+        this.generatedLocationList = JSON.parse(binaryString)
       };
       reader.readAsBinaryString(target.files[0]);
       this.jsonImported = true;
