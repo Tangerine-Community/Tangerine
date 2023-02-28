@@ -3,19 +3,26 @@
 The docker-compose.yml file builds and launches several containers:
 - server-ui - a NEST.js app that serves the editor interface. 
   - Available at port 81 inside the tangerine_default network.
-  - /Dockerfile-server-ui
+  - ./Dockerfile-server-ui
 - server - backend support for the editor user interface. 
   - Available at port 82 inside the tangerine_default network
-  - /Dockerfile-server
+  - ./Dockerfile-server
+- apk-generator - alpine-based container with Android libs to build APK's
+  - Available at port 83 inside the tangerine_default network
+  - ./Dockerfile-apk
 - nginx - reverse proxy that services requests for server and server-ui at port 80. Config files at nginx/default.conf
+  - Exposes all Tangerine services at port 80
+  - ./nginx/Dockerfile
 - couchdb - database server for server
+  - Available at port 5984 and /db on port 80 inside the tangerine_default network
+  - ./Dockerfile-couchdb
   - Data persisted at ./data/couchdb/data
-
-TODO: APK container.
+  - Futon is accessible at https://FOO.DOMAIN/db/_utils/index.html
 
 # Configuration
 
-Copy config.defaults.env to config.env and change T_HOST_NAME.
+Copy config.defaults.env to config.env and change T_HOST_NAME. If you're planning to upload data from a client, set:
+ - T_PROTOCOL="https"
 
 # Testing
 
@@ -36,7 +43,13 @@ The bootstrap function creates a NestExpressApplication using `src/app.module.ts
 
 ### Modifying the editor UI
 
-If you need to develop the editor app, docker exec into server-ui, cd to editor, and `npm run dockerdev` to watch the editor dirs.
+If you need to develop the editor app: 
+
+```
+docker exec -it server-ui sh
+cd /tangerine/editor
+npm run dockerdev ### to watch the editor dirs.
+```
 
 ## Server
 
@@ -46,11 +59,11 @@ The bootstrap function creates a NestExpressApplication using `src/app.module.ts
 
 `docker-compose build` - builds the containers.
 
-`docker-compose up 2> /dev/null` - Starts the containers and filters out verbose logs from couchdb. Wait a few minutes for the logs to show the server-ui route mappings; then it is ready to use.
+`./start-docker-compose.sh  2> /dev/null` - Starts the containers and filters out verbose logs from couchdb. Wait a few minutes for the logs to show the server-ui route mappings; then it is ready to use.
 
-To launch server and server-ui in dev mode (watch files for changes), prepend `NPM_DEV_MODE=":dev"` to docker-compose up command:
+`./develop-docker-compose.sh  2> /dev/null` - Dev mode for the start script. If you open `develop-docker-compose.sh`, you'll see the `NPM_DEV_MODE=":dev"` switch, which launches server and server-ui in dev mode (watch files for changes).
 
-`NPM_DEV_MODE=":dev" docker-compose up 2> /dev/null`
+`./start-docker-compose-linux.sh  2> /dev/null` - Linux version of the start script - uses `docker compose` instead of `docker-compose`.
 
 `docker exec -it nginx sh` - shell to nginx (or substitute 'nginx' for server or server-ui to access those container shells). The base image is Alpine; Alpine ships with sh instead of bash.
 
