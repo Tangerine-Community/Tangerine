@@ -39,7 +39,6 @@ export class ImportLocationListComponent implements OnInit {
   locationListFileName = './location-list.json';
   generatedLocationList: any;
   csvImported = false;
-  jsonFileData;
   jsonImported = false;
 
   async ngOnInit() {
