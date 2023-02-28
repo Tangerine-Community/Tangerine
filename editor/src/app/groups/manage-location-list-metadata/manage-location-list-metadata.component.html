@@ -1,5 +1,9 @@
 <div>
-  <h3>{{title}}</h3>
+  <h3>{{title}}
+    <span *ngIf="!isFormShown" button-span>
+      <button (click)="toggleShowForm()" mat-raised-button color="primary">Add Metadata</button>
+     </span>
+  </h3>
   <div *ngIf="isFormShown">
     <span *ngIf="isItemMarkedForUpdate">Editing {{itemToUpdate.label}}</span>
     <form class="tangy-full-width" novalidate #newMetadataItemForm="ngForm">
@@ -64,6 +68,4 @@
       </span>
     </mat-list-item>
   </mat-list>
-  <paper-fab *ngIf="!isFormShown" (click)="toggleShowForm()" mat-raised-button icon="add" color="accent" class="action">
-  </paper-fab>
 </div>
