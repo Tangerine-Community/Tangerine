@@ -108,7 +108,6 @@ export class ImportLocationListComponent implements OnInit {
 
         const flatLocationList = Loc.flatten(this.generatedLocationList)
         const locationLevels = this.generatedLocationList["locationsLevels"]
-        //const locationCounts = []
         for (const level of locationLevels) {
           this.jsonLocationData.push(
             {

@@ -1,3 +1,4 @@
+<p class="header">Manage Location List Levels and define metadata for each level. The metadata defined here can be assigned values in the content tab. The assigned values will be output when a location value is selected in a form.</p>
 <mat-tab-group animationDuration="0" [selectedIndex]="selected" (selectedIndexChange)="setSelected($event)">
   <mat-tab *ngFor="let level of locationsLevels; let index = index" [label]="level">
     <mat-tab-body>
