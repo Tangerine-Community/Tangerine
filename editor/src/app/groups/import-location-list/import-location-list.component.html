@@ -80,6 +80,9 @@
     <button class="submit" mat-raised-button [disabled]="!CSVHeaders" color="accent" (click)="processLocationListData()">{{'Process CSV'|translate}}</button>
 </mat-list>
 <div *ngIf="jsonImported">
+    <div #jsonEditor>
+        <pre #jsonContainer class="json-container"></pre>
+    </div>
     <button mat-raised-button color="primary" (click)="onBackClick()">{{'Back'|translate}}</button>
     <button class="submit" mat-raised-button color="accent" [disabled]="!generatedLocationList" (click)="saveLocationListToDisk()">{{'Save Location List'|translate}}</button>
 </div>
