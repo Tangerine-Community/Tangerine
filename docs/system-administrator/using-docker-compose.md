@@ -7,7 +7,7 @@ The docker-compose.yml file builds and launches several containers:
 - server - backend support for the editor user interface. 
   - Available at port 82 inside the tangerine_default network
   - ./Dockerfile-server
-- apk-generator - alpine-based container with Android libs to build APK's
+- apk-generator - alpine-based container with Android libs to build APK's and PWA's.
   - Available at port 83 inside the tangerine_default network
   - ./Dockerfile-apk
 - nginx - reverse proxy that services requests for server and server-ui at port 80. Config files at nginx/default.conf

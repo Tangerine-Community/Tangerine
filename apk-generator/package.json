@@ -5,6 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "bin": {
+    "info": "./src/scripts/info.sh",
+    "release-online-survey-app": "./src/scripts/release-online-survey-app.sh",
+    "release-apk": "./src/scripts/release-apk.sh",
+    "release-pwa": "./src/scripts/release-pwa.sh"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
