@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../../app/shared/_services/tangy-error-handler.service';
 import { WindowRef } from '../../core/window-ref.service';
-import { ManageLocationListMetadataComponent as TabComponent } from '../manage-location-list-metadata/manage-location-list-metadata.component';
 @Component({
   selector: 'app-manage-location-list-levels',
   templateUrl: './manage-location-list-levels.component.html',
@@ -19,7 +18,6 @@ export class ManageLocationListLevelsComponent implements OnInit {
   selectedLevel;
   locationListData;
   selected = 0;
-  tabComponent: TabComponent;
 
   constructor(private http: HttpClient, private window: WindowRef, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
 
