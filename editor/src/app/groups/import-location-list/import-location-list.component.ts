@@ -40,6 +40,8 @@ export class ImportLocationListComponent implements OnInit {
   generatedLocationList: any;
   csvImported = false;
   jsonImported = false;
+  jsonLocationData = [];
+  columns = ['levels', 'counts']
 
   async ngOnInit() {
     this.breadcrumbs = [
@@ -93,7 +95,7 @@ export class ImportLocationListComponent implements OnInit {
     }
   }
 
-  importJSONFile(fileInput) {
+  async importJSONFile(fileInput) {
     try {
       const target: DataTransfer = <DataTransfer>(fileInput);
       if (target.files.length !== 1) {
@@ -103,9 +105,22 @@ export class ImportLocationListComponent implements OnInit {
       reader.onload = (e: any) => {
         const binaryString: string = e.target.result;
         this.generatedLocationList = JSON.parse(binaryString)
+
+        const flatLocationList = Loc.flatten(this.generatedLocationList)
+        const locationLevels = this.generatedLocationList["locationsLevels"]
+        //const locationCounts = []
+        for (const level of locationLevels) {
+          this.jsonLocationData.push(
+            {
+              "level": level,
+              "count": flatLocationList.locations.filter(l => l.level == level).length
+            }
+          )
+        }
+
+        this.jsonImported = true;
       };
       reader.readAsBinaryString(target.files[0]);
-      this.jsonImported = true;
     } catch (error) {
       console.error(error);
       this.errorHandler.handleError('Could not Import File.');
