@@ -59,9 +59,7 @@ export class AppComponent implements OnInit {
 
   numberOfClicks = 0 // Counting clicks to escape kiosk mode.
   exitClicks = 5 // If not defined in app-config.json, use this value
-
-  // @ViewChild('toolbar', {static: true}) toolbar: ElementRef;
-
+  
   constructor(
     private userService: UserService,
     private appConfigService: AppConfigService,
