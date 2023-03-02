@@ -241,21 +241,10 @@ export class AppComponent implements OnInit {
       this.router.navigate(['/update']);
     }
     this.processMonitorService.stop(appStartProcess.id)
-    if (this.appConfig.kioskMode) {
-      // this.window.document.documentElement.addEventListener('enter-fullscreen', _ => {
-      //   // document.querySelector('mat-toolbar').style.display = "none"
-      //   // this.toolbar.nativeElement.style.display = "none"
-      //   this.kioskModeEnabled = true
-      // })
-    }
     this.window.document.documentElement.addEventListener('enter-fullscreen', _ => {
-      // document.querySelector('mat-toolbar').style.display = "none"
-      // this.toolbar.nativeElement.style.display = "none"
       this.kioskModeEnabled = true
     })
     this.window.document.documentElement.addEventListener('exit-fullscreen', _ => {
-      // document.querySelector('mat-toolbar').style.display = "none"
-      // this.toolbar.nativeElement.style.display = "none"
       this.kioskModeEnabled = false
     })
   }
