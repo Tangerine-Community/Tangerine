@@ -17,3 +17,7 @@
 h1 {
   color: var(--accent-text-color);
 }
+
+a, a:link, a:visited, a:focus, a:hover, a:active{
+  color: var(--accent-text-color);
+}
