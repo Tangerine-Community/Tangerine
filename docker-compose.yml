@@ -35,7 +35,6 @@ services:
       - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
       - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
       - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
-      - ./editor/src:/tangerine/editor/src:delegated \
       - ./translations:/tangerine/translations:delegated \
       - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
       - ./server/entrypoint-server.sh:/tangerine/server/entrypoint-server.sh:delegated
@@ -64,21 +63,12 @@ services:
 #    entrypoint: "/bin/sh -c \"cd /tangerine/editor && npm run dockerdev && cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     entrypoint: "/bin/sh -c \"cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     volumes:
-      - ./data/groups:/tangerine/groups/:delegated
-      - ./data/csv:/csv/:delegated
-      - ./data/archives:/archives/:delegated
-      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
-      - ./data/client/releases:/tangerine/client/releases/:delegated
-      - ./data/client/content/groups:/tangerine/client/content/groups:delegated
-      - ./data/client/content/assets:/tangerine/client/content/assets:delegated
-      - ./content-sets:/tangerine/content-sets:delegated
       - ./editor/package.json:/tangerine/editor/package.json:delegated
       - ./editor/package-lock.json:/tangerine/editor/package-lock.json:delegated
       - ./editor/src:/tangerine/editor/src:delegated
       - ./server-ui/package.json:/tangerine/server-ui/package.json:delegated
       - ./server-ui/package-lock.json:/tangerine/server-ui/package-lock.json:delegated
       - ./server-ui/src:/tangerine/server-ui/src:delegated
-      - ./server/entrypoint-server-ui.sh:/tangerine/server/entrypoint-server-ui.sh:delegated
 
   apk-generator:
     container_name: "apk-generator"
@@ -118,7 +108,6 @@ services:
       - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
       - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
       - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
-      - ./editor/src:/tangerine/editor/src:delegated \
       - ./translations:/tangerine/translations:delegated \
       - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
 
