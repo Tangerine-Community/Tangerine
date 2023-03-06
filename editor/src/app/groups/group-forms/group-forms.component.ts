@@ -14,8 +14,6 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
-
-
 @Component({
   selector: 'app-group-forms',
   templateUrl: './group-forms.component.html',
@@ -39,6 +37,8 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   groupUrl;
   formsJsonURL;
   canManageForms = false
+
+  panelOpenState = false;
  @ViewChild('copyFormOverlay', {static: true}) copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,

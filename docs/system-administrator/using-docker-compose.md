@@ -26,7 +26,16 @@ Copy config.defaults.env to config.env and change T_HOST_NAME. If you're plannin
 
 # Testing
 
-At the moment you may login (user1/password - configurable in config.env) and browse groups - if you already have them. Group creation is probably not functioning at this point; same for Form editing. 
+## Author/Media Library
+
+Test uploading files. If you get error "413 Request Entity Too Large" you may need to set `client_max_body_size` in nginx. For example here is a location property in nginx/default.conf:
+
+```
+    location ~ ^/app/([^/]+)/media-upload {
+      client_max_body_size 5M;
+      proxy_pass http://server/api/$1/media-upload;
+    }
+```
 
 # Networking
 
