@@ -19,14 +19,82 @@
 >
 </paper-fab>
 
+<div class="indent tad-lower">
+
+  <mat-accordion>
+    <mat-expansion-panel  (opened)="panelOpenState = true"
+                          (closed)="panelOpenState = false">
+      <mat-expansion-panel-header>
+<!--        &nbsp;&nbsp; <i>{{panelOpenState ? '' : '(click to expand)'|translate}}</i>-->
+        <mat-panel-title>
+          <h3>Instructions</h3>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      {{'Drag the gray handles on each form to sort. '|translate}}
+      <h3>Legend</h3>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon matListItemIcon class="tangy-accent-color">edit</mat-icon>
+<!--          <i class="material-icons mat-32 tangy-location-list-icon">edit</i>-->
+          <div matListItemTitle>{{'Edit'|translate}}</div>
+          <div matListItemLine>{{'To edit a form, click the Edit button to the left of the form name.'|translate}}</div>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon class="tangy-accent-color">print</mat-icon>
+          <!--          <i class="material-icons mat-32 tangy-location-list-icon">edit</i>-->
+          <div matListItemTitle>{{'Print'|translate}}</div>
+          <div matListItemLine>
+        {{'The Print button presents a list of form formatting options.'|translate}}
+          </div>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon class="tangy-accent-color">flip_to_front</mat-icon>
+          <!--          <i class="material-icons mat-32 tangy-location-list-icon">edit</i>-->
+          <div matListItemTitle>{{'Copy'|translate}}</div>
+          <div matListItemLine>
+        {{'The Copy button makes a copy of a form.'|translate}}
+          </div>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon class="tangy-accent-color">delete</mat-icon>
+          <!--          <i class="material-icons mat-32 tangy-location-list-icon">edit</i>-->
+          <div matListItemTitle>{{'Delete'|translate}}</div>
+          <div matListItemLine>
+          {{'A delete button is displayed if your account has the relevant permissions.'|translate}}
+          </div>
+        </mat-list-item>
+        <mat-list-item lines="3">
+          <mat-icon matListItemIcon class="tangy-accent-color">archive</mat-icon>
+          <!--          <i class="material-icons mat-32 tangy-location-list-icon">edit</i>-->
+          <div matListItemTitle>{{'Archive'|translate}}</div>
+          {{'Use the Archive button to make a form in-active \n' +
+        '          (if your account has the relevant permissions).'|translate}}
+        </mat-list-item>
+      </mat-list>
+      
+
+    </mat-expansion-panel>
+  </mat-accordion>
+  
+</div>
+
+
 <h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
 <div class="drag-list" cdkDropList (cdkDropListDropped)="dropActive($event)">
   <div class="drag-item" *ngFor="let form of activeForms; let index=index" cdkDrag
     [cdkDragDisabled]="!canManageForms">
-    <span>{{index+1}}</span>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <div class="form-handle" cdkDragHandle>
+<!--      <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="48"><path d="M160 666v-60h640v60H160Zm0-120v-60h640v60H160Z"/></svg>-->
+      <svg viewBox="0 96 960 960" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 100 352.346 L 100 315.055 L 499.29 315.055 L 499.29 352.346 L 100 352.346 Z M 100 277.763 L 100 240.471 L 499.29 240.471 L 499.29 277.763 L 100 277.763 Z" style="opacity: 0.5;"/>
+        <path d="M 100.71 500 L 100.71 462.708 L 500 462.708 L 500 500 L 100.71 500 Z M 100.71 425.417 L 100.71 388.125 L 500 388.125 L 500 425.417 L 100.71 425.417 Z" style="opacity: 0.5;"/>
+        
+      </svg>
+    </div>
+<!--    <span>{{index+1}}</span>-->
+<!--    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>-->
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <a mat-icon-button routerLink="edit/{{form.id}}">
+      <a mat-icon-button routerLink="edit/{{form.id}}" title="{{'Edit'|translate}}">
         <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
     </span>
@@ -48,13 +116,13 @@
       </mat-select>
     </span>
     <span>
-      <a mat-icon-button (click)="printActiveForm.open()">
+      <a mat-icon-button (click)="printActiveForm.open()" title="{{'Print'|translate}}">
         <i class="material-icons mat-32 tangy-location-list-icon">print</i>
       </a>
     </span>
 
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <a mat-icon-button (click)="onCopyFormClick(form.id)">
+      <a mat-icon-button (click)="onCopyFormClick(form.id)" title="{{'Copy'|translate}}">
         <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
       </a>
     </span>
@@ -62,7 +130,7 @@
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button
         [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-        (click)="deleteForm(groupId, form.id)"
+        (click)="deleteForm(groupId, form.id)" title="{{'Delete'|translate}}"
       >
         <i 
           [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
@@ -76,7 +144,7 @@
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button
         [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-        (click)="onArchiveFormClick(groupId, form.id)"
+        (click)="onArchiveFormClick(groupId, form.id)" title="{{'Archive'|translate}}"
       >
         <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
           class="material-icons mat-32 tangy-location-list-icon">archive</i>
@@ -86,20 +154,21 @@
   </div>
 </div>
 <h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
-<div class="drag-list" cdkDropList (cdkDropListDropped)="dropArchived($event)">
-  <div class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag 
-       [cdkDragDisabled]="!canManageForms">
-    <span>{{index+1}}</span>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+<div *ngIf="archivedForms && archivedForms.length > 0">
+  <div class="drag-list" cdkDropList (cdkDropListDropped)="dropArchived($event)">
+    <div class="drag-item" *ngFor="let form of archivedForms; let index=index" cdkDrag
+         [cdkDragDisabled]="!canManageForms">
+      <span>{{index+1}}</span>
+      <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <a mat-icon-button
-        [routerLink]="'/tangy-form-editor/'+groupId+'/'+form.id">
+         [routerLink]="'/tangy-form-editor/'+groupId+'/'+form.id">
         <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
     </span>
-    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+      <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
-    <span>
+      <span>
       <mat-select #printInActiveForm style="width:160px;">
         <mat-option style="width:160px;">
           <a target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
@@ -114,34 +183,39 @@
         </mat-option>
       </mat-select>
     </span>
-    <span>
+      <span>
       <a mat-icon-button (click)="printInActiveForm.open()">
         <i class="material-icons mat-32 tangy-location-list-icon">print</i>
       </a>
     </span>
 
-    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <a mat-icon-button (click)="onCopyFormClick(form.id)">
         <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
       </a>
     </span>
 
-    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-        (click)="deleteForm(groupId, form.id)">
+              [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+              (click)="deleteForm(groupId, form.id)">
         <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
-          class="material-icons mat-32 tangy-location-list-icon">delete</i>
+           class="material-icons mat-32 tangy-location-list-icon">delete</i>
       </button>
     </span>
 
-    <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
+      <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-        (click)="onUnArchiveFormClick(groupId, form.id)">
+              [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+              (click)="onUnArchiveFormClick(groupId, form.id)">
         <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
-          class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
+           class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
       </button>
     </span>
+    </div>
   </div>
 </div>
+<div class="indent" *ngIf="! archivedForms || archivedForms.length === 0">
+  <p>No archived forms</p>
+</div>
+

@@ -31,7 +31,11 @@ export class GroupMediaComponent implements AfterContentInit {
     ] 
     //debugger
     //this.listEl.nativeElement.addEventListener('change', () => this.onListChange())
-    this.listEl.nativeElement.setAttribute('endpoint', './media-list')
+    try {
+      this.listEl.nativeElement.setAttribute('endpoint', './media-list')
+    } catch (e) {
+      console.log(e)
+    }
     this.uploadEl.nativeElement.addEventListener('upload-success', () => this.listEl.nativeElement.setAttribute('endpoint', './media-list'))
   }
 

@@ -97,7 +97,7 @@ import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-temp
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
-
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -130,7 +130,8 @@ import { GroupDevicePasswordPolicyComponent } from './group-device-password-poli
         NgTangyFormEditorModule,
         MatCheckboxModule,
         MatPaginatorModule,
-        MatButtonModule
+        MatButtonModule,
+        MatExpansionModule
     ],
   declarations: [
     LocationListEditorComponent,

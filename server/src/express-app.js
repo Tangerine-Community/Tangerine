@@ -101,7 +101,7 @@ var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
 var hasUploadToken = require('./middleware/has-upload-token.js')
 var hasDeviceOrUploadToken = require('./middleware/has-device-token-or-has-upload-token.js')
 var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
-var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
+// var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
 app.get('/version',
   function (req, res) {
@@ -182,7 +182,7 @@ app.get('/app/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthen
 // Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
 app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./routes/group-responses-by-user-profile-id.js'))
 app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./routes/group-responses-by-user-profile-short-code.js'))
-app.get('/api/:groupId/:docId', isAuthenticatedOrHasUploadToken, require('./routes/group-doc-read.js'))
+// app.get('/api/:groupId/:docId', isAuthenticatedOrHasUploadToken, require('./routes/group-doc-read.js'))
 app.put('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
 app.post('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
 app.delete('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-delete.js'))
@@ -231,7 +231,7 @@ app.use('/api/:group/files', isAuthenticated, function (req, res, next) {
   return express.static(contentPath).apply(this, arguments);
 });
 
-app.use('/csv/', isAuthenticated, express.static('/csv/'));
+app.use('/csv/', isAuthenticated, express.static('/csv/')); 
 
 app.use('/releases/', express.static('/tangerine/client/releases'))
 app.use('/client/', express.static('/tangerine/client/builds/dev'))
