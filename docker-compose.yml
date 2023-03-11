@@ -124,7 +124,6 @@ services:
     ports:
       - '80:80'
 
-
   couchdb:
     container_name: "couchdb"
 #    depends_on:
@@ -140,8 +139,8 @@ services:
     volumes:
       - ./data/couchdb/data:/opt/couchdb/data
       - ./data/couchdb/local.d:/opt/couchdb/etc/local.d
-    logging:
-      driver: none
+#    logging:
+#      driver: none
 
 #  init:
 #    container_name: "init"

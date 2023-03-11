@@ -8,6 +8,8 @@ const access = util.promisify(require('fs').access)
 const exec = util.promisify(require('child_process').exec)
 
 module.exports = async (req, res) => {
+  clog("Starting media upload")
+  console.log("beep")
   try {
     await access(`/tangerine/client/content/groups/${req.params.group}/media`)
   } catch (e) {

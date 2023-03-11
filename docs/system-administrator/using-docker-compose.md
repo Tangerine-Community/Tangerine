@@ -26,6 +26,14 @@ Copy config.defaults.env to config.env and change T_HOST_NAME. If you're plannin
 
 # Testing
 
+## Create group
+
+Create a group by running the following command. This creates a group called "CM-1" using the case-module.
+
+```
+docker exec server create-group "CM-1" case-module
+```
+
 ## Author/Media Library
 
 Test uploading files. If you get error "413 Request Entity Too Large" you may need to set `client_max_body_size` in nginx. For example here is a location property in nginx/default.conf:
@@ -102,5 +110,10 @@ Output:
 "couchdb:172.18.0.4/16"
 ```
 
+## Nginx commands
+
 `docker exec -it nginx nginx -s reload` - reload the nginx config (default.conf) after making changes
+
+Add the following to the docker-compose image section to provide verbose debugging of nginx:
+`command: [nginx-debug, '-g', 'daemon off;']`
 
