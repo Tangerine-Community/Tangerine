@@ -54,7 +54,8 @@ export class GroupSearchComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.formsInfo = await this.formsInfoService.getFormsInfo()
+    const groupId = window.location.hash.split('/')[2]
+    this.formsInfo = await this.formsInfoService.getFormsInfo(groupId)
     this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
       .pipe(debounceTime(300))

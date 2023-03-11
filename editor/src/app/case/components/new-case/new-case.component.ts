@@ -19,10 +19,11 @@ export class NewCaseComponent implements AfterContentInit {
   ) { }
 
   async ngAfterContentInit() {
+    const groupId = window.location.hash.split('/')[2]
     this.activatedRoute.queryParams.subscribe(async params => {
       const formId = params['formId'];
       const caseDefinitions = await this.caseDefinitionsService.load();
-      await this.caseService.create(caseDefinitions.find(caseDefinition => caseDefinition.formId === formId).id)
+      await this.caseService.create(caseDefinitions.find(caseDefinition => caseDefinition.formId === formId).id, groupId)
       this.caseService.openCaseConfirmed = true
       let eventForm:EventForm
       if (this.caseService.caseDefinition.startFormOnOpen && this.caseService.caseDefinition.startFormOnOpen.eventFormId) {
