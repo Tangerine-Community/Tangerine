@@ -1,6 +1,5 @@
 /* jshint esversion: 6 */
 
-
 const express = require('express')
 const bodyParser = require('body-parser');
 const path = require('path')
@@ -36,6 +35,8 @@ const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp
 const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
 const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
 const allowIfUser1 = require('./middleware/allow-if-user1.js');
+const isAuthenticated = require("./middleware/is-authenticated");
+const isUnprotected = require("./middleware/is-unprotected");
 
 if (process.env.T_AUTO_COMMIT === 'true') {
   setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
@@ -76,7 +77,7 @@ var proxy = require('express-http-proxy');
 var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
   proxyReqPathResolver: function (req, res) {
     var path = require('url').parse(req.url).path;
-    // clog("path:" + path);
+    clog("path:" + path);
     return path;
   },
   limit: '1gb'
@@ -209,6 +210,7 @@ app.get('/usage/:startdate/:enddate', require('./routes/usage'));
 app.use('/client', express.static('/tangerine/client/dev'));
 app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
 // app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
+  
 app.use('/api/:group/media-list', require('./routes/group-media-list.js'));
 app.use('/api/:groupId/csv-headers/:formId', require('./routes/group-csv-headers.js'));
 app.use('/api/:groupId/csv-templates/list', require('./routes/group-csv-templates-list.js'));
@@ -217,12 +219,12 @@ app.use('/api/:groupId/csv-templates/read/:templateId', require('./routes/group-
 app.use('/api/:groupId/csv-templates/update', require('./routes/group-csv-templates-update.js'));
 app.use('/api/:groupId/csv-templates/delete/:templateId', require('./routes/group-csv-templates-delete.js'));
 // @TODO Need isAdminUser middleware.
-app.use('/api/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
-app.use('/api/:group/client-media-upload', hasDeviceOrUploadToken, upload.any(), require('./routes/group-client-upload.js'));
-app.use('/api/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
+app.post('/files/:group/media-upload', isUnprotected, upload.any(), require('./routes/group-media-upload.js'));
+app.use('/files/:group/client-media-upload', hasDeviceOrUploadToken, upload.any(), require('./routes/group-client-upload.js'));
+app.use('/files/:group/media-delete', isUnprotected, require('./routes/group-media-delete.js'));
 
 app.use('/files/:group/assets', isAuthenticated, function (req, res, next) {
-  console.log("server assets: " + req.url)
+  // console.log("server assets: " + req.url)
   let contentPath = `/tangerine/groups/${req.params.group}/client`
   return express.static(contentPath).apply(this, arguments);
 });

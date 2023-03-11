@@ -8,7 +8,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
   templateUrl: './group-media.component.html',
   styleUrls: ['./group-media.component.css']
 })
-export class GroupMediaComponent implements AfterContentInit {
+export class GroupMediaComponent implements OnInit, AfterContentInit {
 
   title = _TRANSLATE('Media Library')
   breadcrumbs:Array<Breadcrumb> = []
@@ -17,10 +17,15 @@ export class GroupMediaComponent implements AfterContentInit {
   selection = []
   @ViewChild('list', {static: true}) listEl: ElementRef;
   @ViewChild('upload', {static: true}) uploadEl: ElementRef;
+  private groupId: string;
 
   constructor(
     private http: HttpClient
   ) { }
+
+  async ngOnInit() {
+    this.groupId = window.location.hash.split('/')[2]
+  }
 
   ngAfterContentInit() {
     this.breadcrumbs = [

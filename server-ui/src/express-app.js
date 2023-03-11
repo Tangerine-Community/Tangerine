@@ -1,39 +1,19 @@
 /* jshint esversion: 6 */
 
-
 const express = require('express')
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const path = require('path')
 const fs = require('fs-extra')
 const compression = require('compression')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
-const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
-const multer = require('multer')
-const upload = multer({ dest: '/tmp-uploads/' })
+// const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 var newGroupQueue = []
 const cors = require('cors')
-// const tangyModules = require('./modules/index.js')()
-// const { extendSession, findUserByUsername,
-//    USERS_DB, login, getSitewidePermissionsByUsername,
-//    updateUserSiteWidePermissions, getUserGroupPermissionsByGroupName, addRoleToGroup, findRoleByName, getAllRoles, updateRoleInGroup, isSuperAdmin} = require('./auth');
-// const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
-//    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
-//    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
-//  const {saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
-// log.info('server-ui heartbeat')
-// setInterval(() => log.info('server-ui heartbeat'), 5*60*1000)
+log.info('server-ui heartbeat')
+setInterval(() => log.info('server-ui heartbeat'), 5*60*1000)
 const cookieParser = require('cookie-parser');
-// const { getPermissionsList } = require('./permissions-list.js');
-// const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
-// const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
-// const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
-// const allowIfUser1 = require('./middleware/allow-if-user1.js');
-//
-// if (process.env.T_AUTO_COMMIT === 'true') {
-//   setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
-// }
 module.exports = async function expressAppBootstrap(app) {
 
 // Enable CORS
@@ -65,37 +45,18 @@ if (process.env.T_PROTOCOL == 'https') {
   });
 }
 
-// Proxy for CouchDB
-// var proxy = require('express-http-proxy');
-// var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
-//   proxyReqPathResolver: function (req, res) {
-//     var path = require('url').parse(req.url).path;
-//     // clog("path:" + path);
-//     return path;
-//   },
-//   limit: '1gb'
-// });
-// var mountpoint = '/db';
-// app.use(mountpoint, couchProxy);
-// app.use(mountpoint, function (req, res) {
-//   if (req.originalUrl === mountpoint) {
-//     res.redirect(301, req.originalUrl + '/');
-//   } else {
-//     couchProxy;
-//   }
-// });
 app.use(cookieParser())
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: '1gb' }))
-app.use(bodyParser.text({ limit: '1gb' }))
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json({ limit: '1gb' }))
+// app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
-var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
-var hasUploadToken = require('./middleware/has-upload-token.js')
-var hasDeviceOrUploadToken = require('./middleware/has-device-token-or-has-upload-token.js')
-var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
-var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
+// var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
+// var hasUploadToken = require('./middleware/has-upload-token.js')
+// var hasDeviceOrUploadToken = require('./middleware/has-device-token-or-has-upload-token.js')
+// var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
+// var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
 app.get('/version',
   function (req, res) {
@@ -103,101 +64,7 @@ app.get('/version',
   }
 )
 
-/*
- * Login and session API
- */
 
-// app.post('/login', login);
-// app.get('/login/validate/:userName',
-//   function (req, res) {
-//     if (req.user && (req.params.userName === req.user.name)) {
-//       res.send({ valid: true });
-//     } else {
-//       res.send({ valid: false });
-//     }
-//   }
-// );
-// app.post('/extendSession', isAuthenticated, extendSession);
-// app.get('/permissionsList', isAuthenticated, getPermissionsList);
-// app.get('/sitewidePermissionsByUsername/:username',
-//           isAuthenticated, permit(['can_manage_users_site_wide_permissions']), getSitewidePermissionsByUsername);
-// app.post('/permissions/updateUserSitewidePermissions/:username', isAuthenticated, permit(['can_manage_users_site_wide_permissions']), updateUserSiteWidePermissions);
-//
-// app.get('/custom-login-markup', (request, response) => response.send(process.env.T_CUSTOM_LOGIN_MARKUP || ''));
-
-/*
- * User API
- */
-
-// app.get('/users', isAuthenticated, permit(['can_view_users_list']), getAllUsers);
-// app.get('/users/byUsername/:username', isAuthenticated, getUserByUsername);
-// app.get('/users/findOneUser/:username', isAuthenticated, findOneUserByUsername);
-// app.get('/users/findMyUser/', isAuthenticated, findMyUser);
-// app.put('/users/updateMyUser/', isAuthenticated, updateMyUser);
-// app.get('/users/userExists/:username', isAuthenticated, checkIfUserExistByUsername);
-// app.post('/users/register-user', isAuthenticated, permit(['can_create_users']), registerUser);
-// app.get('/users/isSuperAdminUser/:username', isAuthenticated, isUserSuperAdmin);
-// app.get('/users/isAdminUser/:username', isAuthenticated, isUserAnAdminUser);
-// app.patch('/users/restore/:username', isAuthenticated, permit(['can_edit_users']), restoreUser);
-// app.delete('/users/delete/:username', isAuthenticated, permit(['can_edit_users']), deleteUser);
-// app.put('/users/update/:username', isAuthenticated, permit(['can_edit_users']), updateUser);
-// app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUserGroupPermissionsByGroupName);
-/**
- * Get Config value
- */
-
- // app.get('/configuration/archiveToDisk', isAuthenticated, archiveToDiskConfig);
- // app.get('/configuration/passwordPolicyConfig', isAuthenticated, passwordPolicyConfig);
-
-
-/**
- * Online survey routes
- */
-
-// app.post('/onlineSurvey/publish/:groupId/:formId', isAuthenticated, publishSurvey);
-// app.put('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
-// app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, saveSurveyResponse);
-/*
- * More API
- */
-
-// app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
-// app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
-// app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
-// app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
-// app.get('/app/:groupId/response-variable-value/:responseId/:variableName', isAuthenticated, require('./routes/group-response-variable-value.js'))
-// app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))
-// app.get('/api/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
-// app.get('/app/:groupId/docCountByLocationId/:locationId', isAuthenticated, require('./routes/group-doc-count-by-location-id.js'))
-// app.get('/app/:groupId/downSyncDocCountByLocationId/:locationId', isAuthenticated, require('./routes/group-down-sync-doc-count-by-location-id.js'))
-// // Support for API working with group pathed cookie :). We should do this for others because our group cookies can't access /api/.
-// app.get('/app/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-month-and-form-id.js'))
-//
-// // Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
-// app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./routes/group-responses-by-user-profile-id.js'))
-// app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./routes/group-responses-by-user-profile-short-code.js'))
-// app.get('/api/:groupId/:docId', isAuthenticatedOrHasUploadToken, require('./routes/group-doc-read.js'))
-// app.put('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
-// app.post('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
-// app.delete('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-delete.js'))
-// if (process.env.T_LEGACY === "true") {
-//   app.post('/upload/:groupId', require('./routes/group-upload.js'))
-// }
-// app.get('/api/csv/:groupId/:formId', isAuthenticated, generateCSV)
-// app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
-// app.get('/api/csv-sanitized/:groupId/:formId', isAuthenticated, generateCSV)
-// app.get('/api/csv-sanitized/:groupId/:formId/:year/:month', isAuthenticated, generateCSV)
-// app.post('/api/create/csvDataSet/:groupId', isAuthenticated, generateCSVDataSet)
-// app.get('/api/create/csvDataSets/:datasetsId', allowIfUser1, generateCSVDataSetsRoute)
-// app.post('/api/create/csvDataSet-sanitized/:groupId', isAuthenticated, generateCSVDataSet)
-// app.get('/apis/listCSVDatasets/:groupId/:pageIndex/:pageSize', isAuthenticated, listCSVDataSets)
-// app.get('/apis/CSVDatasetDetail/:datasetId', isAuthenticated, getDatasetDetail)
-//
-// app.get('/api/usage', require('./routes/usage'));
-// // For backwards compatibility for older consumers of this API.
-// app.get('/usage', require('./routes/usage'));
-// app.get('/usage/:startdate', require('./routes/usage'));
-// app.get('/usage/:startdate/:enddate', require('./routes/usage'));
 
 // Static assets.
 app.use('/client', express.static('/tangerine/client/dev'));
@@ -393,204 +260,9 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
     res.sendStatus(500);
   }
 })
-//
-// app.post('/permissions/addRoleToGroup/:groupId',
-//           isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), addRoleToGroup);
-
-// app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
-// app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
-// app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
-
-// app.use('/api/generateDbDump/:groupId/:deviceId/:syncUsername/:syncPassword', async function(req, res, next){
-//   const groupId = req.params.groupId;
-//   const deviceId = req.params.deviceId;
-//   const syncUsername = req.params.syncUsername;
-//   const syncPassword = req.params.syncPassword;
-//   const url = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}`
-//   const devicesUrl = `http://${syncUsername}:${syncPassword}@couchdb:5984/${groupId}-devices`
-//   console.log("about to generateDbDump to " + groupId + " deviceId: " + deviceId + " syncUsername: " + syncUsername + " syncPassword: " + syncPassword + " using devicesUrl: " + devicesUrl)
-//   const groupDevicesDb = await new PouchDB(devicesUrl)
-//   const device = await groupDevicesDb.get(deviceId)
-//   const formInfos = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
-//   let locations;
-//   if (device.syncLocations.length > 0) {
-//     locations = device.syncLocations.map(locationConfig => {
-//       // Get last value, that's the focused sync point.
-//       let location = locationConfig.value.slice(-1).pop()
-//       return location
-//     })
-//   }
-//   const pullSelector = {
-//     "$or": [
-//       ...formInfos.reduce(($or, formInfo) => {
-//         if (formInfo.couchdbSyncSettings && formInfo.couchdbSyncSettings.enabled && formInfo.couchdbSyncSettings.pull) {
-//           $or = [
-//             ...$or,
-//             ...device.syncLocations.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-//               ? device.syncLocations.map(locationConfig => {
-//                 // Get last value, that's the focused sync point.
-//                 let location = locationConfig.value.slice(-1).pop()
-//                 return {
-//                   "form.id": formInfo.id,
-//                   [`location.${location.level}`]: location.value
-//                 }
-//               })
-//               : [
-//                 {
-//                   "form.id": formInfo.id
-//                 }
-//               ]
-//           ]
-//         }
-//         return $or
-//       }, []),
-//       ...device.syncLocations.length > 0
-//         ? device.syncLocations.map(locationConfig => {
-//           // Get last value, that's the focused sync point.
-//           let location = locationConfig.value.slice(-1).pop()
-//           return {
-//             "type": "issue",
-//             [`location.${location.level}`]: location.value,
-//             "resolveOnAppContext": AppContext.Client
-//           }
-//         })
-//         : [
-//           {
-//             "resolveOnAppContext": AppContext.Client,
-//             "type": "issue"
-//           }
-//         ]
-//     ]
-//   }
-//  
-//   const replicationOpts = {
-//     "selector": pullSelector
-//   }
-//   // stream db to express response
-//   const db = new PouchDB(url);
-//  
-//   let dbDumpFileDir = `/tangerine/groups/${groupId}/client/dbDumpFiles`
-//  
-//   for (const location of locations) {
-//     // locations: [{"location.region":"B7BzlR6h"}]
-//     const locationIdentifier = `${location.level}_${location.value}`
-//     let dbDumpFilePath = `${dbDumpFileDir}/${sanitize(locationIdentifier)}-dbDumpFile`
-//     let metadataFilePath = `${dbDumpFileDir}/${sanitize(locationIdentifier)}-metadata`
-//     try {
-//       await fs.ensureDir(dbDumpFileDir)
-//     } catch (err) {
-//       console.error(err)
-//     }
-//    
-//     const exists = await fs.pathExists(dbDumpFilePath)
-//     if (! exists) {
-//       console.log("dbDumpFilePath not created; generating.")
-//       const stream = new MemoryStream()
-//       let dbDumpFileWriteStream = fsc.createWriteStream(dbDumpFilePath)
-//       let metadataWriteStream = fsc.createWriteStream(metadataFilePath)
-//       console.log("Now dumping to the writeStream")
-//       let i = 0
-//       stream.on('data', function (chunk) {
-//         // chunks.push(chunk)
-//         console.log("on dbDumpFileReadStream")
-//         dbDumpFileWriteStream.write(chunk.toString());
-//         if (i === 0) {
-//           try {
-//             const firstChunk = chunk.toString();
-//             const ndjObject = JSON.parse(firstChunk)
-//             console.log("firstChunk: " + firstChunk)
-//             let payloadDocCount, pullLastSeq
-//             if (ndjObject) {
-//               payloadDocCount = ndjObject.db_info?.doc_count;
-//               pullLastSeq = ndjObject.db_info?.update_seq;
-//               const responseObject = {
-//                 "payloadDocCount": payloadDocCount,
-//                 "pullLastSeq": pullLastSeq,
-//                 "locationIdentifier": sanitize(locationIdentifier)
-//               }
-//               metadataWriteStream.write(JSON.stringify(responseObject));
-//             }
-//            
-//           } catch (e) {
-//             console.log("firstChunk ERROR: " + e)
-//           }
-//         }
-//         i++
-//         // writeStream.write(chunk);
-//       });
-//       // await db.dump(dbDumpFileWriteStream, replicationOpts).then(async () => {
-//       await db.dump(stream, replicationOpts).then(async () => {
-//         console.log('Dump from db complete!')
-//         console.log('Sleep for 2 seconds')
-//         await sleep(2000);
-//         // const dbDumpFileReadStream = fs.createReadStream(dbDumpFilePath)
-//         metadataWriteStream.end()
-//         dbDumpFileWriteStream.end()
-//       }).catch(function(err){
-//         // res.status(500).send(err);
-//         console.trace()
-//         res.send({ statusCode: 500, data: "Error dumping database to file: " + err })
-//         reject("Error dumping database to file: " + err)
-//       });
-//       console.log('dumpedString from db complete!')
-//     }
-//     console.log('sending metadata')
-//     fs.createReadStream(metadataFilePath).pipe(res);
-//   }
-// });
-
-// app.use('/api/getDbDump/:groupId/:locationIdentifier', async function(req, res, next){
-//   const groupId = req.params.groupId;
-//   const locationIdentifier = req.params.locationIdentifier;
-//   let dbDumpFileDir = `/tangerine/groups/${groupId}/client/dbDumpFiles`
-//   let dbDumpFilePath = `${dbDumpFileDir}/${locationIdentifier}-dbDumpFile`
-//   const exists = await fs.pathExists(dbDumpFilePath)
-//   if (exists) {
-//     console.log("Transferring the dbDumpFile to locationIdentifier: " + locationIdentifier)
-//     fs.createReadStream(dbDumpFilePath).pipe(res);
-//   } else {
-//     res.send({ statusCode: 404, data: "DB dump file not found. "})
-//   }
-// });
 
 
-/**
- * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
- * @param {string} srcPath The path to the directory
- */
-const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory())
 
-/**
- * Gets the list of all the existing groups from the content folder
- * Listens for the changes feed on each of the group's database
- */
-function allGroups() {
-  const CONTENT_PATH = '/tangerine/groups/'
-  const groups = getDirectories(CONTENT_PATH)
-  return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
-}
 
-// const runPaidWorker = require('./paid-worker.js')
-// async function keepAlivePaidWorker() {
-//   let state = {}
-//   while(true) {
-//     try {
-//       state = await runPaidWorker()
-//       if (state.batchMarkedPaid === 0) {
-//         //log.info('No responses marked as paid. Sleeping...')
-//         await sleep(10*1000)
-//       } else {
-//         log.info(`Marked ${state.batchMarkedPaid} responses as paid.`)
-//       }
-//     } catch (error) {
-//       log.error(error.message)
-//       console.log(error)
-//       await sleep(10*1000)
-//     }
-//   }
-// }
-// keepAlivePaidWorker()
-
-// await tangyModules.hook('declareAppRoutes', {app})
 
 }
