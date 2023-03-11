@@ -63,7 +63,7 @@ export class GroupCasesComponent implements OnInit {
       }
     ]
     this.groupId = window.location.hash.split('/')[2]
-    this.formsInfo = await this.formsInfoService.getFormsInfo()
+    this.formsInfo = await this.formsInfoService.getFormsInfo(this.groupId)
     this.formTypesInfo = FORM_TYPES_INFO
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.selector = {
@@ -86,7 +86,11 @@ export class GroupCasesComponent implements OnInit {
 
   async query() {
     this.loading = true
-    this.cases = <Array<any>>await this.httpClient.post(`/group-responses/search/${this.groupId}`, { phrase: '', index: 'search' }).toPromise()
+    let cases = await this.httpClient.post(`/group-responses/search/${this.groupId}`, { phrase: '', index: 'search' }).toPromise()
+    if (!cases) {
+      cases = []
+    }
+    this.cases = <Array<any>>cases
     this.renderSearchResults()
     this.loading = false
   }

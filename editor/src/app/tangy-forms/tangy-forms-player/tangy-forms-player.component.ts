@@ -80,6 +80,7 @@ export class TangyFormsPlayerComponent {
   }
 
   async render() {
+    const groupId = window.location.hash.split('/')[2]
     // Get form ingredients.
     const formResponse = this.response
       ? new TangyFormResponseModel(this.response)
@@ -90,10 +91,10 @@ export class TangyFormsPlayerComponent {
     this.formId = this.formId
       ? this.formId
       : formResponse['form']['id']
-    this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId)
+    this.formInfo = await this.tangyFormsInfoService.getFormInfo(this.formId, groupId)
     this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
     if (this.templateId) {
-      let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
+      let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId, groupId)
       const response = formResponse
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
@@ -117,7 +118,7 @@ export class TangyFormsPlayerComponent {
         // for all new form responses.
         formVersionId = this.formInfo.formVersions[0].id 
       }
-      let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId)
+      let  formHtml =  await this.tangyFormService.getFormMarkup(this.formId, formVersionId, groupId)
       // Put the form on the screen.
       const container = this.container.nativeElement
       container.innerHTML = formHtml

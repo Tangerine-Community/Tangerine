@@ -163,13 +163,13 @@ class CaseService {
     }, [])
   }
 
-  async create(caseDefinitionId) {
+  async create(caseDefinitionId, groupId:string) {
     this.caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseDefinitionId)
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
     const tangyFormContainerEl:any = document.createElement('div')
-    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId, null)
+    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId, null, groupId)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form')
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
@@ -1258,7 +1258,7 @@ class CaseService {
   }
 
   async createQuery (
-    { caseId, eventId, formId, formName, formTitle, participantId, variableName, queryType, queryDate, queryText }
+    { caseId, eventId, formId, formName, formTitle, participantId, variableName, queryType, queryDate, queryText, groupId }
       ): Promise<string> {
     caseId = this.case._id;
     let caseEvent = this.case.events
@@ -1285,7 +1285,7 @@ class CaseService {
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
       const tangyFormContainerEl:any = document.createElement('div');
-      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId, null);
+      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId, null, groupId);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
       document.body.appendChild(tangyFormContainerEl);
