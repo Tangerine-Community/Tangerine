@@ -40,7 +40,7 @@ export class GroupSearchComponent implements OnInit {
   stoppedSearching$ = new Subject()
   searchReady$ = new Subject()
   navigatingTo$ = new Subject()
-  searchDocs:Array<any>
+  searchDocs:Array<any> = []
   username:string
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
@@ -114,11 +114,11 @@ export class GroupSearchComponent implements OnInit {
           ${t('No results.')}
         </span>
       `
-    }
-    for (const searchDoc of this.searchDocs) {
-      const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
-      searchResultsMarkup += `
+    } else {
+      for (const searchDoc of this.searchDocs) {
+        const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
+        const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
+        searchResultsMarkup += `
       <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
         <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
         <div>
@@ -129,6 +129,7 @@ export class GroupSearchComponent implements OnInit {
         </div>
       </div>
       `
+      }
     }
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup
     this.didSearch$.next(true)
