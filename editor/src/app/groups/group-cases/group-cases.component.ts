@@ -149,7 +149,13 @@ export class GroupCasesComponent implements OnInit {
       </div>
       `
     }
-    this.searchResults.nativeElement.innerHTML = searchResultsMarkup
+    if (this.cases && this.cases.length > 0) {
+      this.groupSearch.searchResults.nativeElement.style.display='none'
+      this.groupSearch.searchResults.nativeElement.innerHTML = searchResultsMarkup
+    } else {
+      this.groupSearch.searchResults.nativeElement.innerHTML = '<span style="padding: 25px">No cases found.</span>'
+    }
+    
   }
 
 }
