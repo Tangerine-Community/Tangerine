@@ -1,3 +1,7 @@
 a {
     text-decoration: none;
 }
+
+.indent {
+  margin-left: 1em;
+}
