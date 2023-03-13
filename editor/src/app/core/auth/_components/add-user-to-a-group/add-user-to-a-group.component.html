@@ -1,7 +1,8 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <form novalidate #addUserToGroupForm="ngForm">
   <div>
-    <p>Begin typing the username to choose the user:</p>
+    <p>If you need to create a new user, click the "Users" link on the left navigation menu.</p>
+    <p>Begin typing a username to choose an existing user:</p>
     <mat-form-field class="tangy-full-width">
       <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)='usernameSelected($event.option.value)'>
