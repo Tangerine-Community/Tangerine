@@ -11,6 +11,7 @@
         <mat-card-subtitle>{{'Manage locations levels and content related to choosing locations on forms, sync, and more.'|translate}}</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
+  
   <mat-card appearance="outlined" [hidden]="!syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="sync" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_sync'">
     <mat-card-header>
         <div mat-card-avatar>
@@ -22,6 +23,7 @@
         <mat-card-subtitle>{{'Manage which forms to enable two-way sync on.'|translate}}</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
+  
   <mat-card appearance="outlined" class="is-link mat-elevation-z3" routerLink="security" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
     <mat-card-header>
         <div mat-card-avatar>
@@ -33,10 +35,14 @@
         <mat-card-subtitle>Manage who has server level access to this group.</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
+  
   <mat-card appearance="outlined" class="is-link mat-elevation-z3" routerLink="device-password-policy" *appHasAPermission="let i;group:groupId; permission:'can_access_security'">
     <mat-card-header>
         <div mat-card-avatar>
-          <mwc-icon class="tangy-foreground-secondary">password</mwc-icon>
+<!--          <mwc-icon class="tangy-foreground-secondary">policy</mwc-icon>-->
+          <mat-icon aria-hidden="false" aria-label="lock icon" fontIcon="lock" class="tangy-foreground-secondary"></mat-icon>
+<!--          <mat-icon svgIcon="policy" aria-hidden="false" aria-label="Example thumbs up SVG icon"></mat-icon>-->
+
         </div>
         <mat-card-title>
             <a>{{'Password Policy for Device Accounts'|translate}}</a>

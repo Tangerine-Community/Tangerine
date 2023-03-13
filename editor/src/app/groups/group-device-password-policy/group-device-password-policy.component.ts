@@ -4,6 +4,7 @@ import { AppConfig } from 'src/app/shared/_classes/app-config.class';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import {FilesService} from "../services/files.service";
 
 const strongPasswordPolicyDescription = 'Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters'
 const strongPasswordPolicyRegEx = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
@@ -29,13 +30,16 @@ export class GroupDevicePasswordPolicyComponent implements OnInit {
   passwordPolicyRegex:string
   passwordPolicyDescription:string
   accountRecoveryQuestion:string
+  groupId:string
 
   constructor(
     private processMonitor: ProcessMonitorService,
-    private http: HttpClient
+    private http: HttpClient,
+    private filesService: FilesService
   ) { }
 
   async ngOnInit() {
+    this.groupId = window.location.pathname.split('/')[2]
     const process = this.processMonitor.start('group-device-password-policy', 'Retrieving group device password policy...')
     this.breadcrumbs = [
       <Breadcrumb>{
@@ -43,7 +47,7 @@ export class GroupDevicePasswordPolicyComponent implements OnInit {
         url: `device-password-policy`
       }
     ]
-    const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
+    const appConfig = <AppConfig>await this.filesService.get(this.groupId, 'app-config.json')
     this.passwordPolicyRegex = appConfig.passwordPolicy?.replace
       ? appConfig.passwordPolicy.replace(/\\/g, '\\\\')
       : ''
@@ -79,7 +83,7 @@ export class GroupDevicePasswordPolicyComponent implements OnInit {
 
   async submit() {
     const process = this.processMonitor.start('group-device-password-policy', 'Saving...')
-    const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
+    const appConfig = <AppConfig>await this.filesService.get(this.groupId, 'app-config.json')
     if (this.passwordPolicyCategory === 'no_password') {
       appConfig.noPassword = true
       appConfig.passwordPolicy = ''
@@ -97,7 +101,7 @@ export class GroupDevicePasswordPolicyComponent implements OnInit {
       appConfig.passwordRecipe = this.passwordPolicyDescriptionEl?.nativeElement?.value
     }
     await this.http.post('/editor/file/save', {
-      groupId: window.location.pathname.split('/')[2],
+      groupId: this.groupId,
       filePath: './app-config.json',
       fileContents: JSON.stringify(appConfig, null, 2)
     }).toPromise()
