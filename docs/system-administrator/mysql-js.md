@@ -80,6 +80,26 @@ To set up remote encrypted connections to mysql, three options:
 2. __SSH__: For each person using MySQL, they will need SSH access to the server. When granted, they may use tunneling of mysql port 3306 over SSH to access mysql at `127.0.0.1:3306`.  For example, to set up an SSH port forwarding on Mac or Linux, run `ssh -L 3306:your-server:3306 your-server`.
 3. __VPN__: If you connect to MySQL via the IP address of the server, using a VPN will ensure that communication with MySQL is encrypted. Note however that the traffic will be visible to those also on your VPN so make sure it's a trusted VPN only used by those who have permission to access the data.
 
+## Resetting MySQL databases
+
+If you need to reset the mysql database, do the following:
+- stop the mysql docker instance: `docker stop mysql`
+- delete ./data/mysql
+- remove 'mysql-js' from T_MODULES
+- Run ./start.sh or ./develop.sh. This will remove the mysql-js module from enabledModules in the app couch database's modules doc. See "Disabling modules: mysql-js" in the console to confirm.
+- add 'mysql-js' to T_MODULES - this will init the mysql databases.
+- Run ./start.sh or ./develop.sh. This will add the mysql-js module from enabledModules in the app couch database's modules doc and create the databases. See "Enabling modules: mysql-js" in the console to confirm.
+
+## Configuration
+
+- You may add configuration options to ./server/src/mysql-js/conf.d/config-file.js. 
+- If you are using the mysql container and are having errors with very large forms, the new settings in ./server/src/mysql-js/conf.d/config-file.js
+  should help. You will need to completely rebuild the mysql database. Stop the Tangerine and mysql containers. Delete (or -rename) the ./data/mysql directory.  
+  Then restart Tangerine using the ./start.sh or develop.sh script.
+- Important: If you already have a mysql instance running and don't want to rebuild the mysql database, delete the `innodb-page-size=64K`
+  line from ./server/src/mysql-js/conf.d/config-file.js; otherwise, your mysql instance will not start.
+- If making changes to the `innodb-page-size` option, you must delete the ./data/mysql directory.
+
 ## Troubleshooting
 
 ### Issue: Data on the Mysql db is far behind the Couchdb.

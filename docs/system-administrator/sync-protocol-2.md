@@ -2,7 +2,7 @@
 
 ## Background
 
-When Tangerine was originally created, devices would only use a one-way sync from the tablet to the server. Sync Protocol 2 was developed to enable two-way sync; typically, all data from the tablet is pushed to the server, and - in order to conserve bandwidth - only data from some forms is pulled to the tablet. 
+When Tangerine was originally created, devices would only use a one-way sync from the tablet to the server [sync-protocol-1 doc](./sync-protocol-1.md). Sync Protocol 2 was developed to enable two-way sync; typically, all data from the tablet is pushed to the server, and - in order to conserve bandwidth - only data from some forms is pulled to the tablet. 
 
 The form responses that are synced depend on which forms are configured for sync and limited to a grouping by the "location" field in that users' profile.
 

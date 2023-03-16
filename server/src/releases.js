@@ -75,7 +75,7 @@ const releasePWA = async (req, res)=>{
       res.send({statusCode: 200, data: 'ok', buildId})
     });
     // await child.kill()
-    
+      
 	} catch (error) {
 		console.error(error)
 		res.send({ statusCode: 500, data: error })

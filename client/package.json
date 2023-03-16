@@ -61,7 +61,7 @@
     "rxjs": "^6.6.7",
     "rxjs-compat": "^6.6.7",
     "spark-md5": "^3.0.2",
-    "tangy-form": "^4.38.3",
+    "tangy-form": "^4.39.3",
     "translation-web-component": "^1.1.1",
     "tslib": "^2.4.1",
     "underscore": "^1.13.6",

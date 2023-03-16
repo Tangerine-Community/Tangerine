@@ -31,21 +31,21 @@ module.exports = {
       for (let i = 0; i < groups.length; i++) {
         const groupId = groups[i]
         await initializeGroupForMySQL(groupId)
-        const knex = require('knex')({
-          client: 'mysql2',
-          connection: {
-            host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
-            port: 3306,
-            user: `${process.env.T_MYSQL_USER}`,
-            password: `${process.env.T_MYSQL_PASSWORD}`
-          }
-        })
-        try {
-          await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
-        } catch (e) {
-          log.debug(e)
-        }
-        await knex.destroy()
+        // const knex = require('knex')({
+        //   client: 'mysql2',
+        //   connection: {
+        //     host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
+        //     port: 3306,
+        //     user: `${process.env.T_MYSQL_USER}`,
+        //     password: `${process.env.T_MYSQL_PASSWORD}`
+        //   }
+        // })
+        // try {
+        //   await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
+        // } catch (e) {
+        //   log.debug(e)
+        // }
+        // await knex.destroy()
       }
     },
     disable: function(data) {
@@ -61,8 +61,16 @@ module.exports = {
       const { groupNames } = data
       for (let i = 0; i < groupNames.length; i++) {
         const groupName = groupNames[i]
-        await removeGroupForMySQL(groupName)
-        await initializeGroupForMySQL(groupName)
+        try {
+          await removeGroupForMySQL(groupName)
+        } catch (e) {
+          console.log("error: " + e)
+        }
+        try {
+          await initializeGroupForMySQL(groupName)
+        } catch (e) {
+          console.log("error: " + e)
+        }
       }
       return data
     },
@@ -263,13 +271,28 @@ async function removeGroupForMySQL(groupId) {
 
 async function initializeGroupForMySQL(groupId) {
   const mysqlDbName = groupId.replace(/-/g,'')
-  console.log(`Creating mysql db ${mysqlDbName}`)
+  // console.log(`Creating mysql db ${mysqlDbName}`)
+  // try {
+  //   await exec(`mysql -u ${process.env.T_MYSQL_USER} -h ${process.env.T_MYSQL_CONTAINER_NAME} -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+  // } catch (e) {
+  //   console.log(`Error creating mysql db ${mysqlDbName}`)
+  //   console.log(e)
+  // }
+  const knex = require('knex')({
+    client: 'mysql2',
+    connection: {
+      host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
+      port: 3306,
+      user: `${process.env.T_MYSQL_USER}`,
+      password: `${process.env.T_MYSQL_PASSWORD}`
+    }
+  })
   try {
-    await exec(`mysql -u ${process.env.T_MYSQL_USER} -h ${process.env.T_MYSQL_CONTAINER_NAME} -p"${process.env.T_MYSQL_PASSWORD}" -e "CREATE DATABASE ${mysqlDbName};"`)
+    await knex.raw('CREATE DATABASE ' + mysqlDbName)
   } catch (e) {
-    console.log(`Error creating mysql db ${mysqlDbName}`)
-    console.log(e)
+    log.debug(e)
   }
+  await knex.destroy()
   console.log(`Created mysql db ${mysqlDbName}`)
 }
 
@@ -879,7 +902,7 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
     // const e = SqlString.escapeId(dataKeys[i], true)
     // dataKeys[i] = e
     if (!infoKeysLower.includes(e.toLowerCase())) {
-      log.info(`Adding column ${e} new name: ${dataKeys[i]} to table ${tableName}`)
+      log.info(`Adding new column ${e} to table ${tableName}`)
       try {
         await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
           t.text(e)

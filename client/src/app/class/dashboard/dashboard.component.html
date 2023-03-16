@@ -51,10 +51,14 @@
 </mat-toolbar>
 
 <mat-toolbar *ngIf="!selectedClass" class="classDashboard">
+
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
             [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
       {{'Add Class'|translate}}
+    </button>
+    <button mat-stroked-button color="primary" [routerLink]="['/class-config/']">
+        <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>
     </button>
   </span>
 </mat-toolbar>
@@ -131,6 +135,9 @@
 
 
   </div>
+</mat-card>
+<mat-card class="tangy-class-card-content-container" *ngIf="!selectedClass">
+  {{'Click the wrench icon to enable an archived class.'|translate}}
 </mat-card>
 
 <div #container class = "hideme"> </div>

@@ -34,8 +34,15 @@ const { getPermissionsList } = require('./permissions-list.js');
 const { releaseAPK, releasePWA, releaseOnlineSurveyApp, unreleaseOnlineSurveyApp, commitFilesToVersionControl } = require('./releases.js');
 const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
 const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
+
+// Middleware to protect routes.
 const allowIfUser1 = require('./middleware/allow-if-user1.js');
-const isAuthenticated = require("./middleware/is-authenticated");
+const isAuthenticated = require('./middleware/is-authenticated.js')
+const {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
+const hasUploadToken = require('./middleware/has-upload-token.js')
+const hasDeviceOrUploadToken = require('./middleware/has-device-token-or-has-upload-token.js')
+const hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
+// const isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 const isUnprotected = require("./middleware/is-unprotected");
 
 if (process.env.T_AUTO_COMMIT === 'true') {
@@ -96,15 +103,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '1gb' }))
 app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
-// Middleware to protect routes.
-var isAuthenticated = require('./middleware/is-authenticated.js')
-var {permit, permitOnGroupIfAll} = require('./middleware/permitted.js')
-var hasUploadToken = require('./middleware/has-upload-token.js')
-var hasDeviceOrUploadToken = require('./middleware/has-device-token-or-has-upload-token.js')
-var hasSurveyUploadKey = require('./middleware/has-online-survey-upload-key')
-// var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
-app.get('/version',
+
+
+  app.get('/version',
   function (req, res) {
     res.send(process.env.T_VERSION);
   }
@@ -170,7 +172,11 @@ app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, save
 
 app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
-app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
+  if (process.env.T_UPLOAD_WITHOUT_UPDATING_REV === "false") {
+    app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
+  } else {
+    app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload-without-get-rev.js'))
+  }
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
 app.get('/app/:groupId/response-variable-value/:responseId/:variableName', isAuthenticated, require('./routes/group-response-variable-value.js'))
 app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))
