@@ -85,7 +85,7 @@ T_REGISTRATION_REQUIRES_SERVER_USER="false"
 T_CENTRALLY_MANAGED_USER_PROFILE="false"
 
 # Sync Protocol 1 Only: Don't do a GET before a PUT when uploading.
-T_UPLOAD_WITHOUT_UPDATING_REV="false"
+T_UPLOAD_WITHOUT_UPDATING_REV="true"
 
 # Auto Commit will make a commit in every group's content folder at a specified frequency. Changes are only committed if there is a change.
 T_AUTO_COMMIT="true"
