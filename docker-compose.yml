@@ -63,6 +63,7 @@ services:
 #    entrypoint: "/bin/sh -c \"cd /tangerine/editor && npm run dockerdev && cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     entrypoint: "/bin/sh -c \"cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     volumes:
+      - ./data/groups:/tangerine/groups/:delegated
       - ./editor/package.json:/tangerine/editor/package.json:delegated
       - ./editor/package-lock.json:/tangerine/editor/package-lock.json:delegated
       - ./editor/src:/tangerine/editor/src:delegated
