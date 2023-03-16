@@ -76,6 +76,29 @@ cd /tangerine/editor
 npm run dockerdev ### to watch the editor dirs.
 ```
 
+### Modifying the client app
+
+docker exec -it apk-generator sh
+
+```
+cd /tangerine/client
+./node_modules/.bin/ng build --watch --poll 100 --base-href ./ -c production --output-path ./dev &
+```
+
+and in another shell run the copy script
+
+docker exec -it apk-generator sh
+```
+cd /tangerine/client && \
+rm -rf builds/apk/www/shell && \
+rm -rf builds/pwa/release-uuid/app && \
+cp -r dev builds/apk/www/shell && \
+cp -r pwa-tools/updater-app/build/default builds/pwa && \
+cp -r dev builds/pwa/release-uuid/app
+```
+
+Now after you make changes, run the copy script and this will update the builds dir when you generate an apk or pwa.
+
 ## Server
 
 The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server/src/express-app.js. Notice that these routes are mostly different from the routes in server-ui/src/express-app.js.
