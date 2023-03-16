@@ -15,6 +15,8 @@ import * as qrcode from 'qrcode-generator-es6';
 import * as moment from 'moment'
 import * as XLSX from "xlsx";
 import { UAParser } from 'ua-parser-js';
+import {FilesService} from "../services/files.service";
+import {LocationList} from "../../shared/_services/app-config.service";
 
 const template__calculateDownSyncSizeFunction = `
   window.calculateDownSyncSize = async function() {
@@ -96,6 +98,8 @@ export class GroupDevicesComponent implements OnInit {
     private httpClient:HttpClient,
     private groupsService:GroupsService,
     private groupDevicesService:GroupDevicesService,
+
+    private filesService: FilesService
   ) { }
 
   async ngOnInit() {
@@ -107,9 +111,7 @@ export class GroupDevicesComponent implements OnInit {
     ]
     this.route.params.subscribe(async params => {
       this.groupId = params.groupId
-      const group = await this.groupsService.getGroupInfo(params.groupId)
-      //this.menuService.setContext(group.label, 'Deploy', 'deploy', group._id)
-      const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
+      const locationList = await this.filesService.get(this.groupId, 'location-list.json')
       this.flatLocationList = Loc.flatten(locationList)
       //this.locationEl.nativeElement.addEventListener('change', (event) => this.onLocationSelection(event.target.value))
       this.update()
@@ -492,7 +494,7 @@ export class GroupDevicesComponent implements OnInit {
   }
 
   async generateDevices() {
-    const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
+    const locationList = <LocationList>await this.filesService.get(this.groupId, 'location-list.json')
     const maxSyncLocations = 20
     // Set up an array of blank syncLocations for the template to iterate over.
     const syncLocations = []
@@ -535,6 +537,7 @@ export class GroupDevicesComponent implements OnInit {
           <tangy-location
             name="assigned_location"
             label="Assign device to location at which location?"
+            location-src="/files/${this.groupId}/assets/location-list.json"
             hint-text="This determines the default location metadata for syncing that is applied to a new Case. Your forms may reassign a Case, see change-location-of-case form in the case-module content set for an example."
             show-levels='${locationList.locationsLevels.join(',')}'
           >
@@ -577,6 +580,7 @@ export class GroupDevicesComponent implements OnInit {
             </tangy-radio-buttons>
             <tangy-location
               name="sync_location__${i}"
+              location-src="/files/${this.groupId}/assets/location-list.json"
               show-if="parseInt(getValue('number_of_sync_locations'))-1 >= ${i}"
               label="Sync device to which location?"
               ${syncLocations && syncLocations[i] && syncLocations[i].value ? `

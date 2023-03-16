@@ -22,7 +22,9 @@ export class TangyFormsInfoService {
   }
 
   async getFormInfo(id:string, groupId:string):Promise<FormInfo> {
-    return (await this.getFormsInfo(groupId)).find(formInfo => formInfo.id === id)
+    const formsInfo = await this.getFormsInfo(groupId)
+    const result = formsInfo.find(formInfo => formInfo.id === id)
+    return result
   }
 
   async getFormTemplateMarkup(formId:string, formTemplateId:string, groupId:string):Promise<string> {

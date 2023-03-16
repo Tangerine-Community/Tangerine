@@ -117,3 +117,46 @@ Output:
 Add the following to the docker-compose image section to provide verbose debugging of nginx:
 `command: [nginx-debug, '-g', 'daemon off;']`
 
+## Migration issues
+
+I have migrated most of the editor code that directly fetches app assets from the server to use the filesService, which uses a URL that nginx easily does a proxy_pass over to the server.
+Unfortunately some of the code is inside the tangy-form lib and would require much more refactoring to use fileServer. 
+
+Example get using filesService: `const appConfig = <AppConfig>await this.filesService.get(this.groupId, 'app-config.json')`
+Example get using XMLHttpRequest (tangy-form's tangy-location input) `request.open('GET', this.locationSrc);`
+ - this.locationSrc = './assets/location-list.json'
+ - This creates the following urL: ' /app/group-0812e5b7-8d13-48f4-b274-f1ebff2f1df1/assets/location-list.json'
+ - I had to add  the following mapping in the docker container for server-ui to access the data dir: 
+```yaml
+      - ./data/groups:/tangerine/groups/:delegated
+```
+ - In the server-ui express-app.js I added a route that points to the /tangerine/groups/ path inside the container. It uses this new mapping to ./groups...
+```yaml
+  app.use('/app/:group/assets/', function (req, res, next) {
+    const params = JSON.stringify(req.params)
+    console.log("server-ui route: /app/:group/assets : " + params + " req.url: " + req.url + " req.originalUrl: " + req.originalUrl)
+    let contentPath = `/tangerine/groups/${req.params.group}/client`
+    return express.static(contentPath).apply(this, arguments);
+  });
+ - ```
+ - One thing to note: the main / routes to server-ui (editor): 
+```yaml
+    location / {
+      proxy_pass http://server-ui;
+    }
+```
+     We may consider having it route to server instead and have it hoist the editor. Also check out these express routes in server-ui (editor):
+   ```js
+      app.use('/', function (req, res, next) {
+  app.use('/app/:group/', function (req, res, next) {...}
+  app.use('/app/:group/assets/', function (req, res, next) {
+
+```
+    The last route - /app/:group/assets/ - is what is serving files from the groups directory on the /tangerine fs. 
+
+Ideally, app.use('/',..) amd app.use('/app/:group/assets/') would be in server/express-app.js and only  app.use('/app/:group/') would be in server-ui/express-app.js.
+
+
+  
+
+

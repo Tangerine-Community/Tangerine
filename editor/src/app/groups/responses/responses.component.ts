@@ -6,6 +6,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment'
+import {FilesService} from "../services/files.service";
 
 @Component({
   selector: 'app-responses',
@@ -34,7 +35,8 @@ export class ResponsesComponent implements OnInit {
     private appConfigService:AppConfigService,
     private route:ActivatedRoute,
     private http: HttpClient,
-    private router:Router
+    private router:Router,
+    private filesService: FilesService
   ) {
     this.moment = moment
   }
@@ -47,7 +49,7 @@ export class ResponsesComponent implements OnInit {
   }
 
   async getResponses() {
-    const locationList = await this.http.get('./assets/location-list.json').toPromise()
+    const locationList = await this.filesService.get(this.groupId, 'location-list.json')
     let responses = []
     if (this.filterBy === '*') {
       responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responses/${this.limit}/${this.skip}`).toPromise()
