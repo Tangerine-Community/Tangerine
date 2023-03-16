@@ -249,8 +249,8 @@ export class GroupService {
       ...(!tangyModules.enabledModules.includes('case') && !tangyModules.enabledModules.includes('class'))
         ? [
           {
-            id: 'reports',
-            src: './reports/form.html',
+            id:'reports',
+            src: './assets/reports/form.html',
             title: 'Reports',
             listed: false,
             ...tangyModules.enabledModules.includes('case')

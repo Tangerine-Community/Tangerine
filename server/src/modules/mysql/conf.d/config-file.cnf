@@ -1,2 +1,4 @@
 [mysqld]
-default-storage-engine=myisam
+innodb-strict-mode=OFF
+innodb-page-size=64K
+innodb-log-buffer-size=128M

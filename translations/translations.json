@@ -20,6 +20,11 @@
     "languageDirection": "ltr"
   },
   {
+    "label": "Español (GT)",
+    "languageCode": "es_gt",
+    "languageDirection": "ltr"
+  },
+  {
     "label": "French",
     "languageCode": "fr",
     "languageDirection": "ltr"

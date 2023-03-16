@@ -1,6 +1,7 @@
-# Using docker-compose to launch Tangerine
+# New Tangerine 4.0 Architecture
 
-The docker-compose.yml file builds and launches several containers:
+Tangerine 4.0 features a new architecture which offers greater security and resiliency for the application. The new design breaks Tangerine down into five containers, which are described in the docker-compose.yml file. 
+
 - server-ui - a NEST.js app that serves the editor interface. 
   - Available at port 81 inside the tangerine_default network.
   - ./Dockerfile-server-ui
@@ -21,8 +22,15 @@ The docker-compose.yml file builds and launches several containers:
 
 # Configuration
 
-Copy config.defaults.env to config.env and change T_HOST_NAME. If you're planning to upload data from a client, set:
+Older versions of Tangerine used a config.sh for configuration. The new version uses a config.env file. Copy config.defaults.env to config.env and change T_HOST_NAME. If you're planning to upload data from a client, set:
  - T_PROTOCOL="https"
+If migrating from an older version of Tangerine, rename config.sh to config.env. It's a better idea to start fresh because there may be new properties introduced in the config.defaults.env fie, but in a pinch it's fine.
+
+# Launching Tangerine
+
+All of the shell scripts for launching Tangerine are in the root directory. Some of them have -linux appended to the filename, indicating they are for linux installations. It's usually the difference between using `docker-compose` on Mac and `docker compose` on Linux.
+
+`./start-docker-compose-linux.sh  2> /dev/null` - Starts the containers and filters out verbose logs from couchdb. Wait a few minutes for the logs to show the server-ui route mappings; then it is ready to use.
 
 # Testing
 
