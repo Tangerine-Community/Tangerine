@@ -78,16 +78,18 @@ npm run dockerdev ### to watch the editor dirs.
 
 ### Modifying the client app
 
-docker exec -it apk-generator sh
+First get client to build automatically: 
+
+docker exec -it apk-generator bash
 
 ```
 cd /tangerine/client
 ./node_modules/.bin/ng build --watch --poll 100 --base-href ./ -c production --output-path ./dev &
 ```
 
-and in another shell run the copy script
+Since that command was run with an "&" at the end - instructing the shell to run the command as a background process -  you can run the next command in the same shell. Wait a moment to get the results of the first command. 
+Now run the following script to copy the built app whenever you want to generate an APK or PWA:
 
-docker exec -it apk-generator sh
 ```
 cd /tangerine/client && \
 rm -rf builds/apk/www/shell && \
