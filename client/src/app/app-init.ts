@@ -1,6 +1,6 @@
 import { Injectable }  from '@angular/core';
 import { EncryptionPlugin } from './shared/_classes/app-config.class';
-import { connectToCryptoPouchDb, connectToIndexedDb, connectToPouchDb, connectToSqlCipherDb, DB } from './shared/_factories/db.factory';
+import { connectToCryptoPouchDb, connectToIndexedDb, connectToPouchDb } from './shared/_factories/db.factory';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 function getAppConfig() {
@@ -19,7 +19,7 @@ function getAppConfig() {
 
 async function hasInstalledOnPouchDB() {
   // Some initial process of elimination.
-  if (await hasInstalledOnCryptoPouch() || await hasInstalledOnSqlcipher()) {
+  if (await hasInstalledOnCryptoPouch() || await hasInstalledOnIndexedDB()) {
     return false
   }
   // See if the installed variable is set.
@@ -32,26 +32,6 @@ async function hasInstalledOnPouchDB() {
     hasInstalled = false
   }
   console.log("hasInstalledOnPouchDB: " + hasInstalled)
-  return hasInstalled
-}
-
-async function hasInstalledOnSqlcipher() {
-  if (!window['isCordovaApp']) {
-    // Not a Cordova App? Definitely never installed using SqlCipher.
-    return false
-  }
-  let hasInstalled = false
-  // While this doesn't connect to an encrypted db, it will connect to a db in sqlite thus testing if
-  // sqlcipher has ever been installed on. Note that if we ever add support for unencrypted sqlite, this
-  // check won't work.
-  let db = connectToSqlCipherDb('tangerine-variables')
-  try {
-    await db.get('installed')
-    hasInstalled = true
-  } catch(e) {
-    hasInstalled = false
-  }
-  console.log("hasInstalledOnSqlcipher: " + hasInstalled)
   return hasInstalled
 }
 
@@ -83,16 +63,6 @@ async function hasInstalledOnIndexedDB() {
   return hasInstalled
 }
 
-
-async function sqlcipherIsEnabled() {
-  const appConfig = await getAppConfig();
-  // If no encryption plugin is defined and app level encryption is not turned off, default to sqlCipher being enabled.
-  return appConfig['encryptionPlugin'] === EncryptionPlugin.SqlCipher ||
-    (!appConfig['encryptionPlugin'] && !appConfig['turnOffAppLevelEncryption'])
-      ? true
-      : false
-}
-
 async function cryptoPouchIsEnabled() {
   const appConfig = await getAppConfig();
   return appConfig['encryptionPlugin'] === EncryptionPlugin.CryptoPouch
@@ -102,15 +72,15 @@ async function cryptoPouchIsEnabled() {
 
 async function indexedDbIsEnabled() {
   const appConfig = await getAppConfig();
-  return appConfig['useCustomAdapter']
+  return !appConfig['useLegacyAdapter']
     ? true
     : false
 }
 
 async function hasNotInstalledOnAnything() {
   return !await hasInstalledOnPouchDB() &&
-    !await hasInstalledOnSqlcipher() &&
-    !await hasInstalledOnCryptoPouch()
+         !await hasInstalledOnIndexedDB() &&
+         !await hasInstalledOnCryptoPouch()
       ? true
       : false 
 }
@@ -118,11 +88,6 @@ async function hasNotInstalledOnAnything() {
 async function startCryptoPouch() {
   console.log('Starting CryptoPouch...')
   window['cryptoPouchRunning'] = true
-}
-
-async function startSqlcipher() {
-  console.log('Starting SqlCipher...')
-  window['sqlCipherRunning'] = true
 }
 
 async function startIndexedDb() {
@@ -145,12 +110,6 @@ export class AppInit {
             await sleep(1000)
           }
           // Determine if we should start an encryption plugin.
-          if (
-            await hasInstalledOnSqlcipher() || 
-            (await sqlcipherIsEnabled() && await hasNotInstalledOnAnything())
-          ) {
-            await startSqlcipher()
-          }
           if (
             await hasInstalledOnCryptoPouch() ||
             (await cryptoPouchIsEnabled() && await hasNotInstalledOnAnything())
