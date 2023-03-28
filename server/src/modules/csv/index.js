@@ -402,8 +402,9 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
           }
           ;
           let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+          let totalNumberOfItems = input.value.length
           let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
-          let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+          let numberOfItemsCorrect = totalNumberOfItems - numberOfItemsIncorrect
           set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
           set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
           set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)

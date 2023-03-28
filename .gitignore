@@ -59,3 +59,6 @@ scripts/apk-build.sh
 /site
 
 /.vscode
+.angular
+.secrets
+._.DS_Store
