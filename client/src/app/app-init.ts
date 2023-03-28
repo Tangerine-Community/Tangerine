@@ -1,8 +1,6 @@
 import { Injectable }  from '@angular/core';
 // @ts-ignore
-import { EncryptionPlugin } from './shared/_classes/app-config.class';
-import { connectToCryptoPouchDb, connectToIndexedDb, connectToPouchDb } from './shared/_factories/db.factory';
-const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+import { connectToCryptoPouchDb, connectToIndexedDb, connectToLegacyIdb } from './shared/_factories/db.factory';
 
 function getAppConfig() {
   return new Promise((resolve, reject) => {
@@ -18,21 +16,21 @@ function getAppConfig() {
   })
 }
 
-async function hasInstalledOnPouchDB() {
+async function hasInstalledOnLegacyIdb() {
   // Some initial process of elimination.
   if (await hasInstalledOnCryptoPouch() || await hasInstalledOnIndexedDB()) {
     return false
   }
   // See if the installed variable is set.
   let hasInstalled = false
-  let db = connectToPouchDb('tangerine-variables')
+  let db = connectToLegacyIdb('tangerine-variables')
   try {
     await db.get('installed')
     hasInstalled = true
   } catch(e) {
     hasInstalled = false
   }
-  console.log("hasInstalledOnPouchDB: " + hasInstalled)
+  console.log("hasInstalledOnLegacyIdb: " + hasInstalled)
   return hasInstalled
 }
 
@@ -66,20 +64,27 @@ async function hasInstalledOnIndexedDB() {
 
 async function cryptoPouchIsEnabled() {
   const appConfig = await getAppConfig();
-  return appConfig['encryptionPlugin'] === EncryptionPlugin.CryptoPouch
+  return !appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyAdapter"]
     ? true
     : false
 }
 
 async function indexedDbIsEnabled() {
   const appConfig = await getAppConfig();
-  return !appConfig['useLegacyAdapter']
+  return appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyIdbAdapter"]
+    ? true
+    : false
+}
+
+async function legacyIdbIsEnabled() {
+  const appConfig = await getAppConfig();
+  return appConfig["useLegacyIdbAdapter"]
     ? true
     : false
 }
 
 async function hasNotInstalledOnAnything() {
-  return !await hasInstalledOnPouchDB() &&
+  return !await hasInstalledOnLegacyIdb() &&
          !await hasInstalledOnIndexedDB() &&
          !await hasInstalledOnCryptoPouch()
       ? true
@@ -96,6 +101,11 @@ async function startIndexedDb() {
   window['indexedDbRunning'] = true
 }
 
+async function startLegacyIdb() {
+  console.log('Starting Legacy IDB...')
+  window['legacyIdbRunning'] = true
+}
+
 @Injectable()
 export class AppInit {
   constructor() {
@@ -106,10 +116,6 @@ export class AppInit {
       console.log("AppInitService.init() called");
       if (window['isCordovaApp']) {
         document.addEventListener('deviceready', async () => {
-          // Wait until sqlite is ready.
-          while (!window['sqliteStorageFile']) {
-            await sleep(1000)
-          }
           // Determine if we should start an encryption plugin.
           if (
             await hasInstalledOnCryptoPouch() ||
@@ -122,6 +128,12 @@ export class AppInit {
             (await indexedDbIsEnabled() && await hasNotInstalledOnAnything())
           ) {
             await startIndexedDb()
+          }
+          if (
+            await hasInstalledOnLegacyIdb() || 
+            await legacyIdbIsEnabled() && await hasNotInstalledOnAnything()
+          ) {
+            await startLegacyIdb()
           }
           // If the above didn't start encryption, encryption won't be used.
           const appConfig = await getAppConfig();
@@ -137,8 +149,17 @@ export class AppInit {
         ) {
           await startCryptoPouch()
         }
-        else if (await indexedDbIsEnabled()) {
+        if (
+          await hasInstalledOnIndexedDB() ||
+          (await indexedDbIsEnabled() && await hasNotInstalledOnAnything())
+        ) {
           await startIndexedDb()
+        }
+        if (
+          await hasInstalledOnLegacyIdb() || 
+          await legacyIdbIsEnabled() && await hasNotInstalledOnAnything()
+        ) {
+          await startLegacyIdb()
         }
         // Enabling this setting for testing with a PWA.
         const appConfig = await getAppConfig();
