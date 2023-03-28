@@ -4,7 +4,7 @@
 
 __Fixes__
 - Fix running the `reporting-cache-clear` command on the `mysql-js` module
-- Extend the particpantID key to 64 chars to handle long keys for T_MYSQL_MULTI_PARTICIPANT_SCHEMA
+- Extend the particpantID key to 80 chars to handle long keys for T_MYSQL_MULTI_PARTICIPANT_SCHEMA
     - For those using `mysql-js`: This change requires running `reporting-cache-clear` to take effect.
 
 __Server upgrade instructions__
