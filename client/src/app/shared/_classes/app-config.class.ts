@@ -92,10 +92,11 @@ export class AppConfig {
   // Encryption configuration.
   //
 
-  // Options are "SqlCipher" or "CryptoPouch". "SqlCipher" is the default but "CryptoPouch" is probably more stable.
-  encryptionPlugin:EncryptionPlugin
   // Turns off all app level encryption. App will then report as depending on System (disk) level encryption.
   turnOffAppLevelEncryption:boolean
+
+  // Turns on Legacy IDB Adapter.
+  useLegacyIdbAdapter:boolean
 
   //
   // GPS configuration.
@@ -161,9 +162,4 @@ export class AppConfig {
 
   calculateLocalDocsForLocation:boolean;
   
-}
-
-export enum EncryptionPlugin {
-  SqlCipher = 'SqlCipher',
-  CryptoPouch = 'CryptoPouch'
 }
