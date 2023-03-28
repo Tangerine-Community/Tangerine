@@ -55,6 +55,7 @@ export function connectToIndexedDb(name, key = ''):PouchDB {
   }
 }
 
+/* TODO: Leaving Legacy adapter IDB in for now until we test indexeddb and CryptoPouch */
 export function connectToPouchDb(name):PouchDB {
   const pouchDBOptions = <any>{}
   if (window['changes_batch_size'] && name === 'shared-user-database') {
