@@ -537,7 +537,6 @@ function populateDataFromDocument(doc, data) {
           // const keySafe = sanitizedKey.replace(/\./g,'_')
           const keySafe = sanitizeMysql(sanitizedKey)
           // log.info(`key: ${key}; keySafe: ${keySafe}; value: ${value}`)
-          if ()
           cleanData[keySafe] = value
         } catch (e) {
           log.info(`ERROR: key: ${key}; value: ${value}; e: ${e}`)
