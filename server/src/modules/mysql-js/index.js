@@ -120,7 +120,7 @@ module.exports = {
               let key_len = 32
               if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
                 participant_id = doc._id + '-' + participant.id
-                key_len = 64
+                key_len = 80
               }
               const flatDoc = stringifyDocDataObjects({
                 ...participant,
