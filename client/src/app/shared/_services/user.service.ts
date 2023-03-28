@@ -27,7 +27,7 @@ export type UserRole = string
 export class UserService {
 
   userData = {};
-  usersDb = DB('users')
+  usersDb = DB('users');
   userDatabases: Array<UserDatabase> = []
   config: AppConfig
   _currentUser = ''
