@@ -255,9 +255,17 @@ async function removeGroupForMySQL(groupId) {
   } catch (e) {
     log.error(e)
   }
-  const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-  await fs.unlink(pathToStateFile)
-  console.log(`Removed state file and database for ${groupId}`)
+  try {
+    const pathToStateFile = `/mysql-module-state/${groupId}.ini`
+    await fs.unlink(pathToStateFile)
+    console.log(`Removed legacy state file and database for ${groupId}`)
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      return;
+    } else {
+      log.error(e)
+    }
+  }
  
 }
 
