@@ -88,6 +88,7 @@ export class SyncCouchdbService {
   pullSyncOptions;
   pushSyncOptions;
   fullSync: string;
+  isFirstSync: boolean;
   retryCount: number
   
   constructor(
@@ -128,6 +129,8 @@ export class SyncCouchdbService {
     fullSync?:SyncDirection,
     reduceBatchSize = false
   ): Promise<ReplicationStatus> {
+    // set isFirstSync
+    this.isFirstSync = isFirstSync
     // set fullSync
     this.fullSync = fullSync
     // Prepare config.
@@ -319,7 +322,7 @@ export class SyncCouchdbService {
         this.syncMessage$.next(progress);
       }).on('checkpoint', (info) => {
         if (info) {
-          // console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
+          console.log(direction + ': Checkpoint - Info: ' + JSON.stringify(info));
           let progress;
           if (info.checkpoint) {
             checkpointProgress = checkpointProgress + 1
@@ -542,7 +545,7 @@ export class SyncCouchdbService {
     if (typeof prePullLastSeq === 'undefined') {
       prePullLastSeq = 0;
     }
-    if (this.fullSync && this.fullSync === 'pull') {
+    if (!this.isFirstSync && this.fullSync && this.fullSync === 'pull') {
       prePullLastSeq = 0;
     }
     const pullSelector = this.getPullSelector(syncDetails);
