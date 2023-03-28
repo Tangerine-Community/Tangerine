@@ -43,7 +43,8 @@ RUN cordova plugin add cordova-plugin-x-socialsharing --save && sleep 5
 
 RUN apk add --update bash vim curl wget jq git tar unzip bash-completion gradle
 
-RUN #cordova build
+## No need to warm up cordova
+# RUN cordova build
 
 ## Install apk-generator.
 ADD ./apk-generator/package.json /tangerine/apk-generator/package.json

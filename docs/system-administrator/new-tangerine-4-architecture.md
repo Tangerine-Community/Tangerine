@@ -28,9 +28,7 @@ If migrating from an older version of Tangerine, rename config.sh to config.env.
 
 # Launching Tangerine
 
-All of the shell scripts for launching Tangerine are in the root directory. Some of them have -linux appended to the filename, indicating they are for linux installations. It's usually the difference between using `docker-compose` on Mac and `docker compose` on Linux.
-
-`./start-docker-compose-linux.sh  2> /dev/null` - Starts the containers and filters out verbose logs from couchdb. Wait a few minutes for the logs to show the server-ui route mappings; then it is ready to use.
+All of the shell scripts for launching Tangerine are in the root directory. The two scripts `develop.sh` and `start.sh` start the cascade to build and run the docker containers. 
 
 # Testing
 
@@ -113,8 +111,6 @@ The bootstrap function creates a NestExpressApplication using `src/app.module.ts
 
 `./develop-docker-compose.sh  2> /dev/null` - Dev mode for the start script. If you open `develop-docker-compose.sh`, you'll see the `NPM_DEV_MODE=":dev"` switch, which launches server and server-ui in dev mode (watch files for changes).
 
-`./start-docker-compose-linux.sh  2> /dev/null` - Linux version of the start script - uses `docker compose` instead of `docker-compose`.
-
 `docker exec -it nginx sh` - shell to nginx (or substitute 'nginx' for server or server-ui to access those container shells). The base image is Alpine; Alpine ships with sh instead of bash.
 
 `docker network ls` - list the network ip addresses. Sample output:
@@ -188,8 +184,5 @@ Example get using XMLHttpRequest (tangy-form's tangy-location input) `request.op
     The last route - /app/:group/assets/ - is what is serving files from the groups directory on the /tangerine fs. 
 
 Ideally, app.use('/',..) amd app.use('/app/:group/assets/') would be in server/express-app.js and only  app.use('/app/:group/') would be in server-ui/express-app.js.
-
-
-  
 
 

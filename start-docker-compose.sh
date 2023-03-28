@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Running start-compse.sh"
+echo "Running start-docker-compose.sh"
 echo "pwd: $pwd"
 
 
@@ -71,4 +71,4 @@ if [ ! -d data/dat-output ]; then
   mkdir data/dat-output
 fi
 
-docker-compose up
+docker compose up

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Running start-compse.sh"
+echo "Running develop-compose.sh"
 echo "pwd: $pwd"
 
 
@@ -71,4 +71,4 @@ if [ ! -d data/dat-output ]; then
   mkdir data/dat-output
 fi
 
-NPM_DEV_MODE=":dev" docker-compose up
+NPM_DEV_MODE=":dev" docker compose up
