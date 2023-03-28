@@ -2,8 +2,11 @@
 
 ## v4.0.0
 
+Upgrading to this version or higher requires reinstallation of all devices.
+
 __NEW Features__
 - Upgrades to Angular, Nest, and Cordova frameworks.
+- PouchDB upgrade to [v8.0](https://pouchdb.com/2022/12/14/pouchdb-8.0.0.html) and use the new IndexedDB adapter. By default the client app will be encrypted with CryptoPouch and use IndexedDB adapter. If `turnOffInAppEncryption` is set to true in the `app-config.sh`, then IndexedDB will be used without encryption.
 
 __Fixes__
  - Editor:Spreadsheet Templates - If you choose a form that does not yet have any data, the application pops up an alert 
