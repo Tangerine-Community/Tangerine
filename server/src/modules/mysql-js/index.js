@@ -109,8 +109,10 @@ module.exports = {
             for (let i = 0; i < doc.participants.length; i++) {
               const participant = doc.participants[i]
               let participant_id = participant.id
+              let key_len = 32
               if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
                 participant_id = doc._id + '-' + participant.id
+                key_len = 64
               }
               const flatDoc = stringifyDocDataObjects({
                 ...participant,
@@ -127,8 +129,8 @@ module.exports = {
               primaryKey = 'participantID'
               createFunction = function (t) {
                 t.engine('InnoDB')
-                t.string(primaryKey, 36).notNullable().primary();
-                t.string('CaseID', 36).index('participant_CaseID_IDX');
+                t.string(primaryKey, key_len).notNullable().primary();
+                t.string('CaseID', key_len).index('participant_CaseID_IDX');
                 t.double('inactive');
               }
               const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
