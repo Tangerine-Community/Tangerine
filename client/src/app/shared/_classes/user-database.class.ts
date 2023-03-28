@@ -4,9 +4,6 @@ import PouchDB from 'pouchdb';
 import { DB } from '../_factories/db.factory';
 import * as jsonpatch from "fast-json-patch";
 
-import PouchIndexedDb from 'pouchdb-adapter-indexeddb';
-PouchDB.plugin(PouchIndexedDb)
-
 export class UserDatabase {
 
   userId: string;
@@ -29,12 +26,10 @@ export class UserDatabase {
     this.groupId = groupId 
     this.attachHistoryToDocs = attachHistoryToDocs 
 
-    var changes_batch_size = window['changes_batch_size'] ? window['changes_batch_size'] : 50
-
     if (shared) {
-      this.db = new PouchDB(SHARED_USER_DATABASE_NAME, {adapter: 'indexeddb', view_update_changes_batch_size: changes_batch_size})
+      this.db = DB(SHARED_USER_DATABASE_NAME, key)
     } else {
-      this.db = new PouchDB(username, {adapter: 'indexeddb', view_update_changes_batch_size: changes_batch_size})
+      this.db = DB(username, key)
     }
   }
 
@@ -47,12 +42,6 @@ export class UserDatabase {
 
   async get(_id) {
     const doc = await this.db.get(_id);
-    // @TODO Temporary workaround for CryptoPouch bug where it doesn't include the _rev when getting a doc.
-    if (this.db.cryptoPouchIsEnabled) {
-      const tmpDb = new PouchDB(this.db.name)
-      const encryptedDoc = await tmpDb.get(_id)
-      doc._rev = encryptedDoc._rev
-    }
     return doc
   }
 

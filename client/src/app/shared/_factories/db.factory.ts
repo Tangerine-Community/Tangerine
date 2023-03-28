@@ -4,8 +4,6 @@ import PouchDB from 'pouchdb';
 // import * as PouchDBFind from 'pouchdb-find';
 import CryptoPouch from 'crypto-pouch';
 import * as PouchDBUpsert from 'pouchdb-upsert';
-import debugPouch from 'pouchdb-debug';
-PouchDB.plugin(debugPouch);
 import PouchDBFind from 'pouchdb-find';
 PouchDB.plugin(PouchDBFind);
 import PouchIndexedDb from 'pouchdb-adapter-indexeddb';

@@ -1,4 +1,5 @@
 import { Injectable }  from '@angular/core';
+// @ts-ignore
 import { EncryptionPlugin } from './shared/_classes/app-config.class';
 import { connectToCryptoPouchDb, connectToIndexedDb, connectToPouchDb } from './shared/_factories/db.factory';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
