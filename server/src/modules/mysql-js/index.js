@@ -384,6 +384,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
         set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+      } else if (input.tagName === 'TANGY-SIGNATURE') {
+        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input && typeof input.value === 'string') {
         set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
@@ -535,6 +537,7 @@ function populateDataFromDocument(doc, data) {
           // const keySafe = sanitizedKey.replace(/\./g,'_')
           const keySafe = sanitizeMysql(sanitizedKey)
           // log.info(`key: ${key}; keySafe: ${keySafe}; value: ${value}`)
+          if ()
           cleanData[keySafe] = value
         } catch (e) {
           log.info(`ERROR: key: ${key}; value: ${value}; e: ${e}`)
