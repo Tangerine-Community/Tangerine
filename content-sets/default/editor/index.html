@@ -39,6 +39,17 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
 } )
           
 
+var currentYear = (new Date()).getFullYear();
+var oldYear = parseInt(currentYear) - 4
+debugger
+for (var i = currentYear; i >= oldYear; i--) { 
+
+	var option = document.createElement('option');
+	option.text = i
+	option.value = i
+	inputs.year.insertBefore(option,inputs.year.children.item(0) )
+
+} 								 
          
             
             " on-change="
@@ -556,10 +567,7 @@ inputs.form.insertBefore(option,inputs.form.children.item(0) )
               <td>
                 <tangy-select name="year" class="" style="" required="" question-number="" label="Year" error-text=""
                   hint-text="" option-select-label="----" secondary-label="">
-                  <option value="2018">2018</option>
-                  <option value="2019">2019</option>
-                  <option value="2020">2020</option>
-                  <option value="2021">2021</option>
+                 
                 </tangy-select>
               </td>
               <td>

@@ -1,0 +1,19 @@
+<mat-dialog-content class="mat-typography">
+  <div #feedback id="feedback">
+    <div #feedbackMessage id="feedback-message">
+      <div mat-dialog-title class="dialog-title">
+        <button mat-icon-button aria-label="close dialog" mat-dialog-close (click)="onNoClick()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <mat-card *ngIf="data.classGroupReport?.feedback">
+        <mat-card-title>{{'Feedback'|translate}}</mat-card-title>
+        <mat-card-content>
+          <h2>{{'Student'|translate}}: {{data.name}}</h2>
+          <h3>{{tNumber(data.classGroupReport?.feedback?.percentileRange)}} {{'Percentile'|translate}}</h3>
+          <span [innerHTML]="data.classGroupReport?.feedback?.message"></span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</mat-dialog-content>
