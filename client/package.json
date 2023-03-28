@@ -54,6 +54,7 @@
     "pako": "^2.1.0",
     "plotly.js-dist": "^2.16.3",
     "pouchdb": "8.0.0",
+    "pouchdb-adapter-indexeddb": "8.0.0",
     "pouchdb-adapter-cordova-sqlite": "^2.0.8",
     "pouchdb-debug": "^7.2.1",
     "pouchdb-find": "^8.0.0",

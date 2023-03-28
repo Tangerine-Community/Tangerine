@@ -1,7 +1,6 @@
 import { Injectable }  from '@angular/core';
-import { EncryptionPlugin } from './shared/_classes/app-config.class';
-import { connectToCryptoPouchDb, connectToPouchDb, connectToSqlCipherDb, DB } from './shared/_factories/db.factory';
-const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+// @ts-ignore
+import { connectToCryptoPouchDb, connectToIndexedDb, connectToLegacyIdb } from './shared/_factories/db.factory';
 
 function getAppConfig() {
   return new Promise((resolve, reject) => {
@@ -17,41 +16,21 @@ function getAppConfig() {
   })
 }
 
-async function hasInstalledOnPouchDB() {
+async function hasInstalledOnLegacyIdb() {
   // Some initial process of elimination.
-  if (await hasInstalledOnCryptoPouch() || await hasInstalledOnSqlcipher()) {
+  if (await hasInstalledOnCryptoPouch() || await hasInstalledOnIndexedDB()) {
     return false
   }
   // See if the installed variable is set.
   let hasInstalled = false
-  let db = connectToPouchDb('tangerine-variables')
+  let db = connectToLegacyIdb('tangerine-variables')
   try {
     await db.get('installed')
     hasInstalled = true
   } catch(e) {
     hasInstalled = false
   }
-  console.log("hasInstalledOnPouchDB: " + hasInstalled)
-  return hasInstalled
-}
-
-async function hasInstalledOnSqlcipher() {
-  if (!window['isCordovaApp']) {
-    // Not a Cordova App? Definitely never installed using SqlCipher.
-    return false
-  }
-  let hasInstalled = false
-  // While this doesn't connect to an encrypted db, it will connect to a db in sqlite thus testing if
-  // sqlcipher has ever been installed on. Note that if we ever add support for unencrypted sqlite, this
-  // check won't work.
-  let db = connectToSqlCipherDb('tangerine-variables')
-  try {
-    await db.get('installed')
-    hasInstalled = true
-  } catch(e) {
-    hasInstalled = false
-  }
-  console.log("hasInstalledOnSqlcipher: " + hasInstalled)
+  console.log("hasInstalledOnLegacyIdb: " + hasInstalled)
   return hasInstalled
 }
 
@@ -70,26 +49,44 @@ async function hasInstalledOnCryptoPouch() {
   return hasInstalled
 }
 
-async function sqlcipherIsEnabled() {
-  const appConfig = await getAppConfig();
-  // If no encryption plugin is defined and app level encryption is not turned off, default to sqlCipher being enabled.
-  return appConfig['encryptionPlugin'] === EncryptionPlugin.SqlCipher ||
-    (!appConfig['encryptionPlugin'] && !appConfig['turnOffAppLevelEncryption'])
-      ? true
-      : false
+async function hasInstalledOnIndexedDB() {
+  let hasInstalled = false
+  let db = connectToIndexedDb('tangerine-variables')
+  try {
+    await db.get('installed')
+    hasInstalled = true
+  } catch(e) {
+    hasInstalled = false
+  }
+  console.log("hasInstalledOnIndexedDB: " + hasInstalled)
+  return hasInstalled
 }
 
 async function cryptoPouchIsEnabled() {
   const appConfig = await getAppConfig();
-  return appConfig['encryptionPlugin'] === EncryptionPlugin.CryptoPouch
+  return !appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyAdapter"]
+    ? true
+    : false
+}
+
+async function indexedDbIsEnabled() {
+  const appConfig = await getAppConfig();
+  return appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyIdbAdapter"]
+    ? true
+    : false
+}
+
+async function legacyIdbIsEnabled() {
+  const appConfig = await getAppConfig();
+  return appConfig["useLegacyIdbAdapter"]
     ? true
     : false
 }
 
 async function hasNotInstalledOnAnything() {
-  return !await hasInstalledOnPouchDB() &&
-    !await hasInstalledOnSqlcipher() &&
-    !await hasInstalledOnCryptoPouch()
+  return !await hasInstalledOnLegacyIdb() &&
+         !await hasInstalledOnIndexedDB() &&
+         !await hasInstalledOnCryptoPouch()
       ? true
       : false 
 }
@@ -99,9 +96,14 @@ async function startCryptoPouch() {
   window['cryptoPouchRunning'] = true
 }
 
-async function startSqlcipher() {
-  console.log('Starting SqlCipher...')
-  window['sqlCipherRunning'] = true
+async function startIndexedDb() {
+  console.log('Starting IndexedDB...')
+  window['indexedDbRunning'] = true
+}
+
+async function startLegacyIdb() {
+  console.log('Starting Legacy IDB...')
+  window['legacyIdbRunning'] = true
 }
 
 @Injectable()
@@ -114,22 +116,24 @@ export class AppInit {
       console.log("AppInitService.init() called");
       if (window['isCordovaApp']) {
         document.addEventListener('deviceready', async () => {
-          // Wait until sqlite is ready.
-          while (!window['sqliteStorageFile']) {
-            await sleep(1000)
-          }
           // Determine if we should start an encryption plugin.
-          if (
-            await hasInstalledOnSqlcipher() || 
-            (await sqlcipherIsEnabled() && await hasNotInstalledOnAnything())
-          ) {
-            await startSqlcipher()
-          }
           if (
             await hasInstalledOnCryptoPouch() ||
             (await cryptoPouchIsEnabled() && await hasNotInstalledOnAnything())
           ) {
             await startCryptoPouch()
+          }
+          if (
+            await hasInstalledOnIndexedDB() ||
+            (await indexedDbIsEnabled() && await hasNotInstalledOnAnything())
+          ) {
+            await startIndexedDb()
+          }
+          if (
+            await hasInstalledOnLegacyIdb() || 
+            await legacyIdbIsEnabled() && await hasNotInstalledOnAnything()
+          ) {
+            await startLegacyIdb()
           }
           // If the above didn't start encryption, encryption won't be used.
           const appConfig = await getAppConfig();
@@ -144,6 +148,18 @@ export class AppInit {
           (await cryptoPouchIsEnabled() && await hasNotInstalledOnAnything())
         ) {
           await startCryptoPouch()
+        }
+        if (
+          await hasInstalledOnIndexedDB() ||
+          (await indexedDbIsEnabled() && await hasNotInstalledOnAnything())
+        ) {
+          await startIndexedDb()
+        }
+        if (
+          await hasInstalledOnLegacyIdb() || 
+          await legacyIdbIsEnabled() && await hasNotInstalledOnAnything()
+        ) {
+          await startLegacyIdb()
         }
         // Enabling this setting for testing with a PWA.
         const appConfig = await getAppConfig();
