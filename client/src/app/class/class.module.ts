@@ -22,7 +22,10 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatPaginationIntlService} from "./_services/mat-pagination-intl.service";
 import {TranslateService} from "@ngx-translate/core";
 import { StudentSubtestReportComponent } from './reports/student-subtest-report/student-subtest-report.component';
-import { StudentGroupingReportComponent } from './reports/student-grouping-report/student-grouping-report.component';
+import {
+  FeedbackDialog,
+  StudentGroupingReportComponent
+} from './reports/student-grouping-report/student-grouping-report.component';
 import {PageNotFoundComponent} from "./page-not-found.component";
 import { StudentProgressTableComponent } from './reports/student-progress-table/student-progress-table.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
@@ -34,30 +37,32 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { ClassFormComponent } from './class-form/class-form.component';
 import {TangyFormsModule} from "../tangy-forms/tangy-forms.module";
 import {ClassFormsPlayerComponent} from "./class-forms-player.component";
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    ClassRoutingModule,
-    MatTabsModule,
-    MatInputModule,
-    MatMenuModule,
-    MatListModule,
-    MatCardModule,
-    CdkTableModule,
-    MatTableModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonToggleModule,
-    MatSlideToggleModule,
-    TangyFormsModule
-  ],
-  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent],
+    imports: [
+        CommonModule,
+        SharedModule,
+        ClassRoutingModule,
+        MatTabsModule,
+        MatInputModule,
+        MatMenuModule,
+        MatListModule,
+        MatCardModule,
+        CdkTableModule,
+        MatTableModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonToggleModule,
+        MatSlideToggleModule,
+        TangyFormsModule,
+        MatDialogModule
+    ],
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent],
   providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {

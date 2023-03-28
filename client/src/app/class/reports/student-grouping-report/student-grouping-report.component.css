@@ -137,6 +137,11 @@ p {
 #stats td:first-child {
   padding-left: 5px;
 }
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 
 

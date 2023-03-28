@@ -137,15 +137,18 @@ fi
 [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
 
-docker run -d \
-   -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
-   -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
-   -p 5984:5984 \
+CMD="docker run -d \
+   --restart on-failure \
+   -e COUCHDB_USER=\"$T_COUCHDB_USER_ADMIN_NAME\" \
+   -e COUCHDB_PASSWORD=\"$T_COUCHDB_USER_ADMIN_PASS\" \
+   $T_COUCHDB_PORT_MAPPING \
    -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
    -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
-   --name $T_COUCHDB_CONTAINER_NAME \
+   --name \"$T_COUCHDB_CONTAINER_NAME\" \
    couchdb:2
-
+"
+echo $CMD
+eval "$CMD"
 sleep 10
 
 #
@@ -198,6 +201,7 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --env \"T_JWT_EXPIRES_IN=$T_JWT_EXPIRES_IN\" \
   --env \"T_ONLY_PROCESS_THESE_GROUPS=$T_ONLY_PROCESS_THESE_GROUPS\" \
   --env \"T_LIMIT_NUMBER_OF_CHANGES=$T_LIMIT_NUMBER_OF_CHANGES\" \
+  --env \"T_UPLOAD_WITHOUT_UPDATING_REV=$T_UPLOAD_WITHOUT_UPDATING_REV\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -243,6 +247,7 @@ OPTIONS="
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
   --env \"T_MYSQL_MULTI_PARTICIPANT_SCHEMA=$T_MYSQL_MULTI_PARTICIPANT_SCHEMA\" \
   --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
+  --volume $(pwd)/server/src/modules/mysql-js/conf.d:/etc/mysql/conf.d:delegated \
   $OPTIONS
 "
 fi
