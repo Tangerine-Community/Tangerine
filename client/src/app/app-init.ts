@@ -64,7 +64,7 @@ async function hasInstalledOnIndexedDB() {
 
 async function cryptoPouchIsEnabled() {
   const appConfig = await getAppConfig();
-  return !appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyAdapter"]
+  return !appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyIdbAdapter"]
     ? true
     : false
 }
@@ -123,13 +123,13 @@ export class AppInit {
           ) {
             await startCryptoPouch()
           }
-          if (
+          else if (
             await hasInstalledOnIndexedDB() ||
             (await indexedDbIsEnabled() && await hasNotInstalledOnAnything())
           ) {
             await startIndexedDb()
           }
-          if (
+          else if (
             await hasInstalledOnLegacyIdb() || 
             await legacyIdbIsEnabled() && await hasNotInstalledOnAnything()
           ) {
@@ -149,13 +149,13 @@ export class AppInit {
         ) {
           await startCryptoPouch()
         }
-        if (
+        else if (
           await hasInstalledOnIndexedDB() ||
           (await indexedDbIsEnabled() && await hasNotInstalledOnAnything())
         ) {
           await startIndexedDb()
         }
-        if (
+        else if (
           await hasInstalledOnLegacyIdb() || 
           await legacyIdbIsEnabled() && await hasNotInstalledOnAnything()
         ) {

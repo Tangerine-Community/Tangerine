@@ -19,8 +19,10 @@ PouchDB.plugin(CryptoPouch)
 
 export function connectToCryptoPouchDb(name, key = ''):PouchDB {
   let pouchDBOptions = <any>{}
+  // deterministic_revs is required for CryptoPouch
   pouchDBOptions = {
-    adapter: 'indexeddb'
+    adapter: 'indexeddb',
+    deterministic_revs: true
   }
   if (key) {
     pouchDBOptions.key = key
