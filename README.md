@@ -210,6 +210,8 @@ cp ../translations/translation* src/assets/
 npm start
 ```
 
+If you are developing on an M1-based Mac, run `export NODE_OPTIONS="--openssl-legacy-provider"` in your command shell before running `npm start`.
+
 View the app at <http://localhost:4200>.
 
 __Optional__: If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
