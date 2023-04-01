@@ -200,6 +200,8 @@ export NODE_OPTIONS=--openssl-legacy-provider
 npm start
 ```
 
+If you are developing on an M1-based Mac, run `export NODE_OPTIONS="--openssl-legacy-provider"` in your command shell before running `npm start`.
+
 View the app at <http://localhost:4200>.
 
 If using ngrok.io or tunnelto.dev, use the 'start-using-proxy' instead of 'start' command. This will add some switches that enable the use of some older libraries.
