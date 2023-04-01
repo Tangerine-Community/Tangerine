@@ -1,0 +1,73 @@
+<div>
+<!--  <mat-card class="form-settings" id="form-settings">-->
+<!--    &lt;!&ndash;<mat-card-title>&ndash;&gt;-->
+<!--    &lt;!&ndash;<h2 mat-card-title-text>Settings for {{data.title}} </h2>&ndash;&gt;-->
+<!--    &lt;!&ndash;</mat-card-title>&ndash;&gt;-->
+<!--    &lt;!&ndash;<mat-card-content>&ndash;&gt;-->
+
+<!--    &lt;!&ndash;<mat-tab-group>&ndash;&gt;-->
+<!--    &lt;!&ndash;<mat-tab label="Feedback">&ndash;&gt;-->
+<!--    &lt;!&ndash;<mat-dialog-content>&ndash;&gt;-->
+<!--    <mat-card-header>-->
+<!--      <mat-card-title>{{'Media Input Editor'|translate}}</mat-card-title>-->
+<!--    </mat-card-header>-->
+<!--    <mat-card-content>-->
+
+<!--        <button mat-raised-button class="add-feedback-button" (click) = "showAddMediaInputForm()" *ngIf="!showMediaInputForm">Add Media Input</button>-->
+        <div id="media-inputs-editor" *ngIf = "showMediaItemsListing" >
+          <h2 class="tangy-foreground-secondary">{{'Media Input Editor'|translate}}</h2>
+          <p>{{'If the media elements are not available, add them to the '|translate}}<a routerLink="../../../media-library">{{'Media Library'|translate}}</a>.</p>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <!-- operations Column -->
+
+            <!-- formItemName Column -->
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef> Field Title </th>
+              <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+            </ng-container>
+
+            <!-- formItemName Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Field Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+
+            <!-- percentile Column -->
+            <ng-container matColumnDef="mediaElements">
+              <th mat-header-cell *matHeaderCellDef> Media Elements </th>
+              <td mat-cell *matCellDef="let element">
+              <ng-container *ngIf="element.id === element.mediaElements?.formItem">
+<!--                {{element.mediaElements?.mediaElements | json}}-->
+                <ul *ngIf="element.mediaElements?.mediaElements">
+                  <li *ngFor="let item of element.mediaElements?.mediaElements">
+                    {{item}}
+                  </li>
+                </ul>
+              </ng-container>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="controls">
+              <th mat-header-cell *matHeaderCellDef> Controls </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button color="primary">
+                  <mat-icon aria-label="Edit"(click)="editMediaInput(element.id)">edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteMediaInput(element.groupName, element.formId, element.formItem)">
+                  <mat-icon aria-label="Delete">delete_forever</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+<!--          <p>&nbsp;</p>-->
+        </div>
+<!--  <div class="media-list" [hidden]="!showMediaList">-->
+<!--    <file-list-http #list></file-list-http>-->
+<!--  </div>-->
+<!--    </mat-card-content>-->
+<!--  </mat-card>-->
+</div>
