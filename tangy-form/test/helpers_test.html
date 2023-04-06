@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>loc test</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+
+  </head>
+  <body>
+
+    <script type="module">
+      import { Get, Set } from '../helpers.js'
+      import stub from './stub.js'
+
+      suite('helpers', () => {
+        test('Get should return value', () => {
+          assert.equal(Get(stub.tangyFormResponse, 'input1'), 'Foo')
+        })
+        test('Get should behave as factory then get should return value', () => {
+          const get = Get(stub.tangyFormResponse)
+          assert.equal(get('input1'), 'Foo')
+        })
+        test('Set should return response with updated value', () => {
+          const tangyFormResponseModel = Set(stub.tangyFormResponse, 'input1', 'Bar')
+          assert.equal(tangyFormResponseModel.get('input1'), 'Bar')
+        })
+        test('Set should behave as factory then set should return response with updated value', () => {
+          const set = Set(stub.tangyFormResponse)
+          const tangyFormResponseModel = set('input1', 'Bar')
+          assert.equal(tangyFormResponseModel.get('input1'), 'Bar')
+        })
+      })
+    </script>
+
+  </body>
+</html>

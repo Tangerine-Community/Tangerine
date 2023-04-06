@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="BlankFixture">
+      <template>
+        <tangy-date-widget>
+        </tangy-date-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ResumeFixture">
+      <template>
+        <tangy-date-widget>
+          <tangy-input 
+            name="input1"
+            label="Input 1"
+            required
+            tangy-if="console.log('test')"
+            type="date">
+          </tangy-input>
+        </tangy-date-widget>
+      </template>
+    </test-fixture>
+    <script type="module">
+      import 'tangy-form/tangy-form.js'
+      import 'tangy-form/input/tangy-input.js'
+      import '../tangy-widgets.js'
+      import '../widget/tangy-date-widget.js'
+      suite('tangy-date-widget', () => {
+        test('should open blank with defaults', () => {
+          const element = fixture('BlankFixture')
+          assert.equal(element._config.hasOwnProperty('name'), true)
+          assert.equal(element._config.hasOwnProperty('required'), true)
+          assert.equal(element._config.hasOwnProperty('disabled'), true)
+          assert.equal(element._config.hasOwnProperty('hidden'), true)
+          assert.equal(element._config.hasOwnProperty('label'), true)
+          assert.equal(element._config.hasOwnProperty('showIf'), true)
+          assert.equal(element._config.hasOwnProperty('allowedPattern'), true)
+          assert.equal(element._config.hasOwnProperty('min'), true)
+          assert.equal(element._config.hasOwnProperty('max'), true)
+          assert.equal(element._config.hasOwnProperty('type'), true)
+        })
+        test('should resume', () => {
+          const element = fixture('ResumeFixture')
+          assert.equal(element._config.name, 'input1')
+          assert.equal(element._config.label, 'Input 1')
+          assert.equal(element._config.required, true)
+          assert.equal(element._config.hidden, false)
+          assert.equal(element._config.disabled, false)
+          assert.equal(element._config.showIf, `console.log('test')`)
+          assert.equal(element._config.type, `date`)
+        })
+        test('should resume and save with edits', () => {
+          const element = fixture('ResumeFixture')
+          assert.equal(element._config.required, true)
+          element.shadowRoot.querySelector('#edit-button').click()
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=label]').value = 'New label'
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=required]').value = ''
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=required]').setAttribute('value','')
+          element.shadowRoot.querySelector('tangy-form-item').clickedComplete()
+          assert.equal(element._config.label, 'New label')
+          assert.equal(element._config.required, false)
+        })
+        test('should show print view', () => {
+          const element = fixture('ResumeFixture')
+          element.mode = 'MODE_PRINT'
+          element.shadowRoot.querySelector('#print-container').innerText.includes('Prompt')
+        })
+      })
+
+    </script>
+
+  </body>
+</html>

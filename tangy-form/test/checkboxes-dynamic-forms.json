@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Class Registration",
+    "src": "./assets/class-registration/form.html",
+    "id": "class-registration"
+  },
+  {
+    "title": "Student Registration",
+    "src": "./assets/student-registration/form.html",
+    "id": "student-registration"
+  },
+  {
+    "id": "form-0.14408564179243433",
+    "title": "Class 1-3",
+    "src": "./assets/form-0.14408564179243433/form.html"
+  },
+  {
+    "id": "form-0.8968099085588848",
+    "title": "Class 2",
+    "src": "./assets/form-0.8968099085588848/form.html"
+  }
+]
