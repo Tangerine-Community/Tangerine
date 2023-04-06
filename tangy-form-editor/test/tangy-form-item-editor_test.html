@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form-editor test</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <script src="../node_modules/tangy-translate/index.js"></script>
+
+
+  </head>
+  <body>
+
+    <test-fixture id="TangyFormItemEditorFixture">
+      <template>
+        <tangy-form-item-editor></tangy-form-item-editor>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../tangy-form-item-editor.js'
+      import 'tangy-form/input/tangy-input.js'
+
+      suite('tangy-form-item-editor', () => {
+       
+        test('should start with no problem', () => {
+          const element = fixture('TangyFormItemEditorFixture');
+          element.categories = false;
+          element.item = {
+            "id": "text_inputs_1",
+            "title": "Text Inputs 1",
+            "tagName": "TANGY-FORM-ITEM",
+            "constructorName": "HTMLElement",
+            "template": "\n                  <tangy-input name=\"text_input_1\" label=\"What is your first name?\" type=\"text\"></tangy-input>\n                ",
+            "onOpen": null,
+            "onChange": null,
+            "category": null,
+            "summary": false,
+            "rightToLeft": false,
+            "hideBackButton": false
+          }
+        })
+ 
+        test('should dispatch save event', () => {
+          const element = fixture('TangyFormItemEditorFixture');
+          element.categories = false;
+          element.item = {
+            "id": "text_inputs_1",
+            "title": "Text Inputs 1",
+            "tagName": "TANGY-FORM-ITEM",
+            "constructorName": "HTMLElement",
+            "template": "\n                  <tangy-input name=\"text_input_1\" label=\"What is your first name?\" type=\"text\"></tangy-input>\n                ",
+            "onOpen": null,
+            "onChange": null,
+            "category": null,
+            "summary": false,
+            "rightToLeft": false,
+            "hideBackButton": false
+          }
+          let hasTriggered = false
+          element.addEventListener('save', _ => hasTriggered = true );
+          element.shadowRoot.querySelector('#save').click()
+          assert.equal(hasTriggered, true)
+        })
+ 
+    })
+
+    </script>
+
+  </body>
+</html>

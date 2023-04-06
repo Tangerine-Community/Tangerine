@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="BlankFixture">
+      <template>
+        <tangy-acasi-widget>
+        </tangy-acasi-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ResumeFixture">
+      <template>
+        <tangy-acasi-widget>
+          <tangy-acasi images="../demo/assets/images/never.png,../demo/assets/images/once.png,../demo/assets/images/few.png,../demo/assets/images/many.png,../demo/assets/images/dont_know.png"
+                       introsrc="../demo/assets/sounds/1.mp3"
+                       label="ACASI test"
+                       name="pq2"
+                       touchsrc="../demo/assets/sounds/never_Eng.mp3,../demo/assets/sounds/once_Eng.mp3,../demo/assets/sounds/fewtimes_Eng.mp3,../demo/assets/sounds/manytimes_Eng.mp3,../demo/assets/sounds/noresponse_Eng.mp3"
+                       transitionsrc="../demo/assets/sounds/swish.mp3"></tangy-acasi>
+        </tangy-acasi-widget>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import 'tangy-form/tangy-form.js'
+      import 'tangy-form/input/tangy-input.js'
+      import '../tangy-widgets.js'
+      import '../widget/tangy-acasi-widget.js'
+      suite('tangy-acasi-widget', () => {
+        test('should open blank with defaults', () => {
+          const element = fixture('BlankFixture')
+          assert.equal(element._config.hasOwnProperty('name'), true)
+          assert.equal(element._config.hasOwnProperty('required'), true)
+          assert.equal(element._config.hasOwnProperty('disabled'), true)
+          assert.equal(element._config.hasOwnProperty('hidden'), true)
+          assert.equal(element._config.hasOwnProperty('label'), true)
+        })
+        test('should resume', () => {
+          const element = fixture('ResumeFixture')
+          assert.equal(element._config.name, 'pq2')
+          assert.equal(element._config.label, 'ACASI test')
+          assert.equal(element._config.required, false)
+          assert.equal(element._config.hidden, false)
+          assert.equal(element._config.disabled, false)
+        })
+        test('should resume and save with edits', () => {
+          const element = fixture('ResumeFixture')
+          element.shadowRoot.querySelector('#edit-button').click()
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=introsrc]').value = '../demo/assets/sounds/2.mp3'
+          element.shadowRoot.querySelector('tangy-form-item').clickedComplete()
+          assert.equal(element._config.introsrc, '../demo/assets/sounds/2.mp3')
+        })
+      })
+
+    </script>
+
+  </body>
+</html>

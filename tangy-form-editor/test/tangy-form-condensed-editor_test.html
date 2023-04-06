@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form-editor test</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <script src="../node_modules/js-beautify/js/lib/beautify-html.js"></script>
+
+  </head>
+  <body>
+
+    <test-fixture id="EmptyTemplateFixture">
+      <template>
+        <tangy-form-condensed-editor>
+          <template>
+          </template>
+        </tangy-form-condensed-editor>
+      </template>
+    </test-fixture>
+
+
+    <test-fixture id="ContainerFixture">
+      <template>
+        <tangy-form-condensed-editor>
+          <template>
+            <tangy-input type="text" name="input1" label="Input 1"></tangy-input>
+            <tangy-input type="number" name="input2" label="Input 2"></tangy-input>
+          </template>
+        </tangy-form-condensed-editor>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="PrintFixture">
+      <template>
+        <tangy-form-condensed-editor print>
+          <template>
+            <tangy-input type="text" name="input1" label="Input 1"></tangy-input>
+            <tangy-input type="number" name="input2" label="Input 2"></tangy-input>
+          </template>
+        </tangy-form-condensed-editor>
+      </template>
+    </test-fixture>
+    <script type="module">
+
+      import * as Polymer from '../node_modules/@polymer/polymer/polymer-legacy.js'
+      import 'tangy-form/tangy-form.js'
+      import 'tangy-form/input/tangy-input.js'
+      import '../tangy-widgets.js'
+      import '../tangy-form-condensed-editor.js'
+      import '../widget/tangy-text-widget.js'
+      import '../widget/tangy-number-widget.js'
+      suite('tangy-form-condensed-editor', () => {
+        test('should open with a blank template and add the first input', () => {
+          const element = fixture('EmptyTemplateFixture')
+          element.shadowRoot.querySelector('#add-button').click()
+          assert(!!element.shadowRoot.querySelector('tangy-form-editor-add-input'), true)
+        })
+        test('should open with 2 input editors', () => {
+          const element = fixture('ContainerFixture')
+          assert.equal(element.shadowRoot.querySelectorAll('[widget]').length, 2)
+          assert.equal(element.shadowRoot.querySelectorAll('[widget]')[1].tagName, 'TANGY-NUMBER-WIDGET')
+        })
+        test('should get markup back', () => {
+          const element = fixture('ContainerFixture')
+          const template = document.createElement('template')
+          template.innerHTML = element.markup
+          assert.equal(template.content.querySelectorAll('[name]').length, 2)
+          assert.equal(template.content.querySelectorAll('[label]').length, 2)
+        })
+        test('should add input to top of template', () => {
+          const element = fixture('ContainerFixture')
+          element.shadowRoot.querySelector('#add-button').click()
+          assert(element.shadowRoot.querySelector('sortable-list').children[0].tagName, 'TANGY-FORM-EDITOR-ADD-INPUT')
+        })
+        test('should remove input and see reflected', () => {
+          const element = fixture('ContainerFixture')
+          element.shadowRoot.querySelector('[widget]').shadowRoot.querySelector('#remove-button').click()
+          assert.equal(element.shadowRoot.querySelectorAll('[widget]').length, 1)
+          const template = document.createElement('template')
+          template.innerHTML = element.markup
+          assert.equal(template.content.querySelectorAll('[name]').length, 1)
+        })
+        test('should edit input and see reflected', () => {
+          const element = fixture('ContainerFixture')
+          element.shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('#edit-button').click()
+          element
+            .shadowRoot.querySelector('tangy-text-widget')
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=name]').value = 'foo'
+          element.shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('tangy-form-item').clickedComplete()
+          const template = document.createElement('template')
+          template.innerHTML = element.markup
+          assert.equal(!!template.content.querySelector('[name=foo]'), true)
+        })
+        test('should add an input and see reflected', () => {
+          const element = fixture('ContainerFixture')
+          element.shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('#add-button').click()
+          element.shadowRoot.querySelector('tangy-form-editor-add-input').shadowRoot.querySelector('#tangy-text-widget').click()
+          assert.equal(element.shadowRoot.querySelectorAll('[widget]').length, 3)
+        })
+        test('should show print mode', () => {
+          const element = fixture('PrintFixture')
+          assert.equal(
+            [...element.shadowRoot.querySelectorAll('[widget]')]
+              .reduce((allWidgetsInPrintMode, widgetEl) => widgetEl.mode === 'MODE_PRINT' 
+                ? allWidgetsInPrintMode 
+                : false
+                , true
+              )
+            , true
+          )
+        })
+
+      })
+
+    </script>
+
+  </body>
+</html>
