@@ -45,6 +45,9 @@ ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
     npm install
 
+ADD tangy-form /tangerine/tangy-form/
+ADD tangy-form-editor /tangerine/tangy-form-editor/
+
 # Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+        import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+        import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+        <style>
+            html {
+                --document-background-color: #FAFAFA;
+                --primary-color-dark: #3c5b8d;
+                --primary-text-color: var(--light-theme-text-color);
+                --primary-color: #3c5b8d;
+                --accent-color: #f26f10;
+                --accent-text-color: #FFF;
+                --error-color: var(--paper-red-500);
+                --disabled-color: #BBB;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5 {
+                @apply --paper-font-common-base;
+                color: var(--primary-text-color);
+                margin: 25px 0px 5px 15px;
+            }
+        </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-acasi.js"></script>
+    <script type="module" src="../input/tangy-box.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-checkboxes-dynamic.js"></script>
+    <script type="module" src="../input/tangy-eftouch.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+    <script type="module" src="../input/tangy-timed.js"></script>
+    <script type="module" src="../input/tangy-untimed-grid.js"></script>
+    <script type="module" src="../input/tangy-toggle-button.js"></script>
+    <script type="module" src="../input/tangy-photo-capture.js"></script>
+    <script type="module" src="../input/tangy-qr.js"></script>
+    <script type="module" src="../input/tangy-consent.js"></script>
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+        </style>
+    </custom-style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>tangy-timed-grid</h3>
+        <demo-snippet>
+            <template>
+                <tangy-form id="tangy-timed-grid-form" title="My Form">
+                    <tangy-form-item id="tangy-timed-grid-item" title="Tangy Timed Grid">
+                        <tangy-timed required columns="3" name="tangy-timed-grid" auto-stop="2" capture-item-at="5"
+                            duration="15">
+                            <option value="class1_term2-d">1</option>
+                            <option value="class1_term2-1">Jumatatu,</option>
+                            <option value="class1_term2-2">wezi</option>
+                            <option value="class1_term2-3">walikuja</option>
+                            <option value="class1_term2-4">kijijini.</option>
+                            <option value="class1_term2-5">Watu</option>
+                            <option value="class1_term2-6">wakapiga</option>
+                            <option value="class1_term2-7">mayowe.</option>
+                            <option value="class1_term2-8">“Tunataka</option>
+                            <option value="class1_term2-9">dhahabu!”</option>
+                            <option value="class1_term2-10">wezi</option>
+                            <option value="class1_term2-11">wakasema.</option>
+                            <option value="class1_term2-12">Watu</option>
+                            <option value="class1_term2-13">walipatwa</option>
+                            <option value="class1_term2-14">na</option>
+                            <option value="class1_term2-15">wasiwasi.</option>
+                            <option value="class1_term2-16">Watu</option>
+                            <option value="class1_term2-17">wakasema,</option>
+                            <option value="class1_term2-18">“Hatuna</option>
+                            <option value="class1_term2-19">chochote</option>
+                            <option value="class1_term2-20">cha</option>
+                            <option value="class1_term2-21">thamani.”</option>
+                            <option value="class1_term2-22">Polisi</option>
+                            <option value="class1_term2-23">walifika</option>
+                            <option value="class1_term2-24">hapo.</option>
+                            <option value="class1_term2-25">Waliwashika</option>
+                            <option value="class1_term2-26">wezi</option>
+                            <option value="class1_term2-27">na</option>
+                            <option value="class1_term2-28">kuwatia</option>
+                            <option value="class1_term2-29">pingu.</option>
+                            <option value="class1_term2-30">Wezi</option>
+                            <option value="class1_term2-31">walipelekwa</option>
+                            <option value="class1_term2-32">gerezani.</option>
+                        </tangy-timed>
+                    </tangy-form-item>
+                </tangy-form>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

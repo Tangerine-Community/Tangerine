@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form-editor test</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <script src="../node_modules/js-beautify/js/lib/beautify-html.js"></script>
+    <script src="../node_modules/tangy-translate/index.js"></script>
+
+    <script type="module" src="../tangy-form-editor.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="TangyFormItemEditorFixture">
+      <template>
+        <tangy-form-item-editor></tangy-form-item-editor>
+      </template>
+    </test-fixture>
+        
+    <test-fixture id="TestFixture">
+      <template>
+        <tangy-form-editor>
+          <template>
+            <tangy-form id="field-demo" title="Field Demo" on-submit="1+1">
+              <tangy-form-item id="text_inputs_1" title="Text Inputs 1">
+                <template>
+                  <tangy-input name="text_input_1" label="What is your first name?" type="text"></tangy-input>
+                </template>
+              </tangy-form-item>
+              <tangy-form-item id="text_inputs_2" title="Text Inputs 2">
+                <template>
+                  <tangy-input name="text_input_2" label="What is your last name?" type="text" error-message="This is required." required></tangy-input>
+                </template>
+              </tangy-form-item> 
+              <tangy-form-item id="summary" summary title="Summary">
+                <template>
+                  Thank you for taking our survey.
+                </template>
+              </tangy-form-item> 
+            </tangy-form>
+          </template>
+        </tangy-form-editor>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="DuplicateVariableNamesFixture">
+      <template>
+        <tangy-form-editor>
+          <template>
+            <tangy-form id="field-demo" title="Field Demo" on-submit="1+1">
+              <tangy-form-item id="text_inputs_1" title="Text Inputs 1">
+                <template>
+                  <tangy-input name="text_input_1" label="This should be a detected duplicate variable name" type="text" error-message="This is required." required></tangy-input>
+                </template>
+              </tangy-form-item>
+              <tangy-form-item id="text_inputs_2" title="Text Inputs 2">
+                <template>
+                  <tangy-input name="text_input_1" label="This should be a detected duplicate variable name" type="text" error-message="This is required." required></tangy-input>
+                  <tangy-input name="text_input_2" label="This should not be a detected duplicate variable name" type="text" error-message="This is required." required></tangy-input>
+                </template>
+              </tangy-form-item> 
+              <tangy-form-item id="summary" summary title="Summary">
+                <template>
+                  Thank you for taking our survey.
+                </template>
+              </tangy-form-item> 
+            </tangy-form>
+          </template>
+        </tangy-form-editor>
+      </template>
+    </test-fixture>
+    
+    <test-fixture id="PrintFixture">
+      <template>
+        <tangy-form-editor print>
+          <template>
+            <tangy-form id="field-demo" title="Field Demo">
+              <tangy-form-item id="text_inputs_1" title="Text Inputs 1">
+                <template>
+                  <tangy-input name="text_input_1" label="What is your first name?" type="text"></tangy-input>
+                </template>
+              </tangy-form-item>
+              <tangy-form-item id="text_inputs_2" title="Text Inputs 2">
+                <template>
+                  <tangy-input name="text_input_2" label="What is your last name?" type="text" error-message="This is required." required></tangy-input>
+                </template>
+              </tangy-form-item> 
+              <tangy-form-item id="summary" summary title="Summary">
+                <template>
+                  Thank you for taking our survey.
+                </template>
+              </tangy-form-item> 
+            </tangy-form>
+          </template>
+        </tangy-form-editor>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ShowSkipIfFixture">
+      <template>
+        <tangy-form-editor>
+          <template>
+            <tangy-form id="field-demo" title="Field Demo" on-submit="1+1">
+              <tangy-form-item id="text_inputs_1" title="Text Inputs 1">
+                <template>
+                  <tangy-input name="text_input_1" label="What is your first name?" type="text"></tangy-input>
+                </template>
+              </tangy-form-item>
+            </tangy-form>
+          </template>
+        </tangy-form-editor>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="HideSkipIfFixture">
+      <template>
+        <tangy-form-editor hide-skip-if>
+          <template>
+            <tangy-form id="field-demo" title="Field Demo" on-submit="1+1">
+              <tangy-form-item id="text_inputs_1" title="Text Inputs 1">
+                <template>
+                  <tangy-input name="text_input_1" label="What is your first name?" type="text"></tangy-input>
+                </template>
+              </tangy-form-item>
+            </tangy-form>
+          </template>
+        </tangy-form-editor>
+      </template>
+    </test-fixture>
+
+
+
+
+    <script type="module">
+      suite('tangy-form-editor', () => {
+
+        test('should have skip-if editor when not using hide-skip-if', () => {
+          const element = fixture('ShowSkipIfFixture');
+          element.shadowRoot.querySelector('[icon="editor:mode-edit"]').click()
+          element.querySelector('tangy-form-item-editor').shadowRoot.querySelector('tangy-form-condensed-editor').shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('[icon=create]').click()
+          assert.equal(
+            !!element.querySelector('tangy-form-item-editor').shadowRoot.querySelector('tangy-form-condensed-editor').shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('[name="skip_if"]'),
+            true
+          )
+        })
+
+        test('should not skip-if editor when using hide-skip-if', () => {
+          const element = fixture('HideSkipIfFixture');
+          element.shadowRoot.querySelector('[icon="editor:mode-edit"]').click()
+          // Make sure editing something doesn't have it.
+          element.querySelector('tangy-form-item-editor').shadowRoot.querySelector('tangy-form-condensed-editor').shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('[icon=create]').click()
+          assert.equal(
+            !!element.querySelector('tangy-form-item-editor').shadowRoot.querySelector('tangy-form-condensed-editor').shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('[name="skip_if"]'),
+            false 
+          )
+          // Make sure adding something doesn't have it.
+          element.querySelector('tangy-form-item-editor').shadowRoot.querySelector('tangy-form-condensed-editor').shadowRoot.querySelector('#add-button').click()
+          element.querySelector('tangy-form-item-editor').shadowRoot.querySelector('tangy-form-condensed-editor').shadowRoot.querySelector('tangy-form-editor-add-input').shadowRoot.querySelector('#tangy-text-widget').click()
+          assert.equal(
+            !!element.querySelector('tangy-form-item-editor').shadowRoot.querySelector('tangy-form-condensed-editor').shadowRoot.querySelector('tangy-text-widget').shadowRoot.querySelector('[name="skip_if"]'),
+            false 
+          )
+        })
+
+        test('should find duplicate variable names', () => {
+          const element = fixture('DuplicateVariableNamesFixture');
+          const duplicateNames = element.findDuplicateVariableNames()
+          assert.equal(duplicateNames.length, 1)
+          assert.equal(duplicateNames.includes('text_input_1'), true)
+        })
+ 
+        test('should warn about duplicate variable names on save', (done) => {
+          const element = fixture('DuplicateVariableNamesFixture');
+          const duplicateNames = element.findDuplicateVariableNames()
+          assert.equal(duplicateNames.length, 1)
+          assert.equal(duplicateNames.includes('text_input_1'), true)
+          element.addEventListener('tangy-form-editor-save', _ => {
+            assert.equal(!!element.$.warning.innerHTML, true)
+            assert.equal(!!element.store.getState().warningMessage, true)
+            done()
+          })
+          element.$.container.querySelector('.save-form').click()
+        })       
+
+        test('should have 2 items listed after putting formHtml inline', () => {
+          const element = fixture('TestFixture');
+          assert.equal(element.shadowRoot.querySelectorAll('paper-card').length, 3);
+        });
+
+        test('after clicking new item button, should have 3 items', () => {
+          const element = fixture('TestFixture');
+          element.$.container.querySelector('.item-create').click()
+          assert.equal(element.shadowRoot.querySelectorAll('paper-card').length, 4);
+        });
+
+        test('after clicking new item button, formHtml should have 3 tangy-form-item elements', () => {
+          const element = fixture('TestFixture');
+          element.$.container.querySelector('.item-create').click()
+          const containerEl = document.createElement('div')
+          containerEl.innerHTML = element.formHtml
+          assert.equal(containerEl.querySelectorAll('tangy-form-item').length, 4)
+        });
+
+        test('after clicking save, should dispatch tangy-form-editor-change event', (done) => {
+          const element = fixture('TestFixture');
+          element.addEventListener('tangy-form-editor-change', _ => {
+            assert.notEqual(element.formHtml, null)
+            done()
+          })
+          element.$.container.querySelector('.save-form').click()
+        });
+
+        test('should update form level exit-clicks', () => {
+          const element = fixture('TestFixture');
+          element.shadowRoot.querySelector('#main-expansion-panel').opened = true
+          element.shadowRoot.querySelector('#on-submit-editor').opened = true
+          element.shadowRoot.querySelector('#exit-clicks-input').value = '2'
+          element.shadowRoot.querySelector('.save-form').click()
+          assert.equal(element.formHtml.includes(`exit-clicks="2"`), true) 
+        })
+
+        test('should update form level on-submit logic', () => {
+          const element = fixture('TestFixture');
+          element.shadowRoot.querySelector('#main-expansion-panel').opened = true
+          element.shadowRoot.querySelector('#on-submit-editor').opened = true
+          element.shadowRoot.querySelector('#on-submit-editor juicy-ace-editor').value = '2+2'
+          element.shadowRoot.querySelector('.save-form').click()
+          assert.equal(element.formHtml.includes(`on-submit="
+          2+2
+        "`), true) 
+        })
+
+        test('should have tangy-form.on-submit available to edit', () => {
+          const element = fixture('TestFixture');
+          assert(element.shadowRoot.querySelector('#on-submit-editor juicy-ace-editor').value, '1+1')
+        })
+
+        test('opens item editor', () => {
+          const element = fixture('TestFixture');
+          element.$.container.querySelector('.item-edit').click()
+          assert.equal(element.querySelector('tangy-form-item-editor').item.id, 'text_inputs_1')
+        });
+
+        test('opens in print mode', () => {
+          const element = fixture('PrintFixture');
+          assert.equal(
+            [...element.shadowRoot.querySelectorAll('tangy-form-condensed-editor')]
+              .reduce((allItemEditorsInPrintMode, itemEl) => itemEl.print === true 
+                ? allItemEditorsInPrintMode 
+                : false
+                , true
+              ),
+            true
+          )
+        });
+
+      });
+
+    </script>
+
+  </body>
+</html>

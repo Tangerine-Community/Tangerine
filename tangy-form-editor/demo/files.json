@@ -1,0 +1,32 @@
+[
+  {
+    "path": "assets/images/bird.png",
+    "type": "image",
+    "size": "22KB"
+  },
+  {
+    "path": "assets/images/cat.png",
+    "type": "image",
+    "size": "22KB"
+  },
+  {
+    "path": "assets/images/cow.png",
+    "type": "image",
+    "size": "22KB"
+  },
+  {
+    "path": "assets/images/dog.png",
+    "type": "image",
+    "size": "22KB"
+  },
+  {
+    "path": "assets/images/pig.png",
+    "type": "image",
+    "size": "22KB"
+  },
+  {
+    "path": "assets/images/turtle.png",
+    "type": "image",
+    "size": "22KB"
+  }
+]
