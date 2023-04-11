@@ -57,7 +57,7 @@
     "underscore": "^1.10.2",
     "uuid": "^8.3.0",
     "workbox-cli": "^2.1.2",
-    "xlsx": "^0.14.1",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
