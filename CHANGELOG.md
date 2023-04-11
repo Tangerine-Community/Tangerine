@@ -36,7 +36,7 @@ docker rmi tangerine/tangerine:v3.27.1
 __Fixes__
 - Tangerine on Android APK ignore requestFullscreen() [#3539](https://github.com/Tangerine-Community/Tangerine/issues/3539)
 - This fix above also adds a new app-config.json property - `exitClicks` - enables admin  to set number of clicks to exit kioskMode.
-
+- Fixed: Tangy-radio button and tangy keyboard do not render on Online survey [#3551](https://github.com/Tangerine-Community/Tangerine/issues/3551)
 
 __Server upgrade instructions__
 
