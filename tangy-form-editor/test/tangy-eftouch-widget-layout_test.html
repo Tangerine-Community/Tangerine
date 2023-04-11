@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="BlankFixture">
+      <template>
+        <tangy-eftouch-widget-layout>
+        </tangy-eftouch-widget-layout>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ResumeFixture">
+      <template>
+        <tangy-eftouch-widget-layout>
+          <option width=33 height=33 src="foo.png" value="a"></option>
+          <option width=33 height=33 src="foo.png" value="b"></option>
+          <option width=33 height=33 src="foo.png" value="c"></option>
+          <option width=33 height=33 src="foo.png" value="d"></option>
+          <option width=33 height=33 src="foo.png" value="e"></option>
+          <option width=33 height=33 src="foo.png" value="f" disabled></option>
+          <option width=33 height=33 src="foo.png" value="g" correct></option>
+          <option width=33 height=33 src="foo.png" value="h"></option>
+          <option width=33 height=33 src="foo.png" value="i"></option>
+        </tangy-eftouch-widget-layout>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../tangy-widgets.js'
+      import '../widget/tangy-eftouch-widget-layout.js'
+      suite('tangy-eftouch-widget-layout', () => {
+
+        test('should disable a cell', function () {
+          const element = fixture('ResumeFixture')
+          element.querySelectorAll('tangy-checkbox[name=disabled]')[0].value = 'on'
+          element.querySelectorAll('tangy-checkbox[name=disabled]')[0].dispatchEvent(new Event('change', {bubbles: true}))
+          const template = document.createElement('template')
+          template.innerHTML = element.value
+          assert.equal(template.content.querySelector('option').hasAttribute('disabled'), true)
+        })
+
+        test('should disable a cell', function () {
+          const element = fixture('ResumeFixture')
+          element.querySelectorAll('tangy-checkbox[name=correct]')[0].value = 'on'
+          element.querySelectorAll('tangy-checkbox[name=correct]')[0].dispatchEvent(new Event('change', {bubbles: true}))
+          const template = document.createElement('template')
+          template.innerHTML = element.value
+          assert.equal(template.content.querySelector('option').hasAttribute('correct'), true)
+        })
+
+        test('should open blank with defaults', function () {
+          const element = fixture('BlankFixture')
+        })
+
+        test('layout should resume to have 3 rows and 3 columns in each row, one disabled cell', function () {
+          const element = fixture('ResumeFixture')
+          // Has three rows?
+          assert(element.layout.length, 3)
+          // Each row has three columns?
+          assert(element.layout
+            .reduce((eachRowHasThreeColumns, row) => row.columns.length === 3 
+              ? eachRowHasThreeColumns 
+              : false
+              , true
+            ) 
+          , true)
+          assert.equal(element.layout[1].columns[2].disabled, true)
+          assert.equal(element.layout[2].columns[0].correct, true)
+        })
+
+        test('value should have 9 options', function () {
+          const element = fixture('ResumeFixture')
+          const template = document.createElement('template')
+          template.innerHTML = element.value
+          assert(template.content.querySelectorAll('option').length, 9)
+        })
+
+        test('should add column', function() {
+          const element = fixture('ResumeFixture')
+          assert(element.querySelector('.row').querySelectorAll('.column').length, 5)
+          assert(element.layout[0].columns.length, 3)
+          element.querySelector('.add-column').click()
+          assert(element.querySelector('.row').querySelectorAll('.column').length, 6)
+          assert(element.layout[0].columns.length, 4)
+        }) 
+
+        test('should remove column', function() {
+          const element = fixture('ResumeFixture')
+          assert(element.querySelector('.row').querySelectorAll('.column').length, 5)
+          assert(element.layout[0].columns.length, 3)
+          element.querySelector('.remove-column').click()
+          assert(element.querySelector('.row').querySelectorAll('.column').length, 4)
+          assert(element.layout[0].columns.length, 2)
+        }) 
+
+        test('should add row', function() {
+          const element = fixture('ResumeFixture')
+          assert(element.querySelectorAll('.row').length, 3)
+          assert(element.layout.length, 3)
+          element.querySelector('.add-row').click()
+          assert(element.querySelectorAll('.row').length, 4)
+          assert(element.layout.length, 4)
+        }) 
+
+        test('should remove row', function() {
+          const element = fixture('ResumeFixture')
+          assert(element.querySelectorAll('.row').length, 3)
+          assert(element.layout.length, 3)
+          element.querySelector('.remove-row').click()
+          assert(element.querySelectorAll('.row').length, 2)
+          assert(element.layout.length, 2)
+        }) 
+
+        test('should warn when column widths do not equal 100%')
+        test('should be invalid when column widths do not equal 100%')
+        test('should warn when row heights are greater that 100%')
+      })
+
+    </script>
+
+  </body>
+</html>
