@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>OCR Demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+      <script src="../node_modules/tesseract.js/dist/tesseract.min.js"></script>
+
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          /*--accent-color: #f26f10;*/
+          --accent-color: #3c5b8d;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+          --tangy-element-border: 0;
+          /*--tangy-element-margin: 0;*/
+        }
+        h1, h2, h3, h4, h5, p{
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 15px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-consent.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-partial-date.js"></script>
+    <script type="module" src="../input/tangy-photo-capture.js"></script>
+    <script type="module" src="../input/tangy-qr.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+  </head>
+  <body>
+    <h3>Inputs Demo</h3>
+    <tangy-form id="form-6a876d4d-15c9-46a7-ad75-bea5bf839161" title="Scan Test" category="null" use-ocr="true"
+
+
+
+                fullscreen-nav-align="top"
+
+                on-open="
+
+        "
+                exit-clicks=""
+                cycle-sequences=""
+                on-change="
+
+        "
+                on-submit="
+
+        "
+                on-resubmit="
+
+        "
+    >
+
+        <tangy-form-item id="item_c1eac965-61f1-4696-a9a3-30a2c6520948"
+                         title="Communication and Language"
+                         scoring-fields=""
+                         custom-scoring-logic=""
+                         on-open="
+            "
+                         on-change="
+
+            "
+                         category="
+              null
+            "
+        >
+            <template>
+
+                <tangy-radio-buttons name="comp1" required="" question-number="" label="What was the text about?" hint-text="" error-text="" warn-text="" class="" style="">
+
+                    <option value="1">The average temperature of the climate.</option>
+
+                    <option value="2">The artificial causes of global warming.</option>
+
+                    <option value="3" correct="">The natural causes of climate change.</option>
+
+                </tangy-radio-buttons>
+
+                <tangy-radio-buttons name="comp2" required="" question-number="" label="The change of the average temperature must be" hint-text="" error-text="" warn-text="" class="" style="">
+
+                    <option value="1">Global warming</option>
+
+                    <option value="2">Earth's natural cycles</option>
+
+                    <option value="3" correct="">From artificial and natural causes. </option>
+
+                </tangy-radio-buttons>
+
+                <tangy-input type="text" allowed-pattern="" inner-label=" " name="thoughts1" required="" question-number="" label="What do you think about global warming?" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+                <tangy-input type="text" allowed-pattern="" inner-label=" " name="thoughts2" required="" question-number="" label="What do you think of the control that man could have over the natural causes of global warming?" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+            </template>
+        </tangy-form-item>
+
+    </tangy-form>
+  </body>
+</html>

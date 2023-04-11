@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          --accent-color: #f26f10;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+        }
+        h1, h2, h3, h4, h5 {
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 25px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-acasi.js"></script>
+    <script type="module" src="../input/tangy-box.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-eftouch.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+    <script type="module" src="../input/tangy-timed.js"></script>
+    <script type="module" src="../input/tangy-toggle-button.js"></script>
+
+
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+          <tangy-form id="tangy-eftouch-demo" title="Tangy EFTouch Demo" fullscreen>
+            <tangy-form-item id="item0">
+              <template>
+                The assessment is about to begin. Click the right arrow to begin.
+              </template>
+            </tangy-form-item>
+            <tangy-form-item id="item1">
+              <template>
+                1 / 11 <br>
+                When I say the name of each animal, please touch it on your screen.
+                <br>
+                <tangy-eftouch 
+                  disabled
+                  
+                  name="demo1"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+            <tangy-form-item id="item2" hide-next-button hide-back-button>
+              <template>
+                2 / 11 <br>
+                Touch the cat.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="demo2"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+            <tangy-form-item id="item3" hide-next-button hide-back-button>
+              <template>
+                3 / 11 <br>
+                Touch the dog.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="eftouch_variable"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+            <tangy-form-item id="item4" hide-next-button hide-back-button>
+              <template>
+                4 / 11 <br>
+                Touch the tortoise.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="eftouch_variable"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+            <tangy-form-item id="item5" hide-next-button hide-back-button>
+              <template>
+                5 / 11 <br>
+                Touch the cow.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="eftouch_variable"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+
+            <tangy-form-item id="item6" hide-next-button hide-back-button>
+              <template>
+                6 / 11 <br>
+                Touch the fish.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="eftouch_variable"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+
+            <tangy-form-item id="item7" hide-next-button hide-back-button>
+              <template>
+                7 / 11 <br>
+                Touch the bird.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="eftouch_variable"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+
+            <tangy-form-item id="item8" hide-next-button hide-back-button>
+              <template>
+                8 / 11 <br>
+                Touch the pig.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="eftouch_variable"
+                  >
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/cat.png" value="cat"></option>
+                  <option width=33 height=33 src="assets/images/dog.png" value="dog"></option>
+
+                  <option width=33 height=33 src="assets/images/pig.png" value="pig"></option>
+                  <option width=33 height=33 src="assets/images/turtle.png" value="turtle"></option>
+                  <option width=33 height=33 src="assets/images/cow.png" value="cow"></option>
+
+                  <option width=33 height=33 value="blank"></option>
+                  <option width=33 height=33 src="assets/images/fish.png" value="fish"></option>
+                  <option width=33 height=33 src="assets/images/bird.png" value="bird"></option>
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+
+            <tangy-form-item id="item9">
+              <template>
+                9 / 11 <br>
+                In this game I want you to press the green button as fast as you can every time you see an animal but not when it is a pig.
+                <br>
+                <tangy-eftouch 
+                  input-sound="assets/sounds/pop.mp3" 
+                  
+                  transition-delay=100 
+                  auto-progress
+                  name="eftouch_variable"
+                  >
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                  <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                  <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+
+                </tangy-eftouch>
+              </template>
+            </tangy-form-item>
+
+            <tangy-form-item id="item10">
+                <template>
+                  10 / 11 <br>
+                  Here is a cat. Should you touch the green button? [have the child click the green button]
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    
+                    transition-delay=1000000 
+                    transition-message="Yes, because it's not a pig."
+                    auto-progress
+                    name="eftouch_variable"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/cat.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+
+              <tangy-form-item id="item11">
+                <template>
+                  11 / 11 <br>
+                  Here is a pig. Should you touch the green button? 
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    warning-time=2000
+                    warning-message="No, because it's a pig."
+                    
+                    name="eftouch_variable"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/pig.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+ 
+              <tangy-form-item id="item12">
+                <template>
+                  1 / 6 <br>
+                  Here's a dog. Should you touch the green button? <br>
+                  [Give child 2 seconds to respond. Correct as needed. Be sure child clicked the button.]
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    
+                    warning-time="2000"
+                    warning-message="2s passed. Correct as needed. Be sure child clicked the button."
+                    name="eftouch_variable"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/dog.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+
+              <tangy-form-item id="item13">
+                <template>
+                  2 / 6 <br>
+                  Here's a tortoise. Should you touch the green button? <br>
+                  [Give child 2 seconds to respond. Correct as needed. Be sure child clicked the button.]
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    warning-time="2000"
+                    warning-message="2s passed. Correct as needed. Be sure child clicked the button."
+                    name="eftouch_variable"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/turtle.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+ 
+              <tangy-form-item id="item14">
+                <template>
+                  3 / 6 <br>
+                  Here's a cow. Should you touch the green button? <br>
+                  [Give child 2 seconds to respond. Correct as needed. Be sure child clicked the button.]
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    warning-time="2000"
+                    warning-message="2s passed. Correct as needed. Be sure child clicked the button."
+                    name="eftouch_variable"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/cow.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+ 
+              <tangy-form-item id="item15">
+                <template>
+                  4 / 6 <br>
+                  Here's a fish. Should you touch the green button? <br>
+                  [Give child 2 seconds to respond. Correct as needed. Be sure child clicked the button.]
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    
+                    warning-time="2000"
+                    warning-message="2s passed. Correct as needed. Be sure child clicked the button."
+                    name="eftouch_variable"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/fish.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+
+              <tangy-form-item id="item15-1">
+                <template>
+                  5 / 6 <br>
+                  Here's a bird. Should you touch the green button? <br>
+                  [Give child 2 seconds to respond. Correct as needed. Be sure child clicked the button.]
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    
+                    warning-time="2000"
+                    warning-message="2s passed. Correct as needed. Be sure child clicked the button."
+                    name="eftouch_variable"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/bird.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+              <tangy-form-item id="item16" 
+                on-open="
+                  setTimeout(_ => {
+                    if (inputs.test_5.value.selection === '') inputShow('success_message')
+                  }, 2000)
+                ">
+                <template>
+                  6 / 6 <br>
+                  Here's a pig. Should you touch the green button? <br>
+                  [Give child 2 seconds to respond. Correct as needed. Be sure child clicked the button.]
+                  <tangy-box name="success_message" hidden>Good job not touching the pig.</tangy-box>
+                  <br>
+                <tangy-eftouch 
+                    input-sound="assets/sounds/pop.mp3" 
+                    
+                    name="test_5"
+                    >
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/pig.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+                    <option width=33 height=33 src="assets/images/green-button.png" value="green-button"></option>
+                    <option width=33 height=33 src="assets/images/blank.png" value="blank"></option>
+  
+                  </tangy-eftouch>
+                </template>
+              </tangy-form-item>
+ 
+
+
+
+
+
+          </tangy-form>
+    </div>
+  </body>
+</html>
