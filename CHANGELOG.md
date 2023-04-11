@@ -6,6 +6,10 @@ __Fixes__
 - Fix running the `reporting-cache-clear` command on the `mysql-js` module
 - Extend the particpantID key to 80 chars to handle long keys for T_MYSQL_MULTI_PARTICIPANT_SCHEMA
     - For those using `mysql-js`: This change requires running `reporting-cache-clear` to take effect.
+- Fix missing groupId in user-profile PR: [#3494](https://github.com/Tangerine-Community/Tangerine/pull/3494)
+  - This bugfix added groupId to the user-profile.
+  - In mysql-js, it also throws an error when groupId is missing. [Relevant commit](https://github.com/Tangerine-Community/Tangerine/pull/3494/files#diff-84876aa37057bd8bf558b8f60d01b30821e3dbfd53ba442d5a74432822ceb11bR779). This is different from earlier behavior, which lets the document pass without an error. All docs should have a groupId. 
+
 
 __Server upgrade instructions__
 
