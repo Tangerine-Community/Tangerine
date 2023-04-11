@@ -1,5 +1,11 @@
 # What's new
 
+## v3.28.0
+
+__New Features__
+- The tangy-form and tangy-form-editor library source code have been merged with the Tangerine source code. 
+- Support for OCR scanning. [66ec676c4a](https://github.com/Tangerine-Community/tangy-form/commit/66ec676c4a6a12101ba2feac7eb8104eed8f0b8a)
+
 ## v3.27.3
 
 __Fixes__
