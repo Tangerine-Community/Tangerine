@@ -75,6 +75,8 @@ export class AppConfig {
   noPassword = false
   // Prevent users from logging out and accessing menu. Useful when used in conjunction with a kiosk mode app.
   kioskMode = false
+  // How many clicks to exit kioskMode?
+  exitClicks:number
 
   //
   // Profile configuration.
