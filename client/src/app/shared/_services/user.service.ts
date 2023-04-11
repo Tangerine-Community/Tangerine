@@ -248,7 +248,7 @@ export class UserService {
     // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
     const appInfo = await this.deviceService.getAppInfo()
-    userProfile.groupId = appInfo.groupId
+    userProfile['groupId'] = appInfo.groupId
     userProfile.items = [
       {
         id: 'item1',
