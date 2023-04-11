@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form scoring demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+        import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+        import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+        <style>
+            html {
+                --document-background-color: #FAFAFA;
+                --primary-color-dark: #3c5b8d;
+                --primary-text-color: var(--light-theme-text-color);
+                --primary-color: #3c5b8d;
+                --accent-color: #f26f10;
+                --accent-text-color: #FFF;
+                --error-color: var(--paper-red-500);
+                --warn-color: #993f0b;
+                --warn-background-color: #f4e688;
+                --disabled-color: #BBB;
+            }
+            h1, h2, h3, h4, h5 {
+                @apply --paper-font-common-base;
+                color: var(--primary-text-color);
+                margin: 25px 0px 5px 15px;
+            }
+        </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-acasi.js"></script>
+    <script type="module" src="../input/tangy-box.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-checkboxes-dynamic.js"></script>
+    <script type="module" src="../input/tangy-consent.js"></script>
+    <script type="module" src="../input/tangy-eftouch.js"></script>
+    <script type="module" src="../input/tangy-ethio-date.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+    <script type="module" src="../input/tangy-timed.js"></script>
+    <script type="module" src="../input/tangy-untimed-grid.js"></script>
+    <script type="module" src="../input/tangy-toggle-button.js"></script>
+    <script type="module" src="../input/tangy-partial-date.js"></script>
+    <script type="module" src="../input/tangy-photo-capture.js"></script>
+    <script type="module" src="../input/tangy-video-capture.js"></script>
+    <script type="module" src="../input/tangy-qr.js"></script>
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+        </style>
+    </custom-style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+
+    <h3>tangy-form scoring demo</h3>
+    <demo-snippet>
+        <template>
+            <tangy-form id="my-form" title="My Form">
+                <tangy-form-item title="Awuoro Yawa" scoring-section scoring-fields="fam_word1,fam_word2,cb1,cb2,text1,fruit_time,tangy-timed-grid" id="item1">
+                    <tangy-radio-buttons name="fam_word1" question-number="" label="1. свет" hint-text=" [св'эт] закрытый слог, 2 согласные рядом" error-text="" warn-text="" class="" style="">
+                        <option value="0">Неверно / нет ответа</option>
+                        <option value="1">Верный</option>
+                    </tangy-radio-buttons>
+                    <tangy-radio-buttons name="fam_word2" question-number="" label="2. шар" hint-text="[шар] простой закрытый слог" error-text="" warn-text="" class="" style="">
+                        <option value="0">Неверно / нет ответа</option>
+                        <option value="1">Верный</option>
+                    </tangy-radio-buttons>
+                    <tangy-checkbox name="cb1">
+                        Tangerines?
+                    </tangy-checkbox>
+                    <tangy-checkbox name="cb2">
+                        Apples?
+                    </tangy-checkbox>
+                    <tangy-input name="text1" label="Number of people"></tangy-input>
+                    <tangy-checkboxes
+                            name="fruit_time"
+                            label="What <b>time</b> do you take fruit?"
+                            hint-text="This is <b>hint text</b>."
+                            >
+                        <option name="morning">Morning</option>
+                        <option name="afternoon">Afternoon</option>
+                        <option name="evening"><i>Evening</i></option>
+                    </tangy-checkboxes>
+                    <tangy-timed required columns="3" name="tangy-timed-grid" auto-stop="2">
+                        <option value="class1_term2-d">1</option><option value="class1_term2-1">Jumatatu,</option><option value="class1_term2-2">wezi</option><option value="class1_term2-3">walikuja</option><option value="class1_term2-4">kijijini.</option><option value="class1_term2-5">Watu</option><option value="class1_term2-6">wakapiga</option><option value="class1_term2-7">mayowe.</option><option value="class1_term2-8">“Tunataka</option><option value="class1_term2-9">dhahabu!”</option><option value="class1_term2-10">wezi</option><option value="class1_term2-11">wakasema.</option><option value="class1_term2-12">Watu</option><option value="class1_term2-13">walipatwa</option><option value="class1_term2-14">na</option><option value="class1_term2-15">wasiwasi.</option><option value="class1_term2-16">Watu</option><option value="class1_term2-17">wakasema,</option><option value="class1_term2-18">“Hatuna</option><option value="class1_term2-19">chochote</option><option value="class1_term2-20">cha</option><option value="class1_term2-21">thamani.”</option><option value="class1_term2-22">Polisi</option><option value="class1_term2-23">walifika</option><option value="class1_term2-24">hapo.</option><option value="class1_term2-25">Waliwashika</option><option value="class1_term2-26">wezi</option><option value="class1_term2-27">na</option><option value="class1_term2-28">kuwatia</option><option value="class1_term2-29">pingu.</option><option value="class1_term2-30">Wezi</option><option value="class1_term2-31">walipelekwa</option><option value="class1_term2-32">gerezani.</option>
+                    </tangy-timed>
+                </tangy-form-item>
+
+            </tangy-form>
+
+            <script>
+                document.querySelector('#my-form').addEventListener('submit', event => {
+                    // By default, the form response is locked and the user can browse it. Use event.preventDefault()
+                    // to do something else.
+                    event.preventDefault()
+                    // 3 ways to inspect the user's response to the form. Ordered by level of detail.
+                    console.log(event.target.response)
+                    console.log(event.target.inputs)
+                    console.log(event.target.values)
+                })
+            </script>
+        </template>
+    </demo-snippet>
+</div>
+</body>
+</html>

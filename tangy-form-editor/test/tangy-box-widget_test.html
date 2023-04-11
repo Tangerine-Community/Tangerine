@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="BlankFixture">
+      <template>
+        <tangy-box-widget>
+        </tangy-box-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ResumeFixture">
+      <template>
+        <tangy-box-widget>
+          <tangy-box name="Summary"
+           label="Please read this Summary to the student."
+           required
+           hidden
+           disabled
+           tangy-if="console.log('test')"
+          ><p>Thank you for taking our survey. You may close the book.</p></tangy-box>
+        </tangy-box-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="NestedFixture">
+      <template>
+        <tangy-box-widget>
+          <tangy-box name="boxer"><table>
+            <tbody><tr>
+              <td>Here is something nice</td>
+              <td>
+                <tangy-text-widget>
+                  <tangy-input
+                          name="input1"
+                          label="Input 1"
+                          required
+                          hidden
+                          disabled
+                          tangy-if="console.log('test')"
+                          type="text">
+                  </tangy-input>
+                </tangy-text-widget>
+              </td>
+            </tr>
+            </tbody></table>
+          </tangy-box>
+        </tangy-box-widget>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import 'tangy-form/tangy-form.js'
+      import 'tangy-form/input/tangy-input.js'
+      import '../tangy-widgets.js'
+      import '../widget/tangy-text-widget.js'
+      import 'tangy-form/input/tangy-box.js'
+      import '../widget/tangy-box-widget.js'
+      suite('tangy-box-widget', () => {
+        test('should open blank with defaults', () => {
+          const element = fixture('BlankFixture')
+          assert.equal(element._config.hasOwnProperty('name'), true)
+          assert.equal(element._config.hasOwnProperty('hidden'), true)
+          assert.equal(element._config.hasOwnProperty('showIf'), true)
+          assert.equal(element._config.hasOwnProperty('htmlCode'), true)
+        })
+        test('should resume', () => {
+          const element = fixture('ResumeFixture')
+          assert.equal(element._config.name, 'Summary')
+          assert.equal(element._config.hidden, true)
+          assert.equal(element._config.htmlCode, `<p>Thank you for taking our survey. You may close the book.</p>`)
+        })
+        test('should resume and save with edits', () => {
+          const element = fixture('NestedFixture')
+          element.shadowRoot.querySelector('#edit-button').click()
+          element
+                  .shadowRoot.querySelector('tangy-form-item')
+                  .querySelector("tangy-code").querySelector('tangy-text-widget').shadowRoot.querySelector('#edit-button').click()
+          element
+                  .shadowRoot.querySelector('tangy-form-item')
+                  .querySelector("tangy-code").querySelector("tangy-text-widget")
+                  .shadowRoot.querySelector('tangy-form-item')
+                  .querySelector('[name=label]').value = "New label"
+          element.shadowRoot.querySelector('tangy-form-item').clickedComplete()
+        })
+      })
+
+    </script>
+
+  </body>
+</html>

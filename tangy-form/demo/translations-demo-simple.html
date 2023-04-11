@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Tangy Form Inputs Demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          /*--accent-color: #f26f10;*/
+          --accent-color: #3c5b8d;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+          --tangy-element-border: 0;
+          /*--tangy-element-margin: 0;*/
+        }
+        h1, h2, h3, h4, h5, p{
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 15px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+  </head>
+  <body>
+    <h3>Inputs Demo</h3>
+    <div class="vertical-section-container centered">
+        <button onclick="changeLanguage('en')">
+          Enable English
+        </button>
+        <button onclick="changeLanguage('fr')">
+          Enable French 
+        </button>
+      </div>  
+      <script>
+        window.changeLanguage = async function (languageCode) {
+          document.documentElement.lang = languageCode;
+          document.body.dispatchEvent(new CustomEvent('lang-change'));
+          const response = await fetch(`./translation.${languageCode}.json`)
+          const translation = await response.json()
+          window.translation = translation
+          document.body.dispatchEvent(new CustomEvent('lang-ready'));
+        }
+      </script>
+    <tangy-form id="my-form" title="My Form">
+        <tangy-form-item id="item1">
+            <tangy-input name="input1" label="<t-lang en>Hello.</t-lang><t-lang fr>Bonjour.</t-lang>"></tangy-input>
+        </tangy-form-item>
+        <tangy-form-item id="item2">
+            <t-lang en>Hello.</t-lang><t-lang fr>Bonjour.</t-lang>
+        </tangy-form-item>
+    </tangy-form>
+  </body>
+</html>

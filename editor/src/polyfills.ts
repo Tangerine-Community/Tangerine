@@ -106,11 +106,11 @@ import './global-shim'
 import 'tangy-form-editor/tangy-form-editor.js'
 import './app/couchdb-conflict-manager/src/couchdb-conflict-manager.js'
 // @TODO Remove this when this element has been added to tangy-form-editor.
-import 'tangy-form/input/tangy-ethio-date.js';
-import '@vaadin/vaadin-upload/vaadin-upload.js'
+// import 'tangy-form/input/tangy-ethio-date.js';
+// import '@vaadin/vaadin-upload/vaadin-upload.js'
 
-import '@polymer/paper-radio-button/paper-radio-button.js';
-import '@polymer/paper-radio-group/paper-radio-group.js';
+// import '@polymer/paper-radio-button/paper-radio-button.js';
+// import '@polymer/paper-radio-group/paper-radio-group.js';
 
 // Fix for the way Angular builds pouchdb https://github.com/pouchdb/pouchdb/issues/7299
 // Also probably fixes other things that try to use node process global.
@@ -118,8 +118,8 @@ import '@polymer/paper-radio-group/paper-radio-group.js';
 //(window as any).process = process
 
 //import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
-import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
-
+// import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
+// import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js';
 import * as moment from 'moment'
 (window as any).moment = moment
 
