@@ -61,7 +61,7 @@
     "pouchdb": "github:neighbourhoodie/pouchdb#tangerine-chris-29063-plus-view-adapter",
     "pouchdb-adapter-cordova-sqlite": "^2.0.7",
     "pouchdb-debug": "^7.2.1",
-    "pouchdb-find": "^7.1.1",
+    "pouchdb-find": "^8.0.1",
     "pouchdb-replication-stream": "github:orolle/pouchdb-replication-stream",
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "^6.5.5",
