@@ -386,6 +386,9 @@ class TangyFormEditor extends PolymerElement {
           <paper-checkbox style="margin:15px;" id="record-item-first-open-times-checkbox" ${
             state.form.recordItemFirstOpenTimes ? 'checked' : ''
           }>${t('Enable recording "first opened time" on all sections')}</paper-checkbox><br>
+          <paper-checkbox style="margin:15px;" id="use-ocr-checkbox" ${
+          state.form.useOcr ? 'checked' : ''
+          }>${t('Enable OCR scanning for this form')}</paper-checkbox><br>
           <paper-checkbox style="margin:15px;" id="open-in-fullscreen-checkbox" ${
             state.form.openInFullscreen ? 'checked' : ''
           }>${t('Open in fullscreen mode')}</paper-checkbox><br>
@@ -620,6 +623,7 @@ class TangyFormEditor extends PolymerElement {
       fullscreenInline: this.$.container.querySelector('#fullscreen-inline-checkbox').hasAttribute('checked'),
       fullscreenNavAlign: this.$.container.querySelector('#fullscreen-nav-align-select').value,
       recordItemFirstOpenTimes: this.$.container.querySelector('#record-item-first-open-times-checkbox').hasAttribute('checked'),
+      useOcr: this.$.container.querySelector('#use-ocr-checkbox').hasAttribute('checked'),
       onOpen: this.shadowRoot.querySelector('#on-open-editor juicy-ace-editor').value.replace(/"/g, '&#34;'),
       onChange: this.shadowRoot.querySelector('#on-change-editor juicy-ace-editor').value.replace(/"/g, '&#34;'),
       onSubmit: this.shadowRoot.querySelector('#on-submit-editor juicy-ace-editor').value.replace(/"/g, '&#34;'),
