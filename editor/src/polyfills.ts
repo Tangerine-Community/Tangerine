@@ -102,6 +102,7 @@ import { Loc } from 'tangy-form/util/loc.js';
 import { t } from 'tangy-form/util/t.js';
 (window as any).t = t 
 
+
 import './global-shim'
 import 'tangy-form-editor/tangy-form-editor.js'
 import './app/couchdb-conflict-manager/src/couchdb-conflict-manager.js'

@@ -435,7 +435,7 @@ export class TangyForm extends PolymerElement {
         value: undefined,
         reflectToAttribute: true
       },
-      useOcr: {
+      ocr: {
         type: Boolean,
         value: false,
         reflectToAttribute: true
@@ -683,8 +683,8 @@ export class TangyForm extends PolymerElement {
     items.forEach((item) => {
       let index = state.items.findIndex((itemState) => item.id == itemState.id)
       if (index !== -1) item.setProps(state.items[index])
-      if (this.useOcr) {
-        item.useOcr = true
+      if (this.ocr) {
+        item.ocr = true
       }
     })
 
