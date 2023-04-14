@@ -4,10 +4,15 @@ import './util/html-element-props.js'
 import '@polymer/paper-card/paper-card.js'
 import './style/tangy-common-styles.js'
 import { TangyFormItemHelpers } from './tangy-form-item-callback-helpers.js'
-// import { createWorker } from 'tesseract.js';
+import { createWorker } from 'tesseract.js';
 // const worker = createWorker({
 //   logger: m => console.log(m),
 // });
+const worker = createWorker({
+  corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+  workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
+  logger: m => console.log(m),
+});
 
 /**
  * `tangy-form-item`
@@ -268,7 +273,7 @@ export class TangyFormItem extends PolymerElement {
       <paper-card id="card" class="shrunk">
         <div class="card-content">
           <label class="heading"></label>
-          <template is="dom-if" if="{{useOcr}}">
+          <template is="dom-if" if="{{ocr}}">
             <paper-button id="ocrButton" on-click="onOcrButtonPress"><t-t>ocr</t-t></paper-button>
             <tangy-photo-capture max-size-in-kb='512' label="Take a Photo" ></tangy-photo-capture>
           </template>
@@ -488,7 +493,7 @@ export class TangyFormItem extends PolymerElement {
         value: undefined,
         reflectToAttribute: false
       },
-      useOcr: {
+      ocr: {
         type: Boolean,
         value: false,
         notify: true
@@ -521,8 +526,8 @@ export class TangyFormItem extends PolymerElement {
         let inputEl = this.querySelector(`[name="${inputState.name}"]`)
         if (inputEl) inputEl.setProps(inputState)
       })
-    // if (this.parentElement.useOcr) {
-    //   this.useOcr = true
+    // if (this.parentElement.ocr) {
+    //   this.ocr = true
     // }
     // this.shadowRoot.querySelector('tangy-photo-capture').addEventListener('TANGY_MEDIA_UPDATE', event => {
     //   // Comment out event.preventDefault() to test saving to file system.
@@ -986,7 +991,7 @@ export class TangyFormItem extends PolymerElement {
     // const {data: {text}} = await worker.recognize(img);
     // console.log(text);
 
-    const { data: { text } } = await Tesseract.recognize(img, 'eng', {
+    const { data: { text } } = await worker.recognize(img, 'eng', {
       corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
       workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
       logger: m => console.log(m),
