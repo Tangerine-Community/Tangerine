@@ -76,13 +76,13 @@ RUN cd /tangerine/online-survey-app && \
 
 # build client.
 add client /tangerine/client
-run cd /tangerine/client && \
+RUN cd /tangerine/client && \
     ./node_modules/.bin/ng build --base-href "./"
 
 # Build editor.
 ADD editor /tangerine/editor
 RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
-RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
@@ -106,9 +106,8 @@ ADD server /tangerine/server
 RUN cd /tangerine/server && \
     npm link
 
-
 #
-# Wrap up 
+# Wrap up
 #
 
 ADD ./ /tangerine
@@ -118,4 +117,7 @@ RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
 
 EXPOSE 80
-ENTRYPOINT cd /tangerine/server/ && npm start 
+ENTRYPOINT cd /tangerine/server/ && npm start
+
+## Used for testing...
+#CMD ["/bin/bash"]

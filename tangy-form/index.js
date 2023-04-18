@@ -20,3 +20,4 @@ import './input/tangy-partial-date.js';
 import './input/tangy-toggle.js';
 import './input/tangy-gate.js';
 import './input/tangy-ethio-date.js';
+import './input/tangy-ocr.js';

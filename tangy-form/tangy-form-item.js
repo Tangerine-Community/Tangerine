@@ -4,15 +4,17 @@ import './util/html-element-props.js'
 import '@polymer/paper-card/paper-card.js'
 import './style/tangy-common-styles.js'
 import { TangyFormItemHelpers } from './tangy-form-item-callback-helpers.js'
-import { createWorker } from 'tesseract.js';
+// import { createWorker } from 'tesseract.js';
 // const worker = createWorker({
 //   logger: m => console.log(m),
 // });
-const worker = createWorker({
-  corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
-  workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
-  logger: m => console.log(m),
-});
+// const worker = createWorker({
+//   // corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+//   // corePath: 'tesseract-core.wasm.js',
+//   // workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
+//   // workerPath: "worker.min.js",
+//   logger: m => console.log(m),
+// });
 
 /**
  * `tangy-form-item`
@@ -46,8 +48,7 @@ export class TangyFormItem extends PolymerElement {
       open: t('open'),
       close: t('close'),
       save: t('save'),
-      submit: t('submit'),
-      ocr: t('ocr')
+      submit: t('submit')
     }
     this.hadDiscrepancies = []
     this.hadWarnings = []
@@ -268,14 +269,12 @@ export class TangyFormItem extends PolymerElement {
         paper-card .card-content {
           padding: var(--tangy-form-item--paper-card-content--padding, 15px);
         }
-
       </style>
       <paper-card id="card" class="shrunk">
         <div class="card-content">
           <label class="heading"></label>
           <template is="dom-if" if="{{ocr}}">
-            <paper-button id="ocrButton" on-click="onOcrButtonPress"><t-t>ocr</t-t></paper-button>
-            <tangy-photo-capture max-size-in-kb='512' label="Take a Photo" ></tangy-photo-capture>
+            <tangy-ocr max-size-in-kb='512' label="Photograph the test." ></tangy-ocr>
           </template>
           <slot></slot>
         </div>
@@ -529,7 +528,7 @@ export class TangyFormItem extends PolymerElement {
     // if (this.parentElement.ocr) {
     //   this.ocr = true
     // }
-    // this.shadowRoot.querySelector('tangy-photo-capture').addEventListener('TANGY_MEDIA_UPDATE', event => {
+    // this.shadowRoot.querySelector('tangy-ocr').addEventListener('TANGY_MEDIA_UPDATE', event => {
     //   // Comment out event.preventDefault() to test saving to file system.
     //   // Enable event.preventDefault() to test saving to db.
     //   // event.preventDefault()
@@ -971,15 +970,16 @@ export class TangyFormItem extends PolymerElement {
 
   async onOcrButtonPress() {
     console.log("Tangy-form-item says hello. ")
-    const img = this.shadowRoot.querySelector('tangy-photo-capture').value
+    const img = this.shadowRoot.querySelector('tangy-ocr').value
 
-    // Tesseract.recognize(
-    //     image,
-    //     'eng',
-    //     { logger: m => console.log(m) }
-    // ).then(({ data: { text } }) => {
-    //   console.log(text);
-    // })
+    Tesseract.recognize(
+        img,
+        'eng',
+        { logger: m => console.log(m) }
+    ).then(({ data: { text } }) => {
+      console.log(text);
+      this.shadowRoot.querySelector('#ocrResults').innerHTML = `<br/><pre>${text}</pre`
+    })
 
     // await worker.load();
     // await worker.loadLanguage('eng');
@@ -991,12 +991,22 @@ export class TangyFormItem extends PolymerElement {
     // const {data: {text}} = await worker.recognize(img);
     // console.log(text);
 
-    const { data: { text } } = await worker.recognize(img, 'eng', {
-      corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
-      workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
-      logger: m => console.log(m),
-    });
-    console.log(text);
+    // const { data: { text } } = await worker.recognize(img, 'eng', {
+    //   corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+    //   workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
+    //   logger: m => console.log(m),
+    // });
+
+
+    // const worker = createWorker({
+    //   logger: m => console.log(m),
+    // });
+    // await worker.load();
+    // await worker.loadLanguage('eng');
+    // await worker.initialize('eng');
+    // const { data: { text } } = await worker.recognize(img, 'eng');
+    // console.log(text);
+    // await worker.terminate();
   }
 
 }
