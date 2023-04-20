@@ -1,11 +1,46 @@
 # What's new
 
+## v3.27.3
+
+__Fixes__
+- Fix running the `reporting-cache-clear` command on the `mysql-js` module
+- Extend the particpantID key to 80 chars to handle long keys for T_MYSQL_MULTI_PARTICIPANT_SCHEMA
+    - For those using `mysql-js`: This change requires running `reporting-cache-clear` to take effect.
+- Fix missing groupId in user-profile PR: [#3494](https://github.com/Tangerine-Community/Tangerine/pull/3494)
+  - This bugfix added groupId to the user-profile.
+  - In mysql-js, it also throws an error when groupId is missing. [Relevant commit](https://github.com/Tangerine-Community/Tangerine/pull/3494/files#diff-84876aa37057bd8bf558b8f60d01b30821e3dbfd53ba442d5a74432822ceb11bR779). This is different from earlier behavior, which lets the document pass without an error. All docs should have a groupId. 
+
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.27.2
+./start.sh v3.27.2
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.27.1
+```
+
 ## v3.27.2
 
 __Fixes__
 - Tangerine on Android APK ignore requestFullscreen() [#3539](https://github.com/Tangerine-Community/Tangerine/issues/3539)
 - This fix above also adds a new app-config.json property - `exitClicks` - enables admin  to set number of clicks to exit kioskMode.
-
+- Fixed: Tangy-radio button and tangy keyboard do not render on Online survey [#3551](https://github.com/Tangerine-Community/Tangerine/issues/3551)
 
 __Server upgrade instructions__
 
