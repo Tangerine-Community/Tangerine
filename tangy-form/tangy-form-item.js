@@ -274,7 +274,7 @@ export class TangyFormItem extends PolymerElement {
         <div class="card-content">
           <label class="heading"></label>
           <template is="dom-if" if="{{ocr}}">
-            <tangy-ocr max-size-in-kb='512' label="Photograph the test." ></tangy-ocr>
+            <tangy-ocr max-size-in-kb='512' label="Photograph the test." dictionary="{{dictionary}}" ></tangy-ocr>
           </template>
           <slot></slot>
         </div>
@@ -496,6 +496,11 @@ export class TangyFormItem extends PolymerElement {
         type: Boolean,
         value: false,
         notify: true
+      },
+      dictionary: {
+        type: String,
+        value: '',
+        notify: true
       }
     };
   }
@@ -525,9 +530,21 @@ export class TangyFormItem extends PolymerElement {
         let inputEl = this.querySelector(`[name="${inputState.name}"]`)
         if (inputEl) inputEl.setProps(inputState)
       })
-    // if (this.parentElement.ocr) {
-    //   this.ocr = true
-    // }
+    if (this.parentElement.ocr) {
+      this.ocr = true
+      const metaData = this.getInputsMeta()
+      this.dictionary = ''
+      metaData.forEach(item => {
+        if (item.value && item.value.length > 0) {
+          item.value.forEach(value => {
+            const labelArray = value.label.split('-')
+            // this.dictionary = this.dictionary + labelArray[0] + ' - \n'
+            this.dictionary = this.dictionary + value.label + '\n'
+          })
+        }
+      })
+      console.log("this.dictionary: ", this.dictionary)
+    }
     // this.shadowRoot.querySelector('tangy-ocr').addEventListener('TANGY_MEDIA_UPDATE', event => {
     //   // Comment out event.preventDefault() to test saving to file system.
     //   // Enable event.preventDefault() to test saving to db.

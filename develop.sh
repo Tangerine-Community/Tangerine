@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+#set -e
 
 #
 # Set up data folders.
@@ -230,8 +230,7 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/translations:/tangerine/translations:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
   --volume $(pwd)/tangy-form-editor/tangy-form-editor.js:/tangerine/tangy-form-editor/tangy-form-editor.js:delegated \
-  --volume $(pwd)/tangy-form/tangy-form.js:/tangerine/tangy-form/tangy-form.js:delegated \
-  --volume $(pwd)/tangy-form/tangy-form-item.js:/tangerine/tangy-form/tangy-form-item.js:delegated \
+  --volume $(pwd)/tangy-form:/tangerine/tangy-form:delegated \
   tangerine/tangerine:local
  "
 

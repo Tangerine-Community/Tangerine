@@ -9,7 +9,8 @@ import '@polymer/paper-button/paper-button.js'
 import '@polymer/paper-progress/paper-progress.js';
 import { TangyInputBase } from '../tangy-input-base.js'
 import ImageBlobReduce from 'image-blob-reduce'
-import Tesseract from "tesseract.js";
+// import Tesseract from "tesseract.js";
+import { createWorker } from "tesseract.js";
 import Uppy from '@uppy/core';
 import Dashboard from '@uppy/dashboard';
 import ImageEditor from '@uppy/image-editor';
@@ -216,6 +217,11 @@ export class TangyOcr extends TangyInputBase {
         value: false,
         reflectToAttribute: true
       },
+      dictionary: {
+        type: String,
+        value: '',
+        notify: true
+      }
      }
   }
 
@@ -230,10 +236,15 @@ export class TangyOcr extends TangyInputBase {
     // })
     this.constraints = {video: { facingMode: { exact: "environment" } }}
     this.currentStream = null;
+    this.parentElement.querySelectorAll('[name]')
+        .forEach(input => {
+          console.log("hey")
+          debugger;
+        })
   }
 
   disconnectedCallback() {
-    this.stopMediaTracks(this.currentStream)
+    // this.stopMediaTracks(this.currentStream)
   }
 
   ready() {
@@ -288,21 +299,40 @@ export class TangyOcr extends TangyInputBase {
               importFiles: 'Import via:',
             },
           },})
-        .use(Webcam, { target: Dashboard, modes:['picture'], mirror:false, videoConstraints: constraints })
+        // .use(Webcam, { target: Dashboard, modes:['picture'], mirror:false, videoConstraints: constraints, mobileNativeCamera:true })
+        // .use(Webcam, { target: Dashboard, modes:['picture'], mirror:false, mobileNativeCamera:true })
+        .use(Webcam, { target: Dashboard, modes:['picture'], mirror:false, videoConstraints: constraints, mobileNativeCamera:false, showVideoSourceDropdown:true })
         .use(ImageEditor, { target: Dashboard });
-    uppy.on('file-editor:complete', (updatedFile) => {
+    uppy.on('file-editor:complete', async (updatedFile) => {
       // console.log(updatedFile);
       this.shadowRoot.querySelector('#ocrResults').innerHTML = ``
       this.shadowRoot.querySelector('#progress-bar').style.display = 'block'
-      Tesseract.recognize(
-          updatedFile.data,
-          'eng',
-          { logger: m => console.log(m) }
-      ).then(({ data: { text } }) => {
-        this.shadowRoot.querySelector('#progress-bar').style.display = 'none'
-        console.log(text);
-        this.shadowRoot.querySelector('#ocrResults').innerHTML = `<br/><pre>${text}</pre>`
-      })
+      // Tesseract.recognize(
+      //     updatedFile.data,
+      //     'spa',
+      //     { logger: m => console.log(m) }
+      // ).then(({ data: { text } }) => {
+      //   this.shadowRoot.querySelector('#progress-bar').style.display = 'none'
+      //   console.log(text);
+      //   this.shadowRoot.querySelector('#ocrResults').innerHTML = `<br/><pre>${text}</pre>`
+      // })
+
+      const worker = await createWorker({
+        corePath:'./assets/config/tesseract.js-core/tesseract-core-simd.wasm.js',
+        workerPath:'./assets/config/tesseract.js/dist/worker.min.js',
+        langPath:'./assets/config/spa.user-words',
+        CONFIGFILE: './assets/config/tesseract-config' });
+      // await worker.loadLanguage('spa');
+      // await worker.initialize('spa');
+      await worker.initialize('spa', "0", {load_number_dawg: "0", user_words_suffix: './assets/config/user-words'});
+      // await worker.initialize('spa', "0", {load_number_dawg: "0", CONFIGFILE: './assets/config/tesseract-config'});
+      await worker.setParameters({
+        user_words_suffix: this.dictionary,
+      });
+      const { data: { text } } = await worker.recognize(updatedFile.data,{user_words_suffix: this.dictionary});
+      this.shadowRoot.querySelector('#progress-bar').style.display = 'none'
+      console.log(text);
+      this.shadowRoot.querySelector('#ocrResults').innerHTML = `<br/><pre>${text}</pre>`
     });
   }
 
@@ -426,9 +456,9 @@ export class TangyOcr extends TangyInputBase {
 
   getConstraints() {
     if (this.front) {
-      return {video: { facingMode: { exact: "user" } }}
+      return { facingMode: "user" }
     } else {
-      return {video: { facingMode: { exact: "environment" } }}
+      return { facingMode: "environment" }
     }
   }
 
