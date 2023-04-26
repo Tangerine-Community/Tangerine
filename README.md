@@ -224,9 +224,14 @@ npm start
 
 View the app at <http://localhost:4200>.
 
-If using ngrok.io ot tunnelto.dev, add the --disable-host-check flag to the `npm start` command.
+If using ngrok.io ot tunnelto.dev, use the `'start-using-proxy' script, which  
+` adds the --disable-host-check flag to the `npm start` command.
 
 It's nice that the Angular webpack dev server will reload your browser when making changes in the tangy-form folder.
+
+After launching the app, run the proxy:
+
+`tunnelto --subdomain my-subdomain --port 4200`
 
 
 ## Deprecated Version of Tangerine
