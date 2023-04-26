@@ -1,3 +1,4 @@
+import { MatExpansionModule } from '@angular/material/expansion'
 import { MatChipsModule } from '@angular/material/chips';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -35,6 +36,7 @@ import { EditIssueComponent } from './components/edit-issue/edit-issue.component
     SharedModule,
     TangyFormsModule,
     MatChipsModule,
+    MatExpansionModule,
     CommonModule
   ],
   providers: [

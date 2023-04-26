@@ -177,6 +177,7 @@ app-case-breadcrumb {
 
 .new-event {
     position: relative;
+    margin-bottom: 20px;
 }
 .new-event form {
     display: flex;
@@ -206,4 +207,18 @@ app-case-breadcrumb {
   position: absolute;
   top: 17px;
   right: 80px;
+}
+
+.mat-accordiann .mat-expansion-panel-header-title,
+.mat-accordiann .mat-expansion-panel-header-description {
+flex-basis: 0;
+}
+
+.mat-accordiann .mat-expansion-panel-header-description {
+justify-content: space-between;
+align-items: center;
+}
+
+.mat-accordiann .mat-form-field + .mat-form-field {
+margin-left: 8px;
 }
