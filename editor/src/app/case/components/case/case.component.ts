@@ -40,6 +40,7 @@ export class CaseComponent implements AfterContentInit {
   groupId:string
   hideRestore: boolean = false
   hideFormPlayer = true
+  step = -1;
   process: any;
 
   constructor(
@@ -85,6 +86,23 @@ export class CaseComponent implements AfterContentInit {
     await this.getIssuesAndConflicts(caseId)
     this.ready = true
     this.processMonitorService.stop(process.id)
+
+    // this is required to reload the expansion panel
+    this.ref.detectChanges()
+  }
+
+  setStep(index: number) {
+    this.step = index;
+    this.getIssuesAndConflicts(this.groupId)
+    this.ref.detectChanges()
+  }
+
+  nextStep() {
+    this.step++;
+  }
+
+  prevStep() {
+    this.step--;
   }
 
   calculateTemplateData() {
