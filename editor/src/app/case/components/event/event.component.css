@@ -232,9 +232,19 @@ button[type="submit"] {
     text-align: right;
 }
 
-
 .new-event .button-left {
   position: absolute;
   top: 17px;
   right: 80px;
+}
+
+#menu-container {
+    position: relative;
+    overflow: visible;
+    text-align: right;
+    color: #666;
+}
+
+.mat-slide-toggle {
+    transform: scale(0.8) translateX(-10px);
 }

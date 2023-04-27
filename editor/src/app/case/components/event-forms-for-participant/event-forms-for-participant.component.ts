@@ -32,6 +32,7 @@ export class EventFormsForParticipantComponent implements OnInit {
   @Input('participantId') participantId:string
   @Input('caseId') caseId:string
   @Input('eventId') eventId:string
+  @Input('showArchived') showArchived: boolean;
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
@@ -122,7 +123,7 @@ export class EventFormsForParticipantComponent implements OnInit {
       caseEventHasEventFormsForParticipantsRole: this.caseEventDefinition.eventFormDefinitions.some(eventDef => eventDef.forCaseRole.split(',').map(e=>e.trim()).includes(participant.caseRoleId)),
       eventFormsParticipantCanCreate: this.eventFormsParticipantCanCreate(participant.id),
       eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
-        return (eventForm.participantId === participant.id && !eventForm.archived)
+        return (eventForm.participantId === participant.id && (this.showArchived || !eventForm.archived))
           ? [...eventFormInfos, <EventFormInfo>{
             eventForm,
             eventFormDefinition: this

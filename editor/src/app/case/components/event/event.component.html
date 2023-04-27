@@ -1,8 +1,13 @@
 <div *ngIf="loaded">
   <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
   <app-case-notifications></app-case-notifications>
-  <div class="wrapper">
+  <div class="wrapper">    
     <div class="screen" *ngIf="hasNotificationEnforcingAttention"></div>
+    <mat-toolbar id="menu-container">
+      <span class="tangy-spacer"></span>
+      <mat-checkbox class="mat-slide-toggle" [checked]="showArchivedSliderState"  
+        (change)="showArchivedSliderChange()">Show Archived</mat-checkbox>
+    </mat-toolbar>
     <app-event-form-list-item
       *ngFor="let eventFormInfo of noRoleEventFormInfos"
       [case]="caseService.case"
@@ -19,6 +24,7 @@
       [caseId]="caseService.case._id"
       [eventId]="caseEvent.id"
       [participantId]="participant.id"
+      [showArchived]="showArchivedSliderState"
       *ngFor="let participant of caseService.case.participants"
     >
     </app-event-forms-for-participant>
@@ -75,6 +81,7 @@
               </paper-button>
             </div>
           </div>
+          
         </div>
       </div>
     </mat-expansion-panel>

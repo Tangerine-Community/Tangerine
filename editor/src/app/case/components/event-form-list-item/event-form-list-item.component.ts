@@ -43,6 +43,7 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemSecondary = '';
   canUserDeleteForms: boolean;
   canUserArchiveForms: boolean;
+  canUserUnarchiveForms: boolean;
   response:any
 
   constructor(
@@ -57,7 +58,8 @@ export class EventFormListItemComponent implements OnInit {
   async ngOnInit() {
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
-    this.canUserArchiveForms = true
+    this.canUserArchiveForms = true;
+    this.canUserUnarchiveForms = true;
     const response = await this.formService.getResponse(this.eventForm.formResponseId);
     this.response = response
     const getValue = (variableName) => {
@@ -112,6 +114,18 @@ export class EventFormListItemComponent implements OnInit {
       );
     if (confirmArchive) {
       this.caseService.archiveFormResponse(this.eventForm.caseEventId, this.eventForm.id);
+      await this.caseService.save();
+      this.formDeleted.emit('formDeleted');
+      this.ref.detectChanges();
+    }
+  }
+
+  async unarchiveItem() {
+    const confirmUnarchive = confirm(
+      _TRANSLATE('Are you sure you want to archive this form instance?')
+      );
+    if (confirmUnarchive) {
+      this.caseService.unarchiveFormResponse(this.eventForm.caseEventId, this.eventForm.id);
       await this.caseService.save();
       this.formDeleted.emit('formDeleted');
       this.ref.detectChanges();
