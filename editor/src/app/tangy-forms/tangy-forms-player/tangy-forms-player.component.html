@@ -1,28 +1,22 @@
-<div  class="subject-header">
-  <span id="event-actions">
-    <span *ngIf="rendered && response && response.archived" class="archived">
-      [ Archived ]
-      <paper-button class="button" mat-icon-button (click)="onUnarchive()">
-        <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i> Unarchive
-      </paper-button>
-    </span>
-    <span *ngIf="rendered && response && !response.archived" class="unarchived">
-      <paper-button class="button" mat-icon-button (click)="onArchive()">
-        <i class="material-icons mat-32 tangy-location-list-icon">archive</i>  Archive
-      </paper-button>
-    </span>
-  </span>
-</div>
 <div id="menu-container" *ngIf="rendered && formInfo && formInfo.templates && formInfo.templates.length > 0 && response && response.complete">
-  <mwc-icon (click)="print()" class="print">print</mwc-icon>
-  <mwc-icon [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>
-  <mat-menu #appMenu="matMenu">
-    <button mat-menu-item (click)="setTemplate('')">
-      Form
-    </button>
-    <button mat-menu-item *ngFor="let template of formTemplatesInContext" (click)="setTemplate(template.id)">
-      {{template.label}}
-    </button>
-  </mat-menu> 
+  <span *ngIf="rendered && response && response.archived" id="archive-span">Archived</span>  
+  <mat-toolbar id="menu-container">
+    <span *ngIf="rendered && response && response.archived">
+      <mwc-icon (click)="unarchive()" class="md-container-button">unarchive</mwc-icon>
+    </span>
+    <span *ngIf="rendered && response && !response.archived">
+      <mwc-icon (click)="archive()" class="md-container-button">archive</mwc-icon>
+    </span>
+    <mwc-icon (click)="print()" class="print md-container-button">print</mwc-icon>
+    <mwc-icon [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>
+    <mat-menu #appMenu="matMenu">
+      <button mat-menu-item (click)="setTemplate('')">
+        Form
+      </button>
+      <button mat-menu-item *ngFor="let template of formTemplatesInContext" (click)="setTemplate(template.id)">
+        {{template.label}}
+      </button>
+    </mat-menu>
+  </mat-toolbar>
 </div>
 <div #container> </div>

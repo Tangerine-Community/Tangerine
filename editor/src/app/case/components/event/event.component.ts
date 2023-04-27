@@ -42,6 +42,7 @@ export class EventComponent implements OnInit {
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
   window:any
+  step = -1;
 
   constructor(
     private route: ActivatedRoute,
@@ -105,6 +106,20 @@ export class EventComponent implements OnInit {
 
   async ngOnDestroy() {
     await eval(this.caseEventDefinition.onEventClose)
+  }
+
+  setStep(index: number) {
+    this.step = index;
+    this.getArchivedAndConflicts(this.groupId)
+    this.ref.detectChanges()
+  }
+
+  nextStep() {
+    this.step++;
+  }
+
+  prevStep() {
+    this.step--;
   }
 
   async getArchivedAndConflicts(caseId) {
@@ -192,13 +207,13 @@ export class EventComponent implements OnInit {
     }
   }
 
-  async onUnarchiveEventForm(form) {
-    const restoreConfirmed = confirm(_TRANSLATE('Unarchive this event?'));
-    if (restoreConfirmed) {
-      if (form.archived) {
+  async unarchiveEventForm(form) {
+    const unarchiveConfirmed = confirm(_TRANSLATE('Unarchive this event?'));
+    if (unarchiveConfirmed) {
+      if (!form.archived) {
         alert("Already unarchived.")
       } else {
-        await this.caseService.unarchiveFormResponse(this.caseEvent.id, form.id)
+        await this.caseService.unarchiveCaseEvent(this.caseEvent.id)
 
         const caseId = window.location.hash.split('/')[2]
         await this.getArchivedAndConflicts(caseId)
