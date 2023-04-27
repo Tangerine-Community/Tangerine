@@ -1,5 +1,8 @@
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -36,7 +39,10 @@ import { EditIssueComponent } from './components/edit-issue/edit-issue.component
     SharedModule,
     TangyFormsModule,
     MatChipsModule,
+    MatCheckboxModule,
     MatExpansionModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
     CommonModule
   ],
   providers: [
