@@ -37,7 +37,6 @@ export class EventComponent implements OnInit {
   authenticationService: AuthenticationService
   groupId:string
   conflictingEventForms:Array<any>
-  archivedEventForms:Array<any>
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
@@ -75,7 +74,7 @@ export class EventComponent implements OnInit {
 
       this.onEventOpen() 
 
-      await this.getArchivedAndConflicts(this.caseEvent.caseId)
+      await this.getConflicts(this.caseEvent.caseId)
 
       this.loaded = true
       this.ref.detectChanges()
@@ -116,7 +115,7 @@ export class EventComponent implements OnInit {
 
   setStep(index: number) {
     this.step = index;
-    this.getArchivedAndConflicts(this.groupId)
+    this.getConflicts(this.groupId)
     this.ref.detectChanges()
   }
 
@@ -134,7 +133,7 @@ export class EventComponent implements OnInit {
     this.ref.detectChanges()
   }
 
-  async getArchivedAndConflicts(caseId) {
+  async getConflicts(caseId) {
     try {
       const queryResults = await this.groupIssuesService.query(this.groupId, {
         fun: "conflicts",
@@ -190,8 +189,6 @@ export class EventComponent implements OnInit {
       console.error("Error fetching conflicts: " + JSON.stringify(e))
     }
 
-    this.archivedEventForms = this.caseEvent.eventForms.filter(event => event.archived)
-
     this.ref.detectChanges()
   }
 
@@ -212,7 +209,7 @@ export class EventComponent implements OnInit {
         }
 
         const caseId = window.location.hash.split('/')[2]
-        await this.getArchivedAndConflicts(caseId)
+        await this.getConflicts(caseId)
         // calculateTemplateData already does a this.ref.detectChanges(), but just in case...
         this.ref.detectChanges()
       }
@@ -226,9 +223,6 @@ export class EventComponent implements OnInit {
         alert("Already unarchived.")
       } else {
         await this.caseService.unarchiveCaseEvent(this.caseEvent.id)
-
-        const caseId = window.location.hash.split('/')[2]
-        await this.getArchivedAndConflicts(caseId)
         this.ref.detectChanges()
       }
     }
