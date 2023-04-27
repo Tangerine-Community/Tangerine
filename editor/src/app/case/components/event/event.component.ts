@@ -43,6 +43,7 @@ export class EventComponent implements OnInit {
   selectedNewEventFormDefinition = ''
   window:any
   step = -1;
+  showArchivedSliderState = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -69,27 +70,8 @@ export class EventComponent implements OnInit {
         .case
         .events
         .find(caseEvent => caseEvent.id === params.eventId)
-      this.caseEventDefinition = this
-        .caseService
-        .caseDefinition
-        .eventDefinitions
-        .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
-      const noRoleEventFormDefinitionIds:Array<string> = this.caseEventDefinition.eventFormDefinitions
-        .filter(eventFormDefinition => !eventFormDefinition.forCaseRole)
-        .map(eventFormDefinition => eventFormDefinition.id)
-      this.noRoleEventFormInfos = this
-        .caseEvent
-        .eventForms
-        .filter(eventForm => !eventForm.archived && noRoleEventFormDefinitionIds.includes(eventForm.eventFormDefinitionId))
-        .map(eventForm => {
-          return <EventFormInfo>{
-            eventForm,
-            eventFormDefinition: this
-              .caseEventDefinition
-              .eventFormDefinitions
-              .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
-          }
-        })
+      
+      await this.loadEventFormsInfos()
 
       this.onEventOpen() 
 
@@ -97,6 +79,30 @@ export class EventComponent implements OnInit {
 
       this.loaded = true
       this.ref.detectChanges()
+    })
+  }
+
+  async loadEventFormsInfos() {
+    this.caseEventDefinition = this
+    .caseService
+    .caseDefinition
+    .eventDefinitions
+    .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
+  const noRoleEventFormDefinitionIds:Array<string> = this.caseEventDefinition.eventFormDefinitions
+    .filter(eventFormDefinition => !eventFormDefinition.forCaseRole)
+    .map(eventFormDefinition => eventFormDefinition.id)
+  this.noRoleEventFormInfos = this
+    .caseEvent
+    .eventForms
+    .filter(eventForm => (this.showArchivedSliderState ? true : !eventForm.archived) && noRoleEventFormDefinitionIds.includes(eventForm.eventFormDefinitionId))
+    .map(eventForm => {
+      return <EventFormInfo>{
+        eventForm,
+        eventFormDefinition: this
+          .caseEventDefinition
+          .eventFormDefinitions
+          .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+      }
     })
   }
 
@@ -120,6 +126,12 @@ export class EventComponent implements OnInit {
 
   prevStep() {
     this.step--;
+  }
+
+  async showArchivedSliderChange() {
+    this.showArchivedSliderState = !this.showArchivedSliderState
+    await this.loadEventFormsInfos()
+    this.ref.detectChanges()
   }
 
   async getArchivedAndConflicts(caseId) {
