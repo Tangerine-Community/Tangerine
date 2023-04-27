@@ -61,29 +61,5 @@
         </div>
       </ng-template>
     </mat-expansion-panel>
-    <mat-expansion-panel *ngIf="archivedEventForms.length > 0" [expanded]="step === 1" (opened)="setStep(1)">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Archived Event Forms
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <div *ngFor="let archivedEventForm of archivedEventForms" class="icon-list-item archive new-event">
-        <mwc-icon slot="item-icon">archive</mwc-icon>
-        <div>
-          <div><strong>{{archivedEventForm.eventFormDefinitionId}}</strong></div>
-          <div>
-            <div secondary>
-              Complete: {{archivedEventForm.complete}}
-            </div>
-            <div class="text-right">
-              <paper-button (click)="unarchiveEventForm(archivedEventForm)" [hidden]="hideRestore" class="button">
-                <i class="material-icons mat-32 tangy-location-list-icon">unarchive</i>  {{'Unarchive'|translate}}
-              </paper-button>
-            </div>
-          </div>
-          
-        </div>
-      </div>
-    </mat-expansion-panel>
   </mat-accordion>
 </div>
