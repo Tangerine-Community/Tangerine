@@ -8,6 +8,7 @@ import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
 import {ProcessMonitorService} from "../../shared/_services/process-monitor.service";
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
+import { CaseService } from 'src/app/case/services/case.service';
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -33,6 +34,7 @@ export class TangyFormsPlayerComponent {
   @Input('metadata') metadata:any
 
   authenticationService: AuthenticationService
+  caseService: CaseService
 
   $rendered = new Subject()
   $submit = new Subject()
@@ -56,10 +58,12 @@ export class TangyFormsPlayerComponent {
     private tangyFormsInfoService:TangyFormsInfoService,
     private tangyFormService: TangyFormService,
     private processMonitorService: ProcessMonitorService,
-    authenticationService: AuthenticationService
+    authenticationService: AuthenticationService,
+    caseService: CaseService
   ) {
     this.window = window
     this.authenticationService = authenticationService
+    this.caseService = caseService
   }
 
   isDirty() {
@@ -216,7 +220,8 @@ export class TangyFormsPlayerComponent {
   async saveResponse(state) {
     let stateDoc = {}
     stateDoc = await this.tangyFormService.getResponse(state._id)
-    if (stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary) {
+    const archiveStateChange = state.archived === stateDoc['archived']
+    if (stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary && archiveStateChange) {
       // Since what is in the database is complete, and it's still complete, and it doesn't have 
       // a summary where they might add some input, don't save! They are probably reviewing data.
     } else {
@@ -238,14 +243,40 @@ export class TangyFormsPlayerComponent {
     window.print();
   }
 
-  async onArchive() {
+  async archive() {
     const archiveConfirm = confirm(_TRANSLATE('Archive this form response?'));
     if (archiveConfirm) {
       if (this.response.archived) {
+        alert("Already archived.")
+      } else {
+        this.response.archived = true
+        try {
+          await this.throttledSaveResponse(this.response)
+        } catch (e) {
+          alert("An error occurred while archiving the form.")
+        }
+        if (this.response.archived) {
+          await this.caseService.archiveEventForm(this.metadata.eventId, this.metadata.eventFormId)
+        }
+      }
+    }
+  }
+
+  async unarchive() {
+    const archiveConfirm = confirm(_TRANSLATE('Unarchive this form response?'));
+    if (archiveConfirm) {
+      if (!this.response.archived) {
         alert("Already unarchived.")
       } else {
         this.response.archived = false
-        this.throttledSaveResponse(this.response)
+        try {
+          await this.throttledSaveResponse(this.response)
+        } catch (e) {
+          alert("An error occurred while unarchiving the form.")
+        }
+        if (!this.response.archived) {
+          await this.caseService.unarchiveEventForm(this.metadata.eventId, this.metadata.eventFormId)
+        }
       }
     }
   }

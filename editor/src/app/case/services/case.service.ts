@@ -753,6 +753,42 @@ class CaseService {
     }
   }
 
+  async archiveEventForm(caseEventId:string, eventFormId:string) {
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    if (caseEvent) {
+      var eventForm = caseEvent.eventForms.find(form => form.id === eventFormId)
+      if (eventForm && eventForm.formResponseId) {
+          const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+          if (formResponse && !formResponse.archived) {
+            formResponse.archived = true
+            await this.tangyFormService.saveResponse(formResponse)
+          }
+          eventForm.archived = true
+          await this.save()
+        }
+    }
+  }
+
+  async unarchiveEventForm(caseEventId:string, eventFormId:string) {
+    const caseEvent = this.case.events.find(event => event.id === caseEventId)
+    if (caseEvent) {
+      var eventForm = caseEvent.eventForms.find(form => form.id === eventFormId)
+      if (eventForm && eventForm.formResponseId) {
+          const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
+          if (formResponse && formResponse.archived) {
+            formResponse.archived = false
+            await this.tangyFormService.saveResponse(formResponse)
+          }
+          eventForm.archived = false
+          await this.save()
+        }
+    }
+  }
+
+  /*
+   * Form Response API
+   */
+
   async archiveFormResponse(caseEventId:string, eventFormId:string) {
     const caseEvent = this.case.events.find(event => event.id === caseEventId)
     if (caseEvent) {

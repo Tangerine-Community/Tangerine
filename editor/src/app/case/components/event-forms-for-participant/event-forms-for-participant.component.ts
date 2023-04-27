@@ -60,7 +60,6 @@ export class EventFormsForParticipantComponent implements OnInit {
   }
 
   onFormDelete() {
-    console.log('form delete detected')
     this.render()
   }
 

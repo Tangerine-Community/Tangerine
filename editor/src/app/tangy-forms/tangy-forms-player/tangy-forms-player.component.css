@@ -6,7 +6,7 @@
     color: #666;
 }	
 
-.print {
+.md-container-button {
     margin-right: 10px;
 }
 
@@ -14,4 +14,8 @@
     #menu-container {
         display: none;
     }
+}
+
+.archived-span {
+    text-align: top;
 }
