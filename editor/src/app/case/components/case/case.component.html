@@ -28,6 +28,11 @@
 
 <div class="wrapper">
   <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
+  <mat-toolbar id="menu-container">
+    <span class="tangy-spacer"></span>
+    <mat-checkbox class="mat-small-checkbox-transform" [checked]="showArchivedSliderState"  
+      (change)="showArchivedSliderChange()">Show Archived</mat-checkbox>
+  </mat-toolbar>
   <div *ngFor="let eventInfo of caseEventsInfo">
     <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
       [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
@@ -102,30 +107,6 @@
               </div>
               <div class="text-right">
                 <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-    </mat-expansion-panel>
-
-    <mat-expansion-panel *ngIf="archivedEvents.length > 0" [expanded]="step === 2" (opened)="setStep(2)">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Archived Events
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-template [ngIf]="step === 2" matTabContent>
-        <div *ngFor="let archivedEvent of archivedEvents" class="icon-list-item archive new-event">
-          <mwc-icon slot="item-icon">archive</mwc-icon>
-          <div>
-            <div><strong>{{archivedEvent.name}}</strong></div>
-            <div>
-              <div secondary>
-                Complete: {{archivedEvent.complete}}
-              </div>
-              <div class="text-right">
-                <paper-button (click)="onUnarchiveEvent(archivedEvent)" [hidden]="hideRestore" class="button"><mwc-icon>unarchive</mwc-icon></paper-button>
               </div>
             </div>
           </div>
