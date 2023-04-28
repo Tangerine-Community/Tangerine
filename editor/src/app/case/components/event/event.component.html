@@ -3,11 +3,13 @@
   <app-case-notifications></app-case-notifications>
   <div class="wrapper">    
     <div class="screen" *ngIf="hasNotificationEnforcingAttention"></div>
-    <mat-toolbar id="menu-container">
-      <span class="tangy-spacer"></span>
-      <mat-checkbox class="mat-slide-toggle" [checked]="showArchivedSliderState"  
-        (change)="showArchivedSliderChange()">Show Archived</mat-checkbox>
-    </mat-toolbar>
+    <div>
+      <mat-toolbar id="menu-container">
+        <span class="tangy-spacer"></span>
+        <mat-checkbox class="mat-small-checkbox-transform " [checked]="showArchivedSliderState"  
+          (change)="showArchivedSliderChange()">Show Archived</mat-checkbox>
+      </mat-toolbar>
+    </div>
     <app-event-form-list-item
       *ngFor="let eventFormInfo of noRoleEventFormInfos"
       [case]="caseService.case"
