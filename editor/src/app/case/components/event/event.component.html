@@ -37,7 +37,7 @@
 
 <div *appHasAPermission="let i;group:groupId; permission:'can_restore_conflict_event'">
   <mat-accordion class="mat-accordian" multi>    
-    <mat-expansion-panel *ngIf="conflictingEventForms.length > 0" [expanded]="step === 0" (opened)="setStep(0)">
+    <mat-expansion-panel *ngIf="conflictingEventsExist" [expanded]="step === 0" (opened)="setStep(0)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Conflicting Event Forms

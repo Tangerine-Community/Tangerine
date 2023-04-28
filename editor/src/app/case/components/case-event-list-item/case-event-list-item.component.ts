@@ -19,6 +19,8 @@ export class CaseEventListItemComponent implements AfterContentInit {
   @Input() caseEventDefinition:CaseEventDefinition
   @Input() caseEvent:CaseEvent
   @Input() case:Case
+  @Input() showArchived:boolean;
+
   defaultTemplateListItemIcon = `\${caseEvent.complete ? 'event_available' : 'event_note'}`
   defaultTemplateListItemPrimary = `
       <span>\${caseEventDefinition.name}</span> (\${caseEvent.id.substr(0,6)})
@@ -32,12 +34,14 @@ export class CaseEventListItemComponent implements AfterContentInit {
   renderedTemplateListItemSecondary = ''
 
   canUserArchiveForms: boolean;
+  canUserUnarchiveForms: boolean;
 
   constructor(
     private ref: ChangeDetectorRef,
     private caseService: CaseService
   ) {
     this.canUserArchiveForms = true
+    this.canUserUnarchiveForms = true
 
     ref.detach()
   }

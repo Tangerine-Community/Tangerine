@@ -65,7 +65,7 @@ h2 {
 }
 
 .wrapper {
-    margin: 0px;
+    margin: 0px 0px 20px 0px;
 }
 paper-button {
     background: var(--accent-color);

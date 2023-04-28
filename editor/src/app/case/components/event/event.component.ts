@@ -36,13 +36,14 @@ export class EventComponent implements OnInit {
   noRoleEventFormInfos: Array<EventFormInfo>
   authenticationService: AuthenticationService
   groupId:string
-  conflictingEventForms:Array<any>
+  conflictingEventForms:Array<any> = []
+  conflictingEventsExist: boolean = false
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
   window:any
   step = -1;
-  showArchivedSliderState = false;
+  showArchivedSliderState: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -147,6 +148,7 @@ export class EventComponent implements OnInit {
         return [...previousValue, ...currentValue._conflicts]
       }, [])
       const conflicts = []
+      this.conflictingEventsExist = false
       if (conflictRevisionIds) {
         for (const conflictRevisionId of conflictRevisionIds) {
           const token = localStorage.getItem('token');
@@ -157,10 +159,10 @@ export class EventComponent implements OnInit {
       const caseParticipantIds = this.caseService.case.participants.map(participant => participant.id)
       this.conflictingEventForms = []
       conflicts.forEach(conflict => {
-        const caseEventIds = this.caseService.case.events.filter(event => event.id)
+        const caseEvent = this.caseService.case.events.find(caseEvent => caseEvent.id)
         // filter out any events that are from participants not in this "winning" case rev
-        const conflictEvents = conflict.events.map(event => {
-          if (event.eventForms) {
+        const conflictEvents = conflict.events.map(conflictEvent => {
+          if (caseEvent.id == conflictEvent.id && conflictEvent.eventForms) {
             const hasParticipant = (eventForm) => {
               // The first Registration event's participantId is empty.
               if (eventForm.participantId === "") {
@@ -169,19 +171,19 @@ export class EventComponent implements OnInit {
                 return caseParticipantIds.includes(eventForm.participantId)
               }
             }
-            const relevantEvent = event.eventForms.some(hasParticipant)
+            const relevantEvent = conflictEvent.eventForms.some(hasParticipant)
             if (relevantEvent) {
-              return event
+              return conflictEvent
             }
           }
         })
         // Now find any events that are not in the "winning" rev.
-        conflictEvents.forEach(event => {
-          const isOldEvent = caseEventIds.includes(event.id)
-          if (!isOldEvent) {
+        conflictEvents.forEach(conflictEvent => {
+          if (!caseEvent.id == conflictEvent.id) {
             // since we are putting events from different _revs in the same array, need to mark which _rev the event belongs to.
-            event.conflictRevisionId = conflict._rev
-            this.conflictingEventForms.push(event.eventForms)
+            conflictEvent.conflictRevisionId = conflict._rev
+            this.conflictingEventForms.push(conflictEvent.eventForms)
+            this.conflictingEventsExist = true
           }
         })
       })

@@ -36,7 +36,8 @@
   <div *ngFor="let eventInfo of caseEventsInfo">
     <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
       [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
-      [case]="caseService.case" routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
+      [case]="caseService.case" routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}"
+      [showArchived]="showArchivedSliderState">
     </app-case-event-list-item>
   </div>
   <div class="icon-list-item event new-event">
