@@ -245,6 +245,6 @@ button[type="submit"] {
     color: #666;
 }
 
-.mat-slide-toggle {
+.mat-small-checkbox-transform {
     transform: scale(0.8) translateX(-10px);
 }

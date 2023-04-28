@@ -35,13 +35,13 @@ export class CaseComponent implements AfterContentInit {
   authenticationService: AuthenticationService
   issues:Array<Issue>
   conflictingEvents:Array<any>
-  archivedEvents:Array<any>
   moment
   groupId:string
   hideRestore: boolean = false
   hideFormPlayer = true
   step = -1;
   process: any;
+  showArchivedSliderState = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -105,6 +105,12 @@ export class CaseComponent implements AfterContentInit {
     this.step--;
   }
 
+  showArchivedSliderChange() {
+    this.showArchivedSliderState = !this.showArchivedSliderState
+    this.calculateTemplateData()
+    this.ref.detectChanges()
+  }
+
   calculateTemplateData() {
     const caseService = this.caseService
     const getVariable = (variableName) => {
@@ -125,7 +131,10 @@ export class CaseComponent implements AfterContentInit {
       .map(caseEventDefinition => {
         return {
           caseEventDefinition,
-          caseEvents: this.caseService.case.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id && !caseEvent.archived)
+          caseEvents: 
+            this.caseService.case.events.filter(caseEvent => 
+              caseEvent.caseEventDefinitionId === caseEventDefinition.id && 
+              (this.showArchivedSliderState ? true : !caseEvent.archived))
         }
       })
     this.creatableCaseEventsInfo = this.caseEventsInfo
@@ -133,8 +142,6 @@ export class CaseComponent implements AfterContentInit {
         return (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0)
           && undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id)
       })
-    
-    this.archivedEvents = this.caseService.case.events.filter(caseEvent => caseEvent.archived)
     
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
