@@ -103,7 +103,6 @@ export class TangyFormsPlayerComponent {
     this.formTemplatesInContext = this.formInfo.templates ? this.formInfo.templates.filter(template => template.appContext === environment.appContext) : []
     if (this.templateId) {
       let  templateMarkup =  await this.tangyFormsInfoService.getFormTemplateMarkup(this.formId, this.templateId)
-      const response = formResponse
       eval(`this.container.nativeElement.innerHTML = \`${templateMarkup}\``)
     } else {
       let formVersionId

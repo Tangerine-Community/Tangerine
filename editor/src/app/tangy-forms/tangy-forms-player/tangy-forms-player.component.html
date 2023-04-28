@@ -1,22 +1,24 @@
-<div id="menu-container" *ngIf="rendered && formInfo && formInfo.templates && formInfo.templates.length > 0 && response && response.complete">
-  <span *ngIf="rendered && response && response.archived" id="archive-span">Archived</span>  
+<div id="menu-container" *ngIf="rendered && formInfo && response && response.complete">
+  <span *ngIf="response.archived" id="archive-span">Archived</span>
   <mat-toolbar id="menu-container">
-    <span *ngIf="rendered && response && response.archived">
+    <span *ngIf="response.archived">
       <mwc-icon (click)="unarchive()" class="md-container-button">unarchive</mwc-icon>
     </span>
-    <span *ngIf="rendered && response && !response.archived">
+    <span *ngIf="!response.archived">
       <mwc-icon (click)="archive()" class="md-container-button">archive</mwc-icon>
     </span>
     <mwc-icon (click)="print()" class="print md-container-button">print</mwc-icon>
-    <mwc-icon [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>
-    <mat-menu #appMenu="matMenu">
-      <button mat-menu-item (click)="setTemplate('')">
-        Form
-      </button>
-      <button mat-menu-item *ngFor="let template of formTemplatesInContext" (click)="setTemplate(template.id)">
-        {{template.label}}
-      </button>
-    </mat-menu>
+    <span *ngIf="formInfo.templates && formInfo.templates.length > 0">
+      <mwc-icon  [matMenuTriggerFor]="appMenu">chrome_reader_mode</mwc-icon>
+      <mat-menu #appMenu="matMenu">
+        <button mat-menu-item (click)="setTemplate('')">
+          Form
+        </button>
+        <button mat-menu-item *ngFor="let template of formTemplatesInContext" (click)="setTemplate(template.id)">
+          {{template.label}}
+        </button>
+      </mat-menu>
+    </span>
   </mat-toolbar>
 </div>
 <div #container> </div>
