@@ -24,6 +24,8 @@ import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import { GroupDevicesService } from '../../groups/services/group-devices.service'
+import { GroupIssuesService } from './../../groups/services/group-issues.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +43,7 @@ class CaseService {
   queryEventFormDefinitionId: any
   queryFormId: any
   _shouldSave = true
+
 
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = {
@@ -107,7 +110,8 @@ class CaseService {
     private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient,
-    private groupDevicesService:GroupDevicesService
+    private groupDevicesService:GroupDevicesService,
+    private groupIssuesService:GroupIssuesService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -274,7 +278,6 @@ class CaseService {
         }
       }
     }
-    await this.closeIssuesForCase(this.case._id, "Case Deletion")
 
     this.case.archived=true
     // Keeping inputs so that the case show up in searches *on the server*
@@ -305,42 +308,6 @@ class CaseService {
       archivedCase.items[0].inputs = this.case.items[0].inputs
     }
     await this.tangyFormService.saveResponse(archivedCase)
-  }
-
-  async closeIssuesForCase(caseId, comment) {
-    const userId = window['userId']
-    const username = window['username']
-    const db = await window['T'].user.getUserDatabase(username)
-    const results = await db.query('issuesByCaseId',
-      {
-        startkey: `${caseId}`,
-        endkey: `${caseId}\uffff`
-      }
-    )
-    if (results?.rows.length > 0) {
-      var issues = results.rows
-      for (const issue of issues) {
-        await this.closeIssue(issue.id, comment, username, userId)
-      }
-    }
-  }
-
-  async closeIssuesForFormResponse(formResponseId, comment) {
-    const userId = window['userId']
-    const username = window['username']
-    const db = await window['T'].user.getUserDatabase(username)
-    const results = await db.query('issuesByFormResponseId',
-      {
-        startkey: `${formResponseId}`,
-        endkey: `${formResponseId}\uffff`
-      }
-    )
-    if (results?.rows.length > 0) {
-      var issues = results.rows
-      for (const issue of issues) {
-        await this.closeIssue(issue.id, comment, username, userId)
-      }
-    }
   }
   
   async setCase(caseInstance) {
@@ -853,8 +820,6 @@ class CaseService {
             }
           )
           await this.tangyFormService.saveResponse(archivedFormResponse)
-
-          await this.closeIssuesForFormResponse(formResponse.id, "Closed for Form Response Deletion")
         }
         this.deleteEventForm(caseEventId, eventFormId)
         await this.save()
