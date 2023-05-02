@@ -15,9 +15,11 @@ export class CaseBreadcrumbComponent implements OnInit {
   @Input() caseEventId:string
   @Input() eventFormId:string
   @Input() caseInstance:Case
+  @Output() caseActionEvent = new EventEmitter();
   primaryText = ''
   secondaryText = ''
   secondaryLink = ''
+  groupId:string
 
   constructor(
     private caseService: CaseService,
@@ -29,6 +31,7 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   ngOnInit() {
     this.caseInstance = this.caseService.case
+    this.groupId = window.location.pathname.split('/')[2]
     const caseEvent = this.caseEventId
       ? this.caseInstance
         .events
@@ -72,6 +75,18 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   goBackToCases() {
     this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
+  }
+
+  deleteCase() {
+    this.caseActionEvent.emit('delete');
+  }
+
+  archiveCase() {
+    this.caseActionEvent.emit('archive');
+  }
+
+  unarchiveCase() {
+    this.caseActionEvent.emit('unarchive');
   }
 
 }

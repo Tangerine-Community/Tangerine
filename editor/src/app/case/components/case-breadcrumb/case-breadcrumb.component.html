@@ -1,6 +1,33 @@
 <div class="primary">
   <iron-icon icon="clear" class="back-to-cases" (click)="goBackToCases()"></iron-icon>
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
+  <span class="case-action-container">
+    <span class="case-archived-text" *ngIf="caseInstance.archived">[ Archived ]</span>
+    <mwc-icon class="case-action-menu" [matMenuTriggerFor]="rootMenu" (click)="ref.detectChanges()">more_vert</mwc-icon>
+    <mat-menu #rootMenu="matMenu">
+      <button mat-menu-item disabled>
+        <span>Case Actions</span>
+      </button>
+      <div *appHasAPermission="let i;group:groupId; permission:'can_delete_cases'">
+        <button mat-menu-item (click)="deleteCase()">
+          <mwc-icon>delete</mwc-icon>
+          <span>Delete</span>
+        </button>
+      </div>
+      <div *appHasAPermission="let i;group:groupId; permission:'can_archive_cases'">
+        <button mat-menu-item (click)="archiveCase()" *ngIf="!caseInstance.archived">
+          <mwc-icon>archive</mwc-icon>
+          <span>Archive</span>
+        </button>
+      </div> 
+      <div *appHasAPermission="let i;group:groupId; permission:'can_unarchive_cases'">
+        <button mat-menu-item (click)="unarchiveCase()" *ngIf="caseInstance.archived">
+          <mwc-icon>unarchive</mwc-icon>
+          <span>Unarchive</span>
+        </button>
+      </div>
+    </mat-menu>
+  </span>
 </div>
 <div class="secondary" *ngIf="secondaryText">
     <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>

@@ -1,4 +1,4 @@
-<div class="icon-list-item case-event-list-item event {{caseEventDefinition.required ? 'required' : ''}}">
+<div class="icon-list-item case-event-list-item event {{caseEventDefinition.required ? 'required' : ''}} {{ caseEvent.archived ? 'disabled' : '' }}">
 	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
 	<div>
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
