@@ -71,17 +71,6 @@ export class CaseComponent implements AfterContentInit {
     this.window.caseService = this.caseService
     this.onCaseOpen()
 
-    try {
-      let queryResults = await this.groupIssuesService.query(this.groupId, {
-        fun: "issuesByCaseId",
-        keys: [caseId],
-        include_docs: true,
-        descending: true
-      })
-      this.issues = queryResults.map(issue => issue.doc)
-    } catch (e) {
-      console.log("Error fetching issues: " + e)
-    }
     this.calculateTemplateData()
     await this.getIssuesAndConflicts(caseId)
     this.ready = true
@@ -92,17 +81,9 @@ export class CaseComponent implements AfterContentInit {
   }
 
   setStep(index: number) {
-    this.step = index;
-    this.getIssuesAndConflicts(this.groupId)
+    this.step = (this.step != index) ? index : -1;
+    //this.getIssuesAndConflicts(this.groupId)
     this.ref.detectChanges()
-  }
-
-  nextStep() {
-    this.step++;
-  }
-
-  prevStep() {
-    this.step--;
   }
 
   showArchivedSliderChange() {
@@ -226,9 +207,11 @@ export class CaseComponent implements AfterContentInit {
   }
 
   async onSubmit() {
-    await this.caseService.save()
-    this.calculateTemplateData()
-  }
+      await this.caseService.createEvent(this.selectedNewEventType)
+      await this.caseService.save()
+      this.calculateTemplateData()
+  }q
+
   async onRestore(event) {
     const restoreConfirmed = confirm(_TRANSLATE('Restore this event?'));
     if (restoreConfirmed) {
@@ -278,6 +261,16 @@ export class CaseComponent implements AfterContentInit {
 
   scroll(el: HTMLElement) {
     el.scrollIntoView();
+  }
+
+  processCaseAction(event: any) {
+    if (event == "delete") {
+      this.delete()
+    } else if (event == "archive") {
+      this.archive()
+    } else if (event == "unarchive") {
+      this.unarchive()
+    }
   }
 
   async archive() {

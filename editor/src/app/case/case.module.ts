@@ -1,5 +1,6 @@
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatChipsModule } from '@angular/material/chips';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
@@ -39,6 +40,7 @@ import { EditIssueComponent } from './components/edit-issue/edit-issue.component
     TangyFormsModule,
     MatChipsModule,
     MatCheckboxModule,
+    MatMenuModule,
     MatExpansionModule,
     MatToolbarModule,
     CommonModule
