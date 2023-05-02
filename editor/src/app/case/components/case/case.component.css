@@ -22,7 +22,8 @@
   color: #FFF;
 }
 
-#case-actions .button {
+#case-actions {
+  float: right;
   margin-left: 15px;
 }
 .cover-when-not-confirmed {
