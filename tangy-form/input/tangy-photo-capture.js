@@ -71,7 +71,7 @@ export class TangyPhotoCapture extends TangyInputBase {
       <div id="qnum-number"></div>
       <div id="qnum-content">
         <label id="label"></label>
-        <div id="imageDisplay">
+         <div id="imageDisplay">
 <!--          <span style="margin: auto; font-size: 3em;"> <svg id="splash" style="width: 400px; margin:  9px 15px 0px 16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 83.41 83.43"></svg></span>-->
 <!--          <div class="centered" id="placeholder"> <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="-1.0000000000002274 -2.492537313432649 644.0000000000005 645.4925373134326" width="300" height="641.49"><defs><path d="M0 -1.49L640 -1.49L640 640L0 640L0 -1.49Z" id="h2j0HmwHkI"></path></defs><g><g><use xlink:href="#h2j0HmwHkI" opacity="1" fill="#abb3ab" fill-opacity="1"></use></g></g></svg></div>-->
           <video autoplay id="video"></video>
