@@ -48,6 +48,7 @@ import "tangy-form/input/tangy-signature.js";
 class TangyFormEditor extends PolymerElement {
   static get template() {
     return html`
+      
       <style>
         :host {
           display: block;

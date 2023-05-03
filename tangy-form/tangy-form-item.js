@@ -274,7 +274,7 @@ export class TangyFormItem extends PolymerElement {
         <div class="card-content">
           <label class="heading"></label>
           <template is="dom-if" if="{{ocr}}">
-            <tangy-ocr max-size-in-kb='512' label="Photograph the test." ></tangy-ocr>
+            <tangy-scan-image label="Scan the test." ></tangy-scan-image>
           </template>
           <slot></slot>
         </div>

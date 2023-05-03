@@ -24,6 +24,7 @@
               "src/libs/bcrypt.min.js",
               "src/libs/SQLitePlugin.js",
               "src/libs/plotly-latest.min.js",
+              "src/libs/opencv.js",
               "src/app/core/sync-records/peers/memorystream-standalone.js",
               "src/app/core/sync-records/peers/pouchdb.replication-stream.min.js",
               "src/app/core/sync-records/peers/pouchdb.load.js",
