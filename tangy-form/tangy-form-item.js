@@ -274,7 +274,7 @@ export class TangyFormItem extends PolymerElement {
         <div class="card-content">
           <label class="heading"></label>
           <template is="dom-if" if="{{ocr}}">
-            <tangy-scan-image label="Scan the test." ></tangy-scan-image>
+            <tangy-scan-image label="Scan the test." inputs="{{inputs}}" ></tangy-scan-image>
           </template>
           <slot></slot>
         </div>
@@ -504,6 +504,49 @@ export class TangyFormItem extends PolymerElement {
     this._injected[name] = value
   }
 
+  ready() {
+    super.ready();
+    this.addEventListener('TANGY_SCAN_IMAGE_VALUE', event => {
+      // Comment out event.preventDefault() to test saving to file system.
+      // Enable event.preventDefault() to test saving to db.
+      // event.preventDefault()
+      console.log("Tangy-form-item Caught TANGY_SCAN_IMAGE_VALUE: ")
+      const lines = event.detail.value
+      // this.inputs is poopulated usually for submit() but tangy-scan-image needs inputs property to be populated.
+      let inputs = []
+      this
+          .querySelectorAll('[name]')
+          .forEach(input => inputs.push(input.getModProps && window.useShrinker ? input.getModProps() : input.getProps()))
+      // this.inputs = inputs
+      const answeredQuestions = []
+      inputs.forEach(input => {
+        const label = input.label
+        const name = input.name
+        lines.forEach(line => {
+            if (label.includes(line)) {
+              console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE: " + label + " includes " + line)
+              let regex = RegExp(line);
+              const match = regex.exec(label);
+              if (match) {
+                console.log("match found at " + match.index);
+                if (match.index === 0) {
+                  console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name)
+                  input.value = 'on'
+                  answeredQuestions.push(input)
+                }
+              }
+              // if (line.trim().length === label.trim().length) {
+              //   console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name)
+              //   input.value = 'on'
+              //   answeredQuestions.push(input)
+              // }
+            }
+        })
+      })
+      console.log(`Tangy-form-item TANGY_SCAN_IMAGE_VALUE answeredQuestions: ${JSON.stringify(answeredQuestions)}`)
+    }, true)
+  }
+
   // Apply state in the store to the DOM.
   reflect() {
     this.shadowRoot.querySelector('.heading').innerHTML = this.hasAttribute('title')
@@ -525,16 +568,10 @@ export class TangyFormItem extends PolymerElement {
         let inputEl = this.querySelector(`[name="${inputState.name}"]`)
         if (inputEl) inputEl.setProps(inputState)
       })
-    // if (this.parentElement.ocr) {
-    //   this.ocr = true
-    // }
-    // this.shadowRoot.querySelector('tangy-ocr').addEventListener('TANGY_MEDIA_UPDATE', event => {
-    //   // Comment out event.preventDefault() to test saving to file system.
-    //   // Enable event.preventDefault() to test saving to db.
-    //   // event.preventDefault()
-    //   // 3 ways to inspect the user's response to the form. Ordered by level of detail.
-    //   console.log("Tangy-form-item Caught TANGY_MEDIA_UPDATE event at: " + event.target.name)
-    // }, true)
+    if (this.parentElement.ocr) {
+      this.ocr = true
+    }
+
   }
 
   fireHookInput(hook, event, input) {
