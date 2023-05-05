@@ -5,6 +5,7 @@ pip3 install pandas
 pip3 install pymysql==0.10.1
 pip3 install SQLAlchemy
 apt update
-apt-get install -y mysql-server
+apt install -y default-mysql-server
+
 
 
