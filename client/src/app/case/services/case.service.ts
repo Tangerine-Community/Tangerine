@@ -364,6 +364,14 @@ class CaseService {
     return caseEvent
   }
 
+  async onCaseEventCreate(caseEvent: CaseEvent) {
+    const caseEventDefinition = this.caseDefinition
+    .eventDefinitions
+    .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+
+    await eval(caseEventDefinition.onEventCreate)
+  }
+
   setEventName(eventId, name:string) {
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
