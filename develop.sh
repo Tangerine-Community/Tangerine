@@ -229,8 +229,8 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
   --volume $(pwd)/translations:/tangerine/translations:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
-  --volume $(pwd)/tangy-form-editor/tangy-form-editor.js:/tangerine/tangy-form-editor/tangy-form-editor.js:delegated \
-  --volume $(pwd)/tangy-form/tangy-form.js:/tangerine/tangy-form/tangy-form.js:delegated \
+  --volume $(pwd)/tangy-form-editor:/tangerine/tangy-form-editor:delegated \
+  --volume $(pwd)/tangy-form:/tangerine/tangy-form:delegated \
   tangerine/tangerine:local
  "
 

@@ -13,6 +13,7 @@ class TangyScanImage extends LitElement {
       invisible: { type: Boolean },
       canvas: { type: Object },
       context: { type: Object },
+      inputs: { type: Object },
     }
   }
 
@@ -116,21 +117,46 @@ class TangyScanImage extends LitElement {
     // const constraints = this.getConstraints()
     this.constraints = {video: { facingMode: { exact: "environment" } }}
     // Get access to the camera using getUserMedia()
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-          // let video = this.shadowRoot.querySelector('video');
-          // Set the video element's source to the camera stream
-          this.video.srcObject = stream;
-          this.video.play();
-          // setInterval(this.processVideo, 0);
-          setInterval(() => {
-            this.processVideo()
-          // }, 1000 / 60); // Capture 60 frames per second
-          }, 0); // Capture 60 frames per second
-        })
-        .catch(error => {
-          console.error('Error accessing camera:', error);
-        });
+    // navigator.mediaDevices.getUserMedia(this.constraints)
+    //     .then(stream => {
+    //       // let video = this.shadowRoot.querySelector('video');
+    //       // Set the video element's source to the camera stream
+    //       this.video.srcObject = stream;
+    //       this.video.play();
+    //       // setInterval(this.processVideo, 0);
+    //       setInterval(() => {
+    //         this.processVideo()
+    //       // }, 1000 / 60); // Capture 60 frames per second
+    //       }, 0); // Capture 60 frames per second
+    //     })
+    //     .catch(error => {
+    //       console.error('Error accessing camera:', error);
+    //     });
+    const onSuccess = (imageData) => {
+      const onSuccess = (recognizedText) => {
+        //var element = document.getElementById('pp');
+        //element.innerHTML=recognizedText.blocks.blocktext;
+        //Use above two lines to show recognizedText in html
+        console.log(recognizedText);
+        // alert(recognizedText.blocks.blocktext);
+        const lines = recognizedText.lines.linetext;
+        // this.value = JSON.stringify(lines);
+        this.dispatchEvent(new CustomEvent('TANGY_SCAN_IMAGE_VALUE', {bubbles: true, composed: true, detail: {value: lines}}));
+      }
+      const onFail = (message) => {
+        alert('Failed because: ' + message);
+      }
+      mltext.getText(onSuccess, onFail,{imgType : 0, imgSrc : imageData});
+      // for imgType Use 0,1,2,3 or 4
+
+    }
+    const onFail = (message) =>{
+      alert('Failed because: ' + message);
+    }
+    navigator.camera.getPicture(onSuccess, onFail, { quality: 100, correctOrientation: true });
+
+
+
   }
 
   processVideo() {
