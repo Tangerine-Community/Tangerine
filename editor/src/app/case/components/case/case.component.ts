@@ -207,11 +207,15 @@ export class CaseComponent implements AfterContentInit {
   }
 
   async onSubmit() {
-      await this.caseService.createEvent(this.selectedNewEventType)
+    const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
+    if (this.selectedNewEventType !== '') {
+      var caseEvent = this.caseService.createEvent(this.selectedNewEventType)
+      await this.caseService.onCaseEventCreate(caseEvent)
       await this.caseService.save()
       this.calculateTemplateData()
-  }q
-
+      this.processMonitorService.stop(process.id)
+    }
+  }
   async onRestore(event) {
     const restoreConfirmed = confirm(_TRANSLATE('Restore this event?'));
     if (restoreConfirmed) {
