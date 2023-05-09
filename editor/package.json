@@ -38,6 +38,7 @@
     "assert": "^2.0.0",
     "axios": "^1.2.3",
     "fast-json-patch": "^3.1.1",
+    "file-list-component": "github:Tangerine-Community/file-list",
     "json-diff": "^1.0.0",
     "jsondiffpatch": "^0.4.1",
     "jwt-decode": "^3.1.2",
