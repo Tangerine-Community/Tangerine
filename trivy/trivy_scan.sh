@@ -1,6 +1,6 @@
 TIMEOUT="20m"
 
-trivy image --scanners vuln tangerine-v4-server --timeout $TIMEOUT --format template --template "@trivy/contrib/html.tpl" -o trivy/reports/tangerine-v4-server.html
-trivy image --scanners vuln tangerine-v4-server-ui --timeout $TIMEOUT --format template --template "@trivy/contrib/html.tpl" -o trivy/reports/tangerine-v4-server-ui.html
-trivy image --scanners vuln tangerine-v4-couchdb --timeout $TIMEOUT --format template --template "@trivy/contrib/html.tpl" -o trivy/reports/tangerine-v4-couchdb.html
-trivy image --scanners vuln tangerine-v4-apk-generator --timeout $TIMEOUT --format template --template "@trivy/contrib/html.tpl" -o trivy/reports/tangerine-v4-apk-generator.html
+trivy image --scanners vuln tangerine-server --timeout $TIMEOUT --format template --template "@contrib/html.tpl" -o ../data/groups/reports/tangerine-server.html
+trivy image --scanners vuln tangerine-server-ui --timeout $TIMEOUT --format template --template "@contrib/html.tpl" -o ../data/groups/reports/tangerine-server-ui.html
+trivy image --scanners vuln tangerine-couchdb --timeout $TIMEOUT --format template --template "@contrib/html.tpl" -o ../data/groups/reports/tangerine-couchdb.html
+trivy image --scanners vuln tangerine-apk-generator --timeout $TIMEOUT --format template --template "@contrib/html.tpl" -o ../data/groups/reports/tangerine-apk-generator.html
