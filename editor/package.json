@@ -61,7 +61,7 @@
     "underscore": "^1.13.6",
     "uuid": "^9.0.0",
     "workbox-cli": "^6.5.4",
-    "xlsx": "^0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz",
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
