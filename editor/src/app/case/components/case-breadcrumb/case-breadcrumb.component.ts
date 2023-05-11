@@ -89,7 +89,7 @@ export class CaseBreadcrumbComponent implements OnInit {
     this.caseActionEvent.emit('unarchive');
   }
 
-  showmenu() {
+  showMenu() {
     this.ref.detectChanges()
   }
 
