@@ -45,8 +45,8 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemPrimary = '';
   renderedTemplateListItemSecondary = '';
   canUserDeleteForms: boolean;
-  canUserArchiveForms: boolean;
-  canUserUnarchiveForms: boolean;
+  groupId:string;
+  eventFormArchived: boolean = false;
   response:any
 
   constructor(
@@ -59,10 +59,10 @@ export class EventFormListItemComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.groupId = window.location.pathname.split('/')[2]
+
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
-    this.canUserArchiveForms = true;
-    this.canUserUnarchiveForms = true;
     const response = await this.formService.getResponse(this.eventForm.formResponseId);
     this.response = response
     const getValue = (variableName) => {
@@ -96,6 +96,9 @@ export class EventFormListItemComponent implements OnInit {
     eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateEventFormListItemIcon ? \`${this.caseDefinition.templateEventFormListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``);
     eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateEventFormListItemPrimary ? \`${this.caseDefinition.templateEventFormListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``);
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``);
+
+    this.eventFormArchived = eventForm.archived
+
     this.ref.detectChanges();
   }
 

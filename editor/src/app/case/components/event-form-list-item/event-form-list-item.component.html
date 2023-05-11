@@ -10,13 +10,13 @@
 			<mwc-icon>delete</mwc-icon>
 		</button>
 	</span>
-	<span *ngIf="canUserArchiveForms && !eventForm.archived">
-		<button (click)="onArchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
+	<span *ngIf="!eventFormArchived">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_archive_cases'" (click)="onArchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
 			<mwc-icon>archive</mwc-icon>
 		</button>
 	</span>
-	<span *ngIf="canUserUnarchiveForms && eventForm.archived">
-		<button (click)="onUnarchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon-alternate">
+	<span *ngIf="eventFormArchived">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_unarchive_cases'" (click)="onUnarchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon-alternate">
 			<mwc-icon>unarchive</mwc-icon>
 		</button>
 	</span>
