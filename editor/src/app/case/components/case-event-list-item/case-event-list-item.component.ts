@@ -1,4 +1,4 @@
-import { Component, Input, Output,  AfterContentInit, ChangeDetectorRef, EventEmitter } from '@angular/core';
+import { Component, Input, Output,  OnInit, ChangeDetectorRef, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
@@ -13,7 +13,7 @@ import { CaseService } from '../../services/case.service';
   templateUrl: './case-event-list-item.component.html',
   styleUrls: ['./case-event-list-item.component.css']
 })
-export class CaseEventListItemComponent implements AfterContentInit {
+export class CaseEventListItemComponent implements OnInit {
 
   @Input() caseDefinition:CaseDefinition
   @Input() caseEventDefinition:CaseEventDefinition
@@ -24,6 +24,7 @@ export class CaseEventListItemComponent implements AfterContentInit {
   @Output() caseEventUnarchiveEvent = new EventEmitter();
 
   groupId:string;
+  caseEventArchived: boolean = false;
 
   defaultTemplateListItemIcon = `\${caseEvent.complete ? 'event_available' : 'event_note'}`
   defaultTemplateListItemPrimary = `
@@ -40,12 +41,12 @@ export class CaseEventListItemComponent implements AfterContentInit {
   constructor(
     private ref: ChangeDetectorRef,
     private caseService: CaseService,
-    private router: Router
+    private router: Router,
   ) {
     ref.detach()
   }
 
-  ngAfterContentInit() {
+  ngOnInit() {
     this.groupId = window.location.pathname.split('/')[2]
     
     this.loadCaseEventInfo()
@@ -69,6 +70,9 @@ export class CaseEventListItemComponent implements AfterContentInit {
     eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateCaseEventListItemIcon ? \`${this.caseDefinition.templateCaseEventListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
     eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateCaseEventListItemPrimary ? \`${this.caseDefinition.templateCaseEventListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateCaseEventListItemSecondary ? \`${this.caseDefinition.templateCaseEventListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
+
+    this.caseEventArchived = this.caseEvent.archived
+
     this.ref.detectChanges()
   }
 
