@@ -730,15 +730,17 @@ class CaseService {
     const caseEvent = this.case.events.find(event => event.id === caseEventId)
     if (caseEvent) {
       var eventForm = caseEvent.eventForms.find(form => form.id === eventFormId)
-      if (eventForm && eventForm.formResponseId) {
+      if (eventForm) {
+        if (eventForm.formResponseId) {
           const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
           if (formResponse && !formResponse.archived) {
             formResponse.archived = true
             await this.tangyFormService.saveResponse(formResponse)
           }
-          eventForm.archived = true
-          await this.save()
         }
+        eventForm.archived = true
+        await this.save()
+      }
     }
   }
 
@@ -746,15 +748,17 @@ class CaseService {
     const caseEvent = this.case.events.find(event => event.id === caseEventId)
     if (caseEvent) {
       var eventForm = caseEvent.eventForms.find(form => form.id === eventFormId)
-      if (eventForm && eventForm.formResponseId) {
+      if (eventForm) {
+        if (eventForm.formResponseId) {
           const formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId)
           if (formResponse && formResponse.archived) {
             formResponse.archived = false
             await this.tangyFormService.saveResponse(formResponse)
           }
-          eventForm.archived = false
-          await this.save()
         }
+        eventForm.archived = false
+        await this.save()
+      }
     }
   }
 

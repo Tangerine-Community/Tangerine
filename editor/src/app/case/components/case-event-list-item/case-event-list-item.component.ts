@@ -76,24 +76,12 @@ export class CaseEventListItemComponent implements AfterContentInit {
     this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
   }
 
-  async archiveItem() {
-    const confirmArchive = confirm(
-      _TRANSLATE('Are you sure you want to archive this event?')
-      );
-    if (confirmArchive) {
+  onArchiveEventClick() {
       this.caseEventArchiveEvent.emit(this.caseEvent.id)
-      this.loadCaseEventInfo()
-    }
   }
 
-  async unarchiveItem() {
-    const confirmUnarchive = confirm(
-      _TRANSLATE('Are you sure you want to unarchive this event?')  
-      );
-    if (confirmUnarchive) {
-      this.caseEventUnarchiveEvent.emit(this.caseEvent.id)
-      this.loadCaseEventInfo()
-    }
+  onUnarchiveCaseClick() {
+    this.caseEventUnarchiveEvent.emit(this.caseEvent.id)
   }
 
 }

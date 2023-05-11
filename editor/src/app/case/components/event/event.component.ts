@@ -30,6 +30,8 @@ interface ParticipantInfo {
 })
 export class EventComponent implements OnInit {
 
+  caseId: string
+  eventId: string
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
   participantInfos:Array<ParticipantInfo>
@@ -61,17 +63,11 @@ export class EventComponent implements OnInit {
   async ngOnInit() {
     this.groupId = window.location.pathname.split('/')[2]
 
-    this.route.params.subscribe(async params => {
-      await this.caseService.load(params.caseId)
-      this.caseService.setContext(params.eventId)
-      this.window.caseService = this.caseService
-      this.caseEvent = this
-        .caseService
-        .case
-        .events
-        .find(caseEvent => caseEvent.id === params.eventId)
-      
-      await this.loadEventFormsInfos()
+    this.route.params.subscribe(async params => {    
+      this.caseId = params.caseId
+      this.eventId = params.eventId
+
+      await this.loadEventFormsInfos(true)
 
       this.onEventOpen() 
 
@@ -82,28 +78,40 @@ export class EventComponent implements OnInit {
     })
   }
 
-  async loadEventFormsInfos() {
+  async loadEventFormsInfos(reload:boolean) {
+    if (reload) {
+      await this.caseService.load(this.caseId)
+    }
+    this.caseService.setContext(this.eventId)
+    this.window.caseService = this.caseService
+    this.caseEvent = this
+      .caseService
+      .case
+      .events
+      .find(caseEvent => caseEvent.id === this.eventId)
+
     this.caseEventDefinition = this
     .caseService
     .caseDefinition
     .eventDefinitions
     .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
-  const noRoleEventFormDefinitionIds:Array<string> = this.caseEventDefinition.eventFormDefinitions
-    .filter(eventFormDefinition => !eventFormDefinition.forCaseRole)
-    .map(eventFormDefinition => eventFormDefinition.id)
-  this.noRoleEventFormInfos = this
-    .caseEvent
-    .eventForms
-    .filter(eventForm => (this.showArchivedSliderState ? true : !eventForm.archived) && noRoleEventFormDefinitionIds.includes(eventForm.eventFormDefinitionId))
-    .map(eventForm => {
-      return <EventFormInfo>{
-        eventForm,
-        eventFormDefinition: this
-          .caseEventDefinition
-          .eventFormDefinitions
-          .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
-      }
-    })
+
+    const noRoleEventFormDefinitionIds: Array<string> = this.caseEventDefinition.eventFormDefinitions
+      .filter(eventFormDefinition => !eventFormDefinition.forCaseRole)
+      .map(eventFormDefinition => eventFormDefinition.id)
+    this.noRoleEventFormInfos = this
+      .caseEvent
+      .eventForms
+      .filter(eventForm => (this.showArchivedSliderState ? true : !eventForm.archived) && noRoleEventFormDefinitionIds.includes(eventForm.eventFormDefinitionId))
+      .map(eventForm => {
+        return <EventFormInfo>{
+          eventForm,
+          eventFormDefinition: this
+            .caseEventDefinition
+            .eventFormDefinitions
+            .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+        }
+      })
   }
 
   async onEventOpen(){
@@ -130,7 +138,7 @@ export class EventComponent implements OnInit {
 
   async showArchivedSliderChange() {
     this.showArchivedSliderState = !this.showArchivedSliderState
-    await this.loadEventFormsInfos()
+    await this.loadEventFormsInfos(false)
     this.ref.detectChanges()
   }
 
@@ -218,15 +226,31 @@ export class EventComponent implements OnInit {
     }
   }
 
-  async unarchiveEventForm(form) {
-    const unarchiveConfirmed = confirm(_TRANSLATE('Unarchive this event?'));
+  async onEventFormDelete(eventFormId) {
+    const unarchiveConfirmed = confirm(_TRANSLATE('Are you sure you want to delete this form?'));
     if (unarchiveConfirmed) {
-      if (!form.archived) {
-        alert("Already unarchived.")
-      } else {
-        await this.caseService.unarchiveCaseEvent(this.caseEvent.id)
+        this.caseService.deleteEventForm(this.caseEvent.id, eventFormId)
+        await this.caseService.save()
+        await this.loadEventFormsInfos(true)
         this.ref.detectChanges()
-      }
+    }
+  }
+
+  async onEventFormArchive(eventFormId) {
+    const unarchiveConfirmed = confirm(_TRANSLATE('Are you sure you want to archive this form?'));
+    if (unarchiveConfirmed) {
+        await this.caseService.archiveEventForm(this.caseEvent.id, eventFormId)
+        await this.loadEventFormsInfos(true)
+        this.ref.detectChanges()
+    }
+  }
+
+  async onEventFormUnarchive(eventFormId) {
+    const unarchiveConfirmed = confirm(_TRANSLATE('Are you sure you want to unarchive this form?'));
+    if (unarchiveConfirmed) {
+        await this.caseService.unarchiveEventForm(this.caseEvent.id, eventFormId)
+        await this.loadEventFormsInfos(true)
+        this.ref.detectChanges()
     }
   }
 
