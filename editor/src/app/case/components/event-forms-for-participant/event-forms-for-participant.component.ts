@@ -1,7 +1,7 @@
 import { NotificationStatus } from './../../classes/notification.class';
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 
-import { Component, OnInit, AfterContentInit, ChangeDetectorRef, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, ChangeDetectorRef, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
@@ -33,6 +33,9 @@ export class EventFormsForParticipantComponent implements OnInit {
   @Input('caseId') caseId:string
   @Input('eventId') eventId:string
   @Input('showArchived') showArchived: boolean;
+  @Output() formDeletedEvent = new EventEmitter();
+  @Output() formArchivedEvent = new EventEmitter();
+  @Output() formUnarchivedEvent = new EventEmitter();
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
@@ -60,10 +63,6 @@ export class EventFormsForParticipantComponent implements OnInit {
     this.render()
   }
 
-  onFormDelete() {
-    this.render()
-  }
-
   async render() {
     await this.caseService.load(this.caseId)
     this.window.caseService = this.caseService
@@ -86,6 +85,18 @@ export class EventFormsForParticipantComponent implements OnInit {
     return this._canExitToRoute
   }
 
+  onDeleteFormClick(eventFormId) {
+    this.formDeletedEvent.emit(eventFormId);
+  }
+
+  onArchiveFormClick(eventFormId) {
+    this.formArchivedEvent.emit(eventFormId);
+  }
+
+  onUnarchiveFormClick(eventFormId) {
+    this.formUnarchivedEvent.emit(eventFormId);
+  }
+
   eventFormsParticipantCanCreate(participantId) {
     const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
     return this.caseEventDefinition.eventFormDefinitions
@@ -100,13 +111,6 @@ export class EventFormsForParticipantComponent implements OnInit {
           ? [...availableEventFormDefinitions, eventFormDefinition]
           : availableEventFormDefinitions
       }, [])
-  }
-
-  updateFormList(event) {
-    if (event === 'formDeleted') {
-      this.getParticipantInfo()
-      this.ref.detectChanges()
-    }
   }
 
   getParticipantInfo() {

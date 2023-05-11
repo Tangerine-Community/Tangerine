@@ -1,4 +1,4 @@
-import {Component, AfterContentInit, ChangeDetectorRef, OnDestroy, ViewChild, Input} from '@angular/core';
+import {Component, AfterContentInit, ChangeDetectorRef} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -321,18 +321,28 @@ export class CaseComponent implements AfterContentInit {
     }
   }
 
-  async onCaseEventArchiveEvent(caseEventId) {
-    await this.caseService.archiveCaseEvent(caseEventId)
+  async onCaseEventArchive(caseEventId) {
+    const confirmArchive = confirm(
+      _TRANSLATE('Are you sure you want to archive this event?')
+      );
+    if (confirmArchive) {
+      await this.caseService.archiveCaseEvent(caseEventId)
 
-    this.loadCaseInstanceInfo(true)
-    this.calculateTemplateData()
+      this.loadCaseInstanceInfo(true)
+      this.calculateTemplateData()
+    }
   }
 
-  async onCaseEventUnarchiveEvent(caseEventId) {
-    await this.caseService.unarchiveCaseEvent(caseEventId)
+  async onCaseEventUnarchive(caseEventId) {
+    const confirmArchive = confirm(
+      _TRANSLATE('Are you sure you want to unarchive this event?')
+      );
+    if (confirmArchive) {
+      await this.caseService.unarchiveCaseEvent(caseEventId)
 
-    this.loadCaseInstanceInfo(true)
-    this.calculateTemplateData()
+      this.loadCaseInstanceInfo(true)
+      this.calculateTemplateData()
+    }
   }
 
 }
