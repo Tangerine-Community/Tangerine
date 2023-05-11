@@ -20,6 +20,7 @@ export class CaseBreadcrumbComponent implements OnInit {
   secondaryText = ''
   secondaryLink = ''
   groupId:string
+  showingCaseEventList:boolean;
 
   constructor(
     private caseService: CaseService,
@@ -32,6 +33,10 @@ export class CaseBreadcrumbComponent implements OnInit {
   ngOnInit() {
     this.caseInstance = this.caseService.case
     this.groupId = window.location.pathname.split('/')[2]
+
+    // Used to hide the case actions from the event-list and form-reponse component views
+    this.showingCaseEventList = !window.location.hash.includes("event")
+
     const caseEvent = this.caseEventId
       ? this.caseInstance
         .events
