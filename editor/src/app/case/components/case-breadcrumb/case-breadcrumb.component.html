@@ -3,7 +3,7 @@
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
   <span class="case-action-container">
     <span class="case-archived-text" *ngIf="caseInstance.archived">[ Archived ]</span>
-    <mwc-icon class="case-action-menu" [matMenuTriggerFor]="rootMenu" (click)="ref.detectChanges()">more_vert</mwc-icon>
+    <mwc-icon class="case-action-menu" [matMenuTriggerFor]="rootMenu" (click)="showMenu()">more_vert</mwc-icon>
     <mat-menu #rootMenu="matMenu">
       <button mat-menu-item disabled>
         <span>Case Actions</span>
