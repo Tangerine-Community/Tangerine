@@ -172,8 +172,6 @@ async function batch() {
       let processGroup = false
       if (onlyProcessTheseGroups.length === 0 || onlyProcessTheseGroups.includes(database.name)) {
         processGroup = true
-      } else {
-        // log.debug("Excluding group: " + database.name + " from mysql processing.")
       }
       if (processGroup) {
         const db = new DB(database.name)

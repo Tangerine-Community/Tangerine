@@ -10,7 +10,7 @@ if (process.argv[2] === '--help') {
 const moduleName = process.argv[2]
 
 async function go() {
-  if (moduleName === 'mysql' || moduleName === 'mysql-js') {
+  if (moduleName === 'mysql-js') {
     clearModuleCache(moduleName)
   } else {
     console.log('Unsupported module: ' + moduleName)
