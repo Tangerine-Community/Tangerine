@@ -37,6 +37,7 @@ export class CaseComponent implements AfterContentInit {
   conflictingEvents:Array<any>
   moment
   groupId:string
+  caseId:string
   hideRestore: boolean = false
   hideFormPlayer = true
   step = -1;
@@ -62,17 +63,13 @@ export class CaseComponent implements AfterContentInit {
   async ngAfterContentInit() {
     const process = this.processMonitorService.start('caseOpen', 'Opening Case...')
     this.groupId = window.location.pathname.split('/')[2]
-    const caseId = window.location.hash.split('/')[2]
-    if (!this.caseService.case || caseId !== this.caseService.case._id) {
-      await this.caseService.load(caseId)
-      this.caseService.openCaseConfirmed = false
-    }
-    this.caseService.setContext()
-    this.window.caseService = this.caseService
+    this.caseId = window.location.hash.split('/')[2]
+    await this.loadCaseInstanceInfo(true)
+    
     this.onCaseOpen()
 
     this.calculateTemplateData()
-    await this.getIssuesAndConflicts(caseId)
+    await this.getIssuesAndConflicts(this.caseId)
     this.ready = true
     this.processMonitorService.stop(process.id)
 
@@ -90,6 +87,14 @@ export class CaseComponent implements AfterContentInit {
     this.showArchivedSliderState = !this.showArchivedSliderState
     this.calculateTemplateData()
     this.ref.detectChanges()
+  }
+
+  async loadCaseInstanceInfo(reload:boolean) {
+    if (reload || !this.caseService.case || this.caseId !== this.caseService.case._id) {
+      await this.caseService.load(this.caseId)
+    }
+    this.caseService.setContext()
+    this.window.caseService = this.caseService
   }
 
   calculateTemplateData() {
@@ -283,7 +288,9 @@ export class CaseComponent implements AfterContentInit {
       this.process = this.processMonitorService.start('archiving a case', 'Archiving a case.')
       await this.caseService.archive()
       this.processMonitorService.stop(this.process.id)
-      this.ref.detectChanges()
+
+      // Reload the page so the breadcrumb updates
+      this.router.navigate(['case', this.caseId])
     }
   }
 
@@ -293,6 +300,9 @@ export class CaseComponent implements AfterContentInit {
       this.process = this.processMonitorService.start('unarchiving a case', 'Un-archiving a case.')
       await this.caseService.unarchive()
       this.processMonitorService.stop(this.process.id)
+
+      this.loadCaseInstanceInfo(true)
+      this.calculateTemplateData()
       this.ref.detectChanges()
     }
   }
@@ -305,8 +315,24 @@ export class CaseComponent implements AfterContentInit {
       this.process = this.processMonitorService.start('deleting a case', 'Deleting a case.')
       await this.caseService.delete()
       this.processMonitorService.stop(this.process.id)
-      this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
+
+      this.loadCaseInstanceInfo(true)
+      this.ref.detectChanges()
     }
+  }
+
+  async onCaseEventArchiveEvent(caseEventId) {
+    await this.caseService.archiveCaseEvent(caseEventId)
+
+    this.loadCaseInstanceInfo(true)
+    this.calculateTemplateData()
+  }
+
+  async onCaseEventUnarchiveEvent(caseEventId) {
+    await this.caseService.unarchiveCaseEvent(caseEventId)
+
+    this.loadCaseInstanceInfo(true)
+    this.calculateTemplateData()
   }
 
 }

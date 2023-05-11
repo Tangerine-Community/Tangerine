@@ -525,7 +525,7 @@ class CaseService {
 
   async unarchiveCaseEvent(caseEventId:string) {
     const caseEvent = this.case.events.find(event => event.id === caseEventId)
-    if (caseEvent && !caseEvent.archived) {
+    if (caseEvent && caseEvent.archived) {
       var archivedEventForms = caseEvent.eventForms.filter(form => form.archived)
       for (var eventForm of archivedEventForms) {
         if (eventForm.formResponseId) {
