@@ -42,6 +42,7 @@ export class TangyFormsPlayerComponent {
   $resubmit = new Subject()
   $afterResubmit = new Subject()
   rendered = false
+  groupId: string
 
   formInfo:FormInfo
   formTemplatesInContext:Array<FormTemplate>
@@ -61,6 +62,8 @@ export class TangyFormsPlayerComponent {
     authenticationService: AuthenticationService,
     caseService: CaseService
   ) {
+    this.groupId = window.location.pathname.split('/')[2]
+
     this.window = window
     this.authenticationService = authenticationService
     this.caseService = caseService
