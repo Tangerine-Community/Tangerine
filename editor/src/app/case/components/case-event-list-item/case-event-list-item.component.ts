@@ -1,9 +1,9 @@
-import { Component, Input, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output,  AfterContentInit, ChangeDetectorRef, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
-import { DatePipe } from '@angular/common';
 import * as moment from 'moment'
 import { CaseDefinition } from '../../classes/case-definition.class';
 import { CaseService } from '../../services/case.service';
@@ -20,6 +20,10 @@ export class CaseEventListItemComponent implements AfterContentInit {
   @Input() caseEvent:CaseEvent
   @Input() case:Case
   @Input() showArchived:boolean;
+  @Output() caseEventArchiveEvent = new EventEmitter();
+  @Output() caseEventUnarchiveEvent = new EventEmitter();
+
+  groupId:string;
 
   defaultTemplateListItemIcon = `\${caseEvent.complete ? 'event_available' : 'event_note'}`
   defaultTemplateListItemPrimary = `
@@ -33,20 +37,21 @@ export class CaseEventListItemComponent implements AfterContentInit {
   renderedTemplateListItemPrimary = ''
   renderedTemplateListItemSecondary = ''
 
-  canUserArchiveForms: boolean;
-  canUserUnarchiveForms: boolean;
-
   constructor(
     private ref: ChangeDetectorRef,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private router: Router
   ) {
-    this.canUserArchiveForms = true
-    this.canUserUnarchiveForms = true
-
     ref.detach()
   }
 
   ngAfterContentInit() {
+    this.groupId = window.location.pathname.split('/')[2]
+    
+    this.loadCaseEventInfo()
+  }
+
+  loadCaseEventInfo() {
     const getVariable = (variableName) => {
       const variablesByName = this.case.items.reduce((variablesByName,item) => {
         for (let input of item.inputs) {
@@ -67,15 +72,27 @@ export class CaseEventListItemComponent implements AfterContentInit {
     this.ref.detectChanges()
   }
 
+  onCaseEventClick() {
+    this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+  }
+
   async archiveItem() {
     const confirmArchive = confirm(
       _TRANSLATE('Are you sure you want to archive this event?')
       );
     if (confirmArchive) {
-      this.caseService.archiveCaseEvent(this.caseEvent.id);
-      await this.caseService.save();
+      this.caseEventArchiveEvent.emit(this.caseEvent.id)
+      this.loadCaseEventInfo()
+    }
+  }
 
-      this.ref.detectChanges();
+  async unarchiveItem() {
+    const confirmUnarchive = confirm(
+      _TRANSLATE('Are you sure you want to unarchive this event?')  
+      );
+    if (confirmUnarchive) {
+      this.caseEventUnarchiveEvent.emit(this.caseEvent.id)
+      this.loadCaseEventInfo()
     }
   }
 

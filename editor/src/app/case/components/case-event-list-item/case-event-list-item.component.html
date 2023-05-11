@@ -1,14 +1,18 @@
-<div class="icon-list-item case-event-list-item event {{caseEventDefinition.required ? 'required' : ''}} {{ caseEvent.archived ? 'disabled' : '' }}">
+<div class="icon-list-item case-event-list-item event {{caseEventDefinition.required ? 'required' : ''}} {{ caseEvent.archived ? 'disabled' : '' }}" (click)="onCaseEventClick()">
 	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
 	<div>
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
 	<span class="tangy-spacer"></span>
-	<span *ngIf="canUserArchiveForms && !caseEvent.archived">
-		<paper-button (click)="archiveItem()" class="tangy-location-list-icon"><mwc-icon>archive</mwc-icon></paper-button>
+	<span *ngIf="!caseEvent.archived">
+		<button (click)="archiveItem($event); $event.stopPropagation();" class="tangy-small-list-icon">
+			<mwc-icon>archive</mwc-icon>
+		</button>
 	</span>
-	<span *ngIf="canUserUnarchiveForms && caseEvent.archived">
-		<paper-button (click)="unarchiveItem()" disabled="" class="tangy-location-list-icon"><mwc-icon>unarchive</mwc-icon></paper-button>
+	<span *ngIf="caseEvent.archived">
+		<button (click)="unarchiveItem($event); $event.stopPropagation();" class="tangy-small-list-icon-alternate">
+			<mwc-icon>unarchive</mwc-icon>
+		</button>
 	</span>
 </div>
