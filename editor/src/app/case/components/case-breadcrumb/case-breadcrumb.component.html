@@ -1,7 +1,7 @@
 <div class="primary">
   <iron-icon icon="clear" class="back-to-cases" (click)="goBackToCases()"></iron-icon>
   <span [innerHTML]="primaryText|unsanitizeHtml"></span>
-  <span class="case-action-container">
+  <span *ngIf="showingCaseEventList" class="case-action-container">
     <span class="case-archived-text" *ngIf="caseInstance.archived">[ Archived ]</span>
     <mwc-icon class="case-action-menu" [matMenuTriggerFor]="rootMenu" (click)="showMenu()">more_vert</mwc-icon>
     <mat-menu #rootMenu="matMenu">
