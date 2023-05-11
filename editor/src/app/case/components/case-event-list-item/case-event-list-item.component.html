@@ -5,12 +5,12 @@
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
 	<span *ngIf="!caseEventArchived">
-		<button *appHasAPermission="let i;group:groupId; permission:'can_archive_cases'" (click)="onArchiveEventClick(); $event.stopPropagation();" class="tangy-small-list-icon">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_archive_events'" (click)="onArchiveEventClick(); $event.stopPropagation();" class="tangy-small-list-icon">
 			<mwc-icon>archive</mwc-icon>
 		</button>
 	</span>
 	<span *ngIf="caseEventArchived">
-		<button *appHasAPermission="let i;group:groupId; permission:'can_unarchive_cases'" (click)="onUnarchiveCaseClick(); $event.stopPropagation();" class="tangy-small-list-icon-alternate">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_unarchive_events'" (click)="onUnarchiveCaseClick(); $event.stopPropagation();" class="tangy-small-list-icon-alternate">
 			<mwc-icon>unarchive</mwc-icon>
 		</button>
 	</span>

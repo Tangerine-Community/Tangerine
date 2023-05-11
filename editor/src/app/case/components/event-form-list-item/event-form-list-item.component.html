@@ -11,12 +11,12 @@
 		</button>
 	</span>
 	<span *ngIf="!eventFormArchived">
-		<button *appHasAPermission="let i;group:groupId; permission:'can_archive_cases'" (click)="onArchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_archive_forms'" (click)="onArchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
 			<mwc-icon>archive</mwc-icon>
 		</button>
 	</span>
 	<span *ngIf="eventFormArchived">
-		<button *appHasAPermission="let i;group:groupId; permission:'can_unarchive_cases'" (click)="onUnarchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon-alternate">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_unarchive_forms'" (click)="onUnarchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon-alternate">
 			<mwc-icon>unarchive</mwc-icon>
 		</button>
 	</span>
