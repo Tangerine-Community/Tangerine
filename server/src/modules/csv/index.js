@@ -157,7 +157,7 @@ module.exports = {
                   }
                 }
               } else {
-                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                console.log("CSV: No eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
               }
               // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
               // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
