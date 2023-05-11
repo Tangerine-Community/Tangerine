@@ -24,8 +24,8 @@
       [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
       [case]="caseService.case"
       [showArchived]="showArchivedSliderState"
-      (caseEventArchiveEvent)="onCaseEventArchiveEvent(caseEvent.id)"
-      (caseEventUnarchiveEvent)="onCaseEventUnarchiveEvent(caseEvent.id)">
+      (caseEventArchiveEvent)="onCaseEventArchive(caseEvent.id)"
+      (caseEventUnarchiveEvent)="onCaseEventUnarchive(caseEvent.id)">
     </app-case-event-list-item>
   </div>
   <div class="icon-list-item event new-event">

@@ -18,8 +18,10 @@
       [caseEventDefinition]="caseEventDefinition"
       [eventForm]="eventFormInfo.eventForm"
       [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+      (formDeletedEvent)="onEventFormDelete($event)"
+      (formArchivedEvent)="onEventFormArchive($event)"
+      (formUnarchivedEvent)="onEventFormUnarchive($event)"
       class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
-      routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
     >
     </app-event-form-list-item>
     <app-event-forms-for-participant
@@ -27,6 +29,9 @@
       [eventId]="caseEvent.id"
       [participantId]="participant.id"
       [showArchived]="showArchivedSliderState"
+      (formDeletedEvent)="onEventFormDelete($event)"
+      (formArchivedEvent)="onEventFormArchive($event)"
+      (formUnarchivedEvent)="onEventFormUnarchive($event)"
       *ngFor="let participant of caseService.case.participants"
     >
     </app-event-forms-for-participant>
