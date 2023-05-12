@@ -1,4 +1,5 @@
 import {LitElement, html} from 'lit';
+import {t} from "../util/t.js";
 // import {cv} from "@techstark/opencv-js";
 // import * as cv from "@techstark/opencv-js"
 
@@ -28,6 +29,13 @@ class TangyScanImage extends LitElement {
     this.video = null;
     this.canvas = null;
     this.context = null;
+    this.t = {
+      capture: t('capture'),
+      retake: t('retake'),
+      accept: t('accept'),
+      clear: t('clear'),
+      saving: t('Saving...')
+    }
   }
 
   // validate() {
@@ -40,69 +48,13 @@ class TangyScanImage extends LitElement {
       <style include="tangy-element-styles"></style>
 
       <style>
-        video {
-          display:none
-        }
-
-        .hint-text{
-          margin-top:6px;
-          margin-left:4px;
-        }
-
-        #buttons {
-          margin: 15px 0px;
-        }
 
         paper-button {
           background-color: var(--accent-color, #CCC);
         }
 
-        paper-button[disabled] {
-          opacity: .2;
-        }
-
-        .saving {
-          filter: grayscale(100%);
-          opacity: 0.4;
-        }
-
-        .saved {
-          filter: grayscale(0%);
-          opacity: 1;
-          border:5px solid green;
-        }
-        /* Centered text */
-        .centered {
-          position: absolute;
-          top: 37.5%;
-          left: 37.5%;
-          transform: translate(-37.5%, -37.5%);
-          font-size: xxx-large;
-          color: red;
-          display:none;
-        }
       </style>
-      <div class="flex-container m-y-25">
-        <div id="qnum-number"></div>
-        <div id="qnum-content">
-          <label id="label"></label>
-          <div id="imageDisplay">
-            <video width="640" height="480" autoplay id="video"></video>
-<!--            <canvas id="canvas" style='display:none'></canvas>-->
-            <canvas id="canvas" width="640" height="480"></canvas>
-            <img src="${this.value}" style='display:none' id="photoCaptureImage"/>
-            <div id="centeredText" class="centered">[[t.saving]]</div>
-          </div
-          <div id="buttons">
-            <paper-button id="capture-button" on-click="capturePhoto"><iron-icon icon="camera-enhance"></iron-icon> [[t.capture]] </paper-button>
-            <paper-button id="clear-button" on-click="clearPhoto" disabled><iron-icon icon="delete"></iron-icon> [[t.clear]] </paper-button>
-          </div>
-          <label class="hint-text"></label>
-          <div id="error-text"></div>
-          <div id="warn-text"></div>
-          <div id="discrepancy-text"></div>
-        </div>
-      </div>
+      <paper-button id="retake-button" @click="${this.scanImage}"><iron-icon icon="camera-enhance"></iron-icon> ${this.t.retake} </paper-button>
     `
   }
 
@@ -112,26 +64,10 @@ class TangyScanImage extends LitElement {
     } else {
       this.front = true
     }
-    this.video = this.shadowRoot.querySelector('video');
-    this.canvas = this.shadowRoot.querySelector('canvas');
-    // const constraints = this.getConstraints()
-    this.constraints = {video: { facingMode: { exact: "environment" } }}
-    // Get access to the camera using getUserMedia()
-    // navigator.mediaDevices.getUserMedia(this.constraints)
-    //     .then(stream => {
-    //       // let video = this.shadowRoot.querySelector('video');
-    //       // Set the video element's source to the camera stream
-    //       this.video.srcObject = stream;
-    //       this.video.play();
-    //       // setInterval(this.processVideo, 0);
-    //       setInterval(() => {
-    //         this.processVideo()
-    //       // }, 1000 / 60); // Capture 60 frames per second
-    //       }, 0); // Capture 60 frames per second
-    //     })
-    //     .catch(error => {
-    //       console.error('Error accessing camera:', error);
-    //     });
+    this.scanImage();
+  }
+
+  scanImage() {
     const onSuccess = (imageData) => {
       const onSuccess = (recognizedText) => {
         //var element = document.getElementById('pp');
@@ -141,23 +77,24 @@ class TangyScanImage extends LitElement {
         // alert(recognizedText.blocks.blocktext);
         const lines = recognizedText.lines.linetext;
         // this.value = JSON.stringify(lines);
-        this.dispatchEvent(new CustomEvent('TANGY_SCAN_IMAGE_VALUE', {bubbles: true, composed: true, detail: {value: lines}}));
+        this.dispatchEvent(new CustomEvent('TANGY_SCAN_IMAGE_VALUE', {
+          bubbles: true,
+          composed: true,
+          detail: {value: lines}
+        }));
       }
       const onFail = (message) => {
         alert('Failed because: ' + message);
       }
-      mltext.getText(onSuccess, onFail,{imgType : 0, imgSrc : imageData});
+      mltext.getText(onSuccess, onFail, {imgType: 0, imgSrc: imageData});
       // for imgType Use 0,1,2,3 or 4
-
     }
-    const onFail = (message) =>{
+    const onFail = (message) => {
       alert('Failed because: ' + message);
     }
-    navigator.camera.getPicture(onSuccess, onFail, { quality: 100, correctOrientation: true });
-
-
-
+    navigator.camera.getPicture(onSuccess, onFail, {quality: 100, correctOrientation: true});
   }
+
 
   processVideo() {
     // const video = this.shadowRoot.querySelector('video');

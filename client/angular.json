@@ -37,18 +37,6 @@
             "styles": [
               "./node_modules/material-design-icons/iconfont/material-icons.css",
               "src/styles.scss"
-            ],
-            "scripts": [
-              {
-                "input": "../tangy-form/node_modules/tesseract.js/dist/worker.min.js",
-                "inject": true,
-                "bundleName": "worker.min.js"
-              },
-              {
-                "input": "../tangy-form/node_modules/tesseract.js-core/tesseract-core.wasm.js",
-                "inject": true,
-                "bundleName": "tesseract-core.wasm.js"
-              }
             ]
           },
           "configurations": {
