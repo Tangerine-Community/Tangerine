@@ -1,9 +1,11 @@
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
-import { t } from './util/t.js'
+import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {t} from './util/t.js'
 import './util/html-element-props.js'
 import '@polymer/paper-card/paper-card.js'
 import './style/tangy-common-styles.js'
-import { TangyFormItemHelpers } from './tangy-form-item-callback-helpers.js'
+import {TangyFormItemHelpers} from './tangy-form-item-callback-helpers.js'
+import '@polymer/polymer/lib/elements/dom-repeat.js';
+
 // import { createWorker } from 'tesseract.js';
 // const worker = createWorker({
 //   logger: m => console.log(m),
@@ -48,7 +50,8 @@ export class TangyFormItem extends PolymerElement {
       open: t('open'),
       close: t('close'),
       save: t('save'),
-      submit: t('submit')
+      submit: t('submit'),
+      reset: t('reset')
     }
     this.hadDiscrepancies = []
     this.hadWarnings = []
@@ -269,12 +272,31 @@ export class TangyFormItem extends PolymerElement {
         paper-card .card-content {
           padding: var(--tangy-form-item--paper-card-content--padding, 15px);
         }
+        #reset {
+          height: auto;
+          color: black;
+          text-transform: uppercase;
+          font-size: unset;
+          font-family: var(--paper-font-common-base_-_font-family);
+          -webkit-font-smoothing: var(--paper-font-common-base_-_-webkit-font-smoothing);
+        }
       </style>
       <paper-card id="card" class="shrunk">
         <div class="card-content">
           <label class="heading"></label>
           <template is="dom-if" if="{{ocr}}">
             <tangy-scan-image label="Scan the test." inputs="{{inputs}}" ></tangy-scan-image>
+            <paper-button id="reset" on-click="resetAnswers"><iron-icon icon="icons:refresh"></iron-icon> <t-t>reset</t-t> </paper-button>
+            <template is="dom-if" if="{{answeredQuestions.length > 0}}">
+            <div id="answerDisplay">
+              <p>
+                Answered Questions:
+              <ul>
+                <template is="dom-repeat" items="[[answeredQuestions]]"><li>{{item.name}} : {{item.value}}</li></template>
+              </ul>
+              </p>
+            </div>
+            </template>
           </template>
           <slot></slot>
         </div>
@@ -496,6 +518,10 @@ export class TangyFormItem extends PolymerElement {
         type: Boolean,
         value: false,
         notify: true
+      },
+      answeredQuestions: {
+        type: Array,
+        value: []
       }
     };
   }
@@ -510,30 +536,64 @@ export class TangyFormItem extends PolymerElement {
       // Comment out event.preventDefault() to test saving to file system.
       // Enable event.preventDefault() to test saving to db.
       // event.preventDefault()
-      console.log("Tangy-form-item Caught TANGY_SCAN_IMAGE_VALUE: ")
+      this.answeredQuestions = []
       const lines = event.detail.value
       // this.inputs is poopulated usually for submit() but tangy-scan-image needs inputs property to be populated.
+      let items = this.parentElement.getMeta().items
       let inputs = []
-      this
-          .querySelectorAll('[name]')
-          .forEach(input => inputs.push(input.getModProps && window.useShrinker ? input.getModProps() : input.getProps()))
+      items.forEach(item => {
+        if (item.id === this.id) {
+          inputs = item.inputs
+        }
+      })
+      // this
+      //     .querySelectorAll('[name]')
+      //     .forEach(input => inputs.push(input.getModProps && window.useShrinker ? input.getModProps() : input.getProps()))
+      //
+      // this.parentElement.getMeta().inputs.forEach(input => inputs.push(input))
       // this.inputs = inputs
-      const answeredQuestions = []
+      let currentAnsweredLine = 0
       inputs.forEach(input => {
         const label = input.label
         const name = input.name
-        lines.forEach(line => {
+        lines.forEach((line, indexLine) => {
             if (label.includes(line)) {
               console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE: " + label + " includes " + line)
               let regex = RegExp(line);
               const match = regex.exec(label);
               if (match) {
-                console.log("match found at " + match.index);
-                if (match.index === 0) {
-                  console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name)
-                  input.value = 'on'
-                  answeredQuestions.push(input)
-                }
+                console.log("match found at index: " + match.index);
+                currentAnsweredLine = indexLine
+                const options = input.value
+                options.forEach((option, indexOption) => {
+                  const optionLabel = option.label
+                  const optionValue = option.value
+                  lines.slice(indexLine + 1).every((optionLine, indexSliceLine) => {
+                    const optionLabelPart = optionLabel.split("-")[0].trim()
+                    const optionLinePart = optionLine.split("-")[0].trim()
+                    if (optionLabelPart.includes(optionLinePart)) {
+                      console.log("optionLabel: " + optionLabelPart + " includes " + optionLinePart)
+                      let regex = RegExp(optionLine);
+                      const match = regex.exec(optionLabel);
+                      if (match) {
+                        console.log("match found at " + match.index);
+                        if (match.index === 0) {
+                          console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name + " to " + optionValue)
+                          // input.value = 'on'
+                          // Pass in the radiobutton by referencing it by variable name in the
+                          // inputs object, then the value you would like to set it to.
+                          const inputEl = this.querySelector('[name=' + name + ']')
+                          this.setValueOfRadioButtons(inputEl, optionValue)
+                          // answeredQuestions.push(input)
+                          this.push('answeredQuestions', {name: name, value: optionLabel});
+                            return false
+                        }
+                      }
+                    }
+                    return true
+                  })
+                })
+
               }
               // if (line.trim().length === label.trim().length) {
               //   console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name)
@@ -543,7 +603,7 @@ export class TangyFormItem extends PolymerElement {
             }
         })
       })
-      console.log(`Tangy-form-item TANGY_SCAN_IMAGE_VALUE answeredQuestions: ${JSON.stringify(answeredQuestions)}`)
+      console.log(`Tangy-form-item TANGY_SCAN_IMAGE_VALUE answeredQuestions: ${JSON.stringify(this.answeredQuestions, null, 2)}`)
     }, true)
   }
 
@@ -1005,45 +1065,27 @@ export class TangyFormItem extends PolymerElement {
       }, [])
   }
 
-  async onOcrButtonPress() {
-    console.log("Tangy-form-item says hello. ")
-    const img = this.shadowRoot.querySelector('tangy-ocr').value
-
-    Tesseract.recognize(
-        img,
-        'eng',
-        { logger: m => console.log(m) }
-    ).then(({ data: { text } }) => {
-      console.log(text);
-      this.shadowRoot.querySelector('#ocrResults').innerHTML = `<br/><pre>${text}</pre`
+  setValueOfRadioButtons(input, value) {
+    input.value = input.value.map(button => {
+      console.log("value: " + value + " button value: " + button.value)
+      const inputValue = {
+        ...button,
+        value: button.name === value ? 'on' : ''
+      }
+      return inputValue;
     })
+  }
 
-    // await worker.load();
-    // await worker.loadLanguage('eng');
-    // // await worker.initialize('eng', OEM.LSTM_ONLY);
-    // await worker.initialize('eng');
-    // // await worker.setParameters({
-    // //   tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
-    // // });
-    // const {data: {text}} = await worker.recognize(img);
-    // console.log(text);
-
-    // const { data: { text } } = await worker.recognize(img, 'eng', {
-    //   corePath: '../../node_modules/tesseract.js-core/tesseract-core.wasm.js',
-    //   workerPath: "../../node_modules/tesseract.js/dist/worker.min.js",
-    //   logger: m => console.log(m),
-    // });
-
-
-    // const worker = createWorker({
-    //   logger: m => console.log(m),
-    // });
-    // await worker.load();
-    // await worker.loadLanguage('eng');
-    // await worker.initialize('eng');
-    // const { data: { text } } = await worker.recognize(img, 'eng');
-    // console.log(text);
-    // await worker.terminate();
+  resetAnswers() {
+    this.querySelectorAll('[name]').forEach(input => {
+      input.value = input.value.map(button => {
+        return {
+          ...button,
+          value: ''
+        };
+      })
+    })
+    this.answeredQuestions = []
   }
 
 }
