@@ -31,21 +31,6 @@ module.exports = {
       for (let i = 0; i < groups.length; i++) {
         const groupId = groups[i]
         await initializeGroupForMySQL(groupId)
-        // const knex = require('knex')({
-        //   client: 'mysql2',
-        //   connection: {
-        //     host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
-        //     port: 3306,
-        //     user: `${process.env.T_MYSQL_USER}`,
-        //     password: `${process.env.T_MYSQL_PASSWORD}`
-        //   }
-        // })
-        // try {
-        //   await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
-        // } catch (e) {
-        //   log.debug(e)
-        // }
-        // await knex.destroy()
       }
     },
     disable: function(data) {
@@ -110,7 +95,7 @@ module.exports = {
               t.integer('complete');
               t.bigint('startunixtime');//TODO: is this being set properly in mysql?
             }
-            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
             
             // output participants
@@ -141,7 +126,7 @@ module.exports = {
                 t.string('CaseID', key_len).index('participant_CaseID_IDX');
                 t.double('inactive');
               }
-              const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+              const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
             // log.debug("doc.events.length: " + doc.events.length)
@@ -177,7 +162,7 @@ module.exports = {
                     t.integer('complete');
                     t.integer('required');
                   }
-                  const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+                  const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
                   log.info('Processed: ' + JSON.stringify(result))
                 }
               } else {
@@ -204,7 +189,7 @@ module.exports = {
                 t.integer('estimate');
                 t.integer('startDate');
               }
-              const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+              const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
           } else if (doc.type === 'issue') {
@@ -222,7 +207,7 @@ module.exports = {
               t.tinyint('complete');
               t.string('archived', 36); // 
             }
-            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           } else {
             const flatDoc = await prepareFlatData(doc, locationList, sanitized);
@@ -238,7 +223,7 @@ module.exports = {
               t.tinyint('complete');
               t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
             }
-            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           }
           await knex.destroy()
@@ -781,11 +766,11 @@ async function convert_issue(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, primaryKey, createFunction) {
+async function saveToMysql(knex, sourceDb, doc, tablenameSuffix, tableName, docType, primaryKey, createFunction) {
   let data;
   let result = {id: doc._id, tableName, docType, caseId: doc.caseId}
   const tables = []
-  const groupId = doc.groupId
+  const groupId = doc.groupId || sourceDb.name
   // console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
   if (!groupId) {
     log.error("Unable to save a doc without groupId: " + JSON.stringify(doc))
