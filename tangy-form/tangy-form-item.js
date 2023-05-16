@@ -287,16 +287,16 @@ export class TangyFormItem extends PolymerElement {
           <template is="dom-if" if="{{ocr}}">
             <tangy-scan-image label="Scan the test." inputs="{{inputs}}" ></tangy-scan-image>
             <paper-button id="reset" on-click="resetAnswers"><iron-icon icon="icons:refresh"></iron-icon> <t-t>reset</t-t> </paper-button>
-            <template is="dom-if" if="{{answeredQuestions.length > 0}}">
-            <div id="answerDisplay">
-              <p>
-                Answered Questions:
-              <ul>
-                <template is="dom-repeat" items="[[answeredQuestions]]"><li>{{item.name}} : {{item.value}}</li></template>
-              </ul>
-              </p>
-            </div>
-            </template>
+<!--            <template is="dom-if" if="{{answeredQuestions.length > 0}}">-->
+<!--            <div id="answerDisplay">-->
+<!--              <p>-->
+<!--                Answered Questions:-->
+<!--              <ul>-->
+<!--                <template is="dom-repeat" items="[[answeredQuestions]]"><li>{{item.name}} : {{item.value}}</li></template>-->
+<!--              </ul>-->
+<!--              </p>-->
+<!--            </div>-->
+<!--            </template>-->
           </template>
           <slot></slot>
         </div>
@@ -557,50 +557,50 @@ export class TangyFormItem extends PolymerElement {
         const label = input.label
         const name = input.name
         lines.forEach((line, indexLine) => {
-            if (label.includes(line)) {
-              console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE: " + label + " includes " + line)
-              let regex = RegExp(line);
-              const match = regex.exec(label);
-              if (match) {
-                console.log("match found at index: " + match.index);
-                currentAnsweredLine = indexLine
-                const options = input.value
-                options.forEach((option, indexOption) => {
-                  const optionLabel = option.label
-                  const optionValue = option.value
-                  lines.slice(indexLine + 1).every((optionLine, indexSliceLine) => {
-                    const optionLabelPart = optionLabel.split("-")[0].trim()
-                    const optionLinePart = optionLine.split("-")[0].trim()
-                    if (optionLabelPart.includes(optionLinePart)) {
-                      console.log("optionLabel: " + optionLabelPart + " includes " + optionLinePart)
-                      let regex = RegExp(optionLine);
-                      const match = regex.exec(optionLabel);
-                      if (match) {
-                        console.log("match found at " + match.index);
-                        if (match.index === 0) {
-                          console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name + " to " + optionValue)
-                          // input.value = 'on'
-                          // Pass in the radiobutton by referencing it by variable name in the
-                          // inputs object, then the value you would like to set it to.
-                          const inputEl = this.querySelector('[name=' + name + ']')
-                          this.setValueOfRadioButtons(inputEl, optionValue)
-                          // answeredQuestions.push(input)
-                          this.push('answeredQuestions', {name: name, value: optionLabel});
-                            return false
-                        }
-                      }
+          if (label.includes(line)) {
+            console.log("Question label: " + label + " includes scanned line: " + line)
+            // let regex = RegExp(line);
+            // const match = regex.exec(label);
+            // if (match) {
+            //   console.log("match found at index: " + match.index);
+            currentAnsweredLine = indexLine
+            const options = input.value
+            options.forEach((option, indexOption) => {
+              const optionLabel = option.label
+              const optionValue = option.value
+              // lines.slice(indexLine + 1).every((optionLine, indexSliceLine) => {
+              lines.every((optionLine, indexSliceLine) => {
+                const optionLabelPart = optionLabel.split("-")[0].trim()
+                const optionLinePart = optionLine.split("-")[0].trim()
+                // if (optionLabelPart.includes(optionLinePart)) {
+                  let regex = RegExp(optionLinePart);
+                  const match = regex.exec(optionLabelPart);
+                  if (match) {
+                    console.log("optionLabel: " + optionLabelPart + " includes " + optionLinePart + " match found at " + match.index)
+                    if (match.index === 0) {
+                      console.log("Match successful! Setting: " + name + " to " + optionValue)
+                      // input.value = 'on'
+                      // Pass in the radiobutton by referencing it by variable name in the
+                      // inputs object, then the value you would like to set it to.
+                      const inputEl = this.querySelector('[name=' + name + ']')
+                      this.setValueOfRadioButtons(inputEl, optionValue)
+                      // answeredQuestions.push(input)
+                      this.push('answeredQuestions', {name: name, value: optionLabel});
+                      return false
                     }
-                    return true
-                  })
-                })
+                  }
+                // }
+                return true
+              })
+            })
 
-              }
-              // if (line.trim().length === label.trim().length) {
-              //   console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name)
-              //   input.value = 'on'
-              //   answeredQuestions.push(input)
-              // }
-            }
+            // }
+            // if (line.trim().length === label.trim().length) {
+            //   console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name)
+            //   input.value = 'on'
+            //   answeredQuestions.push(input)
+            // }
+          }
         })
       })
       console.log(`Tangy-form-item TANGY_SCAN_IMAGE_VALUE answeredQuestions: ${JSON.stringify(this.answeredQuestions, null, 2)}`)

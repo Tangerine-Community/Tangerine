@@ -35,7 +35,7 @@ class TangyRadioBlocks extends TangyInputBase {
         #label {
           margin: 0;
           text-transform: none;
-          font-size: 2rem;
+          font-size: var(--label-font-size);
           text-align: center;
           margin-bottom: 1rem;
         }
