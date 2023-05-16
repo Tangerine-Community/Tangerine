@@ -312,12 +312,8 @@ const getItemValue = (doc, variableName) => {
  */
 
 const generateFlatResponse = async function (formResponse, locationList, sanitized) {
-  if (formResponse.form.id === '') {
-    formResponse.form.id = 'blank'
-  }
   let flatFormResponse = {
     _id: formResponse._id,
-    formId: formResponse.form.id,
     formTitle: formResponse.form.title,
     startUnixtime: formResponse.startUnixtime,
     buildId: formResponse.buildId||'',
@@ -327,6 +323,12 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     complete: formResponse.complete,
     archived: formResponse.archived||''
   };
+  if (!formResponse.formId) {
+    if (formResponse.form.id === '') {
+      formResponse.form.id = 'blank'
+    }
+    flatFormResponse['formId'] = formResponse.form.id
+  }
   function set(input, key, value) {
     flatFormResponse[key.trim()] = input.skipped
       ? process.env.T_REPORTING_MARK_SKIPPED_WITH
