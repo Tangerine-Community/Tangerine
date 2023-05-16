@@ -68,7 +68,7 @@ class TangyRadioButtons extends TangyInputBase {
         }
       </style>
       
-      <div class="flex-container m-y-25">
+      <div class="flex-container m-y-10">
         <div id="qnum-number"></div>
         <div id="qnum-content">
           <label id="label" for="group"></label>

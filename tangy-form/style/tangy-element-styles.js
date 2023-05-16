@@ -69,7 +69,7 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
       label {
         font-family: var(--paper-font-common-base_-_font-family);
         display: block;
-        font-size: 1.2rem;
+        font-size: var(--label-font-size);
         color: var(--primary-text-color);
         margin-bottom: 5px;
       }
@@ -153,6 +153,9 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
 
       .m-y-25 {
         margin: var(--tangy-form-widget--margin, 25px 0);
+      }
+      .m-y-10 {
+        margin: var(--tangy-form-widget--margin, 10px 0);
       }
    
       
