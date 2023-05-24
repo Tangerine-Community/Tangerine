@@ -532,13 +532,12 @@ export class TangyFormItem extends PolymerElement {
 
   ready() {
     super.ready();
-    this.addEventListener('TANGY_SCAN_IMAGE_VALUE', event => {
+    this.addEventListener('TANGY_SCAN_IMAGE_VALUE', async event => {
       // Comment out event.preventDefault() to test saving to file system.
       // Enable event.preventDefault() to test saving to db.
       // event.preventDefault()
       this.answeredQuestions = []
-      const lines = event.detail.value
-      // this.inputs is poopulated usually for submit() but tangy-scan-image needs inputs property to be populated.
+
       let items = this.parentElement.getMeta().items
       let inputs = []
       items.forEach(item => {
@@ -546,18 +545,109 @@ export class TangyFormItem extends PolymerElement {
           inputs = item.inputs
         }
       })
+
+      const scanResult = event.detail.value
+      const linesObject = scanResult.linesObject
+      const linetextArray = linesObject.linetext
+      const lineFrameArray = linesObject.lineframe
+      const imageData = scanResult.imageData // url
+      // const baseImageWidth = scanResult.width
+      // const baseImageHeight = scanResult.height
+      // this.inputs is poopulated usually for submit() but tangy-scan-image needs inputs property to be populated.
+
       // this
       //     .querySelectorAll('[name]')
       //     .forEach(input => inputs.push(input.getModProps && window.useShrinker ? input.getModProps() : input.getProps()))
       //
       // this.parentElement.getMeta().inputs.forEach(input => inputs.push(input))
       // this.inputs = inputs
+      const baseImage = new Image()
+      baseImage.src = imageData
+      await baseImage.decode();
+      const baseImageWidth = baseImage.width
+      const baseImageHeight = baseImage.height
+
+      const image = cv.imread(baseImage); // Load the image using OpenCV
+      const cvImageWidth = image.size().width
+      const cvImageHeight = image.size().height
+
+      console.log('CV image width: ' + image.cols + '\n' +
+          'image height: ' + image.rows + '\n' +
+          'image size: ' + image.size().width + '*' + image.size().height + '\n' +
+          'image depth: ' + image.depth() + '\n' +
+          'image channels ' + image.channels() + '\n' +
+          'image type: ' + image.type() + '\n');
       let currentAnsweredLine = 0
       inputs.forEach(input => {
         const label = input.label
         const name = input.name
-        lines.forEach((line, indexLine) => {
+        linetextArray.forEach((line, indexLine) => {
           if (label.includes(line)) {
+            // input.insertAdjacentHTML(
+            //     "afterend",
+            //     "<div id='tangy-scan-image-line-" + indexLine + "'></div>"
+            // );
+            const scanEl = document.createElement('canvas');
+            scanEl.setAttribute("id", "tangy-scan-image-line-" + indexLine);
+            const inputEl = this.querySelector("[name='" + name + "']")
+            inputEl.parentNode.insertBefore(scanEl, inputEl.nextSibling);
+            // const scanEl = document.querySelector("#tangy-scan-image-line-" + indexLine)
+
+            const lineFrame = lineFrameArray[indexLine]
+            let [x, y, width, height] = [lineFrame.x, lineFrame.y, lineFrame.width, lineFrame.height]; // Extract the coordinates
+            if (height > image.height) {
+              console.error("height > image.height: " + height)
+              height = image.height
+            }
+            if (width > image.width) {
+              console.error("width > image.width: " + width)
+              width = image.width
+            }
+            console.log('Camera baseImageWidth: ' + baseImageWidth + ' baseImageHeight: ' + baseImageHeight);
+            console.log('CV ImageWidth: ' + cvImageWidth + ' cvImageHeight: ' + cvImageHeight);
+
+            // const X1 = (x / baseImageWidth) * cvImageWidth
+            // const Y1 = (y / baseImageHeight) * cvImageHeight
+            // const X2 = (width / baseImageWidth) * cvImageWidth
+            // const Y2 = (height / baseImageHeight) * cvImageHeight
+
+            const X1 = x
+            const Y1 = y
+            const X2 = width
+            const Y2 = height
+            // let itemNumber = i+1
+            // console.log("Item: " + itemNumber + " Creating Rect using dimensions: x:" + x + " y: " + y  + " width: " + width + " height: " + height)
+            console.log(" Creating Rect using lineFrame dimensions: x:" + x + " y: " + y + " width: " + width + " height: " + height)
+            // Extract the region of interest from the image
+            const rect = new cv.Rect(X1, Y1, X2, Y2)
+            try {
+              const roi = image.roi(rect);
+              // Convert the OpenCV image to grayscale for processing
+              const gray = new cv.Mat();
+              cv.cvtColor(roi, gray, cv.COLOR_BGR2GRAY);
+              // Perform image processing and circle detection with OpenCV
+              const circles = new cv.Mat();
+              // cv.HoughCircles(gray, circles, cv.HOUGH_GRADIENT, 1, 20, 50, 30, 0, 0);
+              // cv.HoughCircles(gray, circles, cv.HOUGH_GRADIENT, 1,
+              //     gray.rows / 16,  // change this value to detect circles with different distances to each other
+              //     100, 30, 1, 30 // change the last two parameters
+              //     // (min_radius & max_radius) to detect larger circles
+              // );
+              // cv.HoughCircles(src, circles, cv.HOUGH_GRADIENT, 1, 35, 70, 20, 0, 0);
+              // Analyze the circle detection results
+              const hasFilledCircle = circles.size() > 0;
+
+              cv.imshow(scanEl, roi);
+              // await sleep(1000)
+              // Clean up resources
+              roi.delete();
+              gray.delete();
+              circles.delete();
+              // Use the 'hasFilledCircle' variable as needed for further processing or display
+              console.log(hasFilledCircle);
+            } catch (e) {
+              console.log("error: " + e)
+            }
             console.log("Question label: " + label + " includes scanned line: " + line)
             // let regex = RegExp(line);
             // const match = regex.exec(label);
@@ -569,26 +659,26 @@ export class TangyFormItem extends PolymerElement {
               const optionLabel = option.label
               const optionValue = option.value
               // lines.slice(indexLine + 1).every((optionLine, indexSliceLine) => {
-              lines.every((optionLine, indexSliceLine) => {
+              linetextArray.every((optionLine, indexLine) => {
                 const optionLabelPart = optionLabel.split("-")[0].trim()
                 const optionLinePart = optionLine.split("-")[0].trim()
                 // if (optionLabelPart.includes(optionLinePart)) {
-                  let regex = RegExp(optionLinePart);
-                  const match = regex.exec(optionLabelPart);
-                  if (match) {
-                    console.log("optionLabel: " + optionLabelPart + " includes " + optionLinePart + " match found at " + match.index)
-                    if (match.index === 0) {
-                      console.log("Match successful! Setting: " + name + " to " + optionValue)
-                      // input.value = 'on'
-                      // Pass in the radiobutton by referencing it by variable name in the
-                      // inputs object, then the value you would like to set it to.
-                      const inputEl = this.querySelector('[name=' + name + ']')
-                      this.setValueOfRadioButtons(inputEl, optionValue)
-                      // answeredQuestions.push(input)
-                      this.push('answeredQuestions', {name: name, value: optionLabel});
-                      return false
-                    }
+                let regex = RegExp(optionLinePart);
+                const match = regex.exec(optionLabelPart);
+                if (match) {
+                  console.log("optionLabel: " + optionLabelPart + " includes " + optionLinePart + " match found at " + match.index)
+                  if (match.index === 0) {
+                    console.log("Match successful! Setting: " + name + " to " + optionValue)
+                    // input.value = 'on'
+                    // Pass in the radiobutton by referencing it by variable name in the
+                    // inputs object, then the value you would like to set it to.
+                    const inputEl = this.querySelector('[name=' + name + ']')
+                    this.setValueOfRadioButtons(inputEl, optionValue)
+                    // answeredQuestions.push(input)
+                    this.push('answeredQuestions', {name: name, value: optionLabel});
+                    return false
                   }
+                }
                 // }
                 return true
               })
