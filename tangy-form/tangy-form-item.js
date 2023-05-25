@@ -550,6 +550,7 @@ export class TangyFormItem extends PolymerElement {
       const linesObject = scanResult.linesObject
       const linetextArray = linesObject.linetext
       const lineFrameArray = linesObject.lineframe
+      const linePointsArray = linesObject.linepoints
       const imageData = scanResult.imageData // url
       // const baseImageWidth = scanResult.width
       // const baseImageHeight = scanResult.height
@@ -563,6 +564,7 @@ export class TangyFormItem extends PolymerElement {
       // this.inputs = inputs
       const baseImage = new Image()
       baseImage.src = imageData
+      console.log("imageData file path: " + imageData)
       await baseImage.decode();
       const baseImageWidth = baseImage.width
       const baseImageHeight = baseImage.height
@@ -582,44 +584,99 @@ export class TangyFormItem extends PolymerElement {
         const label = input.label
         const name = input.name
         linetextArray.forEach((line, indexLine) => {
-          if (label.includes(line)) {
+          // if (label.includes(line)) {
+          if (line.includes(label)) {
             // input.insertAdjacentHTML(
             //     "afterend",
             //     "<div id='tangy-scan-image-line-" + indexLine + "'></div>"
             // );
-            const scanEl = document.createElement('canvas');
-            scanEl.setAttribute("id", "tangy-scan-image-line-" + indexLine);
-            const inputEl = this.querySelector("[name='" + name + "']")
-            inputEl.parentNode.insertBefore(scanEl, inputEl.nextSibling);
-            // const scanEl = document.querySelector("#tangy-scan-image-line-" + indexLine)
+
 
             const lineFrame = lineFrameArray[indexLine]
+            // const linePoints = linePointsArray[indexLine]
             let [x, y, width, height] = [lineFrame.x, lineFrame.y, lineFrame.width, lineFrame.height]; // Extract the coordinates
-            if (height > image.height) {
-              console.error("height > image.height: " + height)
-              height = image.height
-            }
-            if (width > image.width) {
-              console.error("width > image.width: " + width)
-              width = image.width
-            }
+            console.log("Lineframe coordinates: x:" + x + " y: " + y  + " width: " + width + " height: " + height)
+            // if (height > image.height) {
+            //   console.error("height > image.height: " + height)
+            //   height = image.height
+            // }
+            // if (width > image.width) {
+            //   console.error("width > image.width: " + width)
+            //   width = image.width
+            // }
+            // let [x1, y1, x2, y2] = [linePoints.x1, linePoints.y1, linePoints.x2, linePoints.y2]; // Extract the coordinates
+
             console.log('Camera baseImageWidth: ' + baseImageWidth + ' baseImageHeight: ' + baseImageHeight);
             console.log('CV ImageWidth: ' + cvImageWidth + ' cvImageHeight: ' + cvImageHeight);
+
+            // const x1 = x
+            // const y1 = x + baseImageHeight
+            // const x2 = y1 + baseImageWidth
+            // const y2 = x2 - baseImageHeight
 
             // const X1 = (x / baseImageWidth) * cvImageWidth
             // const Y1 = (y / baseImageHeight) * cvImageHeight
             // const X2 = (width / baseImageWidth) * cvImageWidth
             // const Y2 = (height / baseImageHeight) * cvImageHeight
 
+            // const X1 = (x / baseImageWidth) * cvImageWidth
+            // const Y1 = (y / baseImageHeight) * cvImageHeight
+            // // const Y1 = ((y + height) / baseImageHeight) * cvImageHeight
+            // const X2 = ((x + width) / baseImageWidth) * cvImageWidth
+            // const Y2 = ((y + height) / baseImageHeight) * cvImageHeight
+
+            // const X1 = (x / baseImageWidth) * cvImageWidth
+            // const Y1 = (1 - (y + height) / baseImageHeight) * cvImageHeight
+            // // const Y1 = ((y + height) / baseImageHeight) * cvImageHeight
+            // const X2 = ((x + width) / baseImageWidth) * cvImageWidth
+            // const Y2 = (1 - y / baseImageHeight) * cvImageHeight
+
+            // const X1 = (x)
+            // const Y1 = (1 - (y + height))
+            // const X2 = (x + width)
+            // const Y2 = (1 - y)
+
             const X1 = x
-            const Y1 = y
+            const Y1 = (y + height)
             const X2 = width
             const Y2 = height
+
+            // const X1 = x
+            // const Y1 = y
+            // const X2 = x + width
+            // const Y2 = y + height
+
+            // const X1 = (x1 / baseImageWidth) * cvImageWidth
+            // const Y1 = (y1 / baseImageHeight) * cvImageHeight
+            // const X2 = (x2 / baseImageWidth) * cvImageWidth
+            // const Y2 = (y2 / baseImageHeight) * cvImageHeight
+
+            // const X1 = x
+            // const Y1 = y
+            // const X2 = width
+            // const Y2 = height
+
+            // const X1 = x1
+            // const Y1 = y1
+            // const X2 = x2
+            // const Y2 = y2
+
             // let itemNumber = i+1
-            // console.log("Item: " + itemNumber + " Creating Rect using dimensions: x:" + x + " y: " + y  + " width: " + width + " height: " + height)
-            console.log(" Creating Rect using lineFrame dimensions: x:" + x + " y: " + y + " width: " + width + " height: " + height)
+            // console.log(" Creating Rect using lineFrame dimensions: x:" + x + " y: " + y + " width: " + width + " height: " + height)
+            // console.log(" Creating Rect using linePoints: x1:" + x1 + " y1: " + y1 + " x2: " + x2 + " y2: " + y2)
+            console.log(" Calculating OpenCV coordinates from lineFrame: x1:" + X1 + " y1: " + Y1 + " x2: " + X2 + " y2: " + Y2)
+            // console.log(" Creating Rect(" + X1 + ", " + Y1 + ", " + (X2 - X1) + ", " + (Y2 - Y1))
+            console.log(" Creating Rect(" + X1 + ", " + Y1 + ", " + X2 + ", " + Y2)
+            const divEl = document.createElement('div');
+            // divEl.innerHTML = "<p>Creating Rect(" + X1 + ", " + Y1 + ", " + (X2 - X1) + ", " + (Y2 - Y1) + ") for line: " + line + "</p>";
+            divEl.innerHTML = "<p>Creating Rect(" + X1 + ", " + Y1 + ", " + X2 + ", " + Y2 + ") for line: " + line + "</p>";
+            divEl.setAttribute("id", "tangy-scan-image-div-" + indexLine);
+            const inputEl = this.querySelector("[name='" + name + "']")
+            inputEl.parentNode.insertBefore(divEl, inputEl.nextSibling);
+
             // Extract the region of interest from the image
             const rect = new cv.Rect(X1, Y1, X2, Y2)
+            // const rect = new cv.Rect(X1, Y1, (X2 - X1), (Y2 - Y1))
             try {
               const roi = image.roi(rect);
               // Convert the OpenCV image to grayscale for processing
@@ -636,8 +693,13 @@ export class TangyFormItem extends PolymerElement {
               // cv.HoughCircles(src, circles, cv.HOUGH_GRADIENT, 1, 35, 70, 20, 0, 0);
               // Analyze the circle detection results
               const hasFilledCircle = circles.size() > 0;
-
+              const scanEl = document.createElement('canvas');
+              scanEl.setAttribute("id", "tangy-scan-image-line-" + indexLine);
+              const inputEl = this.querySelector("[name='" + name + "']")
+              inputEl.parentNode.insertBefore(scanEl, inputEl.nextSibling);
+              // const scanEl = document.querySelector("#tangy-scan-image-line-" + indexLine)
               cv.imshow(scanEl, roi);
+
               // await sleep(1000)
               // Clean up resources
               roi.delete();
@@ -663,7 +725,11 @@ export class TangyFormItem extends PolymerElement {
                 const optionLabelPart = optionLabel.split("-")[0].trim()
                 const optionLinePart = optionLine.split("-")[0].trim()
                 // if (optionLabelPart.includes(optionLinePart)) {
-                let regex = RegExp(optionLinePart);
+                function escapeRegExp(text) {
+                  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+                }
+                const escapedOptionLinePart = escapeRegExp(optionLinePart)
+                let regex = RegExp(escapedOptionLinePart);
                 const match = regex.exec(optionLabelPart);
                 if (match) {
                   console.log("optionLabel: " + optionLabelPart + " includes " + optionLinePart + " match found at " + match.index)
