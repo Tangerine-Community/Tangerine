@@ -323,12 +323,14 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     complete: formResponse.complete,
     archived: formResponse.archived||''
   };
+
   if (!formResponse.formId) {
     if (formResponse.form.id === '') {
       formResponse.form.id = 'blank'
     }
     flatFormResponse['formId'] = formResponse.form.id
   }
+
   function set(input, key, value) {
     flatFormResponse[key.trim()] = input.skipped
       ? process.env.T_REPORTING_MARK_SKIPPED_WITH
@@ -345,60 +347,60 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         }
       }
       if (!sanitize) {
-      // Simplify the keys by removing formID.itemId
-      let firstIdSegment = ""
-      if (input.tagName === 'TANGY-LOCATION') {
-        // Populate the ID and Label columns for TANGY-LOCATION levels.
-        locationKeys = []
-        for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
-          locationKeys.push(group.value)
-          try {
-            const location = getLocationByKeys(locationKeys, locationList)
-            for (let keyName in location) {
-              if (keyName !== 'children') {
-                set(input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
+        // Simplify the keys by removing formID.itemId
+        let firstIdSegment = ""
+        if (input.tagName === 'TANGY-LOCATION') {
+          // Populate the ID and Label columns for TANGY-LOCATION levels.
+          locationKeys = []
+          for (let group of input.value) {
+            set(input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
+            locationKeys.push(group.value)
+            try {
+              const location = getLocationByKeys(locationKeys, locationList)
+              for (let keyName in location) {
+                if (keyName !== 'children') {
+                  set(input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
+                }
               }
+            } catch(e) {
+              set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
             }
-          } catch(e) {
-            set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
+          }
+        } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
+          let selectedOption = input.value.find(option => !!option.value) 
+          set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
+        } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
+          set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
+          set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        } else if (input.tagName === 'TANGY-SIGNATURE') {
+          set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        } else if (input && typeof input.value === 'string') {
+          set(input, `${firstIdSegment}${input.name}`, input.value)
+        } else if (input && typeof input.value === 'number') {
+          set(input, `${firstIdSegment}${input.name}`, input.value)
+        } else if (input && Array.isArray(input.value)) {
+          let i = 0
+          for (let group of input.value) {
+            i++
+            let keyName = group.name
+            if (!group.name) {
+              keyName = i
+            }
+            set(input, `${firstIdSegment}${input.name}_${keyName}`, group.value)
+          }
+        } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
+          let elementKeys = Object.keys(input.value);
+          let i = 0
+          for (let key of elementKeys) {
+            i++
+            let keyName = key
+            if (!key) {
+              keyName = i
+            }
+            set(input, `${firstIdSegment}${input.name}_${keyName}`, input.value[key])
           }
         }
-      } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
-        let selectedOption = input.value.find(option => !!option.value) 
-        set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
-      } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
-        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
-      } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
-        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
-      } else if (input.tagName === 'TANGY-SIGNATURE') {
-        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
-      } else if (input && typeof input.value === 'string') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
-      } else if (input && typeof input.value === 'number') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
-      } else if (input && Array.isArray(input.value)) {
-        let i = 0
-        for (let group of input.value) {
-          i++
-          let keyName = group.name
-          if (!group.name) {
-            keyName = i
-          }
-          set(input, `${firstIdSegment}${input.name}_${keyName}`, group.value)
-        }
-      } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
-        let elementKeys = Object.keys(input.value);
-        let i = 0
-        for (let key of elementKeys) {
-          i++
-          let keyName = key
-          if (!key) {
-            keyName = i
-          }
-          set(input, `${firstIdSegment}${input.name}_${keyName}`, input.value[key])
-        }
-      }
       } // sanitize
     }
   }
@@ -647,14 +649,14 @@ async function convert_response(knex, doc, groupId, tableName) {
   const participantId = doc.participantId
   const caseEventId = doc.caseEventId
 
-  let formID = data['formid']
+  var formID = doc.formId || data['formid']
   if (formID) {
     // thanks to https://stackoverflow.com/a/14822579
     const find = '-'
     const replace = '_'
     formID = formID.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
   } else {
-    let message = `ERROR: formID is null for response: ${JSON.stringify(doc)}`;
+    let message = `ERROR: formId is null for response: ${JSON.stringify(doc)}`;
     log.error(message)
     throw new Error(message)
   }
