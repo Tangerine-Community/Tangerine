@@ -10,11 +10,6 @@
     "languageDirection": "ltr"
   },
   {
-    "label": "普通話 (Chinese)",
-    "languageCode": "zh",
-    "languageDirection": "ltr"
-  },
-  {
    "label": "Dari",
    "languageCode": "faprs",
    "languageDirection": "rtl"
@@ -22,11 +17,6 @@
   {
     "label": "English",
     "languageCode": "en",
-    "languageDirection": "ltr"
-  },
-  {
-    "label": "Español",
-    "languageCode": "es",
     "languageDirection": "ltr"
   },
   {
