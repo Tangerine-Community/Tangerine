@@ -904,7 +904,7 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
     // const e = SqlString.escapeId(dataKeys[i], true)
     // dataKeys[i] = e
     if (!infoKeysLower.includes(e.toLowerCase())) {
-      log.info(`Adding new column ${e} to table ${tableName}`)
+      // log.debug(`Adding new column ${e} to table ${tableName}`)
       try {
         await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
           t.text(e)
