@@ -162,6 +162,7 @@ export class AppConfig {
   //
 
   calculateLocalDocsForLocation:boolean;
+  useAttendanceFeature: boolean;
   
 }
 
