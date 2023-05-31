@@ -13,6 +13,7 @@ import {TangyFormService} from '../../tangy-forms/tangy-form.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import {VariableService} from "../../shared/_services/variable.service";
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import {AppConfigService} from "../../shared/_services/app-config.service";
 
 export interface StudentResult {
   id: string;
@@ -32,7 +33,6 @@ export interface StudentResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  
   classes; students; 
   enabledClasses; // filter out classes that have the 'archive' property.
   currentClassId; currentClassIndex;
@@ -69,6 +69,9 @@ export class DashboardComponent implements OnInit {
   classGroupReport: ClassGroupingReport;
   displayClassGroupReport = false;
   feedbackViewInited = false;
+  useAttendanceFeature = false
+  showAttendanceList: boolean
+
   getValue: (variableName, response) => any;
   
   @ViewChild('container', {static: true}) container: ElementRef;
@@ -81,7 +84,8 @@ export class DashboardComponent implements OnInit {
     private classFormService: ClassFormService,
     private tangyFormService: TangyFormService,
     private tangyFormsInfoService: TangyFormsInfoService,
-    private variableService: VariableService
+    private variableService: VariableService,
+    private appConfigService: AppConfigService
   ) { }
 
   getClassTitle(classResponse:TangyFormResponse) {
@@ -91,6 +95,8 @@ export class DashboardComponent implements OnInit {
 
   async ngOnInit() {
     (<any>window).Tangy = {};
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.useAttendanceFeature = appConfig.useAttendanceFeature
     await this.classFormService.initialize();
     this.classes = await this.getMyClasses();
     this.getValue = this.dashboardService.getValue
@@ -111,13 +117,18 @@ export class DashboardComponent implements OnInit {
       // find the options that are set to 'on'
       const classArray = await this.populateCurrentCurriculums(classDoc);
       if (classArray) {
-        this.currArray = await this.populateCurrentCurriculums(classDoc);
+        this.currArray = classArray
         klass.curriculum = this.currArray
         classMenu.push(klass)
       }
     }
     this.classUtils = new ClassUtils();
-    await this.initDashboard(null, null, null, null);
+    // resetVars = this.useAttendanceFeature ? true : resetVars
+    // if (this.useAttendanceFeature) {
+    //   await this.getAttendanceList()
+    // } else {
+      await this.initDashboard(null, null, null, null);
+    // }
   }
 
   async initDashboard(classIndex: number, currentClassId, curriculumId, resetVars) {
@@ -181,7 +192,11 @@ export class DashboardComponent implements OnInit {
         this.currentItemId = initialForm.id;
       }
       if (this.currentItemId) {
-        this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId);
+        // if (this.useAttendanceFeature) {
+        //   await this.getAttendanceList()
+        // } else {
+          this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId);
+        // }
       }
 
       // await this.populateFeedback(curriculumId);
@@ -314,6 +329,63 @@ export class DashboardComponent implements OnInit {
         // studentResults["forms"].push(formResult)
         studentResults['forms'][form.id] = formResult;
       });
+      allStudentResults.push(studentResults);
+    });
+    this.allStudentResults = allStudentResults;
+    // await this.populateFeedback(curriculumId);
+  }
+
+  async getAttendanceList() {
+    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
+    this.currentClassId = await this.variableService.get('class-currentClassId');
+    const classId = this.currentClassId
+    const itemId = 0
+    this.students = await this.getMyStudents(classId);
+    // const item = this.curriculumFormsList.find(x => x.id === itemId);
+    // const results = await this.getResultsByClass(classId, this.curriculum.name, [item], item);
+    // this.studentsResponses = [];
+    // const formsTodisplay = {};
+    // this.curriculumFormsList.forEach(form => {
+    //   formsTodisplay[form.id] = form;
+    // });
+    // for (const response of results as any[] ) {
+    //   // console.log("response: " + JSON.stringify(response))
+    //   // studentsResponses.push();
+    //   if (formsTodisplay[response.formId] !== 'undefined') {
+    //     const studentId = response.studentId;
+    //     let studentReponses = this.studentsResponses[studentId];
+    //     if (typeof studentReponses === 'undefined') {
+    //       studentReponses = {};
+    //     }
+    //     const formId = response.formId;
+    //     studentReponses[formId] = response;
+    //     this.studentsResponses[studentId] = studentReponses;
+    //   }
+    // }
+    const allStudentResults = [];
+    // for (const student of this.students) {
+    this.students.forEach((student) => {
+      const studentResults = {};
+      const student_name = this.getValue('student_name', student.doc)
+      const classId = this.getValue('classId', student.doc)
+      studentResults['id'] = student.id;
+      studentResults['name'] = student_name
+      studentResults['classId'] = classId
+      // studentResults["forms"] = [];
+      studentResults['forms'] = {};
+      // for (const form of this.curriculumForms) {
+      // this.curriculumFormsList.forEach((form) => {
+      //   const formResult = {};
+      //   formResult['formId'] = form.id;
+      //   formResult['curriculum'] = this.curriculum.name;
+      //   formResult['title'] = form.title;
+      //   formResult['src'] = form.src;
+      //   if (this.studentsResponses[student.id]) {
+      //     formResult['response'] = this.studentsResponses[student.id][form.id];
+      //   }
+      //   // studentResults["forms"].push(formResult)
+      //   studentResults['forms'][form.id] = formResult;
+      // });
       allStudentResults.push(studentResults);
     });
     this.allStudentResults = allStudentResults;
@@ -510,6 +582,28 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  /**
+   * Shim attendance into the currArray so it'll appear in the dropdown.
+   * Makes attendance the selectedCurriculum.
+   * @param cassId
+   */
+  async showAttandanceListing(cassId) {
+    console.log('showAttandanceListing');
+    // const currentClassId = await this.variableService.get('class-currentClassId');
+    // this.students = await this.getMyStudents(currentClassId);
+    // console.log("this.students:" + JSON.stringify(this.students));
+    await this.getAttendanceList()
+    const attendance = {
+      "name": "attendance",
+      "value": "on",
+      "label": "Attendance"
+    }
+    this.currArray.push(attendance)
+    this.selectedCurriculum = this.currArray.find(x => x.name === 'attendance')
+    this.showAttendanceList = true
+  }
+
+
   // ngAfterViewChecked() {
   //   if (!this.feedbackViewInited) {
   //     let el: HTMLElement = document.querySelector(".feedback-example")
@@ -528,4 +622,12 @@ export class DashboardComponent implements OnInit {
   //     }
   //   }
   // }
+  toggleAttendance() {
+    console.log('toggleAttendance')
+    // event.target.classList.toggle("active");
+  }
+
+  toggleMood() {
+    console.log('toggleMood')
+  }
 }

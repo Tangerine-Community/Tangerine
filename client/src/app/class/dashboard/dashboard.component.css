@@ -172,7 +172,19 @@ mat-card-title {
   top: 120px !important;
 }
 
+.attendance-icons {
+  padding: 0 0.5em;
+  font-size: xx-large;
+}
 
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary {
+  background-color: green;
+}
 
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.gray {
+  background-color: lightgrey;
+}
 
-
+.gray {
+  background-color: gray;
+}

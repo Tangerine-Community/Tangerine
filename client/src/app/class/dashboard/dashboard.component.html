@@ -72,6 +72,7 @@
       
       <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
         <mat-option>{{'None'|translate}}</mat-option>
+        <mat-option *ngIf="useAttendanceFeature" (click)="showAttandanceListing()">{{'Attendance'|translate}}</mat-option>
         <mat-option *ngFor="let item of formList;" value="{{item.id}}"
                     (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
       </mat-select>
@@ -80,7 +81,7 @@
     <!--<div class="flexbox-horizontal-container">-->
     <div>
       <!--<div class="d1">-->
-      <div>
+      <div *ngIf="!showAttendanceList" >
         <table class="dashboard-table">
           <tr>
             <th>{{'Student'|translate}}</th>
@@ -104,32 +105,70 @@
         </table>
         <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
       </div>
-      <!--<div class="d2" *ngIf="classGroupReport?.feedback">-->
-        <!--<mat-card class="card-feedback">-->
-          <!--<mat-card-title>Feedback</mat-card-title>-->
-          <!--<mat-card-content>-->
-            <!--<p>-->
-            <!--<span *ngIf="classGroupReport?.max">-->
-              <!--{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.max}} ({{classGroupReport?.aveCorrectPerc}}%)-->
-              <!--{{'of'|translate}} {{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}-->
-            <!--</span>-->
-            <!--<span *ngIf="!classGroupReport?.max">-->
-              <!--{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.attempted}} ({{classGroupReport?.aveCorrectPerc}}%)-->
-              <!--{{'of'|translate}} {{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}-->
-            <!--</span>-->
-            <!--<span *ngIf="classGroupReport?.studentsToWatch"><br/>{{'Students to watch'|translate}}: </span>-->
-            <!--<span *ngIf="classGroupReport?.studentsToWatch">-->
-              <!--<span *ngFor="let student of classGroupReport?.studentsToWatch">-->
-                <!--{{student}}-->
-              <!--</span>-->
-            <!--</span>-->
 
-            <!--</p>-->
-            <!--<span [innerHTML]="classGroupReport?.feedback?.message" *ngIf="displayClassGroupReport"></span>-->
-            <!--<p><br/><a href="/#/reports/grouping/{{currentItemId}}/{{selectedClass.doc._id}}/{{curriculumId}}">{{classGroupReport?.subtestName}} report</a></p>-->
-          <!--</mat-card-content>-->
-        <!--</mat-card>-->
-      <!--</div>-->
+      <div *ngIf="showAttendanceList" >
+        <table class="dashboard-table">
+          <tr>
+            <th>{{'Student'|translate}}</th>
+            <th>{{'Status'|translate}}</th>
+          </tr>
+          <tr *ngFor="let element of allStudentResults">
+            <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
+            <td class="checkbox-response" *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
+              <input type="checkbox"
+                     (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
+                     [checked]="true"/>
+            </td>
+            <ng-template #elseBlock>
+              <td class="checkbox-response" style="text-align: center">
+<!--                <input type="checkbox" (click)="$event.stopPropagation()"-->
+<!--                       (change)="$event ? selectCheckbox(element,currentItemId) : null"-->
+<!--                />-->
+                <table>
+                  <tr>
+                    <td style="padding-right: 1em;">
+<!--                      <button mat-mini-fab color="green">-->
+<!--                      <mat-icon>star</mat-icon>-->
+<!--                    </button>-->
+                      <mat-chip color="primary" selected class="green" (click)="toggleAttendance()"><mat-icon>star</mat-icon></mat-chip>
+                    </td>
+                    <td>
+                      <mat-chip-list multiple="false"  (click)="toggleMood()">
+                        <mat-chip class="gray"><mat-icon>mood</mat-icon></mat-chip>
+                        <mat-chip class="gray" color="accent"><mat-icon>sentiment_neutral</mat-icon></mat-chip>
+                        <mat-chip class="gray" color="warn"><mat-icon>sentiment_dissatisfied</mat-icon></mat-chip>
+                      </mat-chip-list>
+                    </td>
+                  </tr>
+                </table>
+
+<!--                <button mat-fab matTooltip="Primary" color="primary" class="attendance-icons">-->
+<!--                  <mat-icon>mood</mat-icon>-->
+<!--                </button>-->
+<!--                &nbsp;-->
+<!--                <button mat-fab matTooltip="Primary" color="primary" class="attendance-icons">-->
+<!--                  <mat-icon>sentiment_neutral</mat-icon>-->
+<!--                </button>-->
+<!--                &nbsp;-->
+<!--                <button mat-fab matTooltip="Primary" color="primary" class="attendance-icons">-->
+<!--                  <mat-icon>sentiment_dissatisfied</mat-icon>-->
+<!--                </button>-->
+<!--                <mat-icon aria-hidden="false" aria-label="Smile" fontIcon="mood" class="attendance-icons">mood</mat-icon>-->
+<!--                <mat-icon aria-hidden="false" aria-label="Smile" fontIcon="mood" class="attendance-icons">sentiment_neutral</mat-icon>-->
+<!--                <mat-icon aria-hidden="false" aria-label="Smile" fontIcon="mood" class="attendance-icons">sentiment_dissatisfied</mat-icon>-->
+<!--                <mat-chip-listbox aria-label="Sentiment">-->
+<!--                  <mat-chip-option color="primary"><mat-icon>mood</mat-icon></mat-chip-option>-->
+<!--                  <mat-chip-option color="accent"><mat-icon>sentiment_neutral</mat-icon></mat-chip-option>-->
+<!--                  <mat-chip-option color="warn"><mat-icon>sentiment_dissatisfied</mat-icon></mat-chip-option>-->
+<!--                </mat-chip-listbox>-->
+
+              </td>
+            </ng-template>
+          </tr>
+        </table>
+        <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+      </div>
+
     </div>
 
 

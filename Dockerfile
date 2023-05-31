@@ -35,6 +35,9 @@ RUN apt-get update && apt-get install -y python3-pip
 #RUN cd /tangerine/server/src/modules/mysql && \
 #    ./install-dependencies.sh
 
+ADD tangy-form /tangerine/tangy-form/
+ADD tangy-form-editor /tangerine/tangy-form-editor/
+
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
@@ -44,9 +47,6 @@ RUN cd /tangerine/online-survey-app/ && \
 ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
     npm install
-
-ADD tangy-form /tangerine/tangy-form/
-ADD tangy-form-editor /tangerine/tangy-form-editor/
 
 # Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
