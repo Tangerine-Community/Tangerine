@@ -28,7 +28,7 @@ If migrating from an older version of Tangerine, rename config.sh to config.env.
 
 # Launching Tangerine
 
-All of the shell scripts for launching Tangerine are in the root directory. The two scripts `develop.sh` and `start.sh` start the cascade to build and run the docker containers. 
+All of the shell scripts for launching Tangerine are in the root directory. The two scripts `develop-docker-compose.sh` and `start-docker-compose.sh` start the cascade to build and run the docker containers. 
 
 # Testing
 
