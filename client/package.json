@@ -63,7 +63,7 @@
     "rxjs-compat": "^6.6.7",
     "spark-md5": "^3.0.2",
     "tangy-form": "^4.39.3",
-    "translation-web-component": "^1.1.1",
+    "translation-web-component": "github:Tangerine-Community/translation-web-component",
     "tslib": "^2.4.1",
     "underscore": "^1.13.6",
     "uuid-browser": "^3.1.0",

@@ -26,7 +26,7 @@
     "redux": "^4.2.0",
     "rxjs": "^6.6.7",
     "tangy-form": "^4.38.3",
-    "translation-web-component": "^1.1.1",
+    "translation-web-component": "github:Tangerine-Community/translation-web-component",
     "tslib": "^2.4.1",
     "zone.js": "~0.11.8"
   },

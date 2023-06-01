@@ -55,7 +55,7 @@
     "rxjs-compat": "^6.6.7",
     "tangy-form": "^4.39.3",
     "tangy-form-editor": "7.16.0",
-    "translation-web-component": "1.1.1",
+    "translation-web-component": "github:Tangerine-Community/translation-web-component",
     "tslib": "^2.4.1",
     "ua-parser-js": "^1.0.32",
     "underscore": "^1.13.6",
