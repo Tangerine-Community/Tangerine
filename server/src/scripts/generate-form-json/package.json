@@ -11,7 +11,7 @@
   "dependencies": {
     "@happy-dom/server-rendering": "^2.46.3",
     "@polymer/polymer": "^3.5.1",
-    "tangy-form": "^4.39.3"
+    "tangy-form": "^4.41.1"
   },
   "type": "module"
 }
