@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Tangy Form Inputs Demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          /*--accent-color: #f26f10;*/
+          --accent-color: #3c5b8d;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+          --tangy-element-border: 0;
+          /*--tangy-element-margin: 0;*/
+        }
+        h1, h2, h3, h4, h5, p{
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 15px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+<!--    <script type="module" src="../input/tangy-checkbox.js"></script>-->
+<!--    <script type="module" src="../input/tangy-checkboxes.js"></script>-->
+<!--    <script type="module" src="../input/tangy-consent.js"></script>-->
+<!--    <script type="module" src="../input/tangy-gps.js"></script>-->
+<!--    <script type="module" src="../input/tangy-input.js"></script>-->
+<!--    <script type="module" src="../input/tangy-location.js"></script>-->
+<!--    <script type="module" src="../input/tangy-partial-date.js"></script>-->
+<!--    <script type="module" src="../input/tangy-photo-capture.js"></script>-->
+<!--    <script type="module" src="../input/tangy-qr.js"></script>-->
+<!--    <script type="module" src="../input/tangy-radio-button.js"></script>-->
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+<!--    <script type="module" src="../input/tangy-select.js"></script>-->
+      <script type="module">
+          import '@polymer/paper-radio-button/paper-radio-button.js';
+          import '@polymer/paper-radio-group/paper-radio-group.js';
+      </script>
+  </head>
+  <body>
+    <h3>Inputs Demo</h3>
+    <tangy-form id="my-form" title="My Form">
+              
+        <tangy-form-item id="item1" title="Item 1">
+
+<!--            <tangy-radio-button-->
+<!--                    name="qr"-->
+<!--                    question-number="1."-->
+<!--                    label="English label.-->
+<!--    "-->
+<!--                    hint-text="English hint-text."-->
+<!--                    error-text="English error-text.-->
+<!--    ">-->
+<!--            </tangy-radio-button>-->
+
+<!--            <tangy-radio-buttons-->
+<!--                name="radio-buttons"-->
+<!--                question-number="1."-->
+<!--                label="English label."-->
+<!--                hint-text="English hint-text."-->
+<!--                error-text="English error-text."-->
+<!--                >-->
+<!--                <option value="Z" hint-text="English hint-text.">English label 1.</option>-->
+<!--                <option value="Y" hint-text="English hint-text.">English label 2.</option>-->
+<!--            </tangy-radio-buttons>-->
+
+            <tangy-radio-buttons name="mdrcdavail" class="" style="" required="" question-number="1." label="
+          <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+          <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang>
+        " error-message="" invalid-message="" hint-text="">
+                <option value="1">
+                    <t-lang en="">Yes</t-lang>
+                    <t-lang fr="">Oui</t-lang>
+                </option>
+                <option value="2">
+                    <t-lang en="">No</t-lang>
+                    <t-lang fr="">Non</t-lang>
+                </option>
+            </tangy-radio-buttons>
+
+            <p>hey</p>
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <tangy-radio-button name="mdrcdavail" incomplete="" value="">
+                    <t-lang en="" style="display: inline;">Yes</t-lang>
+                    <t-lang fr="" style="display: none;">Oui</t-lang>
+                </tangy-radio-button>
+                <br/>
+                <tangy-radio-button name="mdrcdavail-2" incomplete="" value="">
+                    <t-lang en="" style="display: inline;">No</t-lang>
+                    <t-lang fr="" style="display: none;">Non</t-lang>
+                </tangy-radio-button>
+            </paper-radio-group>
+
+            <br/>
+            <br/>
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <tangy-box name="sn08_head" class="" style="">
+                <t-lang en="">Maternal Clinical Information</t-lang>
+                <t-lang fr="">Informations Cliniques</t-lang>
+            </tangy-box>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <tangy-input type="text" allowed-pattern="" inner-label="" name="wtmedrec" class="" style="" dont-skip-if="getValue('mdrcdavail') === '1'" required="" question-number="2a." valid-if="(/^[0-9]+\.[0-9]{1}$|[0-9]+\.[0-9]{1}[^0-9]/.test(input.value))" label="<t-lang en>Record weight:</t-lang>
+          <t-lang fr>Enregistrez le poids &nbsp; :</t-lang>" error-message="" invalid-message="" hint-text="<t-lang en>1 decimal place (kg)</t-lang>
+          <t-lang fr>1 décimale près. (kg)</t-lang>">
+            </tangy-input>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+            <p> <t-lang en>Is the participant's medical record available for review at time of interview?</t-lang>
+                <t-lang fr>Y a-t-il un carnet de santé de la participante disponible pour révision au moment de l'entretien &nbsp; ?</t-lang></p>
+            <paper-radio-group>
+                <paper-radio-button name="mdrcdavail">Small</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-2">Medium</paper-radio-button><br/>
+                <paper-radio-button name="mdrcdavail-3">Large</paper-radio-button>
+            </paper-radio-group>
+
+        </tangy-form-item>
+    </tangy-form>
+  </body>
+</html>

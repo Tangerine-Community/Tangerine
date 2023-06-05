@@ -67,8 +67,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     if (enabledModules && !!(enabledModules.find(module=>module==='class'))) {
       this.hasClassModule = true;
     }
-    const categories = JSON.stringify(appConfigCategories);
-
+    const categories = JSON.stringify(appConfigCategories)? JSON.stringify(appConfigCategories) : '[]';
 
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {

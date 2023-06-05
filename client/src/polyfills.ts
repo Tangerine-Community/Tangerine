@@ -48,6 +48,8 @@ import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 import 'tangy-form/input/tangy-radio-blocks.js';
 import 'tangy-form/input/tangy-video-capture.js';
+import 'tangy-form/input/tangy-scan-image.js';
+
 
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc
@@ -63,16 +65,16 @@ import 'date-carousel/date-carousel.js'
 (window as any).process = {};
 
 
-//import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
+// import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
-import '@polymer/paper-item/paper-icon-item.js';
-import '@polymer/paper-item/paper-item-body.js';
-import '@polymer/iron-icons/notification-icons.js';
-import '@polymer/paper-progress/paper-progress.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-menu-button/paper-menu-button.js';
+// import '@polymer/paper-item/paper-icon-item.js';
+// import '@polymer/paper-item/paper-item-body.js';
+// import '@polymer/iron-icons/notification-icons.js';
+// import '@polymer/paper-progress/paper-progress.js';
+// import '@polymer/paper-icon-button/paper-icon-button.js';
+// import '@polymer/paper-item/paper-item.js';
+// import '@polymer/paper-listbox/paper-listbox.js';
+// import '@polymer/paper-menu-button/paper-menu-button.js';
 
 import * as moment from 'moment'
 (window as any).moment = moment
@@ -140,3 +142,4 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+import 'document-register-element';

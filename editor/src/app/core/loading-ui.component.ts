@@ -1,6 +1,7 @@
 import {LitElement, html, css} from 'lit-element';
-import {customElement, property} from 'lit/decorators.js';
-import '@polymer/paper-progress/paper-progress.js';
+// import {customElement, property} from 'lit/decorators.js';
+// import '@polymer/paper-progress/paper-progress.js';
+import {customElement, property} from "lit-element/lib/decorators";
 
 @customElement('loading-ui')
 export class LoadingUiComponent extends LitElement {
@@ -28,7 +29,7 @@ export class LoadingUiComponent extends LitElement {
   render() {
     return html`
       <div class="loading-text" @click=${this.escape}>
-        <paper-progress indeterminate></paper-progress>
+        Loading...
       </div>
     `;
   }
