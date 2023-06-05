@@ -233,7 +233,8 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
   --volume $(pwd)/translations:/tangerine/translations:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
-  --volume $(pwd)/server/phantomjs-1.9.8-linux-x86_64.tar.bz2:/tangerine/server/phantomjs-1.9.8-linux-x86_64.tar.bz2:delegated
+  --volume $(pwd)/tangy-form-editor:/tangerine/tangy-form-editor:delegated \
+  --volume $(pwd)/tangy-form:/tangerine/tangy-form:delegated \
   tangerine/tangerine:local
  "
 
@@ -254,6 +255,7 @@ OPTIONS="
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
   --env \"T_MYSQL_MULTI_PARTICIPANT_SCHEMA=$T_MYSQL_MULTI_PARTICIPANT_SCHEMA\" \
   --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
+  --volume $(pwd)/server/src/modules/mysql-js/conf.d:/etc/mysql/conf.d:delegated \
   $OPTIONS
 "
 fi
