@@ -1,22 +1,18 @@
 version: "3.9"
 services:
-  server:
-    build:
-      context: .
-      dockerfile: ./Dockerfile-server
-    container_name: "server"
-    ports:
-      - "82:80"
-    restart: unless-stopped
-    env_file: config.env
-    environment:
-      - T_COUCHDB_USER_ADMIN_NAME=/run/secrets/couchdb_admin_name
-      - T_COUCHDB_USER_ADMIN_PASS=/run/secrets/couchdb_admin_password
-      - T_COUCHDB_ENDPOINT=http://admin:password@couchdb:5984/
-      - "NODE_ENV=development"
-      - NPM_DEV_MODE
-    entrypoint: "/bin/sh -c \"cd /tangerine/server/ && npm run start$${NPM_DEV_MODE}\""
+  init:
+    container_name: "init"
+    image: alpine:latest
+    restart: "no"
+#    tty: true
+#    build:
+#      context: .
+#      dockerfile: ./Dockerfile-init
+    command: |
+      sh -c '/run.sh'
+#    entrypoint: [ "sh", "-c",  "./run.sh"]
     volumes:
+      - ./init/run.sh:/run.sh:delegated
       - ./data/groups:/tangerine/groups/:delegated
       - ./data/csv:/csv/:delegated
       - ./data/archives:/archives/:delegated
@@ -24,21 +20,50 @@ services:
       - ./data/client/releases:/tangerine/client/releases/:delegated
       - ./data/client/content/groups:/tangerine/client/content/groups:delegated
       - ./data/client/content/assets:/tangerine/client/content/assets:delegated
-      - ./content-sets:/tangerine/content-sets:delegated
-      - ./server/package.json:/tangerine/server/package.json:delegated
-      - ./server/src:/tangerine/server/src:delegated
-      - ./client/src:/tangerine/client/src:delegated \
-      - ./client/dist:/tangerine/client/dist:delegated \
-      - ./server/reporting:/tangerine/server/reporting:delegated \
-      - ./upgrades:/tangerine/upgrades:delegated \
-      - ./scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
-      - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
       - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
       - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
-      - ./translations:/tangerine/translations:delegated \
-      - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
-      - ./server/entrypoint-server.sh:/tangerine/server/entrypoint-server.sh:delegated
 
+  server:
+      container_name: "server"
+      depends_on:
+        - init
+        - couchdb
+      build:
+        context: .
+        dockerfile: ./Dockerfile-server
+      ports:
+        - "82:80"
+      restart: unless-stopped
+      env_file: config.env
+      environment:
+        - T_COUCHDB_USER_ADMIN_NAME=/run/secrets/couchdb_admin_name
+        - T_COUCHDB_USER_ADMIN_PASS=/run/secrets/couchdb_admin_password
+        - T_COUCHDB_ENDPOINT=http://admin:password@couchdb:5984/
+        - "NODE_ENV=development"
+        - NPM_DEV_MODE
+      entrypoint: "/bin/sh -c \"cd /tangerine/server/ && npm run start$${NPM_DEV_MODE}\""
+      volumes:
+        - ./data/groups:/tangerine/groups/:delegated
+        - ./data/csv:/csv/:delegated
+        - ./data/archives:/archives/:delegated
+        - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
+        - ./data/client/releases:/tangerine/client/releases/:delegated
+        - ./data/client/content/groups:/tangerine/client/content/groups:delegated
+        - ./data/client/content/assets:/tangerine/client/content/assets:delegated
+        - ./content-sets:/tangerine/content-sets:delegated
+        - ./server/package.json:/tangerine/server/package.json:delegated
+        - ./server/src:/tangerine/server/src:delegated
+        - ./client/src:/tangerine/client/src:delegated \
+        - ./client/dist:/tangerine/client/dist:delegated \
+        - ./server/reporting:/tangerine/server/reporting:delegated \
+        - ./upgrades:/tangerine/upgrades:delegated \
+        - ./scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
+        - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
+        - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
+        - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
+        - ./translations:/tangerine/translations:delegated \
+        - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+        - ./server/entrypoint-server.sh:/tangerine/server/entrypoint-server.sh:delegated
 
   server-ui:
     container_name: "server-ui"
@@ -127,8 +152,8 @@ services:
 
   couchdb:
     container_name: "couchdb"
-#    depends_on:
-#      - init
+    depends_on:
+      - init
     build:
       context: .
       dockerfile: ./Dockerfile-couchdb
