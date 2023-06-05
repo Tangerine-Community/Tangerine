@@ -9,6 +9,7 @@ RUN echo "I'm building for $TARGETARCH"
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
+
 RUN git config --global url."https://".insteadOf git://
 
 # Never ask for confirmations
@@ -36,6 +37,7 @@ ENV T_HOST_NAME 127.0.0.1
 ENV T_PROTOCOL http
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
+
 
 #RUN apt-get update && apt-get install -y python3-pip
 
@@ -71,6 +73,9 @@ ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
     npm install
 
+ADD tangy-form /tangerine/tangy-form/
+ADD tangy-form-editor /tangerine/tangy-form-editor/
+
 # Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \
@@ -100,21 +105,14 @@ RUN cd /tangerine/online-survey-app && \
     ./node_modules/.bin/ng build --base-href "./"
 
 # build client.
-ADD client /tangerine/client
+add client /tangerine/client
 RUN cd /tangerine/client && \
-    ./node_modules/.bin/ng build --base-href "./" -c production
+    ./node_modules/.bin/ng build --base-href "./"
 
 # Build editor.
 ADD editor /tangerine/editor
-RUN cd /tangerine/editor && \
-#    export NODE_OPTIONS=--openssl-legacy-provider && \
-    npm dedupe
-RUN cd /tangerine/editor && \
-#    export NODE_OPTIONS=--openssl-legacy-provider && \
-    ./node_modules/.bin/ng build --base-href "./" -c production
-
-# Disabling building service worker for editor.
-RUN cd /tangerine/editor && ./node_modules/.bin/workbox generateSW
+RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 
 # Build PWA tools.
 RUN cd /tangerine/client/pwa-tools/updater-app && \
@@ -142,7 +140,6 @@ RUN cd /tangerine/server && \
     npm link
 
 # Wrap up
-
 ADD ./ /tangerine
 
 RUN mkdir /csv

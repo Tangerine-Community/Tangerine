@@ -18,7 +18,7 @@ All warning and validation logic can make use of the getValue function but also 
 
 In the below example you see an input defined which will trigger a validation if the value is great then 5, Between 5 and 7 it is only a warning message, meaning that the user can proceed if they click Next/Submit again but if the value is greater then 7 the user has to correct the input. 
 
-<img src="./media/validation01.png" width="570">
+<img src="../media/validation01.png" width="570">
 
 
 
@@ -28,14 +28,14 @@ The easiest validation is for number type of inputs. There we can directly speci
 I will add an age input of type number. Then on the Validation tab i have defined min and max values, as well as error text. 
 
 
-<img src="./media/validation02.png" width="570">
+<img src="../media/validation02.png" width="570">
 
 
 
 I want to add one more validation to my stu_number variable, making sure it is exactly 6 characters long. For this I will use input.value.length == 6 
 
 Here is how this looks in student number input. 
-<img src="./media/validation03.png" width="570">
+<img src="../media/validation03.png" width="570">
 
 
 
@@ -46,7 +46,7 @@ If, for example, the value entered into an "INPUT-NUMBER" field should have 9 or
     input.value.length > 9
 
 
-<img src="./media/add_input.png" width="570">
+<img src="../media/add_input.png" width="570">
 
 
 Tangerine also allow you to compare the value entered in the current item to a value entered for another, earlier item. This might be the case, e.g. for attendance when observing a classroom. That is, when recording attendance, the number of children present should not exceed the number of children enrolled. Assume that a relevant variable name of the earlier item was "boys_enrolled" and the current items is about the boys present, this might be the validation logic to enter under "Valid if" for boys_present.
@@ -54,7 +54,7 @@ Tangerine also allow you to compare the value entered in the current item to a v
     :::javascript
     parseInt(input.value) <= inputs.boys_enrolled.value
 
-<img src="./media/prior_valid.png" width="570">
+<img src="../media/prior_valid.png" width="570">
 
 
 If you want to validate that a number input is in between a particular range but also allow a 'No Reply' answer, use the below validation rule:

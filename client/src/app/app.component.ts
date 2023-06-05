@@ -14,7 +14,7 @@ import { CaseService } from 'src/app/case/services/case.service';
 import { VariableService } from './shared/_services/variable.service';
 import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
-import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
@@ -58,6 +58,9 @@ export class AppComponent implements OnInit {
   @ViewChild('activeTasks')
   dialogRef:any
 
+  numberOfClicks = 0 // Counting clicks to escape kiosk mode.
+  exitClicks = 5 // If not defined in app-config.json, use this value
+  
   constructor(
     private userService: UserService,
     private appConfigService: AppConfigService,
@@ -114,6 +117,25 @@ export class AppComponent implements OnInit {
       classDashboard: dashboardService,
       activityService: activityService,
       translate: window['t']
+    }
+  }
+
+  @HostListener("click")
+  clicked() {
+    this.exitClicks = this.appConfig.exitClicks ? this.appConfig.exitClicks : this.exitClicks
+    if (this.appConfig.kioskMode && this.kioskModeEnabled) {
+      this.numberOfClicks++
+      console.log("click! " + this.numberOfClicks)
+      if (this.numberOfClicks === 1) {
+        setTimeout( () => {
+          console.log('Resetting this.numberOfClicks.');
+          this.numberOfClicks = 0
+        }, 2000);
+      }
+      if (this.numberOfClicks > (this.exitClicks - 1)) {
+        this.numberOfClicks = 0
+        this.window.document.body.dispatchEvent(new CustomEvent('exit-fullscreen', { bubbles: true }))
+      }
     }
   }
   
@@ -218,6 +240,12 @@ export class AppComponent implements OnInit {
       this.router.navigate(['/update']);
     }
     this.processMonitorService.stop(appStartProcess.id)
+    this.window.document.documentElement.addEventListener('enter-fullscreen', _ => {
+      this.kioskModeEnabled = true
+    })
+    this.window.document.documentElement.addEventListener('exit-fullscreen', _ => {
+      this.kioskModeEnabled = false
+    })
   }
 
   async install() {

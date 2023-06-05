@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          --accent-color: #f26f10;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --warn-color: #993f0b;
+          --warn-background-color: #f4e688;
+          --disabled-color: #BBB;
+        }
+        h1, h2, h3, h4, h5 {
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 25px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-acasi.js"></script>
+    <script type="module" src="../input/tangy-box.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-checkboxes-dynamic.js"></script>
+    <script type="module" src="../input/tangy-consent.js"></script>
+    <script type="module" src="../input/tangy-eftouch.js"></script>
+    <script type="module" src="../input/tangy-ethio-date.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+    <script type="module" src="../input/tangy-timed.js"></script>
+    <script type="module" src="../input/tangy-untimed-grid.js"></script>
+    <script type="module" src="../input/tangy-toggle-button.js"></script>
+    <script type="module" src="../input/tangy-partial-date.js"></script>
+    <script type="module" src="../input/tangy-photo-capture.js"></script>
+    <script type="module" src="../input/tangy-qr.js"></script>
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+
+      <h3>cycle-sequences demo</h3>
+      <!--demo-snippet>
+        <template>
+          <tangy-form id="my-form" title="My Form" cycle-sequences="1,4,3
+          1,4,3 
+          1,4,3">
+            <tangy-form-item id="item1">
+              <tangy-input name="input1" label="What is your first name 1?"></tangy-input>
+            </tangy-form-item>
+            <tangy-form-item id="item2">
+              <tangy-input name="input2" label="What is your last name 2?"></tangy-input>
+            </tangy-form-item>
+            <tangy-form-item id="item3">
+              <tangy-input name="input3" label="What is your last name 3?"></tangy-input>
+            </tangy-form-item>
+            <tangy-form-item id="item4">
+              <tangy-input name="input4" label="What is your last name 4?"></tangy-input>
+            </tangy-form-item>
+          </tangy-form>
+        </template>
+      </demo-snippet-->
+    <tangy-form id="SkipSecondItemCycleSequences_" title="My Form" cycle-sequences="1,3,4
+      1,3,4
+      1,3,4">
+        <tangy-form-item id="item1" title="1">
+          1 
+        </tangy-form-item>
+        <tangy-form-item id="item2" title="2">
+          2 
+        </tangy-form-item>
+        <tangy-form-item id="item3" title="3">
+          3 
+        </tangy-form-item>
+        <tangy-form-item id="item4" title="4">
+          4 
+        </tangy-form-item>
+      </tangy-form>
+      
+        
+    </div>
+  </body>
+</html>

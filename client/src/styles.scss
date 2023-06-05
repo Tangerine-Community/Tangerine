@@ -12,6 +12,11 @@
 @import './_tangy-app-variables.scss';
 @import "./tangerine-theme.scss";
 
+@font-face {
+  font-family: 'FiraCode';
+  src: url('./fonts/FiraCode-VariableFont_wght.ttf');
+}
+
 html {
 
   /* Background color of the document */
@@ -43,6 +48,7 @@ html {
 
   /* Other component overrides */
   --paper-tabs-selection-bar-color: #f26f10;
+  --label-font-size: 1.2rem;
 
 }
 

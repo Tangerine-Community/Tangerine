@@ -11,6 +11,8 @@ client/app/node_modules
 client/tangy-forms/node_modules
 client/tangy-forms/bower_components
 server/node_modules
+tangy-form/node_modules
+tangy-form-editor/node_modules
 scripts/generate-csv/node_modules
 scripts/generate-uploads/node_modules
 config.sh

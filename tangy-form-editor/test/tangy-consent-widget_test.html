@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="BlankFixture">
+      <template>
+        <tangy-consent-widget>
+        </tangy-consent-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ResumeFixture">
+      <template>
+        <tangy-consent-widget>
+          <tangy-consent name="consent-test"></tangy-consent>
+        </tangy-consent-widget>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import 'tangy-form/tangy-form.js'
+      import 'tangy-form/input/tangy-input.js'
+      import '../tangy-widgets.js'
+      import '../widget/tangy-consent-widget.js'
+      suite('tangy-consent-widget', () => {
+        test('should open blank with defaults', () => {
+          const element = fixture('BlankFixture')
+          assert.equal(element._config.hasOwnProperty('name'), true)
+          assert.equal(element._config.hasOwnProperty('required'), true)
+          assert.equal(element._config.hasOwnProperty('disabled'), true)
+          assert.equal(element._config.hasOwnProperty('hidden'), true)
+          assert.equal(element._config.hasOwnProperty('showIf'), true)
+        })
+        test('should resume', () => {
+          const element = fixture('ResumeFixture')
+          assert.equal(element._config.name, 'consent-test')
+          assert.equal(element._config.required, false)
+          assert.equal(element._config.hidden, false)
+          assert.equal(element._config.disabled, false)
+        })
+        test('should resume and save with edits', () => {
+          const element = fixture('ResumeFixture')
+          element.shadowRoot.querySelector('#edit-button').click()
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=name]').value = 'consent_test_test'
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=required]').value = ''
+          element.shadowRoot.querySelector('tangy-form-item').clickedComplete()
+          assert.equal(element._config.name, 'consent_test_test')
+          assert.equal(element._config.required, false)
+        })
+      })
+
+    </script>
+
+  </body>
+</html>

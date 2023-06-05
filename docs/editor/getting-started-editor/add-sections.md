@@ -3,19 +3,19 @@
 To add a new section to your instrument, hit "ADD SECTION".
 
 
-<img src="./media/add_section.png" width="100">
+<img src="../media/add_section.png" width="100">
 
 The interface allows a drag-and-drop feature which enables reordering of the sections already created. The order in which the sections are listed, is the same as the sequence of screens that will be shown on the tablet when the tablet user is filling in the form.
 
 ## Section Editor
 Upon adding a new section, or selecting to "EDIT" your instrument section, you will see the section editor screen below.
 
-<img src="./media/sectionEditor.png" width="570">
+<img src="../media/sectionEditor.png" width="570">
 
 
 If this is a new section, you might give it a new name from the section header. Click the pen icon on the right of the blue bar and overwrite the "title". Or any other of the configuration options. Then hit SUBMIT to save your edits.
 
-<img src="./media/sectionEditor.gif" width="570">
+<img src="../media/sectionEditor.gif" width="570">
 
 ## Section Options
 
@@ -35,7 +35,7 @@ Hide navigation icons -- Hides the arrow from the back and Next buttons. If both
 
 Threshold: Number of incorrect answers before disabling remaining questions -- This option is used in conjunction with radio button questions only. Set it to the number of consecutive incorrect replies before the test is discontinued. You must mark an option in the radio button group as Correct for this to work. Only one correct option per question can be defined.
 
-<img src="./media/insertButton.png" width="100">
+<img src="../media/insertButton.png" width="100">
 
 
 To add an item to your instrument section, click
@@ -43,7 +43,7 @@ To add an item to your instrument section, click
 This opens the item type selection interface.
 
 
-<img src="./media/itemInterface.png" width="570">
+<img src="../media/itemInterface.png" width="570">
 
 
 These elements are subdivided into groups of item types (e.g., inputs, location, lists, misc):

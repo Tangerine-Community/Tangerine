@@ -231,6 +231,8 @@ OPTIONS="--link $T_COUCHDB_CONTAINER_NAME:couchdb \
   --volume $(pwd)/translations:/tangerine/translations:delegated \
   --volume $(pwd)/online-survey-app/src:/tangerine/online-survey-app/src:delegated \
   --volume $(pwd)/server/phantomjs-1.9.8-linux-x86_64.tar.bz2:/tangerine/server/phantomjs-1.9.8-linux-x86_64.tar.bz2:delegated
+  --volume $(pwd)/tangy-form-editor:/tangerine/tangy-form-editor:delegated \
+  --volume $(pwd)/tangy-form:/tangerine/tangy-form:delegated \
   tangerine/tangerine:local
  "
 
