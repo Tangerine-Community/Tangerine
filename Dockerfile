@@ -35,18 +35,25 @@ RUN apt-get update && apt-get install -y python3-pip
 #RUN cd /tangerine/server/src/modules/mysql && \
 #    ./install-dependencies.sh
 
+
+ADD tangy-form /tangerine/tangy-form/
+ADD tangy-form-editor /tangerine/tangy-form-editor/
+
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json
 RUN cd /tangerine/online-survey-app/ && \
     npm install
 
+# Install phantomjs
+COPY ./server/phantomjs-2.1.1-linux-x86_64.tar.bz2 /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2
+ENV PHANTOM_JS phantomjs-2.1.1-linux-x86_64
+RUN cd /tmp/ && tar xvjf $PHANTOM_JS.tar.bz2 && \
+    mv $PHANTOM_JS /usr/local/sbin/ && ln -sf /usr/local/sbin/$PHANTOM_JS/bin/phantomjs /usr/local/bin
+
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
     npm install
-
-ADD tangy-form /tangerine/tangy-form/
-ADD tangy-form-editor /tangerine/tangy-form-editor/
 
 # Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
@@ -71,53 +78,53 @@ RUN cd /tangerine/client/pwa-tools/updater-app && \
 
 # Build online-survey-app.
 ADD online-survey-app /tangerine/online-survey-app/
-RUN cd /tangerine/online-survey-app && \
-    ./node_modules/.bin/ng build --base-href "./"
-
-# build client.
-add client /tangerine/client
-RUN cd /tangerine/client && \
-    ./node_modules/.bin/ng build --base-href "./"
-
-# Build editor.
-ADD editor /tangerine/editor
-RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
-RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
-
-# Build PWA tools.
-RUN cd /tangerine/client/pwa-tools/updater-app && \
-    npm run build && \
-    cp logo.svg build/default/
-
-# Package release sources for APK and PWA.
-RUN cd /tangerine/client && \
-    cp -r dist/tangerine-client builds/apk/www/shell && \
-    cp -r pwa-tools/updater-app/build/default builds/pwa && \
-    mkdir builds/pwa/release-uuid && \
-    cp -r dist/tangerine-client builds/pwa/release-uuid/app
-
-# Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
-RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
-
-# Add the rest of server.
-ADD server /tangerine/server
-
-# Link up global commands.
-RUN cd /tangerine/server && \
-    npm link
-
+#RUN cd /tangerine/online-survey-app && \
+#    ./node_modules/.bin/ng build --base-href "./"
 #
-# Wrap up
+## build client.
+#add client /tangerine/client
+#RUN cd /tangerine/client && \
+#    ./node_modules/.bin/ng build --base-href "./"
 #
-
+## Build editor.
+#ADD editor /tangerine/editor
+#RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+#RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
+#
+## Build PWA tools.
+#RUN cd /tangerine/client/pwa-tools/updater-app && \
+#    npm run build && \
+#    cp logo.svg build/default/
+#
+## Package release sources for APK and PWA.
+#RUN cd /tangerine/client && \
+#    cp -r dist/tangerine-client builds/apk/www/shell && \
+#    cp -r pwa-tools/updater-app/build/default builds/pwa && \
+#    mkdir builds/pwa/release-uuid && \
+#    cp -r dist/tangerine-client builds/pwa/release-uuid/app
+#
+## Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
+#RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
+#
+## Add the rest of server.
+#ADD server /tangerine/server
+#
+## Link up global commands.
+#RUN cd /tangerine/server && \
+#    npm link
+#
+##
+## Wrap up
+##
+#
 ADD ./ /tangerine
-
-RUN mkdir /csv
-RUN mkdir /groups
-RUN echo {} > /paid-worker-state.json
-
-EXPOSE 80
-ENTRYPOINT cd /tangerine/server/ && npm start
+#
+#RUN mkdir /csv
+#RUN mkdir /groups
+#RUN echo {} > /paid-worker-state.json
+#
+#EXPOSE 80
+#ENTRYPOINT cd /tangerine/server/ && npm start
 
 ## Used for testing...
-#CMD ["/bin/bash"]
+CMD ["/bin/bash"]

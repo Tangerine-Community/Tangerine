@@ -12,6 +12,6 @@ echo "entrypoint-development.sh - starting client"
 cd /tangerine/client
 ./node_modules/.bin/ng build --watch --poll 100 --base-href ./ --output-path ./dev &
 
-echo "entrypoint-development.sh - starting editor"
-cd /tangerine/editor
-npm run dockerdev
+#echo "entrypoint-development.sh - starting editor"
+#cd /tangerine/editor
+#npm run dockerdev
