@@ -66,12 +66,9 @@ class TangyRadioButtons extends TangyInputBase {
           font-size: 1em;
           font-weight: lighter;
         }
-        .ocr-border {
-          border-style: solid;
-        }
       </style>
       
-      <div class="flex-container m-y-10 ocr-border">
+      <div class="flex-container m-y-10">
         <div id="qnum-number"></div>
         <div id="qnum-content">
           <label id="label" for="group"></label>

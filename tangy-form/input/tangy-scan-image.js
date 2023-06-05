@@ -89,76 +89,86 @@ class TangyScanImage extends LitElement {
         //Use above two lines to show recognizedText in html
         console.log(recognizedText);
         // alert(recognizedText.blocks.blocktext);
-        const lines = recognizedText.lines.linetext;
-        const baseImage = new Image()
-        baseImage.src = imageData
-        // baseImage.onload = () => sendCanvas(canvas, baseImage);
-        await baseImage.decode();
-        this.canvas.width = baseImage.width;
-        this.canvas.height = baseImage.height;
+        const linesObject = recognizedText.lines;
+        // const baseImage = new Image()
+        // baseImage.src = imageData
+        // // baseImage.onload = () => sendCanvas(canvas, baseImage);
+        // await baseImage.decode();
+        // this.canvas.width = baseImage.width;
+        // this.canvas.height = baseImage.height;
+        const scanResult = {
+          linesObject: linesObject,
+          imageData:imageData
+        }
 
-        let ctx = this.canvas.getContext('2d');
-        ctx.drawImage(baseImage, 0, 0, baseImage.width, baseImage.height);
+        // let ctx = this.canvas.getContext('2d');
+        // ctx.drawImage(baseImage, 0, 0, baseImage.width, baseImage.height);
 
         // this.scannedImage.src = imageData;
-        const image = cv.imread(baseImage); // Load the image using OpenCV
-        console.log('image width: ' + image.cols + '\n' +
-            'image height: ' + image.rows + '\n' +
-            'image size: ' + image.size().width + '*' + image.size().height + '\n' +
-            'image depth: ' + image.depth() + '\n' +
-            'image channels ' + image.channels() + '\n' +
-            'image type: ' + image.type() + '\n');
-        // const blockframe = recognizedText.blocks.blockframe
-        const itemframe = recognizedText.lines.lineframe
-        for (let i = 0; i < itemframe.length; i++) {
-          const item = itemframe[i]
-          // const [x, y, width, height] = [xCoordinate, yCoordinate, boundingBoxWidth, boundingBoxHeight]; // Extract the coordinates
-          let [x, y, width, height] = [item.x, item.y, item.width, item.height]; // Extract the coordinates
-          if (height > image.height) {
-            console.error("height > image.height: " + height)
-            height = image.height
-          }
-          if (width > image.width) {
-            console.error("width > image.width: " + width)
-            width = image.width
-          }
-          let itemNumber = i+1
-          console.log("Item: " + itemNumber + " Creating Rect using dimensions: x:" + x + " y: " + y  + " width: " + width + " height: " + height)
-          // Extract the region of interest from the image
-          const rect = new cv.Rect(x, y, width, height)
-          try {
-            const roi = image.roi(rect);
-            // Convert the OpenCV image to grayscale for processing
-            const gray = new cv.Mat();
-            cv.cvtColor(roi, gray, cv.COLOR_BGR2GRAY);
-            // Perform image processing and circle detection with OpenCV
-            const circles = new cv.Mat();
-            // cv.HoughCircles(gray, circles, cv.HOUGH_GRADIENT, 1, 20, 50, 30, 0, 0);
-            cv.HoughCircles(gray, circles, cv.HOUGH_GRADIENT, 1,
-                gray.rows/16,  // change this value to detect circles with different distances to each other
-                100, 30, 1, 30 // change the last two parameters
-                // (min_radius & max_radius) to detect larger circles
-            );
-            // cv.HoughCircles(src, circles, cv.HOUGH_GRADIENT, 1, 35, 70, 20, 0, 0);
-            // Analyze the circle detection results
-            const hasFilledCircle = circles.size() > 0;
-
-            cv.imshow(this.canvas, roi);
-            await sleep(1000)
-            // Clean up resources
-            // roi.delete();
-            // gray.delete();
-            // circles.delete();
-            // Use the 'hasFilledCircle' variable as needed for further processing or display
-            console.log(hasFilledCircle);
-          } catch (e) {
-            console.log("error: " + e)
-          }
-        }
+        // const image = cv.imread(baseImage); // Load the image using OpenCV
+        // console.log('image width: ' + image.cols + '\n' +
+        //     'image height: ' + image.rows + '\n' +
+        //     'image size: ' + image.size().width + '*' + image.size().height + '\n' +
+        //     'image depth: ' + image.depth() + '\n' +
+        //     'image channels ' + image.channels() + '\n' +
+        //     'image type: ' + image.type() + '\n');
+        // const cvImageWidth = image.size().width
+        // const cvImageHeight = image.size().height
+        // // const blockframe = recognizedText.blocks.blockframe
+        // const itemframe = recognizedText.lines.lineframe
+        // for (let i = 0; i < itemframe.length; i++) {
+        //   const item = itemframe[i]
+        //   // const [x, y, width, height] = [xCoordinate, yCoordinate, boundingBoxWidth, boundingBoxHeight]; // Extract the coordinates
+        //   let [x, y, width, height] = [item.x, item.y, item.width, item.height]; // Extract the coordinates
+        //   if (height > image.height) {
+        //     console.error("height > image.height: " + height)
+        //     height = image.height
+        //   }
+        //   if (width > image.width) {
+        //     console.error("width > image.width: " + width)
+        //     width = image.width
+        //   }
+        //   const X1 = (x / baseImage.width) * cvImageWidth
+        //   const Y1 = (y / baseImage.height) * cvImageHeight
+        //   const X2 = (width / baseImage.width) * cvImageWidth
+        //   const Y2 = (height / baseImage.height) * cvImageHeight
+        //   let itemNumber = i+1
+        //   console.log("Item: " + itemNumber + " Creating Rect using dimensions: x:" + x + " y: " + y  + " width: " + width + " height: " + height)
+        //   // Extract the region of interest from the image
+        //   const rect = new cv.Rect(x, y, width, height)
+        //   try {
+        //     const roi = image.roi(rect);
+        //     // Convert the OpenCV image to grayscale for processing
+        //     const gray = new cv.Mat();
+        //     cv.cvtColor(roi, gray, cv.COLOR_BGR2GRAY);
+        //     // Perform image processing and circle detection with OpenCV
+        //     const circles = new cv.Mat();
+        //     // cv.HoughCircles(gray, circles, cv.HOUGH_GRADIENT, 1, 20, 50, 30, 0, 0);
+        //     cv.HoughCircles(gray, circles, cv.HOUGH_GRADIENT, 1,
+        //         gray.rows/16,  // change this value to detect circles with different distances to each other
+        //         100, 30, 1, 30 // change the last two parameters
+        //         // (min_radius & max_radius) to detect larger circles
+        //     );
+        //     // cv.HoughCircles(src, circles, cv.HOUGH_GRADIENT, 1, 35, 70, 20, 0, 0);
+        //     // Analyze the circle detection results
+        //     const hasFilledCircle = circles.size() > 0;
+        //
+        //     cv.imshow(this.canvas, roi);
+        //     await sleep(1000)
+        //     // Clean up resources
+        //     // roi.delete();
+        //     // gray.delete();
+        //     // circles.delete();
+        //     // Use the 'hasFilledCircle' variable as needed for further processing or display
+        //     console.log(hasFilledCircle);
+        //   } catch (e) {
+        //     console.log("error: " + e)
+        //   }
+        // }
         this.dispatchEvent(new CustomEvent('TANGY_SCAN_IMAGE_VALUE', {
           bubbles: true,
           composed: true,
-          detail: {value: lines}
+          detail: {value: scanResult}
         }));
       }
       const onFail = (message) => {
@@ -170,7 +180,8 @@ class TangyScanImage extends LitElement {
     const onFail = (message) => {
       alert('Failed because: ' + message);
     }
-    navigator.camera.getPicture(onSuccess, onFail, {quality: 100, correctOrientation: true});
+    // navigator.camera.getPicture(onSuccess, onFail, {quality: 100, correctOrientation: true});
+    navigator.camera.getPicture(onSuccess, onFail, {quality: 100});
   }
 
 
@@ -215,7 +226,7 @@ class TangyScanImage extends LitElement {
         // console.log("BOOOP circles.cols: " + circles.cols + " circles.rows: " + circles.rows)
         // console.log("radius: " + radius + " center: " + JSON.stringify(center))
       }
-      cv.imshow(this.canvas, src);
+      // cv.imshow(this.canvas, src);
     }, 1000/30);
   }
 
