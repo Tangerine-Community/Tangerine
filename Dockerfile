@@ -35,7 +35,6 @@ RUN apt-get update && apt-get install -y python3-pip
 #RUN cd /tangerine/server/src/modules/mysql && \
 #    ./install-dependencies.sh
 
-
 ADD tangy-form /tangerine/tangy-form/
 ADD tangy-form-editor /tangerine/tangy-form-editor/
 
