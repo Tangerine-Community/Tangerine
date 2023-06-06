@@ -135,13 +135,12 @@ export class SyncCouchdbService {
     this.fullSync = fullSync
     // Prepare config.
     const appConfig = await this.appConfigService.getAppConfig()
-    this.batchSize = reduceBatchSize ? this.reducedBatchSize : appConfig.batchSize || this.batchSize
-    this.initialBatchSize = appConfig.initialBatchSize || this.initialBatchSize
+    this.batchSize =
+      (isFirstSync || fullSync === SyncDirection.pull) ? this.initialBatchSize :
+      reduceBatchSize ? this.reducedBatchSize : appConfig.batchSize || this.batchSize
     this.writeBatchSize = reduceBatchSize ? this.reducedBatchSize : appConfig.writeBatchSize || this.writeBatchSize
     this.changesBatchSize = reduceBatchSize ? this.reducedChangesBatchSize : appConfig.changesBatchSize || this.changesBatchSize
-    let batchSize = (isFirstSync || fullSync === SyncDirection.pull)
-      ? this.initialBatchSize
-      : this.batchSize
+
     let replicationStatus:ReplicationStatus
     syncDetails.usePouchDbLastSequenceTracking = appConfig.usePouchDbLastSequenceTracking || await this.variableService.get('usePouchDbLastSequenceTracking')
       ? true
@@ -239,7 +238,7 @@ export class SyncCouchdbService {
     let prePullLastSeq = await this.variableService.get('sync-pull-last_seq')
     while (!hadPullSuccess && !this.cancelling) {
       try {
-        pullReplicationStatus = await this.pull(userDb, remoteDb, appConfig, syncDetails, batchSize, prePullLastSeq);
+        pullReplicationStatus = await this.pull(userDb, remoteDb, syncDetails, prePullLastSeq);
         if (!pullReplicationStatus.pullError) {
           await this.variableService.set('sync-pull-last_seq', pullReplicationStatus.info.last_seq)
           hadPullSuccess = true
@@ -268,7 +267,7 @@ export class SyncCouchdbService {
     let hadPullIssueFormsSuccess = false
     while (!hadPullIssueFormsSuccess && !this.cancelling) {
       try {
-        pullIssueFormsReplicationStatus = await this.pullFormResponses(userDb, remoteDb, assignedFormResponseIds, appConfig, syncDetails, batchSize, prePullLastSeq);
+        pullIssueFormsReplicationStatus = await this.pullFormResponses(userDb, remoteDb, assignedFormResponseIds, syncDetails, prePullLastSeq);
         if (!pullIssueFormsReplicationStatus.pullError) {
           hadPullIssueFormsSuccess = true
           pullIssueFormsReplicationStatus.hadPullSuccess = true
@@ -410,7 +409,7 @@ export class SyncCouchdbService {
       ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": push_last_seq },
       "batch_size": this.batchSize,
       "batches_limit": 1,
-      "changes_batch_size": appConfig.changes_batch_size ? appConfig.changes_batch_size : null,
+      "changes_batch_size": this.changesBatchSize,
       "remaining": 100,
       "pushed": pushed,
       "checkpoint": 'source',
@@ -533,7 +532,7 @@ export class SyncCouchdbService {
     })
   }
 
-  async pull(userDb, remoteDb, appConfig, syncDetails, batchSize, prePullLastSeq): Promise<ReplicationStatus> {
+  async pull(userDb, remoteDb, syncDetails, prePullLastSeq): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
       pullError: '',
@@ -566,7 +565,7 @@ export class SyncCouchdbService {
      */
     let syncOptions = {
       ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": prePullLastSeq },
-      "batch_size": batchSize,
+      "batch_size": this.batchSize,
       "write_batch_size": this.writeBatchSize,
       "batches_limit": 1,
       "pulled": pulled,
@@ -594,7 +593,7 @@ export class SyncCouchdbService {
     
     status.initialPullLastSeq = prePullLastSeq
     status.currentPushLastSeq = status.info.last_seq
-    status.batchSize = batchSize
+    status.batchSize = this.batchSize
 
     if (failureDetected) {
       status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
@@ -669,7 +668,7 @@ export class SyncCouchdbService {
     return pullSelector;
   }
 
-  async pullFormResponses(userDb, remoteDb, docIds, appConfig, syncDetails, batchSize, prePullLastSeq): Promise<ReplicationStatus> {
+  async pullFormResponses(userDb, remoteDb, docIds, syncDetails, prePullLastSeq): Promise<ReplicationStatus> {
     let status = <ReplicationStatus>{
       pulled: 0,
       pullError: '',
@@ -702,7 +701,7 @@ export class SyncCouchdbService {
      */
     let syncOptions = {
       ...syncDetails.usePouchDbLastSequenceTracking ? { } : { "since": prePullLastSeq },
-      "batch_size": batchSize,
+      "batch_size": this.batchSize,
       "write_batch_size": this.writeBatchSize,
       "batches_limit": 1,
       "pulled": pulled,
@@ -729,7 +728,7 @@ export class SyncCouchdbService {
     
     status.initialPullLastSeq = prePullLastSeq
     status.currentPushLastSeq = status.info.last_seq
-    status.batchSize = batchSize
+    status.batchSize = this.batchSize
 
     if (failureDetected) {
       status.pullError = `${error.message || error}. ${window['t']('Trying again')}: ${window['t']('Retry ')}${this.retryCount}.`
