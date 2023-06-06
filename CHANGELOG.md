@@ -56,6 +56,7 @@ __New Features__
 __Fixes__
 - Fixed PWA assets (sound,video) only work when online [#1905](https://github.com/Tangerine-Community/Tangerine/issues/1905)
 
+
 __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
@@ -76,6 +77,94 @@ docker logs --since=60m tangerine
 git fetch origin
 git checkout v3.28.0
 ./start.sh v3.28.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.28.0
+```
+
+## v3.27.6
+
+__Fixes__
+- Address issues using the CaseService `createCaseEvent` API in `on-submit` logic by making the function synchronous
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.27.6
+./start.sh v3.27.6
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.27.5
+```
+
+## v3.27.5
+
+__Fixes__
+- CSV Generation: Fix permissions on generate csv batch script
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.27.5
+./start.sh v3.27.5
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.27.4
+```
+
+
+## v3.27.4
+
+__Fixes__
+- Synchronization: Update Reduce Batch Size button to apply during normal sync for pull and push
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v3.27.4
+./start.sh v3.27.4
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.27.3
 ```
@@ -112,7 +201,7 @@ git fetch origin
 git checkout v3.27.2
 ./start.sh v3.27.2
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.27.1
+docker rmi tangerine/tangerine:v3.27.2
 ```
 
 ## v3.27.2
@@ -272,7 +361,6 @@ docker logs --since=60m tangerine
 git fetch origin
 git checkout v3.26.2
 ./start.sh v3.26.2
->>>>>>> main
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.26.1
 ```

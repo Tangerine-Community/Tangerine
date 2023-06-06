@@ -1,4 +1,5 @@
 apt update
-apt-get install -y mysql-server
+apt install -y default-mysql-server
+
 
 
