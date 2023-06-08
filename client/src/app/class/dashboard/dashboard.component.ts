@@ -14,6 +14,7 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import {VariableService} from "../../shared/_services/variable.service";
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import {AppConfigService} from "../../shared/_services/app-config.service";
+import { DateTime } from 'luxon';
 
 export interface StudentResult {
   id: string;
@@ -71,9 +72,15 @@ export class DashboardComponent implements OnInit {
   feedbackViewInited = false;
   useAttendanceFeature = false
   showAttendanceList: boolean
+  attendanceRegister: {
+    _id: string,
+    timestamp: number,
+    class: {},
+    attendanceList: StudentResult[]
+  }
+  attendanceList: StudentResult[]
 
   getValue: (variableName, response) => any;
-  
   @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
@@ -88,7 +95,7 @@ export class DashboardComponent implements OnInit {
     private appConfigService: AppConfigService
   ) { }
 
-  getClassTitle(classResponse:TangyFormResponse) {
+  getClassTitle(classResponse: TangyFormResponse) {
     const gradeInput = classResponse.items[0].inputs.find(input => input.name === 'grade')
     return gradeInput.value
   }
@@ -280,6 +287,7 @@ export class DashboardComponent implements OnInit {
 
   async selectSubTask(itemId, classId, curriculumId) {
     // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
+    this.showAttendanceList = false;
     await this.variableService.set( 'class-currentItemId', itemId );
 
     // this.currentClassId = this.selectedClass.id;
@@ -335,60 +343,21 @@ export class DashboardComponent implements OnInit {
     // await this.populateFeedback(curriculumId);
   }
 
-  async getAttendanceList() {
+  async getAttendanceList(students) {
     // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
-    this.currentClassId = await this.variableService.get('class-currentClassId');
-    const classId = this.currentClassId
-    const itemId = 0
-    this.students = await this.getMyStudents(classId);
-    // const item = this.curriculumFormsList.find(x => x.id === itemId);
-    // const results = await this.getResultsByClass(classId, this.curriculum.name, [item], item);
-    // this.studentsResponses = [];
-    // const formsTodisplay = {};
-    // this.curriculumFormsList.forEach(form => {
-    //   formsTodisplay[form.id] = form;
-    // });
-    // for (const response of results as any[] ) {
-    //   // console.log("response: " + JSON.stringify(response))
-    //   // studentsResponses.push();
-    //   if (formsTodisplay[response.formId] !== 'undefined') {
-    //     const studentId = response.studentId;
-    //     let studentReponses = this.studentsResponses[studentId];
-    //     if (typeof studentReponses === 'undefined') {
-    //       studentReponses = {};
-    //     }
-    //     const formId = response.formId;
-    //     studentReponses[formId] = response;
-    //     this.studentsResponses[studentId] = studentReponses;
-    //   }
-    // }
-    const allStudentResults = [];
-    // for (const student of this.students) {
-    this.students.forEach((student) => {
+
+    const attendanceList = [];
+    students.forEach((student) => {
       const studentResults = {};
       const student_name = this.getValue('student_name', student.doc)
       const classId = this.getValue('classId', student.doc)
-      studentResults['id'] = student.id;
+      studentResults['id'] = student.id
       studentResults['name'] = student_name
       studentResults['classId'] = classId
-      // studentResults["forms"] = [];
-      studentResults['forms'] = {};
-      // for (const form of this.curriculumForms) {
-      // this.curriculumFormsList.forEach((form) => {
-      //   const formResult = {};
-      //   formResult['formId'] = form.id;
-      //   formResult['curriculum'] = this.curriculum.name;
-      //   formResult['title'] = form.title;
-      //   formResult['src'] = form.src;
-      //   if (this.studentsResponses[student.id]) {
-      //     formResult['response'] = this.studentsResponses[student.id][form.id];
-      //   }
-      //   // studentResults["forms"].push(formResult)
-      //   studentResults['forms'][form.id] = formResult;
-      // });
-      allStudentResults.push(studentResults);
+      studentResults['forms'] = {}
+      attendanceList.push(studentResults)
     });
-    this.allStudentResults = allStudentResults;
+    return attendanceList
     // await this.populateFeedback(curriculumId);
   }
 
@@ -587,12 +556,30 @@ export class DashboardComponent implements OnInit {
    * Makes attendance the selectedCurriculum.
    * @param cassId
    */
-  async showAttandanceListing(cassId) {
-    console.log('showAttandanceListing');
-    // const currentClassId = await this.variableService.get('class-currentClassId');
-    // this.students = await this.getMyStudents(currentClassId);
-    // console.log("this.students:" + JSON.stringify(this.students));
-    await this.getAttendanceList()
+  async showAttandanceListing(selectedClass) {
+    console.log('showAttandanceListing')
+    this.currentClassId = await this.variableService.get('class-currentClassId')
+    this.students = await this.getMyStudents(this.currentClassId)
+
+    const timestamp = Date.now()
+    const reportDate = DateTime.now().toLocaleString(DateTime.DATE_SHORT)
+    const grade = this.getClassTitle(selectedClass.doc)
+    const attendanceRegisterId = 'attendance-' + grade + '-' + reportDate
+    let attendanceRegisterDoc
+    try {
+      attendanceRegisterDoc = await this.dashboardService.getDoc(attendanceRegisterId)
+      this.attendanceList = attendanceRegisterDoc.attendanceList
+      this.attendanceRegister = attendanceRegisterDoc
+    } catch (e) {
+      this.attendanceList =  await this.getAttendanceList(this.students)
+      this.attendanceRegister = {
+        _id: attendanceRegisterId,
+        timestamp: timestamp,
+        class: selectedClass,
+        attendanceList: this.attendanceList
+      }
+    }
+
     const attendance = {
       "name": "attendance",
       "value": "on",
@@ -622,12 +609,28 @@ export class DashboardComponent implements OnInit {
   //     }
   //   }
   // }
-  toggleAttendance() {
-    console.log('toggleAttendance')
+  async toggleAttendance(student) {
+    student.absent = !student.absent
+    await this.saveStudentAttendance(student)
     // event.target.classList.toggle("active");
   }
 
-  toggleMood() {
-    console.log('toggleMood')
+  async toggleMood(mood, student) {
+    student.mood = mood
+    await this.saveStudentAttendance(student)
+  }
+
+  private async saveStudentAttendance(student) {
+    console.log('saved student attendance: ' + JSON.stringify(student))
+    // save allStudentResults
+    this.attendanceRegister.attendanceList = this.attendanceList
+    // save attendanceRegister
+    let doc
+    try {
+      doc = await this.dashboardService.getDoc(this.attendanceRegister._id)
+      this.attendanceRegister['_rev'] = doc._rev
+    } catch (e) {
+    }
+    await this.dashboardService.saveDoc(this.attendanceRegister)
   }
 }

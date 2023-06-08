@@ -7,7 +7,7 @@ import {ClassGroupingReport} from '../reports/student-grouping-report/class-grou
 import {ClassUtils} from '../class-utils';
 import {UserService} from '../../shared/_services/user.service';
 import {UserDatabase} from '../../shared/_classes/user-database.class';
-import { _TRANSLATE } from 'src/app/shared/translation-marker';
+import {_TRANSLATE} from 'src/app/shared/translation-marker';
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -647,5 +647,15 @@ export class DashboardService {
       return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
     }
   };
+
+  getDoc = async (id) => {
+    this.db = await this.getUserDB()
+    return await this.db.get(id)
+  }
+
+  saveDoc = async (doc) => {
+    this.db = await this.getUserDB()
+    return await this.db.put(doc);
+  }
 }
 
