@@ -15,14 +15,13 @@ export class TangyFormsPlayerComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<any> {
-    const formId = this.route.snapshot.paramMap.get('formId');
     const data = await this.httpClient.get('./assets/form/form.html', {responseType: 'text'}).toPromise();
     this.container.nativeElement.innerHTML = data;
     const tangyForm = this.container.nativeElement.querySelector('tangy-form');
     tangyForm.addEventListener('after-submit', async (event) => {
       event.preventDefault();
       try {
-        if (await this.formsService.uploadFormResponse(event.target.response, formId)){
+        if (await this.formsService.uploadFormResponse(event.target.response)){
           this.router.navigate(['/form-submitted-success']);
         } else {
           alert('Form could not be submitted. Please retry');
