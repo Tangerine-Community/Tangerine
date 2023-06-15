@@ -47,6 +47,8 @@ export class AppComponent implements OnInit {
   installed = false
   isLoggedIn = false
   isAdmin = false
+  isChrome = true
+  isSafari17orHigher = false
   kioskModeEnabled = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
@@ -117,6 +119,29 @@ export class AppComponent implements OnInit {
       activityService: activityService,
       translate: window['t']
     }
+
+    // Navigator storage estimate is only available on Chrome or Safari v17+
+    var userAgent = (navigator && navigator.userAgent) ? navigator.userAgent.toLowerCase() : '';
+
+    var isChrome = userAgent.indexOf('chrome') !== -1;
+    this.isChrome = isChrome
+
+    var isSafari = userAgent.indexOf('safari') !== -1
+    var isSafari17orHigher = false
+    if (!isChrome && isSafari) {
+      try {
+        const versionString = "Version/"
+        let match = userAgent.indexOf(versionString);
+        if (match !== -1) {
+          const version = userAgent.slice(match + versionString.length, match + versionString.length + 2)
+          isSafari17orHigher = parseInt(version) > 17
+        }
+      }
+      catch {
+        isSafari17orHigher = false
+      }
+    }
+    this.isSafari17orHigher = isSafari17orHigher
   }
 
   @HostListener("click")
@@ -300,44 +325,49 @@ export class AppComponent implements OnInit {
   }
 
   async checkStorageUsage() {
-    const storageEstimate = await navigator.storage.estimate()
-    const availableFreeSpace = storageEstimate.quota - storageEstimate.usage
-    const minimumFreeSpace = this.appConfig.minimumFreeSpace
-      ? this.appConfig.minimumFreeSpace
-      : 50*1000*1000
-    if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
-      const batchSize = this.appConfig.usageCleanupBatchSize
-        ? this.appConfig.usageCleanupBatchSize
-        : 10
-      this.freespaceCorrectionOccuring = true
-      await this.correctFreeSpace(minimumFreeSpace, batchSize)
-      this.freespaceCorrectionOccuring = false
+    if (this.isChrome || this.isSafari17orHigher) {
+      const storageEstimate = await navigator.storage.estimate()
+      const availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+      const minimumFreeSpace = this.appConfig.minimumFreeSpace
+        ? this.appConfig.minimumFreeSpace
+        : 50*1000*1000
+      if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
+        const batchSize = this.appConfig.usageCleanupBatchSize
+          ? this.appConfig.usageCleanupBatchSize
+          : 10
+        this.freespaceCorrectionOccuring = true
+        await this.correctFreeSpace(minimumFreeSpace, batchSize)
+        this.freespaceCorrectionOccuring = false
+      }
     }
   }
 
   async correctFreeSpace(minimumFreeSpace, batchSize) {
-    console.log('Making freespace...')
-    let storageEstimate = await navigator.storage.estimate()
-    let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
-    while(availableFreeSpace < minimumFreeSpace) {
-      const DB = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-      const results = await DB.query('tangy-form/responseByUploadDatetime', {
-        descending: false,
-        limit: batchSize,
-        include_docs: true
-      });
-      for(let row of results.rows) {
-        await DB.remove(row.doc)
+    if (this.isChrome || this.isSafari17orHigher) {
+      console.log('Making freespace...')
+
+      let storageEstimate = await navigator.storage.estimate()
+      let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+      while(availableFreeSpace < minimumFreeSpace) {
+        const DB = await this.userService.getUserDatabase(this.userService.getCurrentUser())
+        const results = await DB.query('tangy-form/responseByUploadDatetime', {
+          descending: false,
+          limit: batchSize,
+          include_docs: true
+        });
+        for(let row of results.rows) {
+          await DB.remove(row.doc)
+        }
+        await DB.compact()
+        // Sleep so we give time for IndexedDB to adjust itself and also not to overload the main task a user might
+        // be trying to complete.
+        await sleep(60*1000)
+        // Get a new estimate.
+        storageEstimate = await navigator.storage.estimate()
+        availableFreeSpace = storageEstimate.quota - storageEstimate.usage
       }
-      await DB.compact()
-      // Sleep so we give time for IndexedDB to adjust itself and also not to overload the main task a user might
-      // be trying to complete.
-      await sleep(60*1000)
-      // Get a new estimate.
-      storageEstimate = await navigator.storage.estimate()
-      availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+      console.log('Finished making freespace...')
     }
-    console.log('Finished making freespace...')
   }
 
   logout() {
