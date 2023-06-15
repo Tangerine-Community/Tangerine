@@ -6,11 +6,6 @@ RELEASE_TYPE="$3"
 APP_NAME="$4"
 UPLOAD_KEY="$5"
 
-FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client/"
-FORM_DIRECTORY="$FORM_CLIENT_DIRECTORY/$FORM_ID"
-LOCATION_LIST_PATH="$FORM_CLIENT_DIRECTORY/location-list.json"
-MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media/"
-
 if [ "$2" = "--help" ] || [ "$GROUP_ID" = "" ] || [ "$FORM_ID" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
   echo "RELEASE Online Survey App"
@@ -37,11 +32,21 @@ RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/online-survey-apps/$
 echo $RELEASE_DIRECTORY
 
 rm -r $RELEASE_DIRECTORY
+
+
+FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client/"
+FORM_DIRECTORY="$FORM_CLIENT_DIRECTORY/$FORM_ID"
+LOCATION_LIST_PATH="$FORM_CLIENT_DIRECTORY/location-list.json"
+
+# Set up the release dir from the dist
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
-cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
-cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
+
+# Copy the full contents of the client directory to the assets folder in the release
+cp -r $FORM_CLIENT_DIRECTORY/* $RELEASE_DIRECTORY/assets/
+# Rename the form folder to 'form' (required to load the form properly)
+mv $RELEASE_DIRECTORY/$FORM_ID $RELEASE_DIRECTORY/assets/form
+# Also copy in the translations
 cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
-cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/media
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
