@@ -42,11 +42,10 @@ LOCATION_LIST_PATH="$FORM_CLIENT_DIRECTORY/location-list.json"
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 
 # Copy the full contents of the client directory to the assets folder in the release
+# Includes translations, media and any files added by the renderer and used by the forms
 cp -r $FORM_CLIENT_DIRECTORY/* $RELEASE_DIRECTORY/assets/
 # Rename the form folder to 'form' (required to load the form properly)
 mv $RELEASE_DIRECTORY/$FORM_ID $RELEASE_DIRECTORY/assets/form
-# Also copy in the translations
-cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
