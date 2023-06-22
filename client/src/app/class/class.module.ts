@@ -39,6 +39,7 @@ import {TangyFormsModule} from "../tangy-forms/tangy-forms.module";
 import {ClassFormsPlayerComponent} from "./class-forms-player.component";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatChipsModule} from "@angular/material/chips";
+import { AttendanceComponent } from './reports/attendance/attendance.component';
 
 @NgModule({
   imports: [
@@ -64,7 +65,7 @@ import {MatChipsModule} from "@angular/material/chips";
     MatDialogModule,
     MatChipsModule
   ],
-  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent],
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent],
   providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
