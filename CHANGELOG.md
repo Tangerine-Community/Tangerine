@@ -1,10 +1,11 @@
 # What's new
 
-## v3.28.0
+## v3.28.1
 
 __New Features__
 - The tangy-form and tangy-form-editor library source code have been merged with the Tangerine source code. 
 - Support for OCR scanning. [66ec676c4a](https://github.com/Tangerine-Community/tangy-form/commit/66ec676c4a6a12101ba2feac7eb8104eed8f0b8a)
+- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` to app-config.json. It also has a new view, 'responsesForAttendanceByClassId', an 'Attendance and Behaviour' subtest menu item which enables collection of those values per student, and an 'Attendance' report. 
 
 __Fixes__
 - Fixed PWA assets (sound,video) only work when online [#1905](https://github.com/Tangerine-Community/Tangerine/issues/1905)
