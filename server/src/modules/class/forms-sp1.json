@@ -8,5 +8,10 @@
     "title": "Student Registration",
     "src": "./assets/student-registration/form.html",
     "id": "student-registration"
+  },
+  {
+    "title": "Attendance",
+    "src": "./assets/attendance/form.html",
+    "id": "attendance"
   }
 ]

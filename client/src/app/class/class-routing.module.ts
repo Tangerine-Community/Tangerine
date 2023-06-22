@@ -10,6 +10,7 @@ import {TaskReportComponent} from "./reports/task-report/task-report.component";
 import {ClassConfigComponent} from "./class-config/class-config.component";
 import {ClassFormComponent} from "./class-form/class-form.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player.component";
+import {AttendanceComponent} from "./reports/attendance/attendance.component";
 
 const appRoutes = [
   {
@@ -35,6 +36,11 @@ const appRoutes = [
   {
     path: 'reports/taskReport/:classId',
     component: TaskReportComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'reports/attendance/:classId',
+    component: AttendanceComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {

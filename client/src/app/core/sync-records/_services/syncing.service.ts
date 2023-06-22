@@ -82,11 +82,14 @@ export class SyncingService {
     }
   }
 
-  async getUploadQueue(username:string = '', skipByFormId:Array<string> = []) {
+  async getUploadQueue(username: string = '', skipByFormId: Array<string> = []) {
     const allFormIds = (await this.tangyFormsInfoService.getFormsInfo()).map(info => info.id)
+    const appConfig = await this.appConfigService.getAppConfig()
+    if (appConfig.useAttendanceFeature) {
+      allFormIds.push('attendance')
+    }
     const includeByFormId = allFormIds.filter(id => !skipByFormId.includes(id))
     const DB = await this.userService.getUserDatabase(username);
-    const appConfig = await this.appConfigService.getAppConfig()
     let localNotUploadedDocIds = []
     if (appConfig.uploadUnlockedFormReponses) {
       const results = await DB.query('responsesUnLockedAndNotUploaded/responsesUnLockedAndNotUploaded', {keys: includeByFormId});
@@ -100,7 +103,7 @@ export class SyncingService {
       ...localNotUploadedDocIds,
       ...results.rows.map(row => row.id)
     ]
-    // Also mark the user profile for upload if it has been modifid since last upload.
+    // Also mark the user profile for upload if it has been modified since last upload.
     const userProfile = await this.userService.getUserProfile(username || await this.getLoggedInUser())
     return userProfile.lastModified > userProfile.uploadDatetime
       ? [ ...localNotUploadedDocIds, userProfile._id ]

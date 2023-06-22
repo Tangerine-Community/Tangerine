@@ -32,5 +32,22 @@
       "pull": false,
       "filterByLocation": true
     }
+  },
+  {
+    "title": "Attendance",
+    "src": "./assets/attendance/form.html",
+    "id": "attendance",
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "push": true,
+      "pull": false,
+      "filterByLocation": true
+    }
   }
 ]

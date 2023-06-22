@@ -46,6 +46,7 @@
         <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
         <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
         <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass.id}}">{{'Task Report'|translate}}</button>
+        <button mat-menu-item routerLink="/reports/attendance/{{selectedClass.id}}">{{'Attendance and Behaviour'|translate}}</button>
       </mat-menu>
     </span>
 </mat-toolbar>
@@ -78,9 +79,7 @@
       </mat-select>
     </mat-form-field>
 
-    <!--<div class="flexbox-horizontal-container">-->
     <div>
-      <!--<div class="d1">-->
       <div *ngIf="!showAttendanceList" >
         <table class="dashboard-table">
           <tr>
@@ -120,41 +119,37 @@
                   <td style="padding-right: 1em;" >
                     <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
                     <ng-template #absent>
-                      <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)"><mat-icon>star</mat-icon></mat-chip>
+                      <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)"><mat-icon>remove</mat-icon></mat-chip>
                     </ng-template>
                     <ng-template #present>
-                      <mat-chip color="primary" class="green" (click)="toggleAttendance(element)"><mat-icon>star</mat-icon></mat-chip>
+                      <mat-chip color="primary" class="green" (click)="toggleAttendance(element)"><mat-icon>check</mat-icon></mat-chip>
                     </ng-template>
                   </td>
                   <td>
                     <mat-chip-list multiple="false">
                       <ng-container *ngIf="element['mood'] == 'happy'; then happy; else happyDefault"></ng-container>
                       <ng-template #happy>
-                      <mat-chip (click)="toggleMood('happy', element)" color="primary" class="blue"><mat-icon>mood</mat-icon></mat-chip>
+                      <mat-chip (click)="toggleMood('happy', element)" color="primary" class="green"><mat-icon>mood</mat-icon></mat-chip>
                       </ng-template>
                       <ng-template #happyDefault>
-                        <mat-chip (click)="toggleMood('happy', element)" color="accent"><mat-icon>mood</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('happy', element)" color="accent" class="green"><mat-icon>mood</mat-icon></mat-chip>
                       </ng-template>
 
                       <ng-container *ngIf="element['mood'] == 'neutral'; then neutral; else neutralDefault"></ng-container>
                       <ng-template #neutral>
-                      <mat-chip (click)="toggleMood('neutral', element)" color="primary" class="blue"><mat-icon>mood</mat-icon></mat-chip>
+                      <mat-chip (click)="toggleMood('neutral', element)" color="accent" class="orange"><mat-icon>sentiment_neutral</mat-icon></mat-chip>
                       </ng-template>
                       <ng-template #neutralDefault>
-                        <mat-chip (click)="toggleMood('neutral', element)" color="accent"><mat-icon>mood</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('neutral', element)" color="accent"><mat-icon>sentiment_neutral</mat-icon></mat-chip>
                       </ng-template>
 
                       <ng-container *ngIf="element['mood'] == 'sad'; then sad; else sadDefault"></ng-container>
                       <ng-template #sad>
-                      <mat-chip (click)="toggleMood('sad', element)" color="primary" class="blue"><mat-icon>mood</mat-icon></mat-chip>
+                      <mat-chip (click)="toggleMood('sad', element)" color="accent" class="red"><mat-icon>sentiment_dissatisfied</mat-icon></mat-chip>
                       </ng-template>
                       <ng-template #sadDefault>
-                        <mat-chip (click)="toggleMood('sad', element)" color="accent"><mat-icon>mood</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('sad', element)" color="accent"><mat-icon>sentiment_dissatisfied</mat-icon></mat-chip>
                       </ng-template>
-
-
-<!--                      <mat-chip (click)="toggleMood('neutral', element)" color="accent"><mat-icon>sentiment_neutral</mat-icon></mat-chip>-->
-<!--                      <mat-chip (click)="toggleMood('sad', element)" color="warn"><mat-icon>sentiment_dissatisfied</mat-icon></mat-chip>-->
                     </mat-chip-list>
                   </td>
                 </tr>

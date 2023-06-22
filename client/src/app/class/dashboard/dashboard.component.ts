@@ -34,7 +34,8 @@ export interface StudentResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  classes; students; 
+  classes: any[]
+  students: any[]
   enabledClasses; // filter out classes that have the 'archive' property.
   currentClassId; currentClassIndex;
   currentItemId; curriculumId;
@@ -75,8 +76,16 @@ export class DashboardComponent implements OnInit {
   attendanceRegister: {
     _id: string,
     timestamp: number,
-    class: {},
-    attendanceList: StudentResult[]
+    classId: string,
+    grade: string,
+    schoolName: string
+    schoolYear: string,
+    attendanceList: StudentResult[],
+    collection: string,
+    form: {},
+    items: any[],
+    complete: boolean,
+    type: string
   }
   attendanceList: StudentResult[]
 
@@ -343,20 +352,34 @@ export class DashboardComponent implements OnInit {
     // await this.populateFeedback(curriculumId);
   }
 
-  async getAttendanceList(students) {
+  /**
+   * Get the attendance list for the class. If the attendanceListFromDoc is passed in, then
+   * populate the student from that doc by matching student.id.
+   * @param students
+   * @param attendanceListFromDoc
+   */
+  async getAttendanceList(students, attendanceListFromDoc) {
     // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
-
-    const attendanceList = [];
+    const attendanceList = []
     students.forEach((student) => {
-      const studentResults = {};
-      const student_name = this.getValue('student_name', student.doc)
-      const classId = this.getValue('classId', student.doc)
-      studentResults['id'] = student.id
-      studentResults['name'] = student_name
-      studentResults['classId'] = classId
-      studentResults['forms'] = {}
-      attendanceList.push(studentResults)
-    });
+      let studentResult
+      const studentId = student.id
+      if (attendanceListFromDoc) {
+        studentResult = attendanceListFromDoc.find(studentDoc => studentDoc.id === studentId)
+      }
+      if (studentResult) {
+        attendanceList.push(studentResult)
+      } else {
+        const student_name = this.getValue('student_name', student.doc)
+        const classId = this.getValue('classId', student.doc)
+        studentResult = {}
+        studentResult['id'] = studentId
+        studentResult['name'] = student_name
+        studentResult['classId'] = classId
+        studentResult['forms'] = {}
+        attendanceList.push(studentResult)
+      }
+    })
     return attendanceList
     // await this.populateFeedback(curriculumId);
   }
@@ -562,34 +585,74 @@ export class DashboardComponent implements OnInit {
     this.students = await this.getMyStudents(this.currentClassId)
 
     const timestamp = Date.now()
-    const reportDate = DateTime.now().toLocaleString(DateTime.DATE_SHORT)
+    const reportDate = DateTime.local().toISODate()
     const grade = this.getClassTitle(selectedClass.doc)
+    const schoolName = this.getValue('school_name', selectedClass.doc)
+    const schoolYear = this.getValue('school_year', selectedClass.doc)
     const attendanceRegisterId = 'attendance-' + grade + '-' + reportDate
-    let attendanceRegisterDoc
+    let attendanceRegisterDoc, attendanceListFromDoc
     try {
       attendanceRegisterDoc = await this.dashboardService.getDoc(attendanceRegisterId)
-      this.attendanceList = attendanceRegisterDoc.attendanceList
-      this.attendanceRegister = attendanceRegisterDoc
+      attendanceListFromDoc = attendanceRegisterDoc.attendanceList
+      // this.attendanceRegister = attendanceRegisterDoc
     } catch (e) {
-      this.attendanceList =  await this.getAttendanceList(this.students)
+    }
+
+    this.attendanceList =  await this.getAttendanceList(this.students, attendanceListFromDoc)
+    if (!attendanceRegisterDoc) {
       this.attendanceRegister = {
         _id: attendanceRegisterId,
         timestamp: timestamp,
-        class: selectedClass,
-        attendanceList: this.attendanceList
+        classId: selectedClass.id,
+        grade: grade,
+        schoolName: schoolName,
+        schoolYear: schoolYear,
+        attendanceList: this.attendanceList,
+        collection: 'TangyFormResponse',
+        type: 'attendance',
+        form: {
+          id: 'attendance',
+        },
+        items: [{
+          id: 'class-registration',
+          title: 'Class Registration',
+          inputs: [{}]
+        },
+          {
+          id: 'item_1',
+          title: 'Item 1',
+          inputs: [{
+            name: 'timestamp',
+            label: 'timestamp'
+          }]
+        }],
+        complete: false
       }
+      const startAttendanceRegister = confirm(_TRANSLATE('Begin Attendance and Behaviour record for today?'))
+      if (startAttendanceRegister) {
+        const attendance = {
+          'name': 'attendance',
+          'value': 'on',
+          'label': _TRANSLATE('Attendance and Behaviour')
+        }
+        this.currArray.push(attendance)
+        this.selectedCurriculum = this.currArray.find(x => x.name === 'attendance')
+        this.showAttendanceList = true
+        await this.saveStudentAttendance(null)
+      } else {
+        this.showAttendanceList = false
+        if (!this.currentItemId || this.currentItemId === '') {
+          const initialForm = this.curriculumFormsList[0]
+          this.currentItemId = initialForm.id
+        }
+        await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
+      }
+    } else {
+      this.showAttendanceList = true
+      attendanceRegisterDoc.attendanceList = this.attendanceList
+      this.attendanceRegister = attendanceRegisterDoc
     }
-
-    const attendance = {
-      "name": "attendance",
-      "value": "on",
-      "label": "Attendance"
-    }
-    this.currArray.push(attendance)
-    this.selectedCurriculum = this.currArray.find(x => x.name === 'attendance')
-    this.showAttendanceList = true
   }
-
 
   // ngAfterViewChecked() {
   //   if (!this.feedbackViewInited) {
