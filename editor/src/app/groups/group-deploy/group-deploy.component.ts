@@ -1,7 +1,7 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Component, OnInit } from '@angular/core';
-import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { ProcessMonitorService } from 'src/app/shared/_services/process-monitor.service';
 
 
@@ -19,7 +19,7 @@ export class GroupDeployComponent implements OnInit {
   ready = false
 
   constructor(
-    private serverConfig:ServerConfigService,
+    private serverConfig:AppConfigService,
     private processMonitor:ProcessMonitorService
   ) { }
 
@@ -27,8 +27,8 @@ export class GroupDeployComponent implements OnInit {
     this.breadcrumbs = []
     this.groupId = window.location.pathname.split('/')[2]
     const process = this.processMonitor.start('group-deploy', 'Loading...')
-    const config = await this.serverConfig.getServerConfig()
-    this.syncProtocol2Enabled = !!(config.enabledModules.find(module=>module==='sync-protocol-2'))
+    const config = await this.serverConfig.getAppConfig()
+    this.syncProtocol2Enabled = !!(config.modules.find(module=>module==='sync-protocol-2'))
     this.processMonitor.stop(process.id)
     this.ready = true
   }
