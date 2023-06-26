@@ -24,10 +24,10 @@ cp -r data ../data-backup-$(date "+%F-%T")
 docker logs --since=60m tangerine
 # Fetch the updates.
 git fetch origin
-git checkout -b v3.27.7 v3.27.7
-./start.sh v3.27.7
+git checkout -b v3.27.8 v3.27.8
+./start.sh v3.27.8
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.27.6
+docker rmi tangerine/tangerine:v3.27.7
 ```
 
 ## v3.27.7
