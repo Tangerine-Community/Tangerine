@@ -40,31 +40,33 @@ import {ClassFormsPlayerComponent} from "./class-forms-player.component";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatChipsModule} from "@angular/material/chips";
 import { AttendanceComponent } from './reports/attendance/attendance.component';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    ClassRoutingModule,
-    MatTabsModule,
-    MatInputModule,
-    MatMenuModule,
-    MatListModule,
-    MatCardModule,
-    CdkTableModule,
-    MatTableModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonToggleModule,
-    MatSlideToggleModule,
-    TangyFormsModule,
-    MatDialogModule,
-    MatChipsModule
-  ],
+    imports: [
+        CommonModule,
+        SharedModule,
+        ClassRoutingModule,
+        MatTabsModule,
+        MatInputModule,
+        MatMenuModule,
+        MatListModule,
+        MatCardModule,
+        CdkTableModule,
+        MatTableModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonToggleModule,
+        MatSlideToggleModule,
+        TangyFormsModule,
+        MatDialogModule,
+        MatChipsModule,
+        FormsModule
+    ],
   declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent],
   providers: [UserService, ClassFormService, DashboardService,  {
     provide: MatPaginatorIntl,
