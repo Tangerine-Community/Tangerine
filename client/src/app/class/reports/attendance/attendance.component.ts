@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {UserDatabase} from "../../../shared/_classes/user-database.class";
 import {HttpClient} from "@angular/common/http";
 import {UserService} from "../../../shared/_services/user.service";
@@ -20,15 +20,26 @@ export class AttendanceComponent implements OnInit {
   db: UserDatabase
   attendanceReports: any[]
   attendanceReport: any
+  recentVisitsReport: any
+  // @ViewChild('numVisits', {static: true}) searchResults: ElementRef
+  // @Input()  numVisits!: number | string
+  numVisits = '3'
+
   async ngOnInit(): Promise<void> {
     const classId = this.route.snapshot.paramMap.get('classId')
     this.attendanceReports = await this.getAttendanceDocs(classId)
-    const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]
-    this.attendanceReports.forEach((attendanceReport) => {
+    const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
+    this.attendanceReports.forEach(this.processAttendanceReport(currentAttendanceReport))
+    this.attendanceReport = currentAttendanceReport
+    await this.getRecentVisitsReport()
+  }
+
+  private processAttendanceReport(currentAttendanceReport) {
+    return (attendanceReport) => {
       const attendanceList = attendanceReport.doc.attendanceList
       for (let i = 0; i < attendanceList.length; i++) {
         const student = attendanceList[i]
-        const currentStudent = currentAttendanceReport.doc.attendanceList.find((thisStudent) => {
+        const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
           return thisStudent.id === student.id
         })
         currentStudent.reportCount = currentStudent.reportCount ? currentStudent.reportCount + 1 : 1
@@ -64,9 +75,9 @@ export class AttendanceComponent implements OnInit {
           }
         }
       }
-    })
-    this.attendanceReport = currentAttendanceReport.doc
+    };
   }
+
   async getUserDB() {
     return await this.userService.getUserDatabase();
   }
@@ -78,6 +89,35 @@ export class AttendanceComponent implements OnInit {
       include_docs: true
     });
     return result.rows;
+  }
+
+  async getRecentVisitsReport() {
+    const recentVisitsReport = {}
+    recentVisitsReport['count'] = 3
+    // const classId = this.route.snapshot.paramMap.get('classId')
+    // const result = await this.db.query('tangy-class/recentVisitsByClassId', {
+    //   startkey: [classId],
+    //   endkey: [classId, {}],
+    //   include_docs: true
+    // });
+    // return result.rows;
+    const recentVisitReports = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
+    // const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]
+    // recentVisitReports.forEach(this.processAttendanceReport())
+
+    // do a deep clone
+    const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
+    const currentAttendanceReport = JSON.parse(JSON.stringify(recentVisitDoc))
+    recentVisitReports.forEach(this.processAttendanceReport(currentAttendanceReport))
+    this.recentVisitsReport = currentAttendanceReport
+  }
+
+  async onNumberVisitsChange(event: any) {
+    console.log('onNumberVisitsChange', event)
+    console.log('numVisits: ', this.numVisits)
+    if (this.numVisits) {
+      await this.getRecentVisitsReport()
+    }
   }
 
 }

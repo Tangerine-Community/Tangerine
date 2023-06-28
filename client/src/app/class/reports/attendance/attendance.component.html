@@ -31,5 +31,36 @@
       </table>
 <!--    </div>-->
   </div>
+  <div id="last-n-report">
+    <h3>{{'Most recent'|translate}} {{numVisits}} {{'visits'|translate}}</h3>
+    <table class="subtest">
+      <tr>
+        <td colspan="2">
+          {{'Enter number of visits to query'|translate}}
+        </td>
+        <td colspan="1">
+          <form class="num-visits-form">
+            <mat-form-field>
+              <input [(ngModel)]="numVisits" matInput type="number" placeholder="Ex. 3" (ngModelChange)="onNumberVisitsChange($event)" [ngModelOptions]="{standalone: true}">
+            </mat-form-field>
+          </form>
+        </td>
+      </tr>
+      <tr *ngIf="recentVisitsReport">
+        <td colspan="3">Reports queried: {{recentVisitsReport?.length}}</td>
+      </tr>
+      <tr>
+        <th>{{'Student'|translate}}</th>
+        <th>{{'Attendance'|translate}}</th>
+        <th>{{'Behavior'|translate}}</th>
+      </tr>
+
+      <tr *ngFor="let student of recentVisitsReport?.attendanceList">
+        <td>{{student.name}}</td>
+        <td [ngClass]="{'red': student.presentPercentage < 21, 'green': student.presentPercentage > 79}"> {{student.presentPercentage}} % </td>
+        <td [ngClass]="{'red': student.moodPercentage <=20, 'orange': (student.moodPercentage >=20 && student.moodPercentage < 90), 'green': student.moodPercentage >=90}"> {{student.moodPercentage}} % </td>
+      </tr>
+    </table>
+  </div>
 
 </mat-card>
