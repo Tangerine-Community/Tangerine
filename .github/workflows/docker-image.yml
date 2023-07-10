@@ -16,7 +16,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            tangerine/tangerine-server
+            tangerine/server
           # generate Docker tags based on the following events/attributes
           tags: |
             type=semver,pattern={{raw}}
@@ -56,7 +56,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            tangerine/tangerine-editor
+            tangerine/server-ui
           # generate Docker tags based on the following events/attributes
           tags: |
             type=semver,pattern={{raw}}
@@ -96,7 +96,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            tangerine/tangerine-editor
+            tangerine/apk-generator
           # generate Docker tags based on the following events/attributes
           tags: |
             type=semver,pattern={{raw}}
