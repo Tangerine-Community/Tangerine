@@ -47,7 +47,7 @@
     "moment": "^2.29.4",
     "ngx-permissions": "^15.0.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
-    "pouchdb": "^8.0.0",
+    "pouchdb": "^8.0.1",
     "qrcode-generator-es6": "^1.1.4",
     "rangen": "^1.0.0",
     "redux": "^4.2.0",

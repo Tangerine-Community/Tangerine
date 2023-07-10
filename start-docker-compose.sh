@@ -1,5 +1,5 @@
 #!/bin/sh
-
+set -e
 echo "Running start-docker-compose.sh"
 echo "pwd: $pwd"
 
@@ -69,6 +69,9 @@ if [ ! -f data/paid-worker-state.json ]; then
 fi
 if [ ! -d data/dat-output ]; then
   mkdir data/dat-output
+fi
+if [ ! -d state ]; then
+  mkdir state
 fi
 
 docker compose up

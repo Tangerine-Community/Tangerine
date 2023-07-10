@@ -64,14 +64,14 @@ async function hasInstalledOnIndexedDB() {
 
 async function cryptoPouchIsEnabled() {
   const appConfig = await getAppConfig();
-  return !appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyIdbAdapter"]
+  return appConfig['useAppLevelEncryption'] && !appConfig["useLegacyIdbAdapter"]
     ? true
     : false
 }
 
 async function indexedDbIsEnabled() {
   const appConfig = await getAppConfig();
-  return appConfig['turnOffAppLevelEncryption'] && !appConfig["useLegacyIdbAdapter"]
+  return !appConfig['useAppLevelEncryption'] && !appConfig["useLegacyIdbAdapter"]
     ? true
     : false
 }

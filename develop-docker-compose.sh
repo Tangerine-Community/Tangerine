@@ -19,6 +19,10 @@ if [ ! -d data ]; then
   mkdir data
   IS_INSTALLING="true"
 fi
+
+if [ ! -d data-groups ]; then
+  mkdir data-groups
+fi
 if [ ! -d data/csv ]; then
   mkdir data/csv
 fi
@@ -70,5 +74,7 @@ fi
 if [ ! -d data/dat-output ]; then
   mkdir data/dat-output
 fi
-
+if [ ! -d state ]; then
+  mkdir state
+fi
 NPM_DEV_MODE=":dev" docker compose up

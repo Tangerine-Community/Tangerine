@@ -1,0 +1,9 @@
+FROM couchdb:3
+
+COPY couchdb/local.ini /opt/couchdb/etc/
+
+COPY couchdb/entrypoint.sh /entrypoint.sh
+
+#RUN chmod +x /entrypoint.sh
+#
+#ENTRYPOINT ["/entrypoint.sh"]

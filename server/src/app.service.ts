@@ -80,9 +80,9 @@ export class AppService {
 
   async install() {
     log.info('Installing...')
-    log.info('Creating _users database...')
-    log.info(`${this.config.couchdbEndpoint}/_users`)
-    await createSitewideDatabase('_users')
+    // log.info('Creating _users database...')
+    // log.info(`${this.config.couchdbEndpoint}/_users`)
+    // await createSitewideDatabase('_users')
     await createSitewideDatabase('app')
     await createSitewideDatabase('groups')
     await createSitewideDatabase('users')

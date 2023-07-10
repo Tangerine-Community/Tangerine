@@ -36,7 +36,7 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "./node_modules/tangy-form-editor/ckeditor/",
+                "input": "../tangy-form-editor/ckeditor/",
                 "output": "./ckeditor/"
               },
               {

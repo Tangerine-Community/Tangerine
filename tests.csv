@@ -1,3 +1,0 @@
-name,description,steps
-Automated Issue creation on Client, Tests the APIs on client to make sure an Issue is created on a form submit and that the issue is uploaded to the server.,"1) Load the 'case' content set into a group. 2) Deploy the app to either APK or PWA. 3) Create a case of type 'Mother'. 4) Fill out the registration form with an age of 85. 5) After submitting the registration, upload to server. 6) In Editor, navigate to test group's Data -> Issues. 7) Confirm that an Issue appears titled 'Out of bounds age’."
-Granting site-wide permission of can_create_group allows Editor user to create a group, ...,...

@@ -2,6 +2,7 @@
 
 Tangerine 4.0 features a new architecture which offers greater security and resiliency for the application. The new design breaks Tangerine down into five containers, which are described in the docker-compose.yml file. 
 
+- init - creates new directories and initializes key.
 - server-ui - a NEST.js app that serves the editor interface. 
   - Available at port 81 inside the tangerine_default network.
   - ./Dockerfile-server-ui
@@ -19,6 +20,7 @@ Tangerine 4.0 features a new architecture which offers greater security and resi
   - ./Dockerfile-couchdb
   - Data persisted at ./data/couchdb/data
   - Futon is accessible at https://FOO.DOMAIN/db/_utils/index.html
+  - Update admin password in ./couchdb/local.ini in the [admins] section.
 
 # Configuration
 
@@ -63,6 +65,8 @@ The containers `server` and `server-ui` launch using the entrypoint `npm start` 
 ## Server-ui
 
 The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver-ui%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server-ui/src/express-app.js.
+
+The instance of tangy-form-editor in server-ui's editor uses the tangy-form lib instead of linking to the tangy-form code in the tangerine filesystem (i.e. "tangy-form": "file:../tangy-form" in package.json). This is a compromise to deal with a duplicate lib issue. 
 
 ### Modifying the editor UI
 
