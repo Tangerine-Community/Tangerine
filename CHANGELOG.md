@@ -14,6 +14,11 @@ __NEW Features__
 - The tangy-form and tangy-form-editor libraries are now a part of the Tangerine source code. 
 - PouchDB upgrade to [v8.0](https://pouchdb.com/2022/12/14/pouchdb-8.0.0.html) and use the new IndexedDB adapter.
 - If a project handles protected health information, the device must be encrypted. Tangerine no longer manages the encryption of records. See note below about "javascript-based encryption" for more information.
+- The start scripts have been renamed: 
+  - `start.sh` is now `start-docker-compose.sh`
+  - `develope.sh` is now `develop-docker-compose.sh`
+- The container image's Dockerfiles have been moved to the 'docker-build-files' directory.
+- A script to perform Trivy code scanning is in the trivy directory. Scan reports are stored in data/trivy-reports.
 
 __Fixes__
  - Editor:Spreadsheet Templates - If you choose a form that does not yet have any data, the application pops up an alert 
