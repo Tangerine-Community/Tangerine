@@ -12,16 +12,20 @@ services:
       sh -c '/run.sh'
 #    entrypoint: [ "sh", "-c",  "./run.sh"]
     volumes:
+
       - ./init/run.sh:/run.sh:delegated
-      - ./data/groups:/tangerine/groups/:delegated
       - ./data/csv:/csv/:delegated
-      - ./data/archives:/archives/:delegated
-      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
-      - ./data/client/releases:/tangerine/client/releases/:delegated
-      - ./data/client/content/groups:/tangerine/client/content/groups:delegated
-      - ./data/client/content/assets:/tangerine/client/content/assets:delegated
-      - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
-      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
+
+        #      - ./data/groups:/tangerine/groups/:delegated
+#      - ./data/archives:/archives/:delegated
+#      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
+#      - ./data/client/releases:/tangerine/client/releases/:delegated
+#      - ./data/client/content/groups:/tangerine/client/content/groups:delegated
+#      - ./data/client/content/assets:/tangerine/client/content/assets:delegated
+#      - ${PWD}/data/id_rsa:/root/.ssh/id_rsa:delegated \
+#      - ${PWD}/data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
+      - ./data/ssh:/root/.ssh:delegated \
+      - ./data/state:/state:delegated \
 
   server:
       container_name: "server"
@@ -30,7 +34,7 @@ services:
         - couchdb
       build:
         context: .
-        dockerfile: ./Dockerfile-server
+        dockerfile: ./docker-build-files/Dockerfile-server
       ports:
         - "82:80"
       restart: unless-stopped
@@ -43,10 +47,10 @@ services:
         - NPM_DEV_MODE
       entrypoint: "/bin/sh -c \"cd /tangerine/server/ && npm run start$${NPM_DEV_MODE}\""
       volumes:
-        - ./data/groups:/tangerine/groups/:delegated
+        - ./data/groups:/tangerine/groups
         - ./data/csv:/csv/:delegated
         - ./data/archives:/archives/:delegated
-        - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
+#        - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
         - ./data/client/releases:/tangerine/client/releases/:delegated
         - ./data/client/content/groups:/tangerine/client/content/groups:delegated
         - ./data/client/content/assets:/tangerine/client/content/assets:delegated
@@ -59,11 +63,13 @@ services:
         - ./upgrades:/tangerine/upgrades:delegated \
         - ./scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
         - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
-        - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
-        - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
+#        - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
+#        - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
         - ./translations:/tangerine/translations:delegated \
         - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
         - ./server/entrypoint-server.sh:/tangerine/server/entrypoint-server.sh:delegated
+        - ./data/ssh:/root/.ssh:delegated \
+        - ./data/state:/state:delegated \
 
   server-ui:
     container_name: "server-ui"
@@ -72,7 +78,7 @@ services:
       - server
     build:
       context: .
-      dockerfile: ./Dockerfile-server-ui
+      dockerfile: ./docker-build-files/Dockerfile-server-ui
     ports:
       - "81:80"
     restart: unless-stopped
@@ -88,7 +94,7 @@ services:
 #    entrypoint: "/bin/sh -c \"cd /tangerine/editor && npm run dockerdev && cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     entrypoint: "/bin/sh -c \"cd /tangerine/server-ui/ && npm run start$${NPM_DEV_MODE}\""
     volumes:
-      - ./data/groups:/tangerine/groups/:delegated
+      - ./data/groups:/tangerine/groups
       - ./editor/package.json:/tangerine/editor/package.json:delegated
       - ./editor/package-lock.json:/tangerine/editor/package-lock.json:delegated
       - ./editor/src:/tangerine/editor/src:delegated
@@ -103,7 +109,7 @@ services:
       - server
     build:
       context: .
-      dockerfile: ./Dockerfile-apk
+      dockerfile: ./docker-build-files/Dockerfile-apk
     ports:
       - "83:80"
     restart: unless-stopped
@@ -116,10 +122,10 @@ services:
       - NPM_DEV_MODE
     entrypoint: "/bin/sh -c \"cd /tangerine/apk-generator/ && npm run start$${NPM_DEV_MODE}\""
     volumes:
-      - ./data/groups:/tangerine/groups/:delegated
+      - ./data/groups:/tangerine/groups
       - ./data/csv:/csv/:delegated
       - ./data/archives:/archives/:delegated
-      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
+#      - ./data/reporting-worker-state.json:/reporting-worker-state.json:delegated
       - ./data/client/releases:/tangerine/client/releases/:delegated
       - ./data/client/content/groups:/tangerine/client/content/groups:delegated
       - ./data/client/content/assets:/tangerine/client/content/assets:delegated
@@ -132,8 +138,8 @@ services:
       - ./upgrades:/tangerine/upgrades:delegated \
       - ./scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
       - ./scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
-      - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
-      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
+#      - ./data/id_rsa:/root/.ssh/id_rsa:delegated \
+#      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
       - ./translations:/tangerine/translations:delegated \
       - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
 
@@ -156,39 +162,18 @@ services:
       - init
     build:
       context: .
-      dockerfile: ./Dockerfile-couchdb
+      dockerfile: ./docker-build-files/Dockerfile-couchdb
     ports:
       - "5984:5984"
-    environment:
-      - COUCHDB_USER=admin
-      - COUCHDB_PASSWORD=password
     volumes:
       - ./data/couchdb/data:/opt/couchdb/data
       - ./data/couchdb/local.d:/opt/couchdb/etc/local.d
 #    logging:
 #      driver: none
 
-#  init:
-#    container_name: "init"
-#    tty: true
-#    build:
-#      context: .
-#      dockerfile: ./Dockerfile-init
-##    entrypoint: [ "sh", "-c",  "./entrypoint-init.sh"]
-#    volumes:
-#      - ./entrypoint-init.sh:/entrypoint-init.sh:delegated
-#      - ./data/:/tangerine/:delegated
-##      - ./data/csv:/tangerine/csv/:delegated
-##      - ./data/archives:/tangerine/archives/:delegated
-##      - ./data/client:/tangerine/client/:delegated
-##      - ./data/client/releases:/tangerine/client/releases:delegated
-##      - ./data/client/releases/prod:/tangerine/client/releases/prod:delegated
-#      - ./data/id_rsa:/tangerine/id_rsa:delegated
-#      - ./data/id_rsa.pub:/tangerine/id_rsa.pub:delegated
-#      - ./data/reporting-worker-state.json:/tangerine/reporting-worker-state.json:delegated
-
 secrets:
   couchdb_admin_name:
     file: ./.secrets/couchdb_admin_name.txt
   couchdb_admin_password:
     file: ./.secrets/couchdb_admin_password.txt
+

@@ -2,11 +2,18 @@
 
 ## v4.0.0
 
-Upgrading to this version or higher requires reinstallation of all devices.
+
+Tangerine v4.0.0 is a major upgrade of the system architecture; it now features six docker containers: init, server, server-ui, apk-generator, nginx, and couchdb. It uses a docker-compose.yml to configure docker containers. Please review that file to become familiar this new architecture.
+The file [new-tangerine-4-architecture.md](docs/system-administrator/new-tangerine-4-architecture.md) provides a detailed description of this new architecture.
+
+Upgrading to this version or higher requires re-installation of all devices.
 
 __NEW Features__
+
 - Upgrades to Angular, Nest, and Cordova frameworks.
-- PouchDB upgrade to [v8.0](https://pouchdb.com/2022/12/14/pouchdb-8.0.0.html) and use the new IndexedDB adapter. By default the client app will be encrypted with CryptoPouch and use IndexedDB adapter. If `turnOffInAppEncryption` is set to true in the `app-config.sh`, then IndexedDB will be used without encryption.
+- The tangy-form and tangy-form-editor libraries are now a part of the Tangerine source code. 
+- PouchDB upgrade to [v8.0](https://pouchdb.com/2022/12/14/pouchdb-8.0.0.html) and use the new IndexedDB adapter.
+- If a project handles protected health information, the device must be encrypted. Tangerine no longer manages the encryption of records. See note below about "javascript-based encryption" for more information.
 
 __Fixes__
  - Editor:Spreadsheet Templates - If you choose a form that does not yet have any data, the application pops up an alert 
@@ -16,13 +23,12 @@ __Fixes__
  - Security: removed package-lock.json from custom-app content set. Issue: [#3525](https://github.com/Tangerine-Community/Tangerine/issues/3525) PR: [#3526](https://github.com/Tangerine-Community/Tangerine/pull/3526)
  - Editor: Updated Login UI. Issue: [3531](https://github.com/Tangerine-Community/Tangerine/issues/3531)
  - Tangerine theme CSS rules are not being executed in client. Issue: [#3529](https://github.com/Tangerine-Community/Tangerine/issues/3529)
+ - The javascript-based encryption has so far failed to deliver positive results; therefore, we are disabling this option. The new 'useAppLevelEncryption' property has been introduced to show that this feature is opt-in only. The 'turnOffAppLevelEncryption' property is no longer available. The default is to *not* use in-app encryption, which means that the administrator must enable System (disk) level encryption on the device. There is no encryption provided by Tangerine in eithewr PWA's or APK's; both platforms use the same IndexedDB adapter to save records, The APK-based "sqlcipher" plugin persistence has been removed.
 
 __Server upgrade instructions__
 
 If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins. 
 
-Tangerine 4.0.0 uses a docker-compose.yml to configure docker containers. Please review that file to become familiar this new architecture. 
-The file [new-tangerine-4-architecture.md](docs/system-administrator/new-tangerine-4-architecture.md) provides a detailed description of this new architecture.
 
 ```
 cd tangerine

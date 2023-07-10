@@ -94,8 +94,11 @@ export class AppConfig {
   // Encryption configuration.
   //
 
+  // Enables app level encryption.
+  useAppLevelEncryption:boolean
+
   // Turns off all app level encryption. App will then report as depending on System (disk) level encryption.
-  turnOffAppLevelEncryption:boolean
+  // turnOffAppLevelEncryption:boolean
 
   // Turns on Legacy IDB Adapter.
   useLegacyIdbAdapter:boolean

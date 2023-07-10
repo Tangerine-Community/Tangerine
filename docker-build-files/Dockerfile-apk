@@ -79,6 +79,13 @@ RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root
 
+ADD tangy-form /tangerine/tangy-form/
+RUN cd /tangerine/tangy-form && \
+    npm install
+ADD tangy-form-editor /tangerine/tangy-form-editor/
+RUN cd /tangerine/tangy-form-editor && \
+    npm install
+
 # Build online-survey-app.
 ADD online-survey-app /tangerine/online-survey-app/
 RUN cd /tangerine/online-survey-app && \
