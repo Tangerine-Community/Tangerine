@@ -5,6 +5,7 @@
 __Fixes__
 - Copy all media directories from the client form directories to ensure assets are available in online surveys
 - Allows form developers to publish images and sounds in online surveys
+- Fix the language dropdown in online surveys
 
 __Server upgrade instructions__
 
