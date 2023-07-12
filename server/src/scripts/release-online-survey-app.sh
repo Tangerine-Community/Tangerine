@@ -45,7 +45,7 @@ cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 # Includes translations, media and any files added by the renderer and used by the forms
 cp -r $FORM_CLIENT_DIRECTORY/* $RELEASE_DIRECTORY/assets/
 # Rename the form folder to 'form' (required to load the form properly)
-mv $RELEASE_DIRECTORY/$FORM_ID $RELEASE_DIRECTORY/assets/form
+mv $RELEASE_DIRECTORY/assets/$FORM_ID $RELEASE_DIRECTORY/assets/form
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
