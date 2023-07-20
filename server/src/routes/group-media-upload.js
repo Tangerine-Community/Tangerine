@@ -16,8 +16,7 @@ module.exports = async (req, res) => {
   }
   clog("Listing Uploads: ", req.files)
   for (let file of req.files) {
-    await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/
-    /${file.originalname.replace(/(\s+)/g, '\\$1')}`)
+    await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/media/${file.originalname.replace(/(\s+)/g, '\\$1')}`)
   }
   res.send()
  
