@@ -1,0 +1,47 @@
+<div>
+  <mat-toolbar *ngIf="currentFile" class="progress-bar">
+    <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
+    <span class="progress">{{ progress }}%</span>
+  </mat-toolbar>
+
+  <mat-form-field>
+    <div>
+      <mat-toolbar>
+        <input matInput [value]="fileName" />
+
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="!currentFile"
+          (click)="upload()"
+        >
+          Upload
+        </button>
+      </mat-toolbar>
+
+      <input
+        type="file"
+        id="fileInput"
+        (change)="selectFile($event)"
+        name="fileInput"
+      />
+    </div>
+  </mat-form-field>
+</div>
+
+<div *ngIf="message" class="message">
+  {{ message }}
+</div>
+
+<!--<mat-card class="example-card">-->
+<!--  <mat-card-header>-->
+<!--    <mat-card-title>List of Files</mat-card-title>-->
+<!--  </mat-card-header>-->
+<!--  <mat-card-content>-->
+<!--    <mat-list role="list">-->
+<!--      <mat-list-item role="listitem" *ngFor="let file of fileInfos | async">-->
+<!--        <a href="{{ file.url }}">{{ file.name }}</a>-->
+<!--      </mat-list-item>-->
+<!--    </mat-list>-->
+<!--  </mat-card-content>-->
+<!--</mat-card>-->
