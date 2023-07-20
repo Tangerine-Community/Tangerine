@@ -24,7 +24,7 @@ export class FilesService {
       filePath = filePath.slice(PREFIX.length);
     }
     let url = `/files/${groupId}/assets/${filePath}`
-    console.log("url: " + url )
+    // console.log("url: " + url )
     const extension = url.split('.').pop();
     if (extension === 'json') {
       file$ = this.httpClient.get(url,  {responseType: 'json'})

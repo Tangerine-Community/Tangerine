@@ -106,7 +106,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    console.log("init")
     this.snav.opened = true
     this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
       if (isLoggedIn) {
