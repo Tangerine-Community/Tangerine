@@ -2,9 +2,11 @@ const jwt = require('jsonwebtoken');
 const issuer = process.env.T_JWT_ISSUER || 'Tangerine';
 const expiresIn = process.env.T_JWT_EXPIRES_IN || '1h';
 const jwtTokenSecret = require('crypto').randomBytes(256).toString('base64');
+const algorithm  =  process.env.T_JWT_ALGORITHM || 'HS256';
 
 const createLoginJWT = ({ username, permissions }) => {
   const signingOptions = {
+    algorithm,
     expiresIn,
     issuer,
     subject: username,
@@ -14,7 +16,7 @@ const createLoginJWT = ({ username, permissions }) => {
 
 const verifyJWT = (token) => {
   try {
-    const jwtPayload = jwt.verify(token, jwtTokenSecret, { issuer });
+    const jwtPayload = jwt.verify(token, jwtTokenSecret, { issuer, algorithms: ['HS256', 'HS384', 'HS512'] });
     return !!jwtPayload;
   } catch (error) {
     return false;
@@ -23,7 +25,7 @@ const verifyJWT = (token) => {
 
 const decodeJWT = (token) => {
   try {
-    const jwtPayload = jwt.verify(token, jwtTokenSecret, { issuer });
+    const jwtPayload = jwt.verify(token, jwtTokenSecret, { issuer, algorithms: ['HS256', 'HS384', 'HS512'] });
     return jwtPayload;
   } catch (error) {
     return undefined;
