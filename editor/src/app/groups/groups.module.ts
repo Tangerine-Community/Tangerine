@@ -98,40 +98,43 @@ import { GroupDatabaseConflictsComponent } from './group-database-conflicts/grou
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {FileUploadComponent} from "../file/file-upload.component";
+import {MatToolbarModule} from "@angular/material/toolbar";
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [
-        CommonModule,
-        BrowserModule,
-        MatGridListModule,
-        FormsModule,
-        DragDropModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        MatButtonModule,
-        MatSelectModule,
-        GroupsRoutingModule,
-        MatCardModule,
-        MatListModule,
-        MatTabsModule,
-        MatChipsModule,
-        MatTableModule,
-        MatIconModule,
-        MatMenuModule,
-        MatTreeModule,
-        MatProgressSpinnerModule,
-        MatGridListModule,
-        MatFormFieldModule,
-        MatSlideToggleModule,
-        TangyFormsModule,
-        SharedModule,
-        NgTangyFormEditorModule,
-        MatCheckboxModule,
-        MatPaginatorModule,
-        MatButtonModule,
-        MatExpansionModule
+      CommonModule,
+      BrowserModule,
+      MatGridListModule,
+      FormsModule,
+      DragDropModule,
+      ReactiveFormsModule,
+      MatInputModule,
+      MatAutocompleteModule,
+      MatButtonModule,
+      MatSelectModule,
+      GroupsRoutingModule,
+      MatCardModule,
+      MatListModule,
+      MatTabsModule,
+      MatChipsModule,
+      MatTableModule,
+      MatIconModule,
+      MatMenuModule,
+      MatTreeModule,
+      MatProgressSpinnerModule,
+      MatGridListModule,
+      MatFormFieldModule,
+      MatSlideToggleModule,
+      TangyFormsModule,
+      SharedModule,
+      NgTangyFormEditorModule,
+      MatCheckboxModule,
+      MatPaginatorModule,
+      MatButtonModule,
+      MatExpansionModule,
+      MatToolbarModule
     ],
   declarations: [
     LocationListEditorComponent,
@@ -200,7 +203,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     GroupCsvTemplatesComponent,
     GroupDatabaseConflictsComponent,
     DownloadStatisticalFileComponent,
-    GroupDevicePasswordPolicyComponent
+    GroupDevicePasswordPolicyComponent,
+    FileUploadComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

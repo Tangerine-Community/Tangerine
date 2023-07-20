@@ -9,16 +9,15 @@ const exec = util.promisify(require('child_process').exec)
 
 module.exports = async (req, res) => {
   clog("Starting media upload")
-  console.log("beep")
   try {
     await access(`/tangerine/client/content/groups/${req.params.group}/media`)
   } catch (e) {
     await exec(`mkdir /tangerine/client/content/groups/${req.params.group}/media`)
   }
-  console.log("Uploads? Anybody???", req.files)
+  clog("Listing Uploads: ", req.files)
   for (let file of req.files) {
-    console.log("File: ", file)
-    await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/media/${file.originalname.replace(/(\s+)/g, '\\$1')}`)
+    await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/
+    /${file.originalname.replace(/(\s+)/g, '\\$1')}`)
   }
   res.send()
  
