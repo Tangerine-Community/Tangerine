@@ -70,7 +70,7 @@ The instance of tangy-form-editor in server-ui's editor uses the tangy-form lib 
 
 ### Modifying the editor UI
 
-If you need to develop the editor app: 
+If you need to develop the editor app and/or make changes to tangy-form-editor, docker exec into the server-ui container and launch dockerdev in editor: 
 
 ```
 docker exec -it server-ui sh

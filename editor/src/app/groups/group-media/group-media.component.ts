@@ -16,7 +16,7 @@ export class GroupMediaComponent implements OnInit, AfterContentInit {
   thereIsSelection = false
   selection = []
   @ViewChild('list', {static: true}) listEl: ElementRef;
-  @ViewChild('upload', {static: true}) uploadEl: ElementRef;
+  // @ViewChild('upload', {static: true}) uploadEl: ElementRef;
   private groupId: string;
 
   constructor(
@@ -41,7 +41,7 @@ export class GroupMediaComponent implements OnInit, AfterContentInit {
     } catch (e) {
       console.log(e)
     }
-    this.uploadEl.nativeElement.addEventListener('upload-success', () => this.listEl.nativeElement.setAttribute('endpoint', './media-list'))
+    // this.uploadEl.nativeElement.addEventListener('upload-success', () => this.listEl.nativeElement.setAttribute('endpoint', './media-list'))
   }
 
   async onDeleteClick() {

@@ -101,6 +101,8 @@ services:
       - ./server-ui/package.json:/tangerine/server-ui/package.json:delegated
       - ./server-ui/package-lock.json:/tangerine/server-ui/package-lock.json:delegated
       - ./server-ui/src:/tangerine/server-ui/src:delegated
+      - ./tangy-form-editor:/tangerine/tangy-form-editor:delegated
+      - ./tangy-form:/tangerine/tangy-form:delegated
 
   apk-generator:
     container_name: "apk-generator"
