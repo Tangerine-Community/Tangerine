@@ -31,6 +31,7 @@ __Fixes__
  - The javascript-based encryption has so far failed to deliver positive results; therefore, we are disabling this option. The new 'useAppLevelEncryption' property has been introduced to show that this feature is opt-in only. The 'turnOffAppLevelEncryption' property is no longer available. The default is to *not* use in-app encryption, which means that the administrator must enable System (disk) level encryption on the device. There is no encryption provided by Tangerine in eithewr PWA's or APK's; both platforms use the same IndexedDB adapter to save records, The APK-based "sqlcipher" plugin persistence has been removed.
  - Security: User can use JSON Web Token "None" Hashing Algorithm Issue: [#3618](https://github.com/Tangerine-Community/Tangerine/issues/3618)
  - Media library cannot upload photos. Issue:  [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
+ - The /assets route is now protected. The Tangerine logo has its own route that permits access by all. 
 
 __Server upgrade instructions__
 
