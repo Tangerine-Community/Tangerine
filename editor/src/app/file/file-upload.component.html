@@ -1,38 +1,53 @@
 <div>
-  <p>Click "Select file" to select a file for uploading.</p>
-  <mat-toolbar *ngIf="currentFile" class="progress-bar">
-    <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
-    <span class="progress">{{ progress }}%</span>
-  </mat-toolbar>
+<!--  <p>Click "Select file" to select a file for uploading.</p>-->
 
-  <mat-form-field>
+
+<!--  <mat-form-field>-->
+<!--    <div>-->
+<!--      <mat-toolbar>-->
+<!--        <input matInput [value]="fileName" />-->
+
+<!--        <button-->
+<!--          mat-flat-button-->
+<!--          color="primary"-->
+<!--          [disabled]="!currentFile"-->
+<!--          (click)="upload()"-->
+<!--        >-->
+<!--          Upload-->
+<!--        </button>-->
+<!--      </mat-toolbar>-->
+<!--      <mat-toolbar *ngIf="currentFile" class="progress-bar">-->
+<!--        <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>-->
+<!--        <span class="progress">{{ progress }}%</span>-->
+<!--      </mat-toolbar>-->
+
+<!--      <input-->
+<!--        type="file"-->
+<!--        id="fileInput"-->
+<!--        (change)="selectFile($event)"-->
+<!--        name="fileInput"-->
+<!--      />-->
+<!--    </div>-->
+<!--  </mat-form-field>-->
+  <form enctype="multipart/form-data" method="post">
     <div>
-      <mat-toolbar>
-        <input matInput [value]="fileName" />
+      <label for="picked">Choose a file to upload:</label>
+      <input type="file"
+             id="picked"
+             #picked
+             (click)="message=''"
+             (change)="onPicked(picked)">
 
-        <button
-          mat-flat-button
-          color="primary"
-          [disabled]="!currentFile"
-          (click)="upload()"
-        >
-          Upload
-        </button>
-      </mat-toolbar>
-
-      <input
-        type="file"
-        id="fileInput"
-        (change)="selectFile($event)"
-        name="fileInput"
-      />
     </div>
-  </mat-form-field>
+    <p *ngIf="message">{{message}}</p>
+  </form>
 </div>
 
 <div *ngIf="message" class="message">
   {{ message }}
 </div>
+<paper-button (click)="onDeleteClick()"><iron-icon icon="delete"></iron-icon>remove selected files</paper-button>
+<file-list-http #list></file-list-http>
 
 <!--<mat-card class="example-card">-->
 <!--  <mat-card-header>-->

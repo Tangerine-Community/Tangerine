@@ -101,6 +101,10 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {FileUploadComponent} from "../file/file-upload.component";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {MessageService} from "../message.service";
+import {RequestCache, RequestCacheWithMap} from "../request-cache.service";
+// import { RequestCache, RequestCacheWithMap } from './request-cache.service';
+
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -208,6 +212,7 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     GroupDevicePasswordPolicyComponent,
     FileUploadComponent
   ],
-  providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
+  providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService, MessageService,
+    { provide: RequestCache, useClass: RequestCacheWithMap }, ],
 })
 export class GroupsModule { }
