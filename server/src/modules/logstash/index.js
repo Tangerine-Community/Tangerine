@@ -117,17 +117,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
     groupId: formResponse.groupId||'',
     complete: formResponse.complete
   };
-  function set(input, key, value) {
-    flatFormResponse[key] = input.skipped
-        ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-        : 
-        input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : 
-        value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
-            ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
-            : value
-  }
+
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
@@ -138,49 +128,49 @@ const generateFlatResponse = async function (formResponse, locationList) {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
           locationKeys.push(group.value)
           try {
             const location = getLocationByKeys(locationKeys, locationList)
             for (let keyName in location) {
               if (keyName !== 'children') {
-                set(input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
+                tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
               }
             }
           } catch(e) {
-            set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
+            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
       } else if (input.tagName === 'TANGY-GPS') {
-        set(input, `${firstIdSegment}geoip.location.lat`, input.value.latitude)
-        set(input, `${firstIdSegment}geoip.location.lon`, input.value.longitude)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}geoip.location.lat`, input.value.latitude)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}geoip.location.lon`, input.value.longitude)
         // Flatter...
-        set(input, `geoip.lat`, input.value.latitude)
-        set(input, `geoip.lon`, input.value.longitude)
+        tangyModules.setVariable(flatFormResponse, input, `geoip.lat`, input.value.latitude)
+        tangyModules.setVariable(flatFormResponse, input, `geoip.lon`, input.value.longitude)
 
       } else if (input.tagName === 'TANGY-TIMED') {
-        set(input, `${firstIdSegment}${input.name}.duration`, input.duration)
-        set(input, `${firstIdSegment}${input.name}.time_remaining`, input.timeRemaining)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.duration`, input.duration)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.time_remaining`, input.timeRemaining)
         // Calculate Items Per Minute.
         let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
         let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
         let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-        set(input, `${firstIdSegment}${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-        set(input, `${firstIdSegment}${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
         let timeSpent = input.duration - input.timeRemaining
-        set(input, `${firstIdSegment}${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
       } else if (input && typeof input.value === 'string') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && Array.isArray(input.value)) {
         for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.name}`, group.value)
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.name}`, group.value)
         }
       } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
         for (let key of elementKeys) {
-          set(input, `${firstIdSegment}${input.name}.${key}`, input.value[key])
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${key}`, input.value[key])
         };
       }
     }
