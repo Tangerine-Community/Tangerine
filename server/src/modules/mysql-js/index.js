@@ -4,13 +4,9 @@ const fs = require('fs-extra');
 const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
-const { spawn } = require('child_process');
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
-const createGroupDatabase = require('../../create-group-database.js')
-const { v4: uuidv4 } = require('uuid');
-const byParticipantView = require(`./byParticipant.js`)
-const byTypeViews = require(`./byType.js`)
+const tangyModules = require('../index.js')()
 const sanitize = require("sanitize-filename");
 
 /* Enable this if you want to run commands manually when debugging.

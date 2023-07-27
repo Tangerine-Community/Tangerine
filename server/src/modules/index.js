@@ -23,23 +23,25 @@ class TangyModules {
    * Tangerine server level configurations related to reporting. The hierarchy of elements is based on our experience 
    * in users want the data to appear.
    * 
-   * Assumptions:
-   * 1. If the input is 'hidden' or 'disabled', it was not 'skipped' (intentionally) by the user
-   * 2. The input can only be 'skipped' if it is not 'hidden' or 'disabled'
-   * 3. 'undefined' variables are handled last
+   * 1. 'skipped' means there is skip-logic that made the question not appear
+   * 3. 'hidden' is for variables that are auto-calculated
+   * 2. 'not required and incomplete' is for optional questions that were not answered
+   * 4. 'undefined' handles cases where the user wants something like 'null' or 'na' for easier processing with stats tools
    */
   setVariable(flatFormResponse, input, key, value) {
-    if ((input.hidden || input.disabled)) {
-      if (process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE") {
-        flatFormResponse[key] = process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH
-      } else {
-        flatFormResponse[key] = value
-      }
-    } else if (input.skipped && !input.required) {
+
+    if (value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE") {
+      value = process.env.T_REPORTING_MARK_UNDEFINED_WITH
+    }
+
+    if (input.skipped) {
       flatFormResponse[key] = process.env.T_REPORTING_MARK_SKIPPED_WITH
-    } else if (value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE") {
-      // value is neither hidden, disabled, nor skipped, but is still 'undefined'
-      flatFormResponse[key] = process.env.T_REPORTING_MARK_UNDEFINED_WITH
+    } else if (input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE") {
+      // The name for the variable T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH is misleading
+      // DO NOT ADD 'input.disabled' to the else if statement above
+      flatFormResponse[key] = process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH
+    } else if (!input.required && value == '') {
+      flatFormResponse[key] = process.env.T_REPORTING_MARK_OPTIONAL_NO_ANSWER_WITH
     } else {
       flatFormResponse[key] = value
     }
