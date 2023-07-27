@@ -6,7 +6,6 @@ const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
-const CODE_SKIP = '999'
 const createGroupDatabase = require('../../create-group-database.js')
 const groupsList = require('/tangerine/server/src/groups-list.js')
 
