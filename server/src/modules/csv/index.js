@@ -397,7 +397,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
           tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
           tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
           tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
-        } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
+        } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
           // Do nothing :).
         } else if (input && typeof input.value === 'string') {
           tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value)

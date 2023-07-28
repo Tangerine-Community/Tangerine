@@ -112,13 +112,13 @@ T_ORIENTATION="any"
 T_HIDE_SKIP_IF="true"
 
 # In outputs, set cell value to this when something is skipped due to skip logic.
-T_REPORTING_MARK_SKIPPED_WITH="999"
+T_REPORTING_MARK_SKIPPED_WITH="SKIPPED"
 
 # In outputs, set cell value to this when something is optional and not answered.
-T_REPORTING_MARK_OPTIONAL_NO_ANSWER_WITH="888"
+T_REPORTING_MARK_OPTIONAL_NO_ANSWER_WITH="SKIPPED"
 
 # In outputs, set cell value to this when something is disabled or hidden. Set to "ORIGINAL_VALUE" if you want the actual value stored.
-T_REPORTING_MARK_HIDDEN_WITH="ORIGINAL_VALUE"
+T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH="ORIGINAL_VALUE"
 
 # In outputs, set cell value to this when something is undefined. Set to "ORIGINAL_VALUE" if you want the actual value stored.
 T_REPORTING_MARK_UNDEFINED_WITH="UNDEFINED"
