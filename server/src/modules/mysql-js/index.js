@@ -362,6 +362,8 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
           tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
         } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
           tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
+          // Do nothing :).
         } else if (input.tagName === 'TANGY-SIGNATURE') {
           tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
         } else if (input && typeof input.value === 'string') {
