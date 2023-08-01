@@ -67,15 +67,15 @@ app.get('/version',
 
 
 // Static assets.
-  app.use('/assets/tangerine-logo-box.png', express.static('/tangerine/editor/dist/tangerine-editor/assets/tangerine-logo-box.png'));
-  app.use('/assets/:file', isAuthenticated, function (req, res, next) {
-    // const params = JSON.stringify(req.params)
-    // const argumentsStr = JSON.stringify(arguments)
-    console.log("rule: /assets:file")
-    console.dir(req.originalUrl)
-    let contentPath = `/tangerine/editor/dist/tangerine-editor/assets`
-    return express.static(contentPath).apply(this, arguments);
-  });
+//   app.use('/assets/tangerine-logo-box.png', express.static('/tangerine/editor/dist/tangerine-editor/assets/tangerine-logo-box.png'));
+//   app.use('/assets/:file', isAuthenticated, function (req, res, next) {
+//     // const params = JSON.stringify(req.params)
+//     // const argumentsStr = JSON.stringify(arguments)
+//     console.log("rule: /assets:file")
+//     console.dir(req.originalUrl)
+//     let contentPath = `/tangerine/editor/dist/tangerine-editor/assets`
+//     return express.static(contentPath).apply(this, arguments);
+//   });
 app.use('/client', express.static('/tangerine/client/dev'));
 // app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
   app.use('/', function (req, res, next) {

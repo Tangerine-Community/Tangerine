@@ -37,3 +37,8 @@
 .mat-mdc-form-field {
   width: 400px;
 }
+
+.uploads {
+  margin-top: 2em;
+  margin-left: 1em;
+}

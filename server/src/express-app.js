@@ -226,14 +226,14 @@ app.use('/', function (req, res, next) {
   return express.static('/tangerine/editor/dist/tangerine-editor').apply(this, arguments);
 });
 // app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
-app.use('/assets/:file', isAuthenticated, function (req, res, next) {
-  // const params = JSON.stringify(req.params)
-  // const argumentsStr = JSON.stringify(arguments)
-  console.log("rule: /assets:file")
-  console.dir(req.originalUrl)
-  let contentPath = `/tangerine/editor/dist/tangerine-editor/assets`
-  return express.static(contentPath).apply(this, arguments);
-});
+// app.use('/assets/:file', isAuthenticated, function (req, res, next) {
+//   // const params = JSON.stringify(req.params)
+//   // const argumentsStr = JSON.stringify(arguments)
+//   console.log("rule: /assets:file")
+//   console.dir(req.originalUrl)
+//   let contentPath = `/tangerine/editor/dist/tangerine-editor/assets`
+//   return express.static(contentPath).apply(this, arguments);
+// });
 
 app.use('/api/:group/media-list', require('./routes/group-media-list.js'));
 app.use('/api/:groupId/csv-headers/:formId', require('./routes/group-csv-headers.js'));

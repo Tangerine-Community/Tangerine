@@ -19,7 +19,7 @@
     "@polymer/paper-toggle-button": "^3.0.1",
     "@polymer/polymer": "^3.5.1",
     "dr-niels-paper-expansion-panel": "https://github.com/DrNiels/paper-expansion-panel.git#master",
-    "file-list-component": "^1.4.0",
+    "file-list-component": "github:Tangerine-Community/file-list",
     "js-beautify": "^1.14.7",
     "juicy-ace-editor": "https://github.com/Juicy/juicy-ace-editor.git#ES6-modules",
     "redux": "^4.2.0",

@@ -10,7 +10,7 @@ RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
 #RUN apk add git
 
 RUN apk fix && \
-    apk --no-cache --update add git git-lfs gpg less openssh patch && \
+    apk --no-cache --update add git git-lfs gpg less openssh patch jq zip && \
     git lfs install
 
 RUN git config --global url."https://".insteadOf git://
@@ -26,7 +26,7 @@ RUN git config --global url."https://".insteadOf git://
 #RUN npm config set unsafe-perm false
 
 # Install helpful JSON utility.
-RUN apk update && apk add jq
+RUN #apk update && apk add jq
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1
