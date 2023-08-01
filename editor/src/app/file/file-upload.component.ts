@@ -1,6 +1,6 @@
 import {AfterContentInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import {Observable, of, throwError} from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import {FileUploadService} from "./services/file-upload.service";
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -117,7 +117,8 @@ export class FileUploadComponent implements OnInit, AfterContentInit {
   deleteFile(pathsThatAreSelected): Observable<any> {
     return this.http.post('./media-delete', { paths: pathsThatAreSelected })
       .pipe(
-        catchError(this.handleError)
+        // catchError(this.handleError())
+      catchError(err => of([]))
       );
   }
 
@@ -129,7 +130,8 @@ export class FileUploadComponent implements OnInit, AfterContentInit {
     }, [])
     if (!pathsThatAreSelected.length) return
     // this.http.post('./media-delete', { paths: pathsThatAreSelected })
-    this.deleteFile(pathsThatAreSelected)
+    // this.deleteFile(pathsThatAreSelected)
+    await this.http.post('./media-delete', { paths: pathsThatAreSelected }).toPromise()
     this.listEl.nativeElement.setAttribute('endpoint', './media-list')
   }
 }

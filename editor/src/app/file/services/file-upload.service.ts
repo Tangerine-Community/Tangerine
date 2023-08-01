@@ -18,12 +18,13 @@ export class FileUploadService {
   // upload(file: File): Observable<HttpEvent<any>> {
   upload(file: File) {
     if (!file) { return of<string>(); }
-    // const formData: FormData = new FormData();
+    const formData: FormData = new FormData();
 
-    // formData.append('file', file);
+    formData.append('file', file);
 
     // const req = new HttpRequest('POST', `${this.baseUrl}/upload`, formData, {
-    const req = new HttpRequest('POST', `./media-upload`, file, {
+    // const req = new HttpRequest('POST', `./media-upload`, file, {
+    const req = new HttpRequest('POST', `./media-upload`, formData, {
       reportProgress: true,
     });
 

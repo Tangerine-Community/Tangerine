@@ -15,9 +15,12 @@ module.exports = async (req, res) => {
     await exec(`mkdir /tangerine/client/content/groups/${req.params.group}/media`)
   }
   clog("Listing Uploads: ", req.files)
-  for (let file of req.files) {
-    await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/media/${file.originalname.replace(/(\s+)/g, '\\$1')}`)
+  if (req.files) {
+    for (let file of req.files) {
+      await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/media/${file.originalname.replace(/(\s+)/g, '\\$1')}`)
+    }
+    res.send('OK')
   }
-  res.send()
+
  
 }

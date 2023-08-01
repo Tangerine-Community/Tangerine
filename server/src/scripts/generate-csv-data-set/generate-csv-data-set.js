@@ -125,6 +125,7 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     state.csvs.find(csv => csv.formId === formId).inProgress = false
     await writeState(state)
   }
+
   const child = await spawn(`zip`, [outputPath, ...state.csvs.map(csvInfo => csvInfo.outputPath)])
   await new Promise((resolve, reject) => {
     child.on('close', (code) => {
