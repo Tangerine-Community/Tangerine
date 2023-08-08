@@ -55,20 +55,14 @@ export class AttendanceComponent implements OnInit {
         if (mood) {
           switch (mood) {
             case 'happy':
-              // currentStudent.happyCount = currentStudent.happyCount ? currentStudent.happyCount + 1 : 1
-              // currentStudent.happyPercentage = Math.round((currentStudent.happyCount / reportCount) * 100)
               currentStudent.moodValues.push(90)
               currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
               break
             case 'neutral':
-              // currentStudent.neutralCount = currentStudent.neutralCount ? currentStudent.neutralCount + 1 : 1
-              // currentStudent.neutralPercentage = Math.round((currentStudent.neutralCount / reportCount) * 100)
               currentStudent.moodValues.push(70)
               currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
               break
             case 'sad':
-              // currentStudent.sadCount = currentStudent.sadCount ? currentStudent.sadCount + 1 : 1
-              // currentStudent.sadPercentage = Math.round((currentStudent.sadCount / reportCount) * 100)
               currentStudent.moodValues.push(20)
               currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
               break

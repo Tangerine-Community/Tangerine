@@ -5,18 +5,38 @@
 <!--    <div *ngFor="let attendanceReport of attendanceReports" class="attendance-report-div">-->
 
 <!--      <div *ngFor="let attendanceReport of attendanceReports">-->
+    <div style="margin-bottom:1em">
+      <h3>{{'Legend'|translate}} </h3>
+      <p>{{'Student behaviour is calculated according to the following rules and color-coding: '|translate}}</p>
+      <table class="legend">
+        <tr>
+          <td class="red">{{'Sad'|translate}}</td>
+          <td>{{'Score is < 20'|translate}}</td>
+        </tr>
+        <tr>
+          <td class="orange">{{'Neutral'|translate}}</td>
+          <td>{{'Score is > 20 and < 90'|translate}}</td>
+        </tr>
+        <tr>
+          <td class="green">{{'Happy'|translate}}</td>
+          <td>{{'Score is > 90'|translate}}</td>
+        </tr>
+      </table>
+    </div>
+<div>
+  <h3>{{'Attendance Summary'|translate}} </h3>
       <table class="subtest">
         <tr>
           <td colspan="1">&nbsp;</td>
-          <td colspan="2">{{'Most Recent'|translate}}: {{attendanceReport?._id.split('-')[2]}}-{{attendanceReport?._id.split('-')[3]}}-{{attendanceReport?._id.split('-')[4]}}</td>
+          <td colspan="2">{{'Most Recent Class'|translate}}: {{attendanceReport?._id.split('-')[2]}}-{{attendanceReport?._id.split('-')[3]}}-{{attendanceReport?._id.split('-')[4]}}</td>
           <td>&nbsp;</td>
-          <td colspan="2">{{'30 days'|translate}}</td>
+          <td colspan="2">{{'Past 30 days'|translate}}</td>
         </tr>
         <tr>
           <th>{{'Student'|translate}}</th>
           <th>{{'Attendance'|translate}}</th>
           <th>{{'Behavior'|translate}}</th>
-          <td>&nbsp;</td>
+          <td style="width:20px">&nbsp;</td>
           <th>{{'Attendance'|translate}}</th>
           <th>{{'Behavior'|translate}}</th>
         </tr>
@@ -29,14 +49,14 @@
         <td [ngClass]="{'red': student.moodPercentage <=20, 'orange': (student.moodPercentage >=20 && student.moodPercentage < 90), 'green': student.moodPercentage >=90}"> {{student.moodPercentage}} % </td>
       </tr>
       </table>
-<!--    </div>-->
+    </div>
   </div>
   <div id="last-n-report">
     <h3>{{'Most recent'|translate}} {{numVisits}} {{'visits'|translate}}</h3>
     <table class="subtest">
       <tr>
         <td colspan="2">
-          {{'Enter number of visits to query'|translate}}
+          {{'Enter number of attendance reports to query'|translate}}
         </td>
         <td colspan="1">
           <form class="num-visits-form">
@@ -47,7 +67,7 @@
         </td>
       </tr>
       <tr *ngIf="recentVisitsReport">
-        <td colspan="3">Reports queried: {{recentVisitsReport?.length}}</td>
+        <td colspan="3">{{'Attendance reports queried'|translate}}: {{recentVisitsReport?.attendanceList.length}}</td>
       </tr>
       <tr>
         <th>{{'Student'|translate}}</th>
