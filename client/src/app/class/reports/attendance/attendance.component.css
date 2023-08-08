@@ -26,3 +26,6 @@ mat-form-field {
 #last-n-report {
   margin-top: 30px
 }
+.legend td {
+  padding: 0 1em;
+}
