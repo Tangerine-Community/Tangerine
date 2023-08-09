@@ -227,13 +227,17 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
     formResponse.form.id = 'blank'
   }
   const cycleSequencesReplacer = new RegExp('\n', 'g')
+  const startDatetime = moment(formResponse.startUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
+  const endDatetime = moment(formResponse.endUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
   let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
     cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
     sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
     startUnixtime: formResponse.startUnixtime||'',
+    startDatetime: startDatetime,
     endUnixtime: formResponse.endUnixtime||'',
+    endDatetime: endDatetime,
     lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
     buildId: formResponse.buildId||'',
     buildChannel: formResponse.buildChannel||'',
