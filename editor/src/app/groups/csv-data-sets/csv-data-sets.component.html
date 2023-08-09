@@ -71,7 +71,7 @@
       </th>
       <td class="tangy-foreground-secondary link" mat-cell *matCellDef="let dataSet">
         <a *ngIf="dataSet.state?.complete && dataSet.fileExists" mat-icon-button [href]="dataSet.downloadUrl">
-          <i class="material-icons mat-32 tangy-location-list-icon">get_app</i> Download
+          <i class="material-icons mat-32 tangy-location-list-icon">get_app</i> <span class="download-text">download file</span>
         </a>
         <mat-spinner diameter=25 [hidden]="dataSet.status !== 'In progress'"></mat-spinner>
       </td>
