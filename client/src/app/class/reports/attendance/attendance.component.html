@@ -10,16 +10,16 @@
       <p>{{'Student behaviour is calculated according to the following rules and color-coding: '|translate}}</p>
       <table class="legend">
         <tr>
-          <td class="red">{{'Sad'|translate}}</td>
-          <td>{{'Score is < 20'|translate}}</td>
+          <td class="red"></td>
+          <td>{{'Score is < 33'|translate}}</td>
         </tr>
         <tr>
-          <td class="orange">{{'Neutral'|translate}}</td>
-          <td>{{'Score is > 20 and < 90'|translate}}</td>
+          <td class="orange"></td>
+          <td>{{'Score is > 33 and < 66'|translate}}</td>
         </tr>
         <tr>
-          <td class="green">{{'Happy'|translate}}</td>
-          <td>{{'Score is > 90'|translate}}</td>
+          <td class="green"></td>
+          <td>{{'Score is > 66'|translate}}</td>
         </tr>
       </table>
     </div>
@@ -36,6 +36,7 @@
           <th>{{'Student'|translate}}</th>
           <th>{{'Attendance'|translate}}</th>
           <th>{{'Behavior'|translate}}</th>
+          <th>{{'Scores'|translate}}</th>
           <td style="width:20px">&nbsp;</td>
           <th>{{'Attendance'|translate}}</th>
           <th>{{'Behavior'|translate}}</th>
@@ -44,6 +45,11 @@
         <td>{{student.name}}</td>
         <td [ngClass]="{'red': student.absent, 'green': !student.absent}"></td>
         <td [ngClass]="{'red': student.mood === 'sad', 'orange': student.mood === 'neutral', 'green': student.mood === 'happy'}"></td>
+        <td>{{student.studentScores| json}}
+          <p *ngFor="let score of student.studentScores">
+            {{score.curriculum}}: {{score.score}}
+          </p>
+        </td>
         <td>&nbsp;</td>
         <td [ngClass]="{'red': student.presentPercentage < 21, 'green': student.presentPercentage > 79}"> {{student.presentPercentage}} % </td>
         <td [ngClass]="{'red': student.moodPercentage <=20, 'orange': (student.moodPercentage >=20 && student.moodPercentage < 90), 'green': student.moodPercentage >=90}"> {{student.moodPercentage}} % </td>
