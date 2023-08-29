@@ -52,7 +52,7 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
   })
 }
 
-async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', excludePii = false, excludeArchivedForms = false) {
+async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', year = '*', month = '*', excludePii = false, excludeArchivedForms = false, excludeUserProfileAndReports = false) {
   const http = await getUser1HttpInterface()
   const group = (await http.get(`/nest/group/read/${groupId}`)).data
   const groupLabel = group.label.replace(/ /g, '_')
@@ -85,6 +85,10 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     const formInfo = forms.find(formInfo => formInfo.id === formId)
 
     if (formInfo.archived && excludeArchivedForms) {
+      continue
+    }
+
+    if (excludeUserProfileAndReports && (formId == 'reports' || formId == 'user-profile')) {
       continue
     }
 
