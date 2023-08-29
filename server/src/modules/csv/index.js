@@ -4,6 +4,7 @@ const clog = require('tangy-log').clog
 const groupReportingViews = require(`./views.js`)
 const {promisify} = require('util');
 const fs = require('fs');
+const moment = require('moment')
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 const createGroupDatabase = require('../../create-group-database.js')
