@@ -44,6 +44,60 @@ ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \
     npm install
 
+# Install client.
+ADD client/package.json /tangerine/client/package.json
+RUN cd /tangerine/client/ && \
+    npm install
+
+# Install PWA tools.
+ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
+ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
+RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
+    npm install
+ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
+ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
+RUN cd /tangerine/client/pwa-tools/updater-app && \
+    npm install && \
+    ./node_modules/.bin/bower install --allow-root
+
+# Build online-survey-app.
+ADD online-survey-app /tangerine/online-survey-app/
+RUN cd /tangerine/online-survey-app && \
+    ./node_modules/.bin/ng build --base-href "./"
+
+# build client.
+add client /tangerine/client
+run cd /tangerine/client && \
+    ./node_modules/.bin/ng build --base-href "./"
+
+# Build editor.
+ADD editor /tangerine/editor
+RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
+
+# Build PWA tools.
+RUN cd /tangerine/client/pwa-tools/updater-app && \
+    npm run build && \
+    cp logo.svg build/default/
+
+# Package release sources for APK and PWA.
+RUN cd /tangerine/client && \
+    cp -r dist/tangerine-client builds/apk/www/shell && \
+    cp -r pwa-tools/updater-app/build/default builds/pwa && \
+    mkdir builds/pwa/release-uuid && \
+    cp -r dist/tangerine-client builds/pwa/release-uuid/app
+
+# Modify links to javascript modules because they won't work in an APK (Angular 8 work-around)
+RUN sed -i 's/type="module"/type="text\/javascript"/g' /tangerine/client/builds/apk/www/shell/index.html
+
+# Add the rest of server.
+ADD server /tangerine/server
+
+# Link up global commands.
+RUN cd /tangerine/server && \
+    npm link
+
+
 #
 # Wrap up 
 #
