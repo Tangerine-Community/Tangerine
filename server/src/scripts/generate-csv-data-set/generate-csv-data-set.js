@@ -84,7 +84,8 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
     const forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
     const formInfo = forms.find(formInfo => formInfo.id === formId)
 
-    if (formInfo.archived && excludeArchivedForms) {
+    // Note: `formInfo` will not be set when generating Case Type, Case Event, Event Form and Participants CSVs
+    if (excludeArchivedForms && formInfo && formInfo.archived) {
       continue
     }
 
