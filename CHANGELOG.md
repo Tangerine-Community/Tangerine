@@ -2,10 +2,21 @@
 
 ## v3.27.8
 
+__New Features__
+- New server configuration setting for output value of optionally not answered questions
+  - The value set in the config variable `T_REPORTING_MARK_OPTIONAL_NO_ANSWER_WITH` in `config.sh` will be the value of questions that are optional and not answered by the respondent.
+  - The default value is "SKIPPED" for consistency with previous outputs
+- CSV outputs now include the metadata variables `startDateTime` and `endDateTime`  auto-calculated from the `startUnixTime` and `endUnixTime` variables
+- Additional parameter for the csv data set generation process to ignore `user-profile` and `reports` from the output csv files
+
 __Fixes__
 - Copy all media directories from the client form directories to ensure assets are available in online surveys
 - Allows form developers to publish images and sounds in online surveys
 - Fix the language dropdown in online surveys
+- Outputs will no longer try to process outputs for `TANGY-TEMPLTE` inputs
+
+__Package Updates__
+- Lock @ts-stack/markdown to 1.4.0 to prevent breaking of builds
 
 __Server upgrade instructions__
 
@@ -15,7 +26,7 @@ Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerin
 cd tangerine
 # Check the size of the data folder.
 du -sh data
-# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade. 
 df -h
 # Turn off tangerine and database.
 docker stop tangerine couchdb
