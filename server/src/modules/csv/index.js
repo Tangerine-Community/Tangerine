@@ -4,9 +4,9 @@ const clog = require('tangy-log').clog
 const groupReportingViews = require(`./views.js`)
 const {promisify} = require('util');
 const fs = require('fs');
+const moment = require('moment')
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
-const CODE_SKIP = '999'
 const createGroupDatabase = require('../../create-group-database.js')
 const groupsList = require('/tangerine/server/src/groups-list.js')
 
@@ -228,13 +228,17 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
     formResponse.form.id = 'blank'
   }
   const cycleSequencesReplacer = new RegExp('\n', 'g')
+  const startDatetime = moment(formResponse.startUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
+  const endDatetime = moment(formResponse.endUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
   let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
     cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
     sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
     startUnixtime: formResponse.startUnixtime||'',
+    startDatetime: startDatetime,
     endUnixtime: formResponse.endUnixtime||'',
+    endDatetime: endDatetime,
     lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
     buildId: formResponse.buildId||'',
     buildChannel: formResponse.buildChannel||'',
@@ -251,17 +255,6 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
       participantId: formResponse.participantId || ''
     } : {}
   };
-  function set(input, key, value) {
-    flatFormResponse[key] = input.skipped
-        ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-        : 
-        input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : 
-        value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
-            ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
-            : value
-  }
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     flatFormResponse[`${item.id}_firstOpenTime`]= item.firstOpenTime? item.firstOpenTime:''
@@ -278,29 +271,29 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
           // Populate the ID and Label columns for TANGY-LOCATION levels.
           locationKeys = []
           for (let group of input.value) {
-            set(input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
             try {
               const location = getLocationByKeys(locationKeys, locationList)
               for (let keyName in location) {
                 if (keyName !== 'children') {
-                  set(input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])
+                  tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])
                 }
               }
             } catch (e) {
-              set(input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
+              tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' || input.tagName === 'TANGY-RADIO-BLOCKS') {
           // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
-          set(input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
             ? input.value.find(input => input.value == 'on')
               ? input.value.find(input => input.value == 'on').name
               : ''
             : `${input.value}`
           )
         } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? '1'
               : '0'
           )
@@ -308,38 +301,38 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
           // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
           if (Array.isArray(input.value)) {
             for (let checkboxInput of input.value) {
-              set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
+              tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
                   ? "1"
                   : "0"
               )
             }
           } else {
-            set(input, `${formID}.${item.id}.${input.name}`, `${input.value}`) 
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, `${input.value}`) 
           }
         } else if (input.tagName === 'TANGY-CHECKBOX') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? "1"
               : "0"
           )
         } else if (input.tagName === 'TANGY-SIGNATURE') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
         } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
         } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )
         } else if (input.tagName === 'TANGY-EFTOUCH') {
           let elementKeys = Object.keys(input.value);
           for (let key of elementKeys) {
-            set(
+            tangyModules.setVariable(flatFormResponse, 
               input, 
               `${formID}.${item.id}.${input.name}.${key}`, 
               Array.isArray(input.value[key])
@@ -361,26 +354,26 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               // Correct.
               derivedValue = '1'
             }
-            set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
             if (toggleInput.highlighted === true) {
               hitLastAttempted = true
             }
           }
           ;
-          set(input, `${formID}.${item.id}.${input.name}.duration`, input.duration)
-          set(input, `${formID}.${item.id}.${input.name}.time_remaining`, input.timeRemaining)
-          set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
-          set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
-          set(input, `${formID}.${item.id}.${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
-          set(input, `${formID}.${item.id}.${input.name}.time_intermediate_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.duration`, input.duration)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.time_remaining`, input.timeRemaining)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.time_intermediate_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
           // Calculate Items Per Minute.
           let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
           let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
           let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
           let timeSpent = input.duration - input.timeRemaining
-          set(input, `${formID}.${item.id}.${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
         } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
           let hitLastAttempted = false
           for (let toggleInput of input.value) {
@@ -395,7 +388,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               // Correct.
               derivedValue = '1'
             }
-            set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
             if (toggleInput.highlighted === true) {
               hitLastAttempted = true
             }
@@ -405,24 +398,24 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
           let totalNumberOfItems = input.value.length
           let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
           let numberOfItemsCorrect = totalNumberOfItems - numberOfItemsIncorrect
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
-          set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
-          set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
-        } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
+        } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
           // Do nothing :).
         } else if (input && typeof input.value === 'string') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value)
         } else if (input && typeof input.value === 'number') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value)
         } else if (input && Array.isArray(input.value)) {
           for (let group of input.value) {
-            set(input, `${formID}.${item.id}.${input.name}.${group.name}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.name}`, group.value)
           }
         } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
           let elementKeys = Object.keys(input.value);
           for (let key of elementKeys) {
-            set(input, `${formID}.${item.id}.${input.name}.${key}`, input.value[key])
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${key}`, input.value[key])
           }
           ;
         }

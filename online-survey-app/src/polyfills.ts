@@ -90,6 +90,7 @@ import 'tangy-form/input/tangy-toggle.js';
 import 'tangy-form/input/tangy-radio-blocks.js';
 import 'tangy-form/input/tangy-video-capture.js';
 
+import 'translation-web-component/t-select.js'
 
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc;
