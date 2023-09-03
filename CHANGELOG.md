@@ -15,6 +15,10 @@ __Fixes__
 - Fix the language dropdown in online surveys
 - Outputs will no longer try to process outputs for `TANGY-TEMPLTE` inputs
 
+__Breaking Changes__
+- Removes build dependencies for legacy python `mysql` output module
+  - For those using the legacy module, [see the documentation move to the new `mysql-js` module](https://docs.tangerinecentral.org/system-administrator/mysql-js/)
+
 __Package Updates__
 - Lock @ts-stack/markdown to 1.4.0 to prevent breaking of builds
 
