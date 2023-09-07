@@ -262,6 +262,38 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         participantId: formResponse.participantId || ''
       } : {}
     };
+  } else if (formResponse.type === 'scores') {
+    log.info(`Saving flatFormResponse for scores type `)
+    flatFormResponse = {
+      _id: formResponse._id,
+      formId: formResponse.form.id,
+      cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
+      sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
+      startUnixtime: formResponse.startUnixtime||'',
+      endUnixtime: formResponse.endUnixtime||'',
+      lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
+      buildId: formResponse.buildId||'',
+      buildChannel: formResponse.buildChannel||'',
+      deviceId: formResponse.deviceId||'',
+      groupId: formResponse.groupId||'',
+      complete: formResponse.complete,
+      // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
+      archived: formResponse.archived,
+      tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
+      timestamp: formResponse.timestamp,
+      classId: formResponse.classId,
+      grade: formResponse.grade,
+      schoolName: formResponse.schoolName,
+      schoolYear: formResponse.schoolYear,
+      scoreList: formResponse.scoreList,
+      type: formResponse.type,
+      ...formResponse.caseId ? {
+        caseId: formResponse.caseId,
+        eventId: formResponse.eventId,
+        eventFormId: formResponse.eventFormId,
+        participantId: formResponse.participantId || ''
+      } : {}
+    };
   } else {
     flatFormResponse = {
       _id: formResponse._id,
@@ -534,7 +566,29 @@ function saveFormInfo(flatResponse, db) {
           }
         })
       })
-
+    }
+    if (flatResponse.type === 'scores') {
+      log.info(`Saving scoreList headers: ${JSON.stringify(flatResponse.scoreList)}`)
+      flatResponse.scoreList.forEach(score => {
+        Object.keys(score).forEach(key => {
+          if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
+            // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
+            let safeKey = key.replace('form-0.', '')
+            // Make the header property (AKA label) just the variable name.
+            const firstOccurenceIndex = safeKey.indexOf('.')
+            const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
+            let keyArray = key.split('.')
+            // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+            // Preserve the namespacing of user-profile
+            if (keyArray[0] === 'user-profile') {
+              formDoc.columnHeaders.push({ key, header: safeKey })
+            } else {
+              formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
+            }
+            foundNewHeaders = true
+          }
+        })
+      })
     }
     if (foundNewHeaders) {
       try {
@@ -579,7 +633,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         userProfileId = doc[userProfileIdKey]
       }
       // console.log("CSV generation for doc _id: " + doc._id + "; adding userProfile to doc with userProfileId: " + userProfileId + " ")
-      let userProfileDoc;
+      let  userProfileDoc;
       if (userProfileId !== 'Editor') {
         // Get the user profile.
         try {
@@ -599,7 +653,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
           let docNamespaced;
           let keyArray = key.split('.')
-          // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+          console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
           if (keyArray[0] === 'user-profile') {
             docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
           } else {
