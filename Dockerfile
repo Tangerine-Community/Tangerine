@@ -36,7 +36,11 @@ RUN apt-get update && apt-get install -y python3-pip
 #    ./install-dependencies.sh
 
 ADD tangy-form /tangerine/tangy-form/
+RUN cd /tangerine/tangy-form && \
+    npm install
 ADD tangy-form-editor /tangerine/tangy-form-editor/
+RUN cd /tangerine/tangy-form-editor && \
+    npm install
 
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json

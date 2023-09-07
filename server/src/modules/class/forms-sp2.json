@@ -49,5 +49,22 @@
       "pull": false,
       "filterByLocation": true
     }
+  },
+  {
+    "title": "scores",
+    "src": "./assets/daily-scores/form.html",
+    "id": "scores",
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete": false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "push": true,
+      "pull": false,
+      "filterByLocation": true
+    }
   }
 ]

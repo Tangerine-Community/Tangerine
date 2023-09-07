@@ -146,6 +146,23 @@ const tangyClassDesignDoc = {
         }
       }.toString()
     },
+    responsesForScoreByClassId: {
+      map: function (doc) {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
+          if (doc.form.id !== 'scores') { return }
+          const classId = doc.classId
+          //     const attendanceRegisterId = 'attendance-' + grade + '-' + reportDate
+          // const attendanceRegisterIdArray = doc._id.split('-')
+          // const attendanceDate = attendanceRegisterIdArray[attendanceRegisterIdArray.length - 1]
+          const timestamp = doc.timestamp
+          const monthBefore = new Date()
+          const monthBeforeMilli = monthBefore.setDate(monthBefore.getDate() - 30)
+          if (doc.timestamp > monthBeforeMilli) {
+            emit([classId, doc._id], true)
+          }
+        }
+      }.toString()
+    },
   }
 };
 export { tangyClassDesignDoc };

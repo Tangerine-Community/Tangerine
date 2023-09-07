@@ -18,35 +18,41 @@
   </span>
   <span dir="rtl" *ngFor="let class of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">
       <button mat-stroked-button color="primary" [matMenuTriggerFor]="catMenu" class="mat-button"
-              attr.data-classId = "{{class.id}}">
+              attr.data-classId="{{class.id}}">
         {{getClassTitle(class.doc)}}
       </button>
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
           <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">
-            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>
+            <button mat-menu-item *ngIf="curriculum.value ==='on'"
+                    (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>
           </span>
         </ng-template>
       </mat-menu>
     </span>
   <span dir="rtl" class="class-dashboard-button-spacer-right">
-      <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+      <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu"
+              class="mat-button">{{'Select Report'|translate}}</button>
       <mat-menu #groupingMenu="matMenu">
         <ng-template matMenuContent>
-        <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+        <button mat-menu-item *ngFor="let item of formList"
+                routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
         </ng-template>
       </mat-menu>
-      <!--<mat-menu #progressMenu="matMenu">-->
-        <!--<ng-template matMenuContent>-->
-        <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
-        <!--</ng-template>-->
-      <!--</mat-menu>-->
+    <!--<mat-menu #progressMenu="matMenu">-->
+    <!--<ng-template matMenuContent>-->
+    <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
+    <!--</ng-template>-->
+    <!--</mat-menu>-->
       <mat-menu #reportsMenu="matMenu">
         <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
         <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
-        <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
+        <button mat-menu-item
+                routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
         <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass.id}}">{{'Task Report'|translate}}</button>
-        <button mat-menu-item routerLink="/reports/attendance/{{selectedClass.id}}">{{'Attendance and Behaviour'|translate}}</button>
+        <button mat-menu-item
+                routerLink="/reports/attendance/{{selectedClass.id}}">{{'Attendance and Behaviour'|translate}}</button>
+        <!--        <button mat-menu-item routerLink="/reports/grades/{{selectedClass.id}}">{{'Grades'|translate}}</button>-->
       </mat-menu>
     </span>
 </mat-toolbar>
@@ -66,21 +72,34 @@
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
-    <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
-
-    <mat-form-field>
-      <mat-label>{{'Select Subtask'|translate}}</mat-label>
-      
-      <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
-        <mat-option>{{'None'|translate}}</mat-option>
-        <mat-option *ngIf="useAttendanceFeature" (click)="showAttandanceListing(selectedClass)">{{'Attendance'|translate}}</mat-option>
-        <mat-option *ngFor="let item of formList;" value="{{item.id}}"
-                    (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
+    <div *ngIf="selectedCurriculum && !showSummary" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
+      : {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
+    <div *ngIf="showSummary" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}</p></div>
+    <div class="controls-wrapper">
+      <div class="controls-one">
+        <mat-form-field>
+          <mat-label>{{'Select Subtask'|translate}}</mat-label>
+          <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
+            <mat-option>{{'None'|translate}}</mat-option>
+            <mat-option *ngIf="useAttendanceFeature"
+                        (click)="showAttendanceListing(selectedClass)">{{'Attendance'|translate}}</mat-option>
+            <mat-option *ngIf="useAttendanceFeature"
+                        (click)="showScoreListing(selectedClass)">{{'Scoring'|translate}}</mat-option>
+            <mat-option *ngFor="let item of formList;" value="{{item.id}}"
+                        (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="controls-two" *ngIf="showScoreList">
+        <mat-form-field class="example-full-width">
+          <mat-label>{{'Name of Test'|translate}}</mat-label>
+          <input matInput placeholder="{{'Ex. Math Week 1 test'|translate}}" [(ngModel)]="testName"
+                 (change)="updateScore(testName)">
+        </mat-form-field>
+      </div>
+    </div>
     <div>
-      <div *ngIf="!showAttendanceList" >
+      <div *ngIf="!showAttendanceList && !showScoreList && !showSummary">
         <table class="dashboard-table">
           <tr>
             <th>{{'Student'|translate}}</th>
@@ -105,7 +124,7 @@
         <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
       </div>
 
-      <div *ngIf="showAttendanceList" >
+      <div *ngIf="showAttendanceList && !showScoreList">
         <table class="dashboard-table">
           <tr>
             <th>{{'Student'|translate}}</th>
@@ -116,39 +135,56 @@
             <td style="text-align: center">
               <table>
                 <tr>
-                  <td style="padding-right: 1em;" >
+                  <td style="padding-right: 1em;">
                     <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
                     <ng-template #absent>
-                      <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)"><mat-icon>remove</mat-icon></mat-chip>
+                      <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)">
+                        <mat-icon>remove</mat-icon>
+                      </mat-chip>
                     </ng-template>
                     <ng-template #present>
-                      <mat-chip color="primary" class="green" (click)="toggleAttendance(element)"><mat-icon>check</mat-icon></mat-chip>
+                      <mat-chip color="primary" class="green" (click)="toggleAttendance(element)">
+                        <mat-icon>check</mat-icon>
+                      </mat-chip>
                     </ng-template>
                   </td>
                   <td>
                     <mat-chip-list multiple="false">
                       <ng-container *ngIf="element['mood'] == 'happy'; then happy; else happyDefault"></ng-container>
                       <ng-template #happy>
-                      <mat-chip (click)="toggleMood('happy', element)" color="primary" class="green"><mat-icon>mood</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('happy', element)" color="primary" class="green">
+                          <mat-icon>mood</mat-icon>
+                        </mat-chip>
                       </ng-template>
                       <ng-template #happyDefault>
-                        <mat-chip (click)="toggleMood('happy', element)" color="accent" class="green"><mat-icon>mood</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('happy', element)" color="accent" class="green">
+                          <mat-icon>mood</mat-icon>
+                        </mat-chip>
                       </ng-template>
 
-                      <ng-container *ngIf="element['mood'] == 'neutral'; then neutral; else neutralDefault"></ng-container>
+                      <ng-container
+                        *ngIf="element['mood'] == 'neutral'; then neutral; else neutralDefault"></ng-container>
                       <ng-template #neutral>
-                      <mat-chip (click)="toggleMood('neutral', element)" color="accent" class="orange"><mat-icon>sentiment_neutral</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('neutral', element)" color="accent" class="orange">
+                          <mat-icon>sentiment_neutral</mat-icon>
+                        </mat-chip>
                       </ng-template>
                       <ng-template #neutralDefault>
-                        <mat-chip (click)="toggleMood('neutral', element)" color="accent"><mat-icon>sentiment_neutral</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('neutral', element)" color="accent">
+                          <mat-icon>sentiment_neutral</mat-icon>
+                        </mat-chip>
                       </ng-template>
 
                       <ng-container *ngIf="element['mood'] == 'sad'; then sad; else sadDefault"></ng-container>
                       <ng-template #sad>
-                      <mat-chip (click)="toggleMood('sad', element)" color="accent" class="red"><mat-icon>sentiment_dissatisfied</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('sad', element)" color="accent" class="red">
+                          <mat-icon>sentiment_dissatisfied</mat-icon>
+                        </mat-chip>
                       </ng-template>
                       <ng-template #sadDefault>
-                        <mat-chip (click)="toggleMood('sad', element)" color="accent"><mat-icon>sentiment_dissatisfied</mat-icon></mat-chip>
+                        <mat-chip (click)="toggleMood('sad', element)" color="accent">
+                          <mat-icon>sentiment_dissatisfied</mat-icon>
+                        </mat-chip>
                       </ng-template>
                     </mat-chip-list>
                   </td>
@@ -160,8 +196,90 @@
         <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
       </div>
 
-    </div>
+      <div *ngIf="showSummary">
+        <table class="dashboard-table">
+          <tr>
+            <th class="student-name-column" colspan="2">{{'Student'|translate}}</th>
+            <th colspan="2">{{'Attendance'|translate}}</th>
+            <th colspan="2">{{'Behavior'|translate}}</th>
+          </tr>
+          <tr *ngFor="let student of attendanceReport?.attendanceList">
+<!--          <tr *ngFor="let student of attendanceReport?.attendanceList">-->
+            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
+            <td class="sms-button-column"><button mat-mini-fab color="accent" aria-label="SMS button with an sms icon" (click)="sendText(student)" [ngStyle]="{transform: 'scale(0.6)'}">
+              <mat-icon>sms</mat-icon>
+            </button></td>
+<!--            <td style="text-align: center">-->
+<!--              <table>-->
+<!--                <tr>-->
+                  <td style="padding-right: 1em;">
+<!--                    <mat-chip-list>-->
+<!--                      <mat-chip color="primary" [ngClass]="{'red': student.presentPercentage < 21, 'green': student.presentPercentage > 79}">-->
+<!--                        {{student.presentPercentage}}-->
+<!--                      </mat-chip>-->
+<!--                    </mat-chip-list>-->
+<!--                    <div [ngClass]="{-->
+<!--            'danger-bar': student.presentPercentage <= 20,-->
+<!--            'warn-bar': student.presentPercentage > 21,-->
+<!--            'ok-bar': student.presentPercentage > 51-->
+<!--          }">-->
+<!--                    <mat-progress-bar mode="determinate" value="{{student.presentPercentage}}"></mat-progress-bar> {{student.presentPercentage}}%-->
+<!--                    </div>-->
+                    <mat-progress-bar
+                      value="{{ student.presentPercentage }}"
+                      [appProgressBarColor]="(student.presentPercentage)"
+                      mode="determinate">
+                    </mat-progress-bar>
+                  </td>
+                  <td class="number-cell">{{student.presentPercentage}}%</td>
+                  <td style="padding-right: 1em;">
+<!--                    <mat-chip-list>-->
+<!--                    <mat-chip color="primary" [ngClass]="{'red': student.moodPercentage <=20, 'orange': (student.moodPercentage >=20 && student.moodPercentage < 90), 'green': student.moodPercentage >=90}">-->
+<!--                      {{student.moodPercentage}} %-->
+<!--                    </mat-chip>-->
+<!--                    </mat-chip-list>-->
+<!--                    <mat-progress-bar mode="determinate" value="{{student.moodPercentage}}"></mat-progress-bar> {{student.moodPercentage}}%-->
+                    <mat-progress-bar
+                      value="{{ student.moodPercentage }}"
+                      [appProgressBarColor]="(student.moodPercentage)"
+                      mode="determinate">
+                    </mat-progress-bar>
+                  </td>
+                  <td class="number-cell">{{student.moodPercentage}}%</td>
+<!--                </tr>-->
+<!--              </table>-->
+<!--            </td>-->
+          </tr>
+        </table>
+        <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+      </div>
 
+      <div *ngIf="showScoreList && !showAttendanceList">
+        <table class="dashboard-table">
+          <tr>
+            <th>{{'Student'|translate}}</th>
+            <th>{{'Score'|translate}}</th>
+          </tr>
+          <tr *ngFor="let element of scoreList">
+            <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
+            <td style="text-align: center">
+              <!--              <table>-->
+              <!--                <tr>-->
+              <!--                  <td style="padding-right: 1em;" >-->
+              <mat-form-field class="quarter-width">
+                <input matInput type="number" min="0" max="100" [(ngModel)]="element['score']"
+                       (change)="updateScore(element)">
+              </mat-form-field>
+              <!--                  </td>-->
+              <!--                </tr>-->
+              <!--              </table>-->
+            </td>
+          </tr>
+        </table>
+        <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+      </div>
+
+    </div>
 
 
   </div>
@@ -170,4 +288,4 @@
   {{'Click the wrench icon to enable an archived class.'|translate}}
 </mat-card>
 
-<div #container class = "hideme"> </div>
+<div #container class="hideme"></div>

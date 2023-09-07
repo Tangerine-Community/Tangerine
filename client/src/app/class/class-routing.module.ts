@@ -11,6 +11,7 @@ import {ClassConfigComponent} from "./class-config/class-config.component";
 import {ClassFormComponent} from "./class-form/class-form.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player.component";
 import {AttendanceComponent} from "./reports/attendance/attendance.component";
+import {GradesComponent} from "./reports/grades/grades.component";
 
 const appRoutes = [
   {
@@ -41,6 +42,11 @@ const appRoutes = [
   {
     path: 'reports/attendance/:classId',
     component: AttendanceComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'reports/grades/:classId',
+    component: GradesComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {

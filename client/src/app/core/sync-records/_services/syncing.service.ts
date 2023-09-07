@@ -87,6 +87,7 @@ export class SyncingService {
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.useAttendanceFeature) {
       allFormIds.push('attendance')
+      allFormIds.push('scores')
     }
     const includeByFormId = allFormIds.filter(id => !skipByFormId.includes(id))
     const DB = await this.userService.getUserDatabase(username);

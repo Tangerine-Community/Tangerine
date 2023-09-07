@@ -177,21 +177,21 @@ mat-card-title {
   font-size: xx-large;
 }
 
-.mat-chip.mat-standard-chip.mat-primary {
-  background-color: green;
-}
+/*.mat-chip.mat-standard-chip.mat-primary {*/
+/*  background-color: green;*/
+/*}*/
 
-.mat-chip.mat-standard-chip.mat-primary.blue {
-  background-color: deepskyblue;
-}
+/*.mat-chip.mat-standard-chip.mat-primary.blue {*/
+/*  background-color: deepskyblue;*/
+/*}*/
 
-.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.gray {
-  background-color: lightgrey;
-}
+/*.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.gray {*/
+/*  background-color: lightgrey;*/
+/*}*/
 
-.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.red {
-  background-color: red;
-}
+/*.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.red {*/
+/*  background-color: red;*/
+/*}*/
 
 .gray {
   background-color: gray;
@@ -207,4 +207,56 @@ mat-card-title {
 
 .red {
   background-color: red;
+}
+
+.quarter-width {
+  width: 25%;
+}
+
+.controls-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 10px;
+}
+.controls-one {
+  grid-column: 1 / 2;
+  grid-row: 1;
+}
+.controls-two {
+  grid-column: 2 / 2;
+  grid-row: 1;
+}
+.gray {
+  background-color: gray;
+}
+
+.green {
+  background-color: green;
+}
+
+.blue {
+  background-color: deepskyblue;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.red {
+  background-color: red;
+}
+
+.number-cell {
+  width: 20px;
+}
+
+.student-name-column {
+  width: 120px;
+  font-size: smaller;
+  padding-right:5px;
+}
+
+.sms-button-column {
+  width: 60px;
+  padding-right:5px;
 }

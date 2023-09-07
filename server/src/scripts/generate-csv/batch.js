@@ -63,8 +63,11 @@ async function batch() {
           // Check to see if variable comes from a section that was disabled.
           if (doc.type === 'attendance' && header === 'attendanceList') {
             // skip
+          } else if (doc.type === 'scores' && header === 'scoreList') {
+            // skip
           } else {
             let value = doc[header];
+            console.log("header: " + header + " value: " + value)
             if (typeof value === 'string') {
               if (csvReplacementCharacters) {
                 csvReplacementCharacters.forEach(expression => {
@@ -82,6 +85,7 @@ async function batch() {
               }
             }
             if (typeof header === 'string' && header.split('.').length === 3) {
+              console.log("Checking header: " + header + " to see if it is disabled.")
               const itemId = header.split('.')[1]
               if (itemId && doc[`${itemId}_disabled`] === 'true') {
                 if (outputDisabledFieldsToCSV) {
@@ -108,7 +112,13 @@ async function batch() {
         if (doc.type === 'attendance') {
           // let row = []
           doc.attendanceList.forEach(attendance => {
-            row = [...row.slice(0,-5), attendance.id, attendance.name, attendance.forms, attendance.mood, attendance.absent ]
+            row = [...row.slice(0,-4), attendance.id, attendance.name, attendance.forms, attendance.mood, attendance.absent ]
+            rows.push(row)
+          })
+        } else if (doc.type === 'scores') {
+          // let row = []
+          doc.scoreList.forEach(score => {
+            row = [...row.slice(0,-4), score.id, score.name, score.forms, score.score ]
             rows.push(row)
           })
         } else {
