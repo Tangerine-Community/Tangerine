@@ -3,7 +3,6 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {DashboardService} from '../_services/dashboard.service';
 import { PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 import {ClassFormService} from '../_services/class-form.service';
 import {Router} from '@angular/router';
 import {_TRANSLATE} from '../../shared/translation-marker';
@@ -15,6 +14,7 @@ import {VariableService} from "../../shared/_services/variable.service";
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import { DateTime } from 'luxon';
+declare const sms: any;
 
 export interface StudentResult {
   id: string;
@@ -73,6 +73,8 @@ export class DashboardComponent implements OnInit {
   feedbackViewInited = false;
   useAttendanceFeature = false
   showAttendanceList: boolean
+  showScoreList: boolean
+  showSummary: boolean
   attendanceRegister: {
     _id: string,
     timestamp: number,
@@ -87,8 +89,32 @@ export class DashboardComponent implements OnInit {
     complete: boolean,
     type: string
   }
+  scoreRegister: {
+    _id: string,
+    timestamp: number,
+    classId: string,
+    grade: string,
+    schoolName: string
+    schoolYear: string,
+    scoreList: StudentResult[],
+    collection: string,
+    form: {},
+    items: any[],
+    complete: boolean,
+    type: string,
+    testName: string
+  }
   attendanceList: StudentResult[]
+  scoreList: StudentResult[]
+  testName: string = ""
 
+  scoreReports: any[]
+  scoreReport: any
+  attendanceReport: any
+  attendanceReports: any[]
+  allStudentScores: any = {}
+  window:any;
+  
   getValue: (variableName, response) => any;
   @ViewChild('container', {static: true}) container: ElementRef;
 
@@ -110,7 +136,8 @@ export class DashboardComponent implements OnInit {
   }
 
   async ngOnInit() {
-    (<any>window).Tangy = {};
+    (<any>window).Tangy = {}
+    this.window = window
     const appConfig = await this.appConfigService.getAppConfig()
     this.useAttendanceFeature = appConfig.useAttendanceFeature
     await this.classFormService.initialize();
@@ -143,7 +170,7 @@ export class DashboardComponent implements OnInit {
     // if (this.useAttendanceFeature) {
     //   await this.getAttendanceList()
     // } else {
-      await this.initDashboard(null, null, null, null);
+    await this.initDashboard(null, null, null, null);
     // }
   }
 
@@ -207,12 +234,12 @@ export class DashboardComponent implements OnInit {
         const initialForm = this.curriculumFormsList[0];
         this.currentItemId = initialForm.id;
       }
-      if (this.currentItemId) {
-        // if (this.useAttendanceFeature) {
-        //   await this.getAttendanceList()
-        // } else {
-          this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId);
-        // }
+      // showSummary
+      if (this.useAttendanceFeature) {
+        this.showSummary = true
+        await this.populateSummary(this.currentClassId, this.curriculum)
+      } else {
+        await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId);
       }
 
       // await this.populateFeedback(curriculumId);
@@ -297,6 +324,8 @@ export class DashboardComponent implements OnInit {
   async selectSubTask(itemId, classId, curriculumId) {
     // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
     this.showAttendanceList = false;
+    this.showScoreList = false;
+    this.showSummary = false;
     await this.variableService.set( 'class-currentItemId', itemId );
 
     // this.currentClassId = this.selectedClass.id;
@@ -327,9 +356,11 @@ export class DashboardComponent implements OnInit {
     this.students.forEach((student) => {
       const studentResults = {};
       const student_name = this.getValue('student_name', student.doc)
+      const phone = this.getValue('phone', student.doc);
       const classId = this.getValue('classId', student.doc)
       studentResults['id'] = student.id;
       studentResults['name'] = student_name
+      studentResults['phone'] = phone
       studentResults['classId'] = classId
       // studentResults["forms"] = [];
       studentResults['forms'] = {};
@@ -353,34 +384,36 @@ export class DashboardComponent implements OnInit {
   }
 
   /**
-   * Get the attendance list for the class. If the attendanceListFromDoc is passed in, then
+   * Get the attendance list for the class. If the listFromDoc is passed in, then
    * populate the student from that doc by matching student.id.
    * @param students
-   * @param attendanceListFromDoc
+   * @param listFromDoc
    */
-  async getAttendanceList(students, attendanceListFromDoc) {
+  async getList(students, listFromDoc) {
     // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
-    const attendanceList = []
+    const list = []
     students.forEach((student) => {
       let studentResult
       const studentId = student.id
-      if (attendanceListFromDoc) {
-        studentResult = attendanceListFromDoc.find(studentDoc => studentDoc.id === studentId)
+      if (listFromDoc) {
+        studentResult = listFromDoc.find(studentDoc => studentDoc.id === studentId)
       }
       if (studentResult) {
-        attendanceList.push(studentResult)
+        list.push(studentResult)
       } else {
         const student_name = this.getValue('student_name', student.doc)
+        const phone = this.getValue('phone', student.doc);
         const classId = this.getValue('classId', student.doc)
         studentResult = {}
         studentResult['id'] = studentId
         studentResult['name'] = student_name
+        studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}
-        attendanceList.push(studentResult)
+        list.push(studentResult)
       }
     })
-    return attendanceList
+    return list
     // await this.populateFeedback(curriculumId);
   }
 
@@ -579,8 +612,12 @@ export class DashboardComponent implements OnInit {
    * Makes attendance the selectedCurriculum.
    * @param cassId
    */
-  async showAttandanceListing(selectedClass) {
-    console.log('showAttandanceListing')
+  async showAttendanceListing(selectedClass) {
+    console.log('showAttendanceListing')
+    this.showScoreList = false
+    this.showSummary = false
+    const type = "attendance"
+    const registerNameForDialog = 'Attendance and Behaviour';
     this.currentClassId = await this.variableService.get('class-currentClassId')
     this.students = await this.getMyStudents(this.currentClassId)
 
@@ -589,19 +626,19 @@ export class DashboardComponent implements OnInit {
     const grade = this.getClassTitle(selectedClass.doc)
     const schoolName = this.getValue('school_name', selectedClass.doc)
     const schoolYear = this.getValue('school_year', selectedClass.doc)
-    const attendanceRegisterId = 'attendance-' + grade + '-' + reportDate
-    let attendanceRegisterDoc, attendanceListFromDoc
+    const id = type + '-' + grade + '-' + reportDate
+    let doc, listFromDoc
     try {
-      attendanceRegisterDoc = await this.dashboardService.getDoc(attendanceRegisterId)
-      attendanceListFromDoc = attendanceRegisterDoc.attendanceList
-      // this.attendanceRegister = attendanceRegisterDoc
+      doc = await this.dashboardService.getDoc(id)
+      listFromDoc = doc.attendanceList
+      // this.attendanceRegister = doc
     } catch (e) {
     }
 
-    this.attendanceList =  await this.getAttendanceList(this.students, attendanceListFromDoc)
-    if (!attendanceRegisterDoc) {
+    this.attendanceList =  await this.getList(this.students, listFromDoc)
+    if (!doc) {
       this.attendanceRegister = {
-        _id: attendanceRegisterId,
+        _id: id,
         timestamp: timestamp,
         classId: selectedClass.id,
         grade: grade,
@@ -609,9 +646,9 @@ export class DashboardComponent implements OnInit {
         schoolYear: schoolYear,
         attendanceList: this.attendanceList,
         collection: 'TangyFormResponse',
-        type: 'attendance',
+        type: type,
         form: {
-          id: 'attendance',
+          id: type,
         },
         items: [{
           id: 'class-registration',
@@ -628,15 +665,15 @@ export class DashboardComponent implements OnInit {
         }],
         complete: false
       }
-      const startAttendanceRegister = confirm(_TRANSLATE('Begin Attendance and Behaviour record for today?'))
-      if (startAttendanceRegister) {
-        const attendance = {
-          'name': 'attendance',
+      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
+      if (startRegister) {
+        const curriculum = {
+          'name': type,
           'value': 'on',
-          'label': _TRANSLATE('Attendance and Behaviour')
+          'label': _TRANSLATE(registerNameForDialog)
         }
-        this.currArray.push(attendance)
-        this.selectedCurriculum = this.currArray.find(x => x.name === 'attendance')
+        this.currArray.push(curriculum)
+        this.selectedCurriculum = this.currArray.find(x => x.name === type)
         this.showAttendanceList = true
         await this.saveStudentAttendance(null)
       } else {
@@ -649,8 +686,94 @@ export class DashboardComponent implements OnInit {
       }
     } else {
       this.showAttendanceList = true
-      attendanceRegisterDoc.attendanceList = this.attendanceList
-      this.attendanceRegister = attendanceRegisterDoc
+      doc.attendanceList = this.attendanceList
+      this.attendanceRegister = doc
+    }
+  }
+  
+  /**
+   * Shim attendance into the currArray so it'll appear in the dropdown.
+   * Makes attendance the selectedCurriculum.
+   * @param cassId
+   */
+  async showScoreListing(selectedClass) {
+    console.log('showScoreListing')
+    this.showAttendanceList = false
+    this.showSummary = false
+    const type = "scores"
+    const registerNameForDialog = 'Scoring';
+    this.currentClassId = await this.variableService.get('class-currentClassId')
+    this.students = await this.getMyStudents(this.currentClassId)
+
+    const timestamp = Date.now()
+    const reportDate = DateTime.local().toISODate()
+    const grade = this.getClassTitle(selectedClass.doc)
+    const schoolName = this.getValue('school_name', selectedClass.doc)
+    const schoolYear = this.getValue('school_year', selectedClass.doc)
+    const id = type + '-' + grade + '-' + reportDate
+    let doc, listFromDoc
+    try {
+      doc = await this.dashboardService.getDoc(id)
+      listFromDoc = doc.scoreList
+      this.testName = doc.testName
+      // this.attendanceRegister = doc
+    } catch (e) {
+    }
+
+    this.scoreList =  await this.getList(this.students, listFromDoc)
+    if (!doc) {
+      this.scoreRegister = {
+        _id: id,
+        timestamp: timestamp,
+        classId: selectedClass.id,
+        grade: grade,
+        schoolName: schoolName,
+        schoolYear: schoolYear,
+        testName: this.testName,
+        scoreList: this.scoreList,
+        collection: 'TangyFormResponse',
+        type: type,
+        form: {
+          id: type,
+        },
+        items: [{
+          id: 'class-registration',
+          title: 'Class Registration',
+          inputs: [{}]
+        },
+          {
+          id: 'item_1',
+          title: 'Item 1',
+          inputs: [{
+            name: 'timestamp',
+            label: 'timestamp'
+          }]
+        }],
+        complete: false
+      }
+      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
+      if (startRegister) {
+        const curriculum = {
+          'name': type,
+          'value': 'on',
+          'label': _TRANSLATE(registerNameForDialog)
+        }
+        this.currArray.push(curriculum)
+        this.selectedCurriculum = this.currArray.find(x => x.name === type)
+        this.showScoreList = true
+        await this.saveStudentScore(null)
+      } else {
+        this.showScoreList = false
+        if (!this.currentItemId || this.currentItemId === '') {
+          const initialForm = this.curriculumFormsList[0]
+          this.currentItemId = initialForm.id
+        }
+        await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
+      }
+    } else {
+      this.showScoreList = true
+      doc.scoreList = this.scoreList
+      this.scoreRegister = doc
     }
   }
 
@@ -695,5 +818,82 @@ export class DashboardComponent implements OnInit {
     } catch (e) {
     }
     await this.dashboardService.saveDoc(this.attendanceRegister)
+  }
+  
+  async updateScore(student) {
+    // student['score'] = score
+    await this.saveStudentScore(student)
+  }
+
+  private async saveStudentScore(student) {
+    console.log('saved student score: ' + JSON.stringify(student))
+    this.scoreRegister.scoreList = this.scoreList
+    // update testName in case user updated it.
+    this.scoreRegister.testName = this.testName
+    // save scoreRegister
+    let doc
+    try {
+      doc = await this.dashboardService.getDoc(this.scoreRegister._id)
+      this.scoreRegister['_rev'] = doc._rev
+    } catch (e) {
+    }
+    await this.dashboardService.saveDoc(this.scoreRegister)
+  }
+  
+  private async populateSummary(classId, curriculum) {
+    this.students = await this.getMyStudents(classId);
+    this.scoreReports = await this.dashboardService.getScoreDocs(classId)
+    const currentScoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
+    this.scoreReport = currentScoreReport
+
+    this.attendanceReports = await this.dashboardService.getAttendanceDocs(classId)
+    const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
+
+    // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
+    const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, classId)
+
+    const rankedStudentScores = this.dashboardService.rankStudentScores(studentReportsCards);
+    // this.groupingsByCurriculum[curriculumId] = rankedStudentScores
+    this.allStudentScores[curriculum.name] = rankedStudentScores.map((grouping) => {
+      return {
+        id: grouping.result.id,
+        curriculum: grouping.result.curriculum,
+        score: grouping.result.scorePercentageCorrect
+      }
+    })
+    
+    this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, this.students))
+    this.attendanceReport = currentAttendanceReport
+  }
+
+  sendText(student) {
+    console.log("send text")
+    if (this.window.isCordovaApp) {
+      //CONFIGURATION
+      var options = {
+        replaceLineBreaks: false, // true to replace \n by a new line, false by default
+        android: {
+          intent: 'INTENT'  // send SMS with the native android SMS messaging
+          //intent: '' // send SMS without opening any other app, require : android.permission.SEND_SMS and android.permission.READ_PHONE_STATE
+        }
+      };
+
+      var success = function () {
+        // alert('Message sent successfully');
+      };
+      var error = function (e) {
+        alert('Message Failed:' + e);
+      };
+      const phone = student.phone
+      if (!phone) {
+        alert('This student does not have a phone number.')
+        return
+      } else {
+        const message = 'Report for ' + student.name + ': Attendance is ' + student.presentPercentage + '%' + ' and behaviour is ' + student.moodPercentage + '%'
+        sms.send(phone, message, options, success, error);
+      }
+    } else {
+      alert('This feature is only available on a mobile device.')
+    }
   }
 }

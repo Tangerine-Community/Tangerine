@@ -8,6 +8,7 @@ import {ClassUtils} from '../class-utils';
 import {UserService} from '../../shared/_services/user.service';
 import {UserDatabase} from '../../shared/_classes/user-database.class';
 import {_TRANSLATE} from 'src/app/shared/translation-marker';
+// import {GroupingTable, StudentReportsCards} from "../reports/task-report/task-report.component";
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -657,5 +658,229 @@ export class DashboardService {
     this.db = await this.getUserDB()
     return await this.db.put(doc);
   }
+
+  async getScoreDocs(selectedClass: any) {
+    this.db = await this.getUserDB();
+    const result = await this.db.query('tangy-class/responsesForScoreByClassId', {
+      startkey: [selectedClass],
+      endkey: [selectedClass, {}],
+      include_docs: true
+    });
+    return result.rows;
+  }
+
+  /**
+   * Queries responsesForAttendanceByClassId view to get attendance docs for a class
+   * @param selectedClass
+   */
+  async getAttendanceDocs(selectedClass: any) {
+    this.db = await this.getUserDB();
+    const result = await this.db.query('tangy-class/responsesForAttendanceByClassId', {
+      startkey: [selectedClass],
+      endkey: [selectedClass, {}],
+      include_docs: true
+    });
+    return result.rows;
+  }
+
+  /**
+   * Grafted from task-report.component.ts
+   * Loops through all the student scores and calculates the average mood, present, and score for each student
+   * populate students array if you need to add phone and other properties from studentRegistration.
+   * @param currentAttendanceReport
+   * @private
+   */
+  processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, students: any[]) {
+    return (attendanceReport) => {
+      const attendanceList = attendanceReport.doc.attendanceList
+      for (let i = 0; i < attendanceList.length; i++) {
+        const student = attendanceList[i]
+        const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
+          return thisStudent.id === student.id
+        })
+        currentStudent.reportCount = currentStudent.reportCount ? currentStudent.reportCount + 1 : 1
+        currentStudent.presentCount = currentStudent.presentCount ? currentStudent.presentCount : 0
+        if (students) {
+          const studentRegistration  = students.find((thisStudent) => {
+            return thisStudent.doc._id === student.id
+          })
+          const phone = this.getValue('phone', studentRegistration.doc)
+          currentStudent.phone = phone
+        }
+        const absent = student.absent ? student.absent : false
+        if (!absent) {
+          currentStudent.presentCount = currentStudent.presentCount + 1
+        }
+        currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
+
+        currentStudent.moodValues = currentStudent.moodValues ? currentStudent.moodValues : []
+        const mood = student.mood
+        if (mood) {
+          switch (mood) {
+            case 'happy':
+              currentStudent.moodValues.push(100)
+              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
+              break
+            case 'neutral':
+              currentStudent.moodValues.push(66.6)
+              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
+              break
+            case 'sad':
+              currentStudent.moodValues.push(33.3)
+              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
+              break
+          }
+        }
+        if (!currentStudent.score) {
+          const currentStudentScore = scoreReport.scoreList.find((thisStudent) => {
+            return thisStudent.id === student.id
+          })
+          currentStudent.score = currentStudentScore.score
+        }
+        const studentScores = {}
+        const curriculi = Object.keys(allStudentScores);
+        curriculi.forEach((curriculum) => {
+          const scores = allStudentScores[curriculum]
+          const studentScore = scores.filter((score) => {
+            return score.id === student.id
+          })
+          studentScores[curriculum] = studentScore
+        })
+        currentStudent.studentScores = studentScores
+      }
+    };
+  }
+
+  async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores) {
+    const recentVisitsReport = {}
+    recentVisitsReport['count'] = 3
+    // const classId = this.route.snapshot.paramMap.get('classId')
+    // const result = await this.db.query('tangy-class/recentVisitsByClassId', {
+    //   startkey: [classId],
+    //   endkey: [classId, {}],
+    //   include_docs: true
+    // });
+    // return result.rows;
+    // const recentVisitReports = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
+    // const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]
+    // recentVisitReports.forEach(this.processAttendanceReport())
+
+    // do a deep clone
+    const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
+    const currentAttendanceReport = JSON.parse(JSON.stringify(recentVisitDoc))
+    recentVisitReports.forEach(this.processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, null))
+    // this.recentVisitsReport = currentAttendanceReport
+    return currentAttendanceReport
+  }
+
+  rankStudentScores(studentReportsCards: StudentReportsCards) {
+    const groupings: Array<GroupingTable> = [];
+    const colorClass = ['concerning', 'poor', 'mediocre', 'good', 'great'];
+    const status = ['Concerning', 'Poor', 'Mediocre', 'Good', 'Great'];
+    Object.values(studentReportsCards).forEach((reportCard: StudentResult) => {
+      console.log('hey');
+      const reduceClassAverage = (p, studentResult) => {
+        return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
+      };
+      const calcAverage = array => array.reduce(reduceClassAverage, 0) / array.length;
+      const average = Math.round(calcAverage(reportCard.results));
+      reportCard.scorePercentageCorrect = average;
+      const percentile = this.calculatePercentile(average);
+
+      const groupingTable = new GroupingTable();
+      groupingTable.name = reportCard.name;
+      groupingTable.result = reportCard;
+      groupingTable.percentile = percentile;
+      groupingTable.status = status[percentile];
+      groupingTable.colorClass = colorClass[percentile];
+
+      groupings.push(groupingTable);
+    });
+    // this.totals = totals;
+    // this.studentReportsCards = studentReportsCards;
+    function compare(a, b) {
+      if (typeof a.result.scorePercentageCorrect === 'undefined' && b.result.scorePercentageCorrect) {
+        return 1;
+      }
+      if (a.result.scorePercentageCorrect && typeof b.result.scorePercentageCorrect === 'undefined') {
+        return -1;
+      }
+      if (a.result.scorePercentageCorrect < b.result.scorePercentageCorrect) {
+        return 1;
+      }
+      if (a.result.scorePercentageCorrect > b.result.scorePercentageCorrect) {
+        return -1;
+      }
+      return 0;
+    }
+    return groupings.sort(compare);
+  }
+
+  async generateStudentReportsCards(curriculum, classId) {
+    const studentReportsCards: StudentReportsCards = {};
+    // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
+    // this.curriculumName = curriculum.label;
+    // // this.curriculumName = "Student Evaluation";
+    const curriculumId = curriculum.name
+    const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
+    const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+    const itemReport = await Promise.all(curriculumFormsList.map(async item => {
+        const results = await this.getResultsByClass(classId, curriculumId, curriculumFormsList, item);
+        if (results.length > 0) {
+          return await this.getClassGroupReport(item, classId, curriculumId, results);
+        }
+      })
+    );
+    Object.keys(itemReport).forEach((item) => {
+      if (typeof itemReport[item] !== 'undefined') {
+        const report: ClassGroupingReport = itemReport[item];
+        const allStudentResults: Array<StudentResult> = report.allStudentResults;
+        const reduceClassAverage = (p, studentResult) => {
+          return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
+        };
+        const calcAverage = array => array.reduce(reduceClassAverage, 0) / array.length;
+        const average = Math.round(calcAverage(allStudentResults));
+
+        // now add array of studentResults to each student's record.
+        const collectStudentResults = (studentResult: StudentResult) => {
+          let reportCard = studentReportsCards[studentResult.id];
+          if (typeof reportCard === 'undefined') {
+            reportCard = new StudentResult();
+            reportCard.results = new Array<StudentResult>();
+            reportCard.curriculum = curriculum;
+            reportCard.name = studentResult.name;
+            reportCard.id = studentResult.id;
+          }
+          reportCard.results.push(studentResult);
+          studentReportsCards[studentResult.id] = reportCard;
+          // let average = typeof studentResult.scorePercentageCorrect !== 'undefined'? studentAverage.scorePercentageCorrect + studentResult.scorePercentageCorrect:studentAverage.scorePercentageCorrect
+
+          // add studentAverage to studentAverages object.
+        };
+        allStudentResults.forEach(collectStudentResults);
+
+        // totals.push({
+        //   itemId: report.itemId,
+        //   itemName: report.subtestName,
+        //   average: average,
+        //   classSize: report.classSize,
+        //   studentsAssessed: report.studentsAssessed
+        // });
+      }
+    });
+    return studentReportsCards
+  }
+}
+
+export class StudentReportsCards {
+  [key: string]: StudentResult
+}
+
+export class GroupingTable {
+  name: string;
+  result: StudentResult;
+  percentile: number;
+  status: string;
+  colorClass: string;
 }
 
