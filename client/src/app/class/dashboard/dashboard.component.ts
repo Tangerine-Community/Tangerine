@@ -803,7 +803,9 @@ export class DashboardComponent implements OnInit {
 
   async toggleMood(mood, student) {
     student.mood = mood
-    await this.saveStudentAttendance(student)
+    if (!student.absent) {
+      await this.saveStudentAttendance(student)
+    }
   }
 
   private async saveStudentAttendance(student) {
