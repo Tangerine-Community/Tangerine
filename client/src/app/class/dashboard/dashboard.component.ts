@@ -1,19 +1,20 @@
-import { UserService } from 'src/app/shared/_services/user.service';
+import {UserService} from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {DashboardService} from '../_services/dashboard.service';
-import { PageEvent } from '@angular/material/paginator';
+import {PageEvent} from '@angular/material/paginator';
 import {ClassFormService} from '../_services/class-form.service';
 import {Router} from '@angular/router';
 import {_TRANSLATE} from '../../shared/translation-marker';
 import {ClassUtils} from '../class-utils';
 import {ClassGroupingReport} from '../reports/student-grouping-report/class-grouping-report';
 import {TangyFormService} from '../../tangy-forms/tangy-form.service';
-import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
+import {TangyFormsInfoService} from 'src/app/tangy-forms/tangy-forms-info-service';
 import {VariableService} from "../../shared/_services/variable.service";
-import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import {TangyFormResponse} from 'src/app/tangy-forms/tangy-form-response.class';
 import {AppConfigService} from "../../shared/_services/app-config.service";
-import { DateTime } from 'luxon';
+import {DateTime} from 'luxon';
+
 declare const sms: any;
 
 export interface StudentResult {
@@ -866,6 +867,27 @@ export class DashboardComponent implements OnInit {
     
     this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, this.students))
     this.attendanceReport = currentAttendanceReport
+    const studentsWithoutAttendance:any[] = this.students.filter((thisStudent) => {
+      return !this.attendanceReport.attendanceList.find((student) => {
+        return thisStudent.doc._id === student.id
+      })
+    })
+    // add any students who haven't had attendance taken yet to the attendanceList
+    studentsWithoutAttendance.forEach((student) => {
+      const studentResult = {}
+      const student_name = this.getValue('student_name', student.doc)
+      const phone = this.getValue('phone', student.doc);
+      const classId = this.getValue('classId', student.doc)
+      studentResult['id'] = student.id
+      studentResult['name'] = student_name
+      studentResult['phone'] = phone
+      studentResult['classId'] = classId
+      studentResult['forms'] = {}
+      this.attendanceReport.attendanceList.push(studentResult)
+    })
+    // const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
+    //   return thisStudent.id === student.id
+    // })
   }
 
   sendText(student) {
