@@ -72,10 +72,11 @@
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
-    <div *ngIf="selectedCurriculum && !showSummary && !showAttendanceList" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
+    <div *ngIf="selectedCurriculum && !showSummary && !showAttendanceList && !showScoreListing" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
       : {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
     <div *ngIf="showSummary" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}</p></div>
     <div *ngIf="showAttendanceList" class="selectedClassLabel"><p>{{'Attendance List'|translate}}</p></div>
+    <div *ngIf="showScoreList" class="selectedClassLabel"><p>{{'Student Scores'|translate}}</p></div>
     <div class="controls-wrapper">
       <div class="controls-one">
         <mat-form-field>
@@ -214,21 +215,25 @@
               </button>
             </td>
             <td style="padding-right: 1em;">
-              <mat-progress-bar
+              <mat-progress-bar 
+                *ngIf="student.presentPercentage"
                 value="{{ student.presentPercentage }}"
                 [appProgressBarColor]="(student.presentPercentage)"
                 mode="determinate">
               </mat-progress-bar>
             </td>
-            <td class="number-cell">{{student.presentPercentage}}%</td>
+            <td class="number-cell" *ngIf="student.presentPercentage">{{student.presentPercentage}}%</td>
+            <td class="number-cell" *ngIf="!student.presentPercentage">{{'N/A'|translate}}</td>
             <td style="padding-left: 1em;padding-right: 1em;">
               <mat-progress-bar
+                *ngIf="student.moodPercentage"
                 value="{{ student.moodPercentage }}"
                 [appProgressBarColor]="(student.moodPercentage)"
                 mode="determinate">
               </mat-progress-bar>
             </td>
-            <td class="number-cell">{{student.moodPercentage}}%</td>
+            <td class="number-cell" *ngIf="student.moodPercentage">{{student.moodPercentage}}%</td>
+            <td class="number-cell" *ngIf="!student.moodPercentage">{{'N/A'|translate}}</td>
           </tr>
         </table>
         <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
