@@ -735,7 +735,7 @@ export class DashboardService {
           const currentStudentScore = scoreReport.scoreList.find((thisStudent) => {
             return thisStudent.id === student.id
           })
-          currentStudent.score = currentStudentScore.score
+          currentStudent.score = currentStudentScore?.score
         }
         const studentScores = {}
         const curriculi = Object.keys(allStudentScores);
@@ -778,7 +778,6 @@ export class DashboardService {
     const colorClass = ['concerning', 'poor', 'mediocre', 'good', 'great'];
     const status = ['Concerning', 'Poor', 'Mediocre', 'Good', 'Great'];
     Object.values(studentReportsCards).forEach((reportCard: StudentResult) => {
-      console.log('hey');
       const reduceClassAverage = (p, studentResult) => {
         return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
       };

@@ -112,7 +112,7 @@ async function batch() {
         if (doc.type === 'attendance') {
           // let row = []
           doc.attendanceList.forEach(attendance => {
-            row = [...row.slice(0,-4), attendance.id, attendance.name, attendance.forms, attendance.mood, attendance.absent ]
+            row = [...row.slice(0,-6), attendance.id, attendance.name, attendance.phone, attendance.forms, attendance.absent, attendance.mood ]
             rows.push(row)
           })
         } else if (doc.type === 'scores') {

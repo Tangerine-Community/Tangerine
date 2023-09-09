@@ -296,8 +296,8 @@ export class DashboardComponent implements OnInit {
     this.curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
 
     if (typeof this.curriculumFormsList === 'undefined') {
-      const msg = `This is an error - there are no this.curriculumForms
-      for this curriculum or range. Check if the config files are available.`;
+      const msg = _TRANSLATE(`This is an error - there are no this.curriculumForms
+      for this curriculum or range. Check if the config files are available.`);
       console.log(msg);
       alert(msg);
     }
@@ -411,6 +411,8 @@ export class DashboardComponent implements OnInit {
         studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}
+        studentResult['absent'] = false
+        studentResult['mood'] = 'happy'
         list.push(studentResult)
       }
     })
@@ -614,7 +616,6 @@ export class DashboardComponent implements OnInit {
    * @param cassId
    */
   async showAttendanceListing(selectedClass) {
-    console.log('showAttendanceListing')
     this.showScoreList = false
     this.showSummary = false
     const type = "attendance"
@@ -698,7 +699,6 @@ export class DashboardComponent implements OnInit {
    * @param cassId
    */
   async showScoreListing(selectedClass) {
-    console.log('showScoreListing')
     this.showAttendanceList = false
     this.showSummary = false
     const type = "scores"
@@ -825,6 +825,11 @@ export class DashboardComponent implements OnInit {
   
   async updateScore(student) {
     // student['score'] = score
+    if (student['score'] < 0 || student['score'] > 100) {
+      alert(_TRANSLATE('Score must be between 0 and 100'))
+      student['score'] = 0
+      return
+    }
     await this.saveStudentScore(student)
   }
 
@@ -906,18 +911,18 @@ export class DashboardComponent implements OnInit {
         // alert('Message sent successfully');
       };
       var error = function (e) {
-        alert('Message Failed:' + e);
+        alert(_TRANSLATE('Message Failed:') + e);
       };
       const phone = student.phone
       if (!phone) {
-        alert('This student does not have a phone number.')
+        alert(_TRANSLATE('This student does not have a phone number.'))
         return
       } else {
-        const message = 'Report for ' + student.name + ': Attendance is ' + student.presentPercentage + '%' + ' and behaviour is ' + student.moodPercentage + '%'
+        const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
         sms.send(phone, message, options, success, error);
       }
     } else {
-      alert('This feature is only available on a mobile device.')
+      alert(_TRANSLATE('This feature is only available on a mobile device.'))
     }
   }
 }

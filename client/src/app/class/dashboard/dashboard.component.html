@@ -72,7 +72,8 @@
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
-    <div *ngIf="selectedCurriculum && !showSummary && !showAttendanceList && !showScoreListing" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
+    <div *ngIf="selectedCurriculum && !showSummary && !showAttendanceList && !showScoreListing"
+         class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
       : {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
     <div *ngIf="showSummary" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}</p></div>
     <div *ngIf="showAttendanceList" class="selectedClassLabel"><p>{{'Attendance List'|translate}}</p></div>
@@ -130,68 +131,69 @@
         <table class="dashboard-table">
           <tr>
             <th>{{'Student'|translate}}</th>
-            <th>{{'Status'|translate}}</th>
+            <th>{{'Attendance'|translate}}</th>
+            <th>{{'Behavior'|translate}}</th>
           </tr>
           <tr *ngFor="let element of attendanceList">
             <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
-            <td style="text-align: center">
-              <table>
-                <tr>
-                  <td style="padding-right: 1em;">
-                    <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
-                    <ng-template #absent>
-                      <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)">
-                        <mat-icon>remove</mat-icon>
-                      </mat-chip>
-                    </ng-template>
-                    <ng-template #present>
-                      <mat-chip color="primary" class="green" (click)="toggleAttendance(element)">
-                        <mat-icon>check</mat-icon>
-                      </mat-chip>
-                    </ng-template>
-                  </td>
-                  <td>
-                    <mat-chip-list [selectable]="!element['absent']" multiple="false">
-                      <ng-container *ngIf="element['mood'] == 'happy'; then happy; else happyDefault"></ng-container>
-                      <ng-template #happy>
-                        <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']" [selectable]="!element['absent']" color="primary" class="green">
-                          <mat-icon>mood</mat-icon>
-                        </mat-chip>
-                      </ng-template>
-                      <ng-template #happyDefault>
-                        <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']" [selectable]="!element['absent']" color="accent" class="accent">
-                          <mat-icon>mood</mat-icon>
-                        </mat-chip>
-                      </ng-template>
+            <td style="padding-right: 1em;">
+              <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
+              <ng-template #absent>
+                <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)">
+                  <mat-icon>remove</mat-icon>
+                </mat-chip>
+              </ng-template>
+              <ng-template #present>
+                <mat-chip color="primary" class="green" (click)="toggleAttendance(element)">
+                  <mat-icon>check</mat-icon>
+                </mat-chip>
+              </ng-template>
+            </td>
+            <td>
+              <mat-chip-list [selectable]="!element['absent']" multiple="false">
+                <ng-container *ngIf="element['mood'] == 'happy'; then happy; else happyDefault"></ng-container>
+                <ng-template #happy>
+                  <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']"
+                            [selectable]="!element['absent']" color="primary" class="green">
+                    <mat-icon>mood</mat-icon>
+                  </mat-chip>
+                </ng-template>
+                <ng-template #happyDefault>
+                  <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']"
+                            [selectable]="!element['absent']" color="accent" class="accent">
+                    <mat-icon>mood</mat-icon>
+                  </mat-chip>
+                </ng-template>
 
-                      <ng-container
-                        *ngIf="element['mood'] == 'neutral'; then neutral; else neutralDefault"></ng-container>
-                      <ng-template #neutral>
-                        <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']" [selectable]="!element['absent']" color="accent" class="orange">
-                          <mat-icon>sentiment_neutral</mat-icon>
-                        </mat-chip>
-                      </ng-template>
-                      <ng-template #neutralDefault>
-                        <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']" [selectable]="!element['absent']" color="accent">
-                          <mat-icon>sentiment_neutral</mat-icon>
-                        </mat-chip>
-                      </ng-template>
+                <ng-container
+                  *ngIf="element['mood'] == 'neutral'; then neutral; else neutralDefault"></ng-container>
+                <ng-template #neutral>
+                  <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']"
+                            [selectable]="!element['absent']" color="accent" class="orange">
+                    <mat-icon>sentiment_neutral</mat-icon>
+                  </mat-chip>
+                </ng-template>
+                <ng-template #neutralDefault>
+                  <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']"
+                            [selectable]="!element['absent']" color="accent">
+                    <mat-icon>sentiment_neutral</mat-icon>
+                  </mat-chip>
+                </ng-template>
 
-                      <ng-container *ngIf="element['mood'] == 'sad'; then sad; else sadDefault"></ng-container>
-                      <ng-template #sad>
-                        <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']" [selectable]="!element['absent']" color="accent" class="red">
-                          <mat-icon>sentiment_dissatisfied</mat-icon>
-                        </mat-chip>
-                      </ng-template>
-                      <ng-template #sadDefault>
-                        <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']" [selectable]="!element['absent']" color="accent">
-                          <mat-icon>sentiment_dissatisfied</mat-icon>
-                        </mat-chip>
-                      </ng-template>
-                    </mat-chip-list>
-                  </td>
-                </tr>
-              </table>
+                <ng-container *ngIf="element['mood'] == 'sad'; then sad; else sadDefault"></ng-container>
+                <ng-template #sad>
+                  <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']"
+                            [selectable]="!element['absent']" color="accent" class="red">
+                    <mat-icon>sentiment_dissatisfied</mat-icon>
+                  </mat-chip>
+                </ng-template>
+                <ng-template #sadDefault>
+                  <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']"
+                            [selectable]="!element['absent']" color="accent">
+                    <mat-icon>sentiment_dissatisfied</mat-icon>
+                  </mat-chip>
+                </ng-template>
+              </mat-chip-list>
             </td>
           </tr>
         </table>
@@ -215,7 +217,7 @@
               </button>
             </td>
             <td style="padding-right: 1em;">
-              <mat-progress-bar 
+              <mat-progress-bar
                 *ngIf="student.presentPercentage"
                 value="{{ student.presentPercentage }}"
                 [appProgressBarColor]="(student.presentPercentage)"
@@ -249,7 +251,7 @@
             <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
             <td style="text-align: center">
               <mat-form-field class="quarter-width">
-                <input matInput type="number" min="0" max="100" [(ngModel)]="element['score']"
+                <input id="scoreCtrl" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="element['score']" 
                        (change)="updateScore(element)">
               </mat-form-field>
             </td>
@@ -257,10 +259,7 @@
         </table>
         <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
       </div>
-
     </div>
-
-
   </div>
 </mat-card>
 <mat-card class="tangy-class-card-content-container" *ngIf="!selectedClass">
