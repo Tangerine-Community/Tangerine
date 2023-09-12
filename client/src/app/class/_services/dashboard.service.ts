@@ -209,65 +209,69 @@ export class DashboardService {
 
       item.inputs.forEach(input => {
         // inputs = [...inputs, ...input.value]
-          const data = {};
-          const valueField = input.value;
-          let value;
-          let max: number = null;
-          if (input.tagName === 'TANGY-INPUT') {
-            if (typeof input.max !== 'undefined' && input.max !== '') {
-              max = parseFloat(input.max);
-              // don't add to totalMax if it's the _score field
-              if (input.name !== form['id'] + '_score') {
+        // There are sometimes properties added to the inputs array - such as "userProfileId" or "tabletUserName" 
+        // that are not html elements. Let's filter those out because those are not answeredQuestions.
+          if (input.tagName) {
+            const data = {};
+            const valueField = input.value;
+            let value;
+            let max: number = null;
+            if (input.tagName === 'TANGY-INPUT') {
+              if (typeof input.max !== 'undefined' && input.max !== '') {
+                max = parseFloat(input.max);
+                // don't add to totalMax if it's the _score field
+                if (input.name !== form['id'] + '_score') {
+                  totalMax = totalMax + max;
+                }
+              }
+            } else  if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+              valueField.forEach(option => {
+                const optionValue = parseFloat(option.name);
+                if (option.value !== '') {
+                  value = optionValue;
+                }
+                if (optionValue > max) {
+                  max = optionValue;
+                }
+              });
+              totalMax =  totalMax + max;
+            } else  if (input.tagName === 'TANGY-CHECKBOX') {
+              if (input.value !== '') {
+                value = 1;
+              }
+              ++totalMax;
+            } else  if (input.tagName === 'TANGY-CHECKBOXES') {
+              valueField.forEach(option => {
+                const optionValue = parseFloat(option.name);
+                if (option.value !== '') {
+                  value = optionValue;
+                }
+                if (optionValue > max && optionValue !== 888) {
+                  max = optionValue;
+                }
                 totalMax = totalMax + max;
+              });
+            } else  if (input.tagName === 'TANGY-BOX') {
+              // ignore
+            } else  if (input.tagName?.includes('WIDGET')) {
+              // ignore
+            } else {
+              if (input.value !== '') {
+                value = input.value;
               }
+              totalMax = ++totalMax;
             }
-          } else  if (input.tagName === 'TANGY-RADIO-BUTTONS') {
-            valueField.forEach(option => {
-              const optionValue = parseFloat(option.name);
-              if (option.value !== '') {
-                value = optionValue;
-              }
-              if (optionValue > max) {
-                max = optionValue;
-              }
-            });
-            totalMax =  totalMax + max;
-          } else  if (input.tagName === 'TANGY-CHECKBOX') {
-            if (input.value !== '') {
-              value = 1;
+            data[input.name] = value;
+            if (!score) {
+              score = 0
             }
-            ++totalMax;
-          } else  if (input.tagName === 'TANGY-CHECKBOXES') {
-            valueField.forEach(option => {
-              const optionValue = parseFloat(option.name);
-              if (option.value !== '') {
-                value = optionValue;
-              }
-              if (optionValue > max && optionValue !== 888) {
-                max = optionValue;
-              }
-              totalMax = totalMax + max;
-            });
-          } else  if (input.tagName === 'TANGY-BOX') {
-            // ignore
-          } else  if (input.tagName.includes('WIDGET')) {
-            // ignore
-          } else {
-            if (input.value !== '') {
-              value = input.value;
+            if (!max) {
+              max = 0
             }
-            totalMax = ++totalMax;
+            data['score'] = score;
+            data['max'] = max;
+            answeredQuestions.push(data);
           }
-          data[input.name] = value;
-          if (!score) {
-            score = 0
-          }
-          if (!max) {
-            max = 0
-          }
-          data['score'] = score;
-          data['max'] = max;
-          answeredQuestions.push(data);
       });
 
       if (usingScorefield) {
