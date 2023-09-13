@@ -176,7 +176,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     try {
       if (!this.runComparison && !this.fullSync) {
         // Normal Sync
-        this.replicationStatus = await this.syncService.sync(false, null)
+        this.replicationStatus = await this.syncService.sync(false, null, this.reduceBatchSize)
       } else if (this.runComparison === 'pull') {
         // Pull comparison
         this.otherMessage = "Forcing a sync before the Comparison Sync to make sure that all docs have been uploaded from the tablet."

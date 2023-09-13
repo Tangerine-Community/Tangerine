@@ -26,7 +26,7 @@ async function generateCsvDataSets(filename) {
   }
   for (let group of state.groups) {
     await writeState(state)
-    await generateCsvDataSet(group.id, group.formIds, group.outputPath, '*', '*', false, true)
+    await generateCsvDataSet(group.id, group.formIds, group.outputPath, '*', '*', false, true, true)
     group.complete = true
     await writeState(state)
   }
