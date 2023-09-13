@@ -757,7 +757,7 @@ export class DashboardService {
 
   async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores) {
     const recentVisitsReport = {}
-    recentVisitsReport['count'] = 3
+    // recentVisitsReport['count'] = 3
     // const classId = this.route.snapshot.paramMap.get('classId')
     // const result = await this.db.query('tangy-class/recentVisitsByClassId', {
     //   startkey: [classId],

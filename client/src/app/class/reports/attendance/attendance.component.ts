@@ -88,7 +88,7 @@ export class AttendanceComponent implements OnInit {
     console.log('numVisits: ', this.numVisits)
     if (this.numVisits) {
       const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
-      await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores)
+      this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores)
     }
   }
 
