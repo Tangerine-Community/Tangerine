@@ -210,6 +210,10 @@ mat-card-title {
   background-color: red;
 }
 
+.green {
+  background-color: green;
+}
+
 .quarter-width {
   width: 25%;
 }
@@ -226,25 +230,6 @@ mat-card-title {
 .controls-two {
   grid-column: 2 / 2;
   grid-row: 1;
-}
-.gray {
-  background-color: gray;
-}
-
-.green {
-  background-color: green;
-}
-
-.blue {
-  background-color: deepskyblue;
-}
-
-.orange {
-  background-color: orange;
-}
-
-.red {
-  background-color: red;
 }
 
 .number-cell {
