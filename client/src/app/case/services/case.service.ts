@@ -201,7 +201,7 @@ class CaseService {
     await this.setCase(this.case)
     this.case.caseDefinitionId = caseDefinitionId;
     if (this.caseDefinition.startFormOnOpen && this.caseDefinition.startFormOnOpen.eventFormId) {
-      const caseEvent = await this.createEvent(this.caseDefinition.startFormOnOpen.eventId)
+      const caseEvent = this.createEvent(this.caseDefinition.startFormOnOpen.eventId)
       this.createEventForm(caseEvent.id, this.caseDefinition.startFormOnOpen.eventFormId) 
     }
     await this.save()
@@ -328,7 +328,7 @@ class CaseService {
    * Case Event API
    */
 
-  async createEvent(eventDefinitionId:string): Promise<CaseEvent> {
+  createEvent(eventDefinitionId:string) {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -361,10 +361,15 @@ class CaseService {
         }
       }
     }
+    return caseEvent
+  }
+
+  async onCaseEventCreate(caseEvent: CaseEvent) {
+    const caseEventDefinition = this.caseDefinition
+    .eventDefinitions
+    .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
 
     await eval(caseEventDefinition.onEventCreate)
-
-    return caseEvent
   }
 
   setEventName(eventId, name:string) {
@@ -1190,7 +1195,7 @@ class CaseService {
 
     if (caseEvent === undefined) {
         const newDate = moment(new Date(), 'YYYY-MM-DD').unix() * 1000;
-        caseEvent = await this.createEvent(this.queryCaseEventDefinitionId);
+        caseEvent = this.createEvent(this.queryCaseEventDefinitionId);
         await this.save();
       } else {
         caseEvent = this.case.events

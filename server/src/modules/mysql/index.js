@@ -270,13 +270,6 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     complete: formResponse.complete,
     archived: formResponse.archived||''
   };
-  function set(input, key, value) {
-    flatFormResponse[key.trim()] = input.skipped
-      ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-      : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-        ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : value
-  }
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
       let sanitize = false;
@@ -292,38 +285,38 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
           locationKeys.push(group.value)
           try {
             const location = getLocationByKeys(locationKeys, locationList)
             for (let keyName in location) {
               if (keyName !== 'children') {
-                set(input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
+                tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
               }
             }
           } catch(e) {
-            set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
+            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
       } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
         let selectedOption = input.value.find(option => !!option.value) 
-        set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
       } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
-        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
-        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
       } else if (input && typeof input.value === 'string') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
+        tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && Array.isArray(input.value)) {
         for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.name}`, group.value)
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.name}`, group.value)
         }
       } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
         for (let key of elementKeys) {
-          set(input, `${firstIdSegment}${input.name}.${key}`, input.value[key])
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${key}`, input.value[key])
         };
       }
       } // sanitize

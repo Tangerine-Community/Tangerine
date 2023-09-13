@@ -6,9 +6,6 @@ RELEASE_TYPE="$3"
 APP_NAME="$4"
 UPLOAD_KEY="$5"
 
-FORM_DIRECTORY="/tangerine/groups/$GROUP_ID/client/$FORM_ID"
-LOCATION_LIST_PATH="/tangerine/groups/$GROUP_ID/client/location-list.json"
-
 if [ "$2" = "--help" ] || [ "$GROUP_ID" = "" ] || [ "$FORM_ID" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
   echo "RELEASE Online Survey App"
@@ -32,13 +29,20 @@ mkdir /tangerine/client/releases/$RELEASE_TYPE/online-survey-apps
 mkdir /tangerine/client/releases/$RELEASE_TYPE/online-survey-apps/$GROUP_ID
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/online-survey-apps/$GROUP_ID/$FORM_ID"
 
-echo $RELEASE_DIRECTORY
-
+# Ensure the release directory does not exist
 rm -r $RELEASE_DIRECTORY
+
+FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client/"
+FORM_DIRECTORY="$FORM_CLIENT_DIRECTORY/$FORM_ID"
+LOCATION_LIST_PATH="$FORM_CLIENT_DIRECTORY/location-list.json"
+MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media/"
+
+# Set up the release dir from the dist
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
 cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
 cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
+cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/media/
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 

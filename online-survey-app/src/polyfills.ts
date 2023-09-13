@@ -64,29 +64,33 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
 import * as Redux from 'redux';
 (window as any).Redux = Redux;
-import 'tangy-form/tangy-form.js';
-import 'tangy-form/input/tangy-box.js';
-import 'tangy-form/input/tangy-input.js';
-import 'tangy-form/input/tangy-timed.js';
-import 'tangy-form/input/tangy-untimed-grid.js';
-import 'tangy-form/input/tangy-checkbox.js';
-import 'tangy-form/input/tangy-checkboxes.js';
-import 'tangy-form/input/tangy-checkboxes-dynamic.js';
-import 'tangy-form/input/tangy-radio-buttons.js';
-import 'tangy-form/input/tangy-select.js';
-import 'tangy-form/input/tangy-location.js';
-import 'tangy-form/input/tangy-gps.js';
+import 'tangy-form/tangy-form.js'
+import 'tangy-form/input/tangy-box.js'
+import 'tangy-form/input/tangy-gate.js'
+import 'tangy-form/input/tangy-input.js'
+import 'tangy-form/input/tangy-keyboard-input.js'
+import 'tangy-form/input/tangy-timed.js'
+import 'tangy-form/input/tangy-untimed-grid.js'
+import 'tangy-form/input/tangy-checkbox.js'
+import 'tangy-form/input/tangy-checkboxes.js'
+import 'tangy-form/input/tangy-checkboxes-dynamic.js'
+import 'tangy-form/input/tangy-radio-buttons.js'
+import 'tangy-form/input/tangy-select.js'
+import 'tangy-form/input/tangy-location.js'
+import 'tangy-form/input/tangy-gps.js'
 import 'tangy-form/input/tangy-acasi.js';
 import 'tangy-form/input/tangy-eftouch.js';
 import 'tangy-form/input/tangy-photo-capture.js';
-import 'tangy-form/input/tangy-video-capture.js';
 import 'tangy-form/input/tangy-qr.js';
 import 'tangy-form/input/tangy-consent.js';
 import 'tangy-form/input/tangy-partial-date.js';
+import 'tangy-form/input/tangy-ethio-date.js';
 import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
-import 'translation-web-component/t-select.js'
+import 'tangy-form/input/tangy-radio-blocks.js';
+import 'tangy-form/input/tangy-video-capture.js';
 
+import 'translation-web-component/t-select.js'
 
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc;
