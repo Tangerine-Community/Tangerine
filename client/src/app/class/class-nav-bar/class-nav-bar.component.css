@@ -1,0 +1,7 @@
+.white-menu-item {
+  color: var(--primary-text-color-overlay);
+}
+
+.class-dashboard-button-spacer-right {
+  margin-right: 10px;
+}

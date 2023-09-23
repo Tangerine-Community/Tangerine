@@ -44,6 +44,10 @@ import {FormsModule} from "@angular/forms";
 import {GradesComponent} from './reports/grades/grades.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {ProgressBarColor} from "./utils/progress-bar-color";
+import {AttendanceDashboardComponent} from './attendance/attendance-dashboard/attendance-dashboard.component';
+import {AttendanceCheckComponent} from './attendance/attendance-check/attendance-check.component';
+import {AttendanceNavComponent} from "./attendance/attendance-nav.component";
+import { AttendanceScoresComponent } from './attendance/attendance-scores/attendance-scores.component';
 
 @NgModule({
   imports: [
@@ -71,7 +75,7 @@ import {ProgressBarColor} from "./utils/progress-bar-color";
     MatProgressBarModule,
     FormsModule
   ],
-  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor],
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent],
   providers: [UserService, ClassFormService, DashboardService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
@@ -80,7 +84,7 @@ import {ProgressBarColor} from "./utils/progress-bar-color";
       return service;
     },
     deps: [TranslateService]
-  }]
+  }, { provide: Window, useValue: window }]
 })
 export class ClassModule {
 }

@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {DashboardService} from '../_services/dashboard.service';
 import {PageEvent} from '@angular/material/paginator';
 import {ClassFormService} from '../_services/class-form.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {_TRANSLATE} from '../../shared/translation-marker';
 import {ClassUtils} from '../class-utils';
 import {ClassGroupingReport} from '../reports/student-grouping-report/class-grouping-report';
@@ -15,7 +15,6 @@ import {TangyFormResponse} from 'src/app/tangy-forms/tangy-form-response.class';
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {DateTime} from 'luxon';
 
-declare const sms: any;
 
 export interface StudentResult {
   id: string;
@@ -73,68 +72,27 @@ export class DashboardComponent implements OnInit {
   displayClassGroupReport = false;
   feedbackViewInited = false;
   useAttendanceFeature = false
-  showAttendanceList: boolean
   showScoreList: boolean
   showSummary: boolean
-  attendanceRegister: {
-    _id: string,
-    timestamp: number,
-    classId: string,
-    grade: string,
-    schoolName: string
-    schoolYear: string,
-    attendanceList: StudentResult[],
-    collection: string,
-    form: {},
-    items: any[],
-    complete: boolean,
-    type: string
-  }
-  scoreRegister: {
-    _id: string,
-    timestamp: number,
-    classId: string,
-    grade: string,
-    schoolName: string
-    schoolYear: string,
-    scoreList: StudentResult[],
-    collection: string,
-    form: {},
-    items: any[],
-    complete: boolean,
-    type: string,
-    testName: string
-  }
-  attendanceList: StudentResult[]
-  scoreList: StudentResult[]
-  testName: string = ""
-
-  scoreReports: any[]
-  scoreReport: any
-  attendanceReport: any
-  attendanceReports: any[]
-  allStudentScores: any = {}
   window:any;
   
   getValue: (variableName, response) => any;
   @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
-    private http: HttpClient,
+    // private http: HttpClient,
     private dashboardService: DashboardService,
-    private userService: UserService,
+    // private userService: UserService,
     private router: Router,
     private classFormService: ClassFormService,
-    private tangyFormService: TangyFormService,
-    private tangyFormsInfoService: TangyFormsInfoService,
+    // private tangyFormService: TangyFormService,
+    // private tangyFormsInfoService: TangyFormsInfoService,
     private variableService: VariableService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private route: ActivatedRoute,
   ) { }
 
-  getClassTitle(classResponse: TangyFormResponse) {
-    const gradeInput = classResponse.items[0].inputs.find(input => input.name === 'grade')
-    return gradeInput.value
-  }
+  
 
   async ngOnInit() {
     (<any>window).Tangy = {}
@@ -142,15 +100,14 @@ export class DashboardComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig()
     this.useAttendanceFeature = appConfig.useAttendanceFeature
     await this.classFormService.initialize();
-    this.classes = await this.getMyClasses();
+    this.enabledClasses = await this.dashboardService.getEnabledClasses();
     this.getValue = this.dashboardService.getValue
-    const enabledClasses = this.classes.map(klass => {
-      if ((klass.doc.items[0].inputs.length > 0) && (!klass.doc.archive)) {
-        return klass
-      }
-    });
-    this.enabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
-    let classMenu = []
+    // const enabledClasses = this.classes.map(klass => {
+    //   if ((klass.doc.items[0].inputs.length > 0) && (!klass.doc.archive)) {
+    //     return klass
+    //   }
+    // });
+    // this.enabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
     for (const classDoc of this.enabledClasses) {
       const grade = this.getValue('grade', classDoc.doc)
       let klass = {
@@ -159,94 +116,39 @@ export class DashboardComponent implements OnInit {
         curriculum: []
       }
       // find the options that are set to 'on'
-      const classArray = await this.populateCurrentCurriculums(classDoc);
+      const classArray = await this.dashboardService.populateCurrentCurriculums(classDoc.doc);
       if (classArray) {
         this.currArray = classArray
         klass.curriculum = this.currArray
-        classMenu.push(klass)
       }
     }
-    this.classUtils = new ClassUtils();
-    // resetVars = this.useAttendanceFeature ? true : resetVars
-    // if (this.useAttendanceFeature) {
-    //   await this.getAttendanceList()
-    // } else {
-    await this.initDashboard(null, null, null, null);
-    // }
-  }
-
-  async initDashboard(classIndex: number, currentClassId, curriculumId, resetVars) {
-    if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
-      let currentClass, currentItemId = '';
-      if (resetVars) {
-        await this.variableService.set('class-classIndex', classIndex.toString());
-        await this.variableService.set('class-currentClassId', currentClassId);
-        await this.variableService.set('class-curriculumId', curriculumId);
-      }
-      this.currentClassIndex = 0;
-      if (classIndex === null) {
-        let classClassIndex = await this.variableService.get('class-classIndex')
-        if (classClassIndex !== null) {
-          classIndex = parseInt(classClassIndex)
-          if (!Number.isNaN(classIndex)) {
-            this.currentClassIndex = classIndex;
-          }
-        }
-        currentItemId = await this.variableService.get('class-currentItemId');
-        currentClassId = await this.variableService.get('class-currentClassId');
-        curriculumId = await this.variableService.get('class-curriculumId');
+    let classIndex, curriculumId
+    
+    this.route.queryParams.subscribe(async params => {
+      classIndex = params['classIndex'];
+      curriculumId = params['curriculumId'];
+      if (typeof classIndex !== 'undefined') {
+        // going to init some vars
+        const currentClass = this.enabledClasses[classIndex];
+        const currentClassId = currentClass.id;
+        this.allStudentResults = await this.dashboardService.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
       } else {
-        this.currentClassIndex = classIndex
-      }
-      await this.variableService.set('class-classIndex', this.currentClassIndex);
-
-      currentClass = this.enabledClasses[this.currentClassIndex];
-      if (typeof currentClass === 'undefined') {
-        // Maybe a class has been removed
-        this.currentClassIndex = 0
-        currentClass = this.enabledClasses[this.currentClassIndex];
-      } else {
-        this.selectedClass = currentClass;
+        this.allStudentResults = await this.dashboardService.initDashboard(null, null, null, null, this.enabledClasses);
       }
 
-      if (currentClassId && currentClassId !== '') {
-        this.currentClassId = currentClassId;
-      } else {
-        this.currentClassId = currentClass.id;
-        await this.variableService.set('class-currentClassId', this.currentClassId);
-      }
-      if (currentItemId && currentItemId !== '') {
-        this.currentItemId = currentItemId;
-      } else {
-        this.currentItemId = null;
-      }
+      this.classUtils = new ClassUtils();
+      // resetVars = this.useAttendanceFeature ? true : resetVars
+      // if (this.useAttendanceFeature) {
+      //   await this.getAttendanceList()
+      // } else {
+      this.selectedClass = window['T'].classDashboard.selectedClass
+      this.formList = window["T"].classDashboard.formList
+      // this.enabledClasses = window['T'].classDashboard.enabledClasses;
 
-      this.currArray = await this.populateCurrentCurriculums(currentClass);
-      if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
-        const curriculum = this.currArray[0];
-        curriculumId = curriculum.name;
-      }
-      this.curriculumId = curriculumId;
-      await this.variableService.set('class-curriculumId', curriculumId);
-      this.curriculum = this.currArray.find(x => x.name === curriculumId);
-      await this.populateFormsMetadata(curriculumId);
-
-      if (!currentItemId || currentItemId === '') {
-        const initialForm = this.curriculumFormsList[0];
-        this.currentItemId = initialForm.id;
-      }
-      // showSummary
-      if (this.useAttendanceFeature) {
-        this.showSummary = true
-        await this.populateSummary(this.currentClassId, this.curriculum)
-      } else {
-        await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId);
-      }
-
-      // await this.populateFeedback(curriculumId);
-      // console.log("this.classGroupReport item: " + item + " this.currentClassId: " + this.currentClassId + " curriculumId: " + curriculumId + "results: "  + JSON.stringify(results))
-      // console.log("this.classGroupReport feedback: " + JSON.stringify(this.classGroupReport.feedback))
-    }
+      curriculumId = curriculumId? curriculumId: await this.variableService.get('class-curriculumId');
+      this.selectedCurriculum = this.currArray.find(x => x.name === curriculumId);
+      this.currentItemId = await this.variableService.get('class-currentItemId');
+    })
   }
 
   private async populateFeedback(curriculumId) {
@@ -269,162 +171,11 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  private async populateCurrentCurriculums(currentClass) {
-    let inputs = [], fullCurrArray
-    currentClass.doc.items.forEach(item => inputs = [...inputs, ...item.inputs]);
-    if (inputs.length > 0) {
-      // find the curriculum element
-      const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
-      // find the options that are set to 'on'
-      const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
-      fullCurrArray =  Promise.all(currArray.map(async curr => {
-        const formId = curr.name;
-        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-        curr.label = formInfo.title
-        return curr
-      }));
-    }
-   
-    return fullCurrArray;
-  }
-
-// Populates this.curriculumFormsList and this.formList for a curriculum.
-  async populateFormsMetadata(curriculumId) {
-    const curriculumForms = [];
-    // this only needs to happen once.
-    const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    this.curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-
-    if (typeof this.curriculumFormsList === 'undefined') {
-      const msg = _TRANSLATE(`This is an error - there are no this.curriculumForms
-      for this curriculum or range. Check if the config files are available.`);
-      console.log(msg);
-      alert(msg);
-    }
-
-    this.formList = [];
-    let currentClassId;
-    const currentClass = this.enabledClasses[this.currentClassIndex];
-    if (typeof currentClass !== 'undefined') {
-      currentClassId = currentClass.id;
-    }
-    for (const form of this.curriculumFormsList) {
-      const formEl = {
-        'title': form.title,
-        'id': form.id,
-        'classId': currentClassId,
-        'curriculumId': curriculumId
-      };
-      this.formList.push(formEl);
-    }
-
-    this.selectedCurriculum = this.currArray.find(x => x.name === curriculumId);
-    this.selectedClass = this.enabledClasses[this.currentClassIndex];
-  }
-
-  async selectSubTask(itemId, classId, curriculumId) {
-    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
-    this.showAttendanceList = false;
-    this.showScoreList = false;
-    this.showSummary = false;
-    await this.variableService.set( 'class-currentItemId', itemId );
-
-    // this.currentClassId = this.selectedClass.id;
-    this.students = await this.getMyStudents(classId);
-    const item = this.curriculumFormsList.find(x => x.id === itemId);
-    const results = await this.getResultsByClass(classId, this.curriculum.name, [item], item);
-    this.studentsResponses = [];
-    const formsTodisplay = {};
-    this.curriculumFormsList.forEach(form => {
-      formsTodisplay[form.id] = form;
-    });
-    for (const response of results as any[] ) {
-      // console.log("response: " + JSON.stringify(response))
-      // studentsResponses.push();
-      if (formsTodisplay[response.formId] !== 'undefined') {
-        const studentId = response.studentId;
-        let studentReponses = this.studentsResponses[studentId];
-        if (typeof studentReponses === 'undefined') {
-          studentReponses = {};
-        }
-        const formId = response.formId;
-        studentReponses[formId] = response;
-        this.studentsResponses[studentId] = studentReponses;
-      }
-    }
-    const allStudentResults = [];
-    // for (const student of this.students) {
-    this.students.forEach((student) => {
-      const studentResults = {};
-      const student_name = this.getValue('student_name', student.doc)
-      const phone = this.getValue('phone', student.doc);
-      const classId = this.getValue('classId', student.doc)
-      studentResults['id'] = student.id;
-      studentResults['name'] = student_name
-      studentResults['phone'] = phone
-      studentResults['classId'] = classId
-      // studentResults["forms"] = [];
-      studentResults['forms'] = {};
-      // for (const form of this.curriculumForms) {
-      this.curriculumFormsList.forEach((form) => {
-        const formResult = {};
-        formResult['formId'] = form.id;
-        formResult['curriculum'] = this.curriculum.name;
-        formResult['title'] = form.title;
-        formResult['src'] = form.src;
-        if (this.studentsResponses[student.id]) {
-          formResult['response'] = this.studentsResponses[student.id][form.id];
-        }
-        // studentResults["forms"].push(formResult)
-        studentResults['forms'][form.id] = formResult;
-      });
-      allStudentResults.push(studentResults);
-    });
-    this.allStudentResults = allStudentResults;
-    // await this.populateFeedback(curriculumId);
-  }
-
-  /**
-   * Get the attendance list for the class. If the listFromDoc is passed in, then
-   * populate the student from that doc by matching student.id.
-   * @param students
-   * @param listFromDoc
-   */
-  async getList(students, listFromDoc) {
-    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
-    const list = []
-    students.forEach((student) => {
-      let studentResult
-      const studentId = student.id
-      if (listFromDoc) {
-        studentResult = listFromDoc.find(studentDoc => studentDoc.id === studentId)
-      }
-      if (studentResult) {
-        list.push(studentResult)
-      } else {
-        const student_name = this.getValue('student_name', student.doc)
-        const phone = this.getValue('phone', student.doc);
-        const classId = this.getValue('classId', student.doc)
-        studentResult = {}
-        studentResult['id'] = studentId
-        studentResult['name'] = student_name
-        studentResult['phone'] = phone
-        studentResult['classId'] = classId
-        studentResult['forms'] = {}
-        studentResult['absent'] = false
-        studentResult['mood'] = 'happy'
-        list.push(studentResult)
-      }
-    })
-    return list
-    // await this.populateFeedback(curriculumId);
-  }
-
   // Triggered by dropdown selection in UI.
   async populateCurriculum (classIndex, curriculumId) {
     const currentClass = this.enabledClasses[classIndex];
     const currentClassId = currentClass.id;
-    await this.initDashboard(classIndex, currentClassId, curriculumId, true);
+    await this.dashboardService.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
   }
 
   selectReport(reportId) {
@@ -481,7 +232,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  /** Populate the querystring with the form info. */
+  /** Navigate to the student registration form */
   selectStudentName(column) {
     const formsArray = Object.values(column.forms);
     const studentId = column.id;
@@ -514,83 +265,73 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  /**
-   * Fetch ./assets/${curriculum}/form.html, attach to the container, select all tangy-form-item objects
-   * and push into a string array, limited by pageIndex and pageSize
-   * @param curriculum
-   * @param pageIndex
-   * @param pageSize
-   * @returns {Promise<any[]>}
-   */
-  async getCurriculaForms(curriculum, pageIndex, pageSize) {
-    try {
-      let selectedCurriculumForms, start, end, curriculumForms = [];
-      const i = 1;
-      if (pageIndex === 0) {
-        start = 0;
-        end = pageSize;
-      } else {
-        this.pageLength = Math.max(this.pageLength, 0);
-        start = ((pageIndex * pageSize) > this.pageLength) ?
-          (Math.ceil(this.pageLength / pageSize) - 1) * pageSize :
-          pageIndex * pageSize;
-        this.pageStart = start;
-        end = Math.min(start + pageSize, this.pageLength);
-        console.log( start + 1 + ' - ' + end + '  of  ' + this.pageLength);
-      }
-
-      // this only needs to happen once.
-      const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculum);
-      const container = this.container.nativeElement;
-      container.innerHTML = curriculumFormHtml;
-      const formEl = container.querySelectorAll('tangy-form-item');
-      const output = '';
-      for (const el of formEl) {
-        const attrs = el.attributes;
-        const obj = {};
-        for (let i = attrs.length - 1; i >= 0; i--) {
-          // output = attrs[i].name + "->" + attrs[i].value;
-          obj[attrs[i].name] = attrs[i].value;
-          // console.log("this.formEl:" + output )
-        }
-        curriculumForms.push(obj);
-      }
-      this.curriculumFormsList = curriculumForms;
-
-      this.formList = [];
-      let currentClassId;
-      const currentClass = this.enabledClasses[this.currentClassIndex];
-      if (typeof currentClass !== 'undefined') {
-        currentClassId = currentClass.id;
-      }
-      for (const form of this.curriculumFormsList) {
-        const formEl = {
-          'title': form.title,
-          'id': form.id,
-          'classId': currentClassId,
-          'curriculumId': curriculum
-        };
-        this.formList.push(formEl);
-      }
-
-      // this.length = this.curriculumFormsList.length
-      this.pageLength = this.curriculumFormsList.length;
-      selectedCurriculumForms  = curriculumForms.slice(start, end);
-      return selectedCurriculumForms;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async getMyClasses() {
-    try {
-      const classes = await this.dashboardService.getMyClasses();
-      // console.log("this.classes:" + JSON.stringify(this.classes))
-      return classes;
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  // /**
+  //  * Fetch ./assets/${curriculum}/form.html, attach to the container, select all tangy-form-item objects
+  //  * and push into a string array, limited by pageIndex and pageSize
+  //  * @param curriculum
+  //  * @param pageIndex
+  //  * @param pageSize
+  //  * @returns {Promise<any[]>}
+  //  */
+  // async getCurriculaForms(curriculum, pageIndex, pageSize) {
+  //   try {
+  //     let selectedCurriculumForms, start, end, curriculumForms = [];
+  //     const i = 1;
+  //     if (pageIndex === 0) {
+  //       start = 0;
+  //       end = pageSize;
+  //     } else {
+  //       this.pageLength = Math.max(this.pageLength, 0);
+  //       start = ((pageIndex * pageSize) > this.pageLength) ?
+  //         (Math.ceil(this.pageLength / pageSize) - 1) * pageSize :
+  //         pageIndex * pageSize;
+  //       this.pageStart = start;
+  //       end = Math.min(start + pageSize, this.pageLength);
+  //       console.log( start + 1 + ' - ' + end + '  of  ' + this.pageLength);
+  //     }
+  //
+  //     // this only needs to happen once.
+  //     const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculum);
+  //     const container = this.container.nativeElement;
+  //     container.innerHTML = curriculumFormHtml;
+  //     const formEl = container.querySelectorAll('tangy-form-item');
+  //     const output = '';
+  //     for (const el of formEl) {
+  //       const attrs = el.attributes;
+  //       const obj = {};
+  //       for (let i = attrs.length - 1; i >= 0; i--) {
+  //         // output = attrs[i].name + "->" + attrs[i].value;
+  //         obj[attrs[i].name] = attrs[i].value;
+  //         // console.log("this.formEl:" + output )
+  //       }
+  //       curriculumForms.push(obj);
+  //     }
+  //     this.curriculumFormsList = curriculumForms;
+  //
+  //     this.formList = [];
+  //     let currentClassId;
+  //     const currentClass = this.enabledClasses[this.currentClassIndex];
+  //     if (typeof currentClass !== 'undefined') {
+  //       currentClassId = currentClass.id;
+  //     }
+  //     for (const form of this.curriculumFormsList) {
+  //       const formEl = {
+  //         'title': form.title,
+  //         'id': form.id,
+  //         'classId': currentClassId,
+  //         'curriculumId': curriculum
+  //       };
+  //       this.formList.push(formEl);
+  //     }
+  //
+  //     // this.length = this.curriculumFormsList.length
+  //     this.pageLength = this.curriculumFormsList.length;
+  //     selectedCurriculumForms  = curriculumForms.slice(start, end);
+  //     return selectedCurriculumForms;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   async getMyStudents(selectedClass: any) {
     try {
@@ -607,174 +348,6 @@ export class DashboardComponent implements OnInit {
       return await this.dashboardService.getResultsByClass(selectedClass, curriculum, forms, item);
     } catch (error) {
       console.error(error);
-    }
-  }
-
-  /**
-   * Shim attendance into the currArray so it'll appear in the dropdown.
-   * Makes attendance the selectedCurriculum.
-   * @param cassId
-   */
-  async showAttendanceListing(selectedClass) {
-    this.showScoreList = false
-    this.showSummary = false
-    const type = "attendance"
-    const registerNameForDialog = 'Attendance and Behaviour';
-    this.currentClassId = await this.variableService.get('class-currentClassId')
-    this.students = await this.getMyStudents(this.currentClassId)
-
-    const timestamp = Date.now()
-    const reportDate = DateTime.local().toISODate()
-    const grade = this.getClassTitle(selectedClass.doc)
-    const schoolName = this.getValue('school_name', selectedClass.doc)
-    const schoolYear = this.getValue('school_year', selectedClass.doc)
-    const id = type + '-' + grade + '-' + reportDate
-    let doc, listFromDoc
-    try {
-      doc = await this.dashboardService.getDoc(id)
-      listFromDoc = doc.attendanceList
-      // this.attendanceRegister = doc
-    } catch (e) {
-    }
-
-    this.attendanceList =  await this.getList(this.students, listFromDoc)
-    if (!doc) {
-      this.attendanceRegister = {
-        _id: id,
-        timestamp: timestamp,
-        classId: selectedClass.id,
-        grade: grade,
-        schoolName: schoolName,
-        schoolYear: schoolYear,
-        attendanceList: this.attendanceList,
-        collection: 'TangyFormResponse',
-        type: type,
-        form: {
-          id: type,
-        },
-        items: [{
-          id: 'class-registration',
-          title: 'Class Registration',
-          inputs: [{}]
-        },
-          {
-          id: 'item_1',
-          title: 'Item 1',
-          inputs: [{
-            name: 'timestamp',
-            label: 'timestamp'
-          }]
-        }],
-        complete: false
-      }
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
-      if (startRegister) {
-        const curriculum = {
-          'name': type,
-          'value': 'on',
-          'label': _TRANSLATE(registerNameForDialog)
-        }
-        this.currArray.push(curriculum)
-        this.selectedCurriculum = this.currArray.find(x => x.name === type)
-        this.showAttendanceList = true
-        await this.saveStudentAttendance(null)
-      } else {
-        this.showAttendanceList = false
-        if (!this.currentItemId || this.currentItemId === '') {
-          const initialForm = this.curriculumFormsList[0]
-          this.currentItemId = initialForm.id
-        }
-        await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
-      }
-    } else {
-      this.showAttendanceList = true
-      doc.attendanceList = this.attendanceList
-      this.attendanceRegister = doc
-    }
-  }
-  
-  /**
-   * Shim attendance into the currArray so it'll appear in the dropdown.
-   * Makes attendance the selectedCurriculum.
-   * @param cassId
-   */
-  async showScoreListing(selectedClass) {
-    this.showAttendanceList = false
-    this.showSummary = false
-    const type = "scores"
-    const registerNameForDialog = 'Scoring';
-    this.currentClassId = await this.variableService.get('class-currentClassId')
-    this.students = await this.getMyStudents(this.currentClassId)
-
-    const timestamp = Date.now()
-    const reportDate = DateTime.local().toISODate()
-    const grade = this.getClassTitle(selectedClass.doc)
-    const schoolName = this.getValue('school_name', selectedClass.doc)
-    const schoolYear = this.getValue('school_year', selectedClass.doc)
-    const id = type + '-' + grade + '-' + reportDate
-    let doc, listFromDoc
-    try {
-      doc = await this.dashboardService.getDoc(id)
-      listFromDoc = doc.scoreList
-      this.testName = doc.testName
-      // this.attendanceRegister = doc
-    } catch (e) {
-    }
-
-    this.scoreList =  await this.getList(this.students, listFromDoc)
-    if (!doc) {
-      this.scoreRegister = {
-        _id: id,
-        timestamp: timestamp,
-        classId: selectedClass.id,
-        grade: grade,
-        schoolName: schoolName,
-        schoolYear: schoolYear,
-        testName: this.testName,
-        scoreList: this.scoreList,
-        collection: 'TangyFormResponse',
-        type: type,
-        form: {
-          id: type,
-        },
-        items: [{
-          id: 'class-registration',
-          title: 'Class Registration',
-          inputs: [{}]
-        },
-          {
-          id: 'item_1',
-          title: 'Item 1',
-          inputs: [{
-            name: 'timestamp',
-            label: 'timestamp'
-          }]
-        }],
-        complete: false
-      }
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
-      if (startRegister) {
-        const curriculum = {
-          'name': type,
-          'value': 'on',
-          'label': _TRANSLATE(registerNameForDialog)
-        }
-        this.currArray.push(curriculum)
-        this.selectedCurriculum = this.currArray.find(x => x.name === type)
-        this.showScoreList = true
-        await this.saveStudentScore(null)
-      } else {
-        this.showScoreList = false
-        if (!this.currentItemId || this.currentItemId === '') {
-          const initialForm = this.curriculumFormsList[0]
-          this.currentItemId = initialForm.id
-        }
-        await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
-      }
-    } else {
-      this.showScoreList = true
-      doc.scoreList = this.scoreList
-      this.scoreRegister = doc
     }
   }
 
@@ -796,133 +369,9 @@ export class DashboardComponent implements OnInit {
   //     }
   //   }
   // }
-  async toggleAttendance(student) {
-    student.absent = !student.absent
-    await this.saveStudentAttendance(student)
-    // event.target.classList.toggle("active");
-  }
 
-  async toggleMood(mood, student) {
-    student.mood = mood
-    if (!student.absent) {
-      await this.saveStudentAttendance(student)
-    }
-  }
-
-  private async saveStudentAttendance(student) {
-    console.log('saved student attendance: ' + JSON.stringify(student))
-    // save allStudentResults
-    this.attendanceRegister.attendanceList = this.attendanceList
-    // save attendanceRegister
-    let doc
-    try {
-      doc = await this.dashboardService.getDoc(this.attendanceRegister._id)
-      this.attendanceRegister['_rev'] = doc._rev
-    } catch (e) {
-    }
-    await this.dashboardService.saveDoc(this.attendanceRegister)
-  }
+  getClassTitle = this.dashboardService.getClassTitle
+  selectSubTask = this.dashboardService.selectSubTask
   
-  async updateScore(student) {
-    // student['score'] = score
-    if (student['score'] < 0 || student['score'] > 100) {
-      alert(_TRANSLATE('Score must be between 0 and 100'))
-      student['score'] = 0
-      return
-    }
-    await this.saveStudentScore(student)
-  }
-
-  private async saveStudentScore(student) {
-    console.log('saved student score: ' + JSON.stringify(student))
-    this.scoreRegister.scoreList = this.scoreList
-    // update testName in case user updated it.
-    this.scoreRegister.testName = this.testName
-    // save scoreRegister
-    let doc
-    try {
-      doc = await this.dashboardService.getDoc(this.scoreRegister._id)
-      this.scoreRegister['_rev'] = doc._rev
-    } catch (e) {
-    }
-    await this.dashboardService.saveDoc(this.scoreRegister)
-  }
   
-  private async populateSummary(classId, curriculum) {
-    this.students = await this.getMyStudents(classId);
-    this.scoreReports = await this.dashboardService.getScoreDocs(classId)
-    const currentScoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
-    this.scoreReport = currentScoreReport
-
-    this.attendanceReports = await this.dashboardService.getAttendanceDocs(classId)
-    const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
-
-    // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
-    const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, classId)
-
-    const rankedStudentScores = this.dashboardService.rankStudentScores(studentReportsCards);
-    // this.groupingsByCurriculum[curriculumId] = rankedStudentScores
-    this.allStudentScores[curriculum.name] = rankedStudentScores.map((grouping) => {
-      return {
-        id: grouping.result.id,
-        curriculum: grouping.result.curriculum,
-        score: grouping.result.scorePercentageCorrect
-      }
-    })
-    
-    this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, this.students))
-    this.attendanceReport = currentAttendanceReport
-    const studentsWithoutAttendance:any[] = this.students.filter((thisStudent) => {
-      return !this.attendanceReport.attendanceList.find((student) => {
-        return thisStudent.doc._id === student.id
-      })
-    })
-    // add any students who haven't had attendance taken yet to the attendanceList
-    studentsWithoutAttendance.forEach((student) => {
-      const studentResult = {}
-      const student_name = this.getValue('student_name', student.doc)
-      const phone = this.getValue('phone', student.doc);
-      const classId = this.getValue('classId', student.doc)
-      studentResult['id'] = student.id
-      studentResult['name'] = student_name
-      studentResult['phone'] = phone
-      studentResult['classId'] = classId
-      studentResult['forms'] = {}
-      this.attendanceReport.attendanceList.push(studentResult)
-    })
-    // const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
-    //   return thisStudent.id === student.id
-    // })
-  }
-
-  sendText(student) {
-    console.log("send text")
-    if (this.window.isCordovaApp) {
-      //CONFIGURATION
-      var options = {
-        replaceLineBreaks: false, // true to replace \n by a new line, false by default
-        android: {
-          intent: 'INTENT'  // send SMS with the native android SMS messaging
-          //intent: '' // send SMS without opening any other app, require : android.permission.SEND_SMS and android.permission.READ_PHONE_STATE
-        }
-      };
-
-      var success = function () {
-        // alert('Message sent successfully');
-      };
-      var error = function (e) {
-        alert(_TRANSLATE('Message Failed:') + e);
-      };
-      const phone = student.phone
-      if (!phone) {
-        alert(_TRANSLATE('This student does not have a phone number.'))
-        return
-      } else {
-        const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
-        sms.send(phone, message, options, success, error);
-      }
-    } else {
-      alert(_TRANSLATE('This feature is only available on a mobile device.'))
-    }
-  }
 }
