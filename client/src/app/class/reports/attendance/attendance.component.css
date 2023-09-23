@@ -76,6 +76,10 @@ td.centered {
   text-align: center;
 }
 
+td.progress-bar {
+  padding-left: 1em;
+}
+
 #most-recent-class-table {
   width:600px;
 }

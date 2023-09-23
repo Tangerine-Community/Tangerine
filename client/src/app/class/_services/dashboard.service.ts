@@ -8,6 +8,9 @@ import {ClassUtils} from '../class-utils';
 import {UserService} from '../../shared/_services/user.service';
 import {UserDatabase} from '../../shared/_classes/user-database.class';
 import {_TRANSLATE} from 'src/app/shared/translation-marker';
+import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service";
+import {TangyFormResponse} from "../../tangy-forms/tangy-form-response.class";
+import {VariableService} from "../../shared/_services/variable.service";
 // import {GroupingTable, StudentReportsCards} from "../reports/task-report/task-report.component";
 // import Stats from 'stats-lite';
 
@@ -20,12 +23,25 @@ export class DashboardService {
 
   constructor(
     private http: HttpClient,
-    private userService: UserService
+    private userService: UserService,
+    private tangyFormsInfoService : TangyFormsInfoService,
+    private variableService: VariableService,
   ) {}
 
   db: UserDatabase;
   databaseName: String;
   classUtils: ClassUtils = new ClassUtils();
+  currentClassIndex
+  currentClassId
+  currentItemId
+  currArray
+  
+  // Some properties that will be shared with window.T:
+  selectedClass
+  formList
+  enabledClasses
+  allStudentResults: StudentResult[];
+  
 
   async getUserDB() {
     return await this.userService.getUserDatabase();
@@ -49,6 +65,16 @@ export class DashboardService {
       include_docs: true
     });
     return result.rows;
+  }
+
+  async getEnabledClasses() {
+    const classes = await this.getMyClasses();
+    const enabledClasses = classes.map(klass => {
+      if ((klass.doc.items[0].inputs.length > 0) && (!klass.doc.archive)) {
+        return klass
+      }
+    });
+    return enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
   }
 
   async getMyStudents(selectedClass: any) {
@@ -704,7 +730,7 @@ export class DashboardService {
         })
         currentStudent.reportCount = currentStudent.reportCount ? currentStudent.reportCount + 1 : 1
         currentStudent.presentCount = currentStudent.presentCount ? currentStudent.presentCount : 0
-        if (students) {
+        if (students?.length > 0) {
           const studentRegistration  = students.find((thisStudent) => {
             return thisStudent.doc._id === student.id
           })
@@ -736,7 +762,7 @@ export class DashboardService {
           }
         }
         if (!currentStudent.score) {
-          const currentStudentScore = scoreReport.scoreList.find((thisStudent) => {
+          const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
             return thisStudent.id === student.id
           })
           currentStudent.score = currentStudentScore?.score
@@ -873,6 +899,265 @@ export class DashboardService {
     });
     return studentReportsCards
   }
+
+
+  async populateCurrentCurriculums(currentClass) {
+    let inputs = [], fullCurrArray
+    currentClass.items.forEach(item => inputs = [...inputs, ...item.inputs]);
+    if (inputs.length > 0) {
+      // find the curriculum element
+      const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
+      // find the options that are set to 'on'
+      const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
+      fullCurrArray =  Promise.all(currArray.map(async curr => {
+        const formId = curr.name;
+        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
+        curr.label = formInfo.title
+        return curr
+      }));
+    }
+
+    return fullCurrArray;
+  }
+
+  getClassTitle(classResponse: TangyFormResponse) {
+    const gradeInput = classResponse.items[0].inputs.find(input => input.name === 'grade')
+    return gradeInput.value
+  }
+
+  /**
+   * Get the attendance list for the class. If the listFromDoc is passed in, then
+   * populate the student from that doc by matching student.id.
+   * @param students
+   * @param listFromDoc
+   */
+  async getAttendanceList(students, listFromDoc) {
+    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
+    const list = []
+    students.forEach((student) => {
+      let studentResult
+      const studentId = student.id
+      if (listFromDoc) {
+        studentResult = listFromDoc.find(studentDoc => studentDoc.id === studentId)
+      }
+      if (studentResult) {
+        list.push(studentResult)
+      } else {
+        const student_name = this.getValue('student_name', student.doc)
+        const phone = this.getValue('phone', student.doc);
+        const classId = this.getValue('classId', student.doc)
+        studentResult = {}
+        studentResult['id'] = studentId
+        studentResult['name'] = student_name
+        studentResult['phone'] = phone
+        studentResult['classId'] = classId
+        studentResult['forms'] = {}
+        studentResult['absent'] = false
+        studentResult['mood'] = 'happy'
+        list.push(studentResult)
+      }
+    })
+    return list
+    // await this.populateFeedback(curriculumId);
+  }
+
+  
+  async initDashboard(classIndex: number, currentClassId: string, curriculumId: string, resetVars: boolean, enabledClasses) {
+    if (typeof enabledClasses === 'undefined') {
+      enabledClasses = await this.getEnabledClasses();
+    }
+    this.enabledClasses = enabledClasses
+    if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
+      let currentClass, currentItemId = '';
+      if (resetVars) {
+        await this.variableService.set('class-classIndex', classIndex.toString());
+        await this.variableService.set('class-currentClassId', currentClassId);
+        await this.variableService.set('class-curriculumId', curriculumId);
+      }
+      this.currentClassIndex = 0;
+      if (classIndex === null) {
+        let classClassIndex = await this.variableService.get('class-classIndex')
+        if (classClassIndex !== null) {
+          classIndex = parseInt(classClassIndex)
+          if (!Number.isNaN(classIndex)) {
+            this.currentClassIndex = classIndex;
+          }
+        }
+        currentItemId = await this.variableService.get('class-currentItemId');
+        currentClassId = await this.variableService.get('class-currentClassId');
+        curriculumId = await this.variableService.get('class-curriculumId');
+      } else {
+        this.currentClassIndex = classIndex
+      }
+      await this.variableService.set('class-classIndex', this.currentClassIndex);
+
+      currentClass = this.enabledClasses[this.currentClassIndex]?.doc
+      if (typeof currentClass === 'undefined') {
+        // Maybe a class has been removed
+        this.currentClassIndex = 0
+        currentClass = this.enabledClasses[this.currentClassIndex].doc
+      } else {
+        this.selectedClass = currentClass;
+      }
+
+      if (currentClassId && currentClassId !== '') {
+        this.currentClassId = currentClassId;
+      } else {
+        this.currentClassId = currentClass.id;
+        await this.variableService.set('class-currentClassId', this.currentClassId);
+      }
+      if (currentItemId && currentItemId !== '') {
+        this.currentItemId = currentItemId;
+      } else {
+        this.currentItemId = null;
+      }
+
+      this.currArray = await this.populateCurrentCurriculums(currentClass);
+      // const curriculum = this.currArray.find(x => x.name === curriculumId);
+      if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
+        const curriculum = this.currArray[0];
+        curriculumId = curriculum.name;
+      }
+      await this.variableService.set('class-curriculumId', curriculumId);
+
+      const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
+      const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+
+      this.formList = await this.populateFormsMetadata(curriculumId, curriculumFormsList, currentClass);
+
+      if (!currentItemId || currentItemId === '') {
+        const initialForm = curriculumFormsList[0];
+        this.currentItemId = initialForm.id;
+      }
+      
+      window['T'].classDashboard.selectedClass = this.selectedClass
+      window["T"].classDashboard.formList = this.formList
+      window["T"].classDashboard.enabledClasses = this.enabledClasses
+      
+      // showSummary
+      // if (this.useAttendanceFeature) {
+      // this.showSummary = true
+      // await this.populateSummary(this.currentClassId, this.curriculum)
+      // } else {
+      // const curriculumName = curriculum.name
+      const allStudentResults = await this.selectSubTask(this.currentItemId, this.currentClassId, curriculumId, curriculumFormsList);
+      
+      return allStudentResults
+      // }
+
+      // await this.populateFeedback(curriculumId);
+      // console.log("this.classGroupReport item: " + item + " this.currentClassId: " + this.currentClassId + " curriculumId: " + curriculumId + "results: "  + JSON.stringify(results))
+      // console.log("this.classGroupReport feedback: " + JSON.stringify(this.classGroupReport.feedback))
+
+
+      // this.selectedClass = this.enabledClasses[this.currentClassIndex].doc
+      
+      
+    }
+  }
+
+  // Uses curriculumFormsList to populate formList for a curriculum.
+  async populateFormsMetadata(curriculumId, curriculumFormsList, currentClass) {
+    const curriculumForms = [];
+    // this only needs to happen once.
+
+    if (typeof curriculumFormsList === 'undefined') {
+      const msg = _TRANSLATE(`This is an error - there are no this.curriculumForms
+      for this curriculum or range. Check if the config files are available.`);
+      console.log(msg);
+      alert(msg);
+    }
+
+    const formList = [];
+    let currentClassId;
+    // const currentClass = this.enabledClasses[this.currentClassIndex];
+    if (typeof currentClass !== 'undefined') {
+      currentClassId = currentClass.id;
+    }
+    for (const form of curriculumFormsList) {
+      const formEl = {
+        'title': form.title,
+        'id': form.id,
+        'classId': currentClassId,
+        'curriculumId': curriculumId
+      };
+      formList.push(formEl);
+    }
+    return formList
+  }
+
+  async selectSubTask(itemId, classId, curriculumId, curriculumFormsList) {
+    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
+    const curriculumName = curriculumId
+    if (!curriculumFormsList) {
+      const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
+      curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+    }
+    await this.variableService.set( 'class-currentItemId', itemId );
+
+    // this.currentClassId = this.selectedClass.id;
+    const students = await this.getMyStudents(classId);
+    const item = curriculumFormsList.find(x => x.id === itemId);
+    const results = await this.getResultsByClass(classId, curriculumName, [item], item);
+    const studentsResponses = [];
+    const formsTodisplay = {};
+    curriculumFormsList.forEach(form => {
+      formsTodisplay[form.id] = form;
+    });
+    for (const response of results as any[] ) {
+      // console.log("response: " + JSON.stringify(response))
+      // studentsResponses.push();
+      if (formsTodisplay[response.formId] !== 'undefined') {
+        const studentId = response.studentId;
+        let studentReponses = studentsResponses[studentId];
+        if (typeof studentReponses === 'undefined') {
+          studentReponses = {};
+        }
+        const formId = response.formId;
+        studentReponses[formId] = response;
+        studentsResponses[studentId] = studentReponses;
+      }
+    }
+    const allStudentResults = [];
+    // for (const student of this.students) {
+    students.forEach((student) => {
+      const studentResults = {};
+      const student_name = this.getValue('student_name', student.doc)
+      const phone = this.getValue('phone', student.doc);
+      const classId = this.getValue('classId', student.doc)
+      studentResults['id'] = student.id;
+      studentResults['name'] = student_name
+      studentResults['phone'] = phone
+      studentResults['classId'] = classId
+      // studentResults["forms"] = [];
+      studentResults['forms'] = {};
+      // for (const form of this.curriculumForms) {
+      curriculumFormsList.forEach((form) => {
+        const formResult = {};
+        formResult['formId'] = form.id;
+        formResult['curriculum'] = curriculumName;
+        formResult['title'] = form.title;
+        formResult['src'] = form.src;
+        if (studentsResponses[student.id]) {
+          formResult['response'] = studentsResponses[student.id][form.id];
+        }
+        // studentResults["forms"].push(formResult)
+        studentResults['forms'][form.id] = formResult;
+      });
+      allStudentResults.push(studentResults);
+    });
+    // this.allStudentResults = allStudentResults;
+    // await this.populateFeedback(curriculumId);
+    return allStudentResults;
+  }
+
+  // Triggered by dropdown selection in UI.
+  async populateCurriculum (classIndex, curriculumId) {
+    const currentClass = this.enabledClasses[classIndex];
+    const currentClassId = currentClass.id;
+    this.allStudentResults = await this.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
+  }
+  
 }
 
 export class StudentReportsCards {

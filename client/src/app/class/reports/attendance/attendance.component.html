@@ -62,7 +62,7 @@
 <!--              </div>-->
 <!--            </ng-container>-->
           </td>
-          <td class="centered">
+          <td class="centered progress-bar">
 <!--          <td [ngClass]="{'red': student.score < 60, 'orange': (student.score >=60 && student.score < 80), 'green': student.score > 79}" class="centered">-->
             <mat-progress-bar
               *ngIf="student.score"
@@ -74,7 +74,7 @@
           <td class="number-cell centered">
             {{student.score}}%
           </td>
-          <td class="centered" *ngFor="let score of student.studentScores | keyvalue">
+          <td class="centered progress-bar" *ngFor="let score of student.studentScores | keyvalue">
             <!--            <ng-container *ngFor="let score of student.studentScores | keyvalue">-->
             <!--            {{score.key}}:{{score.value}}-->
             <ng-container *ngFor="let val of score.value">
@@ -111,7 +111,7 @@
           <td class="student-name-column">{{student.name}}</td>
 <!--          <td-->
 <!--            [ngClass]="{'red': student.presentPercentage < 21, 'green': student.presentPercentage > 79}">-->
-          <td class="centered">
+          <td class="centered progress-bar">
             <mat-progress-bar
               *ngIf="student.presentPercentage"
               value="{{ student.presentPercentage }}"
@@ -125,7 +125,7 @@
 <!--            [ngClass]="{'red': student.moodPercentage <=20, 'orange': (student.moodPercentage >=20 && student.moodPercentage < 90), 'green': student.moodPercentage >=90}"> {{student.moodPercentage}}-->
 <!--            %-->
 <!--          </td>-->
-          <td class="centered">
+          <td class="centered progress-bar">
             <mat-progress-bar
               *ngIf="student.moodPercentage"
               value="{{ student.moodPercentage }}"
@@ -185,7 +185,7 @@
 <!--            [ngClass]="{'red': student.presentPercentage < 21, 'green': student.presentPercentage > 79}"> {{student.presentPercentage}}-->
 <!--            %-->
 <!--          </td>-->
-          <td class="centered">
+          <td class="centered progress-bar">
             <mat-progress-bar
               *ngIf="student.presentPercentage"
               value="{{ student.presentPercentage }}"
@@ -199,7 +199,7 @@
 <!--            [ngClass]="{'red': student.moodPercentage <=20, 'orange': (student.moodPercentage >=20 && student.moodPercentage < 90), 'green': student.moodPercentage >=90}"> {{student.moodPercentage}}-->
 <!--            %-->
 <!--          </td>-->
-          <td class="centered">
+          <td class="centered progress-bar">
             <mat-progress-bar
               *ngIf="student.moodPercentage"
               value="{{ student.moodPercentage }}"

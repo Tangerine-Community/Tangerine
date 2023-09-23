@@ -1,1 +1,13 @@
 <div #container></div>
+<div class="class-config-content" *ngIf="showClassConfig">
+  <h1>Class Configuration</h1>
+  <p>Toggle a class 'off' to archive. The toggle will be white when 'off'. Click a class 'on' to enable.  The toggle will be orange when 'on'. </p>
+  <span *ngFor="let class of classes; let classIndex=index">
+    <p>
+      <mat-slide-toggle [checked]="!class.doc.archive"
+                        (click)="toggleClass(class.id)">Class: {{getClassTitle(class.doc)}}</mat-slide-toggle>
+    </p>
+  </span>
+</div>
+
+
