@@ -70,7 +70,7 @@ export class ClassNavBarComponent implements OnInit {
     const curriculumId = await this.variableService.get('class-curriculumId');
     const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
     const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-    this.formList = await this.dashboardService.populateFormsMetadata(null, curriculumFormsList, currentClass);
+    this.formList = await this.dashboardService.populateFormsMetadata(curriculumId, curriculumFormsList, currentClass);
 
   }
 

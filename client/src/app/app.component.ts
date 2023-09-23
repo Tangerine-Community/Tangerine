@@ -62,8 +62,6 @@ export class AppComponent implements OnInit {
   exitClicks = 5 // If not defined in app-config.json, use this value
 
   showClassNavBar = false;  // Currently only true if this is a class project - appConfig.homeUrl === 'dashboard'
-  // formList = [];
-  // selectedClass
   
   constructor(
     private userService: UserService,
@@ -235,8 +233,6 @@ export class AppComponent implements OnInit {
     }
     if (this.appConfig.homeUrl === 'dashboard') {
       this.showClassNavBar = true;
-      this.formList = window["T"].formList
-      this.selectedClass = window["T"].selectedClass
     }
     this.ready = true;
 
