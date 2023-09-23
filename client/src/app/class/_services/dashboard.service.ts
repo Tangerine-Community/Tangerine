@@ -1072,7 +1072,7 @@ export class DashboardService {
     let currentClassId;
     // const currentClass = this.enabledClasses[this.currentClassIndex];
     if (typeof currentClass !== 'undefined') {
-      currentClassId = currentClass.id;
+      currentClassId = currentClass._id;
     }
     for (const form of curriculumFormsList) {
       const formEl = {
