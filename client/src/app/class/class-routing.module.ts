@@ -12,8 +12,26 @@ import {ClassFormComponent} from "./class-form/class-form.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player.component";
 import {AttendanceComponent} from "./reports/attendance/attendance.component";
 import {GradesComponent} from "./reports/grades/grades.component";
+import {AttendanceDashboardComponent} from "./attendance/attendance-dashboard/attendance-dashboard.component";
+import {AttendanceCheckComponent} from "./attendance/attendance-check/attendance-check.component";
+import {AttendanceScoresComponent} from "./attendance/attendance-scores/attendance-scores.component";
 
 const appRoutes = [
+  {
+    path: 'attendance-dashboard',
+    component: AttendanceDashboardComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },  
+  {
+    path: 'attendance-check',
+    component: AttendanceCheckComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  }, 
+  {
+    path: 'attendance-scores',
+    component: AttendanceScoresComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
   {
     path: 'dashboard',
     component: DashboardComponent,

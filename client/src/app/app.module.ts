@@ -35,6 +35,8 @@ import { NewFormResponseModule } from './core/new-form-response/new-form-respons
 import {AppInit} from './app-init';
 import {AdminConfigurationModule} from "./core/admin-configuration/admin-configuration.module";
 import { MaintenanceModule } from './core/maintenance/maintenance.module';
+import {ClassNavBarComponent} from "./class/class-nav-bar/class-nav-bar.component";
+import {MatListModule} from "@angular/material/list";
 export { AppComponent }
 
 export function initializeApp1(appInit: AppInit) {
@@ -45,7 +47,7 @@ export function initializeApp1(appInit: AppInit) {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent, ClassNavBarComponent
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
@@ -53,7 +55,8 @@ export function initializeApp1(appInit: AppInit) {
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule,
+    MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule,
+    MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule, MatListModule,
     TangyFormsModule,
     AuthModule,
     CaseManagementModule,

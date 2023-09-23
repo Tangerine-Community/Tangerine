@@ -34,7 +34,7 @@ export class AttendanceComponent implements OnInit {
   recentVisitsReport: any
   // @ViewChild('numVisits', {static: true}) searchResults: ElementRef
   // @Input()  numVisits!: number | string
-  numVisits = '3'
+  numVisits = '5'
   classId: string;
   curriculi: any;
   curriculumName: string;
