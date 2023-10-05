@@ -1,4 +1,7 @@
-<span class="class-dashboard-button-spacer-left">
+<span class="class-dashboard-button-spacer-left nav-grade-indicator" *ngIf="selectedClass">
+  {{'Grade: '|translate}}{{getClassTitle(selectedClass)}}
+</span>
+<span class="class-dashboard-button-spacer-left" *ngIf="selectedClass">
     
   <!--    <button mat-stroked-button color="primary"-->
   <!--            [routerLink]="['/class-config/']">-->
@@ -55,7 +58,7 @@
   </mat-menu>
   </span>
 
-<span class="class-dashboard-button-spacer-right">
+<span class="class-dashboard-button-spacer-right" *ngIf="selectedClass">
     <button mat-button [matMenuTriggerFor]="reportsMenu" class="white-menu-item">
       <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">dashboard</mat-icon>
       <span>{{'Reports'|translate}}</span>

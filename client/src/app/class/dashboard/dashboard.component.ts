@@ -79,18 +79,20 @@ export class DashboardComponent implements OnInit {
   getValue: (variableName, response) => any;
   @ViewChild('container', {static: true}) container: ElementRef;
 
-  constructor(
-    // private http: HttpClient,
-    private dashboardService: DashboardService,
-    // private userService: UserService,
-    private router: Router,
-    private classFormService: ClassFormService,
-    // private tangyFormService: TangyFormService,
-    // private tangyFormsInfoService: TangyFormsInfoService,
-    private variableService: VariableService,
-    private appConfigService: AppConfigService,
-    private route: ActivatedRoute,
-  ) { }
+    constructor(
+        // private http: HttpClient,
+        private dashboardService: DashboardService,
+        // private userService: UserService,
+        private router: Router,
+        private classFormService: ClassFormService,
+        // private tangyFormService: TangyFormService,
+        // private tangyFormsInfoService: TangyFormsInfoService,
+        private variableService: VariableService,
+        private appConfigService: AppConfigService,
+        private route: ActivatedRoute,
+        private http: HttpClient
+    ) {
+    }
 
   
 
@@ -146,7 +148,7 @@ export class DashboardComponent implements OnInit {
       // this.enabledClasses = window['T'].classDashboard.enabledClasses;
 
       curriculumId = curriculumId? curriculumId: await this.variableService.get('class-curriculumId');
-      this.selectedCurriculum = this.currArray.find(x => x.name === curriculumId);
+      this.selectedCurriculum = this.currArray?.find(x => x.name === curriculumId);
       this.currentItemId = await this.variableService.get('class-currentItemId');
     })
   }
@@ -372,6 +374,11 @@ export class DashboardComponent implements OnInit {
 
   getClassTitle = this.dashboardService.getClassTitle
   selectSubTask = this.dashboardService.selectSubTask
+
+    async getCurriculaForms(curriculum) {
+        const formHtml =  await this.http.get(`./assets/${curriculum}/form.html`, {responseType: 'text'}).toPromise();
+        return formHtml;
+    }
   
   
 }
