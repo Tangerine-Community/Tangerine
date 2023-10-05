@@ -41,6 +41,8 @@ MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media/"
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
 cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
+mkdir -p $MEDIA_PATH $RELEASE_DIRECTORY/assets/media
+cp -r $MEDIA_PATH $RELEASE_DIRECTORY/assets/
 cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
 cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/media/
 

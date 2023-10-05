@@ -8,18 +8,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   declarations: [SettingsComponent],
-  imports: [
-    CommonModule,
-    SettingsRoutingModule,
-    SharedModule,
-    MatTabsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        SettingsRoutingModule,
+        SharedModule,
+        MatTabsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatSlideToggleModule
+    ]
 })
 export class SettingsModule { }

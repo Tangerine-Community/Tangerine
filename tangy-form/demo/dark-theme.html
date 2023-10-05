@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+      <style>
+
+        /*
+         * Dark theme example.
+         */
+        html {
+          --tangy-form-item--background-color: #000;
+          --primary-color-dark: #ded5c0;
+          --primary-text-color-overlay: #000;
+          --primary-text-color: #fafafa;
+          --primary-color: #c3a472;
+          --accent-color: #0d90ef;
+          --accent-color-dark: #33aaff;
+          --accent-text-color: #000;
+          --error-color: #00ffff; 
+          --disabled-color: #444444;
+          --paper-tabs-selection-bar-color: #0d90ef;
+        }
+
+
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-acasi.js"></script>
+    <script type="module" src="../input/tangy-box.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-checkboxes-dynamic.js"></script>
+    <script type="module" src="../input/tangy-eftouch.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+    <script type="module" src="../input/tangy-timed.js"></script>
+    <script type="module" src="../input/tangy-untimed-grid.js"></script>
+    <script type="module" src="../input/tangy-toggle-button.js"></script>
+    <script type="module" src="../input/tangy-photo-capture.js"></script>
+    <script type="module" src="../input/tangy-qr.js"></script>
+    <script type="module" src="../input/tangy-consent.js"></script>
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+
+      <h3>dark theme example</h3>
+      <demo-snippet>
+        <template>
+          <tangy-form id="fruit-survey" title="Fruit Survey">
+            <tangy-form-item id="item1" title="Fruit Survey">
+              <tangy-input
+                name="tangy_input"
+                type="text"
+                label="This is a regular tangy input label."
+                inner-label="<t-lang en>This is an inner-label text</t-lang><t-lang fr>Ceci est un texte interne</t-lang>."
+                placeholder="<t-lang en>This is placeholder text</t-lang><t-lang fr>Ceci est un espace réservé</t-lang>."
+                hint-text="This is <b>hint text</b>"
+                error-message="This is a custom <t-lang en>error message</t-lang>"
+                required>
+              </tangy-input>
+              <tangy-input
+                name="tangy_input"
+                type="email"
+                label="This is an email tangy input."
+                required>
+              </tangy-input>
+              <tangy-photo-capture name="picture"></tangy-photo-capture>
+              <tangy-radio-buttons
+                name="fruit_selection"
+                label="What is your <b>favorite</b> fruit?"
+                hint-text="This is <b>hint text</b>."
+                required>
+                <option name="orange">Orange</option>
+                <option name="banana">Banana</option>
+                <option name="tangerine"><b>Tangerine</b></option>
+              </tangy-radio-buttons>
+              <tangy-select name="fruit_selection_2"
+                label="What is your <b>second favorite</b> fruit?"
+                hint-text="This is <b>hint text</b>."
+                required>
+                <option name=""></option>
+                <option name="orange">Orange</option>
+                <option name="banana">Banana</option>
+                <option name="tangerine"><b>Tangerine</b></option>
+              </tangy-select>
+              <tangy-checkboxes
+                name="fruit_time"
+                label="What <b>time</b> do you take fruit?"
+                hint-text="This is <b>hint text</b>."
+                required>
+                <option name="morning">Morning</option>
+                <option name="afternoon">Afternoon</option>
+                <option name="evening"><i>Evening</i></option>
+              </tangy-checkboxes>
+              Where do you eat fruit?
+              <tangy-location
+                name="location"
+                location-src="./location-list.json"
+                hint-text="This is <b>hint text</b>."
+                show-levels="county,school"
+                required>
+              </tangy-location>
+              tangy-gps with hide-coordinates and hide-accuracy-distance:
+              <tangy-gps
+                name="gps"
+                hint-text="This is <b>hint text</b>."
+                hide-coordinates
+                hide-accuracy-distance
+                required>
+              </tangy-gps>
+              tangy-gps without hide-coordinates:
+              <tangy-gps name="gps2" required></tangy-gps>
+              <tangy-qr
+                name="qr"
+                label="Scan a QR code"
+                hint-text="This is <b>hint text</b>."
+                required>
+              </tangy-qr>
+            </tangy-form-item>
+            <tangy-form-item id="summary" title="Summary" on-change="">
+              <tangy-input name="comments" label="Comments"></tangy-input>
+              Thank you for taking our survey.
+            </tangy-form-item>
+          </tangy-form>
+        </template>
+      </demo-snippet>
+
+
+    </div>
+  </body>
+</html>
