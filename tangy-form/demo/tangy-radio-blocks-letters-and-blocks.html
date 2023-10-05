@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-radio-blocks demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+        import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+        import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+        <style>
+            html {
+                --document-background-color: #FAFAFA;
+                --primary-color-dark: #3c5b8d;
+                --primary-text-color: var(--light-theme-text-color);
+                --primary-color: #3c5b8d;
+                --accent-color: #f26f10;
+                --accent-text-color: #FFF;
+                --error-color: var(--paper-red-500);
+                --disabled-color: #BBB;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5 {
+                @apply --paper-font-common-base;
+                color: var(--primary-text-color);
+                margin: 25px 0px 5px 15px;
+            }
+        </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-acasi.js"></script>
+    <script type="module" src="../input/tangy-box.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-checkboxes-dynamic.js"></script>
+    <script type="module" src="../input/tangy-eftouch.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+    <script type="module" src="../input/tangy-timed.js"></script>
+    <script type="module" src="../input/tangy-untimed-grid.js"></script>
+    <script type="module" src="../input/tangy-toggle-button.js"></script>
+    <script type="module" src="../input/tangy-video-capture.js"></script>
+    <script type="module" src="../input/tangy-qr.js"></script>
+    <script type="module" src="../input/tangy-consent.js"></script>
+    <script type="module" src="../input/tangy-signature.js"></script>
+    <script type="module" src="../input/tangy-radio-block.js"></script>
+    <script type="module" src="../input/tangy-radio-blocks.js"></script>
+    <script type="module" src="../input/tangy-keyboard-input.js"></script>
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+        </style>
+    </custom-style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>tangy-radio-blocks letters demo</h3>
+        <demo-snippet>
+            <template>
+                <tangy-form
+                        id="letters"
+                        title="Letters"
+                >
+                    <tangy-form-item
+                            id="item0"
+                            title="Item 0"
+                    >
+                        <tangy-radio-blocks
+                                name="radioBlocks0"
+                                orientation="rows"
+                                label="What did Mary have?"
+                        >
+                            <option value="0">a book</option>
+                            <option value="1">a little lamb</option>
+                            <option value="2">a pencil</option>
+                            <option value="3">a dog</option>
+                        </tangy-radio-blocks>
+                        <tangy-box id="tangerineMan" class=""><img src="./assets/images/ms-talk2.png" class="talk"></tangy-box>
+                    </tangy-form-item>
+                    <tangy-form-item
+                            id="item1"
+                            title="Item 1"
+                    >
+                        <tangy-radio-blocks
+                                name="radioBlocks1"
+                        >
+                            <option value="w">w</option>
+                            <option value="u">u</option>
+                            <option value="m">m</option>
+                            <option value="v">v</option>
+                            <option value="n">n</option>
+                        </tangy-radio-blocks>
+                        <tangy-box id="tangerineMan" class=""><img src="./assets/images/ms-talk2.png" class="talk"></tangy-box>
+                    </tangy-form-item>
+                    <tangy-form-item
+                            id="item2"
+                            title="Item 2"
+                    >
+                        <tangy-keyboard-input
+                                keys="a b c d e f g h i j k l m n o p q r s t u v w x y z"
+                                name="keyboardInput1"
+                        >
+                        </tangy-keyboard-input>
+                        <tangy-box id="tangerineMan" class=""><img src="./assets/images/ms-talk2.png" class="talk"></tangy-box>
+                    </tangy-form-item>
+                </tangy-form>
+                <script>
+                    document.querySelector('#letters').addEventListener('submit', event => {
+                        // By default, the form response is locked and the user can browse it. Use event.preventDefault()
+                        // to do something else.
+                        event.preventDefault()
+                        // 3 ways to inspect the user's response to the form. Ordered by level of detail.
+                        console.log(event.target.response)
+                        console.log(event.target.inputs)
+                        console.log(event.target.values)
+                    })
+                </script>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>

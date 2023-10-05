@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Tangy Form Clinical Updates Demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          /*--accent-color: #f26f10;*/
+          --accent-color: #3c5b8d;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+          --tangy-element-border: 0;
+          /*--tangy-element-margin: 0;*/
+        }
+        h1, h2, h3, h4, h5, p{
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 15px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-partial-date.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+ 
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+     <demo-snippet>
+        <template>      
+          <tangy-form id="my-form" title="My Form">
+              <h3>Tangy-form Clinical Updates Demo</h3>
+              
+              <tangy-form-item id="item1">
+
+                <tangy-checkboxes name="saeseriousness" label="Seriousness Criteria:"
+                  question-number="1." 
+                  hint-text="Please select all applicable options."
+                  error-text="You must select at least one option."
+                  required>
+                    <option name="saedeath" hint-text="Only select death if the participant has died and a death certificate is available.">Resulted in death</option>
+                    <option name="saelfethrt">Life-threatening</option>
+                    <option name="saehosp">Hospitalization/prolongation of hospitalization</option>
+                    <option name="saepersist">Persistent/significant disability/incapacity</option>
+                    <option name="saecongenital">Congenital anomaly/Birth defect</option>
+                    <option name="saeimprtnt">Important medical event </option>
+                </tangy-checkboxes>
+
+                <tangy-input name="test-input" 
+                  label="How are you doing today?"
+                  hint-text="You may type as many characters as you wish."
+                  error-text="You must explain how you are doing today!"
+                  question-number="2."
+                  inner-label=" "
+                  required>
+                </tangy-input>
+
+                <tangy-partial-date name="test" question-number="3." label="
+                  <t-lang en>Please enter the child's date of birth.</t-lang>
+                  <t-lang fr>S'il vous plaît entrer la date de naissance de l'enfant.</t-lang>"
+                  hint-text="
+                  <t-lang en>Please enter the complete date of birth if known. If the complete date of birth is not known, please enter as much information as possible. A partial date is allowed.</t-lang>
+                  <t-lang fr>S'il vous plaît entrer la date de naissance complète si connue. Si la date de naissance complète n'est pas connue, veuillez entrer autant d'informations que possible. Une date partielle est autorisée.</t-lang>"
+                  future-date-error-text="<t-lang en>You have entered a date that is in the future but the child's date of birth must be in the past. Please review the date and make an appropriate correction.</t-lang><t-lang fr>
+                      Vous avez entré une date future, mais la date de naissance de l'enfant doit être passée. Veuillez revoir la date et apporter une correction appropriée.</t-lang>"
+                  required disallow-future-date show-today-button allow-unknown-day allow-unknown-month allow-unknown-year min-year="1990" max-year="2020">
+                </tangy-partial-date>
+         
+                <tangy-select name="saeoption" label="Seriousness Option:"
+                  question-number="4." required
+                  hint-text="Please select all applicable options."ß
+                  error-text="You must select one option.">
+                      <option name="" disabled></option>
+                      <option name="saedeath" hint-text="Only select death if the participant has died and a death certificate is available.">Resulted in death</option>
+                      <option name="saelfethrt">Life-threatening</option>
+                      <option name="saehosp">Hospitalization/prolongation of hospitalization</option>
+                      <option name="saepersist">Persistent/significant disability/incapacity</option>
+                      <option name="saecongenital">Congenital anomaly/Birth defect</option>
+                      <option name="saeimprtnt">Important medical event </option>
+                  </tangy-select>
+
+                  <tangy-radio-buttons name="sae2" label="Seriousness Option:"
+                    question-number="5." required
+                    hint-text="Please select one option."
+                    error-text="You must select one option.">
+                      <option name="saedeath" hint-text="Only select death if the participant has died and a death certificate is available.">Resulted in death</option>
+                      <option name="saelfethrt">Life-threatening</option>
+                      <option name="saehosp">Hospitalization/prolongation of hospitalization</option>
+                      <option name="saepersist">Persistent/significant disability/incapacity</option>
+                      <option name="saecongenital">Congenital anomaly/Birth defect</option>
+                      <option name="saeimprtnt">Important medical event</option>
+                  </tangy-radio-buttons>
+     
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </demo-snippet>
+    </div>
+  </body>
+</html>

@@ -128,6 +128,15 @@ export class AppConfig {
 
   columnsOnVisitsTab = []
   categories = []
+  
+  //
+  // Teach configuration properties
+  //
+
+  teachProperties = {
+    units: [],
+    cutoffRange:""
+  }
 
   //
   // Custom App configuration
@@ -162,6 +171,7 @@ export class AppConfig {
   //
 
   calculateLocalDocsForLocation:boolean;
+  useAttendanceFeature: boolean;
   
 }
 

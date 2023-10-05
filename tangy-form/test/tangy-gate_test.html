@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-gatees test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+  </head>
+  <body>
+    
+    <test-fixture id="TangyGateFixture">
+      <template>
+        <tangy-gate name="gate" inprogress="Saving to server..." success="Saved!"></tangy-gate>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../input/tangy-gate.js'
+      suite('tangy-gate', () => {
+        
+        test('be invalid until value is set', () => {
+          const element = fixture('TangyGateFixture');
+          assert.equal(element.validate(), false)
+          element.value = true
+          assert.equal(element.validate(), true)
+        })
+
+      })
+    </script>
+
+  </body>
+</html>
