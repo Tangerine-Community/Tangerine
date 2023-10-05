@@ -5,7 +5,8 @@ import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
 import {Router} from "@angular/router";
 import {StudentResult} from "../../dashboard/dashboard.component";
-import {AttendanceNavComponent} from "../attendance-nav.component";
+import {UserService} from "../../../shared/_services/user.service";
+
 
 @Component({
   selector: 'app-attendance-check',
@@ -24,6 +25,7 @@ export class AttendanceCheckComponent implements OnInit {
     grade: string,
     schoolName: string
     schoolYear: string,
+    reportDate:string,
     attendanceList: StudentResult[],
     collection: string,
     form: {},
@@ -31,11 +33,13 @@ export class AttendanceCheckComponent implements OnInit {
     complete: boolean,
     type: string
   }
+  selectedClass: any
   
   constructor(
     private dashboardService: DashboardService,
               private variableService : VariableService,
-              private router: Router
+              private router: Router,
+              private userService: UserService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -46,12 +50,13 @@ export class AttendanceCheckComponent implements OnInit {
     let classClassIndex = await this.variableService.get('class-classIndex')
     if (classClassIndex !== null) {
       classIndex = parseInt(classClassIndex)
-      if (!Number.isNaN(classIndex)) {
+      if (Number.isNaN(classIndex)) {
         classIndex = 0
       }
     }
 
     const currentClass = enabledClasses[classIndex]?.doc;
+    this.selectedClass = currentClass;
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     const curriculum = currArray.find(x => x.name === curriculumId);
@@ -71,28 +76,25 @@ export class AttendanceCheckComponent implements OnInit {
     const students = await this.dashboardService.getMyStudents(currentClassId);
     
     const timestamp = Date.now()
-    const reportDate = DateTime.local().toISODate()
-    const grade = this.dashboardService.getClassTitle(currentClass)
-    const schoolName = this.getValue('school_name', currentClass)
-    const schoolYear = this.getValue('school_year', currentClass)
-    const id = type + '-' + grade + '-' + reportDate
-    let doc, listFromDoc
+    const {reportDate, grade, schoolName, schoolYear, id} = this.dashboardService.generateSearchableId(currentClass, type);
+
+    let currentAttendanceReport, listFromDoc
     try {
-      doc = await this.dashboardService.getDoc(id)
-      listFromDoc = doc.attendanceList
-      // this.attendanceRegister = doc
+      currentAttendanceReport = await this.dashboardService.getDoc(id)
+      listFromDoc = currentAttendanceReport.attendanceList
     } catch (e) {
     }
-
+    
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, listFromDoc)
-    if (!doc) {
+    if (!currentAttendanceReport) {
       this.attendanceRegister = {
         _id: id,
         timestamp: timestamp,
-        classId: curriculum.id,
+        classId: currentClassId,
         grade: grade,
         schoolName: schoolName,
         schoolYear: schoolYear,
+        reportDate: reportDate,
         attendanceList: this.attendanceList,
         collection: 'TangyFormResponse',
         type: type,
@@ -131,15 +133,17 @@ export class AttendanceCheckComponent implements OnInit {
         //   this.currentItemId = initialForm.id
         // }
         // await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
-        this.router.navigate(['/attendance-dashboard/'], { queryParams:
-            { curriculum: 'student-registration' }
-        });
+        this.router.navigate(['/dashboard/']);
       }
     } else {
-      doc.attendanceList = this.attendanceList
-      this.attendanceRegister = doc
+      currentAttendanceReport.attendanceList = this.attendanceList
+      this.attendanceRegister = currentAttendanceReport
     }
   }
+
+  private
+
+
 
   async toggleAttendance(student) {
     student.absent = !student.absent
@@ -163,12 +167,13 @@ export class AttendanceCheckComponent implements OnInit {
     // save allStudentResults
     this.attendanceRegister.attendanceList = this.attendanceList
     // save attendanceRegister
-    let doc
+    let currentAttendanceReport
     try {
-      doc = await this.dashboardService.getDoc(this.attendanceRegister._id)
-      this.attendanceRegister['_rev'] = doc._rev
+      currentAttendanceReport = await this.dashboardService.getDoc(this.attendanceRegister._id)
+      this.attendanceRegister['_rev'] = currentAttendanceReport._rev
     } catch (e) {
     }
+
     await this.dashboardService.saveDoc(this.attendanceRegister)
   }
 
@@ -181,5 +186,7 @@ export class AttendanceCheckComponent implements OnInit {
         { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
+
+  getClassTitle = this.dashboardService.getClassTitle
 
 }

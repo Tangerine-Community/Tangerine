@@ -11,7 +11,8 @@ import {_TRANSLATE} from 'src/app/shared/translation-marker';
 import {TangyFormsInfoService} from "../../tangy-forms/tangy-forms-info-service";
 import {TangyFormResponse} from "../../tangy-forms/tangy-form-response.class";
 import {VariableService} from "../../shared/_services/variable.service";
-// import {GroupingTable, StudentReportsCards} from "../reports/task-report/task-report.component";
+import {DateTime} from "luxon";
+import {sanitize} from "sanitize-filename-ts";
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -700,17 +701,36 @@ export class DashboardService {
   }
 
   /**
-   * Queries responsesForAttendanceByClassId view to get attendance docs for a class
-   * @param selectedClass
+   * Queries allDocs to get docs for either attendance or score
+   * @param classId
    */
-  async getAttendanceDocs(selectedClass: any) {
+  async searchDocs(type: string, currentClass, reportDate: string) {
     this.db = await this.getUserDB();
-    const result = await this.db.query('tangy-class/responsesForAttendanceByClassId', {
-      startkey: [selectedClass],
-      endkey: [selectedClass, {}],
+    const grade = this.getValue('grade', currentClass)
+    const schoolName = this.getValue('school_name', currentClass)
+    const schoolYear = this.getValue('school_year', currentClass)
+    let searchTerm = reportDate ?  type + '-' + schoolYear + '-' + schoolName + '-' + grade + '-' + reportDate : type + '-' + schoolYear + '-' + schoolName + '-' + grade
+    const result = await this.db.allDocs({
+      startkey: searchTerm,
+      endkey: searchTerm + '\uffff',
       include_docs: true
     });
     return result.rows;
+  }
+
+  /**
+   * Generate a unique id for the attendance or score report
+   * @param currentClass
+   * @param type
+   */
+  generateSearchableId(currentClass, type: string) {
+    const username = this.userService.getCurrentUser()
+    const reportDate = DateTime.local().toISODate()
+    const grade = this.getValue('grade', currentClass)
+    const schoolName = this.getValue('school_name', currentClass)
+    const schoolYear = this.getValue('school_year', currentClass)
+    const id = type + '-' + sanitize(schoolYear) + '-' + sanitize(schoolName) + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username)
+    return {reportDate, grade, schoolName, schoolYear, id};
   }
 
   /**
@@ -921,8 +941,8 @@ export class DashboardService {
   }
 
   getClassTitle(classResponse: TangyFormResponse) {
-    const gradeInput = classResponse.items[0].inputs.find(input => input.name === 'grade')
-    return gradeInput.value
+    const gradeInput = classResponse?.items[0].inputs.find(input => input.name === 'grade')
+    return gradeInput?.value
   }
 
   /**
@@ -932,7 +952,6 @@ export class DashboardService {
    * @param listFromDoc
    */
   async getAttendanceList(students, listFromDoc) {
-    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
     const list = []
     students.forEach((student) => {
       let studentResult

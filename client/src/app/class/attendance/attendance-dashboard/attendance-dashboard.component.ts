@@ -17,6 +17,7 @@ export class AttendanceDashboardComponent implements OnInit {
   attendanceReport: any
   getValue: (variableName: any, response: any) => any;
   window: any = window
+  selectedClass: any
   constructor(
     private dashboardService: DashboardService,
     private variableService : VariableService,
@@ -31,27 +32,35 @@ export class AttendanceDashboardComponent implements OnInit {
     let classClassIndex = await this.variableService.get('class-classIndex')
     if (classClassIndex !== null) {
       classIndex = parseInt(classClassIndex)
-      if (!Number.isNaN(classIndex)) {
+      if (Number.isNaN(classIndex)) {
         classIndex = 0
       }
     }
     
     const currentClass = enabledClasses[classIndex]?.doc
+    this.selectedClass = currentClass;
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     const curriculum = currArray.find(x => x.name === curriculumId);
 
     const currentClassId = await this.variableService.get('class-currentClassId');
-    await this.populateSummary(currentClassId, curriculum)
+    await this.populateSummary(currentClass, curriculum)
   }
 
-  private async populateSummary(classId, curriculum) {
+  private async populateSummary(currentClass, curriculum) {
+    const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
-    const scoreReports = await this.dashboardService.getScoreDocs(classId)
+    // const scoreReports = await this.dashboardService.getScoreDocs(classId)
+    const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
     const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
 
-    const attendanceReports = await this.dashboardService.getAttendanceDocs(classId)
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null)
     const currentAttendanceReport = attendanceReports[attendanceReports.length - 1]?.doc
+    if (!currentAttendanceReport) {
+      alert(_TRANSLATE('You must take attendance before you can view the attendance dashboard.'))
+      this.router.navigate(['attendance-check'])
+      return
+    }
 
     // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
     const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, classId)
@@ -71,7 +80,7 @@ export class AttendanceDashboardComponent implements OnInit {
     attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))
     this.attendanceReport = currentAttendanceReport
     const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
-      return !this.attendanceReport.attendanceList.find((student) => {
+      return !this.attendanceReport?.attendanceList.find((student) => {
         return thisStudent.doc._id === student.id
       })
     })
@@ -133,5 +142,7 @@ export class AttendanceDashboardComponent implements OnInit {
         { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
+
+  getClassTitle = this.dashboardService.getClassTitle
 
 }

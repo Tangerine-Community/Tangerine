@@ -1,21 +1,12 @@
-<mat-card class="tangy-class-card-content-container">
-  <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}</p></div>
-  <div class="controls-wrapper">
-    <div class="controls-one">  
-      <button mat-icon-button color="primary"
-              [routerLink]="['/attendance-check/']"
-              aria-label="icon button with a checklist icon">
-        <mat-icon>checklist</mat-icon>
-      </button>
-    </div>
-    <div class="controls-two">
-      <button mat-icon-button color="primary"
-              [routerLink]="['/attendance-scores/']"
-              aria-label="icon button with a scoreboard icon">
-        <mat-icon>scoreboard</mat-icon>
-      </button>
-    </div>
+<div class="nav-flex-container">
+  <div class="nav-flex-items">
   </div>
+  <div class="nav-flex-items">
+    <app-attendance-nav></app-attendance-nav>
+  </div>
+</div>
+<mat-card class="tangy-class-card-content-container">
+  <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass)}}</p></div>
   <div>
     <table class="dashboard-table">
       <tr>
@@ -55,6 +46,6 @@
       </tr>
     </table>
     <span><p class="mat-h3"
-             *ngIf="attendanceReport?.attendanceList.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+             *ngIf="!attendanceReport || attendanceReport?.attendanceList.length === 0">{{'No Students currently registered.'|translate}}</p></span>
   </div>
 </mat-card>
