@@ -49,8 +49,8 @@ export class AttendanceComponent implements OnInit {
 
 
     this.curriculi = [];
-    const classDoc = await this.classFormService.getResponse(classId);
-    const classRegistration = this.classUtils.getInputValues(classDoc);
+    const currentClass = await this.classFormService.getResponse(classId);
+    const classRegistration = this.classUtils.getInputValues(currentClass);
     const allCurriculums = classRegistration.curriculum;
     for (const curriculum of allCurriculums as any[]) {
       if (curriculum['value'] === 'on') {
@@ -66,11 +66,10 @@ export class AttendanceComponent implements OnInit {
       await this.onCurriculumSelect(curriculum.name)
     }
 
-    this.scoreReports = await this.dashboardService.getScoreDocs(classId)
-    const currentScoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
-    this.scoreReport = currentScoreReport
+    this.scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
+    this.scoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
 
-    this.attendanceReports = await this.dashboardService.getAttendanceDocs(classId)
+    this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null)
     const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
     this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, null))
     this.attendanceReport = currentAttendanceReport

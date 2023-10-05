@@ -1,3 +1,10 @@
+<div class="nav-flex-container" *ngIf="useAttendanceFeature">
+  <div class="nav-flex-items">
+  </div>
+  <div class="nav-flex-items">
+    <app-attendance-nav></app-attendance-nav>
+  </div>
+</div>
 <mat-toolbar *ngIf="!selectedClass" class="classDashboard">
 
   <span dir="rtl" class="class-dashboard-button-spacer-left">
@@ -10,7 +17,6 @@
 <!--    </button>-->
   </span>
 </mat-toolbar>
-
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
     <div *ngIf="selectedCurriculum"
@@ -27,14 +33,6 @@
                         (click)="selectSubTask(item.id,item.classId,item.curriculumId, null)">{{item.title}}</mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
-      <div class="controls-two" *ngIf="useAttendanceFeature">
-        <button mat-icon-button color="primary"
-                [routerLink]="['/attendance-dashboard/']"
-                [queryParams]='classRegistrationParams'
-                aria-label="icon button with a task list icon">
-          <mat-icon>summarize</mat-icon>
-        </button>
       </div>
     </div>
     <div>
@@ -66,7 +64,7 @@
   </div>
 </mat-card>
 <mat-card class="tangy-class-card-content-container" *ngIf="!selectedClass">
-  {{'Click the wrench icon to enable an archived class.'|translate}}
+  {{'Click the right-hand menu to the Settings to enable an archived class.'|translate}}
 </mat-card>
 
 <div #container class="hideme"></div>

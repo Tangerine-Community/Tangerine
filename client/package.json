@@ -71,6 +71,7 @@
     "redux": "^4.2.1",
     "rxjs": "^6.5.5",
     "rxjs-compat": "^6.5.5",
+    "sanitize-filename-ts": "^1.0.2",
     "spark-md5": "^3.0.2",
     "tangy-form": "file:../tangy-form",
     "translation-web-component": "1.1.1",

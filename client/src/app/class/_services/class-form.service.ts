@@ -77,7 +77,7 @@ export class ClassFormService {
 
 const tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '30',
+  version: '32',
   views: {
     responsesForStudentRegByClassId: {
       map: function (doc) {
@@ -128,41 +128,7 @@ const tangyClassDesignDoc = {
           emit(`${doc.form.id}`, true);
         }
       }.toString()
-    },
-    responsesForAttendanceByClassId: {
-      map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
-          if (doc.form.id !== 'attendance') { return }
-          const classId = doc.classId
-          //     const attendanceRegisterId = 'attendance-' + grade + '-' + reportDate
-          // const attendanceRegisterIdArray = doc._id.split('-')
-          // const attendanceDate = attendanceRegisterIdArray[attendanceRegisterIdArray.length - 1]
-          const timestamp = doc.timestamp
-          const monthBefore = new Date()
-          const monthBeforeMilli = monthBefore.setDate(monthBefore.getDate() - 30)
-          if (doc.timestamp > monthBeforeMilli) {
-            emit([classId, doc._id], true)
-          }
-        }
-      }.toString()
-    },
-    responsesForScoreByClassId: {
-      map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
-          if (doc.form.id !== 'scores') { return }
-          const classId = doc.classId
-          //     const attendanceRegisterId = 'attendance-' + grade + '-' + reportDate
-          // const attendanceRegisterIdArray = doc._id.split('-')
-          // const attendanceDate = attendanceRegisterIdArray[attendanceRegisterIdArray.length - 1]
-          const timestamp = doc.timestamp
-          const monthBefore = new Date()
-          const monthBeforeMilli = monthBefore.setDate(monthBefore.getDate() - 30)
-          if (doc.timestamp > monthBeforeMilli) {
-            emit([classId, doc._id], true)
-          }
-        }
-      }.toString()
-    },
+    }
   }
 };
 export { tangyClassDesignDoc };
