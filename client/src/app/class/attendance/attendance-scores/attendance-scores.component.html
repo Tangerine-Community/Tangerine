@@ -1,0 +1,37 @@
+<div class="nav-flex-container">
+  <div class="nav-flex-items">
+  </div>
+  <div class="nav-flex-items">
+    <app-attendance-nav></app-attendance-nav>
+  </div>
+</div>
+<mat-card class="tangy-class-card-content-container">
+  <div class="selectedClassLabel"><p>{{'Student Scores'|translate}}</p></div>
+  <div class="controls-three" *ngIf="showScoreList">
+    <mat-form-field class="example-full-width">
+      <mat-label>{{'Name of Test'|translate}}</mat-label>
+      <input matInput placeholder="{{'Ex. Math Week 1 test'|translate}}" [(ngModel)]="testName"
+             (change)="updateScore(testName,unitIndex)">
+    </mat-form-field>
+  </div>
+
+
+  <div>
+    <table class="dashboard-table">
+      <tr>
+        <th>{{'Student'|translate}}</th>
+        <th *ngFor="let unit of units">{{unit}} {{'Score'|translate}}</th>
+      </tr>
+      <tr *ngFor="let student of scoreList">
+        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
+        <td *ngFor="let unit of units; index as unitIndex" style="text-align: center">
+          <mat-form-field class="quarter-width">
+            <input id="scoreCtrl" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"
+                   (change)="updateScore(student, unitIndex)">
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+    <span><p class="mat-h3" *ngIf="scoreList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+  </div>
+</mat-card>

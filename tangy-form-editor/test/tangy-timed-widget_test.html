@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="BlankFixture">
+      <template>
+        <tangy-timed-widget>
+        </tangy-timed-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ResumeFixture">
+      <template>
+        <tangy-timed-widget>
+          <tangy-timed required columns="4" duration=80 name="class1_term2"><option value="class1_term2-1">Jumatatu,</option><option value="class1_term2-2">wezi</option><option value="class1_term2-3">walikuja</option><option value="class1_term2-4">kijijini.</option><option value="class1_term2-5">Watu</option><option value="class1_term2-6">wakapiga</option><option value="class1_term2-7">mayowe.</option><option value="class1_term2-8">“Tunataka</option><option value="class1_term2-9">dhahabu!”</option><option value="class1_term2-10">wezi</option><option value="class1_term2-11">wakasema.</option><option value="class1_term2-12">Watu</option><option value="class1_term2-13">walipatwa</option><option value="class1_term2-14">na</option><option value="class1_term2-15">wasiwasi.</option><option value="class1_term2-16">Watu</option><option value="class1_term2-17">wakasema,</option><option value="class1_term2-18">“Hatuna</option><option value="class1_term2-19">chochote</option><option value="class1_term2-20">cha</option><option value="class1_term2-21">thamani.”</option><option value="class1_term2-22">Polisi</option><option value="class1_term2-23">walifika</option><option value="class1_term2-24">hapo.</option><option value="class1_term2-25">Waliwashika</option><option value="class1_term2-26">wezi</option><option value="class1_term2-27">na</option><option value="class1_term2-28">kuwatia</option><option value="class1_term2-29">pingu.</option><option value="class1_term2-30">Wezi</option><option value="class1_term2-31">walipelekwa</option><option value="class1_term2-32">gerezani.</option></tangy-timed>
+        </tangy-timed-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="OptionFontSizeFixture">
+      <template>
+        <tangy-timed-widget>
+          <tangy-timed required columns="4" duration=80 name="class1_term2" option-font-size="5"><option value="class1_term2-1">Jumatatu,</option><option value="class1_term2-2">wezi</option><option value="class1_term2-3">walikuja</option><option value="class1_term2-4">kijijini.</option><option value="class1_term2-5">Watu</option><option value="class1_term2-6">wakapiga</option><option value="class1_term2-7">mayowe.</option><option value="class1_term2-8">“Tunataka</option><option value="class1_term2-9">dhahabu!”</option><option value="class1_term2-10">wezi</option><option value="class1_term2-11">wakasema.</option><option value="class1_term2-12">Watu</option><option value="class1_term2-13">walipatwa</option><option value="class1_term2-14">na</option><option value="class1_term2-15">wasiwasi.</option><option value="class1_term2-16">Watu</option><option value="class1_term2-17">wakasema,</option><option value="class1_term2-18">“Hatuna</option><option value="class1_term2-19">chochote</option><option value="class1_term2-20">cha</option><option value="class1_term2-21">thamani.”</option><option value="class1_term2-22">Polisi</option><option value="class1_term2-23">walifika</option><option value="class1_term2-24">hapo.</option><option value="class1_term2-25">Waliwashika</option><option value="class1_term2-26">wezi</option><option value="class1_term2-27">na</option><option value="class1_term2-28">kuwatia</option><option value="class1_term2-29">pingu.</option><option value="class1_term2-30">Wezi</option><option value="class1_term2-31">walipelekwa</option><option value="class1_term2-32">gerezani.</option></tangy-timed>
+        </tangy-timed-widget>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../tangy-widgets.js'
+      import '../widget/tangy-timed-widget.js'
+      suite('tangy-timed-widget', () => {
+        test('should open blank with defaults', () => {
+          const element = fixture('BlankFixture')
+          assert.equal(element._config.hasOwnProperty('name'), true)
+          assert.equal(element._config.hasOwnProperty('required'), true)
+          assert.equal(element._config.hasOwnProperty('disabled'), true)
+          assert.equal(element._config.hasOwnProperty('hidden'), true)
+        })
+        test('should resume', () => {
+          const element = fixture('ResumeFixture')
+          assert.equal(element._config.name, 'class1_term2')
+          assert.equal(element._config.required, true)
+          assert.equal(element._config.hidden, false)
+          assert.equal(element._config.disabled, false)
+          assert.equal(element._config.options.length, 32)
+          assert.equal(element._config.options[0].value, 'class1_term2-1')
+        })
+        test('should resume and save with edits', () => {
+          const element = fixture('ResumeFixture')
+          element.shadowRoot.querySelector('#edit-button').click()
+          let formEl = element.shadowRoot.querySelector('tangy-form')
+          let optionEl = formEl.querySelector('tangy-form-item').querySelector("tangy-input[name='options']")
+          optionEl.value = optionEl.value + ' foo'
+          // Force dom-if to not defer render so buttons are shown.
+          formEl.querySelector('tangy-form-item').shadowRoot.querySelector('dom-if').render()
+          formEl.querySelector('tangy-form-item').shadowRoot.querySelector('#complete').click()
+          let options = element._config.options
+          assert.equal(options.length, 33)
+        })
+        test('should resume and save with edits to option font size', () => {
+          const element = fixture('OptionFontSizeFixture')
+          element.shadowRoot.querySelector('#edit-button').click()
+          let formEl = element.shadowRoot.querySelector('tangy-form')
+          let optionFontSizeEl = formEl.querySelector('tangy-form-item').querySelector("tangy-input[name='optionFontSize']")
+          optionFontSizeEl.value = 4
+          // Force dom-if to not defer render so buttons are shown.
+          formEl.querySelector('tangy-form-item').shadowRoot.querySelector('dom-if').render()
+          formEl.querySelector('tangy-form-item').shadowRoot.querySelector('#complete').click()
+          let optionFontSize = element._config.optionFontSize
+          assert.equal(optionFontSize, 4)
+        })
+      })
+
+    </script>
+
+  </body>
+</html>

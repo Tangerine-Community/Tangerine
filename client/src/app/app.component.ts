@@ -31,6 +31,7 @@ import { ProcessMonitorService } from './shared/_services/process-monitor.servic
 import { ProcessMonitorDialogComponent } from './shared/_components/process-monitor-dialog/process-monitor-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivityService } from './shared/_services/activity.service';
+import {ClassNavBarComponent} from "./class/class-nav-bar/class-nav-bar.component";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -59,6 +60,8 @@ export class AppComponent implements OnInit {
 
   numberOfClicks = 0 // Counting clicks to escape kiosk mode.
   exitClicks = 5 // If not defined in app-config.json, use this value
+
+  showClassNavBar = false;  // Currently only true if this is a class project - appConfig.homeUrl === 'dashboard'
   
   constructor(
     private userService: UserService,
@@ -227,6 +230,9 @@ export class AppComponent implements OnInit {
     if (this.appConfig.syncProtocol !== '2') {
       this.checkStorageUsage();
       setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
+    }
+    if (this.appConfig.homeUrl === 'dashboard') {
+      this.showClassNavBar = true;
     }
     this.ready = true;
 

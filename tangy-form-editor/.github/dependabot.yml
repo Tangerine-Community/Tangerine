@@ -1,0 +1,65 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: webpack
+    versions:
+    - 4.46.0
+    - 5.31.0
+    - 5.31.2
+    - 5.32.0
+    - 5.33.2
+    - 5.34.0
+    - 5.35.0
+    - 5.35.1
+    - 5.36.0
+  - dependency-name: js-beautify
+    versions:
+    - 1.13.11
+    - 1.13.5
+  - dependency-name: y18n
+    versions:
+    - 4.0.1
+  - dependency-name: bl
+    versions:
+    - 1.2.3
+  - dependency-name: webpack-cli
+    versions:
+    - 4.4.0
+    - 4.5.0
+  - dependency-name: socket.io
+    versions:
+    - 2.4.1
+  - dependency-name: urijs
+    versions:
+    - 1.19.5
+    - 1.19.6
+  - dependency-name: elliptic
+    versions:
+    - 6.5.3
+    - 6.5.4
+  - dependency-name: mem
+    versions:
+    - 4.3.0
+  - dependency-name: prismjs
+    versions:
+    - 1.23.0
+  - dependency-name: http-proxy
+    versions:
+    - 1.18.1
+  - dependency-name: node-fetch
+    versions:
+    - 2.6.1
+  - dependency-name: yargs-parser
+    versions:
+    - 13.1.2
+  - dependency-name: https-proxy-agent
+    versions:
+    - 2.2.4
+  - dependency-name: lodash.template
+    versions:
+    - 4.5.0

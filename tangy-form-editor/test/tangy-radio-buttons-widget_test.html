@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="BlankFixture">
+      <template>
+        <tangy-radio-buttons-widget>
+        </tangy-radio-buttons-widget>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ResumeFixture">
+      <template>
+        <tangy-radio-buttons-widget>
+          <tangy-radio-buttons
+                  label="These are radio buttons."
+                  name="radio_buttons_1" >
+            <option value="tangerine">Tangerine</option>
+            <option value="apple">Apple</option>
+            <option value="pear">Pear</option>
+            <option value="coconut">Coconut</option>
+          </tangy-radio-buttons>
+        </tangy-radio-buttons-widget>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../tangy-widgets.js'
+      import '../widget/tangy-radio-buttons-widget.js'
+      suite('tangy-radio-buttons-widget', () => {
+        test('should open blank with defaults', () => {
+          const element = fixture('BlankFixture')
+          assert.equal(element._config.hasOwnProperty('name'), true)
+          assert.equal(element._config.hasOwnProperty('required'), true)
+          assert.equal(element._config.hasOwnProperty('disabled'), true)
+          assert.equal(element._config.hasOwnProperty('hidden'), true)
+          assert.equal(element._config.hasOwnProperty('label'), true)
+        })
+        test('should resume', () => {
+          const element = fixture('ResumeFixture')
+          assert.equal(element._config.name, 'radio_buttons_1')
+          assert.equal(element._config.label, 'These are radio buttons.')
+          assert.equal(element._config.required, false)
+          assert.equal(element._config.hidden, false)
+          assert.equal(element._config.disabled, false)
+          assert.equal(element._config.options.length, 4)
+          assert.equal(element._config.options[0].value, 'tangerine')
+        })
+        test('should resume and save with edits', () => {
+          const element = fixture('ResumeFixture')
+          element.shadowRoot.querySelector('#edit-button').click()
+          let value = element.shadowRoot.querySelector('tangy-form-item')
+                  .querySelector('tangy-list')
+                  .shadowRoot.querySelectorAll('tangy-list-item')[0]
+                  .querySelectorAll('tangy-input')[0]
+                  .value
+          assert.equal(value, 'tangerine')
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=label]').value = 'New label'
+          element
+            .shadowRoot.querySelector('tangy-form-item')
+            .querySelector('[name=required]').setAttribute('value','')
+          element.shadowRoot.querySelector('tangy-form-item').querySelector('tangy-list').shadowRoot.querySelector('.add-another').click()
+          assert(element.shadowRoot.querySelector('tangy-form-item').querySelector('tangy-list').shadowRoot.querySelectorAll('tangy-list-item').length, 7)
+          element.shadowRoot.querySelector('tangy-form-item').clickedComplete()
+          assert.equal(element._config.label, 'New label')
+          assert.equal(element._config.options.length, 5)
+          assert.equal(element._config.required, false)
+          assert.equal(!!element.markup, true)
+        })
+      })
+
+    </script>
+
+  </body>
+</html>

@@ -1,5 +1,39 @@
 # What's new
 
+## v3.27.9
+
+__New Features__
+- The tangy-form and tangy-form-editor library source code have been merged with the Tangerine source code.
+- Support for OCR scanning. [66ec676c4a](https://github.com/Tangerine-Community/tangy-form/commit/66ec676c4a6a12101ba2feac7eb8104eed8f0b8a)
+- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` to app-config.json. It also has a new view, 'responsesForAttendanceByClassId', an 'Attendance and Behaviour' subtest menu item which enables collection of those values per student, and an 'Attendance' report.
+
+__Fixes__
+- Fixed PWA assets (sound,video) only work when online [#1905](https://github.com/Tangerine-Community/Tangerine/issues/1905)
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade. 
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout -b v3.27.9 v3.27.9
+./start.sh v3.27.9
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.27.8
+```
+
 ## v3.27.8
 
 __New Features__

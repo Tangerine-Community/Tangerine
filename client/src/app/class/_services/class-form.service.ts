@@ -77,7 +77,7 @@ export class ClassFormService {
 
 const tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '28',
+  version: '32',
   views: {
     responsesForStudentRegByClassId: {
       map: function (doc) {

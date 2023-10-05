@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form-editor demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+    <script src="../ckeditor/ckeditor.js"></script>
+    <script src="../node_modules/js-beautify/js/lib/beautify-html.js"></script>
+
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+      import 'tangy-form/input/tangy-input.js'
+      import '../tangy-form-condensed-editor.js'
+      import '../tangy-input-editor.js'
+    </script>
+
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic tangy-form-editor demo</h3>
+      <demo-snippet>
+          <template>
+            <tangy-form-condensed-editor>
+            <template>
+                <tangy-input name="input1" label="Input 1"></tangy-input>
+                <tangy-input name="input2" label="Input 2"></tangy-input>
+            </template>
+            </tangy-form-condensed-editor>
+          </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>
