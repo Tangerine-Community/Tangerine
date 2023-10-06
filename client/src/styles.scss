@@ -6,11 +6,7 @@
   vertical-align: middle;
 }
 
-//@import '~material-design-icons-iconfont/dist/material-design-icons.css';
 $material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
-//@import '~material-design-icons-iconfont/src/material-design-icons';
-//@import '~material-design-icons-iconfont/dist/material-design-icons.scss';
-//@import '~material-design-icons-iconfont/dist/fonts';
 @import '~material-design-icons-iconfont/src/material-design-icons';
 /* TODO: I'm not sure this is having any affect */
 @import './_tangy-app-variables.scss';

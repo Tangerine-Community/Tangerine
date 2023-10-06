@@ -16,7 +16,7 @@
     "lit-element": "^2.4.0",
     "rxjs": "^6.6.3",
     "tangerine-preview": "latest",
-    "tangy-form": "^4.20.0",
+    "tangy-form": "^4.41.1",
     "webpack": "^5.1.3",
     "webpack-cli": "^4.1.0"
   }
