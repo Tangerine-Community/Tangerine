@@ -167,7 +167,7 @@ The [Bullet points for Tangerine Development](./docs/developer/development-bulle
 
 Prereqs includes [node](https://nodejs.org/en/). Before setting up your sandbox, see the decide which Content Set you would like to set it up with. Content Sets are configuration and forms for Tangerine that serve as starting places and examples of the different ways Tangerine Client can be used. See the list of Content Sets in the `content-sets` folder and note which one you will be installing with which will be referenced in the commands below.
 
-For Tangerine instances based on a v3.x branch, install phantomjs globally. This is used for running tests.
+For Tangerine instances based on a v3.x branch, you may need to install phantomjs globally in order to run tests.
 ```bash
 cd /usr/local/share
 sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -202,10 +202,7 @@ npm start
 
 View the app at <http://localhost:4200>.
 
-If using ngrok.io ot tunnelto.dev, add the --disable-host-check flag to the `npm start` command.
-
-It's nice that the Angular webpack dev server will reload your browser when making changes in the tangy-form folder.
-
+If using ngrok.io or tunnelto.dev, use the 'start-using-proxy' instead of 'start' command. This will add some switches that enable the use of some older libraries.
 
 ## Deprecated Version of Tangerine
 
