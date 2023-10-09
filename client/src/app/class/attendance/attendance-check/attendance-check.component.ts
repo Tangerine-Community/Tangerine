@@ -29,7 +29,6 @@ export class AttendanceCheckComponent implements OnInit {
     attendanceList: StudentResult[],
     collection: string,
     form: {},
-    items: any[],
     complete: boolean,
     type: string
   }
@@ -101,19 +100,6 @@ export class AttendanceCheckComponent implements OnInit {
         form: {
           id: type,
         },
-        items: [{
-          id: 'class-registration',
-          title: 'Class Registration',
-          inputs: [{}]
-        },
-          {
-            id: 'item_1',
-            title: 'Item 1',
-            inputs: [{
-              name: 'timestamp',
-              label: 'timestamp'
-            }]
-          }],
         complete: false
       }
       const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))

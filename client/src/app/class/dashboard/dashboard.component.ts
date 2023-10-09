@@ -14,6 +14,7 @@ import {VariableService} from "../../shared/_services/variable.service";
 import {TangyFormResponse} from 'src/app/tangy-forms/tangy-form-response.class';
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {DateTime} from 'luxon';
+import {Subscription} from "rxjs";
 
 
 export interface StudentResult {
@@ -37,9 +38,12 @@ export class DashboardComponent implements OnInit {
   classes: any[]
   students: any[]
   enabledClasses; // filter out classes that have the 'archive' property.
+  enabledClassesSubscription: Subscription; 
   currentClassId; currentClassIndex;
   currentItemId; curriculumId;
-  selectedClass; selectedCurriculum;
+  selectedClass;
+  selectedClassSubscription: Subscription;
+  selectedCurriculum;
 
   curriculumFormsList;  // list of all curriculum forms
   curriculumForms;  // a subset of curriculumFormsList
@@ -90,7 +94,7 @@ export class DashboardComponent implements OnInit {
         private variableService: VariableService,
         private appConfigService: AppConfigService,
         private route: ActivatedRoute,
-        private http: HttpClient
+        private http: HttpClient,
     ) {
     }
 
@@ -102,7 +106,11 @@ export class DashboardComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig()
     this.useAttendanceFeature = appConfig.useAttendanceFeature
     await this.classFormService.initialize();
-    this.enabledClasses = await this.dashboardService.getEnabledClasses();
+    // this.enabledClasses = await this.dashboardService.getEnabledClasses();
+    this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe((enabledClasses) => {
+        this.enabledClasses = enabledClasses
+    })
+    
     this.getValue = this.dashboardService.getValue
     // const enabledClasses = this.classes.map(klass => {
     //   if ((klass.doc.items[0].inputs.length > 0) && (!klass.doc.archive)) {
@@ -143,13 +151,17 @@ export class DashboardComponent implements OnInit {
       // if (this.useAttendanceFeature) {
       //   await this.getAttendanceList()
       // } else {
-      this.selectedClass = window['T'].classDashboard.selectedClass
+      // this.selectedClass = window['T'].classDashboard.selectedClass
       this.formList = window["T"].classDashboard.formList
-      // this.enabledClasses = window['T'].classDashboard.enabledClasses;
+      this.enabledClasses = window['T'].classDashboard.enabledClasses;
 
       curriculumId = curriculumId? curriculumId: await this.variableService.get('class-curriculumId');
       this.selectedCurriculum = this.currArray?.find(x => x.name === curriculumId);
       this.currentItemId = await this.variableService.get('class-currentItemId');
+    })
+
+    this.selectedClassSubscription = this.dashboardService.selectedClass$.subscribe((selectedClass) => {
+      this.selectedClass = selectedClass
     })
   }
 
@@ -379,6 +391,16 @@ export class DashboardComponent implements OnInit {
         const formHtml =  await this.http.get(`./assets/${curriculum}/form.html`, {responseType: 'text'}).toPromise();
         return formHtml;
     }
-  
+  ngOnDestroy() {
+    // avoid memory leaks here by cleaning up after ourselves. If we
+    // don't then we will continue to run our initialiseInvites()
+    // method on every navigationEnd event.
+    if (this.enabledClassesSubscription) {
+      this.enabledClassesSubscription.unsubscribe();
+    }
+    if (this.selectedClassSubscription) {
+      this.selectedClassSubscription.unsubscribe();
+    }
+  }
   
 }
