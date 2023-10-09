@@ -1,6 +1,6 @@
 # What's new
 
-## v3.27.9
+## v3.30.0
 
 __New Features__
 - The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` 
@@ -12,7 +12,8 @@ __New Features__
     "units": ["unit 1", "unit 2", "unit 3"],
     "cutoffRange": "10"
   }
-```
+  ```
+- Updated docker-tangerine-base-image to v3.8.0, which adds the cordova-plugin-x-socialsharing plugin and enables sharing to WhatsApp.
 
 
 __Fixes__
