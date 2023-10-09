@@ -5,6 +5,7 @@ import {ClassUtils} from '../class-utils';
 import {VariableService} from "../../shared/_services/variable.service";
 import {StudentResult} from "../dashboard/dashboard.component";
 import {ActivatedRoute} from "@angular/router";
+import {BehaviorSubject, Subject, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-class-nav-bar',
@@ -14,17 +15,20 @@ import {ActivatedRoute} from "@angular/router";
 export class ClassNavBarComponent implements OnInit {
   formList = [];
   selectedClass: any
+  selectedClassSubscription: Subscription;
   studentRegistrationCurriculum = 'student-registration';
   classRegistrationParams = {
     curriculum: 'class-registration'
   };
-  enabledClasses = [];
+  
   window: any;
   classUtils: ClassUtils = new ClassUtils();
   currentClassIndex
   currArray
   allStudentResults: StudentResult[];
   getValue: (variableName, response) => any;
+  enabledClasses = [];
+  enabledClassesSubscription: Subscription;
 
   constructor(
     private dashboardService: DashboardService,
@@ -37,8 +41,15 @@ export class ClassNavBarComponent implements OnInit {
     this.window = window;
     // this.selectedClass = window['T'].classDashboard.selectedClass;
     this.route.queryParams.subscribe(async params => {
+      // classIndex = params['classIndex'];
+      // curriculumId = params['curriculumId'];
       // this.formList = window['T'].classDashboard.formList;
-      this.enabledClasses = await this.dashboardService.getEnabledClasses();
+      this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe((enabledClasses) => {
+        this.enabledClasses = enabledClasses
+      })
+      if (this.enabledClasses.length === 0) {
+        this.enabledClasses = await this.dashboardService.getEnabledClasses();
+      }
       this.getValue = this.dashboardService.getValue
       for (const classDoc of this.enabledClasses) {
         const grade = this.getValue('grade', classDoc.doc)
@@ -67,9 +78,11 @@ export class ClassNavBarComponent implements OnInit {
         // Maybe a class has been removed
         this.currentClassIndex = 0
         currentClass = this.enabledClasses[this.currentClassIndex]?.doc
-      } else {
-        this.selectedClass = currentClass;
       }
+      this.selectedClass = currentClass;
+      this.selectedClassSubscription = this.dashboardService.selectedClass$.subscribe((selectedClass) => {
+        this.selectedClass = selectedClass
+      })
       // this.currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
       const curriculumId = await this.variableService.get('class-curriculumId');
       // curriculumId will be null when starting with a new instance of tangerine.
@@ -91,6 +104,18 @@ export class ClassNavBarComponent implements OnInit {
     const currentClass = this.enabledClasses[classIndex];
     const currentClassId = currentClass.id;
     this.allStudentResults = await this.dashboardService.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
+  }
+
+  ngOnDestroy() {
+    // avoid memory leaks here by cleaning up after ourselves. If we
+    // don't then we will continue to run our initialiseInvites()
+    // method on every navigationEnd event.
+    if (this.enabledClassesSubscription) {
+      this.enabledClassesSubscription.unsubscribe();
+    }
+    if (this.selectedClassSubscription) {
+      this.selectedClassSubscription.unsubscribe();
+    }
   }
 
 }
