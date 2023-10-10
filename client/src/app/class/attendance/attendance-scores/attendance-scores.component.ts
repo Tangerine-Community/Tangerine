@@ -81,9 +81,10 @@ export class AttendanceScoresComponent implements OnInit {
     const type = "scores"
     const registerNameForDialog = 'Scoring';
     const students = await this.dashboardService.getMyStudents(currentClassId)
-
+    const schoolName = this.getValue('school_name', selectedClass)
+    const schoolYear = this.getValue('school_year', selectedClass)
     const timestamp = Date.now()
-    const {reportDate, grade, schoolName, schoolYear, id} = this.dashboardService.generateSearchableId(selectedClass, type);
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(selectedClass, type);
     let doc, listFromDoc
     try {
       doc = await this.dashboardService.getDoc(id)
