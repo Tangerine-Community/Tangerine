@@ -5,69 +5,105 @@
       <tr>
         <th>{{'Student'|translate}}</th>
         <th>{{'Attendance'|translate}}</th>
-        <th>{{'Behavior'|translate}}</th>
       </tr>
       <tr *ngFor="let element of attendanceList">
         <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
         <td style="padding-right: 1em;">
-          <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
-          <ng-template #absent>
-            <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)">
-              <mat-icon>remove</mat-icon>
-            </mat-chip>
-          </ng-template>
-          <ng-template #present>
-            <mat-chip color="primary" class="green" (click)="toggleAttendance(element)">
-              <mat-icon>check</mat-icon>
-            </mat-chip>
-          </ng-template>
-        </td>
-        <td>
-          <mat-chip-list [selectable]="!element['absent']" multiple="false">
-            <ng-container *ngIf="element['mood'] == 'happy'; then happy; else happyDefault"></ng-container>
-            <ng-template #happy>
-              <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']"
-                        [selectable]="!element['absent']" color="primary" class="green">
-                <mat-icon>mood</mat-icon>
+          <mat-chip-list class="absent">
+            <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
+            <ng-template #absent>
+              <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)">
+                <mat-icon>remove</mat-icon>
               </mat-chip>
             </ng-template>
-            <ng-template #happyDefault>
-              <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']"
-                        [selectable]="!element['absent']" color="accent" class="accent">
-                <mat-icon>mood</mat-icon>
-              </mat-chip>
-            </ng-template>
-
-            <ng-container
-              *ngIf="element['mood'] == 'neutral'; then neutral; else neutralDefault"></ng-container>
-            <ng-template #neutral>
-              <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']"
-                        [selectable]="!element['absent']" color="accent" class="orange">
-                <mat-icon>sentiment_neutral</mat-icon>
-              </mat-chip>
-            </ng-template>
-            <ng-template #neutralDefault>
-              <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']"
-                        [selectable]="!element['absent']" color="accent">
-                <mat-icon>sentiment_neutral</mat-icon>
-              </mat-chip>
-            </ng-template>
-
-            <ng-container *ngIf="element['mood'] == 'sad'; then sad; else sadDefault"></ng-container>
-            <ng-template #sad>
-              <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']"
-                        [selectable]="!element['absent']" color="accent" class="red">
-                <mat-icon>sentiment_dissatisfied</mat-icon>
-              </mat-chip>
-            </ng-template>
-            <ng-template #sadDefault>
-              <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']"
-                        [selectable]="!element['absent']" color="accent">
-                <mat-icon>sentiment_dissatisfied</mat-icon>
+            <ng-template #present>
+              <mat-chip color="primary" class="green" (click)="toggleAttendance(element)">
+                <mat-icon>check</mat-icon>
               </mat-chip>
             </ng-template>
           </mat-chip-list>
         </td>
+<!--        <td>-->
+<!--          <mat-chip-list [selectable]="!element['absent']" multiple="false">-->
+<!--            <ng-container *ngIf="element['mood'] == 'happy'; then happy; else happyDefault"></ng-container>-->
+<!--            <ng-template #happy>-->
+<!--              <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']"-->
+<!--                        [selectable]="!element['absent']" color="primary" class="green">-->
+<!--                <mat-icon>mood</mat-icon>-->
+<!--              </mat-chip>-->
+<!--            </ng-template>-->
+<!--            <ng-template #happyDefault>-->
+<!--              <mat-chip (click)="toggleMood('happy', element)" [disabled]="element['absent']"-->
+<!--                        [selectable]="!element['absent']" color="accent" class="accent">-->
+<!--                <mat-icon>mood</mat-icon>-->
+<!--              </mat-chip>-->
+<!--            </ng-template>-->
+
+<!--            <ng-container-->
+<!--              *ngIf="element['mood'] == 'neutral'; then neutral; else neutralDefault"></ng-container>-->
+<!--            <ng-template #neutral>-->
+<!--              <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']"-->
+<!--                        [selectable]="!element['absent']" color="accent" class="orange">-->
+<!--                <mat-icon>sentiment_neutral</mat-icon>-->
+<!--              </mat-chip>-->
+<!--            </ng-template>-->
+<!--            <ng-template #neutralDefault>-->
+<!--              <mat-chip (click)="toggleMood('neutral', element)" [disabled]="element['absent']"-->
+<!--                        [selectable]="!element['absent']" color="accent">-->
+<!--                <mat-icon>sentiment_neutral</mat-icon>-->
+<!--              </mat-chip>-->
+<!--            </ng-template>-->
+
+<!--            <ng-container *ngIf="element['mood'] == 'sad'; then sad; else sadDefault"></ng-container>-->
+<!--            <ng-template #sad>-->
+<!--              <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']"-->
+<!--                        [selectable]="!element['absent']" color="accent" class="red">-->
+<!--                <mat-icon>sentiment_dissatisfied</mat-icon>-->
+<!--              </mat-chip>-->
+<!--            </ng-template>-->
+<!--            <ng-template #sadDefault>-->
+<!--              <mat-chip (click)="toggleMood('sad', element)" [disabled]="element['absent']"-->
+<!--                        [selectable]="!element['absent']" color="accent">-->
+<!--                <mat-icon>sentiment_dissatisfied</mat-icon>-->
+<!--              </mat-chip>-->
+<!--            </ng-template>-->
+<!--          </mat-chip-list>-->
+<!--        </td>-->
+<!--        <td class="checkbox-response" *ngIf="element.forms['form-internal-behaviour'] ; else elseBlock ">-->
+<!--          <input type="checkbox"-->
+<!--                 (change)="$event ? selectCheckboxResult(element,'form-internal-behaviour',$event) : null"-->
+<!--                 [checked]="true"-->
+<!--                 [disabled]="element['absent']" -->
+<!--                 [hidden]="element['absent']"-->
+<!--          />-->
+<!--        </td>-->
+<!--        <ng-template #elseBlock>-->
+<!--          <td class="checkbox-response">-->
+<!--            <input type="checkbox" -->
+<!--                   (click)="$event.stopPropagation()"-->
+<!--                   (change)="$event ? selectCheckbox(element,'form-internal-behaviour') : null"-->
+<!--                   [disabled]="element['absent']"-->
+<!--                   [hidden]="element['absent']"-->
+<!--            />-->
+<!--          </td>-->
+<!--        </ng-template>-->
+<!--        <td class="checkbox-response" *ngIf="element.forms['form-external-behaviour'] ; else elseBlock ">-->
+<!--          <input type="checkbox"-->
+<!--                 (change)="$event ? selectCheckboxResult(element,'form-external-behaviour',$event) : null"-->
+<!--                 [checked]="true"-->
+<!--                 [disabled]="element['absent']"-->
+<!--                 [hidden]="element['absent']"-->
+<!--          />-->
+<!--        </td>-->
+<!--        <ng-template #elseBlock>-->
+<!--          <td class="checkbox-response">-->
+<!--            <input type="checkbox" (click)="$event.stopPropagation()"-->
+<!--                   (change)="$event ? selectCheckbox(element,'form-external-behaviour') : null"-->
+<!--                   [disabled]="element['absent']"-->
+<!--                   [hidden]="element['absent']"-->
+<!--            />-->
+<!--          </td>-->
+<!--        </ng-template>-->
       </tr>
     </table>
     <span><p class="mat-h3"

@@ -6,6 +6,7 @@ import {VariableService} from "../../../shared/_services/variable.service";
 import {Router} from "@angular/router";
 import {StudentResult} from "../../dashboard/dashboard.component";
 import {UserService} from "../../../shared/_services/user.service";
+import {FormMetadata} from "../../form-metadata";
 
 
 @Component({
@@ -33,6 +34,7 @@ export class AttendanceCheckComponent implements OnInit {
     type: string
   }
   selectedClass: any
+  behaviorForms: Promise<FormMetadata[]>;
   
   constructor(
     private dashboardService: DashboardService,
@@ -72,19 +74,21 @@ export class AttendanceCheckComponent implements OnInit {
   async showAttendanceListing(currentClassId, curriculum, currentClass) {
     const type = "attendance"
     const registerNameForDialog = 'Attendance and Behaviour';
+    this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
-    
+    const schoolName = this.getValue('school_name', currentClass)
+    const schoolYear = this.getValue('school_year', currentClass)
     const timestamp = Date.now()
-    const {reportDate, grade, schoolName, schoolYear, id} = this.dashboardService.generateSearchableId(currentClass, type);
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, type);
 
-    let currentAttendanceReport, listFromDoc
+    let currentAttendanceReport, savedAttendanceList
     try {
       currentAttendanceReport = await this.dashboardService.getDoc(id)
-      listFromDoc = currentAttendanceReport.attendanceList
+      savedAttendanceList = currentAttendanceReport.attendanceList
     } catch (e) {
     }
     
-    this.attendanceList =  await this.dashboardService.getAttendanceList(students, listFromDoc)
+    this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList)
     if (!currentAttendanceReport) {
       this.attendanceRegister = {
         _id: id,
@@ -174,5 +178,55 @@ export class AttendanceCheckComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
+
+  /** Populate the querystring with the form info. */
+  selectCheckboxResult(column, itemId, event) {
+    // let el = this.selection.select(column);
+    event.currentTarget.checked = true;
+    // this.selection.toggle(column)
+    const formsArray = Object.values(column.forms);
+    const selectedForm = formsArray.find(input => (input['formId'] === itemId) ? true : false);
+    const studentId = column.id;
+    const classId = column.classId;
+    const selectedFormId = selectedForm['formId'];
+    const curriculum = selectedForm['curriculum'];
+    const src = selectedForm['src'];
+    const title = selectedForm['title'];
+    const responseId = selectedForm['response']['_id'];
+    this.router.navigate(['class-form'], { queryParams:
+          { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
+            classId: classId, itemId: selectedFormId, src: src, title:
+            title, responseId: responseId }
+    });
+  }
+
+  /** Populate the querystring with the form info. */
+  async selectCheckbox(column, formId) {
+    // let el = this.selection.select(row);
+    // this.selection.toggle(column)
+    const formsArray = Object.values(column.forms);
+    // const selectedForm = formsArray.find(response => (response['form']['id'] === formId));
+    const studentId = column.id;
+    const classId = column.classId;
+    // const selectedFormId = selectedForm['formId'];
+    const selectedFormId = formId
+    // const curriculum = selectedForm['curriculum'];
+    // const src = selectedForm['src'];
+    // const title = selectedForm['title'];
+    // let responseId = null;
+    // const curriculumResponse = await this.dashboardService.getCurriculumResponse(classId, curriculum, studentId)
+    // if (curriculumResponse) {
+    //   responseId = curriculumResponse._id
+    // }
+    this.router.navigate(['class-form'], { queryParams:
+          { formId: selectedFormId,
+            curriculum: curriculum,
+            studentId: studentId,
+            classId: classId,
+            src: src,
+            title: title,
+            responseId: responseId }
+    });
+  }
 
 }

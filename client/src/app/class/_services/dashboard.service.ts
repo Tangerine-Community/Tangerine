@@ -14,6 +14,7 @@ import {VariableService} from "../../shared/_services/variable.service";
 import {DateTime} from "luxon";
 import {sanitize} from "sanitize-filename-ts";
 import {BehaviorSubject, Subject} from "rxjs";
+import {ClassFormService} from "./class-form.service";
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -28,6 +29,7 @@ export class DashboardService {
     private userService: UserService,
     private tangyFormsInfoService : TangyFormsInfoService,
     private variableService: VariableService,
+    private classFormService: ClassFormService,
   ) {}
 
   db: UserDatabase;
@@ -82,6 +84,11 @@ export class DashboardService {
     this.enabledClasses = filteredEnabledClasses
     this.enabledClasses$.next(filteredEnabledClasses)
     return filteredEnabledClasses
+  }
+
+  async getBehaviorForms() {
+    const forDefs = await this.getFormList();
+    return forDefs.filter(form => form.id.startsWith('form-behav')).sort((a, b) => (a.id > b.id) ? 1 : -1)
   }
 
   async getMyStudents(selectedClass: any) {
@@ -722,11 +729,10 @@ export class DashboardService {
   generateSearchableId(currentClass, type: string) {
     const username = this.userService.getCurrentUser()
     const reportDate = DateTime.local().toISODate()
+    const reportTime = DateTime.local().toISOTime()
     const grade = this.getValue('grade', currentClass)
-    const schoolName = this.getValue('school_name', currentClass)
-    const schoolYear = this.getValue('school_year', currentClass)
-    const id = type + '-' + sanitize(schoolYear) + '-' + sanitize(schoolName) + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username)
-    return {reportDate, grade, schoolName, schoolYear, id};
+    const id = type + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username) + reportTime
+    return {reportDate, grade, reportTime, id};
   }
 
   /**
@@ -915,18 +921,18 @@ export class DashboardService {
   }
 
   /**
-   * Get the attendance list for the class. If the listFromDoc is passed in, then
+   * Get the attendance list for the class, including any students who have not yet had attendance checked. If the savedAttendanceList is passed in, then
    * populate the student from that doc by matching student.id.
    * @param students
-   * @param listFromDoc
+   * @param savedAttendanceList
    */
-  async getAttendanceList(students, listFromDoc) {
+  async getAttendanceList(students, savedAttendanceList) {
     const list = []
-    students.forEach((student) => {
+    for (const student of students) {
       let studentResult
       const studentId = student.id
-      if (listFromDoc) {
-        studentResult = listFromDoc.find(studentDoc => studentDoc.id === studentId)
+      if (savedAttendanceList) {
+        studentResult = savedAttendanceList.find(studentDoc => studentDoc.id === studentId)
       }
       if (studentResult) {
         list.push(studentResult)
@@ -934,6 +940,7 @@ export class DashboardService {
         const student_name = this.getValue('student_name', student.doc)
         const phone = this.getValue('phone', student.doc);
         const classId = this.getValue('classId', student.doc)
+        
         studentResult = {}
         studentResult['id'] = studentId
         studentResult['name'] = student_name
@@ -941,10 +948,33 @@ export class DashboardService {
         studentResult['classId'] = classId
         studentResult['forms'] = {}
         studentResult['absent'] = false
-        studentResult['mood'] = 'happy'
+
+        // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
+        // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+        // curriculumFormsList.forEach((form) => {
+        //   const formResult = {};
+        //   formResult['formId'] = form.id;
+        //   formResult['curriculum'] = curriculumName;
+        //   formResult['title'] = form.title;
+        //   formResult['src'] = form.src;
+        //   if (studentsResponses[student.id]) {
+        //     formResult['response'] = studentsResponses[student.id][form.id];
+        //   }
+        //   studentResults['forms'][form.id] = formResult;
+        // });
+        
+        const responses = await this.classFormService.getResponsesByStudentId(studentId);
+        for (const response of responses as any[]) {
+          // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
+          const respFormId = response.doc.form.id;
+          // if (respClassId === this.classId && respCurrId === this.curriculum) {
+          //   this.formResponse = response.doc;
+          // }
+          studentResult['forms'][respFormId] = response.doc;
+        }
         list.push(studentResult)
       }
-    })
+    }
     return list
     // await this.populateFeedback(curriculumId);
   }
