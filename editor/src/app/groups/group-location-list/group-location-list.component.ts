@@ -1,6 +1,9 @@
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { GroupsService } from '../services/groups.service';
+import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 
 @Component({
   selector: 'app-group-location-list',
@@ -9,18 +12,45 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GroupLocationListComponent implements OnInit {
 
-  title = _TRANSLATE("Location List")
-  breadcrumbs:Array<Breadcrumb> = []
+  title = _TRANSLATE("Location Lists")
+  breadcrumbs:Array<Breadcrumb> = [
+    <Breadcrumb>{
+      label: this.title,
+      url: `location-lists`
+    }
+  ]
+  groupId:string
+  locationListFileName:string
+  locationListId:string
+  stopPolling = false
 
-  constructor() { }
+  constructor(
+    private route: ActivatedRoute,
+    private groupsService: GroupsService,
+    private errorHandler: TangyErrorHandler
+  ) {
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
+    this.locationListId = this.route.snapshot.paramMap.get('locationListId');
 
-  ngOnInit() {
-    this.breadcrumbs = [
-      <Breadcrumb>{
-        label: _TRANSLATE('Location List'),
-        url: `location-list`
-      }
-    ]
+  }
+
+  async ngOnInit() {
+    try {
+      const data: any = await this.groupsService.getLocationLists(this.groupId);
+      const locationListData = data.find(loc => loc.id == this.locationListId);
+      this.locationListFileName = locationListData.src
+
+      this.breadcrumbs = [
+        ...this.breadcrumbs,
+        <Breadcrumb>{
+          label: locationListData.name,
+          url: `location-lists/${locationListData.id}`
+        }
+      ]
+
+    } catch (error) {
+      this.errorHandler.handleError('Could Not Load Location List Data');
+    }
   }
 
 }
