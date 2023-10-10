@@ -265,6 +265,15 @@ export class GroupsService {
     }
   }
 
+  async getLocationLists(groupId: string) {
+    const locationListFileName = 'location-lists.json';
+    try {
+      return await this.httpClient.get(`/editor/${groupId}/content/${locationListFileName}`).toPromise();
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
   async getLocationList(groupId: string) {
     const locationListFileName = 'location-list.json';
     try {
@@ -273,6 +282,7 @@ export class GroupsService {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
+
   /**
    * replace spaces, punctuations, tabs , underscores with dashes (-) and removes any trailing dashes at the end of the string
    *

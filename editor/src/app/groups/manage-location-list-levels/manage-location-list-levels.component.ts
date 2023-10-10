@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../../app/shared/_services/tangy-error-handler.service';
@@ -9,8 +9,10 @@ import { WindowRef } from '../../core/window-ref.service';
   styleUrls: ['./manage-location-list-levels.component.css']
 })
 export class ManageLocationListLevelsComponent implements OnInit {
+  
+  @Input() locationListFileName;
+
   groupId;
-  locationListFileName = 'location-list.json';
   locationsLevels;
   isFormShown = false;
   locationLabel;
