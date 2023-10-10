@@ -13,7 +13,7 @@
     >
     </paper-fab>
   </div>
-  <app-event-form-list-item (formDeleted)="updateFormList($event)"
+  <app-event-form-list-item
     *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
     [case]="caseService.case"
     [caseDefinition]="caseService.caseDefinition"
@@ -21,7 +21,9 @@
     [caseEventDefinition]="caseEventDefinition"
     [eventForm]="eventFormInfo.eventForm"
     [eventFormDefinition]="eventFormInfo.eventFormDefinition"
-    (formDeleted)="onFormDelete()"
+    (formDeletedEvent)="onDeleteFormClick(eventFormInfo.eventForm.id)"
+    (formArchivedEvent)="onArchiveFormClick(eventFormInfo.eventForm.id)"
+    (formUnarchivedEvent)="onUnarchiveFormClick(eventFormInfo.eventForm.id)"
     class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
   >
   </app-event-form-list-item>
