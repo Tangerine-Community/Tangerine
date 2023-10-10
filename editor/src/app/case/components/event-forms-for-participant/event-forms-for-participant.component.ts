@@ -1,7 +1,7 @@
 import { NotificationStatus } from './../../classes/notification.class';
 import { EventFormDefinition } from './../../classes/event-form-definition.class';
 
-import { Component, OnInit, AfterContentInit, ChangeDetectorRef, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, ChangeDetectorRef, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
@@ -32,6 +32,10 @@ export class EventFormsForParticipantComponent implements OnInit {
   @Input('participantId') participantId:string
   @Input('caseId') caseId:string
   @Input('eventId') eventId:string
+  @Input('showArchived') showArchived: boolean;
+  @Output() formDeletedEvent = new EventEmitter();
+  @Output() formArchivedEvent = new EventEmitter();
+  @Output() formUnarchivedEvent = new EventEmitter();
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
@@ -59,11 +63,6 @@ export class EventFormsForParticipantComponent implements OnInit {
     this.render()
   }
 
-  onFormDelete() {
-    console.log('form delete detected')
-    this.render()
-  }
-
   async render() {
     await this.caseService.load(this.caseId)
     this.window.caseService = this.caseService
@@ -86,6 +85,18 @@ export class EventFormsForParticipantComponent implements OnInit {
     return this._canExitToRoute
   }
 
+  onDeleteFormClick(eventFormId) {
+    this.formDeletedEvent.emit(eventFormId);
+  }
+
+  onArchiveFormClick(eventFormId) {
+    this.formArchivedEvent.emit(eventFormId);
+  }
+
+  onUnarchiveFormClick(eventFormId) {
+    this.formUnarchivedEvent.emit(eventFormId);
+  }
+
   eventFormsParticipantCanCreate(participantId) {
     const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
     return this.caseEventDefinition.eventFormDefinitions
@@ -102,13 +113,6 @@ export class EventFormsForParticipantComponent implements OnInit {
       }, [])
   }
 
-  updateFormList(event) {
-    if (event === 'formDeleted') {
-      this.getParticipantInfo()
-      this.ref.detectChanges()
-    }
-  }
-
   getParticipantInfo() {
     const participant = this.caseService.case.participants.find(participant => participant.id === this.participantId)
     const id = participant.id
@@ -123,7 +127,7 @@ export class EventFormsForParticipantComponent implements OnInit {
       caseEventHasEventFormsForParticipantsRole: this.caseEventDefinition.eventFormDefinitions.some(eventDef => eventDef.forCaseRole.split(',').map(e=>e.trim()).includes(participant.caseRoleId)),
       eventFormsParticipantCanCreate: this.eventFormsParticipantCanCreate(participant.id),
       eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
-        return eventForm.participantId === participant.id
+        return (eventForm.participantId === participant.id && (this.showArchived || !eventForm.archived))
           ? [...eventFormInfos, <EventFormInfo>{
             eventForm,
             eventFormDefinition: this

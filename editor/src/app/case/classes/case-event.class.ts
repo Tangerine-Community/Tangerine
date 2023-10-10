@@ -12,6 +12,9 @@ class CaseEvent {
   windowStartDay: string
   windowEndDay: string
   occurredOnDay: string
+  archived:boolean = false
+  // started date
+  // last updated date
 
   name: string
   constructor() {
