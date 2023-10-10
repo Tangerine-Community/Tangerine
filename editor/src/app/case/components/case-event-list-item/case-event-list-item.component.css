@@ -1,0 +1,7 @@
+.tangy-spacer{
+  flex: 1 1 auto;
+}
+
+.case-event-list-item.disabled {
+	background-color: #ccc;
+}
