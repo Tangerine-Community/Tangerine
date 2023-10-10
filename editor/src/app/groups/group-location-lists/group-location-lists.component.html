@@ -1,0 +1,17 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div id="description">
+  {{'Location Lists allow you to define sets of locations that appear as drop down lists. Each location list can be used as inputs in forms or to assign locations to devices.'|translate}}
+</div>
+<app-dynamic-table 
+  *ngIf="locationLists.length > 0"
+  [data]="locationLists" 
+  (rowClick)="onRowClick($event)"
+  (rowDelete)="onRowDelete($event)" 
+  (rowEdit)="onRowEdit($event)"
+>
+</app-dynamic-table>
+<div *ngIf="locationLists.length === 0" id="no-spreadsheets">
+  {{'No Spreadsheet Templates have been created. Click the + icon in the bottom right to get started.'|translate}}
+</div>
+<paper-fab (click)="createLocationList()" mat-raised-button icon="add" color="accent" class="action">
+</paper-fab>

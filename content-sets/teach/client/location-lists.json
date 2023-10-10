@@ -1,0 +1,14 @@
+[
+  {
+    "id": "location-1",
+    "name": "Schools",
+    "src": "./school-locations.json",
+    "default": true
+  },
+  {
+    "id": "location-2",
+    "name": "Hospitals",
+    "src": "./hospital-locations.json",
+    "default": false
+  }
+]
