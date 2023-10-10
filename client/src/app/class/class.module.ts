@@ -48,6 +48,7 @@ import {AttendanceDashboardComponent} from './attendance/attendance-dashboard/at
 import {AttendanceCheckComponent} from './attendance/attendance-check/attendance-check.component';
 import {AttendanceNavComponent} from "./attendance/attendance-nav.component";
 import { AttendanceScoresComponent } from './attendance/attendance-scores/attendance-scores.component';
+import { AttendanceBehaviorComponent } from './attendance/attendance-behavior/attendance-behavior.component';
 
 @NgModule({
   imports: [
@@ -75,7 +76,7 @@ import { AttendanceScoresComponent } from './attendance/attendance-scores/attend
     MatProgressBarModule,
     FormsModule
   ],
-  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent],
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent, AttendanceBehaviorComponent],
   providers: [UserService, ClassFormService, DashboardService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
