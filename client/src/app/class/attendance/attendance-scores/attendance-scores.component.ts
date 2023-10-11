@@ -77,19 +77,22 @@ export class AttendanceScoresComponent implements OnInit {
    * Makes attendance the selectedCurriculum.
    * @param cassId
    */
-  async showScoreListing(selectedClass, currentClassId) {
+  async showScoreListing(currentClass, currentClassId) {
     const type = "scores"
     const registerNameForDialog = 'Scoring';
     const students = await this.dashboardService.getMyStudents(currentClassId)
-    const schoolName = this.getValue('school_name', selectedClass)
-    const schoolYear = this.getValue('school_year', selectedClass)
+    const schoolName = this.getValue('school_name', currentClass)
+    const schoolYear = this.getValue('school_year', currentClass)
     const timestamp = Date.now()
-    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(selectedClass, type);
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, type);
     let doc, listFromDoc
     try {
-      doc = await this.dashboardService.getDoc(id)
-      listFromDoc = doc.scoreList
-      this.testName = doc.testName
+      // doc = await this.dashboardService.getDoc(id)
+      // listFromDoc = doc.scoreList
+      // this.testName = doc.testName
+      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate)
+      doc = docArray? docArray[0]?.doc : null
+      listFromDoc = doc?.attendanceList
     } catch (e) {
     }
 
@@ -98,7 +101,7 @@ export class AttendanceScoresComponent implements OnInit {
       this.scoreRegister = {
         _id: id,
         timestamp: timestamp,
-        classId: selectedClass.id,
+        classId: currentClass.id,
         grade: grade,
         schoolName: schoolName,
         schoolYear: schoolYear,
