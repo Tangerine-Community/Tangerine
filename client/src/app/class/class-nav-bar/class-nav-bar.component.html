@@ -56,23 +56,21 @@
           {{'Add Student'|translate}}
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
-                [queryParams]='classRegistrationParams'
-                aria-label="icon button with a task list icon">
-<!--          <mat-icon>summarize</mat-icon>-->
-          <span>{{'Dashboard'|translate}}</span>
-        </button>
+<!--        <button mat-menu-item [routerLink]="['/attendance-dashboard/']"-->
+<!--                [queryParams]='classRegistrationParams'>-->
+<!--          <span>{{'Dashboard'|translate}}</span>-->
+<!--        </button>-->
         <button mat-menu-item [routerLink]="['/attendance-check/']"
-                [queryParams]='classRegistrationParams'
-                aria-label="icon button with a task list icon">
-<!--          <mat-icon>checklist</mat-icon>-->
-          <span>{{'Check Attendance'|translate}}</span>
+                [queryParams]='classRegistrationParams'>
+          <span>{{'Attendance'|translate}}</span>
+        </button>
+        <button mat-menu-item [routerLink]="['/behavior-check/']"
+                [queryParams]='classRegistrationParams'>
+          <span>{{'Behavior'|translate}}</span>
         </button>
         <button mat-menu-item [routerLink]="['/attendance-scores/']"
-                [queryParams]='classRegistrationParams'
-                aria-label="icon button with a task list icon">
-<!--          <mat-icon>scoreboard</mat-icon>-->
-          <span>{{'Record test scores'|translate}}</span>
+                [queryParams]='classRegistrationParams'>
+          <span>{{'Scores'|translate}}</span>
         </button>
   </mat-menu>
   </span>

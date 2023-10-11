@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {StudentResult} from "../../dashboard/dashboard.component";
 import {UserService} from "../../../shared/_services/user.service";
 import {FormMetadata} from "../../form-metadata";
+import {ClassFormService} from "../../_services/class-form.service";
 
 
 @Component({
@@ -40,11 +41,12 @@ export class AttendanceCheckComponent implements OnInit {
     private dashboardService: DashboardService,
               private variableService : VariableService,
               private router: Router,
-              private userService: UserService
+              private classFormService: ClassFormService
   ) { }
 
   async ngOnInit(): Promise<void> {
     let classIndex
+    await this.classFormService.initialize();
     this.getValue = this.dashboardService.getValue
     const enabledClasses = await this.dashboardService.getEnabledClasses();
 
@@ -73,7 +75,7 @@ export class AttendanceCheckComponent implements OnInit {
    */
   async showAttendanceListing(currentClassId, curriculum, currentClass) {
     const type = "attendance"
-    const registerNameForDialog = 'Attendance and Behaviour';
+    const registerNameForDialog = 'Attendance';
     this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
@@ -83,8 +85,10 @@ export class AttendanceCheckComponent implements OnInit {
 
     let currentAttendanceReport, savedAttendanceList
     try {
-      currentAttendanceReport = await this.dashboardService.getDoc(id)
-      savedAttendanceList = currentAttendanceReport.attendanceList
+      // currentAttendanceReport = await this.dashboardService.getDoc(id)
+      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate)
+      currentAttendanceReport = docArray? docArray[0]?.doc : null
+      savedAttendanceList = currentAttendanceReport?.attendanceList
     } catch (e) {
     }
     
@@ -130,11 +134,7 @@ export class AttendanceCheckComponent implements OnInit {
       this.attendanceRegister = currentAttendanceReport
     }
   }
-
-  private
-
-
-
+  
   async toggleAttendance(student) {
     student.absent = !student.absent
     if (student.absent) {
@@ -218,15 +218,17 @@ export class AttendanceCheckComponent implements OnInit {
     // if (curriculumResponse) {
     //   responseId = curriculumResponse._id
     // }
-    this.router.navigate(['class-form'], { queryParams:
-          { formId: selectedFormId,
-            curriculum: curriculum,
-            studentId: studentId,
-            classId: classId,
-            src: src,
-            title: title,
-            responseId: responseId }
-    });
+    
+    
+    // this.router.navigate(['class-form'], { queryParams:
+    //       { formId: selectedFormId,
+    //         curriculum: curriculum,
+    //         studentId: studentId,
+    //         classId: classId,
+    //         src: src,
+    //         title: title,
+    //         responseId: responseId }
+    // });
   }
 
 }

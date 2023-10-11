@@ -1,0 +1,52 @@
+<mat-card class="tangy-class-card-content-container">
+  <div class="selectedClassLabel"><p>{{'Attendance'|translate}}: {{getClassTitle(selectedClass)}}</p></div>
+  <div>
+    <table class="dashboard-table">
+      <tr>
+        <th>{{'Student'|translate}}</th>
+        <th>{{'Internal Behavior'|translate}}</th>
+        <th>{{'External Behavior'|translate}}</th>
+      </tr>
+      <tr *ngFor="let element of attendanceList">
+        <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
+        <td class="checkbox-response" *ngIf="element.forms['form-internal-behaviour'] ; else elseBlock ">
+          <input type="checkbox"
+                 (change)="$event ? selectCheckboxResult(element,'form-internal-behaviour',$event) : null"
+                 [checked]="true"
+                 [disabled]="element['absent']"
+                 [hidden]="element['absent']"
+          />
+        </td>
+        <ng-template #elseBlock>
+          <td class="checkbox-response">
+            <input type="checkbox"
+                   (click)="$event.stopPropagation()"
+                   (change)="$event ? selectCheckbox(element,'form-internal-behaviour') : null"
+                   [disabled]="element['absent']"
+                   [hidden]="element['absent']"
+            />
+          </td>
+        </ng-template>
+        <td class="checkbox-response" *ngIf="element.forms['form-external-behaviour'] ; else elseBlock ">
+          <input type="checkbox"
+                 (change)="$event ? selectCheckboxResult(element,'form-external-behaviour',$event) : null"
+                 [checked]="true"
+                 [disabled]="element['absent']"
+                 [hidden]="element['absent']"
+          />
+        </td>
+        <ng-template #elseBlock>
+          <td class="checkbox-response">
+            <input type="checkbox" (click)="$event.stopPropagation()"
+                   (change)="$event ? selectCheckbox(element,'form-external-behaviour') : null"
+                   [disabled]="element['absent']"
+                   [hidden]="element['absent']"
+            />
+          </td>
+        </ng-template>
+      </tr>
+    </table>
+    <span><p class="mat-h3"
+             *ngIf="attendanceList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+  </div>
+</mat-card>
