@@ -710,9 +710,11 @@ export class DashboardService {
   async searchDocs(type: string, currentClass, reportDate: string) {
     this.db = await this.getUserDB();
     const grade = this.getValue('grade', currentClass)
-    const schoolName = this.getValue('school_name', currentClass)
-    const schoolYear = this.getValue('school_year', currentClass)
-    let searchTerm = reportDate ?  type + '-' + schoolYear + '-' + schoolName + '-' + grade + '-' + reportDate : type + '-' + schoolYear + '-' + schoolName + '-' + grade
+    // const schoolName = this.getValue('school_name', currentClass)
+    // const schoolYear = this.getValue('school_year', currentClass)
+    //     const id = type + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username) + reportTime
+    // str = str.replace(/\s+/g, '-').
+    let searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-'))
     const result = await this.db.allDocs({
       startkey: searchTerm,
       endkey: searchTerm + '\uffff',
@@ -731,7 +733,7 @@ export class DashboardService {
     const reportDate = DateTime.local().toISODate()
     const reportTime = DateTime.local().toISOTime()
     const grade = this.getValue('grade', currentClass)
-    const id = type + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username) + reportTime
+    const id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
     return {reportDate, grade, reportTime, id};
   }
 

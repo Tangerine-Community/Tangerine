@@ -1,22 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import {DateTime} from "luxon";
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
 import {Router} from "@angular/router";
-import {StudentResult} from "../../dashboard/dashboard.component";
 import {UserService} from "../../../shared/_services/user.service";
+import {StudentResult} from "../../dashboard/dashboard.component";
 import {FormMetadata} from "../../form-metadata";
-import {ClassFormService} from "../../_services/class-form.service";
-
 
 @Component({
-  selector: 'app-attendance-check',
-  templateUrl: './attendance-check.component.html',
-  styleUrls: ['./attendance-check.component.css','../../dashboard/dashboard.component.css']
+  selector: 'app-behavior-check',
+  templateUrl: './behavior-check.component.html',
+  styleUrls: ['./behavior-check.component.css','../../dashboard/dashboard.component.css']
 })
-export class AttendanceCheckComponent implements OnInit {
-  
+export class BehaviorCheckComponent implements OnInit {
+
   getValue: (variableName: any, response: any) => any;
   window: any = window
   attendanceList: StudentResult[] = []
@@ -39,14 +36,13 @@ export class AttendanceCheckComponent implements OnInit {
   
   constructor(
     private dashboardService: DashboardService,
-              private variableService : VariableService,
-              private router: Router,
-              private classFormService: ClassFormService
+    private variableService : VariableService,
+    private router: Router,
+    private userService: UserService
   ) { }
 
   async ngOnInit(): Promise<void> {
     let classIndex
-    await this.classFormService.initialize();
     this.getValue = this.dashboardService.getValue
     const enabledClasses = await this.dashboardService.getEnabledClasses();
 
@@ -63,7 +59,7 @@ export class AttendanceCheckComponent implements OnInit {
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     const curriculum = currArray.find(x => x.name === curriculumId);
-    
+
     const currentClassId = await this.variableService.get('class-currentClassId');
     await this.showAttendanceListing(currentClassId, curriculum, currentClass)
   }
@@ -75,7 +71,7 @@ export class AttendanceCheckComponent implements OnInit {
    */
   async showAttendanceListing(currentClassId, curriculum, currentClass) {
     const type = "attendance"
-    const registerNameForDialog = 'Attendance';
+    const registerNameForDialog = 'Behavior';
     this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
@@ -85,13 +81,11 @@ export class AttendanceCheckComponent implements OnInit {
 
     let currentAttendanceReport, savedAttendanceList
     try {
-      // currentAttendanceReport = await this.dashboardService.getDoc(id)
-      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate)
-      currentAttendanceReport = docArray? docArray[0]?.doc : null
-      savedAttendanceList = currentAttendanceReport?.attendanceList
+      currentAttendanceReport = await this.dashboardService.getDoc(id)
+      savedAttendanceList = currentAttendanceReport.attendanceList
     } catch (e) {
     }
-    
+
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList)
     if (!currentAttendanceReport) {
       this.attendanceRegister = {
@@ -134,7 +128,11 @@ export class AttendanceCheckComponent implements OnInit {
       this.attendanceRegister = currentAttendanceReport
     }
   }
-  
+
+  private
+
+
+
   async toggleAttendance(student) {
     student.absent = !student.absent
     if (student.absent) {
@@ -194,9 +192,9 @@ export class AttendanceCheckComponent implements OnInit {
     const title = selectedForm['title'];
     const responseId = selectedForm['response']['_id'];
     this.router.navigate(['class-form'], { queryParams:
-          { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
-            classId: classId, itemId: selectedFormId, src: src, title:
-            title, responseId: responseId }
+        { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
+          classId: classId, itemId: selectedFormId, src: src, title:
+          title, responseId: responseId }
     });
   }
 
@@ -221,13 +219,13 @@ export class AttendanceCheckComponent implements OnInit {
     
     
     // this.router.navigate(['class-form'], { queryParams:
-    //       { formId: selectedFormId,
-    //         curriculum: curriculum,
-    //         studentId: studentId,
-    //         classId: classId,
-    //         src: src,
-    //         title: title,
-    //         responseId: responseId }
+    //     { formId: selectedFormId,
+    //       curriculum: curriculum,
+    //       studentId: studentId,
+    //       classId: classId,
+    //       src: src,
+    //       title: title,
+    //       responseId: responseId }
     // });
   }
 
