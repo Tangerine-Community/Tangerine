@@ -1103,31 +1103,13 @@ export class DashboardService {
         await this.variableService.set('class-curriculumId', curriculumId);
       }
       this.currentClassIndex = 0;
-      if (classIndex === null) {
-        let classClassIndex = await this.variableService.get('class-classIndex')
-        if (classClassIndex !== null) {
-          classIndex = parseInt(classClassIndex)
-          if (!Number.isNaN(classIndex)) {
-            this.currentClassIndex = classIndex;
-          }
-        }
-        currentItemId = await this.variableService.get('class-currentItemId');
-        currentClassId = await this.variableService.get('class-currentClassId');
-        curriculumId = await this.variableService.get('class-curriculumId');
-      } else {
-        this.currentClassIndex = classIndex
-      }
-      await this.variableService.set('class-classIndex', this.currentClassIndex);
+      const __vars = await this.initExposeVariables(classIndex);
+      classIndex = __vars.classIndex;
+      currentItemId = __vars.currentItemId;
+      currentClassId = __vars.currentClassId;
+      curriculumId = __vars.curriculumId;
+      currentClass = __vars.currentClass;
 
-      currentClass = this.enabledClasses[this.currentClassIndex]?.doc
-      if (typeof currentClass === 'undefined') {
-        // Maybe a class has been removed
-        this.currentClassIndex = 0
-        currentClass = this.enabledClasses[this.currentClassIndex].doc
-      }
-      this.selectedClass = currentClass;
-      this.selectedClass$.next(currentClass)
-      
       if (currentClassId && currentClassId !== '') {
         this.currentClassId = currentClassId;
       } else {
@@ -1165,7 +1147,39 @@ export class DashboardService {
     }
   }
 
-  // Uses curriculumFormsList to populate formList for a curriculum.
+  async initExposeVariables(classIndex: number) {
+    let currentItemId: string
+    let currentClassId: string
+    let curriculumId: string
+    let currentClass
+    if (classIndex === null) {
+      let classClassIndex = await this.variableService.get('class-classIndex')
+      if (classClassIndex !== null) {
+        classIndex = parseInt(classClassIndex)
+        if (!Number.isNaN(classIndex)) {
+          this.currentClassIndex = classIndex;
+        }
+      }
+      currentItemId = await this.variableService.get('class-currentItemId');
+      currentClassId = await this.variableService.get('class-currentClassId');
+      curriculumId = await this.variableService.get('class-curriculumId');
+    } else {
+      this.currentClassIndex = classIndex
+    }
+    await this.variableService.set('class-classIndex', this.currentClassIndex);
+
+    currentClass = this.enabledClasses[this.currentClassIndex]?.doc
+    if (typeof currentClass === 'undefined') {
+      // Maybe a class has been removed
+      this.currentClassIndex = 0
+      currentClass = this.enabledClasses[this.currentClassIndex].doc
+    }
+    this.selectedClass = currentClass;
+    this.selectedClass$.next(currentClass)
+    return {classIndex, currentItemId, currentClassId, curriculumId, currentClass};
+  }
+
+// Uses curriculumFormsList to populate formList for a curriculum.
   async populateFormsMetadata(curriculumId, curriculumFormsList, currentClass) {
     // this only needs to happen once.
     if (typeof curriculumFormsList === 'undefined') {
@@ -1253,6 +1267,28 @@ export class DashboardService {
     const currentClass = this.enabledClasses[classIndex];
     const currentClassId = currentClass.id;
     this.allStudentResults = await this.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
+  }
+
+
+  async setCurrentClass() {
+    await this.variableService.set('class-classIndex', null);
+    await this.variableService.set('class-currentClassId', null);
+    await this.variableService.set('class-curriculumId', null);
+    await this.variableService.set('class-currentItemId', null);
+    const classes = await this.getMyClasses();
+    const enabledClasses = classes.map(klass => {
+      if (!klass.doc.archive) {
+        return klass
+      }
+    });
+    const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
+    // set classIndex to allEnabledClasses.length
+    const classIndex = allEnabledClasses.length - 1
+    const currentClass = allEnabledClasses[classIndex]
+    this.selectedClass$.next(currentClass.doc)
+    const currentClassId = currentClass.id
+    await this.variableService.set('class-classIndex', classIndex);
+    await this.variableService.set('class-currentClassId', currentClassId);
   }
   
 }
