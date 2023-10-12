@@ -31,6 +31,7 @@ export class AttendanceCheckComponent implements OnInit {
     attendanceList: StudentResult[],
     collection: string,
     form: {},
+    items: any[],
     complete: boolean,
     type: string
   }
@@ -108,6 +109,19 @@ export class AttendanceCheckComponent implements OnInit {
         form: {
           id: type,
         },
+        items: [{
+          id: 'class-registration',
+          title: 'Class Registration',
+          inputs: [{}]
+        },
+          {
+            id: 'item_1',
+            title: 'Item 1',
+            inputs: [{
+              name: 'timestamp',
+              label: 'timestamp'
+            }]
+          }],
         complete: false
       }
       const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
@@ -119,7 +133,7 @@ export class AttendanceCheckComponent implements OnInit {
         // }
         // this.currArray.push(curriculum)
         // this.selectedCurriculum = this.currArray.find(x => x.name === type)
-        await this.saveStudentAttendance(null)
+        // await this.saveStudentAttendance(null)
       } else {
         // this.showAttendanceList = false
         // if (!this.currentItemId || this.currentItemId === '') {
@@ -133,6 +147,7 @@ export class AttendanceCheckComponent implements OnInit {
       currentAttendanceReport.attendanceList = this.attendanceList
       this.attendanceRegister = currentAttendanceReport
     }
+    await this.saveStudentAttendance(null)
   }
   
   async toggleAttendance(student) {

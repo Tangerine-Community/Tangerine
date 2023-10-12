@@ -984,7 +984,58 @@ export class DashboardService {
     // await this.populateFeedback(curriculumId);
   }
 
+  /**
+   * Get the attendance list for the class, including any students who have not yet had attendance checked. If the savedAttendanceList is passed in, then
+   * populate the student from that doc by matching student.id.
+   * @param students
+   * @param listFromDoc
+   */
+  async getScoreList(students, listFromDoc) {
+    const list = []
+    for (const student of students) {
+      let studentResult
+      const studentId = student.id
+      if (listFromDoc) {
+        studentResult = listFromDoc.find(studentDoc => studentDoc.id === studentId)
+      }
+      if (studentResult) {
+        list.push(studentResult)
+      } else {
+        const student_name = this.getValue('student_name', student.doc)
+        const phone = this.getValue('phone', student.doc);
+        const classId = this.getValue('classId', student.doc)
 
+        studentResult = {}
+        studentResult['id'] = studentId
+        studentResult['name'] = student_name
+        studentResult['phone'] = phone
+        studentResult['classId'] = classId
+        studentResult['forms'] = {}
+        studentResult['absent'] = false
+        studentResult['behavior'] = {}
+
+        // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
+        // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+        // curriculumFormsList.forEach((form) => {
+        //   const formResult = {};
+        //   formResult['formId'] = form.id;
+        //   formResult['curriculum'] = curriculumName;
+        //   formResult['title'] = form.title;
+        //   formResult['src'] = form.src;
+        //   if (studentsResponses[student.id]) {
+        //     formResult['response'] = studentsResponses[student.id][form.id];
+        //   }
+        //   studentResults['forms'][form.id] = formResult;
+        // });
+
+        // await this.addBehaviorRecords(studentResult, studentId);
+        list.push(studentResult)
+      }
+    }
+    return list
+    // await this.populateFeedback(curriculumId);
+  }
+  
   async addBehaviorRecords(studentResult, studentId) {
     const formsList = [
       {

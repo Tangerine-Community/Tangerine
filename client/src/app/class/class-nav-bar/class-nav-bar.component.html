@@ -5,6 +5,7 @@
       <span>{{'Classes'|translate}}</span>
     </button>
   <mat-menu #classesMenu="matMenu">
+    <ng-template [ngIf]="enabledClasses.length > 0">
     <span *ngFor="let class of enabledClasses; let classIndex=index"
           class="class-dashboard-curr-button-spacer">
 <!--    <button mat-menu-item [matMenuTriggerFor]="catMenu">-->
@@ -12,16 +13,17 @@
             [queryParams]={classIndex:classIndex}>
         {{getClassTitle(class.doc)}}
       </button>
-<!--      <mat-menu #catMenu="matMenu">-->
-<!--        <ng-container *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">-->
-<!--          <button mat-menu-item *ngIf="curriculum.value ==='on'"-->
-<!--                  [routerLink]="['/dashboard/']"-->
-<!--                  [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>-->
-<!--              {{curriculum.label}}-->
-<!--            </button>-->
-<!--        </ng-container>-->
-<!--      </mat-menu>-->
+      <!--      <mat-menu #catMenu="matMenu">-->
+      <!--        <ng-container *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">-->
+      <!--          <button mat-menu-item *ngIf="curriculum.value ==='on'"-->
+      <!--                  [routerLink]="['/dashboard/']"-->
+      <!--                  [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>-->
+      <!--              {{curriculum.label}}-->
+      <!--            </button>-->
+      <!--        </ng-container>-->
+      <!--      </mat-menu>-->
       </span>
+    </ng-template>
         <mat-divider></mat-divider>
         <button mat-menu-item
                 [routerLink]="['/class-form/']"
