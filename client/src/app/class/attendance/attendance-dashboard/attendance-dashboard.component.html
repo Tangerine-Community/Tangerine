@@ -1,5 +1,16 @@
-<mat-card class="tangy-class-card-content-container">
-  <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass)}}</p></div>
+<mat-toolbar *ngIf="!selectedClass" class="classDashboard">
+  <span dir="rtl" class="class-dashboard-button-spacer-left">
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
+      {{'Add Class'|translate}}
+    </button>
+    <!--    <button mat-stroked-button color="primary" [routerLink]="['/class-config/']">-->
+    <!--        <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>-->
+    <!--    </button>-->
+  </span>
+</mat-toolbar>
+<mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
+  <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass)}} {{reportDate}}</p></div>
   <div>
     <table class="dashboard-table">
       <tr>
@@ -27,15 +38,33 @@
         <td class="number-cell" *ngIf="student.presentPercentage">{{student.presentPercentage}}%</td>
         <td class="number-cell" *ngIf="!student.presentPercentage">{{'N/A'|translate}}</td>
         <td style="padding-left: 1em;padding-right: 1em;">
-          <mat-progress-bar
-            *ngIf="student.moodPercentage"
-            value="{{ student.moodPercentage }}"
-            [appProgressBarColor]="(student.moodPercentage)"
-            mode="determinate">
-          </mat-progress-bar>
+<!--          <mat-progress-bar-->
+<!--            *ngIf="student.moodPercentage"-->
+<!--            value="{{ student.moodPercentage }}"-->
+<!--            [appProgressBarColor]="(student.moodPercentage)"-->
+<!--            mode="determinate">-->
+<!--          </mat-progress-bar>-->
+          <div *ngIf="student['behavior'] && student['behavior']['internalPercentage']">Internal:
+            <mat-progress-bar
+              *ngIf="student['behavior'] && student['behavior']['internalPercentage']"
+              value="{{ student['behavior']['internalPercentage'] }}"
+              [appProgressBarColor]="(student['behavior']['internalPercentage'])"
+              mode="determinate">
+            </mat-progress-bar> {{ student['behavior']['internalPercentage'] }} %
+<!--            <ng-template [ngIf]="!student['behavior']['internalPercentage']"> {{'N/A'|translate}}</ng-template>-->
+          </div>
+          <div *ngIf="student['behavior'] && student['behavior']['externalPercentage']">External:
+            <mat-progress-bar
+              *ngIf="student['behavior']['externalPercentage']"
+              value="{{ student['behavior']['externalPercentage'] }}"
+              [appProgressBarColor]="(student['behavior']['externalPercentage'])"
+              mode="determinate"> {{ student['behavior']['externalPercentage'] }} %
+            </mat-progress-bar>
+<!--            <ng-template [ngIf]="!student['behavior']['externalPercentage']"> {{'N/A'|translate}}</ng-template>-->
+          </div>
         </td>
-        <td class="number-cell" *ngIf="student.moodPercentage">{{student.moodPercentage}}%</td>
-        <td class="number-cell" *ngIf="!student.moodPercentage">{{'N/A'|translate}}</td>
+<!--        <td class="number-cell" *ngIf="student.moodPercentage">{{student.moodPercentage}}%</td>-->
+<!--        <td class="number-cell" *ngIf="!student['behavior']['externalPercentage']">{{'N/A'|translate}}</td>-->
       </tr>
     </table>
     <span><p class="mat-h3"

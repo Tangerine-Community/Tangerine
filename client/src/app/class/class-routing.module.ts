@@ -15,8 +15,14 @@ import {GradesComponent} from "./reports/grades/grades.component";
 import {AttendanceCheckComponent} from "./attendance/attendance-check/attendance-check.component";
 import {AttendanceScoresComponent} from "./attendance/attendance-scores/attendance-scores.component";
 import {BehaviorCheckComponent} from "./attendance/behavior-check/behavior-check.component";
+import {AttendanceDashboardComponent} from "./attendance/attendance-dashboard/attendance-dashboard.component";
 
 const appRoutes = [
+  {
+    path: 'attendance-dashboard',
+    component: AttendanceDashboardComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },  
   {
     path: 'attendance-check',
     component: AttendanceCheckComponent,

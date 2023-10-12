@@ -1,5 +1,5 @@
 <mat-card class="tangy-class-card-content-container">
-  <div class="selectedClassLabel"><p>{{'Attendance'|translate}}: {{getClassTitle(selectedClass)}}</p></div>
+  <div class="selectedClassLabel"><p>{{'Behavior'|translate}}</p></div>
   <div>
     <table class="dashboard-table">
       <tr>
@@ -9,38 +9,42 @@
       </tr>
       <tr *ngFor="let element of attendanceList">
         <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
-        <td class="checkbox-response" *ngIf="element.forms['form-internal-behaviour'] ; else elseBlock ">
+        <td class="checkbox-response" *ngIf="element.forms['form-internal-behaviour'].response ; else elseBlock ">
           <input type="checkbox"
                  (change)="$event ? selectCheckboxResult(element,'form-internal-behaviour',$event) : null"
                  [checked]="true"
-                 [disabled]="element['absent']"
-                 [hidden]="element['absent']"
-          />
+          /><ng-template [ngIf]="element['behavior']['internal']"> {{'Score'|translate}}:  {{element['behavior']['internal']}} / 18 </ng-template>
+          <mat-progress-bar
+            *ngIf="element['behavior']['internalPercentage']"
+            value="{{ element['behavior']['internalPercentage'] }}"
+            [appProgressBarColor]="(element['behavior']['internalPercentage'])"
+            mode="determinate">
+          </mat-progress-bar>
         </td>
         <ng-template #elseBlock>
           <td class="checkbox-response">
             <input type="checkbox"
                    (click)="$event.stopPropagation()"
                    (change)="$event ? selectCheckbox(element,'form-internal-behaviour') : null"
-                   [disabled]="element['absent']"
-                   [hidden]="element['absent']"
             />
           </td>
         </ng-template>
-        <td class="checkbox-response" *ngIf="element.forms['form-external-behaviour'] ; else elseBlock ">
+        <td class="checkbox-response" *ngIf="element.forms['form-external-behaviour'].response ; else elseBlock2 ">
           <input type="checkbox"
                  (change)="$event ? selectCheckboxResult(element,'form-external-behaviour',$event) : null"
                  [checked]="true"
-                 [disabled]="element['absent']"
-                 [hidden]="element['absent']"
-          />
+          /><ng-template [ngIf]="element['behavior']['external']"> {{'Score'|translate}}::  {{element['behavior']['external']}} / 18 </ng-template>
+          <mat-progress-bar
+            *ngIf="element['behavior']['externalPercentage']"
+            value="{{ element['behavior']['externalPercentage'] }}"
+            [appProgressBarColor]="(element['behavior']['externalPercentage'])"
+            mode="determinate">
+          </mat-progress-bar>
         </td>
-        <ng-template #elseBlock>
+        <ng-template #elseBlock2>
           <td class="checkbox-response">
             <input type="checkbox" (click)="$event.stopPropagation()"
                    (change)="$event ? selectCheckbox(element,'form-external-behaviour') : null"
-                   [disabled]="element['absent']"
-                   [hidden]="element['absent']"
             />
           </td>
         </ng-template>

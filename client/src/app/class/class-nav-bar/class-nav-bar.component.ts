@@ -41,8 +41,8 @@ export class ClassNavBarComponent implements OnInit {
     this.window = window;
     // this.selectedClass = window['T'].classDashboard.selectedClass;
     this.route.queryParams.subscribe(async params => {
-      // classIndex = params['classIndex'];
-      // curriculumId = params['curriculumId'];
+      let classIndex = params['classIndex'];
+      let curriculumId = params['curriculumId'];
       // this.formList = window['T'].classDashboard.formList;
       this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe((enabledClasses) => {
         this.enabledClasses = enabledClasses
@@ -65,14 +65,21 @@ export class ClassNavBarComponent implements OnInit {
           klass.curriculum = this.currArray
         }
       }
-
-      let classClassIndex = await this.variableService.get('class-classIndex')
-      if (classClassIndex !== null) {
-        const classIndex = parseInt(classClassIndex)
-        if (!Number.isNaN(classIndex)) {
-          this.currentClassIndex = classIndex;
+      if (classIndex) {
+        await this.variableService.set('class-classIndex', classIndex);
+        this.currentClassIndex = classIndex;
+      } else {
+        let classClassIndex = await this.variableService.get('class-classIndex')
+        if (classClassIndex !== null) {
+          const classIndex = parseInt(classClassIndex)
+          if (!Number.isNaN(classIndex)) {
+            this.currentClassIndex = classIndex;
+          }
+        } else {
+          this.currentClassIndex = 0;
         }
       }
+      
       let currentClass = this.enabledClasses[this.currentClassIndex]?.doc
       if (typeof currentClass === 'undefined') {
         // Maybe a class has been removed
@@ -84,7 +91,14 @@ export class ClassNavBarComponent implements OnInit {
         this.selectedClass = selectedClass
       })
       // this.currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-      const curriculumId = await this.variableService.get('class-curriculumId');
+      if (!curriculumId) {
+        curriculumId = await this.variableService.get('class-curriculumId');
+      }
+      if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
+        const curriculum = this.currArray[0];
+        curriculumId = curriculum.name;
+      }
+      await this.variableService.set('class-curriculumId', curriculumId);
       // curriculumId will be null when starting with a new instance of tangerine.
       if (curriculumId) {
         const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);

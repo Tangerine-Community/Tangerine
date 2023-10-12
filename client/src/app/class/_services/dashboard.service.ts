@@ -752,55 +752,60 @@ export class DashboardService {
         const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
           return thisStudent.id === student.id
         })
-        currentStudent.reportCount = currentStudent.reportCount ? currentStudent.reportCount + 1 : 1
-        currentStudent.presentCount = currentStudent.presentCount ? currentStudent.presentCount : 0
-        if (students?.length > 0) {
-          const studentRegistration  = students.find((thisStudent) => {
-            return thisStudent.doc._id === student.id
-          })
-          const phone = this.getValue('phone', studentRegistration.doc)
-          currentStudent.phone = phone
-        }
-        const absent = student.absent ? student.absent : false
-        if (!absent) {
-          currentStudent.presentCount = currentStudent.presentCount + 1
-        }
-        currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
-
-        currentStudent.moodValues = currentStudent.moodValues ? currentStudent.moodValues : []
-        const mood = student.mood
-        if (mood) {
-          switch (mood) {
-            case 'happy':
-              currentStudent.moodValues.push(100)
-              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-              break
-            case 'neutral':
-              currentStudent.moodValues.push(66.6)
-              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-              break
-            case 'sad':
-              currentStudent.moodValues.push(33.3)
-              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-              break
+        if (currentStudent) {
+          currentStudent.reportCount = currentStudent.reportCount ? currentStudent.reportCount + 1 : 1
+          currentStudent.presentCount = currentStudent.presentCount ? currentStudent.presentCount : 0
+          if (students?.length > 0) {
+            const studentRegistration = students.find((thisStudent) => {
+              return thisStudent.doc._id === student.id
+            })
+            const phone = this.getValue('phone', studentRegistration.doc)
+            currentStudent.phone = phone
           }
+          const absent = student.absent ? student.absent : false
+          if (!absent) {
+            currentStudent.presentCount = currentStudent.presentCount + 1
+          }
+          currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
+          // currentStudent.moodValues = currentStudent.moodValues ? currentStudent.moodValues : []
+          // const mood = student.mood
+          // if (mood) {
+          //   switch (mood) {
+          //     case 'happy':
+          //       currentStudent.moodValues.push(100)
+          //       currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
+          //       break
+          //     case 'neutral':
+          //       currentStudent.moodValues.push(66.6)
+          //       currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
+          //       break
+          //     case 'sad':
+          //       currentStudent.moodValues.push(33.3)
+          //       currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
+          //       break
+          //   }
+          // }
+
+          currentStudent['behavior'] = {}
+          // await this.addBehaviorRecords(currentStudent, student.id)
+
+          if (!currentStudent.score) {
+            const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
+              return thisStudent.id === student.id
+            })
+            currentStudent.score = currentStudentScore?.score
+          }
+          // const studentScores = {}
+          // const curriculi = Object.keys(allStudentScores);
+          // curriculi.forEach((curriculum) => {
+          //   const scores = allStudentScores[curriculum]
+          //   const studentScore = scores.filter((score) => {
+          //     return score.id === student.id
+          //   })
+          //   studentScores[curriculum] = studentScore
+          // })
+          // currentStudent.studentScores = studentScores
         }
-        if (!currentStudent.score) {
-          const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
-            return thisStudent.id === student.id
-          })
-          currentStudent.score = currentStudentScore?.score
-        }
-        const studentScores = {}
-        const curriculi = Object.keys(allStudentScores);
-        curriculi.forEach((curriculum) => {
-          const scores = allStudentScores[curriculum]
-          const studentScore = scores.filter((score) => {
-            return score.id === student.id
-          })
-          studentScores[curriculum] = studentScore
-        })
-        currentStudent.studentScores = studentScores
       }
     };
   }
@@ -905,13 +910,18 @@ export class DashboardService {
       // find the curriculum element
       const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
       // find the options that are set to 'on'
-      const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
-      fullCurrArray =  Promise.all(currArray.map(async curr => {
-        const formId = curr.name;
-        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-        curr.label = formInfo.title
-        return curr
-      }));
+      if (curriculumInput) {
+        const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
+        fullCurrArray =  Promise.all(currArray.map(async curr => {
+          const formId = curr.name;
+          const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
+          curr.label = formInfo.title
+          return curr
+        }));
+      } else {
+        fullCurrArray = [];
+      }
+      
     }
 
     return fullCurrArray;
@@ -950,6 +960,7 @@ export class DashboardService {
         studentResult['classId'] = classId
         studentResult['forms'] = {}
         studentResult['absent'] = false
+        studentResult['behavior'] = {}
 
         // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
         // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
@@ -964,16 +975,8 @@ export class DashboardService {
         //   }
         //   studentResults['forms'][form.id] = formResult;
         // });
-        
-        const responses = await this.classFormService.getResponsesByStudentId(studentId);
-        for (const response of responses as any[]) {
-          // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
-          const respFormId = response.doc.form.id;
-          // if (respClassId === this.classId && respCurrId === this.curriculum) {
-          //   this.formResponse = response.doc;
-          // }
-          studentResult['forms'][respFormId] = response.doc;
-        }
+
+        await this.addBehaviorRecords(studentResult, studentId);
         list.push(studentResult)
       }
     }
@@ -981,7 +984,61 @@ export class DashboardService {
     // await this.populateFeedback(curriculumId);
   }
 
-  
+
+  async addBehaviorRecords(studentResult, studentId) {
+    const formsList = [
+      {
+        formId: 'form-internal-behaviour',
+        curriculum: 'form-internal-behaviour',
+        title: 'Comportamientos internalizantes',
+        src: './assets/form-internal-behaviour/form.html'
+      },
+      {
+        formId: 'form-external-behaviour',
+        curriculum: 'form-external-behaviour',
+        title: 'Comportamientos externalizantes',
+        src: './assets/form-external-behaviour/form.html'
+      }
+    ]
+    formsList.forEach((form) => {
+      const formResult = {};
+      formResult['formId'] = form.formId;
+      formResult['curriculum'] = form.curriculum;
+      formResult['title'] = form.title;
+      formResult['src'] = form.src;
+      studentResult['forms'][form.formId] = formResult;
+    })
+
+    const responses = await this.classFormService.getResponsesByStudentId(studentId);
+    for (const response of responses as any[]) {
+      // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
+      const respFormId = response.doc.form.id;
+      // if (respClassId === this.classId && respCurrId === this.curriculum) {
+      //   this.formResponse = response.doc;
+      // }
+      // studentResult['forms'][respFormId] = response.doc;
+      if (studentResult['forms'][respFormId]) {
+        studentResult['forms'][respFormId]['response'] = response.doc;
+      }
+
+      const responseDoc = response.doc
+      switch (respFormId) {
+        case 'form-internal-behaviour':
+          const usingScorefield = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
+          const intScore = usingScorefield.value
+          studentResult['behavior']['internal'] = intScore
+          studentResult['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
+          break
+        case 'form-external-behaviour':
+          const usingScorefield2 = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
+          const extScore = usingScorefield2.value
+          studentResult['behavior']['external'] = extScore
+          studentResult['behavior']['externalPercentage'] = Math.round((extScore / 18) * 100)
+          break
+      }
+    }
+  }
+
   async initDashboard(classIndex: number, currentClassId: string, curriculumId: string, resetVars: boolean, enabledClasses) {
     if (typeof enabledClasses === 'undefined') {
       enabledClasses = await this.getEnabledClasses();
