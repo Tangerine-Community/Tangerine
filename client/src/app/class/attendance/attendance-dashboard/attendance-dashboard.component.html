@@ -35,8 +35,8 @@
             mode="determinate">
           </mat-progress-bar>
         </td>
-        <td class="number-cell" *ngIf="student.presentPercentage">{{student.presentPercentage}}%</td>
-        <td class="number-cell" *ngIf="!student.presentPercentage">{{'N/A'|translate}}</td>
+        <td class="number-cell" *ngIf="student.presentPercentage || student.presentPercentage === 0">{{student.presentPercentage}}%</td>
+        <td class="number-cell" *ngIf="!student.presentPercentage && student.presentPercentage != 0">{{'N/A'|translate}}</td>
         <td style="padding-left: 1em;padding-right: 1em;">
 <!--          <mat-progress-bar-->
 <!--            *ngIf="student.moodPercentage"-->

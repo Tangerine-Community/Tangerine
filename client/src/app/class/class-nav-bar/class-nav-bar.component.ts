@@ -90,13 +90,18 @@ export class ClassNavBarComponent implements OnInit {
       this.selectedClassSubscription = this.dashboardService.selectedClass$.subscribe((selectedClass) => {
         this.selectedClass = selectedClass
       })
-      // this.currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
       if (!curriculumId) {
         curriculumId = await this.variableService.get('class-curriculumId');
       }
+      if (currentClass) {
+        this.currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+      }
+
       if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
-        const curriculum = this.currArray[0];
-        curriculumId = curriculum.name;
+        if (this.currArray && this.currArray.length === 0) {
+          const curriculum = this.currArray[0];
+          curriculumId = curriculum.name;
+        }
       }
       await this.variableService.set('class-curriculumId', curriculumId);
       // curriculumId will be null when starting with a new instance of tangerine.
