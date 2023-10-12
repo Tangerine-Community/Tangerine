@@ -1,17 +1,17 @@
 <span class="class-dashboard-button-spacer-left">
   <button mat-button [matMenuTriggerFor]="classesMenu" class="white-menu-item">
     <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">school</mat-icon>
-<!--      <span>{{'Grade: '|translate}}{{getClassTitle(selectedClass)}}</span>-->
-      <span>{{'Classes'|translate}}</span>
+    <span>{{'Grade'|translate}} <ng-template [ngIf]="selectedClass">: {{getClassTitle(selectedClass)}}</ng-template></span>
+<!--      <span>{{'Classes'|translate}}</span>-->
     </button>
   <mat-menu #classesMenu="matMenu">
     <ng-template [ngIf]="enabledClasses.length > 0">
-    <span *ngFor="let class of enabledClasses; let classIndex=index"
+    <span *ngFor="let klass of enabledClasses; let classIndex=index"
           class="class-dashboard-curr-button-spacer">
 <!--    <button mat-menu-item [matMenuTriggerFor]="catMenu">-->
     <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
             [queryParams]={classIndex:classIndex}>
-        {{getClassTitle(class.doc)}}
+        {{getClassTitle(klass.doc)}}
       </button>
       <!--      <mat-menu #catMenu="matMenu">-->
       <!--        <ng-container *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">-->

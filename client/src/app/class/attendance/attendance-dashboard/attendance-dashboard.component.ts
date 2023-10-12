@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DateTime} from "luxon";
 
 declare const sms: any;
@@ -28,6 +28,7 @@ export class AttendanceDashboardComponent implements OnInit {
     private dashboardService: DashboardService,
     private variableService : VariableService,
     private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -36,31 +37,62 @@ export class AttendanceDashboardComponent implements OnInit {
     this.reportDate = DateTime.local().toISODate()
     const enabledClasses = await this.dashboardService.getEnabledClasses();
 
-    let classClassIndex = await this.variableService.get('class-classIndex')
-    if (classClassIndex !== null) {
-      classIndex = parseInt(classClassIndex)
-      if (Number.isNaN(classIndex)) {
-        classIndex = 0
-      }
-    }
-    
-    const currentClass = enabledClasses[classIndex]?.doc
-    this.selectedClass = currentClass;
-    
-    // const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    // const curriculumId = await this.variableService.get('class-curriculumId');
-    // const curriculum = currArray.find(x => x.name === curriculumId);
+    // let classClassIndex = await this.variableService.get('class-classIndex')
+    // if (classClassIndex !== null) {
+    //   classIndex = parseInt(classClassIndex)
+    //   if (Number.isNaN(classIndex)) {
+    //     classIndex = 0
+    //   }
+    // }
     //
-    // const currentClassId = await this.variableService.get('class-currentClassId');
-    // await this.populateSummary(currentClass, curriculum)
-    if (currentClass) {
-      await this.populateSummary(currentClass, null)
+    // const currentClass = enabledClasses[classIndex]?.doc
+    // this.selectedClass = currentClass;
+    
+    // new instance - no classes yet.
+    if (typeof enabledClasses !== 'undefined' && enabledClasses.length > 0) {
+
+      this.route.queryParams.subscribe(async params => {
+        classIndex = params['classIndex'];
+        // let curriculumId = params['curriculumId'];
+        const __vars = await this.dashboardService.initExposeVariables(classIndex);
+        const currentClass = __vars.currentClass;
+        this.selectedClass = currentClass;
+        if (currentClass) {
+          await this.populateSummary(currentClass, null)
+        }
+      })
+      
+      // const __vars = await this.dashboardService.initExposeVariables(classIndex);
+      // // classIndex = __vars.classIndex;
+      // // currentItemId = __vars.currentItemId;
+      // // currentClassId = __vars.currentClassId;
+      // // curriculumId = __vars.curriculumId;
+      // const currentClass = __vars.currentClass;
+      // this.selectedClass = currentClass;
+      //
+      // // const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+      // // const curriculumId = await this.variableService.get('class-curriculumId');
+      // // const curriculum = currArray.find(x => x.name === curriculumId);
+      // //
+      // // const currentClassId = await this.variableService.get('class-currentClassId');
+      // // await this.populateSummary(currentClass, curriculum)
+      // if (currentClass) {
+      //   await this.populateSummary(currentClass, null)
+      // }
     }
   }
 
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
+
+    if (students.length === 0) {
+      alert(_TRANSLATE('You must register students before you can view the attendance dashboard.'))
+      this.router.navigate(['class-form'], { queryParams: {curriculum:'student-registration',classId:currentClass?._id} });
+      return
+    }
+    // [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}
+    
     // const scoreReports = await this.dashboardService.getScoreDocs(classId)
     // const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
     // const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc

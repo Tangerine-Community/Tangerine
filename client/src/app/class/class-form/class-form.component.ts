@@ -132,23 +132,7 @@ export class ClassFormComponent implements OnInit {
         await this.saveResponse(state)
         // Reset vars and set to this new class-registration
         if (state.form.id === 'class-registration' && !this.formResponse) {
-          await this.variableService.set('class-classIndex', null);
-          await this.variableService.set('class-currentClassId', null);
-          await this.variableService.set('class-curriculumId', null);
-          await this.variableService.set('class-currentItemId', null);
-          const classes = await this.dashboardService.getMyClasses();
-          const enabledClasses = classes.map(klass => {
-            if (!klass.doc.archive) {
-              return klass
-            }
-          });
-          const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
-          // set classIndex to allEnabledClasses.length
-          const classIndex = allEnabledClasses.length - 1
-          const currentClass = allEnabledClasses[classIndex]
-          const currentClassId = currentClass.id
-          await this.variableService.set('class-classIndex', classIndex);
-          await this.variableService.set('class-currentClassId', currentClassId);
+          await this.dashboardService.setCurrentClass();
         }
         const appConfig = await this.appConfigService.getAppConfig()
         const url = appConfig.homeUrl
@@ -156,6 +140,7 @@ export class ClassFormComponent implements OnInit {
       })
     })
   }
+
 
   async saveResponse(state) {
     let stateDoc = {}
