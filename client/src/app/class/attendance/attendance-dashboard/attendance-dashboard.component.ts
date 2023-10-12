@@ -3,6 +3,7 @@ import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
 import {Router} from '@angular/router';
+import {DateTime} from "luxon";
 
 declare const sms: any;
 
@@ -18,6 +19,11 @@ export class AttendanceDashboardComponent implements OnInit {
   getValue: (variableName: any, response: any) => any;
   window: any = window
   selectedClass: any
+  reportDate:string
+  classRegistrationParams = {
+    curriculum: 'class-registration'
+  };
+  
   constructor(
     private dashboardService: DashboardService,
     private variableService : VariableService,
@@ -27,6 +33,7 @@ export class AttendanceDashboardComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     let classIndex
     this.getValue = this.dashboardService.getValue
+    this.reportDate = DateTime.local().toISODate()
     const enabledClasses = await this.dashboardService.getEnabledClasses();
 
     let classClassIndex = await this.variableService.get('class-classIndex')
@@ -39,23 +46,28 @@ export class AttendanceDashboardComponent implements OnInit {
     
     const currentClass = enabledClasses[classIndex]?.doc
     this.selectedClass = currentClass;
-    const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    const curriculumId = await this.variableService.get('class-curriculumId');
-    const curriculum = currArray.find(x => x.name === curriculumId);
-
-    const currentClassId = await this.variableService.get('class-currentClassId');
-    await this.populateSummary(currentClass, curriculum)
+    
+    // const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+    // const curriculumId = await this.variableService.get('class-curriculumId');
+    // const curriculum = currArray.find(x => x.name === curriculumId);
+    //
+    // const currentClassId = await this.variableService.get('class-currentClassId');
+    // await this.populateSummary(currentClass, curriculum)
+    if (currentClass) {
+      await this.populateSummary(currentClass, null)
+    }
   }
 
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
     // const scoreReports = await this.dashboardService.getScoreDocs(classId)
-    const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
-    const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
+    // const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
+    // const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
 
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null)
-    const currentAttendanceReport = attendanceReports[attendanceReports.length - 1]?.doc
+    const currentAttendance = attendanceReports[attendanceReports.length - 1]
+    const currentAttendanceReport = currentAttendance?.doc
     if (!currentAttendanceReport) {
       alert(_TRANSLATE('You must take attendance before you can view the attendance dashboard.'))
       this.router.navigate(['attendance-check'])
@@ -63,21 +75,25 @@ export class AttendanceDashboardComponent implements OnInit {
     }
 
     // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
-    const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, classId)
-
-    const rankedStudentScores = this.dashboardService.rankStudentScores(studentReportsCards);
-    // this.groupingsByCurriculum[curriculumId] = rankedStudentScores
-    const curriculumName = curriculum.name
+    // const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, classId)
+    //
+    // const rankedStudentScores = this.dashboardService.rankStudentScores(studentReportsCards);
+    // // this.groupingsByCurriculum[curriculumId] = rankedStudentScores
+    // const curriculumName = curriculum.name
     const allStudentScores: any = {}
-    allStudentScores[curriculumName] = rankedStudentScores.map((grouping) => {
-      return {
-        id: grouping.result.id,
-        curriculum: grouping.result.curriculum,
-        score: grouping.result.scorePercentageCorrect
-      }
-    })
+    // allStudentScores[curriculumName] = rankedStudentScores.map((grouping) => {
+    //   return {
+    //     id: grouping.result.id,
+    //     curriculum: grouping.result.curriculum,
+    //     score: grouping.result.scorePercentageCorrect
+    //   }
+    // })
 
-    attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))
+    // attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))
+    attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, null, allStudentScores, students))
+    // const currentAttendanceReportArray = []
+    // currentAttendanceReportArray.push(currentAttendance)
+    // currentAttendanceReportArray.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))
     this.attendanceReport = currentAttendanceReport
     const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
       return !this.attendanceReport?.attendanceList.find((student) => {
@@ -125,7 +141,8 @@ export class AttendanceDashboardComponent implements OnInit {
         alert(_TRANSLATE('This student does not have a phone number.'))
         return
       } else {
-        const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
+        // const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
+        const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%'
         sms.send(phone, message, options, success, error);
       }
     } else {

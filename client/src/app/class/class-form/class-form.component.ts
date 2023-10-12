@@ -9,6 +9,7 @@ import {Subject} from "rxjs";
 import {VariableService} from "../../shared/_services/variable.service";
 import {_TRANSLATE} from "../../shared/translation-marker";
 import {ClassFormsPlayerComponent} from "../class-forms-player.component";
+import {AppConfigService} from "../../shared/_services/app-config.service";
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -46,7 +47,8 @@ export class ClassFormComponent implements OnInit {
     private dashboardService: DashboardService,
     private classFormService: ClassFormService,
     private tangyFormService: TangyFormService,
-    private variableService: VariableService
+    private variableService: VariableService,
+    private appConfigService: AppConfigService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -148,7 +150,9 @@ export class ClassFormComponent implements OnInit {
           await this.variableService.set('class-classIndex', classIndex);
           await this.variableService.set('class-currentClassId', currentClassId);
         }
-        this.router.navigate(['dashboard']);
+        const appConfig = await this.appConfigService.getAppConfig()
+        const url = appConfig.homeUrl
+        this.router.navigate([url]);
       })
     })
   }

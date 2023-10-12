@@ -1,5 +1,5 @@
 <mat-card class="tangy-class-card-content-container">
-  <div class="selectedClassLabel"><p>{{'Attendance'|translate}}: {{getClassTitle(selectedClass)}}</p></div>
+  <div class="selectedClassLabel"><p>{{'Attendance'|translate}} <ng-template [ngIf]="attendanceRegister?.reportDate">: {{attendanceRegister?.reportDate}}</ng-template></p></div>
   <div>
     <table class="dashboard-table">
       <tr>
