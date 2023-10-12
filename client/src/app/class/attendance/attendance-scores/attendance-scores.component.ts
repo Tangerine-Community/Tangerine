@@ -16,7 +16,7 @@ export class AttendanceScoresComponent implements OnInit {
 
   getValue: (variableName: any, response: any) => any;
   window: any = window
-  attendanceList: StudentResult[] = []
+  scoreList: StudentResult[] = []
   scoreRegister: {
     _id: string,
     timestamp: number,
@@ -33,7 +33,6 @@ export class AttendanceScoresComponent implements OnInit {
     items: any[],
     complete: boolean
   }
-  scoreList: StudentResult[]
   testName: string = ""
   showScoreList: boolean = true
   units: string[] = []
@@ -90,13 +89,13 @@ export class AttendanceScoresComponent implements OnInit {
       // doc = await this.dashboardService.getDoc(id)
       // listFromDoc = doc.scoreList
       // this.testName = doc.testName
-      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate)
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate)
       doc = docArray? docArray[0]?.doc : null
-      listFromDoc = doc?.attendanceList
+      listFromDoc = doc?.scoreList
     } catch (e) {
     }
 
-    this.scoreList =  await this.dashboardService.getAttendanceList(students, listFromDoc)
+    this.scoreList =  await this.dashboardService.getScoreList(students, listFromDoc)
     if (!doc) {
       this.scoreRegister = {
         _id: id,
@@ -156,7 +155,7 @@ export class AttendanceScoresComponent implements OnInit {
     console.log('saved student score: ' + JSON.stringify(student))
     this.scoreRegister.scoreList = this.scoreList
     // update testName in case user updated it.
-    this.scoreRegister.testName = this.testName
+    // this.scoreRegister.testName = this.testName
     // save scoreRegister
     let doc
     try {
