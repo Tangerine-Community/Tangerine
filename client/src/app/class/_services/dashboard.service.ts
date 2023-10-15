@@ -13,7 +13,7 @@ import {TangyFormResponse} from "../../tangy-forms/tangy-form-response.class";
 import {VariableService} from "../../shared/_services/variable.service";
 import {DateTime} from "luxon";
 import {sanitize} from "sanitize-filename-ts";
-import {BehaviorSubject, Subject} from "rxjs";
+import {Subject} from "rxjs";
 import {ClassFormService} from "./class-form.service";
 // import Stats from 'stats-lite';
 
@@ -46,7 +46,8 @@ export class DashboardService {
   enabledClasses
   allStudentResults: StudentResult[];
 
-  public readonly enabledClasses$: BehaviorSubject<any> = new BehaviorSubject(this.getEnabledClasses);
+  // public readonly enabledClasses$: BehaviorSubject<any> = new BehaviorSubject(this.getEnabledClasses());
+  public readonly enabledClasses$: Subject<any> = new Subject();
   public readonly selectedClass$: Subject<any> = new Subject();
 
   async getUserDB() {
@@ -681,6 +682,11 @@ export class DashboardService {
     return feedback;
   }
 
+  /**
+  * Special parsing for enabled curriculums.
+  * By default returns the curriculum name.
+   * Set provideCurriculumObject if you want a special curriculum Object, which is useful for menu labels.
+  * */
   public getValue = (variableName, response) => {
     if (response) {
       const variablesByName = response.items.reduce((variablesByName, item) => {
@@ -689,7 +695,26 @@ export class DashboardService {
         }
         return variablesByName;
       }, {});
-      return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+        return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+    }
+  };
+
+  /**
+  * Special parsing for enabled curriculums.
+  * By default returns a special curriculum Object, which is useful for menu labels.
+  * */
+  public getCurriculumObject = (variableName, response) => {
+    if (response) {
+      const variablesByName = response.items.reduce((variablesByName, item) => {
+        for (const input of item.inputs) {
+          variablesByName[input.name] = input.value;
+        }
+        return variablesByName;
+      }, {});
+        return variablesByName[variableName].reduce((optionThatIsOn, option) => {
+          optionThatIsOn = option.value === 'on' ? {name: option.name, label: option.label} : optionThatIsOn, ''
+          return optionThatIsOn
+        })
     }
   };
 
@@ -1103,7 +1128,7 @@ export class DashboardService {
         await this.variableService.set('class-curriculumId', curriculumId);
       }
       this.currentClassIndex = 0;
-      const __vars = await this.initExposeVariables(classIndex);
+      const __vars = await this.initExposeVariables(classIndex, curriculumId);
       classIndex = __vars.classIndex;
       currentItemId = __vars.currentItemId;
       currentClassId = __vars.currentClassId;
@@ -1147,10 +1172,9 @@ export class DashboardService {
     }
   }
 
-  async initExposeVariables(classIndex: number) {
+  async initExposeVariables(classIndex: number, curriculumId: string) {
     let currentItemId: string
     let currentClassId: string
-    let curriculumId: string
     let currentClass
     if (classIndex === null) {
       let classClassIndex = await this.variableService.get('class-classIndex')

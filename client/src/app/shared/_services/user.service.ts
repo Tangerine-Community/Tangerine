@@ -164,7 +164,11 @@ export class UserService {
       return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId, appConfig.attachHistoryToDocs)
     } else {
       const appInfo = await this.deviceService.getAppInfo()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo.buildId, appInfo.buildChannel, appInfo.groupId, appConfig.attachHistoryToDocs)
+      if (appInfo) {
+        return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false, appInfo?.buildId, appInfo?.buildChannel, appInfo?.groupId, appConfig.attachHistoryToDocs)
+      } else {
+        return null
+      }
     }
   }
 

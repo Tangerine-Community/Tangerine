@@ -16,7 +16,7 @@ export class AttendanceDashboardComponent implements OnInit {
 
   currentClassId:string
   attendanceReport: any
-  getValue: (variableName: any, response: any) => any;
+  getValue: (variableName, response, provideCurriculumObject) => any;
   window: any = window
   selectedClass: any
   reportDate:string
@@ -53,8 +53,8 @@ export class AttendanceDashboardComponent implements OnInit {
 
       this.route.queryParams.subscribe(async params => {
         classIndex = params['classIndex'];
-        // let curriculumId = params['curriculumId'];
-        const __vars = await this.dashboardService.initExposeVariables(classIndex);
+        let curriculumId = params['curriculumId'];
+        const __vars = await this.dashboardService.initExposeVariables(classIndex, curriculumId);
         const currentClass = __vars.currentClass;
         this.selectedClass = currentClass;
         if (currentClass) {
@@ -135,9 +135,9 @@ export class AttendanceDashboardComponent implements OnInit {
     // add any students who haven't had attendance taken yet to the attendanceList
     studentsWithoutAttendance.forEach((student) => {
       const studentResult = {}
-      const student_name = this.getValue('student_name', student.doc)
-      const phone = this.getValue('phone', student.doc);
-      const classId = this.getValue('classId', student.doc)
+      const student_name = this.getValue('student_name', student.doc, false)
+      const phone = this.getValue('phone', student.doc, false);
+      const classId = this.getValue('classId', student.doc, false)
       studentResult['id'] = student.id
       studentResult['name'] = student_name
       studentResult['phone'] = phone
