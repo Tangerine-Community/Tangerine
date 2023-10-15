@@ -27,8 +27,10 @@ export class ClassNavBarComponent implements OnInit {
   currArray
   allStudentResults: StudentResult[];
   getValue: (variableName, response) => any;
+  getCurriculumObject: (variableName, response) => any;
   enabledClasses = [];
   enabledClassesSubscription: Subscription;
+  curriculums = {}
 
   constructor(
     private dashboardService: DashboardService,
@@ -118,8 +120,17 @@ export class ClassNavBarComponent implements OnInit {
           //   return enabledClass.id === selectedClass._id
           // })
         })
-    this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe((enabledClasses) => {
+    this.getValue = this.dashboardService.getValue
+    this.getCurriculumObject = this.dashboardService.getCurriculumObject
+    this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe(async (enabledClasses) => {
       this.enabledClasses = enabledClasses
+      for (const enabledClass of this.enabledClasses) {
+        // const grade = this.getClassTitle(enabledClass.doc)
+        // enabledClass.name = grade
+        // const curriculum = this.getCurriculumObject('curriculum', enabledClass.doc)
+        // this.curriculums[enabledClass.id] = curriculum
+        await this.dashboardService.populateCurrentCurriculums(enabledClass.doc);
+      }
     })
   }
 
