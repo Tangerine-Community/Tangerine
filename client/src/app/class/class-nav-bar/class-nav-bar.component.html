@@ -8,22 +8,36 @@
     <ng-template [ngIf]="enabledClasses.length > 0">
     <span *ngFor="let klass of enabledClasses; let classIndex=index"
           class="class-dashboard-curr-button-spacer">
-<!--    <button mat-menu-item [matMenuTriggerFor]="catMenu">-->
-    <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
-            [queryParams]={classIndex:classIndex}>
+    <button mat-menu-item [matMenuTriggerFor]="curriculumMenu">
+<!--    <button mat-menu-item [routerLink]="['/attendance-dashboard/']"-->
+<!--            [queryParams]={classIndex:classIndex}>-->
         {{getClassTitle(klass.doc)}}
       </button>
-      <!--      <mat-menu #catMenu="matMenu">-->
-      <!--        <ng-container *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">-->
-      <!--          <button mat-menu-item *ngIf="curriculum.value ==='on'"-->
-      <!--                  [routerLink]="['/dashboard/']"-->
-      <!--                  [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>-->
-      <!--              {{curriculum.label}}-->
-      <!--            </button>-->
-      <!--        </ng-container>-->
-      <!--      </mat-menu>-->
+            <mat-menu #curriculumMenu="matMenu">
+<!--              <ng-container *ngFor="let curriculum of klass.doc.items[0].inputs[3].value;">-->
+<!--              <ng-container *ngFor="let curriculum of curriculums[klass['_id']]">-->
+              <ng-container *ngFor="let curriculum of klass.doc.items[0].inputs[3].value;">
+                <button mat-menu-item *ngIf="curriculum.value ==='on'"
+                        [routerLink]="['/attendance-dashboard/']"
+                        [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
+                  {{curriculum.label}}
+                  </button>
+              </ng-container>
+            </mat-menu>
       </span>
     </ng-template>
+<!--    <span dir="rtl" *ngFor="let klass of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">-->
+<!--      <button mat-menu-item [matMenuTriggerFor]="catMenu">-->
+<!--        {{getClassTitle(klass.doc)}}-->
+<!--      </button>-->
+<!--      <mat-menu #catMenu="matMenu">-->
+<!--        <ng-template matMenuContent>-->
+<!--          <span *ngFor="let curriculum of klass.doc.items[0].inputs[3].value;">-->
+<!--            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>-->
+<!--          </span>-->
+<!--        </ng-template>-->
+<!--      </mat-menu>-->
+<!--    </span>-->
         <mat-divider></mat-divider>
         <button mat-menu-item
                 [routerLink]="['/class-form/']"
