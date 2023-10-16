@@ -1,6 +1,6 @@
 <span class="class-dashboard-button-spacer-left">
   <button mat-button [matMenuTriggerFor]="classesMenu" class="white-menu-item">
-    <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">school</mat-icon>
+    <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">edit</mat-icon>
     <span>{{'Grade'|translate}} <ng-template [ngIf]="selectedClass">: {{getClassTitle(selectedClass)}}</ng-template></span>
 <!--      <span>{{'Classes'|translate}}</span>-->
     </button>
@@ -48,11 +48,6 @@
                 [routerLink]="['/class-form/']"
                 [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}>
           {{'Add Student'|translate}}
-        </button>
-        <mat-divider></mat-divider>
-        <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
-                [queryParams]='classRegistrationParams'>
-          <span>{{'Dashboard'|translate}}</span>
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item [routerLink]="['/attendance-check/']"

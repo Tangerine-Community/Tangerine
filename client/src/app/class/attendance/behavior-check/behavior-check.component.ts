@@ -34,6 +34,7 @@ export class BehaviorCheckComponent implements OnInit {
   }
   selectedClass: any
   behaviorForms: Promise<FormMetadata[]>;
+  curriculum:any
   
   constructor(
     private dashboardService: DashboardService,
@@ -58,10 +59,10 @@ export class BehaviorCheckComponent implements OnInit {
     this.selectedClass = currentClass;
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
-    const curriculum = currArray.find(x => x.name === curriculumId);
+    this.curriculum = currArray.find(x => x.name === curriculumId);
 
     const currentClassId = await this.variableService.get('class-currentClassId');
-    await this.showBehaviorListing(currentClassId, curriculum, currentClass)
+    await this.showBehaviorListing(currentClassId, this.curriculum, currentClass)
   }
 
   /**
@@ -77,7 +78,8 @@ export class BehaviorCheckComponent implements OnInit {
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
     const timestamp = Date.now()
-    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, type);
+    const curriculumLabel = this.curriculum.label
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
 
     let currentAttendanceReport, savedAttendanceList = null;
     // try {
