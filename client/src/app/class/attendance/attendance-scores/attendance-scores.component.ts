@@ -132,7 +132,7 @@ export class AttendanceScoresComponent implements OnInit {
           }],
         complete: false
       }
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
+      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record?'))
       if (startRegister) {
         await this.saveStudentScore(null)
       } else {
