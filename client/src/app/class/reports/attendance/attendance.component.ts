@@ -65,11 +65,14 @@ export class AttendanceComponent implements OnInit {
       const curriculum = this.curriculi[i];
       await this.onCurriculumSelect(curriculum.name)
     }
+    
+    //TODO: placeholder until we find out if we need to run this report per curriculum.
+    const curriculumLabel = null
 
-    this.scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
+    this.scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel)
     this.scoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
 
-    this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null)
+    this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel)
     const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
     this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, null))
     this.attendanceReport = currentAttendanceReport

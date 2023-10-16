@@ -37,6 +37,7 @@ export class AttendanceCheckComponent implements OnInit {
   }
   selectedClass: any
   behaviorForms: Promise<FormMetadata[]>;
+  curriculum:any
   
   constructor(
     private dashboardService: DashboardService,
@@ -63,10 +64,10 @@ export class AttendanceCheckComponent implements OnInit {
     this.selectedClass = currentClass;
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
-    const curriculum = currArray.find(x => x.name === curriculumId);
+    this.curriculum = currArray.find(x => x.name === curriculumId);
     
     const currentClassId = await this.variableService.get('class-currentClassId');
-    await this.showAttendanceListing(currentClassId, curriculum, currentClass)
+    await this.showAttendanceListing(currentClassId, this.curriculum, currentClass)
   }
 
   /**
@@ -82,12 +83,13 @@ export class AttendanceCheckComponent implements OnInit {
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
     const timestamp = Date.now()
-    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, type);
+    const curriculumLabel = this.curriculum.label
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
 
     let currentAttendanceReport, savedAttendanceList
     try {
       // currentAttendanceReport = await this.dashboardService.getDoc(id)
-      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate)
+      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate, curriculumLabel)
       currentAttendanceReport = docArray? docArray[0]?.doc : null
       savedAttendanceList = currentAttendanceReport?.attendanceList
     } catch (e) {
