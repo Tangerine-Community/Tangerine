@@ -775,7 +775,7 @@ export class DashboardService {
    * @private
    */
   processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, students: any[]) {
-    return (attendanceReport) => {
+    return async (attendanceReport) => {
       const attendanceList = attendanceReport.doc.attendanceList
       for (let i = 0; i < attendanceList.length; i++) {
         const student = attendanceList[i]
@@ -817,7 +817,7 @@ export class DashboardService {
           // }
 
           currentStudent['behavior'] = {}
-          // await this.addBehaviorRecords(currentStudent, student.id)
+          await this.addBehaviorRecords(currentStudent, student.id)
 
           if (!currentStudent.score) {
             const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
