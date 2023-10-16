@@ -49,6 +49,7 @@ export class DashboardService {
   // public readonly enabledClasses$: BehaviorSubject<any> = new BehaviorSubject(this.getEnabledClasses());
   public readonly enabledClasses$: Subject<any> = new Subject();
   public readonly selectedClass$: Subject<any> = new Subject();
+  public readonly selectedCurriculumId$: Subject<any> = new Subject();
 
   async getUserDB() {
     return await this.userService.getUserDatabase();
@@ -730,16 +731,20 @@ export class DashboardService {
 
   /**
    * Queries allDocs to get docs for either attendance or score
-   * @param classId
    */
-  async searchDocs(type: string, currentClass, reportDate: string) {
+  async searchDocs(type: string, currentClass, reportDate: string, curriculumLabel: string) {
     this.db = await this.getUserDB();
     const grade = this.getValue('grade', currentClass)
     // const schoolName = this.getValue('school_name', currentClass)
     // const schoolYear = this.getValue('school_year', currentClass)
     //     const id = type + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username) + reportTime
     // str = str.replace(/\s+/g, '-').
-    let searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-'))
+    let searchTerm
+    if (curriculumLabel) {
+      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-'))
+    } else {
+      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-'))
+    }
     const result = await this.db.allDocs({
       startkey: searchTerm,
       endkey: searchTerm + '\uffff',
@@ -753,12 +758,12 @@ export class DashboardService {
    * @param currentClass
    * @param type
    */
-  generateSearchableId(currentClass, type: string) {
+  generateSearchableId(currentClass, curriculumLabel: string, type: string) {
     const username = this.userService.getCurrentUser()
     const reportDate = DateTime.local().toISODate()
     const reportTime = DateTime.local().toISOTime()
     const grade = this.getValue('grade', currentClass)
-    const id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+    const id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
     return {reportDate, grade, reportTime, id};
   }
 
@@ -784,7 +789,7 @@ export class DashboardService {
             const studentRegistration = students.find((thisStudent) => {
               return thisStudent.doc._id === student.id
             })
-            const phone = this.getValue('phone', studentRegistration.doc)
+            const phone = this.getValue('phone', studentRegistration?.doc)
             currentStudent.phone = phone
           }
           const absent = student.absent ? student.absent : false
@@ -1146,14 +1151,6 @@ export class DashboardService {
       } else {
         this.currentItemId = null;
       }
-
-      this.currArray = await this.populateCurrentCurriculums(currentClass);
-      if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
-        const curriculum = this.currArray[0];
-        curriculumId = curriculum.name;
-      }
-      await this.variableService.set('class-curriculumId', curriculumId);
-
       const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
       const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
 
@@ -1190,14 +1187,24 @@ export class DashboardService {
     } else {
       this.currentClassIndex = classIndex
     }
-    await this.variableService.set('class-classIndex', this.currentClassIndex);
-
+    
     currentClass = this.enabledClasses[this.currentClassIndex]?.doc
     if (typeof currentClass === 'undefined') {
       // Maybe a class has been removed
       this.currentClassIndex = 0
       currentClass = this.enabledClasses[this.currentClassIndex].doc
     }
+    
+    this.currArray = await this.populateCurrentCurriculums(currentClass);
+    if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
+      const curriculum = this.currArray[0];
+      curriculumId = curriculum.name;
+    }
+    this.selectedCurriculumId$.next(curriculumId)
+
+    await this.variableService.set('class-curriculumId', curriculumId);
+    await this.variableService.set('class-classIndex', this.currentClassIndex);
+    
     this.selectedClass = currentClass;
     this.selectedClass$.next(currentClass)
     return {classIndex, currentItemId, currentClassId, curriculumId, currentClass};

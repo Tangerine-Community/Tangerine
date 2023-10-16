@@ -23,6 +23,7 @@ export class AttendanceDashboardComponent implements OnInit {
   classRegistrationParams = {
     curriculum: 'class-registration'
   };
+  curriculum: any;
   
   constructor(
     private dashboardService: DashboardService,
@@ -54,9 +55,16 @@ export class AttendanceDashboardComponent implements OnInit {
       this.route.queryParams.subscribe(async params => {
         classIndex = params['classIndex'];
         let curriculumId = params['curriculumId'];
+        
         const __vars = await this.dashboardService.initExposeVariables(classIndex, curriculumId);
         const currentClass = __vars.currentClass;
         this.selectedClass = currentClass;
+        const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+        // When app is initialized, there is no curriculumId, so we need to set it to the first one.
+        if (!curriculumId && currArray?.length > 0) {
+          curriculumId = currArray[0].name
+        }
+        this.curriculum = currArray.find(x => x.name === curriculumId);
         if (currentClass) {
           await this.populateSummary(currentClass, null)
         }
@@ -85,7 +93,8 @@ export class AttendanceDashboardComponent implements OnInit {
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
-
+    const curriculumLabel = this.curriculum?.label
+    
     if (students.length === 0) {
       alert(_TRANSLATE('You must register students before you can view the attendance dashboard.'))
       this.router.navigate(['class-form'], { queryParams: {curriculum:'student-registration',classId:currentClass?._id} });
@@ -97,7 +106,7 @@ export class AttendanceDashboardComponent implements OnInit {
     // const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
     // const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
 
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null)
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel)
     const currentAttendance = attendanceReports[attendanceReports.length - 1]
     const currentAttendanceReport = currentAttendance?.doc
     if (!currentAttendanceReport) {

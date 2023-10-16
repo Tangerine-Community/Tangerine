@@ -36,6 +36,9 @@ export class AttendanceScoresComponent implements OnInit {
   testName: string = ""
   showScoreList: boolean = true
   units: string[] = []
+  selectedClass: any
+  curriculum: any
+  saveSuccess: boolean;
   
   constructor(
     private dashboardService: DashboardService,
@@ -62,9 +65,10 @@ export class AttendanceScoresComponent implements OnInit {
     this.units = appConfig.teachProperties?.units
 
     const currentClass = enabledClasses[classIndex]?.doc;
+    this.selectedClass = currentClass;
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
-    // const curriculum = currArray.find(x => x.name === curriculumId);
+    this.curriculum = currArray.find(x => x.name === curriculumId);
 
     const currentClassId = await this.variableService.get('class-currentClassId');
     await this.showScoreListing(currentClass, currentClassId)
@@ -83,13 +87,14 @@ export class AttendanceScoresComponent implements OnInit {
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
     const timestamp = Date.now()
-    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, type);
+    const curriculumLabel = this.curriculum.label
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
     let doc, listFromDoc
     try {
       // doc = await this.dashboardService.getDoc(id)
       // listFromDoc = doc.scoreList
       // this.testName = doc.testName
-      const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate)
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, null, curriculumLabel)
       doc = docArray? docArray[0]?.doc : null
       listFromDoc = doc?.scoreList
     } catch (e) {
@@ -163,7 +168,34 @@ export class AttendanceScoresComponent implements OnInit {
       this.scoreRegister['_rev'] = doc._rev
     } catch (e) {
     }
-    await this.dashboardService.saveDoc(this.scoreRegister)
+    const result = await this.dashboardService.saveDoc(this.scoreRegister)
+    if (result.ok) {
+      this.saveSuccess = true
+      setTimeout(() => {
+        this.saveSuccess = false
+      }, 2000);
+    }
+  }
+
+  async saveStudentScores() {
+    console.log('saved student scores ')
+    this.scoreRegister.scoreList = this.scoreList
+    // update testName in case user updated it.
+    // this.scoreRegister.testName = this.testName
+    // save scoreRegister
+    let doc
+    try {
+      doc = await this.dashboardService.getDoc(this.scoreRegister._id)
+      this.scoreRegister['_rev'] = doc._rev
+    } catch (e) {
+    }
+    const result = await this.dashboardService.saveDoc(this.scoreRegister)
+    if (result.ok) {
+      this.saveSuccess = true
+      setTimeout(() => {
+        this.saveSuccess = false
+      }, 2000);
+    }
   }
 
   /** Navigate to the student registration form */
