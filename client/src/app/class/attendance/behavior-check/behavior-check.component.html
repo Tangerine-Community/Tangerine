@@ -13,7 +13,7 @@
           <input type="checkbox"
                  (change)="$event ? selectCheckboxResult(element,'form-internal-behaviour',$event) : null"
                  [checked]="true"
-          /><ng-template [ngIf]="element['behavior']['internal']"> {{'Score'|translate}}:  {{element['behavior']['internal']}} / 18 </ng-template>
+          /><ng-template [ngIf]="element['behavior']['internal']"> {{'Score'|translate}}:  {{element['behavior']['internalPercentage']}}% </ng-template>
           <mat-progress-bar
             *ngIf="element['behavior']['internalPercentage']"
             value="{{ element['behavior']['internalPercentage'] }}"
@@ -33,7 +33,7 @@
           <input type="checkbox"
                  (change)="$event ? selectCheckboxResult(element,'form-external-behaviour',$event) : null"
                  [checked]="true"
-          /><ng-template [ngIf]="element['behavior']['external']"> {{'Score'|translate}}::  {{element['behavior']['external']}} / 18 </ng-template>
+          /><ng-template [ngIf]="element['behavior']['external']"> {{'Score'|translate}}::  {{element['behavior']['externalPercentage']}} % </ng-template>
           <mat-progress-bar
             *ngIf="element['behavior']['externalPercentage']"
             value="{{ element['behavior']['externalPercentage'] }}"
