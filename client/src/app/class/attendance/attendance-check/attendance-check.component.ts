@@ -66,7 +66,7 @@ export class AttendanceCheckComponent implements OnInit {
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
     
-    const currentClassId = await this.variableService.get('class-currentClassId');
+    const currentClassId = this.selectedClass._id
     await this.showAttendanceListing(currentClassId, this.curriculum, currentClass)
   }
 
@@ -143,7 +143,7 @@ export class AttendanceCheckComponent implements OnInit {
         //   this.currentItemId = initialForm.id
         // }
         // await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
-        this.router.navigate(['/dashboard/']);
+        this.router.navigate(['/attendance-dashboard/']);
       }
     } else {
       currentAttendanceReport.attendanceList = this.attendanceList

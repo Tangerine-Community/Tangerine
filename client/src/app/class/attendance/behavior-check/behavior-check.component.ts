@@ -61,7 +61,7 @@ export class BehaviorCheckComponent implements OnInit {
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
 
-    const currentClassId = await this.variableService.get('class-currentClassId');
+    const currentClassId = this.selectedClass._id
     await this.showBehaviorListing(currentClassId, this.curriculum, currentClass)
   }
 
@@ -82,11 +82,6 @@ export class BehaviorCheckComponent implements OnInit {
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
 
     let currentAttendanceReport, savedAttendanceList = null;
-    // try {
-    //   currentAttendanceReport = await this.dashboardService.getDoc(id)
-    //   savedAttendanceList = currentAttendanceReport.attendanceList
-    // } catch (e) {
-    // }
 
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList)
     // if (!currentAttendanceReport) {

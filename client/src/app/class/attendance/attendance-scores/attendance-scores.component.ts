@@ -70,16 +70,11 @@ export class AttendanceScoresComponent implements OnInit {
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
 
-    const currentClassId = await this.variableService.get('class-currentClassId');
+    const currentClassId = this.selectedClass._id
     await this.showScoreListing(currentClass, currentClassId)
   }
 
-
-  /**
-   * Shim attendance into the currArray so it'll appear in the dropdown.
-   * Makes attendance the selectedCurriculum.
-   * @param cassId
-   */
+  
   async showScoreListing(currentClass, currentClassId) {
     const type = "scores"
     const registerNameForDialog = 'Scoring';
@@ -132,14 +127,14 @@ export class AttendanceScoresComponent implements OnInit {
           }],
         complete: false
       }
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record?'))
-      if (startRegister) {
-        await this.saveStudentScore(null)
-      } else {
-        this.router.navigate(['/attendance-dashboard/'], { queryParams:
-            { curriculum: 'student-registration' }
-        });
-      }
+      // const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record?'))
+      // if (startRegister) {
+      await this.saveStudentScore(null)
+      // } else {
+      //   this.router.navigate(['/attendance-dashboard/'], { queryParams:
+      //       { curriculum: 'student-registration' }
+      //   });
+      // }
     } else {
       this.showScoreList = true
       doc.scoreList = this.scoreList

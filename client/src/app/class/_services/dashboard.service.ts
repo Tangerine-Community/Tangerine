@@ -15,6 +15,7 @@ import {DateTime} from "luxon";
 import {sanitize} from "sanitize-filename-ts";
 import {Subject} from "rxjs";
 import {ClassFormService} from "./class-form.service";
+import {AppConfigService} from "../../shared/_services/app-config.service";
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -767,16 +768,22 @@ export class DashboardService {
     return {reportDate, grade, reportTime, id};
   }
 
+  
   /**
    * Grafted from task-report.component.ts
    * Loops through all the student scores and calculates the average mood, present, and score for each student
    * populate students array if you need to add phone and other properties from studentRegistration.
+   * @param attendanceList
    * @param currentAttendanceReport
+   * @param scoreReport
+   * @param allStudentScores
+   * @param students
+   * @param scoreUnits - from app-config.json - appConfig.teachProperties?.units
    * @private
    */
-  processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, students: any[]) {
-    return async (attendanceReport) => {
-      const attendanceList = attendanceReport.doc.attendanceList
+  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits) {
+    // return async (attendanceReport) => {
+    //   const attendanceList = attendanceReport.doc.attendanceList
       for (let i = 0; i < attendanceList.length; i++) {
         const student = attendanceList[i]
         const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
@@ -792,8 +799,7 @@ export class DashboardService {
             const phone = this.getValue('phone', studentRegistration?.doc)
             currentStudent.phone = phone
           }
-          const absent = student.absent ? student.absent : false
-          if (!absent) {
+          if (typeof student.absent !== 'undefined' && student.absent === false) {
             currentStudent.presentCount = currentStudent.presentCount + 1
           }
           currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
@@ -818,12 +824,25 @@ export class DashboardService {
 
           currentStudent['behavior'] = {}
           await this.addBehaviorRecords(currentStudent, student.id)
-
+          
           if (!currentStudent.score) {
             const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
               return thisStudent.id === student.id
             })
-            currentStudent.score = currentStudentScore?.score
+            if (currentStudentScore) {
+              const len = scoreUnits.length
+              let total = 0
+              let completedUnits = 0
+              scoreUnits.forEach((scoreUnit, index) => {
+                const currentScore = currentStudentScore['score_'+index];
+                if (currentScore) {
+                  total = total + currentScore
+                  completedUnits++
+                }
+              })
+              const averageScore = total/completedUnits
+              currentStudent.score = averageScore
+            }
           }
           // const studentScores = {}
           // const curriculi = Object.keys(allStudentScores);
@@ -837,14 +856,20 @@ export class DashboardService {
           // currentStudent.studentScores = studentScores
         }
       }
-    };
+    // }
   }
 
-  async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores) {
+  async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores, scoreUnits) {
     // do a deep clone
     const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
     const currentAttendanceReport = JSON.parse(JSON.stringify(recentVisitDoc))
-    recentVisitReports.forEach(this.processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, null))
+    // recentVisitReports.forEach(this.processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits))
+    for (let i = 0; i < recentVisitReports.length; i++) {
+        const attendanceReport = recentVisitReports[i];
+        const attendanceList = attendanceReport.doc.attendanceList
+        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits)
+      
+    }
     // this.recentVisitsReport = currentAttendanceReport
     return currentAttendanceReport
   }
@@ -1173,7 +1198,7 @@ export class DashboardService {
     let currentItemId: string
     let currentClassId: string
     let currentClass
-    if (classIndex === null) {
+    if (!classIndex) {
       let classClassIndex = await this.variableService.get('class-classIndex')
       if (classClassIndex !== null) {
         classIndex = parseInt(classClassIndex)
@@ -1204,6 +1229,7 @@ export class DashboardService {
 
     await this.variableService.set('class-curriculumId', curriculumId);
     await this.variableService.set('class-classIndex', this.currentClassIndex);
+    await this.variableService.set('class-currentClassId', this.currentClassId);
     
     this.selectedClass = currentClass;
     this.selectedClass$.next(currentClass)

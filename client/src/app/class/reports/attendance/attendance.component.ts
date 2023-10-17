@@ -7,6 +7,7 @@ import {ClassUtils} from "../../class-utils";
 import {ClassFormService} from "../../_services/class-form.service";
 import {TangyFormsInfoService} from "../../../tangy-forms/tangy-forms-info-service";
 import {DashboardService} from "../../_services/dashboard.service";
+import {AppConfigService} from "../../../shared/_services/app-config.service";
 
 @Component({
   selector: 'app-attendance',
@@ -22,6 +23,7 @@ export class AttendanceComponent implements OnInit {
     private classFormService: ClassFormService,
     private tangyFormsInfoService: TangyFormsInfoService,
     private dashboardService: DashboardService,
+    private appConfigService: AppConfigService
   ) {
   }
 
@@ -41,13 +43,17 @@ export class AttendanceComponent implements OnInit {
   curriculumFormsList;  // list of all curriculum forms
   // groupingsByCurriculum: any = {}
   allStudentScores: any = {}
+  units: string[] = []
 
   async ngOnInit(): Promise<void> {
     const classId = this.route.snapshot.paramMap.get('classId')
     this.classId = classId
     this.classUtils = new ClassUtils();
 
-
+    const appConfig = await this.appConfigService.getAppConfig()
+    const teachConfiguration = appConfig.teachProperties
+    this.units = appConfig.teachProperties?.units
+    
     this.curriculi = [];
     const currentClass = await this.classFormService.getResponse(classId);
     const classRegistration = this.classUtils.getInputValues(currentClass);
@@ -74,10 +80,17 @@ export class AttendanceComponent implements OnInit {
 
     this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel)
     const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
-    this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, null))
+    // this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, null, this.units))
+
+    for (let i = 0; i < this.attendanceReports.length; i++) {
+      const attendanceReport = this.attendanceReports[i];
+      const attendanceList = attendanceReport.doc.attendanceList
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, this.scoreReport, this.allStudentScores, null, this.units)
+    }
+    
     this.attendanceReport = currentAttendanceReport
     const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
-    this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores)
+    this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units)
   }
 
   async getUserDB() {
@@ -90,7 +103,7 @@ export class AttendanceComponent implements OnInit {
     console.log('numVisits: ', this.numVisits)
     if (this.numVisits) {
       const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
-      this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores)
+      this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units)
     }
   }
 
