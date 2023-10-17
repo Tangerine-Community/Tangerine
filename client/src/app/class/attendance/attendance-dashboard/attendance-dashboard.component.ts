@@ -4,6 +4,7 @@ import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
 import {ActivatedRoute, Router} from '@angular/router';
 import {DateTime} from "luxon";
+import {AppConfigService} from "../../../shared/_services/app-config.service";
 
 declare const sms: any;
 
@@ -24,12 +25,14 @@ export class AttendanceDashboardComponent implements OnInit {
     curriculum: 'class-registration'
   };
   curriculum: any;
+  units: string[] = []
   
   constructor(
     private dashboardService: DashboardService,
     private variableService : VariableService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private appConfigService: AppConfigService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -37,6 +40,8 @@ export class AttendanceDashboardComponent implements OnInit {
     this.getValue = this.dashboardService.getValue
     this.reportDate = DateTime.local().toISODate()
     const enabledClasses = await this.dashboardService.getEnabledClasses();
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.units = appConfig.teachProperties?.units
 
     // let classClassIndex = await this.variableService.get('class-classIndex')
     // if (classClassIndex !== null) {
@@ -58,6 +63,7 @@ export class AttendanceDashboardComponent implements OnInit {
         
         const __vars = await this.dashboardService.initExposeVariables(classIndex, curriculumId);
         const currentClass = __vars.currentClass;
+        curriculumId = __vars.curriculumId;
         this.selectedClass = currentClass;
         const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
         // When app is initialized, there is no curriculumId, so we need to set it to the first one.
@@ -66,7 +72,7 @@ export class AttendanceDashboardComponent implements OnInit {
         }
         this.curriculum = currArray.find(x => x.name === curriculumId);
         if (currentClass) {
-          await this.populateSummary(currentClass, null)
+          await this.populateSummary(currentClass, this.curriculum)
         }
       })
       
@@ -93,18 +99,17 @@ export class AttendanceDashboardComponent implements OnInit {
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
-    const curriculumLabel = this.curriculum?.label
+    const curriculumLabel = curriculum?.label
     
     if (students.length === 0) {
       alert(_TRANSLATE('You must register students before you can view the attendance dashboard.'))
       this.router.navigate(['class-form'], { queryParams: {curriculum:'student-registration',classId:currentClass?._id} });
       return
     }
-    // [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}
     
     // const scoreReports = await this.dashboardService.getScoreDocs(classId)
-    // const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
-    // const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
+    const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, null)
+    const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
 
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel)
     const currentAttendance = attendanceReports[attendanceReports.length - 1]
@@ -130,8 +135,12 @@ export class AttendanceDashboardComponent implements OnInit {
     //   }
     // })
 
-    // attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))
-    attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, null, allStudentScores, students))
+    // attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students, this.units))
+    for (let i = 0; i < attendanceReports.length; i++) {
+      const attendanceReport = attendanceReports[i];
+      const attendanceList = attendanceReport.doc.attendanceList
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, currentScoreReport, allStudentScores, students, this.units)
+    }
     // const currentAttendanceReportArray = []
     // currentAttendanceReportArray.push(currentAttendance)
     // currentAttendanceReportArray.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))

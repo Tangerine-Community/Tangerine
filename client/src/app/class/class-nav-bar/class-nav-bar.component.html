@@ -46,20 +46,24 @@
         </button>
         <button mat-menu-item
                 [routerLink]="['/class-form/']"
-                [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}>
+                [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}
+                *ngIf="selectedClass">
           {{'Add Student'|translate}}
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item [routerLink]="['/attendance-check/']"
-                [queryParams]='classRegistrationParams'>
+                [queryParams]='classRegistrationParams'
+                *ngIf="selectedClass">
           <span>{{'Attendance'|translate}}</span>
         </button>
         <button mat-menu-item [routerLink]="['/behavior-check/']"
-                [queryParams]='classRegistrationParams'>
+                [queryParams]='classRegistrationParams'
+                *ngIf="selectedClass">
           <span>{{'Behavior'|translate}}</span>
         </button>
         <button mat-menu-item [routerLink]="['/attendance-scores/']"
-                [queryParams]='classRegistrationParams'>
+                [queryParams]='classRegistrationParams'
+                *ngIf="selectedClass">
           <span>{{'Scores'|translate}}</span>
         </button>
   </mat-menu>

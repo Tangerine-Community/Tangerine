@@ -284,3 +284,7 @@ mat-card-title {
   align-self: auto;
   order: 0;
 }
+
+td.centered {
+  text-align: center;
+}
