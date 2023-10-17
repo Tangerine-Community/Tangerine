@@ -4,8 +4,7 @@
     <table class="dashboard-table">
       <tr>
         <th>{{'Student'|translate}}</th>
-        <th>{{'Internal Behavior'|translate}}</th>
-        <th>{{'External Behavior'|translate}}</th>
+        <th>{{'Behavior'|translate}}</th>
       </tr>
       <tr *ngFor="let element of attendanceList">
         <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
@@ -26,25 +25,6 @@
             <input type="checkbox"
                    (click)="$event.stopPropagation()"
                    (change)="$event ? selectCheckbox(element,'form-internal-behaviour') : null"
-            />
-          </td>
-        </ng-template>
-        <td class="checkbox-response" *ngIf="element.forms['form-external-behaviour'].response ; else elseBlock2 ">
-          <input type="checkbox"
-                 (change)="$event ? selectCheckboxResult(element,'form-external-behaviour',$event) : null"
-                 [checked]="true"
-          /><ng-template [ngIf]="element['behavior']['externalPercentage']"> {{'Score'|translate}}::  {{element['behavior']['externalPercentage']}} % </ng-template>
-          <mat-progress-bar
-            *ngIf="element['behavior']['externalPercentage']"
-            value="{{ element['behavior']['externalPercentage'] }}"
-            [appProgressBarColor]="(element['behavior']['externalPercentage'])"
-            mode="determinate">
-          </mat-progress-bar>
-        </td>
-        <ng-template #elseBlock2>
-          <td class="checkbox-response">
-            <input type="checkbox" (click)="$event.stopPropagation()"
-                   (change)="$event ? selectCheckbox(element,'form-external-behaviour') : null"
             />
           </td>
         </ng-template>
