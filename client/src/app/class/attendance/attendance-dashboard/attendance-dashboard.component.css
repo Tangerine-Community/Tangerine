@@ -255,8 +255,8 @@ mat-card-title {
 }
 
 .sms-button-column {
-  width: 60px;
-  padding-right:5px;
+  width: 50px;
+  padding-right:2px;
 }
 .nav-flex-container {
   display: flex;

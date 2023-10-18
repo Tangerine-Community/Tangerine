@@ -60,8 +60,9 @@ export class AttendanceCheckComponent implements OnInit {
       }
     }
 
-    const currentClass = enabledClasses[classIndex]?.doc;
+    const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
+    
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);

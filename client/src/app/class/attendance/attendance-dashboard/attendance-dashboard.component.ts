@@ -119,6 +119,8 @@ export class AttendanceDashboardComponent implements OnInit {
       this.router.navigate(['attendance-check'])
       return
     }
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel)
+    const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
 
     // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
     // const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, classId)
@@ -134,16 +136,12 @@ export class AttendanceDashboardComponent implements OnInit {
     //     score: grouping.result.scorePercentageCorrect
     //   }
     // })
-
-    // attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students, this.units))
+    
     for (let i = 0; i < attendanceReports.length; i++) {
       const attendanceReport = attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, currentScoreReport, allStudentScores, students, this.units)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, currentScoreReport, allStudentScores, students, this.units, currentBehaviorReport)
     }
-    // const currentAttendanceReportArray = []
-    // currentAttendanceReportArray.push(currentAttendance)
-    // currentAttendanceReportArray.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))
     this.attendanceReport = currentAttendanceReport
     const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
       return !this.attendanceReport?.attendanceList.find((student) => {

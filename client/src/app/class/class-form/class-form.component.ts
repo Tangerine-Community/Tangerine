@@ -10,6 +10,7 @@ import {VariableService} from "../../shared/_services/variable.service";
 import {_TRANSLATE} from "../../shared/translation-marker";
 import {ClassFormsPlayerComponent} from "../class-forms-player.component";
 import {AppConfigService} from "../../shared/_services/app-config.service";
+import {DateTime} from "luxon";
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -133,6 +134,36 @@ export class ClassFormComponent implements OnInit {
         // Reset vars and set to this new class-registration
         if (state.form.id === 'class-registration' && !this.formResponse) {
           await this.dashboardService.setCurrentClass();
+        }
+        if (state.form.id === 'form-internal-behaviour' && !this.formResponse) {
+          // Look up today's behaviour scores form and add this score to it
+          let currentBehaviorReport, savedBehaviorList = null;
+          try {
+            const type = "behavior"
+            const enabledClasses = await this.dashboardService.getEnabledClasses();
+            let classClassIndex = await this.variableService.get('class-classIndex')
+            const classIndex = parseInt(classClassIndex)
+            const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
+            const reportDate = DateTime.local().toISODate()
+            const curriculumLabel = this.curriculum.label
+            const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate, curriculumLabel)
+            currentBehaviorReport = docArray? docArray[0]?.doc : null
+            // savedBehaviorList = currentBehaviorReport?.studentBehaviorList
+            const currentStudent = currentBehaviorReport.studentBehaviorList.find((thisStudent) => {
+              return thisStudent.id === this.studentId
+            })
+            if (currentStudent) {
+              currentStudent['behavior'] = {}
+              const usingScorefield = state.items[0].inputs.find(input => input.name === state['form']['id'] + '_score');
+              const intScore = usingScorefield.value
+              currentStudent['behavior']['formResponseId'] = state._id
+              currentStudent['behavior']['internal'] = intScore
+              currentStudent['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
+              await this.dashboardService.saveDoc(currentBehaviorReport)
+            }
+            
+          } catch (e) {
+          }
         }
         const appConfig = await this.appConfigService.getAppConfig()
         const url = appConfig.homeUrl

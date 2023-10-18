@@ -80,12 +80,14 @@ export class AttendanceComponent implements OnInit {
 
     this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel)
     const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
-    // this.attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, this.scoreReport, this.allStudentScores, null, this.units))
 
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel)
+    const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+    
     for (let i = 0; i < this.attendanceReports.length; i++) {
       const attendanceReport = this.attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, this.scoreReport, this.allStudentScores, null, this.units)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, this.scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport)
     }
     
     this.attendanceReport = currentAttendanceReport

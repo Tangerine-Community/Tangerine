@@ -781,7 +781,7 @@ export class DashboardService {
    * @param scoreUnits - from app-config.json - appConfig.teachProperties?.units
    * @private
    */
-  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits) {
+  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits, currentBehaviorReport) {
     // return async (attendanceReport) => {
     //   const attendanceList = attendanceReport.doc.attendanceList
       for (let i = 0; i < attendanceList.length; i++) {
@@ -822,8 +822,8 @@ export class DashboardService {
           //   }
           // }
 
-          currentStudent['behavior'] = {}
-          await this.addBehaviorRecords(currentStudent, student.id)
+          // currentStudent['behavior'] = {}
+          // await this.addBehaviorRecords(currentStudent, student.id)
           
           if (!currentStudent.score) {
             const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
@@ -842,6 +842,33 @@ export class DashboardService {
               })
               const averageScore = total/completedUnits
               currentStudent.score = averageScore
+            }
+          }
+          
+          if (!currentStudent.behavior) {
+            const currentStudentBehavior = currentBehaviorReport?.studentBehaviorList.find((thisStudent) => {
+              return thisStudent.id === student.id
+            })
+            if (currentStudentBehavior) {
+              // const len = scoreUnits.length
+              // let total = 0
+              // let completedUnits = 0
+              // scoreUnits.forEach((scoreUnit, index) => {
+              //   const currentScore = currentStudentBehavior['score_'+index];
+              //   if (currentScore) {
+              //     total = total + currentScore
+              //     completedUnits++
+              //   }
+              // })
+              // const averageScore = total/completedUnits
+              // currentStudent.score = averageScore
+
+              currentStudent['behavior'] = {}
+              // const usingScorefield = state.items[0].inputs.find(input => input.name === state['form']['id'] + '_score');
+              // const intScore = usingScorefield.value
+              currentStudent['behavior']['internal'] = currentStudentBehavior['behavior']['internal']
+              currentStudent['behavior']['internalPercentage'] = currentStudentBehavior['behavior']['internalPercentage']
+              currentStudent['behavior']['formResponseId'] = currentStudentBehavior['behavior']['formResponseId']
             }
           }
           // const studentScores = {}
@@ -863,12 +890,12 @@ export class DashboardService {
     // do a deep clone
     const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
     const currentAttendanceReport = JSON.parse(JSON.stringify(recentVisitDoc))
-    // recentVisitReports.forEach(this.processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits))
+    const currentBehaviorReport = null
     for (let i = 0; i < recentVisitReports.length; i++) {
         const attendanceReport = recentVisitReports[i];
         const attendanceList = attendanceReport.doc.attendanceList
-        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits)
-      
+        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits, currentBehaviorReport)
+
     }
     // this.recentVisitsReport = currentAttendanceReport
     return currentAttendanceReport
@@ -1040,7 +1067,7 @@ export class DashboardService {
   }
 
   /**
-   * Get the attendance list for the class, including any students who have not yet had attendance checked. If the savedAttendanceList is passed in, then
+   * Get the score list for the class, including any students who have not yet had attendance checked. If the savedScoreList (listFromDoc) is passed in, then
    * populate the student from that doc by matching student.id.
    * @param students
    * @param listFromDoc
@@ -1099,12 +1126,12 @@ export class DashboardService {
         title: 'Comportamientos internalizantes',
         src: './assets/form-internal-behaviour/form.html'
       },
-      {
-        formId: 'form-external-behaviour',
-        curriculum: 'form-external-behaviour',
-        title: 'Comportamientos externalizantes',
-        src: './assets/form-external-behaviour/form.html'
-      }
+      // {
+      //   formId: 'form-external-behaviour',
+      //   curriculum: 'form-external-behaviour',
+      //   title: 'Comportamientos externalizantes',
+      //   src: './assets/form-external-behaviour/form.html'
+      // }
     ]
     formsList.forEach((form) => {
       const formResult = {};
@@ -1134,13 +1161,13 @@ export class DashboardService {
           const intScore = usingScorefield.value
           studentResult['behavior']['internal'] = intScore
           studentResult['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
-          break
-        case 'form-external-behaviour':
-          const usingScorefield2 = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
-          const extScore = usingScorefield2.value
-          studentResult['behavior']['external'] = extScore
-          studentResult['behavior']['externalPercentage'] = Math.round((extScore / 18) * 100)
-          break
+        //   break
+        // case 'form-external-behaviour':
+        //   const usingScorefield2 = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
+        //   const extScore = usingScorefield2.value
+        //   studentResult['behavior']['external'] = extScore
+        //   studentResult['behavior']['externalPercentage'] = Math.round((extScore / 18) * 100)
+        //   break
       }
     }
   }
@@ -1341,14 +1368,25 @@ export class DashboardService {
     const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
     // set classIndex to allEnabledClasses.length
     const classIndex = allEnabledClasses.length - 1
-    const currentClass = allEnabledClasses[classIndex]
-    this.selectedClass$.next(currentClass.doc)
-    const currentClassId = currentClass.id
+    const currentClass = this.getSelectedClass(allEnabledClasses, classIndex);
+    const currentClassId = currentClass._id
     await this.variableService.set('class-classIndex', classIndex);
     await this.variableService.set('class-currentClassId', currentClassId);
   }
-  
+
+  /**
+   * Notified subscribers when selectedClass is set.
+   * Returns the currentClass doc.
+   * @param allEnabledClasses
+   * @param classIndex
+   */
+  getSelectedClass(allEnabledClasses: any[], classIndex: number) {
+    const currentClass = allEnabledClasses[classIndex]?.doc
+    this.selectedClass$.next(currentClass)
+    return currentClass;
+  }
 }
+
 
 export class StudentReportsCards {
   [key: string]: StudentResult

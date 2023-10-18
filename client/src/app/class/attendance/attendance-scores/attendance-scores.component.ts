@@ -64,8 +64,9 @@ export class AttendanceScoresComponent implements OnInit {
     const teachConfiguration = appConfig.teachProperties
     this.units = appConfig.teachProperties?.units
 
-    const currentClass = enabledClasses[classIndex]?.doc;
+    const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
+    
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
@@ -86,9 +87,6 @@ export class AttendanceScoresComponent implements OnInit {
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
     let doc, listFromDoc
     try {
-      // doc = await this.dashboardService.getDoc(id)
-      // listFromDoc = doc.scoreList
-      // this.testName = doc.testName
       const docArray = await this.dashboardService.searchDocs(type, currentClass, null, curriculumLabel)
       doc = docArray? docArray[0]?.doc : null
       listFromDoc = doc?.scoreList

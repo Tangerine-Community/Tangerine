@@ -1,22 +1,22 @@
 <mat-card class="tangy-class-card-content-container">
-  <div class="selectedClassLabel"><p>{{curriculum?.label}} {{'Behavior'|translate}}</p></div>
+  <div class="selectedClassLabel"><p>{{curriculum?.label}} {{'Behavior'|translate}} <ng-template [ngIf]="reportLocaltime">: {{reportLocaltime}}</ng-template></p></div>
   <div>
     <table class="dashboard-table">
       <tr>
         <th>{{'Student'|translate}}</th>
         <th>{{'Behavior'|translate}}</th>
       </tr>
-      <tr *ngFor="let element of attendanceList">
-        <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
-        <td class="checkbox-response" *ngIf="element.forms['form-internal-behaviour'].response ; else elseBlock ">
+      <tr *ngFor="let student of studentBehaviorList">
+        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
+        <td class="checkbox-response" *ngIf="student.forms['form-internal-behaviour'].response ; else elseBlock ">
           <input type="checkbox"
-                 (change)="$event ? selectCheckboxResult(element,'form-internal-behaviour',$event) : null"
+                 (change)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null"
                  [checked]="true"
-          /><ng-template [ngIf]="element['behavior']['internalPercentage']"> {{'Score'|translate}}:  {{element['behavior']['internalPercentage']}}% </ng-template>
+          /><ng-template [ngIf]="(student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0)"> {{'Score'|translate}}:  {{student['behavior']['internalPercentage']}}% </ng-template>
           <mat-progress-bar
-            *ngIf="element['behavior']['internalPercentage']"
-            value="{{ element['behavior']['internalPercentage'] }}"
-            [appProgressBarColor]="(element['behavior']['internalPercentage'])"
+            *ngIf="(student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0)"
+            value="{{ student['behavior']['internalPercentage'] }}"
+            [appProgressBarColor]="(student['behavior']['internalPercentage'])"
             mode="determinate">
           </mat-progress-bar>
         </td>
@@ -24,13 +24,13 @@
           <td class="checkbox-response">
             <input type="checkbox"
                    (click)="$event.stopPropagation()"
-                   (change)="$event ? selectCheckbox(element,'form-internal-behaviour') : null"
+                   (change)="$event ? selectCheckbox(student,'form-internal-behaviour') : null"
             />
           </td>
         </ng-template>
       </tr>
     </table>
     <span><p class="mat-h3"
-             *ngIf="attendanceList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+             *ngIf="studentBehaviorList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
   </div>
 </mat-card>
