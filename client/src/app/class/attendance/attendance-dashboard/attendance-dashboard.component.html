@@ -55,8 +55,13 @@
 <!--            <ng-template [ngIf]="!student['behavior']['internalPercentage']"> {{'N/A'|translate}}</ng-template>-->
           </div>
         </td>
-        <td class="number-cell" *ngIf="student['behavior']['internalPercentage']">{{student['behavior']['internalPercentage']}}%</td>
-        <td class="number-cell" *ngIf="!student['behavior']['internalPercentage']">{{'N/A'|translate}}</td>
+        <td class="number-cell"> 
+          <ng-container *ngIf="student['behavior'] && (student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0); else naTemplate">{{student['behavior']['internalPercentage']}}%
+          </ng-container>
+        <ng-template #naTemplate>
+          <td class="number-cell"> {{'N/A'|translate}}</td>
+        </ng-template>
+<!--        <td class="number-cell" *ngIf="student['behavior']['internalPercentage']">{{'N/A'|translate}}</td>-->
 <!--        <td class="number-cell" *ngIf="student.moodPercentage">{{student.moodPercentage}}%</td>-->
 <!--        <td class="number-cell" *ngIf="!student['behavior']['externalPercentage']">{{'N/A'|translate}}</td>-->
         <td class="number-cell centered" *ngIf="student['score']">{{student['score']}}%</td>

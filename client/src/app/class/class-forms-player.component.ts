@@ -19,6 +19,7 @@ export class ClassFormsPlayerComponent {
   @Input('response') response:TangyFormResponseModel
   @Input('formHtml') formHtml:string
   @ViewChild('container', {static: true}) container: ElementRef;
+  $beforeSubmit = new Subject()
   $afterSubmit = new Subject()
   rendered = false
   window:any;
@@ -53,6 +54,9 @@ export class ClassFormsPlayerComponent {
     } else {
       formEl.newResponse()
     }
+    formEl.addEventListener('before-submit', (event) => {
+      this.$beforeSubmit.next(true)
+    })
     formEl.addEventListener('after-submit', async (event) => {
       this.$afterSubmit.next(formEl.response)
     })

@@ -7,6 +7,7 @@ import {UserService} from "../../../shared/_services/user.service";
 import {StudentResult} from "../../dashboard/dashboard.component";
 import {FormMetadata} from "../../form-metadata";
 import {ClassFormService} from "../../_services/class-form.service";
+import {DateTime} from "luxon";
 
 @Component({
   selector: 'app-behavior-check',
@@ -17,8 +18,8 @@ export class BehaviorCheckComponent implements OnInit {
 
   getValue: (variableName: any, response: any) => any;
   window: any = window
-  attendanceList: StudentResult[] = []
-  attendanceRegister: {
+  studentBehaviorList: StudentResult[] = []
+  register: {
     _id: string,
     timestamp: number,
     classId: string,
@@ -26,15 +27,17 @@ export class BehaviorCheckComponent implements OnInit {
     schoolName: string
     schoolYear: string,
     reportDate:string,
-    attendanceList: StudentResult[],
+    studentBehaviorList: StudentResult[],
     collection: string,
     form: {},
+    items: any[],
     complete: boolean,
     type: string
   }
   selectedClass: any
   behaviorForms: Promise<FormMetadata[]>;
   curriculum:any
+  reportLocaltime: string;
   
   constructor(
     private dashboardService: DashboardService,
@@ -55,8 +58,9 @@ export class BehaviorCheckComponent implements OnInit {
       }
     }
 
-    const currentClass = enabledClasses[classIndex]?.doc;
+    const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
+
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
@@ -81,11 +85,27 @@ export class BehaviorCheckComponent implements OnInit {
     const curriculumLabel = this.curriculum.label
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
 
-    let currentAttendanceReport, savedAttendanceList = null;
+    let currentBehaviorReport, savedBehaviorList = null;
+    try {
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate, curriculumLabel)
+      currentBehaviorReport = docArray? docArray[0]?.doc : null
+      savedBehaviorList = currentBehaviorReport?.studentBehaviorList
+      
+    } catch (e) {
+    }
 
-    this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList)
+
+    if (currentBehaviorReport?.timestamp) {
+      const timestampFormatted = DateTime.fromMillis(currentBehaviorReport?.timestamp)
+      // DATE_MED
+      this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
+    } else {
+      this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+    }
+
+    this.studentBehaviorList =  await this.dashboardService.getAttendanceList(students, savedBehaviorList)
     // if (!currentAttendanceReport) {
-      this.attendanceRegister = {
+      this.register = {
         _id: id,
         timestamp: timestamp,
         classId: currentClassId,
@@ -93,52 +113,43 @@ export class BehaviorCheckComponent implements OnInit {
         schoolName: schoolName,
         schoolYear: schoolYear,
         reportDate: reportDate,
-        attendanceList: this.attendanceList,
+        studentBehaviorList: this.studentBehaviorList,
         collection: 'TangyFormResponse',
         type: type,
         form: {
           id: type,
         },
+        items: [{
+          id: 'class-registration',
+          title: 'Class Registration',
+          inputs: [{}]
+        },
+          {
+            id: 'item_1',
+            title: 'Item 1',
+            inputs: [{
+              name: 'timestamp',
+              label: 'timestamp'
+            }]
+          }],
         complete: false
       }
-      // const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
-      // if (startRegister) {
-      //   // const curriculum = {
-      //   //   'name': type,
-      //   //   'value': 'on',
-      //   //   'label': _TRANSLATE(registerNameForDialog)
-      //   // }
-      //   // this.currArray.push(curriculum)
-      //   // this.selectedCurriculum = this.currArray.find(x => x.name === type)
-      //   await this.saveStudentAttendance(null)
-      // } else {
-      //   // this.showAttendanceList = false
-      //   // if (!this.currentItemId || this.currentItemId === '') {
-      //   //   const initialForm = this.curriculumFormsList[0]
-      //   //   this.currentItemId = initialForm.id
-      //   // }
-      //   // await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
-      //   this.router.navigate(['/dashboard/']);
-      // }
-    // } else {
-    //   currentAttendanceReport.attendanceList = this.attendanceList
-    //   this.attendanceRegister = currentAttendanceReport
-    // }
+    await this.saveStudentBehavior(null)
   }
 
-  private async saveStudentAttendance(student) {
-    console.log('saved student attendance: ' + JSON.stringify(student))
+  private async saveStudentBehavior(student) {
+    console.log('saving student behavior. ')
     // save allStudentResults
-    this.attendanceRegister.attendanceList = this.attendanceList
-    // save attendanceRegister
+    this.register.studentBehaviorList = this.studentBehaviorList
+    // save register
     let currentAttendanceReport
     try {
-      currentAttendanceReport = await this.dashboardService.getDoc(this.attendanceRegister._id)
-      this.attendanceRegister['_rev'] = currentAttendanceReport._rev
+      currentAttendanceReport = await this.dashboardService.getDoc(this.register._id)
+      this.register['_rev'] = currentAttendanceReport._rev
     } catch (e) {
     }
 
-    await this.dashboardService.saveDoc(this.attendanceRegister)
+    await this.dashboardService.saveDoc(this.register)
   }
 
   /** Navigate to the student registration form */
