@@ -849,38 +849,15 @@ export class DashboardService {
             const currentStudentBehavior = currentBehaviorReport?.studentBehaviorList.find((thisStudent) => {
               return thisStudent.id === student.id
             })
-            if (currentStudentBehavior) {
-              // const len = scoreUnits.length
-              // let total = 0
-              // let completedUnits = 0
-              // scoreUnits.forEach((scoreUnit, index) => {
-              //   const currentScore = currentStudentBehavior['score_'+index];
-              //   if (currentScore) {
-              //     total = total + currentScore
-              //     completedUnits++
-              //   }
-              // })
-              // const averageScore = total/completedUnits
-              // currentStudent.score = averageScore
-
-              currentStudent['behavior'] = {}
-              // const usingScorefield = state.items[0].inputs.find(input => input.name === state['form']['id'] + '_score');
-              // const intScore = usingScorefield.value
-              currentStudent['behavior']['internal'] = currentStudentBehavior['behavior']['internal']
-              currentStudent['behavior']['internalPercentage'] = currentStudentBehavior['behavior']['internalPercentage']
-              currentStudent['behavior']['formResponseId'] = currentStudentBehavior['behavior']['formResponseId']
+            if (currentStudentBehavior && currentStudentBehavior['behavior']) {
+                currentStudent['behavior'] = {}
+                // const usingScorefield = state.items[0].inputs.find(input => input.name === state['form']['id'] + '_score');
+                // const intScore = usingScorefield.value
+                currentStudent['behavior']['internal'] = currentStudentBehavior['behavior']['internal']
+                currentStudent['behavior']['internalPercentage'] = currentStudentBehavior['behavior']['internalPercentage']
+                currentStudent['behavior']['formResponseId'] = currentStudentBehavior['behavior']['formResponseId']
             }
           }
-          // const studentScores = {}
-          // const curriculi = Object.keys(allStudentScores);
-          // curriculi.forEach((curriculum) => {
-          //   const scores = allStudentScores[curriculum]
-          //   const studentScore = scores.filter((score) => {
-          //     return score.id === student.id
-          //   })
-          //   studentScores[curriculum] = studentScore
-          // })
-          // currentStudent.studentScores = studentScores
         }
       }
     // }
@@ -1042,7 +1019,7 @@ export class DashboardService {
         studentResult['classId'] = classId
         studentResult['forms'] = {}
         studentResult['absent'] = false
-        studentResult['behavior'] = {}
+        studentResult['behavior'] = null
 
         // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
         // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
@@ -1058,7 +1035,7 @@ export class DashboardService {
         //   studentResults['forms'][form.id] = formResult;
         // });
 
-        await this.addBehaviorRecords(studentResult, studentId);
+        // await this.addBehaviorRecords(studentResult, studentId);
         list.push(studentResult)
       }
     }
@@ -1094,7 +1071,7 @@ export class DashboardService {
         studentResult['classId'] = classId
         studentResult['forms'] = {}
         studentResult['absent'] = false
-        studentResult['behavior'] = {}
+        studentResult['behavior'] = null
 
         // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
         // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
@@ -1118,59 +1095,59 @@ export class DashboardService {
     // await this.populateFeedback(curriculumId);
   }
   
-  async addBehaviorRecords(studentResult, studentId) {
-    const formsList = [
-      {
-        formId: 'form-internal-behaviour',
-        curriculum: 'form-internal-behaviour',
-        title: 'Comportamientos internalizantes',
-        src: './assets/form-internal-behaviour/form.html'
-      },
-      // {
-      //   formId: 'form-external-behaviour',
-      //   curriculum: 'form-external-behaviour',
-      //   title: 'Comportamientos externalizantes',
-      //   src: './assets/form-external-behaviour/form.html'
-      // }
-    ]
-    formsList.forEach((form) => {
-      const formResult = {};
-      formResult['formId'] = form.formId;
-      formResult['curriculum'] = form.curriculum;
-      formResult['title'] = form.title;
-      formResult['src'] = form.src;
-      studentResult['forms'][form.formId] = formResult;
-    })
-
-    const responses = await this.classFormService.getResponsesByStudentId(studentId);
-    for (const response of responses as any[]) {
-      // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
-      const respFormId = response.doc.form.id;
-      // if (respClassId === this.classId && respCurrId === this.curriculum) {
-      //   this.formResponse = response.doc;
-      // }
-      // studentResult['forms'][respFormId] = response.doc;
-      if (studentResult['forms'][respFormId]) {
-        studentResult['forms'][respFormId]['response'] = response.doc;
-      }
-
-      const responseDoc = response.doc
-      switch (respFormId) {
-        case 'form-internal-behaviour':
-          const usingScorefield = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
-          const intScore = usingScorefield.value
-          studentResult['behavior']['internal'] = intScore
-          studentResult['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
-        //   break
-        // case 'form-external-behaviour':
-        //   const usingScorefield2 = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
-        //   const extScore = usingScorefield2.value
-        //   studentResult['behavior']['external'] = extScore
-        //   studentResult['behavior']['externalPercentage'] = Math.round((extScore / 18) * 100)
-        //   break
-      }
-    }
-  }
+  // async addBehaviorRecords(studentResult, studentId) {
+  //   const formsList = [
+  //     {
+  //       formId: 'form-internal-behaviour',
+  //       curriculum: 'form-internal-behaviour',
+  //       title: 'Comportamientos internalizantes',
+  //       src: './assets/form-internal-behaviour/form.html'
+  //     },
+  //     // {
+  //     //   formId: 'form-external-behaviour',
+  //     //   curriculum: 'form-external-behaviour',
+  //     //   title: 'Comportamientos externalizantes',
+  //     //   src: './assets/form-external-behaviour/form.html'
+  //     // }
+  //   ]
+  //   formsList.forEach((form) => {
+  //     const formResult = {};
+  //     formResult['formId'] = form.formId;
+  //     formResult['curriculum'] = form.curriculum;
+  //     formResult['title'] = form.title;
+  //     formResult['src'] = form.src;
+  //     studentResult['forms'][form.formId] = formResult;
+  //   })
+  //
+  //   const responses = await this.classFormService.getResponsesByStudentId(studentId);
+  //   for (const response of responses as any[]) {
+  //     // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
+  //     const respFormId = response.doc.form.id;
+  //     // if (respClassId === this.classId && respCurrId === this.curriculum) {
+  //     //   this.formResponse = response.doc;
+  //     // }
+  //     // studentResult['forms'][respFormId] = response.doc;
+  //     if (studentResult['forms'][respFormId]) {
+  //       studentResult['forms'][respFormId]['response'] = response.doc;
+  //     }
+  //
+  //     const responseDoc = response.doc
+  //     switch (respFormId) {
+  //       case 'form-internal-behaviour':
+  //         const usingScorefield = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
+  //         const intScore = usingScorefield.value
+  //         studentResult['behavior']['internal'] = intScore
+  //         studentResult['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
+  //       //   break
+  //       // case 'form-external-behaviour':
+  //       //   const usingScorefield2 = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
+  //       //   const extScore = usingScorefield2.value
+  //       //   studentResult['behavior']['external'] = extScore
+  //       //   studentResult['behavior']['externalPercentage'] = Math.round((extScore / 18) * 100)
+  //       //   break
+  //     }
+  //   }
+  // }
 
   async initDashboard(classIndex: number, currentClassId: string, curriculumId: string, resetVars: boolean, enabledClasses) {
     if (typeof enabledClasses === 'undefined') {

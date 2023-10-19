@@ -5,3 +5,10 @@ mat-chip-list.absent {
 ::ng-deep .mat-chip-list-wrapper {
   justify-content: center;
 }
+.mat-card {
+  padding: 5px 0px;
+}
+
+.left-padding {
+  padding-left: 5px;
+}
