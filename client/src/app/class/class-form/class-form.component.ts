@@ -31,13 +31,14 @@ export class ClassFormComponent implements OnInit {
   @ViewChild('formPlayer', {static: true}) formPlayer: ClassFormsPlayerComponent
   responseId;
   curriculum;
+  curriculumLabel: string;
   studentId;
   classId;
   classUtils: ClassUtils;
   viewRecord = false;
   formHtml;
   formResponse;
-
+  reportDate: string;
   throttledSaveLoaded;
   throttledSaveFiring;
 
@@ -61,8 +62,10 @@ export class ClassFormComponent implements OnInit {
       this.formId = params['formId']; // corresponds to the form_item.id
       this.classId = params['classId'];
       this.curriculum = params['curriculum']; // corresponds to form.id
+      this.curriculumLabel = params['curriculumLabel']; // corresponds to form.id
       this.studentId = params['studentId'];
       this.viewRecord = params['viewRecord'];
+      this.reportDate = params['reportDate'];
       if (typeof this.formId === 'undefined') {
         // this is student reg or class reg.
         this.formId = this.curriculum;
@@ -135,6 +138,7 @@ export class ClassFormComponent implements OnInit {
         if (state.form.id === 'class-registration' && !this.formResponse) {
           await this.dashboardService.setCurrentClass();
         }
+        
         if (state.form.id === 'form-internal-behaviour' && !this.formResponse) {
           // Look up today's behaviour scores form and add this score to it
           let currentBehaviorReport, savedBehaviorList = null;
@@ -144,9 +148,10 @@ export class ClassFormComponent implements OnInit {
             let classClassIndex = await this.variableService.get('class-classIndex')
             const classIndex = parseInt(classClassIndex)
             const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
-            const reportDate = DateTime.local().toISODate()
-            const curriculumLabel = this.curriculum.label
-            const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate, curriculumLabel)
+            // const reportDate = DateTime.local().toISODate()
+            // const formInfo = await this.tangyFormsInfoService.getFormInfo(this.curriculum)
+            // const curriculumLabel = formInfo.title
+            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, this.curriculumLabel)
             currentBehaviorReport = docArray? docArray[0]?.doc : null
             // savedBehaviorList = currentBehaviorReport?.studentBehaviorList
             const currentStudent = currentBehaviorReport.studentBehaviorList.find((thisStudent) => {
@@ -161,7 +166,6 @@ export class ClassFormComponent implements OnInit {
               currentStudent['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
               await this.dashboardService.saveDoc(currentBehaviorReport)
             }
-            
           } catch (e) {
           }
         }

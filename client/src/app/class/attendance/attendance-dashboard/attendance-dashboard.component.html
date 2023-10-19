@@ -9,15 +9,15 @@
     <!--    </button>-->
   </span>
 </mat-toolbar>
-<mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
-  <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}} : {{getClassTitle(selectedClass)}} : {{curriculum?.label}} : {{reportDate}}</p></div>
+<mat-card *ngIf="selectedClass">
+  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}} :  : {{reportDate}}</div>
   <div>
     <table class="dashboard-table">
       <tr>
-        <th class="student-name-column" colspan="2">{{'Student'|translate}}</th>
-        <th colspan="2">{{'Attendance'|translate}}</th>
-        <th colspan="2">{{'Behavior'|translate}}</th>
-        <th>{{'Scoring'|translate}}</th>
+        <th class="student-name-column" colspan="2">{{'Stud.'|translate}}</th>
+        <th colspan="2">{{'Attend.'|translate}}</th>
+        <th colspan="2">{{'Behav.'|translate}}</th>
+        <th>{{'Score.'|translate}}</th>
       </tr>
       <tr *ngFor="let student of attendanceReport?.attendanceList">
         <!--          <tr *ngFor="let student of attendanceReport?.attendanceList">-->
@@ -67,7 +67,7 @@
         <td class="number-cell centered" *ngIf="student['score']">{{student['score']}}%</td>
       </tr>
     </table>
-    <span><p class="mat-h3"
+    <span><p class="mat-h3 left-padding"
              *ngIf="!attendanceReport || attendanceReport?.attendanceList.length === 0">{{'No Students currently registered.'|translate}}</p></span>
   </div>
 </mat-card>

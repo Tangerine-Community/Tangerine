@@ -93,8 +93,7 @@ export class BehaviorCheckComponent implements OnInit {
       
     } catch (e) {
     }
-
-
+    
     if (currentBehaviorReport?.timestamp) {
       const timestampFormatted = DateTime.fromMillis(currentBehaviorReport?.timestamp)
       // DATE_MED
@@ -104,7 +103,7 @@ export class BehaviorCheckComponent implements OnInit {
     }
 
     this.studentBehaviorList =  await this.dashboardService.getAttendanceList(students, savedBehaviorList)
-    // if (!currentAttendanceReport) {
+    if (!currentBehaviorReport) {
       this.register = {
         _id: id,
         timestamp: timestamp,
@@ -117,7 +116,7 @@ export class BehaviorCheckComponent implements OnInit {
         collection: 'TangyFormResponse',
         type: type,
         form: {
-          id: type,
+          id: 'form-internal-behaviour',
         },
         items: [{
           id: 'class-registration',
@@ -134,6 +133,10 @@ export class BehaviorCheckComponent implements OnInit {
           }],
         complete: false
       }
+    } else {
+      currentBehaviorReport.studentBehaviorList = this.studentBehaviorList
+      this.register = currentBehaviorReport
+    }
     await this.saveStudentBehavior(null)
   }
 
@@ -203,6 +206,7 @@ export class BehaviorCheckComponent implements OnInit {
     const src = null;
     const title = null;
     let responseId = null;
+    
     // const formResponse = await this.dashboardService.getCurriculumResponse(classId, curriculum, studentId)
     // const responses = await this.classFormService.getResponsesByStudentId(studentId);
     // for (const response of responses as any[]) {
@@ -221,6 +225,8 @@ export class BehaviorCheckComponent implements OnInit {
     this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId,
           curriculum: curriculum,
+          curriculumLabel: this.curriculum.label,
+          reportDate: this.register.reportDate,
           studentId: studentId,
           classId: classId,
           src: src,
