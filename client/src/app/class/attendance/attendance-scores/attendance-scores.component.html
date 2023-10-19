@@ -1,24 +1,9 @@
-<mat-card class="tangy-class-card-content-container">
+<mat-card>
   <div class="selectedClassLabel"><p>{{curriculum?.label}} {{'Student Scores'|translate}}</p></div>
   <div>
-<!--    <table class="dashboard-table">-->
-<!--      <tr>-->
-<!--        <th>{{'Student'|translate}}</th>-->
-<!--        <th *ngFor="let unit of units">{{unit}}</th>-->
-<!--      </tr>-->
-<!--      <tr *ngFor="let student of scoreList">-->
-<!--        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>-->
-<!--        <td *ngFor="let unit of units; index as unitIndex" style="text-align: center">-->
-<!--&lt;!&ndash;          <mat-form-field class="quarter-width">&ndash;&gt;-->
-<!--            <input id="scoreCtrl" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"-->
-<!--                   (change)="updateScore(student, unitIndex.toString())">-->
-<!--&lt;!&ndash;          </mat-form-field>&ndash;&gt;-->
-<!--        </td>-->
-<!--      </tr>-->
-<!--    </table>-->
     <mat-tab-group>
       <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">
-        <h2>{{unit}}</h2>
+        <h2 class="header">{{unit}}</h2>
         <table class="dashboard-table">
           <tr>
             <th>{{'Student'|translate}}</th>
