@@ -189,9 +189,40 @@ export class AttendanceDashboardComponent implements OnInit {
         alert(_TRANSLATE('This student does not have a phone number.'))
         return
       } else {
+        let attendanceMessage = _TRANSLATE('Attendance is: ') + student.presentPercentage + '%'
+        
+        let behaviorMessage = ""
+        if (student['behavior'] && student['behavior']['internalPercentage']) {
+          behaviorMessage = " ; " + _TRANSLATE('behaviour is: ') + student['behavior']['internalPercentage'] + '%'
+        }
+        let scoresMessage = "" +
+          " ; " + _TRANSLATE('score average is: ') + student.score + "%"
+        
         // const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
-        const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%'
-        sms.send(phone, message, options, success, error);
+        const message = _TRANSLATE('Report for ') + student.name + ': ' + attendanceMessage + behaviorMessage + scoresMessage
+        // sms.send(phone, message, options, success, error);
+
+        let options = {
+          // message: _TRANSLATE('Share this '), // not supported on some apps (Facebook, Instagram)
+          message: message, // not supported on some apps (Facebook, Instagram)
+          subject: _TRANSLATE('Student feedback '), // fi. for email
+          chooserTitle: _TRANSLATE('Pick an app '), // Android only, you can override the default share sheet title
+          phone: phone, // phone number to share (for WhatsApp only)
+          number: phone, // phone number to share (for WhatsApp only) unused. delete.
+          appPackageName: 'com.whatsapp' // Android only, you can provide id of the App you want to share with
+        };
+
+        const onSuccess = (result) => {
+          // console.log("Share completed? " + result); // On Android apps mostly return false even while it's true
+          console.log("Shared to app: " + result); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+        };
+
+        const onError = (msg) => {
+          console.log("Sharing failed with message: " + msg);
+          alert( _TRANSLATE('Sharing failed: WhatsApp may not be installed. The following apps are available for sharing: ') + msg);
+        };
+        // this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+        this.window.plugins.socialsharing.shareViaWhatsAppToPhone(phone, message, null /* img */, null /* url */, onSuccess, onError)
       }
     } else {
       alert(_TRANSLATE('This feature is only available on a mobile device.'))
