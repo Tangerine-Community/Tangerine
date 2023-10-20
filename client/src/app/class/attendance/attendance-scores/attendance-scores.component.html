@@ -3,7 +3,7 @@
   <div>
     <mat-tab-group>
       <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">
-        <h2 class="header">{{unit}}</h2>
+<!--        <h2 class="header">{{unit}}</h2>-->
         <table class="dashboard-table">
           <tr>
             <th>{{'Student'|translate}}</th>
@@ -12,8 +12,12 @@
           <tr *ngFor="let student of scoreList">
             <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
 <!--            <td style="text-align: center">{{student['score_'+unit]}}</td>-->
-            <td style="text-align: center"><input id="scoreCtrl_{{unitIndex}}" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"
-                                                  (change)="updateScore(student, unitIndex.toString())"></td>
+            <td style="text-align: center">
+              <mat-form-field class="example-full-width">
+              <input id="scoreCtrl_{{unitIndex}}" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"
+                                                  (change)="updateScore(student, unitIndex.toString())">
+              </mat-form-field>
+            </td>
           </tr>
         </table>
         <div class="right-align">

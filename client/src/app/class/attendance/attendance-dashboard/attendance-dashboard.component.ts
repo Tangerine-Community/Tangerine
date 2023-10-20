@@ -119,6 +119,26 @@ export class AttendanceDashboardComponent implements OnInit {
       this.router.navigate(['attendance-check'])
       return
     }
+
+    const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
+      return !currentAttendanceReport?.attendanceList.find((student) => {
+        return thisStudent.doc._id === student.id
+      })
+    })
+    // add any students who haven't had attendance taken yet to the attendanceList
+    studentsWithoutAttendance.forEach((student) => {
+      const studentResult = {}
+      const student_name = this.getValue('student_name', student.doc, false)
+      const phone = this.getValue('phone', student.doc, false);
+      const classId = this.getValue('classId', student.doc, false)
+      studentResult['id'] = student.id
+      studentResult['name'] = student_name
+      studentResult['phone'] = phone
+      studentResult['classId'] = classId
+      studentResult['forms'] = {}
+      currentAttendanceReport.attendanceList.push(studentResult)
+    })
+    
     const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel)
     const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
 
@@ -143,24 +163,7 @@ export class AttendanceDashboardComponent implements OnInit {
       await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, currentScoreReport, allStudentScores, students, this.units, currentBehaviorReport)
     }
     this.attendanceReport = currentAttendanceReport
-    const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
-      return !this.attendanceReport?.attendanceList.find((student) => {
-        return thisStudent.doc._id === student.id
-      })
-    })
-    // add any students who haven't had attendance taken yet to the attendanceList
-    studentsWithoutAttendance.forEach((student) => {
-      const studentResult = {}
-      const student_name = this.getValue('student_name', student.doc, false)
-      const phone = this.getValue('phone', student.doc, false);
-      const classId = this.getValue('classId', student.doc, false)
-      studentResult['id'] = student.id
-      studentResult['name'] = student_name
-      studentResult['phone'] = phone
-      studentResult['classId'] = classId
-      studentResult['forms'] = {}
-      this.attendanceReport.attendanceList.push(studentResult)
-    })
+    
     // const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
     //   return thisStudent.id === student.id
     // })
