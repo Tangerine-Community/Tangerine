@@ -1,6 +1,6 @@
 input[type=number] {
   width: auto;
-  border-bottom: 2px solid blue;
+  /*border-bottom: 2px solid blue;*/
 }
 .right-align {
   text-align: right;
@@ -14,4 +14,7 @@ input[type=number] {
 }
 .header {
   padding-left: 1em;
+}
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: rgba(0,0,0,.04);
 }

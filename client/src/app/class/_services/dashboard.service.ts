@@ -801,8 +801,9 @@ export class DashboardService {
           }
           if (typeof student.absent !== 'undefined' && student.absent === false) {
             currentStudent.presentCount = currentStudent.presentCount + 1
+            currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
           }
-          currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
+          
           // currentStudent.moodValues = currentStudent.moodValues ? currentStudent.moodValues : []
           // const mood = student.mood
           // if (mood) {
