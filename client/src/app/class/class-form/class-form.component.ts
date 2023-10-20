@@ -163,7 +163,7 @@ export class ClassFormComponent implements OnInit {
               const intScore = usingScorefield.value
               currentStudent['behavior']['formResponseId'] = state._id
               currentStudent['behavior']['internal'] = intScore
-              currentStudent['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
+              currentStudent['behavior']['internalPercentage'] = Math.round((intScore / 36) * 100)
               await this.dashboardService.saveDoc(currentBehaviorReport)
             }
           } catch (e) {
