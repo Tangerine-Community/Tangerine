@@ -1,19 +1,19 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <mat-tab-group>
 
-  <mat-tab label="{{'Levels'|translate}}">
+  <mat-tab label="{{'Levels'|translate}}" *ngIf="ready">
     <app-manage-location-list-levels locationListFileName="{{ locationListFileName }}"></app-manage-location-list-levels>
   </mat-tab>
 
-  <mat-tab label="{{'Content'|translate}}">
-    <app-location-list-editor></app-location-list-editor>
+  <mat-tab label="{{'Content'|translate}}" *ngIf="ready">
+    <app-location-list-editor locationListFileName="{{ locationListFileName }}"></app-location-list-editor>
   </mat-tab>
 
-  <mat-tab label="{{'Import'|translate}}">
-    <app-import-location-list></app-import-location-list>
+  <mat-tab label="{{'Import'|translate}}" *ngIf="ready">
+    <app-import-location-list locationListFileName="{{ locationListFileName }}"></app-import-location-list>
   </mat-tab>
-  <mat-tab label="{{'Export'|translate}}">
-    <app-export-location-list></app-export-location-list>
+  <mat-tab label="{{'Export'|translate}}" *ngIf="ready">
+    <app-export-location-list locationListFileName="{{ locationListFileName }}"></app-export-location-list>
   </mat-tab>
 
 

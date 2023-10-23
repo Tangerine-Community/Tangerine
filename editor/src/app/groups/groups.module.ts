@@ -98,6 +98,7 @@ import { GroupDatabaseConflictsComponent } from './group-database-conflicts/grou
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
 import { GroupLocationListsComponent } from './group-location-lists/group-location-lists.component';
+import { GroupLocationListNewComponent } from './group-location-list-new/group-location-list-new.component';
 
 
 @NgModule({
@@ -172,6 +173,8 @@ import { GroupLocationListsComponent } from './group-location-lists/group-locati
     GroupReleasesComponent,
     GroupFormsEditComponent,
     GroupLocationListComponent,
+    GroupLocationListsComponent,
+    GroupLocationListNewComponent,
     GroupDeviceUsersComponent,
     GroupUploadsComponent,
     GroupReleaseApkTestComponent,
@@ -201,8 +204,7 @@ import { GroupLocationListsComponent } from './group-location-lists/group-locati
     GroupCsvTemplatesComponent,
     GroupDatabaseConflictsComponent,
     DownloadStatisticalFileComponent,
-    GroupDevicePasswordPolicyComponent,
-    GroupLocationListsComponent
+    GroupDevicePasswordPolicyComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })
