@@ -11,6 +11,9 @@ import { Loc } from 'tangy-form/util/loc.js';
   styleUrls: ['./location-list-editor.component.css']
 })
 export class LocationListEditorComponent implements OnInit {
+
+  @Input() locationListFileName;
+
   locationList: any;
   currentPath = [];
   currentLocation: any;
@@ -24,7 +27,6 @@ export class LocationListEditorComponent implements OnInit {
   metadata: any = {};
   showLocationForm = false;
   groupId = '';
-  locationListFileName = 'location-list.json';
   isMoveLocationFormShown = false;
   parentItemsForMoveLocation;
   moveLocationParentLevelId;

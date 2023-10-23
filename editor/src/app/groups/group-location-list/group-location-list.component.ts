@@ -13,16 +13,18 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 export class GroupLocationListComponent implements OnInit {
 
   title = _TRANSLATE("Location Lists")
+  groupId:string
+  locationListFileName:string
+  locationListId:string
+  stopPolling = false
+  ready = false
+
   breadcrumbs:Array<Breadcrumb> = [
     <Breadcrumb>{
       label: this.title,
       url: `location-lists`
     }
   ]
-  groupId:string
-  locationListFileName:string
-  locationListId:string
-  stopPolling = false
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +40,7 @@ export class GroupLocationListComponent implements OnInit {
     try {
       const data: any = await this.groupsService.getLocationLists(this.groupId);
       const locationListData = data.find(loc => loc.id == this.locationListId);
-      this.locationListFileName = locationListData.src
+      this.locationListFileName = locationListData.path
 
       this.breadcrumbs = [
         ...this.breadcrumbs,
@@ -47,7 +49,7 @@ export class GroupLocationListComponent implements OnInit {
           url: `location-lists/${locationListData.id}`
         }
       ]
-
+      this.ready = true
     } catch (error) {
       this.errorHandler.handleError('Could Not Load Location List Data');
     }

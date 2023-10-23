@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 import { Loc } from 'tangy-form/util/loc.js';
@@ -10,6 +10,10 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./export-location-list.component.css']
 })
 export class ExportLocationListComponent implements OnInit {
+
+  @Input() locationListFileName;
+
+  groupId:string;
   locationEntries = [];
   locationObject = {};
   locationLevels = [];
@@ -19,11 +23,12 @@ export class ExportLocationListComponent implements OnInit {
   constructor(private groupService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
+    this.groupId = this.route.snapshot.paramMap.get('groupId')
   }
 
   async exportAsCSV() {
     this.isExportingCSV = true;
-    const data = await this.groupService.getLocationList(this.route.snapshot.paramMap.get('groupId'));
+    const data = await this.groupService.getLocationList(this.groupId, this.locationListFileName);
     this.locationLevels = data['locationsLevels'] as [];
     Object.values(data['locations']).forEach(e => {
       this.unwrap(e);

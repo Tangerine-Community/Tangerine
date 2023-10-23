@@ -3,9 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Breadcrumb } from 'src/app/shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
-import { GroupsService } from '../services/groups.service';
-import { Loc } from 'tangy-form/util/loc.js';
-
+import { GroupsService, LocationList } from '../services/groups.service';
 
 @Component({
   selector: 'app-group-location-lists',
@@ -23,6 +21,7 @@ export class GroupLocationListsComponent implements OnInit {
   ]
 
   locationLists:Array<any> = []
+  locationListTableData:Array<any> = []
   locationListsLength = 0
   groupId:string
 
@@ -34,47 +33,58 @@ export class GroupLocationListsComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.route.params.subscribe(async params => {
-      this.groupId = params['groupId']
-      this.listLocations()
-    })
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
+    this.loadLocationLists();
   }
 
-  async listLocations() {
+  async loadLocationLists() {
     try {
       const data: any = await this.groupsService.getLocationLists(this.groupId);
       this.locationLists = data;
+      this.locationListTableData = data.map(location => { return {
+        "id": location.id,
+        "Name": location.name,
+        "Levels": location.locationsLevels,
+        "Default": location.path == 'location-list.json' ? "True": ""
+      }})
+
       this.locationListsLength = data.length;
     } catch (error) {
-      this.errorHandler.handleError('Could Not Load Location List Data');
+      this.errorHandler.handleError('Failed to load Location List information for this group.');
     }
-
-    /*
-    this.csvTemplates = csvTemplates.map(csvTemplate => { return {
-      "_id": csvTemplate._id,
-      "Template Title": csvTemplate.title,
-      "Form": formsInfo.find(formInfo => formInfo.id === csvTemplate.formId)?.title,
-      "Columns": csvTemplate.headers
-    }})
-    */
   }
 
   async createLocationList() {
-    //const csvTemplate = await this.groupsService.createCsvTemplate(this.groupId)
-    //this.router.navigate([csvTemplate._id], {relativeTo: this.route})
-  }
-
-  async onRowClick($event) {
-    this.router.navigate([$event.id], {relativeTo: this.route})
+    const locationListId = await this.groupsService.generateID();
+    this.router.navigate(['new', locationListId], {relativeTo: this.route})
   }
 
   async onRowEdit($event) {
-    //this.router.navigate([$event._id], {relativeTo: this.route})
+    const locationId = $event.id    
+    this.router.navigate([locationId], { relativeTo: this.route })
   }
 
   async onRowDelete($event) {
-    //const status = await this.formsService.deleteCsvTemplate(this.groupId, $event._id)
-    //this.listCsvTemplates()
+    const locationId = $event.id
+    const locationName = $event.Name
+
+    if (locationId == "location-list") {
+      alert("The default location list cannot be deleted.")
+      return;
+    }
+
+    const locationList:LocationList = {
+      id: locationId,
+      name: locationName,
+      locationsLevels: [],
+      locations: {}
+    }
+
+    const confirmation = confirm(_TRANSLATE(`Are you sure you want to delete the location list: ${locationName}?`))
+    if (confirmation) {
+      await this.groupsService.deleteLocationList(this.groupId, locationList);
+      await this.loadLocationLists()
+    }
   }
 
 }

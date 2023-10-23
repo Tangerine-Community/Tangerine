@@ -17,6 +17,7 @@ import { ListUsersComponent } from './list-users/list-users.component';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
 import { GroupLocationListsComponent } from './group-location-lists/group-location-lists.component';
 import { GroupLocationListComponent } from './group-location-list/group-location-list.component';
+import { GroupLocationListNewComponent } from './group-location-list-new/group-location-list-new.component';
 import { GroupFormsEditComponent } from './group-forms-edit/group-forms-edit.component';
 import { GroupMediaComponent } from './group-media/group-media.component';
 import { CaseManagementEditorComponent } from './case-management-editor/case-management-editor.component';
@@ -97,6 +98,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-lists', component: GroupLocationListsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-lists/:locationListId', component: GroupLocationListComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/location-lists/new/:locationListId', component: GroupLocationListNewComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/device-password-policy', component: GroupDevicePasswordPolicyComponent, canActivate: [LoginGuard] },
