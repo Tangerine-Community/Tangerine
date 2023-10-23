@@ -56,6 +56,7 @@
                 </div>
             </span>
         </mat-list-item>
+        <div *ngIf="locationList.metadata">
         <mat-list-item role="listitem" class="gray-bottom-border"
             *ngFor="let metadata of locationList.metadata[locationLevel]">
             <span class="text-indent-3 tangy-foreground-secondary ">{{metadata.label}}</span>
@@ -75,6 +76,7 @@
             </span>
             <span></span>
         </mat-list-item>
+        </div>
     </ng-container>
     <br /><br />
     <button mat-raised-button color="primary" (click)="onBackClick()">{{'Back'|translate}}</button>

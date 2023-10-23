@@ -28,7 +28,8 @@ export class ExportLocationListComponent implements OnInit {
 
   async exportAsCSV() {
     this.isExportingCSV = true;
-    const data = await this.groupService.getLocationList(this.groupId, this.locationListFileName);
+    const data:any = await this.groupService.getLocationList(this.groupId, this.locationListFileName);
+    const locationListId = data.id
     this.locationLevels = data['locationsLevels'] as [];
     Object.values(data['locations']).forEach(e => {
       this.unwrap(e);
@@ -36,7 +37,7 @@ export class ExportLocationListComponent implements OnInit {
     const worksheet = XLSX.utils.json_to_sheet(this.locationEntries);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'location-list');
-    XLSX.writeFile(workbook, 'location-list.xlsx');
+    XLSX.writeFile(workbook, `${this.groupId}-location-list-${locationListId}.xlsx`);
     this.resetValues();
   }
 
@@ -68,10 +69,10 @@ export class ExportLocationListComponent implements OnInit {
 
   async exportAsJSON() {
     this.isExportingJSON = true;
-    const groupId = this.route.snapshot.paramMap.get('groupId')
-    const data = await this.groupService.getLocationList(groupId);
+    const data:any = await this.groupService.getLocationList(this.groupId, this.locationListFileName);
+    const locationListId = data.id
     const jsonData = JSON.stringify(data)
-    const fileName = `${groupId}-location-list.json`
+    const fileName = `${this.groupId}-location-list-${locationListId}.json`
     var downloader = document.createElement('a');
     downloader.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(jsonData));
     downloader.setAttribute('download', fileName);

@@ -47,10 +47,7 @@ export class LocationListEditorComponent implements OnInit {
       this.groupId = params.groupId;
     });
     try {
-      const data: any = await this.groupsService.getLocationList(this.groupId);
-      const flatLocationList = Loc.flatten(data);
-      // TODO Why do we need zoneLevelLocations???
-      const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone');
+      const data: any = await this.groupsService.getLocationList(this.groupId, this.locationListFileName);
       this.locationsLevels = data.locationsLevels;
       this.locationsLevelsLength = data.locationsLevels.length;
       await this.setLocationList(data);

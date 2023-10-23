@@ -1,0 +1,37 @@
+.tangy-full-width {
+    width: 95%;
+}
+
+span.tangy-foreground-secondary {
+    padding-top: 0.3rem;
+}
+
+a.faux-anchor {
+    cursor: pointer;
+}
+
+* {
+    word-wrap: break-word;
+}
+
+.gray-bottom-border {
+    border-bottom: #cccccc 0.5px solid;
+}
+
+.text-indent-3 {
+    text-indent: 3rem;
+}
+
+.header {
+    margin: 15px;
+}
+
+.submit {
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+
+.export-div {
+    margin: 15px;
+    padding-bottom: 30px;
+}
