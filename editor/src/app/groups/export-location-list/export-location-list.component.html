@@ -1,10 +1,12 @@
-<div class="tangy-content">
+<div class="export-div">
+    <h3> {{'Export CSV'|translate}} </h3>
     <p *ngIf="isExportingCSV">{{'Downloading CSV file...'}}</p>
     <button mat-raised-button color="primary" (click)="exportAsCSV()" [disabled]="isExportingCSV">{{'Export Location List as CSV'|translate}}</button>
     <p>Export a CSV file of the Location List with columns of the location levels and unique identifiers</p>
     <p>The file can be modified and imported to update the location list.</p>
 </div>
-<div class="tangy-content">
+<div class="export-div">
+    <h3> {{'Export JSON'|translate}} </h3>
     <p *ngIf="isExportingJSON">{{'Downloading JSON file...'}}</p>
     <button mat-raised-button color="primary" (click)="exportAsJSON()" [disabled]="isExportingJSON">{{'Export Location List as JSON'|translate}}</button>
     <p>Export a JSON file of the Location List</p>
