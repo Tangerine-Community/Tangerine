@@ -6,6 +6,14 @@ import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import { v4 as UUID } from 'uuid';
+
+export interface LocationList {
+  id:string
+  name:string
+  locationsLevels:Array<any>
+  locations:Object
+}
+
 @Injectable()
 export class GroupsService {
   constructor(
@@ -266,18 +274,33 @@ export class GroupsService {
   }
 
   async getLocationLists(groupId: string) {
-    const locationListFileName = 'location-lists.json';
     try {
-      return await this.httpClient.get(`/editor/${groupId}/content/${locationListFileName}`).toPromise();
+      return await this.httpClient.get(`/app/${groupId}/location-lists/read`).toPromise();
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
 
-  async getLocationList(groupId: string) {
-    const locationListFileName = 'location-list.json';
+  async createLocationList(groupId:string, locationList:LocationList) {
     try {
-      return await this.httpClient.get(`/editor/${groupId}/content/${locationListFileName}`).toPromise();
+      return await this.httpClient.post(`/app/${groupId}/location-list/create`, locationList).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async deleteLocationList(groupId:string, locationList:LocationList) {
+    try {
+      return await this.httpClient.post(`/app/${groupId}/location-list/delete`, locationList).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async getLocationList(groupId: string, locationListFilePath: string = 'location-list.json') {
+    const locationListFullFilePath = `/editor/${groupId}/content/${locationListFilePath}`
+    try {
+      return await this.httpClient.get(locationListFullFilePath).toPromise();
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

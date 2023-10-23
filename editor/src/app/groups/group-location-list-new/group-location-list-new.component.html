@@ -1,0 +1,13 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<div id="container" #container>
+  <p>
+    Enter a title for the new location list. After clicking submit, you will be able to enter location values manually or import a location list from csv or json.
+  </p>
+  <form class="form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Title</mat-label>
+      <input matInput placeholder="Location Title" [(ngModel)]="locationListTitle" name="title" required>
+    </mat-form-field>
+    <paper-button class="button" (click)="onSubmit()">submit</paper-button>
+  </form>
+</div>
