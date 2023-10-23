@@ -58,7 +58,9 @@ export class ImportLocationListComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
     });
-    this.locationList = await this.http.get(`/editor/${this.groupId}/content/location-list.json`).toPromise();
+    const data: any = await this.groupsService.getLocationList(this.groupId, this.locationListFileName);
+
+    this.locationList = data
     this.locationListLevels = this.locationList.locationsLevels;
     this.canUserImportFile = !this.isLocationHierarchiesEmpty();
     // TODO this is a workaround for https://github.com/Tangerine-Community/Tangerine/issues/1576
@@ -140,10 +142,12 @@ export class ImportLocationListComponent implements OnInit {
         this.errorHandler.handleError(`empty values on line: "${headers.row}" at column "${headers.column}"`);
         return;
       }
-      const metadata: any = this.validateMetadata();
-      if (metadata && !metadata.isValid) {
-        this.errorHandler.handleError(`check values on line: "${metadata.row}" at column "${metadata.column}"`);
-        return;
+      if (this.locationList.metadata) {
+        const metadata: any = this.validateMetadata();
+        if (metadata && !metadata.isValid) {
+          this.errorHandler.handleError(`check values on line: "${metadata.row}" at column "${metadata.column}"`);
+          return;
+        }
       }
       this.generateIDs();
       this.transformFromMappings();

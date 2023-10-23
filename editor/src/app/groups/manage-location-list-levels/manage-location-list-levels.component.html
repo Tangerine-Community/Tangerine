@@ -14,8 +14,8 @@
         <input name="locationLabel" [(ngModel)]="locationLabel" matInput placeholder="{{'Label'|translate}}"
           required>
       </mat-form-field>
-      <mat-form-field class="tangy-full-width">
-        <mat-select name="parentLevel" placeholder="Parent Level" [(ngModel)]="parentLevel">
+      <mat-form-field class="tangy-full-width" *ngIf="locationsLevels.length > 0">
+        <mat-select name="parentLevel" placeholder="Parent Level" [(ngModel)]="parentLevel" required>
           <mat-option *ngFor="let location of locationsLevels" [value]="location">
             {{location}}
           </mat-option>

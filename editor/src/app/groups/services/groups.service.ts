@@ -12,6 +12,7 @@ export interface LocationList {
   name:string
   locationsLevels:Array<any>
   locations:Object
+  metadata:Object
 }
 
 @Injectable()

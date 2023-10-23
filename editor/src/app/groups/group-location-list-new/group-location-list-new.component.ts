@@ -44,7 +44,7 @@ export class GroupLocationListNewComponent implements OnInit {
       return
     }
     
-    const locationList:LocationList = {
+    const locationList = {
       id: this.generatedLocationId,
       name: this.locationListTitle,
       locationsLevels: [],
