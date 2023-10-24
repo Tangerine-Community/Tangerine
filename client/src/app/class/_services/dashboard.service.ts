@@ -94,7 +94,11 @@ export class DashboardService {
     return forDefs.filter(form => form.id.startsWith('form-behav')).sort((a, b) => (a.id > b.id) ? 1 : -1)
   }
 
-  async getMyStudents(selectedClass: any) {
+  /**
+   * Queries the view tangy-class/responsesByClassIdCurriculumId to get the list of curricula for the selected class.
+   * @param selectedClass
+   */
+   async getMyStudents(selectedClass: any) {
     this.db = await this.getUserDB();
     const result = await this.db.query('tangy-class/responsesForStudentRegByClassId', {
       startkey: [selectedClass],
@@ -732,8 +736,13 @@ export class DashboardService {
 
   /**
    * Queries allDocs to get docs for either attendance or score
+   * @param type
+   * @param currentClass
+   * @param reportDate
+   * @param curriculumLabel - may be empty if ignoreCurriculumsForTracking is set in the class-registration form (currentClass).
+   * @param randomId
    */
-  async searchDocs(type: string, currentClass, reportDate: string, curriculumLabel: string) {
+  async searchDocs(type: string, currentClass, reportDate: string, curriculumLabel: string, randomId: string) {
     this.db = await this.getUserDB();
     const grade = this.getValue('grade', currentClass)
     // const schoolName = this.getValue('school_name', currentClass)
@@ -742,9 +751,9 @@ export class DashboardService {
     // str = str.replace(/\s+/g, '-').
     let searchTerm
     if (curriculumLabel) {
-      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-'))
+      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-'))
     } else {
-      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-'))
+      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId
     }
     const result = await this.db.allDocs({
       startkey: searchTerm,
@@ -757,17 +766,23 @@ export class DashboardService {
   /**
    * Generate a unique id for the attendance or score report
    * @param currentClass
+   * @param curriculumLabel
    * @param type
+   * @param randomId - generated on the client when a class is created by the class-registration form.
    */
-  generateSearchableId(currentClass, curriculumLabel: string, type: string) {
+  generateSearchableId(currentClass, curriculumLabel: string, type: string, randomId: string) {
+    let id;
     const username = this.userService.getCurrentUser()
     const reportDate = DateTime.local().toISODate()
     const reportTime = DateTime.local().toISOTime()
     const grade = this.getValue('grade', currentClass)
-    const id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+    if (!curriculumLabel) {
+      id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+    } else {
+      id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+    }
     return {reportDate, grade, reportTime, id};
   }
-
   
   /**
    * Grafted from task-report.component.ts
@@ -799,8 +814,10 @@ export class DashboardService {
             const phone = this.getValue('phone', studentRegistration?.doc)
             currentStudent.phone = phone
           }
-          if (typeof student.absent !== 'undefined' && student.absent === false) {
-            currentStudent.presentCount = currentStudent.presentCount + 1
+          if (typeof student.absent !== 'undefined') {
+            if (student.absent === false) {
+              currentStudent.presentCount = currentStudent.presentCount + 1
+            }
             currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
           }
           

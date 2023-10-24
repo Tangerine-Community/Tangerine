@@ -74,15 +74,15 @@ export class AttendanceComponent implements OnInit {
     
     //TODO: placeholder until we find out if we need to run this report per curriculum.
     const curriculumLabel = null
+    const randomId = this.dashboardService.getValue('randomId', currentClass)
+    this.scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
+      this.scoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
 
-    this.scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel)
-    this.scoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
+    this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
+      const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
 
-    this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel)
-    const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
-
-    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel)
-    const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
+      const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
     
     for (let i = 0; i < this.attendanceReports.length; i++) {
       const attendanceReport = this.attendanceReports[i];
