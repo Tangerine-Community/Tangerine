@@ -81,16 +81,20 @@ export class BehaviorCheckComponent implements OnInit {
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
+    const randomId = this.getValue('randomId', currentClass)
     const timestamp = Date.now()
-    const curriculumLabel = this.curriculum.label
-    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
+    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+    let curriculumLabel = curriculum?.label
+    if (ignoreCurriculumsForTracking) {
+      curriculumLabel = null
+    }
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);
 
     let currentBehaviorReport, savedBehaviorList = null;
     try {
-      const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate, curriculumLabel)
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate, curriculumLabel, randomId)
       currentBehaviorReport = docArray? docArray[0]?.doc : null
       savedBehaviorList = currentBehaviorReport?.studentBehaviorList
-      
     } catch (e) {
     }
     

@@ -82,12 +82,13 @@ export class AttendanceScoresComponent implements OnInit {
     const students = await this.dashboardService.getMyStudents(currentClassId)
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
+    const randomId = this.getValue('randomId', currentClass)
     const timestamp = Date.now()
     const curriculumLabel = this.curriculum.label
-    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);
     let doc, listFromDoc
     try {
-      const docArray = await this.dashboardService.searchDocs(type, currentClass, null, curriculumLabel)
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, null, curriculumLabel, randomId)
       doc = docArray? docArray[0]?.doc : null
       listFromDoc = doc?.scoreList
     } catch (e) {
@@ -98,7 +99,7 @@ export class AttendanceScoresComponent implements OnInit {
       this.scoreRegister = {
         _id: id,
         timestamp: timestamp,
-        classId: currentClass.id,
+        classId: currentClassId,
         grade: grade,
         schoolName: schoolName,
         schoolYear: schoolYear,

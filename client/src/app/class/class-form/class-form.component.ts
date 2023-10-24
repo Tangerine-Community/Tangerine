@@ -127,6 +127,9 @@ export class ClassFormComponent implements OnInit {
             // This can happen when a user views a form but does not enter anything.
           }
         }
+        if (state.form.id === 'class-registration') {
+          
+        }
         if (state.form.id !== 'student-registration' && state.form.id !== 'class-registration') {
           const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
           const srValues = this.classUtils.getInputValues(studentRegistrationDoc);
@@ -151,7 +154,13 @@ export class ClassFormComponent implements OnInit {
             // const reportDate = DateTime.local().toISODate()
             // const formInfo = await this.tangyFormsInfoService.getFormInfo(this.curriculum)
             // const curriculumLabel = formInfo.title
-            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, this.curriculumLabel)
+            const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+            let curriculumLabel = this.curriculumLabel
+            if (ignoreCurriculumsForTracking) {
+              curriculumLabel = null
+            }
+            const randomId = this.dashboardService.getValue('randomId', currentClass)
+            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, curriculumLabel, randomId)
             currentBehaviorReport = docArray? docArray[0]?.doc : null
             // savedBehaviorList = currentBehaviorReport?.studentBehaviorList
             const currentStudent = currentBehaviorReport.studentBehaviorList.find((thisStudent) => {

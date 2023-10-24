@@ -83,14 +83,19 @@ export class AttendanceCheckComponent implements OnInit {
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
+    const randomId = this.getValue('randomId', currentClass)
+    const ignoreCurriculumsForTracking = this.getValue('ignoreCurriculumsForTracking', currentClass)
     const timestamp = Date.now()
-    const curriculumLabel = this.curriculum.label
-    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type);
+    let curriculumLabel = curriculum.label
+    if (ignoreCurriculumsForTracking) {
+      curriculumLabel = null
+    }
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);
 
     let currentAttendanceReport, savedAttendanceList
     try {
       // currentAttendanceReport = await this.dashboardService.getDoc(id)
-      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate, curriculumLabel)
+      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate, curriculumLabel, randomId)
       currentAttendanceReport = docArray? docArray[0]?.doc : null
       savedAttendanceList = currentAttendanceReport?.attendanceList
     } catch (e) {
