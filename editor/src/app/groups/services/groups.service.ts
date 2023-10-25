@@ -7,12 +7,16 @@ import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import { v4 as UUID } from 'uuid';
 
-export interface LocationList {
+export class LocationList {
   id:string
   name:string
   locationsLevels:Array<any>
   locations:Object
   metadata:Object
+
+  constructor(data) {
+    Object.assign(this, data)
+  }
 }
 
 @Injectable()
