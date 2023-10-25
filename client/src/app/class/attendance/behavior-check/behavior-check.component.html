@@ -8,7 +8,7 @@
       </tr>
       <tr *ngFor="let student of studentBehaviorList">
         <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
-        <td class="checkbox-response" *ngIf="student['behavior'] ; else elseBlock ">
+        <td class="checkbox-response" *ngIf="student['behavior'] !==null ; else elseBlock ">
           <input type="checkbox"
                  (change)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null"
                  [checked]="true"
