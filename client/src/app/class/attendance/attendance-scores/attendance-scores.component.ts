@@ -82,7 +82,7 @@ export class AttendanceScoresComponent implements OnInit {
     const students = await this.dashboardService.getMyStudents(currentClassId)
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
-    const randomId = this.getValue('randomId', currentClass)
+    const randomId = currentClass.metadata?.randomId
     const timestamp = Date.now()
     const curriculumLabel = this.curriculum.label
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);

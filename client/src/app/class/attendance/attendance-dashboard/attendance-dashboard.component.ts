@@ -27,6 +27,7 @@ export class AttendanceDashboardComponent implements OnInit {
   curriculum: any;
   units: string[] = []
   ignoreCurriculumsForTracking: boolean = false
+  enableContactChoosing: boolean = false
   
   constructor(
     private dashboardService: DashboardService,
@@ -109,7 +110,7 @@ export class AttendanceDashboardComponent implements OnInit {
       this.router.navigate(['class-form'], { queryParams: {curriculum:'student-registration',classId:currentClass?._id} });
       return
     }
-    const randomId = this.dashboardService.getValue('randomId', currentClass)
+    const randomId = currentClass.metadata?.randomId
     // const scoreReports = await this.dashboardService.getScoreDocs(classId)
     const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
     const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
@@ -232,8 +233,11 @@ export class AttendanceDashboardComponent implements OnInit {
           console.log("Sharing failed with message: " + msg);
           alert( _TRANSLATE('Sharing failed: WhatsApp may not be installed. The following apps are available for sharing: ') + msg);
         };
-        // this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
-        this.window.plugins.socialsharing.shareViaWhatsAppToPhone(phone, message, null /* img */, null /* url */, onSuccess, onError)
+        if (this.enableContactChoosing) {
+          this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+        } else {
+          this.window.plugins.socialsharing.shareViaWhatsAppToPhone(phone, message, null /* img */, null /* url */, onSuccess, onError)
+        }
       }
     } else {
       alert(_TRANSLATE('This feature is only available on a mobile device.'))
@@ -251,5 +255,9 @@ export class AttendanceDashboardComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
+
+  setEnableContactChoosing(checked: boolean) {
+    this.enableContactChoosing = checked
+  }
 
 }
