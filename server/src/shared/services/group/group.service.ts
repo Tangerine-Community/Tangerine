@@ -289,6 +289,8 @@ export class GroupService {
     // location-list.json
     //
     await fs.writeFile(`/tangerine/groups/${groupId}/client/location-list.json`, JSON.stringify({
+      "id": "location-list",
+      "name": "Default Location List",
       "locationsLevels": [],
       "locations": {},
       "metadata": {}
