@@ -40,19 +40,22 @@ export class GroupLocationListNewComponent implements OnInit {
 
   async onSubmit() {
     if (!this.locationListTitle) {
-      alert(_TRANSLATE('Please provide a title and id for this location list.'))
+      alert(_TRANSLATE('Please provide a title for this location list.'))
       return
     }
     
-    const locationList = {
-      id: this.generatedLocationId,
-      name: this.locationListTitle,
-      locationsLevels: [],
-      locations: {}
-    }
+    const locationList = new LocationList(
+      {
+        id: this.generatedLocationId,
+        name: this.locationListTitle,
+        locationsLevels: [],
+        locations: {},
+        metadata: {}
+      }
+    )
     try { 
-      this.groupsService.createLocationList(this.groupId, locationList)
-      window.location.hash = `#/groups/${this.groupId}/configure/location-lists/${this.generatedLocationId}`
+      await this.groupsService.createLocationList(this.groupId, locationList)
+      this.router.navigate(['groups', this.groupId, 'configure', 'location-lists', this.generatedLocationId])
     } catch (err) {
       alert("Failed to create new location list.")
     }

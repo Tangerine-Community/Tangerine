@@ -44,8 +44,7 @@ export class GroupLocationListsComponent implements OnInit {
       this.locationListTableData = data.map(location => { return {
         "id": location.id,
         "Name": location.name,
-        "Levels": location.locationsLevels,
-        "Default": location.path == 'location-list.json' ? "True": ""
+        "Levels": location.locationsLevels
       }})
 
       this.locationListsLength = data.length;
@@ -73,12 +72,7 @@ export class GroupLocationListsComponent implements OnInit {
       return;
     }
 
-    const locationList:LocationList = {
-      id: locationId,
-      name: locationName,
-      locationsLevels: [],
-      locations: {}
-    }
+    const locationList = new LocationList({id: locationId}) 
 
     const confirmation = confirm(_TRANSLATE(`Are you sure you want to delete the location list: ${locationName}?`))
     if (confirmation) {
