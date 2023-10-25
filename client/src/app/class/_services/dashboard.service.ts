@@ -771,7 +771,7 @@ export class DashboardService {
    * @param randomId - generated on the client when a class is created by the class-registration form.
    */
   generateSearchableId(currentClass, curriculumLabel: string, type: string, randomId: string) {
-    let id;
+    let id: string;
     const username = this.userService.getCurrentUser()
     const reportDate = DateTime.local().toISODate()
     const reportTime = DateTime.local().toISOTime()

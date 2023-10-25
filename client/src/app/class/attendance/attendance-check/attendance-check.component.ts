@@ -38,6 +38,7 @@ export class AttendanceCheckComponent implements OnInit {
   selectedClass: any
   behaviorForms: Promise<FormMetadata[]>;
   curriculum:any
+  ignoreCurriculumsForTracking: boolean = false
   
   constructor(
     private dashboardService: DashboardService,
@@ -62,6 +63,7 @@ export class AttendanceCheckComponent implements OnInit {
 
     const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
+    this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
     
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
@@ -83,7 +85,7 @@ export class AttendanceCheckComponent implements OnInit {
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
-    const randomId = this.getValue('randomId', currentClass)
+    const randomId = currentClass.metadata?.randomId
     const ignoreCurriculumsForTracking = this.getValue('ignoreCurriculumsForTracking', currentClass)
     const timestamp = Date.now()
     let curriculumLabel = curriculum.label

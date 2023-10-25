@@ -300,3 +300,7 @@ td.centered {
 .left-padding {
   padding-left: 5px;
 }
+
+.mat-checkbox-layout {
+  white-space: normal !important;
+}

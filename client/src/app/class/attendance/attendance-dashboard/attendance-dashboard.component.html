@@ -15,7 +15,12 @@
   <div>
     <table class="dashboard-table">
       <tr>
-        <th class="student-name-column" colspan="2">{{'Stud.'|translate}}</th>
+        <th class="student-name-column">{{'Stud.'|translate}}</th>
+        <th class="student-name-column">
+            <mat-checkbox (change)="setEnableContactChoosing($event.checked)">
+                {{'Open Contacts'|translate}}
+            </mat-checkbox>
+        </th>
         <th colspan="2">{{'Attend.'|translate}}</th>
         <th colspan="2">{{'Behav.'|translate}}</th>
         <th>{{'Score.'|translate}}</th>

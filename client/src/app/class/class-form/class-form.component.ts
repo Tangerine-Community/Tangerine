@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClassUtils} from "../class-utils";
 import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
@@ -10,7 +10,7 @@ import {VariableService} from "../../shared/_services/variable.service";
 import {_TRANSLATE} from "../../shared/translation-marker";
 import {ClassFormsPlayerComponent} from "../class-forms-player.component";
 import {AppConfigService} from "../../shared/_services/app-config.service";
-import {DateTime} from "luxon";
+
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -41,7 +41,10 @@ export class ClassFormComponent implements OnInit {
   reportDate: string;
   throttledSaveLoaded;
   throttledSaveFiring;
-
+  
+  hasEventFormRedirect = false
+  eventFormRedirectUrl = ''
+  eventFormRedirectBackButtonText = ''
   constructor(
     private route: ActivatedRoute,
     private hostElementRef: ElementRef,
@@ -57,6 +60,10 @@ export class ClassFormComponent implements OnInit {
     await this.classFormService.initialize();
     this.classUtils = new ClassUtils();
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
+    
+    this.hasEventFormRedirect = window['eventFormRedirect'] ? true : false
+    this.eventFormRedirectUrl = window['eventFormRedirect']
+    
     this.route.queryParams.subscribe(async params => {
       this.responseId = params['responseId'];
       this.formId = params['formId']; // corresponds to the form_item.id
@@ -128,7 +135,12 @@ export class ClassFormComponent implements OnInit {
           }
         }
         if (state.form.id === 'class-registration') {
-          
+          if (typeof state.metadata?.randomId === 'undefined') {
+            if (typeof state.metadata === 'undefined') {
+              state.metadata = {};
+            }
+            state.metadata['randomId'] = this.classUtils.makeId(6);
+          }
         }
         if (state.form.id !== 'student-registration' && state.form.id !== 'class-registration') {
           const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
@@ -136,7 +148,7 @@ export class ClassFormComponent implements OnInit {
           srValues['id'] = this.studentId;
           state.metadata = {'studentRegistrationDoc': srValues};
         }
-        await this.saveResponse(state)
+        await this.throttledSaveResponse(state)
         // Reset vars and set to this new class-registration
         if (state.form.id === 'class-registration' && !this.formResponse) {
           await this.dashboardService.setCurrentClass();
@@ -159,7 +171,7 @@ export class ClassFormComponent implements OnInit {
             if (ignoreCurriculumsForTracking) {
               curriculumLabel = null
             }
-            const randomId = this.dashboardService.getValue('randomId', currentClass)
+            const randomId = currentClass.metadata?.randomId
             const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, curriculumLabel, randomId)
             currentBehaviorReport = docArray? docArray[0]?.doc : null
             // savedBehaviorList = currentBehaviorReport?.studentBehaviorList
@@ -180,12 +192,35 @@ export class ClassFormComponent implements OnInit {
         }
         const appConfig = await this.appConfigService.getAppConfig()
         const url = appConfig.homeUrl
-        this.router.navigate([url]);
+        
+        if (window['eventFormRedirect']) {
+          // await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+          this.router.navigateByUrl(window['eventFormRedirect'])
+          window['eventFormRedirect'] = ''
+        } else {
+          this.router.navigate([url]);
+        }
       })
     })
   }
-
-
+  
+  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
+  // Everything else in between we can ignore.
+  async throttledSaveResponse(response) {
+    // If already loaded, return.
+    if (this.throttledSaveLoaded) return
+    // Throttle this fire by waiting until last fire is done.
+    if (this.throttledSaveFiring) {
+      this.throttledSaveLoaded = true
+      while (this.throttledSaveFiring) await sleep(200)
+      this.throttledSaveLoaded = false
+    }
+    // Fire it.
+    this.throttledSaveFiring = true
+    await this.saveResponse(response)
+    this.throttledSaveFiring = false
+  }
+  
   async saveResponse(state) {
     let stateDoc = {}
     stateDoc = await this.tangyFormService.getResponse(state._id)

@@ -74,7 +74,7 @@ export class AttendanceComponent implements OnInit {
     
     //TODO: placeholder until we find out if we need to run this report per curriculum.
     const curriculumLabel = null
-    const randomId = this.dashboardService.getValue('randomId', currentClass)
+    const randomId = currentClass.metadata?.randomId
     this.scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
       this.scoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
 

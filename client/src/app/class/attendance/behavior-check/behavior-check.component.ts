@@ -81,7 +81,7 @@ export class BehaviorCheckComponent implements OnInit {
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
-    const randomId = this.getValue('randomId', currentClass)
+    const randomId = currentClass.metadata?.randomId
     const timestamp = Date.now()
     const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
     let curriculumLabel = curriculum?.label
@@ -195,12 +195,15 @@ export class BehaviorCheckComponent implements OnInit {
     });
   }
 
-  /** Populate the querystring with the form info. */
+  /** 
+   * This is for new forms without responses.
+   * Populate the querystring with the form info. 
+   **/
   async selectCheckbox(column, formId) {
     // let el = this.selection.select(row);
     // this.selection.toggle(column)
-    const formsArray = Object.values(column.forms);
-    const selectedForm = formsArray.find(response => (response['formId'] === formId));
+    // const formsArray = Object.values(column.forms);
+    // const selectedForm = formsArray.find(response => (response['formId'] === formId));
     const studentId = column.id;
     const classId = column.classId;
     // const selectedFormId = selectedForm['formId'];
@@ -222,9 +225,9 @@ export class BehaviorCheckComponent implements OnInit {
     //   studentResult['forms'][respFormId] = response.doc;
     // }
     
-    if (selectedForm) {
-      responseId = selectedForm['_id']
-    }
+    // if (selectedForm) {
+    //   responseId = selectedForm['_id']
+    // }
     
     this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId,
