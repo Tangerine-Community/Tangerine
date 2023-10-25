@@ -45,6 +45,8 @@ export class ClassFormComponent implements OnInit {
   hasEventFormRedirect = false
   eventFormRedirectUrl = ''
   eventFormRedirectBackButtonText = ''
+  
+  newForm = false;
   constructor(
     private route: ActivatedRoute,
     private hostElementRef: ElementRef,
@@ -73,6 +75,7 @@ export class ClassFormComponent implements OnInit {
       this.studentId = params['studentId'];
       this.viewRecord = params['viewRecord'];
       this.reportDate = params['reportDate'];
+      this.newForm = params['newForm'];
       if (typeof this.formId === 'undefined') {
         // this is student reg or class reg.
         this.formId = this.curriculum;
@@ -80,13 +83,17 @@ export class ClassFormComponent implements OnInit {
       const formHtml = await this.tangyFormService.getFormMarkup(this.curriculum)
       if (typeof this.studentId !== 'undefined') {
         if (typeof this.responseId === 'undefined') {
-          // This is either a new subtest or from a stale dashboard, so check using the curriculum and student id
-          const responses = await this.classFormService.getResponsesByStudentId(this.studentId);
-          for (const response of responses as any[]) {
-            const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
-            const respCurrId = response.doc.form.id;
-            if (respClassId === this.classId && respCurrId === this.curriculum) {
-              this.formResponse = response.doc;
+          // work-around for attendance records, which differ from usual class records.
+          // Only the selectCheckbox function in class-forms-player.component.ts sets this param.
+          if (!this.newForm) {
+            // This is either a new subtest or from a stale dashboard, so check using the curriculum and student id
+            const responses = await this.classFormService.getResponsesByStudentId(this.studentId);
+            for (const response of responses as any[]) {
+              const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
+              const respCurrId = response.doc.form.id;
+              if (respClassId === this.classId && respCurrId === this.curriculum) {
+                this.formResponse = response.doc;
+              }
             }
           }
         } else {

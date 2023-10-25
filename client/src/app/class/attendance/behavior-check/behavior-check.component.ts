@@ -238,7 +238,9 @@ export class BehaviorCheckComponent implements OnInit {
           classId: classId,
           src: src,
           title: title,
-          responseId: responseId }
+          responseId: responseId,
+          newForm: true
+        }
     });
   }
 
