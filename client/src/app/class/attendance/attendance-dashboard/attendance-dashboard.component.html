@@ -11,23 +11,17 @@
 </mat-toolbar>
 <mat-card *ngIf="selectedClass">
 <!--  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : <ng-container *ngIf="!ignoreCurriculumsForTracking">{{curriculum?.label}} : </ng-container>{{reportDate}}</div>-->
-  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}} : {{reportDate}}</div>
+  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}} : {{reportLocaltime}}</div>
   <div>
     <table class="dashboard-table">
       <tr>
-        <th class="student-name-column">{{'Stud.'|translate}}</th>
-        <th class="student-name-column">
-            <mat-checkbox (change)="setEnableContactChoosing($event.checked)">
-                {{'Open Contacts'|translate}}
-            </mat-checkbox>
-        </th>
+        <th colspan="2" class="student-name-column">{{'Stud.'|translate}}</th>
         <th colspan="2">{{'Attend.'|translate}}</th>
         <th colspan="2">{{'Behav.'|translate}}</th>
         <th>{{'Score.'|translate}}</th>
       </tr>
       <tr *ngFor="let student of attendanceReport?.attendanceList">
-        <!--          <tr *ngFor="let student of attendanceReport?.attendanceList">-->
-        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
+        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
         <td class="sms-button-column">
           <button mat-mini-fab color="accent" aria-label="SMS button with an sms icon" (click)="sendText(student)"
                   [ngStyle]="{transform: 'scale(0.6)'}">

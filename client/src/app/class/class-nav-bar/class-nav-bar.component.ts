@@ -129,6 +129,10 @@ export class ClassNavBarComponent implements OnInit {
         // enabledClass.name = grade
         // const curriculum = this.getCurriculumObject('curriculum', enabledClass.doc)
         // this.curriculums[enabledClass.id] = curriculum
+        const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', enabledClass.doc)
+        if (ignoreCurriculumsForTracking) {
+          enabledClass['ignoreCurriculumsForTracking'] = true
+        }
         await this.dashboardService.populateCurrentCurriculums(enabledClass.doc);
       }
     })
