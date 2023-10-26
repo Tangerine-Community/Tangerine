@@ -790,13 +790,15 @@ export class DashboardService {
    * populate students array if you need to add phone and other properties from studentRegistration.
    * @param attendanceList
    * @param currentAttendanceReport
-   * @param scoreReport
+   * @param scoreReport - could be a single object or an array if ignoreCurriculumsForTracking
    * @param allStudentScores
    * @param students
    * @param scoreUnits - from app-config.json - appConfig.teachProperties?.units
+   * @param currentBehaviorReport
+   * @param ignoreCurriculumsForTracking - for classes that teach the same students multiple subjects.
    * @private
    */
-  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits, currentBehaviorReport) {
+  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits, currentBehaviorReport, ignoreCurriculumsForTracking: boolean = false) {
     // return async (attendanceReport) => {
     //   const attendanceList = attendanceReport.doc.attendanceList
       for (let i = 0; i < attendanceList.length; i++) {
@@ -844,22 +846,13 @@ export class DashboardService {
           // await this.addBehaviorRecords(currentStudent, student.id)
           
           if (!currentStudent.score) {
-            const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
-              return thisStudent.id === student.id
-            })
-            if (currentStudentScore) {
-              const len = scoreUnits.length
-              let total = 0
-              let completedUnits = 0
-              scoreUnits.forEach((scoreUnit, index) => {
-                const currentScore = currentStudentScore['score_'+index];
-                if (currentScore) {
-                  total = total + currentScore
-                  completedUnits++
-                }
-              })
-              const averageScore = total/completedUnits
-              currentStudent.score = averageScore
+            if (ignoreCurriculumsForTracking) {
+              for (let j = 0; j < scoreReport.length; j++) {
+                const report = scoreReport[j].doc
+                this.processScoreReport(report, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent);
+              }
+            } else {
+              this.processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent);
             }
           }
           
@@ -881,6 +874,36 @@ export class DashboardService {
     // }
   }
 
+  private processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking: boolean, currentStudent) {
+    const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
+      return thisStudent.id === student.id
+    })
+    if (currentStudentScore) {
+      const len = scoreUnits.length
+      let total = 0
+      let completedUnits = 0
+      scoreUnits.forEach((scoreUnit, index) => {
+        const currentScore = currentStudentScore['score_' + index];
+        if (currentScore) {
+          total = total + currentScore
+          completedUnits++
+        }
+      })
+      const averageScore = total / completedUnits
+      if (!isNaN(averageScore)) {
+        if (ignoreCurriculumsForTracking) {
+          if (!currentStudent.scores) {
+            currentStudent.scores = {}
+          }
+          const curriculumId = scoreReport._id.split("-")[4]
+          currentStudent.scores[curriculumId] = averageScore
+        } else {
+          currentStudent.score = averageScore
+        }
+      }
+    }
+  }
+
   async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores, scoreUnits) {
     // do a deep clone
     const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
@@ -889,7 +912,7 @@ export class DashboardService {
     for (let i = 0; i < recentVisitReports.length; i++) {
         const attendanceReport = recentVisitReports[i];
         const attendanceList = attendanceReport.doc.attendanceList
-        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits, currentBehaviorReport)
+        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits, currentBehaviorReport, null)
 
     }
     // this.recentVisitsReport = currentAttendanceReport
@@ -993,6 +1016,7 @@ export class DashboardService {
           const formId = curr.name;
           const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
           curr.label = formInfo.title
+          curr.labelSafe = sanitize(formInfo.title.replace(/\s+/g, '-'))
           return curr
         }));
       } else {

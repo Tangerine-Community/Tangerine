@@ -248,7 +248,6 @@ mat-card-title {
 }
 
 .number-cell {
-  width: 20px;
   padding-right: 1em;
   padding-left: 1em;
 }
@@ -305,4 +304,8 @@ td.centered {
 
 .mat-checkbox-layout {
   white-space: normal !important;
+}
+
+.progress-bar {
+  min-width: 20px;
 }

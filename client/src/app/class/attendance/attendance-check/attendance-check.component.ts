@@ -39,6 +39,7 @@ export class AttendanceCheckComponent implements OnInit {
   behaviorForms: Promise<FormMetadata[]>;
   curriculum:any
   ignoreCurriculumsForTracking: boolean = false
+  reportLocaltime: string;
   
   constructor(
     private dashboardService: DashboardService,
@@ -101,6 +102,14 @@ export class AttendanceCheckComponent implements OnInit {
       currentAttendanceReport = docArray? docArray[0]?.doc : null
       savedAttendanceList = currentAttendanceReport?.attendanceList
     } catch (e) {
+    }
+
+    if (currentAttendanceReport?.timestamp) {
+      const timestampFormatted = DateTime.fromMillis(currentAttendanceReport?.timestamp)
+      // DATE_MED
+      this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
+    } else {
+      this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
     }
     
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList)
