@@ -38,7 +38,7 @@ export class SettingsComponent implements OnInit, AfterContentInit {
 
   async ngOnInit(): Promise<void> {
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.homeUrl === 'dashboard') {
+    if (appConfig.homeUrl === 'dashboard' || appConfig.homeUrl === 'attendance-dashboard') {
       this.showClassConfig = true;
       await this.classFormService.initialize();
       this.classes = await this.dashboardService.getMyClasses();
