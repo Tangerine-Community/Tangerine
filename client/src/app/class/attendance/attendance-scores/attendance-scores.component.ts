@@ -201,4 +201,6 @@ export class AttendanceScoresComponent implements OnInit {
         { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
   }
+
+  getClassTitle = this.dashboardService.getClassTitle
 }

@@ -28,6 +28,7 @@ export class AttendanceDashboardComponent implements OnInit {
   units: string[] = []
   ignoreCurriculumsForTracking: boolean = false
   enableContactChoosing: boolean = false
+  reportLocaltime: string;
   
   constructor(
     private dashboardService: DashboardService,
@@ -41,6 +42,7 @@ export class AttendanceDashboardComponent implements OnInit {
     let classIndex
     this.getValue = this.dashboardService.getValue
     this.reportDate = DateTime.local().toISODate()
+    this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
     const enabledClasses = await this.dashboardService.getEnabledClasses();
     const appConfig = await this.appConfigService.getAppConfig()
     this.units = appConfig.teachProperties?.units
@@ -138,10 +140,12 @@ export class AttendanceDashboardComponent implements OnInit {
     studentsWithoutAttendance.forEach((student) => {
       const studentResult = {}
       const student_name = this.getValue('student_name', student.doc, false)
+      const student_surname = this.getValue('student_surname', student.doc, false)
       const phone = this.getValue('phone', student.doc, false);
       const classId = this.getValue('classId', student.doc, false)
       studentResult['id'] = student.id
       studentResult['name'] = student_name
+      studentResult['surname'] = student_surname
       studentResult['phone'] = phone
       studentResult['classId'] = classId
       studentResult['forms'] = {}

@@ -1027,12 +1027,14 @@ export class DashboardService {
         list.push(studentResult)
       } else {
         const student_name = this.getValue('student_name', student.doc)
+        const student_surname = this.getValue('student_surname', student.doc)
         const phone = this.getValue('phone', student.doc);
         const classId = this.getValue('classId', student.doc)
         
         studentResult = {}
         studentResult['id'] = studentId
         studentResult['name'] = student_name
+        studentResult['surname'] = student_surname
         studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}
@@ -1079,12 +1081,14 @@ export class DashboardService {
         list.push(studentResult)
       } else {
         const student_name = this.getValue('student_name', student.doc)
+        const student_surname = this.getValue('student_surname', student.doc)
         const phone = this.getValue('phone', student.doc);
         const classId = this.getValue('classId', student.doc)
 
         studentResult = {}
         studentResult['id'] = studentId
         studentResult['name'] = student_name
+        studentResult['surname'] = student_surname
         studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}

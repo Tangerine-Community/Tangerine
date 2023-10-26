@@ -80,18 +80,49 @@ td.progress-bar {
   padding-left: 1em;
 }
 
-#most-recent-class-table {
-  width:600px;
-}
+/*#most-recent-class-table {*/
+/*  width:600px;*/
+/*}*/
 
-#past-30-days-table {
-  width:600px;
-}
+/*#past-30-days-table {*/
+/*  width:600px;*/
+/*}*/
 
-#last-n-report-table {
-  width:600px;
-}
+/*#last-n-report-table {*/
+/*  width:600px;*/
+/*}*/
 
 .number-cell {
   width: 20px;
+}
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
+.selectedClassLabel p {
+  text-align: center;
+}
+
+.dashboard-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.dashboard-table th {
+  border: 1px solid #ddd;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #f29d38;
+  color: white;
+}
+
+.dashboard-table .checkbox-response {
+  text-align: center;
 }

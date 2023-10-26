@@ -1,5 +1,5 @@
 <mat-card>
-  <div class="selectedClassLabel"><p>{{curriculum?.label}} {{'Behavior'|translate}} <ng-template [ngIf]="reportLocaltime">: {{reportLocaltime}}</ng-template></p></div>
+  <div class="selectedClassLabel">{{'Behavior'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}} : {{reportLocaltime}}</div>
   <div>
     <table class="dashboard-table">
       <tr>
@@ -7,7 +7,7 @@
         <th>{{'Behavior'|translate}}</th>
       </tr>
       <tr *ngFor="let student of studentBehaviorList">
-        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
+        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
         <td class="checkbox-response" *ngIf="student['behavior'] !==null ; else elseBlock ">
           <input type="checkbox"
                  (change)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null"

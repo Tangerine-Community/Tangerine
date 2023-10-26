@@ -7,7 +7,7 @@
         <th>{{'Attendance'|translate}}</th>
       </tr>
       <tr *ngFor="let element of attendanceList">
-        <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
+        <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} {{element["surname"]}} </td>
         <td style="padding-right: 1em;">
           <mat-chip-list class="absent">
             <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>

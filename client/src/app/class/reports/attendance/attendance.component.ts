@@ -8,6 +8,8 @@ import {ClassFormService} from "../../_services/class-form.service";
 import {TangyFormsInfoService} from "../../../tangy-forms/tangy-forms-info-service";
 import {DashboardService} from "../../_services/dashboard.service";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
+import {VariableService} from "../../../shared/_services/variable.service";
+import {DateTime} from "luxon";
 
 @Component({
   selector: 'app-attendance',
@@ -18,12 +20,11 @@ export class AttendanceComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
     private userService: UserService,
-    private classFormService: ClassFormService,
     private tangyFormsInfoService: TangyFormsInfoService,
     private dashboardService: DashboardService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private variableService: VariableService
   ) {
   }
 
@@ -44,7 +45,11 @@ export class AttendanceComponent implements OnInit {
   // groupingsByCurriculum: any = {}
   allStudentScores: any = {}
   units: string[] = []
-
+  selectedClass: any
+  getValue: (variableName: any, response: any) => any;
+  curriculum:any
+  reportLocaltime: string;
+  
   async ngOnInit(): Promise<void> {
     const classId = this.route.snapshot.paramMap.get('classId')
     this.classId = classId
@@ -55,7 +60,26 @@ export class AttendanceComponent implements OnInit {
     this.units = appConfig.teachProperties?.units
     
     this.curriculi = [];
-    const currentClass = await this.classFormService.getResponse(classId);
+    // const currentClass = await this.classFormService.getResponse(classId);
+
+    let classIndex
+    this.getValue = this.dashboardService.getValue
+    const enabledClasses = await this.dashboardService.getEnabledClasses();
+
+    let classClassIndex = await this.variableService.get('class-classIndex')
+    if (classClassIndex !== null) {
+      classIndex = parseInt(classClassIndex)
+      if (Number.isNaN(classIndex)) {
+        classIndex = 0
+      }
+    }
+    const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
+    this.selectedClass = currentClass;
+
+    const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+    const curriculumId = await this.variableService.get('class-curriculumId');
+    this.curriculum = currArray.find(x => x.name === curriculumId);
+    
     const classRegistration = this.classUtils.getInputValues(currentClass);
     const allCurriculums = classRegistration.curriculum;
     for (const curriculum of allCurriculums as any[]) {
@@ -80,6 +104,14 @@ export class AttendanceComponent implements OnInit {
 
     this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
       const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
+
+    if (currentAttendanceReport?.timestamp) {
+      const timestampFormatted = DateTime.fromMillis(currentAttendanceReport?.timestamp)
+      // DATE_MED
+      this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
+    } else {
+      this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+    }
 
     const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
       const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
@@ -184,4 +216,7 @@ export class AttendanceComponent implements OnInit {
     })
     console.log("done")
   }
+
+  getClassTitle = this.dashboardService.getClassTitle
+  
 }
