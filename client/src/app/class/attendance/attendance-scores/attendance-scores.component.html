@@ -1,5 +1,5 @@
 <mat-card>
-  <div class="selectedClassLabel"><p>{{curriculum?.label}} {{'Student Scores'|translate}}</p></div>
+  <div class="selectedClassLabel">{{'Student Scores'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}}</div>
   <div>
     <mat-tab-group>
       <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">
@@ -10,7 +10,7 @@
             <th>{{'Score'|translate}}</th>
           </tr>
           <tr *ngFor="let student of scoreList">
-            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
+            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
 <!--            <td style="text-align: center">{{student['score_'+unit]}}</td>-->
             <td style="text-align: center">
               <mat-form-field class="example-full-width">

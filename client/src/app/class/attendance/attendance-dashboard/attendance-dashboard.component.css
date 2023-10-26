@@ -249,6 +249,8 @@ mat-card-title {
 
 .number-cell {
   width: 20px;
+  padding-right: 1em;
+  padding-left: 1em;
 }
 
 /*.student-name-column {*/

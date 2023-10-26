@@ -18,3 +18,16 @@ input[type=number] {
 .mat-form-field-appearance-fill .mat-form-field-flex {
   background-color: rgba(0,0,0,.04);
 }
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
+.selectedClassLabel p {
+  text-align: center;
+}
