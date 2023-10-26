@@ -29,6 +29,7 @@ export class AttendanceDashboardComponent implements OnInit {
   ignoreCurriculumsForTracking: boolean = false
   enableContactChoosing: boolean = false
   reportLocaltime: string;
+  currArray: any[]
   
   constructor(
     private dashboardService: DashboardService,
@@ -70,6 +71,7 @@ export class AttendanceDashboardComponent implements OnInit {
         curriculumId = __vars.curriculumId;
         this.selectedClass = currentClass;
         const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+        this.currArray = currArray
         // When app is initialized, there is no curriculumId, so we need to set it to the first one.
         if (!curriculumId && currArray?.length > 0) {
           curriculumId = currArray[0].name
@@ -104,23 +106,23 @@ export class AttendanceDashboardComponent implements OnInit {
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
-    // const curriculumLabel = curriculum?.label
-    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
-    let curriculumLabel = curriculum?.label
     if (students.length === 0) {
       alert(_TRANSLATE('You must register students before you can view the attendance dashboard.'))
       this.router.navigate(['class-form'], { queryParams: {curriculum:'student-registration',classId:currentClass?._id} });
       return
     }
-    const randomId = currentClass.metadata?.randomId
-    // const scoreReports = await this.dashboardService.getScoreDocs(classId)
-    const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
-    const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
-
+    
+    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+    let curriculumLabel = curriculum?.label
     // Set the curriculumLabel to null if ignoreCurriculumsForTracking is true.
     if (ignoreCurriculumsForTracking) {
       curriculumLabel = null
     }
+    
+    const randomId = currentClass.metadata?.randomId
+    // const scoreReports = await this.dashboardService.getScoreDocs(classId)
+    const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
+    const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
 
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
     const currentAttendance = attendanceReports[attendanceReports.length - 1]
@@ -169,11 +171,15 @@ export class AttendanceDashboardComponent implements OnInit {
     //     score: grouping.result.scorePercentageCorrect
     //   }
     // })
+    let scoreReport = currentScoreReport
+    if (ignoreCurriculumsForTracking) {
+      scoreReport = scoreReports
+    }
     
     for (let i = 0; i < attendanceReports.length; i++) {
       const attendanceReport = attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, currentScoreReport, allStudentScores, students, this.units, currentBehaviorReport)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students, this.units, currentBehaviorReport, ignoreCurriculumsForTracking)
     }
     this.attendanceReport = currentAttendanceReport
     

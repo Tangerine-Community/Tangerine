@@ -12,3 +12,11 @@ mat-chip-list.absent {
 .left-padding {
   padding-left: 5px;
 }
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
