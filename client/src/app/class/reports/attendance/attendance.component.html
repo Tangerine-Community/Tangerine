@@ -4,96 +4,6 @@
     <div>
       <h2>{{'Most Recent Class'|translate}}</h2>
       <p>{{'Date'|translate}}: {{reportLocaltime}}</p>
-<!--      <table id="most-recent-class-table">-->
-<!--&lt;!&ndash;        <tr>&ndash;&gt;-->
-<!--&lt;!&ndash;          <td colspan="1">&nbsp;</td>&ndash;&gt;-->
-<!--&lt;!&ndash;          <td colspan="2">{{'Most Recent Class'|translate}}: {{attendanceReport?._id.split('-')[2]}}&ndash;&gt;-->
-<!--&lt;!&ndash;            -{{attendanceReport?._id.split('-')[3]}}-{{attendanceReport?._id.split('-')[4]}}</td>&ndash;&gt;-->
-<!--&lt;!&ndash;          <td>&nbsp;</td>&ndash;&gt;-->
-<!--&lt;!&ndash;        </tr>&ndash;&gt;-->
-<!--        <tr>-->
-<!--          <th class="student-name-column">{{'Student'|translate}}</th>-->
-<!--          <th class="attendance-column">{{'Attendance'|translate}}</th>-->
-<!--          <th class="behavior-column">{{'Behavior'|translate}}</th>-->
-<!--          <th class="score-column" colspan="2">{{scoreReport?.testName}}</th>-->
-<!--          <th *ngFor="let form of curriculi" colspan="2" class="score-column">-->
-<!--            {{form.label}}-->
-<!--          </th>-->
-<!--        </tr>-->
-<!--        <tr *ngFor="let student of attendanceReport?.attendanceList">-->
-<!--          <td class="student-name">{{student.name}} {{student.student_surname}}</td>-->
-<!--&lt;!&ndash;          <td [ngClass]="{'red': student.absent, 'green': !student.absent}"></td>&ndash;&gt;-->
-<!--          <td class="centered">-->
-<!--            <ng-container *ngIf="student.absent; then absent; else present"></ng-container>-->
-<!--            <ng-template #absent>-->
-<!--              <mat-chip color="primary" selected class="red">-->
-<!--                <mat-icon>remove</mat-icon>-->
-<!--              </mat-chip>-->
-<!--            </ng-template>-->
-<!--            <ng-template #present>-->
-<!--              <mat-chip color="primary" class="green">-->
-<!--                <mat-icon>check</mat-icon>-->
-<!--              </mat-chip>-->
-<!--            </ng-template>-->
-<!--          </td>-->
-<!--&lt;!&ndash;          <td&ndash;&gt;-->
-<!--&lt;!&ndash;            [ngClass]="{'red': student.mood === 'sad', 'orange': student.mood === 'neutral', 'green': student.mood === 'happy'}"></td>&ndash;&gt;-->
-<!--          <td [ngSwitch]="student.mood" class="centered">-->
-<!--&lt;!&ndash;            <ng-container [ngSwitch]="student.mood">&ndash;&gt;-->
-<!--&lt;!&ndash;              <div *ngSwitchCase="happy">&ndash;&gt;-->
-<!--                <mat-chip color="primary" class="green" *ngSwitchCase="'happy'">-->
-<!--                  <mat-icon>mood</mat-icon>-->
-<!--                </mat-chip>-->
-<!--&lt;!&ndash;              </div>&ndash;&gt;-->
-<!--&lt;!&ndash;              <div *ngSwitchCase="neutral">&ndash;&gt;-->
-<!--                <mat-chip color="accent" class="orange" *ngSwitchCase="'neutral'">-->
-<!--                  <mat-icon>sentiment_neutral</mat-icon>-->
-<!--                </mat-chip>-->
-<!--&lt;!&ndash;              </div>&ndash;&gt;-->
-<!--&lt;!&ndash;              <div *ngSwitchCase="sad">&ndash;&gt;-->
-<!--                <mat-chip color="accent" class="red" *ngSwitchCase="'sad'">-->
-<!--                  <mat-icon>sentiment_dissatisfied</mat-icon>-->
-<!--                </mat-chip>-->
-<!--            -->
-<!--                <mat-chip color="primary" class="green" disabled *ngSwitchDefault>-->
-<!--                  <mat-icon>mood</mat-icon>-->
-<!--                </mat-chip>-->
-<!--&lt;!&ndash;              </div>&ndash;&gt;-->
-<!--&lt;!&ndash;            </ng-container>&ndash;&gt;-->
-<!--          </td>-->
-<!--          <td class="centered progress-bar">-->
-<!--&lt;!&ndash;          <td [ngClass]="{'red': student.score < 60, 'orange': (student.score >=60 && student.score < 80), 'green': student.score > 79}" class="centered">&ndash;&gt;-->
-<!--            <mat-progress-bar-->
-<!--              *ngIf="student.score"-->
-<!--              value="{{ student.score }}"-->
-<!--              [appProgressBarColor]="(student.score)"-->
-<!--              mode="determinate">-->
-<!--            </mat-progress-bar>-->
-<!--          </td>-->
-<!--          <td class="number-cell centered">-->
-<!--            {{student.score}}%-->
-<!--          </td>-->
-<!--          <td class="centered progress-bar" *ngFor="let score of student.studentScores | keyvalue">-->
-<!--            &lt;!&ndash;            <ng-container *ngFor="let score of student.studentScores | keyvalue">&ndash;&gt;-->
-<!--            &lt;!&ndash;            {{score.key}}:{{score.value}}&ndash;&gt;-->
-<!--            <ng-container *ngFor="let val of score.value">-->
-<!--              <mat-progress-bar-->
-<!--                *ngIf="val.score"-->
-<!--                value="{{ val.score }}"-->
-<!--                [appProgressBarColor]="(val.score)"-->
-<!--                mode="determinate">-->
-<!--              </mat-progress-bar>-->
-<!--            </ng-container>-->
-<!--          </td>-->
-<!--          <td class="number-cell centered" *ngFor="let score of student.studentScores | keyvalue">-->
-<!--            <ng-container *ngFor="let val of score.value">-->
-<!--              {{val.score}}%-->
-<!--            </ng-container>-->
-<!--          </td>-->
-<!--&lt;!&ndash;          <td class="number-cell" *ngIf="student.moodPercentage">{{val.score}}%</td>&ndash;&gt;-->
-<!--&lt;!&ndash;          <td class="number-cell" *ngIf="!student.moodPercentage">{{'N/A'|translate}}</td>&ndash;&gt;-->
-<!--        </tr>-->
-<!--      </table>-->
       <table class="dashboard-table most-recent-class-table">
         <tr>
           <th class="student-name-column">{{'Stud.'|translate}}</th>
@@ -140,6 +50,9 @@
             <!--        <td class="number-cell" *ngIf="student.moodPercentage">{{student.moodPercentage}}%</td>-->
             <!--        <td class="number-cell" *ngIf="!student['behavior']['externalPercentage']">{{'N/A'|translate}}</td>-->
           <td class="number-cell centered" *ngIf="student['score']">{{student['score']}}%</td>
+          <td class="number-cell centered" *ngIf="student['scores']">
+            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>
+          </td>
         </tr>
       </table>
       <p>&nbsp;</p>

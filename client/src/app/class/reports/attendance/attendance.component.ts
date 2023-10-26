@@ -76,6 +76,8 @@ export class AttendanceComponent implements OnInit {
     const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
 
+    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
@@ -115,11 +117,16 @@ export class AttendanceComponent implements OnInit {
 
     const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
       const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+
+    let scoreReport = this.scoreReport
+    if (ignoreCurriculumsForTracking) {
+      scoreReport = this.scoreReports
+    }
     
     for (let i = 0; i < this.attendanceReports.length; i++) {
       const attendanceReport = this.attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, this.scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport, ignoreCurriculumsForTracking)
     }
     
     this.attendanceReport = currentAttendanceReport
