@@ -1,5 +1,18 @@
 <mat-card>
-  <div class="selectedClassLabel">{{'Student Scores'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}}</div>
+<!--  <div class="selectedClassLabel">{{'Student Scores'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}}</div>-->
+  <div class="selectedClassLabel">{{'Student Scores'|translate}}<br/>
+        {{getClassTitle(selectedClass)}} : {{curriculum?.label}}
+    <div *ngIf="ignoreCurriculumsForTracking">
+      <mat-form-field>
+        <mat-label>{{'Change Subject'|translate}}</mat-label>
+        <mat-select [(value)]="curriculumId" placeholder="Select SubTask">
+          <mat-option>{{'None'|translate}}</mat-option>
+          <mat-option *ngFor="let item of currArray;" value="{{item.id}}"
+                      (click)="changeCurriculum(item.name)">{{item.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
   <div>
     <mat-tab-group>
       <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">

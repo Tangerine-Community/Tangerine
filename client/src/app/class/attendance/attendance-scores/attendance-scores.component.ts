@@ -10,7 +10,7 @@ import {AppConfigService} from "../../../shared/_services/app-config.service";
 @Component({
   selector: 'app-attendance-scores',
   templateUrl: './attendance-scores.component.html',
-  styleUrls: ['./attendance-scores.component.css','../../dashboard/dashboard.component.css']
+  styleUrls: ['../../dashboard/dashboard.component.css', './attendance-scores.component.css']
 })
 export class AttendanceScoresComponent implements OnInit {
 
@@ -39,6 +39,9 @@ export class AttendanceScoresComponent implements OnInit {
   selectedClass: any
   curriculum: any
   saveSuccess: boolean;
+  currArray: any;
+  curriculumId:string
+  ignoreCurriculumsForTracking: boolean = false
   
   constructor(
     private dashboardService: DashboardService,
@@ -66,10 +69,13 @@ export class AttendanceScoresComponent implements OnInit {
 
     const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
-    
+
+    this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    const curriculumId = await this.variableService.get('class-curriculumId');
-    this.curriculum = currArray.find(x => x.name === curriculumId);
+    this.curriculumId = await this.variableService.get('class-curriculumId');
+    this.curriculum = currArray.find(x => x.name === this.curriculumId);
+    this.currArray = currArray;
 
     const currentClassId = this.selectedClass._id
     await this.showScoreListing(currentClass, currentClassId)
@@ -203,4 +209,12 @@ export class AttendanceScoresComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
+
+  changeCurriculum = async (curriculumId) => {
+    // this.dashboardService.changeCurriculum(curriculum, this.currArray, this.selectedClass, this.router)
+    this.curriculumId = curriculumId
+    await this.variableService.set('class-curriculumId', curriculumId);
+    this.curriculum = this.currArray.find(x => x.name === this.curriculumId);
+    await this.showScoreListing(this.selectedClass, this.selectedClass._id)
+  }
 }
