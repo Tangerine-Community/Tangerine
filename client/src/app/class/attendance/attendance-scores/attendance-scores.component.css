@@ -31,3 +31,21 @@ input[type=number] {
 .selectedClassLabel p {
   text-align: center;
 }
+
+.controls-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 10px;
+}
+.controls-one {
+  grid-column: 1 / 2;
+  grid-row: 1;
+}
+.controls-two {
+  grid-column: 2 / 2;
+  grid-row: 1;
+}
+
+.controls-two mat-icon {
+  transform: scale(1.5);
+}
