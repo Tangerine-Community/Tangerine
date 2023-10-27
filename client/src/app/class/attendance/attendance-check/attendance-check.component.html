@@ -1,5 +1,5 @@
 <mat-card>
-  <div class="selectedClassLabel">{{'Attendance'|translate}} : {{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+  <div class="selectedClassLabel">{{'Attendance'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
   <div>
     <table class="dashboard-table">
       <tr>

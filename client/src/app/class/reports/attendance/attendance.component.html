@@ -1,5 +1,5 @@
 <!--<mat-card class="tangy-class-card-content-container">-->
-<div class="selectedClassLabel">{{'Report'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}} </div>
+<div class="selectedClassLabel">{{'Report'|translate}}<br/>{{getClassTitle(selectedClass)}}<ng-container *ngIf="!ignoreCurriculumsForTracking"> : {{curriculum?.label}} </ng-container></div>
   <div class="tangy-class-card-content-container">
     <div>
       <h2>{{'Most Recent Class'|translate}}</h2>
