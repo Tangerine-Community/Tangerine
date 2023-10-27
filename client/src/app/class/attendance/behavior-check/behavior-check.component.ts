@@ -38,6 +38,7 @@ export class BehaviorCheckComponent implements OnInit {
   behaviorForms: Promise<FormMetadata[]>;
   curriculum:any
   reportLocaltime: string;
+  ignoreCurriculumsForTracking: boolean = false
   
   constructor(
     private dashboardService: DashboardService,
@@ -61,6 +62,8 @@ export class BehaviorCheckComponent implements OnInit {
     const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
 
+    this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
@@ -83,9 +86,8 @@ export class BehaviorCheckComponent implements OnInit {
     const schoolYear = this.getValue('school_year', currentClass)
     const randomId = currentClass.metadata?.randomId
     const timestamp = Date.now()
-    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
     let curriculumLabel = curriculum?.label
-    if (ignoreCurriculumsForTracking) {
+    if (this.ignoreCurriculumsForTracking) {
       curriculumLabel = null
     }
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);

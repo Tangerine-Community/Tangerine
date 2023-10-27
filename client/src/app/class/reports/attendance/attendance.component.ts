@@ -49,6 +49,8 @@ export class AttendanceComponent implements OnInit {
   getValue: (variableName: any, response: any) => any;
   curriculum:any
   reportLocaltime: string;
+  ignoreCurriculumsForTracking: boolean = false
+  currArray: any[]
   
   async ngOnInit(): Promise<void> {
     const classId = this.route.snapshot.paramMap.get('classId')
@@ -76,9 +78,10 @@ export class AttendanceComponent implements OnInit {
     const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
 
-    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+    this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
 
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+    this.currArray = currArray
     const curriculumId = await this.variableService.get('class-curriculumId');
     this.curriculum = currArray.find(x => x.name === curriculumId);
     
@@ -119,14 +122,14 @@ export class AttendanceComponent implements OnInit {
       const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
 
     let scoreReport = this.scoreReport
-    if (ignoreCurriculumsForTracking) {
+    if (this.ignoreCurriculumsForTracking) {
       scoreReport = this.scoreReports
     }
     
     for (let i = 0; i < this.attendanceReports.length; i++) {
       const attendanceReport = this.attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport, ignoreCurriculumsForTracking)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport, this.ignoreCurriculumsForTracking)
     }
     
     this.attendanceReport = currentAttendanceReport
