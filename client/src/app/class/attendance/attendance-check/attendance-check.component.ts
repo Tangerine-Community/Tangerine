@@ -87,10 +87,9 @@ export class AttendanceCheckComponent implements OnInit {
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
     const randomId = currentClass.metadata?.randomId
-    const ignoreCurriculumsForTracking = this.getValue('ignoreCurriculumsForTracking', currentClass)
     const timestamp = Date.now()
     let curriculumLabel = curriculum.label
-    if (ignoreCurriculumsForTracking) {
+    if (this.ignoreCurriculumsForTracking) {
       curriculumLabel = null
     }
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);

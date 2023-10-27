@@ -47,17 +47,6 @@ export class AttendanceDashboardComponent implements OnInit {
     const enabledClasses = await this.dashboardService.getEnabledClasses();
     const appConfig = await this.appConfigService.getAppConfig()
     this.units = appConfig.teachProperties?.units
-
-    // let classClassIndex = await this.variableService.get('class-classIndex')
-    // if (classClassIndex !== null) {
-    //   classIndex = parseInt(classClassIndex)
-    //   if (Number.isNaN(classIndex)) {
-    //     classIndex = 0
-    //   }
-    // }
-    //
-    // const currentClass = enabledClasses[classIndex]?.doc
-    // this.selectedClass = currentClass;
     
     // new instance - no classes yet.
     if (typeof enabledClasses !== 'undefined' && enabledClasses.length > 0) {
@@ -82,24 +71,6 @@ export class AttendanceDashboardComponent implements OnInit {
           await this.populateSummary(currentClass, this.curriculum)
         }
       })
-      
-      // const __vars = await this.dashboardService.initExposeVariables(classIndex);
-      // // classIndex = __vars.classIndex;
-      // // currentItemId = __vars.currentItemId;
-      // // currentClassId = __vars.currentClassId;
-      // // curriculumId = __vars.curriculumId;
-      // const currentClass = __vars.currentClass;
-      // this.selectedClass = currentClass;
-      //
-      // // const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-      // // const curriculumId = await this.variableService.get('class-curriculumId');
-      // // const curriculum = currArray.find(x => x.name === curriculumId);
-      // //
-      // // const currentClassId = await this.variableService.get('class-currentClassId');
-      // // await this.populateSummary(currentClass, curriculum)
-      // if (currentClass) {
-      //   await this.populateSummary(currentClass, null)
-      // }
     }
   }
 

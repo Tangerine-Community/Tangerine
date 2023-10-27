@@ -22,7 +22,6 @@
           <ng-template #otherScoreHeader>
             <th *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
           </ng-template>
-          
       </tr>
       <tr *ngFor="let student of attendanceReport?.attendanceList">
         <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
@@ -49,7 +48,6 @@
               [appProgressBarColor]="(student['behavior']['internalPercentage'])"
               mode="determinate">
             </mat-progress-bar>
-<!--          </div>-->
         </td>
         <td class="number-cell centered"> 
           <ng-container *ngIf="student['behavior'] && (student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0); else naTemplate">{{student['behavior']['internalPercentage']}}%
@@ -57,10 +55,10 @@
         <ng-template #naTemplate>
           {{'N/A'|translate}}
         </ng-template>
-        <td *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader" class="number-cell centered">
+        <td *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell" class="number-cell centered">
           <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
         </td>
-        <ng-template #otherScoreHeader>
+        <ng-template #otherScoreCell>
           <td class="number-cell centered" *ngFor="let curriculum of currArray">
 <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
             <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
