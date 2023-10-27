@@ -150,9 +150,7 @@ export class AttendanceComponent implements OnInit {
       this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units)
     }
   }
-
   
-
   /**
    * Grafted from task-report.component.ts
    * @param curriculumId
