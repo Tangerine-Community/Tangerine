@@ -113,61 +113,26 @@ export class AttendanceCheckComponent implements OnInit {
     
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList)
     if (!currentAttendanceReport) {
-      this.attendanceRegister = {
-        _id: id,
-        timestamp: timestamp,
-        classId: currentClassId,
-        grade: grade,
-        schoolName: schoolName,
-        schoolYear: schoolYear,
-        reportDate: reportDate,
-        attendanceList: this.attendanceList,
-        collection: 'TangyFormResponse',
-        type: type,
-        form: {
-          id: type,
-        },
-        items: [{
-          id: 'class-registration',
-          title: 'Class Registration',
-          inputs: [{}]
-        },
-          {
-            id: 'item_1',
-            title: 'Item 1',
-            inputs: [{
-              name: 'timestamp',
-              label: 'timestamp'
-            }]
-          }],
-        complete: false
-      }
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
-      if (startRegister) {
-        // const curriculum = {
-        //   'name': type,
-        //   'value': 'on',
-        //   'label': _TRANSLATE(registerNameForDialog)
-        // }
-        // this.currArray.push(curriculum)
-        // this.selectedCurriculum = this.currArray.find(x => x.name === type)
-        // await this.saveStudentAttendance(null)
-      } else {
-        // this.showAttendanceList = false
-        // if (!this.currentItemId || this.currentItemId === '') {
-        //   const initialForm = this.curriculumFormsList[0]
-        //   this.currentItemId = initialForm.id
-        // }
-        // await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
-        this.router.navigate(['/attendance-dashboard/']);
-      }
+      this.attendanceRegister = this.dashboardService.buildAttendanceReport(id, timestamp, currentClassId, grade, schoolName, schoolYear, reportDate, type, this.attendanceList);
+      // const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
+      // if (startRegister) {
+      // } else {
+      //   this.router.navigate(['/attendance-dashboard/']);
+      // }
     } else {
       currentAttendanceReport.attendanceList = this.attendanceList
       this.attendanceRegister = currentAttendanceReport
     }
-    await this.saveStudentAttendance(null)
+    if (students.length > 0) {
+      await this.saveStudentAttendance(null)
+    } else {
+      const startRegister = confirm(_TRANSLATE('There are no students. Begin ' + registerNameForDialog + ' record for today anyways?'))
+      if (startRegister) {
+        await this.saveStudentAttendance(null)
+      }
+    }
   }
-  
+
   async toggleAttendance(student) {
     student.absent = !student.absent
     if (student.absent) {

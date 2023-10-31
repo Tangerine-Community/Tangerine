@@ -77,11 +77,11 @@ export class AttendanceDashboardComponent implements OnInit {
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
-    if (students.length === 0) {
-      alert(_TRANSLATE('You must register students before you can view the attendance dashboard.'))
-      this.router.navigate(['class-form'], { queryParams: {curriculum:'student-registration',classId:currentClass?._id} });
-      return
-    }
+    // if (students.length === 0) {
+    //   alert(_TRANSLATE('You must register students before you can view the attendance dashboard.'))
+    //   this.router.navigate(['class-form'], { queryParams: {curriculum:'student-registration',classId:currentClass?._id} });
+    //   return
+    // }
     
     const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
     let curriculumLabel = curriculum?.label
@@ -97,12 +97,12 @@ export class AttendanceDashboardComponent implements OnInit {
 
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
     const currentAttendance = attendanceReports[attendanceReports.length - 1]
-    const currentAttendanceReport = currentAttendance?.doc
-    if (!currentAttendanceReport) {
-      alert(_TRANSLATE('You must take attendance before you can view the attendance dashboard.'))
-      this.router.navigate(['attendance-check'])
-      return
-    }
+    let currentAttendanceReport = currentAttendance?.doc
+      if (!currentAttendanceReport && students.length > 0) {
+      // create a new attendance report stub
+        const attendanceList =  await this.dashboardService.getAttendanceList(students, null)
+        currentAttendanceReport = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
+      }
 
     const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
       return !currentAttendanceReport?.attendanceList.find((student) => {
@@ -150,7 +150,7 @@ export class AttendanceDashboardComponent implements OnInit {
     for (let i = 0; i < attendanceReports.length; i++) {
       const attendanceReport = attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students, this.units, currentBehaviorReport, ignoreCurriculumsForTracking)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students, this.units, currentBehaviorReport, ignoreCurriculumsForTracking, curriculum)
     }
     this.attendanceReport = currentAttendanceReport
     

@@ -751,9 +751,9 @@ export class DashboardService {
     // str = str.replace(/\s+/g, '-').
     let searchTerm
     if (curriculumLabel) {
-      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-'))
+      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
     } else {
-      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId
+      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
     }
     const result = await this.db.allDocs({
       startkey: searchTerm,
@@ -777,9 +777,9 @@ export class DashboardService {
     const reportTime = DateTime.local().toISOTime()
     const grade = this.getValue('grade', currentClass)
     if (!curriculumLabel) {
-      id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+      id = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
     } else {
-      id = type + '-' + sanitize(grade.replace(/\s+/g, '-')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '-')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+      id = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
     }
     return {reportDate, grade, reportTime, id};
   }
@@ -798,7 +798,7 @@ export class DashboardService {
    * @param ignoreCurriculumsForTracking - for classes that teach the same students multiple subjects.
    * @private
    */
-  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits, currentBehaviorReport, ignoreCurriculumsForTracking: boolean = false) {
+  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits, currentBehaviorReport, ignoreCurriculumsForTracking: boolean = false, curriculum) {
     // return async (attendanceReport) => {
     //   const attendanceList = attendanceReport.doc.attendanceList
       for (let i = 0; i < attendanceList.length; i++) {
@@ -823,36 +823,14 @@ export class DashboardService {
             currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
           }
           
-          // currentStudent.moodValues = currentStudent.moodValues ? currentStudent.moodValues : []
-          // const mood = student.mood
-          // if (mood) {
-          //   switch (mood) {
-          //     case 'happy':
-          //       currentStudent.moodValues.push(100)
-          //       currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-          //       break
-          //     case 'neutral':
-          //       currentStudent.moodValues.push(66.6)
-          //       currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-          //       break
-          //     case 'sad':
-          //       currentStudent.moodValues.push(33.3)
-          //       currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-          //       break
-          //   }
-          // }
-
-          // currentStudent['behavior'] = {}
-          // await this.addBehaviorRecords(currentStudent, student.id)
-          
           if (!currentStudent.score) {
             if (ignoreCurriculumsForTracking) {
               for (let j = 0; j < scoreReport.length; j++) {
                 const report = scoreReport[j].doc
-                this.processScoreReport(report, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent);
+                this.processScoreReport(report, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
               }
             } else {
-              this.processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent);
+              this.processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
             }
           }
           
@@ -874,7 +852,7 @@ export class DashboardService {
     // }
   }
 
-  private processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking: boolean, currentStudent) {
+  private processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking: boolean, currentStudent, curriculum) {
     const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
       return thisStudent.id === student.id
     })
@@ -895,8 +873,9 @@ export class DashboardService {
           if (!currentStudent.scores) {
             currentStudent.scores = {}
           }
-          const curriculumId = scoreReport._id.split("-")[4]
-          currentStudent.scores[curriculumId] = averageScore
+          const curriculumLabel = sanitize(curriculum.label.replace(/\s+/g, ''))
+          // using bracket notation in case the curriculumId is a number.
+          currentStudent.scores[curriculumLabel] = averageScore
         } else {
           currentStudent.score = averageScore
         }
@@ -904,7 +883,7 @@ export class DashboardService {
     }
   }
 
-  async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores, scoreUnits) {
+  async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores, scoreUnits, curriculum) {
     // do a deep clone
     const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
     const currentAttendanceReport = JSON.parse(JSON.stringify(recentVisitDoc))
@@ -912,7 +891,7 @@ export class DashboardService {
     for (let i = 0; i < recentVisitReports.length; i++) {
         const attendanceReport = recentVisitReports[i];
         const attendanceList = attendanceReport.doc.attendanceList
-        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits, currentBehaviorReport, null)
+        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits, currentBehaviorReport, null, curriculum)
 
     }
     // this.recentVisitsReport = currentAttendanceReport
@@ -1408,6 +1387,39 @@ export class DashboardService {
     this.selectedClass$.next(currentClass)
     return currentClass;
   }
+  
+  buildAttendanceReport(id: string, timestamp: number, currentClassId, grade, schoolName, schoolYear, reportDate: string, type: string, attendanceList) {
+    return {
+      _id: id,
+      timestamp: timestamp,
+      classId: currentClassId,
+      grade: grade,
+      schoolName: schoolName,
+      schoolYear: schoolYear,
+      reportDate: reportDate,
+      attendanceList: attendanceList,
+      collection: 'TangyFormResponse',
+      type: type,
+      form: {
+        id: type,
+      },
+      items: [{
+        id: 'class-registration',
+        title: 'Class Registration',
+        inputs: [{}]
+      },
+        {
+          id: 'item_1',
+          title: 'Item 1',
+          inputs: [{
+            name: 'timestamp',
+            label: 'timestamp'
+          }]
+        }],
+      complete: false
+    }
+  }
+  
 }
 
 
