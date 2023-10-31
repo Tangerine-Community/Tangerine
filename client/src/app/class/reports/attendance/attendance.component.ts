@@ -129,12 +129,12 @@ export class AttendanceComponent implements OnInit {
     for (let i = 0; i < this.attendanceReports.length; i++) {
       const attendanceReport = this.attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport, this.ignoreCurriculumsForTracking)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport, this.ignoreCurriculumsForTracking, this.curriculum)
     }
     
     this.attendanceReport = currentAttendanceReport
     const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
-    this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units)
+    this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units, this.curriculum)
   }
 
   async getUserDB() {
@@ -147,7 +147,7 @@ export class AttendanceComponent implements OnInit {
     console.log('numVisits: ', this.numVisits)
     if (this.numVisits) {
       const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
-      this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units)
+      this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units, this.curriculum)
     }
   }
   
