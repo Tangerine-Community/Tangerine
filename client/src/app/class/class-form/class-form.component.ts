@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClassUtils} from "../class-utils";
 import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
@@ -55,8 +55,11 @@ export class ClassFormComponent implements OnInit {
     private classFormService: ClassFormService,
     private tangyFormService: TangyFormService,
     private variableService: VariableService,
-    private appConfigService: AppConfigService
-  ) { }
+    private appConfigService: AppConfigService,
+    private ref: ChangeDetectorRef
+  ) {
+    ref.detach()
+  }
 
   async ngOnInit(): Promise<void> {
     await this.classFormService.initialize();
@@ -123,7 +126,7 @@ export class ClassFormComponent implements OnInit {
         // For new student-registration etc.
         this.formPlayer.formHtml = formHtml
       }
-      await this.formPlayer.render()
+      this.ref.detectChanges()
 
       // this.formPlayer.formEl.addEventListener('TANGY_FORM_UPDATE', async (event) => {
       this.formPlayer.$afterSubmit.subscribe(async (state:any) => {
@@ -202,12 +205,22 @@ export class ClassFormComponent implements OnInit {
         
         if (window['eventFormRedirect']) {
           // await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+          await this.router.navigate(['class-form'], { queryParams:
+              { curriculum: this.curriculum, classId: this.classId, newForm: this.newForm, queryParamsHandling: 'preserve',
+                preserveFragment: true }
+          });
+          // /class-form?curriculum=student-registration&classId=' + classId + '&newForm=true';
+          // '/class-form?curriculum=student-registration&classId=d4605997-8a4f-4027-a52b-185e84e2454f&newForm=true'
           this.router.navigateByUrl(window['eventFormRedirect'])
-          window['eventFormRedirect'] = ''
+          // Fix for double-submit of this form clearing eventFormRedirect.
+          if (!this.newForm) {
+            window['eventFormRedirect'] = ''
+          }
         } else {
           this.router.navigate([url]);
         }
       })
+      await this.formPlayer.render()
     })
   }
   
