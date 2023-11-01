@@ -16,8 +16,8 @@
     <table class="dashboard-table">
       <tr>
         <th colspan="2" class="student-name-column">{{'Stud.'|translate}}</th>
-        <th colspan="2">{{'Attend.'|translate}}</th>
-        <th colspan="2">{{'Behav.'|translate}}</th>
+        <th>{{'Attend.'|translate}}</th>
+        <th>{{'Behav.'|translate}}</th>
         <th *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
           <ng-template #otherScoreHeader>
             <th *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
@@ -31,33 +31,58 @@
             <mat-icon>sms</mat-icon>
           </button>
         </td>
-        <td class="progress-bar">
-          <mat-progress-bar
-            *ngIf="student.presentPercentage"
-            value="{{ student.presentPercentage }}"
-            [appProgressBarColor]="(student.presentPercentage)"
-            mode="determinate">
-          </mat-progress-bar>
-        </td>
-        <td class="number-cell centered" *ngIf="student.presentPercentage || student.presentPercentage === 0">{{student.presentPercentage}}%</td>
-        <td class="number-cell centered" *ngIf="!student.presentPercentage && student.presentPercentage != 0">{{'N/A'|translate}}</td>
-        <td class="progress-bar">
-            <mat-progress-bar
-              *ngIf="student['behavior'] && student['behavior']['internalPercentage']"
-              value="{{ student['behavior']['internalPercentage'] }}"
-              [appProgressBarColor]="(student['behavior']['internalPercentage'])"
-              mode="determinate">
-            </mat-progress-bar>
-        </td>
-        <td class="number-cell centered"> 
-          <ng-container *ngIf="student['behavior'] && (student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0); else naTemplate">{{student['behavior']['internalPercentage']}}%
+        <td [ngClass]="{'red' : student.presentPercentage && student.presentPercentage < 80, 
+        'green' : student.presentPercentage >= 80,
+        'white': !student.presentPercentage && student.presentPercentage != 0,
+        'number-cell': true,
+        'centered': true}">
+          <ng-container *ngIf="student.presentPercentage || student.presentPercentage === 0; else naAttendanceTemplate">
+            {{student.presentPercentage}}%
           </ng-container>
-        <ng-template #naTemplate>
-          {{'N/A'|translate}}
-        </ng-template>
-        <td *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell" class="number-cell centered">
-          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+          <ng-template *ngIf="!student.presentPercentage && student.presentPercentage != 0" #naAttendanceTemplate>
+            {{'N/A'|translate}}
+          </ng-template>
         </td>
+<!--        <td class="number-cell centered" *ngIf="student.presentPercentage || student.presentPercentage === 0">{{student.presentPercentage}}%</td>-->
+<!--        <td class="number-cell centered" *ngIf="!student.presentPercentage && student.presentPercentage != 0">{{'N/A'|translate}}</td>-->
+<!--        <td class="progress-bar">-->
+<!--            <mat-progress-bar-->
+<!--              *ngIf="student['behavior'] && student['behavior']['internalPercentage']"-->
+<!--              value="{{ student['behavior']['internalPercentage'] }}"-->
+<!--              [appProgressBarColor]="(student['behavior']['internalPercentage'])"-->
+<!--              mode="determinate">-->
+<!--            </mat-progress-bar>-->
+<!--        </td>-->
+<!--        <td class="number-cell centered"> -->
+<!--          <ng-container *ngIf="student['behavior'] && (student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0); else naTemplate">{{student['behavior']['internalPercentage']}}%-->
+<!--          </ng-container>-->
+<!--        <ng-template #naTemplate>-->
+<!--          {{'N/A'|translate}}-->
+<!--        </ng-template>-->
+
+        <td [ngClass]="{'red' : student.behavior?.internalPercentage && student.behavior?.internalPercentage < 66, 
+        'green' : student.behavior?.internalPercentage >= 66, 
+        'white' : !student.behavior?.internalPercentage && student.behavior?.internalPercentage != 0,
+        'number-cell': true,
+        'centered': true}"> 
+          <ng-container *ngIf="student.behavior?.internalPercentage || student.behavior?.internalPercentage === 0; else naBehaviorTemplate">
+            {{student.behavior?.internalPercentage}}%
+          </ng-container>
+          <ng-template *ngIf="!student.behavior?.internalPercentage && student.behavior?.internalPercentage != 0" #naBehaviorTemplate>
+            {{'N/A'|translate}}
+          </ng-template>
+        </td>
+        <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
+          <td  [ngClass]="{'red' : student.behavior?.internalPercentage && student.behavior?.internalPercentage < 66,
+           'green' : student.behavior?.internalPercentage >= 66, 
+           'white' : !student.behavior?.internalPercentage && student.behavior?.internalPercentage != 0,
+        'number-cell': true,
+        'centered': true}">
+            <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
+            <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+          </td>
+        </ng-container>
+        
         <ng-template #otherScoreCell>
           <td class="number-cell centered" *ngFor="let curriculum of currArray">
 <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
