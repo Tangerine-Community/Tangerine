@@ -5,17 +5,19 @@ const readDir = util.promisify(require('fs').readdir)
 const log = require('tangy-log').log
 
 /*
- * This script compiles and returns metadata about location list files in the group directory.
+ * This script compiles and returns the data into location list files in the group directory.
  * Before multiple location lists were allowed, the file named 'location-list.json' lived in the
- * client directory. This script looks for that file and adds the metadata to the returned list if 
- * it exists. It also looks for a folder called 'locations' in the group directory and gets the metadata
+ * client directory. This script looks for that file and adds it's data to the returned list if 
+ * it exists. It also looks for a folder called 'locations' in the group directory and gets the data
  * from any JSON files in that directory. 
  */
 
 module.exports = async (req, res) => {
-  const fileMetadata = []
+  const locationLists = []
 
-  function getFileMetadata(fullPath, filePath) {    
+  function getLocationListData(fullPath, filePath) {
+    let locationData = {}
+    
     const fileContents = fs.readFileSync(fullPath, "utf8")
     const fileData = JSON.parse(fileContents)
 
@@ -23,12 +25,14 @@ module.exports = async (req, res) => {
     if (!!fileData.locationsLevels && !!fileData.locations) {
       const locationName = fileData.name ? fileData.name : path.parse(filePath).name
       const fileId = fileData.id ? fileData.id : locationName
-      return {
+
+      locationData = {
         id: fileId,
         name: locationName,
         path: filePath,
         ...fileData
       }
+      return locationData
     }
   
   }
@@ -38,9 +42,9 @@ module.exports = async (req, res) => {
     const locationListFilePath = 'location-list.json'
     const locationListFullPath = path.join(groupDir, locationListFilePath)
     if (fs.existsSync(locationListFullPath)) {
-      const metadata = getFileMetadata(locationListFullPath, locationListFilePath)
-      if (metadata) {
-        fileMetadata.push(metadata)
+      const data = getLocationListData(locationListFullPath, locationListFilePath)
+      if (data) {
+        locationLists.push(data)
       }
     }
 
@@ -53,15 +57,15 @@ module.exports = async (req, res) => {
           if (path.extname(fileName) == ".json") {
             const fullPath = path.join(locationsDir, fileName)
             const filePath = `locations/${fileName}`
-            const metadata = getFileMetadata(fullPath, filePath)
-            if (metadata) {
-              fileMetadata.push(metadata)
+            const data = getLocationListData(fullPath, filePath)
+            if (data) {
+              locationLists.push(data)
             }
           }
         }
       }
     }
-    return res.send(fileMetadata)
+    return res.send(locationLists)
   } catch (err) {
     log.error(`Error reading location list: ${err}`)
     return res.status(500).send(err)
