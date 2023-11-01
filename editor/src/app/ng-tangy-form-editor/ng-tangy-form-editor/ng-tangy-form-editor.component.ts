@@ -6,6 +6,7 @@ import { MatTabChangeEvent } from "@angular/material/tabs";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {FormMetadata} from "../feedback-editor/form-metadata";
 import {Feedback} from "../feedback-editor/feedback";
+import { GroupsService } from 'src/app/groups/services/groups.service';
 
 @Component({
   selector: 'app-ng-tangy-form-editor',
@@ -32,7 +33,8 @@ export class NgTangyFormEditorComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private appConfigService: AppConfigService,
-    private serverConfigService:ServerConfigService
+    private serverConfigService:ServerConfigService,
+    private groupsService:GroupsService
   ) { }
 
   async ngOnInit() {
@@ -57,13 +59,18 @@ export class NgTangyFormEditorComponent implements OnInit {
     if (enabledModules && !!(enabledModules.find(module=>module==='class'))) {
       this.hasClassModule = true;
     }
+    // Categories is an string of an array: categories ='["one","two","three","four"]'>
     const categories = JSON.stringify(appConfigCategories);
 
+    let locationListMetadataJSON = <any> await this.groupsService.getLocationLists(this.groupId)
+    
+    // don't clutter the html with the full set of locations
+    delete locationListMetadataJSON.locations
+    const locationListMetadata = locationListMetadataJSON ? JSON.stringify(locationListMetadataJSON) : "";
 
-    // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {
       this.containerEl.innerHTML = `
-        <tangy-form-editor style="margin:15px" categories='${categories}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
+        <tangy-form-editor style="margin:15px" categories='${categories}' location-list-metadata='${locationListMetadata}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
           <template>
             ${formHtml}
           </template>
