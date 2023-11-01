@@ -823,16 +823,16 @@ export class DashboardService {
             currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
           }
           
-          if (!currentStudent.score) {
-            if (ignoreCurriculumsForTracking) {
-              for (let j = 0; j < scoreReport.length; j++) {
-                const report = scoreReport[j].doc
-                this.processScoreReport(report, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
-              }
-            } else {
-              this.processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
-            }
-          }
+          // if (!currentStudent.score) {
+          //   if (ignoreCurriculumsForTracking) {
+          //     for (let j = 0; j < scoreReport.length; j++) {
+          //       const report = scoreReport[j].doc
+          //       this.processScoreReport(report, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
+          //     }
+          //   } else {
+          //     this.processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
+          //   }
+          // }
           
           if (!currentStudent.behavior) {
             const currentStudentBehavior = currentBehaviorReport?.studentBehaviorList.find((thisStudent) => {
@@ -852,7 +852,7 @@ export class DashboardService {
     // }
   }
 
-  private processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking: boolean, currentStudent, curriculum) {
+  processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking: boolean, currentStudent, curriculum) {
     const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
       return thisStudent.id === student.id
     })

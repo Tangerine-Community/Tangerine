@@ -30,6 +30,7 @@ export class AttendanceDashboardComponent implements OnInit {
   enableContactChoosing: boolean = false
   reportLocaltime: string;
   currArray: any[]
+  enabledClasses: any[]
   
   constructor(
     private dashboardService: DashboardService,
@@ -44,12 +45,12 @@ export class AttendanceDashboardComponent implements OnInit {
     this.getValue = this.dashboardService.getValue
     this.reportDate = DateTime.local().toISODate()
     this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
-    const enabledClasses = await this.dashboardService.getEnabledClasses();
+    this.enabledClasses = await this.dashboardService.getEnabledClasses();
     const appConfig = await this.appConfigService.getAppConfig()
     this.units = appConfig.teachProperties?.units
     
     // new instance - no classes yet.
-    if (typeof enabledClasses !== 'undefined' && enabledClasses.length > 0) {
+    if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
 
       this.route.queryParams.subscribe(async params => {
         classIndex = params['classIndex'];
@@ -83,47 +84,62 @@ export class AttendanceDashboardComponent implements OnInit {
     //   return
     // }
     
-    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+    // Create a blank attendance list
+
+    // add any students who haven't had attendance taken yet to the attendanceList
+    // students.forEach((student) => {
+    //   const studentResult = {}
+    //   const student_name = this.getValue('student_name', student.doc, false)
+    //   const student_surname = this.getValue('student_surname', student.doc, false)
+    //   const phone = this.getValue('phone', student.doc, false);
+    //   const classId = this.getValue('classId', student.doc, false)
+    //   studentResult['id'] = student.id
+    //   studentResult['name'] = student_name
+    //   studentResult['surname'] = student_surname
+    //   studentResult['phone'] = phone
+    //   studentResult['classId'] = classId
+    //   studentResult['forms'] = {}
+    //   currentAttendanceReport.attendanceList.push(studentResult)
+    // })
+
+    const attendanceList =  await this.dashboardService.getAttendanceList(students, null)
+    // const register = this.dashboardService.buildAttendanceReport(id, timestamp, currentClassId, grade, schoolName, schoolYear, reportDate, type, attendanceList);
+    const register= this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
+    
     let curriculumLabel = curriculum?.label
     // Set the curriculumLabel to null if ignoreCurriculumsForTracking is true.
-    if (ignoreCurriculumsForTracking) {
+    if (this.ignoreCurriculumsForTracking) {
       curriculumLabel = null
     }
     
     const randomId = currentClass.metadata?.randomId
     // const scoreReports = await this.dashboardService.getScoreDocs(classId)
-    const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
+    const scoreReports = []
+    for (let i = 0; i < this.currArray.length; i++) {
+      const curriculum = this.currArray[i];
+      let curriculumLabel = curriculum?.label
+      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
+      reports.forEach((report) => {
+        report.doc.curriculum = curriculum
+        scoreReports.push(report.doc)
+      })
+    }
     const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
 
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
     const currentAttendance = attendanceReports[attendanceReports.length - 1]
-    let currentAttendanceReport = currentAttendance?.doc
-      if (!currentAttendanceReport && students.length > 0) {
-      // create a new attendance report stub
-        const attendanceList =  await this.dashboardService.getAttendanceList(students, null)
-        currentAttendanceReport = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
-      }
+    // let currentAttendanceReport = currentAttendance?.doc
+      // if (!currentAttendanceReport && students.length > 0) {
+      // // create a new attendance report stub
+      //   const attendanceList =  await this.dashboardService.getAttendanceList(students, null)
+      //   currentAttendanceReport = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
+      // }
 
-    const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
-      return !currentAttendanceReport?.attendanceList.find((student) => {
-        return thisStudent.doc._id === student.id
-      })
-    })
-    // add any students who haven't had attendance taken yet to the attendanceList
-    studentsWithoutAttendance.forEach((student) => {
-      const studentResult = {}
-      const student_name = this.getValue('student_name', student.doc, false)
-      const student_surname = this.getValue('student_surname', student.doc, false)
-      const phone = this.getValue('phone', student.doc, false);
-      const classId = this.getValue('classId', student.doc, false)
-      studentResult['id'] = student.id
-      studentResult['name'] = student_name
-      studentResult['surname'] = student_surname
-      studentResult['phone'] = phone
-      studentResult['classId'] = classId
-      studentResult['forms'] = {}
-      currentAttendanceReport.attendanceList.push(studentResult)
-    })
+    // const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
+    //   return !currentAttendanceReport?.attendanceList.find((student) => {
+    //     return thisStudent.doc._id === student.id
+    //   })
+    // })
     
     const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
     const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
@@ -143,16 +159,33 @@ export class AttendanceDashboardComponent implements OnInit {
     //   }
     // })
     let scoreReport = currentScoreReport
-    if (ignoreCurriculumsForTracking) {
+    if (this.ignoreCurriculumsForTracking) {
       scoreReport = scoreReports
     }
     
     for (let i = 0; i < attendanceReports.length; i++) {
       const attendanceReport = attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students, this.units, currentBehaviorReport, ignoreCurriculumsForTracking, curriculum)
+      await this.dashboardService.processAttendanceReport(attendanceList, register, scoreReport, allStudentScores, students, this.units, currentBehaviorReport, this.ignoreCurriculumsForTracking, curriculum)
     }
-    this.attendanceReport = currentAttendanceReport
+
+    for (let i = 0; i < attendanceList.length; i++) {
+      const student = attendanceList[i]
+
+      if (this.ignoreCurriculumsForTracking) {
+        for (let j = 0; j < scoreReports.length; j++) {
+          const report = scoreReport[j]
+          const curriculum = report.curriculum
+          // let curriculumLabel = curriculum?.label
+          this.dashboardService.processScoreReport(report, student, this.units, this.ignoreCurriculumsForTracking, student, curriculum);
+        }
+      } else {
+        // this.dashboardService.processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
+      }
+
+    }
+    
+    this.attendanceReport = register
     
     // const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
     //   return thisStudent.id === student.id
