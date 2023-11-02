@@ -786,70 +786,53 @@ export class DashboardService {
   
   /**
    * Grafted from task-report.component.ts
+   * Loops through all the student scores and calculates the presentPercentage for each student
+   * @param attendanceList
+   * @param register
+   * @private
+   */
+  async processAttendanceReport(attendanceList, register) {
+    for (let i = 0; i < attendanceList.length; i++) {
+      const attendanceStudent = attendanceList[i]
+      const student = register.attendanceList.find((thisStudent) => {
+        return thisStudent.id === attendanceStudent.id
+      })
+      if (student) {
+        student.reportCount = student.reportCount ? student.reportCount + 1 : 1
+        student.presentCount = student.presentCount ? student.presentCount : 0
+        if (typeof attendanceStudent.absent !== 'undefined') {
+          if (attendanceStudent.absent === false) {
+            student.presentCount = student.presentCount + 1
+          }
+          student.presentPercentage = Math.round((student.presentCount / student.reportCount) * 100)
+        }
+      }
+    }
+  }
+
+  /**
+   * Grafted from task-report.component.ts
    * Loops through all the student scores and calculates the average mood, present, and score for each student
    * populate students array if you need to add phone and other properties from studentRegistration.
    * @param attendanceList
    * @param currentAttendanceReport
-   * @param scoreReport - could be a single object or an array if ignoreCurriculumsForTracking
-   * @param allStudentScores
-   * @param students
-   * @param scoreUnits - from app-config.json - appConfig.teachProperties?.units
-   * @param currentBehaviorReport
-   * @param ignoreCurriculumsForTracking - for classes that teach the same students multiple subjects.
    * @private
    */
-  async processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, students: any[], scoreUnits, currentBehaviorReport, ignoreCurriculumsForTracking: boolean = false, curriculum) {
-    // return async (attendanceReport) => {
-    //   const attendanceList = attendanceReport.doc.attendanceList
-      for (let i = 0; i < attendanceList.length; i++) {
-        const student = attendanceList[i]
-        const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
-          return thisStudent.id === student.id
-        })
-        if (currentStudent) {
-          currentStudent.reportCount = currentStudent.reportCount ? currentStudent.reportCount + 1 : 1
-          currentStudent.presentCount = currentStudent.presentCount ? currentStudent.presentCount : 0
-          if (students?.length > 0) {
-            const studentRegistration = students.find((thisStudent) => {
-              return thisStudent.doc._id === student.id
-            })
-            const phone = this.getValue('phone', studentRegistration?.doc)
-            currentStudent.phone = phone
-          }
-          if (typeof student.absent !== 'undefined') {
-            if (student.absent === false) {
-              currentStudent.presentCount = currentStudent.presentCount + 1
-            }
-            currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
-          }
-          
-          // if (!currentStudent.score) {
-          //   if (ignoreCurriculumsForTracking) {
-          //     for (let j = 0; j < scoreReport.length; j++) {
-          //       const report = scoreReport[j].doc
-          //       this.processScoreReport(report, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
-          //     }
-          //   } else {
-          //     this.processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking, currentStudent, curriculum);
-          //   }
-          // }
-          
-          if (!currentStudent.behavior) {
-            const currentStudentBehavior = currentBehaviorReport?.studentBehaviorList.find((thisStudent) => {
-              return thisStudent.id === student.id
-            })
-            if (currentStudentBehavior && currentStudentBehavior['behavior']) {
-                currentStudent['behavior'] = {}
-                // const usingScorefield = state.items[0].inputs.find(input => input.name === state['form']['id'] + '_score');
-                // const intScore = usingScorefield.value
-                currentStudent['behavior']['internal'] = currentStudentBehavior['behavior']['internal']
-                currentStudent['behavior']['internalPercentage'] = currentStudentBehavior['behavior']['internalPercentage']
-                currentStudent['behavior']['formResponseId'] = currentStudentBehavior['behavior']['formResponseId']
-            }
-          }
+  async processBehaviorReport(behaviorList, register) {
+    for (let i = 0; i < behaviorList.length; i++) {
+      const behaviorStudent = behaviorList[i]
+      const student = register.attendanceList.find((thisStudent) => {
+        return thisStudent.id === behaviorStudent.id
+      })
+      if (student) {
+        student.behaviorSum = student.behaviorSum ? student.behaviorSum : 0
+        if (typeof behaviorStudent.behavior?.internalPercentage !== 'undefined') {
+          student.behaviorReportCount = student.behaviorReportCount ? student.behaviorReportCount + 1 : 1
+          student.behaviorSum = student.behaviorSum + behaviorStudent.behavior?.internalPercentage
+          student.behaviorPercentage = Math.round((student.behaviorSum / student.behaviorReportCount))
         }
       }
-    // }
+    }
   }
 
   processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking: boolean, currentStudent, curriculum) {
@@ -891,7 +874,7 @@ export class DashboardService {
     for (let i = 0; i < recentVisitReports.length; i++) {
         const attendanceReport = recentVisitReports[i];
         const attendanceList = attendanceReport.doc.attendanceList
-        await this.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, allStudentScores, null, scoreUnits, currentBehaviorReport, null, curriculum)
+        await this.processAttendanceReport(attendanceList, currentAttendanceReport)
 
     }
     // this.recentVisitsReport = currentAttendanceReport
@@ -1016,15 +999,15 @@ export class DashboardService {
    * Get the attendance list for the class, including any students who have not yet had attendance checked. If the savedAttendanceList is passed in, then
    * populate the student from that doc by matching student.id.
    * @param students
-   * @param savedAttendanceList
+   * @param savedList
    */
-  async getAttendanceList(students, savedAttendanceList) {
+  async getAttendanceList(students, savedList) {
     const list = []
     for (const student of students) {
       let studentResult
       const studentId = student.id
-      if (savedAttendanceList) {
-        studentResult = savedAttendanceList.find(studentDoc => studentDoc.id === studentId)
+      if (savedList) {
+        studentResult = savedList.find(studentDoc => studentDoc.id === studentId)
       }
       if (studentResult) {
         list.push(studentResult)
@@ -1419,7 +1402,6 @@ export class DashboardService {
       complete: false
     }
   }
-  
 }
 
 
