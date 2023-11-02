@@ -129,7 +129,7 @@ export class AttendanceComponent implements OnInit {
     for (let i = 0; i < this.attendanceReports.length; i++) {
       const attendanceReport = this.attendanceReports[i];
       const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport, scoreReport, this.allStudentScores, null, this.units, currentBehaviorReport, this.ignoreCurriculumsForTracking, this.curriculum)
+      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport)
     }
     
     this.attendanceReport = currentAttendanceReport
