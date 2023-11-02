@@ -113,12 +113,12 @@ export class AttendanceCheckComponent implements OnInit {
     
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList)
     if (!currentAttendanceReport) {
+      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
+      if (startRegister) {
+      } else {
+        this.router.navigate(['/attendance-dashboard/']);
+      }
       this.attendanceRegister = this.dashboardService.buildAttendanceReport(id, timestamp, currentClassId, grade, schoolName, schoolYear, reportDate, type, this.attendanceList);
-      // const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
-      // if (startRegister) {
-      // } else {
-      //   this.router.navigate(['/attendance-dashboard/']);
-      // }
     } else {
       currentAttendanceReport.attendanceList = this.attendanceList
       this.attendanceRegister = currentAttendanceReport
