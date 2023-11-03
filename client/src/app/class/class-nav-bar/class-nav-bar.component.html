@@ -6,7 +6,7 @@
     </button>
   <mat-menu #classesMenu="matMenu">
     <ng-template [ngIf]="enabledClasses.length > 0">
-        <button mat-menu-item>
+        <button mat-menu-item disabled class="menu-section-header">
           {{'Change Class'|translate}}
         </button>
     <span *ngFor="let klass of enabledClasses; let classIndex=index"
