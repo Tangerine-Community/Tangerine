@@ -309,3 +309,21 @@ td.centered {
 .progress-bar {
   min-width: 20px;
 }
+
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.mediocre {
+  background-color: #DC921F !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+
+

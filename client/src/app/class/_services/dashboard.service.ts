@@ -738,28 +738,36 @@ export class DashboardService {
    * Queries allDocs to get docs for either attendance or score
    * @param type
    * @param currentClass
-   * @param reportDate
+   * @param reportDate. If null, calculates today's date. Calculates a month previous for searchEndKey.
    * @param curriculumLabel - may be empty if ignoreCurriculumsForTracking is set in the class-registration form (currentClass).
    * @param randomId
    */
   async searchDocs(type: string, currentClass, reportDate: string, curriculumLabel: string, randomId: string) {
     this.db = await this.getUserDB();
-    const grade = this.getValue('grade', currentClass)
-    // const schoolName = this.getValue('school_name', currentClass)
-    // const schoolYear = this.getValue('school_year', currentClass)
-    //     const id = type + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username) + reportTime
-    // str = str.replace(/\s+/g, '-').
-    let searchTerm
-    if (curriculumLabel) {
-      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
-    } else {
-      searchTerm = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+    if (!reportDate) {
+      reportDate = DateTime.local().toISODate()
     }
-    const result = await this.db.allDocs({
-      startkey: searchTerm,
-      endkey: searchTerm + '\uffff',
+    const lastMonth = DateTime.fromISO(reportDate).minus({ months: 1 }).toISODate()
+    const grade = this.getValue('grade', currentClass)
+    let searchStartKey, searchEndKey
+    if (curriculumLabel) {
+      searchStartKey = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+      searchEndKey = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + lastMonth : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+    } else {
+      searchStartKey = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+      searchEndKey = reportDate ?  type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + lastMonth : type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+    }
+    const options = {
+      startkey: searchStartKey,
+      endkey: searchEndKey + '\uffff',
       include_docs: true
-    });
+    }
+    if (reportDate) {
+      options['startkey'] = searchStartKey +  '\uffff'
+      options['endkey'] = searchEndKey
+      options['descending'] = true
+    }
+    const result = await this.db.allDocs(options);
     return result.rows;
   }
 
@@ -866,7 +874,7 @@ export class DashboardService {
     }
   }
 
-  async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores, scoreUnits, curriculum) {
+  async getRecentVisitsReport(recentVisitReports) {
     // do a deep clone
     const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
     const currentAttendanceReport = JSON.parse(JSON.stringify(recentVisitDoc))
@@ -1001,7 +1009,9 @@ export class DashboardService {
    * @param students
    * @param savedList
    */
-  async getAttendanceList(students, savedList) {
+  async getAttendanceList(students, savedList, curriculum) {
+    // const curriculumFormHtml = await this.getCurriculaForms(curriculum.name);
+    // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
     const list = []
     for (const student of students) {
       let studentResult
@@ -1024,6 +1034,18 @@ export class DashboardService {
         studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}
+        // curriculumFormsList.forEach((form) => {
+        //   const formResult = {};
+        //   formResult['formId'] = form.id;
+        //   formResult['curriculum'] = curriculum.name;
+        //   formResult['title'] = form.title;
+        //   formResult['src'] = form.src;
+        //   // if (studentsResponses[student.id]) {
+        //   //   formResult['response'] = studentsResponses[student.id][form.id];
+        //   // }
+        //   studentResult['forms'][form.id] = formResult;
+        // });
+        
         studentResult['absent'] = false
         studentResult['behavior'] = null
 

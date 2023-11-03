@@ -31,8 +31,9 @@
             <mat-icon>sms</mat-icon>
           </button>
         </td>
-        <td [ngClass]="{'red' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendanceThreshold, 
-        'green' : student.presentPercentage >= attendanceThreshold,
+        <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendanceThreshold, 
+        'good' : student.presentPercentage < attendanceThreshold && student.presentPercentage > (attendanceThreshold - cutoffRange),
+        'great' : student.presentPercentage >= attendanceThreshold,
         'white': student.presentPercentage === null || student.presentPercentage === undefined,
         'number-cell': true,
         'centered': true}">
@@ -44,8 +45,9 @@
           </ng-template>
         </td>
 
-        <td [ngClass]="{'red' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorThreshold, 
-        'green' : student.behaviorPercentage >= behaviorThreshold, 
+        <td [ngClass]="{'mediocre' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorThreshold, 
+        'great' : student.behaviorPercentage >= behaviorThreshold, 
+        'good' : student.behaviorPercentage < behaviorThreshold && student.behaviorPercentage > (behaviorThreshold - cutoffRange),
         'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
         'number-cell': true,
         'centered': true}"> 
@@ -58,9 +60,10 @@
         </td>
         
         <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
-          <td [ngClass]="{'red' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringThreshold, 
-        'green' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringThreshold, 
-        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+          <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringThreshold, 
+        'great' : student['score'] && student['score'] >= scoringThreshold, 
+        'good' : student['score'] < scoringThreshold && student['score'] > (scoringThreshold - cutoffRange),
+        'white' : student['score'] === null || student['score'] === undefined,
         'number-cell': true,
         'centered': true}">
             <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
@@ -69,8 +72,9 @@
         </ng-container>
         
         <ng-template #otherScoreCell>
-          <td *ngFor="let curriculum of currArray" [ngClass]="{'red' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringThreshold, 
-        'green' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringThreshold, 
+          <td *ngFor="let curriculum of currArray" [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringThreshold && student['scores'][curriculum.labelSafe] > (scoringThreshold - cutoffRange),
         'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
         'number-cell': true,
         'centered': true}">

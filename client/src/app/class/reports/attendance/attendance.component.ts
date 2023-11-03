@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UserDatabase} from "../../../shared/_classes/user-database.class";
 import {HttpClient} from "@angular/common/http";
 import {UserService} from "../../../shared/_services/user.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ClassUtils} from "../../class-utils";
 import {ClassFormService} from "../../_services/class-form.service";
 import {TangyFormsInfoService} from "../../../tangy-forms/tangy-forms-info-service";
@@ -20,6 +20,7 @@ export class AttendanceComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private userService: UserService,
     private tangyFormsInfoService: TangyFormsInfoService,
     private dashboardService: DashboardService,
@@ -37,7 +38,7 @@ export class AttendanceComponent implements OnInit {
   recentVisitsReport: any
   // @ViewChild('numVisits', {static: true}) searchResults: ElementRef
   // @Input()  numVisits!: number | string
-  numVisits = '5'
+  numVisits = 5
   classId: string;
   curriculi: any;
   curriculumName: string;
@@ -51,6 +52,11 @@ export class AttendanceComponent implements OnInit {
   reportLocaltime: string;
   ignoreCurriculumsForTracking: boolean = false
   currArray: any[]
+  attendanceThreshold: number
+  scoringThreshold: number
+  behaviorThreshold: number
+  cutoffRange: number
+  curriculumId
   
   async ngOnInit(): Promise<void> {
     const classId = this.route.snapshot.paramMap.get('classId')
@@ -60,7 +66,10 @@ export class AttendanceComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig()
     const teachConfiguration = appConfig.teachProperties
     this.units = appConfig.teachProperties?.units
-    
+    this.attendanceThreshold = appConfig.teachProperties?.attendanceThreshold
+    this.scoringThreshold = appConfig.teachProperties?.scoringThreshold
+    this.behaviorThreshold = appConfig.teachProperties?.behaviorThreshold
+    this.cutoffRange = appConfig.teachProperties?.cutoffRange
     this.curriculi = [];
     // const currentClass = await this.classFormService.getResponse(classId);
 
@@ -82,8 +91,8 @@ export class AttendanceComponent implements OnInit {
 
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     this.currArray = currArray
-    const curriculumId = await this.variableService.get('class-curriculumId');
-    this.curriculum = currArray.find(x => x.name === curriculumId);
+    this.curriculumId = await this.variableService.get('class-curriculumId');
+    this.curriculum = currArray.find(x => x.name === this.curriculumId);
     
     const classRegistration = this.classUtils.getInputValues(currentClass);
     const allCurriculums = classRegistration.curriculum;
@@ -96,19 +105,48 @@ export class AttendanceComponent implements OnInit {
       }
     }
 
-    for (let i = 0; i < this.curriculi.length; i++) {
-      const curriculum = this.curriculi[i];
-      await this.onCurriculumSelect(curriculum.name)
-    }
-    
-    //TODO: placeholder until we find out if we need to run this report per curriculum.
-    const curriculumLabel = null
-    const randomId = currentClass.metadata?.randomId
-    this.scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
-      this.scoreReport = this.scoreReports[this.scoreReports.length - 1]?.doc
+    // for (let i = 0; i < this.curriculi.length; i++) {
+    //   const curriculum = this.curriculi[i];
+    //   await this.onCurriculumSelect(curriculum.name)
+    // }
 
-    this.attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
-      const currentAttendanceReport = this.attendanceReports[this.attendanceReports.length - 1]?.doc
+    // const { attendanceReports, currentAttendanceReport } = await this.generateSummaryReport(currArray, curriculumId, currentClass, classId);
+    this.attendanceReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, null);
+    // this.attendanceReport = currentAttendanceReport
+    // const mostRecentAttendanceReport = attendanceReports.slice(0 - parseInt(this.numVisits, 10))
+    // this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport)
+    this.recentVisitsReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, this.numVisits);
+  }
+
+  private async generateSummaryReport(currArray, curriculumId, currentClass, classId: string, numVisits: number) {
+    this.curriculum = currArray.find(x => x.name === curriculumId);
+    let curriculumLabel = this.curriculum?.label
+    // Set the curriculumLabel to null if ignoreCurriculumsForTracking is true.
+    if (this.ignoreCurriculumsForTracking) {
+      curriculumLabel = null
+    }
+    const randomId = currentClass.metadata?.randomId
+
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
+    const students = await this.dashboardService.getMyStudents(classId);
+
+    const currentAttendanceReport = attendanceReports[attendanceReports.length - 1]?.doc
+    const savedAttendanceList = currentAttendanceReport?.attendanceList
+
+    const attendanceList = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
+    const register = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
+
+    const scoreReports = []
+    for (let i = 0; i < this.currArray.length; i++) {
+      const curriculum = this.currArray[i];
+      let curriculumLabel = curriculum?.label
+      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
+      reports.forEach((report) => {
+        report.doc.curriculum = curriculum
+        scoreReports.push(report.doc)
+      })
+    }
+    const currentScoreReport = scoreReports[scoreReports.length - 1]
 
     if (currentAttendanceReport?.timestamp) {
       const timestampFormatted = DateTime.fromMillis(currentAttendanceReport?.timestamp)
@@ -118,23 +156,53 @@ export class AttendanceComponent implements OnInit {
       this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
     }
 
-    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
-      const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
-
-    let scoreReport = this.scoreReport
+    let scoreReport = currentScoreReport
     if (this.ignoreCurriculumsForTracking) {
       scoreReport = this.scoreReports
     }
-    
-    for (let i = 0; i < this.attendanceReports.length; i++) {
-      const attendanceReport = this.attendanceReports[i];
-      const attendanceList = attendanceReport.doc.attendanceList
-      await this.dashboardService.processAttendanceReport(attendanceList, currentAttendanceReport)
+
+    if (numVisits) {
+      const selectedAttendanceReports = attendanceReports.slice(0 - numVisits)
+      for (let i = 0; i < selectedAttendanceReports.length; i++) {
+        const attendanceReport = selectedAttendanceReports[i];
+        const attendanceList = attendanceReport.doc.attendanceList
+        await this.dashboardService.processAttendanceReport(attendanceList, register)
+      }
+    } else {
+      await this.dashboardService.processAttendanceReport(attendanceList, register)
     }
     
-    this.attendanceReport = currentAttendanceReport
-    const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
-    this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units, this.curriculum)
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
+    const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+    const behaviorList = currentBehaviorReport.studentBehaviorList
+    // await this.dashboardService.processBehaviorReport(behaviorList, register)
+
+    if (numVisits) {
+      const selectedBehaviorReports = behaviorReports.slice(0 - numVisits)
+      for (let i = 0; i < selectedBehaviorReports.length; i++) {
+        const attendanceReport = selectedBehaviorReports[i];
+        const studentBehaviorList = attendanceReport.doc.studentBehaviorList
+        await this.dashboardService.processBehaviorReport(studentBehaviorList, register)
+      }
+    } else {
+      await this.dashboardService.processBehaviorReport(behaviorList, register)
+    }
+
+    for (let i = 0; i < attendanceList.length; i++) {
+      const student = attendanceList[i]
+      if (this.ignoreCurriculumsForTracking) {
+        for (let j = 0; j < scoreReports.length; j++) {
+          const report = scoreReports[j]
+          const scoreCurriculum = report.curriculum
+          // let curriculumLabel = curriculum?.label
+          this.dashboardService.processScoreReport(report, student, this.units, this.ignoreCurriculumsForTracking, student, scoreCurriculum);
+        }
+      } else {
+        this.dashboardService.processScoreReport(scoreReport, student, this.units, this.ignoreCurriculumsForTracking, student, this.curriculum);
+      }
+    }
+    // return {attendanceReports, currentAttendanceReport};
+    return currentAttendanceReport
   }
 
   async getUserDB() {
@@ -146,8 +214,10 @@ export class AttendanceComponent implements OnInit {
     console.log('onNumberVisitsChange', event)
     console.log('numVisits: ', this.numVisits)
     if (this.numVisits) {
-      const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
-      this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport, this.scoreReport, this.allStudentScores, this.units, this.curriculum)
+      // const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
+      // const mostRecentAttendanceReport = this.attendanceReports.slice(0 - this.numVisits)
+      // this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport)
+      this.recentVisitsReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, this.numVisits);
     }
   }
   
@@ -225,6 +295,18 @@ export class AttendanceComponent implements OnInit {
     console.log("done")
   }
 
+  /** Navigate to the student registration form */
+  selectStudentName(column) {
+    const formsArray = Object.values(column.forms);
+    const studentId = column.id;
+    const classId = column.classId;
+    this.router.navigate(['class-form'], { queryParams:
+        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
+    });
+  }
+
   getClassTitle = this.dashboardService.getClassTitle
+  
+  
   
 }

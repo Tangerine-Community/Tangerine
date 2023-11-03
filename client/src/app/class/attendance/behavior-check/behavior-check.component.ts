@@ -108,7 +108,7 @@ export class BehaviorCheckComponent implements OnInit {
       this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
     }
 
-    this.studentBehaviorList =  await this.dashboardService.getAttendanceList(students, savedBehaviorList)
+    this.studentBehaviorList =  await this.dashboardService.getAttendanceList(students, savedBehaviorList, curriculum)
     if (!currentBehaviorReport) {
       this.register = {
         _id: id,
@@ -186,10 +186,12 @@ export class BehaviorCheckComponent implements OnInit {
     const selectedFormId = null;
     // const curriculum = selectedForm['curriculum'];
     const curriculum = formId;
-    const src = selectedForm['src'];
-    const title = selectedForm['title'];
+    // const src = selectedForm['src'];
+    const src = "./assets/form-internal-behaviour/form.html"
+    // const title = selectedForm['title'];
+    const title = "Behavior";
     // const responseId = selectedForm['response']['_id'];
-    const responseId = selectedForm['_id'];
+    const responseId = column.behavior?.formResponseId
     this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
           classId: classId, itemId: selectedFormId, src: src, title:
