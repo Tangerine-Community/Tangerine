@@ -97,7 +97,7 @@ export class AttendanceCheckComponent implements OnInit {
     let currentAttendanceReport, savedAttendanceList
     try {
       // currentAttendanceReport = await this.dashboardService.getDoc(id)
-      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate, curriculumLabel, randomId)
+      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate, curriculumLabel, randomId, false)
       currentAttendanceReport = docArray? docArray[0]?.doc : null
       savedAttendanceList = currentAttendanceReport?.attendanceList
     } catch (e) {
@@ -113,6 +113,7 @@ export class AttendanceCheckComponent implements OnInit {
     
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList, curriculum)
     if (!currentAttendanceReport) {
+      // TODO check if the currentAttendanceReport.timestamp or currentAttendanceReport.reportDate is today.
       const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
       if (startRegister) {
       } else {

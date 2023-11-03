@@ -182,7 +182,7 @@ export class ClassFormComponent implements OnInit {
               curriculumLabel = null
             }
             const randomId = currentClass.metadata?.randomId
-            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, curriculumLabel, randomId)
+            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, curriculumLabel, randomId, false)
             currentBehaviorReport = docArray? docArray[0]?.doc : null
             // savedBehaviorList = currentBehaviorReport?.studentBehaviorList
             const currentStudent = currentBehaviorReport.studentBehaviorList.find((thisStudent) => {

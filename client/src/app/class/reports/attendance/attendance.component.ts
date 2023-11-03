@@ -129,7 +129,7 @@ export class AttendanceComponent implements OnInit {
     }
     const randomId = currentClass.metadata?.randomId
 
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId, true)
     const students = await this.dashboardService.getMyStudents(classId);
 
     const currentAttendanceReport = attendanceReports[attendanceReports.length - 1]?.doc
@@ -142,7 +142,7 @@ export class AttendanceComponent implements OnInit {
     for (let i = 0; i < this.currArray.length; i++) {
       const curriculum = this.currArray[i];
       let curriculumLabel = curriculum?.label
-      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId)
+      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId, true)
       reports.forEach((report) => {
         report.doc.curriculum = curriculum
         scoreReports.push(report.doc)
@@ -174,7 +174,7 @@ export class AttendanceComponent implements OnInit {
       await this.dashboardService.processAttendanceReport(attendanceList, register)
     }
     
-    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId, true)
     const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
     const behaviorList = currentBehaviorReport?.studentBehaviorList
     // await this.dashboardService.processBehaviorReport(behaviorList, register)
