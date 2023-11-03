@@ -1,0 +1,32 @@
+<h2>Student Details</h2>
+
+<h3>{{data.student.name}} {{data.student.surname}}</h3>
+<p>{{'Phone'|translate}}: {{data.student.phone}}</p>
+<div>
+  <ng-container *ngIf="data.student.ignoreCurriculumsForTracking; else notSharedScores">
+<p>{{'Unit Scores'|translate}}</p>
+  <ul>
+    <li *ngFor="let item of data.student.unitScores | keyvalue">
+      {{item.key}}:{{item.value}}
+    </li>
+  </ul>
+<p>{{'Score Percentages:'|translate}}</p>
+  <ul>
+    <li *ngFor="let item of data.student.scores | keyvalue">
+      {{item.key}}:{{item.value}}%
+    </li>
+  </ul>
+  </ng-container>
+  <ng-template #notSharedScores>
+    <p>{{'Unit Scores'|translate}}</p>
+    <ul>
+      <li *ngFor="let unit of this.units; index as unitIndex">
+        {{data.student['score_'+unitIndex]}}
+      </li>
+    </ul>
+    <p>{{'Score Percentage:'|translate}}: {{data.student['score']}}</p>
+    
+  </ng-template>
+</div>
+
+<!--{{data | json}}-->
