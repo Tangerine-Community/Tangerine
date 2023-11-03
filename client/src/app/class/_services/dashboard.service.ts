@@ -994,7 +994,7 @@ export class DashboardService {
           const formId = curr.name;
           const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
           curr.label = formInfo.title
-          curr.labelSafe = sanitize(formInfo.title.replace(/\s+/g, '-'))
+          curr.labelSafe = sanitize(formInfo.title.replace(/\s+/g, ''))
           return curr
         }));
       } else {
