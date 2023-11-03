@@ -33,7 +33,8 @@ export class AttendanceDashboardComponent implements OnInit {
   enabledClasses: any[]
   attendanceThreshold: number
   scoringThreshold: number
-  behaviorThreshold: number  
+  behaviorThreshold: number
+  cutoffRange: number  
   
   constructor(
     private dashboardService: DashboardService,
@@ -54,6 +55,7 @@ export class AttendanceDashboardComponent implements OnInit {
     this.attendanceThreshold = appConfig.teachProperties?.attendanceThreshold
     this.scoringThreshold = appConfig.teachProperties?.scoringThreshold
     this.behaviorThreshold = appConfig.teachProperties?.behaviorThreshold
+    this.cutoffRange = appConfig.teachProperties?.cutoffRange
     
     // new instance - no classes yet.
     if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
@@ -84,8 +86,7 @@ export class AttendanceDashboardComponent implements OnInit {
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
-    const attendanceList =  await this.dashboardService.getAttendanceList(students, null)
-    // const register = this.dashboardService.buildAttendanceReport(id, timestamp, currentClassId, grade, schoolName, schoolYear, reportDate, type, attendanceList);
+    const attendanceList =  await this.dashboardService.getAttendanceList(students, null, curriculum)
     const register= this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
     
     let curriculumLabel = curriculum?.label
@@ -106,11 +107,11 @@ export class AttendanceDashboardComponent implements OnInit {
         scoreReports.push(report.doc)
       })
     }
-    const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
+    const currentScoreReport = scoreReports[scoreReports.length - 1]
 
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId)
     const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
-    const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+    // const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
     let scoreReport = currentScoreReport
     if (this.ignoreCurriculumsForTracking) {
       scoreReport = scoreReports
@@ -130,18 +131,6 @@ export class AttendanceDashboardComponent implements OnInit {
 
     for (let i = 0; i < attendanceList.length; i++) {
       const student = attendanceList[i]
-      // const currentStudentBehavior = currentBehaviorReport?.studentBehaviorList.find((thisStudent) => {
-      //   return thisStudent.id === student.id
-      // })
-      // if (currentStudentBehavior && currentStudentBehavior['behavior']) {
-      //   student['behavior'] = {}
-      //   // const usingScorefield = state.items[0].inputs.find(input => input.name === state['form']['id'] + '_score');
-      //   // const intScore = usingScorefield.value
-      //   student['behavior']['internal'] = currentStudentBehavior['behavior']['internal']
-      //   student['behavior']['internalPercentage'] = currentStudentBehavior['behavior']['internalPercentage']
-      //   student['behavior']['formResponseId'] = currentStudentBehavior['behavior']['formResponseId']
-      // }
-      
       if (this.ignoreCurriculumsForTracking) {
         for (let j = 0; j < scoreReports.length; j++) {
           const report = scoreReport[j]
@@ -152,7 +141,6 @@ export class AttendanceDashboardComponent implements OnInit {
       } else {
         this.dashboardService.processScoreReport(scoreReport, student, this.units, this.ignoreCurriculumsForTracking, student, curriculum);
       }
-
     }
     
     this.attendanceReport = register

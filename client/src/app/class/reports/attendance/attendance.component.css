@@ -126,3 +126,28 @@ td.progress-bar {
 .dashboard-table .checkbox-response {
   text-align: center;
 }
+
+.student-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: 1em;
+  padding-right:5px;
+}
+
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.mediocre {
+  background-color: #DC921F !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+
