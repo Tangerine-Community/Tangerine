@@ -848,12 +848,21 @@ export class DashboardService {
       return thisStudent.id === student.id
     })
     if (currentStudentScore) {
+      const curriculumLabel = sanitize(curriculum.label.replace(/\s+/g, ''))
       const len = scoreUnits.length
       let total = 0
       let completedUnits = 0
       scoreUnits.forEach((scoreUnit, index) => {
         const currentScore = currentStudentScore['score_' + index];
         if (currentScore) {
+          if (ignoreCurriculumsForTracking) {
+            if (!currentStudent.unitScores) {
+              currentStudent.unitScores = {}
+            }
+            currentStudent.unitScores[curriculumLabel + '_score_' + index] = currentScore
+          } else {
+            currentStudent['score_' + index] = currentScore
+          }
           total = total + currentScore
           completedUnits++
         }
@@ -864,7 +873,6 @@ export class DashboardService {
           if (!currentStudent.scores) {
             currentStudent.scores = {}
           }
-          const curriculumLabel = sanitize(curriculum.label.replace(/\s+/g, ''))
           // using bracket notation in case the curriculumId is a number.
           currentStudent.scores[curriculumLabel] = averageScore
         } else {
