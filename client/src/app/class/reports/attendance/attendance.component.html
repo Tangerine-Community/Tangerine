@@ -34,7 +34,8 @@
         </ng-template>
           
         <tr *ngFor="let student of attendanceReport?.attendanceList">
-          <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+<!--          <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>-->
+          <td> {{student["name"]}} {{student["surname"]}} </td>
           <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendanceThreshold, 
         'good' : student.presentPercentage < attendanceThreshold && student.presentPercentage > (attendanceThreshold - cutoffRange),
         'great' : student.presentPercentage >= attendanceThreshold,
@@ -159,7 +160,8 @@
           </ng-template>
           
           <tr *ngFor="let student of recentVisitsReport?.attendanceList">
-            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+<!--            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>-->
+            <td> {{student["name"]}} {{student["surname"]}} </td>
             <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendanceThreshold, 
         'good' : student.presentPercentage < attendanceThreshold && student.presentPercentage > (attendanceThreshold - cutoffRange),
         'great' : student.presentPercentage >= attendanceThreshold,
