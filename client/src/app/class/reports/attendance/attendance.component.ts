@@ -10,7 +10,8 @@ import {DashboardService} from "../../_services/dashboard.service";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {VariableService} from "../../../shared/_services/variable.service";
 import {DateTime} from "luxon";
-
+import {MatBottomSheet, MatBottomSheetRef} from '@angular/material/bottom-sheet';
+import {StudentDetailsComponent} from "../../attendance/student-details/student-details.component";
 @Component({
   selector: 'app-attendance',
   templateUrl: './attendance.component.html',
@@ -25,7 +26,8 @@ export class AttendanceComponent implements OnInit {
     private tangyFormsInfoService: TangyFormsInfoService,
     private dashboardService: DashboardService,
     private appConfigService: AppConfigService,
-    private variableService: VariableService
+    private variableService: VariableService,
+    private _bottomSheet: MatBottomSheet
   ) {
   }
 
@@ -304,6 +306,20 @@ export class AttendanceComponent implements OnInit {
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
         { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
+    });
+  }
+
+  selectStudentDetails(student) {
+    console.log("selectStudentDetails: ", student)
+    student.ignoreCurriculumsForTracking = this.ignoreCurriculumsForTracking
+    const studentId = student.id;
+    const classId = student.classId;
+    // this.router.navigate(['student-details'], { queryParams:
+    //     { studentId: studentId, classId: classId }
+    // });
+    
+    this._bottomSheet.open(StudentDetailsComponent, {
+      data: { student: student },
     });
   }
 
