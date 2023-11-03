@@ -174,7 +174,7 @@ export class AttendanceComponent implements OnInit {
     
     const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId)
     const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
-    const behaviorList = currentBehaviorReport.studentBehaviorList
+    const behaviorList = currentBehaviorReport?.studentBehaviorList
     // await this.dashboardService.processBehaviorReport(behaviorList, register)
 
     if (numVisits) {
@@ -185,7 +185,9 @@ export class AttendanceComponent implements OnInit {
         await this.dashboardService.processBehaviorReport(studentBehaviorList, register)
       }
     } else {
-      await this.dashboardService.processBehaviorReport(behaviorList, register)
+      if (behaviorList) {
+        await this.dashboardService.processBehaviorReport(behaviorList, register)
+      }
     }
 
     for (let i = 0; i < attendanceList.length; i++) {
