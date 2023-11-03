@@ -8,44 +8,62 @@
       <table class="dashboard-table most-recent-class-table">
         <tr>
           <th class="student-name-column">{{'Stud.'|translate}}</th>
-          <th colspan="2">{{'Attend.'|translate}}</th>
-          <th colspan="2">{{'Behav.'|translate}}</th>
+          <th>{{'Attend.'|translate}}</th>
+          <th>{{'Behav.'|translate}}</th>
           <th *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
           <ng-template #otherScoreHeader>
             <th *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
           </ng-template>
         </tr>
         <tr *ngFor="let student of attendanceReport?.attendanceList">
-          <td class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
-          <td  class="progress-bar">
-            <mat-progress-bar
-              *ngIf="student.presentPercentage"
-              value="{{ student.presentPercentage }}"
-              [appProgressBarColor]="(student.presentPercentage)"
-              mode="determinate">
-            </mat-progress-bar>
-          </td>
-          <td class="number-cell centered" *ngIf="student.presentPercentage || student.presentPercentage === 0">{{student.presentPercentage}}%</td>
-          <td class="number-cell centered" *ngIf="!student.presentPercentage && student.presentPercentage != 0">{{'N/A'|translate}}</td>
-          <td class="progress-bar">
-            <mat-progress-bar
-              *ngIf="student['behavior'] && student['behavior']['internalPercentage']"
-              value="{{ student['behavior']['internalPercentage'] }}"
-              [appProgressBarColor]="(student['behavior']['internalPercentage'])"
-              mode="determinate">
-            </mat-progress-bar>
-          </td>
-          <td class="number-cell centered">
-            <ng-container *ngIf="student['behavior'] && (student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0); else naTemplate">{{student['behavior']['internalPercentage']}}%
+          <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+          <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendanceThreshold, 
+        'good' : student.presentPercentage < attendanceThreshold && student.presentPercentage > (attendanceThreshold - cutoffRange),
+        'great' : student.presentPercentage >= attendanceThreshold,
+        'white': student.presentPercentage === null || student.presentPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+            <ng-container *ngIf="student.presentPercentage || student.presentPercentage === 0; else naAttendanceTemplate">
+              {{student.presentPercentage}}%
             </ng-container>
-            <ng-template #naTemplate>
+            <ng-template *ngIf="student.presentPercentage === null || student.presentPercentage === undefined" #naAttendanceTemplate>
               {{'N/A'|translate}}
             </ng-template>
-          <td *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell" class="number-cell centered">
-            <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
           </td>
+
+          <td [ngClass]="{'mediocre' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorThreshold, 
+        'great' : student.behaviorPercentage >= behaviorThreshold, 
+        'good' : student.behaviorPercentage < behaviorThreshold && student.behaviorPercentage > (behaviorThreshold - cutoffRange),
+        'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+            <ng-container *ngIf="student.behaviorPercentage || student.behaviorPercentage === 0; else naBehaviorTemplate">
+              {{student.behaviorPercentage}}%
+            </ng-container>
+            <ng-template *ngIf="student.behaviorPercentage === null || student.behaviorPercentage === undefined" #naBehaviorTemplate>
+              {{'N/A'|translate}}
+            </ng-template>
+          </td>
+
+          <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
+            <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringThreshold, 
+        'great' : student['score'] && student['score'] >= scoringThreshold, 
+        'good' : student['score'] < scoringThreshold && student['score'] > (scoringThreshold - cutoffRange),
+        'white' : student['score'] === null || student['score'] === undefined,
+        'number-cell': true,
+        'centered': true}">
+              <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
+              <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+            </td>
+          </ng-container>
+
           <ng-template #otherScoreCell>
-            <td class="number-cell centered" *ngFor="let curriculum of currArray">
+            <td *ngFor="let curriculum of currArray" [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringThreshold && student['scores'][curriculum.labelSafe] > (scoringThreshold - cutoffRange),
+        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+        'number-cell': true,
+        'centered': true}">
               <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
               <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
             </td>
@@ -60,7 +78,7 @@
       <table>
         <tr>
           <td>
-            {{'Enter number of attendance reports to query: '|translate}}
+            {{'View reports from the last:'|translate}}
           </td>
           <td>
             <form class="num-visits-form">
@@ -70,55 +88,76 @@
               </mat-form-field>
             </form>
           </td>
+          <td>
+            {{'days:'|translate}}
+          </td>
         </tr>
       </table>
-      <table id="last-n-report-table" class="dashboard-table">
-        <tr>
-          <th class="student-name-column">{{'Stud.'|translate}}</th>
-          <th colspan="2">{{'Attend.'|translate}}</th>
-          <th colspan="2">{{'Behav.'|translate}}</th>
-          <th *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
-          <ng-template #otherScoreHeader>
-            <th *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
-          </ng-template>
-        </tr>
-        <tr *ngFor="let student of recentVisitsReport?.attendanceList">
-          <td class="student-name-column">{{student.name}} {{student.student_surname}}</td>
-          <td class="centered progress-bar">
-            <mat-progress-bar
-              *ngIf="student.presentPercentage"
-              value="{{ student.presentPercentage }}"
-              [appProgressBarColor]="(student.presentPercentage)"
-              mode="determinate">
-            </mat-progress-bar>
-          </td>
-          <td class="number-cell" *ngIf="student.presentPercentage">{{student.presentPercentage}}%</td>
-          <td class="number-cell" *ngIf="!student.presentPercentage">{{'N/A'|translate}}</td>
-          <td class="progress-bar">
-            <mat-progress-bar
-              *ngIf="student['behavior'] && student['behavior']['internalPercentage']"
-              value="{{ student['behavior']['internalPercentage'] }}"
-              [appProgressBarColor]="(student['behavior']['internalPercentage'])"
-              mode="determinate">
-            </mat-progress-bar>
-          </td>
-          <td class="number-cell centered">
-            <ng-container *ngIf="student['behavior'] && (student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0); else naTemplate">{{student['behavior']['internalPercentage']}}%
-            </ng-container>
-            <ng-template #naTemplate>
-              {{'N/A'|translate}}
+        <table  id="last-n-report-table" class="dashboard-table">
+          <tr>
+            <th class="student-name-column">{{'Stud.'|translate}}</th>
+            <th>{{'Attend.'|translate}}</th>
+            <th>{{'Behav.'|translate}}</th>
+            <th *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
+            <ng-template #otherScoreHeader>
+              <th *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
             </ng-template>
-          <td *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell" class="number-cell centered">
-            <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
-          </td>
-          <ng-template #otherScoreCell>
-            <td class="number-cell centered" *ngFor="let curriculum of currArray">
-              <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
-              <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
+          </tr>
+          <tr *ngFor="let student of recentVisitsReport?.attendanceList">
+            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+            <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendanceThreshold, 
+        'good' : student.presentPercentage < attendanceThreshold && student.presentPercentage > (attendanceThreshold - cutoffRange),
+        'great' : student.presentPercentage >= attendanceThreshold,
+        'white': student.presentPercentage === null || student.presentPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+              <ng-container *ngIf="student.presentPercentage || student.presentPercentage === 0; else naAttendanceTemplate">
+                {{student.presentPercentage}}%
+              </ng-container>
+              <ng-template *ngIf="student.presentPercentage === null || student.presentPercentage === undefined" #naAttendanceTemplate>
+                {{'N/A'|translate}}
+              </ng-template>
             </td>
-          </ng-template>
-        </tr>
-      </table>
+
+            <td [ngClass]="{'mediocre' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorThreshold, 
+        'great' : student.behaviorPercentage >= behaviorThreshold, 
+        'good' : student.behaviorPercentage < behaviorThreshold && student.behaviorPercentage > (behaviorThreshold - cutoffRange),
+        'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+              <ng-container *ngIf="student.behaviorPercentage || student.behaviorPercentage === 0; else naBehaviorTemplate">
+                {{student.behaviorPercentage}}%
+              </ng-container>
+              <ng-template *ngIf="student.behaviorPercentage === null || student.behaviorPercentage === undefined" #naBehaviorTemplate>
+                {{'N/A'|translate}}
+              </ng-template>
+            </td>
+
+            <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
+              <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringThreshold, 
+        'great' : student['score'] && student['score'] >= scoringThreshold, 
+        'good' : student['score'] < scoringThreshold && student['score'] > (scoringThreshold - cutoffRange),
+        'white' : student['score'] === null || student['score'] === undefined,
+        'number-cell': true,
+        'centered': true}">
+                <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
+                <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+              </td>
+            </ng-container>
+
+            <ng-template #otherScoreCell>
+              <td *ngFor="let curriculum of currArray" [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringThreshold && student['scores'][curriculum.labelSafe] > (scoringThreshold - cutoffRange),
+        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+        'number-cell': true,
+        'centered': true}">
+                <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
+                <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
+              </td>
+            </ng-template>
+          </tr>
+        </table>
     </div>
   </div>
 <!-- Must include this empty mat-chip-list element for the mat-chip to work -->
