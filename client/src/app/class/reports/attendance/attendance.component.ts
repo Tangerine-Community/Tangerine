@@ -319,7 +319,9 @@ export class AttendanceComponent implements OnInit {
     // });
     
     this._bottomSheet.open(StudentDetailsComponent, {
-      data: { student: student },
+      data: { student: student,
+        currentClass: this.selectedClass,
+        curriculum: this.curriculum,},
     });
   }
 
