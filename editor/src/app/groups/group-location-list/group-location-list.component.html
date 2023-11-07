@@ -2,18 +2,27 @@
 <mat-tab-group>
 
   <mat-tab label="{{'Levels'|translate}}" *ngIf="ready">
-    <app-manage-location-list-levels locationListFileName="{{ locationListFileName }}"></app-manage-location-list-levels>
+    <ng-template matTabContent>
+      <app-manage-location-list-levels locationListFileName="{{ locationListFileName }}"></app-manage-location-list-levels>
+   </ng-template>
   </mat-tab>
 
   <mat-tab label="{{'Content'|translate}}" *ngIf="ready">
-    <app-location-list-editor locationListFileName="{{ locationListFileName }}"></app-location-list-editor>
+    <ng-template matTabContent>
+      <app-location-list-editor locationListFileName="{{ locationListFileName }}"></app-location-list-editor>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="{{'Import'|translate}}" *ngIf="ready">
-    <app-import-location-list locationListFileName="{{ locationListFileName }}"></app-import-location-list>
+    <ng-template matTabContent>
+      <app-import-location-list locationListFileName="{{ locationListFileName }}"></app-import-location-list>
+    </ng-template>
   </mat-tab>
+  
   <mat-tab label="{{'Export'|translate}}" *ngIf="ready">
-    <app-export-location-list locationListFileName="{{ locationListFileName }}"></app-export-location-list>
+    <ng-template matTabContent>
+      <app-export-location-list locationListFileName="{{ locationListFileName }}"></app-export-location-list>
+    </ng-template>
   </mat-tab>
 
 

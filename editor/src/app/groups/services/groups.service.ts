@@ -288,7 +288,15 @@ export class GroupsService {
 
   async createLocationList(groupId:string, locationList:LocationList) {
     try {
-      return await this.httpClient.post(`/app/${groupId}/location-list/create`, locationList).toPromise()
+      await this.httpClient.put(`/app/${groupId}/location-list/create`, locationList) .toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async updateLocationList(groupId:string, locationList:LocationList) {
+    try {
+      await this.httpClient.put(`/app/${groupId}/location-list/update`, locationList) .toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
