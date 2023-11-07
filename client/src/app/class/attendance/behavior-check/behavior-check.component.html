@@ -1,34 +1,43 @@
 <mat-card>
   <div class="selectedClassLabel">{{'Behavior'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
-  <div>
+  <div class="table-wrapper">
     <table class="dashboard-table">
-      <tr>
-        <th>{{'Student'|translate}}</th>
-        <th>{{'Behavior'|translate}}</th>
-      </tr>
-      <tr *ngFor="let student of studentBehaviorList">
-        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
-        <td class="checkbox-response" *ngIf="student['behavior'] !==null ; else elseBlock ">
-          <input type="checkbox"
-                 (change)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null"
-                 [checked]="true"
-          /><ng-template [ngIf]="(student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0)"> {{'Score'|translate}}:  {{student['behavior']['internalPercentage']}}% </ng-template>
-          <mat-progress-bar
-            *ngIf="(student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0)"
-            value="{{ student['behavior']['internalPercentage'] }}"
-            [appProgressBarColor]="(student['behavior']['internalPercentage'])"
-            mode="determinate">
-          </mat-progress-bar>
-        </td>
-        <ng-template #elseBlock>
-          <td class="checkbox-response">
-            <input type="checkbox"
-                   (click)="$event.stopPropagation()"
-                   (change)="$event ? selectCheckbox(student,'form-internal-behaviour') : null"
-            />
+      <thead>
+        <tr>
+          <th>{{'Student'|translate}}</th>
+          <th>{{'Behavior'|translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of studentBehaviorList">
+          <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+  <!--        <td class="checkbox-response" *ngIf="student['behavior'] !==null ; else elseBlock ">-->
+  <!--        <ng-container *ngIf="student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0; else naBehaviorTemplate">-->
+          <ng-container *ngIf="student['behavior'] !==null; else elseBlock">
+              <td [ngClass]="{'mediocre' : student['behavior']['internalPercentage'] && (student['behavior']['internalPercentage'] !== null || student['behavior']['internalPercentage'] !== undefined) && student['behavior']['internalPercentage'] < behaviorThreshold, 
+          'great' : student['behavior']['internalPercentage'] >= behaviorThreshold, 
+          'good' : student['behavior']['internalPercentage'] < behaviorThreshold && student['behavior']['internalPercentage'] > (behaviorThreshold - cutoffRange),
+          'white' : student['behavior']['internalPercentage'] === null || student['behavior']['internalPercentage'] === undefined,
+          'number-cell': true,
+          'centered': true}">
+              <input type="checkbox"
+                     (change)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null"
+                     [checked]="true"
+              />
+              {{student['behavior']['internalPercentage']}}%
           </td>
-        </ng-template>
-      </tr>
+            </ng-container>
+          
+          <ng-template #elseBlock>
+            <td class="checkbox-response">
+              <input type="checkbox"
+                     (click)="$event.stopPropagation()"
+                     (change)="$event ? selectCheckbox(student,'form-internal-behaviour') : null"
+              />
+            </td>
+          </ng-template>
+        </tr>
+      </tbody>
     </table>
     <span><p class="mat-h3"
              *ngIf="studentBehaviorList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>

@@ -735,36 +735,51 @@ export class DashboardService {
   }
 
   /**
-   * Queries allDocs to get docs for either attendance or score. Performs a searchDateRange search by default.
+   * Queries allDocs to get docs for either attendance or score. Performs a searchDateRange search (the past month) by default.
    * @param type
    * @param currentClass
-   * @param reportDate. If null, calculates today's date. Calculates a month previous for searchEndKey.
+   * @param reportDate. If null, calculates today's date and calculates a month previous for searchEndKey. If reportDate === '*',  does not add reportDate to the query and returns all docs for the type, currentClass, and curriculumLabel.
    * @param curriculumLabel - may be empty if ignoreCurriculumsForTracking is set in the class-registration form (currentClass).
    * @param randomId
    * @param searchDateRange
    */
   async searchDocs(type: string, currentClass, reportDate: string, curriculumLabel: string, randomId: string, searchDateRange: boolean = true) {
+    let endDate;
     let wildcardSearchString = '\uffff'
     this.db = await this.getUserDB();
     if (!reportDate) {
       reportDate = DateTime.local().toISODate()
     }
-    const lastMonth = DateTime.fromISO(reportDate).minus({ months: 1 }).toISODate()
-    let endDate = searchDateRange ? lastMonth : reportDate
+    if (reportDate !== '*') {
+      const lastMonth = DateTime.fromISO(reportDate).minus({ months: 1 }).toISODate()
+      endDate = searchDateRange ? lastMonth : reportDate
+    }
+    
     const grade = this.getValue('grade', currentClass)
     let searchStartKey: string, searchEndKey: string
     if (curriculumLabel) {
       if (reportDate) {
-        searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate
-        searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + endDate
+        if (reportDate === '*') {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+        } else {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + endDate
+        }
+        
       } else {
         searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
         searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
       }
     } else {
       if (reportDate) {
-        searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate
-        searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + endDate
+        if (reportDate === '*') {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+        } else {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + endDate
+        }
       } else {
         searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
         searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId

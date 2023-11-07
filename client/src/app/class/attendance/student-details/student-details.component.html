@@ -1,31 +1,39 @@
-<h2>Student Details</h2>
-
-<h3>{{data.student.name}} {{data.student.surname}}</h3>
+<h2>{{data.student.name}} {{data.student.surname}}</h2>
+<h3>{{curriculumLabel}}</h3>
 <p>{{'Phone'|translate}}: {{data.student.phone}}</p>
 <div>
+  <p>{{'Absent'|translate}}</p>
+  <ul>
+    <li *ngFor="let record of absentRecords">
+      {{record.reportLocaltime}}
+    </li>
+  </ul>
+  
   <ng-container *ngIf="data.student.ignoreCurriculumsForTracking; else notSharedScores">
-<p>{{'Unit Scores'|translate}}</p>
-  <ul>
-    <li *ngFor="let item of data.student.unitScores | keyvalue">
-      {{item.key}}:{{item.value}}
-    </li>
-  </ul>
-<p>{{'Score Percentages:'|translate}}</p>
-  <ul>
-    <li *ngFor="let item of data.student.scores | keyvalue">
-      {{item.key}}:{{item.value}}%
-    </li>
-  </ul>
-  </ng-container>
-  <ng-template #notSharedScores>
-    <p>{{'Unit Scores'|translate}}</p>
+    <p>{{'Scores'|translate}}</p>
     <ul>
-      <li *ngFor="let unit of this.units; index as unitIndex">
-        {{data.student['score_'+unitIndex]}}
+      <li *ngFor="let item of data.student.unitScores | keyvalue">
+        {{item.key}}:{{item.value}}
       </li>
     </ul>
-    <p>{{'Score Percentage:'|translate}}: {{data.student['score']}}</p>
-    
+    <p>{{'Percentages:'|translate}}</p>
+    <ul>
+      <li *ngFor="let item of data.student.scores | keyvalue">
+        {{item.key}}:{{item.value}}%
+      </li>
+    </ul>
+  </ng-container>
+  
+  <ng-template #notSharedScores>
+    <p>{{'Scores'|translate}}</p>
+    <ul>
+      <ng-container *ngFor="let unit of this.units; index as unitIndex">
+      <li *ngIf="data.student['score_'+unitIndex]">
+        {{data.student['score_'+unitIndex]}}
+      </li>
+      </ng-container>
+    </ul>
+    <p *ngIf="data.student['score']">{{'Score Percentage:'|translate}}: {{data.student['score']}}</p>
   </ng-template>
 </div>
 
