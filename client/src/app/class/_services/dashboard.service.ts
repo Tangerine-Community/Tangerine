@@ -895,7 +895,7 @@ export class DashboardService {
           completedUnits++
         }
       })
-      const averageScore = total / completedUnits
+      const averageScore = Math.round(total / completedUnits)
       if (!isNaN(averageScore)) {
         if (ignoreCurriculumsForTracking) {
           if (!currentStudent.scores) {

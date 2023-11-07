@@ -19,11 +19,11 @@
           'good' : student['behavior']['internalPercentage'] < behaviorThreshold && student['behavior']['internalPercentage'] > (behaviorThreshold - cutoffRange),
           'white' : student['behavior']['internalPercentage'] === null || student['behavior']['internalPercentage'] === undefined,
           'number-cell': true,
-          'centered': true}">
-              <input type="checkbox"
-                     (change)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null"
-                     [checked]="true"
-              />
+          'centered': true}" (click)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null">
+<!--              <input type="checkbox"-->
+<!--                     (change)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null"-->
+<!--                     [checked]="true"-->
+<!--              />-->
               {{student['behavior']['internalPercentage']}}%
           </td>
             </ng-container>
