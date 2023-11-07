@@ -29,7 +29,7 @@
     <ul>
       <ng-container *ngFor="let unit of this.units; index as unitIndex">
       <li *ngIf="data.student['score_'+unitIndex]">
-        {{data.student['score_'+unitIndex]}}
+        {{unit}}: {{data.student['score_'+unitIndex]}}
       </li>
       </ng-container>
     </ul>
