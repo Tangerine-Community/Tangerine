@@ -68,14 +68,14 @@ export class GroupLocationListsComponent implements OnInit {
     const locationName = $event.Name
 
     if (locationId == "location-list") {
-      alert("The default location list cannot be deleted.")
-      return;
+      var confirmationText = _TRANSLATE(`WARNING: Clearing the default location list will impact deploy devices. Are you sure you want to clear the default location list?`)
+    } else {
+      var confirmationText =  _TRANSLATE(`Are you sure you want to delete the location list: ${locationName}?`)
     }
 
-    const locationList = new LocationList({id: locationId}) 
-
-    const confirmation = confirm(_TRANSLATE(`Are you sure you want to delete the location list: ${locationName}?`))
+    const confirmation = confirm(confirmationText)
     if (confirmation) {
+      const locationList = new LocationList({id: locationId}) 
       await this.groupsService.deleteLocationList(this.groupId, locationList);
       await this.loadLocationLists()
     }
