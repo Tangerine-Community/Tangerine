@@ -16,6 +16,8 @@ module.exports = async (req, res) => {
 
     const locationsPath = path.join(locationsDir, `${locationInfo.id}.json`)
     await writeFile(locationsPath, JSON.stringify(locationInfo))
+
+    res.sendStatus(200);
   } catch (err) {
     log.error(err);
     res.status(500).send(err);
