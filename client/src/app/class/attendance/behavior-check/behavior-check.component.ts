@@ -8,11 +8,12 @@ import {StudentResult} from "../../dashboard/dashboard.component";
 import {FormMetadata} from "../../form-metadata";
 import {ClassFormService} from "../../_services/class-form.service";
 import {DateTime} from "luxon";
+import {AppConfigService} from "../../../shared/_services/app-config.service";
 
 @Component({
   selector: 'app-behavior-check',
   templateUrl: './behavior-check.component.html',
-  styleUrls: ['./behavior-check.component.css','../../dashboard/dashboard.component.css']
+  styleUrls: ['./behavior-check.component.css']
 })
 export class BehaviorCheckComponent implements OnInit {
 
@@ -39,16 +40,24 @@ export class BehaviorCheckComponent implements OnInit {
   curriculum:any
   reportLocaltime: string;
   ignoreCurriculumsForTracking: boolean = false
+  behaviorThreshold: number
+  cutoffRange: number
   
   constructor(
     private dashboardService: DashboardService,
     private variableService : VariableService,
     private router: Router,
+    private appConfigService: AppConfigService
   ) { }
 
   async ngOnInit(): Promise<void> {
     let classIndex
     this.getValue = this.dashboardService.getValue
+
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.behaviorThreshold = appConfig.teachProperties?.behaviorThreshold
+    this.cutoffRange = appConfig.teachProperties?.cutoffRange
+    
     const enabledClasses = await this.dashboardService.getEnabledClasses();
 
     let classClassIndex = await this.variableService.get('class-classIndex')

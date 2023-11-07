@@ -11,7 +11,7 @@
 </mat-toolbar>
 <mat-card *ngIf="selectedClass">
 <!--  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : <ng-container *ngIf="!ignoreCurriculumsForTracking">{{curriculum?.label}} : </ng-container>{{reportDate}}</div>-->
-  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+  <div class="selectedClassLabel">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
   <div>
     <table class="dashboard-table">
       <tr>

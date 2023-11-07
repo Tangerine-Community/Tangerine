@@ -109,8 +109,8 @@ export class AttendanceDashboardComponent implements OnInit {
     }
     const currentScoreReport = scoreReports[scoreReports.length - 1]
 
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId, true)
-    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId, true)
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, '*', curriculumLabel, randomId, true)
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, '*', curriculumLabel, randomId, true)
     // const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
     let scoreReport = currentScoreReport
     if (this.ignoreCurriculumsForTracking) {
