@@ -347,7 +347,7 @@ export class DashboardService {
                   totalCorrect = maxValueAnswer - totalIncorrect;
                   score = totalCorrect;
                   formItemTalley['totalMax'] = 100
-                  scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
+                  scorePercentageCorrect = this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
                   alreadyAnswered = true;
                 }
                 // console.log("TANGY-TIMED subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer)
@@ -368,7 +368,7 @@ export class DashboardService {
               if (formItemTalley['totalMax']) {
                 maxValueAnswer = formItemTalley['totalMax'];
                 totalIncorrect = totalAnswers - totalCorrect;
-                scorePercentageCorrect =  Math.round(score / formItemTalley['totalMax'] * 100);
+                scorePercentageCorrect =  this.classUtils.round(score / formItemTalley['totalMax'] * 100, 2);
               }
               // prototype = element.tagName
               // console.log("element.tagName: " + element.tagName + " subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer + " score: " + score + " scorePercentageCorrect: " + scorePercentageCorrect)
@@ -387,7 +387,7 @@ export class DashboardService {
               maxValueAnswer = maxValueAnswer + max;
             }
             score = totalCorrect;
-            scorePercentageCorrect = customScore ? customScore : Math.round(totalCorrect / maxValueAnswer * 100);
+            scorePercentageCorrect = customScore ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
             if (customScore) {
               maxValueAnswer = 100
             }
@@ -840,7 +840,7 @@ export class DashboardService {
           if (attendanceStudent.absent === false) {
             student.presentCount = student.presentCount + 1
           }
-          student.presentPercentage = Math.round((student.presentCount / student.reportCount) * 100)
+          student.presentPercentage = this.classUtils.round((student.presentCount / student.reportCount) * 100, 2)
         }
       }
     }
@@ -865,7 +865,7 @@ export class DashboardService {
         if (typeof behaviorStudent.behavior?.internalPercentage !== 'undefined') {
           student.behaviorReportCount = student.behaviorReportCount ? student.behaviorReportCount + 1 : 1
           student.behaviorSum = student.behaviorSum + behaviorStudent.behavior?.internalPercentage
-          student.behaviorPercentage = Math.round((student.behaviorSum / student.behaviorReportCount))
+          student.behaviorPercentage = this.classUtils.round((student.behaviorSum / student.behaviorReportCount), 2)
         }
       }
     }
@@ -895,7 +895,7 @@ export class DashboardService {
           completedUnits++
         }
       })
-      const averageScore = Math.round(total / completedUnits)
+      const averageScore = this.classUtils.round(total / completedUnits, 2)
       if (!isNaN(averageScore)) {
         if (ignoreCurriculumsForTracking) {
           if (!currentStudent.scores) {
@@ -934,7 +934,7 @@ export class DashboardService {
         return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
       };
       const calcAverage = array => array.reduce(reduceClassAverage, 0) / array.length;
-      const average = Math.round(calcAverage(reportCard.results));
+      const average = this.classUtils.round(calcAverage(reportCard.results), 2);
       reportCard.scorePercentageCorrect = average;
       const percentile = this.calculatePercentile(average);
 
@@ -987,7 +987,7 @@ export class DashboardService {
           return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
         };
         const calcAverage = array => array.reduce(reduceClassAverage, 0) / array.length;
-        const average = Math.round(calcAverage(allStudentResults));
+        const average = this.classUtils.round(calcAverage(allStudentResults), 2);
 
         // now add array of studentResults to each student's record.
         const collectStudentResults = (studentResult: StudentResult) => {
@@ -1070,36 +1070,9 @@ export class DashboardService {
         studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}
-        // curriculumFormsList.forEach((form) => {
-        //   const formResult = {};
-        //   formResult['formId'] = form.id;
-        //   formResult['curriculum'] = curriculum.name;
-        //   formResult['title'] = form.title;
-        //   formResult['src'] = form.src;
-        //   // if (studentsResponses[student.id]) {
-        //   //   formResult['response'] = studentsResponses[student.id][form.id];
-        //   // }
-        //   studentResult['forms'][form.id] = formResult;
-        // });
-        
         studentResult['absent'] = false
         studentResult['behavior'] = null
-
-        // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
-        // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-        // curriculumFormsList.forEach((form) => {
-        //   const formResult = {};
-        //   formResult['formId'] = form.id;
-        //   formResult['curriculum'] = curriculumName;
-        //   formResult['title'] = form.title;
-        //   formResult['src'] = form.src;
-        //   if (studentsResponses[student.id]) {
-        //     formResult['response'] = studentsResponses[student.id][form.id];
-        //   }
-        //   studentResults['forms'][form.id] = formResult;
-        // });
-
-        // await this.addBehaviorRecords(studentResult, studentId);
+        
         list.push(studentResult)
       }
     }

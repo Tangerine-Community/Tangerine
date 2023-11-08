@@ -58,6 +58,11 @@
                 *ngIf="selectedClass">
           {{'Add Student'|translate}}
         </button>
+        <mat-divider *ngIf="selectedClass && showDashboardButton"></mat-divider>
+        <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
+                *ngIf="selectedClass && showDashboardButton">
+          <span>{{'Dashboard'|translate}}</span>
+        </button>
         <mat-divider></mat-divider>
         <button mat-menu-item [routerLink]="['/attendance-check/']"
                 [queryParams]='classRegistrationParams'

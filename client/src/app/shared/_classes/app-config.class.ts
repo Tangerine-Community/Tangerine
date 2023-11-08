@@ -139,6 +139,7 @@ export class AppConfig {
     attendanceThreshold: 80,
     scoringThreshold: 60,
     behaviorThreshold: 66,
+    useAttendanceFeature: false,
   }
 
   //
@@ -174,7 +175,6 @@ export class AppConfig {
   //
 
   calculateLocalDocsForLocation:boolean;
-  useAttendanceFeature: boolean;
   
 }
 

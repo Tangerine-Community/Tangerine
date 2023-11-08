@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit {
     (<any>window).Tangy = {}
     this.window = window
     const appConfig = await this.appConfigService.getAppConfig()
-    this.useAttendanceFeature = appConfig.useAttendanceFeature
+    this.useAttendanceFeature = appConfig.teachProperties?.useAttendanceFeature
     await this.classFormService.initialize();
     // this.enabledClasses = await this.dashboardService.getEnabledClasses();
     this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe((enabledClasses) => {
