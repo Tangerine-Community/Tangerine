@@ -21,7 +21,12 @@
           <button mat-menu-item *ngIf="curriculum.value ==='on'"
                   [routerLink]="['/attendance-dashboard/']"
                   [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
-            {{curriculum.label}}
+            {{curriculum.label}} {{'Attendance'|translate}}
+            </button>
+          <button mat-menu-item *ngIf="curriculum.value ==='on' && showDashboardButton"
+                  [routerLink]="['/dashboard/']"
+                  [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
+            {{curriculum.label}} {{'Teach'|translate}}
             </button>
         </ng-container>
       </mat-menu>

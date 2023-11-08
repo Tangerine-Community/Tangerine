@@ -45,7 +45,7 @@ export class ClassNavBarComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig()
     const useAttendanceFeature = appConfig.teachProperties?.useAttendanceFeature
     const homeUrl = appConfig.homeUrl
-    if (useAttendanceFeature && homeUrl === 'attendance-dashboard') {
+    if (useAttendanceFeature && homeUrl === 'dashboard') {
       this.showDashboardButton = true;
     }
     this.selectedClassSubscription = this.dashboardService.selectedClass$.subscribe((selectedClass) => {
