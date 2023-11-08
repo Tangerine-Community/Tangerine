@@ -4,13 +4,18 @@
 
 __New Features__
 - The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` 
- to app-config.json. It also has a new view, 'responsesForAttendanceByClassId', an 'Attendance and Behaviour' subtest menu 
- item which enables collection of those values per student, and an 'Attendance' report. 
+ to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report. 
+- The Attendance records generate _id's based on the grade, curriculum, user, and date and time of the record, so that they can be sorted chronologically.
+  See dashboard.service generateSearchableId for details. 
 - New app-config.json configuration for teach properties:
   ```js
   "teachProperties": {
-    "units": ["unit 1", "unit 2", "unit 3"],
-    "cutoffRange": "10"
+    "units": ["unit 1", "unit 2", "unit 3", "unit 4"],
+    "cutoffRange": "10",
+    "attendanceThreshold": "80",
+    "scoringThreshold": "60",
+    "behaviorThreshold": "66",
+    "useAttendanceFeature": true
   }
   ```
 - Updated docker-tangerine-base-image to v3.8.0, which adds the cordova-plugin-x-socialsharing plugin and enables sharing to WhatsApp.
