@@ -1,9 +1,11 @@
 <!--<mat-card class="tangy-class-card-content-container">-->
 <div class="selectedClassLabel">{{'Report'|translate}}<br/>{{getClassTitle(selectedClass)}}<ng-container *ngIf="!ignoreCurriculumsForTracking"> : {{curriculum?.label}} </ng-container></div>
-  <div class="tangy-class-card-content-container">
+<!--  <div class="tangy-class-card-content-container">-->
     <div>
-      <h2>{{'Most Recent Class'|translate}}</h2>
-      <p>{{'Date'|translate}}: {{reportLocaltime}}</p>
+      <div class="table-description">
+        <h2>{{'Most Recent Class'|translate}}</h2>
+        <p>{{'Date'|translate}}: {{reportLocaltime}}</p>
+      </div>
       <table class="dashboard-table most-recent-class-table">
         <tr>
           <th class="student-name-column">{{'Stud.'|translate}}</th>
@@ -111,7 +113,9 @@
       <p>&nbsp;</p>
       
     <div id="last-n-report">
-      <h2>{{'Most recent'|translate}} {{numVisits}} {{'visits'|translate}}</h2>
+      <div class="table-description">
+        <h2>{{'Most recent'|translate}} {{numVisits}} {{'visits'|translate}}</h2>
+      </div>
       <table>
         <tr>
           <td>
@@ -234,7 +238,7 @@
           </tr>
         </table>
     </div>
-  </div>
+<!--  </div>-->
 <!-- Must include this empty mat-chip-list element for the mat-chip to work -->
 <!--<mat-chip-list></mat-chip-list>-->
 <!--</mat-card>-->

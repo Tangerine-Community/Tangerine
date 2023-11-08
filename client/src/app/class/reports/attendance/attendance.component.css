@@ -29,19 +29,19 @@ mat-form-field {
 .legend td {
   padding: 0 1em;
 }
-.student-name-column {
-  width: 120px;
-  text-align: left;
-}
-.attendance-column {
-  width: 80px;
-}
-.behavior-column {
-  width: 80px;
-}
-.score-column {
-  width: 150px;
-}
+/*.student-name-column {*/
+/*  width: 120px;*/
+/*  text-align: left;*/
+/*}*/
+/*.attendance-column {*/
+/*  width: 80px;*/
+/*}*/
+/*.behavior-column {*/
+/*  width: 80px;*/
+/*}*/
+/*.score-column {*/
+/*  width: 150px;*/
+/*}*/
 
 .red {
   background-color: red;
@@ -92,9 +92,9 @@ td.progress-bar {
 /*  width:600px;*/
 /*}*/
 
-.number-cell {
-  width: 20px;
-}
+/*.number-cell {*/
+/*  width: 20px;*/
+/*}*/
 
 .selectedClassLabel {
   font-size: larger;
@@ -131,8 +131,8 @@ td.progress-bar {
   cursor:pointer;
   color:blue;
   text-decoration:underline;
-  padding-left: 1em;
-  padding-right:5px;
+  padding-left: .5em;
+  padding-right:.5em;
 }
 
 .concerning {
@@ -149,5 +149,8 @@ td.progress-bar {
 }
 .great {
   background-color: #87db90 !important;
+}
+.table-description {
+  margin-left: 3%;
 }
 
