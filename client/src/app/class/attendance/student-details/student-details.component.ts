@@ -34,7 +34,7 @@ export class StudentDetailsComponent implements OnInit {
     const studentId = student.id
 
     const records = []
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', this.data.currentClass, '*', this.curriculumLabel, randomId, true)
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', this.data.currentClass, null, this.curriculumLabel, randomId, true)
     for (let i = 0; i < attendanceReports.length; i++) {
       const attendanceReport = attendanceReports[i].doc
       const timestamp = attendanceReport.timestamp

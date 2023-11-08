@@ -8,6 +8,7 @@
       {{record.reportLocaltime}}
     </li>
   </ul>
+  <p style="margin-left: 1em" *ngIf="absentRecords.length === 0">{{'No absences recorded in the past month.'|translate}}</p>
   
   <ng-container *ngIf="data.student.ignoreCurriculumsForTracking; else notSharedScores">
     <p>{{'Scores'|translate}}</p>
