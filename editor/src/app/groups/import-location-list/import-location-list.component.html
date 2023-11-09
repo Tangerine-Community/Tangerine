@@ -25,13 +25,13 @@
             {{locationLevel}}
         </mat-list-item>
         <mat-list-item role="listitem" class="gray-bottom-border">
-            <span class="text-indent-3 tangy-foreground-secondary ">{{'Label'|translate}}</span>
+            <span class="text-indent-3 tangy-foreground-secondary ">{{'ID'|translate}}</span>
             <span class="tangy-spacer"></span>
             <span>
                 <div *ngIf="CSVHeaders">
                     <mat-form-field class="tangy-full-width">
-                        <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel]"
-                            (selectionChange)="onSelectLocationLevelsMapping(locationLevel,$event.value)">
+                        <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel+'_id']"
+                            (selectionChange)="onSelectLocationLevelsMapping(locationLevel+'_id',$event.value)">
                             <mat-option *ngFor="let column of CSVHeaders" [value]="column">
                                 {{column}}
                             </mat-option>
@@ -41,13 +41,13 @@
             </span>
         </mat-list-item>
         <mat-list-item role="listitem" class="gray-bottom-border">
-            <span class="text-indent-3 tangy-foreground-secondary ">{{'ID'|translate}}</span>
+            <span class="text-indent-3 tangy-foreground-secondary ">{{'Label'|translate}}</span>
             <span class="tangy-spacer"></span>
             <span>
                 <div *ngIf="CSVHeaders">
                     <mat-form-field class="tangy-full-width">
-                        <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel+'_id']"
-                            (selectionChange)="onSelectLocationLevelsMapping(locationLevel+'_id',$event.value)">
+                        <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel]"
+                            (selectionChange)="onSelectLocationLevelsMapping(locationLevel,$event.value)">
                             <mat-option *ngFor="let column of CSVHeaders" [value]="column">
                                 {{column}}
                             </mat-option>
