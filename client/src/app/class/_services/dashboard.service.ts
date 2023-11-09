@@ -1401,6 +1401,12 @@ export class DashboardService {
     this.selectedClass$.next(currentClass)
     return currentClass;
   }
+
+  getSelectedClassLegacy(allEnabledClasses: any[], classIndex: number) {
+    const currentClass = allEnabledClasses[classIndex]
+    this.selectedClass$.next(currentClass)
+    return currentClass;
+  }
   
   buildAttendanceReport(id: string, timestamp: number, currentClassId, grade, schoolName, schoolYear, reportDate: string, type: string, attendanceList) {
     return {

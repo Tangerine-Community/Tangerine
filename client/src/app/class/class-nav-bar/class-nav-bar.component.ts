@@ -32,8 +32,11 @@ export class ClassNavBarComponent implements OnInit {
   enabledClasses = [];
   enabledClassesSubscription: Subscription;
   curriculums = {}
-  showDashboardButton: boolean = false;
-
+  integrateWithOriginalDashboard: boolean = false;
+  useAttendanceFeature: boolean = false;
+  linkToDashboardUrl: boolean = false;
+  classTitle: string;
+  
   constructor(
     private dashboardService: DashboardService,
     private appConfigService: AppConfigService
@@ -43,16 +46,25 @@ export class ClassNavBarComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.window = window;
     const appConfig = await this.appConfigService.getAppConfig()
-    const useAttendanceFeature = appConfig.teachProperties?.useAttendanceFeature
+    this.useAttendanceFeature = appConfig.teachProperties?.useAttendanceFeature
     const homeUrl = appConfig.homeUrl
-    if (useAttendanceFeature && homeUrl === 'dashboard') {
-      this.showDashboardButton = true;
+    // if (this.useAttendanceFeature && homeUrl === 'dashboard') {
+    //   // Enables display of 'Dashboard' button in menu to link to homeUrl 'dashboard'.
+    //   this.integrateWithOriginalDashboard = true;
+    // }
+    if (homeUrl === 'dashboard') {
+      // Enables display of 'Dashboard' button in menu to link to homeUrl 'dashboard'.
+      this.linkToDashboardUrl = true;
     }
     this.selectedClassSubscription = this.dashboardService.selectedClass$.subscribe((selectedClass) => {
           this.selectedClass = selectedClass
           // this.classIndex = this.enabledClasses.findIndex((enabledClass) => {
           //   return enabledClass.id === selectedClass._id
           // })
+      // const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
+      // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+      // this.formList = await this.dashboardService.populateFormsMetadata(curriculumId, curriculumFormsList, selectedClass);
+      this.classTitle = this.getClassTitle(selectedClass)
         })
     this.getValue = this.dashboardService.getValue
     this.getCurriculumObject = this.dashboardService.getCurriculumObject
