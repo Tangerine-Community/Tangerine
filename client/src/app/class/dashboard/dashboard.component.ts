@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {DashboardService} from '../_services/dashboard.service';
 import {PageEvent} from '@angular/material/paginator';
 import {ClassFormService} from '../_services/class-form.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {_TRANSLATE} from '../../shared/translation-marker';
 import {ClassUtils} from '../class-utils';
 import {ClassGroupingReport} from '../reports/student-grouping-report/class-grouping-report';
@@ -68,19 +68,18 @@ export class DashboardComponent implements OnInit {
   classGroupReport: ClassGroupingReport;
   displayClassGroupReport = false;
   feedbackViewInited = false;
+  classTitle: string;
   getValue: (variableName, response) => any;
   
   @ViewChild('container', {static: true}) container: ElementRef;
 
   constructor(
-    private http: HttpClient,
     private dashboardService: DashboardService,
-    private userService: UserService,
     private router: Router,
     private classFormService: ClassFormService,
-    private tangyFormService: TangyFormService,
     private tangyFormsInfoService: TangyFormsInfoService,
-    private variableService: VariableService
+    private variableService: VariableService,
+    private route: ActivatedRoute,
   ) { }
 
   getClassTitle(classResponse:TangyFormResponse) {
@@ -89,6 +88,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async ngOnInit() {
+    let classIndex
     (<any>window).Tangy = {};
     await this.classFormService.initialize();
     this.classes = await this.getMyClasses();
@@ -100,21 +100,47 @@ export class DashboardComponent implements OnInit {
     });
     // this.enabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
     this.enabledClasses = await this.dashboardService.getEnabledClasses();
-    let classMenu = []
-    for (const classDoc of this.enabledClasses) {
-      const grade = this.getValue('grade', classDoc.doc)
-      let klass = {
-        id: classDoc.id,
-        name: grade,
-        curriculum: []
-      }
-      // find the options that are set to 'on'
-      const classArray = await this.populateCurrentCurriculums(classDoc);
-      if (classArray) {
-        this.currArray = classArray
-        klass.curriculum = this.currArray
-        classMenu.push(klass)
-      }
+    
+    // let classMenu = []
+    // for (const classDoc of this.enabledClasses) {
+    //   const grade = this.getValue('grade', classDoc.doc)
+    //   let klass = {
+    //     id: classDoc.id,
+    //     name: grade,
+    //     curriculum: []
+    //   }
+    //   // find the options that are set to 'on'
+    //   const classArray = await this.populateCurrentCurriculums(classDoc);
+    //   if (classArray) {
+    //     this.currArray = classArray
+    //     klass.curriculum = this.currArray
+    //     classMenu.push(klass)
+    //   }
+    // }
+    if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
+
+      this.route.queryParams.subscribe(async params => {
+        classIndex = params['classIndex'];
+        let curriculumId = params['curriculumId'];
+
+        const __vars = await this.dashboardService.initExposeVariables(classIndex, curriculumId);
+        const currentClass = __vars.currentClass;
+        if (!classIndex) {
+          classIndex = __vars.classIndex;
+        }
+        curriculumId = __vars.curriculumId;
+        this.selectedClass = currentClass;
+        const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+        this.currArray = currArray
+        // When app is initialized, there is no curriculumId, so we need to set it to the first one.
+        if (!curriculumId && currArray?.length > 0) {
+          curriculumId = currArray[0].name
+        }
+        this.curriculum = currArray.find(x => x.name === curriculumId);
+        const currentClassId = currentClass.id;
+        this.classTitle = this.getClassTitle(currentClass)
+        await this.initDashboard(classIndex, currentClassId, curriculumId, true);
+      })
     }
     this.classUtils = new ClassUtils();
     await this.initDashboard(null, null, null, null);
@@ -260,7 +286,8 @@ export class DashboardComponent implements OnInit {
     }
 
     this.selectedCurriculum = this.currArray.find(x => x.name === curriculumId);
-    this.selectedClass = this.enabledClasses[this.currentClassIndex];
+    // this.selectedClass = this.enabledClasses[this.currentClassIndex];
+    this.selectedClass = this.dashboardService.getSelectedClass(this.enabledClasses, this.currentClassIndex);
   }
 
   async selectSubTask(itemId, classId, curriculumId) {
