@@ -20,7 +20,7 @@
           <button mat-menu-item *ngIf="curriculum.value ==='on' && useAttendanceFeature"
                   [routerLink]="['/attendance-dashboard/']"
                   [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
-            {{curriculum?.label}} : {{'Attendance'|translate}}
+            {{curriculum?.label}}<ng-container *ngIf="linkToDashboardUrl"> : {{'Attendance'|translate}}</ng-container>
             </button>
           <button mat-menu-item *ngIf="curriculum.value ==='on' && linkToDashboardUrl"
                   [routerLink]="['/dashboard/']"
@@ -33,7 +33,7 @@
         <button mat-menu-item [routerLink]="['/attendance-dashboard/']" 
                 *ngIf="useAttendanceFeature"
                 [queryParams]={classIndex:classIndex}>
-            {{classTitle}} : {{'Attendance'|translate}}
+            {{classTitle}}<ng-container *ngIf="linkToDashboardUrl"> : {{'Attendance'|translate}}</ng-container>
         </button>
         <button mat-menu-item [routerLink]="['/attendance-dashboard/']" 
                 *ngIf="linkToDashboardUrl"

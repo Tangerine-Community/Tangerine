@@ -40,8 +40,8 @@ export class BehaviorCheckComponent implements OnInit {
   curriculum:any
   reportLocaltime: string;
   ignoreCurriculumsForTracking: boolean = false
-  behaviorThreshold: number
-  cutoffRange: number
+  behaviorPrimaryThreshold: number
+  behaviorSecondaryThreshold: number
   
   constructor(
     private dashboardService: DashboardService,
@@ -55,8 +55,8 @@ export class BehaviorCheckComponent implements OnInit {
     this.getValue = this.dashboardService.getValue
 
     const appConfig = await this.appConfigService.getAppConfig()
-    this.behaviorThreshold = appConfig.teachProperties?.behaviorThreshold
-    this.cutoffRange = appConfig.teachProperties?.cutoffRange
+    this.behaviorPrimaryThreshold = appConfig.teachProperties?.behaviorPrimaryThreshold
+    this.behaviorSecondaryThreshold = appConfig.teachProperties?.behaviorSecondaryThreshold
     
     const enabledClasses = await this.dashboardService.getEnabledClasses();
 
