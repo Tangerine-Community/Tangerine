@@ -156,6 +156,7 @@ export class AttendanceDashboardComponent implements OnInit {
   }
 
   sendText(student) {
+    let scoresMessage
     console.log("send text")
     if (this.window.isCordovaApp) {
       //CONFIGURATION
@@ -184,8 +185,25 @@ export class AttendanceDashboardComponent implements OnInit {
         if (student['behavior'] && student['behavior']['internalPercentage']) {
           behaviorMessage = " ; " + _TRANSLATE('behaviour is: ') + student['behavior']['internalPercentage'] + '%'
         }
-        let scoresMessage = "" +
-          " ; " + _TRANSLATE('score average is: ') + student.score + "%"
+        
+        if (!this.ignoreCurriculumsForTracking) {
+          scoresMessage = "" +
+            " ; " + _TRANSLATE('score average is: ') + student.score + "%"
+        } else {
+          let currScores = ""
+          for (let i = 0; i < this.currArray.length; i++) {
+            const curriculum = this.currArray[i];
+            let curriculumLabel = curriculum?.label
+            if (student.scores) {
+              if (student.scores[curriculumLabel]) {
+                currScores = currScores + " " + curriculumLabel + ":" + student.scores[curriculumLabel] + "%"
+              }
+            }
+          }
+          if (currScores.length > 0) {
+            scoresMessage = "" + " ; " + _TRANSLATE('score average is: ') + currScores
+          }
+        }
         
         // const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
         const message = _TRANSLATE('Report for ') + student.name + ': ' + attendanceMessage + behaviorMessage + scoresMessage
