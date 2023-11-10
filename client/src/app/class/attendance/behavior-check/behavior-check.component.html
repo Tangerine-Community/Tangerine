@@ -14,9 +14,9 @@
   <!--        <td class="checkbox-response" *ngIf="student['behavior'] !==null ; else elseBlock ">-->
   <!--        <ng-container *ngIf="student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0; else naBehaviorTemplate">-->
           <ng-container *ngIf="student['behavior'] !==null; else elseBlock">
-              <td [ngClass]="{'mediocre' : student['behavior']['internalPercentage'] && (student['behavior']['internalPercentage'] !== null || student['behavior']['internalPercentage'] !== undefined) && student['behavior']['internalPercentage'] < behaviorThreshold, 
-          'great' : student['behavior']['internalPercentage'] >= behaviorThreshold, 
-          'good' : student['behavior']['internalPercentage'] < behaviorThreshold && student['behavior']['internalPercentage'] > (behaviorThreshold - cutoffRange),
+              <td [ngClass]="{'mediocre' : student['behavior']['internalPercentage'] && (student['behavior']['internalPercentage'] !== null || student['behavior']['internalPercentage'] !== undefined) && student['behavior']['internalPercentage'] < behaviorPrimaryThreshold, 
+          'great' : student['behavior']['internalPercentage'] >= behaviorPrimaryThreshold, 
+          'good' : student['behavior']['internalPercentage'] < behaviorPrimaryThreshold && student['behavior']['internalPercentage'] >= behaviorSecondaryThreshold,
           'white' : student['behavior']['internalPercentage'] === null || student['behavior']['internalPercentage'] === undefined,
           'number-cell': true,
           'centered': true}" (click)="$event ? selectCheckboxResult(student,'form-internal-behaviour',$event) : null">

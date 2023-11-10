@@ -31,9 +31,12 @@ export class AttendanceDashboardComponent implements OnInit {
   reportLocaltime: string;
   currArray: any[]
   enabledClasses: any[]
-  attendanceThreshold: number
-  scoringThreshold: number
-  behaviorThreshold: number
+  attendancePrimaryThreshold: number
+  attendanceSecondaryThreshold: number
+  scoringPrimaryThreshold: number
+  scoringSecondaryThreshold: number
+  behaviorPrimaryThreshold: number
+  behaviorSecondaryThreshold: number
   cutoffRange: number  
   
   constructor(
@@ -52,10 +55,12 @@ export class AttendanceDashboardComponent implements OnInit {
     this.enabledClasses = await this.dashboardService.getEnabledClasses();
     const appConfig = await this.appConfigService.getAppConfig()
     this.units = appConfig.teachProperties?.units
-    this.attendanceThreshold = appConfig.teachProperties?.attendanceThreshold
-    this.scoringThreshold = appConfig.teachProperties?.scoringThreshold
-    this.behaviorThreshold = appConfig.teachProperties?.behaviorThreshold
-    this.cutoffRange = appConfig.teachProperties?.cutoffRange
+    this.attendancePrimaryThreshold = appConfig.teachProperties?.attendancePrimaryThreshold
+    this.attendanceSecondaryThreshold = appConfig.teachProperties?.attendanceSecondaryThreshold
+    this.scoringPrimaryThreshold = appConfig.teachProperties?.scoringPrimaryThreshold
+    this.scoringSecondaryThreshold = appConfig.teachProperties?.scoringSecondaryThreshold
+    this.behaviorPrimaryThreshold = appConfig.teachProperties?.behaviorPrimaryThreshold
+    this.behaviorSecondaryThreshold = appConfig.teachProperties?.behaviorSecondaryThreshold
     
     // new instance - no classes yet.
     if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
