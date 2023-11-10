@@ -167,6 +167,16 @@ The [Bullet points for Tangerine Development](./docs/developer/development-bulle
 
 Prereqs includes [node](https://nodejs.org/en/). Before setting up your sandbox, see the decide which Content Set you would like to set it up with. Content Sets are configuration and forms for Tangerine that serve as starting places and examples of the different ways Tangerine Client can be used. See the list of Content Sets in the `content-sets` folder and note which one you will be installing with which will be referenced in the commands below.
 
+For Tangerine instances based on a v3.x branch, you may need to install phantomjs globally in order to run tests.
+```bash
+cd /usr/local/share
+sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+sudo tar xjf phantomjs-1.9.8-linux-x86_64.tar.bz2
+sudo ln -s /usr/local/share/phantomjs-1.9.8-linux-x86_64/bin/phantomjs /usr/local/share/phantomjs
+sudo ln -s /usr/local/share/phantomjs-1.9.8-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs
+sudo ln -s /usr/local/share/phantomjs-1.9.8-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
+```
+
 ```bash
 # Install Angular CLI globally. This is useful for using the `ng generate` subcommand for templating out new Components, Modules, etc.
 npm install -g @angular/cli
@@ -184,21 +194,15 @@ cp -r ../content-sets/<your pick>/client src/assets
 cp src/assets/app-config.defaults.json src/assets/app-config.json
 # Copy the latest translations into the Angular Assets folder.
 cp ../translations/translation* src/assets/
+# Workaround for ssl issue in phantomjs: error:0308010C:digital envelope routines::unsupported
+export NODE_OPTIONS=--openssl-legacy-provider
 # Start the Angular development server.
 npm start
 ```
 
 View the app at <http://localhost:4200>.
 
-__Optional__: If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
-
-```bash
-rm -r node_modules/tangy-form
-ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/node_modules/tangy-form
-```
-It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
-
-
+If using ngrok.io or tunnelto.dev, use the 'start-using-proxy' instead of 'start' command. This will add some switches that enable the use of some older libraries.
 
 ## Deprecated Version of Tangerine
 
