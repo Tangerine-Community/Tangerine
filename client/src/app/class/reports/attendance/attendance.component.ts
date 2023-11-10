@@ -54,10 +54,12 @@ export class AttendanceComponent implements OnInit {
   reportLocaltime: string;
   ignoreCurriculumsForTracking: boolean = false
   currArray: any[]
-  attendanceThreshold: number
-  scoringThreshold: number
-  behaviorThreshold: number
-  cutoffRange: number
+  attendancePrimaryThreshold: number
+  attendanceSecondaryThreshold: number
+  scoringPrimaryThreshold: number
+  scoringSecondaryThreshold: number
+  behaviorPrimaryThreshold: number
+  behaviorSecondaryThreshold: number
   curriculumId
   
   async ngOnInit(): Promise<void> {
@@ -68,10 +70,12 @@ export class AttendanceComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig()
     const teachConfiguration = appConfig.teachProperties
     this.units = appConfig.teachProperties?.units
-    this.attendanceThreshold = appConfig.teachProperties?.attendanceThreshold
-    this.scoringThreshold = appConfig.teachProperties?.scoringThreshold
-    this.behaviorThreshold = appConfig.teachProperties?.behaviorThreshold
-    this.cutoffRange = appConfig.teachProperties?.cutoffRange
+    this.attendancePrimaryThreshold = appConfig.teachProperties?.attendancePrimaryThreshold
+    this.attendanceSecondaryThreshold = appConfig.teachProperties?.attendanceSecondaryThreshold
+    this.scoringPrimaryThreshold = appConfig.teachProperties?.scoringPrimaryThreshold
+    this.scoringSecondaryThreshold = appConfig.teachProperties?.scoringSecondaryThreshold
+    this.behaviorPrimaryThreshold = appConfig.teachProperties?.behaviorPrimaryThreshold
+    this.behaviorSecondaryThreshold = appConfig.teachProperties?.behaviorSecondaryThreshold
     this.curriculi = [];
     // const currentClass = await this.classFormService.getResponse(classId);
 

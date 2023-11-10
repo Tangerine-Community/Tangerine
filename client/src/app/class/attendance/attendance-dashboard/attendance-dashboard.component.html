@@ -9,9 +9,9 @@
     <!--    </button>-->
   </span>
 </mat-toolbar>
-<mat-card *ngIf="selectedClass">
+<div class="selectedClassLabel">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+<!--<mat-card *ngIf="selectedClass">-->
 <!--  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : <ng-container *ngIf="!ignoreCurriculumsForTracking">{{curriculum?.label}} : </ng-container>{{reportDate}}</div>-->
-  <div class="selectedClassLabel">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
   <div>
     <table class="dashboard-table">
       <tr>
@@ -31,9 +31,9 @@
             <mat-icon>sms</mat-icon>
           </button>
         </td>
-        <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendanceThreshold, 
-        'good' : student.presentPercentage < attendanceThreshold && student.presentPercentage > (attendanceThreshold - cutoffRange),
-        'great' : student.presentPercentage >= attendanceThreshold,
+        <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
+        'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
+        'great' : student.presentPercentage >= attendancePrimaryThreshold,
         'white': student.presentPercentage === null || student.presentPercentage === undefined,
         'number-cell': true,
         'centered': true}">
@@ -45,9 +45,9 @@
           </ng-template>
         </td>
 
-        <td [ngClass]="{'mediocre' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorThreshold, 
-        'great' : student.behaviorPercentage >= behaviorThreshold, 
-        'good' : student.behaviorPercentage < behaviorThreshold && student.behaviorPercentage > (behaviorThreshold - cutoffRange),
+        <td [ngClass]="{'mediocre' : (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorPrimaryThreshold, 
+        'great' : student.behaviorPercentage >= behaviorPrimaryThreshold, 
+        'good' : student.behaviorPercentage < behaviorPrimaryThreshold && student.behaviorPercentage >= behaviorSecondaryThreshold,
         'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
         'number-cell': true,
         'centered': true}"> 
@@ -60,9 +60,9 @@
         </td>
         
         <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
-          <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringThreshold, 
-        'great' : student['score'] && student['score'] >= scoringThreshold, 
-        'good' : student['score'] < scoringThreshold && student['score'] > (scoringThreshold - cutoffRange),
+          <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringPrimaryThreshold, 
+        'great' : student['score'] && student['score'] >= scoringPrimaryThreshold, 
+        'good' : student['score'] < scoringPrimaryThreshold && student['score'] >= scoringSecondaryThreshold,
         'white' : student['score'] === null || student['score'] === undefined,
         'number-cell': true,
         'centered': true}">
@@ -72,9 +72,9 @@
         </ng-container>
         
         <ng-template #otherScoreCell>
-          <td *ngFor="let curriculum of currArray" [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringThreshold, 
-        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringThreshold, 
-        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringThreshold && student['scores'][curriculum.labelSafe] > (scoringThreshold - cutoffRange),
+          <td *ngFor="let curriculum of currArray" [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] > (scoringPrimaryThreshold - cutoffRange),
         'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
         'number-cell': true,
         'centered': true}">
@@ -87,4 +87,4 @@
     <span><p class="mat-h3 left-padding"
              *ngIf="!attendanceReport || attendanceReport?.attendanceList.length === 0">{{'No Students currently registered.'|translate}}</p></span>
   </div>
-</mat-card>
+<!--</mat-card>-->

@@ -3,23 +3,26 @@
 ## v3.30.0
 
 __New Features__
-- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` 
+- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and "homeUrl": "attendance-dashboard"
  to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report. 
 - The Attendance records generate _id's based on the grade, curriculum, user, and date and time of the record, so that they can be sorted chronologically.
   See dashboard.service generateSearchableId for details. 
+- Class now supports `eventFormRedirect` to redirect to different url after submit: `on-submit="window.eventFormRedirect = `/attendance-check`"`
 - New app-config.json configuration for teach properties:
   ```js
   "teachProperties": {
     "units": ["unit 1", "unit 2", "unit 3", "unit 4"],
-    "cutoffRange": "10",
-    "attendanceThreshold": "80",
-    "scoringThreshold": "60",
-    "behaviorThreshold": "66",
+    "attendancePrimaryThreshold": 80,
+    "attendanceSecondaryThreshold": 70,
+    "scoringPrimaryThreshold": 70,
+    "scoringSecondaryThreshold": 60,
+    "behaviorPrimaryThreshold": 90,
+    "behaviorSecondaryThreshold": 80,
     "useAttendanceFeature": true
   }
   ```
+  The PrimaryThreshold and SecondaryThreshold values are used to determine the color of the cell in the reports.
 - Updated docker-tangerine-base-image to v3.8.0, which adds the cordova-plugin-x-socialsharing plugin and enables sharing to WhatsApp.
-
 
 __Fixes__
 - Fixed PWA assets (sound,video) only work when online [#1905](https://github.com/Tangerine-Community/Tangerine/issues/1905)
