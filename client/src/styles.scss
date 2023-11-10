@@ -6,10 +6,16 @@
   vertical-align: middle;
 }
 
-@import '~material-design-icons-iconfont/dist/material-design-icons.css';
+$material-design-icons-font-directory-path: '~material-design-icons-iconfont/dist/fonts/';
+@import '~material-design-icons-iconfont/src/material-design-icons';
 /* TODO: I'm not sure this is having any affect */
 @import './_tangy-app-variables.scss';
 @import "./tangerine-theme.scss";
+
+@font-face {
+  font-family: 'FiraCode';
+  src: url('./fonts/FiraCode-VariableFont_wght.ttf');
+}
 
 html {
 
@@ -42,6 +48,7 @@ html {
 
   /* Other component overrides */
   --paper-tabs-selection-bar-color: #f26f10;
+  --label-font-size: 1.2rem;
 
 }
 

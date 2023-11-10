@@ -1,0 +1,97 @@
+.gray {
+  background-color: gray;
+}
+
+.green {
+  background-color: green;
+}
+
+.blue {
+  background-color: deepskyblue;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.red {
+  background-color: red;
+}
+#last-n-report {
+  margin-top: 1em;
+}
+mat-form-field {
+  width: 35px;
+}
+#last-n-report {
+  margin-top: 30px
+}
+.legend td {
+  padding: 0 1em;
+}
+.student-name-column {
+  width: 120px;
+  text-align: left;
+}
+.attendance-column {
+  width: 80px;
+}
+.behavior-column {
+  width: 80px;
+}
+.score-column {
+  width: 150px;
+}
+
+.red {
+  background-color: red;
+}
+.green {
+  background-color: green;
+}
+.mat-chip.mat-standard-chip.mat-primary {
+  background-color: green;
+}
+
+.mat-chip.mat-standard-chip.mat-primary.blue {
+  background-color: deepskyblue;
+}
+
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.gray {
+  background-color: lightgrey;
+}
+
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.red {
+  background-color: red;
+}
+
+.tangy-class-card-content-container {
+  margin-left: 3%;
+  /*width: 90%;*/
+  margin-right: 5%;
+  /*min-height: vh;*/
+}
+
+td.centered {
+  text-align: center;
+}
+
+td.progress-bar {
+  padding-left: 1em;
+}
+
+#most-recent-class-table {
+  width:600px;
+}
+
+#past-30-days-table {
+  width:600px;
+}
+
+#last-n-report-table {
+  width:600px;
+}
+
+.number-cell {
+  width: 20px;
+}

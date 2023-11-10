@@ -578,9 +578,16 @@ export class UserService {
    *  if developing locally, pull current user from the cache...
    */
   getCurrentUser():string {
-    return window.location.hostname === 'localhost'
-      ? localStorage.getItem('currentUser')
-      : this._currentUser
+    if (window.location.hostname.includes('tunnelto') || window.location.hostname.includes('ngrok') || window.location.hostname.includes('localhost')) {
+      return localStorage.getItem('currentUser')
+    } else {
+      return this._currentUser
+    }
+
+
+    // return window.location.hostname === 'localhost'
+    //   ? localStorage.getItem('currentUser')
+    //   : this._currentUser
   }
 
   async setCurrentUser(username):Promise<string> {
@@ -588,7 +595,7 @@ export class UserService {
     // contents of the lockbox in an unencrypted form on disk in localStorage/etc. Putting currentUser in memory
     // guarantees that if we reload the user will be logged out as opposed to being logged in but not having access
     // to the lockbox contents, thus not actually having access to the database.
-    if (window.location.hostname === 'localhost') {
+    if (window.location.hostname.includes('tunnelto') || window.location.hostname.includes('ngrok') || window.location.hostname.includes('localhost')) {
       localStorage.setItem('currentUser', username)
     } else {
       this._currentUser = username

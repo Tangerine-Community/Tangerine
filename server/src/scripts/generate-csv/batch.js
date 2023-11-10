@@ -55,51 +55,78 @@ async function batch() {
     state.complete = true
   } else {
     // Order each datum's properties by the headers for consistent columns.
+    let rows;
     try {
-      const rows = docs.map(doc => {
-        return [ doc._id, ...state.headersKeys.map(header => {
+      rows = []
+      docs.forEach(doc => {
+        let row = [doc._id, ...state.headersKeys.map(header => {
           // Check to see if variable comes from a section that was disabled.
-          let value = doc[header];
-          if (typeof value === 'string') {
-            if (csvReplacementCharacters) {
-              csvReplacementCharacters.forEach(expression => {
-                const search = expression["search"];
-                const replace = expression["replace"];
-                if (search && replace) {
-                  const re = new RegExp(search, 'g')
-                  try {
-                    value = value.replace(re, replace)
-                  } catch (e) {
-                    console.log("ERROR! re: " + re + " replace: " + replace + " value: " + value + " Error: " + e)
+          if (doc.type === 'attendance' && header === 'attendanceList') {
+            // skip
+          } else if (doc.type === 'scores' && header === 'scoreList') {
+            // skip
+          } else {
+            let value = doc[header];
+            console.log("header: " + header + " value: " + value)
+            if (typeof value === 'string') {
+              if (csvReplacementCharacters) {
+                csvReplacementCharacters.forEach(expression => {
+                  const search = expression["search"];
+                  const replace = expression["replace"];
+                  if (search && replace) {
+                    const re = new RegExp(search, 'g')
+                    try {
+                      value = value.replace(re, replace)
+                    } catch (e) {
+                      console.log("ERROR! re: " + re + " replace: " + replace + " value: " + value + " Error: " + e)
+                    }
                   }
-                }
-              })
+                })
+              }
             }
-          }
-          if(typeof header === 'string' && header.split('.').length === 3) {
-            const itemId = header.split('.')[1]
-            if (itemId && doc[`${itemId}_disabled`] === 'true') {
-              if (outputDisabledFieldsToCSV) {
-                return value
+            if (typeof header === 'string' && header.split('.').length === 3) {
+              console.log("Checking header: " + header + " to see if it is disabled.")
+              const itemId = header.split('.')[1]
+              if (itemId && doc[`${itemId}_disabled`] === 'true') {
+                if (outputDisabledFieldsToCSV) {
+                  return value
+                } else {
+                  return process.env.T_REPORTING_MARK_SKIPPED_WITH
+                }
               } else {
-                return process.env.T_REPORTING_MARK_SKIPPED_WITH
+                if (value === undefined) {
+                  return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+                } else {
+                  return value
+                }
               }
             } else {
               if (value === undefined) {
-                  return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+                return process.env.T_REPORTING_MARK_UNDEFINED_WITH
               } else {
-                  return value
+                return value
               }
             }
-          } else {
-            if (value === undefined) {
-              return process.env.T_REPORTING_MARK_UNDEFINED_WITH
-            } else {
-                return value
-            }          
           }
         })]
+        if (doc.type === 'attendance') {
+          // let row = []
+          doc.attendanceList.forEach(attendance => {
+            row = [...row.slice(0,-6), attendance.id, attendance.name, attendance.phone, attendance.forms, attendance.absent, attendance.mood ]
+            rows.push(row)
+          })
+        } else if (doc.type === 'scores') {
+          // let row = []
+          doc.scoreList.forEach(score => {
+            row = [...row.slice(0,-4), score.id, score.name, score.forms, score.score ]
+            rows.push(row)
+          })
+        } else {
+          // rows = docs.map(doc => {
+          rows.push(row)
+        }
       })
+
       const output = `\n${rows.map(row => new CSV([row]).encode()).join('\n')}`
       await appendFile(state.outputPath, output)
       state.skip = state.skip + state.batchSize

@@ -1,0 +1,44 @@
+<mat-card class="tangy-class-card-content-container">
+  <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass)}}</p></div>
+  <div>
+    <table class="dashboard-table">
+      <tr>
+        <th class="student-name-column" colspan="2">{{'Student'|translate}}</th>
+        <th colspan="2">{{'Attendance'|translate}}</th>
+        <th colspan="2">{{'Behavior'|translate}}</th>
+      </tr>
+      <tr *ngFor="let student of attendanceReport?.attendanceList">
+        <!--          <tr *ngFor="let student of attendanceReport?.attendanceList">-->
+        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
+        <td class="sms-button-column">
+          <button mat-mini-fab color="accent" aria-label="SMS button with an sms icon" (click)="sendText(student)"
+                  [ngStyle]="{transform: 'scale(0.6)'}">
+            <mat-icon>sms</mat-icon>
+          </button>
+        </td>
+        <td style="padding-right: 1em;">
+          <mat-progress-bar
+            *ngIf="student.presentPercentage"
+            value="{{ student.presentPercentage }}"
+            [appProgressBarColor]="(student.presentPercentage)"
+            mode="determinate">
+          </mat-progress-bar>
+        </td>
+        <td class="number-cell" *ngIf="student.presentPercentage">{{student.presentPercentage}}%</td>
+        <td class="number-cell" *ngIf="!student.presentPercentage">{{'N/A'|translate}}</td>
+        <td style="padding-left: 1em;padding-right: 1em;">
+          <mat-progress-bar
+            *ngIf="student.moodPercentage"
+            value="{{ student.moodPercentage }}"
+            [appProgressBarColor]="(student.moodPercentage)"
+            mode="determinate">
+          </mat-progress-bar>
+        </td>
+        <td class="number-cell" *ngIf="student.moodPercentage">{{student.moodPercentage}}%</td>
+        <td class="number-cell" *ngIf="!student.moodPercentage">{{'N/A'|translate}}</td>
+      </tr>
+    </table>
+    <span><p class="mat-h3"
+             *ngIf="!attendanceReport || attendanceReport?.attendanceList.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+  </div>
+</mat-card>

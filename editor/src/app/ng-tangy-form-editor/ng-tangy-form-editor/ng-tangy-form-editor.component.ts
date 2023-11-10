@@ -60,7 +60,7 @@ export class NgTangyFormEditorComponent implements OnInit {
       this.hasClassModule = true;
     }
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
-    const categories = JSON.stringify(appConfigCategories);
+    const categories = JSON.stringify(appConfigCategories)? JSON.stringify(appConfigCategories) : '[]';
 
     let locationListsMetadataJSON = <any> await this.groupsService.getLocationLists(this.groupId)
     
