@@ -23,18 +23,27 @@ export class StudentDetailsComponent implements OnInit {
   units: string[] = []
   absentRecords: any[] = []
   curriculumLabel: string
+  ignoreCurriculumsForTracking: boolean = false
   
   async ngOnInit(): Promise<void> {
     const appConfig = await this.appConfigService.getAppConfig()
     const teachConfiguration = appConfig.teachProperties
     this.units = appConfig.teachProperties?.units
-    this.curriculumLabel = this.data.curriculum?.label
+    const currentClass = this.data.currentClass
+    this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+
+    let curriculumLabel = this.data.curriculum?.label
+    // Set the curriculumLabel to null if ignoreCurriculumsForTracking is true.
+    if (this.ignoreCurriculumsForTracking) {
+      curriculumLabel = null
+    }
+    this.curriculumLabel = curriculumLabel
     const randomId = this.data.currentClass.metadata?.randomId
     const student = this.data.student
     const studentId = student.id
 
     const records = []
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', this.data.currentClass, null, this.curriculumLabel, randomId, true)
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', this.data.currentClass, null, curriculumLabel, randomId, true)
     for (let i = 0; i < attendanceReports.length; i++) {
       const attendanceReport = attendanceReports[i].doc
       const timestamp = attendanceReport.timestamp
