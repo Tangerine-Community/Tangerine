@@ -1,55 +1,3 @@
-<mat-toolbar *ngIf="selectedClass" class="classDashboard">
-
-  <span dir="rtl" class="class-dashboard-button-spacer-left">
-    <button mat-stroked-button color="primary"
-            [routerLink]="['/class-form/']"
-            [queryParams]='classRegistrationParams'>
-      {{'Add Class'|translate}}
-    </button>
-    <button mat-stroked-button color="primary"
-            [routerLink]="['/class-form/']"
-            [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
-      {{'Add Student'|translate}}
-    </button>
-    <button mat-stroked-button color="primary"
-            [routerLink]="['/class-config/']">
-      <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>
-    </button>
-  </span>
-  <span dir="rtl" *ngFor="let class of enabledClasses; let classIndex=index" class="class-dashboard-curr-button-spacer">
-      <button mat-stroked-button color="primary" [matMenuTriggerFor]="catMenu" class="mat-button"
-              attr.data-classId = "{{class.id}}">
-        {{getClassTitle(class.doc)}}
-      </button>
-      <mat-menu #catMenu="matMenu">
-        <ng-template matMenuContent>
-          <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">
-            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>
-          </span>
-        </ng-template>
-      </mat-menu>
-    </span>
-  <span dir="rtl" class="class-dashboard-button-spacer-right">
-      <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
-      <mat-menu #groupingMenu="matMenu">
-        <ng-template matMenuContent>
-        <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-        </ng-template>
-      </mat-menu>
-      <!--<mat-menu #progressMenu="matMenu">-->
-        <!--<ng-template matMenuContent>-->
-        <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
-        <!--</ng-template>-->
-      <!--</mat-menu>-->
-      <mat-menu #reportsMenu="matMenu">
-        <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
-        <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
-        <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
-        <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass.id}}">{{'Task Report'|translate}}</button>
-      </mat-menu>
-    </span>
-</mat-toolbar>
-
 <mat-toolbar *ngIf="!selectedClass" class="classDashboard">
 
   <span dir="rtl" class="class-dashboard-button-spacer-left">
@@ -57,29 +5,30 @@
             [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
       {{'Add Class'|translate}}
     </button>
-    <button mat-stroked-button color="primary" [routerLink]="['/class-config/']">
-        <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>
-    </button>
+<!--    <button mat-stroked-button color="primary" [routerLink]="['/class-config/']">-->
+<!--        <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>-->
+<!--    </button>-->
   </span>
 </mat-toolbar>
-
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
-    <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{getClassTitle(selectedClass.doc)}} - {{selectedCurriculum.label}}</p></div>
-
-    <mat-form-field>
-      <mat-label>{{'Select Subtask'|translate}}</mat-label>
-      
-      <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
-        <mat-option>{{'None'|translate}}</mat-option>
-        <mat-option *ngFor="let item of formList;" value="{{item.id}}"
-                    (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!--<div class="flexbox-horizontal-container">-->
+    <div *ngIf="selectedCurriculum"
+         class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
+      : {{getClassTitle(selectedClass)}} - {{selectedCurriculum.label}}</p></div>
+   
+    <div class="controls-wrapper">
+      <div class="controls-one">
+        <mat-form-field>
+          <mat-label>{{'Select Subtask'|translate}}</mat-label>
+          <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
+            <mat-option>{{'None'|translate}}</mat-option>
+            <mat-option *ngFor="let item of formList;" value="{{item.id}}"
+                        (click)="selectSubTask(item.id,item.classId,item.curriculumId, null)">{{item.title}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
     <div>
-      <!--<div class="d1">-->
       <div>
         <table class="dashboard-table">
           <tr>
@@ -102,42 +51,13 @@
             </ng-template>
           </tr>
         </table>
-        <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+        <span><p class="mat-h3" *ngIf="allStudentResults?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
       </div>
-      <!--<div class="d2" *ngIf="classGroupReport?.feedback">-->
-        <!--<mat-card class="card-feedback">-->
-          <!--<mat-card-title>Feedback</mat-card-title>-->
-          <!--<mat-card-content>-->
-            <!--<p>-->
-            <!--<span *ngIf="classGroupReport?.max">-->
-              <!--{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.max}} ({{classGroupReport?.aveCorrectPerc}}%)-->
-              <!--{{'of'|translate}} {{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}-->
-            <!--</span>-->
-            <!--<span *ngIf="!classGroupReport?.max">-->
-              <!--{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.attempted}} ({{classGroupReport?.aveCorrectPerc}}%)-->
-              <!--{{'of'|translate}} {{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}-->
-            <!--</span>-->
-            <!--<span *ngIf="classGroupReport?.studentsToWatch"><br/>{{'Students to watch'|translate}}: </span>-->
-            <!--<span *ngIf="classGroupReport?.studentsToWatch">-->
-              <!--<span *ngFor="let student of classGroupReport?.studentsToWatch">-->
-                <!--{{student}}-->
-              <!--</span>-->
-            <!--</span>-->
-
-            <!--</p>-->
-            <!--<span [innerHTML]="classGroupReport?.feedback?.message" *ngIf="displayClassGroupReport"></span>-->
-            <!--<p><br/><a href="/#/reports/grouping/{{currentItemId}}/{{selectedClass.doc._id}}/{{curriculumId}}">{{classGroupReport?.subtestName}} report</a></p>-->
-          <!--</mat-card-content>-->
-        <!--</mat-card>-->
-      <!--</div>-->
     </div>
-
-
-
   </div>
 </mat-card>
 <mat-card class="tangy-class-card-content-container" *ngIf="!selectedClass">
-  {{'Click the wrench icon to enable an archived class.'|translate}}
+  {{'Click the right-hand menu to the Settings to enable an archived class.'|translate}}
 </mat-card>
 
-<div #container class = "hideme"> </div>
+<div #container class="hideme"></div>

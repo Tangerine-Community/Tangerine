@@ -43,8 +43,9 @@ cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
 cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
 cp -r $LOCATION_LISTS_PATH/*.json $RELEASE_DIRECTORY/assets/locations/
+mkdir -p $MEDIA_PATH $RELEASE_DIRECTORY/assets/media
+cp -r $MEDIA_PATH $RELEASE_DIRECTORY/assets/
 cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
-cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/media/
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 

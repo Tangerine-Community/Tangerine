@@ -21,17 +21,19 @@ import {ProcessMonitorService} from "./_services/process-monitor.service";
 import {ProcessGuard} from "./_guards/process-guard.service";
 import { ProcessMonitorDialogComponent } from './_components/process-monitor-dialog/process-monitor-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatMenuModule,
-    MatIconModule,
-    MatDialogModule,
-    MatButtonModule
-  ],
+    imports: [
+        CommonModule,
+        MatTableModule,
+        MatMenuModule,
+        MatIconModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatProgressBarModule
+    ],
   providers: [
     AppConfigService,
     ServerConfigService,
