@@ -836,7 +836,7 @@ export class DashboardService {
       if (student) {
         student.reportCount = student.reportCount ? student.reportCount + 1 : 1
         student.presentCount = student.presentCount ? student.presentCount : 0
-        if (typeof attendanceStudent.absent !== 'undefined') {
+        if (typeof attendanceStudent.absent !== 'undefined'&& attendanceStudent.absent !== null) {
           if (attendanceStudent.absent === false) {
             student.presentCount = student.presentCount + 1
           }
@@ -886,8 +886,10 @@ export class DashboardService {
           if (ignoreCurriculumsForTracking) {
             if (!currentStudent.unitScores) {
               currentStudent.unitScores = {}
+              currentStudent.unitScoresPretty = {}
             }
             currentStudent.unitScores[curriculumLabel + '_score_' + index] = currentScore
+            currentStudent.unitScoresPretty[curriculumLabel + ' ' + scoreUnit] = currentScore
           } else {
             currentStudent['score_' + index] = currentScore
           }
@@ -1070,7 +1072,7 @@ export class DashboardService {
         studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}
-        studentResult['absent'] = false
+        studentResult['absent'] = null
         studentResult['behavior'] = null
         
         list.push(studentResult)

@@ -1,8 +1,7 @@
 <h2>{{data.student.name}} {{data.student.surname}}</h2>
 <h3>{{curriculumLabel}}</h3>
-<p>{{'Phone'|translate}}: {{data.student.phone}}</p>
 <div>
-  <p>{{'Absent'|translate}}</p>
+  <p>{{'Attendance'|translate}}</p>
   <ul>
     <li *ngFor="let record of absentRecords">
       {{record.reportLocaltime}}
@@ -13,14 +12,14 @@
   <ng-container *ngIf="data.student.ignoreCurriculumsForTracking; else notSharedScores">
     <p>{{'Scores'|translate}}</p>
     <ul>
-      <li *ngFor="let item of data.student.unitScores | keyvalue">
-        {{item.key}}:{{item.value}}
+      <li *ngFor="let item of data.student.unitScoresPretty | keyvalue">
+        {{item.key}}: {{item.value}}
       </li>
     </ul>
-    <p>{{'Percentages:'|translate}}</p>
+    <p>{{'score average is'|translate}}</p>
     <ul>
       <li *ngFor="let item of data.student.scores | keyvalue">
-        {{item.key}}:{{item.value}}%
+        {{item.key}}: {{item.value}}%
       </li>
     </ul>
   </ng-container>

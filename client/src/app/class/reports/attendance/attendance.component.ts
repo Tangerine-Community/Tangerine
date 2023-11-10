@@ -139,9 +139,10 @@ export class AttendanceComponent implements OnInit {
     const currentAttendanceReport = attendanceReports[attendanceReports.length - 1]?.doc
     const savedAttendanceList = currentAttendanceReport?.attendanceList
 
-    const attendanceList = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
-    const register = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
-
+    const attendanceListStarter = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
+    const register = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceListStarter);
+    const attendanceList = register.attendanceList
+    
     const scoreReports = []
     for (let i = 0; i < this.currArray.length; i++) {
       const curriculum = this.currArray[i];
@@ -210,7 +211,7 @@ export class AttendanceComponent implements OnInit {
       }
     }
     // return {attendanceReports, currentAttendanceReport};
-    return currentAttendanceReport
+    return register
   }
 
   async getUserDB() {
