@@ -115,8 +115,6 @@ mat-card {
   padding-left: 5px;
   padding-right: 5px;
   text-align: center;
-  background-color: var(--primary-color-dark);
-  color: white;
 }
 
 .selectedClassLabel p {
