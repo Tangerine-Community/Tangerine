@@ -125,7 +125,7 @@ input[type=checkbox]:not(:checked) {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;
-  background-color: #f29d38;
+  background-color: var(--primary-color-dark);
   color: white;
 }
 

@@ -134,7 +134,7 @@ export class AttendanceComponent implements OnInit {
     const randomId = currentClass.metadata?.randomId
     const students = await this.dashboardService.getMyStudents(classId);
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId, true)
-    const currentAttendanceReport = attendanceReports? attendanceReports[attendanceReports.length - 1]?.doc : null
+    const currentAttendanceReport = attendanceReports? attendanceReports[0]?.doc : null
     const savedAttendanceList = currentAttendanceReport?.attendanceList
 
     const attendanceListStarter = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
@@ -167,7 +167,7 @@ export class AttendanceComponent implements OnInit {
     }
 
     if (numVisits) {
-      const selectedAttendanceReports = attendanceReports.slice(0 - numVisits)
+      const selectedAttendanceReports = attendanceReports.slice(0,numVisits)
       for (let i = 0; i < selectedAttendanceReports.length; i++) {
         const attendanceReport = selectedAttendanceReports[i];
         const attendanceList = attendanceReport.doc.attendanceList
