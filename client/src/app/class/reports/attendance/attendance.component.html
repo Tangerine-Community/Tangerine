@@ -37,7 +37,6 @@
           
         <tr *ngFor="let student of attendanceReport?.attendanceList">
           <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
-<!--          <td> {{student["name"]}} {{student["surname"]}} </td>-->
           <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
         'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
         'great' : student.presentPercentage >= attendancePrimaryThreshold,
