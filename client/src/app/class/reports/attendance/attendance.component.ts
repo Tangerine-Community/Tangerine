@@ -142,10 +142,13 @@ export class AttendanceComponent implements OnInit {
     this.setForwardButton(currentIndex)
     this.setBackButton(currentIndex)
     const currentAttendanceReport = attendanceReports? attendanceReports[currentIndex]?.doc : null
-    const savedAttendanceList = currentAttendanceReport?.attendanceList
-
-    const attendanceListStarter = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
-    const register = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceListStarter);
+    const currentAttendanceList = currentAttendanceReport?.attendanceList
+    //
+    // // const attendanceListStarter = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
+    // const register = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', savedAttendanceList);
+    // const attendanceList = register.attendanceList
+    const studentAttendanceList =  await this.dashboardService.getAttendanceList(students, null, this.curriculum)
+    const register= this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', studentAttendanceList);
     const attendanceList = register.attendanceList
     
     const scoreReports = []
@@ -181,7 +184,7 @@ export class AttendanceComponent implements OnInit {
         await this.dashboardService.processAttendanceReport(attendanceList, register)
       }
     } else {
-      await this.dashboardService.processAttendanceReport(attendanceList, register)
+      await this.dashboardService.processAttendanceReport(currentAttendanceList, register)
     }
     
     const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, curriculumLabel, randomId, true)
@@ -299,9 +302,9 @@ export class AttendanceComponent implements OnInit {
   }
 
   private setBackButton(updatedIndex) {
-    console.log("goBack updatedIndex: " + updatedIndex)
+    // console.log("goBack updatedIndex: " + updatedIndex)
     if (updatedIndex + 1 > this.currentReportsLength - 1) {
-      console.log("Stop! goBack updatedIndex: " + updatedIndex)
+      // console.log("Stop! goBack updatedIndex: " + updatedIndex)
       this.showBackButton = false
       // return
     } else {
@@ -310,9 +313,9 @@ export class AttendanceComponent implements OnInit {
   }
 
   private setForwardButton(updatedIndex) {
-    console.log("goForward updatedIndex: " + updatedIndex)
+    // console.log("goForward updatedIndex: " + updatedIndex)
     if (this.currentReportsLength - updatedIndex === this.currentReportsLength) {
-      console.log("Stop! goForward currentIndex: " + updatedIndex)
+      // console.log("Stop! goForward currentIndex: " + updatedIndex)
       this.showForwardButton = false
       // return
     } else {
