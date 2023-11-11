@@ -61,6 +61,10 @@ export class AttendanceComponent implements OnInit {
   behaviorPrimaryThreshold: number
   behaviorSecondaryThreshold: number
   curriculumId
+  currentIndex: number = 0
+  currentReportsLength: number = 0
+  showBackButton: boolean = true
+  showForwardButton: boolean = true
   
   async ngOnInit(): Promise<void> {
     const classId = this.route.snapshot.paramMap.get('classId')
@@ -117,14 +121,14 @@ export class AttendanceComponent implements OnInit {
     // }
 
     // const { attendanceReports, currentAttendanceReport } = await this.generateSummaryReport(currArray, curriculumId, currentClass, classId);
-    this.attendanceReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, null);
+    this.attendanceReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, null, this.currentIndex);
     // this.attendanceReport = currentAttendanceReport
     // const mostRecentAttendanceReport = attendanceReports.slice(0 - parseInt(this.numVisits, 10))
     // this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport)
-    this.recentVisitsReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, this.numVisits);
+    this.recentVisitsReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, this.numVisits, this.currentIndex);
   }
 
-  private async generateSummaryReport(currArray, curriculumId, currentClass, classId: string, numVisits: number) {
+  private async generateSummaryReport(currArray, curriculumId, currentClass, classId: string, numVisits: number, currentIndex: number = 0) {
     this.curriculum = currArray.find(x => x.name === curriculumId);
     let curriculumLabel = this.curriculum?.label
     // Set the curriculumLabel to null if ignoreCurriculumsForTracking is true.
@@ -134,7 +138,10 @@ export class AttendanceComponent implements OnInit {
     const randomId = currentClass.metadata?.randomId
     const students = await this.dashboardService.getMyStudents(classId);
     const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, curriculumLabel, randomId, true)
-    const currentAttendanceReport = attendanceReports? attendanceReports[0]?.doc : null
+    this.currentReportsLength = attendanceReports.length
+    this.setForwardButton(currentIndex)
+    this.setBackButton(currentIndex)
+    const currentAttendanceReport = attendanceReports? attendanceReports[currentIndex]?.doc : null
     const savedAttendanceList = currentAttendanceReport?.attendanceList
 
     const attendanceListStarter = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
@@ -224,7 +231,7 @@ export class AttendanceComponent implements OnInit {
       // const mostRecentAttendanceReport = this.attendanceReports.slice(0 - parseInt(this.numVisits, 10))
       // const mostRecentAttendanceReport = this.attendanceReports.slice(0 - this.numVisits)
       // this.recentVisitsReport = await this.dashboardService.getRecentVisitsReport(mostRecentAttendanceReport)
-      this.recentVisitsReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, this.numVisits);
+      this.recentVisitsReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, this.numVisits, this.currentIndex);
     }
   }
   
@@ -234,58 +241,6 @@ export class AttendanceComponent implements OnInit {
    */
   async onCurriculumSelect(curriculumId) {
     console.log('boom!: ' + curriculumId);
-    // // const totals = [];
-    // const studentReportsCards: StudentReportsCards = {};
-    // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
-    // // this.curriculumName = curriculum.label;
-    // // // this.curriculumName = "Student Evaluation";
-    // try {
-    //   const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    //   this.curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-    //   const itemReport = await Promise.all(this.curriculumFormsList.map(async item => {
-    //       const results = await this.dashboardService.getResultsByClass(this.classId, curriculumId, this.curriculumFormsList, item);
-    //       if (results.length > 0) {
-    //         return await this.dashboardService.getClassGroupReport(item, this.classId, curriculumId, results);
-    //       }
-    //     })
-    //   );
-    //   Object.keys(itemReport).forEach((item) => {
-    //     if (typeof itemReport[item] !== 'undefined') {
-    //       const report: ClassGroupingReport = itemReport[item];
-    //       const allStudentResults: Array<StudentResult> = report.allStudentResults;
-    //       const reduceClassAverage = (p, studentResult) => {
-    //         return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
-    //       };
-    //       const calcAverage = array => array.reduce(reduceClassAverage, 0) / array.length;
-    //       const average = Math.round(calcAverage(allStudentResults));
-    //
-    //       // now add array of studentResults to each student's record.
-    //       const collectStudentResults = (studentResult: StudentResult) => {
-    //         let reportCard = studentReportsCards[studentResult.id];
-    //         if (typeof reportCard === 'undefined') {
-    //           reportCard = new StudentResult();
-    //           reportCard.results = new Array<StudentResult>();
-    //           reportCard.curriculum = curriculum;
-    //           reportCard.name = studentResult.name;
-    //           reportCard.id = studentResult.id;
-    //         }
-    //         reportCard.results.push(studentResult);
-    //         studentReportsCards[studentResult.id] = reportCard;
-    //         // let average = typeof studentResult.scorePercentageCorrect !== 'undefined'? studentAverage.scorePercentageCorrect + studentResult.scorePercentageCorrect:studentAverage.scorePercentageCorrect
-    //
-    //         // add studentAverage to studentAverages object.
-    //       };
-    //       allStudentResults.forEach(collectStudentResults);
-    //
-    //       // totals.push({
-    //       //   itemId: report.itemId,
-    //       //   itemName: report.subtestName,
-    //       //   average: average,
-    //       //   classSize: report.classSize,
-    //       //   studentsAssessed: report.studentsAssessed
-    //       // });
-    //     }
-    //   });
 
     const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
     const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, this.classId)
@@ -329,7 +284,39 @@ export class AttendanceComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
-  
-  
-  
+
+  async goBack() {
+    const updatedIndex = this.currentIndex + 1
+    this.setBackButton(updatedIndex)
+    this.currentIndex = updatedIndex
+    this.attendanceReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, null, this.currentIndex);
+  }
+  async goForward() {
+    const updatedIndex = this.currentIndex - 1
+    this.setForwardButton(updatedIndex);
+    this.currentIndex = updatedIndex
+    this.attendanceReport = await this.generateSummaryReport(this.currArray, this.curriculumId, this.selectedClass, this.classId, null, this.currentIndex);
+  }
+
+  private setBackButton(updatedIndex) {
+    console.log("goBack updatedIndex: " + updatedIndex)
+    if (updatedIndex + 1 > this.currentReportsLength - 1) {
+      console.log("Stop! goBack updatedIndex: " + updatedIndex)
+      this.showBackButton = false
+      // return
+    } else {
+      this.showBackButton = true
+    }
+  }
+
+  private setForwardButton(updatedIndex) {
+    console.log("goForward updatedIndex: " + updatedIndex)
+    if (this.currentReportsLength - updatedIndex === this.currentReportsLength) {
+      console.log("Stop! goForward currentIndex: " + updatedIndex)
+      this.showForwardButton = false
+      // return
+    } else {
+      this.showForwardButton = true
+    }
+  }
 }
