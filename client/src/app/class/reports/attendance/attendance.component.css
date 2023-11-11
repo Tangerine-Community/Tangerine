@@ -154,3 +154,11 @@ td.progress-bar {
   margin-left: 3%;
 }
 
+a {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: .5em;
+  padding-right:.5em;
+}
+

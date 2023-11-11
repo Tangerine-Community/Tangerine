@@ -4,7 +4,7 @@
     <div>
       <div class="table-description">
         <h2>{{'Most Recent Class'|translate}}</h2>
-        <p>{{'Date'|translate}}: {{reportLocaltime}}</p>
+        <p><a (click)="goBack()" [hidden]="!showBackButton"> < </a> {{'Date'|translate}}: {{reportLocaltime}} <a (click)="goForward()" [hidden]="!showForwardButton"> > </a></p>
       </div>
       <table class="dashboard-table most-recent-class-table">
         <tr>
