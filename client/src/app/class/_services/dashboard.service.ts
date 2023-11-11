@@ -828,19 +828,20 @@ export class DashboardService {
    * @private
    */
   async processAttendanceReport(attendanceList, register) {
-    for (let i = 0; i < attendanceList.length; i++) {
-      const attendanceStudent = attendanceList[i]
-      const student = register.attendanceList.find((thisStudent) => {
-        return thisStudent.id === attendanceStudent.id
+    for (let i = 0; i < register.attendanceList.length; i++) {
+      const registerStudent = register.attendanceList[i]
+      const student = attendanceList.find((thisStudent) => {
+        return thisStudent?.id === registerStudent.id
       })
       if (student) {
-        student.reportCount = student.reportCount ? student.reportCount + 1 : 1
-        student.presentCount = student.presentCount ? student.presentCount : 0
-        if (typeof attendanceStudent.absent !== 'undefined'&& attendanceStudent.absent !== null) {
-          if (attendanceStudent.absent === false) {
-            student.presentCount = student.presentCount + 1
-          }
-          student.presentPercentage = this.classUtils.round((student.presentCount / student.reportCount) * 100, 2)
+        registerStudent.reportCount = registerStudent.reportCount ? registerStudent.reportCount + 1 : 1
+        registerStudent.presentCount = registerStudent.presentCount ? registerStudent.presentCount : 0
+        if (typeof student.absent !== 'undefined' && student.absent !== true) {
+          registerStudent.presentCount = registerStudent.presentCount + 1
+          registerStudent.presentPercentage = this.classUtils.round((registerStudent.presentCount / registerStudent.reportCount) * 100, 2)
+        }
+        if (typeof student.absent !== 'undefined' && student.absent === true) {
+          registerStudent.presentPercentage = this.classUtils.round((registerStudent.presentCount / registerStudent.reportCount) * 100, 2)
         }
       }
     }
