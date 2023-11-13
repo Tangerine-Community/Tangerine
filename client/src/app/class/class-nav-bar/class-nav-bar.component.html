@@ -17,28 +17,28 @@
       </button>
       <mat-menu #curriculumMenu="matMenu">
         <ng-container *ngFor="let curriculum of klass.doc.items[0].inputs[3].value;">
-          <button mat-menu-item *ngIf="curriculum.value ==='on' && useAttendanceFeature"
+          <button mat-menu-item *ngIf="curriculum.value ==='on' && useAttendanceFeature && !linkToDashboardUrl"
                   [routerLink]="['/attendance-dashboard/']"
                   [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
-            {{curriculum?.label}}<ng-container *ngIf="linkToDashboardUrl"> : {{'Attendance'|translate}}</ng-container>
+            {{curriculum?.label}}
             </button>
           <button mat-menu-item *ngIf="curriculum.value ==='on' && linkToDashboardUrl"
                   [routerLink]="['/dashboard/']"
                   [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
-            {{curriculum?.label}} : {{'Teach'|translate}}
+            {{curriculum?.label}}
             </button>
         </ng-container>
       </mat-menu>
       <ng-template #noCurriculums>
-        <button mat-menu-item [routerLink]="['/attendance-dashboard/']" 
+        <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="linkToDashboardUrl; else attendanceOnly">
+          {{getClassTitle(klass.doc)}}
+      </button>
+      </ng-template>
+      <ng-template #attendanceOnly>
+        <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
                 *ngIf="useAttendanceFeature"
                 [queryParams]={classIndex:classIndex}>
-            {{getClassTitle(klass.doc)}}<ng-container *ngIf="linkToDashboardUrl"> : {{'Attendance'|translate}}</ng-container>
-        </button>
-        <button mat-menu-item [routerLink]="['/attendance-dashboard/']" 
-                *ngIf="linkToDashboardUrl"
-                [queryParams]={classIndex:classIndex}>
-            {{getClassTitle(klass.doc)}} : {{'Teach'|translate}}
+            {{getClassTitle(klass.doc)}}
         </button>
       </ng-template>
       </span>
