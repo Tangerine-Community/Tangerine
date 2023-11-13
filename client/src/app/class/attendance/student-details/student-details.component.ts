@@ -1,51 +1,47 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   Inject,
   OnInit,
-  TemplateRef,
-  ViewChild,
-  ViewEncapsulation
 } from '@angular/core';
 import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {DashboardService} from "../../_services/dashboard.service";
 import {DateTime} from "luxon";
-import {
-  CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent,
-  CalendarView,
-} from 'angular-calendar';
-import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  addHours,
-} from 'date-fns';
-import { EventColor } from 'calendar-utils';
-import {Subject} from "rxjs";
-import {_TRANSLATE} from "../../../shared/translation-marker";
+// import {
+//   CalendarEvent,
+//   CalendarEventAction,
+//   CalendarEventTimesChangedEvent,
+//   CalendarView,
+// } from 'angular-calendar';
+// import {
+//   startOfDay,
+//   endOfDay,
+//   subDays,
+//   addDays,
+//   endOfMonth,
+//   isSameDay,
+//   isSameMonth,
+//   addHours,
+// } from 'date-fns';
+// import { EventColor } from 'calendar-utils';
+// import {Subject} from "rxjs";
+// import {_TRANSLATE} from "../../../shared/translation-marker";
 
-const colors: Record<string, EventColor> = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3',
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF',
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA',
-  },
-};
+// const colors: Record<string, EventColor> = {
+//   red: {
+//     primary: '#ad2121',
+//     secondary: '#FAE3E3',
+//   },
+//   blue: {
+//     primary: '#1e90ff',
+//     secondary: '#D1E8FF',
+//   },
+//   yellow: {
+//     primary: '#e3bc08',
+//     secondary: '#FDF1BA',
+//   },
+// };
 
 @Component({
   selector: 'app-student-details',
@@ -54,7 +50,7 @@ const colors: Record<string, EventColor> = {
 })
 export class StudentDetailsComponent implements OnInit {
 
-  @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
+  // @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
 
   constructor(
     private _bottomSheetRef: MatBottomSheetRef<StudentDetailsComponent>,
@@ -69,17 +65,17 @@ export class StudentDetailsComponent implements OnInit {
   curriculumLabel: string
   ignoreCurriculumsForTracking: boolean = false
   viewDate: Date = new Date();
-  view: CalendarView = CalendarView.Month;
+  // view: CalendarView = CalendarView.Month;
 
-  CalendarView = CalendarView;
-  modalData: {
-    action: string;
-    event: CalendarEvent;
-  };
+  // CalendarView = CalendarView;
+  // modalData: {
+  //   action: string;
+  //   event: CalendarEvent;
+  // };
   
-  refresh = new Subject<void>();
+  // refresh = new Subject<void>();
 
-  events: CalendarEvent[] = [];
+  // events: CalendarEvent[] = [];
   locale: string = 'es_GT';
   
   async ngOnInit(): Promise<void> {
@@ -110,22 +106,23 @@ export class StudentDetailsComponent implements OnInit {
       // DATE_MED
       const reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
       const attendanceList = attendanceReport.attendanceList
-      for (let j = 0; j < attendanceList.length; j++) {
-        const attendance = attendanceList[j]
-        if (attendance.id === studentId) {
-          if (attendance.absent === true) {
-            attendance.reportLocaltime = reportLocaltime
-            records.push(attendance)
-            events.push({
-              start: startOfDay(timestampDate), 
-              title: _TRANSLATE('Absent'),
-              color: { ...colors.red },
-              allDay: true,
-            })
-          }
-        }
-      }
-      this.events = events
+      // To get events into the calendar display
+      // for (let j = 0; j < attendanceList.length; j++) {
+      //   const attendance = attendanceList[j]
+      //   if (attendance.id === studentId) {
+      //     if (attendance.absent === true) {
+      //       attendance.reportLocaltime = reportLocaltime
+      //       records.push(attendance)
+      //       events.push({
+      //         start: startOfDay(timestampDate), 
+      //         title: _TRANSLATE('Absent'),
+      //         color: { ...colors.red },
+      //         allDay: true,
+      //       })
+      //     }
+      //   }
+      // }
+      // this.events = events
     }
     
     this.absentRecords = records
@@ -137,8 +134,8 @@ export class StudentDetailsComponent implements OnInit {
     event.preventDefault();
   }
 
-  setView(view: CalendarView) {
-    this.view = view;
-  }
+  // setView(view: CalendarView) {
+  //   this.view = view;
+  // }
 
 }
