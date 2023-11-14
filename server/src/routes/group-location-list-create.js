@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const util = require('util')
 const writeFile = util.promisify(fs.writeFile)
-const existsSync = util.promisify(fs.existsSync)
+const mkDir = util.promisify(fs.mkdir)
 const log = require('tangy-log').log
 
 module.exports = async (req, res) => {
@@ -10,8 +10,9 @@ module.exports = async (req, res) => {
 
   try {
     const locationsDir = `/tangerine/client/content/groups/${req.params.groupId}/locations`
-    if (!existsSync(locationsDir)) {
-      await fs.mkdir(locationsDir)
+    const dirExists =  fs.existsSync(locationsDir)
+    if (!dirExists) {
+      await mkDir(locationsDir)
     }
 
     const locationsPath = path.join(locationsDir, `${locationInfo.id}.json`)
