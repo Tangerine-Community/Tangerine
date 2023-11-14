@@ -63,14 +63,15 @@ export class NgTangyFormEditorComponent implements OnInit {
     const categories = JSON.stringify(appConfigCategories)? JSON.stringify(appConfigCategories) : '[]';
 
     let locationListsMetadataJSON = <any> await this.groupsService.getLocationLists(this.groupId)
-    
-    // don't clutter the html with the full set of locations
+    // remove the full set of locations or it will kill performance
+    locationListsMetadataJSON = locationListsMetadataJSON.forEach((location) => { delete location.locations })
+
     delete locationListsMetadataJSON.locations
     const locationListMetadata = locationListsMetadataJSON ? JSON.stringify(locationListsMetadataJSON) : "";
 
     if (!this.print) {
       this.containerEl.innerHTML = `
-        <tangy-form-editor style="margin:15px" categories='${categories}' location-list-metadata='${locationListMetadata}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
+        <tangy-form-editor style="margin:15px" categories='${categories}' location-lists-metadata='${locationListMetadata}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
           <template>
             ${formHtml}
           </template>
