@@ -407,3 +407,14 @@ div.more {
   .icon-list-item>mwc-icon{
     color: var(--primary-color) !important;
   }
+
+
+.fc-daygrid-day-number {
+  display: none;
+}
+.fc .fc-daygrid-day-number {
+  position: relative;
+  z-index: 4;
+  padding: 0px;
+  display: none;
+}
