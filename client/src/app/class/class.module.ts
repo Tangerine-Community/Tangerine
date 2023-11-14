@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, registerLocaleData} from '@angular/common';
 
 import {ClassRoutingModule} from './class-routing.module';
 import {DashboardComponent} from './dashboard/dashboard.component';
@@ -51,15 +51,20 @@ import { AttendanceScoresComponent } from './attendance/attendance-scores/attend
 import { BehaviorCheckComponent } from './attendance/behavior-check/behavior-check.component';
 import { StudentDetailsComponent } from './attendance/student-details/student-details.component';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
-// import { CalendarModule, DateAdapter } from 'angular-calendar';
-// import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-
+// import {MatDatepickerModule} from "@angular/material/datepicker";
+import {FullCalendarModule} from "@fullcalendar/angular";
+import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
+import interactionPlugin from '@fullcalendar/interaction'; // a plugin!
 // import { registerLocaleData } from '@angular/common';
 // import localeEsGt from '@angular/common/locales/es-GT';
 
 // the second parameter 'fr-FR' is optional
 // registerLocaleData(localeEsGt);
 
+FullCalendarModule.registerPlugins([ // register FullCalendar plugins
+  dayGridPlugin,
+  interactionPlugin
+]);
 @NgModule({
   imports: [
     CommonModule,
@@ -86,10 +91,7 @@ import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
     MatProgressBarModule,
     FormsModule,
     MatBottomSheetModule,
-    // CalendarModule.forRoot({
-    //   provide: DateAdapter,
-    //   useFactory: adapterFactory,
-    // }),
+    FullCalendarModule
   ],
   declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent, BehaviorCheckComponent, StudentDetailsComponent],
   entryComponents: [

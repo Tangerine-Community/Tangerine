@@ -14,6 +14,9 @@
 <!--    [events]="events"-->
 <!--    [locale]="locale">-->
 <!--  </mwl-calendar-month-view>-->
+  <div class="calendar">
+    <full-calendar [options]="calendarOptions"></full-calendar>
+  </div>
   
   <ng-container *ngIf="data.student.ignoreCurriculumsForTracking; else notSharedScores">
     <p>{{'Scores'|translate}}</p>
