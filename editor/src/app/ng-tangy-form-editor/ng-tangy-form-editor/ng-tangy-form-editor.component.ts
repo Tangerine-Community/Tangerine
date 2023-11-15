@@ -62,11 +62,12 @@ export class NgTangyFormEditorComponent implements OnInit {
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     const categories = JSON.stringify(appConfigCategories)? JSON.stringify(appConfigCategories) : '[]';
 
-    let locationListsMetadataJSON = <any> await this.groupsService.getLocationLists(this.groupId)
-    // remove the full set of locations or it will kill performance
-    locationListsMetadataJSON = locationListsMetadataJSON.forEach((location) => { delete location.locations })
-
-    delete locationListsMetadataJSON.locations
+    // Transpose the location lists metadata and filter out the 'locations' properties so it doesn't kill performance
+    const data = <any> await this.groupsService.getLocationLists(this.groupId)
+    const removePropertyFromArray = (array, property) => {
+      return array.map(({ [property]: _, ...rest }) => rest);
+    };
+    const locationListsMetadataJSON = removePropertyFromArray(data, 'locations')
     const locationListMetadata = locationListsMetadataJSON ? JSON.stringify(locationListsMetadataJSON) : "";
 
     if (!this.print) {
