@@ -27,8 +27,8 @@
       <mat-menu #reportsMenu="matMenu">
         <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
         <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
-        <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
-        <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass.id}}">{{'Task Report'|translate}}</button>
+        <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass._id}}">{{'Student Subtest Report'|translate}}</button>
+        <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass._id}}">{{'Task Report'|translate}}</button>
       </mat-menu>
     </span>
 </mat-toolbar>
