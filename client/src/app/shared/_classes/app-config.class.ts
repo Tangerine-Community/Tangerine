@@ -135,6 +135,7 @@ export class AppConfig {
 
   teachProperties = {
     units: [],
+    unitDates: [],
     cutoffRange:10,
     attendancePrimaryThreshold: 80,
     attendanceSecondaryThreshold: 70,
