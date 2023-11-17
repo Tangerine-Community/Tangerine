@@ -3,7 +3,7 @@
 ## v3.30.0
 
 __New Features__
-- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and "homeUrl": "attendance-dashboard"
+- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and `"homeUrl": "attendance-dashboard"`
  to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report. 
 - The Attendance records generate _id's based on the grade, curriculum, user, and date and time of the record, so that they can be sorted chronologically.
   See dashboard.service generateSearchableId for details. 
@@ -11,7 +11,8 @@ __New Features__
 - New app-config.json configuration for teach properties:
   ```js
   "teachProperties": {
-    "units": ["unit 1", "unit 2", "unit 3", "unit 4"],
+    "units": ["Unidad 1", "Unidad 2"],
+    "unitDates": [{"name": "Unidad 1","start": "2023-02-15", "end": "2023-04-23"}, {"name": "Unidad 2","start": "2023-04-24", "end": "2023-06-30"}],
     "attendancePrimaryThreshold": 80,
     "attendanceSecondaryThreshold": 70,
     "scoringPrimaryThreshold": 70,
