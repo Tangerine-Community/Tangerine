@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { TangyFormsRoutingModule } from './tangy-forms-routing.module';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
 import { MatButtonModule } from "@angular/material/button";
+import { MatChipsModule } from '@angular/material/chips';
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
 import {SharedModule} from "../shared/shared.module";
@@ -17,6 +18,7 @@ import {SharedModule} from "../shared/shared.module";
     MatTabsModule,
     MatMenuModule,
     MatButtonModule,
+    MatChipsModule,
     SharedModule,
     TangyFormsRoutingModule
   ],
