@@ -3,7 +3,6 @@
     <h2>{{data.student.name}} {{data.student.surname}}</h2>
     <h3>{{curriculumLabel}}</h3>
     <div>
-
       <p>{{'Attendance'|translate}}</p>
       <ul>
         <li *ngFor="let record of absentRecords">
@@ -12,13 +11,6 @@
       </ul>
       <p style="margin-left: 1em"
          *ngIf="absentRecords.length === 0">{{'No absences recorded in the past month.'|translate}}</p>
-
-      <!--  <mwl-calendar-month-view-->
-      <!--    [viewDate]="viewDate"-->
-      <!--    [events]="events"-->
-      <!--    [locale]="locale">-->
-      <!--  </mwl-calendar-month-view>-->
-
       <ng-container *ngIf="data.student.ignoreCurriculumsForTracking; else notSharedScores">
         <p>{{'Scores'|translate}}</p>
         <ul>
@@ -52,65 +44,33 @@
     <h4>{{'Units'|translate}}</h4>
     <div class="unit-legend" *ngFor="let unit of unitDates; index as unitIndex">
       <div>{{unit.name}}</div>
-      <div class="unit{{unitIndex+1}}">{{unit.startLocaltime}} - {{unit.endLocaltime}}</div>
+      <div class="unit{{unitIndex+1}}" (click)="showStudentUnitReport(unitIndex, data.student)">{{unit.startLocaltime}} - <br/>{{unit.endLocaltime}}</div>
     </div>
       
     <!--      <table>-->
     <div class="calendar">
-
-
       <ng-container *ngFor="let year of absences | keyvalue">
-        <!--          <ng-container *ngFor="let month of year.value | keyvalue">-->
-        <!--          </ng-container>-->
-        <!--          <div class="calendar">-->
-        <!--            <p>{{year.key}}{{year.value}}</p>-->
         <ng-template #t [ngTemplateOutlet]="t" let-months [ngTemplateOutletContext]="{ $implicit: year.value }">
           <ng-container *ngFor="let month of months | keyvalue:onCompareMonth">
-            <!--                  <p>Hello: {{month.key.monthName}}</p>-->
-            <!--                  <p>Month: {{month.key}}</p>-->
-            <!--                  <table>-->
             <ng-template #t [ngTemplateOutlet]="t" let-day [ngTemplateOutletContext]="{ $implicit: month.value }">
-              <!--                      <ng-template #t [ngTemplateOutlet]="t" let-currentWeekumber [ngTemplateOutletContext]="{ $implicit: 0 }">-->
               <ng-container *ngFor="let da of day.days | keyvalue:onCompare; index as i">
-                <!--                          <ng-template #t [ngTemplateOutlet]="t" let-currentWeekumber [ngTemplateOutletContext]="{ $implicit: da.value.weekNumber }">-->
-                <!--                            <ng-template [ngIf]="da.value.weekNumber > currentWeekumber">-->
-                <!--                            </ng-template>-->
-                <!--                          <ng-container *ngIf="da.value.newWeek === true"><p>start week</p></ng-container>-->
-                <!--                          <div class="box{{i}}">{{da.key}}</div>-->
-                <!--                          <ng-container *ngIf="da.value.isEndOfWeek === true"><p>end week</p></ng-container>-->
                 <ng-template [ngIf]="da.value.newMonth === true">
-                  <!--                            <div class="box{{i}} newMonth">&nbsp;  {{month.value.monthName}}</div>-->
                   <div class="box{{i}} newMonth">&nbsp; {{da.value.newMonthName}}</div>
-                  <!--                            <div class="box{{i}} newMonth">&nbsp;</div>-->
-                  <!--                            <div class="box{{i}} newMonth">&nbsp;</div>-->
-                  <!--                            <div class="box{{i}} newMonth">&nbsp;</div>-->
-                  <!--                            <div class="box{{i}} newMonth">&nbsp;</div>-->
-                  <!--                            <div class="box{{i}} newMonth">&nbsp;</div>-->
-                  <!--                            <div class="box{{i}} newMonth">&nbsp;</div>-->
+                  <ng-container *ngFor="let day of weekdays; index as dayIndex">
+                    <div class="box{{dayIndex}}">{{day}}</div>
+                  </ng-container>
                 </ng-template>
                 <ng-template [ngIf]="da.value.absenceList.length > 0" [ngIfElse]="blank">
-                  <!--                              <div class="box{{i}}">{{da.key}}: {{da.value|json}}</div>-->
                   <div class="box{{i}} absent">{{da.key}}</div>
                 </ng-template>
                 <ng-template #blank>
                   <div class="box{{i}} blank {{da.value.extraStyles}}" title="{{month.key}}">{{da.key}}</div>
                 </ng-template>
-                <!--                          </ng-template>-->
               </ng-container>
-              <!--                      </ng-template>-->
             </ng-template>
-            <!--                  </table>-->
-
           </ng-container>
         </ng-template>
-
-        <!--          </div>-->
-
       </ng-container>
-      <!--      </table>-->
     </div>
   </div>
-  
 </div>
-
-<!--{{data | json}}-->

@@ -21,8 +21,14 @@ __New Features__
     "behaviorSecondaryThreshold": 80,
     "useAttendanceFeature": true
   }
-  ```
+
   The PrimaryThreshold and SecondaryThreshold values are used to determine the color of the cell in the reports.
+- Intl/locale support in Class: The class module currently supports the es-gt locale. Add additional locales in class/module.ts:
+  ```js
+  import { registerLocaleData } from '@angular/common';
+  import localeEsGt from '@angular/common/locales/es-GT';
+  registerLocaleData(localeEsGt);
+  ```
 - Updated docker-tangerine-base-image to v3.8.0, which adds the cordova-plugin-x-socialsharing plugin and enables sharing to WhatsApp.
 
 __Fixes__
