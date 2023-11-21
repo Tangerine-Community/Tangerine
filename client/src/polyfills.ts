@@ -48,6 +48,8 @@ import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 import 'tangy-form/input/tangy-radio-blocks.js';
 import 'tangy-form/input/tangy-video-capture.js';
+// import 'tangy-form/input/tangy-scan-image.js';
+
 
 import { Loc } from 'tangy-form/util/loc.js';
 (window as any).Loc = Loc
@@ -58,7 +60,7 @@ import { t } from 'tangy-form/util/t.js';
 import 'date-carousel/date-carousel.js'
 
 // An attempt to fix something...
-//import 'core-js/es7/reflect';
+// import 'core-js/es7/reflect';
 
 // Fix for the way Angular builds pouchdb https://github.com/pouchdb/pouchdb/issues/7299
 // Also probably fixes other things that try to use node process global.
@@ -66,16 +68,16 @@ import * as process from 'process';
 (window as any).process = process
 
 
-//import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
+// import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
-import '@polymer/paper-item/paper-icon-item.js';
-import '@polymer/paper-item/paper-item-body.js';
-import '@polymer/iron-icons/notification-icons.js';
-import '@polymer/paper-progress/paper-progress.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-menu-button/paper-menu-button.js';
+// import '@polymer/paper-item/paper-icon-item.js';
+// import '@polymer/paper-item/paper-item-body.js';
+// import '@polymer/iron-icons/notification-icons.js';
+// import '@polymer/paper-progress/paper-progress.js';
+// import '@polymer/paper-icon-button/paper-icon-button.js';
+// import '@polymer/paper-item/paper-item.js';
+// import '@polymer/paper-listbox/paper-listbox.js';
+// import '@polymer/paper-menu-button/paper-menu-button.js';
 
 import * as moment from 'moment'
 (window as any).moment = moment
