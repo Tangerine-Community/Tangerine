@@ -1,8 +1,15 @@
 <div *ngIf="loaded">
   <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
   <app-case-notifications></app-case-notifications>
-  <div class="wrapper">
+  <div class="wrapper">    
     <div class="screen" *ngIf="hasNotificationEnforcingAttention"></div>
+    <div>
+      <mat-toolbar id="menu-container">
+        <span class="tangy-spacer"></span>
+        <mat-checkbox class="mat-small-checkbox-transform " [checked]="showArchivedSliderState"  
+          (change)="showArchivedSliderChange()">Show Archived Forms</mat-checkbox>
+      </mat-toolbar>
+    </div>
     <app-event-form-list-item
       *ngFor="let eventFormInfo of noRoleEventFormInfos"
       [case]="caseService.case"
@@ -11,17 +18,55 @@
       [caseEventDefinition]="caseEventDefinition"
       [eventForm]="eventFormInfo.eventForm"
       [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+      (formDeletedEvent)="onEventFormDelete($event)"
+      (formArchivedEvent)="onEventFormArchive($event)"
+      (formUnarchivedEvent)="onEventFormUnarchive($event)"
       class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
-      routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
     >
     </app-event-form-list-item>
     <app-event-forms-for-participant
       [caseId]="caseService.case._id"
       [eventId]="caseEvent.id"
       [participantId]="participant.id"
+      [showArchived]="showArchivedSliderState"
+      (formDeletedEvent)="onEventFormDelete($event)"
+      (formArchivedEvent)="onEventFormArchive($event)"
+      (formUnarchivedEvent)="onEventFormUnarchive($event)"
       *ngFor="let participant of caseService.case.participants"
     >
     </app-event-forms-for-participant>
      
   </div>
+
+</div>
+
+<div *appHasAPermission="let i;group:groupId; permission:'can_restore_conflict_event'">
+  <mat-accordion class="mat-accordian" multi>    
+    <mat-expansion-panel *ngIf="conflictingEventsExist" [expanded]="step === 0" (opened)="setStep(0)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Conflicting Event Forms
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-template>
+        <div *ngFor="let conflict of conflictingEventForms" class="icon-list-item conflict new-event">
+          <mwc-icon slot="item-icon">receipt</mwc-icon>
+          <div>
+            <div><strong>{{conflict.eventFormDefinitionId}}</strong></div>
+            <div>
+              <div secondary>
+                Complete: {{conflict.complete}}
+                <span *ngFor="let eventForm of conflict.eventForms">
+                  ID: {{eventForm.formResponseId | slice:0:8}} Rev: {{conflict.conflictRevisionId| slice:0:8}}
+                </span>
+              </div>
+              <div class="text-right">
+                <paper-button (click)="onRestore(conflict)" [hidden]="hideRestore" class="button">{{'Restore'|translate}}</paper-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
