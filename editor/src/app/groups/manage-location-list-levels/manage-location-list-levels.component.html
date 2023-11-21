@@ -1,27 +1,27 @@
-<div *ngIf="isFormShown">
-  <form class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
-    <mat-form-field class="tangy-full-width">
-      <input name="locationLabel" [(ngModel)]="locationLabel" matInput placeholder="{{'Label'|translate}}"
-        required>
-    </mat-form-field>
-    <mat-form-field class="tangy-full-width">
-      <mat-select name="parentLevel" placeholder="Parent Level" [(ngModel)]="parentLevel">
-        <mat-option *ngFor="let location of locationsLevels" [value]="location">
-          {{location}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addLocationLevel()">{{'Submit'|translate}}</button>
-  </form>
-</div>
-<mat-list role="list">
-  <mat-list-item role="listitem" *ngFor="let location of locationsLevels">
-    <a class="tangy-foreground-primary" [routerLink]="['/groups/', groupId,'configure', 'location-list', 'manage-location-list-metadata',location]">
-      <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
-    </a>
-    <span class="tangy-foreground-secondary">{{location}}</span>
-  </mat-list-item>
-</mat-list>
-
-<paper-fab *ngIf="!isFormShown" (click)="isFormShown=!isFormShown" mat-raised-button icon="add" color="accent" class="action">
-</paper-fab>
+<p class="header">Manage Location List Levels and define metadata for each level. The metadata defined here can be assigned values in the content tab. The assigned values will be output when a location value is selected in a form.</p>
+<mat-tab-group animationDuration="0" [selectedIndex]="selected" (selectedIndexChange)="setSelected($event)">
+  <mat-tab *ngFor="let level of locationsLevels; let index = index" [label]="level">
+    <mat-tab-body>
+      <ng-content *ngTemplateOutlet="metadata; context: level" metadata-tab-content></ng-content>
+      <ng-template #metadata>
+        <app-manage-location-list-metadata [level]="level"></app-manage-location-list-metadata>
+      </ng-template>
+    </mat-tab-body>
+  </mat-tab>
+  <mat-tab label="Add Level">
+    <form class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
+      <mat-form-field class="tangy-full-width">
+        <input name="locationLabel" [(ngModel)]="locationLabel" matInput placeholder="{{'Label'|translate}}"
+          required>
+      </mat-form-field>
+      <mat-form-field class="tangy-full-width" *ngIf="locationsLevels.length > 0">
+        <mat-select name="parentLevel" placeholder="Parent Level" [(ngModel)]="parentLevel" required>
+          <mat-option *ngFor="let location of locationsLevels" [value]="location">
+            {{location}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addLocationLevel()">{{'Submit'|translate}}</button>
+    </form>
+  </mat-tab>
+</mat-tab-group>

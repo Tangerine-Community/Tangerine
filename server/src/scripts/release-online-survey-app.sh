@@ -35,16 +35,17 @@ rm -r $RELEASE_DIRECTORY
 FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client/"
 FORM_DIRECTORY="$FORM_CLIENT_DIRECTORY/$FORM_ID"
 LOCATION_LIST_PATH="$FORM_CLIENT_DIRECTORY/location-list.json"
+LOCATION_LISTS_PATH="$FORM_CLIENT_DIRECTORY/locations"
 MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media/"
 
 # Set up the release dir from the dist
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
 cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
+cp -r $LOCATION_LISTS_PATH/*.json $RELEASE_DIRECTORY/assets/locations/
 mkdir -p $MEDIA_PATH $RELEASE_DIRECTORY/assets/media
 cp -r $MEDIA_PATH $RELEASE_DIRECTORY/assets/
 cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
-cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/media/
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 

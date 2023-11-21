@@ -1,5 +1,5 @@
 
-export const generateFlatResponse = async function (formResponse, locationList, sanitized) {
+export const generateFlatResponse = async function (formResponse, locationLists, sanitized) {
   const process = {
     env: {
       T_REPORTING_MARK_SKIPPED_WITH: 'SKIPPED',
@@ -58,6 +58,7 @@ export const generateFlatResponse = async function (formResponse, locationList, 
           for (let group of input.value) {
             locationKeys.push(group.value)
             try {
+              const locationList = locationLists.find(l => input.locationSrc.endsWith(l.path))
               const location = getLocationByKeys(locationKeys, locationList)
               set(input, location.level, location.label)
             } catch (e) {
