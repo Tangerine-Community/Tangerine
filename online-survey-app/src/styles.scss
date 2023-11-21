@@ -39,6 +39,7 @@ html {
 
   /* Other component overrides */
   --paper-tabs-selection-bar-color: #f26f10;
+  --label-font-size: 1.2rem;
 
 }
 
@@ -375,3 +376,4 @@ div.more {
   .icon-list-item>mwc-icon{
     color: var(--primary-color) !important;
   }
+

@@ -1,0 +1,26 @@
+.white-menu-item {
+  color: var(--primary-text-color-overlay);
+}
+
+.class-dashboard-button-spacer-right {
+  margin-right: 10px;
+}
+
+.nav-grade-indicator {
+  vertical-align: middle;
+  color: var(--primary-text-color-overlay);
+  white-space: nowrap;
+  line-height: 36px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.menu-section-header {
+  background: lightgray;
+  color:black;
+}
+
+::ng-deep .mat-menu-content:not(:empty) {
+  padding-top: 0 !important;
+}
