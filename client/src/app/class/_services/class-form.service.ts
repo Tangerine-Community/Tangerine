@@ -35,8 +35,15 @@ export class ClassFormService {
       this.loadDesignDoc();
     }
   }
+  
+  async initUserDB() {
+    if (!this.userDB) {
+      this.userDB = await this.userService.getUserDatabase();
+    }
+  }
 
   async loadDesignDoc() {
+    await this.initUserDB();
     await this.userDB.put(tangyClassDesignDoc);
   }
 
@@ -44,6 +51,7 @@ export class ClassFormService {
   // into the database. Using a getter and setter for property fields, this would be one way to queue.
   async saveResponse(responseDoc) {
     let r;
+    await this.initUserDB();
     if (!responseDoc._id) {
       r = await this.userDB.post(responseDoc);
     } else {
@@ -54,6 +62,7 @@ export class ClassFormService {
   }
 
   async getResponse(responseId) {
+    await this.initUserDB();
     try {
       const doc = await this.userDB.get(responseId);
       return doc;
@@ -62,6 +71,7 @@ export class ClassFormService {
     }
   }
   async getResponsesByStudentId(studentId) {
+    await this.initUserDB();
     const result = await this.userDB.query('tangy-class/responsesByStudentId', {
       key: studentId,
       include_docs: true
@@ -77,7 +87,7 @@ export class ClassFormService {
 
 const tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '28',
+  version: '29',
   views: {
     responsesForStudentRegByClassId: {
       map: function (doc) {
@@ -96,7 +106,7 @@ const tangyClassDesignDoc = {
     responsesByClassIdCurriculumId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
-          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
+          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc && doc.metadata.studentRegistrationDoc.classId) {
             // console.log("matching: " + doc.metadata.studentRegistrationDoc.classId)
              emit([doc.metadata.studentRegistrationDoc.classId, doc.form.id], true);
           }
@@ -106,7 +116,7 @@ const tangyClassDesignDoc = {
     responsesByClassId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
-          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
+          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc && doc.metadata.studentRegistrationDoc.classId) {
             emit(doc.metadata.studentRegistrationDoc.classId, true);
           }
         }
@@ -115,7 +125,7 @@ const tangyClassDesignDoc = {
     responsesByStudentId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
-          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.id) {
+          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc && doc.metadata.studentRegistrationDoc.id) {
             emit(doc.metadata.studentRegistrationDoc.id, true);
           }
         }

@@ -1,0 +1,90 @@
+<mat-toolbar *ngIf="!selectedClass" class="classDashboard">
+  <span dir="rtl" class="class-dashboard-button-spacer-left">
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
+      {{'Add Class'|translate}}
+    </button>
+    <!--    <button mat-stroked-button color="primary" [routerLink]="['/class-config/']">-->
+    <!--        <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>-->
+    <!--    </button>-->
+  </span>
+</mat-toolbar>
+<div class="selectedClassLabel">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+<!--<mat-card *ngIf="selectedClass">-->
+<!--  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : <ng-container *ngIf="!ignoreCurriculumsForTracking">{{curriculum?.label}} : </ng-container>{{reportDate}}</div>-->
+  <div>
+    <table class="dashboard-table">
+      <tr>
+        <th colspan="2" class="student-name-column">{{'Stud.'|translate}}</th>
+        <th>{{'Attend.'|translate}}</th>
+        <th>{{'Behav.'|translate}}</th>
+        <th *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
+          <ng-template #otherScoreHeader>
+            <th *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+          </ng-template>
+      </tr>
+      <tr *ngFor="let student of attendanceReport?.attendanceList">
+        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+        <td class="sms-button-column">
+          <button mat-mini-fab color="accent" aria-label="SMS button with an sms icon" (click)="sendText(student)"
+                  [ngStyle]="{transform: 'scale(0.6)'}">
+            <mat-icon>sms</mat-icon>
+          </button>
+        </td>
+        <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
+        'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
+        'great' : student.presentPercentage >= attendancePrimaryThreshold,
+        'white': student.presentPercentage === null || student.presentPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+          <ng-container *ngIf="student.presentPercentage || student.presentPercentage === 0; else naAttendanceTemplate">
+            {{student.presentPercentage}}%
+          </ng-container>
+          <ng-template *ngIf="student.presentPercentage === null || student.presentPercentage === undefined" #naAttendanceTemplate>
+            {{'N/A'|translate}}
+          </ng-template>
+        </td>
+
+        <td [ngClass]="{'mediocre' : (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorPrimaryThreshold, 
+        'great' : student.behaviorPercentage >= behaviorPrimaryThreshold, 
+        'good' : student.behaviorPercentage < behaviorPrimaryThreshold && student.behaviorPercentage >= behaviorSecondaryThreshold,
+        'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
+        'number-cell': true,
+        'centered': true}"> 
+          <ng-container *ngIf="student.behaviorPercentage || student.behaviorPercentage === 0; else naBehaviorTemplate">
+            {{student.behaviorPercentage}}%
+          </ng-container>
+          <ng-template *ngIf="student.behaviorPercentage === null || student.behaviorPercentage === undefined" #naBehaviorTemplate>
+            {{'N/A'|translate}}
+          </ng-template>
+        </td>
+        
+        <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
+          <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringPrimaryThreshold, 
+        'great' : student['score'] && student['score'] >= scoringPrimaryThreshold, 
+        'good' : student['score'] < scoringPrimaryThreshold && student['score'] >= scoringSecondaryThreshold,
+        'white' : student['score'] === null || student['score'] === undefined,
+        'number-cell': true,
+        'centered': true}">
+            <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
+            <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+          </td>
+        </ng-container>
+        
+        <ng-template #otherScoreCell>
+          <td *ngFor="let curriculum of currArray" [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] > (scoringPrimaryThreshold - cutoffRange),
+        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+        'number-cell': true,
+        'centered': true}">
+          <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
+            <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
+          </td>
+        </ng-template>
+      </tr>
+    </table>
+    <span><p class="mat-h3 left-padding"
+             *ngIf="!attendanceReport || attendanceReport?.attendanceList.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+  </div>
+<!--</mat-card>-->

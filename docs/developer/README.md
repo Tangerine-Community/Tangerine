@@ -6,6 +6,7 @@
 - [tangerine-dev-tutorial-notes.md](tangerine-dev-tutorial-notes.md)
 
 ## Application design
+- [Data Structures](data-structures.md)
 - [Bootstrapping Tangerine](bootstrapping-tangerine.md)
 - [Viewing Forms and Form Data](viewing-forms-and-data.md)
 - [Supporting custom elements](supporting-custom-elements.md)
