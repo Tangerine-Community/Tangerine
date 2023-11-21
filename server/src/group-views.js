@@ -102,6 +102,13 @@ module.exports.issuesByCaseId = function(doc) {
     emit(doc.caseId, true)
   }
 }
+
+module.exports.issuesByFormResponseId = function(doc) {
+  if (doc.collection === "TangyFormResponse" && doc.type === "issue") {
+    emit(doc.formResponseId, true)
+  }
+}
+
 module.exports.groupConflicts = function(doc) {
   if (doc.collection === "TangyFormResponse" && doc.type === "issue") {
     if (doc.events && doc.events[0] && doc.events[0].data && doc.events[0].data.conflict) {
