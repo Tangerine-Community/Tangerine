@@ -135,13 +135,12 @@ div[class*=box] {
 
 .unit-legend {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: [first] 1fr [line2] 2fr;
   /*grid-template-rows: repeat(4, 1fr);*/
-  grid-column-gap: 0px;
+  grid-column-gap: 5px;
   grid-row-gap: 0px;
 }
 div[class*=unit] {
-  /*background-image: url(data:image/svg+xml;charset=utf-8,%3Csvg width='8' height='8' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 0h1L0 6V5zm1 5v1H5z' fill='%239C92AC' fill-opacity='.4' fill-rule='evenodd'/%3E%3C/svg%3E);*/
   /*border: 1px dotted #fff;*/
   -webkit-transition: all .2s ease;
   transition: all .2s ease;
@@ -150,5 +149,5 @@ div[class*=unit] {
   /*opacity: .5;*/
 }
 .old-month-in-new-month {
-  opacity: .5;
+  opacity: .6;
 }

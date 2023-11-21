@@ -1,49 +1,10 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-} from '@angular/core';
-import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
-import {MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
+import {Component, Inject, OnInit,} from '@angular/core';
+import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {DashboardService} from "../../_services/dashboard.service";
-import {DateTime, Interval} from "luxon";
+import {DateTime, Info, Interval, Settings} from "luxon";
 import {KeyValue} from "@angular/common";
-
-// import {
-//   CalendarEvent,
-//   CalendarEventAction,
-//   CalendarEventTimesChangedEvent,
-//   CalendarView,
-// } from 'angular-calendar';
-// import {
-//   startOfDay,
-//   endOfDay,
-//   subDays,
-//   addDays,
-//   endOfMonth,
-//   isSameDay,
-//   isSameMonth,
-//   addHours,
-// } from 'date-fns';
-// import { EventColor } from 'calendar-utils';
-// import {Subject} from "rxjs";
-// import {_TRANSLATE} from "../../../shared/translation-marker";
-
-// const colors: Record<string, EventColor> = {
-//   red: {
-//     primary: '#ad2121',
-//     secondary: '#FAE3E3',
-//   },
-//   blue: {
-//     primary: '#1e90ff',
-//     secondary: '#D1E8FF',
-//   },
-//   yellow: {
-//     primary: '#e3bc08',
-//     secondary: '#FDF1BA',
-//   },
-// };
+import {VariableService} from "../../../shared/_services/variable.service";
 
 @Component({
   selector: 'app-student-details',
@@ -51,14 +12,13 @@ import {KeyValue} from "@angular/common";
   styleUrls: ['./student-details.component.css']
 })
 export class StudentDetailsComponent implements OnInit {
-
-  // @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
-
+  
   constructor(
     private _bottomSheetRef: MatBottomSheetRef<StudentDetailsComponent>,
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: any,
     private appConfigService: AppConfigService,
     private dashboardService: DashboardService,
+    private variableService: VariableService,
   ) {
   }
 
@@ -68,41 +28,33 @@ export class StudentDetailsComponent implements OnInit {
   curriculumLabel: string
   ignoreCurriculumsForTracking: boolean = false
   viewDate: Date = new Date();
-  // view: CalendarView = CalendarView.Month;
-
-  // CalendarView = CalendarView;
-  // modalData: {
-  //   action: string;
-  //   event: CalendarEvent;
-  // };
-  
-  // refresh = new Subject<void>();
-
-  // events: CalendarEvent[] = [];
   absences: {}
-  locale: string = 'es_GT';
+  // locale: string = 'es_GT';
+  // locale: string = 'es-GT';
+  locale: string = '';
+  weekdays: string[] = []
   
   async ngOnInit(): Promise<void> {
     const appConfig = await this.appConfigService.getAppConfig()
     const teachConfiguration = appConfig.teachProperties
+    const languageCode = await this.variableService.get('languageCode')
+    this.locale = languageCode.replace('_', '-')
+    Settings.defaultLocale = this.locale
     this.units = appConfig.teachProperties?.units
     this.unitDates = appConfig.teachProperties?.unitDates
-    // const unitIntervals = []
-    // const unitColors = getRandomColors(50,this.unitDates.length) // (intensity(1-100), numberofColorsToGenerate)
-
     this.unitDates.forEach((unitDate, index) => {
       const start = DateTime.fromFormat(unitDate.start, 'yyyy-MM-dd')
       const end = DateTime.fromFormat(unitDate.end, 'yyyy-MM-dd')
       const interval = Interval.fromDateTimes(start, end)
-      // const color = unitColors[index]
       unitDate.interval = interval
       unitDate.color = 'unit'+(index+1)
-      const startLocaltime = start.toLocaleString(DateTime.DATE_FULL)
-      const endLocaltime = end.toLocaleString(DateTime.DATE_FULL)
+      const startLocaltime = start.toLocaleString(DateTime.DATE_MED)
+      const endLocaltime = end.toLocaleString(DateTime.DATE_MED)
       unitDate.startLocaltime = startLocaltime
       unitDate.endLocaltime = endLocaltime
-      // unitIntervals.push(interval)
     })
+    this.weekdays = Info.weekdays('narrow', { locale: this.locale })
+    // this.weekdays = Info.weekdays('narrow')
     const currentClass = this.data.currentClass
     this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
 
@@ -171,7 +123,7 @@ export class StudentDetailsComponent implements OnInit {
         // if (i === 0 && dayNumber === 1 && weekday !== 1) {  
         if (i === (durationMonths - 1) && dayNumber === 1 && weekday !== 1) {  // starting w/ (durationMonths - 1) because we are looping months in reverse.
           const daysToPad = weekday - dayNumber
-          console.log('daysToPad', daysToPad)
+          // console.log('daysToPad', daysToPad)
           for (let k = 0; k < daysToPad; k++) {
             // const previousMonthDate = currentDate.minus({days: weekday - 1})
             const dateShim = currentDate.minus({days: weekday - (k+1)})
@@ -206,7 +158,7 @@ export class StudentDetailsComponent implements OnInit {
               const newMonthThisWeekDate = currentDate.plus({ days: 6 })
               // const weekNumberNewMonth = newMonthThisWeekDate.weekNumber
               // const monthNumberNewMonth = newMonthThisWeekDate.month
-              newMonthName =  newMonthThisWeekDate.toLocaleString({month: 'long'})
+              newMonthName =  newMonthThisWeekDate.setLocale(this.locale).toLocaleString({month: 'long'})
               // if (weekNumberNewMonth === weekNumber && monthNumberNewMonth !== monthNumber) {
                 newMonth = true
               // }
@@ -231,7 +183,6 @@ export class StudentDetailsComponent implements OnInit {
         let newMonth = false
         let newMonthName = null
         
-        
         if (currentWeekNumber !== weekNumber) {
           const newMonthThisWeekDate = currentDate.plus({ days: 6 })
           const weekNumberNewMonth = newMonthThisWeekDate.weekNumber
@@ -239,7 +190,7 @@ export class StudentDetailsComponent implements OnInit {
           newWeek = true
           currentWeekNumber = weekNumber
           // check if it's a new month during this week
-          newMonthName =  newMonthThisWeekDate.toLocaleString({month: 'long'})
+          newMonthName =  newMonthThisWeekDate.setLocale(this.locale).toLocaleString({month: 'long'})
           if (weekNumberNewMonth === weekNumber && monthNumberNewMonth !== monthNumber) {
             newMonth = true
           }
@@ -251,8 +202,22 @@ export class StudentDetailsComponent implements OnInit {
         let extraStyles = newMonth? unitColor + " old-month-in-new-month" : unitColor
 
         // mark all days that are in the week that has the old month.
+        // const daysInMonth = currentDate.daysInMonth
+        // const monthOffset = daysInMonth - dayNumber
+        // const newMonthThisWeekDate = currentDate.plus({ days: monthOffset })
+        // // const weekNumberNewMonth = newMonthThisWeekDate.weekNumber
+        // const monthNumberNewMonth = newMonthThisWeekDate.month
         // const oldMonthInNewMonth = monthNumberNewMonth !== monthNumber
         // extraStyles = oldMonthInNewMonth? extraStyles + " old-month-in-new-month" : extraStyles
+        // if (dayNumber === daysInMonth) {
+        //   extraStyles = extraStyles + " last-day-of-month"
+        // }
+
+        const endOfThisWeek = currentDate.endOf('week')
+        const endOfThisWeekMonth = endOfThisWeek.month
+        if (endOfThisWeekMonth !== monthNumber) {
+          extraStyles = extraStyles + " old-month-in-new-month"
+        }
         
         absences[yearNumber][monthNumber]['days'][dayNumber] = {
           date: currentDate,
@@ -271,7 +236,7 @@ export class StudentDetailsComponent implements OnInit {
       }
     }
     
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', this.data.currentClass, null, curriculumLabel, randomId, true)
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', this.data.currentClass, null, null, curriculumLabel, randomId, true)
     for (let i = 0; i < attendanceReports.length; i++) {
       const attendanceReport = attendanceReports[i].doc
       const timestamp = attendanceReport.timestamp
@@ -299,17 +264,6 @@ export class StudentDetailsComponent implements OnInit {
             if (absences[yearNumber] && absences[yearNumber][monthNumber]['days'] && absences[yearNumber][monthNumber]['days'][dayNumber]) {
               absences[yearNumber][monthNumber]['days'][dayNumber]['absenceList'].push(absence)
             }
-            
-            // var diffInMonths = end.diff(start, 'months');
-            
-            // events.push({
-            //   start: startOfDay(timestampDate), 
-            //   title: _TRANSLATE('Absent'),
-            //   color: { ...colors.red },
-            //   allDay: true,
-            // })
-            
-            
           }
         }
       }
@@ -331,8 +285,98 @@ export class StudentDetailsComponent implements OnInit {
     event.preventDefault();
   }
 
-  // setView(view: CalendarView) {
-  //   this.view = view;
-  // }
+  showStudentUnitReport(index, student) {
+    console.log('showStudentUnitReport', index, student)
+    const unit = this.unitDates[index]
+  }
 
+  private async generateSummaryReport(currArray, curriculum, currentClass, classId: string, numVisits: number, currentIndex: number = 0) {
+    // this.curriculum = currArray.find(x => x.name === curriculumId);
+    let curriculumLabel = curriculum?.label
+    // Set the curriculumLabel to null if ignoreCurriculumsForTracking is true.
+    const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+    if (ignoreCurriculumsForTracking) {
+      curriculumLabel = null
+    }
+    const randomId = currentClass.metadata?.randomId
+    const students = await this.dashboardService.getMyStudents(classId);
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null, null, curriculumLabel, randomId, true)
+    const currentAttendanceReport = attendanceReports? attendanceReports[currentIndex]?.doc : null
+    const currentAttendanceList = currentAttendanceReport?.attendanceList
+    //
+    // // const attendanceListStarter = await this.dashboardService.getAttendanceList(students, savedAttendanceList, this.curriculum)
+    // const register = this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', savedAttendanceList);
+    // const attendanceList = register.attendanceList
+    const studentAttendanceList =  await this.dashboardService.getAttendanceList(students, null, curriculum)
+    const register= this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', studentAttendanceList);
+    const attendanceList = register.attendanceList
+
+    const scoreReports = []
+    for (let i = 0; i < currArray.length; i++) {
+      const curriculum = currArray[i];
+      let curriculumLabel = curriculum?.label
+      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, null, curriculumLabel, randomId, true)
+      reports.forEach((report) => {
+        report.doc.curriculum = curriculum
+        scoreReports.push(report.doc)
+      })
+    }
+    const currentScoreReport = scoreReports[scoreReports.length - 1]
+
+    // if (currentAttendanceReport?.timestamp) {
+    //   const timestampFormatted = DateTime.fromMillis(currentAttendanceReport?.timestamp)
+    //   // DATE_MED
+    //   this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
+    // } else {
+    //   this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+    // }
+
+    let scoreReport = currentScoreReport
+
+    if (numVisits) {
+      const selectedAttendanceReports = attendanceReports.slice(0,numVisits)
+      for (let i = 0; i < selectedAttendanceReports.length; i++) {
+        const attendanceReport = selectedAttendanceReports[i];
+        const attendanceList = attendanceReport.doc.attendanceList
+        await this.dashboardService.processAttendanceReport(attendanceList, register)
+      }
+    } else {
+      await this.dashboardService.processAttendanceReport(currentAttendanceList, register)
+    }
+
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, null, null, curriculumLabel, randomId, true)
+    const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+    const behaviorList = currentBehaviorReport?.studentBehaviorList
+    // await this.dashboardService.processBehaviorReport(behaviorList, register)
+
+    if (numVisits) {
+      const selectedBehaviorReports = behaviorReports.slice(0 - numVisits)
+      for (let i = 0; i < selectedBehaviorReports.length; i++) {
+        const attendanceReport = selectedBehaviorReports[i];
+        const studentBehaviorList = attendanceReport.doc.studentBehaviorList
+        await this.dashboardService.processBehaviorReport(studentBehaviorList, register)
+      }
+    } else {
+      if (behaviorList) {
+        await this.dashboardService.processBehaviorReport(behaviorList, register)
+      }
+    }
+
+    for (let i = 0; i < attendanceList.length; i++) {
+      const student = attendanceList[i]
+      if (ignoreCurriculumsForTracking) {
+        for (let j = 0; j < scoreReports.length; j++) {
+          const report = scoreReports[j]
+          const scoreCurriculum = report.curriculum
+          // let curriculumLabel = curriculum?.label
+          this.dashboardService.processScoreReport(report, student, this.units, ignoreCurriculumsForTracking, student, scoreCurriculum);
+        }
+      } else {
+        this.dashboardService.processScoreReport(scoreReport, student, this.units, ignoreCurriculumsForTracking, student, curriculum);
+      }
+    }
+    // return {attendanceReports, currentAttendanceReport};
+    return register
+  }
+  
 }
