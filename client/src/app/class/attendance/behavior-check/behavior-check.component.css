@@ -1,0 +1,129 @@
+.mat-card {
+  padding: 5px 0px;
+}
+
+.left-padding {
+  padding-left: 5px;
+}
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.mediocre {
+  background-color: #DC921F !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+
+/*Copied from dashboard.component.css*/
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.selectedClassLabel p {
+  text-align: center;
+}
+
+/*.dashboard-table {*/
+/*  border-collapse: collapse;*/
+/*  width: 100%;*/
+/*}*/
+
+/*.dashboard-table th {*/
+/*  border: 1px solid #ddd;*/
+/*  padding-top: 12px;*/
+/*  padding-bottom: 12px;*/
+/*  text-align: center;*/
+/*  background-color: #f29d38;*/
+/*  color: white;*/
+/*}*/
+
+.dashboard-table .checkbox-response {
+  text-align: center;
+}
+
+.student-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: 1em;
+  padding-right:5px;
+}
+
+input[type=checkbox] {
+  transform: scale(1.5);
+  margin: 10px;
+}
+
+input[type=checkbox]:not(:checked) {
+  outline: 1px solid #1e5180
+}
+
+/*End of styles copied from dashboard.component.css*/
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  padding: 20px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  padding: 8px;
+  /*text-align: left;*/
+  /*border: 1px solid #ddd;*/
+}
+td.centered {
+  text-align: center;
+  font-size: large
+}
+tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+th {
+  border: 1px solid #ddd;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: var(--primary-color-dark);
+  color: white;
+}
+tfoot {
+  background-color: #4a524a;
+  color: white;
+}
+
+.table-wrapper {
+  width: 100%;
+  /* max-width: 500px; */
+  overflow-x: auto;
+}

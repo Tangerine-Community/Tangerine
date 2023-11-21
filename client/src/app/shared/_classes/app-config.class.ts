@@ -128,6 +128,22 @@ export class AppConfig {
 
   columnsOnVisitsTab = []
   categories = []
+  
+  //
+  // Teach configuration properties
+  //
+
+  teachProperties = {
+    units: [],
+    cutoffRange:10,
+    attendancePrimaryThreshold: 80,
+    attendanceSecondaryThreshold: 70,
+    scoringPrimaryThreshold: 70,
+    scoringSecondaryThreshold: 60,
+    behaviorPrimaryThreshold: 90,
+    behaviorSecondaryThreshold: 80,
+    useAttendanceFeature: false,
+  }
 
   //
   // Custom App configuration

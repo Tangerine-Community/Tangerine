@@ -1,0 +1,338 @@
+html {
+  box-sizing: border-box;
+}
+
+.hideme {
+  display:none;
+}
+
+.mat-table {
+  width:100%;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
+
+.mat-column-Name {
+  padding-right:5px;
+}
+
+th.mat-header-cell {
+  text-align: right;
+}
+
+.button-row button,
+.button-row a {
+  margin-right: 8px;
+}
+
+.mat-tab-label-active {
+  background-color: greenyellow;
+}
+
+/*.tangy-tab-curriculum {*/
+/*background-color: greenyellow;*/
+/*}*/
+
+::ng-deep .tangy-tab-curriculum .mat-tab-labels {
+  background-color: #05608d;
+  color: #fff;
+  font-weight: 500;
+  line-height: 10px;
+  height: 45px;
+  font-size:12px;
+}
+
+::ng-deep .tangy-tab-curriculum .mat-tab-label-active {
+  background-color: #f29d38;
+}
+
+::ng-deep #checkboxContainer {
+  margin-left:10px;
+}
+
+.student-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: 1em;
+  padding-right:5px;
+  background-color: white;
+}
+
+input[type=checkbox] {
+  transform: scale(1.5);
+  margin: 10px;
+}
+
+input[type=checkbox]:not(:checked) {
+  outline: 1px solid #1e5180
+}
+
+.tangy-list-header {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 8px 20px;
+  background: rgba(0,0,0,.03);
+}
+
+.classDashboard {
+  position:relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.classDashboard button {
+  background-color: white;
+}
+
+.class-dashboard-button-spacer-left {
+  margin-left: 10px;
+}
+
+.class-dashboard-button-spacer-right {
+  margin-right: 10px;
+}
+
+.class-dashboard-curr-button-spacer {
+  margin-left: 2px;
+}
+
+mat-card {
+  background-color: var(--primary-color-dark);
+}
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
+.selectedClassLabel p {
+  text-align: center;
+}
+
+.dashboard-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.dashboard-table th {
+  border: 1px solid #ddd;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: var(--primary-color-dark);
+  color: white;
+}
+
+.dashboard-table .checkbox-response {
+  text-align: center;
+}
+
+.tangy-class-card-content-container {
+  margin-left: 3%;
+  /*width: 90%;*/
+  margin-right: 5%;
+  /*min-height: vh;*/
+}
+.flexbox-horizontal-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+.d1 {
+  width: 50%;
+}
+.d2 {
+  width: 50%;
+}
+mat-card.card-feedback {
+  background-color: #f29d38;
+  padding: 16px 10px 10px;
+  border-radius:unset;
+}
+mat-card-header {
+  font-size: 10px;
+}
+mat-card-content {
+  background-color: white;
+  padding:1em;
+}
+mat-card-title {
+  color: white;
+  font: 400 14px/20px Roboto, "Helvetica Neue", sans-serif;
+  font-weight: bold;
+}
+
+::ng-deep .cdk-overlay-pane {
+  top: 120px !important;
+}
+
+.attendance-icons {
+  padding: 0 0.5em;
+  font-size: xx-large;
+}
+
+.mat-chip.mat-standard-chip.mat-primary {
+  background-color: green;
+}
+
+.mat-chip.mat-standard-chip.mat-primary.blue {
+  background-color: deepskyblue;
+}
+
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.gray {
+  background-color: lightgrey;
+}
+
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.red {
+  background-color: red;
+}
+
+.gray {
+  background-color: gray;
+}
+
+.blue {
+  background-color: deepskyblue;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.quarter-width {
+  width: 25%;
+}
+
+.controls-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 10px;
+  margin-bottom: 1em;
+  width: 300px;
+}
+.controls-one {
+  grid-column: 1 / 2;
+  grid-row: 1;
+}
+.controls-two {
+  grid-column: 2 / 2;
+  grid-row: 1;
+}
+/*.controls-three {*/
+/*  grid-column: 3 / 3;*/
+/*  grid-row: 1;*/
+/*}*/
+
+.controls-one mat-icon {
+  transform: scale(1.5);
+}
+
+.controls-two mat-icon {
+  transform: scale(1.5);
+}
+
+.number-cell {
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+/*.student-name-column {*/
+/*  width: 120px;*/
+/*}*/
+
+.sms-button-column {
+  width: 50px;
+  padding-right:2px;
+  background-color: white;
+}
+.nav-flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: normal;
+  align-items: normal;
+  align-content: normal;
+}
+
+.nav-flex-items:nth-child(1) {
+  display: block;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.nav-flex-items:nth-child(2) {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+td.centered {
+  text-align: center;
+}
+
+.mat-card {
+  padding-top: 5px;
+  padding-bottom: 1px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.left-padding {
+  padding-left: 5px;
+}
+
+.mat-checkbox-layout {
+  white-space: normal !important;
+}
+
+.progress-bar {
+  min-width: 20px;
+}
+
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.mediocre {
+  background-color: #DC921F !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+.white {
+  background-color: white !important;
+}
+
+

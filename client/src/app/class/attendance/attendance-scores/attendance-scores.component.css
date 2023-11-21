@@ -1,0 +1,51 @@
+input[type=number] {
+  width: auto;
+  /*border-bottom: 2px solid blue;*/
+}
+.right-align {
+  text-align: right;
+}
+.mat-card {
+  padding: 5px 0px;
+}
+
+.left-padding {
+  padding-left: 5px;
+}
+.header {
+  padding-left: 1em;
+}
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: rgba(0,0,0,.04);
+}
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
+.selectedClassLabel p {
+  text-align: center;
+}
+
+.controls-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 10px;
+}
+.controls-one {
+  grid-column: 1 / 2;
+  grid-row: 1;
+}
+.controls-two {
+  grid-column: 2 / 2;
+  grid-row: 1;
+}
+
+.controls-two mat-icon {
+  transform: scale(1.5);
+}

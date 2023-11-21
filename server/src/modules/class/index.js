@@ -13,6 +13,9 @@ module.exports = {
             flatFormResponse[`sr_classId`] = studentRegistrationDoc.classId;
             flatFormResponse[`sr_student_id`] = studentRegistrationDoc.id;
           }
+          if (formResponse.metadata && formResponse.metadata.randomId) {
+            flatFormResponse[`randomId`] = formResponse.metadata.randomId;
+          }
           resolve({flatFormResponse, formResponse})
       })
     },
