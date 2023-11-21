@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClassUtils} from "../class-utils";
 import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
@@ -9,6 +9,8 @@ import {Subject} from "rxjs";
 import {VariableService} from "../../shared/_services/variable.service";
 import {_TRANSLATE} from "../../shared/translation-marker";
 import {ClassFormsPlayerComponent} from "../class-forms-player.component";
+import {AppConfigService} from "../../shared/_services/app-config.service";
+
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -29,16 +31,22 @@ export class ClassFormComponent implements OnInit {
   @ViewChild('formPlayer', {static: true}) formPlayer: ClassFormsPlayerComponent
   responseId;
   curriculum;
+  curriculumLabel: string;
   studentId;
   classId;
   classUtils: ClassUtils;
   viewRecord = false;
   formHtml;
   formResponse;
-
+  reportDate: string;
   throttledSaveLoaded;
   throttledSaveFiring;
-
+  
+  hasEventFormRedirect = false
+  eventFormRedirectUrl = ''
+  eventFormRedirectBackButtonText = ''
+  
+  newForm = false;
   constructor(
     private route: ActivatedRoute,
     private hostElementRef: ElementRef,
@@ -46,20 +54,31 @@ export class ClassFormComponent implements OnInit {
     private dashboardService: DashboardService,
     private classFormService: ClassFormService,
     private tangyFormService: TangyFormService,
-    private variableService: VariableService
-  ) { }
+    private variableService: VariableService,
+    private appConfigService: AppConfigService,
+    private ref: ChangeDetectorRef
+  ) {
+    ref.detach()
+  }
 
   async ngOnInit(): Promise<void> {
     await this.classFormService.initialize();
     this.classUtils = new ClassUtils();
     setTimeout(() => this.hostElementRef.nativeElement.classList.add('hide-spinner'), 3000)
+    
+    this.hasEventFormRedirect = window['eventFormRedirect'] ? true : false
+    this.eventFormRedirectUrl = window['eventFormRedirect']
+    
     this.route.queryParams.subscribe(async params => {
       this.responseId = params['responseId'];
       this.formId = params['formId']; // corresponds to the form_item.id
       this.classId = params['classId'];
       this.curriculum = params['curriculum']; // corresponds to form.id
+      this.curriculumLabel = params['curriculumLabel']; // corresponds to form.id
       this.studentId = params['studentId'];
       this.viewRecord = params['viewRecord'];
+      this.reportDate = params['reportDate'];
+      this.newForm = params['newForm'];
       if (typeof this.formId === 'undefined') {
         // this is student reg or class reg.
         this.formId = this.curriculum;
@@ -67,13 +86,17 @@ export class ClassFormComponent implements OnInit {
       const formHtml = await this.tangyFormService.getFormMarkup(this.curriculum)
       if (typeof this.studentId !== 'undefined') {
         if (typeof this.responseId === 'undefined') {
-          // This is either a new subtest or from a stale dashboard, so check using the curriculum and student id
-          const responses = await this.classFormService.getResponsesByStudentId(this.studentId);
-          for (const response of responses as any[]) {
-            const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
-            const respCurrId = response.doc.form.id;
-            if (respClassId === this.classId && respCurrId === this.curriculum) {
-              this.formResponse = response.doc;
+          // work-around for attendance records, which differ from usual class records.
+          // Only the selectCheckbox function in class-forms-player.component.ts sets this param.
+          if (!this.newForm) {
+            // This is either a new subtest or from a stale dashboard, so check using the curriculum and student id
+            const responses = await this.classFormService.getResponsesByStudentId(this.studentId);
+            for (const response of responses as any[]) {
+              const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
+              const respCurrId = response.doc.form.id;
+              if (respClassId === this.classId && respCurrId === this.curriculum) {
+                this.formResponse = response.doc;
+              }
             }
           }
         } else {
@@ -103,7 +126,7 @@ export class ClassFormComponent implements OnInit {
         // For new student-registration etc.
         this.formPlayer.formHtml = formHtml
       }
-      await this.formPlayer.render()
+      this.ref.detectChanges()
 
       // this.formPlayer.formEl.addEventListener('TANGY_FORM_UPDATE', async (event) => {
       this.formPlayer.$afterSubmit.subscribe(async (state:any) => {
@@ -121,38 +144,103 @@ export class ClassFormComponent implements OnInit {
             // This can happen when a user views a form but does not enter anything.
           }
         }
+        if (state.form.id === 'class-registration') {
+          if (typeof state.metadata?.randomId === 'undefined') {
+            if (typeof state.metadata === 'undefined') {
+              state.metadata = {};
+            }
+            state.metadata['randomId'] = this.classUtils.makeId(6);
+          }
+        }
         if (state.form.id !== 'student-registration' && state.form.id !== 'class-registration') {
           const studentRegistrationDoc = await this.classFormService.getResponse(this.studentId);
           const srValues = this.classUtils.getInputValues(studentRegistrationDoc);
           srValues['id'] = this.studentId;
           state.metadata = {'studentRegistrationDoc': srValues};
         }
-        await this.saveResponse(state)
+        await this.throttledSaveResponse(state)
         // Reset vars and set to this new class-registration
         if (state.form.id === 'class-registration' && !this.formResponse) {
-          await this.variableService.set('class-classIndex', null);
-          await this.variableService.set('class-currentClassId', null);
-          await this.variableService.set('class-curriculumId', null);
-          await this.variableService.set('class-currentItemId', null);
-          const classes = await this.dashboardService.getMyClasses();
-          const enabledClasses = classes.map(klass => {
-            if (!klass.doc.archive) {
-              return klass
-            }
-          });
-          const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
-          // set classIndex to allEnabledClasses.length
-          const classIndex = allEnabledClasses.length - 1
-          const currentClass = allEnabledClasses[classIndex]
-          const currentClassId = currentClass.id
-          await this.variableService.set('class-classIndex', classIndex);
-          await this.variableService.set('class-currentClassId', currentClassId);
+          await this.dashboardService.setCurrentClass();
         }
-        this.router.navigate(['dashboard']);
+        
+        if (state.form.id === 'form-internal-behaviour' && !this.formResponse) {
+          // Look up today's behaviour scores form and add this score to it
+          let currentBehaviorReport, savedBehaviorList = null;
+          try {
+            const type = "behavior"
+            const enabledClasses = await this.dashboardService.getEnabledClasses();
+            let classClassIndex = await this.variableService.get('class-classIndex')
+            const classIndex = parseInt(classClassIndex)
+            const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
+            // const reportDate = DateTime.local().toISODate()
+            // const formInfo = await this.tangyFormsInfoService.getFormInfo(this.curriculum)
+            // const curriculumLabel = formInfo.title
+            const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+            let curriculumLabel = this.curriculumLabel
+            if (ignoreCurriculumsForTracking) {
+              curriculumLabel = null
+            }
+            const randomId = currentClass.metadata?.randomId
+            const docArray = await this.dashboardService.searchDocs(type, currentClass, this.reportDate, curriculumLabel, randomId, false)
+            currentBehaviorReport = docArray? docArray[0]?.doc : null
+            // savedBehaviorList = currentBehaviorReport?.studentBehaviorList
+            const currentStudent = currentBehaviorReport.studentBehaviorList.find((thisStudent) => {
+              return thisStudent.id === this.studentId
+            })
+            if (currentStudent) {
+              currentStudent['behavior'] = {}
+              const usingScorefield = state.items[0].inputs.find(input => input.name === state['form']['id'] + '_score');
+              const intScore = usingScorefield.value
+              currentStudent['behavior']['formResponseId'] = state._id
+              currentStudent['behavior']['internal'] = intScore
+              currentStudent['behavior']['internalPercentage'] = Math.round((intScore / 36) * 100)
+              await this.dashboardService.saveDoc(currentBehaviorReport)
+            }
+          } catch (e) {
+          }
+        }
+        const appConfig = await this.appConfigService.getAppConfig()
+        const url = appConfig.homeUrl
+        
+        if (window['eventFormRedirect']) {
+          // await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+          await this.router.navigate(['class-form'], { queryParams:
+              { curriculum: this.curriculum, classId: this.classId, newForm: this.newForm, queryParamsHandling: 'preserve',
+                preserveFragment: true }
+          });
+          // /class-form?curriculum=student-registration&classId=' + classId + '&newForm=true';
+          // '/class-form?curriculum=student-registration&classId=d4605997-8a4f-4027-a52b-185e84e2454f&newForm=true'
+          this.router.navigateByUrl(window['eventFormRedirect'])
+          // Fix for double-submit of this form clearing eventFormRedirect.
+          if (!this.newForm) {
+            window['eventFormRedirect'] = ''
+          }
+        } else {
+          this.router.navigate([url]);
+        }
       })
+      await this.formPlayer.render()
     })
   }
-
+  
+  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
+  // Everything else in between we can ignore.
+  async throttledSaveResponse(response) {
+    // If already loaded, return.
+    if (this.throttledSaveLoaded) return
+    // Throttle this fire by waiting until last fire is done.
+    if (this.throttledSaveFiring) {
+      this.throttledSaveLoaded = true
+      while (this.throttledSaveFiring) await sleep(200)
+      this.throttledSaveLoaded = false
+    }
+    // Fire it.
+    this.throttledSaveFiring = true
+    await this.saveResponse(response)
+    this.throttledSaveFiring = false
+  }
+  
   async saveResponse(state) {
     let stateDoc = {}
     stateDoc = await this.tangyFormService.getResponse(state._id)

@@ -1,5 +1,11 @@
 //@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import '~@angular/material/theming';
+
+// Override the checkbox label to wrap
+// https://github.com/angular/components/issues/8416
+.mat-checkbox-layout {
+  white-space: normal !important;
+}
 @import '_tangy-app-variables.scss';
 
 @include mat-core();
