@@ -226,6 +226,14 @@
 "Subtest Report":"Informe de subprueba",
 "Select Student":"Seleccionar estudiante",
 "Results":"Resultados",
+"Class Configuration":"Configuración de clase",
+"Toggle a class 'off' to archive. The toggle will be white when 'off'. Click a class 'on' to enable. The toggle will be orange when 'on'.":"Desactive una clase para archivarla. El interruptor será blanco cuando esté \"apagado\". Haga clic en una clase 'activada' para habilitarla. El interruptor será naranja cuando esté activado.",
+"General Settings":"Configuración general",
+"Class":"Clase",
+"Please choose your language":"Por favor elige tu idioma",
+"Use PouchDB's last sequence tracking when syncing.":"Utilice el seguimiento de la última secuencia de PouchDB al sincronizar.",
+"After submitting updated settings, you will be required to log in again.":"Después de enviar la configuración actualizada, se le pedirá que inicie sesión nuevamente.",
+"Settings have been updated. You will now be redirected to log in.":"La configuración ha sido actualizada. Ahora serás redirigido para iniciar sesión."
 "Attendance and Behaviour":"Asistencia y Comportamiento",
 "Attendance":"Asistencia",
 "Behavior": "Comportamiento",
@@ -277,7 +285,5 @@
 "Report":"Informes",
 "Date":"Fecha",
 "Please choose your language: ":"Por favor elija su idioma:",
-"Class Configuration":"Configuración de grupo",
-"Toggle a class 'off' to archive. The toggle will be white when 'off'. Click a class 'on' to enable. The toggle will be orange when 'on'. ":"Desactive un grupo para archivarlo. El interruptor será blanco cuando esté 'apagado'. Haga clic en un grupo 'activado' para habilitarlo. El interruptor será naranja cuando esté activado.",
 "Change Subject":"Escoger Materia"
 }
