@@ -155,7 +155,7 @@ module.exports = {
                   }
                 }
               } else {
-                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                console.log("CSV - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
               }
               // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
               // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
@@ -347,9 +347,7 @@ const  generateFlatResponse = async function (formResponse, locationLists, sanit
           // This input has an attribute 'locationSrc' with a path to the location list that starts with './assets/'
           // We need to compare file names instead of paths since it is different on the server
           let inputLocationFileName = input.locationSrc ? path.parse(input.locationSrc).base : `location-list.json`
-          console.log(inputLocationFileName)
           const locationList = locationLists.find(locationList => inputLocationFileName == path.parse(locationList.path).base)
-          console.log(locationList.id)
           locationKeys = []
           for (let group of input.value) {
             tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
@@ -539,7 +537,6 @@ function saveFormInfo(flatResponse, db) {
     Object.keys(flatResponse).forEach(key => {
       if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
         // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
-        let safeKey = key.replace('form-0.', '')
         // Make the header property (AKA label) just the variable name.
         const firstOccurenceIndex = safeKey.indexOf('.')
         const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
@@ -704,7 +701,6 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
       }
       
     } catch (error) {
-      // There must not be a user profile yet doc uploaded yet.
       // console.log("Returning doc instead of docWithProfile because user profile not uploaded yet.")
       return doc
     }
