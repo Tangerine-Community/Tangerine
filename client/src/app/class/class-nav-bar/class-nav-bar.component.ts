@@ -6,6 +6,7 @@ import {VariableService} from "../../shared/_services/variable.service";
 import {StudentResult} from "../dashboard/dashboard.component";
 import {ActivatedRoute} from "@angular/router";
 import {BehaviorSubject, Subject, Subscription} from "rxjs";
+import {AppConfigService} from "../../shared/_services/app-config.service";
 
 @Component({
   selector: 'app-class-nav-bar',
@@ -27,69 +28,58 @@ export class ClassNavBarComponent implements OnInit {
   currArray
   allStudentResults: StudentResult[];
   getValue: (variableName, response) => any;
+  getCurriculumObject: (variableName, response) => any;
   enabledClasses = [];
   enabledClassesSubscription: Subscription;
-
+  curriculums = {}
+  integrateWithOriginalDashboard: boolean = false;
+  useAttendanceFeature: boolean = false;
+  linkToDashboardUrl: boolean = false;
+  classTitle: string;
+  
   constructor(
     private dashboardService: DashboardService,
-    private variableService: VariableService,
-    private route: ActivatedRoute
+    private appConfigService: AppConfigService
   ) {
   }
 
   async ngOnInit(): Promise<void> {
     this.window = window;
-    // this.selectedClass = window['T'].classDashboard.selectedClass;
-    this.route.queryParams.subscribe(async params => {
-      // classIndex = params['classIndex'];
-      // curriculumId = params['curriculumId'];
-      // this.formList = window['T'].classDashboard.formList;
-      this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe((enabledClasses) => {
-        this.enabledClasses = enabledClasses
-      })
-      if (this.enabledClasses.length === 0) {
-        this.enabledClasses = await this.dashboardService.getEnabledClasses();
-      }
-      this.getValue = this.dashboardService.getValue
-      for (const classDoc of this.enabledClasses) {
-        const grade = this.getValue('grade', classDoc.doc)
-        let klass = {
-          id: classDoc.id,
-          name: grade,
-          curriculum: []
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.useAttendanceFeature = appConfig.teachProperties?.useAttendanceFeature
+    const homeUrl = appConfig.homeUrl
+    // if (this.useAttendanceFeature && homeUrl === 'dashboard') {
+    //   // Enables display of 'Dashboard' button in menu to link to homeUrl 'dashboard'.
+    //   this.integrateWithOriginalDashboard = true;
+    // }
+    if (homeUrl === 'dashboard') {
+      // Enables display of 'Dashboard' button in menu to link to homeUrl 'dashboard'.
+      this.linkToDashboardUrl = true;
+    }
+    this.selectedClassSubscription = this.dashboardService.selectedClass$.subscribe((selectedClass) => {
+          this.selectedClass = selectedClass
+          // this.classIndex = this.enabledClasses.findIndex((enabledClass) => {
+          //   return enabledClass.id === selectedClass._id
+          // })
+      // const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
+      // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+      // this.formList = await this.dashboardService.populateFormsMetadata(curriculumId, curriculumFormsList, selectedClass);
+      this.classTitle = this.getClassTitle(selectedClass)
+        })
+    this.getValue = this.dashboardService.getValue
+    this.getCurriculumObject = this.dashboardService.getCurriculumObject
+    this.enabledClassesSubscription = this.dashboardService.enabledClasses$.subscribe(async (enabledClasses) => {
+      this.enabledClasses = enabledClasses
+      for (const enabledClass of this.enabledClasses) {
+        // const grade = this.getClassTitle(enabledClass.doc)
+        // enabledClass.name = grade
+        // const curriculum = this.getCurriculumObject('curriculum', enabledClass.doc)
+        // this.curriculums[enabledClass.id] = curriculum
+        const ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', enabledClass.doc)
+        if (ignoreCurriculumsForTracking) {
+          enabledClass['ignoreCurriculumsForTracking'] = true
         }
-        // find the options that are set to 'on'
-        const classArray = await this.dashboardService.populateCurrentCurriculums(classDoc.doc);
-        if (classArray) {
-          this.currArray = classArray
-          klass.curriculum = this.currArray
-        }
-      }
-
-      let classClassIndex = await this.variableService.get('class-classIndex')
-      if (classClassIndex !== null) {
-        const classIndex = parseInt(classClassIndex)
-        if (!Number.isNaN(classIndex)) {
-          this.currentClassIndex = classIndex;
-        }
-      }
-      let currentClass = this.enabledClasses[this.currentClassIndex]?.doc
-      if (typeof currentClass === 'undefined') {
-        // Maybe a class has been removed
-        this.currentClassIndex = 0
-        currentClass = this.enabledClasses[this.currentClassIndex]?.doc
-      }
-      this.selectedClass = currentClass;
-      this.selectedClassSubscription = this.dashboardService.selectedClass$.subscribe((selectedClass) => {
-        this.selectedClass = selectedClass
-      })
-      // this.currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-      const curriculumId = await this.variableService.get('class-curriculumId');
-      // curriculumId will be null when starting with a new instance of tangerine.
-      if (curriculumId) {
-        const curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-        const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
-        this.formList = await this.dashboardService.populateFormsMetadata(curriculumId, curriculumFormsList, currentClass);
+        await this.dashboardService.populateCurrentCurriculums(enabledClass.doc);
       }
     })
   }

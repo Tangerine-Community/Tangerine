@@ -10,13 +10,13 @@ import {AppConfigService} from "../../../shared/_services/app-config.service";
 @Component({
   selector: 'app-attendance-scores',
   templateUrl: './attendance-scores.component.html',
-  styleUrls: ['./attendance-scores.component.css','../../dashboard/dashboard.component.css']
+  styleUrls: ['../../dashboard/dashboard.component.css', './attendance-scores.component.css']
 })
 export class AttendanceScoresComponent implements OnInit {
 
   getValue: (variableName: any, response: any) => any;
   window: any = window
-  attendanceList: StudentResult[] = []
+  scoreList: StudentResult[] = []
   scoreRegister: {
     _id: string,
     timestamp: number,
@@ -33,10 +33,15 @@ export class AttendanceScoresComponent implements OnInit {
     items: any[],
     complete: boolean
   }
-  scoreList: StudentResult[]
   testName: string = ""
   showScoreList: boolean = true
   units: string[] = []
+  selectedClass: any
+  curriculum: any
+  saveSuccess: boolean;
+  currArray: any;
+  curriculumId:string
+  ignoreCurriculumsForTracking: boolean = false
   
   constructor(
     private dashboardService: DashboardService,
@@ -62,42 +67,45 @@ export class AttendanceScoresComponent implements OnInit {
     const teachConfiguration = appConfig.teachProperties
     this.units = appConfig.teachProperties?.units
 
-    const currentClass = enabledClasses[classIndex]?.doc;
-    const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    const curriculumId = await this.variableService.get('class-curriculumId');
-    // const curriculum = currArray.find(x => x.name === curriculumId);
+    const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
+    this.selectedClass = currentClass;
 
-    const currentClassId = await this.variableService.get('class-currentClassId');
+    this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+
+    const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+    this.curriculumId = await this.variableService.get('class-curriculumId');
+    this.curriculum = currArray.find(x => x.name === this.curriculumId);
+    this.currArray = currArray;
+
+    const currentClassId = this.selectedClass._id
     await this.showScoreListing(currentClass, currentClassId)
   }
 
-
-  /**
-   * Shim attendance into the currArray so it'll appear in the dropdown.
-   * Makes attendance the selectedCurriculum.
-   * @param cassId
-   */
-  async showScoreListing(selectedClass, currentClassId) {
+  
+  async showScoreListing(currentClass, currentClassId) {
     const type = "scores"
     const registerNameForDialog = 'Scoring';
     const students = await this.dashboardService.getMyStudents(currentClassId)
-
+    const schoolName = this.getValue('school_name', currentClass)
+    const schoolYear = this.getValue('school_year', currentClass)
+    const randomId = currentClass.metadata?.randomId
     const timestamp = Date.now()
-    const {reportDate, grade, schoolName, schoolYear, id} = this.dashboardService.generateSearchableId(selectedClass, type);
+    const curriculumLabel = this.curriculum.label
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);
     let doc, listFromDoc
     try {
-      doc = await this.dashboardService.getDoc(id)
-      listFromDoc = doc.scoreList
-      this.testName = doc.testName
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, null, curriculumLabel, randomId, true)
+      doc = docArray? docArray[0]?.doc : null
+      listFromDoc = doc?.scoreList
     } catch (e) {
     }
 
-    this.scoreList =  await this.dashboardService.getAttendanceList(students, listFromDoc)
+    this.scoreList =  await this.dashboardService.getScoreList(students, listFromDoc)
     if (!doc) {
       this.scoreRegister = {
         _id: id,
         timestamp: timestamp,
-        classId: selectedClass.id,
+        classId: currentClassId,
         grade: grade,
         schoolName: schoolName,
         schoolYear: schoolYear,
@@ -124,14 +132,14 @@ export class AttendanceScoresComponent implements OnInit {
           }],
         complete: false
       }
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
-      if (startRegister) {
-        await this.saveStudentScore(null)
-      } else {
-        this.router.navigate(['/attendance-dashboard/'], { queryParams:
-            { curriculum: 'student-registration' }
-        });
-      }
+      // const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record?'))
+      // if (startRegister) {
+      await this.saveStudentScore(null)
+      // } else {
+      //   this.router.navigate(['/attendance-dashboard/'], { queryParams:
+      //       { curriculum: 'student-registration' }
+      //   });
+      // }
     } else {
       this.showScoreList = true
       doc.scoreList = this.scoreList
@@ -152,7 +160,7 @@ export class AttendanceScoresComponent implements OnInit {
     console.log('saved student score: ' + JSON.stringify(student))
     this.scoreRegister.scoreList = this.scoreList
     // update testName in case user updated it.
-    this.scoreRegister.testName = this.testName
+    // this.scoreRegister.testName = this.testName
     // save scoreRegister
     let doc
     try {
@@ -160,7 +168,34 @@ export class AttendanceScoresComponent implements OnInit {
       this.scoreRegister['_rev'] = doc._rev
     } catch (e) {
     }
-    await this.dashboardService.saveDoc(this.scoreRegister)
+    const result = await this.dashboardService.saveDoc(this.scoreRegister)
+    if (result.ok) {
+      this.saveSuccess = true
+      setTimeout(() => {
+        this.saveSuccess = false
+      }, 2000);
+    }
+  }
+
+  async saveStudentScores() {
+    console.log('saved student scores ')
+    this.scoreRegister.scoreList = this.scoreList
+    // update testName in case user updated it.
+    // this.scoreRegister.testName = this.testName
+    // save scoreRegister
+    let doc
+    try {
+      doc = await this.dashboardService.getDoc(this.scoreRegister._id)
+      this.scoreRegister['_rev'] = doc._rev
+    } catch (e) {
+    }
+    const result = await this.dashboardService.saveDoc(this.scoreRegister)
+    if (result.ok) {
+      this.saveSuccess = true
+      setTimeout(() => {
+        this.saveSuccess = false
+      }, 2000);
+    }
   }
 
   /** Navigate to the student registration form */
@@ -171,5 +206,15 @@ export class AttendanceScoresComponent implements OnInit {
     this.router.navigate(['class-form'], { queryParams:
         { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId, viewRecord: true }
     });
+  }
+
+  getClassTitle = this.dashboardService.getClassTitle
+
+  changeCurriculum = async (curriculumId) => {
+    // this.dashboardService.changeCurriculum(curriculum, this.currArray, this.selectedClass, this.router)
+    this.curriculumId = curriculumId
+    await this.variableService.set('class-curriculumId', curriculumId);
+    this.curriculum = this.currArray.find(x => x.name === this.curriculumId);
+    await this.showScoreListing(this.selectedClass, this.selectedClass._id)
   }
 }

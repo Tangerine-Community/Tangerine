@@ -231,7 +231,7 @@ export class AppComponent implements OnInit {
       this.checkStorageUsage();
       setInterval(this.checkStorageUsage.bind(this), 60 * 1000);
     }
-    if (this.appConfig.homeUrl === 'dashboard') {
+    if (this.appConfig.homeUrl === 'dashboard' || this.appConfig.homeUrl === 'attendance-dashboard') {
       this.showClassNavBar = true;
     }
     this.ready = true;

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {DateTime} from "luxon";
+import {AppConfigService} from "../../../shared/_services/app-config.service";
 
 declare const sms: any;
 
@@ -15,94 +17,146 @@ export class AttendanceDashboardComponent implements OnInit {
 
   currentClassId:string
   attendanceReport: any
-  getValue: (variableName: any, response: any) => any;
+  getValue: (variableName, response, provideCurriculumObject) => any;
   window: any = window
   selectedClass: any
+  reportDate:string
+  classRegistrationParams = {
+    curriculum: 'class-registration'
+  };
+  curriculum: any;
+  units: string[] = []
+  ignoreCurriculumsForTracking: boolean = false
+  enableContactChoosing: boolean = false
+  reportLocaltime: string;
+  currArray: any[]
+  enabledClasses: any[]
+  attendancePrimaryThreshold: number
+  attendanceSecondaryThreshold: number
+  scoringPrimaryThreshold: number
+  scoringSecondaryThreshold: number
+  behaviorPrimaryThreshold: number
+  behaviorSecondaryThreshold: number
+  cutoffRange: number  
+  
   constructor(
     private dashboardService: DashboardService,
     private variableService : VariableService,
     private router: Router,
+    private route: ActivatedRoute,
+    private appConfigService: AppConfigService
   ) { }
 
   async ngOnInit(): Promise<void> {
     let classIndex
     this.getValue = this.dashboardService.getValue
-    const enabledClasses = await this.dashboardService.getEnabledClasses();
-
-    let classClassIndex = await this.variableService.get('class-classIndex')
-    if (classClassIndex !== null) {
-      classIndex = parseInt(classClassIndex)
-      if (Number.isNaN(classIndex)) {
-        classIndex = 0
-      }
-    }
+    this.reportDate = DateTime.local().toISODate()
+    this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+    this.enabledClasses = await this.dashboardService.getEnabledClasses();
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.units = appConfig.teachProperties?.units
+    this.attendancePrimaryThreshold = appConfig.teachProperties?.attendancePrimaryThreshold
+    this.attendanceSecondaryThreshold = appConfig.teachProperties?.attendanceSecondaryThreshold
+    this.scoringPrimaryThreshold = appConfig.teachProperties?.scoringPrimaryThreshold
+    this.scoringSecondaryThreshold = appConfig.teachProperties?.scoringSecondaryThreshold
+    this.behaviorPrimaryThreshold = appConfig.teachProperties?.behaviorPrimaryThreshold
+    this.behaviorSecondaryThreshold = appConfig.teachProperties?.behaviorSecondaryThreshold
     
-    const currentClass = enabledClasses[classIndex]?.doc
-    this.selectedClass = currentClass;
-    const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
-    const curriculumId = await this.variableService.get('class-curriculumId');
-    const curriculum = currArray.find(x => x.name === curriculumId);
+    // new instance - no classes yet.
+    if (typeof this.enabledClasses !== 'undefined' && this.enabledClasses.length > 0) {
 
-    const currentClassId = await this.variableService.get('class-currentClassId');
-    await this.populateSummary(currentClass, curriculum)
+      this.route.queryParams.subscribe(async params => {
+        classIndex = params['classIndex'];
+        let curriculumId = params['curriculumId'];
+        
+        const __vars = await this.dashboardService.initExposeVariables(classIndex, curriculumId);
+        const currentClass = __vars.currentClass;
+        curriculumId = __vars.curriculumId;
+        this.selectedClass = currentClass;
+        const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
+        this.currArray = currArray
+        // When app is initialized, there is no curriculumId, so we need to set it to the first one.
+        if (!curriculumId && currArray?.length > 0) {
+          curriculumId = currArray[0].name
+        }
+        this.curriculum = currArray.find(x => x.name === curriculumId);
+        if (currentClass) {
+          this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+          await this.populateSummary(currentClass, this.curriculum)
+        }
+      })
+    }
   }
 
   private async populateSummary(currentClass, curriculum) {
     const classId = currentClass._id
     const students = await this.dashboardService.getMyStudents(classId);
+    const attendanceList =  await this.dashboardService.getAttendanceList(students, null, curriculum)
+    const register= this.dashboardService.buildAttendanceReport(null, null, classId, null, null, null, null, 'attendance', attendanceList);
+    
+    let curriculumLabel = curriculum?.label
+    // Set the curriculumLabel to null if ignoreCurriculumsForTracking is true.
+    if (this.ignoreCurriculumsForTracking) {
+      curriculumLabel = null
+    }
+    
+    const randomId = currentClass.metadata?.randomId
     // const scoreReports = await this.dashboardService.getScoreDocs(classId)
-    const scoreReports = await this.dashboardService.searchDocs('scores', currentClass, null)
-    const currentScoreReport = scoreReports[scoreReports.length - 1]?.doc
+    const scoreReports = []
+    for (let i = 0; i < this.currArray.length; i++) {
+      const curriculum = this.currArray[i];
+      let curriculumLabel = curriculum?.label
+      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId, true)
+      reports.forEach((report) => {
+        report.doc.curriculum = curriculum
+        scoreReports.push(report.doc)
+      })
+    }
+    const currentScoreReport = scoreReports[scoreReports.length - 1]
 
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, null)
-    const currentAttendanceReport = attendanceReports[attendanceReports.length - 1]?.doc
-    if (!currentAttendanceReport) {
-      alert(_TRANSLATE('You must take attendance before you can view the attendance dashboard.'))
-      this.router.navigate(['attendance-check'])
-      return
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, '*', curriculumLabel, randomId, true)
+    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, '*', curriculumLabel, randomId, true)
+    // const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+    let scoreReport = currentScoreReport
+    if (this.ignoreCurriculumsForTracking) {
+      scoreReport = scoreReports
+    }
+    
+    for (let i = 0; i < attendanceReports.length; i++) {
+      const attendanceReport = attendanceReports[i];
+      const attendanceList = attendanceReport.doc.attendanceList
+      await this.dashboardService.processAttendanceReport(attendanceList, register)
     }
 
-    // const curriculum = this.curriculi.find((curriculum) => curriculum.name === curriculumId);
-    const studentReportsCards = await this.dashboardService.generateStudentReportsCards(curriculum, classId)
+    for (let i = 0; i < behaviorReports.length; i++) {
+      const behaviorReport = behaviorReports[i];
+      const behaviorList = behaviorReport.doc.studentBehaviorList
+      await this.dashboardService.processBehaviorReport(behaviorList, register)
+    }
 
-    const rankedStudentScores = this.dashboardService.rankStudentScores(studentReportsCards);
-    // this.groupingsByCurriculum[curriculumId] = rankedStudentScores
-    const curriculumName = curriculum.name
-    const allStudentScores: any = {}
-    allStudentScores[curriculumName] = rankedStudentScores.map((grouping) => {
-      return {
-        id: grouping.result.id,
-        curriculum: grouping.result.curriculum,
-        score: grouping.result.scorePercentageCorrect
+    for (let i = 0; i < attendanceList.length; i++) {
+      const student = attendanceList[i]
+      if (this.ignoreCurriculumsForTracking) {
+        for (let j = 0; j < scoreReports.length; j++) {
+          const report = scoreReport[j]
+          const scoreCurriculum = report.curriculum
+          // let curriculumLabel = curriculum?.label
+          this.dashboardService.processScoreReport(report, student, this.units, this.ignoreCurriculumsForTracking, student, scoreCurriculum);
+        }
+      } else {
+        this.dashboardService.processScoreReport(scoreReport, student, this.units, this.ignoreCurriculumsForTracking, student, curriculum);
       }
-    })
-
-    attendanceReports.forEach(this.dashboardService.processAttendanceReport(currentAttendanceReport, currentScoreReport, allStudentScores, students))
-    this.attendanceReport = currentAttendanceReport
-    const studentsWithoutAttendance:any[] = students.filter((thisStudent) => {
-      return !this.attendanceReport?.attendanceList.find((student) => {
-        return thisStudent.doc._id === student.id
-      })
-    })
-    // add any students who haven't had attendance taken yet to the attendanceList
-    studentsWithoutAttendance.forEach((student) => {
-      const studentResult = {}
-      const student_name = this.getValue('student_name', student.doc)
-      const phone = this.getValue('phone', student.doc);
-      const classId = this.getValue('classId', student.doc)
-      studentResult['id'] = student.id
-      studentResult['name'] = student_name
-      studentResult['phone'] = phone
-      studentResult['classId'] = classId
-      studentResult['forms'] = {}
-      this.attendanceReport.attendanceList.push(studentResult)
-    })
+    }
+    
+    this.attendanceReport = register
+    
     // const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
     //   return thisStudent.id === student.id
     // })
   }
 
   sendText(student) {
+    let scoresMessage
     console.log("send text")
     if (this.window.isCordovaApp) {
       //CONFIGURATION
@@ -125,8 +179,60 @@ export class AttendanceDashboardComponent implements OnInit {
         alert(_TRANSLATE('This student does not have a phone number.'))
         return
       } else {
-        const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
-        sms.send(phone, message, options, success, error);
+        let attendanceMessage = _TRANSLATE('Attendance is: ') + student.presentPercentage + '%'
+        
+        let behaviorMessage = ""
+        if (student['behavior'] && student['behavior']['internalPercentage']) {
+          behaviorMessage = " ; " + _TRANSLATE('behaviour is: ') + student['behavior']['internalPercentage'] + '%'
+        }
+        
+        if (!this.ignoreCurriculumsForTracking) {
+          scoresMessage = "" +
+            " ; " + _TRANSLATE('score average is: ') + student.score + "%"
+        } else {
+          let currScores = ""
+          for (let i = 0; i < this.currArray.length; i++) {
+            const curriculum = this.currArray[i];
+            let curriculumLabel = curriculum?.label
+            if (student.scores) {
+              if (student.scores[curriculumLabel]) {
+                currScores = currScores + " " + curriculumLabel + ":" + student.scores[curriculumLabel] + "%"
+              }
+            }
+          }
+          if (currScores.length > 0) {
+            scoresMessage = "" + " ; " + _TRANSLATE('score average is: ') + currScores
+          }
+        }
+        
+        // const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
+        const message = _TRANSLATE('Report for ') + student.name + ': ' + attendanceMessage + behaviorMessage + scoresMessage
+        // sms.send(phone, message, options, success, error);
+
+        let options = {
+          // message: _TRANSLATE('Share this '), // not supported on some apps (Facebook, Instagram)
+          message: message, // not supported on some apps (Facebook, Instagram)
+          subject: _TRANSLATE('Student feedback '), // fi. for email
+          chooserTitle: _TRANSLATE('Pick an app '), // Android only, you can override the default share sheet title
+          phone: phone, // phone number to share (for WhatsApp only)
+          number: phone, // phone number to share (for WhatsApp only) unused. delete.
+          appPackageName: 'com.whatsapp' // Android only, you can provide id of the App you want to share with
+        };
+
+        const onSuccess = (result) => {
+          // console.log("Share completed? " + result); // On Android apps mostly return false even while it's true
+          console.log("Shared to app: " + result); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+        };
+
+        const onError = (msg) => {
+          console.log("Sharing failed with message: " + msg);
+          alert( _TRANSLATE('Sharing failed: WhatsApp may not be installed. The following apps are available for sharing: ') + msg);
+        };
+        if (this.enableContactChoosing) {
+          this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+        } else {
+          this.window.plugins.socialsharing.shareViaWhatsAppToPhone(phone, message, null /* img */, null /* url */, onSuccess, onError)
+        }
       }
     } else {
       alert(_TRANSLATE('This feature is only available on a mobile device.'))
@@ -144,5 +250,9 @@ export class AttendanceDashboardComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
+
+  setEnableContactChoosing(checked: boolean) {
+    this.enableContactChoosing = checked
+  }
 
 }

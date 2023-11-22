@@ -1,49 +1,49 @@
-<!--<span class="class-dashboard-button-spacer-left nav-grade-indicator" *ngIf="selectedClass">-->
-<!--  {{'Grade: '|translate}}{{getClassTitle(selectedClass)}}-->
-<!--</span>-->
-<span class="class-dashboard-button-spacer-left" *ngIf="selectedClass">
-    
-  <!--    <button mat-stroked-button color="primary"-->
-    <!--            [routerLink]="['/class-config/']">-->
-    <!--      <mat-icon aria-hidden="false" aria-label="Config">settings</mat-icon>-->
-    <!--    </button>-->
+<span class="class-dashboard-button-spacer-left">
   <button mat-button [matMenuTriggerFor]="classesMenu" class="white-menu-item">
-    <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">school</mat-icon>
-      <span>{{'Grade: '|translate}}{{getClassTitle(selectedClass)}}</span>
+    <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">edit</mat-icon>
+    <span>{{'Grade'|translate}} <ng-template [ngIf]="selectedClass">: {{getClassTitle(selectedClass)}}</ng-template></span>
     </button>
   <mat-menu #classesMenu="matMenu">
-    <span *ngFor="let class of enabledClasses; let classIndex=index"
+    <ng-template [ngIf]="enabledClasses.length > 0">
+        <button mat-menu-item disabled class="menu-section-header">
+          {{'Change Class'|translate}}
+        </button>
+    <span *ngFor="let klass of enabledClasses; let classIndex=index"
           class="class-dashboard-curr-button-spacer">
-    <button mat-menu-item [matMenuTriggerFor]="catMenu">
-        {{getClassTitle(class.doc)}}
+    <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="!klass.ignoreCurriculumsForTracking; else noCurriculums">
+<!--    <button mat-menu-item [routerLink]="['/attendance-dashboard/']"-->
+<!--            [queryParams]={classIndex:classIndex}>-->
+      {{getClassTitle(klass.doc)}}
       </button>
-      <mat-menu #catMenu="matMenu">
-<!--        <ng-template matMenuContent>-->
-          <!--          <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">-->
-          <!--            <button mat-menu-item *ngIf="curriculum.value ==='on'"-->
-          <!--                                (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>-->
-          <!--            <button mat-menu-item *ngIf="curriculum.value ==='on'"-->
-          <!--                    [routerLink]="['/dashboard/']"-->
-          <!--                    [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>-->
-          <!--              {{curriculum.label}}-->
-          <!--            </button>-->
-          <!--            <button mat-menu-item>-->
-          <!--             Thing-->
-          <!--            </button>-->
-          <!--          </span>-->
-          <!--        </ng-template>-->
-        <ng-container *ngFor="let curriculum of class.doc.items[0].inputs[3].value;">
-<!--          <button mat-menu-item>-->
-            <!--             Menu Item: {{item.id}}-->
-            <!--            </button>-->
-          <button mat-menu-item *ngIf="curriculum.value ==='on'"
+      <mat-menu #curriculumMenu="matMenu">
+        <ng-container *ngFor="let curriculum of klass.doc.items[0].inputs[3].value;">
+          <button mat-menu-item *ngIf="curriculum.value ==='on' && useAttendanceFeature && !linkToDashboardUrl"
+                  [routerLink]="['/attendance-dashboard/']"
+                  [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
+            {{curriculum?.label}}
+            </button>
+          <button mat-menu-item *ngIf="curriculum.value ==='on' && linkToDashboardUrl"
                   [routerLink]="['/dashboard/']"
                   [queryParams]={classIndex:classIndex,curriculumId:curriculum.name}>
-              {{curriculum.label}}
+            {{curriculum?.label}}
             </button>
         </ng-container>
       </mat-menu>
+      <ng-template #noCurriculums>
+        <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="linkToDashboardUrl; else attendanceOnly">
+          {{getClassTitle(klass.doc)}}
+      </button>
+      </ng-template>
+      <ng-template #attendanceOnly>
+        <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
+                *ngIf="useAttendanceFeature"
+                [queryParams]={classIndex:classIndex}>
+            {{getClassTitle(klass.doc)}}
+        </button>
+      </ng-template>
       </span>
+    </ng-template>
+
         <mat-divider></mat-divider>
         <button mat-menu-item
                 [routerLink]="['/class-form/']"
@@ -52,53 +52,65 @@
         </button>
         <button mat-menu-item
                 [routerLink]="['/class-form/']"
-                [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}>
+                [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass?._id}
+                *ngIf="selectedClass">
           {{'Add Student'|translate}}
         </button>
-        <mat-divider></mat-divider>
+        <mat-divider *ngIf="selectedClass && linkToDashboardUrl && useAttendanceFeature"></mat-divider>
+<!--        Show button for attendance Dashboard if homeUrl is 'dashboard' and attendance feature is enabled-->
         <button mat-menu-item [routerLink]="['/attendance-dashboard/']"
-                [queryParams]='classRegistrationParams'
-                aria-label="icon button with a task list icon">
-<!--          <mat-icon>summarize</mat-icon>-->
+                *ngIf="selectedClass && linkToDashboardUrl && useAttendanceFeature">
           <span>{{'Dashboard'|translate}}</span>
         </button>
+        <mat-divider></mat-divider>
         <button mat-menu-item [routerLink]="['/attendance-check/']"
                 [queryParams]='classRegistrationParams'
-                aria-label="icon button with a task list icon">
-<!--          <mat-icon>checklist</mat-icon>-->
-          <span>{{'Check Attendance'|translate}}</span>
+                *ngIf="selectedClass && useAttendanceFeature">
+          <span>{{'Attendance'|translate}}</span>
+        </button>
+        <button mat-menu-item [routerLink]="['/behavior-check/']"
+                [queryParams]='classRegistrationParams'
+                *ngIf="selectedClass && useAttendanceFeature">
+          <span>{{'Behavior'|translate}}</span>
         </button>
         <button mat-menu-item [routerLink]="['/attendance-scores/']"
                 [queryParams]='classRegistrationParams'
-                aria-label="icon button with a task list icon">
-<!--          <mat-icon>scoreboard</mat-icon>-->
-          <span>{{'Record test scores'|translate}}</span>
+                *ngIf="selectedClass && useAttendanceFeature">
+          <span>{{'Scores'|translate}}</span>
         </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item routerLink="/reports/attendance/{{selectedClass?._id}}"
+                *ngIf="selectedClass && useAttendanceFeature"
+                >{{'Report'|translate}}
+        </button>
+<!--        <button mat-menu-item [matMenuTriggerFor]="reportsMenu"-->
+<!--                *ngIf="linkToDashboardUrl"-->
+<!--                >{{'Select Class Report'|translate}}-->
+<!--        </button>-->
   </mat-menu>
   </span>
 
-<span class="class-dashboard-button-spacer-right" *ngIf="selectedClass">
-    <button mat-button [matMenuTriggerFor]="reportsMenu" class="white-menu-item">
-      <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">dashboard</mat-icon>
-      <span>{{'Reports'|translate}}</span>
-    </button>
-      <mat-menu #groupingMenu="matMenu">
-        <ng-template matMenuContent>
-          <button mat-menu-item *ngFor="let item of formList"
-                  routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-        </ng-template>
-      </mat-menu>
-      <mat-menu #reportsMenu="matMenu">
+<!--<span class="class-dashboard-button-spacer-right">-->
+<!--    <button mat-button [matMenuTriggerFor]="reportsMenu" class="white-menu-item">-->
+<!--      <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">dashboard</mat-icon>-->
+<!--      <span>{{'Reports'|translate}}</span>-->
+<!--    </button>-->
+  
+<!--      <mat-menu #groupingMenu="matMenu">-->
 <!--        <ng-template matMenuContent>-->
-          <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
-          <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
-          <button mat-menu-item
-                  routerLink="/reports/studentSubtestReport/{{selectedClass?._id}}">{{'Student Subtest Report'|translate}}</button>
-          <button mat-menu-item
-                  routerLink="/reports/taskReport/{{selectedClass?._id}}">{{'Task Report'|translate}}</button>
-          <button mat-menu-item
-                  routerLink="/reports/attendance/{{selectedClass?._id}}">{{'Attendance and Behaviour'|translate}}</button>
-          <!--        <button mat-menu-item routerLink="/reports/grades/{{selectedClass.id}}">{{'Grades'|translate}}</button>-->
-          <!--        </ng-template>-->
-      </mat-menu>
-    </span>
+<!--          <button mat-menu-item *ngFor="let item of formList"-->
+<!--                  routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
+<!--        </ng-template>-->
+<!--      </mat-menu>-->
+  
+<!--      <mat-menu #reportsMenu="matMenu">-->
+<!--        <ng-template matMenuContent>-->
+<!--&lt;!&ndash;          <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>&ndash;&gt;-->
+<!--          &lt;!&ndash;<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>&ndash;&gt;-->
+<!--          <button mat-menu-item-->
+<!--                  routerLink="/reports/studentSubtestReport/{{selectedClass?._id}}">{{'Student Subtest Report'|translate}}</button>-->
+<!--          <button mat-menu-item-->
+<!--                  routerLink="/reports/taskReport/{{selectedClass?._id}}">{{'Task Report'|translate}}</button>-->
+<!--                  </ng-template>-->
+<!--      </mat-menu>-->
+<!--    </span>-->

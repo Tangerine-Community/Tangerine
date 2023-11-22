@@ -6,6 +6,8 @@ import {VariableService} from "../../../shared/_services/variable.service";
 import {Router} from "@angular/router";
 import {StudentResult} from "../../dashboard/dashboard.component";
 import {UserService} from "../../../shared/_services/user.service";
+import {FormMetadata} from "../../form-metadata";
+import {ClassFormService} from "../../_services/class-form.service";
 
 
 @Component({
@@ -29,20 +31,26 @@ export class AttendanceCheckComponent implements OnInit {
     attendanceList: StudentResult[],
     collection: string,
     form: {},
+    items: any[],
     complete: boolean,
     type: string
   }
   selectedClass: any
+  behaviorForms: Promise<FormMetadata[]>;
+  curriculum:any
+  ignoreCurriculumsForTracking: boolean = false
+  reportLocaltime: string;
   
   constructor(
     private dashboardService: DashboardService,
               private variableService : VariableService,
               private router: Router,
-              private userService: UserService
+              private classFormService: ClassFormService
   ) { }
 
   async ngOnInit(): Promise<void> {
     let classIndex
+    await this.classFormService.initialize();
     this.getValue = this.dashboardService.getValue
     const enabledClasses = await this.dashboardService.getEnabledClasses();
 
@@ -54,14 +62,16 @@ export class AttendanceCheckComponent implements OnInit {
       }
     }
 
-    const currentClass = enabledClasses[classIndex]?.doc;
+    const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
+    this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+    
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
-    const curriculum = currArray.find(x => x.name === curriculumId);
+    this.curriculum = currArray.find(x => x.name === curriculumId);
     
-    const currentClassId = await this.variableService.get('class-currentClassId');
-    await this.showAttendanceListing(currentClassId, curriculum, currentClass)
+    const currentClassId = this.selectedClass._id
+    await this.showAttendanceListing(currentClassId, this.curriculum, currentClass)
   }
 
   /**
@@ -71,65 +81,59 @@ export class AttendanceCheckComponent implements OnInit {
    */
   async showAttendanceListing(currentClassId, curriculum, currentClass) {
     const type = "attendance"
-    const registerNameForDialog = 'Attendance and Behaviour';
+    const registerNameForDialog = 'Attendance';
+    this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
-    
+    const schoolName = this.getValue('school_name', currentClass)
+    const schoolYear = this.getValue('school_year', currentClass)
+    const randomId = currentClass.metadata?.randomId
     const timestamp = Date.now()
-    const {reportDate, grade, schoolName, schoolYear, id} = this.dashboardService.generateSearchableId(currentClass, type);
+    let curriculumLabel = curriculum.label
+    if (this.ignoreCurriculumsForTracking) {
+      curriculumLabel = null
+    }
+    const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);
 
-    let currentAttendanceReport, listFromDoc
+    let currentAttendanceReport, savedAttendanceList
     try {
-      currentAttendanceReport = await this.dashboardService.getDoc(id)
-      listFromDoc = currentAttendanceReport.attendanceList
+      // currentAttendanceReport = await this.dashboardService.getDoc(id)
+      const docArray = await this.dashboardService.searchDocs('attendance', currentClass, reportDate, curriculumLabel, randomId, false)
+      currentAttendanceReport = docArray? docArray[0]?.doc : null
+      savedAttendanceList = currentAttendanceReport?.attendanceList
     } catch (e) {
     }
+
+    if (currentAttendanceReport?.timestamp) {
+      const timestampFormatted = DateTime.fromMillis(currentAttendanceReport?.timestamp)
+      // DATE_MED
+      this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
+    } else {
+      this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+    }
     
-    this.attendanceList =  await this.dashboardService.getAttendanceList(students, listFromDoc)
+    this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList, curriculum)
     if (!currentAttendanceReport) {
-      this.attendanceRegister = {
-        _id: id,
-        timestamp: timestamp,
-        classId: currentClassId,
-        grade: grade,
-        schoolName: schoolName,
-        schoolYear: schoolYear,
-        reportDate: reportDate,
-        attendanceList: this.attendanceList,
-        collection: 'TangyFormResponse',
-        type: type,
-        form: {
-          id: type,
-        },
-        complete: false
-      }
+      // TODO check if the currentAttendanceReport.timestamp or currentAttendanceReport.reportDate is today.
       const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
       if (startRegister) {
-        // const curriculum = {
-        //   'name': type,
-        //   'value': 'on',
-        //   'label': _TRANSLATE(registerNameForDialog)
-        // }
-        // this.currArray.push(curriculum)
-        // this.selectedCurriculum = this.currArray.find(x => x.name === type)
-        await this.saveStudentAttendance(null)
       } else {
-        // this.showAttendanceList = false
-        // if (!this.currentItemId || this.currentItemId === '') {
-        //   const initialForm = this.curriculumFormsList[0]
-        //   this.currentItemId = initialForm.id
-        // }
-        // await this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
-        this.router.navigate(['/dashboard/']);
+        this.router.navigate(['/attendance-dashboard/']);
+        return null
       }
+      this.attendanceRegister = this.dashboardService.buildAttendanceReport(id, timestamp, currentClassId, grade, schoolName, schoolYear, reportDate, type, this.attendanceList);
     } else {
       currentAttendanceReport.attendanceList = this.attendanceList
       this.attendanceRegister = currentAttendanceReport
     }
+    if (students.length > 0) {
+      await this.saveStudentAttendance(null)
+    } else {
+      const startRegister = confirm(_TRANSLATE('There are no students. Begin ' + registerNameForDialog + ' record for today anyways?'))
+      if (startRegister) {
+        await this.saveStudentAttendance(null)
+      }
+    }
   }
-
-  private
-
-
 
   async toggleAttendance(student) {
     student.absent = !student.absent
@@ -174,5 +178,57 @@ export class AttendanceCheckComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
+
+  /** Populate the querystring with the form info. */
+  selectCheckboxResult(column, itemId, event) {
+    // let el = this.selection.select(column);
+    event.currentTarget.checked = true;
+    // this.selection.toggle(column)
+    const formsArray = Object.values(column.forms);
+    const selectedForm = formsArray.find(input => (input['formId'] === itemId) ? true : false);
+    const studentId = column.id;
+    const classId = column.classId;
+    const selectedFormId = selectedForm['formId'];
+    const curriculum = selectedForm['curriculum'];
+    const src = selectedForm['src'];
+    const title = selectedForm['title'];
+    const responseId = selectedForm['response']['_id'];
+    this.router.navigate(['class-form'], { queryParams:
+          { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
+            classId: classId, itemId: selectedFormId, src: src, title:
+            title, responseId: responseId }
+    });
+  }
+
+  /** Populate the querystring with the form info. */
+  async selectCheckbox(column, formId) {
+    // let el = this.selection.select(row);
+    // this.selection.toggle(column)
+    const formsArray = Object.values(column.forms);
+    // const selectedForm = formsArray.find(response => (response['form']['id'] === formId));
+    const studentId = column.id;
+    const classId = column.classId;
+    // const selectedFormId = selectedForm['formId'];
+    const selectedFormId = formId
+    // const curriculum = selectedForm['curriculum'];
+    // const src = selectedForm['src'];
+    // const title = selectedForm['title'];
+    // let responseId = null;
+    // const curriculumResponse = await this.dashboardService.getCurriculumResponse(classId, curriculum, studentId)
+    // if (curriculumResponse) {
+    //   responseId = curriculumResponse._id
+    // }
+    
+    
+    // this.router.navigate(['class-form'], { queryParams:
+    //       { formId: selectedFormId,
+    //         curriculum: curriculum,
+    //         studentId: studentId,
+    //         classId: classId,
+    //         src: src,
+    //         title: title,
+    //         responseId: responseId }
+    // });
+  }
 
 }
