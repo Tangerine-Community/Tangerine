@@ -10,11 +10,33 @@
 <!--    </button>-->
   </span>
 </mat-toolbar>
+<mat-toolbar *ngIf="selectedClass" class="classDashboard">
+
+  <<span dir="rtl" class="class-dashboard-button-spacer-right">
+      <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+      <mat-menu #groupingMenu="matMenu">
+        <ng-template matMenuContent>
+        <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+        </ng-template>
+      </mat-menu>
+  <!--<mat-menu #progressMenu="matMenu">-->
+  <!--<ng-template matMenuContent>-->
+  <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
+  <!--</ng-template>-->
+  <!--</mat-menu>-->
+      <mat-menu #reportsMenu="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
+        <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
+        <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass._id}}">{{'Student Subtest Report'|translate}}</button>
+        <button mat-menu-item routerLink="/reports/taskReport/{{selectedClass._id}}">{{'Task Report'|translate}}</button>
+      </mat-menu>
+    </span>
+</mat-toolbar>
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
     <div *ngIf="selectedCurriculum"
          class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}
-      : {{getClassTitle(selectedClass)}} - {{selectedCurriculum.label}}</p></div>
+      : {{classTitle}} - {{selectedCurriculum.label}}</p></div>
    
     <div class="controls-wrapper">
       <div class="controls-one">
@@ -23,7 +45,7 @@
           <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
             <mat-option>{{'None'|translate}}</mat-option>
             <mat-option *ngFor="let item of formList;" value="{{item.id}}"
-                        (click)="selectSubTask(item.id,item.classId,item.curriculumId, null)">{{item.title}}</mat-option>
+                        (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -50,7 +72,7 @@
               </td>
             </ng-template>
           </tr>
-        </table>
+        </table> 
         <span><p class="mat-h3" *ngIf="allStudentResults?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
       </div>
     </div>

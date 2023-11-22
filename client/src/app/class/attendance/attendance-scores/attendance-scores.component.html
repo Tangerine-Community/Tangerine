@@ -1,30 +1,44 @@
-<mat-card class="tangy-class-card-content-container">
-  <div class="selectedClassLabel"><p>{{'Student Scores'|translate}}</p></div>
-  <div class="controls-three" *ngIf="showScoreList">
-    <mat-form-field class="example-full-width">
-      <mat-label>{{'Name of Test'|translate}}</mat-label>
-      <input matInput placeholder="{{'Ex. Math Week 1 test'|translate}}" [(ngModel)]="testName"
-             (change)="updateScore(testName,unitIndex)">
-    </mat-form-field>
+<mat-card>
+<!--  <div class="selectedClassLabel">{{'Student Scores'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}}</div>-->
+  <div class="selectedClassLabel">{{'Scores'|translate}}<br/>
+        {{getClassTitle(selectedClass)}} : {{curriculum?.label}}
+    <div *ngIf="ignoreCurriculumsForTracking">
+      <mat-form-field>
+        <mat-label>{{'Change Subject'|translate}}</mat-label>
+        <mat-select [(value)]="curriculumId" placeholder="Select SubTask">
+          <mat-option>{{'----'|translate}}</mat-option>
+          <mat-option *ngFor="let item of currArray;" value="{{item.id}}"
+                      (click)="changeCurriculum(item.name)">{{item.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
-
-
   <div>
-    <table class="dashboard-table">
-      <tr>
-        <th>{{'Student'|translate}}</th>
-        <th *ngFor="let unit of units">{{unit}} {{'Score'|translate}}</th>
-      </tr>
-      <tr *ngFor="let student of scoreList">
-        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} </td>
-        <td *ngFor="let unit of units; index as unitIndex" style="text-align: center">
-          <mat-form-field class="quarter-width">
-            <input id="scoreCtrl" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"
-                   (change)="updateScore(student, unitIndex)">
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+    <mat-tab-group>
+      <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">
+<!--        <h2 class="header">{{unit}}</h2>-->
+        <table class="dashboard-table">
+          <tr>
+            <th>{{'Student'|translate}}</th>
+            <th>{{'Score'|translate}}</th>
+          </tr>
+          <tr *ngFor="let student of scoreList">
+            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+<!--            <td style="text-align: center">{{student['score_'+unit]}}</td>-->
+            <td style="text-align: center">
+              <mat-form-field class="example-full-width">
+              <input id="scoreCtrl_{{unitIndex}}" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"
+                                                  (change)="updateScore(student, unitIndex.toString())">
+              </mat-form-field>
+            </td>
+          </tr>
+        </table>
+        <div class="right-align">
+          <button mat-raised-button color="primary" (click)="saveStudentScores()">{{'Submit'|translate}}</button>
+          <div *ngIf="saveSuccess" class="success-message">{{'Scores saved successfully.'|translate}}</div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
     <span><p class="mat-h3" *ngIf="scoreList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
   </div>
 </mat-card>

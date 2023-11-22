@@ -38,7 +38,7 @@ export class SettingsComponent implements OnInit, AfterContentInit {
 
   async ngOnInit(): Promise<void> {
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.homeUrl === 'dashboard') {
+    if (appConfig.homeUrl === 'dashboard' || appConfig.homeUrl === 'attendance-dashboard') {
       this.showClassConfig = true;
       await this.classFormService.initialize();
       this.classes = await this.dashboardService.getMyClasses();
@@ -70,7 +70,7 @@ export class SettingsComponent implements OnInit, AfterContentInit {
       <tangy-form>
         <tangy-form-item>
           <h1>${t('Settings')}</h1>
-          <tangy-select style="height: 130px" label="${t('Please choose your language: ')}" name="language" value="${this.languageCode}" required>
+          <tangy-select style="height: 130px" label="${t('Please choose your language')}:" name="language" value="${this.languageCode}" required>
             ${translations.map(language => `
               <option value="${language.languageCode}">${t(language.label)}</option>
             `).join('')}

@@ -58,6 +58,7 @@ th.mat-header-cell {
   text-decoration:underline;
   padding-left: 1em;
   padding-right:5px;
+  background-color: white;
 }
 
 input[type=checkbox] {
@@ -103,12 +104,17 @@ input[type=checkbox]:not(:checked) {
   margin-left: 2px;
 }
 
+mat-card {
+  background-color: var(--primary-color-dark);
+}
+
 .selectedClassLabel {
   font-size: larger;
   font-weight: bold;
   padding-bottom: 5px;
   padding-left: 5px;
   padding-right: 5px;
+  text-align: center;
 }
 
 .selectedClassLabel p {
@@ -125,7 +131,7 @@ input[type=checkbox]:not(:checked) {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;
-  background-color: #f29d38;
+  background-color: var(--primary-color-dark);
   color: white;
 }
 
@@ -247,16 +253,18 @@ mat-card-title {
 }
 
 .number-cell {
-  width: 20px;
+  padding-right: 1em;
+  padding-left: 1em;
 }
 
-.student-name-column {
-  width: 120px;
-}
+/*.student-name-column {*/
+/*  width: 120px;*/
+/*}*/
 
 .sms-button-column {
-  width: 60px;
-  padding-right:5px;
+  width: 50px;
+  padding-right:2px;
+  background-color: white;
 }
 .nav-flex-container {
   display: flex;
@@ -284,3 +292,47 @@ mat-card-title {
   align-self: auto;
   order: 0;
 }
+
+td.centered {
+  text-align: center;
+}
+
+.mat-card {
+  padding-top: 5px;
+  padding-bottom: 1px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.left-padding {
+  padding-left: 5px;
+}
+
+.mat-checkbox-layout {
+  white-space: normal !important;
+}
+
+.progress-bar {
+  min-width: 20px;
+}
+
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.mediocre {
+  background-color: #DC921F !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+.white {
+  background-color: white !important;
+}
+
+

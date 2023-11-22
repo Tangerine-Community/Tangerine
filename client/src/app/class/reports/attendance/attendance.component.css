@@ -29,19 +29,19 @@ mat-form-field {
 .legend td {
   padding: 0 1em;
 }
-.student-name-column {
-  width: 120px;
-  text-align: left;
-}
-.attendance-column {
-  width: 80px;
-}
-.behavior-column {
-  width: 80px;
-}
-.score-column {
-  width: 150px;
-}
+/*.student-name-column {*/
+/*  width: 120px;*/
+/*  text-align: left;*/
+/*}*/
+/*.attendance-column {*/
+/*  width: 80px;*/
+/*}*/
+/*.behavior-column {*/
+/*  width: 80px;*/
+/*}*/
+/*.score-column {*/
+/*  width: 150px;*/
+/*}*/
 
 .red {
   background-color: red;
@@ -80,18 +80,92 @@ td.progress-bar {
   padding-left: 1em;
 }
 
-#most-recent-class-table {
-  width:600px;
+/*#most-recent-class-table {*/
+/*  width:600px;*/
+/*}*/
+
+/*#past-30-days-table {*/
+/*  width:600px;*/
+/*}*/
+
+/*#last-n-report-table {*/
+/*  width:600px;*/
+/*}*/
+
+/*.number-cell {*/
+/*  width: 20px;*/
+/*}*/
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
 }
 
-#past-30-days-table {
-  width:600px;
+.selectedClassLabel p {
+  text-align: center;
 }
 
-#last-n-report-table {
-  width:600px;
+.dashboard-table {
+  border-collapse: collapse;
+  width: 100%;
 }
 
-.number-cell {
-  width: 20px;
+.dashboard-table th {
+  border: 1px solid #ddd;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: var(--primary-color-dark);
+  color: white;
 }
+
+.dashboard-table .checkbox-response {
+  text-align: center;
+}
+
+.student-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: .5em;
+  padding-right:.5em;
+}
+
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.mediocre {
+  background-color: #DC921F !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+.table-description {
+  margin-left: 3%;
+}
+
+a {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: .5em;
+  padding-right:.5em;
+}
+
+.info-header  {
+  margin-left: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  font-size: larger;
+}
+

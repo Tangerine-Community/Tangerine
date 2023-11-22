@@ -13,7 +13,9 @@ import {TangyFormResponse} from "../../tangy-forms/tangy-form-response.class";
 import {VariableService} from "../../shared/_services/variable.service";
 import {DateTime} from "luxon";
 import {sanitize} from "sanitize-filename-ts";
-import {BehaviorSubject, Subject} from "rxjs";
+import {Subject} from "rxjs";
+import {ClassFormService} from "./class-form.service";
+import {AppConfigService} from "../../shared/_services/app-config.service";
 // import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
@@ -28,6 +30,7 @@ export class DashboardService {
     private userService: UserService,
     private tangyFormsInfoService : TangyFormsInfoService,
     private variableService: VariableService,
+    private classFormService: ClassFormService,
   ) {}
 
   db: UserDatabase;
@@ -44,8 +47,10 @@ export class DashboardService {
   enabledClasses
   allStudentResults: StudentResult[];
 
-  public readonly enabledClasses$: BehaviorSubject<any> = new BehaviorSubject(this.getEnabledClasses);
+  // public readonly enabledClasses$: BehaviorSubject<any> = new BehaviorSubject(this.getEnabledClasses());
+  public readonly enabledClasses$: Subject<any> = new Subject();
   public readonly selectedClass$: Subject<any> = new Subject();
+  public readonly selectedCurriculumId$: Subject<any> = new Subject();
 
   async getUserDB() {
     return await this.userService.getUserDatabase();
@@ -84,7 +89,16 @@ export class DashboardService {
     return filteredEnabledClasses
   }
 
-  async getMyStudents(selectedClass: any) {
+  async getBehaviorForms() {
+    const forDefs = await this.getFormList();
+    return forDefs.filter(form => form.id.startsWith('form-behav')).sort((a, b) => (a.id > b.id) ? 1 : -1)
+  }
+
+  /**
+   * Queries the view tangy-class/responsesByClassIdCurriculumId to get the list of curricula for the selected class.
+   * @param selectedClass
+   */
+   async getMyStudents(selectedClass: any) {
     this.db = await this.getUserDB();
     const result = await this.db.query('tangy-class/responsesForStudentRegByClassId', {
       startkey: [selectedClass],
@@ -333,7 +347,7 @@ export class DashboardService {
                   totalCorrect = maxValueAnswer - totalIncorrect;
                   score = totalCorrect;
                   formItemTalley['totalMax'] = 100
-                  scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
+                  scorePercentageCorrect = this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
                   alreadyAnswered = true;
                 }
                 // console.log("TANGY-TIMED subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer)
@@ -354,7 +368,7 @@ export class DashboardService {
               if (formItemTalley['totalMax']) {
                 maxValueAnswer = formItemTalley['totalMax'];
                 totalIncorrect = totalAnswers - totalCorrect;
-                scorePercentageCorrect =  Math.round(score / formItemTalley['totalMax'] * 100);
+                scorePercentageCorrect =  this.classUtils.round(score / formItemTalley['totalMax'] * 100, 2);
               }
               // prototype = element.tagName
               // console.log("element.tagName: " + element.tagName + " subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer + " score: " + score + " scorePercentageCorrect: " + scorePercentageCorrect)
@@ -373,7 +387,7 @@ export class DashboardService {
               maxValueAnswer = maxValueAnswer + max;
             }
             score = totalCorrect;
-            scorePercentageCorrect = customScore ? customScore : Math.round(totalCorrect / maxValueAnswer * 100);
+            scorePercentageCorrect = customScore ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
             if (customScore) {
               maxValueAnswer = 100
             }
@@ -674,6 +688,11 @@ export class DashboardService {
     return feedback;
   }
 
+  /**
+  * Special parsing for enabled curriculums.
+  * By default returns the curriculum name.
+   * Set provideCurriculumObject if you want a special curriculum Object, which is useful for menu labels.
+  * */
   public getValue = (variableName, response) => {
     if (response) {
       const variablesByName = response.items.reduce((variablesByName, item) => {
@@ -682,7 +701,26 @@ export class DashboardService {
         }
         return variablesByName;
       }, {});
-      return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+        return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+    }
+  };
+
+  /**
+  * Special parsing for enabled curriculums.
+  * By default returns a special curriculum Object, which is useful for menu labels.
+  * */
+  public getCurriculumObject = (variableName, response) => {
+    if (response) {
+      const variablesByName = response.items.reduce((variablesByName, item) => {
+        for (const input of item.inputs) {
+          variablesByName[input.name] = input.value;
+        }
+        return variablesByName;
+      }, {});
+        return variablesByName[variableName].reduce((optionThatIsOn, option) => {
+          optionThatIsOn = option.value === 'on' ? {name: option.name, label: option.label} : optionThatIsOn, ''
+          return optionThatIsOn
+        })
     }
   };
 
@@ -697,111 +735,195 @@ export class DashboardService {
   }
 
   /**
-   * Queries allDocs to get docs for either attendance or score
-   * @param classId
+   * Queries allDocs to get docs for either attendance or score. Performs a searchDateRange search (the past month) by default.
+   * @param type
+   * @param currentClass
+   * @param reportDate. If null, calculates today's date and calculates a month previous for searchEndKey. If reportDate === '*',  does not add reportDate to the query and returns all docs for the type, currentClass, and curriculumLabel.
+   * @param curriculumLabel - may be empty if ignoreCurriculumsForTracking is set in the class-registration form (currentClass).
+   * @param randomId
+   * @param searchDateRange
    */
-  async searchDocs(type: string, currentClass, reportDate: string) {
+  async searchDocs(type: string, currentClass, reportDate: string, curriculumLabel: string, randomId: string, searchDateRange: boolean = true) {
+    let endDate;
+    let wildcardSearchString = '\uffff'
     this.db = await this.getUserDB();
+    if (!reportDate) {
+      reportDate = DateTime.local().toISODate()
+    }
+    if (reportDate !== '*') {
+      const lastMonth = DateTime.fromISO(reportDate).minus({ months: 1 }).toISODate()
+      endDate = searchDateRange ? lastMonth : reportDate
+    }
+    
     const grade = this.getValue('grade', currentClass)
-    const schoolName = this.getValue('school_name', currentClass)
-    const schoolYear = this.getValue('school_year', currentClass)
-    let searchTerm = reportDate ?  type + '-' + schoolYear + '-' + schoolName + '-' + grade + '-' + reportDate : type + '-' + schoolYear + '-' + schoolName + '-' + grade
-    const result = await this.db.allDocs({
-      startkey: searchTerm,
-      endkey: searchTerm + '\uffff',
+    let searchStartKey: string, searchEndKey: string
+    if (curriculumLabel) {
+      if (reportDate) {
+        if (reportDate === '*') {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+        } else {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + endDate
+        }
+        
+      } else {
+        searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+        searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, ''))
+      }
+    } else {
+      if (reportDate) {
+        if (reportDate === '*') {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+        } else {
+          searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate
+          searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + endDate
+        }
+      } else {
+        searchStartKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+        searchEndKey = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId
+      }
+    }
+    const options = {
+      startkey: searchStartKey,
+      endkey: searchEndKey + wildcardSearchString,
       include_docs: true
-    });
+    }
+    if (reportDate) {
+      options['startkey'] = searchStartKey +  wildcardSearchString
+      options['endkey'] = searchEndKey
+      options['descending'] = true
+    }
+    const result = await this.db.allDocs(options);
     return result.rows;
   }
 
   /**
    * Generate a unique id for the attendance or score report
    * @param currentClass
+   * @param curriculumLabel
    * @param type
+   * @param randomId - generated on the client when a class is created by the class-registration form.
    */
-  generateSearchableId(currentClass, type: string) {
+  generateSearchableId(currentClass, curriculumLabel: string, type: string, randomId: string) {
+    let id: string;
     const username = this.userService.getCurrentUser()
     const reportDate = DateTime.local().toISODate()
+    const reportTime = DateTime.local().toISOTime()
     const grade = this.getValue('grade', currentClass)
-    const schoolName = this.getValue('school_name', currentClass)
-    const schoolYear = this.getValue('school_year', currentClass)
-    const id = type + '-' + sanitize(schoolYear) + '-' + sanitize(schoolName) + '-' + sanitize(grade) + '-' + reportDate + '-' + sanitize(username)
-    return {reportDate, grade, schoolName, schoolYear, id};
+    if (!curriculumLabel) {
+      id = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+    } else {
+      id = type + '-' + sanitize(grade.replace(/\s+/g, '')) + '-' + randomId + '-' + sanitize(curriculumLabel.replace(/\s+/g, '')) + '-' + reportDate + '-' + sanitize(username) + '-' + reportTime
+    }
+    return {reportDate, grade, reportTime, id};
+  }
+  
+  /**
+   * Grafted from task-report.component.ts
+   * Loops through all the student scores and calculates the presentPercentage for each student
+   * @param attendanceList
+   * @param register
+   * @private
+   */
+  async processAttendanceReport(attendanceList, register) {
+    for (let i = 0; i < register.attendanceList.length; i++) {
+      const registerStudent = register.attendanceList[i]
+      const student = attendanceList.find((thisStudent) => {
+        return thisStudent?.id === registerStudent.id
+      })
+      if (student) {
+        registerStudent.reportCount = registerStudent.reportCount ? registerStudent.reportCount + 1 : 1
+        registerStudent.presentCount = registerStudent.presentCount ? registerStudent.presentCount : 0
+        if (typeof student.absent !== 'undefined' && student.absent !== true) {
+          registerStudent.presentCount = registerStudent.presentCount + 1
+          registerStudent.presentPercentage = this.classUtils.round((registerStudent.presentCount / registerStudent.reportCount) * 100, 2)
+        }
+        if (typeof student.absent !== 'undefined' && student.absent === true) {
+          registerStudent.presentPercentage = this.classUtils.round((registerStudent.presentCount / registerStudent.reportCount) * 100, 2)
+        }
+      }
+    }
   }
 
   /**
    * Grafted from task-report.component.ts
    * Loops through all the student scores and calculates the average mood, present, and score for each student
    * populate students array if you need to add phone and other properties from studentRegistration.
+   * @param attendanceList
    * @param currentAttendanceReport
    * @private
    */
-  processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, students: any[]) {
-    return (attendanceReport) => {
-      const attendanceList = attendanceReport.doc.attendanceList
-      for (let i = 0; i < attendanceList.length; i++) {
-        const student = attendanceList[i]
-        const currentStudent = currentAttendanceReport.attendanceList.find((thisStudent) => {
-          return thisStudent.id === student.id
-        })
-        currentStudent.reportCount = currentStudent.reportCount ? currentStudent.reportCount + 1 : 1
-        currentStudent.presentCount = currentStudent.presentCount ? currentStudent.presentCount : 0
-        if (students?.length > 0) {
-          const studentRegistration  = students.find((thisStudent) => {
-            return thisStudent.doc._id === student.id
-          })
-          const phone = this.getValue('phone', studentRegistration.doc)
-          currentStudent.phone = phone
+  async processBehaviorReport(behaviorList, register) {
+    for (let i = 0; i < behaviorList.length; i++) {
+      const behaviorStudent = behaviorList[i]
+      const student = register.attendanceList.find((thisStudent) => {
+        return thisStudent.id === behaviorStudent.id
+      })
+      if (student) {
+        student.behaviorSum = student.behaviorSum ? student.behaviorSum : 0
+        if (typeof behaviorStudent.behavior?.internalPercentage !== 'undefined') {
+          student.behaviorReportCount = student.behaviorReportCount ? student.behaviorReportCount + 1 : 1
+          student.behaviorSum = student.behaviorSum + behaviorStudent.behavior?.internalPercentage
+          student.behaviorPercentage = this.classUtils.round((student.behaviorSum / student.behaviorReportCount), 2)
         }
-        const absent = student.absent ? student.absent : false
-        if (!absent) {
-          currentStudent.presentCount = currentStudent.presentCount + 1
-        }
-        currentStudent.presentPercentage = Math.round((currentStudent.presentCount / currentStudent.reportCount) * 100)
-
-        currentStudent.moodValues = currentStudent.moodValues ? currentStudent.moodValues : []
-        const mood = student.mood
-        if (mood) {
-          switch (mood) {
-            case 'happy':
-              currentStudent.moodValues.push(100)
-              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-              break
-            case 'neutral':
-              currentStudent.moodValues.push(66.6)
-              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-              break
-            case 'sad':
-              currentStudent.moodValues.push(33.3)
-              currentStudent.moodPercentage = Math.round(currentStudent.moodValues.reduce((a, b) => a + b, 0) / currentStudent.moodValues.length)
-              break
-          }
-        }
-        if (!currentStudent.score) {
-          const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
-            return thisStudent.id === student.id
-          })
-          currentStudent.score = currentStudentScore?.score
-        }
-        const studentScores = {}
-        const curriculi = Object.keys(allStudentScores);
-        curriculi.forEach((curriculum) => {
-          const scores = allStudentScores[curriculum]
-          const studentScore = scores.filter((score) => {
-            return score.id === student.id
-          })
-          studentScores[curriculum] = studentScore
-        })
-        currentStudent.studentScores = studentScores
       }
-    };
+    }
   }
 
-  async getRecentVisitsReport(recentVisitReports, scoreReport, allStudentScores) {
+  processScoreReport(scoreReport, student, scoreUnits, ignoreCurriculumsForTracking: boolean, currentStudent, curriculum) {
+    const currentStudentScore = scoreReport?.scoreList.find((thisStudent) => {
+      return thisStudent.id === student.id
+    })
+    if (currentStudentScore) {
+      const curriculumLabel = sanitize(curriculum.label.replace(/\s+/g, ''))
+      const len = scoreUnits.length
+      let total = 0
+      let completedUnits = 0
+      scoreUnits.forEach((scoreUnit, index) => {
+        const currentScore = currentStudentScore['score_' + index];
+        if (currentScore) {
+          if (ignoreCurriculumsForTracking) {
+            if (!currentStudent.unitScores) {
+              currentStudent.unitScores = {}
+              currentStudent.unitScoresPretty = {}
+            }
+            currentStudent.unitScores[curriculumLabel + '_score_' + index] = currentScore
+            currentStudent.unitScoresPretty[curriculumLabel + ' ' + scoreUnit] = currentScore
+          } else {
+            currentStudent['score_' + index] = currentScore
+          }
+          total = total + currentScore
+          completedUnits++
+        }
+      })
+      const averageScore = this.classUtils.round(total / completedUnits, 2)
+      if (!isNaN(averageScore)) {
+        if (ignoreCurriculumsForTracking) {
+          if (!currentStudent.scores) {
+            currentStudent.scores = {}
+          }
+          // using bracket notation in case the curriculumId is a number.
+          currentStudent.scores[curriculumLabel] = averageScore
+        } else {
+          currentStudent.score = averageScore
+        }
+      }
+    }
+  }
+
+  async getRecentVisitsReport(recentVisitReports) {
     // do a deep clone
     const recentVisitDoc = recentVisitReports[recentVisitReports.length - 1]?.doc
     const currentAttendanceReport = JSON.parse(JSON.stringify(recentVisitDoc))
-    recentVisitReports.forEach(this.processAttendanceReport(currentAttendanceReport, scoreReport, allStudentScores, null))
+    const currentBehaviorReport = null
+    for (let i = 0; i < recentVisitReports.length; i++) {
+        const attendanceReport = recentVisitReports[i];
+        const attendanceList = attendanceReport.doc.attendanceList
+        await this.processAttendanceReport(attendanceList, currentAttendanceReport)
+
+    }
     // this.recentVisitsReport = currentAttendanceReport
     return currentAttendanceReport
   }
@@ -815,7 +937,7 @@ export class DashboardService {
         return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
       };
       const calcAverage = array => array.reduce(reduceClassAverage, 0) / array.length;
-      const average = Math.round(calcAverage(reportCard.results));
+      const average = this.classUtils.round(calcAverage(reportCard.results), 2);
       reportCard.scorePercentageCorrect = average;
       const percentile = this.calculatePercentile(average);
 
@@ -868,7 +990,7 @@ export class DashboardService {
           return (typeof studentResult.scorePercentageCorrect !== 'undefined' ? p + studentResult.scorePercentageCorrect : p);
         };
         const calcAverage = array => array.reduce(reduceClassAverage, 0) / array.length;
-        const average = Math.round(calcAverage(allStudentResults));
+        const average = this.classUtils.round(calcAverage(allStudentResults), 2);
 
         // now add array of studentResults to each student's record.
         const collectStudentResults = (studentResult: StudentResult) => {
@@ -897,13 +1019,19 @@ export class DashboardService {
       // find the curriculum element
       const curriculumInput = inputs.find(input => (input.name === 'curriculum') ? true : false);
       // find the options that are set to 'on'
-      const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
-      fullCurrArray =  Promise.all(currArray.map(async curr => {
-        const formId = curr.name;
-        const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
-        curr.label = formInfo.title
-        return curr
-      }));
+      if (curriculumInput) {
+        const currArray = curriculumInput.value.filter(input => (input.value === 'on') ? true : false);
+        fullCurrArray =  Promise.all(currArray.map(async curr => {
+          const formId = curr.name;
+          const formInfo = await this.tangyFormsInfoService.getFormInfo(formId)
+          curr.label = formInfo.title
+          curr.labelSafe = sanitize(formInfo.title.replace(/\s+/g, ''))
+          return curr
+        }));
+      } else {
+        fullCurrArray = [];
+      }
+      
     }
 
     return fullCurrArray;
@@ -915,14 +1043,55 @@ export class DashboardService {
   }
 
   /**
-   * Get the attendance list for the class. If the listFromDoc is passed in, then
+   * Get the attendance list for the class, including any students who have not yet had attendance checked. If the savedAttendanceList is passed in, then
+   * populate the student from that doc by matching student.id.
+   * @param students
+   * @param savedList
+   */
+  async getAttendanceList(students, savedList, curriculum) {
+    // const curriculumFormHtml = await this.getCurriculaForms(curriculum.name);
+    // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+    const list = []
+    for (const student of students) {
+      let studentResult
+      const studentId = student.id
+      if (savedList) {
+        studentResult = savedList.find(studentDoc => studentDoc.id === studentId)
+      }
+      if (studentResult) {
+        list.push(studentResult)
+      } else {
+        const student_name = this.getValue('student_name', student.doc)
+        const student_surname = this.getValue('student_surname', student.doc)
+        const phone = this.getValue('phone', student.doc);
+        const classId = this.getValue('classId', student.doc)
+        
+        studentResult = {}
+        studentResult['id'] = studentId
+        studentResult['name'] = student_name
+        studentResult['surname'] = student_surname
+        studentResult['phone'] = phone
+        studentResult['classId'] = classId
+        studentResult['forms'] = {}
+        studentResult['absent'] = null
+        studentResult['behavior'] = null
+        
+        list.push(studentResult)
+      }
+    }
+    return list
+    // await this.populateFeedback(curriculumId);
+  }
+
+  /**
+   * Get the score list for the class, including any students who have not yet had attendance checked. If the savedScoreList (listFromDoc) is passed in, then
    * populate the student from that doc by matching student.id.
    * @param students
    * @param listFromDoc
    */
-  async getAttendanceList(students, listFromDoc) {
+  async getScoreList(students, listFromDoc) {
     const list = []
-    students.forEach((student) => {
+    for (const student of students) {
       let studentResult
       const studentId = student.id
       if (listFromDoc) {
@@ -932,24 +1101,96 @@ export class DashboardService {
         list.push(studentResult)
       } else {
         const student_name = this.getValue('student_name', student.doc)
+        const student_surname = this.getValue('student_surname', student.doc)
         const phone = this.getValue('phone', student.doc);
         const classId = this.getValue('classId', student.doc)
+
         studentResult = {}
         studentResult['id'] = studentId
         studentResult['name'] = student_name
+        studentResult['surname'] = student_surname
         studentResult['phone'] = phone
         studentResult['classId'] = classId
         studentResult['forms'] = {}
         studentResult['absent'] = false
-        studentResult['mood'] = 'happy'
+        studentResult['behavior'] = null
+
+        // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
+        // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+        // curriculumFormsList.forEach((form) => {
+        //   const formResult = {};
+        //   formResult['formId'] = form.id;
+        //   formResult['curriculum'] = curriculumName;
+        //   formResult['title'] = form.title;
+        //   formResult['src'] = form.src;
+        //   if (studentsResponses[student.id]) {
+        //     formResult['response'] = studentsResponses[student.id][form.id];
+        //   }
+        //   studentResults['forms'][form.id] = formResult;
+        // });
+
+        // await this.addBehaviorRecords(studentResult, studentId);
         list.push(studentResult)
       }
-    })
+    }
     return list
     // await this.populateFeedback(curriculumId);
   }
-
   
+  // async addBehaviorRecords(studentResult, studentId) {
+  //   const formsList = [
+  //     {
+  //       formId: 'form-internal-behaviour',
+  //       curriculum: 'form-internal-behaviour',
+  //       title: 'Comportamientos internalizantes',
+  //       src: './assets/form-internal-behaviour/form.html'
+  //     },
+  //     // {
+  //     //   formId: 'form-external-behaviour',
+  //     //   curriculum: 'form-external-behaviour',
+  //     //   title: 'Comportamientos externalizantes',
+  //     //   src: './assets/form-external-behaviour/form.html'
+  //     // }
+  //   ]
+  //   formsList.forEach((form) => {
+  //     const formResult = {};
+  //     formResult['formId'] = form.formId;
+  //     formResult['curriculum'] = form.curriculum;
+  //     formResult['title'] = form.title;
+  //     formResult['src'] = form.src;
+  //     studentResult['forms'][form.formId] = formResult;
+  //   })
+  //
+  //   const responses = await this.classFormService.getResponsesByStudentId(studentId);
+  //   for (const response of responses as any[]) {
+  //     // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
+  //     const respFormId = response.doc.form.id;
+  //     // if (respClassId === this.classId && respCurrId === this.curriculum) {
+  //     //   this.formResponse = response.doc;
+  //     // }
+  //     // studentResult['forms'][respFormId] = response.doc;
+  //     if (studentResult['forms'][respFormId]) {
+  //       studentResult['forms'][respFormId]['response'] = response.doc;
+  //     }
+  //
+  //     const responseDoc = response.doc
+  //     switch (respFormId) {
+  //       case 'form-internal-behaviour':
+  //         const usingScorefield = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
+  //         const intScore = usingScorefield.value
+  //         studentResult['behavior']['internal'] = intScore
+  //         studentResult['behavior']['internalPercentage'] = Math.round((intScore / 18) * 100)
+  //       //   break
+  //       // case 'form-external-behaviour':
+  //       //   const usingScorefield2 = responseDoc.items[0].inputs.find(input => input.name === responseDoc['form']['id'] + '_score');
+  //       //   const extScore = usingScorefield2.value
+  //       //   studentResult['behavior']['external'] = extScore
+  //       //   studentResult['behavior']['externalPercentage'] = Math.round((extScore / 18) * 100)
+  //       //   break
+  //     }
+  //   }
+  // }
+
   async initDashboard(classIndex: number, currentClassId: string, curriculumId: string, resetVars: boolean, enabledClasses) {
     if (typeof enabledClasses === 'undefined') {
       enabledClasses = await this.getEnabledClasses();
@@ -963,31 +1204,13 @@ export class DashboardService {
         await this.variableService.set('class-curriculumId', curriculumId);
       }
       this.currentClassIndex = 0;
-      if (classIndex === null) {
-        let classClassIndex = await this.variableService.get('class-classIndex')
-        if (classClassIndex !== null) {
-          classIndex = parseInt(classClassIndex)
-          if (!Number.isNaN(classIndex)) {
-            this.currentClassIndex = classIndex;
-          }
-        }
-        currentItemId = await this.variableService.get('class-currentItemId');
-        currentClassId = await this.variableService.get('class-currentClassId');
-        curriculumId = await this.variableService.get('class-curriculumId');
-      } else {
-        this.currentClassIndex = classIndex
-      }
-      await this.variableService.set('class-classIndex', this.currentClassIndex);
+      const __vars = await this.initExposeVariables(classIndex, curriculumId);
+      classIndex = __vars.classIndex;
+      currentItemId = __vars.currentItemId;
+      currentClassId = __vars.currentClassId;
+      curriculumId = __vars.curriculumId;
+      currentClass = __vars.currentClass;
 
-      currentClass = this.enabledClasses[this.currentClassIndex]?.doc
-      if (typeof currentClass === 'undefined') {
-        // Maybe a class has been removed
-        this.currentClassIndex = 0
-        currentClass = this.enabledClasses[this.currentClassIndex].doc
-      }
-      this.selectedClass = currentClass;
-      this.selectedClass$.next(currentClass)
-      
       if (currentClassId && currentClassId !== '') {
         this.currentClassId = currentClassId;
       } else {
@@ -999,14 +1222,6 @@ export class DashboardService {
       } else {
         this.currentItemId = null;
       }
-
-      this.currArray = await this.populateCurrentCurriculums(currentClass);
-      if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
-        const curriculum = this.currArray[0];
-        curriculumId = curriculum.name;
-      }
-      await this.variableService.set('class-curriculumId', curriculumId);
-
       const curriculumFormHtml = await this.getCurriculaForms(curriculumId);
       const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
 
@@ -1025,7 +1240,49 @@ export class DashboardService {
     }
   }
 
-  // Uses curriculumFormsList to populate formList for a curriculum.
+  async initExposeVariables(classIndex: number, curriculumId: string) {
+    let currentItemId: string
+    let currentClassId: string
+    let currentClass
+    if (!classIndex) {
+      let classClassIndex = await this.variableService.get('class-classIndex')
+      if (classClassIndex !== null) {
+        classIndex = parseInt(classClassIndex)
+        if (!Number.isNaN(classIndex)) {
+          this.currentClassIndex = classIndex;
+        }
+      }
+      currentItemId = await this.variableService.get('class-currentItemId');
+      currentClassId = await this.variableService.get('class-currentClassId');
+      curriculumId = await this.variableService.get('class-curriculumId');
+    } else {
+      this.currentClassIndex = classIndex
+    }
+    
+    currentClass = this.enabledClasses[this.currentClassIndex]?.doc
+    if (typeof currentClass === 'undefined') {
+      // Maybe a class has been removed
+      this.currentClassIndex = 0
+      currentClass = this.enabledClasses[this.currentClassIndex].doc
+    }
+    
+    this.currArray = await this.populateCurrentCurriculums(currentClass);
+    if (typeof curriculumId === 'undefined' || curriculumId === null || curriculumId === '') {
+      const curriculum = this.currArray[0];
+      curriculumId = curriculum.name;
+    }
+    this.selectedCurriculumId$.next(curriculumId)
+
+    await this.variableService.set('class-curriculumId', curriculumId);
+    await this.variableService.set('class-classIndex', this.currentClassIndex);
+    await this.variableService.set('class-currentClassId', this.currentClassId);
+    
+    this.selectedClass = currentClass;
+    this.selectedClass$.next(currentClass)
+    return {classIndex, currentItemId, currentClassId, curriculumId, currentClass};
+  }
+
+// Uses curriculumFormsList to populate formList for a curriculum.
   async populateFormsMetadata(curriculumId, curriculumFormsList, currentClass) {
     // this only needs to happen once.
     if (typeof curriculumFormsList === 'undefined') {
@@ -1114,8 +1371,79 @@ export class DashboardService {
     const currentClassId = currentClass.id;
     this.allStudentResults = await this.initDashboard(classIndex, currentClassId, curriculumId, true, this.enabledClasses);
   }
+
+
+  async setCurrentClass() {
+    await this.variableService.set('class-classIndex', null);
+    await this.variableService.set('class-currentClassId', null);
+    await this.variableService.set('class-curriculumId', null);
+    await this.variableService.set('class-currentItemId', null);
+    const classes = await this.getMyClasses();
+    const enabledClasses = classes.map(klass => {
+      if (!klass.doc.archive) {
+        return klass
+      }
+    });
+    const allEnabledClasses = enabledClasses.filter(item => item).sort((a, b) => (a.doc.tangerineModifiedOn > b.doc.tangerineModifiedOn) ? 1 : -1)
+    // set classIndex to allEnabledClasses.length
+    const classIndex = allEnabledClasses.length - 1
+    const currentClass = this.getSelectedClass(allEnabledClasses, classIndex);
+    const currentClassId = currentClass._id
+    await this.variableService.set('class-classIndex', classIndex);
+    await this.variableService.set('class-currentClassId', currentClassId);
+  }
+
+  /**
+   * Notified subscribers when selectedClass is set.
+   * Returns the currentClass doc.
+   * @param allEnabledClasses
+   * @param classIndex
+   */
+  getSelectedClass(allEnabledClasses: any[], classIndex: number) {
+    const currentClass = allEnabledClasses[classIndex]?.doc
+    this.selectedClass$.next(currentClass)
+    return currentClass;
+  }
+
+  getSelectedClassLegacy(allEnabledClasses: any[], classIndex: number) {
+    const currentClass = allEnabledClasses[classIndex]
+    this.selectedClass$.next(currentClass)
+    return currentClass;
+  }
   
+  buildAttendanceReport(id: string, timestamp: number, currentClassId, grade, schoolName, schoolYear, reportDate: string, type: string, attendanceList) {
+    return {
+      _id: id,
+      timestamp: timestamp,
+      classId: currentClassId,
+      grade: grade,
+      schoolName: schoolName,
+      schoolYear: schoolYear,
+      reportDate: reportDate,
+      attendanceList: attendanceList,
+      collection: 'TangyFormResponse',
+      type: type,
+      form: {
+        id: type,
+      },
+      items: [{
+        id: 'class-registration',
+        title: 'Class Registration',
+        inputs: [{}]
+      },
+        {
+          id: 'item_1',
+          title: 'Item 1',
+          inputs: [{
+            name: 'timestamp',
+            label: 'timestamp'
+          }]
+        }],
+      complete: false
+    }
+  }
 }
+
 
 export class StudentReportsCards {
   [key: string]: StudentResult

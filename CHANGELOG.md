@@ -2,7 +2,7 @@
 
 ## v3.30.1
 
-__New Feautres__
+__New Features__
 - Multiple Location Lists can be configured using the Tangerine server web interface
 -- Create and manage location lists for use in Tangerine forms
 -- The default location list is used for device and device user assignment
@@ -33,21 +33,31 @@ git checkout -b v3.30.1 v3.30.1
 docker rmi tangerine/tangerine:<previous_version>
 ```
 
+# What's new
+
 ## v3.30.0
 
 __New Features__
-- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` 
- to app-config.json. It also has a new view, 'responsesForAttendanceByClassId', an 'Attendance and Behaviour' subtest menu 
- item which enables collection of those values per student, and an 'Attendance' report. 
+- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and "homeUrl": "attendance-dashboard"
+  to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report.
+- The Attendance records generate _id's based on the grade, curriculum, user, and date and time of the record, so that they can be sorted chronologically.
+  See dashboard.service generateSearchableId for details.
+- Class now supports `eventFormRedirect` to redirect to different url after submit: `on-submit="window.eventFormRedirect = `/attendance-check`"`
 - New app-config.json configuration for teach properties:
   ```js
   "teachProperties": {
-    "units": ["unit 1", "unit 2", "unit 3"],
-    "cutoffRange": "10"
+    "units": ["unit 1", "unit 2", "unit 3", "unit 4"],
+    "attendancePrimaryThreshold": 80,
+    "attendanceSecondaryThreshold": 70,
+    "scoringPrimaryThreshold": 70,
+    "scoringSecondaryThreshold": 60,
+    "behaviorPrimaryThreshold": 90,
+    "behaviorSecondaryThreshold": 80,
+    "useAttendanceFeature": true
   }
   ```
+  The PrimaryThreshold and SecondaryThreshold values are used to determine the color of the cell in the reports.
 - Updated docker-tangerine-base-image to v3.8.0, which adds the cordova-plugin-x-socialsharing plugin and enables sharing to WhatsApp.
-
 
 __Fixes__
 - Fixed PWA assets (sound,video) only work when online [#1905](https://github.com/Tangerine-Community/Tangerine/issues/1905)
@@ -60,12 +70,10 @@ Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerin
 cd tangerine
 # Check the size of the data folder.
 du -sh data
-# Check disk for free space. 
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade. 
 df -h
-# If there is not more than 12 GB plus the size of the data folder, create more space before proceeding. 
-# Good candidates to remove are: data back-up folders and older versions of the Tangerine image
-# rm -rf ../data-backup-<date>
-# docker rmi tangerine/tangerine:<version>
+# Turn off tangerine and database.
+docker stop tangerine couchdb
 # Create a backup of the data folder.
 cp -r data ../data-backup-$(date "+%F-%T")
 # Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
@@ -75,7 +83,7 @@ git fetch origin
 git checkout -b v3.30.0 v3.30.0
 ./start.sh v3.30.0
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:<previous_version>
+docker rmi tangerine/tangerine:v3.29.1
 ```
 
 ## v3.29.1

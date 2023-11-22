@@ -37,6 +37,7 @@ import {AdminConfigurationModule} from "./core/admin-configuration/admin-configu
 import { MaintenanceModule } from './core/maintenance/maintenance.module';
 import {ClassNavBarComponent} from "./class/class-nav-bar/class-nav-bar.component";
 import {MatListModule} from "@angular/material/list";
+import {MatDividerModule} from "@angular/material/divider";
 export { AppComponent }
 
 export function initializeApp1(appInit: AppInit) {
@@ -55,7 +56,7 @@ export function initializeApp1(appInit: AppInit) {
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule,
+    MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatDividerModule,
     MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule, MatListModule,
     TangyFormsModule,
     AuthModule,

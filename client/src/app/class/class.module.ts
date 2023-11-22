@@ -48,6 +48,17 @@ import {AttendanceDashboardComponent} from './attendance/attendance-dashboard/at
 import {AttendanceCheckComponent} from './attendance/attendance-check/attendance-check.component';
 import {AttendanceNavComponent} from "./attendance/attendance-nav.component";
 import { AttendanceScoresComponent } from './attendance/attendance-scores/attendance-scores.component';
+import { BehaviorCheckComponent } from './attendance/behavior-check/behavior-check.component';
+import { StudentDetailsComponent } from './attendance/student-details/student-details.component';
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
+// import { CalendarModule, DateAdapter } from 'angular-calendar';
+// import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+
+// import { registerLocaleData } from '@angular/common';
+// import localeEsGt from '@angular/common/locales/es-GT';
+
+// the second parameter 'fr-FR' is optional
+// registerLocaleData(localeEsGt);
 
 @NgModule({
   imports: [
@@ -73,9 +84,17 @@ import { AttendanceScoresComponent } from './attendance/attendance-scores/attend
     MatDialogModule,
     MatChipsModule,
     MatProgressBarModule,
-    FormsModule
+    FormsModule,
+    MatBottomSheetModule,
+    // CalendarModule.forRoot({
+    //   provide: DateAdapter,
+    //   useFactory: adapterFactory,
+    // }),
   ],
-  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent],
+  declarations: [DashboardComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, FeedbackDialog, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent, ClassConfigComponent, ClassFormComponent, ClassFormsPlayerComponent, AttendanceComponent, GradesComponent, ProgressBarColor, AttendanceDashboardComponent, AttendanceCheckComponent, AttendanceNavComponent, AttendanceScoresComponent, BehaviorCheckComponent, StudentDetailsComponent],
+  entryComponents: [
+    StudentDetailsComponent
+  ],
   providers: [UserService, ClassFormService, DashboardService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {

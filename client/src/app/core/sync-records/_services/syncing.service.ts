@@ -85,7 +85,7 @@ export class SyncingService {
   async getUploadQueue(username: string = '', skipByFormId: Array<string> = []) {
     const allFormIds = (await this.tangyFormsInfoService.getFormsInfo()).map(info => info.id)
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.useAttendanceFeature) {
+    if (appConfig.teachProperties?.useAttendanceFeature) {
       allFormIds.push('attendance')
       allFormIds.push('scores')
     }
