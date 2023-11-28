@@ -15,11 +15,11 @@ import snakeCase from '@queso/snake-case'
 export class ManageLocationListMetadataComponent implements OnInit {
 
   @Input() level: string;
+  @Input() locationListFileName;
 
   title; 
-  groupName;
+  groupId;
   locationLevel;
-  locationListFileName = 'location-list.json';
   isFormShown = false;
   defaultFormState = { label: '', id: '', requiredField: null, variableName: '' };
   form: any;
@@ -30,7 +30,6 @@ export class ManageLocationListMetadataComponent implements OnInit {
   
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
     private errorHandler: TangyErrorHandler,
     private groupsService: GroupsService) { }
 
@@ -38,12 +37,13 @@ export class ManageLocationListMetadataComponent implements OnInit {
 
     this.form = this.defaultFormState;
     this.route.params.subscribe(params => {
-      this.groupName = params.groupId;
+      this.groupId = params.groupId;
     });
     this.locationLevel = this.level;
     this.title = `${this.level} Metadata`
     try {
-      this.locationListData = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
+      const data: any = await this.groupsService.getLocationList(this.groupId, this.locationListFileName);
+      this.locationListData = data;
       this.locationListData['metadata'] = this.locationListData.metadata || {};
       this.locationListData.metadata[this.locationLevel] = this.locationListData.metadata[this.locationLevel] || [];
       this.currentMetadata = this.locationListData.metadata[this.locationLevel];
@@ -71,7 +71,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
       this.locationListData.metadata[this.locationLevel] = levelMetadata;
       this.currentMetadata = this.locationListData.metadata[this.locationLevel];
       this.isFormShown = false;
-      await this.saveLocationList();
+      await this.saveLocationListToDisk();
     } else {
       this.errorHandler.handleError("The variable name already Exists in the location list");
     }
@@ -94,7 +94,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
     if (proceedWithDeletion) {
       this.currentMetadata = this.currentMetadata.filter(metadata => metadata.id !== item.id);
       this.locationListData.metadata[this.locationLevel] = this.currentMetadata;
-      await this.saveLocationList();
+      await this.saveLocationListToDisk();
     }
   }
 
@@ -119,18 +119,12 @@ export class ManageLocationListMetadataComponent implements OnInit {
     this.form = this.defaultFormState;;
     this.itemToUpdate = {};
     this.isFormShown = false;
-    await this.saveLocationList();
+    await this.saveLocationListToDisk();
   }
 
-  async saveLocationList() {
+  async saveLocationListToDisk() {
     try {
-      const payload = {
-        filePath: this.locationListFileName,
-        groupId: this.groupName,
-        fileContents: JSON.stringify(this.locationListData)
-      };
-      await this.http.post(`/editor/file/save`, payload).toPromise();
-      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
+      await this.groupsService.saveFileToGroupDirectory(this.groupId, this.locationListData, this.locationListFileName);
     } catch (error) {
       this.errorHandler.handleError('Error Saving Location List File to disk');
     }

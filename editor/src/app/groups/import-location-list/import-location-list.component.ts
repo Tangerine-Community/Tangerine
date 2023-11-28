@@ -270,14 +270,13 @@ export class ImportLocationListComponent implements OnInit {
       });
     });
     const flatLocationList = {
-      locations, locationsLevels: this.locationList.locationsLevels, metadata: this.locationList.metadata
+      id: this.locationList.id, name: this.locationList.name, locations, locationsLevels: this.locationList.locationsLevels, metadata: this.locationList.metadata
     };
     this.generatedLocationList = Loc.unflatten(flatLocationList);
   }
   async saveLocationListToDisk() {
     try {
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.generatedLocationList, this.locationListFileName);
-      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
       window.location.reload()
     } catch (error) {
       this.errorHandler.handleError('Error Saving Location List File to disk');
