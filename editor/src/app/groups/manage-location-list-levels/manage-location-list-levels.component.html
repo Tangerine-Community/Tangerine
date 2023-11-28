@@ -4,7 +4,7 @@
     <mat-tab-body>
       <ng-content *ngTemplateOutlet="metadata; context: level" metadata-tab-content></ng-content>
       <ng-template #metadata>
-        <app-manage-location-list-metadata [level]="level"></app-manage-location-list-metadata>
+        <app-manage-location-list-metadata [locationListFileName]="locationListFileName" [level]="level"></app-manage-location-list-metadata>
       </ng-template>
     </mat-tab-body>
   </mat-tab>
