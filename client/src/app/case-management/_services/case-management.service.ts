@@ -26,19 +26,17 @@ export class CaseManagementService {
     const allLocations:any = Object.assign({}, res);
     // Calculate our locations by generating the path in the locationList object.
     const locationList = allLocations.locations;
-    const myLocations = [];
     const locations = [];
     const results = await this.getVisitsByYearMonthLocationId();
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
-      const visitKey = visit.key.split('-');
-      if (visitKey[2].toString() === month.toString() && visitKey[3].toString() === year.toString()) {
-        let item = findById(locationList, visitKey[0]);
+      if (visit.value.month === month && visit.value.year === year) {
+        let item = findById(locationList, visit.value.locationId);
         if (!item) {
           locations.push({
-            location: visitKey[0],
-            visits: countUnique(visits, visitKey[0]),
-            id: visitKey[0]
+            location: visit.value.locationId,
+            visits: countUnique(visits, visit.value.locationId),
+            id: visit.value.locationId
           })
         } else {
           locations.push({
@@ -54,15 +52,13 @@ export class CaseManagementService {
   }
 
   async getFilterDatesForAllFormResponses() {
-
     const results = await this.getVisitsByYearMonthLocationId();
     const timeLapseFilter = [];
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
-      const visitKey = visit.key.split('-');
       timeLapseFilter.push({
-        value: `${visitKey[2].toString()}-${visitKey[3].toString()}`,
-        label: `${this.monthNames[visitKey[2].toString()]}, ${visitKey[3].toString()}`,
+        value: `${visit.value.month.toString()}-${visit.value.year.toString()}`,
+        label: `${this.monthNames[visit.value.month.toString()]}, ${visit.value.year.toString()}`,
       });
     });
     return removeDuplicates(timeLapseFilter, 'value');
