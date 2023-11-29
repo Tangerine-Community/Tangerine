@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 import { Loc } from 'tangy-form/util/loc.js';
@@ -10,19 +10,26 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./export-location-list.component.css']
 })
 export class ExportLocationListComponent implements OnInit {
+
+  @Input() locationListFileName;
+
+  groupId:string;
   locationEntries = [];
   locationObject = {};
-  nextLevelProcessed = '';
   locationLevels = [];
   coreProperties = ['level', 'label', 'id', 'children', 'parent', 'descendantsCount'];
-  isExporting = false;
+  isExportingCSV = false;
+  isExportingJSON = false;
   constructor(private groupService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
+    this.groupId = this.route.snapshot.paramMap.get('groupId')
   }
-  async export() {
-    this.isExporting = true;
-    const data = await this.groupService.getLocationList(this.route.snapshot.paramMap.get('groupId'));
+
+  async exportAsCSV() {
+    this.isExportingCSV = true;
+    const data:any = await this.groupService.getLocationList(this.groupId, this.locationListFileName);
+    const locationListId = data.id
     this.locationLevels = data['locationsLevels'] as [];
     Object.values(data['locations']).forEach(e => {
       this.unwrap(e);
@@ -30,15 +37,14 @@ export class ExportLocationListComponent implements OnInit {
     const worksheet = XLSX.utils.json_to_sheet(this.locationEntries);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'location-list');
-    XLSX.writeFile(workbook, 'location-list.xlsx');
+    XLSX.writeFile(workbook, `${this.groupId}-location-list-${locationListId}.xlsx`);
     this.resetValues();
   }
 
   resetValues() {
     this.locationEntries = [];
     this.locationObject = {};
-    this.nextLevelProcessed = '';
-    this.isExporting = false;
+    this.isExportingCSV = false;
   }
   /**
    *
@@ -59,5 +65,19 @@ export class ExportLocationListComponent implements OnInit {
     } else {
       this.locationEntries.push(this.locationObject);
     }
+  }
+
+  async exportAsJSON() {
+    this.isExportingJSON = true;
+    const data:any = await this.groupService.getLocationList(this.groupId, this.locationListFileName);
+    const locationListId = data.id
+    const jsonData = JSON.stringify(data)
+    const fileName = `${this.groupId}-location-list-${locationListId}.json`
+    var downloader = document.createElement('a');
+    downloader.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(jsonData));
+    downloader.setAttribute('download', fileName);
+    downloader.click();
+
+    this.isExportingJSON = false;
   }
 }

@@ -257,6 +257,15 @@ app.use('/app/:group/files', isAuthenticated, function (req, res, next) {
   return express.static(contentPath).apply(this, arguments);
 });
 
+
+// Location List API
+app.use('/app/:groupId/location-lists/read', require('./routes/group-location-lists-read.js'));
+
+app.use('/app/:groupId/location-list/create', require('./routes/group-location-list-create.js'));
+//app.use('/app/:groupId/location-list/read', require('./routes/group-location-list-read.js'));
+app.use('/app/:groupId/location-list/update', require('./routes/group-location-list-update.js'));
+app.use('/app/:groupId/location-list/delete', require('./routes/group-location-list-delete.js'));
+
 app.use('/csv/', isAuthenticated, express.static('/csv/'));
 
 app.use('/releases/', express.static('/tangerine/client/releases'))
