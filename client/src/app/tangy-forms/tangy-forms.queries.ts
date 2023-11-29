@@ -67,7 +67,7 @@ export const TangyFormsQueries = {
       if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
         if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
         // @TODO Take into account timezone.
-        const startDatetime = new Date(doc.startUnixtime);=
+        const startDatetime = new Date(doc.startUnixtime);
         if (doc.location) {
           const lowestLevelLocation = doc.location.value.pop()
           const thisLocationId = lowestLevelLocation.value;
