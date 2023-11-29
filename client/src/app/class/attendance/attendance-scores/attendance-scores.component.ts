@@ -94,7 +94,7 @@ export class AttendanceScoresComponent implements OnInit {
     const {reportDate, grade, reportTime, id} = this.dashboardService.generateSearchableId(currentClass, curriculumLabel, type, randomId);
     let doc, listFromDoc
     try {
-      const docArray = await this.dashboardService.searchDocs(type, currentClass, null, curriculumLabel, randomId, true)
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, null, null, curriculumLabel, randomId, true)
       doc = docArray? docArray[0]?.doc : null
       listFromDoc = doc?.scoreList
     } catch (e) {

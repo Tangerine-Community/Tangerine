@@ -5,8 +5,15 @@
 __New Features__
 - Multiple Location Lists can be configured using the Tangerine server web interface
 -- Create and manage location lists for use in Tangerine forms
--- The default location list is used for device and device user assignment
-
+-- The default location list is used for device and device user assignment.
+- The app-config.json teachProperties has a new property, unitDates:
+  `    "unitDates": [{"name": "Unidad 1","start": "2023-02-15", "end": "2023-04-23"}, {"name": "Unidad 2","start": "2023-04-24", "end": "2023-06-30"}], `
+- Intl/locale support in Class: The class module currently supports the es-gt locale. Add additional locales in class/module.ts:
+  ```js
+  import { registerLocaleData } from '@angular/common';
+  import localeEsGt from '@angular/common/locales/es-GT';
+  registerLocaleData(localeEsGt);
+  ```
 __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
@@ -38,15 +45,16 @@ docker rmi tangerine/tangerine:<previous_version>
 ## v3.30.0
 
 __New Features__
-- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and "homeUrl": "attendance-dashboard"
-  to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report.
+
+- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and `"homeUrl": "attendance-dashboard"`
+ to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report. 
 - The Attendance records generate _id's based on the grade, curriculum, user, and date and time of the record, so that they can be sorted chronologically.
   See dashboard.service generateSearchableId for details.
 - Class now supports `eventFormRedirect` to redirect to different url after submit: `on-submit="window.eventFormRedirect = `/attendance-check`"`
 - New app-config.json configuration for teach properties:
   ```js
   "teachProperties": {
-    "units": ["unit 1", "unit 2", "unit 3", "unit 4"],
+    "units": ["Unidad 1", "Unidad 2"],
     "attendancePrimaryThreshold": 80,
     "attendanceSecondaryThreshold": 70,
     "scoringPrimaryThreshold": 70,
@@ -55,8 +63,8 @@ __New Features__
     "behaviorSecondaryThreshold": 80,
     "useAttendanceFeature": true
   }
-  ```
   The PrimaryThreshold and SecondaryThreshold values are used to determine the color of the cell in the reports.
+
 - Updated docker-tangerine-base-image to v3.8.0, which adds the cordova-plugin-x-socialsharing plugin and enables sharing to WhatsApp.
 
 __Fixes__
