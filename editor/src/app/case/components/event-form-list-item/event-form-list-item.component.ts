@@ -29,7 +29,10 @@ export class EventFormListItemComponent implements OnInit {
   @Input() caseEvent: CaseEvent;
   @Input() eventFormDefinition: EventFormDefinition;
   @Input() eventForm: EventForm;
-  @Output() formDeleted = new EventEmitter();
+  @Output() formDeletedEvent = new EventEmitter();
+  @Output() formArchivedEvent = new EventEmitter();
+  @Output() formUnarchivedEvent = new EventEmitter();
+  
 
   defaultTemplateListItemIcon = `\${eventForm.complete ? 'assignment_turned_in' : 'assignment'}`;
   defaultTemplateListItemPrimary = `
@@ -42,6 +45,8 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemPrimary = '';
   renderedTemplateListItemSecondary = '';
   canUserDeleteForms: boolean;
+  groupId:string;
+  eventFormArchived: boolean = false;
   response:any
 
   constructor(
@@ -54,6 +59,8 @@ export class EventFormListItemComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.groupId = window.location.pathname.split('/')[2]
+
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
     const response = await this.formService.getResponse(this.eventForm.formResponseId);
@@ -89,18 +96,10 @@ export class EventFormListItemComponent implements OnInit {
     eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateEventFormListItemIcon ? \`${this.caseDefinition.templateEventFormListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``);
     eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateEventFormListItemPrimary ? \`${this.caseDefinition.templateEventFormListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``);
     eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``);
+
+    this.eventFormArchived = eventForm.archived
+
     this.ref.detectChanges();
-  }
-  async deleteItem() {
-    const confirmDelete = confirm(
-      _TRANSLATE('Are you sure you want to delete this form instance? You will not be able to undo the operation')
-      );
-    if (confirmDelete) {
-      this.caseService.deleteEventForm(this.eventForm.caseEventId, this.eventForm.id);
-      await this.caseService.save();
-      this.formDeleted.emit('formDeleted');
-      this.ref.detectChanges();
-    }
   }
 
   navigateToEventForm() {
@@ -119,5 +118,17 @@ export class EventFormListItemComponent implements OnInit {
       }
     }
     this.router.navigateByUrl(`/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`)
+  }
+
+  onDeleteFormClick() {
+    this.formDeletedEvent.emit(this.eventForm.id);
+  }
+
+  onArchiveFormClick() {
+    this.formArchivedEvent.emit(this.eventForm.id);
+  }
+
+  onUnarchiveFormClick() {
+    this.formUnarchivedEvent.emit(this.eventForm.id);
   }
 }

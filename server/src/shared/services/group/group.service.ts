@@ -174,6 +174,7 @@ export class GroupService {
     await exec(`cp -r /tangerine/content-sets/default  /tangerine/groups/${groupId}`)
     await exec(`cp /tangerine/translations/*.json /tangerine/groups/${groupId}/client/`)
     await exec(`mkdir /tangerine/groups/${groupId}/client/media`)
+    await exec(`mkdir /tangerine/groups/${groupId}/client/locations`)
     // @TODO Create a symlink to the old group client directory until all the other APIs are updated and we have 
     // a proper upgrade script to migrate group directories.
     await exec(`ln -s /tangerine/groups/${groupId}/client /tangerine/client/content/groups/${groupId}`)
@@ -289,6 +290,8 @@ export class GroupService {
     // location-list.json
     //
     await fs.writeFile(`/tangerine/groups/${groupId}/client/location-list.json`, JSON.stringify({
+      "id": "location-list",
+      "name": `${groupName} Location List`,
       "locationsLevels": [],
       "locations": {},
       "metadata": {}
