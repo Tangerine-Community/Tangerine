@@ -56,7 +56,7 @@ module.exports = {
       return data
     },
     reportingOutputs: async function(data) {
-      async function addDocument(sourceDb, doc, locationList, sanitized, exclusions) {
+      async function addDocument(sourceDb, doc, locationLists, sanitized, exclusions) {
         const tablenameSuffix = ''
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
@@ -79,7 +79,7 @@ module.exports = {
           let tableName, docType, createFunction, primaryKey
           if (doc.type === 'case') {
             // output case
-            const flatDoc = await prepareFlatData(doc, locationList, sanitized);
+            const flatDoc = await prepareFlatData(doc, locationLists, sanitized);
             log.info("Saving case_instance to MySQL doc _id: " + doc._id)
             // case doc
             tableName = 'case_instances' + tablenameSuffix
@@ -227,13 +227,13 @@ module.exports = {
       }
         
       const {doc, sourceDb} = data
-      const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+      const locationLists = tangyModules.getLocationLists(sourceDb.name)
       // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
       const groupsDb = await new DB(`groups`);
       const groupDoc = await groupsDb.get(`${sourceDb.name}`)
       const exclusions = groupDoc['exclusions']
       let sanitized = false;
-      await addDocument(sourceDb, doc, locationList, sanitized, exclusions);
+      await addDocument(sourceDb, doc, locationLists, sanitized, exclusions);
       return data
     }
   }
@@ -307,7 +307,7 @@ const getItemValue = (doc, variableName) => {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList, sanitized) {
+const generateFlatResponse = async function (formResponse, locationLists, sanitized) {
   let flatFormResponse = {
     _id: formResponse._id,
     formTitle: formResponse.form.title,
@@ -339,7 +339,10 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         // Simplify the keys by removing formID.itemId
         let firstIdSegment = ""
         if (input.tagName === 'TANGY-LOCATION') {
-          // Populate the ID and Label columns for TANGY-LOCATION levels.
+          // Populate the id, label and metadata columns for TANGY-LOCATION levels in the current location list.
+          // The location list may be change over time. When values are changed, we attempt to adjust 
+          // so the current values appear in the outputs. 
+          const locationList = locationLists.find(locationList => locationList.path == input.locationSrc)
           locationKeys = []
           for (let group of input.value) {
             tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
@@ -352,7 +355,11 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
                 }
               }
             } catch(e) {
-              tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
+              // Since tangy-form v4.42.0, tangy-location widget saves the label in the value
+              // use the label value saved in the form response if it is not found in the current location list.
+              // If no label appears in the form response, then we put 'orphanced' for the label. 
+              const valueLabel = group.label ? group.label : 'orphaned'
+              tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, valueLabel)
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
@@ -424,8 +431,8 @@ function stringifyDocDataObjects(doc) {
   return doc
 }
 
-async function prepareFlatData(doc, locationList, sanitized) {
-  let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
+async function prepareFlatData(doc, locationLists, sanitized) {
+  let flatResponse = await generateFlatResponse(doc, locationLists, sanitized);
   // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
   flatResponse = Object.keys(flatResponse).reduce((acc, key) => {
     return {
