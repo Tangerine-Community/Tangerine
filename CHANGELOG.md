@@ -6,14 +6,16 @@ __New Features__
 - Multiple Location Lists can be configured using the Tangerine server web interface
 -- Create and manage location lists for use in Tangerine forms
 -- The default location list is used for device and device user assignment.
-- The app-config.json teachProperties has a new property, unitDates:
+- The app-config.json teachProperties has a new property, `"unitDates"`:
   `    "unitDates": [{"name": "Unidad 1","start": "2023-02-15", "end": "2023-04-23"}, {"name": "Unidad 2","start": "2023-04-24", "end": "2023-06-30"}], `
+- The app-config.json teachProperties has a new property, `"showAttendanceCalendar"`, which enables the Attendance Calendar in the Class module when set to true.
 - Intl/locale support in Class: The class module currently supports the es-gt locale. Add additional locales in class/module.ts:
   ```js
   import { registerLocaleData } from '@angular/common';
   import localeEsGt from '@angular/common/locales/es-GT';
   registerLocaleData(localeEsGt);
   ```
+
 __Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.

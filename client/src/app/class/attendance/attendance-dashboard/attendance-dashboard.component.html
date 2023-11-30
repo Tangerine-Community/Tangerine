@@ -1,4 +1,4 @@
-<mat-toolbar *ngIf="!selectedClass" class="classDashboard">
+<mat-toolbar *ngIf="ready && !selectedClass" class="classDashboard">
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
             [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
@@ -9,7 +9,7 @@
     <!--    </button>-->
   </span>
 </mat-toolbar>
-<div class="selectedClassLabel">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+<div class="selectedClassLabel">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking && curriculum">: {{curriculum?.label}} </ng-container><ng-container *ngIf="reportLocaltime && curriculum">: {{reportLocaltime}}</ng-container></div>
 <!--<mat-card *ngIf="selectedClass">-->
 <!--  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : <ng-container *ngIf="!ignoreCurriculumsForTracking">{{curriculum?.label}} : </ng-container>{{reportDate}}</div>-->
   <div>

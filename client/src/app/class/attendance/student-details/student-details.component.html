@@ -39,7 +39,7 @@
       </ng-template>
     </div>
   </div>
-  <div class="flex-item">
+  <div class="flex-item" *ngIf="showCalendar">
     <h3>{{'Calendar'|translate}}</h3>
     <h4>{{'Units'|translate}}</h4>
     <div class="unit-legend" *ngFor="let unit of unitDates; index as unitIndex">
