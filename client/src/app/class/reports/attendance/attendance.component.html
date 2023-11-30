@@ -252,8 +252,13 @@
       <div class="unit-legend">
         <ng-container *ngFor="let unit of unitDates; index as unitIndex">
           <div class="unit-name" (click)="showUnitReport(unitIndex)">{{unit.name}}</div>
-          <div class="unit{{unitIndex+1}}" (click)="showUnitReport(unitIndex)">{{unit.startLocaltime}} - {{unit.endLocaltime}}</div>
+          <div (click)="showUnitReport(unitIndex)">{{unit.startLocaltime}} - {{unit.endLocaltime}}</div>
         </ng-container>
+      </div>
+      
+      <div *ngIf="unitReport?.attendanceList.length > 0" class="table-description">
+        <h2>{{unitReport?.name}}</h2>
+        <p>{{unitReport?.dateRange}}</p>
       </div>
       
       <table id="unit-table" #unitTable class="dashboard-table" *ngIf="unitReport?.attendanceList.length > 0">
