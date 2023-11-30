@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit,} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {DashboardService} from "../../_services/dashboard.service";
@@ -24,6 +24,7 @@ export class StudentDetailsComponent implements OnInit {
 
   units: string[] = []
   unitDates = []
+  showCalendar: boolean = false
   absentRecords: any[] = []
   curriculumLabel: string
   ignoreCurriculumsForTracking: boolean = false
@@ -40,6 +41,7 @@ export class StudentDetailsComponent implements OnInit {
     const languageCode = await this.variableService.get('languageCode')
     this.locale = languageCode.replace('_', '-')
     Settings.defaultLocale = this.locale
+    this.showCalendar = appConfig.teachProperties?.showAttendanceCalendar
     this.units = appConfig.teachProperties?.units
     this.unitDates = appConfig.teachProperties?.unitDates
     this.unitDates.forEach((unitDate, index) => {

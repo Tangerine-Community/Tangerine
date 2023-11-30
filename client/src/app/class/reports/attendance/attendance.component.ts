@@ -260,8 +260,12 @@ export class AttendanceComponent implements OnInit {
     const unitDate = this.unitDates[index]
     const startDate = unitDate.startDate
     const endDate = unitDate.endDate
+    const reportName = unitDate.name
+    const dateRange = unitDate.startLocaltime + ' - ' + unitDate.endLocaltime
     // Since we are querying backwards, we reverse startDate and endDate
     this.unitReport = await this.generateSummaryReport(this.currArray, this.curriculum, this.selectedClass, this.classId, this.numVisits, this.currentIndex, endDate, startDate);
+    this.unitReport.name = reportName
+    this.unitReport.dateRange = dateRange
     setTimeout(() => {
       this.unitTable.nativeElement.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
     }, 500 );

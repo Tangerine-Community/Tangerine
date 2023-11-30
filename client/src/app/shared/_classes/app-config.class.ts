@@ -144,6 +144,7 @@ export class AppConfig {
     behaviorPrimaryThreshold: 90,
     behaviorSecondaryThreshold: 80,
     useAttendanceFeature: false,
+    showAttendanceCalendar: false,
   }
 
   //
