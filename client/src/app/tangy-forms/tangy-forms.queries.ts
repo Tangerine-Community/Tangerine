@@ -53,8 +53,11 @@ export const TangyFormsQueries = {
     map: function (doc) {
       if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
         if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
-        if (doc.location) {
-          let lowestLevelLocation = doc.location.value.pop()
+        let inputs = [];
+        doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+        let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
+        if (location) {
+          let lowestLevelLocation = location.value.pop()
           emit(lowestLevelLocation.value, true);
         } else {
           emit('noLocation', true);
@@ -68,8 +71,11 @@ export const TangyFormsQueries = {
         if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
         // @TODO Take into account timezone.
         const startDatetime = new Date(doc.startUnixtime);
-        if (doc.location) {
-          const lowestLevelLocation = doc.location.value.pop()
+        let inputs = [];
+        doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+        let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
+        if (location) {
+          const lowestLevelLocation = location.value.pop()
           const thisLocationId = lowestLevelLocation.value;
           const value = { locationId: thisLocationId, year: startDatetime.getFullYear(), month: startDatetime.getMonth(), date: startDatetime.getDate()}
           emit(`${thisLocationId}-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, value);
