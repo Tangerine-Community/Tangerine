@@ -77,9 +77,11 @@ export const TangyFormsQueries = {
         if (location) {
           const lowestLevelLocation = location.value.pop()
           const thisLocationId = lowestLevelLocation.value;
-          emit(`${thisLocationId}-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
+          const value = { locationId: thisLocationId, year: startDatetime.getFullYear(), month: startDatetime.getMonth(), date: startDatetime.getDate()}
+          emit(`${thisLocationId}-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, value);
         } else {
-          emit(`noLocation-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
+          const value = { locationId: 'noLocation', year: startDatetime.getFullYear(), month: startDatetime.getMonth(), date: startDatetime.getDate()}
+          emit(`noLocation-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, value);
         }
       }
     }.toString()
