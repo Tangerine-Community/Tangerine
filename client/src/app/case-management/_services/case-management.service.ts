@@ -30,13 +30,18 @@ export class CaseManagementService {
     const results = await this.getVisitsByYearMonthLocationId();
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
-      if (visit.value.month === month && visit.value.year === year) {
-        let item = findById(locationList, visit.value.locationId);
+      const locationId = visit.key.slice(0, -11);
+      const dateParts = visit.key.slice(-10).split('-');
+      const dayKey = dateParts[0]
+      const monthKey = dateParts[1]
+      const yearKey = dateParts[2]
+      if (monthKey === month.toString() && yearKey === year.toString()) {
+        let item = findById(locationList, locationId);
         if (!item) {
           locations.push({
-            location: visit.value.locationId,
-            visits: countUnique(visits, visit.value.locationId),
-            id: visit.value.locationId
+            location: locationId,
+            visits: countUnique(visits, locationId),
+            id: locationId
           })
         } else {
           locations.push({
@@ -56,9 +61,13 @@ export class CaseManagementService {
     const timeLapseFilter = [];
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
+      const dateParts = visit.key.slice(-10).split('-');
+      const dayKey = dateParts[0]
+      const monthKey = dateParts[1]
+      const yearKey = dateParts[2]
       timeLapseFilter.push({
-        value: `${visit.value.month.toString()}-${visit.value.year.toString()}`,
-        label: `${this.monthNames[visit.value.month.toString()]}, ${visit.value.year.toString()}`,
+        value: `${monthKey}-${yearKey}`,
+        label: `${this.monthNames[monthKey]}, ${yearKey}`,
       });
     });
     return removeDuplicates(timeLapseFilter, 'value');
