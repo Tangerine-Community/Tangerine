@@ -662,7 +662,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
           let docNamespaced;
           let keyArray = key.split('.')
-          console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+          // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
           if (keyArray[0] === 'user-profile') {
             docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
           } else {
