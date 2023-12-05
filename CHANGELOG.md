@@ -6,8 +6,13 @@ __New Features__
 - Multiple Location Lists can be configured using the Tangerine server web interface
 -- Create and manage location lists for use in Tangerine forms
 -- The default location list is used for device and device user assignment.
-- The app-config.json teachProperties has a new property, `"unitDates"`:
-  `    "unitDates": [{"name": "Unidad 1","start": "2023-02-15", "end": "2023-04-23"}, {"name": "Unidad 2","start": "2023-04-24", "end": "2023-06-30"}], `
+- The app-config.json teachProperties has new properties, `"unitDates"` and `"studentRegistrationFields"`:
+  ```    
+  "unitDates": [{"name": "Unidad 1","start": "2023-02-15", "end": "2023-04-23"}, {"name": "Unidad 2","start": "2023-04-24", "end": "2023-06-30"}], 
+  "studentRegistrationFields": ["student_name", "student_surname", "phone", "classId"]
+  ```
+  The `unitDates` property is used to configure the dates for each unit in the Class module. 
+  The `studentRegistrationFields` property is used to configure the fields from the Student Registration form to be saved in the class attendance, behavior, and score register and CSV's.
 - The app-config.json teachProperties has a new property, `"showAttendanceCalendar"`, which enables the Attendance Calendar in the Class module when set to true.
 - Intl/locale support in Class: The class module currently supports the es-gt locale. Add additional locales in class/module.ts:
   ```js
@@ -15,6 +20,7 @@ __New Features__
   import localeEsGt from '@angular/common/locales/es-GT';
   registerLocaleData(localeEsGt);
   ```
+- The "Request spreadsheets" CSV output form now has three new forms to view if `useAttendanceFeature` is set to true in app-config.json: Attendance, Behavior, and Score
 
 __Server upgrade instructions__
 

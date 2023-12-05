@@ -117,7 +117,7 @@ export class BehaviorCheckComponent implements OnInit {
       this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
     }
 
-    this.studentBehaviorList =  await this.dashboardService.getAttendanceList(students, savedBehaviorList, curriculum)
+    this.studentBehaviorList =  await this.dashboardService.getBehaviorList(students, savedBehaviorList, curriculum)
     if (!currentBehaviorReport) {
       this.register = {
         _id: id,
@@ -131,7 +131,7 @@ export class BehaviorCheckComponent implements OnInit {
         collection: 'TangyFormResponse',
         type: type,
         form: {
-          id: 'form-internal-behaviour',
+          id: 'behavior',
         },
         items: [{
           id: 'class-registration',

@@ -31,6 +31,7 @@ export class DashboardService {
     private tangyFormsInfoService : TangyFormsInfoService,
     private variableService: VariableService,
     private classFormService: ClassFormService,
+    private appConfigService: AppConfigService
   ) {}
 
   db: UserDatabase;
@@ -1051,6 +1052,8 @@ export class DashboardService {
   async getAttendanceList(students, savedList, curriculum) {
     // const curriculumFormHtml = await this.getCurriculaForms(curriculum.name);
     // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+    const appConfig = await this.appConfigService.getAppConfig();
+    const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields
     const list = []
     for (const student of students) {
       let studentResult
@@ -1059,22 +1062,80 @@ export class DashboardService {
         studentResult = savedList.find(studentDoc => studentDoc.id === studentId)
       }
       if (studentResult) {
+          // migration.
+          if (!studentResult.student_surname) {
+              studentResult.student_surname = studentResult.surname
+          }
+          if (!studentResult.student_name) {
+              studentResult.student_name = studentResult.name
+          }
         list.push(studentResult)
       } else {
-        const student_name = this.getValue('student_name', student.doc)
-        const student_surname = this.getValue('student_surname', student.doc)
-        const phone = this.getValue('phone', student.doc);
-        const classId = this.getValue('classId', student.doc)
-        
         studentResult = {}
         studentResult['id'] = studentId
-        studentResult['name'] = student_name
-        studentResult['surname'] = student_surname
-        studentResult['phone'] = phone
-        studentResult['classId'] = classId
-        studentResult['forms'] = {}
+        
+        studentRegistrationFields.forEach((field) => {
+          studentResult[field] = this.getValue(field, student.doc)
+        })
+        // const student_name = this.getValue('student_name', student.doc)
+        // const student_surname = this.getValue('student_surname', student.doc)
+        // const phone = this.getValue('phone', student.doc);
+        // const classId = this.getValue('classId', student.doc)
+        
+        // studentResult['name'] = student_name
+        // studentResult['surname'] = student_surname
+        // studentResult['phone'] = phone
+        // studentResult['classId'] = classId
         studentResult['absent'] = null
-        studentResult['behavior'] = null
+        
+        list.push(studentResult)
+      }
+    }
+    return list
+    // await this.populateFeedback(curriculumId);
+  }
+
+  /**
+   * Get the behavior list for the class, including any students who have not yet had behavior checked. If the savedBehaviorList is passed in, then
+   * populate the student from that doc by matching student.id.
+   * @param students
+   * @param savedList
+   */
+  async getBehaviorList(students, savedList, curriculum) {
+    const appConfig = await this.appConfigService.getAppConfig();
+    const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields
+    const list = []
+    for (const student of students) {
+      let studentResult
+      const studentId = student.id
+      if (savedList) {
+        studentResult = savedList.find(studentDoc => studentDoc.id === studentId)
+      }
+      if (studentResult) {
+          // migration.
+          if (!studentResult.student_surname) {
+              studentResult.student_surname = studentResult.surname
+          }
+          if (!studentResult.student_name) {
+              studentResult.student_name = studentResult.name
+          }
+        list.push(studentResult)
+      } else {
+        // const student_name = this.getValue('student_name', student.doc)
+        // const student_surname = this.getValue('student_surname', student.doc)
+        // const phone = this.getValue('phone', student.doc);
+        // const classId = this.getValue('classId', student.doc)
+        studentResult = {}
+        studentResult['id'] = studentId
+        // studentResult['name'] = student_name
+        // studentResult['surname'] = student_surname
+        // studentResult['phone'] = phone
+        // studentResult['classId'] = classId
+        // studentResult['forms'] = {}
+        // studentResult['absent'] = null
+        studentRegistrationFields.forEach((field) => {
+          studentResult[field] = this.getValue(field, student.doc)
+        })
         
         list.push(studentResult)
       }
@@ -1090,6 +1151,8 @@ export class DashboardService {
    * @param listFromDoc
    */
   async getScoreList(students, listFromDoc) {
+    const appConfig = await this.appConfigService.getAppConfig();
+    const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields
     const list = []
     for (const student of students) {
       let studentResult
@@ -1098,22 +1161,32 @@ export class DashboardService {
         studentResult = listFromDoc.find(studentDoc => studentDoc.id === studentId)
       }
       if (studentResult) {
+          // migration.
+          if (!studentResult.student_surname) {
+              studentResult.student_surname = studentResult.surname
+          }
+          if (!studentResult.student_name) {
+              studentResult.student_name = studentResult.name
+          }
         list.push(studentResult)
       } else {
-        const student_name = this.getValue('student_name', student.doc)
-        const student_surname = this.getValue('student_surname', student.doc)
-        const phone = this.getValue('phone', student.doc);
-        const classId = this.getValue('classId', student.doc)
+        // const student_name = this.getValue('student_name', student.doc)
+        // const student_surname = this.getValue('student_surname', student.doc)
+        // const phone = this.getValue('phone', student.doc);
+        // const classId = this.getValue('classId', student.doc)
 
         studentResult = {}
         studentResult['id'] = studentId
-        studentResult['name'] = student_name
-        studentResult['surname'] = student_surname
-        studentResult['phone'] = phone
-        studentResult['classId'] = classId
-        studentResult['forms'] = {}
-        studentResult['absent'] = false
-        studentResult['behavior'] = null
+        studentRegistrationFields.forEach((field) => {
+          studentResult[field] = this.getValue(field, student.doc)
+        })
+        // studentResult['name'] = student_name
+        // studentResult['surname'] = student_surname
+        // studentResult['phone'] = phone
+        // studentResult['classId'] = classId
+        // studentResult['forms'] = {}
+        // studentResult['absent'] = false
+        // studentResult['behavior'] = null
 
         // const internalBehaviorFormHtml =  await this.http.get(`./assets/form-internal-behaviour/form.html`, {responseType: 'text'}).toPromise();
         // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
