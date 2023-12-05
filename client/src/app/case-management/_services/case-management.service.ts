@@ -30,18 +30,14 @@ export class CaseManagementService {
     const results = await this.getVisitsByYearMonthLocationId();
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
-      const locationId = visit.key.slice(0, -11);
-      const dateParts = visit.key.slice(-10).split('-');
-      const dayKey = dateParts[0]
-      const monthKey = dateParts[1]
-      const yearKey = dateParts[2]
-      if (monthKey === month.toString() && yearKey === year.toString()) {
-        let item = findById(locationList, locationId);
+      const parts = this._splitQueryKeyParts(visit.key)
+      if (parts.month === month.toString() && parts.year === year.toString()) {
+        let item = findById(locationList, parts.location);
         if (!item) {
           locations.push({
-            location: locationId,
-            visits: countUnique(visits, locationId),
-            id: locationId
+            location: parts.location,
+            visits: countUnique(visits, parts.location),
+            id: parts.location
           })
         } else {
           locations.push({
@@ -61,16 +57,25 @@ export class CaseManagementService {
     const timeLapseFilter = [];
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
-      const dateParts = visit.key.slice(-10).split('-');
-      const dayKey = dateParts[0]
-      const monthKey = dateParts[1]
-      const yearKey = dateParts[2]
+      const parts = this._splitQueryKeyParts(visit.key)
       timeLapseFilter.push({
-        value: `${monthKey}-${yearKey}`,
-        label: `${this.monthNames[monthKey]}, ${yearKey}`,
+        value: `${parts.month}-${parts.year}`,
+        label: `${this.monthNames[parts.month]}, ${parts.year}`,
       });
     });
     return removeDuplicates(timeLapseFilter, 'value');
+  }
+
+  _splitQueryKeyParts(key) {
+      // This is a very hacky way to get the dates from the result key
+      // A better fix would be to assign the values to the result value
+      let keyParts = key.split('-')
+      const yearKey = keyParts.pop()
+      const monthKey = keyParts.pop()
+      const dayKey = keyParts.pop()
+      const locationKey = keyParts.join('-')
+
+      return { year: yearKey, month: monthKey, day: dayKey, location: locationKey }
   }
 
   async  getFilterDatesForAllFormResponsesByLocationId(locationId: string) {
