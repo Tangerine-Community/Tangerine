@@ -145,6 +145,7 @@ export class AppConfig {
     behaviorSecondaryThreshold: 80,
     useAttendanceFeature: false,
     showAttendanceCalendar: false,
+    studentRegistrationFields:[]
   }
 
   //
