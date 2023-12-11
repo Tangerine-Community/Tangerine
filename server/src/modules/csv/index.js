@@ -56,8 +56,6 @@ module.exports = {
         try {
           const {doc, sourceDb} = data
           const groupId = sourceDb.name
-          // TODO: Can't the fetch of the locationList be cached?
-          const locationLists = await tangyModules.getLocationLists(sourceDb.name)
           // console.log(doc.type)
           // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
@@ -65,12 +63,12 @@ module.exports = {
           const SANITIZED_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
           
           if (doc.type !== 'issue') {
-            let flatResponse = await generateFlatResponse(doc, locationLists, false, groupId);
+            let flatResponse = await generateFlatResponse(doc, false, groupId);
             // Process the flatResponse
             let processedResult = flatResponse;
             // Don't add user-profile to the user-profile
             if (processedResult.formId !== 'user-profile') {
-              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationLists)
+              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb)
             }
             // @TODO Ensure design docs are in the database.
             await saveFormInfo(processedResult, REPORTING_DB);
@@ -80,7 +78,7 @@ module.exports = {
 
             // Sanitizing the data:
             // Repeat the flattening in order to deliver sanitized (non-PII) output
-            flatResponse = await generateFlatResponse(doc, locationLists, true, groupId);
+            flatResponse = await generateFlatResponse(doc, true, groupId);
             // Process the flatResponse
             processedResult = flatResponse
             // Don't add user-profile to the sanitized db
@@ -216,14 +214,13 @@ const getItemValue = (doc, variableName) => {
 /** This function processes form response for csv.
  *
  * @param formResponse
- * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
  * @param {boolean} sanitized - flag if data must filter data based on the identifier flag.
  *
  * @param groupId
  * @returns {object} processed results for csv
  */
 
-const  generateFlatResponse = async function (formResponse, locationLists, sanitized, groupId) {
+const  generateFlatResponse = async function (formResponse, sanitized, groupId) {
   let flatFormResponse
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
@@ -308,26 +305,32 @@ const  generateFlatResponse = async function (formResponse, locationLists, sanit
 
           // This input has an attribute 'locationSrc' with a path to the location list that starts with './assets/'
           // We need to compare file names instead of paths since it is different on the server
-          let inputLocationFileName = input.locationSrc ? path.parse(input.locationSrc).base : `location-list.json`
-          const locationList = locationLists.find(locationList => inputLocationFileName == path.parse(locationList.path).base)
+          const locationSrc = input.locationSrc ? path.parse(input.locationSrc).base : `location-list.json`
+          const locationList = await tangyModules.getLocationListsByLocationSrc(groupId, locationSrc)
           locationKeys = []
           for (let group of input.value) {
             tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
-            try {
-              const location = getLocationByKeys(locationKeys, locationList)
-              for (let keyName in location) {
-                if (['descendantsCount', 'children', 'parent'].includes(keyName)) {
-                  continue
-                }
-                tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])                
-              }
-            } catch (e) {
+
+            if (!locationList) {
               // Since tangy-form v4.42.0, tangy-location widget saves the label in the value
               // use the label value saved in the form response if it is not found in the current location list.
               // If no label appears in the form response, then we put 'orphanced' for the label. 
               const valueLabel = group.label ? group.label : 'orphaned'
               tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, valueLabel)
+            } else {
+              try {
+                const location = getLocationByKeys(locationKeys, locationList)
+                for (let keyName in location) {
+                  if (['descendantsCount', 'children', 'parent', 'id'].includes(keyName)) {
+                    continue
+                  }
+                  tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])                
+                }
+              } catch (e) {
+                const valueLabel = group.label ? group.label : 'orphaned'
+                tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, valueLabel)
+              }
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' || input.tagName === 'TANGY-RADIO-BLOCKS') {
@@ -579,7 +582,7 @@ function saveFlatFormResponse(doc, db) {
 
 
 
-async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
+async function attachUserProfile(doc, reportingDb, sourceDb) {
     try {
       let userProfileId = doc.tangerineModifiedByUserId
       if (!userProfileId) {
@@ -600,7 +603,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
           // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
           try {
             let userProfileDocOriginal = await sourceDb.get(userProfileId)
-            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationLists, false, sourceDb.name);
+            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, false, sourceDb.name);
           } catch (e) {
             // console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
           }
@@ -630,18 +633,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         delete docWithProfile['user-profile.groupId']
         delete docWithProfile['user-profile.complete']
         delete docWithProfile['user-profile.item1_firstOpenTime']
-        delete docWithProfile['user-profile.item1.location.region_id']
-        delete docWithProfile['user-profile.item1.location.region_level']
-        delete docWithProfile['user-profile.item1.location.region_parent']
-        delete docWithProfile['user-profile.item1.location.region_descendantsCount']
-        delete docWithProfile['user-profile.item1.location.district_id']
-        delete docWithProfile['user-profile.item1.location.district_level']
-        delete docWithProfile['user-profile.item1.location.district_parent']
-        delete docWithProfile['user-profile.item1.location.district_descendantsCount']
-        delete docWithProfile['user-profile.item1.location.facility_id']
-        delete docWithProfile['user-profile.item1.location.facility_level']
-        delete docWithProfile['user-profile.item1.location.facility_parent']
-        delete docWithProfile['user-profile.item1.location.facility_descendantsCount']
+        delete docWithProfile['user-profile.item1.location']
 
         return docWithProfile
       } else {

@@ -12,6 +12,9 @@ class TangyModules {
       : []
     this.modules = enabledModules.map(moduleName => require(`/tangerine/server/src/modules/${moduleName}/index.js`))
     this.enabledModules = enabledModules
+
+    // lazy load the location lists
+    this.locationLists;
   }
 
   async hook(hookName, data) {
@@ -53,6 +56,17 @@ class TangyModules {
   }
 
   async getLocationLists(groupId) {
+    return this.locationLists ? this.locationLists : await this.initLocationLists(groupId);
+  }
+
+  async getLocationListsByLocationSrc(groupId, locationSrc) {
+    if (!this.locationLists) {
+      this.locationLists = await this.initLocationLists(groupId);
+    }
+    return this.locationLists.find(locationList => locationSrc == path.parse(locationList.path).base)
+  }
+
+  async initLocationLists(groupId) {
     const fileMetadata = []
 
     function getFileMetadata(fullPath, filePath) {    
