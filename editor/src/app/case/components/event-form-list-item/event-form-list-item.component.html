@@ -1,15 +1,28 @@
-<div *ngIf="this.response || (!this.response && !eventForm.formResponseId)" class="icon-list-item {{eventForm.required ? 'required' : ''}}" >
-	<mwc-icon (click)="this.navigateToEventForm()" [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
+<div *ngIf="this.response || (!this.response && !eventForm.formResponseId)" 
+  class="icon-list-item {{eventForm.required ? 'required' : ''}} {{ eventForm.archived ? 'disabled' : '' }}" (click)="this.navigateToEventForm()">
+	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
 	<div (click)="this.navigateToEventForm()">
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
-	<span class="tangy-spacer"></span>
 	<span *ngIf="canUserDeleteForms">
-		<paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
+		<button (click)="onDeleteFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
+			<mwc-icon>delete</mwc-icon>
+		</button>
+	</span>
+	<span *ngIf="!eventFormArchived">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_archive_forms'" (click)="onArchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
+			<mwc-icon>archive</mwc-icon>
+		</button>
+	</span>
+	<span *ngIf="eventFormArchived">
+		<button *appHasAPermission="let i;group:groupId; permission:'can_unarchive_forms'" (click)="onUnarchiveFormClick(); $event.stopPropagation()" class="tangy-small-list-icon-alternate">
+			<mwc-icon>unarchive</mwc-icon>
+		</button>
 	</span>
 </div>
-<div *ngIf="!this.response && eventForm.formResponseId" class="no-response icon-list-item {{eventForm.required ? 'required' : ''}}" >
+<div *ngIf="!this.response && eventForm.formResponseId" 
+  class="no-response icon-list-item {{eventForm.required ? 'required' : ''}} {{ eventForm.archived ? 'disabled' : '' }}">
 	<mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon>
 	<div>
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
@@ -17,6 +30,12 @@
 	</div>
 	<span class="tangy-spacer"></span>
 	<span *ngIf="canUserDeleteForms">
-		<paper-button (click)="deleteItem()" class="button"><mwc-icon>delete</mwc-icon></paper-button>
+		<paper-button (click)="deleteItem($event)" class="tangy-small-list-icon"><mwc-icon>delete</mwc-icon></paper-button>
+	</span>
+	<span *ngIf="canUserArchiveForms && !eventForm.archived">
+		<paper-button (click)="archiveItem($event)" class=".angy-small-list-icon"><mwc-icon>archive</mwc-icon></paper-button>
+	</span>
+	<span *ngIf="canUserUnarchiveForms && eventForm.archived">
+		<paper-button (click)="unarchiveItem($event)" class="tangy-small-list-icon"><mwc-icon>unarchive</mwc-icon></paper-button>
 	</span>
 </div>
