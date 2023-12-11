@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v3.7.3
+FROM tangerine/docker-tangerine-base-image:v3.7.4
 
 RUN git config --global url."https://".insteadOf git://
 
@@ -15,6 +15,8 @@ RUN npm config set unsafe-perm false
 
 # Install helpful JSON utility.
 RUN apt-get update && apt-get install -y jq 
+# Install mysql integration dependencies.
+RUN apt update && apt install -y default-mysql-server
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1
@@ -28,12 +30,6 @@ ENV T_HOST_NAME 127.0.0.1
 ENV T_PROTOCOL http
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
-
-# Install mysql integration dependencies.
-RUN apt-get update && apt-get install -y python3-pip
-ADD ./server/src/modules/mysql/install-dependencies.sh /tangerine/server/src/modules/mysql/install-dependencies.sh
-RUN cd /tangerine/server/src/modules/mysql && \
-    ./install-dependencies.sh
 
 # Install online-survey-app.
 ADD online-survey-app/package.json /tangerine/online-survey-app/package.json

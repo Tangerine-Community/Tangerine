@@ -4,13 +4,9 @@ const fs = require('fs-extra');
 const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
-const { spawn } = require('child_process');
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
-const createGroupDatabase = require('../../create-group-database.js')
-const { v4: uuidv4 } = require('uuid');
-const byParticipantView = require(`./byParticipant.js`)
-const byTypeViews = require(`./byType.js`)
+const tangyModules = require('../index.js')()
 const sanitize = require("sanitize-filename");
 
 /* Enable this if you want to run commands manually when debugging.
@@ -31,21 +27,6 @@ module.exports = {
       for (let i = 0; i < groups.length; i++) {
         const groupId = groups[i]
         await initializeGroupForMySQL(groupId)
-        // const knex = require('knex')({
-        //   client: 'mysql2',
-        //   connection: {
-        //     host: `${process.env.T_MYSQL_CONTAINER_NAME}`,
-        //     port: 3306,
-        //     user: `${process.env.T_MYSQL_USER}`,
-        //     password: `${process.env.T_MYSQL_PASSWORD}`
-        //   }
-        // })
-        // try {
-        //   await knex.raw('CREATE DATABASE ' + groupId.replace(/-/g, ''))
-        // } catch (e) {
-        //   log.debug(e)
-        // }
-        // await knex.destroy()
       }
     },
     disable: function(data) {
@@ -110,15 +91,17 @@ module.exports = {
               t.integer('complete');
               t.bigint('startunixtime');//TODO: is this being set properly in mysql?
             }
-            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
             
             // output participants
             for (let i = 0; i < doc.participants.length; i++) {
               const participant = doc.participants[i]
               let participant_id = participant.id
+              let key_len = 32
               if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
                 participant_id = doc._id + '-' + participant.id
+                key_len = 80
               }
               const flatDoc = stringifyDocDataObjects({
                 ...participant,
@@ -135,11 +118,11 @@ module.exports = {
               primaryKey = 'participantID'
               createFunction = function (t) {
                 t.engine('InnoDB')
-                t.string(primaryKey, 36).notNullable().primary();
-                t.string('CaseID', 36).index('participant_CaseID_IDX');
+                t.string(primaryKey, key_len).notNullable().primary();
+                t.string('CaseID', key_len).index('participant_CaseID_IDX');
                 t.double('inactive');
               }
-              const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+              const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
             // log.debug("doc.events.length: " + doc.events.length)
@@ -175,7 +158,7 @@ module.exports = {
                     t.integer('complete');
                     t.integer('required');
                   }
-                  const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+                  const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
                   log.info('Processed: ' + JSON.stringify(result))
                 }
               } else {
@@ -202,7 +185,7 @@ module.exports = {
                 t.integer('estimate');
                 t.integer('startDate');
               }
-              const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+              const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
               log.info('Processed: ' + JSON.stringify(result))
             }
           } else if (doc.type === 'issue') {
@@ -220,7 +203,7 @@ module.exports = {
               t.tinyint('complete');
               t.string('archived', 36); // 
             }
-            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           } else {
             const flatDoc = await prepareFlatData(doc, locationList, sanitized);
@@ -236,7 +219,7 @@ module.exports = {
               t.tinyint('complete');
               t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
             }
-            const result = await saveToMysql(knex, flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           }
           await knex.destroy()
@@ -263,9 +246,17 @@ async function removeGroupForMySQL(groupId) {
   } catch (e) {
     log.error(e)
   }
-  const pathToStateFile = `/mysql-module-state/${groupId}.ini`
-  await fs.unlink(pathToStateFile)
-  console.log(`Removed state file and database for ${groupId}`)
+  try {
+    const pathToStateFile = `/mysql-module-state/${groupId}.ini`
+    await fs.unlink(pathToStateFile)
+    console.log(`Removed legacy state file and database for ${groupId}`)
+  } catch (e) {
+    if (e.code === 'ENOENT') {
+      return;
+    } else {
+      log.error(e)
+    }
+  }
  
 }
 
@@ -317,12 +308,8 @@ const getItemValue = (doc, variableName) => {
  */
 
 const generateFlatResponse = async function (formResponse, locationList, sanitized) {
-  if (formResponse.form.id === '') {
-    formResponse.form.id = 'blank'
-  }
   let flatFormResponse = {
     _id: formResponse._id,
-    formId: formResponse.form.id,
     formTitle: formResponse.form.title,
     startUnixtime: formResponse.startUnixtime,
     buildId: formResponse.buildId||'',
@@ -332,13 +319,14 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     complete: formResponse.complete,
     archived: formResponse.archived||''
   };
-  function set(input, key, value) {
-    flatFormResponse[key.trim()] = input.skipped
-      ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-      : input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-        ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : value
+
+  if (!formResponse.formId) {
+    if (formResponse.form.id === '') {
+      formResponse.form.id = 'blank'
+    }
+    flatFormResponse['formId'] = formResponse.form.id
   }
+
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
       let sanitize = false;
@@ -348,58 +336,62 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         }
       }
       if (!sanitize) {
-      // Simplify the keys by removing formID.itemId
-      let firstIdSegment = ""
-      if (input.tagName === 'TANGY-LOCATION') {
-        // Populate the ID and Label columns for TANGY-LOCATION levels.
-        locationKeys = []
-        for (let group of input.value) {
-          set(input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
-          locationKeys.push(group.value)
-          try {
-            const location = getLocationByKeys(locationKeys, locationList)
-            for (let keyName in location) {
-              if (keyName !== 'children') {
-                set(input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
+        // Simplify the keys by removing formID.itemId
+        let firstIdSegment = ""
+        if (input.tagName === 'TANGY-LOCATION') {
+          // Populate the ID and Label columns for TANGY-LOCATION levels.
+          locationKeys = []
+          for (let group of input.value) {
+            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
+            locationKeys.push(group.value)
+            try {
+              const location = getLocationByKeys(locationKeys, locationList)
+              for (let keyName in location) {
+                if (keyName !== 'children') {
+                  tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
+                }
               }
+            } catch(e) {
+              tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
             }
-          } catch(e) {
-            set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
+          }
+        } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
+          let selectedOption = input.value.find(option => !!option.value) 
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
+        } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
+          // Do nothing :).
+        } else if (input.tagName === 'TANGY-SIGNATURE') {
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+        } else if (input && typeof input.value === 'string') {
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
+        } else if (input && typeof input.value === 'number') {
+          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
+        } else if (input && Array.isArray(input.value)) {
+          let i = 0
+          for (let group of input.value) {
+            i++
+            let keyName = group.name
+            if (!group.name) {
+              keyName = i
+            }
+            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}_${keyName}`, group.value)
+          }
+        } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
+          let elementKeys = Object.keys(input.value);
+          let i = 0
+          for (let key of elementKeys) {
+            i++
+            let keyName = key
+            if (!key) {
+              keyName = i
+            }
+            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}_${keyName}`, input.value[key])
           }
         }
-      } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
-        let selectedOption = input.value.find(option => !!option.value) 
-        set(input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
-      } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
-        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
-      } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
-        set(input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
-      } else if (input && typeof input.value === 'string') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
-      } else if (input && typeof input.value === 'number') {
-        set(input, `${firstIdSegment}${input.name}`, input.value)
-      } else if (input && Array.isArray(input.value)) {
-        let i = 0
-        for (let group of input.value) {
-          i++
-          let keyName = group.name
-          if (!group.name) {
-            keyName = i
-          }
-          set(input, `${firstIdSegment}${input.name}_${keyName}`, group.value)
-        }
-      } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
-        let elementKeys = Object.keys(input.value);
-        let i = 0
-        for (let key of elementKeys) {
-          i++
-          let keyName = key
-          if (!key) {
-            keyName = i
-          }
-          set(input, `${firstIdSegment}${input.name}_${keyName}`, input.value[key])
-        }
-      }
       } // sanitize
     }
   }
@@ -648,14 +640,14 @@ async function convert_response(knex, doc, groupId, tableName) {
   const participantId = doc.participantId
   const caseEventId = doc.caseEventId
 
-  let formID = data['formid']
+  var formID = doc.formId || data['formid']
   if (formID) {
     // thanks to https://stackoverflow.com/a/14822579
     const find = '-'
     const replace = '_'
     formID = formID.replace(new RegExp(find.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), replace);
   } else {
-    let message = `ERROR: formID is null for response: ${JSON.stringify(doc)}`;
+    let message = `ERROR: formId is null for response: ${JSON.stringify(doc)}`;
     log.error(message)
     throw new Error(message)
   }
@@ -769,63 +761,64 @@ async function convert_issue(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function saveToMysql(knex, doc, tablenameSuffix, tableName, docType, primaryKey, createFunction) {
+async function saveToMysql(knex, sourceDb, doc, tablenameSuffix, tableName, docType, primaryKey, createFunction) {
   let data;
   let result = {id: doc._id, tableName, docType, caseId: doc.caseId}
   const tables = []
-  const groupId = doc.groupId
+  const groupId = doc.groupId || sourceDb.name
   // console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
   if (!groupId) {
-    log.info("doc without groupId: " + JSON.stringify(doc))
-  }
-  // Docs of type response must be flattened first to get the table name.
-  if (doc.type.toLowerCase() !== 'response') {
-    try {
-      await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
-    } catch (e) {
-      let message = "Error creating table: " + e;
-      log.error(message)
-      throw new Error(message)
-    }
-  }
-  switch (doc.type.toLowerCase()) {
-    case 'case':
-      data = await convert_case(knex, doc, groupId, tableName)
-      break;
-    case 'participant':
-      data = await convert_participant(knex, doc, groupId, tableName)
-      break;
-    case 'case-event':
-      data = await convert_case_event(knex, doc, groupId, tableName)
-      break;
-    case 'event-form':
-      data = await convert_event_form(knex, doc, groupId, tableName)
-      break;
-    case 'issue':
-      data = await convert_issue(knex, doc, groupId, tableName)
-      break;
-    case 'response':
-      data = await convert_response(knex, doc, groupId, tableName)
-      // Check if table exists and create if needed:
-      tableName = data['formID_sanitized'] + tablenameSuffix
-      result.tableName = tableName
-      // log.info(`Checking tableName: ${tableName}`)
-      if (!tables.includes(tableName)) {
-        tables.push(tableName)
+    log.error("Unable to save a doc without groupId: " + JSON.stringify(doc))
+  } else {
+    // Docs of type response must be flattened first to get the table name.
+    if (doc.type.toLowerCase() !== 'response') {
+      try {
         await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+      } catch (e) {
+        let message = "Error creating table: " + e;
+        log.error(message)
+        throw new Error(message)
       }
-      break;
-    default:
-      let message1 = "No case for this type: " + doc.type;
-      log.error(message1)
-      throw new Error(message1)
-  }
-  try {
-    await insertDocument(groupId, knex, tableName, data, primaryKey);
-  } catch (e) {
-    let message2 = `Error inserting document: ${JSON.stringify(e)}`;
-    log.error(message2)
-    throw new Error(message2)
+    }
+    switch (doc.type.toLowerCase()) {
+      case 'case':
+        data = await convert_case(knex, doc, groupId, tableName)
+        break;
+      case 'participant':
+        data = await convert_participant(knex, doc, groupId, tableName)
+        break;
+      case 'case-event':
+        data = await convert_case_event(knex, doc, groupId, tableName)
+        break;
+      case 'event-form':
+        data = await convert_event_form(knex, doc, groupId, tableName)
+        break;
+      case 'issue':
+        data = await convert_issue(knex, doc, groupId, tableName)
+        break;
+      case 'response':
+        data = await convert_response(knex, doc, groupId, tableName)
+        // Check if table exists and create if needed:
+        tableName = data['formID_sanitized'] + tablenameSuffix
+        result.tableName = tableName
+        // log.info(`Checking tableName: ${tableName}`)
+        if (!tables.includes(tableName)) {
+          tables.push(tableName)
+          await createTable(knex, groupId, tableName, docType, createFunction, primaryKey)
+        }
+        break;
+      default:
+        let message1 = "No case for this type: " + doc.type;
+        log.error(message1)
+        throw new Error(message1)
+    }
+    try {
+      await insertDocument(groupId, knex, tableName, data, primaryKey);
+    } catch (e) {
+      let message2 = `Error inserting document: ${JSON.stringify(e)}`;
+      log.error(message2)
+      throw new Error(message2)
+    }
   }
   // log.info('Finished processing: ' + data._id + " type: " + tableName)
   return result
@@ -902,7 +895,7 @@ async function insertDocument(groupId, knex, tableName, data, primaryKey) {
     // const e = SqlString.escapeId(dataKeys[i], true)
     // dataKeys[i] = e
     if (!infoKeysLower.includes(e.toLowerCase())) {
-      log.info(`Adding new column ${e} to table ${tableName}`)
+      // log.debug(`Adding new column ${e} to table ${tableName}`)
       try {
         await knex.schema.withSchema(groupId.replace(/-/g, '')).alterTable(tableName, function (t) {
           t.text(e)
