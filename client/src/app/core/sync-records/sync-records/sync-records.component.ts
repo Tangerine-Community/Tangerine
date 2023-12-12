@@ -122,6 +122,8 @@ export class SyncRecordsComponent implements OnInit {
       }
       
     });
+
+    this.syncingService.emitSyncComplete();
   }
 }
 

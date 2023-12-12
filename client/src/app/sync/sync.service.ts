@@ -88,12 +88,6 @@ export class SyncService {
       }
     })
 
-    this.syncCouchdbService.onComplete$.subscribe({
-      next: (replicationStatus) => {
-        this.onComplete$.next(replicationStatus);
-      }
-    })
-
     this.syncCouchdbServiceStartTime = new Date().toISOString()
 
     this.replicationStatus = await this.syncCouchdbService.sync(
@@ -590,6 +584,10 @@ export class SyncService {
       }
     }
     return deletedArchivedDocs
+  }
+
+  emitSyncComplete() {
+    this.onComplete$.next();
   }
   
 }

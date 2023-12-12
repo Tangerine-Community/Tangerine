@@ -151,4 +151,8 @@ export class SyncingService {
     }));
   }
 
+  emitSyncComplete() {
+    this.onComplete$.next();
+  }
+
 }
