@@ -230,6 +230,8 @@ export class SyncComponent implements OnInit, OnDestroy {
     } else {
       console.log('Not a Cordova App - no media uploads')
     }
+
+    this.syncService.emitSyncComplete();
     
   }
 
