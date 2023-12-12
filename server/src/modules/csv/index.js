@@ -2,10 +2,8 @@ const DB = require('../../db.js')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const groupReportingViews = require(`./views.js`)
-const {promisify} = require('util');
-const fs = require('fs');
 const moment = require('moment')
-const readFile = promisify(fs.readFile);
+const path = require('path')
 const tangyModules = require('../index.js')()
 const createGroupDatabase = require('../../create-group-database.js')
 const groupsList = require('/tangerine/server/src/groups-list.js')
@@ -58,8 +56,6 @@ module.exports = {
         try {
           const {doc, sourceDb} = data
           const groupId = sourceDb.name
-          // TODO: Can't the fetch of the locationList be cached?
-          const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
           // console.log(doc.type)
           // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
@@ -67,12 +63,12 @@ module.exports = {
           const SANITIZED_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
           
           if (doc.type !== 'issue') {
-            let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
+            let flatResponse = await generateFlatResponse(doc, false, groupId);
             // Process the flatResponse
             let processedResult = flatResponse;
             // Don't add user-profile to the user-profile
             if (processedResult.formId !== 'user-profile') {
-              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb)
             }
             // @TODO Ensure design docs are in the database.
             await saveFormInfo(processedResult, REPORTING_DB);
@@ -82,7 +78,7 @@ module.exports = {
 
             // Sanitizing the data:
             // Repeat the flattening in order to deliver sanitized (non-PII) output
-            flatResponse = await generateFlatResponse(doc, locationList, true, groupId);
+            flatResponse = await generateFlatResponse(doc, true, groupId);
             // Process the flatResponse
             processedResult = flatResponse
             // Don't add user-profile to the sanitized db
@@ -157,7 +153,7 @@ module.exports = {
                   }
                 }
               } else {
-                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                console.log("CSV - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
               }
               // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
               // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
@@ -214,17 +210,17 @@ const getItemValue = (doc, variableName) => {
   return variablesByName[variableName];
 };
 
+
 /** This function processes form response for csv.
  *
  * @param formResponse
- * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
  * @param {boolean} sanitized - flag if data must filter data based on the identifier flag.
  *
  * @param groupId
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList, sanitized, groupId) {
+const  generateFlatResponse = async function (formResponse, sanitized, groupId) {
   let flatFormResponse
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
@@ -232,100 +228,62 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
   const cycleSequencesReplacer = new RegExp('\n', 'g')
   const startDatetime = moment(formResponse.startUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
   const endDatetime = moment(formResponse.endUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
-  if (formResponse.type === 'attendance') {
-    log.info(`Saving flatFormResponse for attendance type `)
-    flatFormResponse = {
-      _id: formResponse._id,
-      formId: formResponse.form.id,
-      cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
-      sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
-      startUnixtime: formResponse.startUnixtime||'',
-      startDatetime: startDatetime,
-      endUnixtime: formResponse.endUnixtime||'',
-      endDatetime: endDatetime,
-      lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
-      buildId: formResponse.buildId||'',
-      buildChannel: formResponse.buildChannel||'',
-      deviceId: formResponse.deviceId||'',
-      groupId: formResponse.groupId||'',
-      complete: formResponse.complete,
-      // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
-      archived: formResponse.archived,
-      tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
-      timestamp: formResponse.timestamp,
-      classId: formResponse.classId,
-      grade: formResponse.grade,
-      schoolName: formResponse.schoolName,
-      schoolYear: formResponse.schoolYear,
-      attendanceList: formResponse.attendanceList,
-      type: formResponse.type,
-      ...formResponse.caseId ? {
-        caseId: formResponse.caseId,
-        eventId: formResponse.eventId,
-        eventFormId: formResponse.eventFormId,
-        participantId: formResponse.participantId || ''
-      } : {}
-    };
-  } else if (formResponse.type === 'scores') {
-    log.info(`Saving flatFormResponse for scores type `)
-    flatFormResponse = {
-      _id: formResponse._id,
-      formId: formResponse.form.id,
-      cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
-      sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
-      startUnixtime: formResponse.startUnixtime||'',
-      startDatetime: startDatetime,
-      endUnixtime: formResponse.endUnixtime||'',
-      endDatetime: endDatetime,
-      lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
-      buildId: formResponse.buildId||'',
-      buildChannel: formResponse.buildChannel||'',
-      deviceId: formResponse.deviceId||'',
-      groupId: formResponse.groupId||'',
-      complete: formResponse.complete,
-      // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
-      archived: formResponse.archived,
-      tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
-      timestamp: formResponse.timestamp,
-      classId: formResponse.classId,
-      grade: formResponse.grade,
-      schoolName: formResponse.schoolName,
-      schoolYear: formResponse.schoolYear,
-      scoreList: formResponse.scoreList,
-      type: formResponse.type,
-      ...formResponse.caseId ? {
-        caseId: formResponse.caseId,
-        eventId: formResponse.eventId,
-        eventFormId: formResponse.eventFormId,
-        participantId: formResponse.participantId || ''
-      } : {}
-    };
-  } else {
-    flatFormResponse = {
-      _id: formResponse._id,
-      formId: formResponse.form.id,
-      cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
-      sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
-      startUnixtime: formResponse.startUnixtime||'',
-      startDatetime: startDatetime,
-      endUnixtime: formResponse.endUnixtime||'',
-      endDatetime: endDatetime,
-      lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
-      buildId: formResponse.buildId||'',
-      buildChannel: formResponse.buildChannel||'',
-      deviceId: formResponse.deviceId||'',
-      groupId: formResponse.groupId||'',
-      complete: formResponse.complete,
-      // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
-      archived: formResponse.archived,
-      tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
-      ...formResponse.caseId ? {
-        caseId: formResponse.caseId,
-        eventId: formResponse.eventId,
-        eventFormId: formResponse.eventFormId,
-        participantId: formResponse.participantId || ''
-      } : {}
-    };
+  flatFormResponse = {
+    _id: formResponse._id,
+    formId: formResponse.form.id,
+    cycleSequences: formResponse.form.cycleSequences ? formResponse.form.cycleSequences.replace(cycleSequencesReplacer, '  ') : '',
+    sequenceOrderMap: formResponse.form.sequenceOrderMap ? formResponse.form.sequenceOrderMap : '',
+    startUnixtime: formResponse.startUnixtime || '',
+    startDatetime: startDatetime,
+    endUnixtime: formResponse.endUnixtime || '',
+    endDatetime: endDatetime,
+    lastSaveUnixtime: formResponse.lastSaveUnixtime || '',
+    buildId: formResponse.buildId || '',
+    buildChannel: formResponse.buildChannel || '',
+    deviceId: formResponse.deviceId || '',
+    groupId: formResponse.groupId || '',
+    complete: formResponse.complete,
+    // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
+    archived: formResponse.archived,
+    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
+    ...formResponse.caseId ? {
+      caseId: formResponse.caseId,
+      eventId: formResponse.eventId,
+      eventFormId: formResponse.eventFormId,
+      participantId: formResponse.participantId || ''
+    } : {}
+  };
+  if (formResponse.type === 'attendance' || formResponse.type === 'behavior' || formResponse.type === 'scores') {
+    // log.info(`Saving flatFormResponse for type ${formResponse.type} `)
+    flatFormResponse['timestamp'] = formResponse.timestamp
+    flatFormResponse['classId'] = formResponse.classId
+    flatFormResponse['grade'] = formResponse.grade
+    flatFormResponse['schoolName'] = formResponse.schoolName
+    flatFormResponse['schoolYear'] = formResponse.schoolYear
+    flatFormResponse['type'] = formResponse.type
+    if (formResponse.type === 'attendance') {
+      flatFormResponse['attendanceList'] = formResponse.attendanceList
+    } else if (formResponse.type === 'behavior') {
+      // flatFormResponse['studentBehaviorList'] = formResponse.studentBehaviorList
+      const studentBehaviorList = formResponse.studentBehaviorList.map(record => {
+        const student = {}
+        Object.keys(record).forEach(key => {
+          if (key === 'behavior') {
+            student[key + '.formResponseId'] = record[key]['formResponseId']
+            student[key + '.internal'] = record[key]['internal']
+            student[key + '.internalPercentage'] = record[key]['internalPercentage']
+            // console.log("special processing for behavior: " + JSON.stringify(student) )
+          } else {
+            // console.log("key: " + key + " record[key]: " + record[key])
+            student[key] = record[key]
+          }
+        })
+        return student
+      })
+      flatFormResponse['studentBehaviorList'] = studentBehaviorList
+    } else if (formResponse.type === 'scores') {
+      flatFormResponse['scoreList'] = formResponse.scoreList
+    }
   }
   
   let formID = formResponse.form.id;
@@ -341,20 +299,38 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
       }
       if (!sanitize) {
         if (input.tagName === 'TANGY-LOCATION') {
-          // Populate the ID and Label columns for TANGY-LOCATION levels.
+          // Populate the id, label and metadata columns for TANGY-LOCATION levels in the current location list.
+          // The location list may be change over time. When values are changed, we attempt to adjust 
+          // so the current values appear in the outputs.
+
+          // This input has an attribute 'locationSrc' with a path to the location list that starts with './assets/'
+          // We need to compare file names instead of paths since it is different on the server
+          const locationSrc = input.locationSrc ? path.parse(input.locationSrc).base : `location-list.json`
+          const locationList = await tangyModules.getLocationListsByLocationSrc(groupId, locationSrc)
           locationKeys = []
           for (let group of input.value) {
             tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
-            try {
-              const location = getLocationByKeys(locationKeys, locationList)
-              for (let keyName in location) {
-                if (keyName !== 'children') {
-                  tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])
+
+            if (!locationList) {
+              // Since tangy-form v4.42.0, tangy-location widget saves the label in the value
+              // use the label value saved in the form response if it is not found in the current location list.
+              // If no label appears in the form response, then we put 'orphanced' for the label. 
+              const valueLabel = group.label ? group.label : 'orphaned'
+              tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, valueLabel)
+            } else {
+              try {
+                const location = getLocationByKeys(locationKeys, locationList)
+                for (let keyName in location) {
+                  if (['descendantsCount', 'children', 'parent', 'id'].includes(keyName)) {
+                    continue
+                  }
+                  tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])                
                 }
+              } catch (e) {
+                const valueLabel = group.label ? group.label : 'orphaned'
+                tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, valueLabel)
               }
-            } catch (e) {
-              tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' || input.tagName === 'TANGY-RADIO-BLOCKS') {
@@ -527,6 +503,7 @@ function saveFormInfo(flatResponse, db) {
       if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
         // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
         let safeKey = key.replace('form-0.', '')
+
         // Make the header property (AKA label) just the variable name.
         const firstOccurenceIndex = safeKey.indexOf('.')
         const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
@@ -541,46 +518,32 @@ function saveFormInfo(flatResponse, db) {
         foundNewHeaders = true
       }
     })
-    if (flatResponse.type === 'attendance') {
-      log.info(`Saving attendanceList headers: ${JSON.stringify(flatResponse.attendanceList)}`)
-      flatResponse.attendanceList.forEach(attendance => {
-        Object.keys(attendance).forEach(key => {
+    if (flatResponse.type === 'attendance' || flatResponse.type === 'behavior' || flatResponse.type === 'scores') {
+      let listName = ""
+      if (flatResponse.type === 'attendance') {
+        listName = 'attendanceList'
+      } else if (flatResponse.type === 'behavior') {
+        listName = 'studentBehaviorList'
+      } else if (flatResponse.type === 'scores') {
+        listName = 'scoreList'
+      }
+      // log.info(`Saving ${listName} headers to ${formDoc._id}: ${JSON.stringify(flatResponse[listName])}`)
+      flatResponse[listName].forEach(record => {
+        Object.keys(record).forEach(key => {
+          // console.log("key: " + key + " record[key]: " + record[key])
           if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
             // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
             let safeKey = key.replace('form-0.', '')
             // Make the header property (AKA label) just the variable name.
             const firstOccurenceIndex = safeKey.indexOf('.')
-            const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
+            const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex + 1)
             let keyArray = key.split('.')
             // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
             // Preserve the namespacing of user-profile
             if (keyArray[0] === 'user-profile') {
-              formDoc.columnHeaders.push({ key, header: safeKey })
+              formDoc.columnHeaders.push({key, header: safeKey})
             } else {
-              formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
-            }
-            foundNewHeaders = true
-          }
-        })
-      })
-    }
-    if (flatResponse.type === 'scores') {
-      log.info(`Saving scoreList headers: ${JSON.stringify(flatResponse.scoreList)}`)
-      flatResponse.scoreList.forEach(score => {
-        Object.keys(score).forEach(key => {
-          if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
-            // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
-            let safeKey = key.replace('form-0.', '')
-            // Make the header property (AKA label) just the variable name.
-            const firstOccurenceIndex = safeKey.indexOf('.')
-            const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
-            let keyArray = key.split('.')
-            // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
-            // Preserve the namespacing of user-profile
-            if (keyArray[0] === 'user-profile') {
-              formDoc.columnHeaders.push({ key, header: safeKey })
-            } else {
-              formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
+              formDoc.columnHeaders.push({key, header: safeKey.substr(secondOccurenceIndex + 1, safeKey.length)})
             }
             foundNewHeaders = true
           }
@@ -619,7 +582,7 @@ function saveFlatFormResponse(doc, db) {
 
 
 
-async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
+async function attachUserProfile(doc, reportingDb, sourceDb) {
     try {
       let userProfileId = doc.tangerineModifiedByUserId
       if (!userProfileId) {
@@ -640,7 +603,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
           // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
           try {
             let userProfileDocOriginal = await sourceDb.get(userProfileId)
-            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false, sourceDb.name);
+            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, false, sourceDb.name);
           } catch (e) {
             // console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
           }
@@ -650,7 +613,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         let docWithProfile =  Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
           let docNamespaced;
           let keyArray = key.split('.')
-          console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+          // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
           if (keyArray[0] === 'user-profile') {
             docNamespaced = Object.assign({}, acc, { [`${key}`]: userProfileDoc[key] })
           } else {
@@ -670,18 +633,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         delete docWithProfile['user-profile.groupId']
         delete docWithProfile['user-profile.complete']
         delete docWithProfile['user-profile.item1_firstOpenTime']
-        delete docWithProfile['user-profile.item1.location.region_id']
-        delete docWithProfile['user-profile.item1.location.region_level']
-        delete docWithProfile['user-profile.item1.location.region_parent']
-        delete docWithProfile['user-profile.item1.location.region_descendantsCount']
-        delete docWithProfile['user-profile.item1.location.district_id']
-        delete docWithProfile['user-profile.item1.location.district_level']
-        delete docWithProfile['user-profile.item1.location.district_parent']
-        delete docWithProfile['user-profile.item1.location.district_descendantsCount']
-        delete docWithProfile['user-profile.item1.location.facility_id']
-        delete docWithProfile['user-profile.item1.location.facility_level']
-        delete docWithProfile['user-profile.item1.location.facility_parent']
-        delete docWithProfile['user-profile.item1.location.facility_descendantsCount']
+        delete docWithProfile['user-profile.item1.location']
 
         return docWithProfile
       } else {
@@ -691,7 +643,6 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
       }
       
     } catch (error) {
-      // There must not be a user profile yet doc uploaded yet.
       // console.log("Returning doc instead of docWithProfile because user profile not uploaded yet.")
       return doc
     }

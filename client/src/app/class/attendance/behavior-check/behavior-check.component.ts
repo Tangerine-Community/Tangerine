@@ -103,7 +103,7 @@ export class BehaviorCheckComponent implements OnInit {
 
     let currentBehaviorReport, savedBehaviorList = null;
     try {
-      const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate, curriculumLabel, randomId, false)
+      const docArray = await this.dashboardService.searchDocs(type, currentClass, reportDate, null, curriculumLabel, randomId, false)
       currentBehaviorReport = docArray? docArray[0]?.doc : null
       savedBehaviorList = currentBehaviorReport?.studentBehaviorList
     } catch (e) {
@@ -117,7 +117,7 @@ export class BehaviorCheckComponent implements OnInit {
       this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
     }
 
-    this.studentBehaviorList =  await this.dashboardService.getAttendanceList(students, savedBehaviorList, curriculum)
+    this.studentBehaviorList =  await this.dashboardService.getBehaviorList(students, savedBehaviorList, curriculum)
     if (!currentBehaviorReport) {
       this.register = {
         _id: id,
@@ -131,7 +131,7 @@ export class BehaviorCheckComponent implements OnInit {
         collection: 'TangyFormResponse',
         type: type,
         form: {
-          id: 'form-internal-behaviour',
+          id: 'behavior',
         },
         items: [{
           id: 'class-registration',

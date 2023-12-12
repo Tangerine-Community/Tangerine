@@ -58,5 +58,29 @@
        "push" : true,
        "filterByLocation" : true
     }
+  },
+  {
+  "id": "form-internal-behaviour",
+  "type": "form",
+  "title": "Comportamientos Int+Ext",
+  "src": "./assets/form-internal-behaviour/form.html",
+  "searchSettings": {
+    "shouldIndex": false,
+    "variablesToIndex": [],
+    "primaryTemplate": "",
+    "secondaryTemplate": ""
+  },
+  "customSyncSettings": {
+    "enabled": false,
+    "push": false,
+    "pull": false,
+    "excludeIncomplete": false
+  },
+  "couchdbSyncSettings": {
+    "enabled": false,
+    "push": true,
+    "pull": false,
+    "filterByLocation": false
   }
+}
 ]
