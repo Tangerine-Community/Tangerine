@@ -1,4 +1,3 @@
-import { SyncCouchdbService } from './sync/sync-couchdb.service';
 import { LockBoxService } from './shared/_services/lock-box.service';
 import { ClassFormService } from './class/_services/class-form.service';
 import { DashboardService } from './class/_services/dashboard.service';
@@ -84,7 +83,6 @@ export class AppComponent implements OnInit {
     private lockBoxService:LockBoxService,
     private dashboardService:DashboardService,
     private variableService:VariableService,
-    private syncCouchdbService:SyncCouchdbService,
     private processMonitorService:ProcessMonitorService,
     private activityService:ActivityService,
     public dialog: MatDialog,
@@ -101,7 +99,6 @@ export class AppComponent implements OnInit {
       user: userService,
       lockBox: lockBoxService,
       syncing: syncingService,
-      syncCouchdbService: syncCouchdbService, 
       sync: syncService,
       appConfig: appConfigService,
       update: updateService,
@@ -222,6 +219,20 @@ export class AppComponent implements OnInit {
       this.isLoggedIn = false;
       this.isAdmin = false;
     });
+
+    if (this.appConfig.checkForUpdateAfterSync) {
+      if (this.appConfig.syncProtocol === '2') {
+        this.syncService.onComplete$.subscribe((replicationStatus) => {
+          if (!replicationStatus.pullError && !replicationStatus.pushError) {
+            this.runAppUpdate();
+          }
+        })
+      } else {
+        this.syncingService.onComplete$.subscribe(() => {
+            this.runAppUpdate();
+        })
+      }
+    }
 
     // Keep GPS chip warm.
     if (!this.appConfig.disableGpsWarming) {
@@ -351,20 +362,14 @@ export class AppComponent implements OnInit {
     this.router.navigate(['login']);
   }
 
-  async isAppUpdateAvailable() {
-    try {
-      const response = await this.http.get('../../release-uuid.txt').toPromise();
-      const foundReleaseUuid = `${response}`.replace(/\n|\r/g, '');
-      const storedReleaseUuid = localStorage.getItem('release-uuid');
-      this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
-    } catch (e) {
-    }
-  }
-
   async updateApp() {
     if (!confirm(_TRANSLATE('Would you like to update? We recommend syncing data before you do.'))) {
       return
     }
+    this.runAppUpdate()
+  }
+
+  async runAppUpdate() {
     await this.variableService.set(VAR_UPDATE_IS_RUNNING, true)
     if (this.window.isCordovaApp) {
       this.updateIsRunning = true;

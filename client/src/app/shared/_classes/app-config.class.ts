@@ -29,6 +29,7 @@ export class AppConfig {
   syncProtocol = '1'
   groupId:string
   groupName:string
+  checkForUpdateAfterSync:boolean
  
   //
   // Sync Protocol 1 configuration.

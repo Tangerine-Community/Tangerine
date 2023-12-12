@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as pako from 'pako';
+import {Subject} from 'rxjs';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../../shared/_services/user.service';
@@ -9,7 +10,10 @@ import {VariableService} from "../../../shared/_services/variable.service";
 
 @Injectable()
 export class SyncingService {
+
   window;
+  public readonly onComplete$: Subject<any> = new Subject();
+
   constructor(
     private appConfigService: AppConfigService,
     private http: HttpClient,
@@ -27,6 +31,8 @@ export class SyncingService {
   async sync(username, skipByFormId?:Array<string>) {
     await this.pull(username)
     await this.push(username, skipByFormId)
+    this.onComplete$.next();
+    
     return true
   }
 
@@ -51,7 +57,7 @@ export class SyncingService {
       const userProfile = await this.userService.getUserProfile(username);
       const appConfig = await this.appConfigService.getAppConfig()
       const DB = await this.userService.getUserDatabase(username);
-      // ok
+
       const doc_ids = await this.getUploadQueue(username, skipByFormId);
       if (doc_ids && doc_ids.length > 0) {
         for (const doc_id of doc_ids) {
