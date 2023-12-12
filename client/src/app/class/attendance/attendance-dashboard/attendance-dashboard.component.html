@@ -1,4 +1,4 @@
-<mat-toolbar *ngIf="!selectedClass" class="classDashboard">
+<mat-toolbar *ngIf="ready && !selectedClass" class="classDashboard">
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
             [routerLink]="['/class-form/']" [queryParams]='classRegistrationParams'>
@@ -9,10 +9,10 @@
     <!--    </button>-->
   </span>
 </mat-toolbar>
-<div class="selectedClassLabel">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+<div class="selectedClassLabel" *ngIf="ready && selectedClass">{{'Summary'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking && curriculum">: {{curriculum?.label}} </ng-container><ng-container *ngIf="reportLocaltime && curriculum">: {{reportLocaltime}}</ng-container></div>
 <!--<mat-card *ngIf="selectedClass">-->
 <!--  <div class="selectedClassLabel">{{'Student Dashboard'|translate}}<br/>{{getClassTitle(selectedClass)}} : <ng-container *ngIf="!ignoreCurriculumsForTracking">{{curriculum?.label}} : </ng-container>{{reportDate}}</div>-->
-  <div>
+  <div *ngIf="ready && selectedClass">
     <table class="dashboard-table">
       <tr>
         <th colspan="2" class="student-name-column">{{'Stud.'|translate}}</th>
@@ -24,7 +24,7 @@
           </ng-template>
       </tr>
       <tr *ngFor="let student of attendanceReport?.attendanceList">
-        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+        <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
         <td class="sms-button-column">
           <button mat-mini-fab color="accent" aria-label="SMS button with an sms icon" (click)="sendText(student)"
                   [ngStyle]="{transform: 'scale(0.6)'}">

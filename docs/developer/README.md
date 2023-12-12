@@ -4,6 +4,7 @@
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
 - [tangerine-dev-tutorial-notes.md](tangerine-dev-tutorial-notes.md)
+- [Reverse Proxy for Developers](./reverse-proxy-for-developers.md)
 
 ## Application design
 - [Data Structures](data-structures.md)

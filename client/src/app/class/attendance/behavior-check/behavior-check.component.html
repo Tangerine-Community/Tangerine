@@ -10,10 +10,10 @@
       </thead>
       <tbody>
         <tr *ngFor="let student of studentBehaviorList">
-          <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+          <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
   <!--        <td class="checkbox-response" *ngIf="student['behavior'] !==null ; else elseBlock ">-->
   <!--        <ng-container *ngIf="student['behavior']['internalPercentage'] || student['behavior']['internalPercentage'] === 0; else naBehaviorTemplate">-->
-          <ng-container *ngIf="student['behavior'] !==null; else elseBlock">
+          <ng-container *ngIf="student['behavior'] !==undefined; else elseBlock">
               <td [ngClass]="{'mediocre' : student['behavior']['internalPercentage'] && (student['behavior']['internalPercentage'] !== null || student['behavior']['internalPercentage'] !== undefined) && student['behavior']['internalPercentage'] < behaviorPrimaryThreshold, 
           'great' : student['behavior']['internalPercentage'] >= behaviorPrimaryThreshold, 
           'good' : student['behavior']['internalPercentage'] < behaviorPrimaryThreshold && student['behavior']['internalPercentage'] >= behaviorSecondaryThreshold,
