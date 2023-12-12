@@ -3,6 +3,7 @@ const log = require('tangy-log').log
 const fs = require('fs-extra');
 const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
+const path = require('path')
 const exec = util.promisify(require('child_process').exec)
 const fsCore = require('fs');
 const readFile = util.promisify(fsCore.readFile);
@@ -56,7 +57,7 @@ module.exports = {
       return data
     },
     reportingOutputs: async function(data) {
-      async function addDocument(sourceDb, doc, locationList, sanitized, exclusions) {
+      async function addDocument(sourceDb, doc, sanitized, exclusions) {
         const tablenameSuffix = ''
         if (exclusions && exclusions.includes(doc.form.id)) {
           // skip!
@@ -79,7 +80,7 @@ module.exports = {
           let tableName, docType, createFunction, primaryKey
           if (doc.type === 'case') {
             // output case
-            const flatDoc = await prepareFlatData(doc, locationList, sanitized);
+            const flatDoc = await prepareFlatData(doc, sanitized);
             log.info("Saving case_instance to MySQL doc _id: " + doc._id)
             // case doc
             tableName = 'case_instances' + tablenameSuffix
@@ -189,7 +190,7 @@ module.exports = {
               log.info('Processed: ' + JSON.stringify(result))
             }
           } else if (doc.type === 'issue') {
-            const flatDoc = await prepareFlatData(doc, locationList, sanitized);
+            const flatDoc = await prepareFlatData(doc, sanitized);
             // issue doc
             tableName = 'issue' + tablenameSuffix
             docType = 'issue'
@@ -206,7 +207,7 @@ module.exports = {
             const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           } else {
-            const flatDoc = await prepareFlatData(doc, locationList, sanitized);
+            const flatDoc = await prepareFlatData(doc, sanitized);
             tableName = null;
             docType = 'response';
             primaryKey = 'ID'
@@ -227,13 +228,13 @@ module.exports = {
       }
         
       const {doc, sourceDb} = data
-      const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+      const locationLists = tangyModules.getLocationLists(sourceDb.name)
       // const groupsDb = new PouchDB(`${process.env.T_COUCHDB_ENDPOINT}/groups`)
       const groupsDb = await new DB(`groups`);
       const groupDoc = await groupsDb.get(`${sourceDb.name}`)
       const exclusions = groupDoc['exclusions']
       let sanitized = false;
-      await addDocument(sourceDb, doc, locationList, sanitized, exclusions);
+      await addDocument(sourceDb, doc, sanitized, exclusions);
       return data
     }
   }
@@ -301,13 +302,14 @@ const getItemValue = (doc, variableName) => {
 /** This function processes form response, making the data structure flatter.
  *
  * @param {object} formData - form response from database
- * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
  * @param {boolean} sanitized - flag if data must filter data based on the identifier flag.
  *
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = async function (formResponse, locationList, sanitized) {
+const generateFlatResponse = async function (formResponse, sanitized) {
+  const groupId = formResponse.groupId;
+
   let flatFormResponse = {
     _id: formResponse._id,
     formTitle: formResponse.form.title,
@@ -315,7 +317,7 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     buildId: formResponse.buildId||'',
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
-    groupId: formResponse.groupId||'',
+    groupId: groupId||'',
     complete: formResponse.complete,
     archived: formResponse.archived||''
   };
@@ -339,20 +341,38 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
         // Simplify the keys by removing formID.itemId
         let firstIdSegment = ""
         if (input.tagName === 'TANGY-LOCATION') {
-          // Populate the ID and Label columns for TANGY-LOCATION levels.
+          // Populate the id, label and metadata columns for TANGY-LOCATION levels in the current location list.
+          // The location list may be change over time. When values are changed, we attempt to adjust 
+          // so the current values appear in the outputs.
+  
+          // This input has an attribute 'locationSrc' with a path to the location list that starts with './assets/'
+          // We need to compare file names instead of paths since it is different on the server
+          const locationSrc = input.locationSrc ? path.parse(input.locationSrc).base : `location-list.json`
+          const locationList = await tangyModules.getLocationListsByLocationSrc(groupId, locationSrc)
           locationKeys = []
           for (let group of input.value) {
             tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
-            try {
-              const location = getLocationByKeys(locationKeys, locationList)
-              for (let keyName in location) {
-                if (keyName !== 'children') {
-                  tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
+  
+            if (!locationList) {
+              // Since tangy-form v4.42.0, tangy-location widget saves the label in the value
+              // use the label value saved in the form response if it is not found in the current location list.
+              // If no label appears in the form response, then we put 'orphanced' for the label. 
+              const valueLabel = group.label ? group.label : 'orphaned'
+              tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, valueLabel)
+            } else {
+              try {
+                const location = getLocationByKeys(locationKeys, locationList)
+                for (let keyName in location) {
+                  if (['descendantsCount', 'children', 'parent', 'id'].includes(keyName)) {
+                    continue
+                  }
+                  tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])                
                 }
+              } catch (e) {
+                const valueLabel = group.label ? group.label : 'orphaned'
+                tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, valueLabel)
               }
-            } catch(e) {
-              tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
@@ -424,8 +444,8 @@ function stringifyDocDataObjects(doc) {
   return doc
 }
 
-async function prepareFlatData(doc, locationList, sanitized) {
-  let flatResponse = await generateFlatResponse(doc, locationList, sanitized);
+async function prepareFlatData(doc, sanitized) {
+  let flatResponse = await generateFlatResponse(doc, sanitized);
   // If there are any objects/arrays in the flatResponse, stringify them. Also make all property names lowercase to avoid duplicate column names (example: ID and id are different in python/js, but the same for MySQL leading attempting to create duplicate column names of id and ID).
   flatResponse = Object.keys(flatResponse).reduce((acc, key) => {
     return {

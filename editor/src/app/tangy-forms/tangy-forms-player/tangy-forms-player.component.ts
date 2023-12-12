@@ -220,23 +220,19 @@ export class TangyFormsPlayerComponent {
   }
 
   async saveResponse(state) {
-    let stateDoc = {}
-    stateDoc = await this.tangyFormService.getResponse(state._id)
+    let stateDoc = await this.tangyFormService.getResponse(state._id)
     const archiveStateChange = state.archived === stateDoc['archived']
     if (stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary && archiveStateChange) {
       // Since what is in the database is complete, and it's still complete, and it doesn't have 
       // a summary where they might add some input, don't save! They are probably reviewing data.
     } else {
-      if (!stateDoc) {
-        let r = await this.tangyFormService.saveResponse(state)
-        stateDoc = await this.tangyFormService.getResponse(state._id)
-      }
-      await this.tangyFormService.saveResponse({
+      // add metadata
+      stateDoc = {
         ...state,
-        _rev: stateDoc['_rev'],
         location: this.location || state.location,
         ...this.metadata
-      })
+      }   
+      await this.tangyFormService.saveResponse(stateDoc)
     }
     this.response = state
   }

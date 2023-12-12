@@ -47,7 +47,8 @@ export class ResponsesComponent implements OnInit {
   }
 
   async getResponses() {
-    const locationList = await this.http.get('./assets/location-list.json').toPromise()
+    const data: any = await this.groupsService.getLocationLists(this.groupId);
+    const locationLists = data;
     let responses = []
     if (this.filterBy === '*') {
       responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responses/${this.limit}/${this.skip}`).toPromise()
@@ -56,7 +57,7 @@ export class ResponsesComponent implements OnInit {
     }
     const flatResponses = []
     for (let response of responses) {
-      const flatResponse = await generateFlatResponse(response, locationList, false)
+      const flatResponse = await generateFlatResponse(response, locationLists, false)
       this.excludeColumns.forEach(column => delete flatResponse[column])
       flatResponses.push(flatResponse)
     }

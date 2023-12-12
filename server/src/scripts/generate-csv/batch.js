@@ -110,15 +110,30 @@ async function batch() {
           }
         })]
         if (doc.type === 'attendance') {
-          // let row = []
           doc.attendanceList.forEach(attendance => {
-            row = [...row.slice(0,-6), attendance.id, attendance.name, attendance.phone, attendance.forms, attendance.absent, attendance.mood ]
+            let row = [doc._id, ...state.headersKeys.map(header => {
+              let value = attendance[header];
+              console.log("header: " + header + " value: " + value)
+              return value
+            })]
             rows.push(row)
           })
         } else if (doc.type === 'scores') {
-          // let row = []
           doc.scoreList.forEach(score => {
-            row = [...row.slice(0,-4), score.id, score.name, score.forms, score.score ]
+            let row = [doc._id, ...state.headersKeys.map(header => {
+              let value = score[header];
+              console.log("header: " + header + " value: " + value)
+              return value
+            })]
+            rows.push(row)
+          })
+        } else if (doc.type === 'behavior') {
+          doc.studentBehaviorList.forEach(behavior => {
+            let row = [doc._id, ...state.headersKeys.map(header => {
+              let value = behavior[header];
+              console.log("header: " + header + " value: " + value)
+              return value
+            })]
             rows.push(row)
           })
         } else {

@@ -1,25 +1,48 @@
 
-      <tangy-form id="class-registration" title="Class Registration" category="null"
-        on-open="
-        
-        "
-        exit-clicks=""
-        cycle-sequences=""
-        on-change="
-        
-        "
-        on-submit="
-         
-        "
-      >
-        
-          <tangy-form-item id="class-registration" 
-            title="Class Registration"
-             hide-back-button
-            
+<tangy-form id="class-registration" title="Class Registration" category="null"
+
+
+
+
+            fullscreen-nav-align="top"
 
             on-open="
-              
+
+
+
+        "
+            exit-clicks=""
+            cycle-sequences=""
+            on-change="
+
+
+
+        "
+            on-submit="
+
+
+
+        "
+            on-resubmit="
+
+        "
+>
+
+    <tangy-form-item id="class-registration"
+                     title="Class Registration"
+                     hide-back-button
+
+
+
+
+
+
+
+                     scoring-fields=""
+                     custom-scoring-logic=""
+                     on-open="
+
+
   function fetchLocal(url) {
       return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest
@@ -51,11 +74,10 @@
       });
       let tcsEl = document.querySelector('tangy-checkboxes[name=\'curriculum\']')
       let cbDiv = tcsEl.$.checkboxes;
-     debugger
       cbDiv.innerHTML = ''
       data.forEach(function(el) {
-        if ((typeof el.archived == 'undefined' || el.archived == false) 
-        && el.id != 'reports'  && el.id !=='class-registration'   
+        if ((typeof el.archived == 'undefined' || el.archived == false)
+        && el.id != 'reports'  && el.id !=='class-registration'
         && el.id !=='student-registration'   && el.id !=='user-profile') {
             let checkbox = document.createElement('tangy-checkbox')
             checkbox.name = el.id
@@ -74,28 +96,42 @@
       }
     }
      let that = this;
-     loadCurricula(that);   
-                  
+     loadCurricula(that);
+
+
             "
-            on-change="
+                     on-change="
+
+
             "
-            category="  
+                     category="
+
+
             "
-          >
-            <template>
-                
-      <tangy-input type="text" allowed-pattern="" inner-label="" name="school_name" required="" question-number="" label="School name" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
-    
-      <tangy-input type="text" allowed-pattern="" inner-label="" name="school_year" required="" question-number="" label="School year" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
-    
-      <tangy-input type="text" allowed-pattern="" inner-label="" name="grade" required="" question-number="" label="Grade" hint-text="[Don't just write 3, e.g., but write out Grade 3]" error-text="" warn-text="" class="" style=""></tangy-input>
-    
-    
-     <tangy-checkboxes name="curriculum" class="" style="" required="" question-number="" label="Curriculum" error-text="" hint-text="" option-select-label="----" secondary-label="">
-      </tangy-checkboxes>       
-              
-            </template>
-          </tangy-form-item>
-        
-      </tangy-form>
-    
+    >
+        <template>
+
+
+            <tangy-input type="text" allowed-pattern="" inner-label="" name="school_name" required="" question-number="" label="School name" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+            <tangy-input type="text" allowed-pattern="" inner-label="" name="school_year" required="" question-number="" label="School year" hint-text="" error-text="" warn-text="" class="" style=""></tangy-input>
+
+            <tangy-input type="text" allowed-pattern="" inner-label="" name="grade" required="" question-number="" label="Grade" hint-text="[Don't just write 3, e.g., but write out Grade 3]" error-text="" warn-text="" class="" style=""></tangy-input>
+
+            <tangy-checkboxes name="curriculum" class="" style="" required="" question-number="" label="Curriculum" error-text="" hint-text="" option-select-label="----" secondary-label="">
+            </tangy-checkboxes>
+
+            <tangy-checkbox
+                    name="ignoreCurriculumsForTracking"
+                    question-number=""
+                    label="
+            <t-lang en>Share attendance and behaviour tracking across curriculums?</t-lang>"
+                    hint-text=""
+                    error-text=""
+            >
+            </tangy-checkbox>
+
+        </template>
+    </tangy-form-item>
+
+</tangy-form>

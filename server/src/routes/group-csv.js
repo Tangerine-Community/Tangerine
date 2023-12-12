@@ -157,6 +157,7 @@ const listCSVDataSets = async (req, res) => {
 }
 
 const getDataset = async (datasetId) => {
+  
   const result = await CSV_DATASETS.get(datasetId)
   const http = await getUser1HttpInterface()
   let state = {}
@@ -164,25 +165,60 @@ const getDataset = async (datasetId) => {
   let fileExists = false;
   let stateExists = false
   let excludePii = false
-  const stateUrl = encodeURI(result.stateUrl)
+  let stateUrl = encodeURI(result.stateUrl)
+  let errorMessage = '' // if error connecting.
+  let response
   try {
-    const response = await http.get(stateUrl)
+    console.log("Getting: " + stateUrl)
+    response = await http.get(stateUrl)
+  } catch (error) {
+    if (error.code === 'ECONNREFUSED') {
+      doLocalWorkaround = true
+      errorMessage = 'Error connecting to server: ' + error.code
+      const url = new URL(stateUrl);
+      url.hostname = 'localhost';
+      url.protocol = 'http'
+      url.port = 80
+      stateUrl = url.href
+      doLocalWorkaround = false
+      errorMessage = ''
+      console.log("Retrying at : " + stateUrl)
+      try {
+        response = await http.get(stateUrl)
+      } catch (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+      }
+    }
+  }
+  if (response) {
     stateExists = true
     complete = response.data.complete
     state = response.data
     // Old state files used to have an includePii property that implied the reverse meaning of what it sounds, was actually excludePii.
     // Find which property this has and set excludePii accordingly.
-    excludePii = state.hasOwnProperty('excludePii') 
-      ? state.excludePii 
-      : state.hasOwnProperty('includePii') 
-        ? state.includePii 
-        : undefined 
-    fileExists = await fs.pathExists(`/csv/${result.fileName}`)
-  } catch (error) {
-    complete = false
-    fileExists = false
-    stateExists = false
+    excludePii = state.hasOwnProperty('excludePii')
+      ? state.excludePii
+      : state.hasOwnProperty('includePii')
+        ? state.includePii
+        : undefined
   }
+  
+  fileExists = await fs.pathExists(`/csv/${result.fileName}`)
+  
   const csvDataSet = {
     id: datasetId,
     state,
@@ -206,6 +242,9 @@ const getDataset = async (datasetId) => {
     (!csvDataSet.state.complete && !csvDataSet.state.updatedOn)
   ) {
     csvDataSet.status = 'Stopped'
+  } else if (doLocalWorkaround) {
+    csvDataSet.status = 'In progress'
+    csvDataSet.errorMessage = errorMessage
   } else {
     csvDataSet.status = 'In progress'
   }

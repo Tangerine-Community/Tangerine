@@ -7,6 +7,8 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { GroupsService } from '../services/groups.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
+import {AppConfig} from "../../../../../client/src/app/shared/_classes/app-config.class";
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-new-csv-data-set',
@@ -41,6 +43,7 @@ export class NewCsvDataSetComponent implements OnInit {
     private formsService: TangerineFormsService,
     private groupsService:GroupsService,
     private serverConfig: ServerConfigService,
+    private http: HttpClient,
     private errorHandler: TangyErrorHandler) {
     this.breadcrumbs = [
       ...this.breadcrumbs,
@@ -69,10 +72,16 @@ export class NewCsvDataSetComponent implements OnInit {
   async getForms() {
     const csvTemplates = (await this.formsService.listCsvTemplates(this.groupId))
     const config = await this.serverConfig.getServerConfig()
+    const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
     const appendedForms = <Array<TangerineFormInfo>>[
       {id: 'participant',title:_TRANSLATE('Participant')},
       {id: 'event-form',title:_TRANSLATE('Event Form')},
       {id: 'case-event',title: _TRANSLATE('Case Event')}]
+    if (appConfig.teachProperties?.useAttendanceFeature) {
+        appendedForms.push(<TangerineFormInfo>{id: 'attendance', title: _TRANSLATE('Attendance')})
+        appendedForms.push(<TangerineFormInfo>{id: 'behavior', title: _TRANSLATE('Behavior')})
+        appendedForms.push(<TangerineFormInfo>{id: 'scores', title: _TRANSLATE('Scores')})
+    }
     let forms = await this.formsService.getFormsInfo(this.groupId)
     if(config.enabledModules.includes('case')){
       forms = [...forms, ...appendedForms]
@@ -92,7 +101,7 @@ export class NewCsvDataSetComponent implements OnInit {
     this.activeForms = this.forms.filter(form => !form.archived);
     this.archivedForms = this.forms.filter(form => form.archived);
   }
-
+  
   async process() {
     const forms = this.selectedForms
       .map(formId => this.templateSelections[formId] ? `${formId}:${this.templateSelections[formId]}` : formId)

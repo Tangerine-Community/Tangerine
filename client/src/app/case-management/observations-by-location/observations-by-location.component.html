@@ -11,8 +11,9 @@
       <th *ngFor="let col of columns">
         {{col.name}}
       </th>
+      <th>{{'Start Date and Time'|translate}}</th>
       <th>{{'Complete?'|translate}}</th>
-      <th>{{'Date and Time'|translate}}</th>
+      <th>{{'Upload Date and Time'|translate}}</th>
     </tr>
   </thead>
   <tbody>
@@ -27,10 +28,13 @@
         {{col.value|json}}
       </td>
       <td>
+        {{observation.startDatetime| date:'MMM d, y, h:mm a'}}
+      </td>
+      <td>
         {{observation.complete}}
       </td>
       <td>
-        {{observation.startDatetime| date:'MMM d, y, h:mm a'}}
+        {{observation.uploadDatetime| date:'MMM d, y, h:mm a'}}
       </td>
     </tr>
   </tbody>
