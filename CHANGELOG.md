@@ -48,8 +48,6 @@ git checkout -b v3.30.1 v3.30.1
 docker rmi tangerine/tangerine:<previous_version>
 ```
 
-# What's new
-
 ## v3.30.0
 
 __New Features__
