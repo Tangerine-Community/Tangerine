@@ -76,6 +76,8 @@ export class SyncCouchdbService {
 
   public readonly syncMessage$: Subject<any> = new Subject();
   public readonly onCancelled$: Subject<any> = new Subject();
+  public readonly onComplete$: Subject<any> = new Subject();
+
   cancelling = false
   syncing = false 
   batchSize = 200
@@ -283,6 +285,9 @@ export class SyncCouchdbService {
     if (this.cancelling) {
       this.finishCancelling(replicationStatus)
     }
+
+    // Send the onComplete event.
+    this.onComplete$.next(replicationStatus);
 
     // All done.
     return replicationStatus

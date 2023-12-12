@@ -47,6 +47,7 @@ export class SyncService {
   syncMessage: any = {};
   public readonly syncMessage$: Subject<any> = new Subject();
   public readonly onCancelled$: Subject<any> = new Subject();
+  public readonly onComplete$: Subject<any> = new Subject();
   replicationStatus: ReplicationStatus
   syncCouchdbServiceStartTime:string
   syncCouchdbServiceEndime:string
@@ -84,6 +85,12 @@ export class SyncService {
     this.syncCouchdbService.onCancelled$.subscribe({
       next: (replicationStatus) => {
         this.onCancelled$.next(replicationStatus)
+      }
+    })
+
+    this.syncCouchdbService.onComplete$.subscribe({
+      next: (replicationStatus) => {
+        this.onComplete$.next(replicationStatus);
       }
     })
 
