@@ -26,19 +26,18 @@ export class CaseManagementService {
     const allLocations:any = Object.assign({}, res);
     // Calculate our locations by generating the path in the locationList object.
     const locationList = allLocations.locations;
-    const myLocations = [];
     const locations = [];
     const results = await this.getVisitsByYearMonthLocationId();
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
-      const visitKey = visit.key.split('-');
-      if (visitKey[2].toString() === month.toString() && visitKey[3].toString() === year.toString()) {
-        let item = findById(locationList, visitKey[0]);
+      const parts = this._splitQueryKeyParts(visit.key)
+      if (parts.month === month.toString() && parts.year === year.toString()) {
+        let item = findById(locationList, parts.location);
         if (!item) {
           locations.push({
-            location: visitKey[0],
-            visits: countUnique(visits, visitKey[0]),
-            id: visitKey[0]
+            location: parts.location,
+            visits: countUnique(visits, parts.location),
+            id: parts.location
           })
         } else {
           locations.push({
@@ -54,18 +53,29 @@ export class CaseManagementService {
   }
 
   async getFilterDatesForAllFormResponses() {
-
     const results = await this.getVisitsByYearMonthLocationId();
     const timeLapseFilter = [];
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
-      const visitKey = visit.key.split('-');
+      const parts = this._splitQueryKeyParts(visit.key)
       timeLapseFilter.push({
-        value: `${visitKey[2].toString()}-${visitKey[3].toString()}`,
-        label: `${this.monthNames[visitKey[2].toString()]}, ${visitKey[3].toString()}`,
+        value: `${parts.month}-${parts.year}`,
+        label: `${this.monthNames[parts.month]}, ${parts.year}`,
       });
     });
     return removeDuplicates(timeLapseFilter, 'value');
+  }
+
+  _splitQueryKeyParts(key) {
+      // This is a very hacky way to get the dates from the result key
+      // A better fix would be to assign the values to the result value
+      let keyParts = key.split('-')
+      const yearKey = keyParts.pop()
+      const monthKey = keyParts.pop()
+      const dayKey = keyParts.pop()
+      const locationKey = keyParts.join('-')
+
+      return { year: yearKey, month: monthKey, day: dayKey, location: locationKey }
   }
 
   async  getFilterDatesForAllFormResponsesByLocationId(locationId: string) {
@@ -126,6 +136,7 @@ export class CaseManagementService {
       return {
         formTitle,
         startDatetime: observation.doc.startUnixtime,
+        uploadDatetime: observation.doc.uploadDatetime,
         complete: observation.doc.complete,
         formIndex: index,
         _id: observation.doc._id,

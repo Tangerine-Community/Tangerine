@@ -1,6 +1,6 @@
 import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -14,12 +14,12 @@ import snakeCase from '@queso/snake-case'
 })
 export class ManageLocationListMetadataComponent implements OnInit {
 
-  title = _TRANSLATE('Location List Metadata')
-  breadcrumbs:Array<Breadcrumb> = []
- 
-  groupName;
+  @Input() level: string;
+  @Input() locationListFileName;
+
+  title; 
+  groupId;
   locationLevel;
-  locationListFileName = 'location-list.json';
   isFormShown = false;
   defaultFormState = { label: '', id: '', requiredField: null, variableName: '' };
   form: any;
@@ -27,30 +27,23 @@ export class ManageLocationListMetadataComponent implements OnInit {
   currentMetadata;
   isItemMarkedForUpdate = false;
   itemToUpdate;
+  
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
     private errorHandler: TangyErrorHandler,
     private groupsService: GroupsService) { }
+
   async ngOnInit() {
 
     this.form = this.defaultFormState;
     this.route.params.subscribe(params => {
-      this.groupName = params.groupId;
-      this.locationLevel = params.locationLevel;
-      this.breadcrumbs = [
-        <Breadcrumb>{
-          label: _TRANSLATE('Location List'),
-          url: 'location-list'
-        },
-        <Breadcrumb>{
-          label: _TRANSLATE('Location List Metadata'),
-          url: `location-list/manage-location-list-metadata/${params.locationLevel}`
-        }
-      ]
+      this.groupId = params.groupId;
     });
+    this.locationLevel = this.level;
+    this.title = `${this.level} Metadata`
     try {
-      this.locationListData = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
+      const data: any = await this.groupsService.getLocationList(this.groupId, this.locationListFileName);
+      this.locationListData = data;
       this.locationListData['metadata'] = this.locationListData.metadata || {};
       this.locationListData.metadata[this.locationLevel] = this.locationListData.metadata[this.locationLevel] || [];
       this.currentMetadata = this.locationListData.metadata[this.locationLevel];
@@ -64,6 +57,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
     this.isFormShown = !this.isFormShown;
     this.form = {...this.defaultFormState};
   }
+
   async addMetadataItem() {
 
     let levelMetadata = this.currentMetadata;
@@ -77,7 +71,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
       this.locationListData.metadata[this.locationLevel] = levelMetadata;
       this.currentMetadata = this.locationListData.metadata[this.locationLevel];
       this.isFormShown = false;
-      await this.saveLocationList();
+      await this.saveLocationListToDisk();
     } else {
       this.errorHandler.handleError("The variable name already Exists in the location list");
     }
@@ -88,12 +82,19 @@ export class ManageLocationListMetadataComponent implements OnInit {
     this.form.variableName = createVariableName(event.target.value);
   }
 
+  cancelMetadataChange() {
+    this.isItemMarkedForUpdate = false;
+    this.form = this.defaultFormState;;
+    this.itemToUpdate = {};
+    this.isFormShown = false;
+  }
+
   async deleteItem(item) {
     const proceedWithDeletion = confirm(`Delete ${item.label} ?`);
     if (proceedWithDeletion) {
       this.currentMetadata = this.currentMetadata.filter(metadata => metadata.id !== item.id);
       this.locationListData.metadata[this.locationLevel] = this.currentMetadata;
-      await this.saveLocationList();
+      await this.saveLocationListToDisk();
     }
   }
 
@@ -118,18 +119,12 @@ export class ManageLocationListMetadataComponent implements OnInit {
     this.form = this.defaultFormState;;
     this.itemToUpdate = {};
     this.isFormShown = false;
-    await this.saveLocationList();
+    await this.saveLocationListToDisk();
   }
 
-  async saveLocationList() {
+  async saveLocationListToDisk() {
     try {
-      const payload = {
-        filePath: this.locationListFileName,
-        groupId: this.groupName,
-        fileContents: JSON.stringify(this.locationListData)
-      };
-      await this.http.post(`/editor/file/save`, payload).toPromise();
-      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
+      await this.groupsService.saveFileToGroupDirectory(this.groupId, this.locationListData, this.locationListFileName);
     } catch (error) {
       this.errorHandler.handleError('Error Saving Location List File to disk');
     }

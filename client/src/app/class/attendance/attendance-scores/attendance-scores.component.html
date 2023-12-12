@@ -16,15 +16,13 @@
   <div>
     <mat-tab-group>
       <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">
-<!--        <h2 class="header">{{unit}}</h2>-->
         <table class="dashboard-table">
           <tr>
             <th>{{'Student'|translate}}</th>
             <th>{{'Score'|translate}}</th>
           </tr>
           <tr *ngFor="let student of scoreList">
-            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
-<!--            <td style="text-align: center">{{student['score_'+unit]}}</td>-->
+            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
             <td style="text-align: center">
               <mat-form-field class="example-full-width">
               <input id="scoreCtrl_{{unitIndex}}" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"

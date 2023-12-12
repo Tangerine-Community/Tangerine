@@ -1,19 +1,66 @@
 # What's new
 
-# What's new
+## v3.30.1
+
+__New Features__
+- Multiple Location Lists can be configured using the Tangerine server web interface
+-- Create and manage location lists for use in Tangerine forms
+-- The default location list is used for device and device user assignment.
+- The app-config.json teachProperties has new properties, `"unitDates"` and `"studentRegistrationFields"`:
+  ```    
+  "unitDates": [{"name": "Unidad 1","start": "2023-02-15", "end": "2023-04-23"}, {"name": "Unidad 2","start": "2023-04-24", "end": "2023-06-30"}], 
+  "studentRegistrationFields": ["student_name", "student_surname", "phone", "classId"]
+  ```
+  The `unitDates` property is used to configure the dates for each unit in the Class module. 
+  The `studentRegistrationFields` property is used to configure the fields from the Student Registration form to be saved in the class attendance, behavior, and score register and CSV's.
+- The app-config.json teachProperties has a new property, `"showAttendanceCalendar"`, which enables the Attendance Calendar in the Class module when set to true.
+- Intl/locale support in Class: The class module currently supports the es-gt locale. Add additional locales in class/module.ts:
+  ```js
+  import { registerLocaleData } from '@angular/common';
+  import localeEsGt from '@angular/common/locales/es-GT';
+  registerLocaleData(localeEsGt);
+  ```
+- The "Request spreadsheets" CSV output form now has three new forms to view if `useAttendanceFeature` is set to true in app-config.json: Attendance, Behavior, and Score
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. 
+df -h
+# If there is not more than 12 GB plus the size of the data folder, create more space before proceeding. 
+# Good candidates to remove are: data back-up folders and older versions of the Tangerine image
+# rm -rf ../data-backup-<date>
+# docker rmi tangerine/tangerine:<version>
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout -b v3.30.1 v3.30.1
+./start.sh v3.30.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:<previous_version>
+```
 
 ## v3.30.0
 
 __New Features__
-- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and "homeUrl": "attendance-dashboard"
-  to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report.
+
+- The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and `"homeUrl": "attendance-dashboard"`
+ to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report. 
 - The Attendance records generate _id's based on the grade, curriculum, user, and date and time of the record, so that they can be sorted chronologically.
   See dashboard.service generateSearchableId for details.
 - Class now supports `eventFormRedirect` to redirect to different url after submit: `on-submit="window.eventFormRedirect = `/attendance-check`"`
 - New app-config.json configuration for teach properties:
   ```js
   "teachProperties": {
-    "units": ["unit 1", "unit 2", "unit 3", "unit 4"],
+    "units": ["Unidad 1", "Unidad 2"],
     "attendancePrimaryThreshold": 80,
     "attendanceSecondaryThreshold": 70,
     "scoringPrimaryThreshold": 70,
@@ -22,8 +69,8 @@ __New Features__
     "behaviorSecondaryThreshold": 80,
     "useAttendanceFeature": true
   }
-  ```
   The PrimaryThreshold and SecondaryThreshold values are used to determine the color of the cell in the reports.
+
 - Updated docker-tangerine-base-image to v3.8.0, which adds the cordova-plugin-x-socialsharing plugin and enables sharing to WhatsApp.
 
 __Fixes__
@@ -52,12 +99,14 @@ git checkout -b v3.30.0 v3.30.0
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.29.1
 ```
+
 ## v3.29.1
 
 __Fixes__
 
-- Fix undefined reference in markQualifyingEventsAsComplete
-  __Server upgrade instructions__
+- Fix undefined referencein markQualifyingEventsAsComplete
+
+__Server upgrade instructions__
 
 Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
 
@@ -119,9 +168,9 @@ git checkout -b v3.29.0 v3.29.0
 docker rmi tangerine/tangerine:<previous_version>
 ```
 
-## v3.28.X
+## v3.28
 
-This released turned into v4.X
+- This became v4
 
 ## v3.27.8
 
@@ -168,6 +217,46 @@ git checkout -b v3.27.8 v3.27.8
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.27.7
 ```
+
+## v3.29.0
+
+__New Features__
+- Case, Event and Form Archive and Unarchive
+
+We have released an update to Tangerine which allows for the archiving and un-archiving of both events, and forms within events. This is an extension of the already existing functionality by which an entire case can be archived. The purpose of this is to empower data management teams using Tangerine to "clean up" messy cases where extraneous data has been added to a case in error, or by a conflict situation. The purpose of this document is to summarize both the configuration to enable this, and to demonstrate the use of these functions. This functionality will only apply to the web-based version of Tangerine, and will not be available on tablets.
+
+__Package Updates__
+- Updated tangy-form to v4.40.0
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. 
+df -h
+# If there is not more than 12 GB plus the size of the data folder, create more space before proceeding. 
+# Good candidates to remove are: data back-up folders and older versions of the Tangerine image
+# rm -rf ../data-backup-<date>
+# docker rmi tangerine/tangerine:<version>
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout -b v3.29.0 v3.29.0
+./start.sh v3.29.0
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:<previous_version>
+```
+
+## v3.28.X
+
+- Became v4.0
 
 ## v3.27.7
 
