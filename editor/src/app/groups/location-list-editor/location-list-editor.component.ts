@@ -11,6 +11,9 @@ import { Loc } from 'tangy-form/util/loc.js';
   styleUrls: ['./location-list-editor.component.css']
 })
 export class LocationListEditorComponent implements OnInit {
+
+  @Input() locationListFileName;
+
   locationList: any;
   currentPath = [];
   currentLocation: any;
@@ -24,7 +27,6 @@ export class LocationListEditorComponent implements OnInit {
   metadata: any = {};
   showLocationForm = false;
   groupId = '';
-  locationListFileName = 'location-list.json';
   isMoveLocationFormShown = false;
   parentItemsForMoveLocation;
   moveLocationParentLevelId;
@@ -44,22 +46,21 @@ export class LocationListEditorComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
     });
+    await this.getLocationListFromDisk()
+  }
+
+  async getLocationListFromDisk() {
     try {
-      const data: any = await this.groupsService.getLocationList(this.groupId);
-      const flatLocationList = Loc.flatten(data);
-      // TODO Why do we need zoneLevelLocations???
-      const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone');
+      const data: any = await this.groupsService.getLocationList(this.groupId, this.locationListFileName);
+      this.locationList = data;
       this.locationsLevels = data.locationsLevels;
       this.locationsLevelsLength = data.locationsLevels.length;
-      await this.setLocationList(data);
+
+      this.openPath(this.currentPath)
+      
     } catch (error) {
       this.errorHandler.handleError('Could Not Load Location List Data');
     }
-  }
-
-  async setLocationList(locationList) {
-    this.locationList = locationList;
-    this.openPath([]);
   }
 
   openPath(path) {
@@ -111,7 +112,7 @@ export class LocationListEditorComponent implements OnInit {
     }
     await this.calculateDescendants();
     await this.saveLocationListToDisk();
-    await this.setLocationList(this.locationList);
+    await this.getLocationListFromDisk();
     this.form = { label: '', id: '' };
     this.showLocationForm = false;
   }
@@ -126,8 +127,8 @@ export class LocationListEditorComponent implements OnInit {
     const index = flatLocationList.locations.findIndex(location => location.id === this.form.id);
     flatLocationList.locations[index] = { ...flatLocationList.locations[index], ...this.form };
     this.locationList = Loc.unflatten(flatLocationList);
-    await this.setLocationList(this.locationList);
     await this.saveLocationListToDisk();
+    await this.getLocationListFromDisk();
     this.isItemMarkedForUpdate = false;
     this.hideLocationForm();
   }
@@ -165,7 +166,7 @@ export class LocationListEditorComponent implements OnInit {
     this.locationList.locations = findAndAdd(locationObject, this.moveLocationParentLevelId, { [item.id]: { ...item } });
     await this.calculateDescendants();
     await this.saveLocationListToDisk();
-    await this.setLocationList(this.locationList);
+    await this.getLocationListFromDisk();
     this.isMoveLocationFormShown = false;
     this.parentItemsForMoveLocation = null;
   }
@@ -182,7 +183,6 @@ export class LocationListEditorComponent implements OnInit {
       const payload = { filePath: this.locationListFileName, groupId: this.groupId, fileContents: JSON.stringify(this.locationList) };
       await this.http.post(`/editor/file/save`, payload).toPromise();
       this.isLoading = false;
-      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
     } catch (error) {
       this.isLoading = false;
       this.errorHandler.handleError('Error Saving Location Lits File to disk');

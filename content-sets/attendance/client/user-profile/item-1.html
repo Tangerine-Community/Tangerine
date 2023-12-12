@@ -1,0 +1,58 @@
+<form>
+
+  <tangy-radio-buttons required name="role">
+    <option value="coach">Coach</option>
+    <option value="city_manager">City Manager</option>
+    <option value="rti_staff">RTI Staff</option>
+    <option value="other">Other</option>
+  </tangy-radio-buttons>
+
+  <tangy-input 
+    error-message="required" 
+    type="text" 
+    name="employment_number" 
+    required 
+    label="Employment Number">
+  </tangy-input>
+
+  <tangy-input 
+    error-message="required" 
+    type="number" 
+    name="year_of_birth" 
+    required 
+    label="Year of birth">
+  </tangy-input>
+
+  <tangy-input 
+    error-message="required" 
+    type="text" 
+    name="first_name" 
+    required 
+    label="First name">
+  </tangy-input>
+
+  <tangy-input 
+    error-message="required" 
+    type="text" 
+    name="last_name" 
+    required 
+    label="Last name">
+  </tangy-input>
+
+  <tangy-location location-src="./assets/location-list.json" label="My County" name="location" show-levels="county">
+  </tangy-location>
+
+  <tangy-radio-buttons label="Gender" name="gender" required>
+    <option value="female">Female</option>
+    <option value="male">Male</option>
+  </tangy-radio-buttons>
+
+  <tangy-input 
+    error-message="required" 
+    type="number" 
+    name="phone" 
+    required 
+    label="Phone number">
+  </tangy-input>
+
+</form>
