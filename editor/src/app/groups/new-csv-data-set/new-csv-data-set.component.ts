@@ -73,18 +73,22 @@ export class NewCsvDataSetComponent implements OnInit {
     const csvTemplates = (await this.formsService.listCsvTemplates(this.groupId))
     const config = await this.serverConfig.getServerConfig()
     const appConfig = <AppConfig>await this.http.get('./assets/app-config.json').toPromise()
-    const appendedForms = <Array<TangerineFormInfo>>[
-      {id: 'participant',title:_TRANSLATE('Participant')},
-      {id: 'event-form',title:_TRANSLATE('Event Form')},
-      {id: 'case-event',title: _TRANSLATE('Case Event')}]
-    if (appConfig.teachProperties?.useAttendanceFeature) {
-        appendedForms.push(<TangerineFormInfo>{id: 'attendance', title: _TRANSLATE('Attendance')})
-        appendedForms.push(<TangerineFormInfo>{id: 'behavior', title: _TRANSLATE('Behavior')})
-        appendedForms.push(<TangerineFormInfo>{id: 'scores', title: _TRANSLATE('Scores')})
-    }
+    
     let forms = await this.formsService.getFormsInfo(this.groupId)
-    if(config.enabledModules.includes('case')){
-      forms = [...forms, ...appendedForms]
+    if (appConfig.teachProperties?.useAttendanceFeature) {
+      const attendanceForms = <Array<TangerineFormInfo>>[
+        {id: 'attendance', title: _TRANSLATE('Attendance')},
+        {id: 'behavior', title: _TRANSLATE('Behavior')},
+        {id: 'scores', title: _TRANSLATE('Scores')}
+      ]
+      forms = [...forms, ...attendanceForms]
+    }
+    if (config.enabledModules.includes('case')) {
+      const caseForms = <Array<TangerineFormInfo>>[
+        {id: 'participant', title: _TRANSLATE('Participant')},
+        {id: 'event-form', title: _TRANSLATE('Event Form')},
+        {id: 'case-event', title: _TRANSLATE('Case Event')}]
+      forms = [...forms, ...caseForms]
     }
     this.forms = forms.map(form => {
       return {
