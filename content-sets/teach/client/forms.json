@@ -12,35 +12,21 @@
     ]
   },
   {
-    "title": "Student Registration",
-    "src": "./assets/student-registration/form.html",
-    "id": "student-registration",
-    "templates": [
-    ]
-  },
-  {
-    "title": "Class Registration",
-    "src": "./assets/class-registration/form.html",
-    "id": "class-registration",
-    "templates": [
-    ]
-  },
-  {
-    "title": "Attendance",
-    "src": "./assets/attendance/form.html",
-    "id": "attendance"
-  },
-  {
-    "title": "Russian Form",
-    "src": "./assets/russian/form.html",
-    "id": "russian",
-    "templates": [
-      {
-        "src": "./assets/russian/alt.html",
-        "id": "alt",
-        "label": "Alternative View"
-      }
-    ]
+    "id" : "about",
+    "src" : "./assets/about/form.html",
+    "listed" : false,    
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
   },
   {
     "title": "User Profile",
@@ -58,29 +44,5 @@
        "push" : true,
        "filterByLocation" : true
     }
-  },
-  {
-  "id": "form-internal-behaviour",
-  "type": "form",
-  "title": "Comportamientos Int+Ext",
-  "src": "./assets/form-internal-behaviour/form.html",
-  "searchSettings": {
-    "shouldIndex": false,
-    "variablesToIndex": [],
-    "primaryTemplate": "",
-    "secondaryTemplate": ""
-  },
-  "customSyncSettings": {
-    "enabled": false,
-    "push": false,
-    "pull": false,
-    "excludeIncomplete": false
-  },
-  "couchdbSyncSettings": {
-    "enabled": false,
-    "push": true,
-    "pull": false,
-    "filterByLocation": false
   }
-}
 ]

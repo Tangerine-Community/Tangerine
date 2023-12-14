@@ -1,0 +1,13 @@
+[
+  {
+    "type": "caseDoc"
+  },
+  {
+    "type": "demoDoc",
+    "formId": "registration-role-1",
+    "substitutions": {
+      "first_name": "firstname",
+      "last_name": "surname"
+    }
+  }
+]
