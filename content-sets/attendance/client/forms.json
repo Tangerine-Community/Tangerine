@@ -60,6 +60,23 @@
     }
   },
   {
+    "title": "About",
+    "src": "./assets/about/form.html",
+    "id": "about",
+    "customSyncSettings" : {
+       "pull" : false,
+       "enabled" : false,
+       "excludeIncomplete" : false,
+       "push" : false
+    },
+    "couchdbSyncSettings" : {
+       "pull" : true,
+       "enabled" : true,
+       "push" : true,
+       "filterByLocation" : true
+    }
+  },
+  {
   "id": "form-internal-behaviour",
   "type": "form",
   "title": "Comportamientos Int+Ext",
