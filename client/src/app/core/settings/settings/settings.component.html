@@ -10,5 +10,21 @@
     </p>
   </span>
 </div>
+<div #container>
+  <paper-card heading="Device Info" class="info" *ngIf="ready">
+    <div class="card-content">
+      <div class="info-item"><label>Server URL:</label> {{info.serverUrl}}</div>
+      <div class="info-item"><label>Group Name:</label> {{info.groupName}}</div>
+      <div class="info-item"><label>Group ID:</label> {{info.groupId}}</div>
+      <div class="info-item"><label>Build Channel:</label> {{info.buildChannel}}</div>
+      <div class="info-item"><label>Build ID:</label> {{info.buildId}}</div>
+      <div class="info-item"><label>Device ID:</label> {{info.deviceId}}</div>
+      <div class="info-item"><label>Tangerine Version:</label> {{info.tangerineVersion}}</div>
+      <div class="info-item"><label>Version Tag:</label> {{info.versionTag}}</div>
+      <div class="info-item"><label>Assigned Location:</label> <span [innerHTML]="info.assignedLocation"></span></div>
+      <div class="info-item"><label>Encryption Level:</label> {{info.encryptionLevel}}</div>
+    </div>
+  </paper-card>
+</div>
 
 
