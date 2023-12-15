@@ -1,0 +1,28 @@
+${eval('debugger')}
+
+<p>
+  Name of the person: ${response.get('person_name')}
+</p>
+<p>
+  Likes fruit: ${ 
+    {
+      'yes': 'Yes',
+      'no': 'No'
+    }[response.get('likes_fruit')]
+  }
+</p>
+<p>
+  Favorite fruit: ${
+    response
+      .get('favorite_fruits')
+      .map(key => {
+        return {
+          "apple": "Apple",
+          "tangerine": "Tangerine",
+          "kiwi": "Kiwi",
+          "Tomato": "Tomato"
+        }[key]
+      })
+      .join(', ')
+  }
+</p>

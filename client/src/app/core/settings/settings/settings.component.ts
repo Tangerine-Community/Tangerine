@@ -10,6 +10,7 @@ import {TangyFormsInfoService} from "../../../tangy-forms/tangy-forms-info-servi
 import {ClassFormService} from "../../../class/_services/class-form.service";
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {TangyFormResponse} from "../../../tangy-forms/tangy-form-response.class";
+import { AppInfo, DeviceService } from './../../../device/services/device.service';
 
 @Component({
   selector: 'app-settings',
@@ -26,6 +27,9 @@ export class SettingsComponent implements OnInit, AfterContentInit {
   selected = ''
   classes: any;
   showClassConfig = false;
+  info:AppInfo
+  ready = false;
+
   constructor(
     private http: HttpClient,
     private variableService: VariableService,
@@ -34,6 +38,7 @@ export class SettingsComponent implements OnInit, AfterContentInit {
     private dashboardService: DashboardService,
     private tangyFormsInfoService: TangyFormsInfoService,
     private classFormService: ClassFormService,
+    private deviceService:DeviceService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -42,7 +47,6 @@ export class SettingsComponent implements OnInit, AfterContentInit {
       this.showClassConfig = true;
       await this.classFormService.initialize();
       this.classes = await this.dashboardService.getMyClasses();
-      console.log("Got classes")
     }
   }
 
@@ -100,6 +104,13 @@ export class SettingsComponent implements OnInit, AfterContentInit {
       alert(t('Settings have been updated. You will now be redirected to log in.'))
       window.location.href = window.location.href.replace(window.location.hash, 'index.html')
     })
+
+    const info = this.deviceService.getAppInfo()
+    this.info = {
+      ...info,
+      deviceId: info.deviceId ? info.deviceId.substr(0,6) : _TRANSLATE('Log in to see Device ID')
+    }
+    this.ready = true;
   }
 
   async toggleClass(id) {

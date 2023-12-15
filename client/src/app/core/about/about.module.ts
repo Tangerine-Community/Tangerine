@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 
 import { AboutRoutingModule } from './about-routing.module';
 import { AboutComponent } from './about/about.component';
+import { TangyFormsModule } from '../../tangy-forms/tangy-forms.module';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [AboutComponent],
   imports: [
     CommonModule,
-    AboutRoutingModule
+    AboutRoutingModule,
+    TangyFormsModule
   ]
 })
 export class AboutModule { }
