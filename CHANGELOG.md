@@ -5,7 +5,7 @@
 __New Features__
 
 - Customizable 'About' Page on client [#3677](https://github.com/Tangerine-Community/Tangerine/pull/3677)
--- Form developers can create or update a form with the id 'about' 
+-- Form developers can create or update a form with the id 'about'. There is an example form in the [Content Sets]./content-sets`
 -- The form will appear in the 'About' page on the client
 
 __General Updates__
