@@ -78,6 +78,15 @@
   text-align: left;
 }
 
+.student-behavior {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: 1em;
+  padding-right:5px;
+  text-align: center;
+}
+
 input[type=checkbox] {
   transform: scale(1.5);
   margin: 10px;
