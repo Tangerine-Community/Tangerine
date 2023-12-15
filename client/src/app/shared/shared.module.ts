@@ -1,12 +1,14 @@
 import { VariableService } from './_services/variable.service';
 import { LockBoxService } from './_services/lock-box.service';
-import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { AppConfigService } from './_services/app-config.service';
 import { UserService } from './_services/user.service';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TangySnackbarService } from './_services/tangy-snackbar.service';
+import { CommonModule } from '@angular/common';
 
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 export function HttpClientLoaderFactory(httpClient: HttpClient) {
@@ -37,6 +39,7 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserAnimationsModule,
     HttpClientModule,
     MatTooltipModule,
+    MatSnackBarModule,
     MatDialogModule,
     MatButtonModule,
     TranslateModule.forRoot({
@@ -50,6 +53,7 @@ import { MatButtonModule } from '@angular/material/button';
   providers: [
     AppConfigService,
     UserService,
+    TangySnackbarService,
     LockBoxService,
     VariableService,
     {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
