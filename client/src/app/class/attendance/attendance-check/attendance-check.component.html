@@ -1,5 +1,8 @@
 <mat-card>
   <div class="selectedClassLabel">{{'Attendance'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+  <div class="tableHintLabel">
+    <mat-label>{{'Tap on the green checkmark to mark a student as absent'|translate}}</mat-label>
+  </div>
   <div>
     <table class="dashboard-table">
       <tr>
