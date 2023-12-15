@@ -1,5 +1,4 @@
 <mat-card>
-<!--  <div class="selectedClassLabel">{{'Student Scores'|translate}}<br/>{{getClassTitle(selectedClass)}} : {{curriculum?.label}}</div>-->
   <div class="selectedClassLabel">{{'Scores'|translate}}<br/>
         {{getClassTitle(selectedClass)}} : {{curriculum?.label}}
     <div *ngIf="ignoreCurriculumsForTracking">
@@ -13,7 +12,9 @@
       </mat-form-field>
     </div>
   </div>
-  <div>
+  <div class="tableHintLabel">
+    <mat-label>{{'Select a unit to enter scoring for those units.'|translate}}</mat-label>
+  </div>  <div>
     <mat-tab-group>
       <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">
         <table class="dashboard-table">
