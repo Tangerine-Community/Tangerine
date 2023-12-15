@@ -86,6 +86,8 @@ export class AppConfig {
   centrallyManagedUserProfile = false
   // Hides the user profile link to edit when on the Device.
   hideProfile = false
+  // Hides the about page.
+  hideAbout = false
   // When using Sync Protocol 2 and associating a new Device Account with a Device User, setting this to true will show them all Device Users synced
   // down to the Device rather than filtering those Device Users based on the single Device Assignment.
   disableDeviceUserFilteringByAssignment:boolean
