@@ -1,5 +1,51 @@
 # What's new
 
+## v3.30.2
+
+__New Features__
+
+- Customizable 'About' Page on client [#3677](https://github.com/Tangerine-Community/Tangerine/pull/3677)
+-- Form developers can create or update a form with the id 'about' 
+-- The form will appear in the 'About' page on the client
+
+__General Updates__
+- Password Visibility -- the login and register screen on the client shows an 'eye' icon used to hide or show passwords
+- Re-organization of the client app menu
+
+__Teach Module Updates__
+- Behavior screen show a link instead of a checkbox to access the Behavior form
+- Hint text added to attendance, behavior, and scoring tables
+- Improved save messaging for attendance and scoring
+
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. 
+df -h
+# If there is not more than 12 GB plus the size of the data folder, create more space before proceeding. 
+# Good candidates to remove are: data back-up folders and older versions of the Tangerine image
+# rm -rf ../data-backup-<date>
+# docker rmi tangerine/tangerine:<version>
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout -b v3.30.1 v3.30.1
+./start.sh v3.30.1
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:<previous_version>
+```
+
+
+
 ## v3.30.1
 
 __New Features__
