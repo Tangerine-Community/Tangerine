@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="tableHintLabel">
-    <mat-label>{{'Select a unit to enter scoring for those units.'|translate}}</mat-label>
+    <mat-label>{{'Select a unit to enter scoring'|translate}}</mat-label>
   </div>  <div>
     <mat-tab-group>
       <mat-tab *ngFor="let unit of units; index as unitIndex" label="{{unit}}">
@@ -25,17 +25,13 @@
           <tr *ngFor="let student of scoreList">
             <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
             <td style="text-align: center">
-              <mat-form-field class="example-full-width">
-              <input id="scoreCtrl_{{unitIndex}}" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"
-                                                  (change)="updateScore(student, unitIndex.toString())">
+              <mat-form-field class="scoreInput">
+                <input id="scoreCtrl_{{unitIndex}}" name="scoreCtrl" matInput type="number" min="0" max="100" [(ngModel)]="student['score_'+unitIndex]"
+                                                  (change)="updateScore(student, unitIndex.toString())"/>
               </mat-form-field>
             </td>
           </tr>
         </table>
-        <div class="right-align">
-          <button mat-raised-button color="primary" (click)="saveStudentScores()">{{'Submit'|translate}}</button>
-          <div *ngIf="saveSuccess" class="success-message">{{'Scores saved successfully.'|translate}}</div>
-        </div>
       </mat-tab>
     </mat-tab-group>
     <span><p class="mat-h3" *ngIf="scoreList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
