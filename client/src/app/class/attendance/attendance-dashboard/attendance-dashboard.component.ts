@@ -248,7 +248,6 @@ export class AttendanceDashboardComponent implements OnInit {
 
   /** Navigate to the student registration form */
   selectStudentName(column) {
-    const formsArray = Object.values(column.forms);
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
