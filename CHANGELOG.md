@@ -16,6 +16,9 @@ __Teach Module Updates__
 - Behavior screen show a link instead of a checkbox to access the Behavior form
 - Hint text added to attendance, behavior, and scoring tables
 - Improved save messaging for attendance and scoring
+- In Attendance Reports:
+  - add start and end dates to view a custom date range report
+  - Fix the names not displaying in the tables
 
 
 __Server upgrade instructions__
