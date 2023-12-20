@@ -30,7 +30,6 @@ export class AttendanceDashboardComponent implements OnInit {
   curriculum: any;
   units: string[] = []
   ignoreCurriculumsForTracking: boolean = false
-  enableContactChoosing: boolean = false
   reportLocaltime: string;
   currArray: any[]
   enabledClasses: any[]
@@ -217,13 +216,12 @@ export class AttendanceDashboardComponent implements OnInit {
         // sms.send(phone, message, options, success, error);
 
         let options = {
-          // message: _TRANSLATE('Share this '), // not supported on some apps (Facebook, Instagram)
           message: message, // not supported on some apps (Facebook, Instagram)
           subject: _TRANSLATE('Student feedback '), // fi. for email
           chooserTitle: _TRANSLATE('Pick an app '), // Android only, you can override the default share sheet title
           phone: phone, // phone number to share (for WhatsApp only)
-          number: phone, // phone number to share (for WhatsApp only) unused. delete.
-          appPackageName: 'com.whatsapp' // Android only, you can provide id of the App you want to share with
+          // number: phone, // phone number to share (for WhatsApp only) unused. delete.
+          // appPackageName: 'com.whatsapp' // Android only, you can provide id of the App you want to share with
         };
 
         const onSuccess = (result) => {
@@ -235,11 +233,8 @@ export class AttendanceDashboardComponent implements OnInit {
           console.log("Sharing failed with message: " + msg);
           alert( _TRANSLATE('Sharing failed: WhatsApp may not be installed. The following apps are available for sharing: ') + msg);
         };
-        if (this.enableContactChoosing) {
-          this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
-        } else {
-          this.window.plugins.socialsharing.shareViaWhatsAppToPhone(phone, message, null /* img */, null /* url */, onSuccess, onError)
-        }
+        this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+
       }
     } else {
       alert(_TRANSLATE('This feature is only available on a mobile device.'))
@@ -256,9 +251,5 @@ export class AttendanceDashboardComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
-
-  setEnableContactChoosing(checked: boolean) {
-    this.enableContactChoosing = checked
-  }
 
 }
