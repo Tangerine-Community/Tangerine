@@ -186,25 +186,23 @@ export class AttendanceDashboardComponent implements OnInit {
         messageList.push(behaviorMessage)
       }
 
-      let scoresMessage = "";
       if (!this.ignoreCurriculumsForTracking) {
-        scoresMessage = _TRANSLATE('Score average is: ') + student.score + "%"
-        messageList.push(scoresMessage)
-      } else {
-        for (let i = 0; i < this.currArray.length; i++) {
-          const curriculum = this.currArray[i];
-          let curriculumLabel = curriculum?.label
-          if (student.scores) {
-            if (student.scores[curriculumLabel]) {
-              if (i == 0) {
-                scoresMessage = _TRANSLATE('Score average is: ')
-                messageList.push(scoresMessage)
-              }
-              messageList.push(curriculumLabel + ": " + student.scores[curriculumLabel] + "%")
-            }
-          }
+        if (student.score) {
+          let scoresMessage = _TRANSLATE('Score average is: ') + student.score + "%"
+          messageList.push(scoresMessage)
         }
-      }
+      } else {
+        if (student.scores) {
+          let scoresMessage = _TRANSLATE('Subject Scores') + ":";
+          messageList.push(scoresMessage)
+          Object.entries(student.scores).forEach((label, score) => {
+            const curriculum = this.currArray.find(c => c.labelSafe == label)
+            if (curriculum && curriculum.label) {
+              messageList.push(curriculum.label + ": " + score + "%")
+            }
+          })
+        }
+      }      
       
       const fullMessage = messageList.join("\n")
 

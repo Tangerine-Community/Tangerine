@@ -17,7 +17,7 @@
           <th>{{'Behav.'|translate}}</th>
           <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
           <ng-template #otherScoreHeader>
-              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
           </ng-template>
         </tr>
         <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
@@ -142,7 +142,7 @@
             <th>{{'Behav.'|translate}}</th>
             <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
             <ng-template #otherScoreHeader>
-              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
             </ng-template>
           </tr>
           <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
@@ -264,7 +264,7 @@
           <th>{{'Behav.'|translate}}</th>
           <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
           <ng-template #otherScoreHeader>
-            <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+            <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
           </ng-template>
         </tr>
         <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">

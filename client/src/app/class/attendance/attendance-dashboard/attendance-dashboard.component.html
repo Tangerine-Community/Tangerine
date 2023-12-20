@@ -20,7 +20,7 @@
         <th>{{'Behav.'|translate}}</th>
         <th *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
           <ng-template #otherScoreHeader>
-            <th *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+            <th *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
           </ng-template>
       </tr>
       <tr *ngFor="let student of attendanceReport?.attendanceList">
@@ -84,7 +84,6 @@
         'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
         'number-cell': true,
         'centered': true}">
-          <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
             <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
           </td>
         </ng-template>
