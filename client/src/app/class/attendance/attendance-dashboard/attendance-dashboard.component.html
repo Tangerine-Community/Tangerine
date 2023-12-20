@@ -15,7 +15,7 @@
   <div *ngIf="ready && selectedClass">
     <table class="dashboard-table">
       <tr>
-        <th colspan="2" class="student-name-column">{{'Stud.'|translate}}</th>
+        <th colspan="3" class="student-name-column">{{'Stud.'|translate}}</th>
         <th>{{'Attend.'|translate}}</th>
         <th>{{'Behav.'|translate}}</th>
         <th *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
@@ -26,9 +26,15 @@
       <tr *ngFor="let student of attendanceReport?.attendanceList">
         <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
         <td class="sms-button-column">
-          <button mat-mini-fab color="accent" aria-label="SMS button with an sms icon" (click)="sendText(student)"
+          <button mat-mini-fab color="accent" aria-label="SMS button with an sms icon" (click)="sendText(student, 'sms')"
                   [ngStyle]="{transform: 'scale(0.6)'}">
             <mat-icon>sms</mat-icon>
+          </button>
+        </td>
+        <td class="sms-button-column">
+          <button mat-mini-fab aria-label="WhatsApp button" (click)="sendText(student, 'whatsapp')"
+                  [ngStyle]="{transform: 'scale(0.6)'}">
+            <i class="fa fa-whatsapp" [ngStyle]="{transform: 'scale(1.6)'}"></i>
           </button>
         </td>
         <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
