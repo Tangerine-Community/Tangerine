@@ -20,6 +20,9 @@ __Teach Module Updates__
   - add start and end dates to view a custom date range report
   - Fix the names not displaying in the tables
 
+__Fixes__
+- [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
+
 
 __Server upgrade instructions__
 
@@ -42,7 +45,7 @@ docker logs --since=60m tangerine
 # Fetch the updates.
 git fetch origin
 git checkout -b v3.30.1 v3.30.1
-./start.sh v3.30.1
+./start.sh v3.30.2
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:<previous_version>
 ```
