@@ -51,14 +51,11 @@ import { AttendanceScoresComponent } from './attendance/attendance-scores/attend
 import { BehaviorCheckComponent } from './attendance/behavior-check/behavior-check.component';
 import { StudentDetailsComponent } from './attendance/student-details/student-details.component';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
-// import { CalendarModule, DateAdapter } from 'angular-calendar';
-// import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
-// import { registerLocaleData } from '@angular/common';
-// import localeEsGt from '@angular/common/locales/es-GT';
-
-// the second parameter 'fr-FR' is optional
-// registerLocaleData(localeEsGt);
+// Locale support
+import { registerLocaleData } from '@angular/common';
+import localeEsGt from '@angular/common/locales/es-GT';
+registerLocaleData(localeEsGt);
 
 @NgModule({
   imports: [

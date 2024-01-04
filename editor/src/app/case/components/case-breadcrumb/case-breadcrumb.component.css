@@ -33,3 +33,25 @@
 .back-to-cases {
   cursor: pointer;
 }
+
+#tangy-spacer{
+  flex: 1 1 auto;
+  display: flex;
+}
+
+.case-action-container {
+  float: right;
+}
+
+.case-action-menu {
+  margin-right: 8px;
+  align-items: center;
+}
+
+.case-archived-text {
+  margin-right: 8px;
+  color: var(--primary-text-color-overlay);
+  height: 34px;
+  background: var(--primary-color-dark);
+  font-size: 0.8em;
+}

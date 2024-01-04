@@ -9,3 +9,7 @@ a.faux-anchor,
 span.faux-anchor {
   cursor: pointer;
 }
+
+.mat-raised-button {
+  margin-left: 8px;
+}
