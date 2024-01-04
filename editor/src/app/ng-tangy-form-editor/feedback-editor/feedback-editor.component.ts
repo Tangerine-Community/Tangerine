@@ -39,7 +39,7 @@ export class FeedbackEditorComponent implements OnInit {
     public feedbackService:FeedbackService,
     private route: ActivatedRoute,
     public data: FormMetadata,
-    private http: HttpClient) {}
+    private http: HttpClient ) {}
 
   async ngOnInit() {
     this.feedback = this.getFeedback()
