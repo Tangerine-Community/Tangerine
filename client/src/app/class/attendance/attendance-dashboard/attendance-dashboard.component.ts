@@ -175,27 +175,29 @@ export class AttendanceDashboardComponent implements OnInit {
       messageList.push(message)
 
       if (student.presentPercentage) {
-        let attendanceMessage = _TRANSLATE('Attendance is: ') + student.presentPercentage + '%'  
+        let attendanceMessage = _TRANSLATE('Attendance') + ':' + student.presentPercentage + '%'
         messageList.push(attendanceMessage)
       }
 
       
       let behaviorMessage = ""
       if (student.behaviorPercentage) {
-        behaviorMessage = _TRANSLATE('Behaviour is: ') + student.behaviorPercentage + '%'
+        behaviorMessage = _TRANSLATE('Behaviour') + ':' + student.behaviorPercentage + '%'
         messageList.push(behaviorMessage)
       }
 
       if (!this.ignoreCurriculumsForTracking) {
         if (student.score) {
-          let scoresMessage = _TRANSLATE('Score average is: ') + student.score + "%"
+          let scoresMessage = _TRANSLATE('Score average') + ':' + student.score + '%'
           messageList.push(scoresMessage)
         }
       } else {
         if (student.scores) {
-          let scoresMessage = _TRANSLATE('Subject Scores') + ":";
+          let scoresMessage = _TRANSLATE('Subject scores') + ':';
           messageList.push(scoresMessage)
-          Object.entries(student.scores).forEach((label, score) => {
+          Object.entries(student.scores).forEach((scoreArr, _) => {
+            const label = scoreArr[0];
+            const score = scoreArr[1];
             const curriculum = this.currArray.find(c => c.labelSafe == label)
             if (curriculum && curriculum.label) {
               messageList.push(curriculum.label + ": " + score + "%")
@@ -210,13 +212,14 @@ export class AttendanceDashboardComponent implements OnInit {
         console.log("Shared to app: " + result);
       };
       const onError = (msg) => {
-        alert( _TRANSLATE('Sharing failed: WhatsApp may not be installed. The following apps are available for sharing: ') + msg);
+        console.log("Sharing failed with message: " + msg)
+        alert( _TRANSLATE('Something went wrong, please try again.'));
       };
 
       // options are only used in shareViaSMS and shareWithOptions
       let options = {
         message: fullMessage,
-        subject: _TRANSLATE('Student feedback'),
+        subject: _TRANSLATE('Student Report'),
         phone: phone
       };
 

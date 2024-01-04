@@ -156,7 +156,6 @@ export class BehaviorCheckComponent implements OnInit {
   }
 
   private async saveStudentBehavior(student) {
-    console.log('saving student behavior. ')
     // save allStudentResults
     this.register.studentBehaviorList = this.studentBehaviorList
     // save register
