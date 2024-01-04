@@ -153,9 +153,11 @@ cp config.defaults.sh config.sh
 
 Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
-__Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox publicly accessible at a URL. Tangerine Developers have had good luck using [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL that NGROK gives you. It can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
+__Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox accessible using an https URL. A reverse proxy will forward https requests to your dev instance running on port 80. Tangerine Developers have had good luck using [tunnelto](https://tunnelto.dev/) and [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Please note that using those methods expose your dev environment to the Internet. An alternative is to create your own reverse proxy - see the [Reverse Proxy for Developers](./docs/developer/reverse-proxy-for-developers.md) doc for more information. 
 
-Example config.sh when using ngrok:
+You must modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL of your dev server. When using a service such as NGROK, it can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
+
+Example config.sh settings when using a reverse proxy:
 ```bash
 T_HOST_NAME='123random.ngrok.io'
 T_PROTOCOL="https"

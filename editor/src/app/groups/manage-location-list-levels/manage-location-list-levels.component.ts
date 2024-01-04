@@ -1,30 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from '../../../app/shared/_services/tangy-error-handler.service';
-import { WindowRef } from '../../core/window-ref.service';
+import { GroupsService } from '../services/groups.service';
+
 @Component({
   selector: 'app-manage-location-list-levels',
   templateUrl: './manage-location-list-levels.component.html',
   styleUrls: ['./manage-location-list-levels.component.css']
 })
 export class ManageLocationListLevelsComponent implements OnInit {
+  
+  @Input() locationListFileName;
+
   groupId;
-  locationListFileName = 'location-list.json';
-  locationsLevels;
+  locationsLevels:Array<any> = [];
   isFormShown = false;
   locationLabel;
   parentLevel;
+  selectedLevel;
   locationListData;
-  constructor(private http: HttpClient, private window: WindowRef, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
+  selected = 0;
 
+  constructor(private http: HttpClient, 
+              private route: ActivatedRoute,
+              private errorHandler: TangyErrorHandler,
+              private groupsService: GroupsService) { }
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
     });
+    await this.loadLocationLevels()
+  }
+
+  async loadLocationLevels() {
     try {
-      const data: any = await this.http.get(`/editor/${this.groupId}/content/${this.locationListFileName}`).toPromise();
+      const data: any = await this.groupsService.getLocationList(this.groupId, this.locationListFileName);
       this.locationsLevels = data.locationsLevels;
       this.locationListData = data;
     } catch (error) {
@@ -56,16 +68,18 @@ export class ManageLocationListLevelsComponent implements OnInit {
             ]
           }
         }).toPromise();
-        this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
         this.locationLabel = '';
         this.parentLevel = '';
-        this.window.nativeWindow.location.reload();
+
+        this.loadLocationLevels();
       } catch (error) {
         this.errorHandler.handleError('Error Saving Location Lits File to disk');
       }
     }
+  }
 
-
+  setSelected(event: number) {
+    this.selected = event
   }
 }
 

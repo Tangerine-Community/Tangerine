@@ -1,0 +1,153 @@
+.flex-container {
+  /* We first create a flex layout context */
+  display: flex;
+
+  /* Then we define the flow direction 
+     and if we allow the items to wrap 
+   * Remember this is the same as:
+   * flex-direction: row;
+   * flex-wrap: wrap;
+   */
+  flex-flow: row wrap;
+
+  /* Then we define how is distributed the remaining space */
+  justify-content: space-around;
+
+  padding: 0;
+  margin: 0;
+}
+
+.flex-item {
+  padding: 5px;
+  width: 170px;
+}
+
+/*.calendar .flex-container {*/
+/*  !* We first create a flex layout context *!*/
+/*  display: flex;*/
+
+/*  !* Then we define the flow direction */
+/*     and if we allow the items to wrap */
+/*   * Remember this is the same as:*/
+/*   * flex-direction: row;*/
+/*   * flex-wrap: wrap;*/
+/*   *!*/
+/*  flex-flow: row wrap;*/
+
+/*  !* Then we define how is distributed the remaining space *!*/
+/*  justify-content: space-around;*/
+
+/*  padding: 0;*/
+/*  margin: 0;*/
+/*  list-style: none;*/
+/*}*/
+
+/*.calendar .flex-item {*/
+/*  background: tomato;*/
+/*  padding: 0px;*/
+/*  width: 20px;*/
+/*  height: 20px;*/
+/*  margin-top: 10px;*/
+/*  line-height: 100px;*/
+/*  color: white;*/
+/*  font-weight: bold;*/
+/*  font-size: 3em;*/
+/*  text-align: left;*/
+/*}*/
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+}
+
+/*.grid div[class*=box] {*/
+div[class*=box] {
+  /*background-image: url(data:image/svg+xml;charset=utf-8,%3Csvg width='8' height='8' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 0h1L0 6V5zm1 5v1H5z' fill='%239C92AC' fill-opacity='.4' fill-rule='evenodd'/%3E%3C/svg%3E);*/
+  border: 1px dotted #fff;
+  -webkit-transition: all .2s ease;
+  transition: all .2s ease;
+  position: relative;
+  z-index: 1000;
+  /*opacity: .5;*/
+}
+
+.absent {
+  background-color: #ff0000;
+}
+
+.blank {
+  background-color: lightgray;
+}
+
+.shim {
+  background-color: #000000;
+}
+
+.newMonth {
+  /*background-color: #314386;*/
+  background-color: white;
+  grid-column-start:1;
+  grid-column-end: 8;
+}
+
+.unit1 {
+  background-color: #f7b267;
+}
+
+.unit2 {
+  background-color: #f79d65;
+}
+
+.unit3 {
+  background-color: #8acdea;
+}
+
+.unit4 {
+  background-color: #d4fcc3;
+}
+
+.unit5 {
+  background-color: #f25c54;
+}
+
+.unit6 {
+  background-color: #a5a6a0;
+}
+
+.unit7 {
+  background-color: #13f6ef;
+}
+
+.unit8 {
+  background-color: #ae93b4;
+}
+
+.unit9 {
+  background-color: #f1d302;
+}
+
+.unit10 {
+  background-color: #5c8fff;
+}
+
+.unit-legend {
+  display: grid;
+  grid-template-columns: [first] 1fr [line2] 2fr;
+  /*grid-template-rows: repeat(4, 1fr);*/
+  grid-column-gap: 5px;
+  grid-row-gap: 0px;
+}
+div[class*=unit] {
+  /*border: 1px dotted #fff;*/
+  -webkit-transition: all .2s ease;
+  transition: all .2s ease;
+  position: relative;
+  z-index: 1000;
+  /*opacity: .5;*/
+}
+.old-month-in-new-month {
+  opacity: .6;
+}

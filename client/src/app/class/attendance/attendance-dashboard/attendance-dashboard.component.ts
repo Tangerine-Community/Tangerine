@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
@@ -37,14 +40,15 @@ export class AttendanceDashboardComponent implements OnInit {
   scoringSecondaryThreshold: number
   behaviorPrimaryThreshold: number
   behaviorSecondaryThreshold: number
-  cutoffRange: number  
+  cutoffRange: number
+  ready = false
   
   constructor(
     private dashboardService: DashboardService,
     private variableService : VariableService,
     private router: Router,
     private route: ActivatedRoute,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -73,6 +77,7 @@ export class AttendanceDashboardComponent implements OnInit {
         const currentClass = __vars.currentClass;
         curriculumId = __vars.curriculumId;
         this.selectedClass = currentClass;
+        this.ready = true;
         const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
         this.currArray = currArray
         // When app is initialized, there is no curriculumId, so we need to set it to the first one.
@@ -85,6 +90,8 @@ export class AttendanceDashboardComponent implements OnInit {
           await this.populateSummary(currentClass, this.curriculum)
         }
       })
+    } else {
+      this.ready = true;
     }
   }
 
@@ -106,17 +113,17 @@ export class AttendanceDashboardComponent implements OnInit {
     for (let i = 0; i < this.currArray.length; i++) {
       const curriculum = this.currArray[i];
       let curriculumLabel = curriculum?.label
-      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, curriculumLabel, randomId, true)
-      reports.forEach((report) => {
+      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, null, curriculumLabel, randomId, true)
+        reports.forEach((report) => {
         report.doc.curriculum = curriculum
         scoreReports.push(report.doc)
       })
     }
     const currentScoreReport = scoreReports[scoreReports.length - 1]
 
-    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, '*', curriculumLabel, randomId, true)
-    const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, '*', curriculumLabel, randomId, true)
-    // const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
+    const attendanceReports = await this.dashboardService.searchDocs('attendance', currentClass, '*', null, curriculumLabel, randomId, true)
+      const behaviorReports = await this.dashboardService.searchDocs('behavior', currentClass, '*', null, curriculumLabel, randomId, true)
+      // const currentBehaviorReport = behaviorReports[behaviorReports.length - 1]?.doc
     let scoreReport = currentScoreReport
     if (this.ignoreCurriculumsForTracking) {
       scoreReport = scoreReports

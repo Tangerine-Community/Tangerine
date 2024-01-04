@@ -10,7 +10,7 @@ const updateGroupArchivedIndex = async function (GROUP_ID) {
   const formsInfo = await fs.readJSON(`/tangerine/groups/${GROUP_ID}/client/forms.json`) 
   const db = DB(GROUP_ID)
   const variablesToIndexByFormId = formsInfo.reduce((variablesToIndexByFormId, formInfo) => {
-    return formInfo.searchSettings.shouldIndex
+    return formInfo.searchSettings?.shouldIndex
       ? {
         ...variablesToIndexByFormId,
         [formInfo.id]: formInfo.searchSettings.variablesToIndex
