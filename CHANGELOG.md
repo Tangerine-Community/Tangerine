@@ -46,6 +46,8 @@ docker logs --since=60m tangerine
 git fetch origin
 git checkout -b v3.30.1 v3.30.1
 ./start.sh v3.30.2
+# Run the update to copy the new About page to all groups on your site.
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.30.2.js
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:<previous_version>
 ```

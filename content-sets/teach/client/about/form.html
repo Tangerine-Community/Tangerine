@@ -1,58 +1,78 @@
-<tangy-form id="about" title="About" category="null" fullscreen-nav-align="top" exit-clicks="" cycle-sequences="" 
-    on-open="" on-change="" on-submit="" on-resubmit="">
-    <tangy-form-item id="about-item" title="" on-open="" on-change="" category="">
-        <template>
+<tangy-form id="about" title="About" category="null"
+ 
+fullscreen-nav-align="top"
+on-open="
 
-            <tangy-box name="about_text" class="" style="">
-                <h3>About Tangerine</h3>
-                <p>
-                    Tangerine is open source software designed for Android mobile devices. Its primary use is to enable
-                    capture of students’ responses in oral reading and mathematics skills assessments as well as
-                    interview
-                    responses and field observations.
-                </p>
-                <p>
-                    Using Tangerine improves data quality and the efficiency of data collection and analysis. The
-                    software
-                    simplifies the preparation and implementation of field work, reduces student assessment times,
-                    reduces
-                    measurement and data entry errors, and eliminates manual data entry from paper forms. Tangerine is
-                    optimized for offline data collection in low-bandwidth environments and features powerful sync and
-                    data
-                    backup options.
-                </p>
-                <p>
-                    Tangerine was developed by <a href="https://rti.org" target="_blank">RTI International</a> starting
-                    in
-                    2011 with RTI's own internal research funds. RTI redesigned Tangerine and developed a new codebase
-                    using
-                    latest technologies in 2017/2018 with funding support from Google.org. Tangerine is available to the
-                    public through an open-source GNU General Public License. You can host it on your own server and
-                    modify
-                    its code as needed. The only requirement is that if you share your modified version publicly, you
-                    also
-                    need to share the modified source code with the larger community.
-                </p>
-                <p>
-                    Since 2011, Tangerine has been used by over 60 organization, in over 70 countries and 100 languages.
-                    While originally developed for education, Tangerine is increasingly used also for interviews and
-                    field
-                    observations in the health, governance, and agricultural sectors.
-                </p>
-                <p>
-                    For more information on Tangerine see <a href="http://www.tangerinecentral.org"
-                        target="_blank">http://www.tangerinecentral.org</a>.
-                </p>
-                <p>
-                    For questions about Tangerine, contact <a
-                        href="mailto:support@tangerinehelp.zendesk.com">support@tangerinehelp.zendesk.com</a>.
-                </p>
-            </tangy-box>
+"
+exit-clicks=""
+cycle-sequences=""
+on-change="
 
-            
-            <tangy-box name="complete_button" hidden="" class="" style=""><tangy-complete-button
-                    name="complete"></tangy-complete-button></tangy-box>
+"
+on-submit="
 
-        </template>
-    </tangy-form-item>
+"
+on-resubmit="
+"
+>
+  <tangy-form-item id="about-item" 
+    title=""
+           scoring-fields=""
+    custom-scoring-logic=""
+    on-open="
+      document.querySelector('tangy-form-item').removeAttribute('show-complete-button') 
+    "
+    on-change="
+
+    "
+    category="
+    "
+  >
+    <template>
+    <tangy-box name="about_text" class="" style="">
+        <h3>About Tangerine</h3>
+        <p>
+            Tangerine is open source software designed for Android mobile devices. Its primary use is to enable
+            capture of students’ responses in oral reading and mathematics skills assessments as well as
+            interview
+            responses and field observations.
+        </p>
+        <p>
+            Using Tangerine improves data quality and the efficiency of data collection and analysis. The
+            software
+            simplifies the preparation and implementation of field work, reduces student assessment times,
+            reduces
+            measurement and data entry errors, and eliminates manual data entry from paper forms. Tangerine is
+            optimized for offline data collection in low-bandwidth environments and features powerful sync and
+            data
+            backup options.
+        </p>
+        <p>
+            Tangerine was developed by <a href="https://rti.org" target="_blank">RTI International</a> starting
+            in
+            2011 with RTI's own internal research funds. RTI redesigned Tangerine and developed a new codebase
+            using
+            latest technologies in 2017/2018 with funding support from Google.org. Tangerine is available to the
+            public through an open-source GNU General Public License. You can host it on your own server and
+            modify
+            its code as needed. The only requirement is that if you share your modified version publicly, you
+            also
+            need to share the modified source code with the larger community.
+        </p>
+        <p>
+            Since 2011, Tangerine has been used by over 60 organization, in over 70 countries and 100 languages.
+            While originally developed for education, Tangerine is increasingly used also for interviews and
+            field
+            observations in the health, governance, and agricultural sectors.
+        </p>
+        <p>
+            For more information on Tangerine see <a href="http://www.tangerinecentral.org" target="_blank">http://www.tangerinecentral.org</a>.
+        </p>
+        <p>
+            For questions about Tangerine, contact <a href="mailto:support@tangerinehelp.zendesk.com">support@tangerinehelp.zendesk.com</a>.
+        </p>
+    </tangy-box>
+     </template>
+  </tangy-form-item>
+
 </tangy-form>
