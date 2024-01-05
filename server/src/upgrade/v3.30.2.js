@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const fs = require('fs-extra')
-
 const groupsList = require('/tangerine/server/src/groups-list.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
