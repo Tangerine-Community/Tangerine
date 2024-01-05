@@ -19,21 +19,18 @@ async function go() {
     let forms = await fs.readJson(`/tangerine/client/content/groups/${groupName}/forms.json`)
     try {
       forms = [
-        ...(forms.some(form => form.id === 'about')
-          ? forms.map(form =>
-            form.id === 'about'
-              ? { ...form, src: './assets/about/form.html' }
-              : form
-          )
-          : [
-            {
-              id: 'about',
-              title: 'About',
-              listed: false,
-              archived: true,
-              src: './assets/about/form.html',
-            },
-          ]),
+        ...!forms.find(form => form.id === 'about')
+          ? [
+              {
+                id: 'about',
+                title: 'About',
+                listed: false,
+        archived: true,	
+                src: './assets/about/form.html',
+              }
+            ]
+          : [],
+        ...forms
       ]
       await fs.writeJson(`/tangerine/client/content/groups/${groupName}/forms.json`, forms)
 
