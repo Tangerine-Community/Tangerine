@@ -310,10 +310,16 @@ const getItemValue = (doc, variableName) => {
 const generateFlatResponse = async function (formResponse, sanitized) {
   const groupId = formResponse.groupId;
 
+  const startDatetime = moment(formResponse.startUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
+  const endDatetime = moment(formResponse.endUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
+
   let flatFormResponse = {
     _id: formResponse._id,
     formTitle: formResponse.form.title,
     startUnixtime: formResponse.startUnixtime,
+    endUnixtime: formResponse.endUnixtime,
+    startDatetime: startDatetime,
+    endDatetime: endDatetime,
     buildId: formResponse.buildId||'',
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
