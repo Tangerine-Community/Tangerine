@@ -169,7 +169,6 @@ const getDataset = async (datasetId) => {
   let errorMessage = '' // if error connecting.
   let response
   try {
-    console.log("Getting: " + stateUrl)
     response = await http.get(stateUrl)
   } catch (error) {
     if (error.code === 'ECONNREFUSED') {
