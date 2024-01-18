@@ -22,6 +22,7 @@ __Teach Module Updates__
 
 __Fixes__
 - [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
+- CSV Generation broken with 'doLocalWorkaround is undefined' error
 
 
 __Server upgrade instructions__
