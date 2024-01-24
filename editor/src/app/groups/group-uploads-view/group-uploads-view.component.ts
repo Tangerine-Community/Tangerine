@@ -36,6 +36,7 @@ export class GroupUploadsViewComponent implements OnInit {
       this.formPlayer.unlockFormResponses = true
       this.formPlayer.render()
       this.formPlayer.$submit.subscribe(async () => {
+        this.formPlayer.saveResponse(this.formPlayer.formEl.store.getState())
         this.router.navigate([`../`], { relativeTo: this.route })
       })
     })
