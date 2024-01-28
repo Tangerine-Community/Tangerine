@@ -96,7 +96,7 @@ services:
     volumes:
       - ./data/groups:/tangerine/groups
       - ./editor/package.json:/tangerine/editor/package.json:delegated
-      - ./editor/package-lock.json:/tangerine/editor/package-lock.json:delegated
+#      - ./editor/package-lock.json:/tangerine/editor/package-lock.json:delegated
       - ./editor/src:/tangerine/editor/src:delegated
       - ./server-ui/package.json:/tangerine/server-ui/package.json:delegated
       - ./server-ui/package-lock.json:/tangerine/server-ui/package-lock.json:delegated
