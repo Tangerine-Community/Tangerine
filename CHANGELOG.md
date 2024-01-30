@@ -273,45 +273,6 @@ git checkout -b v3.27.8 v3.27.8
 docker rmi tangerine/tangerine:v3.27.7
 ```
 
-## v3.29.0
-
-__New Features__
-- Case, Event and Form Archive and Unarchive
-
-We have released an update to Tangerine which allows for the archiving and un-archiving of both events, and forms within events. This is an extension of the already existing functionality by which an entire case can be archived. The purpose of this is to empower data management teams using Tangerine to "clean up" messy cases where extraneous data has been added to a case in error, or by a conflict situation. The purpose of this document is to summarize both the configuration to enable this, and to demonstrate the use of these functions. This functionality will only apply to the web-based version of Tangerine, and will not be available on tablets.
-
-__Package Updates__
-- Updated tangy-form to v4.40.0
-
-__Server upgrade instructions__
-
-Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
-
-```
-cd tangerine
-# Check the size of the data folder.
-du -sh data
-# Check disk for free space. 
-df -h
-# If there is not more than 12 GB plus the size of the data folder, create more space before proceeding. 
-# Good candidates to remove are: data back-up folders and older versions of the Tangerine image
-# rm -rf ../data-backup-<date>
-# docker rmi tangerine/tangerine:<version>
-# Create a backup of the data folder.
-cp -r data ../data-backup-$(date "+%F-%T")
-# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
-docker logs --since=60m tangerine
-# Fetch the updates.
-git fetch origin
-git checkout -b v3.29.0 v3.29.0
-./start.sh v3.29.0
-# Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:<previous_version>
-```
-
-## v3.28.X
-
-- Became v4.0
 
 ## v3.27.7
 
