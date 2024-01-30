@@ -74,6 +74,10 @@ If you need to develop the editor app and/or make changes to tangy-form-editor, 
 
 ```
 docker exec -it server-ui sh
+## The first time you run this, you'll need to install the node_modules
+cd /tangerine/tangy-form-editor
+npm install
+## End first time setup
 cd /tangerine/editor
 npm run dockerdev ### to watch the editor dirs.
 ```
@@ -89,7 +93,22 @@ cd /tangerine/client
 ./node_modules/.bin/ng build --watch --poll 100 --base-href ./ -c production --output-path ./dev &
 ```
 
-Since that command was run with an "&" at the end - instructing the shell to run the command as a background process -  you can run the next command in the same shell. Wait a moment to get the results of the first command. 
+Since that command was run with an "&" at the end - instructing the shell to run the command as a background process -  you can run the next command in the same shell. 
+
+*** Wait a moment to get the results of the first command. ***
+
+```text
+✔ Browser application bundle generation complete.
+✔ Index html generation complete.
+```
+
+This will show if the compilation is successful.
+
+## The first time you run this, you'll get an error and will need to install the node_modules
+cd /tangerine/tangy-form
+npm install
+## End first time setup
+
 Now run the following script to copy the built app whenever you want to generate an APK or PWA:
 
 ```

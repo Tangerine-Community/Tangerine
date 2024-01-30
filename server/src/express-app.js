@@ -295,13 +295,11 @@ app.use('/api/:group/files', isAuthenticated, function (req, res, next) {
 });
 
 
-// Location List API
-app.use('/api/:groupId/location-lists/read', require('./routes/group-location-lists-read.js'));
-
-app.use('/api/:groupId/location-list/create', require('./routes/group-location-list-create.js'));
-//app.use('/api/:groupId/location-list/read', require('./routes/group-location-list-read.js'));
-app.use('/api/:groupId/location-list/update', require('./routes/group-location-list-update.js'));
-app.use('/api/:groupId/location-list/delete', require('./routes/group-location-list-delete.js'));
+// Location List API 
+app.use('/editor/:groupId/location-lists/read', require('./routes/group-location-lists-read.js'));
+app.use('/editor/:groupId/location-list/create', require('./routes/group-location-list-create.js'));
+app.use('/editor/:groupId/location-list/update', require('./routes/group-location-list-update.js'));
+app.use('/editor/:groupId/location-list/delete', require('./routes/group-location-list-delete.js'));
 
 app.use('/csv/', isAuthenticated, express.static('/csv/'));
 
