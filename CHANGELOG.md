@@ -21,7 +21,7 @@ __Teach Module Updates__
   - Fix the names not displaying in the tables
 
 __Fixes__
-- [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
+- Get Media Uploads working in Editor [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
 - CSV Generation broken with 'doLocalWorkaround is undefined' error
 
 
