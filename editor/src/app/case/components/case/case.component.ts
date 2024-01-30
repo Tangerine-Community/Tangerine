@@ -40,11 +40,14 @@ export class CaseComponent implements AfterContentInit {
   conflictingEvents:Array<any>
   moment
   groupId:string
+  caseId:string
   hideRestore: boolean = false
   // @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
   @ViewChild('proposedFormResponseContainer', {static: false}) proposedFormResponseContainer:TangyFormsPlayerComponent
   hideFormPlayer = true
+  step = -1;
   process: any;
+  showArchivedSliderState = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -66,31 +69,38 @@ export class CaseComponent implements AfterContentInit {
   async ngAfterContentInit() {
     const process = this.processMonitorService.start('caseOpen', 'Opening Case...')
     this.groupId = window.location.pathname.split('/')[2]
-    const caseId = window.location.hash.split('/')[2]
-    this.groupId = window.location.pathname.split('/')[2]
-    if (!this.caseService.case || caseId !== this.caseService.case._id) {
-      await this.caseService.load(caseId)
-      this.caseService.openCaseConfirmed = false
+    this.caseId = window.location.hash.split('/')[2]
+    await this.loadCaseInstanceInfo(true)
+    
+    this.onCaseOpen()
+
+    this.calculateTemplateData()
+    await this.getIssuesAndConflicts(this.caseId)
+    this.ready = true
+    this.processMonitorService.stop(process.id)
+
+    // this is required to reload the expansion panel
+    this.ref.detectChanges()
+  }
+
+  setStep(index: number) {
+    this.step = (this.step != index) ? index : -1;
+    //this.getIssuesAndConflicts(this.groupId)
+    this.ref.detectChanges()
+  }
+
+  showArchivedSliderChange() {
+    this.showArchivedSliderState = !this.showArchivedSliderState
+    this.calculateTemplateData()
+    this.ref.detectChanges()
+  }
+
+  async loadCaseInstanceInfo(reload:boolean) {
+    if (reload || !this.caseService.case || this.caseId !== this.caseService.case._id) {
+      await this.caseService.load(this.caseId)
     }
     this.caseService.setContext()
     this.window.caseService = this.caseService
-    this.onCaseOpen()
-
-    try {
-      let queryResults = await this.groupIssuesService.query(this.groupId, {
-        fun: "issuesByCaseId",
-        keys: [caseId],
-        include_docs: true,
-        descending: true
-      })
-      this.issues = queryResults.map(issue => issue.doc)
-    } catch (e) {
-      console.log("Error fetching issues: " + e)
-    }
-    this.calculateTemplateData()
-    await this.getIssuesAndConflicts(caseId)
-    this.ready = true
-    this.processMonitorService.stop(process.id)
   }
 
   calculateTemplateData() {
@@ -113,7 +123,10 @@ export class CaseComponent implements AfterContentInit {
       .map(caseEventDefinition => {
         return {
           caseEventDefinition,
-          caseEvents: this.caseService.case.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
+          caseEvents: 
+            this.caseService.case.events.filter(caseEvent => 
+              caseEvent.caseEventDefinitionId === caseEventDefinition.id && 
+              (this.showArchivedSliderState ? true : !caseEvent.archived))
         }
       })
     this.creatableCaseEventsInfo = this.caseEventsInfo
@@ -204,8 +217,14 @@ export class CaseComponent implements AfterContentInit {
   }
 
   async onSubmit() {
-    await this.caseService.save()
-    this.calculateTemplateData()
+    const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
+    if (this.selectedNewEventType !== '') {
+      var caseEvent = this.caseService.createEvent(this.selectedNewEventType)
+      await this.caseService.onCaseEventCreate(caseEvent)
+      await this.caseService.save()
+      this.calculateTemplateData()
+      this.processMonitorService.stop(process.id)
+    }
   }
   async onRestore(event) {
     const restoreConfirmed = confirm(_TRANSLATE('Restore this event?'));
@@ -237,23 +256,35 @@ export class CaseComponent implements AfterContentInit {
       }
     }
   }
-  
-  async showConflictFormResponse(formResponseId) {
-    if (formResponseId) {
-      console.log("Displaying formResponseId: " + formResponseId)
-      const formResponse = await this.tangyFormService.getResponse(formResponseId)
-      // this.formPlayer.formResponseId = formResponse._id
-      // this.formPlayer.response = formResponse
-      // await this.formPlayer.render()
-      this.hideFormPlayer = false
-      this.proposedFormResponseContainer.response = formResponse
-      await this.proposedFormResponseContainer.render()
-      this.scroll(this.proposedFormResponseContainer.container.nativeElement)
+
+  async onUnarchiveEvent(event) {
+    const restoreConfirmed = confirm(_TRANSLATE('Unarchive this event?'));
+    if (restoreConfirmed) {
+      if (event.restored) {
+        alert("Already unarchived.")
+      } else {
+        await this.caseService.unarchiveCaseEvent(event.id)
+
+        this.calculateTemplateData()
+        const caseId = window.location.hash.split('/')[2]
+        await this.getIssuesAndConflicts(caseId)
+        this.ref.detectChanges()
+      }
     }
   }
 
   scroll(el: HTMLElement) {
     el.scrollIntoView();
+  }
+
+  processCaseAction(event: any) {
+    if (event == "delete") {
+      this.delete()
+    } else if (event == "archive") {
+      this.archive()
+    } else if (event == "unarchive") {
+      this.unarchive()
+    }
   }
 
   async archive() {
@@ -262,7 +293,9 @@ export class CaseComponent implements AfterContentInit {
       this.process = this.processMonitorService.start('archiving a case', 'Archiving a case.')
       await this.caseService.archive()
       this.processMonitorService.stop(this.process.id)
-      this.ref.detectChanges()
+
+      // Reload the page so the breadcrumb updates
+      this.router.navigate(['case', this.caseId])
     }
   }
 
@@ -272,6 +305,9 @@ export class CaseComponent implements AfterContentInit {
       this.process = this.processMonitorService.start('unarchiving a case', 'Un-archiving a case.')
       await this.caseService.unarchive()
       this.processMonitorService.stop(this.process.id)
+
+      this.loadCaseInstanceInfo(true)
+      this.calculateTemplateData()
       this.ref.detectChanges()
     }
   }
@@ -284,7 +320,33 @@ export class CaseComponent implements AfterContentInit {
       this.process = this.processMonitorService.start('deleting a case', 'Deleting a case.')
       await this.caseService.delete()
       this.processMonitorService.stop(this.process.id)
-      this.router.navigate(['groups', window.location.pathname.split('/')[2], 'data', 'cases']) 
+
+      this.loadCaseInstanceInfo(true)
+      this.ref.detectChanges()
+    }
+  }
+
+  async onCaseEventArchive(caseEventId) {
+    const confirmArchive = confirm(
+      _TRANSLATE('Are you sure you want to archive this event?')
+      );
+    if (confirmArchive) {
+      await this.caseService.archiveCaseEvent(caseEventId)
+
+      this.loadCaseInstanceInfo(true)
+      this.calculateTemplateData()
+    }
+  }
+
+  async onCaseEventUnarchive(caseEventId) {
+    const confirmArchive = confirm(
+      _TRANSLATE('Are you sure you want to unarchive this event?')
+      );
+    if (confirmArchive) {
+      await this.caseService.unarchiveCaseEvent(caseEventId)
+
+      this.loadCaseInstanceInfo(true)
+      this.calculateTemplateData()
     }
   }
 

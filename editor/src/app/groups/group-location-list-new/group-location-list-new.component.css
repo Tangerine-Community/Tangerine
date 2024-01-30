@@ -1,0 +1,8 @@
+.button {
+  background: var(--mdc-theme-secondary);
+  color: var(--accent-text-color);
+}
+
+.container {
+  margin: 15px;
+}

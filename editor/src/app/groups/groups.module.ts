@@ -97,6 +97,8 @@ import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-temp
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
+import { GroupLocationListsComponent } from './group-location-lists/group-location-lists.component';
+import { GroupLocationListNewComponent } from './group-location-list-new/group-location-list-new.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {FileUploadComponent} from "../file/file-upload.component";
 import {MatToolbarModule} from "@angular/material/toolbar";
@@ -130,6 +132,7 @@ import {RequestCache, RequestCacheWithMap} from "../request-cache.service";
         MatTreeModule,
         MatProgressSpinnerModule,
         MatGridListModule,
+        MatSelectModule,
         MatFormFieldModule,
         MatSlideToggleModule,
         TangyFormsModule,
@@ -180,6 +183,8 @@ import {RequestCache, RequestCacheWithMap} from "../request-cache.service";
     GroupReleasesComponent,
     GroupFormsEditComponent,
     GroupLocationListComponent,
+    GroupLocationListsComponent,
+    GroupLocationListNewComponent,
     GroupDeviceUsersComponent,
     GroupUploadsComponent,
     GroupReleaseApkTestComponent,

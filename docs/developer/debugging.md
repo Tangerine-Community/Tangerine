@@ -1,6 +1,6 @@
 # Debugging in the browser:
 
-db.factor import the pouchdb-debug plugin. If you wiash to see all Pouchdb debug logs, enter the following into the js console:
+db.factor import the pouchdb-debug plugin. If you wish to see all Pouchdb debug logs, enter the following into the js console:
 
 ```js
 PouchDB.debug.enable('*');
@@ -21,7 +21,7 @@ docker run \
   etc...
 ```
 
-Add the folloiwng to your node process:
+Add the following to your node process:
 
 ```
 --inspect=[::]:9229 index.js

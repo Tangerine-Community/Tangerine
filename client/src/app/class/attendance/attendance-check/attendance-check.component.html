@@ -1,0 +1,33 @@
+<mat-card>
+  <div class="selectedClassLabel">{{'Attendance'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+  <div class="tableHintLabel">
+    <mat-label>{{'Tap on the green checkmark to mark a student as absent'|translate}}</mat-label>
+  </div>
+  <div>
+    <table class="dashboard-table">
+      <tr>
+        <th>{{'Student'|translate}}</th>
+        <th>{{'Attendance'|translate}}</th>
+      </tr>
+      <tr *ngFor="let element of attendanceList">
+        <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["student_name"]}} {{element["student_surname"]}} </td>
+        <td style="padding-right: 1em;">
+          <mat-chip-list class="absent">
+            <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
+            <ng-template #absent>
+              <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)">
+                <mat-icon>remove</mat-icon>
+              </mat-chip>
+            </ng-template>
+            <ng-template #present>
+              <mat-chip color="primary" class="green" (click)="toggleAttendance(element)">
+                <mat-icon>check</mat-icon>
+              </mat-chip>
+            </ng-template>
+          </mat-chip-list>
+        </td>
+    </table>
+    <span><p class="mat-h3"
+             *ngIf="attendanceList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+  </div>
+</mat-card>

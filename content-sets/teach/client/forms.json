@@ -12,30 +12,21 @@
     ]
   },
   {
-    "title": "Student Registration",
-    "src": "./assets/student-registration/form.html",
-    "id": "student-registration",
-    "templates": [
-    ]
-  },
-  {
-    "title": "Class Registration",
-    "src": "./assets/class-registration/form.html",
-    "id": "class-registration",
-    "templates": [
-    ]
-  },
-  {
-    "title": "Russian Form",
-    "src": "./assets/russian/form.html",
-    "id": "russian",
-    "templates": [
-      {
-        "src": "./assets/russian/alt.html",
-        "id": "alt",
-        "label": "Alternative View"
-      }
-    ]
+    "id" : "about",
+    "src" : "./assets/about/form.html",
+    "listed" : false,    
+    "customSyncSettings": {
+      "enabled": false,
+      "push": false,
+      "pull": false,
+      "excludeIncomplete":false
+    },
+    "couchdbSyncSettings": {
+      "enabled": true,
+      "filterByLocation": true,
+      "push": true,
+      "pull": true
+    }
   },
   {
     "title": "User Profile",

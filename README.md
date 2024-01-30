@@ -175,9 +175,11 @@ cp config.defaults.sh config.sh
 
 Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
-__Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox publicly accessible at a URL. Tangerine Developers have had good luck using [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL that NGROK gives you. It can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
+__Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox accessible using an https URL. A reverse proxy will forward https requests to your dev instance running on port 80. Tangerine Developers have had good luck using [tunnelto](https://tunnelto.dev/) and [ngrok](https://ngrok.com/) to create an https tunnel to your local server. Please note that using those methods expose your dev environment to the Internet. An alternative is to create your own reverse proxy - see the [Reverse Proxy for Developers](./docs/developer/reverse-proxy-for-developers.md) doc for more information. 
 
-Example config.sh when using ngrok:
+You must modify T_HOST_NAME and T_PROTOCOL in config.sh using the URL of your dev server. When using a service such as NGROK, it can be worth it to pay for a static domain name as you would otherwise have to keep destroying your data folder, updating config.sh with the new URL, and starting over every time you get one of the random NGROK addresses.
+
+Example config.env settings when using a reverse proxy:
 ```bash
 T_HOST_NAME='123random.ngrok.io'
 T_PROTOCOL="https"
@@ -189,7 +191,7 @@ The [Bullet points for Tangerine Development](./docs/developer/development-bulle
 
 Prereqs includes [node](https://nodejs.org/en/). Before setting up your sandbox, see the decide which Content Set you would like to set it up with. Content Sets are configuration and forms for Tangerine that serve as starting places and examples of the different ways Tangerine Client can be used. See the list of Content Sets in the `content-sets` folder and note which one you will be installing with which will be referenced in the commands below.
 
-For Tangerine instances based on a v3.x branch, install phantomjs globally. This is used for running tests.
+For Tangerine instances based on a v3.x branch, you may need to install phantomjs globally in order to run tests.
 ```bash
 cd /usr/local/share
 sudo wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
@@ -222,11 +224,11 @@ export NODE_OPTIONS=--openssl-legacy-provider
 npm start
 ```
 
+If you are developing on an M1-based Mac, run `export NODE_OPTIONS="--openssl-legacy-provider"` in your command shell before running `npm start`.
+
 View the app at <http://localhost:4200>.
 
-If using ngrok.io ot tunnelto.dev, add the --disable-host-check flag to the `npm start` command.
-
-It's nice that the Angular webpack dev server will reload your browser when making changes in the tangy-form folder.
+If using ngrok.io or tunnelto.dev, use the 'start-using-proxy' instead of 'start' command. This will add some switches that enable the use of some older libraries.
 
 
 ## Deprecated Version of Tangerine

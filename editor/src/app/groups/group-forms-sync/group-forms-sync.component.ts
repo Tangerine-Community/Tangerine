@@ -37,7 +37,7 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
   title = _TRANSLATE("Sync Settings")
   breadcrumbs:Array<Breadcrumb> = []
   // forms: Array<FormSyncSetting>;
-  forms
+  forms;
   groupId;
   group;
   groupLabel;

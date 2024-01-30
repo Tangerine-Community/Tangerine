@@ -1,6 +1,7 @@
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
-import { AppInfo, DeviceService } from './../../../device/services/device.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { TangyFormsPlayerComponent } from './../../../tangy-forms/tangy-forms-player/tangy-forms-player.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-about',
@@ -9,20 +10,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AboutComponent implements OnInit {
 
-  info:AppInfo
-  ready = false
-
-  constructor(
-    private deviceService:DeviceService
-  ) { }
+  appConfig = window['appConfig']
+  @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
+  $afterSubmit = new Subject()
 
   async ngOnInit() {
-    const info = this.deviceService.getAppInfo()
-    this.info = {
-      ...info,
-      deviceId: info.deviceId ? info.deviceId.substr(0,6) : _TRANSLATE('Log in to see Device ID')
-    }
-    this.ready = true
+    this.formPlayer.formId = "about";
+    this.formPlayer.$beforeSubmit.subscribe(() => { this.closeAbout() });
+    this.formPlayer.render()
+  }
+
+  closeAbout() {
+    window.location.href = this.appConfig.homeUrl
   }
 
 }

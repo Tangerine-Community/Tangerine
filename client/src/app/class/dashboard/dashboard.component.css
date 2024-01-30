@@ -60,6 +60,7 @@ th.mat-mdc-header-cell {
   color:blue;
   text-decoration:underline;
   padding-left: 1em;
+  padding-right:5px;
 }
 
 input[type=checkbox] {
@@ -127,7 +128,7 @@ input[type=checkbox]:not(:checked) {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;
-  background-color: #f29d38;
+  background-color: var(--primary-color-dark);
   color: white;
 }
 
@@ -179,7 +180,108 @@ mat-card-title {
   top: 120px !important;
 }
 
+.attendance-icons {
+  padding: 0 0.5em;
+  font-size: xx-large;
+}
 
+.mat-chip.mat-standard-chip.mat-primary {
+  background-color: green;
+}
 
+.mat-chip.mat-standard-chip.mat-primary.blue {
+  background-color: deepskyblue;
+}
 
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.gray {
+  background-color: lightgrey;
+}
 
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.red {
+  background-color: red;
+}
+
+.gray {
+  background-color: gray;
+}
+
+.blue {
+  background-color: deepskyblue;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.quarter-width {
+  width: 25%;
+}
+
+.controls-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 10px;
+}
+.controls-one {
+  grid-column: 1 / 3;
+  grid-row: 1;
+}
+.controls-two {
+  grid-column: 2 / 3;
+  grid-row: 1;
+}
+.controls-three {
+  grid-column: 3 / 3;
+  grid-row: 1;
+}
+
+.controls-two mat-icon {
+  transform: scale(1.5);
+}
+
+.number-cell {
+  width: 20px;
+}
+
+.student-name-column {
+  width: 120px;
+}
+
+.sms-button-column {
+  width: 50px;
+  padding-right:2px;
+}
+.nav-flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: normal;
+  align-items: normal;
+  align-content: normal;
+}
+
+.nav-flex-items:nth-child(1) {
+  display: block;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.nav-flex-items:nth-child(2) {
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}

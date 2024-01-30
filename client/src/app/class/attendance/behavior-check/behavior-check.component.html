@@ -1,0 +1,37 @@
+<mat-card>
+  <div class="selectedClassLabel">{{'Behavior'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+  <div class="tableHintLabel">
+    <mat-label>{{'Tap the link to complete the student behavior form'|translate}}</mat-label>
+  </div>
+  <div class="table-wrapper">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>{{'Student'|translate}}</th>
+          <th>{{'Behavior'|translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of studentBehaviorList">
+          <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
+          <ng-container *ngIf="student['behavior'] !==undefined; else elseBlock">
+              <td [ngClass]="{'mediocre' : student['behavior']['internalPercentage'] && (student['behavior']['internalPercentage'] !== null || student['behavior']['internalPercentage'] !== undefined) && student['behavior']['internalPercentage'] < behaviorPrimaryThreshold, 
+          'great' : student['behavior']['internalPercentage'] >= behaviorPrimaryThreshold, 
+          'good' : student['behavior']['internalPercentage'] < behaviorPrimaryThreshold && student['behavior']['internalPercentage'] >= behaviorSecondaryThreshold,
+          'white' : student['behavior']['internalPercentage'] === null || student['behavior']['internalPercentage'] === undefined,
+          'number-cell': true,
+          'centered': true}" (click)="$event ? selectStudentFormResults(student,'form-internal-behaviour',$event) : null">
+              {{student['behavior']['internalPercentage']}}%
+          </td>
+            </ng-container>
+          
+          <ng-template #elseBlock>
+            <td (click)="$event ? selectStudentForm(student,'form-internal-behaviour') : null" class="student-behavior">{{'New Form'|translate}}</td>    
+          </ng-template>
+        </tr>
+      </tbody>
+    </table>
+    <span><p class="mat-h3"
+             *ngIf="studentBehaviorList?.length === 0">{{'No Students currently registered.'|translate}}</p></span>
+  </div>
+</mat-card>

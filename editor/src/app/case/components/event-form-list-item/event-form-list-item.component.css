@@ -2,8 +2,9 @@
 	border-left: red solid 4px;
 }
 .no-response {
-opacity: .5;
+	opacity: .5;
 }
+
 .icon-list-item {
 	display: flex;
 	flex-direction: row;
@@ -17,6 +18,11 @@ opacity: .5;
 	width: 100%;
 	cursor: default;
 }
+
+.icon-list-item.disabled {
+	background-color: #ccc;
+}
+
 .icon-list-item > mwc-icon {
 	width: 56px;
 }

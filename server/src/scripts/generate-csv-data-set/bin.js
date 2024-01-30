@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
-// const childProcess = require("child_process");
 const log = require('tangy-log').log
 const generateCsvDataSet = require('./generate-csv-data-set.js')
 
 if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('  generate-csv-data-set <groupId> <formId[,formId]> <outputPath> <year> <month> [--exclude-pii] [--excludeArchivedForms] ')
+  console.log('  generate-csv-data-set <groupId> <formId[,formId]> <outputPath> <year> <month> [--exclude-pii] [--excludeArchivedForms] [--excludeUserProfileAndReports]')
   console.log('Examples:')
   console.log(`  generate-csv-data-set group-abdc form1,form2 ./output.csv 2018 Jan --exclude-pii`)
   console.log(`  generate-csv-data-set group-abdc form1,form2 ./output.csv * * --exclude-pii`)
@@ -20,13 +19,14 @@ const params = {
   year: (process.argv[5]) ? process.argv[5] : null,
   month: (process.argv[6]) ? process.argv[6] : null,
   excludePii: process.argv[7] ? true : false,
-  excludeArchivedForms: process.argv[8] ? true : false
+  excludeArchivedForms: process.argv[8] ? true : false,
+  excludeUserProfileAndReports: process.argv[9] ? true : false
 }
 
 async function go(params) {
   try {
     log.debug("generateCsvDataSet bin.js")
-    await generateCsvDataSet(params.dbName, params.formIds, params.outputPath, params.year, params.month, params.excludePii, params.excludeArchivedForms)
+    await generateCsvDataSet(params.dbName, params.formIds, params.outputPath, params.year, params.month, params.excludePii, params.excludeArchivedForms, params.excludeUserProfileAndReports)
     process.exit()
   } catch (error) {
     console.error(error)

@@ -34,13 +34,14 @@ export class TangyFormsPlayerComponent implements OnInit {
   @Input('preventSubmit') preventSubmit = false
   @Input('metadata') metadata: any
 
-  $rendered = new Subject()
-  $beforeSubmit = new Subject()
-  $submit = new Subject()
-  $afterSubmit = new Subject()
-  $resubmit = new Subject()
-  $afterResubmit = new Subject()
-  $saved = new Subject()
+  // making these public allows parent components to subscribe to them.
+  public readonly $rendered = new Subject()
+  public readonly $beforeSubmit = new Subject()
+  public readonly $submit = new Subject()
+  public readonly $afterSubmit = new Subject()
+  public readonly $resubmit = new Subject()
+  public readonly $afterResubmit = new Subject()
+  public readonly $saved = new Subject()
   rendered = false
   _inject = {}
 
@@ -339,8 +340,7 @@ export class TangyFormsPlayerComponent implements OnInit {
   }
 
   async saveResponse(state) {
-    let stateDoc = {}
-    stateDoc = await this.tangyFormService.getResponse(state._id)
+    let stateDoc = await this.tangyFormService.getResponse(state._id)
     if (stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary) {
       // Since what is in the database is complete, and it's still complete, and it doesn't have 
       // a summary where they might add some input, don't save! They are probably reviewing data.
@@ -353,15 +353,19 @@ export class TangyFormsPlayerComponent implements OnInit {
       if (stateDoc && stateDoc['complete'] && state.complete) {
         await this.variableService.set('incomplete-response-id', null);
       }
+
       // reset some values.
-      stateDoc["uploadDatetime"] = ""
-      // now save the responseDoc.
-      await this.tangyFormService.saveResponse({
+      state["uploadDatetime"] = ""
+      state["_rev"] = stateDoc._rev
+
+      // add metadata
+      stateDoc = {
         ...state,
-        _rev: stateDoc['_rev'],
         location: this.location || state.location,
         ...this.metadata
-      })
+      }   
+      // now save the responseDoc.
+      await this.tangyFormService.saveResponse(stateDoc)
     }
     this.response = state
     this.$saved.next(state)

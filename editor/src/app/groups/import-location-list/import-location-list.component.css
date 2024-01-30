@@ -25,6 +25,27 @@ a.faux-anchor {
   margin-left: 15px;
   margin-bottom: 15px;
 }
-.list-header {
-  display: flex
+.import-div {
+  margin: 15px;
+  padding-bottom: 30px;
+}
+
+.mat-table {
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+
+.mat-column-levels {
+  padding-right: 28px;
+  text-align: center;
+}
+
+.mat-column-counts {
+  padding-right: 28px;
+  text-align: center;
+}
+
+.mat-raised-button {
+  margin-left: 10px;
+  width: 120px;
 }

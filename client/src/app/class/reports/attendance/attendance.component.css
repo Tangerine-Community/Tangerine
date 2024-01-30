@@ -1,0 +1,253 @@
+.gray {
+  background-color: gray;
+}
+
+.green {
+  background-color: green;
+}
+
+.blue {
+  background-color: deepskyblue;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.red {
+  background-color: red;
+}
+#last-n-report {
+  margin-top: 1em;
+}
+#last-n-report {
+  margin-top: 30px
+}
+
+.date-select-form {
+  margin-left: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 450px;
+}
+
+.date-select-form-fields {
+  display: flex;
+  align-items: flex-start;
+}
+
+.legend td {
+  padding: 0 1em;
+}
+/*.student-name-column {*/
+/*  width: 120px;*/
+/*  text-align: left;*/
+/*}*/
+/*.attendance-column {*/
+/*  width: 80px;*/
+/*}*/
+/*.behavior-column {*/
+/*  width: 80px;*/
+/*}*/
+/*.score-column {*/
+/*  width: 150px;*/
+/*}*/
+
+.red {
+  background-color: red;
+}
+.green {
+  background-color: green;
+}
+.mat-chip.mat-standard-chip.mat-primary {
+  background-color: green;
+}
+
+.mat-chip.mat-standard-chip.mat-primary.blue {
+  background-color: deepskyblue;
+}
+
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.gray {
+  background-color: lightgrey;
+}
+
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.red {
+  background-color: red;
+}
+
+.tangy-class-card-content-container {
+  margin-left: 3%;
+  /*width: 90%;*/
+  margin-right: 5%;
+  /*min-height: vh;*/
+}
+
+td.centered {
+  text-align: center;
+}
+
+td.progress-bar {
+  padding-left: 1em;
+}
+
+/*#most-recent-class-table {*/
+/*  width:600px;*/
+/*}*/
+
+/*#past-30-days-table {*/
+/*  width:600px;*/
+/*}*/
+
+/*#last-n-report-table {*/
+/*  width:600px;*/
+/*}*/
+
+/*.number-cell {*/
+/*  width: 20px;*/
+/*}*/
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
+.selectedClassLabel p {
+  text-align: center;
+}
+
+.dashboard-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.dashboard-table th {
+  border: 1px solid #ddd;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: var(--primary-color-dark);
+  color: white;
+}
+
+.dashboard-table .checkbox-response {
+  text-align: center;
+}
+
+.student-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: .5em;
+  padding-right:.5em;
+}
+
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.mediocre {
+  background-color: #DC921F !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+.table-description {
+  margin-left: 3%;
+}
+
+a {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: .5em;
+  padding-right:.5em;
+}
+
+.info-header  {
+  margin-left: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  font-size: larger;
+}
+
+.unit-legend {
+  margin-left: 1em;
+  margin-bottom:1em;
+  max-width: 400px;
+  display: grid;
+  grid-template-columns: [first] 75px [line2] auto;
+  /*grid-template-rows: repeat(4, 1fr);*/
+  grid-column-gap: 5px;
+  grid-row-gap: 0px;
+}
+div[class*=unit] {
+  /*border: 1px dotted #fff;*/
+  -webkit-transition: all .2s ease;
+  position: relative;
+  /*opacity: .5;*/
+}
+
+.unit-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+}
+
+.unit1 {
+  background-color: #f7b267;
+}
+
+.unit2 {
+  background-color: #f79d65;
+}
+
+.unit3 {
+  background-color: #8acdea;
+}
+
+.unit4 {
+  background-color: #d4fcc3;
+}
+
+.unit5 {
+  background-color: #f25c54;
+}
+
+.unit6 {
+  background-color: #a5a6a0;
+}
+
+.unit7 {
+  background-color: #13f6ef;
+}
+
+.unit8 {
+  background-color: #ae93b4;
+}
+
+.unit9 {
+  background-color: #f1d302;
+}
+
+.unit10 {
+  background-color: #5c8fff;
+}
+
+#unit-report {
+  margin-top: 1em;
+}
+
+.unit-report-header {
+  margin-left: 1em;
+}
+
