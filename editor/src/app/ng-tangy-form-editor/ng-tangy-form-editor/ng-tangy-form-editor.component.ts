@@ -8,6 +8,7 @@ import {FormMetadata} from "../feedback-editor/form-metadata";
 import {Feedback} from "../feedback-editor/feedback";
 import {TangerineFormsService} from "../../groups/services/tangerine-forms.service";
 import {FilesService} from "../../groups/services/files.service";
+import { GroupsService } from 'src/app/groups/services/groups.service';
 
 @Component({
   selector: 'app-ng-tangy-form-editor',
@@ -37,6 +38,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     private serverConfigService:ServerConfigService,
     private tangerineForms: TangerineFormsService,
     private filesService: FilesService
+    private groupsService:GroupsService
   ) { }
 
   async ngOnInit() {
@@ -52,7 +54,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     this.groupName = groupName;
     // let formJson = <any>await this.http.get(`./assets/forms.json`).toPromise()
     let formJson = await this.tangerineForms.getFormsInfo(this.groupId)
-    let formSrc = formJson.find(formInfo => formInfo.id === this.formId).src
+    const formSrc = formJson.find(formInfo => formInfo.id === this.formId).src
     // let formHtml = await this.http.get(formSrc, {responseType: 'text'}).toPromise()
     let PREFIX = './assets/'
     if (formSrc.startsWith(PREFIX)) {
@@ -67,12 +69,20 @@ export class NgTangyFormEditorComponent implements OnInit {
     if (enabledModules && !!(enabledModules.find(module=>module==='class'))) {
       this.hasClassModule = true;
     }
+    // Categories is an string of an array: categories ='["one","two","three","four"]'>
     const categories = JSON.stringify(appConfigCategories)? JSON.stringify(appConfigCategories) : '[]';
 
-    // Categories is an string of an array: categories ='["one","two","three","four"]'>
+    // Transpose the location lists metadata and filter out the 'locations' properties so it doesn't kill performance
+    const data = <any> await this.groupsService.getLocationLists(this.groupId)
+    const removePropertyFromArray = (array, property) => {
+      return array.map(({ [property]: _, ...rest }) => rest);
+    };
+    const locationListsMetadataJSON = removePropertyFromArray(data, 'locations')
+    const locationListMetadata = locationListsMetadataJSON ? JSON.stringify(locationListsMetadataJSON) : "";
+
     if (!this.print) {
       this.containerEl.innerHTML = `
-        <tangy-form-editor style="margin:15px" categories='${categories}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
+        <tangy-form-editor style="margin:15px" categories='${categories}' location-lists-metadata='${locationListMetadata}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
           <template>
             ${formHtml}
           </template>

@@ -1,0 +1,366 @@
+<!--<mat-card class="tangy-class-card-content-container">-->
+<div class="selectedClassLabel">{{'Report'|translate}}<br/>{{getClassTitle(selectedClass)}}<ng-container *ngIf="!ignoreCurriculumsForTracking"> : {{curriculum?.label}} </ng-container></div>
+<!--  <div class="tangy-class-card-content-container">-->
+<div class="info-header">
+  {{'Scroll to the right to view the results for subjects and units'|translate}} 
+  <mat-icon>arrow_right_alt</mat-icon>
+</div>
+    <div>
+      <div class="table-description">
+        <h2>{{'Most Recent Class'|translate}}</h2>
+        <p><a (click)="goBack()" [hidden]="!showBackButton"> < </a> {{'Date'|translate}}: {{reportLocaltime}} <a (click)="goForward()" [hidden]="!showForwardButton"> > </a></p>
+      </div>
+      <table class="dashboard-table most-recent-class-table">
+        <tr>
+          <th class="student-name-column">{{'Stud.'|translate}}</th>
+          <th>{{'Attend.'|translate}}</th>
+          <th>{{'Behav.'|translate}}</th>
+          <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
+          <ng-template #otherScoreHeader>
+              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
+          </ng-template>
+        </tr>
+        <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
+        <tr>
+          <th colspan="3" ></th>
+          <th>%</th>
+          <th *ngFor="let unit of units">{{unit}}</th>
+        </tr>
+        </ng-container>
+        <ng-template #otherUnitsHeader>
+          <tr>
+          <th colspan="3"></th>
+          <ng-container *ngFor="let curriculum of currArray">
+            <th>%</th>
+            <ng-container *ngFor="let unit of units">
+              <th>{{unit}}</th>
+            </ng-container>
+          </ng-container>
+          </tr>
+        </ng-template>
+          
+        <tr *ngFor="let student of attendanceReport?.attendanceList">
+          <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
+          <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
+        'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
+        'great' : student.presentPercentage >= attendancePrimaryThreshold,
+        'white': student.presentPercentage === null || student.presentPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+            <ng-container *ngIf="student.presentPercentage || student.presentPercentage === 0; else naAttendanceTemplate">
+              {{student.presentPercentage}}%
+            </ng-container>
+            <ng-template *ngIf="student.presentPercentage === null || student.presentPercentage === undefined" #naAttendanceTemplate>
+              {{'N/A'|translate}}
+            </ng-template>
+          </td>
+
+          <td [ngClass]="{'mediocre' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorPrimaryThreshold, 
+        'great' : student.behaviorPercentage >= behaviorPrimaryThreshold, 
+        'good' : student.behaviorPercentage < behaviorPrimaryThreshold && student.behaviorPercentage >= behaviorSecondaryThreshold,
+        'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+            <ng-container *ngIf="student.behaviorPercentage || student.behaviorPercentage === 0; else naBehaviorTemplate">
+              {{student.behaviorPercentage}}%
+            </ng-container>
+            <ng-template *ngIf="student.behaviorPercentage === null || student.behaviorPercentage === undefined" #naBehaviorTemplate>
+              {{'N/A'|translate}}
+            </ng-template>
+          </td>
+
+          <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
+            <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringPrimaryThreshold, 
+        'great' : student['score'] && student['score'] >= scoringPrimaryThreshold, 
+        'good' : student['score'] < scoringPrimaryThreshold && student['score'] >= scoringSecondaryThreshold,
+        'white' : student['score'] === null || student['score'] === undefined,
+        'number-cell': true,
+        'centered': true}">
+              <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
+              <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+            </td>
+            <ng-container *ngFor="let unit of units; index as unitIndex">
+              <td [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] >= scoringSecondaryThreshold,
+        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+        'number-cell': true,
+        'centered': true}">{{student['score_'+unitIndex]}}</td>
+            </ng-container>
+            
+          </ng-container>
+          <ng-template #otherScoreCell>
+            <ng-container *ngFor="let curriculum of currArray">
+              <td [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] >= scoringSecondaryThreshold,
+        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+        'number-cell': true,
+        'centered': true}">
+                <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
+                <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
+              </td>
+              <ng-container *ngFor="let unit of units; index as unitIndex">
+                <td [ngClass]="{'mediocre' : student['unitScores'] && (student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] !== null || student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] !== undefined) && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] < scoringPrimaryThreshold, 
+        'great' : student['unitScores'] && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] >= scoringPrimaryThreshold, 
+        'good' :  student['unitScores'] && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] < scoringPrimaryThreshold && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] >= scoringSecondaryThreshold,
+        'white' : student['unitScores'] && (student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] === null || student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] === undefined),
+        'number-cell': true,
+        'centered': true}"><ng-container *ngIf="student['unitScores']">{{student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex]}}</ng-container></td>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </tr>
+      </table>
+      
+      <p>&nbsp;</p>
+      
+    <div id="last-n-report">
+      <div class="table-description">
+        <h2>{{'Custom Date Range Report'|translate}}</h2>
+        <p>{{'Select a start and end date to view report for that period'|translate}}</p>
+      </div>
+      <form class="date-select-form">
+        <mat-form-field class="date-select-form-fields" color="accent">
+          <mat-label>{{'Start Date'|translate}}</mat-label>
+          <input matInput [value]="rangeStartDate" [matDatepickerFilter]="beforeEndDateFilter" [matDatepicker]="startDate" (dateChange)="onRangeDateChange('rangeStartDateInput', $event)">
+          <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+          <mat-datepicker #startDate color="accent"></mat-datepicker>
+        </mat-form-field>
+        
+        <mat-form-field class="date-select-form-fields" color="accent">
+          <mat-label>{{'End Date'|translate}}</mat-label>
+          <input matInput id="rangeEndDateInput" [value]="rangeEndDate" [matDatepicker]="endDate" [max]="rangeMaxDate" (dateChange)="onRangeDateChange('rangeEndDateInput', $event)">
+          <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+          <mat-datepicker #endDate color="accent"></mat-datepicker>
+        </mat-form-field>
+      </form>      
+      <table id="last-n-report-table" class="dashboard-table">
+        <tr>
+            <th class="student-name-column">{{'Stud.'|translate}}</th>
+            <th>{{'Attend.'|translate}}</th>
+            <th>{{'Behav.'|translate}}</th>
+            <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
+            <ng-template #otherScoreHeader>
+              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
+            </ng-template>
+          </tr>
+          <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
+            <tr>
+              <th colspan="3" ></th>
+              <th>%</th>
+              <th *ngFor="let unit of units">{{unit}}</th>
+            </tr>
+          </ng-container>
+          <ng-template #otherUnitsHeader>
+            <tr>
+              <th colspan="3"></th>
+              <ng-container *ngFor="let curriculum of currArray">
+                <th>%</th>
+                <ng-container *ngFor="let unit of units">
+                  <th>{{unit}}</th>
+                </ng-container>
+              </ng-container>
+            </tr>
+          </ng-template>
+          
+          <tr *ngFor="let student of dateRangeReport?.attendanceList">
+            <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
+            <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
+        'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
+        'great' : student.presentPercentage >= attendancePrimaryThreshold,
+        'white': student.presentPercentage === null || student.presentPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+              <ng-container *ngIf="student.presentPercentage || student.presentPercentage === 0; else naAttendanceTemplate">
+                {{student.presentPercentage}}%
+              </ng-container>
+              <ng-template *ngIf="student.presentPercentage === null || student.presentPercentage === undefined" #naAttendanceTemplate>
+                {{'N/A'|translate}}
+              </ng-template>
+            </td>
+
+            <td [ngClass]="{'mediocre' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorPrimaryThreshold, 
+        'great' : student.behaviorPercentage >= behaviorPrimaryThreshold, 
+        'good' : student.behaviorPercentage < behaviorPrimaryThreshold && student.behaviorPercentage >= behaviorSecondaryThreshold,
+        'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
+        'number-cell': true,
+        'centered': true}">
+              <ng-container *ngIf="student.behaviorPercentage || student.behaviorPercentage === 0; else naBehaviorTemplate">
+                {{student.behaviorPercentage}}%
+              </ng-container>
+              <ng-template *ngIf="student.behaviorPercentage === null || student.behaviorPercentage === undefined" #naBehaviorTemplate>
+                {{'N/A'|translate}}
+              </ng-template>
+            </td>
+
+            <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
+              <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringPrimaryThreshold, 
+        'great' : student['score'] && student['score'] >= scoringPrimaryThreshold, 
+        'good' : student['score'] < scoringPrimaryThreshold && student['score'] >= scoringSecondaryThreshold,
+        'white' : student['score'] === null || student['score'] === undefined,
+        'number-cell': true,
+        'centered': true}">
+                <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
+                <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+              </td>
+              <ng-container *ngFor="let unit of units; index as unitIndex">
+                <td [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] >= scoringSecondaryThreshold,
+        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+        'number-cell': true,
+        'centered': true}">{{student['score_'+unitIndex]}}</td>
+              </ng-container>
+
+            </ng-container>
+            <ng-template #otherScoreCell>
+              <ng-container *ngFor="let curriculum of currArray">
+                <td [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+        'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+        'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] >= scoringSecondaryThreshold,
+        'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+        'number-cell': true,
+        'centered': true}">
+                  <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
+                  <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
+                </td>
+                <ng-container *ngFor="let unit of units; index as unitIndex">
+                  <td [ngClass]="{'mediocre' : student['unitScores'] && (student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] !== null || student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] !== undefined) && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] < scoringPrimaryThreshold, 
+        'great' : student['unitScores'] && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] >= scoringPrimaryThreshold, 
+        'good' :  student['unitScores'] && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] < scoringPrimaryThreshold && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] >= scoringSecondaryThreshold,
+        'white' : student['unitScores'] && (student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] === null || student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] === undefined),
+        'number-cell': true,
+        'centered': true}"><ng-container *ngIf="student['unitScores']">{{student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex]}}</ng-container></td>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+          </tr>
+        </table>
+    </div>
+      
+    <div id="unit-report">
+      <div class="table-description">
+        <h2>{{'Unit Report'|translate}}</h2>
+        <p>{{'Select a unit to view report for that period'|translate}}</p>
+      </div>
+      
+      <div class="unit-legend">
+        <ng-container *ngFor="let unit of unitDates; index as unitIndex">
+          <div class="unit-name" (click)="showUnitReport(unitIndex)">{{unit.name}}</div>
+          <div (click)="showUnitReport(unitIndex)">{{unit.startLocaltime}} - {{unit.endLocaltime}}</div>
+        </ng-container>
+      </div>
+      
+      <div *ngIf="unitReport?.attendanceList.length > 0" class="table-description">
+        <h2>{{unitReport?.name}}</h2>
+        <p>{{unitReport?.dateRange}}</p>
+      </div>
+      
+      <table id="unit-table" #unitTable class="dashboard-table" *ngIf="unitReport?.attendanceList.length > 0">
+        <tr>
+          <th class="student-name-column">{{'Stud.'|translate}}</th>
+          <th>{{'Attend.'|translate}}</th>
+          <th>{{'Behav.'|translate}}</th>
+          <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
+          <ng-template #otherScoreHeader>
+            <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
+          </ng-template>
+        </tr>
+        <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
+          <tr>
+            <th colspan="3" ></th>
+            <th>%</th>
+            <th *ngFor="let unit of units">{{unit}}</th>
+          </tr>
+        </ng-container>
+        <ng-template #otherUnitsHeader>
+          <tr>
+            <th colspan="3"></th>
+            <ng-container *ngFor="let curriculum of currArray">
+              <th>%</th>
+              <ng-container *ngFor="let unit of units">
+                <th>{{unit}}</th>
+              </ng-container>
+            </ng-container>
+          </tr>
+        </ng-template>
+
+        <tr *ngFor="let student of unitReport?.attendanceList">
+          <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
+          <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
+      'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
+      'great' : student.presentPercentage >= attendancePrimaryThreshold,
+      'white': student.presentPercentage === null || student.presentPercentage === undefined,
+      'number-cell': true,
+      'centered': true}">
+            <ng-container *ngIf="student.presentPercentage || student.presentPercentage === 0; else naAttendanceTemplate">
+              {{student.presentPercentage}}%
+            </ng-container>
+            <ng-template *ngIf="student.presentPercentage === null || student.presentPercentage === undefined" #naAttendanceTemplate>
+              {{'N/A'|translate}}
+            </ng-template>
+          </td>
+
+          <td [ngClass]="{'mediocre' : student.behaviorPercentage && (student.behaviorPercentage !== null || student.behaviorPercentage !== undefined) && student.behaviorPercentage < behaviorPrimaryThreshold, 
+      'great' : student.behaviorPercentage >= behaviorPrimaryThreshold, 
+      'good' : student.behaviorPercentage < behaviorPrimaryThreshold && student.behaviorPercentage >= behaviorSecondaryThreshold,
+      'white' : student.behaviorPercentage === null || student.behaviorPercentage === undefined,
+      'number-cell': true,
+      'centered': true}">
+            <ng-container *ngIf="student.behaviorPercentage || student.behaviorPercentage === 0; else naBehaviorTemplate">
+              {{student.behaviorPercentage}}%
+            </ng-container>
+            <ng-template *ngIf="student.behaviorPercentage === null || student.behaviorPercentage === undefined" #naBehaviorTemplate>
+              {{'N/A'|translate}}
+            </ng-template>
+          </td>
+
+          <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherScoreCell">
+            <td [ngClass]="{'mediocre' : student['score'] && (student['score'] !== null || student['score'] !== undefined) && student['score'] < scoringPrimaryThreshold, 
+      'great' : student['score'] && student['score'] >= scoringPrimaryThreshold, 
+      'good' : student['score'] < scoringPrimaryThreshold && student['score'] >= scoringSecondaryThreshold,
+      'white' : student['score'] === null || student['score'] === undefined,
+      'number-cell': true,
+      'centered': true}">
+              <!--          <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>-->
+              <ng-container *ngIf="student['score']">{{student['score']}}%</ng-container>
+            </td>
+            <ng-container *ngFor="let unit of units; index as unitIndex">
+              <td [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+      'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+      'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] >= scoringSecondaryThreshold,
+      'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+      'number-cell': true,
+      'centered': true}">{{student['score_'+unitIndex]}}</td>
+            </ng-container>
+
+          </ng-container>
+          <ng-template #otherScoreCell>
+            <ng-container *ngFor="let curriculum of currArray">
+              <td [ngClass]="{'mediocre' : student['scores'] && (student['scores'][curriculum.labelSafe] !== null || student['scores'][curriculum.labelSafe] !== undefined) && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold, 
+      'great' : student['scores'] && student['scores'][curriculum.labelSafe] >= scoringPrimaryThreshold, 
+      'good' :  student['scores'] && student['scores'][curriculum.labelSafe] < scoringPrimaryThreshold && student['scores'][curriculum.labelSafe] >= scoringSecondaryThreshold,
+      'white' : student['scores'] && (student['scores'][curriculum.labelSafe] === null || student['scores'][curriculum.labelSafe] === undefined),
+      'number-cell': true,
+      'centered': true}">
+                <!--            <p *ngFor="let item of student['scores'] | keyvalue">{{item.key | slice:0:3}}: {{item.value}}</p>-->
+                <ng-container *ngIf="student['scores'] && student['scores'][curriculum.labelSafe]">{{student['scores'][curriculum.labelSafe]}}%</ng-container>
+              </td>
+              <ng-container *ngFor="let unit of units; index as unitIndex">
+                <td [ngClass]="{'mediocre' : student['unitScores'] && (student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] !== null || student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] !== undefined) && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] < scoringPrimaryThreshold, 
+      'great' : student['unitScores'] && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] >= scoringPrimaryThreshold, 
+      'good' :  student['unitScores'] && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] < scoringPrimaryThreshold && student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] >= scoringSecondaryThreshold,
+      'white' : student['unitScores'] && (student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] === null || student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex] === undefined),
+      'number-cell': true,
+      'centered': true}"><ng-container *ngIf="student['unitScores']">{{student['unitScores'][curriculum.labelSafe + '_score_'+unitIndex]}}</ng-container></td>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </tr>
+      </table>
+    </div>
+<!--  </div>-->
+<!-- Must include this empty mat-chip-list element for the mat-chip to work -->
+<!--<mat-chip-list></mat-chip-list>-->
+<!--</mat-card>-->

@@ -78,16 +78,37 @@ export class EventFormListItemComponent implements OnInit {
         (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId)
       )  &&
       await this.caseService.hasEventFormPermission(EventFormOperation.DELETE, this.eventFormDefinition)
-    
-    this.renderedTemplateListItemIcon = this.caseDefinition.templateEventFormListItemIcon ? eval(`\`${this.caseDefinition.templateEventFormListItemIcon}\``) :  eval(`\`${this.defaultTemplateListItemIcon}\``);
-
-
-    const templateEventFormListItemPrimary = this.caseDefinition.templateEventFormListItemPrimary.replace(/this\./g, '_this.')
-    this.renderedTemplateListItemPrimary = this.caseDefinition.templateEventFormListItemPrimary ? eval(`\`${templateEventFormListItemPrimary}\``) : eval(`\`${this.defaultTemplateListItemPrimary}\``);
-
-    const renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemPrimary.replace(/this\./g, '_this.')
-    this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? eval(`\`${renderedTemplateListItemSecondary}\``) : eval(`\`${this.defaultTemplateListItemSecondary}\``);
-
+    const getValue = (variableName) => {
+      if (response) {
+        const variablesByName = response.items.reduce((variablesByName, item) => {
+          for (const input of item.inputs) {
+            variablesByName[input.name] = input.value;
+          }
+          return variablesByName;
+        }, {});
+        return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+      }
+    };
+    const getCaseVariable = (variableName) => {
+      const variablesByName = this.case.items.reduce((variablesByName, item) => {
+        for (const input of item.inputs) {
+          variablesByName[input.name] = input.value;
+        }
+        return variablesByName;
+      }, {});
+      return variablesByName[variableName];
+    };
+    const caseInstance = this.case;
+    const caseDefinition = this.caseDefinition;
+    const caseEventDefinition = this.caseEventDefinition;
+    const caseEvent = this.caseEvent;
+    const eventForm = this.eventForm;
+    const eventFormDefinition = this.eventFormDefinition;
+    const formatDate = (unixTimeInMilliseconds, format) => moment(new Date(unixTimeInMilliseconds)).format(format);
+    const TRANSLATE = _TRANSLATE;
+    eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateEventFormListItemIcon ? \`${this.caseDefinition.templateEventFormListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``);
+    eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateEventFormListItemPrimary ? \`${this.caseDefinition.templateEventFormListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``);
+    eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``);
     this.ref.detectChanges();
   }
   

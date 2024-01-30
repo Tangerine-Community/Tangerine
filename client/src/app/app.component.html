@@ -20,48 +20,56 @@
   </span>
   <span class="tangy-spacer"></span>
   <app-active-tasks></app-active-tasks>
+  <app-class-nav-bar *ngIf="isLoggedIn && showClassNavBar"></app-class-nav-bar>
   <paper-icon-button icon="more-vert" [matMenuTriggerFor]="appMenu" class="hamburger-menu"></paper-icon-button>
   <mat-menu #appMenu="matMenu">
-    <button *ngIf="ready && appConfig && appConfig.kioskMode" (click)="kioskModeEnabled = true" mat-menu-item>
-      <mat-icon class="material-icons menu-tangy-location-list-icon">screen_lock_landscape</mat-icon>
-      <span>{{'Kiosk Mode'|translate}}</span>
-    </button>
-    <button *ngIf="ready && !appConfig.hideProfile" routerLink="manage-user-profile" mat-menu-item>
-      <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
-      <span>{{'Manage Profile'|translate}}</span>
+    <button *ngIf="isLoggedIn" mat-menu-item routerLink="/">
+      <mat-icon class="material-icons menu-tangy-location-list-icon">home</mat-icon>
+      <span>{{'Home'|translate}}</span>
     </button>
     <button *ngIf="!isLoggedIn" routerLink="" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">lock_open</mat-icon>
       <span>{{'Login / Register'|translate}}</span>
     </button>
-    <button *ngIf="isLoggedIn" routerLink="settings" mat-menu-item>
-      <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
-      <span>{{'Settings'|translate}}</span>
+    <button *ngIf="ready && appConfig && appConfig.kioskMode" (click)="kioskModeEnabled = true" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">screen_lock_landscape</mat-icon>
+      <span>{{'Kiosk Mode'|translate}}</span>
     </button>
     <button *ngIf="isLoggedIn" routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync'|translate}}</span>
     </button>
-    <button *ngIf="isLoggedIn" routerLink="/export-data" mat-menu-item>
-      <mat-icon class="material-icons menu-tangy-location-list-icon">import_export</mat-icon>
-      <span>{{'Export Data'|translate}}</span>
-    </button>
-    <button mat-menu-item (click)="updateApp()" *ngIf="showUpdateAppLink">
-      <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
-      <span>{{'Update App'|translate}}</span>
-    </button>
     <button mat-menu-item (click)="updateApp()" *ngIf="!showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
       <span>{{'Check for Update'|translate}}</span>
     </button>
-    <button *ngIf="isLoggedIn" mat-menu-item routerLink="/maintenance">
-      <mat-icon class="material-icons menu-tangy-location-list-icon">build</mat-icon>
-      <span>{{'Maintenance'|translate}}</span>
+    <button *ngIf="ready && isLoggedIn && !appConfig.hideProfile" routerLink="manage-user-profile" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
+      <span>{{'Manage Profile'|translate}}</span>
     </button>
-    <button routerLink="about" mat-menu-item>
+    <button routerLink="settings" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
+      <span>{{'Settings'|translate}}</span>
+    </button>
+    <button *ngIf="ready && !appConfig.hideAbout" routerLink="about" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">info</mat-icon>
       <span>{{'About'|translate}}</span>
     </button>
+    <!-- Advanced Menu Items-->
+    <mat-divider *ngIf="isLoggedIn"></mat-divider>
+    <button *ngIf="isLoggedIn" mat-menu-item [matMenuTriggerFor]="advancedMenu">{{'Advanced'|translate}}  
+    </button>
+    <mat-menu #advancedMenu="matMenu">
+      <button *ngIf="isLoggedIn" routerLink="/export-data" mat-menu-item>
+        <mat-icon class="material-icons menu-tangy-location-list-icon">import_export</mat-icon>
+        <span>{{'Export Data'|translate}}</span>
+      </button>
+      <button *ngIf="isLoggedIn" mat-menu-item routerLink="/maintenance">
+        <mat-icon class="material-icons menu-tangy-location-list-icon">build</mat-icon>
+        <span>{{'Maintenance'|translate}}</span>
+      </button>
+    </mat-menu>
+    <mat-divider *ngIf="isLoggedIn"></mat-divider>
     <button *ngIf="isLoggedIn" mat-menu-item (click)="logout()">
       <mat-icon class="material-icons menu-tangy-location-list-icon">exit_to_app</mat-icon>
       <span>{{'Logout'|translate}}</span>

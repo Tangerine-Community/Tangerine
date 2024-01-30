@@ -1,0 +1,29 @@
+mat-chip-list.absent {
+  display: block;
+}
+
+::ng-deep .mat-chip-list-wrapper {
+  justify-content: center;
+}
+.mat-card {
+  padding: 5px 0px;
+}
+
+.left-padding {
+  padding-left: 5px;
+}
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
+.tableHintLabel {
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}

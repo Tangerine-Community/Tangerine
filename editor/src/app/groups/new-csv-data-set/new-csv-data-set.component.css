@@ -28,6 +28,9 @@ button {
 .form-list{
   margin-top: 2rem;
 }
+#description, #year-and-month {
+  margin: 20px;
+}
 #description, #description input, #description mat-form-field {
   width: 80%;
 }

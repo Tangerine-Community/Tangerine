@@ -11,6 +11,7 @@ import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 
+
 @Component({
     selector: 'app-registration',
     templateUrl: './registration.component.html',
@@ -36,6 +37,7 @@ export class RegistrationComponent implements OnInit {
     passwordPolicy: string
     passwordRecipe: string
     noPassword = false
+    hidePassword = true
     constructor(
         private userService: UserService,
         private route: ActivatedRoute,

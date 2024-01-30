@@ -94,25 +94,6 @@
           <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
         </table>
       </div>
-      <div #feedback id="feedback" *ngIf="classGroupReport?.studentsAssessed > 0">
-        <div #feedbackMessage id="feedback-message">
-          <mat-card appearance="outlined"  *ngIf="classGroupReport?.feedback">
-            <mat-card-title>{{'Feedback'|translate}}</mat-card-title>
-            <mat-card-content>
-              <h3>{{tNumber(classGroupReport?.feedback?.percentileRange)}} {{'Percentile'|translate}}</h3>
-              <span [innerHTML]="classGroupReport?.feedback?.message"></span>
-            </mat-card-content>
-          </mat-card>
-        </div>
-        <div id="feedback-instructions">
-          <mat-card appearance="outlined"  *ngIf="!classGroupReport?.feedback">
-            <mat-card-title>{{'Feedback'|translate}}</mat-card-title>
-            <mat-card-content>
-              <span>{{'Click on a percentile to view related feedback.'|translate}}</span>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      </div>
       </div>
 </mat-card>
 

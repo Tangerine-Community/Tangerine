@@ -6,6 +6,19 @@ import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import { v4 as UUID } from 'uuid';
+
+export class LocationList {
+  id:string
+  name:string
+  locationsLevels:Array<any>
+  locations:Object
+  metadata:Object
+
+  constructor(data) {
+    Object.assign(this, data)
+  }
+}
+
 @Injectable()
 export class GroupsService {
   constructor(
@@ -265,10 +278,42 @@ export class GroupsService {
     }
   }
 
-  async getLocationList(groupId: string) {
-    const locationListFileName = 'location-list.json';
+  async getLocationLists(groupId: string) {
     try {
-      return await this.httpClient.get(`/editor/${groupId}/content/${locationListFileName}`).toPromise();
+      return await this.httpClient.get(`/editor/${groupId}/location-lists/read`).toPromise();
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async createLocationList(groupId:string, locationList:LocationList) {
+    try {
+      await this.httpClient.put(`/editor/${groupId}/location-list/create`, locationList) .toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async updateLocationList(groupId:string, locationList:LocationList) {
+    try {
+      await this.httpClient.put(`/editor/${groupId}/location-list/update`, locationList) .toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async deleteLocationList(groupId:string, locationList:LocationList) {
+    try {
+      return await this.httpClient.post(`/editor/${groupId}/location-list/delete`, locationList).toPromise()
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+    }
+  }
+
+  async getLocationList(groupId: string, locationListFilePath: string = 'location-list.json') {
+    const locationListFullFilePath = `/editor/${groupId}/content/${locationListFilePath}`
+    try {
+      return await this.httpClient.get(locationListFullFilePath).toPromise();
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

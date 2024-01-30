@@ -8,7 +8,7 @@ import {DatePipe} from '@angular/common';
 @Component({
     selector: 'my-profile',
     templateUrl: './profile.component.html',
-    styleUrls: ['./profile.component.css'],
+    styleUrls: ['./profile.component.css', './material.min.css'],
     providers: [DatePipe]
 })
 export class ProfileComponent implements OnInit {

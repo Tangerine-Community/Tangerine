@@ -38,6 +38,9 @@ import { MaintenanceModule } from './core/maintenance/maintenance.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ActiveTasksComponent } from './core/active-tasks/active-tasks.component';
 import {MatTableModule} from "@angular/material/table";
+import {ClassNavBarComponent} from "./class/class-nav-bar/class-nav-bar.component";
+import {MatListModule} from "@angular/material/list";
+import {MatDividerModule} from "@angular/material/divider";
 export { AppComponent }
 
 export function initializeApp1(appInit: AppInit) {
@@ -49,7 +52,8 @@ export function initializeApp1(appInit: AppInit) {
 @NgModule({
   declarations: [
     AppComponent,
-    ActiveTasksComponent
+    ActiveTasksComponent,
+    ClassNavBarComponent
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
     imports: [
@@ -57,8 +61,9 @@ export function initializeApp1(appInit: AppInit) {
         FormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
-        MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, 
-        MatProgressBarModule, MatTableModule,
+        MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatDividerModule,
+	MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule, MatTableModule,
+	MatListModule,
         OverlayModule,
         TangyFormsModule,
         AuthModule,

@@ -4,8 +4,11 @@
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
 - [tangerine-dev-tutorial-notes.md](tangerine-dev-tutorial-notes.md)
+- [Reverse Proxy for Developers](./reverse-proxy-for-developers.md)
+- [Styling Tangerine](styling-tangerine.md)
 
 ## Application design
+- [Data Structures](data-structures.md)
 - [Bootstrapping Tangerine](bootstrapping-tangerine.md)
 - [Viewing Forms and Form Data](viewing-forms-and-data.md)
 - [Supporting custom elements](supporting-custom-elements.md)
@@ -13,9 +16,9 @@
 - [How Tangerine code is generated](how-tangerine-is-built.md)
 
 ## Debugging
-- [debugging.md](debugging.md)
-- [debugging-reporting.md](debugging-reporting.md)
 - [Creating Clean Development Content](creating-clean-dev-content.md)
+- [debugging-reporting.md](debugging-reporting.md)
+- [debugging_node_apps.md](debugging_node_apps.md)
 
 ## Managing Deployments
 - [Upgrades](upgrades.md)

@@ -361,10 +361,18 @@ class CaseService {
         }
       }
     }
+    
+    await eval(caseEventDefinition.onEventCreate)
+    
+    return caseEvent
+  }
+
+  async onCaseEventCreate(caseEvent: CaseEvent) {
+    const caseEventDefinition = this.caseDefinition
+    .eventDefinitions
+    .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
 
     await eval(caseEventDefinition.onEventCreate)
-
-    return caseEvent
   }
 
   setEventName(eventId, name:string) {
@@ -1611,44 +1619,62 @@ export const markQualifyingCaseAsComplete = ({caseInstance, caseDefinition}:Case
   return { caseInstance, caseDefinition }
 }
 
-export const markQualifyingEventsAsComplete = ({caseInstance, caseDefinition}:CaseInfo):CaseInfo => {
+export const markQualifyingEventsAsComplete = ({ caseInstance, caseDefinition }: CaseInfo): CaseInfo => {
   return {
     caseInstance: {
       ...caseInstance,
       events: caseInstance.events.map(event => {
+        let complete = false;
+        const eventDefinition = caseDefinition.eventDefinitions.find(def => def.id === event.caseEventDefinitionId);
+
+        if (eventDefinition) {
+          const eventFormDefinitions = eventDefinition.eventFormDefinitions;
+
+          // util function
+          function someEventFormComplete(eventForms, andRequired=false) {
+            return eventForms.some(form => {
+              const participant = form.participantId ? caseInstance.participants.find(p => p.id === form.participantId) : undefined
+              if (!form.participantId || (participant && !participant.inactive)) {
+                if (andRequired) {
+                  return !form.complete && form.required;
+                } else {
+                  return !form.complete
+                }
+              }
+              return false;
+            })
+          }
+
+          for (const eventFormDefinition of eventFormDefinitions) {
+            const required = eventFormDefinition.required;
+            const eventForms = event.eventForms.filter(form => form.eventFormDefinitionId === eventFormDefinition.id);
+
+            if (required === true && !eventForms.some(form => form.eventFormDefinitionId === eventFormDefinition.id)) {
+              // 1. Is required and has no Event Form instances.
+              complete = true;
+              break;
+            }
+            else if (required === true && someEventFormComplete(eventForms)) {
+              // 2. Is required and at least one Event Form instance is not complete, but ignore Event Forms for inactive Participants.
+              complete = true
+              break;
+            }
+            else if (required === false && someEventFormComplete(eventForms, true)) {
+              // 3. Is not required and has at least one Event Form instance that is both incomplete and required, but ignore Event Forms for inactive Participants.
+              complete = true;
+              break;
+            }
+          }
+        }
+
         return {
           ...event,
-          complete: !caseDefinition
-            .eventDefinitions
-            .find(eventDefinition => eventDefinition.id === event.caseEventDefinitionId)
-            .eventFormDefinitions
-            .some(eventFormDefinition => {
-              // 1. Is required and has no Event Form instances.
-              return (
-                  eventFormDefinition.required === true &&
-                  !event.eventForms.some(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id)
-                ) ||
-                // 2. Is required and at least one Event Form instance is not complete, but ignore Event Forms for inactive Participants.
-                (
-                  eventFormDefinition.required === true &&
-                  event.eventForms
-                    .filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id && (!eventForm.participantId || !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive))
-                    .some(eventForm => !eventForm.complete)
-                ) ||
-                // 3. Is not required and has at least one Event Form instance that is both incomplete and required, but ignore Event Forms for inactive Participants.
-                (
-                  eventFormDefinition.required === false &&
-                  event.eventForms
-                    .filter(eventForm => 
-                      eventForm.eventFormDefinitionId === eventFormDefinition.id && (!eventForm.participantId || !caseInstance.participants.find(p => p.id === eventForm.participantId).inactive))
-                    .some(eventForm => !eventForm.complete && eventForm.required)
-                )
-            })
-        }
+          complete: !complete
+        };
       })
     },
     caseDefinition
-  }
-}
+  };
+};
 
 export { CaseService };

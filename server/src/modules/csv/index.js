@@ -2,6 +2,8 @@ const DB = require('../../db.js')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const groupReportingViews = require(`./views.js`)
+const moment = require('moment')
+const path = require('path')
 const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
@@ -58,8 +60,6 @@ module.exports = {
         try {
           const {doc, sourceDb} = data
           const groupId = sourceDb.name
-          // TODO: Can't the fetch of the locationList be cached?
-          const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
           // console.log(doc.type)
           // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
@@ -67,12 +67,12 @@ module.exports = {
           const SANITIZED_DB = new DB(`${sourceDb.name}-reporting-sanitized`);
           
           if (doc.type !== 'issue') {
-            let flatResponse = await generateFlatResponse(doc, locationList, false, groupId);
+            let flatResponse = await generateFlatResponse(doc, false, groupId);
             // Process the flatResponse
             let processedResult = flatResponse;
             // Don't add user-profile to the user-profile
             if (processedResult.formId !== 'user-profile') {
-              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb, locationList)
+              processedResult = await attachUserProfile(processedResult, REPORTING_DB, sourceDb)
             }
             // @TODO Ensure design docs are in the database.
             await saveFormInfo(processedResult, REPORTING_DB);
@@ -82,7 +82,7 @@ module.exports = {
 
             // Sanitizing the data:
             // Repeat the flattening in order to deliver sanitized (non-PII) output
-            flatResponse = await generateFlatResponse(doc, locationList, true, groupId);
+            flatResponse = await generateFlatResponse(doc, true, groupId);
             // Process the flatResponse
             processedResult = flatResponse
             // Don't add user-profile to the sanitized db
@@ -157,7 +157,7 @@ module.exports = {
                   }
                 }
               } else {
-                console.log("Mysql - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
+                console.log("CSV - NO eventForms! doc _id: " + doc._id + " in database " +  sourceDb.name + " event: " + JSON.stringify(event))
               }
               // Make a clone of the event so we can delete part of it but not lose it in other iterations of this code
               // Note that this clone is only a shallow copy; however, it is safe to delete top-level properties.
@@ -223,23 +223,28 @@ const getItemValue = (doc, variableName) => {
  * @returns {object} processed results for csv
  */
 
-const  generateFlatResponse = async function (formResponse, locationList, sanitized, groupId) {
+const  generateFlatResponse = async function (formResponse, sanitized, groupId) {
+  let flatFormResponse
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
   const cycleSequencesReplacer = new RegExp('\n', 'g')
-  let flatFormResponse = {
+  const startDatetime = moment(formResponse.startUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
+  const endDatetime = moment(formResponse.endUnixtime).format('yyyy-MM-DD hh:mm:ss') || ''
+  flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
-    cycleSequences: formResponse.form.cycleSequences? formResponse.form.cycleSequences.replace(cycleSequencesReplacer,'  '): '',
-    sequenceOrderMap: formResponse.form.sequenceOrderMap?formResponse.form.sequenceOrderMap:'',
-    startUnixtime: formResponse.startUnixtime||'',
-    endUnixtime: formResponse.endUnixtime||'',
-    lastSaveUnixtime: formResponse.lastSaveUnixtime||'',
-    buildId: formResponse.buildId||'',
-    buildChannel: formResponse.buildChannel||'',
-    deviceId: formResponse.deviceId||'',
-    groupId: formResponse.groupId||'',
+    cycleSequences: formResponse.form.cycleSequences ? formResponse.form.cycleSequences.replace(cycleSequencesReplacer, '  ') : '',
+    sequenceOrderMap: formResponse.form.sequenceOrderMap ? formResponse.form.sequenceOrderMap : '',
+    startUnixtime: formResponse.startUnixtime || '',
+    startDatetime: startDatetime,
+    endUnixtime: formResponse.endUnixtime || '',
+    endDatetime: endDatetime,
+    lastSaveUnixtime: formResponse.lastSaveUnixtime || '',
+    buildId: formResponse.buildId || '',
+    buildChannel: formResponse.buildChannel || '',
+    deviceId: formResponse.deviceId || '',
+    groupId: formResponse.groupId || '',
     complete: formResponse.complete,
     // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
     archived: formResponse.archived,
@@ -251,17 +256,39 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
       participantId: formResponse.participantId || ''
     } : {}
   };
-  function set(input, key, value) {
-    flatFormResponse[key] = input.skipped
-        ? process.env.T_REPORTING_MARK_SKIPPED_WITH
-        : 
-        input.hidden && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
-            ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
-        : 
-        value === undefined && process.env.T_REPORTING_MARK_UNDEFINED_WITH !== "ORIGINAL_VALUE"
-            ? process.env.T_REPORTING_MARK_UNDEFINED_WITH
-            : value
+  if (formResponse.type === 'attendance' || formResponse.type === 'behavior' || formResponse.type === 'scores') {
+    // log.info(`Saving flatFormResponse for type ${formResponse.type} `)
+    flatFormResponse['timestamp'] = formResponse.timestamp
+    flatFormResponse['classId'] = formResponse.classId
+    flatFormResponse['grade'] = formResponse.grade
+    flatFormResponse['schoolName'] = formResponse.schoolName
+    flatFormResponse['schoolYear'] = formResponse.schoolYear
+    flatFormResponse['type'] = formResponse.type
+    if (formResponse.type === 'attendance') {
+      flatFormResponse['attendanceList'] = formResponse.attendanceList
+    } else if (formResponse.type === 'behavior') {
+      // flatFormResponse['studentBehaviorList'] = formResponse.studentBehaviorList
+      const studentBehaviorList = formResponse.studentBehaviorList.map(record => {
+        const student = {}
+        Object.keys(record).forEach(key => {
+          if (key === 'behavior') {
+            student[key + '.formResponseId'] = record[key]['formResponseId']
+            student[key + '.internal'] = record[key]['internal']
+            student[key + '.internalPercentage'] = record[key]['internalPercentage']
+            // console.log("special processing for behavior: " + JSON.stringify(student) )
+          } else {
+            // console.log("key: " + key + " record[key]: " + record[key])
+            student[key] = record[key]
+          }
+        })
+        return student
+      })
+      flatFormResponse['studentBehaviorList'] = studentBehaviorList
+    } else if (formResponse.type === 'scores') {
+      flatFormResponse['scoreList'] = formResponse.scoreList
+    }
   }
+  
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     flatFormResponse[`${item.id}_firstOpenTime`]= item.firstOpenTime? item.firstOpenTime:''
@@ -275,32 +302,50 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
       }
       if (!sanitize) {
         if (input.tagName === 'TANGY-LOCATION') {
-          // Populate the ID and Label columns for TANGY-LOCATION levels.
+          // Populate the id, label and metadata columns for TANGY-LOCATION levels in the current location list.
+          // The location list may be change over time. When values are changed, we attempt to adjust 
+          // so the current values appear in the outputs.
+
+          // This input has an attribute 'locationSrc' with a path to the location list that starts with './assets/'
+          // We need to compare file names instead of paths since it is different on the server
+          const locationSrc = input.locationSrc ? path.parse(input.locationSrc).base : `location-list.json`
+          const locationList = await tangyModules.getLocationListsByLocationSrc(groupId, locationSrc)
           locationKeys = []
           for (let group of input.value) {
-            set(input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
-            try {
-              const location = getLocationByKeys(locationKeys, locationList)
-              for (let keyName in location) {
-                if (keyName !== 'children') {
-                  set(input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])
+
+            if (!locationList) {
+              // Since tangy-form v4.42.0, tangy-location widget saves the label in the value
+              // use the label value saved in the form response if it is not found in the current location list.
+              // If no label appears in the form response, then we put 'orphanced' for the label. 
+              const valueLabel = group.label ? group.label : 'orphaned'
+              tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, valueLabel)
+            } else {
+              try {
+                const location = getLocationByKeys(locationKeys, locationList)
+                for (let keyName in location) {
+                  if (['descendantsCount', 'children', 'parent', 'id'].includes(keyName)) {
+                    continue
+                  }
+                  tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_${keyName}`, location[keyName])                
                 }
+              } catch (e) {
+                const valueLabel = group.label ? group.label : 'orphaned'
+                tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.level}_label`, valueLabel)
               }
-            } catch (e) {
-              set(input, `${formID}.${item.id}.${input.name}.${group.level}_label`, 'orphaned')
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' || input.tagName === 'TANGY-RADIO-BLOCKS') {
           // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
-          set(input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, Array.isArray(input.value) 
             ? input.value.find(input => input.value == 'on')
               ? input.value.find(input => input.value == 'on').name
               : ''
             : `${input.value}`
           )
         } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? '1'
               : '0'
           )
@@ -308,38 +353,38 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
           // Expected value type of input.value is Array, but custom logic may accidentally assign a different data type.
           if (Array.isArray(input.value)) {
             for (let checkboxInput of input.value) {
-              set(input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
+              tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}_${checkboxInput.name}`, checkboxInput.value
                   ? "1"
                   : "0"
               )
             }
           } else {
-            set(input, `${formID}.${item.id}.${input.name}`, `${input.value}`) 
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, `${input.value}`) 
           }
         } else if (input.tagName === 'TANGY-CHECKBOX') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? "1"
               : "0"
           )
         } else if (input.tagName === 'TANGY-SIGNATURE') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
         } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )         
         } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value
               ? `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/app/${groupId}/response-variable-value/${formResponse._id}/${input.name}`
               : ""
           )
         } else if (input.tagName === 'TANGY-EFTOUCH') {
           let elementKeys = Object.keys(input.value);
           for (let key of elementKeys) {
-            set(
+            tangyModules.setVariable(flatFormResponse, 
               input, 
               `${formID}.${item.id}.${input.name}.${key}`, 
               Array.isArray(input.value[key])
@@ -361,26 +406,26 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               // Correct.
               derivedValue = '1'
             }
-            set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
             if (toggleInput.highlighted === true) {
               hitLastAttempted = true
             }
           }
           ;
-          set(input, `${formID}.${item.id}.${input.name}.duration`, input.duration)
-          set(input, `${formID}.${item.id}.${input.name}.time_remaining`, input.timeRemaining)
-          set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
-          set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
-          set(input, `${formID}.${item.id}.${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
-          set(input, `${formID}.${item.id}.${input.name}.time_intermediate_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.duration`, input.duration)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.time_remaining`, input.timeRemaining)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.time_intermediate_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
           // Calculate Items Per Minute.
           let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
           let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
           let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
           let timeSpent = input.duration - input.timeRemaining
-          set(input, `${formID}.${item.id}.${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
         } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
           let hitLastAttempted = false
           for (let toggleInput of input.value) {
@@ -395,7 +440,7 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
               // Correct.
               derivedValue = '1'
             }
-            set(input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}_${toggleInput.name}`, derivedValue)
             if (toggleInput.highlighted === true) {
               hitLastAttempted = true
             }
@@ -405,24 +450,24 @@ const  generateFlatResponse = async function (formResponse, locationList, saniti
           let totalNumberOfItems = input.value.length
           let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
           let numberOfItemsCorrect = totalNumberOfItems - numberOfItemsIncorrect
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
-          set(input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
-          set(input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
-          set(input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
-        } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.gridAutoStopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.autoStop`, input.autoStop)
+        } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
           // Do nothing :).
         } else if (input && typeof input.value === 'string') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value)
         } else if (input && typeof input.value === 'number') {
-          set(input, `${formID}.${item.id}.${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}`, input.value)
         } else if (input && Array.isArray(input.value)) {
           for (let group of input.value) {
-            set(input, `${formID}.${item.id}.${input.name}.${group.name}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${group.name}`, group.value)
           }
         } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
           let elementKeys = Object.keys(input.value);
           for (let key of elementKeys) {
-            set(input, `${formID}.${item.id}.${input.name}.${key}`, input.value[key])
+            tangyModules.setVariable(flatFormResponse, input, `${formID}.${item.id}.${input.name}.${key}`, input.value[key])
           }
           ;
         }
@@ -475,6 +520,38 @@ function saveFormInfo(flatResponse, db) {
         foundNewHeaders = true
       }
     })
+    if (flatResponse.type === 'attendance' || flatResponse.type === 'behavior' || flatResponse.type === 'scores') {
+      let listName = ""
+      if (flatResponse.type === 'attendance') {
+        listName = 'attendanceList'
+      } else if (flatResponse.type === 'behavior') {
+        listName = 'studentBehaviorList'
+      } else if (flatResponse.type === 'scores') {
+        listName = 'scoreList'
+      }
+      // log.info(`Saving ${listName} headers to ${formDoc._id}: ${JSON.stringify(flatResponse[listName])}`)
+      flatResponse[listName].forEach(record => {
+        Object.keys(record).forEach(key => {
+          // console.log("key: " + key + " record[key]: " + record[key])
+          if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
+            // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
+            let safeKey = key.replace('form-0.', '')
+            // Make the header property (AKA label) just the variable name.
+            const firstOccurenceIndex = safeKey.indexOf('.')
+            const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex + 1)
+            let keyArray = key.split('.')
+            // console.log("key: " + key + " keyArray: " + JSON.stringify(keyArray))
+            // Preserve the namespacing of user-profile
+            if (keyArray[0] === 'user-profile') {
+              formDoc.columnHeaders.push({key, header: safeKey})
+            } else {
+              formDoc.columnHeaders.push({key, header: safeKey.substr(secondOccurenceIndex + 1, safeKey.length)})
+            }
+            foundNewHeaders = true
+          }
+        })
+      })
+    }
     if (foundNewHeaders) {
       try {
         await db.put(formDoc)
@@ -507,7 +584,7 @@ function saveFlatFormResponse(doc, db) {
 
 
 
-async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
+async function attachUserProfile(doc, reportingDb, sourceDb) {
     try {
       let userProfileId = doc.tangerineModifiedByUserId
       if (!userProfileId) {
@@ -518,7 +595,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         userProfileId = doc[userProfileIdKey]
       }
       // console.log("CSV generation for doc _id: " + doc._id + "; adding userProfile to doc with userProfileId: " + userProfileId + " ")
-      let userProfileDoc;
+      let  userProfileDoc;
       if (userProfileId !== 'Editor') {
         // Get the user profile.
         try {
@@ -528,7 +605,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
           // If it is not (yet) in the reporting db, then try to get it from the sourceDb.
           try {
             let userProfileDocOriginal = await sourceDb.get(userProfileId)
-            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, locationList, false, sourceDb.name);
+            userProfileDoc = await generateFlatResponse(userProfileDocOriginal, false, sourceDb.name);
           } catch (e) {
             // console.log("Error: sourceDb:  " + sourceDb.name + " unable to fetch userProfileId: " + userProfileId + " Error: " + JSON.stringify(e) + " e: " + e.message)
           }
@@ -558,18 +635,7 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
         delete docWithProfile['user-profile.groupId']
         delete docWithProfile['user-profile.complete']
         delete docWithProfile['user-profile.item1_firstOpenTime']
-        delete docWithProfile['user-profile.item1.location.region_id']
-        delete docWithProfile['user-profile.item1.location.region_level']
-        delete docWithProfile['user-profile.item1.location.region_parent']
-        delete docWithProfile['user-profile.item1.location.region_descendantsCount']
-        delete docWithProfile['user-profile.item1.location.district_id']
-        delete docWithProfile['user-profile.item1.location.district_level']
-        delete docWithProfile['user-profile.item1.location.district_parent']
-        delete docWithProfile['user-profile.item1.location.district_descendantsCount']
-        delete docWithProfile['user-profile.item1.location.facility_id']
-        delete docWithProfile['user-profile.item1.location.facility_level']
-        delete docWithProfile['user-profile.item1.location.facility_parent']
-        delete docWithProfile['user-profile.item1.location.facility_descendantsCount']
+        delete docWithProfile['user-profile.item1.location']
 
         return docWithProfile
       } else {
@@ -579,7 +645,6 @@ async function attachUserProfile(doc, reportingDb, sourceDb, locationList) {
       }
       
     } catch (error) {
-      // There must not be a user profile yet doc uploaded yet.
       // console.log("Returning doc instead of docWithProfile because user profile not uploaded yet.")
       return doc
     }
