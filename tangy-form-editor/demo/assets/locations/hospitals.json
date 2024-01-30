@@ -1,0 +1,43 @@
+{
+  "locationsLevels": ["ward", "clinic"],
+  "locations": {
+    "ward1": {
+      "id": "ward1",
+      "label": "ward 1",
+      "children": {
+        "clinic1": {
+          "id": "clinic1",
+          "label": "clinic 1",
+          "latitude": 44.46567,
+          "longitude": -73.21911
+        },
+        "clinic2": {
+          "id": "clinic2",
+          "label": "clinic 2",
+          "latitude": 44.45308,
+          "longitude": -73.19576
+        }
+      }
+    },
+    "ward2": {
+      "id": "ward2",
+      "label": "ward 2",
+      "children": {
+        "clinic3": {
+          "id": "clinic3",
+          "label": "clinic 3",
+          "latitude": 44.46567,
+          "longitude": -73.21911
+
+        },
+        "clinic4": {
+          "id": "clinic4",
+          "label": "clinic 4",
+          "latitude": 44.46567,
+          "longitude": -73.21911
+
+        }
+      }
+    }
+  }
+}

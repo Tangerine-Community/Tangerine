@@ -602,7 +602,7 @@ class TangyBaseWidget extends PolymerElement {
     return false;
   }
 
-  // ?? So we can do event listeners on dynamic items?? Could also make form components for things like <tangy-list>.
+  // Use to add dynamic event listeners or make form components for things like <tangy-list>.
   afterRenderEdit() {}
 
   /*
@@ -917,6 +917,9 @@ class TangyBaseWidget extends PolymerElement {
         .querySelector("#container")
         .querySelector("tangy-form")
         .addEventListener("submit", (event) => this._onSubmit());
+
+      this.afterRenderEdit();
+
     } else if (this.mode === MODE_INFO) {
       this.shadowRoot.querySelector("#container").innerHTML = this.renderInfo(
         this._config
