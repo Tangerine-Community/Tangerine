@@ -1,4 +1,3 @@
-import { rendererTypeName } from '@angular/compiler';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from 'src/app/core/auth/_services/user.service';

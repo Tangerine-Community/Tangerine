@@ -7,8 +7,8 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { GroupsService } from '../services/groups.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
-import {AppConfig} from "../../../../../client/src/app/shared/_classes/app-config.class";
 import { HttpClient } from '@angular/common/http';
+import {AppConfig} from "../../shared/_classes/app-config.class";
 
 @Component({
   selector: 'app-new-csv-data-set',
