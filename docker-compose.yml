@@ -144,6 +144,8 @@ services:
 #      - ./data/id_rsa.pub:/root/.ssh/id_rsa.pub:delegated \
       - ./translations:/tangerine/translations:delegated \
       - ./online-survey-app/src:/tangerine/online-survey-app/src:delegated \
+      - ./tangy-form-editor:/tangerine/tangy-form-editor:delegated
+      - ./tangy-form:/tangerine/tangy-form:delegated
 
   nginx:
     image: 'nginx:alpine'
