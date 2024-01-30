@@ -17,7 +17,8 @@ export class ManageLocationListMetadataComponent implements OnInit {
   @Input() level: string;
   @Input() locationListFileName;
 
-  title; 
+  title = _TRANSLATE('Location List Metadata')
+  breadcrumbs:Array<Breadcrumb> = []
   groupId;
   locationLevel;
   isFormShown = false;
@@ -38,6 +39,16 @@ export class ManageLocationListMetadataComponent implements OnInit {
     this.form = this.defaultFormState;
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
+      this.breadcrumbs = [
+        <Breadcrumb>{
+          label: _TRANSLATE('Location List'),
+          url: 'location-list'
+        },
+        <Breadcrumb>{
+          label: _TRANSLATE('Location List Metadata'),
+          url: `location-list/manage-location-list-metadata/${params.locationLevel}`
+        }
+      ]
     });
     this.locationLevel = this.level;
     this.title = `${this.level} Metadata`
