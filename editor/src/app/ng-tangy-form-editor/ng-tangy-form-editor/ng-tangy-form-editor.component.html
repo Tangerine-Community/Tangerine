@@ -9,16 +9,6 @@
       <ng-template mat-tab-label>
         {{'Feedback Editor'|translate}}
       </ng-template>
-      <ng-template matTabContent>
-        <feedback-editor [groupName]="groupId" [formId]="formId"></feedback-editor>
-      </ng-template>
-    </mat-tab>
-    <mat-tab>
-      <ng-template mat-tab-label>
-        {{'Media Input Editor'|translate}}
-      </ng-template>
-      <ng-template matTabContent>
-        <media-input-editor [groupId]="groupId" [formId]="formId"></media-input-editor>
-      </ng-template>
+      <feedback-editor [groupName]="groupId" [formId]="formId"></feedback-editor>
     </mat-tab>
 </mat-tab-group>
