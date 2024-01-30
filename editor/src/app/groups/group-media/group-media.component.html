@@ -1,14 +1,6 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <div class="toolbar">
     <vaadin-upload target="./media-upload" #upload></vaadin-upload>
-    
-</div>
-<div class="file-list">
-  <ng-container *ngIf="list['files'].length === 0 else gotFiles">
-  </ng-container>
-  <ng-template #gotFiles>
     <paper-button (click)="onDeleteClick()"><iron-icon icon="delete"></iron-icon>remove selected files</paper-button>
-  </ng-template>
-  <file-list-http #list></file-list-http>
 </div>
-
+<file-list-http #list></file-list-http>
