@@ -84,7 +84,6 @@ export class AttendanceCheckComponent implements OnInit {
    */
   async showAttendanceListing(currentClassId, curriculum, currentClass) {
     const type = "attendance"
-    const registerNameForDialog = 'Attendance';
     this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
@@ -117,7 +116,7 @@ export class AttendanceCheckComponent implements OnInit {
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList, curriculum)
     if (!currentAttendanceReport) {
       // TODO check if the currentAttendanceReport.timestamp or currentAttendanceReport.reportDate is today.
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
+      const startRegister = confirm(_TRANSLATE('Begin Attendance record for today?'))
       if (startRegister) {
       } else {
         this.router.navigate(['/attendance-dashboard/']);
