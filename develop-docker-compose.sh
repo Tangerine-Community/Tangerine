@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 echo "Running develop-compose.sh"
-echo "pwd: $pwd"
+#echo "pwd: $pwd"
 
 
 #
