@@ -208,4 +208,21 @@ Example get using XMLHttpRequest (tangy-form's tangy-location input) `request.op
 
 Ideally, app.use('/',..) amd app.use('/app/:group/assets/') would be in server/express-app.js and only  app.use('/app/:group/') would be in server-ui/express-app.js.
 
+## Troubleshoting
+
+### Startup issues
+
+If you get the following error when launching the start script:
+
+```
+ => CANCELED [apk-generator 41/49] RUN cd /tangerine/online-survey-app &&     ./node_modules/.bin/ng build -  78.2s
+ => ERROR [server-ui 14/21] ADD editor /tangerine/editor                                                       0.1s
+------
+ > [server-ui 14/21] ADD editor /tangerine/editor:
+------
+failed to solve: cannot copy to non-directory: /var/lib/docker/overlay2/caqplhs7l3pi6pk4wqi1v1zhh/merged/tangerine/editor/package-lock.json
+```
+
+See if there is a package-lock.json in the editor directory that is a *directory* and not a file. If so, delete it and try again.
+
 
