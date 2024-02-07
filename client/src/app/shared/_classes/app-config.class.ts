@@ -82,8 +82,11 @@ export class AppConfig {
   // Profile configuration.
   //
 
-  // This setting only applies to Sync Protocol 1.
+  // centrallyManagedUserProfile and registrationRequiresServerUser are mutually exclusive. If both are set to true, the app will default to using centrallyManagedUserProfile.
+  // The user profile is managed by the server and not the Device. This setting is only applicable to Sync Protocol 1.
   centrallyManagedUserProfile = false
+  // The user profile is initially managed by the server and can be updated on the client. This setting is only applicable to Sync Protocol 2.
+  registrationRequiresServerUser = false
   // Hides the user profile link to edit when on the Device.
   hideProfile = false
   // Hides the about page.
