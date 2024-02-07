@@ -11,6 +11,10 @@ __New Features__
 __General Updates__
 - Password Visibility -- the login and register screen on the client shows an 'eye' icon used to hide or show passwords
 - Re-organization of the client app menu
+- Reintroduce `registrationRequiresServerUser` app config setting to make managing central user more flexible
+   - use `registrationRequiresServerUser` to require an import code when registering users on the client
+   - use `centrallyManagedUserProfile` to require an import code AND only allow changes to the user profile on the server
+   - use `hideProfile` to hide the manage user profile page from on the client
 
 __Teach Module Updates__
 - Behavior screen show a link instead of a checkbox to access the Behavior form
