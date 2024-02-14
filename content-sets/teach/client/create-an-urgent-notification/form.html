@@ -1,0 +1,25 @@
+<tangy-form id="create-an-urgent-notification" title="Data Collector causes an urgent notification to be created"
+
+  on-submit="
+    debugger
+    const resolveNotificationEventForm = caseService.createEventForm(caseEvent.id, 'event-form-definition-fdkai3', participant.id)
+    caseService.createNotification(
+      `This is an urgent notification!`, 
+      `
+        Click here to fill out a form that will cause this notification to go away.
+      `,
+      `/case/event/form/${caseService.case._id}/${caseEvent.id}/${resolveNotificationEventForm.id}`,
+      `warning`,
+      `#ff6961`,
+      true,
+      true 
+    ) 
+  "
+
+>
+  <tangy-form-item id="item1">
+    <tangy-box name="info">
+      Submitting this form will cause an urgent notification to be create requiring another form to be filled out.
+    </tangy-box>
+  </tangy-form-item>
+</tangy-form>

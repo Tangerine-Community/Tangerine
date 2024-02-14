@@ -88,7 +88,6 @@ export class BehaviorCheckComponent implements OnInit {
    */
   async showBehaviorListing(currentClassId, curriculum, currentClass) {
     const type = "behavior"
-    const registerNameForDialog = 'Behavior';
     this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
@@ -156,7 +155,6 @@ export class BehaviorCheckComponent implements OnInit {
   }
 
   private async saveStudentBehavior(student) {
-    console.log('saving student behavior. ')
     // save allStudentResults
     this.register.studentBehaviorList = this.studentBehaviorList
     // save register
@@ -172,7 +170,6 @@ export class BehaviorCheckComponent implements OnInit {
 
   /** Navigate to the student registration form */
   selectStudentName(column) {
-    const formsArray = Object.values(column.forms);
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
@@ -183,12 +180,8 @@ export class BehaviorCheckComponent implements OnInit {
   getClassTitle = this.dashboardService.getClassTitle
 
   /** Populate the querystring with the form info. */
-  selectCheckboxResult(column, formId, event) {
-    // let el = this.selection.select(column);
+  selectStudentFormResults(column, formId, event) {
     event.currentTarget.checked = true;
-    // this.selection.toggle(column)
-    const formsArray = Object.values(column.forms);
-    const selectedForm = formsArray.find(response => (response['formId'] === formId));
     const studentId = column.id;
     const classId = column.classId;
     // const selectedFormId = selectedForm['formId'];
@@ -212,35 +205,14 @@ export class BehaviorCheckComponent implements OnInit {
    * This is for new forms without responses.
    * Populate the querystring with the form info. 
    **/
-  async selectCheckbox(column, formId) {
-    // let el = this.selection.select(row);
-    // this.selection.toggle(column)
-    // const formsArray = Object.values(column.forms);
-    // const selectedForm = formsArray.find(response => (response['formId'] === formId));
+  async selectStudentForm(column, formId) {
     const studentId = column.id;
     const classId = column.classId;
-    // const selectedFormId = selectedForm['formId'];
     const selectedFormId = null;
-    // const curriculum = selectedForm['curriculum'];
     const curriculum = formId;
     const src = null;
     const title = null;
     let responseId = null;
-    
-    // const formResponse = await this.dashboardService.getCurriculumResponse(classId, curriculum, studentId)
-    // const responses = await this.classFormService.getResponsesByStudentId(studentId);
-    // for (const response of responses as any[]) {
-    //   // const respClassId = response.doc.metadata.studentRegistrationDoc.classId;
-    //   const respFormId = response.doc.form.id;
-    //   // if (respClassId === this.classId && respCurrId === this.curriculum) {
-    //   //   this.formResponse = response.doc;
-    //   // }
-    //   studentResult['forms'][respFormId] = response.doc;
-    // }
-    
-    // if (selectedForm) {
-    //   responseId = selectedForm['_id']
-    // }
     
     this.router.navigate(['class-form'], { queryParams:
         { formId: selectedFormId,

@@ -19,7 +19,9 @@ export class CreateProfileGuardService implements CanActivate {
     } else {
       const appConfig = await this.appConfigService.getAppConfig()
       let navigateUrl = ''
-      if (appConfig.centrallyManagedUserProfile === true && (appConfig.syncProtocol === '1' || !appConfig.syncProtocol)) {
+      if ((appConfig.centrallyManagedUserProfile === true || appConfig.registrationRequiresServerUser === true) &&
+          (appConfig.syncProtocol === '1' || !appConfig.syncProtocol)
+      ) {
         navigateUrl = '/import-user-profile'
       } else if (appConfig.syncProtocol === '2') {
         navigateUrl = '/associate-user-profile'

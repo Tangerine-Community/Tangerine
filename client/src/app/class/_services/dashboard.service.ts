@@ -1053,7 +1053,7 @@ export class DashboardService {
     // const curriculumFormHtml = await this.getCurriculaForms(curriculum.name);
     // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
     const appConfig = await this.appConfigService.getAppConfig();
-    const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields
+    const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields || []
     const list = []
     for (const student of students) {
       let studentResult
