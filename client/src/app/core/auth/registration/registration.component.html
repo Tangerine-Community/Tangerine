@@ -13,10 +13,11 @@
   <div class="group container content-inner">
     <form role="form" #registration='ngForm' novalidate (submit)="greaseTrap($event)" >
       <mat-form-field *ngIf="requiresAdminPassword === true">
-        <input name="admin-password" type="password" matInput [(ngModel)]="userSignup.adminPassword" required>
+        <input name="admin-password" [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="userSignup.adminPassword" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>{{'Admin Password'|translate}}
         </mat-placeholder>
+        <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
       </mat-form-field>
       <mat-form-field>
         <input name="username" type="text" matInput [(ngModel)]="userSignup.username" (blur)="doesUserExist(userSignup.username)" required>
@@ -26,14 +27,15 @@
       </mat-form-field>
       <br>
       <mat-form-field *ngIf="!noPassword">
-        <input name="password" matInput [(ngModel)]="userSignup.password" type="password" required>
+        <input name="password" matInput [(ngModel)]="userSignup.password" [type]="hidePassword ? 'password' : 'text'" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}
         </mat-placeholder>
+        <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
       </mat-form-field>
       <br>
       <mat-form-field *ngIf="!noPassword">
-        <input name="confirmPassword" matInput [(ngModel)]="userSignup.confirmPassword" type="password" required>
+        <input name="confirmPassword" matInput [(ngModel)]="userSignup.confirmPassword" [type]="hidePassword ? 'password' : 'text'" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}
         </mat-placeholder>

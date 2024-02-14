@@ -1,0 +1,21 @@
+<tangy-form
+  id="mark-form-as-required-example--form-1"
+  title="Mark a Form as required example: form 1"
+  on-submit="
+    if (getValue('likes_fruit').includes('yes')) {
+      const form2 = caseService.createEventForm(caseEvent.id, 'event-form--mark-form-as-required-example-2', participant.id)
+      caseService.markEventFormRequired(caseEvent.id, form2.id)
+    }
+  "
+>
+  <tangy-form-item id="item-1">
+    <tangy-radio-buttons
+      name="likes_fruit"
+      label="Do you like fruit?"
+      hint-text="Answer yes to fill out another form about your favorite fruit."
+    >
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </tangy-radio-buttons>
+  </tangy-form-item>
+</tangy-form>

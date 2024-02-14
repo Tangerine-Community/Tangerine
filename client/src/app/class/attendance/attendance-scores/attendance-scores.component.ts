@@ -6,7 +6,7 @@ import {DashboardService} from "../../_services/dashboard.service";
 import {VariableService} from "../../../shared/_services/variable.service";
 import {Router} from "@angular/router";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
-
+import { TangySnackbarService } from 'src/app/shared/_services/tangy-snackbar.service';
 @Component({
   selector: 'app-attendance-scores',
   templateUrl: './attendance-scores.component.html',
@@ -47,7 +47,8 @@ export class AttendanceScoresComponent implements OnInit {
     private dashboardService: DashboardService,
     private variableService : VariableService,
     private router: Router,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private tangySnackbarService: TangySnackbarService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -64,7 +65,6 @@ export class AttendanceScoresComponent implements OnInit {
     }
 
     const appConfig = await this.appConfigService.getAppConfig()
-    const teachConfiguration = appConfig.teachProperties
     this.units = appConfig.teachProperties?.units
 
     const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
@@ -84,7 +84,6 @@ export class AttendanceScoresComponent implements OnInit {
   
   async showScoreListing(currentClass, currentClassId) {
     const type = "scores"
-    const registerNameForDialog = 'Scoring';
     const students = await this.dashboardService.getMyStudents(currentClassId)
     const schoolName = this.getValue('school_name', currentClass)
     const schoolYear = this.getValue('school_year', currentClass)
@@ -132,14 +131,9 @@ export class AttendanceScoresComponent implements OnInit {
           }],
         complete: false
       }
-      // const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record?'))
-      // if (startRegister) {
-      await this.saveStudentScore(null)
-      // } else {
-      //   this.router.navigate(['/attendance-dashboard/'], { queryParams:
-      //       { curriculum: 'student-registration' }
-      //   });
-      // }
+
+      
+      await this.saveStudentScore()
     } else {
       this.showScoreList = true
       doc.scoreList = this.scoreList
@@ -153,36 +147,33 @@ export class AttendanceScoresComponent implements OnInit {
       student['score_'+unitIndex] = 0
       return
     }
-    await this.saveStudentScore(student)
+    await this.saveStudentScore()
   }
 
-  private async saveStudentScore(student) {
-    console.log('saved student score: ' + JSON.stringify(student))
+  private async saveStudentScore() {
     this.scoreRegister.scoreList = this.scoreList
-    // update testName in case user updated it.
-    // this.scoreRegister.testName = this.testName
-    // save scoreRegister
+
     let doc
     try {
       doc = await this.dashboardService.getDoc(this.scoreRegister._id)
       this.scoreRegister['_rev'] = doc._rev
     } catch (e) {
     }
+
     const result = await this.dashboardService.saveDoc(this.scoreRegister)
     if (result.ok) {
       this.saveSuccess = true
+      this.tangySnackbarService.showText(_TRANSLATE('Saved'))
       setTimeout(() => {
         this.saveSuccess = false
       }, 2000);
+    } else {
+      this.tangySnackbarService.showText(_TRANSLATE('Error saving. Please try again.'));
     }
   }
 
   async saveStudentScores() {
-    console.log('saved student scores ')
     this.scoreRegister.scoreList = this.scoreList
-    // update testName in case user updated it.
-    // this.scoreRegister.testName = this.testName
-    // save scoreRegister
     let doc
     try {
       doc = await this.dashboardService.getDoc(this.scoreRegister._id)
@@ -200,7 +191,6 @@ export class AttendanceScoresComponent implements OnInit {
 
   /** Navigate to the student registration form */
   selectStudentName(column) {
-    const formsArray = Object.values(column.forms);
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
@@ -210,8 +200,7 @@ export class AttendanceScoresComponent implements OnInit {
 
   getClassTitle = this.dashboardService.getClassTitle
 
-  changeCurriculum = async (curriculumId) => {
-    // this.dashboardService.changeCurriculum(curriculum, this.currArray, this.selectedClass, this.router)
+  async changeCurriculum(curriculumId) {
     this.curriculumId = curriculumId
     await this.variableService.set('class-curriculumId', curriculumId);
     this.curriculum = this.currArray.find(x => x.name === this.curriculumId);

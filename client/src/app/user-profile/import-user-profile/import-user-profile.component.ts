@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import PouchDB from 'pouchdb';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { AppConfig } from 'src/app/shared/_classes/app-config.class';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 
 @Component({

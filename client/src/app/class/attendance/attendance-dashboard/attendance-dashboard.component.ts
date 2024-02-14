@@ -30,7 +30,6 @@ export class AttendanceDashboardComponent implements OnInit {
   curriculum: any;
   units: string[] = []
   ignoreCurriculumsForTracking: boolean = false
-  enableContactChoosing: boolean = false
   reportLocaltime: string;
   currArray: any[]
   enabledClasses: any[]
@@ -162,85 +161,78 @@ export class AttendanceDashboardComponent implements OnInit {
     // })
   }
 
-  sendText(student) {
-    let scoresMessage
-    console.log("send text")
+  sendText(student, type) {
     if (this.window.isCordovaApp) {
-      //CONFIGURATION
-      var options = {
-        replaceLineBreaks: false, // true to replace \n by a new line, false by default
-        android: {
-          intent: 'INTENT'  // send SMS with the native android SMS messaging
-          //intent: '' // send SMS without opening any other app, require : android.permission.SEND_SMS and android.permission.READ_PHONE_STATE
-        }
-      };
 
-      var success = function () {
-        // alert('Message sent successfully');
-      };
-      var error = function (e) {
-        alert(_TRANSLATE('Message Failed:') + e);
-      };
       const phone = student.phone
       if (!phone) {
-        alert(_TRANSLATE('This student does not have a phone number.'))
+        alert(_TRANSLATE('This student does not have a phone number'))
         return
-      } else {
-        let attendanceMessage = _TRANSLATE('Attendance is: ') + student.presentPercentage + '%'
-        
-        let behaviorMessage = ""
-        if (student['behavior'] && student['behavior']['internalPercentage']) {
-          behaviorMessage = " ; " + _TRANSLATE('behaviour is: ') + student['behavior']['internalPercentage'] + '%'
-        }
-        
-        if (!this.ignoreCurriculumsForTracking) {
-          scoresMessage = "" +
-            " ; " + _TRANSLATE('score average is: ') + student.score + "%"
-        } else {
-          let currScores = ""
-          for (let i = 0; i < this.currArray.length; i++) {
-            const curriculum = this.currArray[i];
-            let curriculumLabel = curriculum?.label
-            if (student.scores) {
-              if (student.scores[curriculumLabel]) {
-                currScores = currScores + " " + curriculumLabel + ":" + student.scores[curriculumLabel] + "%"
-              }
-            }
-          }
-          if (currScores.length > 0) {
-            scoresMessage = "" + " ; " + _TRANSLATE('score average is: ') + currScores
-          }
-        }
-        
-        // const message = _TRANSLATE('Report for ') + student.name + ': ' + _TRANSLATE('Attendance is ') + student.presentPercentage + '%' + _TRANSLATE(' and behaviour is ') + student.moodPercentage + '%'
-        const message = _TRANSLATE('Report for ') + student.name + ': ' + attendanceMessage + behaviorMessage + scoresMessage
-        // sms.send(phone, message, options, success, error);
-
-        let options = {
-          // message: _TRANSLATE('Share this '), // not supported on some apps (Facebook, Instagram)
-          message: message, // not supported on some apps (Facebook, Instagram)
-          subject: _TRANSLATE('Student feedback '), // fi. for email
-          chooserTitle: _TRANSLATE('Pick an app '), // Android only, you can override the default share sheet title
-          phone: phone, // phone number to share (for WhatsApp only)
-          number: phone, // phone number to share (for WhatsApp only) unused. delete.
-          appPackageName: 'com.whatsapp' // Android only, you can provide id of the App you want to share with
-        };
-
-        const onSuccess = (result) => {
-          // console.log("Share completed? " + result); // On Android apps mostly return false even while it's true
-          console.log("Shared to app: " + result); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-        };
-
-        const onError = (msg) => {
-          console.log("Sharing failed with message: " + msg);
-          alert( _TRANSLATE('Sharing failed: WhatsApp may not be installed. The following apps are available for sharing: ') + msg);
-        };
-        if (this.enableContactChoosing) {
-          this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
-        } else {
-          this.window.plugins.socialsharing.shareViaWhatsAppToPhone(phone, message, null /* img */, null /* url */, onSuccess, onError)
-        }
       }
+
+      let messageList = [];
+      const message = _TRANSLATE('Report for') + ' ' + student.student_name + ': '
+      messageList.push(message)
+
+      if (student.presentPercentage) {
+        let attendanceMessage = _TRANSLATE('Attendance') + ':' + student.presentPercentage + '%'
+        messageList.push(attendanceMessage)
+      }
+
+      
+      let behaviorMessage = ""
+      if (student.behaviorPercentage) {
+        behaviorMessage = _TRANSLATE('Behaviour') + ':' + student.behaviorPercentage + '%'
+        messageList.push(behaviorMessage)
+      }
+
+      if (!this.ignoreCurriculumsForTracking) {
+        if (student.score) {
+          let scoresMessage = _TRANSLATE('Score average') + ':' + student.score + '%'
+          messageList.push(scoresMessage)
+        }
+      } else {
+        if (student.scores) {
+          let scoresMessage = _TRANSLATE('Subject scores') + ':';
+          messageList.push(scoresMessage)
+          Object.entries(student.scores).forEach((scoreArr, _) => {
+            const label = scoreArr[0];
+            const score = scoreArr[1];
+            const curriculum = this.currArray.find(c => c.labelSafe == label)
+            if (curriculum && curriculum.label) {
+              messageList.push(curriculum.label + ": " + score + "%")
+            }
+          })
+        }
+      }      
+      
+      const fullMessage = messageList.join("\n")
+
+      const onSuccess = (result) => {
+        console.log("Shared to app: " + result);
+      };
+      const onError = (msg) => {
+        console.log("Sharing failed with message: " + msg)
+        alert( _TRANSLATE('Something went wrong, please try again.'));
+      };
+
+      // options are only used in shareViaSMS and shareWithOptions
+      let options = {
+        message: fullMessage,
+        subject: _TRANSLATE('Student Report'),
+        phone: phone
+      };
+
+      if (type == 'sms') {
+        // function shareViaSMS (options, phonenumbers, successCallback, errorCallback)
+        this.window.plugins.socialsharing.shareViaSMS(options, phone, onSuccess, onError)
+      } else if (type == 'whatsapp') {
+        // function shareViaSMS(phone, message, fileOrFileArray, url, successCallback, errorCallback)
+        this.window.plugins.socialsharing.shareViaWhatsAppToPhone(phone, fullMessage, null /* img */, null /* url */, onSuccess, onError)
+      } else {
+        this.window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+      }
+
     } else {
       alert(_TRANSLATE('This feature is only available on a mobile device.'))
     }
@@ -248,7 +240,6 @@ export class AttendanceDashboardComponent implements OnInit {
 
   /** Navigate to the student registration form */
   selectStudentName(column) {
-    const formsArray = Object.values(column.forms);
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
@@ -257,9 +248,5 @@ export class AttendanceDashboardComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
-
-  setEnableContactChoosing(checked: boolean) {
-    this.enableContactChoosing = checked
-  }
 
 }

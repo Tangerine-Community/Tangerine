@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
   listUsernamesOnLoginScreen;
   requiresAdminPassword = false
   noPassword = false
+  hidePassword = true
   passwordPolicy: string
   passwordRecipe: string
   constructor(

@@ -1,0 +1,14 @@
+<tangy-form
+  id="workflow-form-2"
+  title="Workflow Form 2"
+  on-submit="
+    const thirdEventForm = caseService.createEventForm(caseEvent.id, 'event-form--workflow-form-3', participant.id)    
+    window.eventFormRedirect = `/case/event/form/${caseInstance._id}/${caseEvent.id}/${thirdEventForm.id}`
+  "
+>
+  <tangy-form-item id="item1">
+    <tangy-box name="info">
+      This is the second form in a series of three. On submit, you will be forward to the third form.
+    </tangy-box>
+  </tangy-form-item>
+</tangy-form>

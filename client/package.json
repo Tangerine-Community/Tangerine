@@ -52,6 +52,7 @@
     "date-carousel": "^5.2.1",
     "date-fns": "^2.30.0",
     "fast-json-patch": "^3.0.0-1",
+    "font-awesome": "^4.7.0",
     "fs-extra": "^6.0.1",
     "install": "^0.13.0",
     "js-uuid": "0.0.6",

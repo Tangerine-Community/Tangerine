@@ -34,13 +34,14 @@ export class TangyFormsPlayerComponent implements OnInit {
   @Input('preventSubmit') preventSubmit = false
   @Input('metadata') metadata: any
 
-  $rendered = new Subject()
-  $beforeSubmit = new Subject()
-  $submit = new Subject()
-  $afterSubmit = new Subject()
-  $resubmit = new Subject()
-  $afterResubmit = new Subject()
-  $saved = new Subject()
+  // making these public allows parent components to subscribe to them.
+  public readonly $rendered = new Subject()
+  public readonly $beforeSubmit = new Subject()
+  public readonly $submit = new Subject()
+  public readonly $afterSubmit = new Subject()
+  public readonly $resubmit = new Subject()
+  public readonly $afterResubmit = new Subject()
+  public readonly $saved = new Subject()
   rendered = false
   _inject = {}
 
