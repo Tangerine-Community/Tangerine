@@ -2,7 +2,8 @@
 <div class="selectedClassLabel">{{'Report'|translate}}<br/>{{getClassTitle(selectedClass)}}<ng-container *ngIf="!ignoreCurriculumsForTracking"> : {{curriculum?.label}} </ng-container></div>
 <!--  <div class="tangy-class-card-content-container">-->
 <div class="info-header">
-  {{'Scroll to the right to view the results for subjects and units. See more at'|translate}} &#8680;
+  {{'Scroll to the right to view the results for subjects and units'|translate}} 
+  <mat-icon>arrow_right_alt</mat-icon>
 </div>
     <div>
       <div class="table-description">
@@ -16,7 +17,7 @@
           <th>{{'Behav.'|translate}}</th>
           <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
           <ng-template #otherScoreHeader>
-              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
           </ng-template>
         </tr>
         <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
@@ -39,7 +40,7 @@
         </ng-template>
           
         <tr *ngFor="let student of attendanceReport?.attendanceList">
-          <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+          <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
           <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
         'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
         'great' : student.presentPercentage >= attendancePrimaryThreshold,
@@ -116,35 +117,32 @@
       
     <div id="last-n-report">
       <div class="table-description">
-        <h2>{{'Most recent'|translate}} {{numVisits}} {{'visits'|translate}}</h2>
+        <h2>{{'Custom Date Range Report'|translate}}</h2>
+        <p>{{'Select a start and end date to view report for that period'|translate}}</p>
       </div>
-      <table>
+      <form class="date-select-form">
+        <mat-form-field class="date-select-form-fields" color="accent">
+          <mat-label>{{'Start Date'|translate}}</mat-label>
+          <input matInput [value]="rangeStartDate" [matDatepickerFilter]="beforeEndDateFilter" [matDatepicker]="startDate" (dateChange)="onRangeDateChange('rangeStartDateInput', $event)">
+          <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+          <mat-datepicker #startDate color="accent"></mat-datepicker>
+        </mat-form-field>
+        
+        <mat-form-field class="date-select-form-fields" color="accent">
+          <mat-label>{{'End Date'|translate}}</mat-label>
+          <input matInput id="rangeEndDateInput" [value]="rangeEndDate" [matDatepicker]="endDate" [max]="rangeMaxDate" (dateChange)="onRangeDateChange('rangeEndDateInput', $event)">
+          <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+          <mat-datepicker #endDate color="accent"></mat-datepicker>
+        </mat-form-field>
+      </form>      
+      <table id="last-n-report-table" class="dashboard-table">
         <tr>
-          <td>
-            {{'View reports from the last:'|translate}}
-          </td>
-          <td>
-            <form class="num-visits-form">
-              <mat-form-field>
-                <input [(ngModel)]="numVisits" matInput type="number"
-                       (ngModelChange)="onNumberVisitsChange($event)" [ngModelOptions]="{standalone: true}">
-              </mat-form-field>
-            </form>
-          </td>
-          <td>
-            {{'days'|translate}}
-          </td>
-          
-        </tr>
-      </table>
-        <table  id="last-n-report-table" class="dashboard-table">
-          <tr>
             <th class="student-name-column">{{'Stud.'|translate}}</th>
             <th>{{'Attend.'|translate}}</th>
             <th>{{'Behav.'|translate}}</th>
             <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
             <ng-template #otherScoreHeader>
-              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+              <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
             </ng-template>
           </tr>
           <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
@@ -166,10 +164,8 @@
             </tr>
           </ng-template>
           
-          <tr *ngFor="let student of recentVisitsReport?.attendanceList">
-<!--            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>-->
-<!--            <td> {{student["name"]}} {{student["surname"]}} </td>-->
-            <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+          <tr *ngFor="let student of dateRangeReport?.attendanceList">
+            <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
             <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
         'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
         'great' : student.presentPercentage >= attendancePrimaryThreshold,
@@ -246,7 +242,7 @@
     <div id="unit-report">
       <div class="table-description">
         <h2>{{'Unit Report'|translate}}</h2>
-        <p>{{'Click unit to view report for that period:'|translate}}</p>
+        <p>{{'Select a unit to view report for that period'|translate}}</p>
       </div>
       
       <div class="unit-legend">
@@ -268,7 +264,7 @@
           <th>{{'Behav.'|translate}}</th>
           <th [attr.colspan]="units?.length+1" *ngIf="!ignoreCurriculumsForTracking; else otherScoreHeader">{{'Score.'|translate}}</th>
           <ng-template #otherScoreHeader>
-            <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label | slice:0:3}}</th>
+            <th [attr.colspan]="units?.length+1" *ngFor="let curriculum of currArray">{{curriculum.label}}</th>
           </ng-template>
         </tr>
         <ng-container *ngIf="!ignoreCurriculumsForTracking; else otherUnitsHeader">
@@ -291,9 +287,7 @@
         </ng-template>
 
         <tr *ngFor="let student of unitReport?.attendanceList">
-          <!--            <td (click)="$event ? selectStudentName(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>-->
-          <!--            <td> {{student["name"]}} {{student["surname"]}} </td>-->
-          <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["name"]}} {{student["surname"]}} </td>
+          <td (click)="$event ? selectStudentDetails(student) : null" class="student-name"> {{student["student_name"]}} {{student["student_surname"]}} </td>
           <td [ngClass]="{'mediocre' : (student.presentPercentage !== null || student.presentPercentage !== undefined) && student.presentPercentage < attendancePrimaryThreshold, 
       'good' : student.presentPercentage < attendancePrimaryThreshold && student.presentPercentage >= attendanceSecondaryThreshold,
       'great' : student.presentPercentage >= attendancePrimaryThreshold,

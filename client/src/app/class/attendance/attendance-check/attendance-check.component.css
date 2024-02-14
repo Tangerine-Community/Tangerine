@@ -20,3 +20,10 @@ mat-chip-list.absent {
   padding-right: 5px;
   text-align: center;
 }
+
+.tableHintLabel {
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}

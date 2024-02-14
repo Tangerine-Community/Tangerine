@@ -8,7 +8,7 @@ import {StudentResult} from "../../dashboard/dashboard.component";
 import {UserService} from "../../../shared/_services/user.service";
 import {FormMetadata} from "../../form-metadata";
 import {ClassFormService} from "../../_services/class-form.service";
-
+import { TangySnackbarService } from 'src/app/shared/_services/tangy-snackbar.service';
 
 @Component({
   selector: 'app-attendance-check',
@@ -45,7 +45,8 @@ export class AttendanceCheckComponent implements OnInit {
     private dashboardService: DashboardService,
               private variableService : VariableService,
               private router: Router,
-              private classFormService: ClassFormService
+              private classFormService: ClassFormService,
+              private tangySnackbarService: TangySnackbarService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -77,11 +78,12 @@ export class AttendanceCheckComponent implements OnInit {
   /**
    * Shim attendance into the currArray so it'll appear in the dropdown.
    * Makes attendance the selectedCurriculum.
-   * @param cassId
+   * @param currentClassId
+   * @param curriculum
+   * @param currentClass
    */
   async showAttendanceListing(currentClassId, curriculum, currentClass) {
     const type = "attendance"
-    const registerNameForDialog = 'Attendance';
     this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)
@@ -114,7 +116,7 @@ export class AttendanceCheckComponent implements OnInit {
     this.attendanceList =  await this.dashboardService.getAttendanceList(students, savedAttendanceList, curriculum)
     if (!currentAttendanceReport) {
       // TODO check if the currentAttendanceReport.timestamp or currentAttendanceReport.reportDate is today.
-      const startRegister = confirm(_TRANSLATE('Begin ' + registerNameForDialog + ' record for today?'))
+      const startRegister = confirm(_TRANSLATE('Begin Attendance record for today?'))
       if (startRegister) {
       } else {
         this.router.navigate(['/attendance-dashboard/']);
@@ -126,46 +128,46 @@ export class AttendanceCheckComponent implements OnInit {
       this.attendanceRegister = currentAttendanceReport
     }
     if (students.length > 0) {
-      await this.saveStudentAttendance(null)
-    } else {
-      const startRegister = confirm(_TRANSLATE('There are no students. Begin ' + registerNameForDialog + ' record for today anyways?'))
-      if (startRegister) {
-        await this.saveStudentAttendance(null)
-      }
+      await this.saveStudentAttendance()
     }
+    
   }
 
   async toggleAttendance(student) {
     student.absent = !student.absent
-    await this.saveStudentAttendance(student)
+    await this.saveStudentAttendance()
   }
 
   async toggleMood(mood, student) {
     student.mood = mood
     if (!student.absent) {
-      await this.saveStudentAttendance(student)
+      await this.saveStudentAttendance()
     }
   }
 
 
-  private async saveStudentAttendance(student) {
-    console.log('saved student attendance: ' + JSON.stringify(student))
+  private async saveStudentAttendance() {
     // save allStudentResults
     this.attendanceRegister.attendanceList = this.attendanceList
     // save attendanceRegister
     let currentAttendanceReport
     try {
-      currentAttendanceReport = await this.dashboardService.getDoc(this.attendanceRegister._id)
+      currentAttendanceReport = await this.dashboardService.getDoc(this.attendanceRegister._id)      
       this.attendanceRegister['_rev'] = currentAttendanceReport._rev
     } catch (e) {
+      // Catches the non-existing doc error
     }
-
-    await this.dashboardService.saveDoc(this.attendanceRegister)
+    
+    try {
+      await this.dashboardService.saveDoc(this.attendanceRegister)
+      this.tangySnackbarService.showText(_TRANSLATE('Saved'));
+    } catch (e) {
+      this.tangySnackbarService.showText(_TRANSLATE('Error saving. Please try again.'));
+    }
   }
 
   /** Navigate to the student registration form */
   selectStudentName(column) {
-    const formsArray = Object.values(column.forms);
     const studentId = column.id;
     const classId = column.classId;
     this.router.navigate(['class-form'], { queryParams:
@@ -174,57 +176,5 @@ export class AttendanceCheckComponent implements OnInit {
   }
 
   getClassTitle = this.dashboardService.getClassTitle
-
-  /** Populate the querystring with the form info. */
-  selectCheckboxResult(column, itemId, event) {
-    // let el = this.selection.select(column);
-    event.currentTarget.checked = true;
-    // this.selection.toggle(column)
-    const formsArray = Object.values(column.forms);
-    const selectedForm = formsArray.find(input => (input['formId'] === itemId) ? true : false);
-    const studentId = column.id;
-    const classId = column.classId;
-    const selectedFormId = selectedForm['formId'];
-    const curriculum = selectedForm['curriculum'];
-    const src = selectedForm['src'];
-    const title = selectedForm['title'];
-    const responseId = selectedForm['response']['_id'];
-    this.router.navigate(['class-form'], { queryParams:
-          { formId: selectedFormId, curriculum: curriculum, studentId: studentId,
-            classId: classId, itemId: selectedFormId, src: src, title:
-            title, responseId: responseId }
-    });
-  }
-
-  /** Populate the querystring with the form info. */
-  async selectCheckbox(column, formId) {
-    // let el = this.selection.select(row);
-    // this.selection.toggle(column)
-    const formsArray = Object.values(column.forms);
-    // const selectedForm = formsArray.find(response => (response['form']['id'] === formId));
-    const studentId = column.id;
-    const classId = column.classId;
-    // const selectedFormId = selectedForm['formId'];
-    const selectedFormId = formId
-    // const curriculum = selectedForm['curriculum'];
-    // const src = selectedForm['src'];
-    // const title = selectedForm['title'];
-    // let responseId = null;
-    // const curriculumResponse = await this.dashboardService.getCurriculumResponse(classId, curriculum, studentId)
-    // if (curriculumResponse) {
-    //   responseId = curriculumResponse._id
-    // }
-    
-    
-    // this.router.navigate(['class-form'], { queryParams:
-    //       { formId: selectedFormId,
-    //         curriculum: curriculum,
-    //         studentId: studentId,
-    //         classId: classId,
-    //         src: src,
-    //         title: title,
-    //         responseId: responseId }
-    // });
-  }
 
 }
