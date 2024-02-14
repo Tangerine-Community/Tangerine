@@ -169,18 +169,15 @@ const getDataset = async (datasetId) => {
   let errorMessage = '' // if error connecting.
   let response
   try {
-    console.log("Getting: " + stateUrl)
     response = await http.get(stateUrl)
   } catch (error) {
     if (error.code === 'ECONNREFUSED') {
-      doLocalWorkaround = true
       errorMessage = 'Error connecting to server: ' + error.code
       const url = new URL(stateUrl);
       url.hostname = 'localhost';
       url.protocol = 'http'
       url.port = 80
       stateUrl = url.href
-      doLocalWorkaround = false
       errorMessage = ''
       console.log("Retrying at : " + stateUrl)
       try {
@@ -242,9 +239,6 @@ const getDataset = async (datasetId) => {
     (!csvDataSet.state.complete && !csvDataSet.state.updatedOn)
   ) {
     csvDataSet.status = 'Stopped'
-  } else if (doLocalWorkaround) {
-    csvDataSet.status = 'In progress'
-    csvDataSet.errorMessage = errorMessage
   } else {
     csvDataSet.status = 'In progress'
   }

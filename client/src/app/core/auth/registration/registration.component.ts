@@ -37,6 +37,7 @@ export class RegistrationComponent implements OnInit {
     passwordPolicy: string
     passwordRecipe: string
     noPassword = false
+    hidePassword = true
     constructor(
         private userService: UserService,
         private route: ActivatedRoute,

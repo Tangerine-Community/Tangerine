@@ -6,6 +6,7 @@ tanerine-env-vars.sh
 .history
 certs
 
+content-sets/content-sets.json
 translations/*.csv
 
 tangerine-preview/app/

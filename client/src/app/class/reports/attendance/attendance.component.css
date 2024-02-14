@@ -20,12 +20,23 @@
 #last-n-report {
   margin-top: 1em;
 }
-mat-form-field {
-  width: 35px;
-}
 #last-n-report {
   margin-top: 30px
 }
+
+.date-select-form {
+  margin-left: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 450px;
+}
+
+.date-select-form-fields {
+  display: flex;
+  align-items: flex-start;
+}
+
 .legend td {
   padding: 0 1em;
 }

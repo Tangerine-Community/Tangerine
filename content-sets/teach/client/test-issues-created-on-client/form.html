@@ -1,0 +1,17 @@
+<tangy-form
+  id="test-issues-created-on-client"
+  on-submit="
+  "
+>
+  <tangy-form-item id="item-1" title="Test issues created on Client">
+    <tangy-input
+      name="can_cause_issue_to_be_created"
+      type="number"
+      label="Enter a number greater than 5 to receive a warning, then confirm to cause an issue to be created."
+      discrepancy-if="getValue('can_cause_issue_to_be_created') && parseInt(getValue('can_cause_issue_to_be_created')) > 5"
+      discrepancy-text="You entered a value greater than 5. If you continue, an Issue will be created and sent to the server on your next upload."
+      required
+    >
+    </tangy-input>
+  </tangy-form-item>
+</tangy-form>
