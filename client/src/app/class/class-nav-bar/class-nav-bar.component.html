@@ -1,6 +1,5 @@
 <span class="class-dashboard-button-spacer-left">
   <button mat-button [matMenuTriggerFor]="classesMenu" class="white-menu-item">
-    <mat-icon class="material-icons menu-tangy-location-list-icon white-menu-item">edit</mat-icon>
     <span>{{'Grade'|translate}} <ng-template [ngIf]="selectedClass">: {{getClassTitle(selectedClass)}}</ng-template></span>
     </button>
   <mat-menu #classesMenu="matMenu">
@@ -8,12 +7,12 @@
         <button mat-menu-item disabled class="menu-section-header">
           {{'Change Class'|translate}}
         </button>
-    <span *ngFor="let klass of enabledClasses; let classIndex=index"
+      <span *ngFor="let klass of enabledClasses; let classIndex=index"
           class="class-dashboard-curr-button-spacer">
-    <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="!klass.ignoreCurriculumsForTracking; else noCurriculums">
+      <button mat-menu-item [matMenuTriggerFor]="curriculumMenu" *ngIf="!klass.ignoreCurriculumsForTracking; else noCurriculums">
 <!--    <button mat-menu-item [routerLink]="['/attendance-dashboard/']"-->
 <!--            [queryParams]={classIndex:classIndex}>-->
-      {{getClassTitle(klass.doc)}}
+        {{getClassTitle(klass.doc)}}
       </button>
       <mat-menu #curriculumMenu="matMenu">
         <ng-container *ngFor="let curriculum of klass.doc.items[0].inputs[3].value;">

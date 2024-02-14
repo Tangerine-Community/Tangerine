@@ -14,6 +14,13 @@
   text-align: center;
 }
 
+.tableHintLabel {
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+}
+
 .concerning {
   background-color: #de9c75 !important;
 }
@@ -58,7 +65,7 @@
 /*  color: white;*/
 /*}*/
 
-.dashboard-table .checkbox-response {
+.dashboard-table {
   text-align: center;
 }
 
@@ -68,6 +75,16 @@
   text-decoration:underline;
   padding-left: 1em;
   padding-right:5px;
+  text-align: left;
+}
+
+.student-behavior {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+  padding-left: 1em;
+  padding-right:5px;
+  text-align: center;
 }
 
 input[type=checkbox] {
