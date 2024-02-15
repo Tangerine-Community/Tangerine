@@ -5,6 +5,8 @@
 __New Features__
 - A new Prompt Box widget available in form authoring allows a form designer to add audio and visual feedback connected to Radio Block widgets. This feature provides a toolset for creating self-guided assessments. See the example in [tangy-forms](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4430)
 
+- Bump version of `tangy-form` to v4.31.1 and `tangy-form-editor` to v7.18.0
+
 
 ## v3.30.2
 
