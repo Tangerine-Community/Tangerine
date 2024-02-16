@@ -89,6 +89,7 @@ import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 import 'tangy-form/input/tangy-radio-blocks.js';
 import 'tangy-form/input/tangy-video-capture.js';
+import 'tangy-form/input/tangy-prompt-box.js';
 
 import 'translation-web-component/t-select.js'
 
