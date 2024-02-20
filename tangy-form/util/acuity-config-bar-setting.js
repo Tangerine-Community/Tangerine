@@ -99,11 +99,11 @@ export class ConfigBarSetting {
             });
 
         };
-        this.accordion = function () {
+        this.accordion = () => {
             // panel title click
             $('.panel-heading', this.self.shadowRoot).on('click',  (e) =>  {
                 e.preventDefault();
-                var target = $(this).next();
+                var target = $('.panel-heading', this.self.shadowRoot).next();
                 if (!$(target).is(":visible")) {
                     $('.panel-heading', this.self.shadowRoot).removeClass('active');
                     $(this).toggleClass('active');
@@ -114,7 +114,7 @@ export class ConfigBarSetting {
             // question icon click
             $('.questions-btn', this.self.shadowRoot).on('click',  (e) => {
                 e.preventDefault();
-                var target = $(this).attr('href');
+                var target = $('.questions-btn', this.self.shadowRoot).attr('href');
                 var content = $(target).next();
                 if (!$(content).is(":visible")) {
                     $('.panel-heading', this.self.shadowRoot).removeClass('active');

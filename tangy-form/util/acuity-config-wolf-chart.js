@@ -6,13 +6,7 @@ export class ConfigWolfChart {
     self = this;
     ver = 2.41;
 
-    constructor() {
-        this.Selector = function(selector) {
-            var that = this.self;
-            return that.shadowRoot.querySelector(selector);
-        }
-        this.cardContentWidth = $('.card-content', this.self.shadowRoot).css('width')
-        // this.viewHeight = $('.card-content', this.self.shadowRoot).css('height')
+    constructor(self) {
         var functionConfigWolfChart = this;
         var objWolf = {};
         var notation, numeratorType, oldCharacter = [];
@@ -34,7 +28,7 @@ export class ConfigWolfChart {
         }
         var shortcuts = ['u', 'n', 'g', 'k', 'q', 'z'];
 
-        this.initObjWolf = function () {
+        this.initObjWolf =  () =>  {
             objWolf = {
                 dateCreated: Date.now(),
                 useCountTimer: null,
@@ -144,7 +138,8 @@ export class ConfigWolfChart {
             //populate the function-button-div with function buttons
             const btFullscreenFunc = $('#btFullscreenFunc', this.self.shadowRoot);
             const btSpacebarFunc = $('#btSpacebarFunc', this.self.shadowRoot);
-            const btShuffleFunc = $('#btShuffleFunc', this.self.shadowRoot);
+            // disabled Shuffle button
+            // const btShuffleFunc = $('#btShuffleFunc', this.self.shadowRoot);
             const btBgFunc = $('#btBgFunc', this.self.shadowRoot);
             $('.fullscreen-button-prototype', this.self.shadowRoot).clone().appendTo(btFullscreenFunc).attr({class: 'f-button fullscreen-button'}).on('click', function () {
                 functionConfigWolfChart.fullscreenChange(objWolf.catThis, objWolf.chartThis);
@@ -152,9 +147,10 @@ export class ConfigWolfChart {
             $('.zoom-button-prototype', this.self.shadowRoot).clone().appendTo(btSpacebarFunc).attr({class: 'f-button zoom-button'}).hide();
             $('.rotate-button-prototype', this.self.shadowRoot).clone().appendTo(btSpacebarFunc).attr({class: 'f-button rotate-button'}).hide();
             $('.interspace-button-prototype', this.self.shadowRoot).clone().appendTo(btSpacebarFunc).attr({class: 'f-button interspace-button'}).hide();
-            $('.shuffle-button-prototype', this.self.shadowRoot).clone().appendTo(btShuffleFunc).attr({class: 'f-button shuffle-button'}).on('click',  () => {
-                functionConfigWolfChart.shuffleLetters();
-            }).hide();
+            // disabled Shuffle button
+            // $('.shuffle-button-prototype', this.self.shadowRoot).clone().appendTo(btShuffleFunc).attr({class: 'f-button shuffle-button'}).on('click',  () => {
+            //     functionConfigWolfChart.shuffleLetters();
+            // }).hide();
             $('.bg-button-prototype', this.self.shadowRoot).clone().appendTo(btBgFunc).attr({class: 'f-button bg-button'}).on('click', function () {
                 functionConfigWolfChart.duoBGFunction()
             }).hide();
@@ -323,7 +319,8 @@ export class ConfigWolfChart {
             if (!anim) {//anim=null is only used on initiating the chart
                 var arCharts = objWolf[selCat].arCharts;
                 if (displayOrder == 2 || displayOrder == 3) {
-                    objWolf.chartThis = arCharts.length - 1;
+                    // objWolf.chartThis = arCharts.length - 1;
+                    objWolf.chartThis = arCharts.length - this.self.sequenceNumber;
                 } else {
                     objWolf.chartThis = 0;
                 }
@@ -1374,7 +1371,7 @@ export class ConfigWolfChart {
                 gNumerator = "2",
                 gDistance = "3000",
                 gLengthOfLine = "100",
-                gDisplayOptions = "1",
+                gDisplayOptions = "2",
                 gDisplayWidth = "939",
                 gDisplayHeight = null,
                 gMirrored = "2"
@@ -1411,8 +1408,8 @@ export class ConfigWolfChart {
                 gDisplayOptions = localStorage.getItem("DisplayOptions"),
                 gDisplayWidth = localStorage.getItem("DisplayWidth"),
                 gDisplayHeight = localStorage.getItem("DisplayHeight"),
-                gMirrored = localStorage.getItem("Mirrored");
-            gColours = JSON.parse(localStorage.getItem("Colours")),
+                gMirrored = localStorage.getItem("Mirrored"),
+                gColours = JSON.parse(localStorage.getItem("Colours")),
                 objWolf = JSON.parse(localStorage.getItem("ObjWolf")),
                 gShortcuts = JSON.parse(localStorage.getItem("Shortcuts"));
             //set value for input
@@ -1558,7 +1555,7 @@ export class ConfigWolfChart {
             }
             $('.V', this.self.shadowRoot).remove();
         };
-        this.PageLetterChart = function () {
+        this.PageLetterChart = () => {
             //#letterChart has been filled with lines of letters from smallest to largest but they are not in pages
             //Page the character lines from smallest to largest so each page fits on screen
             if (objWolf.chartThis) {
@@ -1566,27 +1563,36 @@ export class ConfigWolfChart {
             }
             const displayOrder = $('#display', this.self.shadowRoot).val();
             //not sure what this does, but may implement a chartThis in localStorage so that when you reload you are back on same page
-            var characterLines = $('.character-line', this.self.shadowRoot), cumHt = 0, pageNum = 0;//get the character-line DOM elements but then try to use mostly native js
+            var characterLines = $('.character-line', this.self.shadowRoot), cumHt = 0, numLines = 0, pageNum = 0;//get the character-line DOM elements but then try to use mostly native js
             var arPages = [[]];//this 2-dim array will hold the page tree
             for (let i = 0; i < characterLines.length; i++) {
-                let ht = characterLines[i].clientHeight;
-                if (ht > 0 && ht <= this.viewHeight) {
-                    cumHt = cumHt + ht;
-                    if (cumHt <= this.viewHeight) {
-                        arPages[pageNum].push([characterLines[i]]);
-                    } else {
-                        cumHt = ht;
-                        pageNum++;
-                        arPages[pageNum] = [];
-                        arPages[pageNum].push([characterLines[i]]);
-                    }
+                // let ht = characterLines[i].clientHeight;
+                // if (ht > 0 && ht <= this.viewHeight) {
+                //     cumHt = cumHt + ht;
+                //     if (cumHt <= this.viewHeight) {
+                //         arPages[pageNum].push([characterLines[i]]);
+                //     } else {
+                //         cumHt = ht;
+                //         pageNum++;
+                //         arPages[pageNum] = [];
+                //         arPages[pageNum].push([characterLines[i]]);
+                //     }
+                // } else {
+                //     characterLines[i].remove();
+                // }
+                if (numLines < 1) {
+                    arPages[pageNum].push([characterLines[i]]);
                 } else {
-                    characterLines[i].remove();
+                    pageNum++;
+                    arPages[pageNum] = [];
+                    arPages[pageNum].push([characterLines[i]]);
                 }
+                numLines++;
+
             }
             //---Display Order-----
             //Largest at top of each page. First displayed page is handled when scrollChart() is called
-            if (displayOrder == "1" || displayOrder == "2") {
+            if (displayOrder === "1" || displayOrder === "2") {
                 //just need to reverse order of lines on each page
                 for (let j = 0; j < arPages.length; j++) {
                     arPages[j].reverse();
@@ -1883,7 +1889,7 @@ export class ConfigWolfChart {
             });
         };
         this.Init = () =>  {
-            this.viewHeight = 600;
+            this.viewHeight = 300;
             this.viewWidth = 600;
             var validateElement = this;
             var validate = false,
