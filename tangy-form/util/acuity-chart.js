@@ -83,6 +83,10 @@ export function VisionChart
         returnValue.width = this.chartSizeInPixels.x;
         returnValue.height = this.chartSizeInPixels.y;
 
+        var newStyle = document.createElement('style');
+        newStyle.appendChild(document.createTextNode(`@font-face {font-family: AucklandOptotype; src: url('fonts/AucklandOptotype.woff2) format('woff2');}`));
+        document.head.appendChild(newStyle);
+
         var graphics = returnValue.getContext("2d");
 
         graphics.fillStyle = "White";
@@ -104,7 +108,7 @@ export function VisionChart
             + " inches from the eye.";
 
         var fontHeightInPixels = 16;
-        graphics.font = fontHeightInPixels + "px sans-serif";
+        graphics.font = fontHeightInPixels + "px BrushScriptMT";
         graphics.fillText(message, 0, fontHeightInPixels);
 
         var drawPos = new Coords(0, this.topLineSizeInPixels);
