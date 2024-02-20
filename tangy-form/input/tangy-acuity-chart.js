@@ -2,15 +2,10 @@ import {html, css} from 'lit';
 import '../util/html-element-props.js'
 import '../style/tangy-common-styles.js'
 import '../style/tangy-element-styles.js'
-import '../style/tangy-acuity-styles.js'
 import {TangyInputLitBase} from '../tangy-input-lit-base.js'
-import {Coords, VisionChart} from '../util/acuity-chart.js';
 import {ConfigWolfChart} from '../util/acuity-config-wolf-chart.js';
 import {ConfigBarSetting} from  '../util/acuity-config-bar-setting.js';
-// import 'https://code.jquery.com/jquery-3.6.0.min.js'
 import '../util/jquery-3.7.1.min.js'
-
-// export default window.jQuery.noConflict(true)
 
 /**
  * `tangy-acuity-chart`
@@ -158,11 +153,12 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 letter-spacing: normal;
               }
 
-              tangy-radio-blocks {
-                width: 600px;
-              }
 
-//Wolf Chart CSS
+
+
+
+              
+              
               
               .old_ie  .setting-bar,
               .old_ie  .guide-section,
@@ -801,7 +797,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 width: 80px;
                 right:0px;
                 text-align: center;
-                height:100%;
+                height:350px;
                 z-index: 14;
               }
               #side-bar-bg {
@@ -809,7 +805,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 position:absolute;
                 width: 80px;
                 right:0px;
-                height:100%;
+                height:350px;
                 z-index: 14;
               }
               .setting-button a {
@@ -836,7 +832,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 width: 42px
               }
               #clock-div {
-                display: block;
+                display: none;
                 position: relative;
                 top: 0px;
                 width: 100%;
@@ -974,49 +970,60 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 from { -webkit-transform: translate3d(0, -25, 0); transform: translate3d(0, -25%, 0);}
                 to   { -webkit-transform: translate3d(0, 25%, 0); transform: translate3d(0, 25%, 0);}
               }
+              
+              
 
               @media only screen and (max-width: 1024px) {
                 /* For tablets */
                 #side-bar, #side-bar-bg {
                   width: 50px;
                 }
+
                 #clock-div {
                   display: none;
                 }
-                #side-bar>a svg {
+
+                #side-bar > a svg {
                   width: 28px;
                 }
+
                 #arrow-button-div {
                   top: 20px;
                 }
-                #arrow-button-div>a svg {
+
+                #arrow-button-div > a svg {
                   width: 28px;
                 }
-                #thisBadge>svg {
+
+                #thisBadge > svg {
                   width: 40px;
                 }
+
                 #pic-arrow-div {
                   margin: 0 auto;
                   top: 40px;
                 }
-                #pic-arrow-div>a svg {
+
+                #pic-arrow-div > a svg {
                   width: 28px;
                 }
+
                 #pic-arrow-div a {
                   margin: 0.5em 0;
                 }
+
                 .pic-arrow {
-                  margin:-0.5em 0;
+                  margin: -0.5em 0;
                 }
 
                 #function-button-div {
                   top: 60px;
                 }
+
                 #function-button-div svg {
                   width: 28px;
                 }
-              
-              
+              }
               
             `
         ]
@@ -1026,7 +1033,6 @@ export class TangyAcuityChart extends TangyInputLitBase {
         return html`
             <style include="tangy-common-styles"></style>
             <style include="tangy-element-styles"></style>
-<!--            <style include="tangy-acuity-styles"></style>-->
             <style>
                 :host {
                     --tangy-element-border: 0;
@@ -1100,32 +1106,32 @@ export class TangyAcuityChart extends TangyInputLitBase {
                         </div>
                         <div id="clock-div"></div>
                         <div id="button-div">
-                            <div id="arrow-button-div">
-                                <a id="btRight"></a>
-                                <a id="btLeft"></a>
-                                <a id="thisBadge"></a>
-                            </div>
-                            <div id="pic-arrow-div">
-                                <a id="btUp"></a>
-                                <a id="btDn"></a>
-                            </div>
+<!--                            <div id="arrow-button-div">-->
+<!--                                <a id="btRight"></a>-->
+<!--                                <a id="btLeft"></a>-->
+<!--                                <a id="thisBadge"></a>-->
+<!--                            </div>-->
+<!--                            <div id="pic-arrow-div">-->
+<!--                                <a id="btUp"></a>-->
+<!--                                <a id="btDn"></a>-->
+<!--                            </div>-->
                             <div id="function-button-div">
                                 <a id="btSpacebarFunc"></a>
-                                <a id="btShuffleFunc"></a>
+<!--                                <a id="btShuffleFunc"></a>-->
                                 <a id="btBgFunc"></a>
                             </div>
                         </div>
-                        <div id="nav-button-outer-div">
-                            <div id="nav-button-div">
-                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0,0,4,4"
-                                     style="height:62px;margin-right:-5px;">
-                                    <path d="M4 0V4H2A2 2 0 0 1 2 0z" fill="rgb(114,114,114)" stroke-width="0"/>
-                                    <circle cx="1.5" cy="2" r="0.25" fill="rgb(255,255,255)"/>
-                                    <circle cx="2.3" cy="2" r="0.25" fill="rgb(255,255,255)"/>
-                                    <circle cx="3.1" cy="2" r="0.25" fill="rgb(255,255,255)"/>
-                                </svg>
-                            </div>
-                        </div>
+<!--                        <div id="nav-button-outer-div">-->
+<!--                            <div id="nav-button-div">-->
+<!--                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0,0,4,4"-->
+<!--                                     style="height:62px;margin-right:-5px;">-->
+<!--                                    <path d="M4 0V4H2A2 2 0 0 1 2 0z" fill="rgb(114,114,114)" stroke-width="0"/>-->
+<!--                                    <circle cx="1.5" cy="2" r="0.25" fill="rgb(255,255,255)"/>-->
+<!--                                    <circle cx="2.3" cy="2" r="0.25" fill="rgb(255,255,255)"/>-->
+<!--                                    <circle cx="3.1" cy="2" r="0.25" fill="rgb(255,255,255)"/>-->
+<!--                                </svg>-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                     <div class="setting-bar" id="setting-bar">
                         <a class="close" href="#">
@@ -2926,7 +2932,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
         this.value = ''
         this.configBar = new ConfigBarSetting({self: this});
         this.configBar.self = this;
-        this.configWolf = new ConfigWolfChart();
+        this.configWolf = new ConfigWolfChart({self: this});
         this.configWolf.self = this;
     }
 
@@ -3044,7 +3050,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
 
     connectedCallback() {
         super.connectedCallback()
-        this.calcPpi = this.calcScreenDPI()
+        // this.calcPpi = this.calcScreenDPI()
         // this.configBarSetting();
         // this.ConfigWolfChart();
 
