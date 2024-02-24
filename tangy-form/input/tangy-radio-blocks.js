@@ -38,12 +38,13 @@ class TangyRadioBlocks extends TangyInputBase {
           font-size: var(--label-font-size);
           text-align: center;
           margin-bottom: 1rem;
+          padding-bottom: 1rem;
         }
         #container {
           height: var(--container-height, 50vh);
           background-color: var(--container-background-color, #fff);
           border-radius: 1rem;
-          padding: 4rem 1.2rem;
+          padding: 2rem 1.2rem;
           margin-top: 1rem;
           margin-bottom: 1rem;
         }
