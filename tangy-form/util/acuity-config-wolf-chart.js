@@ -474,6 +474,9 @@ export class ConfigWolfChart {
                     case '10':
                         $('#sAlphabet', this.self.shadowRoot).append('<option value="12">Crowded HOTV</option><option value="13">Crowded HOTV 2</option>');
                         break;
+                    case '11':
+                        $('#sAlphabet', this.self.shadowRoot).append('<option value="14">Auckland</option>');
+                        break;
 
                 }
             });
@@ -626,6 +629,9 @@ export class ConfigWolfChart {
                     break;
                 case '13':
                     arrayCharacter = ['CrowdedHOTV01_0,CrowdedHOTV01_2', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_3,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_0', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_0,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1'];
+                    break;
+                case '14':
+                    arrayCharacter = ['Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A',];
                     break;
             }
             //reverse the order of each line if config set to Mirrored
@@ -1364,14 +1370,20 @@ export class ConfigWolfChart {
                 configBar.init();
             });
         };
+        /**
+         * let gOptotype = "3",
+         * gAlphabet = "5",
+         * gDisplayOptions = "2",
+         * @constructor
+         */
         this.GetConfigByValue = function () {
-            let gOptotype = "3",
-                gAlphabet = "5",
+            let gOptotype = "11",
+                gAlphabet = "14",
                 gNotation = "2",
                 gNumerator = "2",
                 gDistance = "3000",
                 gLengthOfLine = "100",
-                gDisplayOptions = "2",
+                gDisplayOptions = "1",
                 gDisplayWidth = "939",
                 gDisplayHeight = null,
                 gMirrored = "2"
