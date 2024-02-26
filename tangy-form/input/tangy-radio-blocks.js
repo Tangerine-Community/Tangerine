@@ -61,7 +61,6 @@ class TangyRadioBlocks extends TangyInputBase {
           padding: 0px;
         }
         #blockContainer {
-          height: 100%;
           display: flex;
           justify-content: space-around;
           font-size: 4rem;
