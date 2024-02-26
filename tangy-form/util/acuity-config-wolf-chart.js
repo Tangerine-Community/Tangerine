@@ -322,7 +322,7 @@ export class ConfigWolfChart {
                     // objWolf.chartThis = arCharts.length - 1;
                     objWolf.chartThis = arCharts.length - this.self.sequenceNumber;
                 } else {
-                    objWolf.chartThis = 0;
+                    objWolf.chartThis = this.self.sequenceNumber - 1;
                 }
             } else if (anim == 'fav') {//nav buttons display most used chart in category
                 objWolf.chartThis = objWolf.getMostUsed(selCat);
@@ -631,7 +631,7 @@ export class ConfigWolfChart {
                     arrayCharacter = ['CrowdedHOTV01_0,CrowdedHOTV01_2', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_3,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_0', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_0,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1'];
                     break;
                 case '14':
-                    arrayCharacter = ['Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A', 'Auckland_A,Auckland_B,Auckland_C,Auckland_D,Auckland_A',];
+                    arrayCharacter = ['Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D', 'Auckland_E','Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D', 'Auckland_E','Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D'];
                     break;
             }
             //reverse the order of each line if config set to Mirrored
@@ -1295,7 +1295,7 @@ export class ConfigWolfChart {
         this.SetLocalStorage = function () {
 
             let notation = $('#sNotation', this.self.shadowRoot).val(),
-                localOptotype = $('#type', this.self.shadowRoot).val(),
+                localOptotype = $('#sOptotype', this.self.shadowRoot).val(),
                 localsMirrored = $('#sMirrored', this.self.shadowRoot).val(),
                 localDistance = $('#iDistance', this.self.shadowRoot).val().trim(),
                 numeratorType = $('#sNumerator', this.self.shadowRoot).val(),
@@ -1348,7 +1348,7 @@ export class ConfigWolfChart {
                 setConfigDefault.SetConfigDefault();
                 //set variable for local storage
                 let notation = $('#sNotation', this.self.shadowRoot).val(),
-                    localOptotype = $('#type', this.self.shadowRoot).val(),
+                    localOptotype = $('#sOptotype', this.self.shadowRoot).val(),
                     localsMirrored = $('#sMirrored', this.self.shadowRoot).val(),
                     localDistance = $('#iDistance', this.self.shadowRoot).val().trim(),
                     numeratorType = $('#sNumerator', this.self.shadowRoot).val(),
@@ -1376,14 +1376,14 @@ export class ConfigWolfChart {
          * gDisplayOptions = "2",
          * @constructor
          */
-        this.GetConfigByValue = function () {
+        this.GetConfigByValueHardCoded = function () {
             let gOptotype = "11",
                 gAlphabet = "14",
                 gNotation = "2",
                 gNumerator = "2",
                 gDistance = "3000",
                 gLengthOfLine = "100",
-                gDisplayOptions = "1",
+                gDisplayOptions = "2",
                 gDisplayWidth = "939",
                 gDisplayHeight = null,
                 gMirrored = "2"
@@ -1410,7 +1410,7 @@ export class ConfigWolfChart {
             $('#shuffle', this.self.shadowRoot).val(gShortcuts[4]);
             $('#duoBG', this.self.shadowRoot).val(gShortcuts[5]);
         };
-        this.GetConfigByValueOrig = function () {
+        this.GetConfigByValue =  () => {
             var gOptotype = localStorage.getItem("Optotype"),
                 gAlphabet = localStorage.getItem("Alphabet"),
                 gNotation = localStorage.getItem("Notation"),
@@ -1450,8 +1450,12 @@ export class ConfigWolfChart {
             $('#sAlphabet', this.self.shadowRoot).val("2");
             $('#sNotation', this.self.shadowRoot).val("1");
             $('#sNumerator', this.self.shadowRoot).val("2");
-            $('#display', this.self.shadowRoot).val('1');
+            $('#display', this.self.shadowRoot).val('2');
             $('#sMirrored', this.self.shadowRoot).val('2');
+            $('#sMirrored', this.self.shadowRoot).val('2');
+            $('#sMirrored', this.self.shadowRoot).val('2');
+            $('#iDistance', this.self.shadowRoot).val('3000');
+            $('#iLengOfLine', this.self.shadowRoot).val('100');
             colours = {
                 optotype: 'rgba(0,0,0,1)',
                 backgrounds: {
@@ -1944,26 +1948,27 @@ export class ConfigWolfChart {
             this.SelectOptotype();
             this.DisplayArrows();
             this.UpdateSetting();
-            // if (localStorage.getItem("Optotype") != null) {
-            //     //check for latest version, perform major version upgrades
-            //     if (this.UpdateVersion(ver)) {
-            //         this.GetConfigByValue();
-            //         $('.setting-button', this.self.shadowRoot).trigger('click');
-            //         $('#updateSetting', this.self.shadowRoot).removeClass('disabled-btn');
-            //     } else if (localStorage.getItem("Distance") != "" && localStorage.getItem("LengthOfLine") != "") {
-            //         this.GetConfigByValue();
-            //         $('#updateSetting', this.self.shadowRoot).trigger('click');
-            //         $('#updateSetting', this.self.shadowRoot).removeClass('disabled-btn');
-            //     } else {
-            //         $('.setting-button', this.self.shadowRoot).trigger('click');
-            //     }
-            // } else if ($('#iDistance', this.self.shadowRoot).val().trim() == "" || $('#iLengOfLine', this.self.shadowRoot).val().trim() == "") {
-            //     $('.setting-button', this.self.shadowRoot).trigger('click');
-            // }
+            if (localStorage.getItem("Optotype") != null) {
+                //check for latest version, perform major version upgrades
+                // if (this.UpdateVersion(ver)) {
+                //     this.GetConfigByValue();
+                //     $('.setting-button', this.self.shadowRoot).trigger('click');
+                //     $('#updateSetting', this.self.shadowRoot).removeClass('disabled-btn');
+                // } else
+                if (localStorage.getItem("Distance") != "" && localStorage.getItem("LengthOfLine") != "") {
+                    this.GetConfigByValue();
+                    $('#updateSetting', this.self.shadowRoot).trigger('click');
+                    $('#updateSetting', this.self.shadowRoot).removeClass('disabled-btn');
+                } else {
+                    $('.setting-button', this.self.shadowRoot).trigger('click');
+                }
+            } else if ($('#iDistance', this.self.shadowRoot).val().trim() == "" || $('#iLengOfLine', this.self.shadowRoot).val().trim() == "") {
+                $('.setting-button', this.self.shadowRoot).trigger('click');
+            }
             // cek preset initial values
-            this.GetConfigByValue();
-            $('#updateSetting', this.self.shadowRoot).trigger('click');
-            $('#updateSetting', this.self.shadowRoot).removeClass('disabled-btn');
+            // this.GetConfigByValue();
+            // $('#updateSetting', this.self.shadowRoot).trigger('click');
+            // $('#updateSetting', this.self.shadowRoot).removeClass('disabled-btn');
 
             this.ResetValueToDefault();
             this.characterClick();
