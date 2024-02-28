@@ -1,6 +1,6 @@
 <div *ngIf="ready">
   <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-  <mat-card appearance="outlined" class="is-link mat-elevation-z3" routerLink="location-list" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_location_list'">
+  <mat-card appearance="outlined" class="is-link mat-elevation-z3" routerLink="location-lists" *appHasAPermission="let i;group:groupId; permission:'can_access_configure_location_list'">
     <mat-card-header>
         <div mat-card-avatar>
           <mwc-icon class="tangy-foreground-secondary">place</mwc-icon>
