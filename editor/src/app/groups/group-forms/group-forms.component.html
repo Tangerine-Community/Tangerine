@@ -100,7 +100,7 @@
         <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
     </span>
-    <span class="tangy-spacer edit" >
+    <span class="tangy-spacer edit">
       <a mat-icon-button routerLink="edit/{{form.id}}" [innerHTML]="form.title|unsanitizeHtml" title="{{'Edit'|translate}}">
       </a>
     </span>
@@ -167,7 +167,10 @@
         <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
     </span>
-      <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+      <span class="tangy-spacer edit">
+      <a mat-icon-button routerLink="edit/{{form.id}}" [innerHTML]="form.title|unsanitizeHtml" title="{{'Edit'|translate}}">
+      </a>
+    </span>
 
       <span>
       <mat-select #printInActiveForm style="width:160px;">
@@ -197,21 +200,23 @@
     </span>
 
       <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button
-              [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-              (click)="deleteForm(groupId, form.id)">
-        <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
-           class="material-icons mat-32 tangy-location-list-icon">delete</i>
-      </button>
+        <a mat-icon-button [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+           (click)="deleteForm(groupId, form.id)" title="{{'Delete'|translate}}">
+        <i
+          [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
+          class="material-icons mat-32 tangy-location-list-icon"
+        >
+          delete
+        </i>
+      </a>
     </span>
 
       <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button
-              [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-              (click)="onUnArchiveFormClick(groupId, form.id)">
+        <a mat-icon-button [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+           (click)="onUnArchiveFormClick(groupId, form.id)" title="{{'Unarchive'|translate}}">
         <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
            class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
-      </button>
+      </a>
     </span>
     </div>
   </div>
