@@ -79,4 +79,12 @@ mat-expansion-panel {
 .mdc-list {
   padding: 0;
 }
+.edit {
+  color: #A55858;
+  cursor: pointer;
+}
+.mdc-icon-button {
+  display: unset;
+  font-size: large;
+}
 

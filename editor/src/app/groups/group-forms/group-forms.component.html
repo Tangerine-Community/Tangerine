@@ -100,7 +100,10 @@
         <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
     </span>
-    <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span class="tangy-spacer edit" >
+      <a mat-icon-button routerLink="edit/{{form.id}}" [innerHTML]="form.title|unsanitizeHtml" title="{{'Edit'|translate}}">
+      </a>
+    </span>
     
     <span>
       <mat-select #printActiveForm style="width:160px;">
@@ -130,27 +133,23 @@
     </span>
 
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-        (click)="deleteForm(groupId, form.id)" title="{{'Delete'|translate}}"
-      >
-        <i 
+      <a mat-icon-button [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+         (click)="deleteForm(groupId, form.id)" title="{{'Delete'|translate}}">
+        <i
           [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
           class="material-icons mat-32 tangy-location-list-icon"
         >
           delete
         </i>
-      </button>
+      </a>
     </span>
 
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button
-        [disabled]="form.id === 'user-profile' || form.id === 'reports'"
-        (click)="onArchiveFormClick(groupId, form.id)" title="{{'Archive'|translate}}"
-      >
+      <a mat-icon-button [disabled]="form.id === 'user-profile' || form.id === 'reports'"
+         (click)="onArchiveFormClick(groupId, form.id)" title="{{'Archive'|translate}}">
         <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'"
-          class="material-icons mat-32 tangy-location-list-icon">archive</i>
-      </button>
+           class="material-icons mat-32 tangy-location-list-icon">archive</i>
+      </a>
     </span>
     <mat-divider></mat-divider>
   </div>
