@@ -73,8 +73,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
               }
 
               #qnum-content {
-                width: 80vw;
-                /*height: 90vh;*/
+                width: 100%;
                 display: flex;
                 flex-direction: column;
               }
@@ -597,7 +596,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
               .scoreBox {
                 font: bold 5.5mm helvetica,arial, sans-serif;
                 position: absolute;
-                width: 57px;
+                width: 80px;
                 top: 50%;
                 transform: translateY(-50%);
                 margin-top: 0 !important;
@@ -808,6 +807,13 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 height:350px;
                 z-index: 14;
               }
+                #button-bar {
+                    position: absolute;
+                    width: 80px;
+                    right: 0px;
+                    text-align: center;
+                    z-index: 14;
+                }
               .setting-button a {
                 display: block;
                 position: relative;
@@ -1084,8 +1090,8 @@ export class TangyAcuityChart extends TangyInputLitBase {
                     <!--dpi-->
                     <div id="dpi"></div>
                     <!--setting bar-->
-                    <div id="side-bar-bg"></div>
-                    <div id="side-bar">
+<!--                    <div id="side-bar-bg"></div> -->
+                    <div id="button-bar">
                         <a class="setting-button" href="#setting-bar">
                             <svg id="bHamburger" version="1.1" xmlns="http://www.w3.org/2000/svg"
                                  xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -1101,11 +1107,11 @@ export class TangyAcuityChart extends TangyInputLitBase {
                                       stroke-width="0"></rect>
                             </svg>
                         </a>
-                        <div id="fs-div">
-                            <a id="btFullscreenFunc"></a>
-                        </div>
-                        <div id="clock-div"></div>
-                        <div id="button-div">
+<!--                        <div id="fs-div">-->
+<!--                            <a id="btFullscreenFunc"></a>-->
+<!--                        </div>-->
+<!--                        <div id="clock-div"></div>-->
+<!--                        <div id="button-div">-->
 <!--                            <div id="arrow-button-div">-->
 <!--                                <a id="btRight"></a>-->
 <!--                                <a id="btLeft"></a>-->
@@ -1115,12 +1121,12 @@ export class TangyAcuityChart extends TangyInputLitBase {
 <!--                                <a id="btUp"></a>-->
 <!--                                <a id="btDn"></a>-->
 <!--                            </div>-->
-                            <div id="function-button-div">
-                                <a id="btSpacebarFunc"></a>
-<!--                                <a id="btShuffleFunc"></a>-->
-                                <a id="btBgFunc"></a>
-                            </div>
-                        </div>
+<!--                            <div id="function-button-div">-->
+<!--                                <a id="btSpacebarFunc"></a>-->
+<!--&lt;!&ndash;                                <a id="btShuffleFunc"></a>&ndash;&gt;-->
+<!--                                <a id="btBgFunc"></a>-->
+<!--                            </div>-->
+<!--                        </div>-->
 <!--                        <div id="nav-button-outer-div">-->
 <!--                            <div id="nav-button-div">-->
 <!--                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0,0,4,4"-->
@@ -3055,6 +3061,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
                         <div class="modal">Your browser is not supported. You can download the latest version <a
                                 href="https://www.microsoft.com/en-us/download/internet-explorer.aspx">here </a></div>
                     </div>
+                    <div class="scoreBoxSummary"></div>
 
 
                     ${this.hintText ? html`}
