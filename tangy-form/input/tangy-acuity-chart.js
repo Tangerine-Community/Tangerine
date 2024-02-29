@@ -606,7 +606,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 padding: 3px 3px;
                 transition: all 0.1s linear;
                 border: 1px solid transparent;
-                left: 3px;
+                left: -15px;
                 cursor: pointer;
                 -webkit-touch-callout: none; /* iOS Safari */
                 -webkit-user-select: none; /* Safari */
@@ -651,6 +651,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
               }
 
               #letterChart {
+                  margin:auto;
                 position: relative;
                 text-align: center;
                 margin: 0;
