@@ -650,13 +650,13 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 right: 0;
               }
 
-              #letterChart {
-                  margin:auto;
-                position: relative;
-                text-align: center;
-                margin: 0;
-                z-index: 0;
-              }
+                #letterChart {
+                    margin: auto;
+                    position: relative;
+                    text-align: center;
+                    margin: 0;
+                    z-index: 0;
+                }
 
 
               #letterChart .character-line {

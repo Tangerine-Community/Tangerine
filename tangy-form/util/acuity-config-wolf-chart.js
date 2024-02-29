@@ -1881,7 +1881,7 @@ export class ConfigWolfChart {
                     $('.guide-section', this.self.shadowRoot).removeClass('active');
                     $('.mask', this.self.shadowRoot).removeClass('active');
                     var $Element, maxEleWidht = 0
-                    $('#letterChart', this.self.shadowRoot).css({'width': this.viewWidth, 'height': this.viewHeight});
+                    $('#letterChart', this.self.shadowRoot).css({'width': this.viewWidth, 'height': this.viewHeight, 'margin': 'auto'});
                     //set direct or mirrored
                     functionConfigWolfChart.SetDirectCharacter(localsMirrored);
                     //set smaller font for long scoreBox strings
