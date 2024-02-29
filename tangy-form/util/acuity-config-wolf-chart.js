@@ -324,6 +324,7 @@ export class ConfigWolfChart {
                 } else {
                     objWolf.chartThis = this.self.sequenceNumber - 1;
                 }
+                // $('.scoreBoxSummary', this.self.shadowRoot).append("hey");
             } else if (anim == 'fav') {//nav buttons display most used chart in category
                 objWolf.chartThis = objWolf.getMostUsed(selCat);
             } else if (anim == 'fscreen') {
@@ -420,9 +421,9 @@ export class ConfigWolfChart {
             //darken the sidebar in the case of the blank black chart only, id=M0
             //the purpose of this chart is for room darkening, so it is always the first chart
             //in the M category
-            $('#side-bar', this.self.shadowRoot).css({
-                'opacity': 1,
-            });
+            // $('#side-bar', this.self.shadowRoot).css({
+            //     'opacity': 1,
+            // });
             // if (objWolf.chartThisId == "M0") {
             //     $('#side-bar', this.self.shadowRoot).css({
             //         'opacity': 0.1,
@@ -684,6 +685,7 @@ export class ConfigWolfChart {
                 var scoreBoxCol = colours.optotype.replace(/[\d\.]+\)$/g, '1');
 
                 const el = $('#line-' + (i + 1), this.self.shadowRoot);
+                // CEK disabled scorebox here; look for it elsewhere.
                 $('<div class="scoreBox" >' + scoreText + '</div>').insertAfter(el).css({color: scoreBoxCol});
                 //add indicator lines for  6/6 and 6/12
                 if (i == 2) {
@@ -707,7 +709,8 @@ export class ConfigWolfChart {
                     fourthChartRemove = $('#line-' + (i + 1), this.self.shadowRoot).find('svg:nth-child(4)'),
                     fifthChartRemove = $('#line-' + (i + 1), this.self.shadowRoot).find('svg:nth-child(5)');
                 //allow for the scoreBox when fitting letters on lines
-                const sideBarWidth = parseFloat($('#side-bar', this.self.shadowRoot).css('width'));
+                // const sideBarWidth = parseFloat($('#side-bar', this.self.shadowRoot).css('width'));
+                const sideBarWidth = 0;
                 const letterChartViewWidth = this.viewWidth - sideBarWidth
                 var lineWidth = letterChartViewWidth - 60;//60 is the width of scoreBox set in style header
                 if (lineWidth >= svgWidth * 5) {
@@ -1718,8 +1721,8 @@ export class ConfigWolfChart {
                 }
             });
         };
-        this.scoreBoxClick = function () {
-            $(document).on('click', '.scoreBox', function () {
+        this.scoreBoxClick = () => {
+            $(document).on('click', '.scoreBox', () => {
                 var clicked = $(this), lineSVG = "", characterLine = $('.character-line .char-line'),
                     characterSVG = $('.char-line .optotype-symbol');
                 if (clicked[0].getAttribute('class') == "scoreBox") {
@@ -1810,7 +1813,7 @@ export class ConfigWolfChart {
             }, false)
         }
         this.UpdateSetting =  () => {
-            const sideBarWidth = parseFloat($('#side-bar', this.self.shadowRoot).css('width'));
+            // const sideBarWidth = parseFloat($('#side-bar', this.self.shadowRoot).css('width'));
             $('#updateSetting', this.self.shadowRoot).on('click', () => {
                 //set var from user input
                 var notation = $('#sNotation', this.self.shadowRoot).val(),
@@ -1905,8 +1908,8 @@ export class ConfigWolfChart {
             });
         };
         this.Init = () =>  {
-            this.viewHeight = 300;
-            this.viewWidth = 600;
+            this.viewHeight = 280;
+            this.viewWidth = 500;
             var validateElement = this;
             var validate = false,
                 VresultDistance, VresultLength;
