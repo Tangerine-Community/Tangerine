@@ -1087,6 +1087,7 @@ export class DashboardService {
         // studentResult['phone'] = phone
         // studentResult['classId'] = classId
         studentResult['absent'] = null
+        studentResult['late'] = null
         
         list.push(studentResult)
       }
