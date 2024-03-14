@@ -7,6 +7,10 @@ __New Features__
 
 - Bump version of `tangy-form` to v4.31.1 and `tangy-form-editor` to v7.18.0
 
+__Tangerine Teach__
+
+- Add toggle in Attendence Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
+
 
 ## v3.30.2
 
