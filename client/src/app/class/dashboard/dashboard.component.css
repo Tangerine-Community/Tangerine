@@ -194,6 +194,10 @@ mat-card-title {
   background-color: red;
 }
 
+.mat-chip.mat-standard-chip.mat-chip-selected.mat-primary.orange {
+  background-color: orange;
+}
+
 .gray {
   background-color: gray;
 }

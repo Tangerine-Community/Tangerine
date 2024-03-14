@@ -133,18 +133,12 @@ export class AttendanceCheckComponent implements OnInit {
     
   }
 
-  async toggleAttendance(student) {
-    student.absent = !student.absent
+  async toggleAttendance(status, student) {
+    student.absent = status == 'absent'
+    student.late = status == 'late'
+
     await this.saveStudentAttendance()
   }
-
-  async toggleMood(mood, student) {
-    student.mood = mood
-    if (!student.absent) {
-      await this.saveStudentAttendance()
-    }
-  }
-
 
   private async saveStudentAttendance() {
     // save allStudentResults
