@@ -10,6 +10,7 @@ __New Features__
 __Tangerine Teach__
 
 - Add toggle in Attendence Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
+- Use `studentRegistrationFields` to control showing name and surname of student in the student dashboard
 
 
 ## v3.30.2
