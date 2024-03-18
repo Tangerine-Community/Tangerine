@@ -58,7 +58,7 @@
             <th>{{'Completed?'|translate}}</th>
           </tr>
           <tr *ngFor="let element of allStudentResults">
-            <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
+            <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["student_name"]}} {{element["student_surname"]}} </td>
             <td class="checkbox-response" *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
               <input type="checkbox"
                      (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
