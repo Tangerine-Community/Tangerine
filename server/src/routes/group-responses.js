@@ -12,9 +12,15 @@ module.exports = async (req, res) => {
     if (req.params.skip) {
       options.skip = req.params.skip
     }
-    const results = await groupDb.query('responsesByStartUnixTime', options);
-    const docs = results.rows.map(row => row.doc)
-    res.send(docs)
+    if (Object.keys(req.query).length < 1 ){
+      const results = await groupDb.query('responsesByStartUnixTime', options);
+      const docs = results.rows.map(row => row.doc)
+      res.send(docs)
+    } else{
+      const results = await groupDb.query('responsesByStartUnixTime', {...options, startkey:req.query.id});
+      const docs = results.rows.filter(row => row.id.startsWith(req.query.id)).map(row=>row.doc)
+      res.send(docs)
+    }
   } catch (error) {
     log.error(error);
     res.status(500).send(error);
