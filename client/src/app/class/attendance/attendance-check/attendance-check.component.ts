@@ -9,6 +9,7 @@ import {UserService} from "../../../shared/_services/user.service";
 import {FormMetadata} from "../../form-metadata";
 import {ClassFormService} from "../../_services/class-form.service";
 import { TangySnackbarService } from 'src/app/shared/_services/tangy-snackbar.service';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 @Component({
   selector: 'app-attendance-check',
@@ -40,16 +41,22 @@ export class AttendanceCheckComponent implements OnInit {
   curriculum:any
   ignoreCurriculumsForTracking: boolean = false
   reportLocaltime: string;
+  showLateAttendanceOption: boolean = false;
   
   constructor(
     private dashboardService: DashboardService,
               private variableService : VariableService,
               private router: Router,
               private classFormService: ClassFormService,
-              private tangySnackbarService: TangySnackbarService
+              private tangySnackbarService: TangySnackbarService,
+              private appConfigService: AppConfigService
   ) { }
 
   async ngOnInit(): Promise<void> {
+
+    const appConfig = await this.appConfigService.getAppConfig()
+    this.showLateAttendanceOption = appConfig.teachProperties.showLateAttendanceOption || this.showLateAttendanceOption
+
     let classIndex
     await this.classFormService.initialize();
     this.getValue = this.dashboardService.getValue
@@ -133,9 +140,30 @@ export class AttendanceCheckComponent implements OnInit {
     
   }
 
-  async toggleAttendance(status, student) {
-    student.absent = status == 'absent'
-    student.late = status == 'late'
+  async toggleAttendance(currentStatus, student) {
+    if (this.showLateAttendanceOption) {
+      if (currentStatus == 'present') {
+        // moving from present status to late status
+        student.absent = false
+        student.late = true
+      } else if (currentStatus == 'late') {
+        // moving from late status to absent status
+        student.absent = true
+        student.late = false
+      } else {
+        // moving from absent status to present status
+        student.absent = false
+        student.late = false
+      }
+    } else {
+      if (currentStatus == 'present') {
+        // moving from present status to absent status
+        student.absent = true
+      } else {
+        // moving from absent status to present status
+        student.absent = false
+      }
+    }
 
     await this.saveStudentAttendance()
   }
