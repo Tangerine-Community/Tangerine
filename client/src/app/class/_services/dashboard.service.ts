@@ -1101,7 +1101,9 @@ export class DashboardService {
           studentResult[field] = this.getValue(field, student.doc)
         })
         studentResult['absent'] = null
-        studentResult['late'] = null
+        if (appConfig.teachProperties?.showLateAttendanceOption) {
+          studentResult['late'] = null
+        }
         
         list.push(studentResult)
       }
