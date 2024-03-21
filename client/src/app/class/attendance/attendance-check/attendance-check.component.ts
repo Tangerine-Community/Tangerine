@@ -143,24 +143,24 @@ export class AttendanceCheckComponent implements OnInit {
   async toggleAttendance(currentStatus, student) {
     if (this.showLateAttendanceOption) {
       if (currentStatus == 'present') {
-        // moving from present status to late status, then they are not absent
+        // moving from present status to late status
         student.absent = false
         student.late = true
       } else if (currentStatus == 'late') {
-        // moving from late status to absent status, then they are absent
+        // moving from late status to absent status
         student.absent = true
         student.late = false
       } else {
-        // moving from absent status to present status, then they are not absent
+        // moving from absent status to present status
         student.absent = false
         student.late = false
       }
     } else {
       if (currentStatus == 'present') {
-        // moving from present status to absent status, then they are absent
+        // moving from present status to absent status
         student.absent = true
       } else {
-        // moving from absent status to present status, then they are not absent
+        // moving from absent status to present status
         student.absent = false
       }
     }
