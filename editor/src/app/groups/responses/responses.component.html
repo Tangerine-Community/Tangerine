@@ -4,6 +4,11 @@
     <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
   </tangy-select>
 </div>
+<div>
+  <paper-input id="search-bar" name="search-bar" label="{{'Search by ID'|translate}}" #searchBar></paper-input>
+</div>
+<div id="search-results" #searchResults>
+</div>
 <div class="table" *ngIf="ready">
   <app-dynamic-table [data]="responses" (rowDelete)="onRowDelete($event)" (rowEdit)="onRowEdit($event)"></app-dynamic-table>
 </div>
