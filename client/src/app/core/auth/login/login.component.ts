@@ -5,7 +5,7 @@ import { DeviceService } from './../../../device/services/device.service';
 import {from as observableFrom,  Observable } from 'rxjs';
 
 
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
   hidePassword = true
   passwordPolicy: string
   passwordRecipe: string
+  @ViewChild('customLoginMarkup', {static: true}) customLoginMarkup: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -59,6 +60,7 @@ export class LoginComponent implements OnInit {
     if (this.userService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
     }
+    this.customLoginMarkup.nativeElement.innerHTML = appConfig.customLoginMarkup || '';
 
   }
 

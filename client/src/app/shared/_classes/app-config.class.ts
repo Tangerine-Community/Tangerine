@@ -10,7 +10,8 @@ export class AppConfig {
   // Tangerine Case Management: 'case-home'
   // Tangerine Teach: 'dashboard'
   homeUrl = "case-management"
-
+  // customLoginMarkup Custom Markup to include on the login page
+  customLoginMarkup: string
   //
   // i18n configuration.
   //
