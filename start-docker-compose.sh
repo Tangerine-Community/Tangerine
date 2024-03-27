@@ -74,4 +74,4 @@ if [ ! -d state ]; then
   mkdir state
 fi
 
-docker compose up
+docker compose up -d

@@ -1,6 +1,6 @@
 {
   "name": "tangerine-preview",
-  "version": "3.12.5",
+  "version": "4.0.1",
   "description": "",
   "main": "index.js",
   "bin": {
