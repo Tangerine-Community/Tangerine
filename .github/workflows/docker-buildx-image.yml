@@ -6,6 +6,8 @@ on:
       - release/v4.0.0
       - release/v4.0.1
       - test-github-workflows
+    tags:
+      - 'v*'
 
 jobs:
 
