@@ -5,12 +5,24 @@
 __New Features__
 - A new Prompt Box widget available in form authoring allows a form designer to add audio and visual feedback connected to Radio Block widgets. This feature provides a toolset for creating self-guided assessments. See the example in [tangy-forms](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4430)
 
-- Bump version of `tangy-form` to v4.31.1 and `tangy-form-editor` to v7.18.0
+- Client Login Screen Custom HTML: A new app-config.json setting, `customLoginMarkup`, allows for custom HTML to be added to the login screen. This feature is useful for adding custom branding or additional information to the login screen. As an example:
+```json
+"customLoginMarkup": "<div style='text-align: center;'><img src='assets/media/logo.png' alt='logo' style='max-width: 100%;'></div>"
+```
 
 __Tangerine Teach__
 
 - Add toggle in Attendence Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
 - Use `studentRegistrationFields` to control showing name and surname of student in the student dashboard
+
+__Libs and Dependencies__
+- Bump version of `tangy-form` to v4.31.1 and `tangy-form-editor` to v7.18.0 for the new Prompt Box widget
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* NONE
 
 
 ## v3.30.2
