@@ -13,4 +13,4 @@
   <app-dynamic-table [data]="responses" (rowDelete)="onRowDelete($event)" (rowEdit)="onRowEdit($event)"></app-dynamic-table>
 </div>
 <paper-button *ngIf="this.skip !== 0" (click)="previousPage()">< back</paper-button>
-<paper-button (click)="nextPage()">next ></paper-button>
+<paper-button *ngIf="!searchString" (click)="nextPage()">next ></paper-button>

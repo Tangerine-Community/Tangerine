@@ -17,8 +17,8 @@ module.exports = async (req, res) => {
       const docs = results.rows.map(row => row.doc)
       res.send(docs)
     } else{
-      const results = await groupDb.query('responsesByStartUnixTime', {...options, startkey:req.query.id});
-      const docs = results.rows.filter(row => row.id.startsWith(req.query.id)).map(row=>row.doc)
+      const results = await groupDb.query('responsesByStartUnixTime', {include_docs: true, descending: true, startkey:req.query.id});
+      const docs = results.rows.filter(row => row.id.startsWith(req.query.id)).map(row => row.doc)
       res.send(docs)
     }
   } catch (error) {
