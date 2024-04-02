@@ -35,6 +35,7 @@ export class ResponsesComponent implements OnInit {
   forms = [];
   locationLists
   searchString
+  initialResults = []
 
   constructor(
     private groupsService: GroupsService,
@@ -62,10 +63,12 @@ export class ResponsesComponent implements OnInit {
       .searchBar
       .nativeElement
       .addEventListener('keyup', event => {
-        const searchString = event.target.value
-        if (searchString.length > 2 || searchString.length === 0) {
+        const searchString = event.target.value.trim()
+        if (searchString.length > 2) {
+          if (this.searchString === searchString) return;
+          this.searchResults.nativeElement.innerHTML = 'Searching...'
           this.onSearch$.next(event.target.value)
-        } else {
+        } if(searchString.length <= 2 && searchString.length !==0 ) {
           this.searchResults.nativeElement.innerHTML = `
             <span style="padding: 25px">
               ${t('Enter more than two characters...')}
@@ -90,6 +93,7 @@ export class ResponsesComponent implements OnInit {
       flatResponses.push(flatResponse)
     }
     this.responses = flatResponses 
+    this.initialResults = flatResponses
   }
 
   async onSearch(searchString) {
@@ -97,6 +101,7 @@ export class ResponsesComponent implements OnInit {
     this.responses = []
     if (searchString === '') {
       this.searchResults.nativeElement.innerHTML = ''
+      this.responses = this.initialResults
       return 
     }
     const responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responses/${this.limit}/${this.skip}/?id=${searchString}`).toPromise()
@@ -107,6 +112,7 @@ export class ResponsesComponent implements OnInit {
       flatResponses.push(flatResponse)
     }
     this.responses = flatResponses
+    this.responses.length > 0 ? this.searchResults.nativeElement.innerHTML = '': this.searchResults.nativeElement.innerHTML = 'No results matching the criteria.'
   }
 
   async filterByForm(event) {
