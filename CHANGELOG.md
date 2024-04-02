@@ -10,6 +10,8 @@ __New Features__
 "customLoginMarkup": "<div style='text-align: center;'><img src='assets/media/logo.png' alt='logo' style='max-width: 100%;'></div>"
 ```
 
+- Add ID Search to Data > Import: A new feature in the Data > Import screen allows users to search for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. 
+
 __Tangerine Teach__
 
 - Add toggle in Attendence Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
