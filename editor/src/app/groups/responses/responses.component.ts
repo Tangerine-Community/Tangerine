@@ -64,11 +64,16 @@ export class ResponsesComponent implements OnInit {
       .nativeElement
       .addEventListener('keyup', event => {
         const searchString = event.target.value.trim()
+        if (searchString.length == 0) {
+          if (this.searchString === searchString) return;
+          this.onSearch$.next()
+        }         
         if (searchString.length > 2) {
           if (this.searchString === searchString) return;
           this.searchResults.nativeElement.innerHTML = 'Searching...'
           this.onSearch$.next(event.target.value)
-        } if(searchString.length <= 2 && searchString.length !==0 ) {
+        } 
+        if(searchString.length <= 2 && searchString.length !==0 ) {
           this.searchResults.nativeElement.innerHTML = `
             <span style="padding: 25px">
               ${t('Enter more than two characters...')}
