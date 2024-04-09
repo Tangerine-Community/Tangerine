@@ -62,7 +62,7 @@ export class ResponsesComponent implements OnInit {
     this
       .searchBar
       .nativeElement
-      .addEventListener('keyup', event => {
+      .addEventListener('keyup', async event => {
         const searchString = event.target.value.trim()
         if (searchString.length > 2) {
           if (this.searchString === searchString) return;
@@ -74,6 +74,10 @@ export class ResponsesComponent implements OnInit {
               ${t('Enter more than two characters...')}
             </span>
           `
+        } if(searchString.length===0){
+          this.searchResults.nativeElement.innerHTML = ''
+          this.searchString = ''
+          await this.getResponses()
         }
       })
   }
