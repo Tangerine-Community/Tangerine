@@ -36,7 +36,6 @@ module.exports = async (req, res) => {
     res.status(500).send(error);
   }
 }
-
 export const importViews = async (db) => {
   await db.put({
     _id: "_design/searchViews",
