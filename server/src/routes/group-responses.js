@@ -12,18 +12,19 @@ module.exports = async (req, res) => {
     if (req.params.skip) {
       options.skip = req.params.skip
     }
+    let results = undefined;
     if (Object.keys(req.query).length < 1 ) {
       // get all responses for a form
       options.key = req.params.formId;
       options.descending = true;
-      const results = await groupDb.query('responsesByStartUnixTime', options);
-      const docs = results.rows.map(row => row.doc)
-      res.send(docs)
+      results = await groupDb.query('responsesByStartUnixTime', options);
     } else {
       // searh options by document id
       options.startkey = req.query.id;
       options.endkey = `${req.query.id}\ufff0`;
-      const results = await groupDb.allDocs(options);
+      results = await groupDb.allDocs(options);
+    }
+    if (results) {
       const docs = results.rows.map(row => { if (row.doc && row.doc.collection == "TangyFormResponse") { return row.doc } });
       res.send(docs)
     }
