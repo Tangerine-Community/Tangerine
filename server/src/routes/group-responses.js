@@ -17,8 +17,8 @@ module.exports = async (req, res) => {
       const docs = results.rows.map(row => row.doc)
       res.send(docs)
     } else{
-      const results = await groupDb.allDocs({include_docs: true, startkey:req.query.id,endkey: `${req.query.id}\ufff0`,});
-      const docs = results.rows.map(row => row.doc)
+      const results = await groupDb.allDocs({include_docs: true, startkey:req.query.id,endkey: `${req.query.id}\ufff0`, skip: options.skip, limit:options.limit});
+      const docs = results.rows.map(row => row.doc.collection == "TangyFormResponse" && row.doc)
       res.send(docs)
     }
   } catch (error) {
