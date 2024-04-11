@@ -5,19 +5,25 @@ const log = require('tangy-log').log
 module.exports = async (req, res) => {
   try {
     const groupDb = new DB(req.params.groupId)
-    let options = {key: req.params.formId, include_docs: true, descending: true}
+    let options = {include_docs: true}
     if (req.params.limit) {
       options.limit = req.params.limit
     }
     if (req.params.skip) {
       options.skip = req.params.skip
     }
-    if (Object.keys(req.query).length < 1 ){
+    if (Object.keys(req.query).length > 1 ) {
+      // get all responses for a form
+      options.key = req.params.formId;
+      options.descending = true;
       const results = await groupDb.query('responsesByStartUnixTime', options);
       const docs = results.rows.map(row => row.doc)
       res.send(docs)
-    } else{
-      const results = await groupDb.allDocs({include_docs: true, startkey:req.query.id,endkey: `${req.query.id}\ufff0`, skip: options.skip, limit:options.limit});
+    } else {
+      // searh options by document id
+      options.startkey = req.query.id;
+      options.endkey = `${req.query.id}\ufff0`;
+      const results = await groupDb.allDocs(options);
       const docs = results.rows.map(row => row.doc.collection == "TangyFormResponse" && row.doc)
       res.send(docs)
     }
