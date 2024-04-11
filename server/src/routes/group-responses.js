@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
     if (req.params.skip) {
       options.skip = req.params.skip
     }
-    if (Object.keys(req.query).length > 1 ) {
+    if (Object.keys(req.query).length < 1 ) {
       // get all responses for a form
       options.key = req.params.formId;
       options.descending = true;
