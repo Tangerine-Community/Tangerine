@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       options.startkey = req.query.id;
       options.endkey = `${req.query.id}\ufff0`;
       const results = await groupDb.allDocs(options);
-      const docs = results.rows.map(row => row.doc.collection == "TangyFormResponse" && row.doc)
+      const docs = results.rows.map(row => row.doc && row.doc.collection == "TangyFormResponse")
       res.send(docs)
     }
   } catch (error) {
