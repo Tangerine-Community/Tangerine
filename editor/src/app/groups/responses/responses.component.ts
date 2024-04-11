@@ -67,6 +67,8 @@ export class ResponsesComponent implements OnInit {
         if (searchString.length > 2) {
           if (this.searchString === searchString) return;
           this.searchResults.nativeElement.innerHTML = 'Searching...'
+          this.skip = 0
+          this.limit = 30
           this.onSearch$.next(event.target.value)
         } if(searchString.length <= 2 && searchString.length !==0 ) {
           this.searchResults.nativeElement.innerHTML = `
@@ -77,6 +79,8 @@ export class ResponsesComponent implements OnInit {
         } if(searchString.length===0){
           this.searchResults.nativeElement.innerHTML = ''
           this.searchString = ''
+          this.skip = 0
+          this.limit = 30
           await this.getResponses()
         }
       })
