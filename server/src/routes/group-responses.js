@@ -17,17 +17,7 @@ module.exports = async (req, res) => {
       const docs = results.rows.map(row => row.doc)
       res.send(docs)
     } else{
-      try {
-        await groupDb.get('_design/searchViews');
-      } catch (error) {
-        console.log(error)
-        if (error.name === 'not_found') {
-          await importViews(groupDb);
-        } else {
-          return false;
-        }
-    }
-      const results = await groupDb.query('searchViews/responseByFormID', {include_docs: true, startkey:req.query.id,endkey: `${req.query.id}\ufff0`,});
+      const results = await groupDb.allDocs({include_docs: true, startkey:req.query.id,endkey: `${req.query.id}\ufff0`,});
       const docs = results.rows.map(row => row.doc)
       res.send(docs)
     }
@@ -36,18 +26,3 @@ module.exports = async (req, res) => {
     res.status(500).send(error);
   }
 }
-export const importViews = async (db) => {
-  await db.put({
-    _id: "_design/searchViews",
-    views: {
-      responseByFormID: {
-        map: function (doc) {
-          if (doc.collection === "TangyFormResponse") {
-              emit(doc._id, true);
-          }
-      }.toString(),
-      }
-    }
-  });
-  await db.query("searchViews/responseByFormID", { limit: 0 });
-};
