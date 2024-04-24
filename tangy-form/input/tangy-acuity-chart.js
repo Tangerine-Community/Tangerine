@@ -115,8 +115,8 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 height: 100%;
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
-                align-items: center;
+                justify-content: left;
+                align-items: left;
                 font-family: 'Andika', sans-serif;
                 font-size: 1.3rem;
                 font-weight: 400;
@@ -597,7 +597,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 font: bold 5.5mm helvetica,arial, sans-serif;
                 position: absolute;
                 width: 80px;
-                top: 50%;
+                top: 0%;
                 transform: translateY(-50%);
                 margin-top: 0 !important;
                 background: #d8d8d8;
@@ -808,13 +808,6 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 height:350px;
                 z-index: 14;
               }
-                #button-bar {
-                    position: absolute;
-                    width: 80px;
-                    right: 0px;
-                    text-align: center;
-                    z-index: 14;
-                }
               .setting-button a {
                 display: block;
                 position: relative;
@@ -1045,14 +1038,14 @@ export class TangyAcuityChart extends TangyInputLitBase {
                     --tangy-element-border: 0;
                 }
             </style>
-            <div class="flex-container">
+            <div>
                 ${this.questionNumber ? html`
                     <div id="qnum-number">
                         <label>${this.questionNumber}</label>
                     </div>
                 ` : ''}
-                <div id="qnum-content">
-                    <label>${this.label}</label>
+                <div id="qnum-content" class="flex-container">
+                    <!-- <label>${this.label}</label> -->
 <!--                    <div id="configuration">-->
 <!--                        <div>-->
 <!--                            <label>Pixels per Inch:</label>-->
@@ -1089,9 +1082,11 @@ export class TangyAcuityChart extends TangyInputLitBase {
                         ">Next</button>-->
 
                     <!--dpi-->
-                    <div id="dpi"></div>
+<!--                    <div id="dpi"></div>-->
                     <!--setting bar-->
 <!--                    <div id="side-bar-bg"></div> -->
+                    <div id="letterChart" style="height:100%;">
+                    </div>
                     <div id="button-bar">
                         <a class="setting-button" href="#setting-bar">
                             <svg id="bHamburger" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -1146,17 +1141,17 @@ export class TangyAcuityChart extends TangyInputLitBase {
                                  xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                  viewBox="1 1 16 16" enable-background="new 1 1 16 16" xml:space="preserve"
                                  style="width:24px;height:24px">
-            <g id="close-Layer_7" display="none">
-            <rect x="1" y="1" display="inline" width="16" height="16"/>
-            </g>
+                                <g id="close-Layer_7" display="none">
+                                    <rect x="1" y="1" display="inline" width="16" height="16"/>
+                                </g>
                                 <g id="close-Layer_31">
-            <path fill="#68707D" d="M12.1,11.6c0.1,0.1,0.1,0.3,0,0.5c-0.1,0.1-0.2,0.1-0.2,0.1c-0.1,0-0.2,0-0.2-0.1L9,9.5l-2.6,2.6
-                    c-0.1,0.1-0.2,0.1-0.2,0.1c-0.1,0-0.2,0-0.2-0.1c-0.1-0.1-0.1-0.3,0-0.5L8.5,9L5.9,6.4C5.8,6.2,5.8,6,5.9,5.9
-                    c0.1-0.1,0.3-0.1,0.5,0L9,8.5l2.6-2.6c0.1-0.1,0.3-0.1,0.5,0c0.1,0.1,0.1,0.3,0,0.5L9.5,9L12.1,11.6z M9,16.5L9,16.5L9,16.5z
-                     M9,1.2C4.7,1.2,1.2,4.7,1.2,9c0,2.1,0.8,4,2.3,5.5C4.9,16,6.9,16.8,9,16.8h0c4.3,0,7.8-3.5,7.8-7.8C16.8,4.7,13.3,1.2,9,1.2L9,1.2
-                    z"/>
-            </g>
-        </svg>
+                            <path fill="#68707D" d="M12.1,11.6c0.1,0.1,0.1,0.3,0,0.5c-0.1,0.1-0.2,0.1-0.2,0.1c-0.1,0-0.2,0-0.2-0.1L9,9.5l-2.6,2.6
+                                    c-0.1,0.1-0.2,0.1-0.2,0.1c-0.1,0-0.2,0-0.2-0.1c-0.1-0.1-0.1-0.3,0-0.5L8.5,9L5.9,6.4C5.8,6.2,5.8,6,5.9,5.9
+                                    c0.1-0.1,0.3-0.1,0.5,0L9,8.5l2.6-2.6c0.1-0.1,0.3-0.1,0.5,0c0.1,0.1,0.1,0.3,0,0.5L9.5,9L12.1,11.6z M9,16.5L9,16.5L9,16.5z
+                                     M9,1.2C4.7,1.2,1.2,4.7,1.2,9c0,2.1,0.8,4,2.3,5.5C4.9,16,6.9,16.8,9,16.8h0c4.3,0,7.8-3.5,7.8-7.8C16.8,4.7,13.3,1.2,9,1.2L9,1.2
+                                    z"/>
+                            </g>
+                        </svg>
                         </a>
                         <form id="form-setting">
                             <h2>Settings</h2>
@@ -1639,51 +1634,7 @@ export class TangyAcuityChart extends TangyInputLitBase {
                         </div>
                     </div>
                     <!--end guide-section-->
-                    <div id="letterChart" style="height:100%;">
-                        <!-- <div data-line="1" class="character-line">
-            <div class="char-line" id="line-1"></div>
-        </div>
-        <div data-line="2" class="character-line">
-            <div class="char-line" id="line-2"></div>
-        </div>
-        <div data-line="3" class="character-line">
-            <div class="char-line" id="line-3"></div>
-        </div>
-        <div data-line="4" class="character-line">
-            <div class="char-line" id="line-4"></div>
-        </div>
-        <div data-line="5" class="character-line">
-            <div class="char-line" id="line-5"></div>
-        </div>
-        <div data-line="6" class="character-line">
-            <div class="char-line" id="line-6"></div>
-        </div>
-        <div data-line="7" class="character-line">
-            <div class="char-line" id="line-7"></div>
-        </div>
-        <div data-line="8" class="character-line">
-            <div class="char-line" id="line-8"></div>
-        </div>
-        <div data-line="9" class="character-line">
-            <div class="char-line" id="line-9"></div>
-        </div>
-        <div data-line="10" class="character-line">
-            <div class="char-line" id="line-10"></div>
-        </div>
-        <div data-line="11" class="character-line">
-            <div class="char-line" id="line-11"></div>
-        </div>
-        <div data-line="12" class="character-line">
-            <div class="char-line" id="line-12"></div>
-        </div>
-        <div data-line="13" class="character-line">
-            <div class="char-line" id="line-13"></div>
-        </div>
-        <div data-line="14" class="character-line">
-            <div class="char-line" id="line-14"></div>   
-        </div>
-     -->
-                    </div>
+                    
                     <div id="otherChart">
                         <!--these hidden divs below represent a chart each, using class for categorising. 
         They are hidden in the head style.
