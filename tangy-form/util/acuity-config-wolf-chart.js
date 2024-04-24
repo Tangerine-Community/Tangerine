@@ -400,6 +400,7 @@ export class ConfigWolfChart {
             } else {//first use
                 $(charts[selChart], this.self.shadowRoot).show();
                 functionConfigWolfChart.sidebarControls(selCat, selChart);
+                this.self.value = charts[selChart].querySelector('.scoreBox').innerHTML
             }
             //navigation to and display of chart is now finished
             //update cat and chartThis
@@ -1909,7 +1910,7 @@ export class ConfigWolfChart {
         };
         this.Init = () =>  {
             this.viewHeight = 280;
-            this.viewWidth = 500;
+            this.viewWidth = 900;
             var validateElement = this;
             var validate = false,
                 VresultDistance, VresultLength;
