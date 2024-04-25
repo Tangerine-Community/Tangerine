@@ -591,51 +591,58 @@ export class ConfigWolfChart {
         this.GenerateCharacter =  (alphabetType, localOptotype) => {
             var arrayCharacter = [],
                 convertFunction = this;
-            switch (alphabetType) {
-                //set alphabet for each optotype
-                case '1'://SnellenU
-                    arrayCharacter = ['Snellen_N,Snellen_L,Snellen_A,Snellen_Y,Snellen_Z', 'Snellen_E,Snellen_F,Snellen_R,Snellen_D,Snellen_U', 'Snellen_T,Snellen_P,Snellen_V,Snellen_H,Snellen_X', 'Snellen_Y,Snellen_E,Snellen_L,Snellen_R,Snellen_T', 'Snellen_F,Snellen_X,Snellen_U,Snellen_D,Snellen_H', 'Snellen_A,Snellen_N,Snellen_P,Snellen_V,Snellen_Z', 'Snellen_H,Snellen_Z,Snellen_T,Snellen_Y,Snellen_D', 'Snellen_V,Snellen_F,Snellen_X,Snellen_N,Snellen_R', 'Snellen_A,Snellen_L,Snellen_P,Snellen_U,Snellen_E', 'Snellen_P,Snellen_U,Snellen_V,Snellen_F,Snellen_Y', 'Snellen_T,Snellen_A,Snellen_H,Snellen_E,Snellen_D', 'Snellen_L,Snellen_R,Snellen_N,Snellen_Z,Snellen_X', 'Snellen_D,Snellen_Y,Snellen_P,Snellen_L,Snellen_N', 'Snellen_Z,Snellen_A,Snellen_T,Snellen_F,Snellen_R']
-                    break;
-                case '2'://BS4274.3
-                    arrayCharacter = ['Snellen_U,Snellen_R,Snellen_N,Snellen_D,Snellen_V', 'Snellen_N,Snellen_F,Snellen_R,Snellen_Z,Snellen_E', 'Snellen_P,Snellen_H,Snellen_D,Snellen_F,Snellen_V', 'Snellen_R,Snellen_U,Snellen_N,Snellen_E,Snellen_Z', 'Snellen_D,Snellen_V,Snellen_E,Snellen_P,Snellen_R', 'Snellen_U,Snellen_D,Snellen_H,Snellen_V,Snellen_N', 'Snellen_Z,Snellen_U,Snellen_V,Snellen_F,Snellen_P', 'Snellen_E,Snellen_R,Snellen_D,Snellen_H,Snellen_Z', 'Snellen_U,Snellen_D,Snellen_P,Snellen_N,Snellen_F', 'Snellen_V,Snellen_E,Snellen_H,Snellen_U,Snellen_P', 'Snellen_F,Snellen_Z,Snellen_V,Snellen_R,Snellen_N', 'Snellen_H,Snellen_R,Snellen_E,Snellen_Z,Snellen_D', 'Snellen_N,Snellen_F,Snellen_H,Snellen_P,Snellen_Z', 'Snellen_U,Snellen_V,Snellen_F,Snellen_E,Snellen_H']
-                    break;
-                case '3':
-                    arrayCharacter = ['Sloan_C,Sloan_H,Sloan_N,Sloan_R,Sloan_V', 'Sloan_D,Sloan_K,Sloan_O,Sloan_S,Sloan_V', 'Sloan_V,Sloan_O,Sloan_R,Sloan_D,Sloan_N', 'Sloan_H,Sloan_Z,Sloan_C,Sloan_K,Sloan_X', 'Sloan_O,Sloan_K,Sloan_V,Sloan_H,Sloan_D', 'Sloan_Z,Sloan_R,Sloan_N,Sloan_S,Sloan_C', 'Sloan_K,Sloan_S,Sloan_D,Sloan_C,Sloan_H', 'Sloan_R,Sloan_N,Sloan_O,Sloan_V,Sloan_Z', 'Sloan_D,Sloan_H,Sloan_R,Sloan_O,Sloan_K', 'Sloan_C,Sloan_N,Sloan_Z,Sloan_S,Sloan_V', 'Sloan_H,Sloan_O,Sloan_S,Sloan_D,Sloan_N', 'Sloan_C,Sloan_V,Sloan_K,Sloan_Z,Sloan_R', 'Sloan_D,Sloan_H,Sloan_R,Sloan_N,Sloan_O', 'Sloan_S,Sloan_V,Sloan_C,Sloan_K,Sloan_Z']
-                    break;
-                case '4':
-                    arrayCharacter = ['Sloan_V,Sloan_N,Sloan_T,Sloan_C,Sloan_E', 'Sloan_P,Sloan_X,Sloan_R,Sloan_Z,Sloan_S', 'Sloan_D,Sloan_H,Sloan_O,Sloan_L,Sloan_K', 'Sloan_E,Sloan_T,Sloan_K,Sloan_O,Sloan_D', 'Sloan_C,Sloan_S,Sloan_N,Sloan_R,Sloan_H', 'Sloan_P,Sloan_L,Sloan_X,Sloan_Z,Sloan_V', 'Sloan_N,Sloan_K,Sloan_Z,Sloan_P,Sloan_O', 'Sloan_E,Sloan_V,Sloan_R,Sloan_X,Sloan_D', 'Sloan_T,Sloan_C,Sloan_S,Sloan_L,Sloan_H', 'Sloan_V,Sloan_H,Sloan_X,Sloan_D,Sloan_S', 'Sloan_R,Sloan_O,Sloan_K,Sloan_L,Sloan_E', 'Sloan_Z,Sloan_P,Sloan_C,Sloan_N,Sloan_T', 'Sloan_T,Sloan_E,Sloan_V,Sloan_C,Sloan_R', 'Sloan_H,Sloan_L,Sloan_D,Sloan_P,Sloan_N']
-                    break;
-                case '5':
-                    arrayCharacter = ['LandoltC_N,LandoltC_S,LandoltC_E,LandoltC_N,LandoltC_W', 'LandoltC_E,LandoltC_E,LandoltC_N,LandoltC_W,LandoltC_S', 'LandoltC_E,LandoltC_S,LandoltC_S,LandoltC_W,LandoltC_N', 'LandoltC_N,LandoltC_W,LandoltC_N,LandoltC_S,LandoltC_E', 'LandoltC_S,LandoltC_W,LandoltC_N,LandoltC_W,LandoltC_E', 'LandoltC_W,LandoltC_E,LandoltC_S,LandoltC_N,LandoltC_S', 'LandoltC_W,LandoltC_N,LandoltC_E,LandoltC_S,LandoltC_W', 'LandoltC_S,LandoltC_N,LandoltC_N,LandoltC_W,LandoltC_E', 'LandoltC_N,LandoltC_E,LandoltC_S,LandoltC_W,LandoltC_W', 'LandoltC_N,LandoltC_S,LandoltC_E,LandoltC_N,LandoltC_W', 'LandoltC_E,LandoltC_E,LandoltC_N,LandoltC_W,LandoltC_S', 'LandoltC_E,LandoltC_S,LandoltC_S,LandoltC_W,LandoltC_N', 'LandoltC_N,LandoltC_W,LandoltC_N,LandoltC_S,LandoltC_E', 'LandoltC_S,LandoltC_W,LandoltC_N,LandoltC_W,LandoltC_E']
-                    break;
-                case '6':
-                    arrayCharacter = ['TumblingE_N,TumblingE_S,TumblingE_E,TumblingE_N,TumblingE_W', 'TumblingE_E,TumblingE_E,TumblingE_N,TumblingE_W,TumblingE_S', 'TumblingE_E,TumblingE_S,TumblingE_S,TumblingE_W,TumblingE_N', 'TumblingE_N,TumblingE_W,TumblingE_N,TumblingE_S,TumblingE_E', 'TumblingE_S,TumblingE_W,TumblingE_N,TumblingE_W,TumblingE_E', 'TumblingE_W,TumblingE_E,TumblingE_S,TumblingE_N,TumblingE_S', 'TumblingE_W,TumblingE_N,TumblingE_E,TumblingE_S,TumblingE_W', 'TumblingE_S,TumblingE_N,TumblingE_N,TumblingE_W,TumblingE_E', 'TumblingE_N,TumblingE_E,TumblingE_S,TumblingE_W,TumblingE_W', 'TumblingE_N,TumblingE_S,TumblingE_E,TumblingE_N,TumblingE_W', 'TumblingE_E,TumblingE_E,TumblingE_N,TumblingE_W,TumblingE_S', 'TumblingE_E,TumblingE_S,TumblingE_S,TumblingE_W,TumblingE_N', 'TumblingE_N,TumblingE_W,TumblingE_N,TumblingE_S,TumblingE_E', 'TumblingE_S,TumblingE_W,TumblingE_N,TumblingE_W,TumblingE_E'];
-                    break;
-                case '7':
-                    arrayCharacter = ['VanSloan_C,VanSloan_H,VanSloan_N,VanSloan_R,VanSloan_V', 'VanSloan_D,VanSloan_K,VanSloan_O,VanSloan_S,VanSloan_V', 'VanSloan_V,VanSloan_O,VanSloan_R,VanSloan_D,VanSloan_N', 'VanSloan_H,VanSloan_Z,VanSloan_C,VanSloan_K,VanSloan_X', 'VanSloan_O,VanSloan_K,VanSloan_V,VanSloan_H,VanSloan_D', 'VanSloan_Z,VanSloan_R,VanSloan_N,VanSloan_S,VanSloan_C', 'VanSloan_K,VanSloan_S,VanSloan_D,VanSloan_C,VanSloan_H', 'VanSloan_R,VanSloan_N,VanSloan_O,VanSloan_V,VanSloan_Z', 'VanSloan_D,VanSloan_H,VanSloan_R,VanSloan_O,VanSloan_K', 'VanSloan_C,VanSloan_N,VanSloan_Z,VanSloan_S,VanSloan_V', 'VanSloan_H,VanSloan_O,VanSloan_S,VanSloan_D,VanSloan_N', 'VanSloan_C,VanSloan_V,VanSloan_K,VanSloan_Z,VanSloan_R', 'VanSloan_D,VanSloan_H,VanSloan_R,VanSloan_N,VanSloan_O', 'VanSloan_S,VanSloan_V,VanSloan_C,VanSloan_K,VanSloan_Z'];
-                    break;
-                case '8':
-                    arrayCharacter = ['Shape5_0,Shape5_3,Shape5_1,Shape5_4,Shape5_2', 'Shape5_1,Shape5_2,Shape5_0,Shape5_3,Shape5_4', 'Shape5_4,Shape5_0,Shape5_2,Shape5_1,Shape5_3', 'Shape5_2,Shape5_3,Shape5_1,Shape5_4,Shape5_0', 'Shape5_1,Shape5_4,Shape5_3,Shape5_0,Shape5_2', 'Shape5_3,Shape5_0,Shape5_4,Shape5_2,Shape5_1', 'Shape5_2,Shape5_1,Shape5_0,Shape5_4,Shape5_3', 'Shape5_0,Shape5_2,Shape5_1,Shape5_3,Shape5_4', 'Shape5_3,Shape5_1,Shape5_0,Shape5_4,Shape5_2', 'Shape5_4,Shape5_0,Shape5_2,Shape5_3,Shape5_1', 'Shape5_2,Shape5_4,Shape5_3,Shape5_1,Shape5_0', 'Shape5_1,Shape5_3,Shape5_4,Shape5_0,Shape5_2', 'Shape5_0,Shape5_4,Shape5_2,Shape5_1,Shape5_3', 'Shape5_4,Shape5_1,Shape5_3,Shape5_0,Shape5_2'];
-                    break;
-                case '9':
-                    arrayCharacter = ['Chinese01_0,Chinese01_1,Chinese01_6,Chinese01_3,Chinese01_2', 'Chinese01_3,Chinese01_2,Chinese01_4,Chinese01_8,Chinese01_7', 'Chinese01_6,Chinese01_9,Chinese01_5,Chinese01_0,Chinese01_1', 'Chinese01_4,Chinese01_3,Chinese01_0,Chinese01_7,Chinese01_9', 'Chinese01_8,Chinese01_1,Chinese01_2,Chinese01_5,Chinese01_6', 'Chinese01_9,Chinese01_8,Chinese01_6,Chinese01_4,Chinese01_0', 'Chinese01_1,Chinese01_7,Chinese01_3,Chinese01_9,Chinese01_5', 'Chinese01_5,Chinese01_0,Chinese01_2,Chinese01_7,Chinese01_8', 'Chinese01_6,Chinese01_3,Chinese01_8,Chinese01_4,Chinese01_1', 'Chinese01_2,Chinese01_4,Chinese01_1,Chinese01_7,Chinese01_9', 'Chinese01_8,Chinese01_5,Chinese01_3,Chinese01_0,Chinese01_6', 'Chinese01_4,Chinese01_2,Chinese01_1,Chinese01_8,Chinese01_7', 'Chinese01_9,Chinese01_6,Chinese01_5,Chinese01_3,Chinese01_2', 'Chinese01_7,Chinese01_4,Chinese01_0,Chinese01_9,Chinese01_5'];
-                    break;
-                case '10':
-                    arrayCharacter = ['Arabic01_0,Arabic01_1,Arabic01_6,Arabic01_3,Arabic01_2', 'Arabic01_3,Arabic01_2,Arabic01_4,Arabic01_8,Arabic01_7', 'Arabic01_6,Arabic01_9,Arabic01_5,Arabic01_0,Arabic01_1', 'Arabic01_4,Arabic01_3,Arabic01_0,Arabic01_7,Arabic01_9', 'Arabic01_8,Arabic01_1,Arabic01_2,Arabic01_5,Arabic01_6', 'Arabic01_9,Arabic01_8,Arabic01_6,Arabic01_4,Arabic01_0', 'Arabic01_1,Arabic01_7,Arabic01_3,Arabic01_9,Arabic01_5', 'Arabic01_5,Arabic01_0,Arabic01_2,Arabic01_7,Arabic01_8', 'Arabic01_6,Arabic01_3,Arabic01_8,Arabic01_4,Arabic01_1', 'Arabic01_2,Arabic01_4,Arabic01_1,Arabic01_7,Arabic01_9', 'Arabic01_8,Arabic01_5,Arabic01_3,Arabic01_0,Arabic01_6', 'Arabic01_4,Arabic01_2,Arabic01_1,Arabic01_8,Arabic01_7', 'Arabic01_9,Arabic01_6,Arabic01_5,Arabic01_3,Arabic01_2', 'Arabic01_7,Arabic01_4,Arabic01_0,Arabic01_9,Arabic01_5'];
-                    break;
-                case '11':
-                    arrayCharacter = ['Hebrew01_2,Hebrew01_8,Hebrew01_0,Hebrew01_6,Hebrew01_4', 'Hebrew01_7,Hebrew01_1,Hebrew01_5,Hebrew01_9,Hebrew01_3', 'Hebrew01_8,Hebrew01_0,Hebrew01_2,Hebrew01_4,Hebrew01_6', 'Hebrew01_9,Hebrew01_5,Hebrew01_7,Hebrew01_3,Hebrew01_1', 'Hebrew01_6,Hebrew01_4,Hebrew01_8,Hebrew01_0,Hebrew01_2', 'Hebrew01_1,Hebrew01_3,Hebrew01_9,Hebrew01_5,Hebrew01_7', 'Hebrew01_0,Hebrew01_6,Hebrew01_4,Hebrew01_2,Hebrew01_8', 'Hebrew01_5,Hebrew01_7,Hebrew01_3,Hebrew01_1,Hebrew01_9', 'Hebrew01_4,Hebrew01_2,Hebrew01_8,Hebrew01_6,Hebrew01_0', 'Hebrew01_3,Hebrew01_9,Hebrew01_1,Hebrew01_7,Hebrew01_5', 'Hebrew01_2,Hebrew01_6,Hebrew01_0,Hebrew01_8,Hebrew01_4', 'Hebrew01_7,Hebrew01_5,Hebrew01_9,Hebrew01_1,Hebrew01_3', 'Hebrew01_8,Hebrew01_4,Hebrew01_2,Hebrew01_0,Hebrew01_6', 'Hebrew01_1,Hebrew01_5,Hebrew01_7,Hebrew01_3,Hebrew01_9'];
-                    break;
-                case '12':
-                    arrayCharacter = ['CrowdedHOTV01_0', 'CrowdedHOTV01_2', 'CrowdedHOTV01_3', 'CrowdedHOTV01_1', 'CrowdedHOTV01_2', 'CrowdedHOTV01_0', 'CrowdedHOTV01_1', 'CrowdedHOTV01_3', 'CrowdedHOTV01_1', 'CrowdedHOTV01_0', 'CrowdedHOTV01_2', 'CrowdedHOTV01_3', 'CrowdedHOTV01_0', 'CrowdedHOTV01_2'];
-                    break;
-                case '13':
-                    arrayCharacter = ['CrowdedHOTV01_0,CrowdedHOTV01_2', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_3,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_0', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_0,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1'];
-                    break;
-                case '14':
-                    arrayCharacter = ['Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D', 'Auckland_E','Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D', 'Auckland_E','Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D'];
-                    break;
+            if (this.self.characterName) {
+                for (let i = 0; i < 14; i++) {
+                    arrayCharacter.push(this.self.characterName)
+                }
+            } else {
+                switch (alphabetType) {
+                    //set alphabet for each optotype
+                    case '1'://SnellenU
+                        arrayCharacter = ['Snellen_N,Snellen_L,Snellen_A,Snellen_Y,Snellen_Z', 'Snellen_E,Snellen_F,Snellen_R,Snellen_D,Snellen_U', 'Snellen_T,Snellen_P,Snellen_V,Snellen_H,Snellen_X', 'Snellen_Y,Snellen_E,Snellen_L,Snellen_R,Snellen_T', 'Snellen_F,Snellen_X,Snellen_U,Snellen_D,Snellen_H', 'Snellen_A,Snellen_N,Snellen_P,Snellen_V,Snellen_Z', 'Snellen_H,Snellen_Z,Snellen_T,Snellen_Y,Snellen_D', 'Snellen_V,Snellen_F,Snellen_X,Snellen_N,Snellen_R', 'Snellen_A,Snellen_L,Snellen_P,Snellen_U,Snellen_E', 'Snellen_P,Snellen_U,Snellen_V,Snellen_F,Snellen_Y', 'Snellen_T,Snellen_A,Snellen_H,Snellen_E,Snellen_D', 'Snellen_L,Snellen_R,Snellen_N,Snellen_Z,Snellen_X', 'Snellen_D,Snellen_Y,Snellen_P,Snellen_L,Snellen_N', 'Snellen_Z,Snellen_A,Snellen_T,Snellen_F,Snellen_R']
+                        break;
+                    case '2'://BS4274.3
+                        arrayCharacter = ['Snellen_U,Snellen_R,Snellen_N,Snellen_D,Snellen_V', 'Snellen_N,Snellen_F,Snellen_R,Snellen_Z,Snellen_E', 'Snellen_P,Snellen_H,Snellen_D,Snellen_F,Snellen_V', 'Snellen_R,Snellen_U,Snellen_N,Snellen_E,Snellen_Z', 'Snellen_D,Snellen_V,Snellen_E,Snellen_P,Snellen_R', 'Snellen_U,Snellen_D,Snellen_H,Snellen_V,Snellen_N', 'Snellen_Z,Snellen_U,Snellen_V,Snellen_F,Snellen_P', 'Snellen_E,Snellen_R,Snellen_D,Snellen_H,Snellen_Z', 'Snellen_U,Snellen_D,Snellen_P,Snellen_N,Snellen_F', 'Snellen_V,Snellen_E,Snellen_H,Snellen_U,Snellen_P', 'Snellen_F,Snellen_Z,Snellen_V,Snellen_R,Snellen_N', 'Snellen_H,Snellen_R,Snellen_E,Snellen_Z,Snellen_D', 'Snellen_N,Snellen_F,Snellen_H,Snellen_P,Snellen_Z', 'Snellen_U,Snellen_V,Snellen_F,Snellen_E,Snellen_H']
+                        break;
+                    case '3':
+                        arrayCharacter = ['Sloan_C,Sloan_H,Sloan_N,Sloan_R,Sloan_V', 'Sloan_D,Sloan_K,Sloan_O,Sloan_S,Sloan_V', 'Sloan_V,Sloan_O,Sloan_R,Sloan_D,Sloan_N', 'Sloan_H,Sloan_Z,Sloan_C,Sloan_K,Sloan_X', 'Sloan_O,Sloan_K,Sloan_V,Sloan_H,Sloan_D', 'Sloan_Z,Sloan_R,Sloan_N,Sloan_S,Sloan_C', 'Sloan_K,Sloan_S,Sloan_D,Sloan_C,Sloan_H', 'Sloan_R,Sloan_N,Sloan_O,Sloan_V,Sloan_Z', 'Sloan_D,Sloan_H,Sloan_R,Sloan_O,Sloan_K', 'Sloan_C,Sloan_N,Sloan_Z,Sloan_S,Sloan_V', 'Sloan_H,Sloan_O,Sloan_S,Sloan_D,Sloan_N', 'Sloan_C,Sloan_V,Sloan_K,Sloan_Z,Sloan_R', 'Sloan_D,Sloan_H,Sloan_R,Sloan_N,Sloan_O', 'Sloan_S,Sloan_V,Sloan_C,Sloan_K,Sloan_Z']
+                        break;
+                    case '4':
+                        arrayCharacter = ['Sloan_V,Sloan_N,Sloan_T,Sloan_C,Sloan_E', 'Sloan_P,Sloan_X,Sloan_R,Sloan_Z,Sloan_S', 'Sloan_D,Sloan_H,Sloan_O,Sloan_L,Sloan_K', 'Sloan_E,Sloan_T,Sloan_K,Sloan_O,Sloan_D', 'Sloan_C,Sloan_S,Sloan_N,Sloan_R,Sloan_H', 'Sloan_P,Sloan_L,Sloan_X,Sloan_Z,Sloan_V', 'Sloan_N,Sloan_K,Sloan_Z,Sloan_P,Sloan_O', 'Sloan_E,Sloan_V,Sloan_R,Sloan_X,Sloan_D', 'Sloan_T,Sloan_C,Sloan_S,Sloan_L,Sloan_H', 'Sloan_V,Sloan_H,Sloan_X,Sloan_D,Sloan_S', 'Sloan_R,Sloan_O,Sloan_K,Sloan_L,Sloan_E', 'Sloan_Z,Sloan_P,Sloan_C,Sloan_N,Sloan_T', 'Sloan_T,Sloan_E,Sloan_V,Sloan_C,Sloan_R', 'Sloan_H,Sloan_L,Sloan_D,Sloan_P,Sloan_N']
+                        break;
+                    case '5':
+                        arrayCharacter = ['LandoltC_N,LandoltC_S,LandoltC_E,LandoltC_N,LandoltC_W', 'LandoltC_E,LandoltC_E,LandoltC_N,LandoltC_W,LandoltC_S', 'LandoltC_E,LandoltC_S,LandoltC_S,LandoltC_W,LandoltC_N', 'LandoltC_N,LandoltC_W,LandoltC_N,LandoltC_S,LandoltC_E', 'LandoltC_S,LandoltC_W,LandoltC_N,LandoltC_W,LandoltC_E', 'LandoltC_W,LandoltC_E,LandoltC_S,LandoltC_N,LandoltC_S', 'LandoltC_W,LandoltC_N,LandoltC_E,LandoltC_S,LandoltC_W', 'LandoltC_S,LandoltC_N,LandoltC_N,LandoltC_W,LandoltC_E', 'LandoltC_N,LandoltC_E,LandoltC_S,LandoltC_W,LandoltC_W', 'LandoltC_N,LandoltC_S,LandoltC_E,LandoltC_N,LandoltC_W', 'LandoltC_E,LandoltC_E,LandoltC_N,LandoltC_W,LandoltC_S', 'LandoltC_E,LandoltC_S,LandoltC_S,LandoltC_W,LandoltC_N', 'LandoltC_N,LandoltC_W,LandoltC_N,LandoltC_S,LandoltC_E', 'LandoltC_S,LandoltC_W,LandoltC_N,LandoltC_W,LandoltC_E']
+                        break;
+                    case '6':
+                        arrayCharacter = ['TumblingE_N,TumblingE_S,TumblingE_E,TumblingE_N,TumblingE_W', 'TumblingE_E,TumblingE_E,TumblingE_N,TumblingE_W,TumblingE_S', 'TumblingE_E,TumblingE_S,TumblingE_S,TumblingE_W,TumblingE_N', 'TumblingE_N,TumblingE_W,TumblingE_N,TumblingE_S,TumblingE_E', 'TumblingE_S,TumblingE_W,TumblingE_N,TumblingE_W,TumblingE_E', 'TumblingE_W,TumblingE_E,TumblingE_S,TumblingE_N,TumblingE_S', 'TumblingE_W,TumblingE_N,TumblingE_E,TumblingE_S,TumblingE_W', 'TumblingE_S,TumblingE_N,TumblingE_N,TumblingE_W,TumblingE_E', 'TumblingE_N,TumblingE_E,TumblingE_S,TumblingE_W,TumblingE_W', 'TumblingE_N,TumblingE_S,TumblingE_E,TumblingE_N,TumblingE_W', 'TumblingE_E,TumblingE_E,TumblingE_N,TumblingE_W,TumblingE_S', 'TumblingE_E,TumblingE_S,TumblingE_S,TumblingE_W,TumblingE_N', 'TumblingE_N,TumblingE_W,TumblingE_N,TumblingE_S,TumblingE_E', 'TumblingE_S,TumblingE_W,TumblingE_N,TumblingE_W,TumblingE_E'];
+                        break;
+                    case '7':
+                        arrayCharacter = ['VanSloan_C,VanSloan_H,VanSloan_N,VanSloan_R,VanSloan_V', 'VanSloan_D,VanSloan_K,VanSloan_O,VanSloan_S,VanSloan_V', 'VanSloan_V,VanSloan_O,VanSloan_R,VanSloan_D,VanSloan_N', 'VanSloan_H,VanSloan_Z,VanSloan_C,VanSloan_K,VanSloan_X', 'VanSloan_O,VanSloan_K,VanSloan_V,VanSloan_H,VanSloan_D', 'VanSloan_Z,VanSloan_R,VanSloan_N,VanSloan_S,VanSloan_C', 'VanSloan_K,VanSloan_S,VanSloan_D,VanSloan_C,VanSloan_H', 'VanSloan_R,VanSloan_N,VanSloan_O,VanSloan_V,VanSloan_Z', 'VanSloan_D,VanSloan_H,VanSloan_R,VanSloan_O,VanSloan_K', 'VanSloan_C,VanSloan_N,VanSloan_Z,VanSloan_S,VanSloan_V', 'VanSloan_H,VanSloan_O,VanSloan_S,VanSloan_D,VanSloan_N', 'VanSloan_C,VanSloan_V,VanSloan_K,VanSloan_Z,VanSloan_R', 'VanSloan_D,VanSloan_H,VanSloan_R,VanSloan_N,VanSloan_O', 'VanSloan_S,VanSloan_V,VanSloan_C,VanSloan_K,VanSloan_Z'];
+                        break;
+                    case '8':
+                        arrayCharacter = ['Shape5_0,Shape5_3,Shape5_1,Shape5_4,Shape5_2', 'Shape5_1,Shape5_2,Shape5_0,Shape5_3,Shape5_4', 'Shape5_4,Shape5_0,Shape5_2,Shape5_1,Shape5_3', 'Shape5_2,Shape5_3,Shape5_1,Shape5_4,Shape5_0', 'Shape5_1,Shape5_4,Shape5_3,Shape5_0,Shape5_2', 'Shape5_3,Shape5_0,Shape5_4,Shape5_2,Shape5_1', 'Shape5_2,Shape5_1,Shape5_0,Shape5_4,Shape5_3', 'Shape5_0,Shape5_2,Shape5_1,Shape5_3,Shape5_4', 'Shape5_3,Shape5_1,Shape5_0,Shape5_4,Shape5_2', 'Shape5_4,Shape5_0,Shape5_2,Shape5_3,Shape5_1', 'Shape5_2,Shape5_4,Shape5_3,Shape5_1,Shape5_0', 'Shape5_1,Shape5_3,Shape5_4,Shape5_0,Shape5_2', 'Shape5_0,Shape5_4,Shape5_2,Shape5_1,Shape5_3', 'Shape5_4,Shape5_1,Shape5_3,Shape5_0,Shape5_2'];
+                        break;
+                    case '9':
+                        arrayCharacter = ['Chinese01_0,Chinese01_1,Chinese01_6,Chinese01_3,Chinese01_2', 'Chinese01_3,Chinese01_2,Chinese01_4,Chinese01_8,Chinese01_7', 'Chinese01_6,Chinese01_9,Chinese01_5,Chinese01_0,Chinese01_1', 'Chinese01_4,Chinese01_3,Chinese01_0,Chinese01_7,Chinese01_9', 'Chinese01_8,Chinese01_1,Chinese01_2,Chinese01_5,Chinese01_6', 'Chinese01_9,Chinese01_8,Chinese01_6,Chinese01_4,Chinese01_0', 'Chinese01_1,Chinese01_7,Chinese01_3,Chinese01_9,Chinese01_5', 'Chinese01_5,Chinese01_0,Chinese01_2,Chinese01_7,Chinese01_8', 'Chinese01_6,Chinese01_3,Chinese01_8,Chinese01_4,Chinese01_1', 'Chinese01_2,Chinese01_4,Chinese01_1,Chinese01_7,Chinese01_9', 'Chinese01_8,Chinese01_5,Chinese01_3,Chinese01_0,Chinese01_6', 'Chinese01_4,Chinese01_2,Chinese01_1,Chinese01_8,Chinese01_7', 'Chinese01_9,Chinese01_6,Chinese01_5,Chinese01_3,Chinese01_2', 'Chinese01_7,Chinese01_4,Chinese01_0,Chinese01_9,Chinese01_5'];
+                        break;
+                    case '10':
+                        arrayCharacter = ['Arabic01_0,Arabic01_1,Arabic01_6,Arabic01_3,Arabic01_2', 'Arabic01_3,Arabic01_2,Arabic01_4,Arabic01_8,Arabic01_7', 'Arabic01_6,Arabic01_9,Arabic01_5,Arabic01_0,Arabic01_1', 'Arabic01_4,Arabic01_3,Arabic01_0,Arabic01_7,Arabic01_9', 'Arabic01_8,Arabic01_1,Arabic01_2,Arabic01_5,Arabic01_6', 'Arabic01_9,Arabic01_8,Arabic01_6,Arabic01_4,Arabic01_0', 'Arabic01_1,Arabic01_7,Arabic01_3,Arabic01_9,Arabic01_5', 'Arabic01_5,Arabic01_0,Arabic01_2,Arabic01_7,Arabic01_8', 'Arabic01_6,Arabic01_3,Arabic01_8,Arabic01_4,Arabic01_1', 'Arabic01_2,Arabic01_4,Arabic01_1,Arabic01_7,Arabic01_9', 'Arabic01_8,Arabic01_5,Arabic01_3,Arabic01_0,Arabic01_6', 'Arabic01_4,Arabic01_2,Arabic01_1,Arabic01_8,Arabic01_7', 'Arabic01_9,Arabic01_6,Arabic01_5,Arabic01_3,Arabic01_2', 'Arabic01_7,Arabic01_4,Arabic01_0,Arabic01_9,Arabic01_5'];
+                        break;
+                    case '11':
+                        arrayCharacter = ['Hebrew01_2,Hebrew01_8,Hebrew01_0,Hebrew01_6,Hebrew01_4', 'Hebrew01_7,Hebrew01_1,Hebrew01_5,Hebrew01_9,Hebrew01_3', 'Hebrew01_8,Hebrew01_0,Hebrew01_2,Hebrew01_4,Hebrew01_6', 'Hebrew01_9,Hebrew01_5,Hebrew01_7,Hebrew01_3,Hebrew01_1', 'Hebrew01_6,Hebrew01_4,Hebrew01_8,Hebrew01_0,Hebrew01_2', 'Hebrew01_1,Hebrew01_3,Hebrew01_9,Hebrew01_5,Hebrew01_7', 'Hebrew01_0,Hebrew01_6,Hebrew01_4,Hebrew01_2,Hebrew01_8', 'Hebrew01_5,Hebrew01_7,Hebrew01_3,Hebrew01_1,Hebrew01_9', 'Hebrew01_4,Hebrew01_2,Hebrew01_8,Hebrew01_6,Hebrew01_0', 'Hebrew01_3,Hebrew01_9,Hebrew01_1,Hebrew01_7,Hebrew01_5', 'Hebrew01_2,Hebrew01_6,Hebrew01_0,Hebrew01_8,Hebrew01_4', 'Hebrew01_7,Hebrew01_5,Hebrew01_9,Hebrew01_1,Hebrew01_3', 'Hebrew01_8,Hebrew01_4,Hebrew01_2,Hebrew01_0,Hebrew01_6', 'Hebrew01_1,Hebrew01_5,Hebrew01_7,Hebrew01_3,Hebrew01_9'];
+                        break;
+                    case '12':
+                        arrayCharacter = ['CrowdedHOTV01_0', 'CrowdedHOTV01_2', 'CrowdedHOTV01_3', 'CrowdedHOTV01_1', 'CrowdedHOTV01_2', 'CrowdedHOTV01_0', 'CrowdedHOTV01_1', 'CrowdedHOTV01_3', 'CrowdedHOTV01_1', 'CrowdedHOTV01_0', 'CrowdedHOTV01_2', 'CrowdedHOTV01_3', 'CrowdedHOTV01_0', 'CrowdedHOTV01_2'];
+                        break;
+                    case '13':
+                        arrayCharacter = ['CrowdedHOTV01_0,CrowdedHOTV01_2', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_3,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_0', 'CrowdedHOTV01_2,CrowdedHOTV01_3', 'CrowdedHOTV01_0,CrowdedHOTV01_1', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_1,CrowdedHOTV01_2', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1', 'CrowdedHOTV01_3,CrowdedHOTV01_0', 'CrowdedHOTV01_0,CrowdedHOTV01_3', 'CrowdedHOTV01_2,CrowdedHOTV01_1'];
+                        break;
+                    case '14':
+                        arrayCharacter = ['Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D', 'Auckland_E','Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D', 'Auckland_E','Auckland_A', 'Auckland_B', 'Auckland_C', 'Auckland_D'];
+                        break;
+                }
             }
+
             //reverse the order of each line if config set to Mirrored
             const localsMirrored = $('#sMirrored', this.self.shadowRoot).val()
             if (localsMirrored == 2) {
@@ -689,15 +696,15 @@ export class ConfigWolfChart {
                 // CEK disabled scorebox here; look for it elsewhere.
                 $('<div class="scoreBox" >' + scoreText + '</div>').insertAfter(el).css({color: scoreBoxCol});
                 //add indicator lines for  6/6 and 6/12
-                if (i == 2) {
+                // if (i == 2) {
                     //$('*[data-line="'+(i+1)+'"] > .guideline').addClass('blueline');
-                }
-                if (i == 3) {
-                    $('*[data-line="' + (i + 1) + '"] > .guideline', this.self.shadowRoot).addClass('greenline');
-                }
-                if (i == 6) {
-                    $('*[data-line="' + (i + 1) + '"] > .guideline', this.self.shadowRoot).addClass('redline');
-                }
+                // }
+                // if (i == 3) {
+                //     $('*[data-line="' + (i + 1) + '"] > .guideline', this.self.shadowRoot).addClass('greenline');
+                // }
+                // if (i == 6) {
+                //     $('*[data-line="' + (i + 1) + '"] > .guideline', this.self.shadowRoot).addClass('redline');
+                // }
 
                 //calculator viewport width - here we check if 5 letters plus 2 margins will fit on screen and if not,
                 //chop off end letters and try again. If even one letter won't fit, don't display the line at all
@@ -1910,7 +1917,7 @@ export class ConfigWolfChart {
         };
         this.Init = () =>  {
             this.viewHeight = 280;
-            this.viewWidth = 900;
+            this.viewWidth = 600;
             var validateElement = this;
             var validate = false,
                 VresultDistance, VresultLength;
