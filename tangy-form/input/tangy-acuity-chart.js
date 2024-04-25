@@ -13,6 +13,14 @@ import '../util/jquery-3.7.1.min.js'
  * Many thanks to the WolfChart project, from which most of this code was taken.
  * https://github.com/ballantynedewolf/WolfChart
  *
+ * First time this is run in the browser, the configuration needs to be set.
+ * Optotype: LandoltC
+ * Notation: Feet
+ * Distance: 3000
+ * Length of line below*: 100
+ * Sort: Largest to smallest
+ * Mirrored / Direct: Mirrored
+ *
  * @customElement
  * @polymer
  * @demo demo/index.html
