@@ -29,6 +29,7 @@ services:
 
   server:
       container_name: "server"
+      image: tangerine/server
       depends_on:
         - init
         - couchdb
@@ -73,6 +74,7 @@ services:
 
   server-ui:
     container_name: "server-ui"
+    image: tangerine/server-ui
     tty: true
     depends_on:
       - server
@@ -106,6 +108,7 @@ services:
 
   apk-generator:
     container_name: "apk-generator"
+    image: tangerine/apk-generator
     tty: true
     depends_on:
       - server
