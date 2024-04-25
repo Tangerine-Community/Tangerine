@@ -126,6 +126,12 @@ Now after you make changes, run the copy script and this will update the builds 
 
 The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server/src/express-app.js. Notice that these routes are mostly different from the routes in server-ui/src/express-app.js.
 
+# Updating a Deployment
+
+To update a deployment, make a release in the tangerine repo. This will trigger a build in the CI/CD pipeline. The CI/CD pipeline will build the docker images and push them to the docker registry.
+Do a `docker-compose pull` to get the latest images. Then run ./start-docker-compose.sh to start the new containers. 
+You might need to remove the old containers before you do the pull in case they don't update. 
+
 # Useful commands:
 
 `docker-compose build` - builds the containers.

@@ -1,7 +1,49 @@
 # What's new
 
-## v4.0.0
+## v4.0.1
 
+_New Features_
+
+- New custom element - tangy-acuity-chart - for displaying optotypes in a chart format. This element takes the following properties:
+  - `sequenceNumber` - the "score" you wish to display, such as 20/200. 
+  - `characterName` - the name of the character to display, such as `LandoltC_W`
+  Example `<tangy-acuity-chart name="acuity-score-2-4" sequenceNumber="2" characterName="LandoltC_W"></tangy-acuity-chart>`
+  Each tangy-form-item should contain a single tangy-acuity-chart. See the demo at [tangy-acuity-chart](./tangy-form/demo/tangy-acuity-chart.html)
+- Deployment has been improved - To update a deployment, make a release in the tangerine repo. This will trigger a build in the CI/CD pipeline. The CI/CD pipeline will build the docker images and push them to the docker registry.
+  Do a `docker-compose pull` to get the latest images. Then run ./start-docker-compose.sh to start the new containers.
+  You might need to remove the old containers before you do the pull in case they don't update.
+- As mentioned in the v4.0.0 release notes, the file [new-tangerine-4-architecture.md](docs/system-administrator/new-tangerine-4-architecture.md) provides a detailed description of this new architecture.
+
+__Server upgrade instructions__
+
+If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade.
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout v4.0.1
+# This is new! Pull the latest images.
+docker-compose pull
+./start-docker-compose.sh
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v4.0.0
+
+# If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins. 
+./server/src/upgrade/v4.0.0.sh
+```
+
+## v4.0.0
 
 Tangerine v4.0.0 is a major upgrade of the system architecture; it now features six docker containers: init, server, server-ui, apk-generator, nginx, and couchdb. It uses a docker-compose.yml to configure docker containers. Please review that file to become familiar this new architecture.
 The file [new-tangerine-4-architecture.md](docs/system-administrator/new-tangerine-4-architecture.md) provides a detailed description of this new architecture.
