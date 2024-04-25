@@ -3154,6 +3154,11 @@ export class TangyAcuityChart extends TangyInputLitBase {
                 value: 1,
                 reflectToAttribute: true
             },
+            characterName: {
+                type: String,
+                value: '',
+                reflectToAttribute: true
+            },
             numberOfSequences: {
                 type: Number,
                 value: 8,
