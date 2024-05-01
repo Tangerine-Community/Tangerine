@@ -18,6 +18,11 @@ _New Features_
       - If you wish for the images to get larger for the next 5 images, increment the sequenceNumber by 1. 
         For example, sequenceNumber="5" would display 20/50, and sequenceNumber="6" would display 20/12.
     - Each tangy-form-item should contain a single tangy-acuity-chart. See the demo at [tangy-acuity-chart](./tangy-form/demo/tangy-acuity-chart.html)
+    - The first time a form using tangy-acuity-chart loads, it displays the Configuration panel. Enter the following:
+      - Notation - choose Feet or Metres
+      - Distance - must be a number greater than 3000 mm.
+      - Length of line below - must be a number greater than 200 mm.
+    - The app will store these values in the browser's local storage so that they may be re-used the next time.
 - Deployment has been improved - To update a deployment, make a release in the tangerine repo. This will trigger a build in the CI/CD pipeline. The CI/CD pipeline will build the docker images and push them to the docker registry.
   Do a `docker-compose pull` to get the latest images. Then run ./start-docker-compose.sh to start the new containers.
   You might need to remove the old containers before you do the pull in case they don't update.
