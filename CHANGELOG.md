@@ -4,11 +4,20 @@
 
 _New Features_
 
-- New custom element - tangy-acuity-chart - for displaying optotypes in a chart format. This element takes the following properties:
-  - `sequenceNumber` - the "score" you wish to display, such as 20/200. 
-  - `characterName` - the name of the character to display, such as `LandoltC_W`
-  Example `<tangy-acuity-chart name="acuity-score-2-4" sequenceNumber="2" characterName="LandoltC_W"></tangy-acuity-chart>`
-  Each tangy-form-item should contain a single tangy-acuity-chart. See the demo at [tangy-acuity-chart](./tangy-form/demo/tangy-acuity-chart.html)
+- New custom element - tangy-acuity-chart - for displaying optotypes in a chart format. 
+  - This element takes the following properties:
+    - `sequenceNumber` - the "score" you wish to display, such as 20/200. 
+      - 20/10 corresponds to sequenceNumber="1".
+      - 20/20 corresponds to sequenceNumber="4".
+    - `characterName` - the name of the character to display, such as `LandoltC_W`
+  - Usage:
+    - Example `<tangy-acuity-chart name="acuity-score-2-4" sequenceNumber="1" characterName="LandoltC_W"></tangy-acuity-chart>`
+      - The element will display the character "LandoltC_W" at the specified sequenceNumber.
+      - If you wish to display 5 images of the same magnification (e.g. 20/20), you would use  sequenceNumber="4" for each image 
+        and then change each image for each tangy-acuity-chart: - LandoltC_W, LandoltC_E, LandoltC_N, LandoltC_S, LandoltC_C.
+      - If you wish for the images to get larger for the next 5 images, increment the sequenceNumber by 1. 
+        For example, sequenceNumber="5" would display 20/50, and sequenceNumber="6" would display 20/12.
+    - Each tangy-form-item should contain a single tangy-acuity-chart. See the demo at [tangy-acuity-chart](./tangy-form/demo/tangy-acuity-chart.html)
 - Deployment has been improved - To update a deployment, make a release in the tangerine repo. This will trigger a build in the CI/CD pipeline. The CI/CD pipeline will build the docker images and push them to the docker registry.
   Do a `docker-compose pull` to get the latest images. Then run ./start-docker-compose.sh to start the new containers.
   You might need to remove the old containers before you do the pull in case they don't update.
