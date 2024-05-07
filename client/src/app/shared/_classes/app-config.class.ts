@@ -161,6 +161,7 @@ export class AppConfig {
 
   goHomeAfterFormSubmit = false
   forceCompleteForms = false
+  strictOneResponsePerForm = false
 
   //
   // Backup configuration.

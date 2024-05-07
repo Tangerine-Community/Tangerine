@@ -6,8 +6,20 @@
           <span class="tangy-foreground-primary">{{'Select Form Name'|translate}}</span>
         </mat-list-item>
         <mat-list-item class="tangy-location-list" *ngFor="let form of formList">
-          <a class="tangy-foreground-primary" routerLink="/tangy-forms/new/{{form.id}}">
-            <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
+          <a class="tangy-foreground-primary" routerLink="/tangy-forms/{{form.route}}">
+            <ng-container *ngIf="form.new; then newFormIcon; else resumeFormIconCheck"></ng-container>
+            <ng-template #newFormIcon>
+              <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
+            </ng-template>
+            <ng-template #resumeFormIconCheck>
+              <ng-container *ngIf="form.complete; then completeFormIcon; else resumeFormIcon"></ng-container>
+              <ng-template #completeFormIcon>
+                <i class="material-icons md-24 tangy-location-list-icon">check</i>
+              </ng-template>
+              <ng-template #resumeFormIcon>
+                <i class="material-icons md-24 tangy-location-list-icon">open_in_new</i>
+              </ng-template>
+            </ng-template>
           </a>
           <span [innerHTML]="form.title|unsanitizeHtml"></span>
         </mat-list-item>

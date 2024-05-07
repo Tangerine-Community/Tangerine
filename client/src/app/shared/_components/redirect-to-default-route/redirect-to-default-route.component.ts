@@ -27,7 +27,7 @@ export class RedirectToDefaultRouteComponent implements OnInit {
     
     const incompleteResponseId = await this.variableService.get('incomplete-response-id');
     const currentForm = await this.formsService.getResponse(incompleteResponseId);
-    if (this.window.T.appConfig.config.forceCompleteForms&& incompleteResponseId&&!currentForm.complete) {
+    if (this.window.T.appConfig.config.forceCompleteForms && incompleteResponseId && !currentForm.complete) {
       this.router.navigate([`/tangy-forms/resume/${incompleteResponseId}`]);
     } else {
       const home_url = await this.appConfigService.getDefaultURL();
