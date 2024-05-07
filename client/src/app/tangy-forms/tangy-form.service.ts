@@ -99,9 +99,13 @@ export class TangyFormService {
     return (await db.allDocs({include_docs:true})).rows.map(row => row.doc)
   }
 
-  async getResponsesByFormId(formId) {
+  async getResponsesByFormId(formId, limit=undefined) {
     let db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    let r = await db.query('tangy-form/responsesByFormId', { key: formId, include_docs: true })
+    let options = {}
+    if (limit) {
+      options["limit"] = limit
+    }
+    let r = await db.query('tangy-form/responsesByFormId', { key: formId, include_docs: true, ...options })
     return r.rows.map((row) => new TangyFormResponseModel(row.doc))
   }
 
