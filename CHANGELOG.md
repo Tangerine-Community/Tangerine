@@ -12,6 +12,9 @@ __New Features__
 
 - Add ID Search to Data > Import: A new feature in the Data > Import screen allows users to search for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. 
 
+__Fixes__
+- Client Search Service: exclude archived cases from recent activity
+
 __Tangerine Teach__
 
 - Add toggle in Attendence Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
