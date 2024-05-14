@@ -17,7 +17,8 @@ _New Features_
         and then change each image for each tangy-acuity-chart: - LandoltC_W, LandoltC_E, LandoltC_N, LandoltC_S, LandoltC_C.
       - If you wish for the images to get larger for the next 5 images, increment the sequenceNumber by 1. 
         For example, sequenceNumber="5" would display 20/50, and sequenceNumber="6" would display 20/12.
-    - Each tangy-form-item should contain a single tangy-acuity-chart. See the demo at [tangy-acuity-chart](./tangy-form/demo/tangy-acuity-chart.html)
+    - Each tangy-form-item should contain a single tangy-acuity-chart. See the demos of the [tangy-acuity-chart (Landholt-C)](./tangy-form/demo/tangy-acuity-chart.html) 
+        and [tangy-acuity-chart (Auckland](./tangy-form/demo/tangy-acuity-chart-Auckland.html) optotypes.
     - The first time a form using tangy-acuity-chart loads, it displays the Configuration panel. Enter the following:
       - Notation - choose Feet or Metres
       - Distance - must be a number greater than 3000 mm.
