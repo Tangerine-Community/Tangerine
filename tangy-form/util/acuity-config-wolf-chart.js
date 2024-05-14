@@ -1245,9 +1245,9 @@ export class ConfigWolfChart {
             } else if (distance != parseInt(distance, 10)) {
                 result = true;
                 message = "Distance must be integer.";
-            } else if (distance < 3000) {
+            } else if (distance < 1000) {
                 result = true;
-                message = "Distance must be greater than or equal to 3000.";
+                message = "Distance must be greater than or equal to 1000.";
             }
             if (result) {
                 $('#iDistance', this.self.shadowRoot).parent().append('<span class="errorMsg errorDistance">' + message + '</span>');
