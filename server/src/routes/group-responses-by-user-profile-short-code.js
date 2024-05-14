@@ -12,9 +12,16 @@ module.exports = async (req, res) => {
     if (req.params.skip) {
       options.skip = req.params.skip
     }
-    const results = await groupDb.query('responsesByUserProfileShortCode', options);
-    const docs = results.rows.map(row => row.doc)
-    res.send(docs)
+    if(req.query.totalRows){
+      options.limit = 1
+      options.skip =0
+      const results = await groupDb.query('responsesByUserProfileShortCode', options);
+      res.send({totalRows:results.total_rows})
+    }else{
+      const results = await groupDb.query('responsesByUserProfileShortCode', options);
+      const docs = results.rows.map(row => row.doc)
+      res.send(docs)
+    }
   } catch (error) {
     log.error(error);
     res.status(500).send(error);

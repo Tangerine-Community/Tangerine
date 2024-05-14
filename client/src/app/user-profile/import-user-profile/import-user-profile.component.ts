@@ -45,12 +45,22 @@ export class ImportUserProfileComponent implements AfterContentInit {
     this.state = this.STATE_SYNCING
     this.appConfig = await this.appConfigService.getAppConfig()
     const shortCode = this.userShortCodeInput.nativeElement.value
-    this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
-    const newUserProfile = this.docs.find(doc => doc.form && doc.form.id === 'user-profile')
+    let docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise() as Array<any>
+    const newUserProfile = docs.find(doc => doc.form && doc.form.id === 'user-profile')
     await this.userService.saveUserAccount({...userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
-    for (let doc of this.docs) {
-      delete doc._rev
-      await db.put(doc)
+    const totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise())['totalDocs']
+    const docsToQuery = 20;
+    let processedDocs = 0;
+    let index = 0;
+    while (processedDocs < totalDocs) {
+      const skipDocs = docsToQuery * index
+      this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/${docsToQuery}/${skipDocs}`).toPromise()
+      for (let doc of this.docs) {
+        delete doc._rev
+        await db.put(doc)
+      }
+      index++;
+      processedDocs += docsToQuery;
     }
     this.router.navigate([`/${this.appConfig.homeUrl}`] );
   }
