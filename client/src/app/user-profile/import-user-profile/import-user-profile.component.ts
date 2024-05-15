@@ -20,6 +20,10 @@ export class ImportUserProfileComponent implements AfterContentInit {
   appConfig: AppConfig
   state = this.STATE_INPUT
   docs;
+  totalDocs;
+  processedDocs;
+  userAccount;
+  db;
   @ViewChild('userShortCode', {static: true}) userShortCodeInput: ElementRef;
 
   constructor(
@@ -27,42 +31,53 @@ export class ImportUserProfileComponent implements AfterContentInit {
     private http: HttpClient,
     private userService: UserService,
     private appConfigService: AppConfigService
-  ) {  }
+  ) {  } 
 
   ngAfterContentInit() {
   }
 
   async onSubmit() {
     const username = this.userService.getCurrentUser()
-    const db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
+    this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
+    this.userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
     try {
-      const profileToReplace = await db.get(userAccount.userUUID)
-      await db.remove(profileToReplace)
+      const profileToReplace = await this.db.get(this.userAccount.userUUID)
+      await this.db.remove(profileToReplace)
     } catch(e) {
       // It's ok if this fails. It's probably because they are trying again and the profile has already been deleted.
     }
-    this.state = this.STATE_SYNCING
-    this.appConfig = await this.appConfigService.getAppConfig()
-    const shortCode = this.userShortCodeInput.nativeElement.value
-    let docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise() as Array<any>
-    const newUserProfile = docs.find(doc => doc.form && doc.form.id === 'user-profile')
-    await this.userService.saveUserAccount({...userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
-    const totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise())['totalDocs']
-    const docsToQuery = 20;
-    let processedDocs = 0;
-    let index = 0;
-    while (processedDocs < totalDocs) {
-      const skipDocs = docsToQuery * index
-      this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/${docsToQuery}/${skipDocs}`).toPromise()
-      for (let doc of this.docs) {
-        delete doc._rev
-        await db.put(doc)
-      }
-      index++;
-      processedDocs += docsToQuery;
-    }
+    await this.startSyncing()
     this.router.navigate([`/${this.appConfig.homeUrl}`] );
+  }
+
+  async onRetry(){
+    await this.startSyncing()
+  }
+
+  async startSyncing(){
+    try {
+      this.state = this.STATE_SYNCING
+      this.appConfig = await this.appConfigService.getAppConfig()
+      const shortCode = this.userShortCodeInput.nativeElement.value
+      let docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise() as Array<any>
+      const newUserProfile = docs.find(doc => doc.form && doc.form.id === 'user-profile')
+      await this.userService.saveUserAccount({...this.userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
+      this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise())['totalDocs']
+      const docsToQuery = 20;
+      let processedDocs = +localStorage.getItem('processedDocs')||0;
+      while (processedDocs < this.totalDocs) {
+        this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
+        for (let doc of this.docs) {
+          delete doc._rev
+          await this.db.put(doc)
+        }
+        processedDocs += this.docs.length;
+        this.processedDocs = processedDocs
+        localStorage.setItem('processedDocs', String(processedDocs))
+      }
+      } catch (error) {
+        this.state = 'ERROR'
+      }
   }
 
 }
