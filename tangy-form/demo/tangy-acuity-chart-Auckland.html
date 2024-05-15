@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>tangy-form demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          --accent-color: #f26f10;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+          --container-height: 20%;
+        }
+        h1, h2, h3, h4, h5 {
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 25px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-acuity-chart.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-radio-block.js"></script>
+    <script type="module" src="../input/tangy-radio-blocks.js"></script>
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body style="background: #000 !important;">
+
+
+    <demo-snippet>
+      <template>
+        <tangy-form id="my-form" title="My Form">
+          <tangy-form-item id="item-1-1" title="Auckland_A">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-1-1" sequenceNumber="4" characterName="Auckland_A"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-1-1" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-1-2" title="Auckland_B">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-1-2" sequenceNumber="4" characterName="Auckland_B"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-1-2" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-1-3" title="Auckland_C">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-1-3" sequenceNumber="4" characterName="Auckland_C"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-1-3" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-1-4" title="Auckland_A">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-1-4" sequenceNumber="4" characterName="Auckland_A"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-1-4" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-1-5" title="Auckland_D">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-1-5" sequenceNumber="4" characterName="Auckland_D"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-1-5" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-2-1" title="Auckland_C">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-2-1" sequenceNumber="5" characterName="Auckland_C"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-2-1" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-2-2" title="Auckland_E">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-2-2" sequenceNumber="5" characterName="Auckland_E"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-2-2" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-2-3" title="Auckland_G">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-2-3" sequenceNumber="5" characterName="Auckland_G"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-2-3" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-2-4" title="Auckland_D">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-2-4" sequenceNumber="5" characterName="Auckland_D"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-2-4" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-2-5" title="Auckland_B">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-2-5" sequenceNumber="5" characterName="Auckland_B"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-2-5" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-3-1" title="Auckland_C">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-3-1" sequenceNumber="6" characterName="Auckland_C"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-3-1" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-3-2" title="Auckland_H">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-3-2" sequenceNumber="6" characterName="Auckland_H"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-3-3" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-3-3" title="Auckland_I">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-3-3" sequenceNumber="6" characterName="Auckland_I"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-3-3" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-3-4" title="Auckland_D">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-3-4" sequenceNumber="6" characterName="Auckland_D"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-3-4" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-3-5" title="Auckland_A">
+            <div class="vertical-section-container">
+            <tangy-acuity-chart name="acuity-score-3-5" sequenceNumber="6" characterName="Auckland_A"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+            <tangy-radio-blocks
+                    name="acuity-score-answer-3-5" orientation="columns" label="Did the student describe the image correctly?"
+                    required>
+              <option value="0">No</option><option value="1">Yes</option>
+            </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-4-1" title="Auckland_G">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-4-1" sequenceNumber="7" characterName="Auckland_G"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-4-1" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-4-2" title="Auckland_D">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-4-2" sequenceNumber="7" characterName="Auckland_D"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-4-2" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-4-3" title="Auckland_A">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-4-3" sequenceNumber="7" characterName="Auckland_A"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-4-3" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-4-4" title="Auckland_I">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-4-4" sequenceNumber="7" characterName="Auckland_I"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-4-4" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-4-5" title="Auckland_C">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-4-5" sequenceNumber="7" characterName="Auckland_C"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-4-5" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-5-1" title="Auckland_H">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-5-1" sequenceNumber="8" characterName="Auckland_H"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-5-1" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-5-2" title="Auckland_D">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-5-2" sequenceNumber="8" characterName="Auckland_D"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-5-2" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-5-3" title="Auckland_F">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-5-3" sequenceNumber="8" characterName="Auckland_F"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-5-3" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-5-4" title="Auckland_D">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-5-4" sequenceNumber="8" characterName="Auckland_D"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-5-4" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+          <tangy-form-item id="item-5-5" title="Auckland_G">
+            <div class="vertical-section-container">
+              <tangy-acuity-chart name="acuity-score-5-5" sequenceNumber="8" characterName="Auckland_G"></tangy-acuity-chart>
+            </div>
+            <div style="max-height: 200px;">
+              <tangy-radio-blocks
+                      name="acuity-score-answer-5-5" orientation="columns" label="Did the student describe the image correctly?"
+                      required>
+                <option value="0">No</option><option value="1">Yes</option>
+              </tangy-radio-blocks>
+            </div>
+          </tangy-form-item>
+
+        </tangy-form>
+
+        <script>
+          document.querySelector('#my-form').addEventListener('submit', event => {
+            // By default, the form response is locked and the user can browse it. Use event.preventDefault()
+            // to do something else.
+            event.preventDefault()
+            // 3 ways to inspect the user's response to the form. Ordered by level of detail.
+            console.log(event.target.response)
+            console.log(event.target.inputs)
+            console.log(event.target.values)
+          })
+        </script>
+      </template>
+    </demo-snippet>
+  </body>
+</html>
