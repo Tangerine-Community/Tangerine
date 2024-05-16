@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     }
     if(req.query.totalRows){
       options.limit = 1
-      options.skip =0
+      options.skip = 0
       const results = await groupDb.query('responsesByUserProfileShortCode', options);
       res.send({totalRows:results.total_rows})
     }else{
