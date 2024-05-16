@@ -17,6 +17,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
 
   STATE_SYNCING = 'STATE_SYNCING'
   STATE_INPUT = 'STATE_INPUT'
+  STATE_ERROR = 'STATE_ERROR'
   appConfig: AppConfig
   state = this.STATE_INPUT
   docs;
@@ -38,8 +39,8 @@ export class ImportUserProfileComponent implements AfterContentInit {
 
   async onSubmit() {
     const username = this.userService.getCurrentUser()
-    this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-    this.userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
+    this.db = await this.userService.getUserDatabase(username)
+    this.userAccount = await this.userService.getUserAccount(username)
     try {
       const profileToReplace = await this.db.get(this.userAccount.userUUID)
       await this.db.remove(profileToReplace)
@@ -76,7 +77,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
         localStorage.setItem('processedDocs', String(processedDocs))
       }
       } catch (error) {
-        this.state = 'ERROR'
+        this.state = this.STATE_ERROR
       }
   }
 
