@@ -3,12 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { FormSubmittedSuccessComponent } from './form-submitted-success/form-submitted-success.component';
 import { FormsListComponent } from './forms-list/forms-list.component';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
+import { LoginGuard } from './core/auth/_guards/login-guard.service';
 
 const routes: Routes = [
-  //{ path: '', component: FormsListComponent },
-  { path: 'form-submitted-success', component: FormSubmittedSuccessComponent },
-  { path: 'form/:id', component: TangyFormsPlayerComponent },
-  { path: 'form/option/:formId/:option', component: TangyFormsPlayerComponent }
+  { path: 'forms-list', component: FormsListComponent, canActivate: [LoginGuard] },
+  { path: 'form-submitted-success', component: FormSubmittedSuccessComponent, canActivate: [LoginGuard] },
+  { path: 'form/:id', component: TangyFormsPlayerComponent, canActivate: [LoginGuard] },
+  { path: 'form/option/:formId/:option', component: TangyFormsPlayerComponent, canActivate: [LoginGuard] },
 ];
 
 @NgModule({
