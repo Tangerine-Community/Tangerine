@@ -51,19 +51,15 @@ export class ImportUserProfileComponent implements AfterContentInit {
     this.router.navigate([`/${this.appConfig.homeUrl}`] );
   }
 
-  async onRetry(){
-    await this.startSyncing()
-  }
-
   async startSyncing(){
     try {
       this.state = this.STATE_SYNCING
       this.appConfig = await this.appConfigService.getAppConfig()
-      const shortCode = this.userShortCodeInput.nativeElement.value
-      let docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise() as Array<any>
+      const shortCode = this.userShortCodeInput.nativeElement.value;
+      let docs = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?userProfile=true`).toPromise() as Array<any>
       const newUserProfile = docs.find(doc => doc.form && doc.form.id === 'user-profile')
       await this.userService.saveUserAccount({...this.userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
-      this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/1/0`).toPromise())['totalDocs']
+      this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?totalRows=true`).toPromise())['totalDocs']
       const docsToQuery = 20;
       let processedDocs = +localStorage.getItem('processedDocs')||0;
       while (processedDocs < this.totalDocs) {
