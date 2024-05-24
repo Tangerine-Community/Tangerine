@@ -18,13 +18,15 @@ export class ImportUserProfileComponent implements AfterContentInit {
   STATE_SYNCING = 'STATE_SYNCING'
   STATE_INPUT = 'STATE_INPUT'
   STATE_ERROR = 'STATE_ERROR'
+  STATE_NOT_FOUND ='STATE_NOT_FOUND'
   appConfig: AppConfig
   state = this.STATE_INPUT
   docs;
   totalDocs;
-  processedDocs;
+  processedDocs = 0;
   userAccount;
   db;
+  shortCode
   @ViewChild('userShortCode', {static: true}) userShortCodeInput: ElementRef;
 
   constructor(
@@ -53,16 +55,16 @@ export class ImportUserProfileComponent implements AfterContentInit {
   async startSyncing(){
     try {
       this.appConfig = await this.appConfigService.getAppConfig()
-      const shortCode = this.userShortCodeInput.nativeElement.value;
-      let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?userProfile=true`).toPromise()
+      this.shortCode = this.userShortCodeInput.nativeElement.value;
+      let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?userProfile=true`).toPromise()
       if(!!newUserProfile){
         this.state = this.STATE_SYNCING
         await this.userService.saveUserAccount({ ...this.userAccount, userUUID: newUserProfile['_id'], initialProfileComplete: true })
-        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?totalRows=true`).toPromise())['totalDocs']
+        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
         const docsToQuery = 1000;
         let processedDocs = +localStorage.getItem('processedDocs') || 0;
         while (processedDocs < this.totalDocs) {
-          this.docs = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
+          this.docs = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
           for (let doc of this.docs) {
             delete doc._rev
             await this.db.put(doc)
@@ -71,6 +73,8 @@ export class ImportUserProfileComponent implements AfterContentInit {
           this.processedDocs = processedDocs
           localStorage.setItem('processedDocs', String(processedDocs))
         }
+      } else{
+        this.state = this.STATE_NOT_FOUND
       }
       this.router.navigate([`/${this.appConfig.homeUrl}`] );
       } catch (error) {
