@@ -53,24 +53,25 @@ export class ImportUserProfileComponent implements AfterContentInit {
 
   async startSyncing(){
     try {
-      this.state = this.STATE_SYNCING
       this.appConfig = await this.appConfigService.getAppConfig()
       const shortCode = this.userShortCodeInput.nativeElement.value;
-      let docs = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?userProfile=true`).toPromise() as Array<any>
-      const newUserProfile = docs.find(doc => doc.form && doc.form.id === 'user-profile')
-      await this.userService.saveUserAccount({...this.userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
-      this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?totalRows=true`).toPromise())['totalDocs']
-      const docsToQuery = 20;
-      let processedDocs = +localStorage.getItem('processedDocs')||0;
-      while (processedDocs < this.totalDocs) {
-        this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
-        for (let doc of this.docs) {
-          delete doc._rev
-          await this.db.put(doc)
+      let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?userProfile=true`).toPromise()
+      if(!!newUserProfile){
+        this.state = this.STATE_SYNCING
+        await this.userService.saveUserAccount({ ...this.userAccount, userUUID: newUserProfile['_id'], initialProfileComplete: true })
+        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/?totalRows=true`).toPromise())['totalDocs']
+        const docsToQuery = 1000;
+        let processedDocs = +localStorage.getItem('processedDocs') || 0;
+        while (processedDocs < this.totalDocs) {
+          this.docs = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
+          for (let doc of this.docs) {
+            delete doc._rev
+            await this.db.put(doc)
+          }
+          processedDocs += this.docs.length;
+          this.processedDocs = processedDocs
+          localStorage.setItem('processedDocs', String(processedDocs))
         }
-        processedDocs += this.docs.length;
-        this.processedDocs = processedDocs
-        localStorage.setItem('processedDocs', String(processedDocs))
       }
       } catch (error) {
         this.state = this.STATE_ERROR
