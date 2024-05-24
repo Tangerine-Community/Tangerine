@@ -17,12 +17,13 @@ module.exports = async (req, res) => {
       options.limit = 1
       options.skip = 0
       const results = await groupDb.query('responsesByUserProfileShortCode', options);
-      res.send({ totalRows: results.total_rows })
+      res.send({ totalDocs: results.total_rows })
     } else if (req.query.userProfile) {
-     
       await groupDb.query("userProfileByUserProfileShortCode", { limit: 0 });
-      const profile = await groupDb.query("userProfileByUserProfileShortCode", { key: userProfileShortCode, limit: 1, include_docs: true });
-      res.send(profile.rows[0])
+      const result = await groupDb.query("userProfileByUserProfileShortCode", { key: userProfileShortCode, limit: 1, include_docs: true });
+      const profile = result.rows[0]
+      const data = profile ? {_id: profile.id, key: profile.id, formId: profile.doc.form.id, collection: profile.doc.collection}: undefined
+      res.send(data)
     } else {
       const results = await groupDb.query('responsesByUserProfileShortCode', options);
       const docs = results.rows.map(row => row.doc)
