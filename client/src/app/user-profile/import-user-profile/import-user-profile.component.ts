@@ -48,7 +48,6 @@ export class ImportUserProfileComponent implements AfterContentInit {
       // It's ok if this fails. It's probably because they are trying again and the profile has already been deleted.
     }
     await this.startSyncing()
-    this.router.navigate([`/${this.appConfig.homeUrl}`] );
   }
 
   async startSyncing(){
@@ -73,6 +72,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
           localStorage.setItem('processedDocs', String(processedDocs))
         }
       }
+      this.router.navigate([`/${this.appConfig.homeUrl}`] );
       } catch (error) {
         this.state = this.STATE_ERROR
       }

@@ -3,5 +3,5 @@
   <paper-button [disabled]="state === STATE_SYNCING" (click)="onSubmit()">{{'submit'|translate}}</paper-button>
 </p>
 <p *ngIf="state === STATE_SYNCING">
-  {{'Syncing'|translate}}...{{processedDocs}} {{'of'|translate}} {{totalDocs}}
+  {{'Synced'|translate}} {{processedDocs}} {{'of'|translate}} {{totalDocs}}
 </p>
