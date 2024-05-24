@@ -349,6 +349,24 @@ const generateFlatResponse = async function (formResponse, sanitized) {
   }
 
   if (formResponse.type === 'attendance' || formResponse.type === 'behavior' || formResponse.type === 'scores') {
+
+    function hackFunctionToRemoveUserProfileId (formResponse) {
+      // This is a very special hack function to remove userProfileId
+      // It needs to be replaced with a proper solution that resolves duplicate variables.
+      if (formResponse.userProfileId) {
+        for (let item of formResponse.items) {
+          for (let input of item.inputs) {
+            if (input.name === 'userProfileId') {
+              delete formResponse.userProfileId;
+            }
+          }
+        }
+      }
+      return formResponse;
+    }
+
+    formResponse = hackFunctionToRemoveUserProfileId(formResponse);
+
     if (formResponse.type === 'attendance') {
       flatFormResponse['attendanceList'] = formResponse.attendanceList
     } else if (formResponse.type === 'behavior') {
