@@ -213,7 +213,7 @@ module.exports = {
             primaryKey = 'ID'
             createFunction = function (t) {
               t.engine('InnoDB')
-              t.string(primaryKey, 36).notNullable().primary();
+              t.string(primaryKey, 200).notNullable().primary();
               t.string('caseId', 36) // .index('response_caseId_IDX');
               t.string('participantID', 36) //.index('case_instances_ParticipantID_IDX');
               t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
@@ -348,7 +348,9 @@ const generateFlatResponse = async function (formResponse, sanitized) {
     flatFormResponse['formId'] = formResponse.form.id
   }
 
-  if (formResponse.type === 'attendance' || formResponse.type === 'behavior' || formResponse.type === 'scores') {
+  if (formResponse.type === 'attendance' || formResponse.type === 'behavior' || formResponse.type === 'scores' ||
+      formResponse.form.id === 'student-registration' ||
+      formResponse.form.id === 'class-registration') {
 
     function hackFunctionToRemoveUserProfileId (formResponse) {
       // This is a very special hack function to remove userProfileId
