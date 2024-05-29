@@ -77,11 +77,12 @@ if echo "$T_MODULES" | grep mysql; then
   ./mysql-create-dirs.sh
 fi
 
-if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
+  if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
     ./mysql-start-container.sh
     echo "Waiting 60 seconds for mysql container to start..."
-        sleep 60
-        ./mysql-setup.sh
+    sleep 60
+    ./mysql-setup.sh
+  fi
 fi
 
 if echo "$T_MYSQL_PHPMYADMIN" | grep "TRUE"; then
