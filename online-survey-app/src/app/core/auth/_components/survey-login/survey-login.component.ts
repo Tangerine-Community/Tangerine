@@ -2,23 +2,25 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 
 @Component({
-  selector: 'login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: 'survey-login',
+  templateUrl: './survey-login.component.html',
+  styleUrls: ['./survey-login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class SurveyLoginComponent implements OnInit {
 
   errorMessage = '';
   returnUrl: string; // stores the value of the url to redirect to after login
-  user = { username: '', password: '' };
+  user = { accessCode: '' };
   @ViewChild('customLoginMarkup', {static: true}) customLoginMarkup: ElementRef;
   ready = false
 
   constructor(
     private authenticationService: AuthenticationService,
+    private appConfigService: AppConfigService,
     private route: ActivatedRoute,
     private router: Router,
   ) { }
@@ -36,17 +38,16 @@ export class LoginComponent implements OnInit {
   async loginUser() {
     try {
 
-      if (window.location.origin.startsWith('http://localhost')) {
-        // If we are running on localhost, we want to use the local server for authentication 
-        localStorage.setItem(this.user.username, this.user.password);
-        this.router.navigate([this.returnUrl]);
-      } else if (await this.authenticationService.login(this.user.username, this.user.password)) {
+      const appConfig = await this.appConfigService.getAppConfig();
+      const groupId = appConfig['groupId'];
+
+      if (await this.authenticationService.surveyLogin(groupId, this.user.accessCode)) {
         this.router.navigate([this.returnUrl]);
       } else {
-        this.errorMessage = _TRANSLATE('Login Unsuccesful');
+        this.errorMessage = _TRANSLATE('Login Unsuccessful');
       }
     } catch (error) {
-      this.errorMessage = _TRANSLATE('Login Unsuccesful');
+      this.errorMessage = _TRANSLATE('Login Unsuccessful');
       console.error(error);
     }
   }

@@ -46,7 +46,7 @@ const { extendSession, findUserByUsername,
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
-const {getResponse: getSurveyResponse, saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
+const {login: surveyLogin, getResponse: getSurveyResponse, saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
 const { getEventFormData } = require('./case-api')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
@@ -194,6 +194,7 @@ app.post('/onlineSurvey/publish/:groupId/:formId', isAuthenticated, publishSurve
 app.put('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
 app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, saveSurveyResponse);
 
+app.post('/onlineSurvey/login/:groupId/:accessCode', surveyLogin);
 app.get('/onlineSurvey/getResponse/:groupId/:formResponseId', /* hasSurveyUploadKey,*/ getSurveyResponse);
 app.post('/onlineSurvey/saveResponse/:groupId/:caseEventFormId/:formResponseId', /* hasSurveyUploadKey,*/ saveSurveyResponse);
 /*
