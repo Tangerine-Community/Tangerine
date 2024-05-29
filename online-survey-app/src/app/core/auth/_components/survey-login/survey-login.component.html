@@ -1,0 +1,22 @@
+<mat-card *ngIf="!ready">
+  Loading...
+</mat-card>
+<mat-card *ngIf="ready">
+    <form role="form" #login='ngForm' novalidate>
+      <img id="logo" src="/logo.png" width="100%">
+      <mat-form-field>
+        <input matInput type="text" required [(ngModel)]="user.accessCode" id="username" name="username">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">key</i>
+          <span>{{'Access Code'|translate}}</span>
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <br>
+      <button (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
+    </form>
+</mat-card>
+<span #customLoginMarkup></span>

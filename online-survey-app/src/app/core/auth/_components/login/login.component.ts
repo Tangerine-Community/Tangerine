@@ -5,7 +5,7 @@ import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 
 
 @Component({
-  selector: 'app-login',
+  selector: 'login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -28,11 +28,7 @@ export class LoginComponent implements OnInit {
 
     if (await this.authenticationService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
-    }
-    // We always want to log in from the "front door". If we log in from path of `/app/<groupId>`, then the global cookie
-    // will be tied to that pathname and not available at other pathnames such as `/csv/` that is looking for authentication.
-    if (window.location.pathname !== '/') { 
-      window.location.pathname = '/'
+      return;
     }
     this.customLoginMarkup.nativeElement.innerHTML = await this.authenticationService.getCustomLoginMarkup()
     this.ready = true
@@ -42,8 +38,8 @@ export class LoginComponent implements OnInit {
 
       if (window.location.origin.startsWith('http://localhost')) {
         // If we are running on localhost, we want to use the local server for authentication 
+        localStorage.setItem(this.user.username, this.user.password);
         this.router.navigate([this.returnUrl]);
-  
       } else if (await this.authenticationService.login(this.user.username, this.user.password)) {
         this.router.navigate([this.returnUrl]);
       } else {

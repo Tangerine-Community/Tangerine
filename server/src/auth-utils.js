@@ -12,6 +12,15 @@ const createLoginJWT = ({ username, permissions }) => {
   return jwt.sign({ username, permissions }, jwtTokenSecret, signingOptions);
 };
 
+const createAccessCodeJWT = ({ accessCode }) => {
+  const signingOptions = {
+    expiresIn,
+    issuer,
+    subject: accessCode,
+  };
+  return jwt.sign({ accessCode }, jwtTokenSecret, signingOptions);
+};
+
 const verifyJWT = (token) => {
   try {
     const jwtPayload = jwt.verify(token, jwtTokenSecret, { issuer });
@@ -32,6 +41,7 @@ const decodeJWT = (token) => {
 
 module.exports = {
   createLoginJWT,
+  createAccessCodeJWT,
   decodeJWT,
   verifyJWT,
 };

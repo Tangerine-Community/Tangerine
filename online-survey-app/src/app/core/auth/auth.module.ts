@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from '../../shared/shared.module';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './_components/login/login.component';
+import { SurveyLoginComponent } from './_components/survey-login/survey-login.component';
 import { UserRegistrationComponent } from './_components/user-registration/user-registration.component';
 import { LoginGuard } from './_guards/login-guard.service';
 import { AuthenticationService } from './_services/authentication.service';
@@ -37,7 +38,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         MatCheckboxModule
 
     ],
-  declarations: [UserRegistrationComponent, LoginComponent],
+  declarations: [UserRegistrationComponent, LoginComponent, SurveyLoginComponent],
   providers: [AuthenticationService, LoginGuard, UserService]
 })
 export class AuthModule { }

@@ -13,7 +13,7 @@ export class LoginGuard implements CanActivate {
     if (await this.authenticationService.isLoggedIn()) {
       return true;
     }
-    this.router.navigate([route, 'login'], { queryParams: { returnUrl: state.url } });
+    this.router.navigate(['survey-login'], { queryParams: { returnUrl: state.url } });
     return false;
   }
 }

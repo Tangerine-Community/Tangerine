@@ -4,8 +4,10 @@ import { FormSubmittedSuccessComponent } from './form-submitted-success/form-sub
 import { FormsListComponent } from './forms-list/forms-list.component';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
 import { LoginGuard } from './core/auth/_guards/login-guard.service';
+import { SurveyLoginComponent } from './core/auth/_components/survey-login/survey-login.component';
 
 const routes: Routes = [
+  { path: 'survey-login', component: SurveyLoginComponent },
   { path: 'forms-list', component: FormsListComponent, canActivate: [LoginGuard] },
   { path: 'form-submitted-success', component: FormSubmittedSuccessComponent, canActivate: [LoginGuard] },
   { path: 'form/:formId', component: TangyFormsPlayerComponent, canActivate: [LoginGuard] },

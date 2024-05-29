@@ -2,6 +2,36 @@ const DB = require('./db.js');
 const GROUPS_DB = new DB('groups');
 const { v4: uuidV4 } = require('uuid');
 const createFormKey = () => uuidV4();
+const { createAccessCodeJWT } = require('./auth-utils');
+
+const login = async (req, res) => {
+  try {
+
+    const { groupId, accessCode } = req.params;
+
+    console.log('login', groupId, accessCode);
+
+    const groupDb = new DB(groupId)
+    let options = { key: accessCode, include_docs: true }
+    if (req.params.limit) {
+      options.limit = req.params.limit
+    }
+    if (req.params.skip) {
+      options.skip = req.params.skip
+    }
+    const results = await groupDb.query('responsesByUserProfileShortCode', options);
+    const docs = results.rows.map(row => row.doc)
+    const userProfileDoc = docs.find(doc => doc.form.id === 'user-profile');
+
+    if (userProfileDoc) {
+      const token = createAccessCodeJWT({"accessCode": accessCode});
+      return res.status(200).send({ data: { token } });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send({ data: 'Invalid Credentials' });
+  }
+}
 
 const getResponse = async (req, res) => {
   try {
@@ -116,6 +146,7 @@ const unpublishSurvey = async (req, res) => {
 };
 
 module.exports = {
+  login,
   getResponse,
   saveResponse,
   publishSurvey,
