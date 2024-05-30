@@ -51,30 +51,30 @@ const getResponse = async (req, res) => {
 
 const saveResponse = async (req, res) => {
   try {
-    const { groupId, formId, caseEventFormId } = req.params;
+    const { groupId, formId, eventFormId } = req.params;
 
-    console.log('saveResponse', groupId, formId, caseEventFormId);
+    console.log('saveResponse', groupId, formId, eventFormId);
 
     const db = new DB(groupId);
     const data = req.body;
     data.formId = formId;
 
-    if (caseEventFormId) {
+    if (eventFormId) {
       try {
-        const results = await db.query("eventForms/eventForms", {key: caseEventFormId, include_docs: true});
+        const results = await db.query("eventForms/eventForms", {key: eventFormId, include_docs: true});
         if (results.rows.length > 0) {
           const caseDoc = results.rows[0].doc;
           console.log('caseId', caseDoc._id)
 
           for (let event of caseDoc.events) {
-            let eventForm = event.eventForms.find((f) => f.id === caseEventFormId);
+            let eventForm = event.eventForms.find((f) => f.id === eventFormId);
             if (eventForm) {
 
               console.log('eventForm', eventForm.id);
 
               data.caseId = caseDoc._id;
               data.caseEventId = event.id;
-              data.caseEventFormId = eventForm.id;
+              data.eventFormId = eventForm.id;
 
               eventForm.formResponseId = data._id;
               eventForm.complete = true

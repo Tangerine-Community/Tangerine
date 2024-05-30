@@ -47,7 +47,14 @@ const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, ge
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
 const {login: surveyLogin, getResponse: getSurveyResponse, saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey} = require('./online-survey')
-const { getEventFormData } = require('./case-api')
+const {
+  getCaseDefinitions,
+  getCaseDefinition,
+  createCase,
+  createCaseEvent,
+  createEventForm,
+  getEventFormData
+} = require('./case-api')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 const cookieParser = require('cookie-parser');
@@ -184,6 +191,12 @@ app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUse
  * Case API routes
  */
 
+app.get('/case/getCaseDefinitions/:groupId', getCaseDefinitions);
+app.get('/case/getCaseDefinition/:groupId/:caseDefinitionId', getCaseDefinition);
+app.post('/case/createCase/:groupId/:caseDefinitionId', createCase);
+app.post('/case/createCaseEvent/:groupId/:caseId/:caseEventDefinitionId', createCaseEvent);
+app.post('/case/createEventForm/:groupId/:caseId/:caseEventId/:caseEventFormDefinitionId', createEventForm);
+
 app.get('/case/getEventFormData/:groupId/:eventFormId', getEventFormData);
 
 /**
@@ -196,7 +209,7 @@ app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, save
 
 app.post('/onlineSurvey/login/:groupId/:accessCode', surveyLogin);
 app.get('/onlineSurvey/getResponse/:groupId/:formResponseId', /* hasSurveyUploadKey,*/ getSurveyResponse);
-app.post('/onlineSurvey/saveResponse/:groupId/:caseEventFormId/:formResponseId', /* hasSurveyUploadKey,*/ saveSurveyResponse);
+app.post('/onlineSurvey/saveResponse/:groupId/:eventFormId/:formResponseId', /* hasSurveyUploadKey,*/ saveSurveyResponse);
 /*
  * More API
  */
