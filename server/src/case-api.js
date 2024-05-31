@@ -68,6 +68,7 @@ createCase = async (req, res) => {
     await db.put(caseDoc);
     res.send(caseDoc._id);
   } catch (err) {
+    log.error(`Error creating case: ${err}`)
     res.status(500).send(err)
   }
 }
