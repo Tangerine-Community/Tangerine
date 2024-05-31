@@ -8,11 +8,13 @@ class Case {
     this.caseDefinitionId = caseDefinitionId
     this.archived = false
     this.groupId = groupId
+    this.location = {}
     this.form = { id: caseDefinition.formId }
-    this.items = [{ inputs: [], }],
+    this.items = [{ inputs: [] }],
     this.participants = []
     this.disabledEventDefinitionIds = []
     this.notifications = []
+    this.events = []
 
     for (let eventDefinition of caseDefinition.eventDefinitions) {
       if (eventDefinition.required) {
@@ -22,12 +24,12 @@ class Case {
   }
 
   addInputs(inputs) {
+    // transform key, value pairs to 'name' : key, 'value': value pairs
     for (let key in inputs) {
       const input = {
         name: key,
         value: inputs[key]
       }
-      // insert an unkeyed json object into the inputs array
       this.items[0].inputs.push(input)
     }
   }

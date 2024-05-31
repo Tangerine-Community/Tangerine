@@ -20,6 +20,7 @@ const pouchRepStream = require('pouchdb-replication-stream');
 PouchDB.plugin(require('pouchdb-find'));
 PouchDB.plugin(pouchRepStream.plugin);
 PouchDB.adapter('writableStream', pouchRepStream.adapters.writableStream);
+const {DB} = require('./db')
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
@@ -55,6 +56,7 @@ const {
   createEventForm,
   getEventFormData
 } = require('./case-api')
+const { createUserProfile } = require('./user-profile')
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
 const cookieParser = require('cookie-parser');
@@ -186,6 +188,12 @@ app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUse
 
  app.get('/configuration/archiveToDisk', isAuthenticated, archiveToDiskConfig);
  app.get('/configuration/passwordPolicyConfig', isAuthenticated, passwordPolicyConfig);
+
+/**
+ * User Profile API
+ */
+
+app.post('/userProfile/create/:groupId', createUserProfile);
 
 /**
  * Case API routes
