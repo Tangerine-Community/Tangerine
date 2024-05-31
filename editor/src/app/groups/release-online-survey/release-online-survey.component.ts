@@ -46,9 +46,9 @@ export class ReleaseOnlineSurveyComponent implements OnInit {
     this.publishedSurveys = surveyData.filter(e => e.published);
     this.unPublishedSurveys = surveyData.filter(e => !e.published);
   }
-  async publishSurvey(formId, appName) {
+  async publishSurvey(formId, appName, locked) {
     try {
-      await this.groupService.publishSurvey(this.groupId, formId, 'prod', appName);
+      await this.groupService.publishSurvey(this.groupId, formId, 'prod', appName, locked);
       await this.getForms();
       this.errorHandler.handleError(_TRANSLATE('Survey Published Successfully.'));
     } catch (error) {
