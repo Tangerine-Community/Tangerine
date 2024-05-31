@@ -173,20 +173,19 @@ getCaseEventFormSurveyLinks = async (req, res) => {
     const results = await groupDb.get(caseId)
     if (results.rows.length > 0) {
       const caseDoc = results.rows[0].doc
-      const caseDefinition =  _getCaseDefinition(groupId, caseDoc.caseDefinitionId)
+      const caseDefinition = _getCaseDefinition(groupId, caseDoc.caseDefinitionId)
       for (let event of doc.events) {
         let eventForm = event.eventForms.find((f) => f.id === req.params.eventFormId);
         if (eventForm) {
           let formId;
           for (let eventDefinition of caseDefinition.eventDefinitions) {
-              formId = eventDefinition.find((e) => e.id === eventForm.eventFormDefinitionId).formId
-              if (formId) break;
-            }
+            formId = eventDefinition.find((e) => e.id === eventForm.eventFormDefinitionId).formId
+            if (formId) break;
           }
-          const url = `http://localhost/releases/prod/online-survey-apps/group-344fabfe-f892-4a6d-a1da-58616949982f/${formId}/#/caseFormResponse/${caseId}/${eventForm.id}`
-          data.push(url)
-          break;
         }
+        const url = `http://localhost/releases/prod/online-survey-apps/group-344fabfe-f892-4a6d-a1da-58616949982f/${formId}/#/caseFormResponse/${caseId}/${eventForm.id}`
+        data.push(url)
+        break;
       }
     }
   } catch (err) {
