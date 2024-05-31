@@ -193,7 +193,7 @@ app.get('/users/groupPermissionsByGroupName/:groupName', isAuthenticated, getUse
  * User Profile API
  */
 
-app.post('/userProfile/create/:groupId', createUserProfile);
+app.post('/userProfile/createUserProfile/:groupId', createUserProfile);
 
 /**
  * Case API routes
@@ -321,7 +321,10 @@ app.post('/editor/release-apk/:group', isAuthenticated, releaseAPK)
 
 app.post('/editor/release-pwa/:group/', isAuthenticated, releasePWA)
 
+// TODO @deprice: This route should be removed.
 app.use('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/:uploadKey/', isAuthenticated, releaseOnlineSurveyApp)
+
+app.post('/editor/release-online-survey-app/:groupId/:formId/:releaseType/:appName/', isAuthenticated, releaseOnlineSurveyApp)
 
 app.use('/editor/unrelease-online-survey-app/:groupId/:formId/:releaseType/', isAuthenticated, unreleaseOnlineSurveyApp)
 

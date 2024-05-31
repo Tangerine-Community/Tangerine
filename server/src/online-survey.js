@@ -3,6 +3,7 @@ const GROUPS_DB = new DB('groups');
 const { v4: uuidV4 } = require('uuid');
 const createFormKey = () => uuidV4();
 const { createAccessCodeJWT } = require('./auth-utils');
+const { log } = require('console');
 
 const login = async (req, res) => {
   try {
@@ -100,6 +101,7 @@ const publishSurvey = async (req, res) => {
   let surveyInfo = {}
   try {
     const { formId, groupId } = req.params;
+    const locked = req.body.locked || false;
     const data = (await GROUPS_DB.get(groupId));
     data.onlineSurveys = data.onlineSurveys ? data.onlineSurveys : [];
     let surveysIndex = data.onlineSurveys.findIndex((e) => e.formId === formId);
@@ -109,6 +111,7 @@ const publishSurvey = async (req, res) => {
       updatedOn: new Date(),
       updatedBy: req.user.name,
       uploadKey: createFormKey(),
+      locked: locked
     };
     if (surveysIndex < 0) {
       data.onlineSurveys = [...data.onlineSurveys, surveyInfo];

@@ -5,13 +5,14 @@ FORM_ID="$2"
 RELEASE_TYPE="$3"
 APP_NAME=$(echo "$4" | sed "s/ /_/g") # sanitize spaces in app name
 UPLOAD_KEY="$5"
+REQUIRE_ACCESS_CODE="$6"
 
 if [ "$2" = "--help" ] || [ "$GROUP_ID" = "" ] || [ "$FORM_ID" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
   echo "RELEASE Online Survey App"
   echo "A command for releasing the Online Survey App for a specific form in a group."
   echo ""
-  echo "./release-online-survey-app.sh <groupId> <formId> <releaseType> <appName> <uploadKey>"
+  echo "./release-online-survey-app.sh <groupId> <formId> <releaseType> <appName> <uploadKey> [requireAccessCode]"
   echo ""
   echo "Release type is either qa or prod."
   echo ""
@@ -54,10 +55,17 @@ cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
+if [[ $REQUIRE_ACCESS_CODE == 'true' ]]; then
+  REQUIRE_ACCESS_CODE="true"
+else
+  REQUIRE_ACCESS_CODE="false"
+fi
+
 # NOTE: App Config does NOT come from the app-config.json file in the release directory
 sed -i -e "s#GROUP_ID#"$GROUP_ID"#g" $RELEASE_DIRECTORY/assets/app-config.json
 sed -i -e "s#FORM_UPLOAD_URL#"$FORM_UPLOAD_URL"#g" $RELEASE_DIRECTORY/assets/app-config.json
 sed -i -e "s#UPLOAD_KEY#"$UPLOAD_KEY"#g" $RELEASE_DIRECTORY/assets/app-config.json
 sed -i -e "s#APP_NAME#"$APP_NAME"#g" $RELEASE_DIRECTORY/assets/app-config.json
+sed -i -e "s#REQUIRE_ACCESS_CODE#"$REQUIRE_ACCESS_CODE"#g" $RELEASE_DIRECTORY/assets/app-config.json
 
 echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE"
