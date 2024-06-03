@@ -3,17 +3,19 @@
 ## v3.31.0
 
 __New Features__
-- A new Prompt Box widget available in form authoring allows a form designer to add audio and visual feedback connected to Radio Block widgets. This feature provides a toolset for creating self-guided assessments. See the example in [tangy-forms](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4430)
+- A new Prompt Box widget available in form authoring allows a form designer to add audio and visual feedback connected to Radio Block widgets. This feature provides a toolset for creating self-guided assessments. See the example in [tangy-forms](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4430). [#3473](https://github.com/Tangerine-Community/Tangerine/issues/3473)
 
 - Client Login Screen Custom HTML: A new app-config.json setting, `customLoginMarkup`, allows for custom HTML to be added to the login screen. This feature is useful for adding custom branding or additional information to the login screen. As an example:
 ```json
 "customLoginMarkup": "<div style='text-align: center;'><img src='assets/media/logo.png' alt='logo' style='max-width: 100%;'></div>"
 ```
 
-- Add ID Search to Data > Import: A new feature in the Data > Import screen allows users to search for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. 
+- Add ID Search to Data > Import: A new feature in the Data > Import screen allows users to search for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. [#3681](https://github.com/Tangerine-Community/Tangerine/issues/3681)
 
 __Fixes__
 - Client Search Service: exclude archived cases from recent activity
+- Improve import of responses using user-profile short code on client [#3696](https://github.com/Tangerine-Community/Tangerine/issues/3696)
+- Media library cannot upload photos [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
 
 __Tangerine Teach__
 
