@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'form-submitted-success', component: FormSubmittedSuccessComponent, canActivate: [LoginGuard] },
   { path: 'form/:formId', component: TangyFormsPlayerComponent, canActivate: [LoginGuard] },
   { path: 'form/option/:formId/:option', component: TangyFormsPlayerComponent, canActivate: [LoginGuard] },
-  { path: 'caseFormResponse/:caseEventFormId', component: TangyFormsPlayerComponent, canActivate: [LoginGuard] },
+  { path: 'case/event/form/:case/:event/:form', component: TangyFormsPlayerComponent, canActivate: [LoginGuard] },
 ];
 
 @NgModule({

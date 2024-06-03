@@ -13,14 +13,18 @@ export class TangyFormsPlayerComponent implements OnInit {
 
   formId: string;
   formResponseId: string;
-  caseEventFormId: string;
+  caseId: string;
+  caseEventId: string;
+  eventFormId: string;
   
   constructor(private route: ActivatedRoute, private formsService: FormsService, private router: Router, private httpClient:HttpClient
   ) { 
     this.router.events.subscribe(async (event) => {
         this.formId = this.route.snapshot.paramMap.get('formId');
         this.formResponseId = this.route.snapshot.paramMap.get('formResponseId');
-        this.caseEventFormId = this.route.snapshot.paramMap.get('caseEventFormId');
+        this.caseId = this.route.snapshot.paramMap.get('caseId');
+        this.caseEventId = this.route.snapshot.paramMap.get('caseEventId');
+        this.eventFormId = this.route.snapshot.paramMap.get('eventFormId');
     });
   }
 
@@ -29,22 +33,37 @@ export class TangyFormsPlayerComponent implements OnInit {
     this.container.nativeElement.innerHTML = data;
     let tangyForm = this.container.nativeElement.querySelector('tangy-form');
 
-    if (this.caseEventFormId) {
+    if (this.caseId) {
       try {
-        const eventForm = await this.formsService.getEventFormData(this.caseEventFormId);
-        if (eventForm && eventForm.formResponseId) {
-          tangyForm.response = await this.formsService.getFormResponse(eventForm.formResponseId);
+        const caseDoc = await this.formsService.getFormResponse(this.caseId);
+        if (caseDoc) {
+          let inputs = caseDoc.items[0].inputs;
+          if (inputs.length > 0) {
+            window.localStorage.setItem('caseVariables', JSON.stringify(inputs));
+          }
         }
       } catch (error) {
-        //pass
+        console.log('Error loading case variables: ' + error)
+      }
+
+      if (this.eventFormId) {
+        try {
+          // Attempt to load the form response for the event form
+          const eventForm = await this.formsService.getEventFormData(this.eventFormId);
+          if (eventForm && eventForm.formResponseId) {
+            tangyForm.response = await this.formsService.getFormResponse(eventForm.formResponseId);
+          }
+        } catch (error) {
+          //pass
+        }
       }
     }
 
     tangyForm.addEventListener('after-submit', async (event) => {
       event.preventDefault();
       try {
-        if (this.caseEventFormId) {
-          if (await this.formsService.uploadFormResponseForCase(event.target.response, this.caseEventFormId)) {
+        if (this.eventFormId) {
+          if (await this.formsService.uploadFormResponseForCase(event.target.response, this.eventFormId)) {
             this.router.navigate(['/form-submitted-success']);
           } else {
             alert('Form could not be submitted. Please retry');
