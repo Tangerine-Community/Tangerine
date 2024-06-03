@@ -6,3 +6,6 @@
 paper-input {
     margin: 15px;
 }
+#err {
+    color: red;
+  }
