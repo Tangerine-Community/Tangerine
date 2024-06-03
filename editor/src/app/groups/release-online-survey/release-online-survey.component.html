@@ -65,7 +65,7 @@
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
-
+    <span >{{form.updatedOn|date :'medium'}}
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
       <button mat-icon-button (click)="publishSurvey(form.id, form.title, false)">
         <i class="material-icons mat-32 tangy-location-list-icon">published_with_changes</i>
@@ -74,8 +74,6 @@
         <i class="material-icons mat-32 tangy-location-list-icon">lock</i>
       </button>
     </span>
-
-    <span >{{form.updatedOn|date :'medium'}}
     </span>
   </mat-list-item>
 </mat-list>
