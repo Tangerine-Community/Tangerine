@@ -3,7 +3,7 @@
 </mat-card>
 <mat-card *ngIf="ready">
     <form role="form" #login='ngForm' novalidate>
-      <img id="logo" src="/logo.png" width="100%">
+      <span #customLoginMarkup></span>
       <mat-form-field>
         <input matInput type="text" required [(ngModel)]="user.accessCode" id="username" name="username">
         <mat-placeholder>
@@ -19,4 +19,3 @@
       </span>
     </form>
 </mat-card>
-<span #customLoginMarkup></span>

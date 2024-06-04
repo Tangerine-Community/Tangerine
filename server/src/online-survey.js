@@ -2,8 +2,7 @@ const DB = require('./db.js');
 const GROUPS_DB = new DB('groups');
 const { v4: uuidV4 } = require('uuid');
 const createFormKey = () => uuidV4();
-const { createAccessCodeJWT } = require('./auth-utils');
-const { log } = require('console');
+const { createLoginJWT } = require('./auth-utils');
 
 const login = async (req, res) => {
   try {
@@ -25,7 +24,9 @@ const login = async (req, res) => {
     const userProfileDoc = docs.find(doc => doc.form.id === 'user-profile');
 
     if (userProfileDoc) {
-      const token = createAccessCodeJWT({"accessCode": accessCode});
+      debugger;
+      let permissions = {groupPermissions: [], sitewidePermissions: []};
+      const token = createLoginJWT({ "username": accessCode, permissions });
       return res.status(200).send({ data: { token } });
     }
   } catch (error) {

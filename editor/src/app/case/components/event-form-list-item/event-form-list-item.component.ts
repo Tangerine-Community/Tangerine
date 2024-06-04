@@ -13,7 +13,7 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseService } from '../../services/case.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { t } from 'tangy-form/util/t.js'
-
+import { GroupsService } from 'src/app/groups/services/groups.service';
 
 
 @Component({
@@ -47,19 +47,30 @@ export class EventFormListItemComponent implements OnInit {
   canUserDeleteForms: boolean;
   groupId:string;
   eventFormArchived: boolean = false;
+  canLinkToOnlineSurvey: boolean = false;
   response:any
 
   constructor(
     private formService: TangyFormService,
     private ref: ChangeDetectorRef,
     private router:Router,
-    private caseService: CaseService
+    private caseService: CaseService,
+    private groupsService: GroupsService
   ) {
     ref.detach();
   }
 
   async ngOnInit() {
     this.groupId = window.location.pathname.split('/')[2]
+
+    const group = await this.groupsService.getGroupInfo(this.groupId);
+    const groupOnlineSurveys = group?.onlineSurveys ?? [];
+
+    this.canLinkToOnlineSurvey = groupOnlineSurveys.some(survey => 
+      survey.published && 
+      survey.formId === this.eventFormDefinition.formId && 
+      this.eventFormDefinition.allowOnline
+    );
 
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));

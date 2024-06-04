@@ -40,6 +40,7 @@ LOCATION_LISTS_DIRECTORY="$FORM_CLIENT_DIRECTORY/locations"
 MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media"
 CUSTOM_SCRIPTS="$FORM_CLIENT_DIRECTORY/custom-scripts.js"
 CUSTOM_SCRIPTS_MAP="$FORM_CLIENT_DIRECTORY/custom-scripts.js.map"
+CUSTOM_LOGIN_MARKUP="$FORM_CLIENT_DIRECTORY/custom-login-markup.html"
 
 # Set up the release dir from the dist
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
@@ -58,6 +59,7 @@ cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/
 cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
 cp $CUSTOM_SCRIPTS $RELEASE_DIRECTORY/assets/
 cp $CUSTOM_SCRIPTS_MAP $RELEASE_DIRECTORY/assets/
+cp $CUSTOM_LOGIN_MARKUP $RELEASE_DIRECTORY/assets/
 
 CASE_DEFINITIONS="$FORM_CLIENT_DIRECTORY/case-definitions.json"
 echo "CASE_DEFINITIONS: $CASE_DEFINITIONS"

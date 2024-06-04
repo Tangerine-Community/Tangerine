@@ -47,6 +47,8 @@ export class AuthenticationService {
       console.error(error);
       localStorage.removeItem('token');
       localStorage.removeItem('user_id');
+      localStorage.removeItem('password');
+      localStorage.removeItem('permissions');
       return false;
     }
   }
@@ -73,12 +75,13 @@ export class AuthenticationService {
     document.cookie = "Authorization=;max-age=-1";
     localStorage.setItem('token', token);
     localStorage.setItem('user_id', jwtData['accessCode']);
+    localStorage.setItem('permissions', JSON.stringify(jwtData['permissions']));
     document.cookie = `Authorization=${token}`;
   }
 
   async getCustomLoginMarkup() {
     try {
-      return <string>await this.http.get('/custom-login-markup', {responseType: 'text'}).toPromise()
+      return <string>await this.http.get('./assets/custom-login-markup.html', {responseType: 'text'}).toPromise()
     } catch (error) {
       console.error('No custom-login-markup found');
       return '';
