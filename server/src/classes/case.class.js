@@ -58,8 +58,23 @@ class CaseEvent {
 }
 
 class EventForm {
-  constructor(caseId, caseEventId, eventFormDefinition) {
-    this.id = uuidV4()
+
+  id;
+  caseId;
+  caseEventId;
+  eventFormDefinitionId;
+  required;
+  participantId;
+  complete;
+  inactive;
+  formResponseId;
+
+  constructor(data) {
+    Object.assign(this, data);
+  }
+
+  constructor(caseId, caseEventId, eventFormDefinition = null) {
+    this.id = id || uuidV4()
     this.caseId = caseId
     this.caseEventId = caseEventId
     this.eventFormDefinitionId = eventFormDefinition.id

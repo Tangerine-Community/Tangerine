@@ -45,6 +45,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       tangyForms: this.tangyFormService
     }
 
+    // Loading the formResponse must happen before rendering the innerHTML
     let formResponse;
     if (this.caseId) {
       try {
@@ -56,9 +57,12 @@ export class TangyFormsPlayerComponent implements OnInit {
       if (this.eventFormId) {
         try {
           // Attempt to load the form response for the event form
-          const eventForm = await this.formsService.getEventFormData(this.eventFormId);
-          if (eventForm && eventForm.formResponseId) {
-            formResponse = await this.formsService.getFormResponse(eventForm.formResponseId);
+          const event = this.caseService.case.events.find(event => event.id === this.caseEventId);
+          if (event.id) {
+            const eventForm = event.eventForms.find(eventForm => eventForm.id === this.eventFormId);
+              if (eventForm && eventForm.id === this.eventFormId && eventForm.formResponseId) {
+                formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId);
+            }
           }
         } catch (error) {
           //pass
@@ -76,22 +80,31 @@ export class TangyFormsPlayerComponent implements OnInit {
 
     tangyForm.addEventListener('after-submit', async (event) => {
       event.preventDefault();
+      const formResponse = event.target.response;
       try {
-        if (this.eventFormId) {
-          if (await this.formsService.uploadFormResponseForCase(event.target.response, this.eventFormId)) {
-            this.router.navigate(['/form-submitted-success']);
-          } else {
-            alert('Form could not be submitted. Please retry');
-          }
+        if (await this.formsService.uploadFormResponse(formResponse)) {
+          this.router.navigate(['/form-submitted-success']);
         } else {
-          if (await this.formsService.uploadFormResponse(event.target.response)) {
-            this.router.navigate(['/form-submitted-success']);
-          } else {
-            alert('Form could not be submitted. Please retry');
-          }
+          alert('Form could not be submitted. Please retry');
         }
       } catch (error) {
         console.error(error);
+      }
+
+      if (this.eventFormId) {
+        try {
+          const caseEvent = this.caseService.case.events.find(event => event.id === this.caseEventId);
+          if (caseEvent.id) {
+            const eventForm = caseEvent.eventForms.find(eventForm => eventForm.id === this.eventFormId);
+              if (eventForm && eventForm.id === this.eventFormId) {
+                eventForm.formResponseId = formResponse._id
+                eventForm.complete = true
+                await this.caseService.save();
+            }
+          }
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
   }

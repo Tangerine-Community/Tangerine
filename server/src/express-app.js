@@ -54,7 +54,8 @@ const {
   createCase,
   createCaseEvent,
   createEventForm,
-  getEventFormData
+  readEventForm,
+  updateEventForm
 } = require('./case-api')
 const { createUserProfile } = require('./user-profile')
 log.info('heartbeat')
@@ -199,25 +200,23 @@ app.post('/userProfile/createUserProfile/:groupId', createUserProfile);
  * Case API routes
  */
 
-app.get('/case/getCaseDefinitions/:groupId', getCaseDefinitions);
-app.get('/case/getCaseDefinition/:groupId/:caseDefinitionId', getCaseDefinition);
-app.post('/case/createCase/:groupId/:caseDefinitionId', createCase);
-app.post('/case/createCaseEvent/:groupId/:caseId/:caseEventDefinitionId', createCaseEvent);
-app.post('/case/createEventForm/:groupId/:caseId/:caseEventId/:caseEventFormDefinitionId', createEventForm);
-
-app.get('/case/getEventFormData/:groupId/:eventFormId', getEventFormData);
+app.get('/case/getCaseDefinitions/:groupId', isAuthenticated, getCaseDefinitions);
+app.get('/case/getCaseDefinition/:groupId/:caseDefinitionId', isAuthenticated, getCaseDefinition);
+app.post('/case/createCase/:groupId/:caseDefinitionId', isAuthenticated, createCase);
+app.post('/case/createCaseEvent/:groupId/:caseId/:caseEventDefinitionId', isAuthenticated, createCaseEvent);
+app.post('/case/createEventForm/:groupId/:caseId/:caseEventId/:caseEventFormDefinitionId', isAuthenticated, createEventForm);
+app.get('/case/readEventForm/:groupId/:caseId/:caseEventId/:eventFormId', isAuthenticated, readEventForm);
+app.post('/case/updateEventForm/:groupId/:caseId/:caseEventId/:eventFormId', isAuthenticated, updateEventForm);
 
 /**
  * Online survey routes
  */
 
+app.post('/onlineSurvey/login/:groupId/:accessCode', surveyLogin);
 app.post('/onlineSurvey/publish/:groupId/:formId', isAuthenticated, publishSurvey);
 app.put('/onlineSurvey/unpublish/:groupId/:formId', isAuthenticated, unpublishSurvey);
 app.post('/onlineSurvey/saveResponse/:groupId/:formId', hasSurveyUploadKey, saveSurveyResponse);
 
-app.post('/onlineSurvey/login/:groupId/:accessCode', surveyLogin);
-app.get('/onlineSurvey/getResponse/:groupId/:formResponseId', /* hasSurveyUploadKey,*/ getSurveyResponse);
-app.post('/onlineSurvey/saveResponse/:groupId/:eventFormId/:formResponseId', /* hasSurveyUploadKey,*/ saveSurveyResponse);
 /*
  * More API
  */
