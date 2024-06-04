@@ -14,6 +14,7 @@ import { CaseService } from '../../services/case.service';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { t } from 'tangy-form/util/t.js'
 import { GroupsService } from 'src/app/groups/services/groups.service';
+import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 
 
 @Component({
@@ -55,7 +56,8 @@ export class EventFormListItemComponent implements OnInit {
     private ref: ChangeDetectorRef,
     private router:Router,
     private caseService: CaseService,
-    private groupsService: GroupsService
+    private groupsService: GroupsService,
+    private tangyErrorHandler: TangyErrorHandler
   ) {
     ref.detach();
   }
@@ -141,5 +143,12 @@ export class EventFormListItemComponent implements OnInit {
 
   onUnarchiveFormClick() {
     this.formUnarchivedEvent.emit(this.eventForm.id);
+  }
+
+  onCopyLinkClick() {
+    const url = `${window.location.origin}/releases/prod/online-survey-apps/${this.groupId}/${this.eventFormDefinition.formId}/#/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`;
+    navigator.clipboard.writeText(url);
+
+    this.tangyErrorHandler.handleError('Online Survey link copied to clipboard');
   }
 }

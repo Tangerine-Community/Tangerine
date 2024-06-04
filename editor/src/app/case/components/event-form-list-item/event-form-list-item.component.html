@@ -6,7 +6,9 @@
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
 	<span *ngIf="!eventFormArchived && !eventForm.formResponseId && canLinkToOnlineSurvey">
-    <span class="link"><a href="/releases/prod/online-survey-apps/{{groupId}}/{{eventFormDefinition.formId}}/#/case/event/form/{{case._id}}/{{caseEvent.id}}/{{eventForm.id}}" target="_new"> <i class="material-icons mat-32 tangy-location-list-icon">link</i></a></span>
+		<button (click)="onCopyLinkClick(); $event.stopPropagation()" class="tangy-small-list-icon">
+			<mwc-icon>link</mwc-icon>
+		</button>
 	</span>
 	<span *ngIf="canUserDeleteForms">
 		<button (click)="onDeleteFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
