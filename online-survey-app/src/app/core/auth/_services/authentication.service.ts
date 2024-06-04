@@ -74,7 +74,7 @@ export class AuthenticationService {
     const jwtData = jwtDecode(token);
     document.cookie = "Authorization=;max-age=-1";
     localStorage.setItem('token', token);
-    localStorage.setItem('user_id', jwtData['accessCode']);
+    localStorage.setItem('user_id', jwtData['username']);
     localStorage.setItem('permissions', JSON.stringify(jwtData['permissions']));
     document.cookie = `Authorization=${token}`;
   }
