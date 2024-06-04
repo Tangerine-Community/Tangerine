@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormsService } from '../shared/_services/forms-service.service';
+import { FormsService } from 'src/app/shared/_services/forms-service.service';
+import { CaseService } from 'src/app/case/services/case.service';
+import { TangyFormService } from '../tangy-form.service';
 
 @Component({
   selector: 'app-tangy-forms-player',
@@ -16,34 +18,39 @@ export class TangyFormsPlayerComponent implements OnInit {
   caseId: string;
   caseEventId: string;
   eventFormId: string;
+  window: any;
   
-  constructor(private route: ActivatedRoute, private formsService: FormsService, private router: Router, private httpClient:HttpClient
+  constructor(
+    private route: ActivatedRoute, 
+    private formsService: FormsService, 
+    private router: Router, 
+    private httpClient:HttpClient,
+    private caseService: CaseService,
+    private tangyFormService: TangyFormService
   ) { 
     this.router.events.subscribe(async (event) => {
         this.formId = this.route.snapshot.paramMap.get('formId');
         this.formResponseId = this.route.snapshot.paramMap.get('formResponseId');
-        this.caseId = this.route.snapshot.paramMap.get('caseId');
-        this.caseEventId = this.route.snapshot.paramMap.get('caseEventId');
-        this.eventFormId = this.route.snapshot.paramMap.get('eventFormId');
+        this.caseId = this.route.snapshot.paramMap.get('case');
+        this.caseEventId = this.route.snapshot.paramMap.get('event');
+        this.eventFormId = this.route.snapshot.paramMap.get('form');
     });
   }
 
   async ngOnInit(): Promise<any> {
-    const data = await this.httpClient.get('./assets/form/form.html', {responseType: 'text'}).toPromise();
-    this.container.nativeElement.innerHTML = data;
-    let tangyForm = this.container.nativeElement.querySelector('tangy-form');
+    this.tangyFormService.initialize(window.location.pathname.split('/')[4]);
+    this.window = window;
+    this.window.T = {
+      case: this.caseService,
+      tangyForms: this.tangyFormService
+    }
 
+    let formResponse;
     if (this.caseId) {
       try {
-        const caseDoc = await this.formsService.getFormResponse(this.caseId);
-        if (caseDoc) {
-          let inputs = caseDoc.items[0].inputs;
-          if (inputs.length > 0) {
-            window.localStorage.setItem('caseVariables', JSON.stringify(inputs));
-          }
-        }
+        await this.caseService.load(this.caseId);
       } catch (error) {
-        console.log('Error loading case variables: ' + error)
+        console.log('Error loading case: ' + error)
       }
 
       if (this.eventFormId) {
@@ -51,12 +58,20 @@ export class TangyFormsPlayerComponent implements OnInit {
           // Attempt to load the form response for the event form
           const eventForm = await this.formsService.getEventFormData(this.eventFormId);
           if (eventForm && eventForm.formResponseId) {
-            tangyForm.response = await this.formsService.getFormResponse(eventForm.formResponseId);
+            formResponse = await this.formsService.getFormResponse(eventForm.formResponseId);
           }
         } catch (error) {
           //pass
         }
       }
+    }
+
+    const data = await this.httpClient.get('./assets/form/form.html', {responseType: 'text'}).toPromise();
+    this.container.nativeElement.innerHTML = data;
+    let tangyForm = this.container.nativeElement.querySelector('tangy-form');
+
+    if (formResponse) {
+      tangyForm.response = formResponse;
     }
 
     tangyForm.addEventListener('after-submit', async (event) => {

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { FormSubmittedSuccessComponent } from './form-submitted-success/form-submitted-success.component';
 import { FormsListComponent } from './forms-list/forms-list.component';
-import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
+import { TangyFormsPlayerComponent } from './tangy-forms/tangy-forms-player/tangy-forms-player.component';
 import { LoginGuard } from './core/auth/_guards/login-guard.service';
 import { SurveyLoginComponent } from './core/auth/_components/survey-login/survey-login.component';
 
