@@ -75,7 +75,6 @@ fi
 
 if echo "$T_MODULES" | grep mysql; then
   ./mysql-create-dirs.sh
-fi
 
   if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
     ./mysql-start-container.sh

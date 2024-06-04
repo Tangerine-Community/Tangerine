@@ -33,7 +33,7 @@ mkdir -p $GROUP_DIRECTORY
 RELEASE_DIRECTORY="$GROUP_DIRECTORY/$FORM_ID"
 rm -r $RELEASE_DIRECTORY
 
-FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client/"
+FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client"
 FORM_DIRECTORY="$FORM_CLIENT_DIRECTORY/$FORM_ID"
 LOCATION_LIST_PATH="$FORM_CLIENT_DIRECTORY/location-list.json"
 LOCATION_LISTS_DIRECTORY="$FORM_CLIENT_DIRECTORY/locations"
@@ -45,6 +45,8 @@ CUSTOM_SCRIPTS_MAP="$FORM_CLIENT_DIRECTORY/custom-scripts.js.map"
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 
 # Ensure the release directories exists
+mkdir -p $RELEASE_DIRECTORY/assets
+mkdir -p $RELEASE_DIRECTORY/assets/form
 mkdir -p $RELEASE_DIRECTORY/assets/locations
 mkdir -p $RELEASE_DIRECTORY/assets/media
 
@@ -56,6 +58,25 @@ cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/
 cp /tangerine/translations/*.json $RELEASE_DIRECTORY/assets/
 cp $CUSTOM_SCRIPTS $RELEASE_DIRECTORY/assets/
 cp $CUSTOM_SCRIPTS_MAP $RELEASE_DIRECTORY/assets/
+
+CASE_DEFINITIONS="$FORM_CLIENT_DIRECTORY/case-definitions.json"
+echo "CASE_DEFINITIONS: $CASE_DEFINITIONS"
+if [ -f "$CASE_DEFINITIONS" ]; then
+  echo "Found case definitions"
+  cp $CASE_DEFINITIONS $RELEASE_DIRECTORY/assets/
+  # read the case definitions and add the files to the release directory
+  while IFS= read -r line
+  do
+    # if the line contains "src" then it is a file to copy
+    if [[ $line != *"src"* ]]; then
+      continue
+    fi
+    # line is like: "src": "./assets/parent-of-child-6-7-case.json"
+    # strip the file name
+    line=$(echo $line | sed 's/"src": ".\/assets\///g' | sed 's/"//g')
+    cp $FORM_CLIENT_DIRECTORY/$line $RELEASE_DIRECTORY/assets/
+  done < $CASE_DEFINITIONS
+fi
 
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
