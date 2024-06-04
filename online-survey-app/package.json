@@ -24,6 +24,8 @@
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@webcomponents/webcomponentsjs": "^2.4.4",
+    "axios": "^0.21.4",
+    "fast-json-patch": "^3.1.1",
     "jwt-decode": "^4.0.0",
     "material-design-icons-iconfont": "^6.1.0",
     "redux": "^4.0.5",

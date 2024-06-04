@@ -13,17 +13,17 @@ import {MatListModule} from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TangySvgLogoComponent } from './shared/tangy-svg-logo/tangy-svg-logo.component';
-import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
+import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsListComponent } from './forms-list/forms-list.component';
 import { FormSubmittedSuccessComponent } from './form-submitted-success/form-submitted-success.component';
 import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
+import { CaseModule } from './case/case.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     TangySvgLogoComponent,
-    TangyFormsPlayerComponent,
     FormsListComponent,
     FormSubmittedSuccessComponent
   ],
@@ -32,6 +32,7 @@ import { TangyErrorHandler } from './shared/_services/tangy-error-handler.servic
     AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
+    CaseModule,
     MatToolbarModule,
     MatMenuModule,
     MatIconModule,
@@ -39,7 +40,8 @@ import { TangyErrorHandler } from './shared/_services/tangy-error-handler.servic
     MatCardModule,
     MatTabsModule,
     MatListModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TangyFormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [TangyErrorHandler],

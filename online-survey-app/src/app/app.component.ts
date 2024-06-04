@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AppConfigService } from './shared/_services/app-config.service';
+import { CaseService } from './case/services/case.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,9 @@ import { AppConfigService } from './shared/_services/app-config.service';
 export class AppComponent implements OnInit{
   languageDirection: string;
   appName: string;
-  constructor(private appConfigService: AppConfigService){
+  window: any;
+
+  constructor(private appConfigService: AppConfigService, private caseService: CaseService){
   }
 
   async ngOnInit(): Promise<any>{
@@ -17,6 +20,7 @@ export class AppComponent implements OnInit{
       const appConfig = await this.appConfigService.getAppConfig();
       this.appName = appConfig.appName;
       this.languageDirection = appConfig.languageDirection;
+
     } catch (error) {
       this.appName = '';
       this.languageDirection = 'ltr';
