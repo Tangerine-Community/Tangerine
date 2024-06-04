@@ -122,28 +122,39 @@ createEventForm = async (req, res) => {
   }
 }
 
-createParticipant = async (req, res) => {
-  const groupId = req.params.groupId
-  const caseId = req.params.caseId
-  const caseRoleId = req.params.caseRoleId
+updateEventForm = async (req, res) => {
 
-  const caseDefinition =  _getCaseDefinition(groupId, caseDefinitionId)
-  const caseRole = caseDefinition.caseRoles.find((r) => r.id === caseRoleId)
+  let groupId = req.params.groupId
+  let caseId = req.params.caseId
+  let caseEventId = req.params.caseEventId
+  let eventFormId = req.params.eventFormId
 
-  let participant = new Participant(groupId, caseId, caseRole)
+  const db = new DB(groupId);
+  const data = req.body;
 
-  try {
-    const db = new DB(groupId)
-    const caseDoc = await db.get(caseId);
-    caseDoc.participant.push(participant);
-    await db.put(caseDoc);
-    res.send(eventForm._id);
-  } catch (err) {
-    res.status(500).send
+  if (eventFormId) {
+    let newEventForm = new EventForm(data);
+    try {
+      let caseDoc = await db.get(caseId);
+      if (caseDoc) {
+        let event = caseDoc.events.find((e) => e.id === caseEventId);
+        if (event) {
+          let eventForm = event.eventForms.find((f) => f.id === eventFormId);
+          if (eventForm) {
+            eventForm = newEventForm;
+          } else {
+            event.eventForms.push(eventForm);
+          }
+          await db.put(caseDoc);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
-getEventFormData = async (req, res) => {
+readEventForm = async (req, res) => {
   const groupDb = new DB(req.params.groupId)
   let data = {}
   try {
@@ -163,6 +174,27 @@ getEventFormData = async (req, res) => {
     res.status(500).send(err);
   }
   res.send(data)
+}
+
+createParticipant = async (req, res) => {
+  const groupId = req.params.groupId
+  const caseId = req.params.caseId
+  const caseRoleId = req.params.caseRoleId
+
+  const caseDefinition =  _getCaseDefinition(groupId, caseDefinitionId)
+  const caseRole = caseDefinition.caseRoles.find((r) => r.id === caseRoleId)
+
+  let participant = new Participant(groupId, caseId, caseRole)
+
+  try {
+    const db = new DB(groupId)
+    const caseDoc = await db.get(caseId);
+    caseDoc.participant.push(participant);
+    await db.put(caseDoc);
+    res.send(eventForm._id);
+  } catch (err) {
+    res.status(500).send
+  }
 }
 
 getCaseEventFormSurveyLinks = async (req, res) => {
@@ -201,5 +233,7 @@ module.exports = {
   createCase,
   createCaseEvent,
   createEventForm,
-  getEventFormData
+  readEventForm,
+  updateEventForm,
+  createParticipant
 }
