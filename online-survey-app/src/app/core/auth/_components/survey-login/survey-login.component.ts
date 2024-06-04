@@ -15,7 +15,7 @@ export class SurveyLoginComponent implements OnInit {
   errorMessage = '';
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { accessCode: '' };
-  @ViewChild('customLoginMarkup', {static: true}) customLoginMarkup: ElementRef;
+  @ViewChild('customLoginMarkup', {static: false}) customLoginMarkup: ElementRef;
   ready = false
 
   constructor(
@@ -32,9 +32,25 @@ export class SurveyLoginComponent implements OnInit {
       this.router.navigate([this.returnUrl]);
       return;
     }
-    this.customLoginMarkup.nativeElement.innerHTML = await this.authenticationService.getCustomLoginMarkup()
     this.ready = true
+
+    await this.renderCustomLoginMarkup();
   }
+
+  async renderCustomLoginMarkup() {
+    let customLoginMarkup = '<img id="logo" src="/logo.png" width="100%">';
+    try {
+      const markup = await this.authenticationService.getCustomLoginMarkup();
+      if (markup) {
+        customLoginMarkup = markup;
+      }
+    } catch (error) {
+      //pass
+    }
+
+    this.customLoginMarkup.nativeElement.innerHTML = customLoginMarkup
+  }
+
   async loginUser() {
     try {
 
