@@ -4,6 +4,7 @@ import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.com
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 
 @Component({
   selector: 'app-group-uploads-view',
@@ -22,6 +23,7 @@ export class GroupUploadsViewComponent implements OnInit {
     private route:ActivatedRoute,
     private router:Router,
     private http: HttpClient,
+    private tangyFormService: TangyFormService,
   ) { }
 
   ngOnInit() {
@@ -55,7 +57,14 @@ export class GroupUploadsViewComponent implements OnInit {
   }
 
   async verify(){
-
+    try {
+      const data = {...this.formPlayer.formEl.store.getState(), verified:true};
+      await this.tangyFormService.saveResponse(data)
+      alert(_TRANSLATE('Verified successfully.'))
+    } catch (error) {
+      alert(_TRANSLATE('Verification was unsuccessful. Please try again.'))
+      console.log(error)
+    }
   }
 
 }
