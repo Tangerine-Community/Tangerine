@@ -13,6 +13,7 @@ export class DynamicTableComponent implements OnInit, OnChanges {
   @Output() rowDelete: EventEmitter<any> = new EventEmitter<any>();
   @Input() data:Array<any> = []
   @Input() columnLabels = {}
+  @Input() hideActionBar
   columns:Array<any>
   displayedColumns:Array<any>
   dataSource:any
@@ -44,19 +45,22 @@ export class DynamicTableComponent implements OnInit, OnChanges {
         cell: (element: any) => `${element[column] ? element[column] : ``}`     
       }
     })
-    this.displayedColumns = [...this.columns.map(c => c.columnDef), 'actions'];
+    this.displayedColumns = this.hideActionBar? [...this.columns.map(c => c.columnDef)]:[...this.columns.map(c => c.columnDef), 'actions']
     // Set the dataSource for <mat-table>.
     this.dataSource = this.data 
   }
 
-  onRowClick(row) {
-    this.rowClick.emit(row)
-  }
+  onRowClick(event,row) {
 
+    if (event.target.tagName === 'MAT-ICON'){
+      event.stopPropagation()
+    }else{
+      this.rowClick.emit(row)
+    }
+  }
   onRowEdit(row) {
     this.rowEdit.emit(row)
   }
-
   onRowDelete(row) {
     this.rowDelete.emit(row)
   }

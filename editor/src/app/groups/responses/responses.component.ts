@@ -22,6 +22,7 @@ export class ResponsesComponent implements OnInit {
   @Input() excludeForms:Array<string> = []
   @Input() excludeColumns:Array<string> = []
   @Input() hideFilterBy = false
+  @Input() hideActionBar = false
   @ViewChild('searchBar', {static: true}) searchBar: ElementRef
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
   onSearch$ = new Subject()
@@ -128,6 +129,12 @@ export class ResponsesComponent implements OnInit {
     this.skip = 0;
     this.getResponses();
   }
+  async deleteResponse(id) {
+    if(confirm('Are you sure you want to delete this form response?')) {
+      await this.http.delete(`/api/${this.groupId}/${id}`).toPromise()
+      this.getResponses()
+    }
+  }
   nextPage() {
     this.skip = this.skip + this.limit
     if(this.searchString){
@@ -148,6 +155,9 @@ export class ResponsesComponent implements OnInit {
 
   onRowEdit(row) {
     this.router.navigate([row._id ? row._id : row.id], {relativeTo: this.route})
+  }
+  onRowDelete(row) {
+    this.deleteResponse(row._id ? row._id : row.id)
   }
   onRowClick(row){
     this.router.navigate([row._id ? row._id : row.id], {relativeTo: this.route})
