@@ -99,6 +99,7 @@ import { DownloadStatisticalFileComponent } from './download-statistical-file/do
 import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
 import { GroupLocationListsComponent } from './group-location-lists/group-location-lists.component';
 import { GroupLocationListNewComponent } from './group-location-list-new/group-location-list-new.component';
+import { GroupUploadsEditComponent } from './group-uploads-edit/group-uploads-edit.component';
 
 
 @NgModule({
@@ -204,7 +205,8 @@ import { GroupLocationListNewComponent } from './group-location-list-new/group-l
     GroupCsvTemplatesComponent,
     GroupDatabaseConflictsComponent,
     DownloadStatisticalFileComponent,
-    GroupDevicePasswordPolicyComponent
+    GroupDevicePasswordPolicyComponent,
+    GroupUploadsEditComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
 })

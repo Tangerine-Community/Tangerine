@@ -128,14 +128,6 @@ export class ResponsesComponent implements OnInit {
     this.skip = 0;
     this.getResponses();
   }
-
-  async deleteResponse(id) {
-    if(confirm('Are you sure you want to delete this form response?')) {
-      await this.http.delete(`/api/${this.groupId}/${id}`).toPromise()
-      this.getResponses()
-    }
-  }
-
   nextPage() {
     this.skip = this.skip + this.limit
     if(this.searchString){
