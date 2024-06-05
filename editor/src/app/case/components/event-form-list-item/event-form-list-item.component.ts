@@ -15,7 +15,7 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { t } from 'tangy-form/util/t.js'
 import { GroupsService } from 'src/app/groups/services/groups.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
-
+import * as qrcode from 'qrcode-generator-es6';
 
 @Component({
   selector: 'app-event-form-list-item',
@@ -50,6 +50,7 @@ export class EventFormListItemComponent implements OnInit {
   eventFormArchived: boolean = false;
   canLinkToOnlineSurvey: boolean = false;
   response:any
+  surveyLinkUrl:string;
 
   constructor(
     private formService: TangyFormService,
@@ -73,6 +74,8 @@ export class EventFormListItemComponent implements OnInit {
       survey.formId === this.eventFormDefinition.formId && 
       this.eventFormDefinition.allowOnline
     );
+
+    this.surveyLinkUrl = `/releases/prod/online-survey-apps/${this.groupId}/${this.eventFormDefinition.formId}/#/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`;
 
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
@@ -145,10 +148,26 @@ export class EventFormListItemComponent implements OnInit {
     this.formUnarchivedEvent.emit(this.eventForm.id);
   }
 
+  showLinkMenu() {
+    this.ref.detectChanges()
+  }
+
   onCopyLinkClick() {
     const url = `${window.location.origin}/releases/prod/online-survey-apps/${this.groupId}/${this.eventFormDefinition.formId}/#/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`;
     navigator.clipboard.writeText(url);
 
     this.tangyErrorHandler.handleError('Online Survey link copied to clipboard');
   }
+
+  onQRCodeLinkClick() {
+    const url = `${window.location.origin}${this.surveyLinkUrl}`;
+
+    const qr = new qrcode.default(0, 'H')
+    qr.addData(`${url}`)
+    qr.make()
+    window['dialog'].innerHTML = `<div style="width:${Math.round((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth) *.6)}px" id="qr"></div>`
+    window['dialog'].open()
+    window['dialog'].querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
+  }
+
 }
