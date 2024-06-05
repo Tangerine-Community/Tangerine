@@ -59,8 +59,12 @@ export class GroupUploadsViewComponent implements OnInit {
   async verify(){
     try {
       const data = {...this.formPlayer.formEl.store.getState(), verified:true};
-      await this.tangyFormService.saveResponse(data)
-      alert(_TRANSLATE('Verified successfully.'))
+      const result = await this.tangyFormService.saveResponse(data)
+      if(result){
+        alert(_TRANSLATE('Verified successfully.'))
+      }else{
+        alert(_TRANSLATE('Verification was unsuccessful. Please try again.'))
+      }
     } catch (error) {
       alert(_TRANSLATE('Verification was unsuccessful. Please try again.'))
       console.log(error)
