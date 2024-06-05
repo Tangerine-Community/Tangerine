@@ -37,7 +37,6 @@ export class GroupUploadsEditComponent implements OnInit {
         }
       ]
       this.formPlayer.formResponseId = params.responseId
-      this.formPlayer.unlockFormResponses = true
       this.formPlayer.render()
       this.formPlayer.$submit.subscribe(async () => {
         this.formPlayer.saveResponse(this.formPlayer.formEl.store.getState())
