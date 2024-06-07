@@ -2,7 +2,6 @@ const DB = require('./db.js')
 const log = require('tangy-log').log
 const path = require('path')
 const fs = require('fs')
-const { v4: uuidV4 } = require('uuid')
 
 const {Case: Case, CaseEvent: CaseEvent, EventForm: EventForm } = require('./classes/case.class.js')
 
@@ -71,6 +70,17 @@ createCase = async (req, res) => {
     log.error(`Error creating case: ${err}`)
     res.status(500).send(err)
   }
+}
+
+readCase = async (req, res) => {
+  const groupDb = new DB(req.params.groupId)
+  let data = {}
+  try {
+    data = await groupDb.get(caseId);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+  res.send(data)
 }
 
 createCaseEvent = async (req, res) => {
@@ -198,42 +208,52 @@ createParticipant = async (req, res) => {
 }
 
 getCaseEventFormSurveyLinks = async (req, res) => {
-  const caseId = req.params.caseId
-  const groupDb = new DB(req.params.groupId)
-
   let data = []
   try {
-    const results = await groupDb.get(caseId)
-    if (results.rows.length > 0) {
-      const caseDoc = results.rows[0].doc
-      const caseDefinition = _getCaseDefinition(groupId, caseDoc.caseDefinitionId)
-      for (let event of doc.events) {
-        let eventForm = event.eventForms.find((f) => f.id === req.params.eventFormId);
-        if (eventForm) {
-          let formId;
-          for (let eventDefinition of caseDefinition.eventDefinitions) {
-            formId = eventDefinition.find((e) => e.id === eventForm.eventFormDefinitionId).formId
-            if (formId) break;
+    const caseId = req.params.caseId
+    const groupId = req.params.groupId
+
+    const GROUPS_DB = new DB('groups');
+    const groupData = await GROUPS_DB.get(groupId);
+    const onlineSurveys = groupData.onlineSurveys ? groupData.onlineSurveys : [];
+
+    const groupDb = new DB(req.params.groupId)
+    const caseDoc = await groupDb.get(caseId)
+    const caseDefinition = _getCaseDefinition(groupId, caseDoc.caseDefinitionId)
+
+    for (let event of caseDoc.events) {
+      for (let eventForm of event.eventForms.filter((f) => !f.formResponseId)) {
+        for (let eventDefinition of caseDefinition.eventDefinitions) {
+          let eventFormDefinition = eventDefinition.eventFormDefinitions.find((e) => e.id === eventForm.eventFormDefinitionId)
+          if (eventFormDefinition && eventFormDefinition.formId) {
+            const formId = eventFormDefinition.formId
+            const survey = onlineSurveys.find((s) => s.formId === formId && s.published === true && s.locked === true)
+            if (survey) {
+              const origin = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}`
+              const pathname = `releases/prod/online-survey-apps/${groupId}/${formId}`
+              const hash = `#/case/event/form/${caseId}/${event.id}/${eventForm.id}`
+              const url = `${origin}/${pathname}/${hash}`
+              data.push(url)
+            }
           }
         }
-        const url = `http://localhost/releases/prod/online-survey-apps/group-344fabfe-f892-4a6d-a1da-58616949982f/${formId}/#/caseFormResponse/${caseId}/${eventForm.id}`
-        data.push(url)
-        break;
       }
     }
+    res.send(data)
   } catch (err) {
     res.status(500).send(err);
   }
-  res.send(data)
 }
 
 module.exports = {
   getCaseDefinitions,
   getCaseDefinition,
   createCase,
+  readCase,
   createCaseEvent,
   createEventForm,
   readEventForm,
   updateEventForm,
-  createParticipant
+  createParticipant,
+  getCaseEventFormSurveyLinks
 }

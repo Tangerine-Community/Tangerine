@@ -117,10 +117,33 @@ const unpublishSurvey = async (req, res) => {
   }
 };
 
+const getOnlineSurveys = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const formId = req.params.formId || null; // optional
+    if (!groupId) {
+      return res.status(500).send('Could  not find role');
+    }
+    const data = await GROUPS_DB.get(groupId);
+    if (data.onlineSurveys) {
+      if (formId) {
+        return res.status(200).send({ data: data.onlineSurveys.filter((s) => s.formId === formId) });
+      } else {
+        return res.status(200).send({ data: data.onlineSurveys });
+      }
+    } else {
+      return res.status(200).send({ data: [] });
+    }
+  } catch (error) {
+    res.status(500).send('Could not find survey');
+  }
+}
+
 module.exports = {
   login,
   getResponse,
   saveResponse,
   publishSurvey,
-  unpublishSurvey
+  unpublishSurvey,
+  getOnlineSurveys
 }
