@@ -14,9 +14,7 @@ module.exports = async (req, res) => {
       options.skip = req.params.skip
     }
     if (req.query.totalRows) {
-      options.limit = 1
-      options.skip = 0
-      const results = await groupDb.query('responsesByUserProfileShortCode', options);
+      const results = await groupDb.query('responsesByUserProfileShortCode', { key: userProfileShortCode, limit: 1,skip: 0, include_docs: false });
       res.send({ totalDocs: results.total_rows })
     } else if (req.query.userProfile) {
       await groupDb.query("userProfileByUserProfileShortCode", { limit: 0 });
