@@ -44,6 +44,7 @@ class CaseEvent {
     this.complete = false
     this.inactive = false
     this.eventForms = []
+    this.data = []
 
     for (const eventForm of eventDefinition.eventFormDefinitions) {
       if (eventForm.required) {
@@ -53,7 +54,11 @@ class CaseEvent {
   }
 
   addData(data) {
-    this.data = data
+    if (Array.isArray(data)) {
+      this.data.push(...data)
+    } else {
+      this.data.push(data)
+    }
   }
 }
 
@@ -67,23 +72,33 @@ class EventForm {
     this.participantId = ''
     this.complete = false
     this.inactive = false
+    this.data = [];
   }
 
   addData(data) {
-    this.data = data
+    if (Array.isArray(data)) {
+      this.data.push(...data)
+    } else {
+      this.data.push(data)
+    }
   }
 }
 
 class Participant {
-  constructor(participantDefinition) {
+  constructor(caseRole) {
     this.id = uuidV4()
-    this.caseRoleId = participantDefinition.id
-    this.name = ''
+    this.caseRoleId = caseRole.id
+    this.name = caseRole.label
     this.inactive = false;
+    this.data = [];
   }
 
   addData(data) {
-    this.data = data
+    if (Array.isArray(data)) {
+      this.data.push(...data)
+    } else {
+      this.data.push(data)
+    }
   }
 }
 
