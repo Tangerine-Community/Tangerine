@@ -54,12 +54,21 @@ createCase = async (req, res) => {
   let groupId = req.params.groupId
   let caseDefinitionId = req.params.caseDefinitionId
 
+  // check that req.body is json, if not, use JSON.parse
+  let inputs;
+  try {
+    if (typeof req.body == 'object' && Object.keys(req.body).length > 0) {
+      inputs = req.body
+    }
+  } catch (err) {
+    log.error(`Error parsing case inputs from request body: ${err}`)
+  }
+
   try {
     const caseDefinition =  _getCaseDefinition(groupId, caseDefinitionId)
     let caseDoc = new Case(groupId, caseDefinitionId, caseDefinition)
 
-    if (Object.keys(req.body).length > 0) {
-      const inputs = req.body
+    if (inputs) {
       caseDoc.addInputs(inputs)
     }
 
@@ -132,60 +141,6 @@ createEventForm = async (req, res) => {
   }
 }
 
-updateEventForm = async (req, res) => {
-
-  let groupId = req.params.groupId
-  let caseId = req.params.caseId
-  let caseEventId = req.params.caseEventId
-  let eventFormId = req.params.eventFormId
-
-  const db = new DB(groupId);
-  const data = req.body;
-
-  if (eventFormId) {
-    let newEventForm = new EventForm(data);
-    try {
-      let caseDoc = await db.get(caseId);
-      if (caseDoc) {
-        let event = caseDoc.events.find((e) => e.id === caseEventId);
-        if (event) {
-          let eventForm = event.eventForms.find((f) => f.id === eventFormId);
-          if (eventForm) {
-            eventForm = newEventForm;
-          } else {
-            event.eventForms.push(eventForm);
-          }
-          await db.put(caseDoc);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-}
-
-readEventForm = async (req, res) => {
-  const groupDb = new DB(req.params.groupId)
-  let data = {}
-  try {
-    let options = { key: req.params.eventFormId, include_docs: true }
-    const results = await groupDb.query('eventForms/eventForms', options);
-    if (results.rows.length > 0) {
-      const doc = results.rows[0].doc
-      for (let event of doc.events) {
-        let eventForm = event.eventForms.find((f) => f.id === req.params.eventFormId);
-        if (eventForm) {
-          data = eventForm
-          break;
-        }
-      }
-    }
-  } catch (err) {
-    res.status(500).send(err);
-  }
-  res.send(data)
-}
-
 createParticipant = async (req, res) => {
   const groupId = req.params.groupId
   const caseId = req.params.caseId
@@ -252,8 +207,6 @@ module.exports = {
   readCase,
   createCaseEvent,
   createEventForm,
-  readEventForm,
-  updateEventForm,
   createParticipant,
   getCaseEventFormSurveyLinks
 }
