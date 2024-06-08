@@ -45,7 +45,7 @@ export class TangyFormsPlayerComponent implements OnInit {
 
     // Loading the formResponse must happen before rendering the innerHTML
     let formResponse;
-    if (this.caseId) {
+    if (this.caseId && this.caseEventId && this.eventFormId) {
       try {
         await this.caseService.load(this.caseId);
         this.caseService.setContext(this.caseEventId, this.eventFormId)
@@ -56,19 +56,17 @@ export class TangyFormsPlayerComponent implements OnInit {
         }
         this.window.caseService = this.caseService
 
-        if (this.eventFormId) {
-          try {
-            // Attempt to load the form response for the event form
-            const event = this.caseService.case.events.find(event => event.id === this.caseEventId);
-            if (event.id) {
-              const eventForm = event.eventForms.find(eventForm => eventForm.id === this.eventFormId);
-                if (eventForm && eventForm.id === this.eventFormId && eventForm.formResponseId) {
-                  formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId);
-              }
+        try {
+          // Attempt to load the form response for the event form
+          const event = this.caseService.case.events.find(event => event.id === this.caseEventId);
+          if (event.id) {
+            const eventForm = event.eventForms.find(eventForm => eventForm.id === this.eventFormId);
+              if (eventForm && eventForm.id === this.eventFormId && eventForm.formResponseId) {
+                formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId);
             }
-          } catch (error) {
-            //pass
           }
+        } catch (error) {
+          //pass
         }
 
       } catch (error) {
@@ -88,16 +86,15 @@ export class TangyFormsPlayerComponent implements OnInit {
       event.preventDefault();
       const formResponse = event.target.response;
       try {
-        if (await this.formsService.uploadFormResponse(formResponse)) {
-          this.router.navigate(['/form-submitted-success']);
-        } else {
+        if (!await this.formsService.uploadFormResponse(formResponse)) {
           alert('Form could not be submitted. Please retry');
+          return;
         }
       } catch (error) {
         console.error(error);
       }
 
-      if (this.eventFormId) {
+      if (this.caseId && this.caseEventId && this.eventFormId) {
         try {
           const caseEvent = this.caseService.case.events.find(event => event.id === this.caseEventId);
           if (caseEvent.id) {
@@ -108,6 +105,17 @@ export class TangyFormsPlayerComponent implements OnInit {
                 await this.caseService.save();
             }
           }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      this.router.navigate(['/form-submitted-success']);
+
+      if (window['eventFormRedirect']) {
+        try {
+          // this.router.navigateByUrl(window['eventFormRedirect']) -- TODO figure this out later
+          this.window['location'] = window['eventFormRedirect']
+          window['eventFormRedirect'] = ''
         } catch (error) {
           console.error(error);
         }
