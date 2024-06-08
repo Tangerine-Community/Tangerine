@@ -3,7 +3,12 @@ const log = require('tangy-log').log
 const path = require('path')
 const fs = require('fs')
 
-const {Case: Case, CaseEvent: CaseEvent, EventForm: EventForm } = require('./classes/case.class.js')
+const {
+  Case: Case,
+  CaseEvent: CaseEvent,
+  EventForm: EventForm,
+  Participant: Participant
+} = require('./classes/case.class.js')
 
 /* Return the contents of the case-definitions.json file or a sepcified */
 getCaseDefinitions = async (req, res) => {
@@ -142,21 +147,22 @@ createEventForm = async (req, res) => {
 }
 
 createParticipant = async (req, res) => {
-  const groupId = req.params.groupId
-  const caseId = req.params.caseId
-  const caseRoleId = req.params.caseRoleId
-
-  const caseDefinition =  _getCaseDefinition(groupId, caseDefinitionId)
-  const caseRole = caseDefinition.caseRoles.find((r) => r.id === caseRoleId)
-
-  let participant = new Participant(groupId, caseId, caseRole)
-
   try {
+    const groupId = req.params.groupId
+    const caseId = req.params.caseId
+    const caseDefinitionId = req.params.caseDefinitionId
+    const caseRoleId = req.params.caseRoleId
+
+    const caseDefinition =  _getCaseDefinition(groupId, caseDefinitionId)
+    const caseRole = caseDefinition.caseRoles.find((r) => r.id === caseRoleId)
+
+    let participant = new Participant(caseRole)
+
     const db = new DB(groupId)
     const caseDoc = await db.get(caseId);
-    caseDoc.participant.push(participant);
+    caseDoc.participants.push(participant);
     await db.put(caseDoc);
-    res.send(eventForm._id);
+    res.send(participant.id);
   } catch (err) {
     res.status(500).send
   }

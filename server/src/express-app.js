@@ -207,7 +207,7 @@ app.post('/case/createCase/:groupId/:caseDefinitionId', isAuthenticated, createC
 app.post('/case/readCase/:groupId/:caseId', isAuthenticated, readCase);
 app.post('/case/createCaseEvent/:groupId/:caseId/:caseEventDefinitionId', isAuthenticated, createCaseEvent);
 app.post('/case/createEventForm/:groupId/:caseId/:caseEventId/:caseEventFormDefinitionId', isAuthenticated, createEventForm);
-app.post('/case/createParticipant/:groupId/:caseId/:caseEventId/:eventFormId', isAuthenticated, createParticipant);
+app.post('/case/createParticipant/:groupId/:caseId/:caseDefinitionId/:caseRoleId', isAuthenticated, createParticipant);
 app.get('/case/getCaseEventFormSurveyLinks/:groupId/:caseId', isAuthenticated, getCaseEventFormSurveyLinks);
 
 /**
