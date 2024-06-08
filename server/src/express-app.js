@@ -55,8 +55,6 @@ const {
   readCase,
   createCaseEvent,
   createEventForm,
-  readEventForm,
-  updateEventForm,
   createParticipant,
   getCaseEventFormSurveyLinks
 } = require('./case-api')
@@ -209,8 +207,6 @@ app.post('/case/createCase/:groupId/:caseDefinitionId', isAuthenticated, createC
 app.post('/case/readCase/:groupId/:caseId', isAuthenticated, readCase);
 app.post('/case/createCaseEvent/:groupId/:caseId/:caseEventDefinitionId', isAuthenticated, createCaseEvent);
 app.post('/case/createEventForm/:groupId/:caseId/:caseEventId/:caseEventFormDefinitionId', isAuthenticated, createEventForm);
-app.get('/case/readEventForm/:groupId/:caseId/:caseEventId/:eventFormId', isAuthenticated, readEventForm);
-app.post('/case/updateEventForm/:groupId/:caseId/:caseEventId/:eventFormId', isAuthenticated, updateEventForm);
 app.post('/case/createParticipant/:groupId/:caseId/:caseEventId/:eventFormId', isAuthenticated, createParticipant);
 app.get('/case/getCaseEventFormSurveyLinks/:groupId/:caseId', isAuthenticated, getCaseEventFormSurveyLinks);
 
