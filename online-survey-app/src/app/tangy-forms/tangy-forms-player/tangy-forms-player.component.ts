@@ -37,36 +37,42 @@ export class TangyFormsPlayerComponent implements OnInit {
     });
   }
 
-  async ngOnInit(): Promise<any> {
-    this.tangyFormService.initialize(window.location.pathname.split('/')[4]);
+  async ngOnInit(): Promise<any> {   
+    const groupId = window.location.pathname.split('/')[4]; 
+    this.tangyFormService.initialize(groupId);
+
     this.window = window;
-    this.window.T = {
-      case: this.caseService,
-      tangyForms: this.tangyFormService
-    }
 
     // Loading the formResponse must happen before rendering the innerHTML
     let formResponse;
     if (this.caseId) {
       try {
         await this.caseService.load(this.caseId);
+        this.caseService.setContext(this.caseEventId, this.eventFormId)
+
+        this.window.T = {
+          case: this.caseService,
+          tangyForms: this.tangyFormService
+        }
+        this.window.caseService = this.caseService
+
+        if (this.eventFormId) {
+          try {
+            // Attempt to load the form response for the event form
+            const event = this.caseService.case.events.find(event => event.id === this.caseEventId);
+            if (event.id) {
+              const eventForm = event.eventForms.find(eventForm => eventForm.id === this.eventFormId);
+                if (eventForm && eventForm.id === this.eventFormId && eventForm.formResponseId) {
+                  formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId);
+              }
+            }
+          } catch (error) {
+            //pass
+          }
+        }
+
       } catch (error) {
         console.log('Error loading case: ' + error)
-      }
-
-      if (this.eventFormId) {
-        try {
-          // Attempt to load the form response for the event form
-          const event = this.caseService.case.events.find(event => event.id === this.caseEventId);
-          if (event.id) {
-            const eventForm = event.eventForms.find(eventForm => eventForm.id === this.eventFormId);
-              if (eventForm && eventForm.id === this.eventFormId && eventForm.formResponseId) {
-                formResponse = await this.tangyFormService.getResponse(eventForm.formResponseId);
-            }
-          }
-        } catch (error) {
-          //pass
-        }
       }
     }
 
