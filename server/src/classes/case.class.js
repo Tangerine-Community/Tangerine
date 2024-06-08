@@ -46,9 +46,9 @@ class CaseEvent {
     this.eventForms = []
     this.data = []
 
-    for (const eventForm of eventDefinition.eventFormDefinitions) {
-      if (eventForm.required) {
-        this.eventForms.push(new EventForm(caseId, this._id, eventForm))
+    for (const eventFormDefinition of eventDefinition.eventFormDefinitions) {
+      if (eventFormDefinition.required) {
+        this.eventForms.push(new EventForm(caseId, this._id, eventFormDefinition))
       }
     }
   }
@@ -63,7 +63,7 @@ class CaseEvent {
 }
 
 class EventForm {
-  constructor(caseId, caseEventId, eventFormDefinition = null) {
+  constructor(caseId, caseEventId, eventFormDefinition) {
     this.id = uuidV4()
     this.caseId = caseId
     this.caseEventId = caseEventId
