@@ -105,7 +105,7 @@ createCaseEvent = async (req, res) => {
   
   const caseDefinition =  _getCaseDefinition(groupId, caseDefinitionId)
   let caseEventDefinition = caseDefinition.eventDefinitions.find((e) => e.id === caseEventDefinitionId)
-  let caseEvent = new CaseEvent(groupId, caseEventDefinition)
+  let caseEvent = new CaseEvent(caseId, caseEventDefinition)
 
   let caseDoc;
   try {
@@ -132,7 +132,7 @@ createEventForm = async (req, res) => {
       if (eventFormDefinition) break;
   }
   
-  let eventForm = new EventForm(groupId, caseId, caseEventId, eventFormDefinition)
+  let eventForm = new EventForm(caseId, caseEventId, eventFormDefinition)
 
   try {
     const db = new DB(groupId)
