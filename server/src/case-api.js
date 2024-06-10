@@ -184,8 +184,9 @@ getCaseEventFormSurveyLinks = async (req, res) => {
 
     for (let event of caseDoc.events) {
       for (let eventForm of event.eventForms.filter((f) => !f.formResponseId)) {
-        for (let eventDefinition of caseDefinition.eventDefinitions) {
-          let eventFormDefinition = eventDefinition.eventFormDefinitions.find((e) => e.id === eventForm.eventFormDefinitionId)
+        const eventDefinition = caseDefinition.eventDefinitions.find((e) => e.id === event.caseEventDefinitionId)
+        if (eventDefinition) {
+          const eventFormDefinition = eventDefinition.eventFormDefinitions.find((e) => e.id === eventForm.eventFormDefinitionId)
           if (eventFormDefinition && eventFormDefinition.formId) {
             const formId = eventFormDefinition.formId
             const survey = onlineSurveys.find((s) => s.formId === formId && s.published === true && s.locked === true)
@@ -194,7 +195,14 @@ getCaseEventFormSurveyLinks = async (req, res) => {
               const pathname = `releases/prod/online-survey-apps/${groupId}/${formId}`
               const hash = `#/case/event/form/${caseId}/${event.id}/${eventForm.id}`
               const url = `${origin}/${pathname}/${hash}`
-              data.push(url)
+              data.push(
+                {
+                  "eventDefinitionId": event.caseEventDefinitionId,
+                  "eventFormDefinitionId": eventForm.eventFormDefinitionId,
+                  "formId": formId,
+                  "url": url
+                }
+              )
             }
           }
         }
