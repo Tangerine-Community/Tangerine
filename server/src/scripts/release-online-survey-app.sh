@@ -80,6 +80,12 @@ if [ -f "$CASE_DEFINITIONS" ]; then
   done < $CASE_DEFINITIONS
 fi
 
+if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
+  cd "/tangerine/groups/$GROUP/"
+  npm run install-server && npm run build
+  cd /
+fi
+
 FORM_UPLOAD_URL="/onlineSurvey/saveResponse/$GROUP_ID/$FORM_ID"
 
 if [[ $REQUIRE_ACCESS_CODE == 'true' ]]; then
