@@ -85,6 +85,11 @@ export class TangyFormsPlayerComponent implements OnInit {
     tangyForm.addEventListener('after-submit', async (event) => {
       event.preventDefault();
       const formResponse = event.target.response;
+      if (this.caseId && this.caseEventId && this.eventFormId) {
+        formResponse.caseId = this.caseId;
+        formResponse.caseEventId = this.caseEventId;
+        formResponse.eventFormId = this.eventFormId;
+      }
       try {
         if (!await this.formsService.uploadFormResponse(formResponse)) {
           alert('Form could not be submitted. Please retry');
