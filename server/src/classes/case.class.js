@@ -48,7 +48,7 @@ class CaseEvent {
 
     for (const eventFormDefinition of eventDefinition.eventFormDefinitions) {
       if (eventFormDefinition.required) {
-        this.eventForms.push(new EventForm(caseId, this._id, eventFormDefinition))
+        this.eventForms.push(new EventForm(caseId, this.id, eventFormDefinition))
       }
     }
   }
