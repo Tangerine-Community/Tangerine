@@ -156,9 +156,17 @@ export class EventFormListItemComponent implements OnInit {
 
   onCopyLinkClick() {
     const url = `${window.location.origin}/releases/prod/online-survey-apps/${this.groupId}/${this.eventFormDefinition.formId}/#/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`;
-    navigator.clipboard.writeText(url);
+    try {
+      navigator.clipboard.writeText(url);
 
-    this.tangyErrorHandler.handleError('Online Survey link copied to clipboard');
+      this.tangyErrorHandler.handleError('Online Survey link copied to clipboard');
+    } catch (err) {
+      let errMsg = 'Failed to copy link to clipboard';
+      if (window.location.origin.startsWith('http://')) {
+        errMsg = 'Copy to clipboard is not supported with http://.';
+      }
+      this.tangyErrorHandler.handleError(errMsg);
+    }
   }
 
   onQRCodeLinkClick() {
