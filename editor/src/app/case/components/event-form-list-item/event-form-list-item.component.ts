@@ -75,7 +75,9 @@ export class EventFormListItemComponent implements OnInit {
       this.eventFormDefinition.allowOnline
     );
 
-    this.surveyLinkUrl = `/releases/prod/online-survey-apps/${this.groupId}/${this.eventFormDefinition.formId}/#/case/event/form/${this.eventForm.caseId}/${this.eventForm.caseEventId}/${this.eventForm.id}`;
+    if (this.canLinkToOnlineSurvey) {
+      this.surveyLinkUrl = `/releases/prod/online-survey-apps/${this.groupId}/${this.eventFormDefinition.formId}/#/case/event/form/${this.case._id}/${this.caseEvent.id}/${this.eventForm.id}`;
+    }
 
     this.canUserDeleteForms = ((this.eventFormDefinition.allowDeleteIfFormNotCompleted && !this.eventForm.complete)
     || (this.eventFormDefinition.allowDeleteIfFormNotStarted && !this.eventForm.formResponseId));
