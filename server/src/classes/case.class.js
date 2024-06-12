@@ -39,7 +39,7 @@ class CaseEvent {
   constructor(caseId, eventDefinition) {
     this.id = uuidV4();
     this.caseId = caseId
-    this.name = ''
+    this.name = eventDefinition.name || ''
     this.caseEventDefinitionId = eventDefinition.id
     this.complete = false
     this.inactive = false
@@ -66,6 +66,7 @@ class EventForm {
   constructor(caseId, caseEventId, eventFormDefinition, participantId) {
     this.id = uuidV4()
     this.caseId = caseId
+    this.name = eventFormDefinition.name || ''
     this.caseEventId = caseEventId
     this.eventFormDefinitionId = eventFormDefinition.id
     this.required = eventFormDefinition.required
