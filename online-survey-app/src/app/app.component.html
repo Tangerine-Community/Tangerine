@@ -3,6 +3,13 @@
     <tr>
       <td width="100%"></td>
       <td>
+        <div *ngIf="hasHelpLink">
+          <a href="{{helpLink}}" target="_blank">
+            <iron-icon icon="help"></iron-icon>
+          </a>
+        </div>
+      </td>
+      <td>
         <iron-icon icon="language"></iron-icon>
       </td>
       <td>

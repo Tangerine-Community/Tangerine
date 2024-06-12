@@ -10,6 +10,8 @@ import { CaseService } from './case/services/case.service';
 export class AppComponent implements OnInit{
   languageDirection: string;
   appName: string;
+  hasHelpLink: boolean = false;
+  helpLink: string;
   window: any;
 
   constructor(private appConfigService: AppConfigService, private caseService: CaseService){
@@ -20,6 +22,11 @@ export class AppComponent implements OnInit{
       const appConfig = await this.appConfigService.getAppConfig();
       this.appName = appConfig.appName;
       this.languageDirection = appConfig.languageDirection;
+
+      if (appConfig.helpLink) {
+        this.hasHelpLink = true;
+        this.helpLink = appConfig.helpLink;
+      }
 
     } catch (error) {
       this.appName = '';
