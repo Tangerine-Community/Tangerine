@@ -156,11 +156,11 @@ createParticipant = async (req, res) => {
     const caseDefinition =  _getCaseDefinition(groupId, caseDefinitionId)
     const caseRole = caseDefinition.caseRoles.find((r) => r.id === caseRoleId)
 
-    let participant = new Participant(caseRole)
-
     const db = new DB(groupId)
     const caseDoc = await db.get(caseId);
-    caseDoc.participants.push(participant);
+
+    let participant = new Participant(caseRole, caseDoc, caseDefinition)
+
     await db.put(caseDoc);
     res.send(participant.id);
   } catch (err) {
