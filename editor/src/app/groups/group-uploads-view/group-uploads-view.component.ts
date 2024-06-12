@@ -62,6 +62,7 @@ export class GroupUploadsViewComponent implements OnInit {
       const result = await this.tangyFormService.saveResponse(data)
       if(result){
         alert(_TRANSLATE('Verified successfully.'))
+        this.router.navigate([`../`], { relativeTo: this.route })
       }else{
         alert(_TRANSLATE('Verification was unsuccessful. Please try again.'))
       }
