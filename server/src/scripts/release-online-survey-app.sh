@@ -41,6 +41,7 @@ MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media"
 CUSTOM_SCRIPTS="$FORM_CLIENT_DIRECTORY/custom-scripts.js"
 CUSTOM_SCRIPTS_MAP="$FORM_CLIENT_DIRECTORY/custom-scripts.js.map"
 CUSTOM_LOGIN_MARKUP="$FORM_CLIENT_DIRECTORY/custom-login-markup.html"
+APP_CONFIG="$FORM_CLIENT_DIRECTORY/app-config.json"
 
 # Set up the release dir from the dist
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
@@ -94,11 +95,25 @@ else
   REQUIRE_ACCESS_CODE="false"
 fi
 
-# NOTE: App Config does NOT come from the app-config.json file in the release directory
-sed -i -e "s#GROUP_ID#"$GROUP_ID"#g" $RELEASE_DIRECTORY/assets/app-config.json
-sed -i -e "s#FORM_UPLOAD_URL#"$FORM_UPLOAD_URL"#g" $RELEASE_DIRECTORY/assets/app-config.json
-sed -i -e "s#UPLOAD_KEY#"$UPLOAD_KEY"#g" $RELEASE_DIRECTORY/assets/app-config.json
-sed -i -e "s#APP_NAME#"$APP_NAME"#g" $RELEASE_DIRECTORY/assets/app-config.json
-sed -i -e "s#REQUIRE_ACCESS_CODE#"$REQUIRE_ACCESS_CODE"#g" $RELEASE_DIRECTORY/assets/app-config.json
+# Copy the app-config.json to the release directory
+cp $APP_CONFIG $RELEASE_DIRECTORY/assets/
+
+# first delete the last line of the file with the closing bracket
+sed -i '$ d' $RELEASE_DIRECTORY/assets/app-config.json
+
+#append a comma to the end of the last line
+sed -i '$ s/$/,/' $RELEASE_DIRECTORY/assets/app-config.json
+
+#then append the online survey configs
+echo "\"formUploadURL\": \"$FORM_UPLOAD_URL\"," >> $RELEASE_DIRECTORY/assets/app-config.json
+echo "\"uploadKey\": \"$UPLOAD_KEY\"," >> $RELEASE_DIRECTORY/assets/app-config.json
+echo "\"groupId\": \"$GROUP_ID\"," >> $RELEASE_DIRECTORY/assets/app-config.json
+echo "\"languageDirection\": \"ltr\"," >> $RELEASE_DIRECTORY/assets/app-config.json
+echo "\"languageCode\": \"en\"," >> $RELEASE_DIRECTORY/assets/app-config.json
+echo "\"appName\": \"$APP_NAME\"," >> $RELEASE_DIRECTORY/assets/app-config.json
+echo "\"requireAccessCode\": $REQUIRE_ACCESS_CODE" >> $RELEASE_DIRECTORY/assets/app-config.json
+
+# finaly, add the closing bracket
+echo "}" >> $RELEASE_DIRECTORY/assets/app-config.json
 
 echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE"
