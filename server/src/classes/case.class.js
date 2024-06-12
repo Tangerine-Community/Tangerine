@@ -47,7 +47,7 @@ class CaseEvent {
     this.data = []
 
     for (const eventFormDefinition of eventDefinition.eventFormDefinitions) {
-      if (eventFormDefinition.required) {
+      if (eventFormDefinition.required && eventFormDefinition.forCaseRole == '') {
         this.eventForms.push(new EventForm(caseId, this.id, eventFormDefinition))
       }
     }
@@ -63,13 +63,13 @@ class CaseEvent {
 }
 
 class EventForm {
-  constructor(caseId, caseEventId, eventFormDefinition) {
+  constructor(caseId, caseEventId, eventFormDefinition, participantId) {
     this.id = uuidV4()
     this.caseId = caseId
     this.caseEventId = caseEventId
     this.eventFormDefinitionId = eventFormDefinition.id
     this.required = eventFormDefinition.required
-    this.participantId = ''
+    this.participantId = participantId || ''
     this.complete = false
     this.inactive = false
     this.data = [];
@@ -85,12 +85,25 @@ class EventForm {
 }
 
 class Participant {
-  constructor(caseRole) {
+  constructor(caseRole, caseInstance='', caseDefinition='') {
     this.id = uuidV4()
     this.caseRoleId = caseRole.id
     this.name = caseRole.label
     this.inactive = false;
     this.data = [];
+
+    if (caseInstance) {
+      for (let event of caseInstance.events) {
+        const eventDefinition = caseDefinition.eventDefinitions.find((e) => e.id === event.caseEventDefinitionId)
+        if (eventDefinition) {
+          const eventFormsForRole = eventDefinition.eventFormDefinitions.filter((f) => f.required && f.forCaseRole === caseRole.id)
+          for (const eventFormDefinition of eventFormsForRole) {
+            event.eventForms.push(new EventForm(caseInstance._id, event.id, eventFormDefinition, this.id))
+          }
+        }
+      }
+      caseInstance.participants.push(this)
+    }
   }
 
   addData(data) {
