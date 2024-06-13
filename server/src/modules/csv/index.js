@@ -260,6 +260,7 @@ const  generateFlatResponse = async function (formResponse, sanitized, groupId) 
     flatFormResponse['grade'] = formResponse.grade
     flatFormResponse['schoolName'] = formResponse.schoolName
     flatFormResponse['schoolYear'] = formResponse.schoolYear
+    flatFormResponse['reportDate'] = formResponse.reportDate
     flatFormResponse['type'] = formResponse.type
     if (formResponse.type === 'attendance') {
       flatFormResponse['attendanceList'] = formResponse.attendanceList
