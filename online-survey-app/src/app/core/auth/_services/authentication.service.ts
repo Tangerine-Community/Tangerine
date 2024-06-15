@@ -70,6 +70,22 @@ export class AuthenticationService {
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
   }
 
+  async extendUserSession() {
+    const username = localStorage.getItem('user_id');
+    try {
+      const data = await this.http.post('/extendSession', {username}, {observe: 'response'}).toPromise();
+      if (data.status === 200) {
+        const token = data.body['data']['token'];
+       await this.setTokens(token);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async setTokens(token) {
     const jwtData = jwtDecode(token);
     document.cookie = "Authorization=;max-age=-1";
