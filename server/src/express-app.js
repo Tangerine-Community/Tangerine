@@ -47,7 +47,7 @@ const { extendSession, findUserByUsername,
 const {registerUser,  getUserByUsername, isUserSuperAdmin, isUserAnAdminUser, getGroupsByUser, deleteUser,
    getAllUsers, checkIfUserExistByUsername, findOneUserByUsername,
    findMyUser, updateUser, restoreUser, updateMyUser} = require('./users');
-const {login: surveyLogin, getResponse: getSurveyResponse, saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey, getOnlineSurveys} = require('./online-survey')
+const {login: surveyLogin, saveResponse: saveSurveyResponse, publishSurvey, unpublishSurvey, getOnlineSurveys} = require('./online-survey')
 const {
   getCaseDefinitions,
   getCaseDefinition,
