@@ -68,6 +68,9 @@ export class AppComponent implements OnInit{
       } else {
         await this.logout();
       }
+    } else if (Date.now() > expiryTimeInMs && this.isConfirmDialogActive) {
+      // the token expired, and we warned them. Time to log out.
+      await this.logout();
     }
   }
 
