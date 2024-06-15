@@ -35,22 +35,6 @@ const login = async (req, res) => {
   }
 }
 
-const getResponse = async (req, res) => {
-  try {
-
-    const { groupId, formResponseId } = req.params;
-
-    console.log('getResponse', groupId, formResponseId);
-
-    const db = new DB(groupId);
-    const doc = await db.get(formResponseId);
-    return res.status(200).send(doc);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send('Could not get response');
-  }
-};
-
 const saveResponse = async (req, res) => {
   try {
     const { groupId, formId } = req.params;
@@ -141,7 +125,6 @@ const getOnlineSurveys = async (req, res) => {
 
 module.exports = {
   login,
-  getResponse,
   saveResponse,
   publishSurvey,
   unpublishSurvey,
