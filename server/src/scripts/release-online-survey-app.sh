@@ -80,8 +80,8 @@ if [ -f "$CASE_DEFINITIONS" ]; then
   done < $CASE_DEFINITIONS
 fi
 
-if [ -f "/tangerine/groups/$GROUP/package.json" ]; then
-  cd "/tangerine/groups/$GROUP/"
+if [ -f "/tangerine/groups/$GROUP_ID/package.json" ]; then
+  cd "/tangerine/groups/$GROUP_ID/"
   npm run install-server && npm run build
   cd /
 fi
