@@ -1,0 +1,12 @@
+.sticky {
+    position: sticky;
+    top: 20px;
+    max-width: fit-content;
+    margin-inline: auto;
+    z-index: 999;
+}
+
+button, a{
+    margin-right: 10px;
+    margin-top: 10px;
+}
