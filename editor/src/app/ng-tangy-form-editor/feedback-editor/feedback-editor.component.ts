@@ -25,6 +25,7 @@ export class FeedbackEditorComponent implements OnInit {
   skill:string = ""
   assignment:string = ""
   message:string = ""
+  customJSCode:string = ""
   formItems:any
   formItem:string
   formItemName:string
@@ -122,6 +123,7 @@ export class FeedbackEditorComponent implements OnInit {
     this.skill = ""
     this.assignment = ""
     this.message = ""
+    this.customJSCode = ""
     this.formItem = ""
 
     this.showFeedbackForm = true
@@ -140,6 +142,7 @@ export class FeedbackEditorComponent implements OnInit {
       this.feedback.skill = this.skill
       this.feedback.assignment = this.assignment
       this.feedback.message = this.message
+      this.feedback.customJSCode = this.customJSCode
       this.feedback.formItem = this.formItem
       this.feedbackService.update(this.groupName, this.formId, this.feedback)
         .then(async (data) => {
@@ -168,6 +171,7 @@ export class FeedbackEditorComponent implements OnInit {
         this.skill = this.feedback.skill
         this.assignment = this.feedback.assignment
         this.message = this.feedback.message
+        this.customJSCode = this.feedback.customJSCode
         this.formItem = this.feedback.formItem
 
         this.percentileOptions = this.createPercentileOptions(null)
