@@ -215,13 +215,17 @@ export interface DialogData {
   selector: 'feedback-dialog',
   templateUrl: 'feedback-dialog.html',
 })
-export class FeedbackDialog {
+export class FeedbackDialog implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<FeedbackDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) {
   }
-
+  async ngOnInit(){
+    if(this.data.classGroupReport?.feedback?.customJSCode){
+      eval(this.data.classGroupReport?.feedback?.customJSCode)
+    }
+  }
   tNumber(fragment) {
     return tNumber(fragment)
   }
