@@ -118,17 +118,54 @@ docker rmi tangerine/tangerine:v3.27.1
 # If you are upgrading a Tangerine instance, run the server/src/upgrade/v4.0.0.sh script to update Cordova plugins. 
 ./server/src/upgrade/v4.0.0.sh
 ```
+
+## v3.31.0
+
+__New Features__
+- A new Prompt Box widget available in form authoring allows a form designer to add audio and visual feedback connected to Radio Block widgets. This feature provides a toolset for creating self-guided assessments. See the example in [tangy-forms](https://github.com/Tangerine-Community/tangy-form/blob/master/CHANGELOG.md#v4430). [#3473](https://github.com/Tangerine-Community/Tangerine/issues/3473)
+
+- Client Login Screen Custom HTML: A new app-config.json setting, `customLoginMarkup`, allows for custom HTML to be added to the login screen. This feature is useful for adding custom branding or additional information to the login screen. As an example:
+```json
+"customLoginMarkup": "<div style='text-align: center;'><img src='assets/media/logo.png' alt='logo' style='max-width: 100%;'></div>"
+```
+
+- Add ID Search to Data > Import: A new feature in the Data > Import screen allows users to search for a specific ID in the imported data. This feature is useful for finding specific records synced to the server when reviewing or editing completed form responses. [#3681](https://github.com/Tangerine-Community/Tangerine/issues/3681)
+
+__Fixes__
+- Client Search Service: exclude archived cases from recent activity
+- Improve import of responses using user-profile short code on client [#3696](https://github.com/Tangerine-Community/Tangerine/issues/3696)
+- Media library cannot upload photos [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
+
+__Tangerine Teach__
+
+- Add toggle in Attendence Check for 'late'. A teacher can click through the status of 'present', 'late', or 'absent' for each student.
+- Use `studentRegistrationFields` to control showing name and surname of student in the student dashboard
+
+__Libs and Dependencies__
+- Bump version of `tangy-form` to v4.31.1 and `tangy-form-editor` to v7.18.0 for the new Prompt Box widget
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* NONE
+
+
 ## v3.30.2
 
 __New Features__
 
 - Customizable 'About' Page on client [#3677](https://github.com/Tangerine-Community/Tangerine/pull/3677)
-  -- Form developers can create or update a form with the id 'about'. There is an example form in the [Content Sets](https://github.com/Tangerine-Community/Tangerine/tree/release/v3.30.2/content-sets/default/client/about)
-  -- The form will appear in the 'About' page on the client
+-- Form developers can create or update a form with the id 'about'. There is an example form in the [Content Sets](https://github.com/Tangerine-Community/Tangerine/tree/release/v3.30.2/content-sets/default/client/about)
+-- The form will appear in the 'About' page on the client
 
 __General Updates__
 - Password Visibility -- the login and register screen on the client shows an 'eye' icon used to hide or show passwords
 - Re-organization of the client app menu
+- Reintroduce `registrationRequiresServerUser` app config setting to make managing central user more flexible
+   - use `registrationRequiresServerUser` to require an import code when registering users on the client
+   - use `centrallyManagedUserProfile` to require an import code AND only allow changes to the user profile on the server
+   - use `hideProfile` to hide the manage user profile page from on the client
 
 __Teach Module Updates__
 - Behavior screen show a link instead of a checkbox to access the Behavior form
@@ -139,7 +176,7 @@ __Teach Module Updates__
   - Fix the names not displaying in the tables
 
 __Fixes__
-- [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
+- Get Media Uploads working in Editor [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
 - CSV Generation broken with 'doLocalWorkaround is undefined' error
 
 
@@ -177,14 +214,14 @@ docker rmi tangerine/tangerine:<previous_version>
 
 __New Features__
 - Multiple Location Lists can be configured using the Tangerine server web interface
-  -- Create and manage location lists for use in Tangerine forms
-  -- The default location list is used for device and device user assignment.
+-- Create and manage location lists for use in Tangerine forms
+-- The default location list is used for device and device user assignment.
 - The app-config.json teachProperties has new properties, `"unitDates"` and `"studentRegistrationFields"`:
   ```    
   "unitDates": [{"name": "Unidad 1","start": "2023-02-15", "end": "2023-04-23"}, {"name": "Unidad 2","start": "2023-04-24", "end": "2023-06-30"}], 
   "studentRegistrationFields": ["student_name", "student_surname", "phone", "classId"]
   ```
-  The `unitDates` property is used to configure the dates for each unit in the Class module.
+  The `unitDates` property is used to configure the dates for each unit in the Class module. 
   The `studentRegistrationFields` property is used to configure the fields from the Student Registration form to be saved in the class attendance, behavior, and score register and CSV's.
 - The app-config.json teachProperties has a new property, `"showAttendanceCalendar"`, which enables the Attendance Calendar in the Class module when set to true.
 - Intl/locale support in Class: The class module currently supports the es-gt locale. Add additional locales in class/module.ts:
@@ -226,7 +263,7 @@ docker rmi tangerine/tangerine:<previous_version>
 __New Features__
 
 - The 'teach' content-set now supports an optional 'Attendance' feature, enabled by adding `"useAttendanceFeature": true` and `"homeUrl": "attendance-dashboard"`
-  to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report.
+ to app-config.json. It also has a new Class/Attendance menu which enables collection of those values per student, and an 'Attendance' report. 
 - The Attendance records generate _id's based on the grade, curriculum, user, and date and time of the record, so that they can be sorted chronologically.
   See dashboard.service generateSearchableId for details.
 - Class now supports `eventFormRedirect` to redirect to different url after submit: `on-submit="window.eventFormRedirect = `/attendance-check`"`
@@ -344,6 +381,53 @@ docker rmi tangerine/tangerine:<previous_version>
 ## v3.28
 
 - This became v4
+
+## v3.27.8
+
+__New Features__
+- New server configuration setting for output value of optionally not answered questions
+  - The value set in the config variable `T_REPORTING_MARK_OPTIONAL_NO_ANSWER_WITH` in `config.sh` will be the value of questions that are optional and not answered by the respondent.
+  - The default value is "SKIPPED" for consistency with previous outputs
+- CSV outputs now include the metadata variables `startDateTime` and `endDateTime`  auto-calculated from the `startUnixTime` and `endUnixTime` variables
+- Additional parameter for the csv data set generation process to ignore `user-profile` and `reports` from the output csv files
+
+__Fixes__
+- Copy all media directories from the client form directories to ensure assets are available in online surveys
+- Allows form developers to publish images and sounds in online surveys
+- Fix the language dropdown in online surveys
+- Outputs will no longer try to process outputs for `TANGY-TEMPLTE` inputs
+
+__Breaking Changes__
+- Removes build dependencies for legacy python `mysql` output module
+  - For those using the legacy module, [see the documentation move to the new `mysql-js` module](https://docs.tangerinecentral.org/system-administrator/mysql-js/)
+
+__Package Updates__
+- Lock @ts-stack/markdown to 1.4.0 to prevent breaking of builds
+
+__Server upgrade instructions__
+
+Reminder: Consider using the [Tangerine Upgrade Checklist](https://docs.tangerinecentral.org/system-administrator/upgrade-checklist.html) for making sure you test the upgrade safely.
+
+```
+cd tangerine
+# Check the size of the data folder.
+du -sh data
+# Check disk for free space. Ensure there is at least 10GB + size of the data folder amount of free space in order to perform the upgrade. 
+df -h
+# Turn off tangerine and database.
+docker stop tangerine couchdb
+# Create a backup of the data folder.
+cp -r data ../data-backup-$(date "+%F-%T")
+# Check logs for the past hour on the server to ensure it's not being actively used. Look for log messages like "Created sync session" for Devices that are syncing and "login success" for users logging in on the server. 
+docker logs --since=60m tangerine
+# Fetch the updates.
+git fetch origin
+git checkout -b v3.27.8 v3.27.8
+./start.sh v3.27.8
+# Remove Tangerine's previous version Docker Image.
+docker rmi tangerine/tangerine:v3.27.7
+```
+
 
 ## v3.27.7
 
@@ -496,7 +580,7 @@ git fetch origin
 git checkout v3.27.2
 ./start.sh v3.27.2
 # Remove Tangerine's previous version Docker Image.
-docker rmi tangerine/tangerine:v3.27.1
+docker rmi tangerine/tangerine:v3.27.2
 ```
 
 ## v3.27.2
@@ -656,7 +740,6 @@ docker logs --since=60m tangerine
 git fetch origin
 git checkout v3.26.2
 ./start.sh v3.26.2
->>>>>>> main
 # Remove Tangerine's previous version Docker Image.
 docker rmi tangerine/tangerine:v3.26.1
 ```

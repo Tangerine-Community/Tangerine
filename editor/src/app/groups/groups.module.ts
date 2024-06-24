@@ -106,6 +106,7 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MessageService} from "../message.service";
 import {RequestCache, RequestCacheWithMap} from "../request-cache.service";
 // import { RequestCache, RequestCacheWithMap } from './request-cache.service';
+import { GroupUploadsEditComponent } from './group-uploads-edit/group-uploads-edit.component';
 
 
 @NgModule({
@@ -215,7 +216,8 @@ import {RequestCache, RequestCacheWithMap} from "../request-cache.service";
     GroupDatabaseConflictsComponent,
     DownloadStatisticalFileComponent,
     GroupDevicePasswordPolicyComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    GroupUploadsEditComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService, MessageService,
     { provide: RequestCache, useClass: RequestCacheWithMap }, ],

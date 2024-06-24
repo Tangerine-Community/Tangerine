@@ -36,3 +36,6 @@ mat-cell, mat-header-cell {
 .mat-mdc-header-cell, .mat-mdc-cell {
   padding-left: 5px;
 }
+.mat-row{
+  cursor: pointer;
+}

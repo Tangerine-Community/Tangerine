@@ -1,4 +1,4 @@
-import {Component, AfterContentInit, ChangeDetectorRef, OnDestroy, ViewChild, Input} from '@angular/core';
+import {Component, AfterContentInit, ChangeDetectorRef} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -7,9 +7,6 @@ import { CaseEvent } from '../../classes/case-event.class';
 import {Issue} from "../../classes/issue.class";
 import {GroupIssuesService} from "../../../groups/services/group-issues.service";
 import axios from "axios";
-import {TangyFormService} from "../../../tangy-forms/tangy-form.service";
-import {TangyFormsPlayerComponent} from "../../../tangy-forms/tangy-forms-player/tangy-forms-player.component";
-import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 import {ProcessMonitorService} from "../../../shared/_services/process-monitor.service";
@@ -42,8 +39,6 @@ export class CaseComponent implements AfterContentInit {
   groupId:string
   caseId:string
   hideRestore: boolean = false
-  // @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
-  @ViewChild('proposedFormResponseContainer', {static: false}) proposedFormResponseContainer:TangyFormsPlayerComponent
   hideFormPlayer = true
   step = -1;
   process: any;
@@ -56,7 +51,6 @@ export class CaseComponent implements AfterContentInit {
     private ref: ChangeDetectorRef,
     authenticationService: AuthenticationService,
     private groupIssuesService:GroupIssuesService,
-    private tangyFormService: TangyFormService,
     private processMonitorService: ProcessMonitorService
   ) {
     ref.detach()
@@ -134,6 +128,7 @@ export class CaseComponent implements AfterContentInit {
         return (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0)
           && undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id)
       })
+    
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
     this.ref.detectChanges()
@@ -219,7 +214,7 @@ export class CaseComponent implements AfterContentInit {
   async onSubmit() {
     const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
     if (this.selectedNewEventType !== '') {
-      const caseEvent = await this.caseService.createEvent(this.selectedNewEventType)
+      var caseEvent = this.caseService.createEvent(this.selectedNewEventType)
       await this.caseService.onCaseEventCreate(caseEvent)
       await this.caseService.save()
       this.calculateTemplateData()

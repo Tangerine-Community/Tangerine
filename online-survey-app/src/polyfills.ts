@@ -91,6 +91,7 @@ import 'tangy-form/input/tangy-radio-blocks.js';
 import 'tangy-form/input/tangy-video-capture.js';
 import 'tangy-form/input/tangy-scan-image.js';
 import 'tangy-form/input/tangy-acuity-chart.js';
+import 'tangy-form/input/tangy-prompt-box.js';
 
 import 'translation-web-component/t-select.js'
 
