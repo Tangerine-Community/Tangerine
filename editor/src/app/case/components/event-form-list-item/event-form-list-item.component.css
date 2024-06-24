@@ -46,15 +46,3 @@
 	line-height: var(--paper-font-body1_-_line-height);
 	color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
 }
-paper-button {
-    color: #a72605;
-	background: var(--accent-text-color);
-	/* float: right; */
-	width: min-content;
-}
-.tangy-spacer{
-    flex: 1 1 auto;
-}
-paper-button>mwc-icon{
-	font-size: xx-large;
-}

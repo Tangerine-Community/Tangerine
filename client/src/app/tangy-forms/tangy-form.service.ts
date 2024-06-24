@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { FormInfo } from './classes/form-info.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import {TangyFormsInfoService} from './tangy-forms-info-service';
-import {FormVersion} from "./classes/form-version.class";
 import * as jsonpatch from "fast-json-patch";
 
 

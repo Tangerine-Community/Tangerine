@@ -201,30 +201,29 @@ div.more {
   padding-left: 31px;
 
 }
-/* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.*/
-//.mat-tab-label-content {
-//  text-transform: uppercase;
-//}
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
-//mat-card.mat-mdc-card {
-//  background-color: white;
-//}
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
-//mat-card {
-//  margin: 15px 15px 15px;
-//  background: white;
-//}
+.mat-tab-label-content {
+  text-transform: uppercase;
+}
+.mat-tab-content {
+  margin-left: 8px;
+}
+mat-card.mat-card {
+  background-color: white;
+}
+mat-card {
+  margin: 15px 15px 15px;
+  background: white;
+}
 
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
-//mat-card-content > * {
-//  width: 220px;
-//  margin: 4em auto;
-//  padding: 3em 2em 2em 2em;
-//  background: var(--accent-text-color);
-//  border: 1px solid #ebebeb;
-//  box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px,
-//    rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
-//}
+mat-card-content > * {
+  width: 220px;
+  margin: 4em auto;
+  padding: 3em 2em 2em 2em;
+  background: var(--accent-text-color);
+  border: 1px solid #ebebeb;
+  box-shadow: rgba(0, 0, 0, 0.14902) 0px 1px 1px 0px,
+    rgba(0, 0, 0, 0.09804) 0px 1px 2px 0px;
+}
 
 .group {
   position: relative;

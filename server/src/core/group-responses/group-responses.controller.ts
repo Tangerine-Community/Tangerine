@@ -1,6 +1,8 @@
 import { GroupResponsesService } from './../../shared/services/group-responses/group-responses.service';
-import { Controller, All, Param, Body } from '@nestjs/common';
+import { Controller, All, Param, Body , Req} from '@nestjs/common';
 import { SSL_OP_TLS_BLOCK_PADDING_BUG } from 'constants';
+import { Request } from 'express';
+import { decodeJWT } from 'src/auth-utils';
 const log = require('tangy-log').log
 
 @Controller('group-responses')
@@ -48,8 +50,9 @@ export class GroupResponsesController {
   }
 
   @All('update/:groupId')
-  async update(@Param('groupId') groupId, @Body('response') response:any) {
-    const freshResponse = await this.groupResponsesService.update(groupId, response)
+  async update(@Param('groupId') groupId, @Body('response') response:any, @Req() request:Request) {
+    const tangerineModifiedByUserId = decodeJWT(request['headers']['authorization'])['username']
+    const freshResponse = await this.groupResponsesService.update(groupId, {...response, tangerineModifiedByUserId})
     return freshResponse
   }
 

@@ -136,7 +136,7 @@ export class CaseComponent implements AfterContentInit, OnDestroy {
   async onSubmit() {
     const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
     if (this.selectedNewEventType !== '') {
-      const caseEvent = await this.caseService.createEvent(this.selectedNewEventType)
+      const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
       await this.caseService.onCaseEventCreate(caseEvent)
       await this.caseService.save()
       this.calculateTemplateData()

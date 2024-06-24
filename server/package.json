@@ -29,6 +29,7 @@
     "update-group-archived-index": "./src/scripts/update-group-archived-index.js",
     "find-missing-records": "./src/scripts/find-missing-records.js",
     "import-archives": "./src/scripts/import-archives/bin.js",
+    "import-archives-v2": "./src/scripts/import-archives-v2/bin.js",
     "reset-all-devices": "./src/scripts/reset-all-devices/bin.js",
     "translations-update": "./src/scripts/translations-update.js",
     "release-dat": "./src/scripts/release-dat.sh",
