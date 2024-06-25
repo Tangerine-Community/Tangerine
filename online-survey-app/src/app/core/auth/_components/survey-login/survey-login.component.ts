@@ -26,7 +26,9 @@ export class SurveyLoginComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'forms-list';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] ||
+                      localStorage.getItem('caseUrlHash') ||
+                      'forms-list';
 
     if (await this.authenticationService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);

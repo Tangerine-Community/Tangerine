@@ -68,6 +68,9 @@ export class TangyFormsPlayerComponent implements OnInit {
         }
         this.window.caseService = this.caseService
 
+        // Store the caseUrlHash in localStorage so that we can redirect to the correct page after logout -> login
+        localStorage.setItem('caseUrlHash', `/case/event/form/${this.caseId}/${this.caseEventId}/${this.eventFormId}`);
+
         this.metadata = {
           caseId: this.caseId,
           caseEventId: this.caseEventId,
