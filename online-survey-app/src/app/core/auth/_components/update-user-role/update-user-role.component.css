@@ -1,0 +1,16 @@
+.tangy-input-width{
+    width: 80%;
+}
+
+p {
+    margin: 15px;
+}
+
+mat-checkbox{
+    display: block;
+    margin: 0 10px;
+}
+
+button {
+    margin-left: 15px;
+}
