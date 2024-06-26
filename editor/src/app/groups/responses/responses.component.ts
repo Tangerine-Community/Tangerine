@@ -9,6 +9,7 @@ import * as moment from 'moment'
 import { t } from 'tangy-form/util/t.js'
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { _TRANSLATE } from 'src/app/shared/translation-marker';
 
 @Component({
   selector: 'app-responses',
@@ -23,6 +24,7 @@ export class ResponsesComponent implements OnInit {
   @Input() excludeColumns:Array<string> = []
   @Input() hideFilterBy = false
   @Input() hideActionBar = false
+  @Input() showArchiveButton = false
   @ViewChild('searchBar', {static: true}) searchBar: ElementRef
   @ViewChild('searchResults', {static: true}) searchResults: ElementRef
   onSearch$ = new Subject()
@@ -129,11 +131,21 @@ export class ResponsesComponent implements OnInit {
     this.skip = 0;
     this.getResponses();
   }
-  async deleteResponse(id) {
-    if(confirm('Are you sure you want to delete this form response?')) {
-      await this.http.delete(`/api/${this.groupId}/${id}`).toPromise()
-      this.getResponses()
+  async archiveResponse(id) {
+   try {
+    if(confirm(_TRANSLATE('Are you sure you want to archive this form response?'))) {
+      const result = await this.http.patch(`/group-responses/patch/${this.groupId}/${id}`,{archived:true}).toPromise()
+      if(result){
+        alert(_TRANSLATE('Archived successfully.'))
+        this.getResponses()
+      }else{
+        alert(_TRANSLATE('Archival was unsuccessful. Please try again.'))
+      }
     }
+   } catch (error) {
+    alert(_TRANSLATE('Archival was unsuccessful. Please try again.'))
+    console.log(error)
+   }
   }
   nextPage() {
     this.skip = this.skip + this.limit
@@ -156,8 +168,8 @@ export class ResponsesComponent implements OnInit {
   onRowEdit(row) {
     this.router.navigate([row._id ? row._id : row.id], {relativeTo: this.route})
   }
-  onRowDelete(row) {
-    this.deleteResponse(row._id ? row._id : row.id)
+  onRowArchive(row) {
+    this.archiveResponse(row._id ? row._id : row.id)
   }
   onRowClick(row){
     this.router.navigate([row._id ? row._id : row.id], {relativeTo: this.route})
