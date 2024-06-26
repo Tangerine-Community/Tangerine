@@ -243,9 +243,11 @@ const  generateFlatResponse = async function (formResponse, sanitized, groupId) 
     deviceId: formResponse.deviceId || '',
     groupId: formResponse.groupId || '',
     complete: formResponse.complete,
+    verified: formResponse?.verified||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
     // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
-    archived: formResponse.archived,
-    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
+    archived: formResponse?.archived||'',
+    tangerineModifiedByUserId: formResponse?.tangerineModifiedByUserId||'',
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,
       eventId: formResponse.eventId,
