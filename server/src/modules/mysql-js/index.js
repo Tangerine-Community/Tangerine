@@ -319,7 +319,10 @@ const generateFlatResponse = async function (formResponse, sanitized) {
     deviceId: formResponse.deviceId||'',
     groupId: groupId||'',
     complete: formResponse.complete,
-    archived: formResponse.archived||''
+    archived: formResponse?.archived||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
+    tangerineModifiedByUserId: formResponse?.tangerineModifiedByUserId||'',
+    verified: formResponse?.verified||''
   };
 
   if (!formResponse.formId) {

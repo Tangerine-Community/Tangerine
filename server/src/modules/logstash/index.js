@@ -115,7 +115,11 @@ const generateFlatResponse = async function (formResponse, locationList) {
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
-    complete: formResponse.complete
+    complete: formResponse.complete,
+    verified: formResponse?.verified||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
+    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId||'',
+    archived: formResponse?.archived||'',
   };
 
   let formID = formResponse.form.id;
