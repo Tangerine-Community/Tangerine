@@ -18,6 +18,7 @@ export class GroupUploadsViewComponent implements OnInit {
   @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
   responseId
   groupId
+  formResponse
  
   constructor(
     private route:ActivatedRoute,
@@ -26,8 +27,8 @@ export class GroupUploadsViewComponent implements OnInit {
     private tangyFormService: TangyFormService,
   ) { }
 
-  ngOnInit() {
-    this.route.params.subscribe(params => {
+  async ngOnInit() {
+    this.route.params.subscribe(async params => {
       this.responseId = params.responseId
       this.groupId = params.groupId
       this.breadcrumbs = [
@@ -41,6 +42,7 @@ export class GroupUploadsViewComponent implements OnInit {
         }
       ]
       this.formPlayer.formResponseId = params.responseId
+      this.formResponse = await this.tangyFormService.getResponse(params.responseId)
       this.formPlayer.render()
       this.formPlayer.$submit.subscribe(async () => {
         this.formPlayer.saveResponse(this.formPlayer.formEl.store.getState())
@@ -49,10 +51,38 @@ export class GroupUploadsViewComponent implements OnInit {
     })
   }
 
-  async delete(){
-    if(confirm('Are you sure you want to delete this form response?')) {
-      await this.http.delete(`/api/${this.groupId}/${this.responseId}`).toPromise()
-      this.router.navigate([`../`], { relativeTo: this.route })
+  async archive(){
+    if(confirm('Are you sure you want to archive this form response?')) {
+      try {
+        const data = {...this.formPlayer.formEl.store.getState(), archived:true};
+        const result = await this.tangyFormService.saveResponse(data)
+        if(result){
+          alert(_TRANSLATE('Archived successfully.'))
+          this.router.navigate([`../`], { relativeTo: this.route })
+        }else{
+          alert(_TRANSLATE('Archival was unsuccessful. Please try again.'))
+        }
+      } catch (error) {
+        alert(_TRANSLATE('Archival was unsuccessful. Please try again.'))
+        console.log(error)
+      }
+    }
+  }
+  async unarchive(){
+    if(confirm(_TRANSLATE('Are you sure you want to unarchive this form response?'))) {
+      try {
+        const data = {...this.formPlayer.formEl.store.getState(), archived:false};
+        const result = await this.tangyFormService.saveResponse(data)
+        if(result){
+          alert(_TRANSLATE('Unarchived successfully.'))
+          this.router.navigate([`../`], { relativeTo: this.route })
+        }else{
+          alert(_TRANSLATE('Unarchival was unsuccessful. Please try again.'))
+        }
+      } catch (error) {
+        alert(_TRANSLATE('Unarchival was unsuccessful. Please try again.'))
+        console.log(error)
+      }
     }
   }
 
@@ -68,6 +98,21 @@ export class GroupUploadsViewComponent implements OnInit {
       }
     } catch (error) {
       alert(_TRANSLATE('Verification was unsuccessful. Please try again.'))
+      console.log(error)
+    }
+  }
+  async unverify(){
+    try {
+      const data = {...this.formPlayer.formEl.store.getState(), verified:false};
+      const result = await this.tangyFormService.saveResponse(data)
+      if(result){
+        alert(_TRANSLATE('Unverified successfully.'))
+        this.router.navigate([`../`], { relativeTo: this.route })
+      }else{
+        alert(_TRANSLATE('Unverification was unsuccessful. Please try again.'))
+      }
+    } catch (error) {
+      alert(_TRANSLATE('Unverification was unsuccessful. Please try again.'))
       console.log(error)
     }
   }
