@@ -6,9 +6,12 @@ import { AppConfigService } from './app-config.service';
 @Injectable({
   providedIn: 'root'
 })
-export class FormsServiceService {
+export class FormsService {
 
-  constructor(private httpClient: HttpClient, private appConfigService: AppConfigService) { }
+  constructor(
+    private httpClient: HttpClient, 
+    private appConfigService: AppConfigService
+  ) { }
 
   async getForms(): Promise<Form[]> {
     try {
@@ -37,15 +40,15 @@ export class FormsServiceService {
 
   async uploadFormResponse(formResponse): Promise<boolean>{
     try {
-      const {formUploadURL, groupId, uploadKey} = await this.appConfigService.getAppConfig();
+      const config = await this.appConfigService.getAppConfig();
 
       // Set the groupId or it will be missing from the form
       // TODO: Move this logic to tangy-form so it happens for all responses
-      formResponse.groupId = groupId
+      formResponse.groupId = config.groupId
 
       const headers = new HttpHeaders();
-      headers.set('formUploadToken', uploadKey);
-      const data = await this.httpClient.post(formUploadURL, formResponse, {headers, observe: 'response'}).toPromise();
+      headers.set('formUploadToken', config.uploadKey);
+      const data = await this.httpClient.post(config.formUploadURL, formResponse, {headers, observe: 'response'}).toPromise();
       return data.status === 200;
     } catch (error) {
       console.error(error);

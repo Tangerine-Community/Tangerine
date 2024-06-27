@@ -1,0 +1,33 @@
+mat-card {
+  width: 300px;
+  margin: 30px auto;
+}
+.mat-title {
+  color: var(--primary-color);
+  font-size: 1.5em;
+  font-weight: 400;
+  font-family: Roboto, 'Helvetica Nue', sans-serif;
+}
+#logo {
+  margin-bottom: 15px;
+}
+mat-placeholder i {
+  margin-right: 0.075em;
+}
+
+input.mat-input-element {
+  margin-top: 1em;
+}
+
+.mat-placeholder-required.mat-form-field-required-marker.ng-tns-c6-2
+  .mat-form-field-invalid
+  .mat-form-field-placeholder.mat-accent,
+.mat-form-field-invalid
+  .mat-form-field-placeholder
+  .mat-form-field-required-marker {
+  position: relative;
+  bottom: 1em !important;
+}
+.mat-form-field {
+  width: 100%;
+}

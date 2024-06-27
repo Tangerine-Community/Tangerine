@@ -398,10 +398,11 @@ export class GroupsService {
     }
   }
 
-  async publishSurvey(groupId, formId, releaseType = 'prod', appName) {
+  async publishSurvey(groupId, formId, releaseType = 'prod', appName, locked=false) {
     try {
-      const response = await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId}, {observe: 'response'}).toPromise();
-      await this.httpClient.get(`/editor/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}/${response.body['uploadKey']}`).toPromise()
+      const response = await this.httpClient.post(`/onlineSurvey/publish/${groupId}/${formId}`, {groupId, formId, locked}, {observe: 'response'}).toPromise();
+      const uploadKey = response.body['uploadKey']
+      await this.httpClient.post(`/editor/release-online-survey-app/${groupId}/${formId}/${releaseType}/${appName}`, {uploadKey, locked}).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

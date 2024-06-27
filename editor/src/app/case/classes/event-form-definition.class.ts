@@ -15,6 +15,7 @@ export class EventFormDefinition {
   allowDeleteIfFormNotStarted:string
   onEventFormOpen?:string
   onEventFormClose?:string
+  allowOnline?:boolean
 
   constructor() {
   }

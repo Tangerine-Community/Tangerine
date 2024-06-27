@@ -5,6 +5,22 @@
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
+	<span *ngIf="!eventFormArchived && !eventForm.formResponseId && canLinkToOnlineSurvey">
+		<button class="tangy-small-list-icon" [matMenuTriggerFor]="linkMenu" (click)="showLinkMenu(); $event.stopPropagation()">
+			<mwc-icon>share</mwc-icon>
+		</button>
+		<mat-menu #linkMenu="matMenu">
+			<button mat-menu-item tangy-small-list-icon (click)="onCopyLinkClick()">
+				<mwc-icon>link</mwc-icon>
+			</button>
+			<button mat-menu-item tangy-small-list-icon (click)="onQRCodeLinkClick()">
+				<mwc-icon>qr_code</mwc-icon>
+			</button>
+			<button mat-menu-item tangy-small-list-icon (click)="$event.stopPropagation()">
+				<a href="{{surveyLinkUrl}}" target="_new"><mwc-icon>open_in_new</mwc-icon></a>
+			</button>
+		</mat-menu>
+	</span>
 	<span *ngIf="canUserDeleteForms">
 		<button (click)="onDeleteFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
 			<mwc-icon>delete</mwc-icon>

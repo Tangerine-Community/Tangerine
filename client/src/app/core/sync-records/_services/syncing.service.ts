@@ -61,7 +61,7 @@ export class SyncingService {
           doc['items'][0]['inputs'].push({ name: 'tabletUserName', value: username });
           // Redact any fields marked as private.
           doc['items'].forEach(item => {
-            item['inputs'].forEach(input => {
+          item['inputs'].forEach(input => {
               if (input.private) {
                 input.value = '';
               }

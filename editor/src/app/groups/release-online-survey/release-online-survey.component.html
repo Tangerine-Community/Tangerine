@@ -3,15 +3,7 @@
   <h2>Instructions: </h2>
 
   <div>
-    In the Unpublished Surveys section, click the
-    <button class="info-button">
-      <i class="material-icons tangy-location-list-icon">published_with_changes</i>
-    </button>
-    button to "Publish" an online survey. It will then be listed in the Published Surveys section.
-  </div>
-
-  <div>
-    In the Published Surveys section, use the link
+    In the <strong>Published Surveys</strong> section, use the link
     <button class="info-button">
       <i class="material-icons tangy-location-list-icon">link</i>
     </button> 
@@ -21,14 +13,40 @@
         <i class="material-icons tangy-location-list-icon">unpublished</i>
       </button>
       button to "Un-publish" an online survey.
+      The 
+      <button class="info-button">
+        <i class="material-icons tangy-location-list-icon">lock</i>
+      </button> button appears for surveys that require a Device User and Access Code.
   </div>
+
+  <div>
+    In the <strong>Unpublish Surveys</strong> section, click the
+    <button class="info-button">
+      <i class="material-icons tangy-location-list-icon">published_with_changes</i>
+    </button>
+    button to "Publish" an online survey. It will then be listed in the Published Surveys section.
+    To 'Publish' a survey and require a Device User to provide an Access Code, click the 
+    <button class="info-button">
+      <i class="material-icons tangy-location-list-icon">lock</i>
+    </button> button.
+  </div>
+
+  <div>
+
+  </div>
+
 </div>
 <h2 class="tangy-foreground-secondary">{{'Published Surveys'|translate}}</h2>
 <mat-list class="drag-list">
   <mat-list-item class="drag-item" *ngFor="let form of publishedSurveys; let index=index">
     <span>{{index+1}}</span>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span>&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
+    <span *ngIf="form.locked">
+      <button mat-icon-button class="lock-button">
+        <i class="material-icons mat-32 tangy-location-list-icon">lock</i>
+      </button>
+    </span>
     <span>{{form.updatedOn|date :'medium'}}
     </span>
 
@@ -47,14 +65,15 @@
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
-
+    <span >{{form.updatedOn|date :'medium'}}
     <span *appHasAPermission="let i;group:group._id; permission:'can_manage_forms'">
-      <button mat-icon-button (click)="publishSurvey(form.id, form.title)">
+      <button mat-icon-button (click)="publishSurvey(form.id, form.title, false)">
         <i class="material-icons mat-32 tangy-location-list-icon">published_with_changes</i>
       </button>
+      <button mat-icon-button (click)="publishSurvey(form.id, form.title, true)">
+        <i class="material-icons mat-32 tangy-location-list-icon">lock</i>
+      </button>
     </span>
-
-    <span >{{form.updatedOn|date :'medium'}}
     </span>
   </mat-list-item>
 </mat-list>

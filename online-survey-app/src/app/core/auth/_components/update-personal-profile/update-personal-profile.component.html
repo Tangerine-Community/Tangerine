@@ -1,0 +1,68 @@
+<h1 class="tangy-foreground-secondary" *ngIf="user; else elseBlock">
+  {{'Edit User'|translate }} {{user.username}}
+</h1>
+<ng-template #elseBlock>
+  <h1 class="tangy-foreground-secondary">
+    {{'Edit User'|translate }}
+  </h1>
+</ng-template>
+<div id="container" *ngIf="user">
+  <form class="tangy-full-width" novalidate #editUserForm="ngForm">
+    
+    <mat-form-field class="tangy-full-width">
+      <input name="firstName" [(ngModel)]="user.firstName" #firstName="ngModel" matInput placeholder="{{'First Name'|translate}}"
+        required>
+        <mat-error *ngIf="(firstName.invalid||firstName.errors) && (firstName.dirty || firstName.touched)">
+          {{'This Field is Required'|translate}}
+        </mat-error>
+    </mat-form-field>
+    <br>
+    <br>
+    <mat-form-field class="tangy-full-width">
+      <input name="lastName" [(ngModel)]="user.lastName" #lastName="ngModel" matInput placeholder="{{'Last Name'|translate}}"
+        required>
+        <mat-error *ngIf="(lastName.invalid||lastName.errors) && (lastName.dirty || lastName.touched)">
+          {{'This Field is Required'|translate}}
+        </mat-error>
+    </mat-form-field>
+    <br>
+    <br>
+    <mat-form-field class="tangy-full-width">
+      <input name="email" [(ngModel)]="user.email" #email="ngModel" name="email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+        matInput placeholder="{{'Email'|translate}}" required>
+      <mat-error *ngIf="(email.invalid||email.errors) && (email.dirty || email.touched)">
+        {{'Please enter a valid email address'|translate}}
+      </mat-error>
+    </mat-form-field>
+    <br>
+    <br>
+    <mat-checkbox [(ngModel)]="updateUserPassword" name="updateUserPassword">Update User password?</mat-checkbox>
+    <br>
+    <br>
+    <div *ngIf="updateUserPassword">
+      <mat-form-field class="tangy-full-width">
+        <input name="password" type="password" [(ngModel)]="user.currentPassword" #currentPassword="ngModel" matInput placeholder="{{'Current Password'|translate}}"
+          required>
+      </mat-form-field>
+      <mat-form-field class="tangy-full-width">
+        <input name="password" [(ngModel)]="user.password" #password="ngModel" type="password" matInput placeholder="{{'New Password'|translate}}"
+          required>
+      </mat-form-field>
+      <br>
+      <br>
+      <mat-form-field class="tangy-full-width">
+        <input name="confirmPassword" [(ngModel)]="user.confirmPassword" #confirmPassword="ngModel" type="password" matInput placeholder="{{'Confirm Password'|translate}}"
+          required>
+        <mat-error *ngIf="(user.password!==user.confirmPassword) && ((confirmPassword.dirty || confirmPassword.touched)||(password.dirty||password.touched))">
+          {{'Passwords do not match'|translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <span [id]="statusMessage.type" *ngIf="statusMessage.type==='error'">
+        <small>{{statusMessage.message}}</small>
+    </span>
+    <p>
+    <button [disabled]="editUserForm.invalid||(user.confirmPassword!==user.password)||disableSubmit" mat-raised-button color="warn" (click)="editUser()">{{'UPDATE DETAILS'|translate}}</button>
+    </p>
+  </form>
+</div>
