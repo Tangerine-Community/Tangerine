@@ -1,16 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { UserService } from './user.service';
 import { Subject } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 
 @Injectable()
 export class AuthenticationService {
   public currentUserLoggedIn$: any;
   private _currentUserLoggedIn: boolean;
-  constructor(private userService: UserService, private http: HttpClient, private errorHandler: TangyErrorHandler) {
+  constructor(
+    private http: HttpClient,
+    private appConfigService: AppConfigService
+  ) {
     this.currentUserLoggedIn$ = new Subject();
   }
 
@@ -33,7 +35,10 @@ export class AuthenticationService {
     }
   }
 
-  async surveyLogin(groupId: string, accessCode: string) {
+  async surveyLogin(accessCode: string) {
+    const appConfig = await this.appConfigService.getAppConfig();
+    const groupId = appConfig['groupId'];
+
     try {
       const data = await this.http.post(`/onlineSurvey/login/${groupId}/${accessCode}`, {groupId, accessCode}, {observe: 'response'}).toPromise();
       if (data.status === 200) {
@@ -71,9 +76,12 @@ export class AuthenticationService {
   }
 
   async extendUserSession() {
-    const username = localStorage.getItem('user_id');
+    const appConfig = await this.appConfigService.getAppConfig();
+    const groupId = appConfig['groupId'];
+    const accessCode = localStorage.getItem('user_id');
+
     try {
-      const data = await this.http.post('/extendSession', {username}, {observe: 'response'}).toPromise();
+      const data = await this.http.post(`/onlineSurvey/login/${groupId}/${accessCode}`, {groupId, accessCode}, {observe: 'response'}).toPromise();
       if (data.status === 200) {
         const token = data.body['data']['token'];
        await this.setTokens(token);

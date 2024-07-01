@@ -9,8 +9,6 @@ const login = async (req, res) => {
 
     const { groupId, accessCode } = req.params;
 
-    console.log('login', groupId, accessCode);
-
     const groupDb = new DB(groupId)
     let options = { key: accessCode, include_docs: true }
     if (req.params.limit) {
@@ -24,14 +22,16 @@ const login = async (req, res) => {
     const userProfileDoc = docs.find(doc => doc.form.id === 'user-profile');
 
     if (userProfileDoc) {
-      debugger;
       let permissions = {groupPermissions: [], sitewidePermissions: []};
       const token = createLoginJWT({ "username": accessCode, permissions });
       return res.status(200).send({ data: { token } });
+    } else {
+      console.error(error);
+      return res.status(401).send({ data: 'Invalid Credentials' });
     }
   } catch (error) {
     console.error(error);
-    return res.status(401).send({ data: 'Invalid Credentials' });
+    return res.status(500).send({ data: 'An error occurred attempting to login' });
   }
 }
 
