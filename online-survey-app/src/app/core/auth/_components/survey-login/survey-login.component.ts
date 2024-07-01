@@ -2,8 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
-import { AppConfigService } from 'src/app/shared/_services/app-config.service';
-
 
 @Component({
   selector: 'survey-login',
@@ -20,7 +18,6 @@ export class SurveyLoginComponent implements OnInit {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private appConfigService: AppConfigService,
     private route: ActivatedRoute,
     private router: Router,
   ) { }
@@ -55,11 +52,7 @@ export class SurveyLoginComponent implements OnInit {
 
   async loginUser() {
     try {
-
-      const appConfig = await this.appConfigService.getAppConfig();
-      const groupId = appConfig['groupId'];
-
-      if (await this.authenticationService.surveyLogin(groupId, this.user.accessCode)) {
+      if (await this.authenticationService.surveyLogin(this.user.accessCode)) {
         this.router.navigate([this.returnUrl]);
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccessful');
