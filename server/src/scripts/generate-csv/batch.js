@@ -27,7 +27,6 @@ function getData(dbName, formId, skip, batchSize, year, month) {
     try {
       const key = (year && month) ? `${formId}_${year}_${month}` : formId
       const target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
-      console.log(target)
       axios.get(target)
         .then(response => {
           resolve(response.data.rows.map(row => row.doc))
@@ -44,13 +43,9 @@ function getData(dbName, formId, skip, batchSize, year, month) {
 
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
-  console.log("state.skip: " + state.skip)
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
-  console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
   let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
-  console.log("csvReplacementCharacters: " + JSON.stringify(csvReplacementCharacters))
-  // let csvReplacement = csvReplacementCharacters? JSON.parse(csvReplacementCharacters) : false
   if (docs.length === 0) {
     state.complete = true
   } else {
@@ -67,7 +62,6 @@ async function batch() {
             // skip
           } else {
             let value = doc[header];
-            console.log("header: " + header + " value: " + value)
             if (typeof value === 'string') {
               if (csvReplacementCharacters) {
                 csvReplacementCharacters.forEach(expression => {
@@ -85,7 +79,6 @@ async function batch() {
               }
             }
             if (typeof header === 'string' && header.split('.').length === 3) {
-              console.log("Checking header: " + header + " to see if it is disabled.")
               const itemId = header.split('.')[1]
               if (itemId && doc[`${itemId}_disabled`] === 'true') {
                 if (outputDisabledFieldsToCSV) {
@@ -113,7 +106,6 @@ async function batch() {
           doc.attendanceList.forEach(attendance => {
             let row = [doc._id, ...state.headersKeys.map(header => {
               let value = attendance[header];
-              console.log("header: " + header + " value: " + value)
               return value
             })]
             rows.push(row)
@@ -122,7 +114,6 @@ async function batch() {
           doc.scoreList.forEach(score => {
             let row = [doc._id, ...state.headersKeys.map(header => {
               let value = score[header];
-              console.log("header: " + header + " value: " + value)
               return value
             })]
             rows.push(row)
@@ -131,7 +122,6 @@ async function batch() {
           doc.studentBehaviorList.forEach(behavior => {
             let row = [doc._id, ...state.headersKeys.map(header => {
               let value = behavior[header];
-              console.log("header: " + header + " value: " + value)
               return value
             })]
             rows.push(row)
