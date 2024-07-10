@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { _TRANSLATE } from './shared/_services/translation-marker';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
@@ -63,9 +63,14 @@ export class AppComponent implements OnInit{
       this.isConfirmDialogActive = true;
       const extendSession = confirm(_TRANSLATE('You are about to be logged out. Should we extend your session?'));
       if (extendSession) {
-        await this.authenticationService.extendUserSession();
         this.isConfirmDialogActive = false;
+        const extendedSession = await this.authenticationService.extendUserSession();
+        if (!extendedSession) {
+          await this.logout();
+        }
       } else {
+        this.isConfirmDialogActive = false;
+
         await this.logout();
       }
     } else if (Date.now() > expiryTimeInMs && this.isConfirmDialogActive) {
@@ -79,5 +84,11 @@ export class AppComponent implements OnInit{
     await this.authenticationService.logout();
     this.loggedIn = false;
     this.router.navigate(['/survey-login']);
+  }
+
+  @HostListener("window:unload",["$event"])
+  async onUnload(event) {
+    clearInterval(this.sessionTimeoutCheckTimerID);
+    await this.authenticationService.logout();
   }
 }
