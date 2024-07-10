@@ -119,7 +119,7 @@ export class TangyFormsPlayerComponent implements OnInit {
         event.preventDefault();
 
         let response = event.target.store.getState()
-        this.throttledSaveResponse(response)
+        await this.throttledSaveResponse(response)
 
         if (this.caseService && this.caseService.caseEvent && this.caseService.eventForm) {
           this.caseService.markEventFormComplete(this.caseService.caseEvent.id, this.caseService.eventForm.id)
