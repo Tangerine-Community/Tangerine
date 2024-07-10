@@ -26,7 +26,6 @@ const login = async (req, res) => {
       const token = createLoginJWT({ "username": accessCode, permissions });
       return res.status(200).send({ data: { token } });
     } else {
-      console.error(error);
       return res.status(401).send({ data: 'Invalid Credentials' });
     }
   } catch (error) {

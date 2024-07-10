@@ -91,6 +91,7 @@ export class AuthenticationService {
       }
     } catch (error) {
       console.log(error);
+      return false;
     }
   }
 
