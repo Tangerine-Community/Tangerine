@@ -14,8 +14,8 @@ module.exports = async (req, res) => {
       options.skip = req.params.skip
     }
     if (req.query.totalRows) {
-      const results = await groupDb.query('responsesByUserProfileShortCode', { key: userProfileShortCode, limit: 1,skip: 0, include_docs: false });
-      res.send({ totalDocs: results.total_rows })
+      const results = await groupDb.query('totalDocsByUserProfileShortCode', { key: userProfileShortCode, limit: 1,skip: 0, include_docs: false, reduce:true, group:true });
+      res.send({ totalDocs: results.rows[0].value })
     } else if (req.query.userProfile) {
       await groupDb.query("userProfileByUserProfileShortCode", { limit: 0 });
       const result = await groupDb.query("userProfileByUserProfileShortCode", { key: userProfileShortCode, limit: 1, include_docs: true });
@@ -28,7 +28,6 @@ module.exports = async (req, res) => {
       res.send(docs)
     }
   } catch (error) {
-    console.log(error)
     log.error(error);
     res.status(500).send(error);
   }
