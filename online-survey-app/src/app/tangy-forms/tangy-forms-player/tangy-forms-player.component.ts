@@ -49,16 +49,19 @@ export class TangyFormsPlayerComponent implements OnInit {
     });
   }
 
-  async ngOnInit(): Promise<any> {   
-    const groupId = window.location.pathname.split('/')[4]; 
-    this.tangyFormService.initialize(groupId);
-
+  async ngOnInit(): Promise<any> {
     this.window = window;
 
-    // Loading the formResponse must happen before rendering the innerHTML
+    // Loading the formResponse from a case must happen before rendering the innerHTML
     let formResponse;
     if (this.caseId && this.caseEventId && this.eventFormId) {
+      // Store the caseUrlHash in localStorage so that we can redirect to the correct page after logout -> login
+      localStorage.setItem('caseUrlHash', `/case/event/form/${this.caseId}/${this.caseEventId}/${this.eventFormId}`);
+
       try {
+        const groupId = window.location.pathname.split('/')[4];
+        this.tangyFormService.initialize(groupId);
+
         await this.caseService.load(this.caseId);
         this.caseService.setContext(this.caseEventId, this.eventFormId)
 
@@ -67,9 +70,6 @@ export class TangyFormsPlayerComponent implements OnInit {
           tangyForms: this.tangyFormService
         }
         this.window.caseService = this.caseService
-
-        // Store the caseUrlHash in localStorage so that we can redirect to the correct page after logout -> login
-        localStorage.setItem('caseUrlHash', `/case/event/form/${this.caseId}/${this.caseEventId}/${this.eventFormId}`);
 
         this.metadata = {
           caseId: this.caseId,
