@@ -65,8 +65,8 @@ export class ReleaseOnlineSurveyComponent implements OnInit {
       const survey = groupOnlineSurveys.find(s => f.id === s.formId) || {};
       return { ...f, ...survey };
     });
-    this.publishedSurveys = surveyData.filter(e => e.published);
-    this.unPublishedSurveys = surveyData.filter(e => !e.published);
+    this.publishedSurveys = surveyData.filter(e => e.published && e.type == "form");
+    this.unPublishedSurveys = surveyData.filter(e => !e.published && e.type == "form");
   }
   async publishSurvey(formId, appName, locked) {
     const process = this.processMonitorService.start('publishSurvey', 'Publishing Survey');
