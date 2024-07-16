@@ -56,15 +56,15 @@ export class ImportUserProfileComponent implements AfterContentInit {
     try {
       this.appConfig = await this.appConfigService.getAppConfig()
       this.shortCode = this.userShortCodeInput.nativeElement.value;
-      let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?userProfile=true`).toPromise()
+      let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?userProfile=true`).toPromise()
       if(!!newUserProfile){
         this.state = this.STATE_SYNCING
         await this.userService.saveUserAccount({ ...this.userAccount, userUUID: newUserProfile['_id'], initialProfileComplete: true })
-        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
+        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
         const docsToQuery = 1000;
         let processedDocs = +localStorage.getItem('processedDocs') || 0;
         while (processedDocs < this.totalDocs) {
-          this.docs = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
+          this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
           for (let doc of this.docs) {
             delete doc._rev
             await this.db.put(doc)
