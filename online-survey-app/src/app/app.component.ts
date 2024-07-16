@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AppConfigService } from './shared/_services/app-config.service';
 import { _TRANSLATE } from './shared/_services/translation-marker';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
@@ -84,11 +84,5 @@ export class AppComponent implements OnInit{
     await this.authenticationService.logout();
     this.loggedIn = false;
     this.router.navigate(['/survey-login']);
-  }
-
-  @HostListener("window:unload",["$event"])
-  async onUnload(event) {
-    clearInterval(this.sessionTimeoutCheckTimerID);
-    await this.authenticationService.logout();
   }
 }
