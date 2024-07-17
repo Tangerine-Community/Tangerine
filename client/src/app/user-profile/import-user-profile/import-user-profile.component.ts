@@ -58,11 +58,12 @@ export class ImportUserProfileComponent implements AfterContentInit {
       this.shortCode = this.userShortCodeInput.nativeElement.value;
       let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?userProfile=true`).toPromise()
       if(!!newUserProfile){
+        const username = this.userService.getCurrentUser()
         this.state = this.STATE_SYNCING
         await this.userService.saveUserAccount({ ...this.userAccount, userUUID: newUserProfile['_id'], initialProfileComplete: true })
         this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
         const docsToQuery = 1000;
-        let processedDocs = +localStorage.getItem('processedDocs') || 0;
+        let processedDocs = +localStorage.getItem(`${username}-processedDocs`) || 0;
         while (processedDocs < this.totalDocs) {
           this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
           for (let doc of this.docs) {
@@ -71,7 +72,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
           }
           processedDocs += this.docs.length;
           this.processedDocs = processedDocs
-          localStorage.setItem('processedDocs', String(processedDocs))
+          localStorage.setItem(`${username}-processedDocs`, String(processedDocs))
         }
       } else{
         this.state = this.STATE_NOT_FOUND
