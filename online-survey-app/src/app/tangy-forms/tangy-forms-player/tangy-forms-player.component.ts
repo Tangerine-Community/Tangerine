@@ -119,15 +119,11 @@ export class TangyFormsPlayerComponent implements OnInit {
         event.preventDefault();
 
         let response = event.target.store.getState()
-        await this.throttledSaveResponse(response)
-
+        await this.saveResponse(response)
         if (this.caseService && this.caseService.caseEvent && this.caseService.eventForm) {
           this.caseService.markEventFormComplete(this.caseService.caseEvent.id, this.caseService.eventForm.id)
           await this.caseService.save()
         }
-        
-        // first route to form-submitted, then redirect to the url in window['eventFormRedirect']
-        this.router.navigate(['/form-submitted-success']);
         if (window['eventFormRedirect']) {
           try {
             // this.router.navigateByUrl(window['eventFormRedirect']) -- TODO figure this out later
@@ -136,6 +132,8 @@ export class TangyFormsPlayerComponent implements OnInit {
           } catch (error) {
             console.error(error);
           }
+        } else {
+          this.router.navigate(['/form-submitted-success']);
         }
       });
     } else {
@@ -178,16 +176,21 @@ export class TangyFormsPlayerComponent implements OnInit {
     if (stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary && archiveStateChange) {
       // Since what is in the database is complete, and it's still complete, and it doesn't have 
       // a summary where they might add some input, don't save! They are probably reviewing data.
+      this.response = stateDoc
     } else {
       // add metadata
       stateDoc = {
         ...state,
         location: this.location || state.location,
         ...this.metadata
-      }   
-      await this.tangyFormService.saveResponse(stateDoc)
+      }
+      const updatedStateDoc = await this.tangyFormService.saveResponse(stateDoc)
+      if (updatedStateDoc) {
+        this.response = updatedStateDoc
+        return true;
+      }
     }
-    this.response = state
+    return false;
   }
 
   async saveFormResponse(formResponse) {
