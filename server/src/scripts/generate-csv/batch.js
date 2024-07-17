@@ -27,7 +27,6 @@ function getData(dbName, formId, skip, batchSize, year, month) {
     try {
       const key = (year && month) ? `${formId}_${year}_${month}` : formId
       const target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
-      console.log(target)
       axios.get(target)
         .then(response => {
           resolve(response.data.rows.map(row => row.doc))
@@ -42,14 +41,56 @@ function getData(dbName, formId, skip, batchSize, year, month) {
   });
 }
 
+function handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters) {
+  // Handle csv-safe character replacement and disabled fields
+  if (Array.isArray(value)) {
+    return ''
+  }
+  if (typeof value === 'string') {
+    if (csvReplacementCharacters) {
+      csvReplacementCharacters.forEach(expression => {
+        const search = expression["search"];
+        const replace = expression["replace"];
+        if (search && replace) {
+          const re = new RegExp(search, 'g')
+          try {
+            value = value.replace(re, replace)
+          } catch (e) {
+            console.log("ERROR! re: " + re + " replace: " + replace + " value: " + value + " Error: " + e)
+          }
+        }
+      })
+    }
+  }
+  if (typeof header === 'string' && header.split('.').length === 3) {
+    const itemId = header.split('.')[1]
+    if (itemId && doc[`${itemId}_disabled`] === 'true') {
+      if (outputDisabledFieldsToCSV) {
+        return value
+      } else {
+        return process.env.T_REPORTING_MARK_SKIPPED_WITH
+      }
+    } else {
+      if (value === undefined) {
+        return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+      } else {
+        return value
+      }
+    }
+  } else {
+    if (value === undefined) {
+      return process.env.T_REPORTING_MARK_UNDEFINED_WITH
+    } else {
+      return value
+    }
+  }
+}
+
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
-  console.log("state.skip: " + state.skip)
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
   let outputDisabledFieldsToCSV = state.groupConfigurationDoc? state.groupConfigurationDoc["outputDisabledFieldsToCSV"] : false
-  console.log("outputDisabledFieldsToCSV: " + outputDisabledFieldsToCSV)
   let csvReplacementCharacters = state.groupConfigurationDoc? state.groupConfigurationDoc["csvReplacementCharacters"] : false
-  console.log("csvReplacementCharacters: " + JSON.stringify(csvReplacementCharacters))
   // let csvReplacement = csvReplacementCharacters? JSON.parse(csvReplacementCharacters) : false
   if (docs.length === 0) {
     state.complete = true
@@ -59,85 +100,49 @@ async function batch() {
     try {
       rows = []
       docs.forEach(doc => {
-        let row = [doc._id, ...state.headersKeys.map(header => {
-          // Check to see if variable comes from a section that was disabled.
-          if (doc.type === 'attendance' && header === 'attendanceList') {
-            // skip
-          } else if (doc.type === 'scores' && header === 'scoreList') {
-            // skip
-          } else {
-            let value = doc[header];
-            console.log("header: " + header + " value: " + value)
-            if (typeof value === 'string') {
-              if (csvReplacementCharacters) {
-                csvReplacementCharacters.forEach(expression => {
-                  const search = expression["search"];
-                  const replace = expression["replace"];
-                  if (search && replace) {
-                    const re = new RegExp(search, 'g')
-                    try {
-                      value = value.replace(re, replace)
-                    } catch (e) {
-                      console.log("ERROR! re: " + re + " replace: " + replace + " value: " + value + " Error: " + e)
-                    }
-                  }
-                })
-              }
-            }
-            if (typeof header === 'string' && header.split('.').length === 3) {
-              console.log("Checking header: " + header + " to see if it is disabled.")
-              const itemId = header.split('.')[1]
-              if (itemId && doc[`${itemId}_disabled`] === 'true') {
-                if (outputDisabledFieldsToCSV) {
-                  return value
-                } else {
-                  return process.env.T_REPORTING_MARK_SKIPPED_WITH
-                }
-              } else {
-                if (value === undefined) {
-                  return process.env.T_REPORTING_MARK_UNDEFINED_WITH
-                } else {
-                  return value
-                }
-              }
-            } else {
-              if (value === undefined) {
-                return process.env.T_REPORTING_MARK_UNDEFINED_WITH
-              } else {
-                return value
-              }
-            }
-          }
-        })]
         if (doc.type === 'attendance') {
-          doc.attendanceList.forEach(attendance => {
-            let row = [doc._id, ...state.headersKeys.map(header => {
-              let value = attendance[header];
-              console.log("header: " + header + " value: " + value)
-              return value
-            })]
+          doc.attendanceList.forEach(listItem => {
+            let row = ([doc._id, ...state.headersKeys.map(header => {
+              if (listItem[header]) {
+                return listItem[header];
+              } else {
+                let value = doc[header];
+                return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+              }
+            })])
             rows.push(row)
           })
         } else if (doc.type === 'scores') {
-          doc.scoreList.forEach(score => {
-            let row = [doc._id, ...state.headersKeys.map(header => {
-              let value = score[header];
-              console.log("header: " + header + " value: " + value)
-              return value
-            })]
+          doc.scoreList.forEach(listItem => {
+            let row = ([doc._id, ...state.headersKeys.map(header => {
+              if (listItem[header]) {
+                return listItem[header];
+              } else {
+                let value = doc[header];
+                return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+              }
+            })])
             rows.push(row)
           })
         } else if (doc.type === 'behavior') {
-          doc.studentBehaviorList.forEach(behavior => {
-            let row = [doc._id, ...state.headersKeys.map(header => {
-              let value = behavior[header];
-              console.log("header: " + header + " value: " + value)
-              return value
-            })]
+          doc.studentBehaviorList.forEach(listItem => {
+            let row = ([doc._id, ...state.headersKeys.map(header => {
+              if (listItem[header]) {
+                return listItem[header];
+              } else {
+                let value = doc[header];
+                return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+              }
+            })])
             rows.push(row)
           })
         } else {
-          // rows = docs.map(doc => {
+          let row = [doc._id,
+            ...state.headersKeys.map(header => {
+              let value = doc[header];
+              return handleCSVReplacementAndDisabledFields(value, csvReplacementCharacters);
+            })
+          ]
           rows.push(row)
         }
       })
