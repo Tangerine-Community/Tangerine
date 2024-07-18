@@ -78,7 +78,7 @@ module.exports.responsesByUserProfileShortCode = function(doc) {
 }
 
 module.exports.userProfileByUserProfileShortCode = function (doc) {
-  if (doc.collection === "TangyFormResponse"&&doc.form && doc.form.id === 'user-profile') {
+  if (doc.collection === "TangyFormResponse" && doc.form && doc.form.id === 'user-profile') {
       return emit(doc._id.substr(doc._id.length - 6, doc._id.length), true);
   }
 }
