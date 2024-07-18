@@ -57,11 +57,11 @@ export class ImportUserProfileComponent implements AfterContentInit {
     try {
       this.appConfig = await this.appConfigService.getAppConfig()
       this.shortCode = this.userShortCodeInput.nativeElement.value;
-      let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?userProfile=true`).toPromise()
-      if(!!newUserProfile){
+      let existingUserProfile = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/userProfileByShortCode/${this.shortCode}`).toPromise()
+      if(!!existingUserProfile){
         const username = this.userService.getCurrentUser()
         this.state = this.STATE_SYNCING
-        await this.userService.saveUserAccount({ ...this.userAccount, userUUID: newUserProfile['_id'], initialProfileComplete: true })
+        await this.userService.saveUserAccount({ ...this.userAccount, userUUID: existingUserProfile['_id'], initialProfileComplete: true })
         this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
         const docsToQuery = 1000;
         let previousProcessedDocs = await this.variableService.get(`${username}-processedDocs`)
