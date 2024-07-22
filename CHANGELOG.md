@@ -27,7 +27,7 @@ __Tangerine Teach__
 
 __Libs and Dependencies__
 - Bump version of `tangy-form` to v4.31.1 and `tangy-form-editor` to v7.18.0 for the new Prompt Box widget
-- Bump version of `tangy-form` to v4.44.0 for GPS Disabling
+- Bump version of `tangy-form` to v4.45.1 for disabling of `tangy-gps` in server edits
 
 __Server upgrade instructions__
 
