@@ -348,7 +348,6 @@ const generateFlatResponse = async function (formResponse, sanitized) {
     if (formResponse.form.id === '') {
       formResponse.form.id = 'blank'
     }
-    console.log('formResponse.form.id: ' + formResponse.form.id)
     flatFormResponse['formId'] = formResponse.form.id
   }
 
@@ -730,7 +729,6 @@ async function convert_response(knex, doc, groupId, tableName) {
   const caseEventId = doc.caseEventId
 
   var formID = doc.formId || data['formid']
-  console.log("formID: " + formID)
   if (formID) {
     // thanks to https://stackoverflow.com/a/14822579
     const find = '-'
