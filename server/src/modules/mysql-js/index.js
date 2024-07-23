@@ -328,6 +328,7 @@ const getItemValue = (doc, variableName) => {
 const generateFlatResponse = async function (formResponse, sanitized) {
   const groupId = formResponse.groupId;
 
+  // Anything added to this list need to be added to the valuesToRemove list in each of the convert_response function.
   let flatFormResponse = {
     _id: formResponse._id,
     formTitle: formResponse.form.title,
@@ -782,7 +783,7 @@ async function convert_response(knex, doc, groupId, tableName) {
 
 
   // # Delete the following keys;
-  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime']
+  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime', 'tangerineModifiedOn', 'tangerineModifiedByUserId']
   valuesToRemove.forEach(e => delete doc[e]);
   const cleanData = populateDataFromDocument(doc, data);
   return cleanData
