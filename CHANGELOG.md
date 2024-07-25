@@ -19,6 +19,7 @@ __Fixes__
 - Client Search Service: exclude archived cases from recent activity
 - Media library cannot upload photos [#3583](https://github.com/Tangerine-Community/Tangerine/issues/3583)
 - User Profile Import: The process of importing an existing device user now allows for retries and an asynchronous process to download existing records. This fixes an issue cause by timeouts when trying to import a user with a large number of records. [#3696](https://github.com/Tangerine-Community/Tangerine/issues/3696)
+- When `T_ONLY_PROCESS_THESE_GROUPS` has a list of one or more groups, running `reporting-cache-clear` will only process the groups in the list
 
 __Tangerine Teach__
 
