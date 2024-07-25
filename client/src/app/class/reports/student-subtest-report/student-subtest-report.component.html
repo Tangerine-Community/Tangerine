@@ -77,11 +77,8 @@
                  <ng-container *ngIf="res.value.percentage && !res.value.customScore">
                  ({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}}) {{tNumber(res.value.percentage)}}
                  </ng-container>
-                 <ng-container *ngIf="res.value.customScore">
+                 <ng-container *ngIf="res.value.customScore||res.value.customScore===0">
                  {{(tNumber(res.value.customScore))|number : '1.2-2'}}%
-                 </ng-container>
-                 <ng-container *ngIf="!res.value.percentage">
-                 ({{tNumber(res.value.rawScore)}}/{{tNumber(res.value.totalGridAnswers)}})
                  </ng-container>
                  <!--<span *ngIf="res.value.totalCorrect">{{res.value.totalCorrect}}</span>-->
                </ng-container>
