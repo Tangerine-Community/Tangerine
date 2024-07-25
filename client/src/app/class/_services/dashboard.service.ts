@@ -430,7 +430,7 @@ export class DashboardService {
         totalIncorrect: totalIncorrect,
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
-        scorePercentageCorrect: scorePercentageCorrect,
+        scorePercentageCorrect: customScore ? customScore : scorePercentageCorrect,
         duration: duration,
         customScore: customScore
       };
