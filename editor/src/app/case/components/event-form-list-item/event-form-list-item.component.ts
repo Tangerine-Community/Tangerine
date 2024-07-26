@@ -155,7 +155,7 @@ export class EventFormListItemComponent implements OnInit {
   }
 
   onCopyLinkClick() {
-    const url = `${window.location.origin}/${this.surveyLinkUrl}`;
+    const url = `${window.location.origin}${this.surveyLinkUrl}`;
     try {
       navigator.clipboard.writeText(url);
 
