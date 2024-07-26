@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-checkboxes test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+    
+    <test-fixture id="TangyCheckboxFixture">
+      <template>
+        <tangy-checkbox name="fruit_selection" hint-text="Do you agree?">Check if you agree.</tangy-checkbox>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../input/tangy-checkbox.js'
+      suite('tangy-checkbox', () => {
+
+        test('should have hint text', () => {
+          const element = fixture('TangyCheckboxFixture');
+          assert.equal(element.shadowRoot.innerHTML.includes('Do you agree?'), true)
+        })
+        
+        test('should set value back to default applying skipped attribute', () => {
+          const element = fixture('TangyCheckboxFixture');
+          element.shadowRoot.querySelectorAll('paper-checkbox')[0].click()
+          element.shadowRoot.querySelectorAll('paper-checkbox')[0].dispatchEvent(new Event('change',{bubbles:true}))
+          element.setAttribute('skipped', '')
+          assert.equal(element.shadowRoot.querySelectorAll('paper-checkbox')[0].hasAttribute('checked'), false)
+          assert.equal(element.value, '')
+        })
+
+      })
+    </script>
+
+  </body>
+</html>
