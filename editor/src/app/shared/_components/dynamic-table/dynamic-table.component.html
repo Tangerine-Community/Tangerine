@@ -14,10 +14,13 @@
         </button>
         <mat-menu #menu="matMenu">
           <button (click)="onRowEdit(row)" mat-menu-item>
-            <mat-icon>edit</mat-icon><span>{{'edit'}}</span>
+            <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
           </button>
-          <button (click)="onRowDelete(row)" mat-menu-item>
-            <mat-icon>delete</mat-icon><span>{{'delete'}}</span>
+          <button *ngIf="!showArchiveButton" (click)="onRowDelete(row)" mat-menu-item>
+            <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
+          </button>
+          <button *ngIf="showArchiveButton" (click)="onRowArchive(row)" mat-menu-item>
+            <mat-icon>archive</mat-icon><span>{{'archive'|translate}}</span>
           </button>
         </mat-menu>
       </div>
