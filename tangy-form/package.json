@@ -1,16 +1,14 @@
 {
   "name": "tangy-form",
   "description": "A form element for lazy loaded multipage forms",
-  "version": "4.42.0",
+  "version": "4.45.1",
   "main": "tangy-form.js",
   "scripts": {
     "start": "polymer serve",
     "build": "webpack",
     "test": "polymer test -l chrome"
   },
-  "type": "module",
   "dependencies": {
-    "@polymer/iron-icon": "^3.0.1",
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
     "@polymer/paper-card": "^3.0.1",
@@ -24,25 +22,16 @@
     "@polymer/paper-tabs": "^3.1.0",
     "@polymer/paper-toggle-button": "^3.0.1",
     "@polymer/polymer": "^3.5.1",
-    "@techstark/opencv-js": "^4.7.0-release.1",
-    "@uppy/core": "^3.2.0",
-    "@uppy/dashboard": "^3.4.0",
-    "@uppy/image-editor": "^2.1.2",
-    "@uppy/webcam": "^3.3.1",
     "@zxing/library": "^0.19.1",
-    "cropperjs": "^1.5.13",
     "devtools-detect": "^4.0.1",
-    "dr-niels-sortable-list": "https://github.com/DrNiels/sortable-list.git#master",
+    "dr-niels-sortable-list": "git+https://github.com/DrNiels/sortable-list.git#master",
     "ethiopian-date": "0.0.6",
     "image-blob-reduce": "^4.1.0",
     "lit": "^2.6.1",
     "moment": "^2.29.4",
-    "opencv.js": "^1.2.1",
     "redux": "^4.2.0",
     "signature_pad": "^4.1.4",
-    "tesseract.js": "^4.0.3",
     "translation-web-component": "^1.1.1",
-    "wct-browser-legacy": "^1.0.2",
     "zxing-js-es6": "^0.15.3"
   },
   "devDependencies": {
@@ -52,6 +41,7 @@
     "webpack": "4.46.0",
     "webpack-cli": "4.10.0"
   },
+  "type": "module",
   "directories": {
     "doc": "docs",
     "test": "test"
