@@ -266,7 +266,10 @@ const generateFlatResponse = async function (formResponse, sanitized) {
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
-    archived: formResponse.archived||''
+    archived: formResponse?.archived||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
+    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId|'',
+    verified: formResponse?.verified|'',
   };
   for (let item of formResponse.items) {
     for (let input of item.inputs) {

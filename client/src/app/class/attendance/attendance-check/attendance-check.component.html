@@ -13,14 +13,28 @@
         <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["student_name"]}} {{element["student_surname"]}} </td>
         <td style="padding-right: 1em;">
           <mat-chip-list class="absent">
-            <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
+            <ng-container *ngIf="!showLateAttendanceOption; then absentOnly; else withLate"></ng-container>
+            <ng-template #absentOnly>
+                <ng-container *ngIf="element['absent']; then absent; else present"></ng-container>
+            </ng-template>
+            <ng-template #withLate>
+                <ng-container *ngIf="element['absent']; then absent; else second"></ng-container>
+                <ng-template #second>
+                  <ng-container *ngIf="element['late']; then late; else present"></ng-container>
+                </ng-template>
+            </ng-template>
             <ng-template #absent>
-              <mat-chip color="primary" selected class="red" (click)="toggleAttendance(element)">
+              <mat-chip color="red" selected class="red" (click)="toggleAttendance('absent', element)">
+                <mat-icon>close</mat-icon>
+              </mat-chip>
+            </ng-template>
+            <ng-template #late>
+              <mat-chip color="orange" class="orange" (click)="toggleAttendance('late', element)">
                 <mat-icon>remove</mat-icon>
               </mat-chip>
             </ng-template>
             <ng-template #present>
-              <mat-chip color="primary" class="green" (click)="toggleAttendance(element)">
+              <mat-chip color="primary" class="green" (click)="toggleAttendance('present', element)">
                 <mat-icon>check</mat-icon>
               </mat-chip>
             </ng-template>

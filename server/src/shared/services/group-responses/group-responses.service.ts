@@ -137,11 +137,13 @@ export class GroupResponsesService {
   }
 
   async update(groupId, response) {
+    const tangerineModifiedOn = Date.now()
     try {
       const groupDb = this.getGroupsDb(groupId)
       const originalResponse = await groupDb.get(response._id)
       await groupDb.put({
         ...response,
+        tangerineModifiedOn,
         _rev: originalResponse._rev
       })
       const freshResponse = <Group>await groupDb.get(response._id)
@@ -149,7 +151,7 @@ export class GroupResponsesService {
     } catch (e) {
       try {
         const groupDb = this.getGroupsDb(groupId)
-        await groupDb.put(response)
+        await groupDb.put({...response, tangerineModifiedOn})
         const freshResponse = <Group>await groupDb.get(response._id)
         return freshResponse
       } catch (e) {

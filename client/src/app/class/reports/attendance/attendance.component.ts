@@ -117,6 +117,8 @@ export class AttendanceComponent implements OnInit {
       unitDate.endDate = endDate
     })
 
+    this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+
     // maybe make this relative to the selected date for the single day report table
     this.rangeStartDate = DateTime.now().minus({months: 1}).toJSDate();
     this.rangeEndDate = DateTime.now().toJSDate();
@@ -205,17 +207,7 @@ export class AttendanceComponent implements OnInit {
         scoreReports.push(report.doc)
       })
     }
-    const currentScoreReport = scoreReports[scoreReports.length - 1]
-
-    if (currentAttendanceReport?.timestamp) {
-      const timestampFormatted = DateTime.fromMillis(currentAttendanceReport?.timestamp)
-      // DATE_MED
-      this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
-    } else {
-      this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
-    }
-
-    let scoreReport = currentScoreReport
+    let scoreReport = scoreReports[scoreReports.length - 1]
 
     if (startDate && endDate) {
       const selectedAttendanceReports = attendanceReports
@@ -332,11 +324,6 @@ export class AttendanceComponent implements OnInit {
 
   selectStudentDetails(student) {
     student.ignoreCurriculumsForTracking = this.ignoreCurriculumsForTracking
-    const studentId = student.id;
-    const classId = student.classId;
-    // this.router.navigate(['student-details'], { queryParams:
-    //     { studentId: studentId, classId: classId }
-    // });
     
     this._bottomSheet.open(StudentDetailsComponent, {
       data: { student: student,
@@ -352,12 +339,26 @@ export class AttendanceComponent implements OnInit {
     this.setBackButton(updatedIndex)
     this.currentIndex = updatedIndex
     this.attendanceReport = await this.generateSummaryReport(this.currArray, this.curriculum, this.selectedClass, this.classId, this.currentIndex, null, null);
+
+    if ( this.attendanceReport?.timestamp) {
+      const timestampFormatted = DateTime.fromMillis( this.attendanceReport?.timestamp)
+      this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
+    } else {
+      this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+    }
   }
   async goForward() {
     const updatedIndex = this.currentIndex - 1
     this.setForwardButton(updatedIndex);
     this.currentIndex = updatedIndex
     this.attendanceReport = await this.generateSummaryReport(this.currArray, this.curriculum, this.selectedClass, this.classId, this.currentIndex, null, null);
+
+    if ( this.attendanceReport?.timestamp) {
+      const timestampFormatted = DateTime.fromMillis( this.attendanceReport?.timestamp)
+      this.reportLocaltime = timestampFormatted.toLocaleString(DateTime.DATE_FULL)
+    } else {
+      this.reportLocaltime = DateTime.now().toLocaleString(DateTime.DATE_FULL)
+    }
   }
 
   private setBackButton(updatedIndex) {
