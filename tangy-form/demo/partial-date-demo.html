@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Tangy Form = Partial Date Demo and Documentation</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+      import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          --accent-color: #f26f10;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+        }
+        h1, h2, h3, h4, h5, p{
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 15px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-partial-date.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+     <demo-snippet>
+        <template>      
+          <tangy-form id="my-form" title="My Form">
+              <h3>Tangy-form Partial Date Web Component</h3>
+              <p>The <strong>tangy-partial-date</strong> web component is a configurable date picker component with the following options:</p>
+              <ul>
+                <li><strong>name:</strong> control/variable name</li>
+                <li><strong>label:</strong> question text (can be html)</li>
+                <li><strong>hint-text:</strong> extra information displayed under the question</li>
+                <li><strong>disallow-future-date:</strong> boolean to disallow future dates</li>
+                <li><strong>show-today-button:</strong> boolean to enable a button to insert the current date</li>    
+                <li><strong>allow-unknown-day:</strong> boolean to indicate that a day is not required</li>    
+                <li><strong>allow-unknown-month:</strong> boolean to indicate that a month is not required</li>    
+                <li><strong>allow-unknown-year:</strong> boolean to indicate that a year is not required</li>    
+                <li><strong>min-year:</strong> earliest year accepted</li>    
+                <li><strong>max-year:</strong> latest year accepted</li>    
+                <li><strong>numeric-month:</strong> boolean to indicate month should be displayed numerically</li>    
+                <li><strong>missing-date-error-text:</strong> custom error text for missing date</li>
+                <li><strong>invalid-date-error-text:</strong> custom error text for invalid date</li> 
+                <li><strong>future-date-errorText:</strong> custom error text for future date</li>    
+                <li><strong>value:</strong> default value in yyyy-mm-dd format</li>
+                <li><strong>question-number:</strong> optional question number</li>            
+              </ul>
+              <tangy-form-item id="item1">
+                  <tangy-checkbox name="input1">Date is not available.</tangy-checkbox>
+                  
+                <tangy-partial-date name="test" question-number="25." label="
+                  <t-lang en>Please enter the child's date of birth.</t-lang>
+                  <t-lang fr>S'il vous plaît entrer la date de naissance de l'enfant.</t-lang>"
+                hint-text="
+                  <t-lang en>Please enter the complete date of birth if known. If the complete date of birth is not known, please enter as much information as possible. A partial date is allowed.</t-lang>
+                  <t-lang fr>S'il vous plaît entrer la date de naissance complète si connue. Si la date de naissance complète n'est pas connue, veuillez entrer autant d'informations que possible. Une date partielle est autorisée.</t-lang>"
+                  future-date-error-text="<t-lang en>You have entered a date that is in the future but the child's date of birth must be in the past. Please review the date and make an appropriate correction.</t-lang><t-lang fr>
+                      Vous avez entré une date future, mais la date de naissance de l'enfant doit être passée. Veuillez revoir la date et apporter une correction appropriée.</t-lang>"
+                required disallow-future-date show-today-button allow-unknown-day allow-unknown-month allow-unknown-year min-year="1990" max-year="2020"
+                tangy-if="inputs.input1.value !== 'on'" tangy-action="editable">
+              </tangy-partial-date>
+              
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </demo-snippet>
+    </div>
+  </body>
+</html>

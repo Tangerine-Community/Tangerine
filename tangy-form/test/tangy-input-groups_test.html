@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-input-groups test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+  
+ 
+    <test-fixture id="TangyInputGroupsFixture">
+      <template>
+        <tangy-input-groups initial-count="3" name="person">
+          <tangy-input name="first_name" label="First name"></tangy-input>
+          <tangy-input name="last_name" label="Last name"></tangy-input>
+        </tangy-input-groups>
+      </template>
+    </test-fixture>
+
+     <test-fixture id="TangyInputGroupsRequiredFixture">
+      <template>
+        <tangy-form id="tangy-input-groups-form">
+          <tangy-form-item id="tangy-input-groups-form--item-1">
+            <tangy-input-groups initial-count="3" name="person">
+              <tangy-input name="first_name" label="First name" valid-if="input.value === 'something'"></tangy-input>
+              <tangy-input name="last_name" label="Last name" required></tangy-input>
+            </tangy-input-groups>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+ 
+    <test-fixture id="TangyInputGroupsFormFixture">
+      <template>
+        <tangy-form id="tangy-input-groups-form">
+          <tangy-form-item id="tangy-input-groups-form--item-1">
+            <template>
+              <tangy-input-groups initial-count="3" name="person">
+                <tangy-input name="first_name" label="First name"></tangy-input>
+                <tangy-input name="last_name" label="Last name"></tangy-input>
+              </tangy-input-groups>
+            </template>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+
+    <script type="module">
+      import * as Polymer from '../node_modules/@polymer/polymer/polymer-legacy.js'
+      import stub from './stub.js' 
+      import '../tangy-form.js'
+      import '../tangy-input-groups.js'
+      import '../input/tangy-input.js'
+
+      suite('tangy-input-groups', () => {
+        test('tangy-input-groups start with 3 groups', () => {
+          const element = fixture('TangyInputGroupsFixture');
+          assert.equal(element.querySelectorAll('tangy-input-group').length, 3)
+          assert.equal((!!element.querySelectorAll('tangy-input-group')[1].querySelector('[name="person.1.first_name"]')), true)
+        });
+        test('tangy-input-groups creates another input-group', () => {
+          const element = fixture('TangyInputGroupsFixture');
+          element.shadowRoot.querySelector('.add-another').click()
+          assert.equal(element.querySelectorAll('tangy-input-group').length, 4)
+        });
+        test('tangy-input-groups removes an input-group', () => {
+          const element = fixture('TangyInputGroupsFixture');
+          element.shadowRoot.querySelector('.add-another').click()
+          assert.equal(element.querySelectorAll('tangy-input-group').length, 4)
+        });
+        test('tangy-input-groups validates input-group', () => {
+          const element = fixture('TangyInputGroupsRequiredFixture');
+          element.newResponse()
+          const itemEl = element.querySelector('tangy-form-item')
+          assert.equal(itemEl.validate(), false)
+          for (let group of [...itemEl.querySelectorAll('tangy-input-group')]) {
+            group.querySelector('[label="Last name"]').value = 'something'
+          }
+          assert.equal(itemEl.validate(), false)
+          for (let group of [...itemEl.querySelectorAll('tangy-input-group')]) {
+            group.querySelector('[label="First name"]').value = 'something'
+          }
+          assert.equal(itemEl.validate(), true)
+        });
+        test('tangy-input-groups creates a card, user inputs, then value exists on new input', () => {
+          const element = fixture('TangyInputGroupsFormFixture');
+          element.newResponse()
+          element.querySelector('tangy-form-item').shadowRoot.querySelector('dom-if').render()
+          element
+            .querySelector('tangy-form-item')
+            .querySelector('tangy-input-groups').shadowRoot
+            .querySelector('.add-another').click()
+          element
+            .querySelector('tangy-form-item')
+            .querySelector('[name="person.2.first_name"]').value = 'foo'
+          element
+            .querySelector('tangy-form-item')
+            .querySelector('[name="person.3.first_name"]').value = 'bar'
+          element.querySelector('tangy-form-item').shadowRoot.querySelector('#complete').click()
+          assert.equal((element.response.items[0].inputs.length > 0), true)
+          assert.equal(element.response.items[0].inputs.find(input => input.name === 'person.2.first_name').value, 'foo')
+          assert.equal(element.response.items[0].inputs.find(input => input.name === 'person.3.first_name').value, 'bar')
+        });
+        test('tangy-input-groups resumes', () => {
+          const element = fixture('TangyInputGroupsFormFixture');
+          element.response = {"_id":"6d7e7785-f56e-4765-aeab-88851451a338","collection":"TangyFormResponse","form":{"title":"","complete":true,"linearMode":false,"hideClosedItems":false,"hideCompleteFab":false,"tabIndex":1,"showResponse":true,"showSummary":false,"hasSummary":false,"onSubmit":"","id":"tangy-input-groups-form","tagName":"TANGY-FORM"},"items":[{"id":"tangy-input-groups-form--item-1","title":"","summary":false,"hideButtons":false,"hideBackButton":true,"rightToLeft":false,"hideNextButton":true,"showCompleteButton":true,"inputs":[{"tagName":"TANGY-INPUT-GROUPS","name":"person","value":["person-0","person-1","person-2","person-3"],"label":"","disabled":true,"invalid":false,"incomplete":true,"hidden":false},{"tagName":"TANGY-INPUT-GROUP","name":"person-0","value":[],"label":"","disabled":true,"invalid":false,"incomplete":true,"hidden":false},{"name":"person-0.first_name","private":false,"label":"First name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"name":"person-0.last_name","private":false,"label":"Last name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"tagName":"TANGY-INPUT-GROUP","name":"person-1","value":[],"label":"","disabled":true,"invalid":false,"incomplete":true,"hidden":false},{"name":"person-1.first_name","private":false,"label":"First name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"name":"person-1.last_name","private":false,"label":"Last name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"tagName":"TANGY-INPUT-GROUP","name":"person-2","value":[],"label":"","disabled":true,"invalid":false,"incomplete":true,"hidden":false},{"name":"person-2.first_name","private":false,"label":"First name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"foo","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"name":"person-2.last_name","private":false,"label":"Last name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"tagName":"TANGY-INPUT-GROUP","name":"person-3","value":[],"label":"","disabled":true,"invalid":false,"incomplete":true,"hidden":false},{"name":"person-3.first_name","private":false,"label":"First name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"bar","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"name":"person-3.last_name","private":false,"label":"Last name","type":"","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"}],"open":false,"incomplete":false,"disabled":false,"hidden":false,"locked":true,"tagName":"TANGY-FORM-ITEM"}],"complete":true,"focusIndex":0,"nextFocusIndex":1,"previousFocusIndex":-1,"startDatetime":"10/7/2018, 10:49:15 PM","startUnixtime":1538966955659,"uploadDatetime":""}
+          element.querySelector('tangy-form-item').shadowRoot.querySelector('dom-if').render()
+          element.querySelector('tangy-form-item').shadowRoot.querySelector('#open').click()
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name="person-2.first_name"]').value, 'foo')
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name="person-3.first_name"]').value, 'bar')
+        });
+      })
+
+
+      window.stub = {
+       responseWithTangyCards: {"_id":"94897a00-ea84-46ba-b046-21505dd1a1e9","collection":"TangyFormResponse","form":{"title":"My Form","complete":true,"linearMode":false,"hideClosedItems":false,"hideCompleteFab":false,"tabIndex":1,"showResponse":true,"showSummary":false,"hasSummary":false,"onSubmit":"","id":"tangy-cards-demo","tagName":"TANGY-FORM"},"items":[{"id":"item1","title":"People","summary":false,"hideButtons":false,"hideBackButton":true,"rightToLeft":false,"hideNextButton":true,"showCompleteButton":true,"inputs":[{"name":"person","value":[{"name":"c911e052-bea0-4ee9-b3b0-e93023a025c0","value":[{"name":"first_name","private":false,"label":"First name","type":"","errorMessage":"","required":false,"disabled":false,"hidden":false,"invalid":false,"incomplete":true,"value":"foo","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"name":"last_name","private":false,"label":"Last name","type":"","errorMessage":"","required":false,"disabled":false,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"}],"label":"","disabled":false,"invalid":false,"incomplete":true,"hidden":false},{"name":"9d27d598-a811-4e80-b04d-d18523303c12","value":[{"name":"first_name","private":false,"label":"First name","type":"","errorMessage":"","required":false,"disabled":false,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"name":"last_name","private":false,"label":"Last name","type":"","errorMessage":"","required":false,"disabled":false,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"}],"label":"","disabled":false,"invalid":false,"incomplete":true,"hidden":false},{"name":"fd1a64c6-f52a-4480-9a2d-c4792ca2bb39","value":[{"name":"first_name","private":false,"label":"First name","type":"","errorMessage":"","required":false,"disabled":false,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"},{"name":"last_name","private":false,"label":"Last name","type":"","errorMessage":"","required":false,"disabled":false,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","min":"","max":"","tagName":"TANGY-INPUT"}],"label":"","disabled":false,"invalid":false,"incomplete":true,"hidden":false}],"label":"","disabled":true,"invalid":false,"incomplete":true,"hidden":false}],"open":false,"incomplete":false,"disabled":false,"hidden":false,"locked":true,"tagName":"TANGY-FORM-ITEM"}],"inputs":[],"complete":true,"focusIndex":0,"nextFocusIndex":1,"previousFocusIndex":-1,"startDatetime":"10/5/2018, 12:45:43 PM","startUnixtime":1538757943292,"uploadDatetime":""}
+     }
+
+    </script>
+
+  </body>
+</html>

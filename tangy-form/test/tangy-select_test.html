@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-select test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+  </head>
+  <body>
+     
+    <test-fixture id="TangySelectFixture">
+      <template>
+        <tangy-select name="foo" label="This is a label">
+          <option value="a">A</option>
+          <option value="b">B</option>
+          <option value="c">C</option>
+        </tangy-select>
+      </template>
+    </test-fixture>
+
+     <test-fixture id="TangySelectValueSetFixture">
+      <template>
+        <tangy-select name="foo" label="This is a label" value="b">
+          <option value="a">A</option>
+          <option value="b">B</option>
+          <option value="c">C</option>
+        </tangy-select>
+      </template>
+    </test-fixture>    
+
+    <test-fixture id="DynamicTangySelectFixture">
+      <template>
+        <tangy-select name="foo" label="This is a label">
+          <option value="a">A</option>
+          <option value="b">B</option>
+        </tangy-select>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangySelectWithMarkupFixture">
+      <template>
+        <tangy-select name="foo" label="This is a <b>bold label</b>">
+          <option value="a">A</option>
+          <option value="b">B</option>
+          <option value="c">C</option>
+        </tangy-select>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TranslatablePlaceholderFixture">
+      <template>
+        <tangy-select name="foo" placeholder="<t-lang en>Hello</t-lang><t-lang fr>Bonjour</t-lang>">
+          <option value="a">A</option>
+          <option value="b">B</option>
+          <option value="c">C</option>
+        </tangy-select>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import * as Polymer from '../node_modules/@polymer/polymer/polymer-legacy.js'
+      import '../input/tangy-input.js'
+      suite('tangy-input', () => {
+
+        test('should render options', () => {
+          const element = fixture('TangySelectFixture')
+          assert.equal(element.shadowRoot.querySelectorAll('option').length, 4)
+        })
+
+        test('should have value set on load', () => {
+          const element = fixture('TangySelectValueSetFixture')
+          const selectedIndex = element.shadowRoot.querySelector('select').selectedIndex
+          const option = element.shadowRoot.querySelectorAll('option')[selectedIndex];
+          assert.equal(option.getAttribute('value'), 'b')
+        })
+
+        test('should update after value set', (done) => {
+          const element = fixture('TangySelectValueSetFixture')
+          element.addEventListener('render', () => {
+            const selectedIndex = element.shadowRoot.querySelector('select').selectedIndex
+            const option = element.shadowRoot.querySelectorAll('option')[selectedIndex];
+            assert.equal(option.getAttribute('value'), 'c')
+            done()
+          })
+          element.value = 'c'
+        })
+
+        test('should disable', (done) => {
+          const element = fixture('TangySelectFixture')
+          element.setAttribute('disabled', true)
+          element.addEventListener('render', () => {
+            assert.equal(element.shadowRoot.querySelector('select').hasAttribute('disabled'), true)
+            done()
+          })
+        })
+
+        test('should have label with markup', () => {
+          const element = fixture('TangySelectWithMarkupFixture')
+          assert.equal(element.shadowRoot.querySelectorAll('label b').length, 1)
+        })
+
+        test('should add an option dynamically', (done) => {
+          const element = fixture('DynamicTangySelectFixture');
+          element.addEventListener('render', () => {
+            assert.equal(element.shadowRoot.querySelectorAll('option').length, 4)
+            done()
+          })
+          element.innerHTML = `
+            ${element.innerHTML}
+            <option value="c">C</option>
+          `
+        })
+
+      })
+    </script>
+
+  </body>
+</html>

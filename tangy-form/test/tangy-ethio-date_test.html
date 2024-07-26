@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-ethio-date test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+    
+    <test-fixture id="TangyEthiopianDateFixture">
+      <template>
+        <tangy-ethio-date name="test" question-number="25." label="
+                  <t-lang en>Please enter the child's date of birth.</t-lang>
+                  <t-lang fr>S'il vous plaît entrer la date de naissance de l'enfant.</t-lang>"
+                hint-text="
+                  <t-lang en>Please enter the complete date of birth if known. If the complete date of birth is not known, please enter as much information as possible. A partial date is allowed.</t-lang>
+                  <t-lang fr>S'il vous plaît entrer la date de naissance complète si connue. Si la date de naissance complète n'est pas connue, veuillez entrer autant d'informations que possible. Une date partielle est autorisée.</t-lang>"
+                  future-date-error-text="<t-lang en>You have entered a date that is in the future but the child's date of birth must be in the past. Please review the date and make an appropriate correction.</t-lang><t-lang fr>
+                      Vous avez entré une date future, mais la date de naissance de l'enfant doit être passée. Veuillez revoir la date et apporter une correction appropriée.</t-lang>"
+                required disallow-future-date show-today-button allow-unknown-day allow-unknown-month allow-unknown-year min-year="1990" max-year="2020">
+              </tangy-ethio-date> 
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyEthiopianDateShowTodayButtonFixture">
+        <template>
+            <tangy-ethio-date name="test" question-number="25." label="Test question"
+            show-today-button >
+            </tangy-ethio-date>
+        </template>
+    </test-fixture>
+
+    <test-fixture id="TangyEthiopianDateUnknownYear">
+        <template>
+            <tangy-ethio-date name="test" question-number="25." label="Test question"
+            show-today-button allow-unknown-year min-year="1990" max-year="2020">
+            </tangy-ethio-date>
+        </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../input/tangy-ethio-date.js'
+      import moment from 'moment'
+      suite('tangy-ethio-date', () => {
+        test('should reflect value', () => {
+          const element = fixture('TangyEthiopianDateFixture');
+          element.value = "2013-09-23"
+          assert.equal(element.shadowRoot.querySelector("select[name='year']").value, "2013")
+        })
+        test('should show/not show today button', () => {
+          const element = fixture('TangyEthiopianDateShowTodayButtonFixture');
+          assert.equal(element.getAttribute("show-today-button"), "")
+          assert.equal(!!element.shadowRoot.querySelector("paper-button[id='today']"),true)
+          element.removeAttribute("show-today-button")
+          assert.equal(!!element.shadowRoot.querySelector("paper-button[id='today']"),false)
+        })
+        test('should show/not show unknown year option', () => {
+            const element = fixture('TangyEthiopianDateUnknownYear')
+            assert.equal(element.getAttribute("allow-unknown-year"), "")
+            let result = false
+            let options = Array.from(element.shadowRoot.querySelector("select[name='year']").options)
+            for (let option of options) {
+                if (option.value === "9999") {
+                    result = true
+                }
+            }
+            assert.equal(result, true)
+            element.removeAttribute("allow-unknown-year")
+            result = false
+            assert.equal(element.getAttribute("allow-unknown-year"), null)
+            options = Array.from(element.shadowRoot.querySelector("select[name='year']").options)
+            for (let option of options) {
+                if (option.value === "9999") {
+                    result = true
+                }
+            }
+            assert.equal(result, false)
+        })
+
+        test('should calculate diff as null with nothing selected or all unknown', () => {
+          const element = fixture('TangyEthiopianDateFixture');
+          assert.equal(element.diff('year', '2019-01-01', '9999-99-99'), null)
+          assert.equal(element.diff('year', '2019-01-01', '--'), null)
+        })
+
+        test('should calculate diff with only a year selected', () => {
+          const element = fixture('TangyEthiopianDateFixture');
+          /*
+           * Strings are Ethiopian dates
+           * end date is 2027-Sept-12
+           * start dates are 2026-(Sept-12) and 2025-(Sept-12) 
+           */
+          assert.equal(element.diff('year', '2019-01-01', '2018-99-99'), 1)
+          assert.equal(element.diff('year', '2019-01-01', '2017-99-99'), 2)
+          assert.equal(element.diff('year', '2019-01-01', '2018--',), 1)
+          assert.equal(element.diff('year', '2019-01-01', '2017--'), 2)
+        })
+        
+        test('should calculate diff with only a year and month selected', () => {
+          const element = fixture('TangyEthiopianDateFixture');
+          /*
+           * Strings are Ethiopian dates
+           * end date is 2027-Sept-12
+           * start dates are 2026-(Sept-12) and 2025-(Sept-12) 
+           */
+          assert.equal(element.diff('year', '2019-01-01', '2018-01-99'), 1)
+          assert.equal(element.diff('year', '2019-01-01', '2017-01-99'), 2)
+          assert.equal(element.diff('year', '2019-01-01', '2018-01-',), 1)
+          assert.equal(element.diff('year', '2019-01-01', '2017-01-'), 2)
+        })
+
+        test('should calculate diff with all selected', () => {
+          const element = fixture('TangyEthiopianDateFixture');
+          /*
+           * Strings are Ethiopian dates
+           * end date is 2027-Sept-12
+           * start dates are 2026-(Sept-12) and 2025-(Sept-12) 
+           */
+          assert.equal(element.diff('year', '2019-01-01', '2018-01-01'), 1)
+          assert.equal(element.diff('year', '2019-01-01', '2017-01-01'), 2)
+        })
+
+      })
+    </script>
+    
+  </body>
+</html>

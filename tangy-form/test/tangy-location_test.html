@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-location test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="TangyLocationFixture">
+      <template>
+        <tangy-location name="location" location-src="./location-list.json"></tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationFilterByFixture">
+      <template>
+        <tangy-location name="location" show-levels="county,school" filter-by="school1,school4" location-src="./location-list.json"></tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationFilterByGlobalFixture">
+      <template>
+        <tangy-location name="location" show-levels="county,school" filter-by-global location-src="./location-list.json"></tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationRequiredFixture">
+      <template>
+        <tangy-location required show-levels="county,school" location-src="location-list.json"></tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationLabelFixture">
+      <template>
+        <tangy-location required show-levels="county,school" location-src="location-list.json" label="This is a label."></tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationWithValueFixture">
+      <template>
+        <tangy-location required show-levels="county,school" location-src="location-list.json" value='[{"level":"county","value":"county1"},{"level":"school","value":"school1"}]'></tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationShowMetadataFixture">
+      <template>
+        <tangy-location required show-levels="county,school" location-src="location-list.json" show-meta-data></tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationShowMetadataWithTemplateFixture">
+      <template>
+        <tangy-location required show-levels="county,school" location-src="location-list.json" show-meta-data>
+          <h3>Custom Template</h3>
+          level: ${node.level}
+        </tangy-location>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyLocationDynamicLevel">
+      <template>
+        <tangy-form id="my-form" title="">
+          <tangy-form-item 
+            id="item1" 
+            title="Item 1" 
+            on-change="   
+              switch (getValue('level_selection')) {
+                case 'county':
+                  inputs.location_selection.setAttribute('show-levels', 'county')
+                  break
+                case 'school':
+                  inputs.location_selection.setAttribute('show-levels', 'county,school')
+                  break
+             }                                                                                                               
+           "
+         >
+           <tangy-radio-buttons 
+             name="level_selection"
+             label="Choose level"
+             required
+           >
+              <option value="county">county</option>
+              <option value="school">school</option>
+            </tangy-radio-buttons>
+            <tangy-location 
+              name="location_selection"
+              location-src="location-list.json"
+            >
+            </tangy-location>
+         </tangy-form-item>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import * as Polymer from '../node_modules/@polymer/polymer/polymer-legacy.js'
+      import '../input/tangy-location.js'
+      import '../input/tangy-radio-buttons.js'
+      import '../tangy-form.js'
+      suite('tangy-location', () => {
+
+        test('should make selection', (done) => {
+          const element = fixture('TangyLocationFixture')
+          element.addEventListener('location-list-loaded', () => {
+            element.shadowRoot.querySelector('select').value = 'county1'
+            element.shadowRoot.querySelector('select').dispatchEvent(new Event('change', {bubbles:true}))
+            assert.equal(element.value.length, 2)
+            assert.equal(element.value[0].value, 'county1')
+            done()
+          }, {once: true})
+        })
+
+
+        test('should have a label', (done) => {
+          const element = fixture('TangyLocationLabelFixture')
+          element.addEventListener('location-list-loaded', () => {
+            assert.equal(!!element.shadowRoot.querySelector('#label').innerText, true)
+            done()
+          }, {once: true})
+        })
+
+        test('should have a value from markup', (done) => {
+          const element = fixture('TangyLocationWithValueFixture')
+          element.addEventListener('location-list-loaded', () => {
+            assert.equal(element.value.length, 2)
+            done()
+          }, {once: true})
+        })
+
+        test('required tangy-location should not validate when still loading location list', (done) => {
+          const element = fixture('TangyLocationRequiredFixture')
+          assert.equal(element.validate(), false)
+          element.addEventListener('location-list-loaded', () => {
+            element.shadowRoot.querySelectorAll('select')[0].value = 'county2'
+            element.shadowRoot.querySelectorAll('select')[0].dispatchEvent(new Event('change', {bubbles: true}))
+            element.shadowRoot.querySelectorAll('select')[1].value = 'school3'
+            element.shadowRoot.querySelectorAll('select')[1].dispatchEvent(new Event('change', {bubbles: true}))
+            assert.equal(element.validate(), true)
+            done()
+          }, {once: true})
+        })
+
+        test('should change levels and clear selection when levels are reassigned', (done) => {
+          const element = fixture('TangyLocationRequiredFixture')
+          assert.equal(element.validate(), false)
+          element.addEventListener('location-list-loaded', () => {
+            element.shadowRoot.querySelectorAll('select')[0].value = 'county2'
+            element.shadowRoot.querySelectorAll('select')[0].dispatchEvent(new Event('change', {bubbles: true}))
+            element.shadowRoot.querySelectorAll('select')[1].value = 'school3'
+            element.shadowRoot.querySelectorAll('select')[1].dispatchEvent(new Event('change', {bubbles: true}))
+            element.setAttribute('show-levels','county')
+            assert.equal(element.shadowRoot.querySelectorAll('select').length, 1)
+            assert.equal(element.value.length, 0)
+            done()
+          }, {once: true})
+        })
+        test('should resume after dynamic changed levels', (done) => {
+          const element = fixture('TangyLocationDynamicLevel')
+          element.newResponse()
+          element.querySelector('tangy-location').addEventListener('location-list-loaded', () => {
+            element.querySelector('tangy-radio-buttons').value = element.querySelector('tangy-radio-buttons').value.map(option => {
+              return option.name === 'county'
+              ? {
+                ...option,
+                value: 'on'
+              }
+              : {
+                ...option,
+                value: ''
+              }
+            })
+            element.querySelector('tangy-radio-buttons').dispatchEvent(new Event('change', {bubbles: true}))
+            element.querySelector('tangy-location').shadowRoot.querySelectorAll('select')[0].value = 'county2'
+            element.querySelector('tangy-location').shadowRoot.querySelectorAll('select')[0].dispatchEvent(new Event('change', {bubbles: true}))
+            element.querySelector('#item1').shadowRoot.querySelector('#complete').click()
+            element.querySelector('#item1').shadowRoot.querySelector('dom-if').render()
+            element.querySelector('#item1').shadowRoot.querySelector('#open').click()
+            let hasCalledDone = false
+            element.querySelector('tangy-location').addEventListener('location-list-loaded', () => {
+              assert.equal(element.querySelector('#item1').querySelector('[name="location_selection"]').value.length, 1)
+              if (!hasCalledDone) {
+                hasCalledDone = true
+                done()
+              }
+            })
+          }, {once: true})
+        })
+        test('should populate select list locations found in filterBy', (done) => {
+          const element = fixture('TangyLocationFilterByFixture');
+          element.addEventListener('location-list-loaded', () => {
+            element.shadowRoot.querySelector('select').value = 'county2'
+            element.shadowRoot.querySelector('select').dispatchEvent(new Event('change', {bubbles: true}))
+            assert.equal(element.shadowRoot.querySelectorAll('select')[1].querySelectorAll('option').length, 2)
+            done()
+          }, {once: true})
+        })
+        test('should populate filterBy from window.tangyLocationFilterBy', (done) => {
+          window.tangyLocationFilterBy = 'school1,school4'
+          const element = fixture('TangyLocationFilterByGlobalFixture');
+          element.addEventListener('location-list-loaded', () => {
+            element.shadowRoot.querySelector('select').value = 'county2'
+            element.shadowRoot.querySelector('select').dispatchEvent(new Event('change', {bubbles: true}))
+            assert.equal(element.shadowRoot.querySelectorAll('select')[1].querySelectorAll('option').length, 2)
+            done()
+          }, {once: true})
+        })
+        test('should show metadata', (done) => {
+          const element = fixture('TangyLocationShowMetadataFixture');
+          element.addEventListener('location-list-loaded', () => {
+            element.shadowRoot.querySelector('select').value = 'county2'
+            element.shadowRoot.querySelector('select').dispatchEvent(new Event('change', {bubbles: true}))
+            element.shadowRoot.querySelectorAll('select')[1].value = 'school3'
+            element.shadowRoot.querySelectorAll('select')[1].dispatchEvent(new Event('change', {bubbles: true}))
+            // Assert at this point that there is metadata showing for school3.
+            assert(!!element.shadowRoot.querySelector('#metadata'), true)
+            done()
+          }, {once: true})
+        })
+        test('should show metadata with custom template', (done) => {
+          const element = fixture('TangyLocationShowMetadataWithTemplateFixture');
+          element.addEventListener('location-list-loaded', () => {
+            element.shadowRoot.querySelector('select').value = 'county2'
+            element.shadowRoot.querySelector('select').dispatchEvent(new Event('change', {bubbles: true}))
+            element.shadowRoot.querySelectorAll('select')[1].value = 'school3'
+            element.shadowRoot.querySelectorAll('select')[1].dispatchEvent(new Event('change', {bubbles: true}))
+            // Assert at this point that there is metadata showing for school3.
+            assert(element.shadowRoot.querySelector('#metadata').innerText.includes('Custom Template'), true)
+            done()
+          }, {once: true})
+        })
+      })
+
+    </script>
+
+  </body>
+</html>

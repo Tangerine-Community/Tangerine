@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-radio-buttons test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+    
+    <test-fixture id="TangyRadioBlocksFixture">
+      <template>
+        <tangy-radio-blocks
+          name="radioBlocks1"
+        > 
+          <option value="a">a</option>
+          <option value="b">b</option>
+          <option value="c">c</option>
+        </tangy-radio-blocks>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../input/tangy-radio-blocks.js'
+      suite('tangy-radio-blocks', () => {
+
+        test('should have three options', () => {
+          const element = fixture('TangyRadioBlocksFixture');
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-radio-block').length, 3)
+        })
+
+        test('should only have one option selected', () => {
+          const element = fixture('TangyRadioBlocksFixture');
+          element.shadowRoot.querySelectorAll('tangy-radio-block')[0].click()
+          element.shadowRoot.querySelectorAll('tangy-radio-block')[0].dispatchEvent(new Event('change',{bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-radio-block')[1].click()
+          element.shadowRoot.querySelectorAll('tangy-radio-block')[1].dispatchEvent(new Event('change',{bubbles:true}))
+          assert.equal([...element.shadowRoot.querySelectorAll('tangy-radio-block')].filter(n => n.value === 'on').length, 1)
+        })
+
+      })
+    </script>
+
+  </body>
+</html>
