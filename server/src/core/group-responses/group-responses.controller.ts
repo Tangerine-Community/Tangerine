@@ -1,6 +1,8 @@
 import { GroupResponsesService } from './../../shared/services/group-responses/group-responses.service';
-import { Controller, All, Param, Body } from '@nestjs/common';
+import { Controller, All, Param, Body , Req} from '@nestjs/common';
 import { SSL_OP_TLS_BLOCK_PADDING_BUG } from 'constants';
+import { Request } from 'express';
+import { decodeJWT } from 'src/auth-utils';
 const log = require('tangy-log').log
 
 @Controller('group-responses')
@@ -19,7 +21,6 @@ export class GroupResponsesController {
   async query(@Param('groupId') groupId, @Body('query') query) {
     return await this.groupResponsesService.find(groupId, query)
   }
-
   @All('search/:groupId')
   async search(@Param('groupId') groupId, @Body('phrase') phrase, @Body('index') index) {
     return await this.groupResponsesService.search(groupId, phrase, index)
@@ -48,8 +49,9 @@ export class GroupResponsesController {
   }
 
   @All('update/:groupId')
-  async update(@Param('groupId') groupId, @Body('response') response:any) {
-    const freshResponse = await this.groupResponsesService.update(groupId, response)
+  async update(@Param('groupId') groupId, @Body('response') response:any, @Req() request:Request) {
+    const tangerineModifiedByUserId = decodeJWT(request['headers']['authorization'])['username']
+    const freshResponse = await this.groupResponsesService.update(groupId, {...response, tangerineModifiedByUserId})
     return freshResponse
   }
 
@@ -58,5 +60,11 @@ export class GroupResponsesController {
     await this.groupResponsesService.delete(groupId, responseId)
     return {} 
   }
-
+  @All('patch/:groupId/:responseId')
+  async patch(@Param('groupId') groupId:string, @Param('responseId') responseId:string,  @Req() request:Request) {
+    const tangerineModifiedByUserId = decodeJWT(request['headers']['authorization'])['username']
+    const doc = await this.groupResponsesService.read(groupId, responseId)
+    const freshResponse = await this.groupResponsesService.update(groupId, {...doc,...request['body'],tangerineModifiedByUserId})
+    return request['body']
+  }
 }

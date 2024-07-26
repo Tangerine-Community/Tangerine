@@ -25,15 +25,16 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [
-        CommonModule,
-        MatTableModule,
-        MatMenuModule,
-        MatIconModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatProgressBarModule
-    ],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatMenuModule,
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    TranslateModule
+  ],
   providers: [
     AppConfigService,
     ServerConfigService,
@@ -42,7 +43,6 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     ProcessGuard
   ],
   exports: [
-    TranslateModule,
     DynamicTableComponent,
     MatSnackBarModule,
     TangyLoadingComponent,
@@ -51,7 +51,8 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     NgxPermissionsModule,
     HasAPermissionDirective,
     HasSomePermissionsDirective,
-    HasAllPermissionsDirective
+    HasAllPermissionsDirective,
+    TranslateModule
   ],
   declarations: [
     TangyLoadingComponent,
