@@ -1,0 +1,12 @@
+[
+    {
+        "id": "default-location-list",
+        "name": "Default Location List",
+        "path": "./assets/location-list.json"
+    },
+    {
+        "id": "hospitals",
+        "name": "Hospitals",
+        "path": "./assets/locations/hospitals.json"
+    }
+]
