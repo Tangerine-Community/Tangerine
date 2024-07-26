@@ -186,7 +186,11 @@ const generateFlatResponse = async function (formResponse, locationList, sanitiz
     buildChannel: formResponse.buildChannel||'',
     deviceId: formResponse.deviceId||'',
     groupId: formResponse.groupId||'',
-    complete: formResponse.complete
+    complete: formResponse.complete,
+    archived: formResponse?.archived||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
+    tangerineModifiedByUserId: formResponse?.tangerineModifiedByUserId||'',
+    verified: formResponse?.verified||'',
   };
   function set(input, key, value) {
     flatFormResponse[key] = input.skipped

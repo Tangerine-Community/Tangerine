@@ -5,19 +5,22 @@
     <td mat-cell *matCellDef="let row">{{ column.cell(row) }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="actions" stickyEnd>
+  <ng-container matColumnDef="actions" stickyEnd *ngIf="!hideActionBar">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let row">
-      <div class="actions-container" >
+      <div class="actions-container">
         <button class="actions-menu" mat-stroked-button color="primary" [matMenuTriggerFor]="menu">
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
           <button (click)="onRowEdit(row)" mat-menu-item>
-            <mat-icon>edit</mat-icon><span>{{'edit'}}</span>
+            <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
           </button>
-          <button (click)="onRowDelete(row)" mat-menu-item>
-            <mat-icon>delete</mat-icon><span>{{'delete'}}</span>
+          <button *ngIf="!showArchiveButton" (click)="onRowDelete(row)" mat-menu-item>
+            <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
+          </button>
+          <button *ngIf="showArchiveButton" (click)="onRowArchive(row)" mat-menu-item>
+            <mat-icon>archive</mat-icon><span>{{'archive'|translate}}</span>
           </button>
         </mat-menu>
       </div>
@@ -26,6 +29,6 @@
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClick(row)"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClick($event,row)"></tr>
 
 </table>
