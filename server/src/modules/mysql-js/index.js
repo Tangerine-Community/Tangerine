@@ -206,14 +206,31 @@ module.exports = {
             }
             const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
-          } else {
+          } else if (doc.type === 'response') {
             const flatDoc = await prepareFlatData(doc, sanitized);
             tableName = null;
             docType = 'response';
             primaryKey = 'ID'
             createFunction = function (t) {
               t.engine('InnoDB')
-              t.string(primaryKey, 36).notNullable().primary();
+              t.string(primaryKey, 200).notNullable().primary();
+              t.string('caseId', 36) // .index('response_caseId_IDX');
+              t.string('participantID', 36) //.index('case_instances_ParticipantID_IDX');
+              t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
+              t.tinyint('complete');
+              t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
+            }
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            log.info('Processed: ' + JSON.stringify(result))
+          } else {
+            const flatDoc = await prepareFlatData(doc, sanitized);
+            tableName = flatDoc.type;
+            console.log("tableName: " + tableName)
+            docType = 'response';
+            primaryKey = 'ID'
+            createFunction = function (t) {
+              t.engine('InnoDB')
+              t.string(primaryKey, 200).notNullable().primary();
               t.string('caseId', 36) // .index('response_caseId_IDX');
               t.string('participantID', 36) //.index('case_instances_ParticipantID_IDX');
               t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
@@ -223,6 +240,7 @@ module.exports = {
             const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           }
+
           await knex.destroy()
         }
       }
@@ -310,6 +328,7 @@ const getItemValue = (doc, variableName) => {
 const generateFlatResponse = async function (formResponse, sanitized) {
   const groupId = formResponse.groupId;
 
+  // Anything added to this list need to be added to the valuesToRemove list in each of the convert_response function.
   let flatFormResponse = {
     _id: formResponse._id,
     formTitle: formResponse.form.title,
@@ -319,7 +338,10 @@ const generateFlatResponse = async function (formResponse, sanitized) {
     deviceId: formResponse.deviceId||'',
     groupId: groupId||'',
     complete: formResponse.complete,
-    archived: formResponse.archived||''
+    archived: formResponse?.archived||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
+    tangerineModifiedByUserId: formResponse?.tangerineModifiedByUserId||'',
+    verified: formResponse?.verified||''
   };
 
   if (!formResponse.formId) {
@@ -327,6 +349,52 @@ const generateFlatResponse = async function (formResponse, sanitized) {
       formResponse.form.id = 'blank'
     }
     flatFormResponse['formId'] = formResponse.form.id
+  }
+
+  if (formResponse.type === 'attendance' || formResponse.type === 'behavior' || formResponse.type === 'scores' ||
+      formResponse.form.id === 'student-registration' ||
+      formResponse.form.id === 'class-registration') {
+
+    function hackFunctionToRemoveUserProfileId (formResponse) {
+      // This is a very special hack function to remove userProfileId
+      // It needs to be replaced with a proper solution that resolves duplicate variables.
+      if (formResponse.userProfileId) {
+        for (let item of formResponse.items) {
+          for (let input of item.inputs) {
+            if (input.name === 'userProfileId') {
+              delete formResponse.userProfileId;
+            }
+          }
+        }
+      }
+      return formResponse;
+    }
+
+    formResponse = hackFunctionToRemoveUserProfileId(formResponse);
+
+    if (formResponse.type === 'attendance') {
+      flatFormResponse['attendanceList'] = formResponse.attendanceList
+    } else if (formResponse.type === 'behavior') {
+      // flatFormResponse['studentBehaviorList'] = formResponse.studentBehaviorList
+      const studentBehaviorList = formResponse.studentBehaviorList.map(record => {
+        const student = {}
+        Object.keys(record).forEach(key => {
+          if (key === 'behavior') {
+            student[key + '.formResponseId'] = record[key]['formResponseId']
+            student[key + '.internal'] = record[key]['internal']
+            student[key + '.internalPercentage'] = record[key]['internalPercentage']
+            // console.log("special processing for behavior: " + JSON.stringify(student) )
+          } else {
+            // console.log("key: " + key + " record[key]: " + record[key])
+            student[key] = record[key]
+          }
+        })
+        return student
+      })
+      flatFormResponse['studentBehaviorList'] = studentBehaviorList
+    } else if (formResponse.type === 'scores') {
+      flatFormResponse['scoreList'] = formResponse.scoreList
+    }
   }
 
   for (let item of formResponse.items) {
@@ -713,7 +781,7 @@ async function convert_response(knex, doc, groupId, tableName) {
 
 
   // # Delete the following keys;
-  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime']
+  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime', 'tangerineModifiedOn', 'tangerineModifiedByUserId']
   valuesToRemove.forEach(e => delete doc[e]);
   const cleanData = populateDataFromDocument(doc, data);
   return cleanData
@@ -817,6 +885,9 @@ async function saveToMysql(knex, sourceDb, doc, tablenameSuffix, tableName, docT
         data = await convert_issue(knex, doc, groupId, tableName)
         break;
       case 'response':
+      case 'attendance':
+      case 'behavior':
+      case 'scores':
         data = await convert_response(knex, doc, groupId, tableName)
         // Check if table exists and create if needed:
         tableName = data['formID_sanitized'] + tablenameSuffix

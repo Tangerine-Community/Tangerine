@@ -11,7 +11,7 @@ Summary of steps:
 1. Enter the container on command line with `docker exec -it tangerine bash`.
 1. Clear reporting cache with command `reporting-cache-clear`.
 1. Run a batch with debugger enabled by running command `node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)`.
-1. Latch onto debugging session using Chrome inspect. You may need to click "configure" and add `localhost:9228` to "Target discovery settings".
+1. Latch onto debugging session using [Chrome Inspect](chrome://inspect/#devices). You may need to click "configure" and add `localhost:9228` to "Target discovery settings".
 
 
 ## Instructions

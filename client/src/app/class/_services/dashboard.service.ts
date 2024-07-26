@@ -1043,6 +1043,37 @@ export class DashboardService {
     return gradeInput?.value
   }
 
+  async getAllStudentResults(students, studentsResponses, curriculumFormsList, curriculum) {
+    const allStudentResults = [];
+
+    const appConfig = await this.appConfigService.getAppConfig();
+    const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields || []
+
+    students.forEach((student) => {
+      const studentResult = {};
+
+      studentResult['id'] = student.id;
+      studentRegistrationFields.forEach((field) => {
+        studentResult[field] = this.getValue(field, student.doc)
+      })
+      studentResult['forms'] = {};
+      curriculumFormsList.forEach((form) => {
+        const formResult = {};
+        formResult['formId'] = form.id;
+        formResult['curriculum'] = curriculum.name;
+        formResult['title'] = form.title;
+        formResult['src'] = form.src;
+        if (studentsResponses[student.id]) {
+          formResult['response'] = studentsResponses[student.id][form.id];
+        }
+        studentResult['forms'][form.id] = formResult;
+      });
+      allStudentResults.push(studentResult);
+    });
+
+    return allStudentResults;
+  }
+
   /**
    * Get the attendance list for the class, including any students who have not yet had attendance checked. If the savedAttendanceList is passed in, then
    * populate the student from that doc by matching student.id.
@@ -1050,10 +1081,9 @@ export class DashboardService {
    * @param savedList
    */
   async getAttendanceList(students, savedList, curriculum) {
-    // const curriculumFormHtml = await this.getCurriculaForms(curriculum.name);
-    // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
     const appConfig = await this.appConfigService.getAppConfig();
     const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields || []
+
     const list = []
     for (const student of students) {
       let studentResult
@@ -1062,13 +1092,6 @@ export class DashboardService {
         studentResult = savedList.find(studentDoc => studentDoc.id === studentId)
       }
       if (studentResult) {
-          // migration.
-          if (!studentResult.student_surname) {
-              studentResult.student_surname = studentResult.surname
-          }
-          if (!studentResult.student_name) {
-              studentResult.student_name = studentResult.name
-          }
         list.push(studentResult)
       } else {
         studentResult = {}
@@ -1077,22 +1100,15 @@ export class DashboardService {
         studentRegistrationFields.forEach((field) => {
           studentResult[field] = this.getValue(field, student.doc)
         })
-        // const student_name = this.getValue('student_name', student.doc)
-        // const student_surname = this.getValue('student_surname', student.doc)
-        // const phone = this.getValue('phone', student.doc);
-        // const classId = this.getValue('classId', student.doc)
-        
-        // studentResult['name'] = student_name
-        // studentResult['surname'] = student_surname
-        // studentResult['phone'] = phone
-        // studentResult['classId'] = classId
         studentResult['absent'] = null
+        if (appConfig.teachProperties?.showLateAttendanceOption) {
+          studentResult['late'] = null
+        }
         
         list.push(studentResult)
       }
     }
     return list
-    // await this.populateFeedback(curriculumId);
   }
 
   /**

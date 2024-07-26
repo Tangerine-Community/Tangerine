@@ -70,6 +70,7 @@ import { GroupCsvTemplatesComponent } from './group-csv-templates/group-csv-temp
 import { GroupDatabaseConflictsComponent } from './group-database-conflicts/group-database-conflicts.component';
 import { DownloadStatisticalFileComponent } from './download-statistical-file/download-statistical-file.component';
 import { GroupDevicePasswordPolicyComponent } from './group-device-password-policy/group-device-password-policy.component';
+import { GroupUploadsEditComponent } from './group-uploads-edit/group-uploads-edit.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -86,6 +87,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data', component: GroupDataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/uploads', component: GroupUploadsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/uploads/:responseId', component: GroupUploadsViewComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/uploads/:responseId/edit', component: GroupUploadsEditComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/database-conflicts', component: GroupDatabaseConflictsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data/csv-templates', component: GroupCsvTemplatesComponent, canActivate: [LoginGuard] },
