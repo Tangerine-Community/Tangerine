@@ -5,7 +5,7 @@
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
-	<span *ngIf="!eventFormArchived && !eventForm.formResponseId && canLinkToOnlineSurvey">
+	<span *ngIf="!eventFormArchived && canLinkToOnlineSurvey">
 		<button class="tangy-small-list-icon" [matMenuTriggerFor]="linkMenu" (click)="showLinkMenu(); $event.stopPropagation()">
 			<mwc-icon>share</mwc-icon>
 		</button>
