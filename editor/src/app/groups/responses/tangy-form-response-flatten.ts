@@ -23,6 +23,8 @@ export const generateFlatResponse = async function (formResponse, locationLists,
     groupId: formResponse.groupId||'',
     complete: formResponse.complete,
     verified: formResponse.verified||'',
+    archived: formResponse.archived||'',
+    tangerineModifiedOn: formResponse.tangerineModifiedOn||'',
     tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,

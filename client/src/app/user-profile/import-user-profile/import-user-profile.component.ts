@@ -2,10 +2,10 @@ import { Component, ViewChild, ElementRef, AfterContentInit } from '@angular/cor
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../shared/_services/user.service';
 import { Router } from '@angular/router';
-import PouchDB from 'pouchdb';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { AppConfig } from 'src/app/shared/_classes/app-config.class';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
+import { VariableService } from 'src/app/shared/_services/variable.service';
 
 
 @Component({
@@ -33,7 +33,8 @@ export class ImportUserProfileComponent implements AfterContentInit {
     private router: Router,
     private http: HttpClient,
     private userService: UserService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private variableService: VariableService
   ) {  } 
 
   ngAfterContentInit() {
@@ -56,24 +57,26 @@ export class ImportUserProfileComponent implements AfterContentInit {
     try {
       this.appConfig = await this.appConfigService.getAppConfig()
       this.shortCode = this.userShortCodeInput.nativeElement.value;
-      let newUserProfile = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?userProfile=true`).toPromise()
-      if(!!newUserProfile){
+      let existingUserProfile = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/userProfileByShortCode/${this.shortCode}`).toPromise()
+      if(!!existingUserProfile){
+        const username = this.userService.getCurrentUser()
         this.state = this.STATE_SYNCING
-        await this.userService.saveUserAccount({ ...this.userAccount, userUUID: newUserProfile['_id'], initialProfileComplete: true })
-        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
+        await this.userService.saveUserAccount({ ...this.userAccount, userUUID: existingUserProfile['_id'], initialProfileComplete: true })
+        this.totalDocs = (await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/?totalRows=true`).toPromise())['totalDocs']
         const docsToQuery = 1000;
-        let processedDocs = +localStorage.getItem('processedDocs') || 0;
+        let previousProcessedDocs = await this.variableService.get(`${username}-processedDocs`)
+        let processedDocs = parseInt(previousProcessedDocs) || 0;
         while (processedDocs < this.totalDocs) {
-          this.docs = await this.http.get(`${this.appConfig.serverUrl}/api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
+          this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${this.shortCode}/${docsToQuery}/${processedDocs}`).toPromise()
           for (let doc of this.docs) {
             delete doc._rev
             await this.db.put(doc)
           }
           processedDocs += this.docs.length;
           this.processedDocs = processedDocs
-          localStorage.setItem('processedDocs', String(processedDocs))
+          await this.variableService.set(`${username}-processedDocs`, String(processedDocs))
         }
-      } else{
+      } else {
         this.state = this.STATE_NOT_FOUND
       }
       this.router.navigate([`/${this.appConfig.homeUrl}`] );

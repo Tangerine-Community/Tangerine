@@ -21,7 +21,6 @@ export class GroupResponsesController {
   async query(@Param('groupId') groupId, @Body('query') query) {
     return await this.groupResponsesService.find(groupId, query)
   }
-
   @All('search/:groupId')
   async search(@Param('groupId') groupId, @Body('phrase') phrase, @Body('index') index) {
     return await this.groupResponsesService.search(groupId, phrase, index)
@@ -61,5 +60,11 @@ export class GroupResponsesController {
     await this.groupResponsesService.delete(groupId, responseId)
     return {} 
   }
-
+  @All('patch/:groupId/:responseId')
+  async patch(@Param('groupId') groupId:string, @Param('responseId') responseId:string,  @Req() request:Request) {
+    const tangerineModifiedByUserId = decodeJWT(request['headers']['authorization'])['username']
+    const doc = await this.groupResponsesService.read(groupId, responseId)
+    const freshResponse = await this.groupResponsesService.update(groupId, {...doc,...request['body'],tangerineModifiedByUserId})
+    return request['body']
+  }
 }

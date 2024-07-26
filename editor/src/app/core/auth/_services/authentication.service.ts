@@ -213,6 +213,10 @@ export class AuthenticationService {
   }
 
   async getCustomLoginMarkup() {
-    return <string>await this.http.get('/custom-login-markup', {responseType: 'text'}).toPromise()
+    try {
+      return <string>await this.http.get('/custom-login-markup', {responseType: 'text'}).toPromise()
+    } catch (error) {
+      return ''
+    }
   }
 }

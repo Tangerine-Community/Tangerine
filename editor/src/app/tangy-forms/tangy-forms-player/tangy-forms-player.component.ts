@@ -195,7 +195,7 @@ export class TangyFormsPlayerComponent {
         this.$afterResubmit.next(true)
       })
     }
-    this.unlockFormResponses? this.formEl.unlock(): null
+    this.unlockFormResponses? this.formEl.unlock({disableComponents:['TANGY-GPS']}): null
     this.$rendered.next(true)
     this.rendered = true
   }
