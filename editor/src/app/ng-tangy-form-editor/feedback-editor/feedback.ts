@@ -8,5 +8,6 @@ export class Feedback {
   skill:string;
   assignment:string;
   message:string;
+  customJSCode: string;
   messageTruncated: string; // for listing
 }

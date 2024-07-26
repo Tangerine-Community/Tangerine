@@ -90,6 +90,9 @@
             <mat-form-field>
               <textarea matInput placeholder="Feedback message" [(ngModel)]="message">{{message}}</textarea>
             </mat-form-field>
+            <mat-form-field>
+              <textarea matInput placeholder="Custom JS Code" [(ngModel)]="customJSCode">{{customJSCode}}</textarea>
+            </mat-form-field>
           <div style="display: flex; justify-content: flex-end">
             <div mat-dialog-actions>
               <button mat-button (click)="onNoClick()">Cancel</button>  <button mat-raised-button color="primary" (click)="save()">Save feedback</button>
