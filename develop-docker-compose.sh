@@ -77,4 +77,4 @@ fi
 if [ ! -d state ]; then
   mkdir state
 fi
-NPM_DEV_MODE=":dev" docker compose up
+NPM_DEV_MODE=":dev" docker compose up -d

@@ -40,14 +40,15 @@ export class GroupLocationListsComponent implements OnInit {
   async loadLocationLists() {
     try {
       const data: any = await this.groupsService.getLocationLists(this.groupId);
-      this.locationLists = data;
-      this.locationListTableData = data.map(location => { return {
-        "id": location.id,
-        "Name": location.name,
-        "Levels": location.locationsLevels
-      }})
-
-      this.locationListsLength = data.length;
+      if (data) {
+        this.locationLists = data;
+        this.locationListTableData = data.map(location => { return {
+          "id": location.id,
+          "Name": location.name,
+          "Levels": location.locationsLevels
+        }})
+        this.locationListsLength = this.locationLists.length;
+      }
     } catch (error) {
       this.errorHandler.handleError('Failed to load Location List information for this group.');
     }

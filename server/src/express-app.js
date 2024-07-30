@@ -190,7 +190,7 @@ app.get('/app/:groupId/responsesByMonthAndFormId/:keys/:limit?/:skip?', isAuthen
 app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./routes/group-responses-by-user-profile-id.js'))
 app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./routes/group-responses-by-user-profile-short-code.js'))
 app.get('/api/:groupId/userProfileByShortCode/:userProfileShortCode', require('./routes/group-user-profile-by-short-code.js'))
-app.get('/api/:groupId/:docId', isAuthenticatedOrHasUploadToken, require('./routes/group-doc-read.js'))
+app.get('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-read.js'))
 app.put('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
 app.post('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
 app.delete('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-delete.js'))
