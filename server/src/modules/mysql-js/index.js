@@ -375,7 +375,6 @@ const generateFlatResponse = async function (formResponse, sanitized) {
     if (formResponse.type === 'attendance') {
       flatFormResponse['attendanceList'] = formResponse.attendanceList
     } else if (formResponse.type === 'behavior') {
-      // flatFormResponse['studentBehaviorList'] = formResponse.studentBehaviorList
       const studentBehaviorList = formResponse.studentBehaviorList.map(record => {
         const student = {}
         Object.keys(record).forEach(key => {
@@ -407,7 +406,6 @@ const generateFlatResponse = async function (formResponse, sanitized) {
       }
       if (!sanitize) {
         // Simplify the keys by removing formID.itemId
-        let firstIdSegment = ""
         if (input.tagName === 'TANGY-LOCATION') {
           // Populate the id, label and metadata columns for TANGY-LOCATION levels in the current location list.
           // The location list may be change over time. When values are changed, we attempt to adjust 
@@ -419,7 +417,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
           const locationList = await tangyModules.getLocationListsByLocationSrc(groupId, locationSrc)
           locationKeys = []
           for (let group of input.value) {
-            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
   
             if (!locationList) {
@@ -427,7 +425,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
               // use the label value saved in the form response if it is not found in the current location list.
               // If no label appears in the form response, then we put 'orphanced' for the label. 
               const valueLabel = group.label ? group.label : 'orphaned'
-              tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, valueLabel)
+              tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}_label`, valueLabel)
             } else {
               try {
                 const location = getLocationByKeys(locationKeys, locationList)
@@ -435,29 +433,91 @@ const generateFlatResponse = async function (formResponse, sanitized) {
                   if (['descendantsCount', 'children', 'parent', 'id'].includes(keyName)) {
                     continue
                   }
-                  tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])                
+                  tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}_${keyName}`, location[keyName])                
                 }
               } catch (e) {
                 const valueLabel = group.label ? group.label : 'orphaned'
-                tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, valueLabel)
+                tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}_label`, valueLabel)
               }
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
           let selectedOption = input.value.find(option => !!option.value) 
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, selectedOption ? selectedOption.name : '')
         } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
         } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
         } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
           // Do nothing :).
+        } else if (input.tagName === 'TANGY-TIMED') {
+          let hitLastAttempted = false
+          for (let toggleInput of input.value) {
+            let derivedValue = ''
+            if (hitLastAttempted === true) {
+              // Not attempted.
+              derivedValue = '.'
+            } else if (toggleInput.value === 'on' || toggleInput.pressed === true) {
+              // If toggle is 'on' (manually pressed) or pressed is true (row marked), the item is incorrect.
+              derivedValue = '0'
+            } else {
+              // Correct.
+              derivedValue = '1'
+            }
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${toggleInput.name}`, derivedValue)
+            if (toggleInput.highlighted === true) {
+              hitLastAttempted = true
+            }
+          }
+          ;
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.duration`, input.duration)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.time_remaining`, input.timeRemaining)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.grid_auto_stopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.auto_stop`, input.autoStop)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.time_interm_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
+          // Calculate Items Per Minute.
+          let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+          let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+          let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.attempted`, numberOfItemsAttempted)
+          let timeSpent = input.duration - input.timeRemaining
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
+        } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
+          let hitLastAttempted = false
+          for (let toggleInput of input.value) {
+            let derivedValue = ''
+            if (hitLastAttempted === true) {
+              // Not attempted.
+              derivedValue = '.'
+            } else if (toggleInput.value === 'on') {
+              // Incorrect.
+              derivedValue = '0'
+            } else {
+              // Correct.
+              derivedValue = '1'
+            }
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${toggleInput.name}`, derivedValue)
+            if (toggleInput.highlighted === true) {
+              hitLastAttempted = true
+            }
+          }
+          ;
+          let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+          let totalNumberOfItems = input.value.length
+          let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+          let numberOfItemsCorrect = totalNumberOfItems - numberOfItemsIncorrect
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.attempted`, numberOfItemsAttempted)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.grid_auto_stopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.auto_stop`, input.autoStop)
         } else if (input.tagName === 'TANGY-SIGNATURE') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
         } else if (input && typeof input.value === 'string') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value)
         } else if (input && typeof input.value === 'number') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value)
         } else if (input && Array.isArray(input.value)) {
           let i = 0
           for (let group of input.value) {
@@ -466,7 +526,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
             if (!group.name) {
               keyName = i
             }
-            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}_${keyName}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${keyName}`, group.value)
           }
         } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
           let elementKeys = Object.keys(input.value);
@@ -477,7 +537,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
             if (!key) {
               keyName = i
             }
-            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}_${keyName}`, input.value[key])
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${keyName}`, input.value[key])
           }
         }
       } // sanitize
