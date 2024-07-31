@@ -46,7 +46,7 @@ mkdir -p $RELEASE_DIRECTORY/assets/locations
 mkdir -p $RELEASE_DIRECTORY/assets/media
 
 # Copy the form, location list, and media to the release directory
-cp -r $FORM_DIRECTORY/* $RELEASE_DIRECTORY/assets/form/*
+cp $FORM_DIRECTORY/*.html $RELEASE_DIRECTORY/assets/form/
 cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
 cp -r $LOCATION_LISTS_DIRECTORY $RELEASE_DIRECTORY/assets/
 cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/
