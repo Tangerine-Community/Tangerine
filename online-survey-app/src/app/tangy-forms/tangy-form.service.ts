@@ -21,7 +21,7 @@ export class TangyFormService {
   }
 
   initialize(groupId) {
-    this.userId = localStorage.getItem('user_id') || 'Survey'
+    this.userId = sessionStorage.getItem('user_id') || 'Survey'
     this.db = new UserDatabase(this.userId, groupId)
   }
 
