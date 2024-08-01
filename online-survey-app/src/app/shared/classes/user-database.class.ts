@@ -24,7 +24,7 @@ export class UserDatabase {
   }
 
   async get(id) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return (<any>await axios.get(`/group-responses/read/${this.groupId}/${id}`, { headers: { authorization: token }})).data
   }
 
@@ -33,7 +33,7 @@ export class UserDatabase {
   }
 
   async post(doc) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (this.attachHistoryToDocs === undefined) {
       const appConfig = (<any>await axios.get('./assets/app-config.json', { headers: { authorization: token }})).data
       this.attachHistoryToDocs = appConfig['attachHistoryToDocs']
@@ -70,7 +70,7 @@ export class UserDatabase {
 
   async remove(doc) {
     // This is not implemented...
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return await axios.delete(`/api/${this.groupId}`, doc)
   }
 

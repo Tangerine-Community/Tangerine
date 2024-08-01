@@ -55,7 +55,7 @@ export class AppComponent implements OnInit{
   }
   
   async sessionTimeoutCheck() {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const claims = JSON.parse(atob(token.split('.')[1]));
     const expiryTimeInMs = claims['exp'] * 1000;
     const minutesBeforeExpiry = expiryTimeInMs - (15 * 60 * 1000); // warn 15 minutes before expiry of token
