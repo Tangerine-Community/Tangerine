@@ -55,8 +55,8 @@ export class TangyFormsPlayerComponent implements OnInit {
     // Loading the formResponse from a case must happen before rendering the innerHTML
     let formResponse;
     if (this.caseId && this.caseEventId && this.eventFormId) {
-      // Store the caseUrlHash in localStorage so that we can redirect to the correct page after logout -> login
-      localStorage.setItem('caseUrlHash', `/case/event/form/${this.caseId}/${this.caseEventId}/${this.eventFormId}`);
+      // Store the caseUrlHash in sessionStorage so that we can redirect to the correct page after logout -> login
+      sessionStorage.setItem('caseUrlHash', `/case/event/form/${this.caseId}/${this.caseEventId}/${this.eventFormId}`);
 
       try {
         const groupId = window.location.pathname.split('/')[4];
