@@ -9,6 +9,8 @@ class UserProfile {
     this.form = { id: "user-profile" }
     this.items = [{ inputs: [] }]
     this.location = {};
+    this.startDatetime = (new Date()).toLocaleString();
+    this.startUnixtime = Date.now();
   }
 
   addInputs(inputs) {
