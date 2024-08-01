@@ -28,9 +28,9 @@ export class AuthenticationService {
       }
     } catch (error) {
       console.error(error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user_id');
-      localStorage.removeItem('permissions');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user_id');
+      sessionStorage.removeItem('permissions');
       return false;
     }
   }
@@ -50,26 +50,26 @@ export class AuthenticationService {
       }
     } catch (error) {
       console.error(error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user_id');
-      localStorage.removeItem('password');
-      localStorage.removeItem('permissions');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user_id');
+      sessionStorage.removeItem('password');
+      sessionStorage.removeItem('permissions');
       return false;
     }
   }
 
   async isLoggedIn():Promise<boolean> {
     this._currentUserLoggedIn = false;
-    this._currentUserLoggedIn = !!localStorage.getItem('user_id');
+    this._currentUserLoggedIn = !!sessionStorage.getItem('user_id');
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
     return this._currentUserLoggedIn;
   }
 
   async logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_id');
-    localStorage.removeItem('password');
-    localStorage.removeItem('permissions');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user_id');
+    sessionStorage.removeItem('password');
+    sessionStorage.removeItem('permissions');
     document.cookie = "Authorization=;max-age=-1";
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
@@ -78,7 +78,7 @@ export class AuthenticationService {
   async extendUserSession() {
     const appConfig = await this.appConfigService.getAppConfig();
     const groupId = appConfig['groupId'];
-    const accessCode = localStorage.getItem('user_id');
+    const accessCode = sessionStorage.getItem('user_id');
 
     try {
       const data = await this.http.post(`/onlineSurvey/login/${groupId}/${accessCode}`, {groupId, accessCode}, {observe: 'response'}).toPromise();
@@ -98,9 +98,9 @@ export class AuthenticationService {
   async setTokens(token) {
     const jwtData = jwtDecode(token);
     document.cookie = "Authorization=;max-age=-1";
-    localStorage.setItem('token', token);
-    localStorage.setItem('user_id', jwtData['username']);
-    localStorage.setItem('permissions', JSON.stringify(jwtData['permissions']));
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('user_id', jwtData['username']);
+    sessionStorage.setItem('permissions', JSON.stringify(jwtData['permissions']));
     document.cookie = `Authorization=${token}`;
   }
 

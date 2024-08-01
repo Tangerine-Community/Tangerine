@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
 
       if (window.location.origin.startsWith('http://localhost')) {
         // If we are running on localhost, we want to use the local server for authentication 
-        localStorage.setItem(this.user.username, this.user.password);
+        sessionStorage.setItem(this.user.username, this.user.password);
         this.router.navigate([this.returnUrl]);
       } else if (await this.authenticationService.login(this.user.username, this.user.password)) {
         this.router.navigate([this.returnUrl]);

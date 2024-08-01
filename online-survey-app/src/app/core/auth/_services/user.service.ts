@@ -43,7 +43,7 @@ export class UserService {
   }
   
   async getCurrentUser() {
-    return await localStorage.getItem('user_id');
+    return await sessionStorage.getItem('user_id');
   }
   private showError(error: any) {
     console.log(error);
@@ -58,7 +58,7 @@ export class UserService {
 
   async getMyUser() {
     try {
-      if (localStorage.getItem('user_id') === 'user1') {
+      if (sessionStorage.getItem('user_id') === 'user1') {
         return {
           email: 'user1@tangerinecentral.org',
           firstName: 'user1',
