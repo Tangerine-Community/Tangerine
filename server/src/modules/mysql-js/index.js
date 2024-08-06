@@ -99,7 +99,7 @@ module.exports = {
             for (let i = 0; i < doc.participants.length; i++) {
               const participant = doc.participants[i]
               let participant_id = participant.id
-              let key_len = 32
+              let key_len = 36
               if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
                 participant_id = doc._id + '-' + participant.id
                 key_len = 80
@@ -120,7 +120,7 @@ module.exports = {
               createFunction = function (t) {
                 t.engine('InnoDB')
                 t.string(primaryKey, key_len).notNullable().primary();
-                t.string('CaseID', key_len).index('participant_CaseID_IDX');
+                t.string('CaseID', 36).index('participant_CaseID_IDX');
                 t.double('inactive');
               }
               const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
