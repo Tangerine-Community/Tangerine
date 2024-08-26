@@ -42,6 +42,7 @@ MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media"
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 
 # Ensure the release directories exists
+mkdir -p $RELEASE_DIRECTORY/assets/form
 mkdir -p $RELEASE_DIRECTORY/assets/locations
 mkdir -p $RELEASE_DIRECTORY/assets/media
 
