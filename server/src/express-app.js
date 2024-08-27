@@ -14,18 +14,12 @@ const readFile = util.promisify(fsc.readFile);
 const writeFile = util.promisify(fsc.writeFile);
 const unlink = util.promisify(fsc.unlink)
 const sanitize = require('sanitize-filename');
-const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pouchRepStream = require('pouchdb-replication-stream');
 PouchDB.plugin(require('pouchdb-find'));
 PouchDB.plugin(pouchRepStream.plugin);
 PouchDB.adapter('writableStream', pouchRepStream.adapters.writableStream);
-const pako = require('pako')
 const compression = require('compression')
-const chalk = require('chalk');
-const pretty = require('pretty')
-const flatten = require('flat')
-const json2csv = require('json2csv')
 const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
