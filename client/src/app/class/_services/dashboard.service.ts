@@ -242,7 +242,7 @@ export class DashboardService {
 
     if (item) {
       itemCount = item.inputs.length;
-      customScore = item.customScore? item.customScore: null
+      customScore = !isNaN(item.customScore)? item.customScore: null
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -388,8 +388,8 @@ export class DashboardService {
               maxValueAnswer = maxValueAnswer + max;
             }
             score = totalCorrect;
-            scorePercentageCorrect = customScore ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
-            if (customScore) {
+            scorePercentageCorrect = !isNaN(customScore) ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
+            if (!isNaN(customScore)) {
               maxValueAnswer = 100
             }
           }
@@ -430,7 +430,7 @@ export class DashboardService {
         totalIncorrect: totalIncorrect,
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
-        scorePercentageCorrect: scorePercentageCorrect,
+        scorePercentageCorrect: !isNaN(customScore) ? customScore : scorePercentageCorrect,
         duration: duration,
         customScore: customScore
       };
@@ -503,15 +503,15 @@ export class DashboardService {
             studentResults.score = score;
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          const max = studentResponse.customScore? 100: studentResponse.max;
+          const max = !isNaN(studentResponse.customScore)? 100: studentResponse.max;
           if (max) {
             studentResults.max = max;
             classGroupReportMax = max;
           }
-          const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
-          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
+          const totalCorrect = !isNaN(studentResponse.customScore) ? studentResponse.customScore : studentResponse.totalCorrect;
+          const scorePercentageCorrect = !isNaN(studentResponse.customScore) ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
-          const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
+          const maxValueAnswer = !isNaN(studentResponse.customScore) ? 100: studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
           studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
