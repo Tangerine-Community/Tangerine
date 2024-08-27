@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.45.3
+
+Fix undefined access of input without tagName
+
+## v4.45.2
+
+Fix check for 'readOnly' input metadata
+
+## v4.45.1
+
+Fix typo in function name
+
 ## v4.45.0
 
 At times we may need to disable some components when form is unlocked A good example is the tangy-gps component
