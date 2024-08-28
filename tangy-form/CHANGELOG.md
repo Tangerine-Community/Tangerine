@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v4.45.4
+
+Fix missing function parens
+
 ## v4.45.3
 
 Fix undefined access of input without tagName

@@ -167,7 +167,7 @@ const tangyFormReducer = function (state = initialState, action) {
           props.inputs = item.inputs.map(input => {
             const inputMeta = itemMeta.inputs.find(inputMeta => inputMeta.name === input.name)
             if (input.tagName && action.meta.disableComponents && action.meta.disableComponents.length > 0) {
-              if (action.meta.disableComponents.find(e => e.toLowerCase === input.tagName.toLowerCase())) {
+              if (action.meta.disableComponents.find(e => e.toLowerCase() === input.tagName.toLowerCase())) {
                 inputMeta.disabled = true
                 inputMeta.readOnly = true
               }
