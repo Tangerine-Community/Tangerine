@@ -43,7 +43,10 @@
     </custom-style>
   </head>
   <body>
-          <tangy-form-editor files-endpoint="./files.json">
+          <tangy-form-editor 
+            files-endpoint="./files.json" 
+            location-lists-metadata='[{"id":"default-location-list","name":"Default Location List","path":"location-list.json", "locationsLevels": ["county","school"]},{"id":"hospitals","name":"Hospitals","path":"locations/hospitals.json", "locationsLevels": ["clinic","ward"]}]'>
+            
             <template>
 
               <tangy-form 
@@ -202,7 +205,7 @@
                   <template>
                     Your GPS Coordinates:
                     <tangy-gps name="gps_coords"></tangy-gps>
-                    <tangy-location  label="Select your school" name="location" show-levels="county,school"></tangy-location>
+                    <tangy-location  label="Select your location" name="location" show-levels="county,school"></tangy-location>
                   </template>
                 </tangy-form-item>
                 <tangy-form-item id="text_inputs_2" title="Text Inputs 2">
@@ -653,7 +656,7 @@
             </template>
           </tangy-form-editor>
           <script>
-            document.querySelector('tangy-form-editor').addEventListener('tangy-form-editor-change', event => {console.info(event.detail)})
+            document.querySelector('tangy-form-editor').addEventListener('tangy-form-editor-change', event => {console.info('tangy-form-editor-change event')})
           </script>
   </body>
 </html>

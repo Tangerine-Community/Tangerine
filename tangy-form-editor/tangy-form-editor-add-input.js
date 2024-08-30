@@ -127,6 +127,14 @@ class TangyFormEditorAddInput extends PolymerElement {
     const wrapperEl = document.createElement(event.target.id)
     wrapperEl.setAttribute('mode', 'MODE_EDIT')
     wrapperEl.setAttribute('files-endpoint', this.getAttribute('files-endpoint'))
+
+    if (event.target.id == 'tangy-location-widget') {
+      const locationListsMetadata = this.getAttribute('location-lists-metadata')
+      if (locationListsMetadata) {
+        wrapperEl.setAttribute("location-lists-metadata", locationListsMetadata);
+      }
+    }
+    
     if (this.hasAttribute('hide-skip-if')) wrapperEl.setAttribute('hide-skip-if', '')
     if (this.hasAttribute('hide-show-if')) wrapperEl.setAttribute('hide-show-if', '')
     this.after(wrapperEl)

@@ -74,6 +74,10 @@ If you need to develop the editor app and/or make changes to tangy-form-editor, 
 
 ```
 docker exec -it server-ui sh
+## The first time you run this, you'll need to install the node_modules
+cd /tangerine/tangy-form-editor
+npm install
+## End first time setup
 cd /tangerine/editor
 npm run dockerdev ### to watch the editor dirs.
 ```
@@ -89,7 +93,22 @@ cd /tangerine/client
 ./node_modules/.bin/ng build --watch --poll 100 --base-href ./ -c production --output-path ./dev &
 ```
 
-Since that command was run with an "&" at the end - instructing the shell to run the command as a background process -  you can run the next command in the same shell. Wait a moment to get the results of the first command. 
+Since that command was run with an "&" at the end - instructing the shell to run the command as a background process -  you can run the next command in the same shell. 
+
+*** Wait a moment to get the results of the first command. ***
+
+```text
+✔ Browser application bundle generation complete.
+✔ Index html generation complete.
+```
+
+This will show if the compilation is successful.
+
+## The first time you run this, you'll get an error and will need to install the node_modules
+cd /tangerine/tangy-form
+npm install
+## End first time setup
+
 Now run the following script to copy the built app whenever you want to generate an APK or PWA:
 
 ```
@@ -106,6 +125,12 @@ Now after you make changes, run the copy script and this will update the builds 
 ## Server
 
 The bootstrap function creates a NestExpressApplication using `src/app.module.ts`. AppModule launches the editor interface ([app.module.ts](..%2F..%2Fserver%2Fsrc%2Fapp.module.ts)). It also launches an expressInstance that serves the routes in server/src/express-app.js. Notice that these routes are mostly different from the routes in server-ui/src/express-app.js.
+
+# Updating a Deployment
+
+To update a deployment, make a release in the tangerine repo. This will trigger a build in the CI/CD pipeline. The CI/CD pipeline will build the docker images and push them to the docker registry.
+Do a `docker-compose pull` to get the latest images. Then run ./start-docker-compose.sh to start the new containers. 
+You might need to remove the old containers before you do the pull in case they don't update. 
 
 # Useful commands:
 
@@ -188,5 +213,22 @@ Example get using XMLHttpRequest (tangy-form's tangy-location input) `request.op
     The last route - /app/:group/assets/ - is what is serving files from the groups directory on the /tangerine fs. 
 
 Ideally, app.use('/',..) amd app.use('/app/:group/assets/') would be in server/express-app.js and only  app.use('/app/:group/') would be in server-ui/express-app.js.
+
+## Troubleshoting
+
+### Startup issues
+
+If you get the following error when launching the start script:
+
+```
+ => CANCELED [apk-generator 41/49] RUN cd /tangerine/online-survey-app &&     ./node_modules/.bin/ng build -  78.2s
+ => ERROR [server-ui 14/21] ADD editor /tangerine/editor                                                       0.1s
+------
+ > [server-ui 14/21] ADD editor /tangerine/editor:
+------
+failed to solve: cannot copy to non-directory: /var/lib/docker/overlay2/caqplhs7l3pi6pk4wqi1v1zhh/merged/tangerine/editor/package-lock.json
+```
+
+See if there is a package-lock.json in the editor directory that is a *directory* and not a file. If so, delete it and try again.
 
 

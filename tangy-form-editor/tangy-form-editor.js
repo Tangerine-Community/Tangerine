@@ -48,7 +48,6 @@ import "tangy-form/input/tangy-signature.js";
 class TangyFormEditor extends PolymerElement {
   static get template() {
     return html`
-      
       <style>
         :host {
           display: block;
@@ -161,6 +160,10 @@ class TangyFormEditor extends PolymerElement {
       },
       filesEndpoint: {
         type: String,
+        value: ''
+      },
+      locationListsMetadata: {
+        type: Object,
         value: ''
       }
     };
@@ -570,7 +573,8 @@ class TangyFormEditor extends PolymerElement {
       this.$.container.innerHTML = ''
       this.innerHTML = `
         <tangy-form-item-editor
-          files-endpoint="${this.filesEndpoint}" 
+          files-endpoint="${this.filesEndpoint}"
+          location-lists-metadata='${JSON.stringify(this.locationListsMetadata)}'
           ${this.hideSkipIf ? `hide-skip-if` : ''}
           ${this.hideShowIf ? `hide-show-if` : ''}
         >

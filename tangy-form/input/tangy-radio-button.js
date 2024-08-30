@@ -108,7 +108,7 @@ export class TangyRadioButton extends TangyInputBase {
             color: gray;
             font-size: 0.8rem;
             font-weight: lighter;
-        }O
+        }
       </style>
       <paper-radio-button
         ${this.required ? 'required' : ''}

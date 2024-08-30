@@ -1,6 +1,6 @@
 .drag-list {
   margin-left: 1rem;
-  width: 800px;
+  margin-right: 1rem;
   max-width: 100%;
   min-height: 60px;
   display: block;
@@ -78,5 +78,13 @@ mat-expansion-panel {
 }
 .mdc-list {
   padding: 0;
+}
+.edit {
+  color: #A55858;
+  cursor: pointer;
+}
+.mdc-icon-button {
+  display: unset;
+  font-size: large;
 }
 

@@ -35,16 +35,15 @@ class TangyRadioBlocks extends TangyInputBase {
         #label {
           margin: 0;
           text-transform: none;
-          font-size: var(--label-font-size);
+          font-size: 1.4rem;
           text-align: center;
-          margin-bottom: 1rem;
+          padding-bottom: 1rem;
         }
         #container {
-          height: var(--container-height, 50vh);
+          height: var(--container-height, 10vh);
           background-color: var(--container-background-color, #fff);
           border-radius: 1rem;
-          padding: 4rem 1.2rem;
-          margin-top: 1rem;
+          padding: .5rem 1.2rem;
           margin-bottom: 1rem;
         }
         #blockContainer.columns {
@@ -60,7 +59,6 @@ class TangyRadioBlocks extends TangyInputBase {
           padding: 0px;
         }
         #blockContainer {
-          height: 100%;
           display: flex;
           justify-content: space-around;
           font-size: 4rem;

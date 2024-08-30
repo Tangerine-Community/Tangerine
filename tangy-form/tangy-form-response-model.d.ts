@@ -16,5 +16,6 @@ export class TangyFormResponseModel {
   inputs:Array<any>
   inputsByName:any
   type:string
+  archived:boolean
   constructor(data?:any)
 }
