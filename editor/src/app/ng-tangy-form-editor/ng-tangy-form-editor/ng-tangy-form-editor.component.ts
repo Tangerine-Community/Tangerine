@@ -37,7 +37,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     private appConfigService: AppConfigService,
     private serverConfigService:ServerConfigService,
     private tangerineForms: TangerineFormsService,
-    private filesService: FilesService
+    private filesService: FilesService,
     private groupsService:GroupsService
   ) { }
 
@@ -54,7 +54,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     this.groupName = groupName;
     // let formJson = <any>await this.http.get(`./assets/forms.json`).toPromise()
     let formJson = await this.tangerineForms.getFormsInfo(this.groupId)
-    const formSrc = formJson.find(formInfo => formInfo.id === this.formId).src
+    let formSrc = formJson.find(formInfo => formInfo.id === this.formId).src
     // let formHtml = await this.http.get(formSrc, {responseType: 'text'}).toPromise()
     let PREFIX = './assets/'
     if (formSrc.startsWith(PREFIX)) {

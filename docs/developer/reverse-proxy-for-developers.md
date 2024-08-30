@@ -74,3 +74,5 @@ Add your local dev domain to /etc/hosts. The domain 'tangy.test' is used in this
 ```
 
 Now you should be able to access Tangerine using https://tangy.test`.
+
+There is a shell script in the root of this repo - local-ssl-proxy.sh - that will launch the local-ssl-proxy command with the switches mentioned earlier in this document.

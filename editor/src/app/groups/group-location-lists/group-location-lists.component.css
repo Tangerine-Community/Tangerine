@@ -1,3 +1,5 @@
-.container {
-    margin: 15px;
+#container {
+  margin: 15px;
+  background-color: white;
+  padding: 1em;
 }

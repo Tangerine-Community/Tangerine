@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## v7.17.1 to v7.17.6
+
+- Fix multiple location list selection to tangy-location-widget
+
+## v7.17.0
+
+- Add multiple location list selection to tangy-location-widget
+- Bump tangy-form to 4.42.0
+
+## v7.16.2
+- Bumped tangy-form to 4.41.1.
+
+## v7.16.1
+- Updated url for file-list-component.
+
 ## v7.16.0
 - Bumped versions for important libs including tangy-form, polymer-cli, and webpack.
 

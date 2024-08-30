@@ -75,6 +75,8 @@ export class AppConfig {
   noPassword = false
   // Prevent users from logging out and accessing menu. Useful when used in conjunction with a kiosk mode app.
   kioskMode = false
+  // How many clicks to exit kioskMode?
+  exitClicks:number
 
   //
   // Profile configuration.
@@ -84,6 +86,8 @@ export class AppConfig {
   centrallyManagedUserProfile = false
   // Hides the user profile link to edit when on the Device.
   hideProfile = false
+  // Hides the about page.
+  hideAbout = false
   // When using Sync Protocol 2 and associating a new Device Account with a Device User, setting this to true will show them all Device Users synced
   // down to the Device rather than filtering those Device Users based on the single Device Assignment.
   disableDeviceUserFilteringByAssignment:boolean
@@ -126,6 +130,25 @@ export class AppConfig {
 
   columnsOnVisitsTab = []
   categories = []
+  
+  //
+  // Teach configuration properties
+  //
+
+  teachProperties = {
+    units: [],
+    unitDates: [],
+    cutoffRange:10,
+    attendancePrimaryThreshold: 80,
+    attendanceSecondaryThreshold: 70,
+    scoringPrimaryThreshold: 70,
+    scoringSecondaryThreshold: 60,
+    behaviorPrimaryThreshold: 90,
+    behaviorSecondaryThreshold: 80,
+    useAttendanceFeature: false,
+    showAttendanceCalendar: false,
+    studentRegistrationFields:[]
+  }
 
   //
   // Custom App configuration

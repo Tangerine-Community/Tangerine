@@ -570,18 +570,23 @@ class TangyLocation extends TangyInputBase {
     if (this.filterByGlobal) this.filterBy = window.tangyLocationFilterBy
     // When we hear change events, it's coming from users interacting with select lists.
     this.shadowRoot.addEventListener('change', this.onSelectionChange.bind(this))
-    let that = this
+    this.onLocationSrcChange();
+  }
+
+  onLocationSrcChange() {
+    let that = this;
     const request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
+
+    request.onreadystatechange = function () {
       try {
-        that.locationList = JSON.parse(this.responseText)
-        that.render()
-        that.locationListLoaded = true
-        that.dispatchEvent(new CustomEvent('location-list-loaded'))
-      } catch(e) {
-        // Do nothing. Some stages will not have valid JSON returned.
+        that.locationList = JSON.parse(this.responseText);
+        that.render();
+        that.locationListLoaded = true;
+        that.dispatchEvent(new CustomEvent('location-list-loaded'));
+      } catch (e) {// Do nothing. Some stages will not have valid JSON returned.
       }
-    }
+    };
+
     request.open('GET', this.locationSrc);
     request.send();
   }
@@ -625,7 +630,7 @@ class TangyLocation extends TangyInputBase {
   ${selections.map((selection, i) => `
     
     <div class="mdc-select">
-        <select class="mdc-select__surface"
+    <select class="mdc-select__surface"
       name=${selection.level}
       ${(options[selection.level].length === 0) ? 'hidden' : ''}
       ${(this.disabled) ? 'disabled' : ''}
@@ -634,6 +639,7 @@ class TangyLocation extends TangyInputBase {
       
       ${options[selection.level].sort((a, b) => a.label.localeCompare(b.label)).map((option, i) => `
         <option 
+          name="${option.label}"
           value="${option.id}" 
           ${(selection.value === option.id) ? 'selected' : ''}
          >
@@ -743,23 +749,30 @@ class TangyLocation extends TangyInputBase {
     let selections = [...this.value]
     if (selections.length === 0) {
       levels.forEach(level => {
-        selections = [...selections, ...[{ level, value: '' }]]
+        selections = [...selections, ...[{ level, value: '', label: '' }]]
       })
     }
+
+    // Get the options for the selections so we can get the selected label
+    let options = this.calculateLevelOptions(selections, levels)
+
     // Calculate our new value.
     let newSelections = selections.map(selection => {
       // Modify the selection level associated with the event.
       if (selection.level === event.target.name) {
+        let selectedOption = options[event.target.name].find(opt => opt.id == event.target.value)
         return {
-          level: event.target.name,
-          value: event.target.value
+          level: selection.level,
+          value: event.target.value,
+          label: selectedOption ? selectedOption.label : ""
         }
       }
       // Make sure to set the selection values to '' for all selections after the one just selected. 
       else if (levels.indexOf(selection.level) > levels.indexOf(event.target.name)) {
         return {
           level: selection.level,
-          value: ''
+          value: '',
+          label: ''
         }
       }
       // Return unmodified selections if they are unrelated to this event.
