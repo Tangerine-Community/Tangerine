@@ -1,20 +1,25 @@
 const DB = require('../db.js')
-const clog = require('tangy-log').clog
 const log = require('tangy-log').log
 
 module.exports = async (req, res) => {
   try {
     const groupDb = new DB(req.params.groupId)
-    let options = {key: req.params.userProfileShortCode, include_docs: true}
+    const userProfileShortCode = req.params.userProfileShortCode
+    let options = { key: userProfileShortCode }
     if (req.params.limit) {
       options.limit = req.params.limit
     }
     if (req.params.skip) {
       options.skip = req.params.skip
     }
-    const results = await groupDb.query('responsesByUserProfileShortCode', options);
-    const docs = results.rows.map(row => row.doc)
-    res.send(docs)
+    if (req.query.totalRows) {
+      const results = await groupDb.query('responsesByUserProfileShortCode', { key: userProfileShortCode, limit: 1,skip: 0, include_docs: false, reduce: true, group: true });
+      res.send({ totalDocs: results.rows[0].value })
+    } else {
+      const results = await groupDb.query('responsesByUserProfileShortCode', { ...options, include_docs: true, reduce: false });
+      const docs = results.rows.map(row => row.doc)
+      res.send(docs)
+    }
   } catch (error) {
     log.error(error);
     res.status(500).send(error);

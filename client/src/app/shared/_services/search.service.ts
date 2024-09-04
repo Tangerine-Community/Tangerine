@@ -44,7 +44,7 @@ export class SearchService {
     await createSearchIndex(db, formsInfo, customSearchJs) 
   }
 
-  async search(username:string, phrase:string, limit = 50, skip = 0):Promise<Array<SearchDoc>> {
+  async search(username:string, phrase:string, limit = 50, skip = 0, excludeArchived = true):Promise<Array<SearchDoc>> {
     const db = await this.userService.getUserDatabase(username)
     let result:any = {}
     let activity = []
@@ -53,13 +53,18 @@ export class SearchService {
     }
     // Only show activity if they have enough activity to fill a page.
     if (phrase === '' && activity.length >= 11) {
-      const page = activity.slice(skip, skip + limit)
+      let page = activity.slice(skip, skip + limit)
       result = await db.allDocs(
         { 
           keys: page,
           include_docs: true
         }
       )
+      if (excludeArchived) {
+        // Filter out archived
+        page = page.filter(id => !result.rows.find(row => row.id === id).doc.archived);
+      }
+
       // Sort it because the order of the docs returned is not guaranteed by the order of the keys parameter.
       result.rows = page.map(id => result.rows.find(row => row.id === id))
     } else {

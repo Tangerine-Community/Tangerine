@@ -1,7 +1,13 @@
 <p>
-  <paper-input [disabled]="state === STATE_SYNCING" name="user-short-code" label="enter import code here" #userShortCode></paper-input>
-  <paper-button [disabled]="state === STATE_SYNCING" (click)="onSubmit()">submit</paper-button>
+  <paper-input [disabled]="state === STATE_SYNCING" name="user-short-code" label="{{'Enter the provided import code'|translate}}" #userShortCode></paper-input>
+  <paper-button [disabled]="state === STATE_SYNCING" (click)="onSubmit()">{{'submit'|translate}}</paper-button>
 </p>
 <p *ngIf="state === STATE_SYNCING">
-  Syncing...
+  {{'Synced'|translate}} {{processedDocs}} {{'of'|translate}} {{totalDocs}}
+</p>
+<p *ngIf="state === STATE_NOT_FOUND" class="err">
+  {{'Record with import code'|translate}} {{shortCode}}  {{'not found.'|translate}}
+</p>
+<p *ngIf="state === STATE_ERROR" class="err">
+  {{'Import not successful. Click Submit to retry.' |translate}}
 </p>

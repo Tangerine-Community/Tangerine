@@ -5,7 +5,6 @@
 		<div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
 		<div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
 	</div>
-	<span class="tangy-spacer"></span>
 	<span *ngIf="canUserDeleteForms">
 		<button (click)="onDeleteFormClick(); $event.stopPropagation()" class="tangy-small-list-icon">
 			<mwc-icon>delete</mwc-icon>

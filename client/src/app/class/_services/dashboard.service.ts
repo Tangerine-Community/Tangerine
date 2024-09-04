@@ -242,7 +242,7 @@ export class DashboardService {
 
     if (item) {
       itemCount = item.inputs.length;
-      customScore = item.customScore? item.customScore: null
+      customScore = !isNaN(item.customScore)? item.customScore: null
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -388,8 +388,8 @@ export class DashboardService {
               maxValueAnswer = maxValueAnswer + max;
             }
             score = totalCorrect;
-            scorePercentageCorrect = customScore ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
-            if (customScore) {
+            scorePercentageCorrect = !isNaN(customScore) ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
+            if (!isNaN(customScore)) {
               maxValueAnswer = 100
             }
           }
@@ -430,7 +430,7 @@ export class DashboardService {
         totalIncorrect: totalIncorrect,
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
-        scorePercentageCorrect: scorePercentageCorrect,
+        scorePercentageCorrect: !isNaN(customScore) ? customScore : scorePercentageCorrect,
         duration: duration,
         customScore: customScore
       };
@@ -503,15 +503,15 @@ export class DashboardService {
             studentResults.score = score;
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          const max = studentResponse.customScore? 100: studentResponse.max;
+          const max = !isNaN(studentResponse.customScore)? 100: studentResponse.max;
           if (max) {
             studentResults.max = max;
             classGroupReportMax = max;
           }
-          const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
-          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
+          const totalCorrect = !isNaN(studentResponse.customScore) ? studentResponse.customScore : studentResponse.totalCorrect;
+          const scorePercentageCorrect = !isNaN(studentResponse.customScore) ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
-          const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
+          const maxValueAnswer = !isNaN(studentResponse.customScore) ? 100: studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
           studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
@@ -702,7 +702,7 @@ export class DashboardService {
         }
         return variablesByName;
       }, {});
-      return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
+        return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
     }
   };
 
@@ -1043,6 +1043,37 @@ export class DashboardService {
     return gradeInput?.value
   }
 
+  async getAllStudentResults(students, studentsResponses, curriculumFormsList, curriculum) {
+    const allStudentResults = [];
+
+    const appConfig = await this.appConfigService.getAppConfig();
+    const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields || []
+
+    students.forEach((student) => {
+      const studentResult = {};
+
+      studentResult['id'] = student.id;
+      studentRegistrationFields.forEach((field) => {
+        studentResult[field] = this.getValue(field, student.doc)
+      })
+      studentResult['forms'] = {};
+      curriculumFormsList.forEach((form) => {
+        const formResult = {};
+        formResult['formId'] = form.id;
+        formResult['curriculum'] = curriculum.name;
+        formResult['title'] = form.title;
+        formResult['src'] = form.src;
+        if (studentsResponses[student.id]) {
+          formResult['response'] = studentsResponses[student.id][form.id];
+        }
+        studentResult['forms'][form.id] = formResult;
+      });
+      allStudentResults.push(studentResult);
+    });
+
+    return allStudentResults;
+  }
+
   /**
    * Get the attendance list for the class, including any students who have not yet had attendance checked. If the savedAttendanceList is passed in, then
    * populate the student from that doc by matching student.id.
@@ -1050,10 +1081,9 @@ export class DashboardService {
    * @param savedList
    */
   async getAttendanceList(students, savedList, curriculum) {
-    // const curriculumFormHtml = await this.getCurriculaForms(curriculum.name);
-    // const curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
     const appConfig = await this.appConfigService.getAppConfig();
     const studentRegistrationFields = appConfig.teachProperties?.studentRegistrationFields || []
+
     const list = []
     for (const student of students) {
       let studentResult
@@ -1062,13 +1092,6 @@ export class DashboardService {
         studentResult = savedList.find(studentDoc => studentDoc.id === studentId)
       }
       if (studentResult) {
-          // migration.
-          if (!studentResult.student_surname) {
-              studentResult.student_surname = studentResult.surname
-          }
-          if (!studentResult.student_name) {
-              studentResult.student_name = studentResult.name
-          }
         list.push(studentResult)
       } else {
         studentResult = {}
@@ -1077,22 +1100,15 @@ export class DashboardService {
         studentRegistrationFields.forEach((field) => {
           studentResult[field] = this.getValue(field, student.doc)
         })
-        // const student_name = this.getValue('student_name', student.doc)
-        // const student_surname = this.getValue('student_surname', student.doc)
-        // const phone = this.getValue('phone', student.doc);
-        // const classId = this.getValue('classId', student.doc)
-        
-        // studentResult['name'] = student_name
-        // studentResult['surname'] = student_surname
-        // studentResult['phone'] = phone
-        // studentResult['classId'] = classId
         studentResult['absent'] = null
+        if (appConfig.teachProperties?.showLateAttendanceOption) {
+          studentResult['late'] = null
+        }
         
         list.push(studentResult)
       }
     }
     return list
-    // await this.populateFeedback(curriculumId);
   }
 
   /**

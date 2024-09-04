@@ -8,6 +8,7 @@ import { DeviceService } from 'src/app/device/services/device.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseDefinitionsService } from './case-definitions.service';
 import { HttpClient } from '@angular/common/http';
+import { UserService } from 'src/app/core/auth/_services/user.service';
 // Classes.
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { Case } from '../classes/case.class'
@@ -23,6 +24,8 @@ import * as moment from 'moment';
 import { AppContext } from 'src/app/app-context.enum';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import { GroupDevicesService } from '../../groups/services/group-devices.service'
+import { GroupIssuesService } from './../../groups/services/group-issues.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +43,7 @@ class CaseService {
   queryEventFormDefinitionId: any
   queryFormId: any
   _shouldSave = true
+
 
   set case(caseInstance:Case) {
     const caseInfo:CaseInfo = {
@@ -103,9 +107,11 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private deviceService:DeviceService,
+    private userService:UserService,
     private appConfigService:AppConfigService,
     private http:HttpClient,
-    private groupDevicesService:GroupDevicesService
+    private groupDevicesService:GroupDevicesService,
+    private groupIssuesService:GroupIssuesService
   ) {
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -376,7 +382,7 @@ class CaseService {
    * Case Event API
    */
 
-  async createEvent(eventDefinitionId:string): Promise<CaseEvent> {
+  createEvent(eventDefinitionId:string) {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -1430,7 +1436,7 @@ class CaseService {
 
     if (caseEvent === undefined) {
         const newDate = moment(new Date(), 'YYYY-MM-DD').unix() * 1000;
-        caseEvent = await this.createEvent(this.queryCaseEventDefinitionId);
+        caseEvent = this.createEvent(this.queryCaseEventDefinitionId);
         await this.save();
       } else {
         caseEvent = this.case.events

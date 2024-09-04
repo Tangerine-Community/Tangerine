@@ -163,7 +163,7 @@ export class AttendanceScoresComponent implements OnInit {
     const result = await this.dashboardService.saveDoc(this.scoreRegister)
     if (result.ok) {
       this.saveSuccess = true
-      this.tangySnackbarService.showText(_TRANSLATE('Score saved'))
+      this.tangySnackbarService.showText(_TRANSLATE('Saved'))
       setTimeout(() => {
         this.saveSuccess = false
       }, 2000);

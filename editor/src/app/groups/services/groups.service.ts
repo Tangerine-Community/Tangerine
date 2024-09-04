@@ -280,7 +280,7 @@ export class GroupsService {
 
   async getLocationLists(groupId: string) {
     try {
-      return await this.httpClient.get(`/editor/${groupId}/location-lists/read`).toPromise();
+      return await this.httpClient.get(`/app/${groupId}/location-lists/read`).toPromise();
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
@@ -288,7 +288,7 @@ export class GroupsService {
 
   async createLocationList(groupId:string, locationList:LocationList) {
     try {
-      await this.httpClient.put(`/editor/${groupId}/location-list/create`, locationList) .toPromise()
+      await this.httpClient.put(`/app/${groupId}/location-list/create`, locationList).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
@@ -296,7 +296,7 @@ export class GroupsService {
 
   async updateLocationList(groupId:string, locationList:LocationList) {
     try {
-      await this.httpClient.put(`/editor/${groupId}/location-list/update`, locationList) .toPromise()
+      await this.httpClient.put(`/app/${groupId}/location-list/update`, locationList).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
@@ -304,7 +304,7 @@ export class GroupsService {
 
   async deleteLocationList(groupId:string, locationList:LocationList) {
     try {
-      return await this.httpClient.post(`/editor/${groupId}/location-list/delete`, locationList).toPromise()
+      return await this.httpClient.post(`/app/${groupId}/location-list/delete`, locationList).toPromise()
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
@@ -318,6 +318,7 @@ export class GroupsService {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
+
   /**
    * replace spaces, punctuations, tabs , underscores with dashes (-) and removes any trailing dashes at the end of the string
    *

@@ -4,11 +4,7 @@ const clog = require('tangy-log').clog
 const groupReportingViews = require(`./views.js`)
 const moment = require('moment')
 const path = require('path')
-const {promisify} = require('util');
-const fs = require('fs');
-const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
-const CODE_SKIP = '999'
 const createGroupDatabase = require('../../create-group-database.js')
 const groupsList = require('/tangerine/server/src/groups-list.js')
 
@@ -214,12 +210,13 @@ const getItemValue = (doc, variableName) => {
   return variablesByName[variableName];
 };
 
+
 /** This function processes form response for csv.
  *
- * @param {object} formData - form response from database
- * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
+ * @param formResponse
  * @param {boolean} sanitized - flag if data must filter data based on the identifier flag.
  *
+ * @param groupId
  * @returns {object} processed results for csv
  */
 
@@ -246,9 +243,11 @@ const  generateFlatResponse = async function (formResponse, sanitized, groupId) 
     deviceId: formResponse.deviceId || '',
     groupId: formResponse.groupId || '',
     complete: formResponse.complete,
+    verified: formResponse?.verified||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
     // NOTE: Doubtful that anything with an archived flag would show up here because it would have been deleted already in 'Delete from the -reporting db.'
-    archived: formResponse.archived,
-    tangerineModifiedByUserId: formResponse.tangerineModifiedByUserId,
+    archived: formResponse?.archived||'',
+    tangerineModifiedByUserId: formResponse?.tangerineModifiedByUserId||'',
     ...formResponse.caseId ? {
       caseId: formResponse.caseId,
       eventId: formResponse.eventId,
@@ -263,6 +262,7 @@ const  generateFlatResponse = async function (formResponse, sanitized, groupId) 
     flatFormResponse['grade'] = formResponse.grade
     flatFormResponse['schoolName'] = formResponse.schoolName
     flatFormResponse['schoolYear'] = formResponse.schoolYear
+    flatFormResponse['reportDate'] = formResponse.reportDate
     flatFormResponse['type'] = formResponse.type
     if (formResponse.type === 'attendance') {
       flatFormResponse['attendanceList'] = formResponse.attendanceList
@@ -506,6 +506,7 @@ function saveFormInfo(flatResponse, db) {
       if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
         // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
         let safeKey = key.replace('form-0.', '')
+
         // Make the header property (AKA label) just the variable name.
         const firstOccurenceIndex = safeKey.indexOf('.')
         const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)

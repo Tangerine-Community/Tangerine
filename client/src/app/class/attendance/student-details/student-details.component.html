@@ -1,6 +1,6 @@
 <div class="flex-container">
   <div class="flex-item">
-    <h2>{{data.student.name}} {{data.student.surname}}</h2>
+    <h2>{{data.student.student_name}} {{data.student.student_surname}}</h2>
     <h3>{{curriculumLabel}}</h3>
     <div>
       <p>{{'Attendance'|translate}}</p>
@@ -18,7 +18,7 @@
             {{item.key}}: {{item.value}}
           </li>
         </ul>
-        <p>{{'score average is'|translate}}</p>
+        <p>{{'Score average'|translate}}</p>
         <ul>
           <li *ngFor="let item of data.student.scores | keyvalue">
             {{item.key}}: {{item.value}}%
@@ -35,7 +35,7 @@
             </li>
           </ng-container>
         </ul>
-        <p *ngIf="data.student['score']">{{'score average is'|translate}}: {{data.student['score']}}%</p>
+        <p *ngIf="data.student['score']">{{'Score average'|translate}}: {{data.student['score']}}%</p>
       </ng-template>
     </div>
   </div>

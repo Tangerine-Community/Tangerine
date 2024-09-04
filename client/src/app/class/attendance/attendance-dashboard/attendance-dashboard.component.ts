@@ -112,7 +112,7 @@ export class AttendanceDashboardComponent implements OnInit {
     for (let i = 0; i < this.currArray.length; i++) {
       const curriculum = this.currArray[i];
       let curriculumLabel = curriculum?.label
-      const reports = await this.dashboardService.searchDocs('scores', currentClass, null, null, curriculumLabel, randomId, true)
+      const reports = await this.dashboardService.searchDocs('scores', currentClass, '*', null, curriculumLabel, randomId, true)
         reports.forEach((report) => {
         report.doc.curriculum = curriculum
         scoreReports.push(report.doc)
@@ -171,7 +171,7 @@ export class AttendanceDashboardComponent implements OnInit {
       }
 
       let messageList = [];
-      const message = _TRANSLATE('Report for ') + student.student_name + ': '
+      const message = _TRANSLATE('Report for') + ' ' + student.student_name + ': '
       messageList.push(message)
 
       if (student.presentPercentage) {
