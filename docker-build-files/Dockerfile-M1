@@ -1,6 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-#FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-4
-FROM tangerine/docker-tangerine-base-image:local-01-11-2023
+FROM tangerine/docker-tangerine-base-image:v4.0.0-rc-4
 
 RUN git config --global url."https://".insteadOf git://
 
@@ -16,6 +15,8 @@ RUN npm config set unsafe-perm false
 
 # Install helpful JSON utility.
 RUN apt-get update && apt-get install -y jq 
+# Install mysql integration dependencies.
+RUN apt update && apt install -y default-mysql-server
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1

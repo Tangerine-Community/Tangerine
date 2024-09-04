@@ -88,7 +88,6 @@ export class BehaviorCheckComponent implements OnInit {
    */
   async showBehaviorListing(currentClassId, curriculum, currentClass) {
     const type = "behavior"
-    const registerNameForDialog = 'Behavior';
     this.behaviorForms = this.dashboardService.getBehaviorForms()
     const students = await this.dashboardService.getMyStudents(currentClassId);
     const schoolName = this.getValue('school_name', currentClass)

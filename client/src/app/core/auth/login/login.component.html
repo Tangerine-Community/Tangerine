@@ -25,10 +25,13 @@
         <mat-label><mat-icon matSuffix>face</mat-icon>  {{'Username'|translate}}</mat-label>
         <input matInput type="text" required [(ngModel)]="enteredPassword" id="username" name="username">
       </mat-form-field>
-      <mat-form-field *ngIf="!showRecoveryInput && !noPassword" appearance="fill">
-        <mat-label><mat-icon matSuffix>lock_open</mat-icon>  {{'Password'|translate}}</mat-label>
+      <mat-form-field *ngIf="!showRecoveryInput && !noPassword">
         <input matInput [type]="hidePassword ? 'password' : 'text'" required [(ngModel)]="user.password" id="password" name="password">
-		<mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>
+          <span>{{'Password'|translate}}</span>
+        </mat-placeholder>
+        <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
       </mat-form-field>
       <div *ngIf="showRecoveryInput">
         <mat-form-field *ngIf="requiresAdminPassword === true">
@@ -49,7 +52,7 @@
           <mat-placeholder>
             <i class="material-icons mat-11 app-input-icon">lock_open</i>{{'New Password'|translate}}
           </mat-placeholder>
-		  <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          <mat-icon class="material-icons" matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
         </mat-form-field>
         <mat-form-field>
           <input name="confirmNewPassword" matInput [(ngModel)]="user.confirmNewPassword" [type]="hidePassword ? 'password' : 'text'" required>
@@ -76,3 +79,4 @@
     </form>
   </div>
 </div>
+<span #customLoginMarkup></span>
