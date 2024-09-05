@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-checkboxes test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+    
+    <test-fixture id="TangyCheckboxesFixture">
+      <template>
+        <tangy-checkboxes value="fruit_selection" label="What is your favorite fruit?">
+          <option value="orange">Orange</option>
+          <option value="banana">Banana</option>
+          <option value="tangerine">Tangerine</option>
+          <option value="cantalope">Cantalope</option>
+          <option value="cherry">Cherry</option>
+          <option value="kiwi">Kiwi</option>
+        </tangy-checkboxes>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyCheckboxesWithValueFixture">
+      <template>
+        <tangy-checkboxes name="fruit_selection" label="What is your favorite fruit?" value='[{"name":"orange","label":"Orange","required":false,"disabled":false,"invalid":false,"incomplete":true,"hidden":false,"value":"","errorText":"","tagName":"TANGY-CHECKBOX"},{"name":"banana","label":"Banana","required":false,"disabled":false,"invalid":false,"incomplete":true,"hidden":false,"value":"on","errorText":"","tagName":"TANGY-CHECKBOX"},{"name":"tangerine","label":"Tangerine","required":false,"disabled":false,"invalid":false,"incomplete":true,"hidden":false,"value":"","errorText":"","tagName":"TANGY-CHECKBOX"},{"name":"cantalope","label":"Cantalope","required":false,"disabled":false,"invalid":false,"incomplete":true,"hidden":false,"value":"on","errorText":"","tagName":"TANGY-CHECKBOX"},{"name":"cherry","label":"Cherry","required":false,"disabled":false,"invalid":false,"incomplete":true,"hidden":false,"value":"","errorText":"","tagName":"TANGY-CHECKBOX"},{"name":"kiwi","label":"Kiwi","required":false,"disabled":false,"invalid":false,"incomplete":true,"hidden":false,"value":"","errorText":"","tagName":"TANGY-CHECKBOX"}]'>
+          <option value="orange">Orange</option>
+          <option value="banana">Banana</option>
+          <option value="tangerine">Tangerine</option>
+          <option value="cantalope">Cantalope</option>
+          <option value="cherry">Cherry</option>
+          <option value="kiwi">Kiwi</option>
+        </tangy-checkboxes>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyCheckboxesHintTextFixture">
+      <template>
+        <tangy-checkboxes name="fruit_selection" label="What is your favorite fruit?">
+          <option value="orange" hint-text='Oranges but not tangerines.'>Orange</option>
+          <option value="banana">Banana</option>
+          <option value="tangerine">Tangerine</option>
+          <option value="cantalope">Cantalope</option>
+          <option value="cherry">Cherry</option>
+          <option value="kiwi">Kiwi</option>
+        </tangy-checkboxes>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyCheckboxesMutuallyExclusiveFixture">
+      <template>
+        <tangy-checkboxes name="favorite_fruits" label="What are some of your favorite fruits?">
+          <option value="orange">Orange</option>
+          <option value="banana">Banana</option>
+          <option value="tangerine">Tangerine</option>
+          <option value="favorite_is_not_an_option" mutually-exclusive>None of the above.</option>
+        </tangy-checkboxes>
+      </template>
+    </test-fixture>
+ 
+    <test-fixture id="TangyCheckboxesTwoMutuallyExclusiveOptionsFixture">
+      <template>
+        <tangy-checkboxes name="favorite_fruits" label="What are some of your favorite fruits?">
+          <option value="orange">Orange</option>
+          <option value="banana">Banana</option>
+          <option value="tangerine">Tangerine</option>
+          <option value="favorite_is_not_an_option" mutually-exclusive>None of the above.</option>
+          <option value="na" mutually-exclusive>I don't like fruit.</option>
+        </tangy-checkboxes>
+      </template>
+    </test-fixture>
+ 
+
+    <script type="module">
+      import '../input/tangy-checkboxes.js'
+      suite('tangy-checkboxes', () => {
+
+        test('should have six options', () => {
+          const element = fixture('TangyCheckboxesFixture');
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox').length, 6)
+        })
+
+        test('should have value set from markup', () => {
+          const element = fixture('TangyCheckboxesWithValueFixture');
+          assert.equal(element.value.find(item => item.name === 'cantalope').value, 'on')
+          assert.equal(element.value.find(item => item.name === 'banana').value, 'on')
+          assert.equal(element.value.find(item => item.name === 'tangerine').value, '')
+        })
+
+        test('should set value back to default applying skipped attribute', () => {
+          const element = fixture('TangyCheckboxesFixture');
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].dispatchEvent(new Event('change',{bubbles:true}))
+          element.setAttribute('skipped', '')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value, '')
+          assert.equal(element.value[0].value, '')
+        })
+
+        test('should have hint text', () => {
+          const element = fixture('TangyCheckboxesHintTextFixture');
+          assert.equal(element.shadowRoot.querySelector('tangy-checkbox').shadowRoot.innerHTML.includes('Oranges'), true)
+        })
+
+        test('selecting mutually-exclusive option should remove prior choices', () => {
+          const element = fixture('TangyCheckboxesMutuallyExclusiveFixture');
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].dispatchEvent(new Event('change', {bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[1].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[1].dispatchEvent(new Event('change', {bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[3].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[3].dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value, '')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[1].value, '')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[3].value, 'on')
+          assert.equal(element.value[0].value, '')
+          assert.equal(element.value[1].value, '')
+          assert.equal(element.value[3].value, 'on')
+        })
+
+        test('selecting non mutually-exclusive option should remove mutually-exclusive selection', () => {
+          const element = fixture('TangyCheckboxesMutuallyExclusiveFixture');
+         element.shadowRoot.querySelectorAll('tangy-checkbox')[1].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[1].dispatchEvent(new Event('change', {bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[3].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[3].dispatchEvent(new Event('change', {bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value, 'on')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[1].value, '')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[3].value, '')
+          assert.equal(element.value[0].value, 'on')
+          assert.equal(element.value[1].value, '')
+          assert.equal(element.value[3].value, '')
+        })
+
+        test('selecting one mutually-exclusive option should remove other mutually-exclusive selection', () => {
+          const element = fixture('TangyCheckboxesTwoMutuallyExclusiveOptionsFixture');
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[0].dispatchEvent(new Event('change', {bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[1].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[1].dispatchEvent(new Event('change', {bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[3].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[3].dispatchEvent(new Event('change', {bubbles:true}))
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[4].value = 'on'
+          element.shadowRoot.querySelectorAll('tangy-checkbox')[4].dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[0].value, '')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[1].value, '')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[3].value, '')
+          assert.equal(element.shadowRoot.querySelectorAll('tangy-checkbox')[4].value, 'on')
+          assert.equal(element.value[0].value, '')
+          assert.equal(element.value[1].value, '')
+          assert.equal(element.value[3].value, '')
+          assert.equal(element.value[4].value, 'on')
+        })
+        
+
+      })
+    </script>
+
+  </body>
+</html>

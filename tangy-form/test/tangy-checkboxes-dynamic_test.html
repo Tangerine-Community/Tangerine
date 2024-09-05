@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-checkboxes-dynamic test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+    
+    <test-fixture id="TangyCheckboxesDynamicFixture">
+      <template>
+        <tangy-checkboxes-dynamic
+                name="curriculum"
+                label="Curriculum"
+                options-list-source="checkboxes-dynamic-forms.json"
+                options-list-excludes="class-registration,student-registration"
+                options-list-properties="id,title"
+                options-list-exclude-by="id">
+        </tangy-checkboxes-dynamic>
+      </template>
+    </test-fixture>
+
+    <script type="module">
+      import '../input/tangy-checkboxes-dynamic.js'
+      suite('tangy-checkboxes-dynamic', () => {
+        test('should have two options', () => {
+          const element = fixture('TangyCheckboxesDynamicFixture');
+          element.addEventListener('checkbox-options-loaded', () => {
+            assert.equal(element.shadowRoot.querySelectorAll('option').length, 2)
+          })
+        })
+      })
+    </script>
+
+  </body>
+</html>
