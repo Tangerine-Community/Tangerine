@@ -1,0 +1,41 @@
+{
+  "locationsLevels": ["beach"],
+  "locations": {
+    "blanchard-beach": {
+      "id": "blanchard-beach",
+      "label": "Blanchard Beach",
+      "latitude": 44.45718,
+      "longitude":  -73.22435
+    },
+    "kite-beach": {
+      "id": "kite-beach",
+      "label": "Kite Beach",
+      "latitude": 44.46567,
+      "longitude": -73.21911 
+    },
+    "waterfront-park-beach": {
+      "id": "waterfront-park-beach",
+      "label": "Waterfront Park Beach",
+      "latitude": 44.47712, 
+      "longitude":  -73.22161
+    },
+    "dog-beach": {
+      "id": "dog-beach",
+      "label": "Dog Beach",
+      "latitude": 44.48872,
+      "longitude":  -73.23122
+    },
+    "north-beach": {
+      "id": "north-beach",
+      "label": "North Beach",
+      "latitude": 44.49216,
+      "longitude": -73.2409 
+    },
+    "leddy-park-beach": {
+      "id": "leddy-park-beach",
+      "label": "Leddy Park Beach",
+      "latitude": 44.50204,
+      "longitude": -73.25406
+    }
+  }
+}

@@ -1,5 +1,75 @@
 # CHANGELOG
 
+## v4.45.4
+
+Fix missing function parens
+
+## v4.45.3
+
+Fix undefined access of input without tagName
+
+## v4.45.2
+
+Fix check for 'readOnly' input metadata
+
+## v4.45.1
+
+Fix typo in function name
+
+## v4.45.0
+
+At times we may need to disable some components when form is unlocked A good example is the tangy-gps component
+
+Add disabled property and readOnly property
+
+For example: `this.unlockFormResponses? this.formEl.unlock({disableComponents:['TANGY-GPS']}): null`
+
+Refs [Tangerine-Community/Tangerine#3703](https://github.com/Tangerine-Community/Tangerine/issues/3703)
+Part of [Tangerine-Community/Tangerine#3719](https://github.com/Tangerine-Community/Tangerine/pull/3719)
+
+
+## v4.44.0, v4.43.0, v4.43.1, v4.43.2
+
+__Tangerine Radio Blocks__
+
+The `tangy-radio-blocks` element is a single-select input that shows a set of `tangy-radio-block` options. Each option has a label, image, and border that identifies the option. The set of `tangy-radio-block` options appears in either a vertical or horizontal list based on the `columns` attribute. 
+
+This update adds a `sound` attribute to `tangy-radio-block` that takes a path to an audio file. When the image in the option is clicked, the audio will play. 
+
+```html
+<tangy-radio-blocks name="moving_windows_comp_02" label="What does Kofi like to do?" orientation="rows" class="" style="" required="">
+    <option value="0" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Tie_her_shoes.mp3">Tie her shoes</option>
+    <option value="1" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Visit_the_city.mp3">Visit the city</option>
+    <option value="2" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Run.mp3">Run</option>
+    <option value="3" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Get_up_early.mp3">Get up early</option>
+</tangy-radio-blocks>
+```
+
+__Tangerine Prompt__
+
+The new `tangy-prompt-box` input type helps form designers create content sets that interacts with the user through a set of auto-playing sound files. The prompt in the [tangy-radio-blocks-lists demo](./demo/tangy-radio-blocks-lists.html) reads some instructions and then prompts the user by playing the audio associated with the options in a `tangy-radio-blocks` input. This provides a tool for the user to build a self administered assessment. 
+
+The `tangy-prompt-box` input adds two attributes `playOnOpen` which takes a list of option values. When set, the options in the attribute list will play when the input is shown. Also, the attribute `prompt-for` can be set on one or more options with the value of the name of a `tangy-radio-blocks` input. When clicked, the prompt will play it's own `sound`, then loop through the `sound` attributes in the `tangy-radio-blocks`. It will also change the border color to provide both an audio and visual cue. 
+
+Review the example code below. When the `tangy-form-item` opens the prompt box with play the audio for "instructions" and "help". Then, because of the `prompt-for` attribute is set to `moving_windows_comp_02`, it will play sound files in all of the options in the `tangy-radio-blocks` input. If the `help` option in the `tangy-prompt-box` is clicked, it will play it's own sound and then sounds in the prompt box.
+
+```html
+<tangy-form>
+  <tangy-form-item>
+    <tangy-prompt-box name="moving_windows_comp_02_prompt" play-on-open="0,1" justify-content="flex-start">
+        <option value="0" id="instructions" label="prompt" sound="assets/sounds/letters_moving_windows_comp_help.mp3" image="./assets/images/instructions.png"></option>
+        <option value="1" id="help" label="insturctions" prompt-for="moving_windows_comp_02" sound="assets/sounds/letters_moving_windows_comp_02_What_does_Kofi_like_to_do.mp3" image="./assets/images/ms-talk2.png"></option>
+    </tangy-prompt-box>
+    <tangy-radio-blocks name="moving_windows_comp_02" label="What does Kofi like to do?" orientation="rows" class="" style="" required="">
+        <option value="0" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Tie_her_shoes.mp3">Tie her shoes</option>
+        <option value="1" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Visit_the_city.mp3">Visit the city</option>
+        <option value="2" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Run.mp3">Run</option>
+        <option value="3" image="./assets/images/ms-talk2.png" sound="assets/sounds/letters_silent_rcomp_01_Get_up_early.mp3">Get up early</option>
+    </tangy-radio-blocks>
+  </tangy-form-item>
+</tangy-form>
+```
+
 ## v4.42.0
 
 - Add selected tangy-location labels to the input value for reporting outputs
