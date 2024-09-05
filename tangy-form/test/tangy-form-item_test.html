@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <title>tangy-form-item test</title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/redux/dist/redux.js"></script>
+    <script src="../node_modules/web-component-tester/browser.js"></script>
+  </head>
+  <body>
+
+    <test-fixture id="TangyFormItemFixture">
+      <template>
+        <tangy-form id="form1">
+          <tangy-form-item id="item1">
+            <tangy-input name="foo"></tangy-input>
+          </tangy-form-item>
+          <tangy-form-item id="item2">
+            Item 2.
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItem2Fixture">
+      <template>
+        <tangy-form id="form1">
+          <tangy-form-item id="item1">
+            <tangy-radio-buttons name="input1" label="What is your favorite fruit?">
+              <option value="orange">Orange</option>
+              <option value="banana">Banana</option>
+              <option value="tangerine">Tangerine</option>
+              <option value="cantalope">Cantalope</option>
+              <option value="cherry">Cherry</option>
+              <option value="kiwi">Kiwi</option>
+            </tangy-radio-buttons>
+            <tangy-radio-buttons name="input2" label="What is your second favorite fruit?">
+              <option name="orange">Orange</option>
+              <option name="banana">Banana</option>
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope">Cantalope</option>
+              <option name="cherry">Cherry</option>
+              <option name="kiwi">Kiwi</option>
+            </tangy-radio-buttons>
+            <tangy-checkboxes name="input3" label="What have you eaten lately?">
+              <option value="orange">Orange</option>
+              <option value="banana">Banana</option>
+              <option value="tangerine">Tangerine</option>
+              <option value="cantalope">Cantalope</option>
+              <option value="cherry">Cherry</option>
+              <option value="kiwi">Kiwi</option>
+            </tangy-checkboxes>
+
+          </tangy-form-item>
+          <tangy-form-item id="item2">
+            Item 2.
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemValidIfFixture">
+      <template>
+        <tangy-form id="my-form-2" title="My Form 2">
+          <tangy-form-item id="item1">
+            <tangy-checkbox name="input1" valid-if="input.value === 'on'">
+              Do you like tangerines?
+            </tangy-checkbox>
+            <tangy-checkbox name="input2" valid-if="inputs.input1.value === 'on'">
+              Please agree.
+            </tangy-checkbox>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="DisableIfFixture">
+      <template>
+        <tangy-form id="my-form" title="My Form">
+          <tangy-form-item id="item1">
+            <tangy-input name="input1" label="I should disable." disable-if="getValue('input2') === 'on'"></tangy-input>
+            <tangy-checkbox name="input2">
+              Click to disable above question. 
+            </tangy-checkbox>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemValidIfTangyIfFixture">
+      <template>
+        <tangy-form id="my-form-2" title="My Form 2">
+          <tangy-form-item id="item1">
+            <tangy-checkbox name="input1" valid-if="input.value === 'on'">
+              Do you like tangerines?
+            </tangy-checkbox>
+            <tangy-box tangy-if="inputs.input1.invalid === true">
+              You really should consider liking tangerines.
+            </tangy-box>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="SkipHelperFixture">
+      <template>
+        <tangy-form id="my-form" title="My Form">
+          <tangy-form-item id="item1"
+            on-change="
+              if (inputs.input1.value === '') {
+                skip('input2')
+              } else {
+                unskip('input2')
+              }
+            "
+          >
+            <tangy-checkbox name="input1">
+              Do you like tangerines?
+            </tangy-checkbox>
+            <tangy-input 
+              name="input2"
+              label="Where do tangerines come from?"
+            >
+            </tangy-input>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="SkipIfFixture">
+      <template>
+        <tangy-form id="my-form" title="My Form">
+          <tangy-form-item id="item1">
+            <tangy-checkbox name="input1">
+              Do you like tangerines?
+            </tangy-checkbox>
+            <tangy-input 
+              name="input2"
+              label="Where do tangerines come from?"
+              skip-if="inputs.input1.value === ''"
+              required
+            >
+            </tangy-input>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemDiscrepancyIfFixture">
+      <template>
+        <tangy-form id="my-form-2" title="My Form 2">
+          <tangy-form-item id="item1">
+            <tangy-checkbox name="input1" discrepancy-if="input.value !== 'on'">
+              Do you like tangerines?
+            </tangy-checkbox>
+            <tangy-box show-if="inputs.input1.hasDiscrepancy === true">
+              You really should consider liking tangerines.
+            </tangy-box>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemDiscrepancyIf2Fixture">
+      <template>
+        <tangy-form id="my-form-2" title="My Form 2">
+          <tangy-form-item id="item1">
+            <tangy-input name="input1" discrepancy-if="input.value !== 'yes'">
+              Do you like tangerines?
+            </tangy-input>
+            <tangy-box show-if="inputs.input1.hasDiscrepancy === true">
+              You really should consider liking tangerines.
+            </tangy-box>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemDiscrepancyIf3Fixture">
+      <template>
+        <tangy-form id="my-form-2" title="My Form 2">
+          <tangy-form-item id="item1">
+            <tangy-radio-buttons
+              name="input1"
+              discrepancy-if="getValue('input1') !== 'yes'"
+              label="Do you like tangerines?"
+            >
+              <option value="maybe">Maybe</option>
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </tangy-radio-buttons>
+            <!--tangy-box show-if="inputs.input1.hasDiscrepancy === true">
+              You really should consider liking tangerines.
+            </tangy-box-->
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemWarnIfFixture">
+      <template>
+        <tangy-form id="my-form-2" title="My Form 2">
+          <tangy-form-item id="item1">
+            <tangy-checkbox name="input1" warn-if="input.value !== 'on'">
+              Do you like tangerines?
+            </tangy-checkbox>
+            <tangy-box show-if="inputs.input1.hasWarning === true">
+              You really should consider liking tangerines.
+            </tangy-box>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemWarnIf2Fixture">
+      <template>
+        <tangy-form id="my-form-2" title="My Form 2">
+          <tangy-form-item id="item1">
+            <tangy-input name="input1" warn-if="input.value !== 'yes'">
+              Do you like tangerines?
+            </tangy-input>
+            <tangy-box show-if="inputs.input1.hasWarning === true">
+              You really should consider liking tangerines.
+            </tangy-box>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemValidIfTangyIfRadioFixture">
+      <template>
+        <tangy-form id="my-form-3" title="My Form 3">
+          <tangy-form-item id="item1">
+            <tangy-radio-buttons name="input1" label="What is your favorite fruit?" valid-if="getValue('input1') === 'Tangerine'">
+              <option name="orange">Orange</option>
+              <option name="banana">Banana</option>
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope">Cantalope</option>
+              <option name="cherry">Cherry</option>
+              <option name="kiwi">Kiwi</option>
+            </tangy-radio-buttons>
+            <tangy-box tangy-if="inputs.input1.invalid === true">
+              You really should consider liking tangerines.
+            </tangy-box>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemValidIfTangyIfCheckboxesFixture">
+      <template>
+        <tangy-form id="my-form-4" title="My Form 4">
+          <tangy-form-item id="item1">
+            <tangy-checkboxes name="input1" label="What is your favorite fruit?" valid-if="getValue('input1')[0] === 'Tangerine'">
+              <option name="orange">Orange</option>
+              <option name="banana">Banana</option>
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope">Cantalope</option>
+              <option name="cherry">Cherry</option>
+              <option name="kiwi">Kiwi</option>
+            </tangy-checkboxes>
+            <tangy-box tangy-if="inputs.input1.invalid === true">
+              You really should consider liking tangerines.
+            </tangy-box>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="TangyFormItemAutoStopFixture">
+      <template>
+        <tangy-form id="autostop-radio" title="autostop radio">
+          <tangy-form-item id="item1" incorrect-threshold="2">
+            <tangy-radio-buttons name="fruit_selection1" label="What is your favorite fruit?">
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope">Cantalope</option>
+              <option name="cherry" correct>Cherry</option>
+            </tangy-radio-buttons>
+            <tangy-radio-buttons name="fruit_selection2" label="What is your favorite fruit?">
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope">Cantalope</option>
+              <option name="cherry" correct>Cherry</option>
+            </tangy-radio-buttons>
+            <tangy-radio-buttons name="fruit_selection3" label="What is your favorite fruit?">
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope" correct>Cantalope</option>
+              <option name="cherry">Cherry</option>
+            </tangy-radio-buttons>
+            <tangy-radio-buttons name="fruit_selection4" label="What is your favorite fruit?">
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope" correct>Cantalope</option>
+              <option name="cherry">Cherry</option>
+            </tangy-radio-buttons>
+            <tangy-radio-buttons name="fruit_selection5" label="What is your favorite fruit?">
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope" correct>Cantalope</option>
+              <option name="cherry">Cherry</option>
+            </tangy-radio-buttons>
+            <tangy-radio-buttons name="fruit_selection6" label="What is your favorite fruit?">
+              <option name="tangerine">Tangerine</option>
+              <option name="cantalope" correct>Cantalope</option>
+              <option name="cherry">Cherry</option>
+            </tangy-radio-buttons>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ShouldInjectVariable">
+      <template>
+        <tangy-form id="ShouldInjectVariable" title="My Form">
+          <tangy-form-item id="item1" title="1" on-open="someInjectedVariable.itWorked()">
+            <tangy-input name="input1" label="What is your last name?"></tangy-input>
+          </tangy-form-item>
+          <tangy-form-item id="item2" title="2">
+            <tangy-input name="input2" label="What is your last name?"></tangy-input>
+          </tangy-form-item>
+          <tangy-form-item id="item3" title="3">
+            <tangy-input name="input3" label="What is your last name?"></tangy-input>
+          </tangy-form-item>
+        </tangy-form>
+      </template>
+    </test-fixture>
+
+
+
+    <script type="module">
+      import * as Polymer from '../node_modules/@polymer/polymer/polymer-legacy.js'
+      import '../tangy-form.js'
+      import '../input/tangy-input.js'
+      import '../input/tangy-checkbox.js'
+      import '../input/tangy-box.js'
+      import '../input/tangy-radio-buttons.js'
+      import '../input/tangy-checkboxes.js'
+      import { TangyFormItemHelpers } from '../tangy-form-item-callback-helpers.js'
+      suite('tangy-form-item', () => {
+
+        test('should inject variable', () => {
+          var someInjectedVariable = {
+            itWorked: function() {
+              this._itWorked = true 
+            }
+          }
+          const element = fixture('ShouldInjectVariable');
+          element.inject('someInjectedVariable', someInjectedVariable)
+          element.newResponse()
+          assert.equal(someInjectedVariable._itWorked, true)
+        })
+
+        test('should disable an input from disable-if', () => {
+          const element = fixture('DisableIfFixture');
+          element.newResponse()
+          element.querySelector('tangy-form-item').querySelector('[name=input2]').value = 'on'
+          element.querySelector('tangy-form-item').querySelector('[name=input2]').dispatchEvent(new Event('change'))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input1]').disabled, true)
+        })
+ 
+        test('should go to next item on input "next" event', () => {
+          const element = fixture('TangyFormItemFixture');
+          element.newResponse()
+          element.querySelector('tangy-form-item').querySelector('tangy-input').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelectorAll('tangy-form-item')[1].open, true)
+        })
+        
+        test('should return inputs meta data', () => {
+          const element = fixture('TangyFormItem2Fixture');
+          element.newResponse()
+          const inputsMetaData = element.querySelector('tangy-form-item').getInputsMeta()
+          assert.equal(inputsMetaData.length, 3)
+          assert.equal(
+            inputsMetaData.reduce((allInputsHaveSixOptions, input) => input.value.length !== 6 ? false : allInputsHaveSixOptions, true),
+            true
+          )
+        })
+
+        test('should skip input due to skip helper', () => {
+          const element = fixture('SkipHelperFixture');
+          element.newResponse()
+          // Make sure initial state is that input2 is skipped.
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').hasAttribute('skipped'), true)
+          // Trigger action that will unskip.
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').value = 'on'
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').hasAttribute('skipped'), false)
+          // Assign a value and make sure it gets set back to default when skipped.
+          element.querySelector('tangy-form-item').querySelector('[name=input2]').value = 'foo'
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').value, 'foo')
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').value = ''
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').hasAttribute('skipped'), true)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').value, '')
+        })
+
+        test('should skip input due to skip-if', () => {
+          const element = fixture('SkipIfFixture');
+          element.newResponse()
+          // Make sure initial state is that input2 is skipped.
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').hasAttribute('skipped'), true)
+          // Trigger action that will unskip.
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').value = 'on'
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').hasAttribute('skipped'), false)
+          // Assign a value and make sure it gets set back to default when skipped.
+          element.querySelector('tangy-form-item').querySelector('[name=input2]').value = 'foo'
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').value, 'foo')
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').value = ''
+          element.querySelector('tangy-form-item').querySelector('[name=input1]').dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').hasAttribute('skipped'), true)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').value, '')
+          // Should be able to continue regardless of input2 being required and not having value.
+          assert.equal(element.querySelector('tangy-form-item').validate(), true)
+        })
+
+        test('should be invalid from valid-if statements', () => {
+          const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+          const element = fixture('TangyFormItemValidIfFixture');
+          element.newResponse()
+          element.querySelector('tangy-form-item').querySelector('tangy-checkbox').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input1]').invalid, true)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('[name=input2]').invalid, true)
+          element.querySelector('tangy-form-item').querySelector('tangy-checkbox').value = 'on'
+          element.querySelector('tangy-form-item').querySelector('tangy-checkbox').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').open, false)
+        })
+
+        test('should be invalid and show custom error message, then continue after correction', () => {
+          const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+          const element = fixture('TangyFormItemValidIfTangyIfFixture');
+          element.newResponse()
+          element.querySelector('tangy-form-item').querySelector('tangy-checkbox').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-checkbox').invalid, true)
+          element.querySelector('tangy-form-item').querySelector('tangy-checkbox').value = 'on'
+          element.querySelector('tangy-form-item').querySelector('tangy-checkbox').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').open, false)
+        })
+        
+        test('should be invalid from discrepancy-if statement, then continue after no correction, ', () => {
+          const element = fixture('TangyFormItemDiscrepancyIfFixture');
+          element.newResponse()
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-checkbox').hasDiscrepancy, true)
+          assert.equal(element.querySelector('tangy-form-item').validate(), true)
+
+        })
+
+        test('should be invalid from discrepancy-if statement, then still invalid after a failing correction, lastly valid after no correction', () => {
+          const element = fixture('TangyFormItemDiscrepancyIf2Fixture');
+          element.newResponse()
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-input').hasDiscrepancy, true)
+          element.querySelector('tangy-form-item').querySelector('tangy-input').value = 'no'
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-input').hasDiscrepancy, true)
+          assert.equal(element.querySelector('tangy-form-item').validate(), true)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-input').hasDiscrepancy, true)
+        })
+
+        test('should be invalid from discrepancy-if statement, then still invalid after a failing correction, lastly valid after no correction (complex value)', () => {
+          const element = fixture('TangyFormItemDiscrepancyIf3Fixture');
+          element.newResponse()
+          // Select "maybe", should have discrepancy and item will be invalid.
+          element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').shadowRoot.querySelectorAll('tangy-radio-button')[0].click()
+          element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').shadowRoot.querySelectorAll('tangy-radio-button')[0].dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').hasDiscrepancy, true)
+          // Select "no", should have discrepancy and item will still be invalid because the selection changed to another discrepancy qualifying value. 
+          element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').shadowRoot.querySelectorAll('tangy-radio-button')[1].click()
+          element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').shadowRoot.querySelectorAll('tangy-radio-button')[1].dispatchEvent(new Event('change', {bubbles:true}))
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').hasDiscrepancy, true)
+          // Make no selection, discrepancy should remain but item becomes valid because discrepancy value has not changed.
+          assert.equal(element.querySelector('tangy-form-item').validate(), true)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').hasDiscrepancy, true)
+        })
+        
+        test('should be invalid from warn-if statement, then continue after no correction, ', () => {
+          const element = fixture('TangyFormItemWarnIfFixture');
+          element.newResponse()
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-checkbox').hasWarning, true)
+          assert.equal(element.querySelector('tangy-form-item').validate(), true)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-checkbox').hasWarning, true)
+        })
+
+        test('should be invalid from warn-if statement, then still invalid after a failing correction, lastly valid after no correction', () => {
+          const element = fixture('TangyFormItemWarnIf2Fixture');
+          element.newResponse()
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-input').hasWarning, true)
+          element.querySelector('tangy-form-item').querySelector('tangy-input').value = 'no'
+          assert.equal(element.querySelector('tangy-form-item').validate(), false)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-input').hasWarning, true)
+          assert.equal(element.querySelector('tangy-form-item').validate(), true)
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-input').hasWarning, true)
+        })
+
+        test('should be invalid radio and show custom error message, then continue after correction', () => {
+          const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+          const element = fixture('TangyFormItemValidIfTangyIfRadioFixture');
+          element.newResponse()
+          element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').invalid, true)
+          let el = element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').value
+                  .find(input => (input.name === 'Tangerine'))
+          el.value = 'on'
+          element.querySelector('tangy-form-item').querySelector('tangy-radio-buttons').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').open, false)
+        })
+        test('should be invalid checkboxes and show custom error message, then continue after correction', () => {
+          const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+          const element = fixture('TangyFormItemValidIfTangyIfCheckboxesFixture');
+          element.newResponse()
+          element.querySelector('tangy-form-item').querySelector('tangy-checkboxes').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').querySelector('tangy-checkboxes').invalid, true)
+          let el = element.querySelector('tangy-form-item').querySelector('tangy-checkboxes').value
+                  .find(input => (input.name === 'Tangerine'))
+          el.value = 'on'
+          element.querySelector('tangy-form-item').querySelector('tangy-checkboxes').dispatchEvent(new CustomEvent('next'))
+          assert.equal(element.querySelector('tangy-form-item').open, false)
+        })
+        test('should autostop after 2 answers.', () => {
+          const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+          const element = fixture('TangyFormItemAutoStopFixture');
+          element.newResponse()
+          let formItem = element.querySelector('tangy-form-item')
+          let el1 = formItem.querySelector('[name=fruit_selection1]').value
+                  .find(input => (input.name === 'Tangerine'))
+          el1.value = 'on'
+          let helpers = new TangyFormItemHelpers(formItem)
+          let hideInputsUponThreshhold = (input) => helpers.hideInputsUponThreshhold(input)
+          let disable = hideInputsUponThreshhold(formItem)
+          assert.equal(disable, false)
+          let el2 = formItem.querySelector('[name=fruit_selection2]').value
+                  .find(input => (input.name === 'Tangerine'))
+          el2.value = 'on'
+          disable = hideInputsUponThreshhold(formItem)
+          assert.equal(disable, true)
+        })
+      })
+
+    </script>
+
+  </body>
+</html>
