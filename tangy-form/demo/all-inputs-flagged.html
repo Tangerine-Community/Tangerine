@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Tangy Form Inputs Demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/devtools-detect/index.js"></script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <custom-style>
+      <style>
+        html {
+          --document-background-color: #FAFAFA;
+          --primary-color-dark: #3c5b8d;
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-color: #3c5b8d;
+          /*--accent-color: #f26f10;*/
+          --accent-color: #3c5b8d;
+          --accent-text-color: #FFF;
+          --error-color: var(--paper-red-500);
+          --disabled-color: #BBB;
+          --tangy-element-border: 0;
+          /*--tangy-element-margin: 0;*/
+        }
+        h1, h2, h3, h4, h5, p{
+          @apply --paper-font-common-base;
+          color: var(--primary-text-color);
+          margin: 15px 0px 5px 15px;
+        }
+      </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-checkboxes.js"></script>
+    <script type="module" src="../input/tangy-consent.js"></script>
+    <script type="module" src="../input/tangy-gps.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-location.js"></script>
+    <script type="module" src="../input/tangy-partial-date.js"></script>
+    <script type="module" src="../input/tangy-photo-capture.js"></script>
+    <script type="module" src="../input/tangy-qr.js"></script>
+    <script type="module" src="../input/tangy-radio-button.js"></script>
+    <script type="module" src="../input/tangy-radio-buttons.js"></script>
+    <script type="module" src="../input/tangy-select.js"></script>
+  </head>
+  <body>
+    <h3>Inputs Demo</h3>
+    <tangy-form id="my-form" title="My Form">
+              
+        <tangy-form-item id="item1" title="Item 1">
+
+            <tangy-checkbox
+                name="checkbox" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-checkbox>
+            
+            <tangy-checkboxes
+                name="checkboxes" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+                <option 
+                    value="Z" 
+                    hint-text="
+                        <t-lang en>English hint-text.</t-lang>
+                        <t-lang fr>French hint-text.</t-lang>
+                    "
+                >
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                </option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </tangy-checkboxes>
+
+            <tangy-consent
+                name="consent" 
+                question-number="1." 
+                prompt="
+                    <t-lang en>English prompt.</t-lang>
+                    <t-lang fr>French prompt.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-consent>
+
+            <tangy-gps
+                name="gps" 
+                question-number="1." 
+                prompt="
+                    <t-lang en>English prompt.</t-lang>
+                    <t-lang fr>French prompt.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-gps>
+
+            <tangy-input
+                name="input" 
+                type="text"
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                inner-label="
+                    <t-lang en>English inner-label.</t-lang>
+                    <t-lang fr>French inner-label.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-input>
+          
+            <tangy-input
+                name="input"
+                type="number"
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                inner-label="
+                    <t-lang en>English inner-label.</t-lang>
+                    <t-lang fr>French inner-label.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-input>
+
+            <tangy-location
+                name="location" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                location-src="./location-list.json"
+                show-levels="county,school"
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-location>
+
+            <tangy-partial-date 
+                name="tangy-partial-date" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+
+                future-date-error-text="
+                <t-lang en>You have entered a date that is in the future but the child's date of birth must be in the past. Please review the date and make an appropriate correction.</t-lang><t-lang fr>
+                Vous avez entré une date future, mais la date de naissance de l'enfant doit être passée. Veuillez revoir la date et apporter une correction appropriée.</t-lang>"
+                required disallow-future-date show-today-button allow-unknown-day allow-unknown-month allow-unknown-year min-year="1990" max-year="2020">
+            </tangy-partial-date>
+        
+            <tangy-photo-capture
+                name="photo-capture" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-photo-capture>
+        
+            <tangy-qr
+                name="qr" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-qr>
+
+            <tangy-radio-button
+                name="qr" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+            </tangy-radio-button>
+                
+            <tangy-radio-buttons
+                name="radio-buttons" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+                <option 
+                    value="Z" 
+                    hint-text="
+                        <t-lang en>English hint-text.</t-lang>
+                        <t-lang fr>French hint-text.</t-lang>
+                    "
+                >
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                </option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </tangy-radio-buttons>                              
+                
+            <tangy-select
+                name="tangy-select" 
+                question-number="1." 
+                label="
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                "
+                hint-text="
+                    <t-lang en>English hint-text.</t-lang>
+                    <t-lang fr>French hint-text.</t-lang>
+                "
+                error-text="
+                    <t-lang en>English error-text.</t-lang>
+                    <t-lang fr>French error-text.</t-lang>
+                "
+                discrepancy-text="Discrepancy text."
+                warn-text="Warn text."
+                has-warning
+                has-discrepancy
+                invalid
+                required>
+                <option 
+                    value="Z" 
+                    hint-text="
+                        <t-lang en>English hint-text.</t-lang>
+                        <t-lang fr>French hint-text.</t-lang>
+                    "
+                >
+                    <t-lang en>English label.</t-lang>
+                    <t-lang fr>French label.</t-lang>
+                </option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </tangy-select>        
+     
+        </tangy-form-item>
+
+        <tangy-form-item id="item2" title="Item 2">
+            Test.
+        </tangy-form-item>
+
+    </tangy-form>
+  </body>
+</html>

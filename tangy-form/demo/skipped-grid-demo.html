@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Skipped grid demo</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+<!--    <script src="../node_modules/devtools-detect/index.js"></script>-->
+    <script type="module">
+        import devtools from '../node_modules/devtools-detect/index.js';
+    </script>
+    <script src="../node_modules/redux/dist/redux.min.js"></script>
+
+    <script type="module">
+        import '@polymer/iron-demo-helpers/demo-pages-shared-styles';
+        import '@polymer/iron-demo-helpers/demo-snippet';
+    </script>
+    <custom-style>
+        <style>
+            html {
+                --document-background-color: #FAFAFA;
+                --primary-color-dark: #3c5b8d;
+                --primary-text-color: var(--light-theme-text-color);
+                --primary-color: #3c5b8d;
+                --accent-color: #f26f10;
+                --accent-text-color: #FFF;
+                --error-color: var(--paper-red-500);
+                --disabled-color: #BBB;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5 {
+                @apply --paper-font-common-base;
+                color: var(--primary-text-color);
+                margin: 25px 0px 5px 15px;
+            }
+        </style>
+    </custom-style>
+    <script type="module" src="../tangy-form.js"></script>
+    <script type="module" src="../input/tangy-checkbox.js"></script>
+    <script type="module" src="../input/tangy-input.js"></script>
+    <script type="module" src="../input/tangy-timed.js"></script>
+
+    <custom-style>
+        <style is="custom-style" include="demo-pages-shared-styles">
+        </style>
+    </custom-style>
+</head>
+
+<body>
+    <div class="vertical-section-container centered">
+        <h3>Skipped grid demo</h3>
+        <demo-snippet>
+            <template>
+                <tangy-form id="my-form" title="My Form">
+                    <tangy-form-item id="item1"
+                    >
+                        <tangy-checkbox name="checkbox1">Would you like to skip then next input?</tangy-checkbox>
+<!--                        <tangy-input-->
+<!--                                name="input1"-->
+<!--                                tangy-if="inputs.input1.value !== 'on'"-->
+<!--                                tangy-action="editable"-->
+<!--                                label="This input will disable when checkbox1 is checked."-->
+<!--                        ></tangy-input>-->
+                        <tangy-timed required columns="3" name="input1" auto-stop="2" skip-if="isChecked('checkbox1')"
+                                     label="This input will hide when checkbox1 is checked.">
+                            <option value="class1_term2-d">1</option><option value="class1_term2-1">Jumatatu,</option><option value="class1_term2-2">wezi</option><option value="class1_term2-3">walikuja</option><option value="class1_term2-4">kijijini.</option><option value="class1_term2-5">Watu</option><option value="class1_term2-6">wakapiga</option><option value="class1_term2-7">mayowe.</option><option value="class1_term2-8">“Tunataka</option><option value="class1_term2-9">dhahabu!”</option><option value="class1_term2-10">wezi</option><option value="class1_term2-11">wakasema.</option><option value="class1_term2-12">Watu</option><option value="class1_term2-13">walipatwa</option><option value="class1_term2-14">na</option><option value="class1_term2-15">wasiwasi.</option><option value="class1_term2-16">Watu</option><option value="class1_term2-17">wakasema,</option><option value="class1_term2-18">“Hatuna</option><option value="class1_term2-19">chochote</option><option value="class1_term2-20">cha</option><option value="class1_term2-21">thamani.”</option><option value="class1_term2-22">Polisi</option><option value="class1_term2-23">walifika</option><option value="class1_term2-24">hapo.</option><option value="class1_term2-25">Waliwashika</option><option value="class1_term2-26">wezi</option><option value="class1_term2-27">na</option><option value="class1_term2-28">kuwatia</option><option value="class1_term2-29">pingu.</option><option value="class1_term2-30">Wezi</option><option value="class1_term2-31">walipelekwa</option><option value="class1_term2-32">gerezani.</option>
+                        </tangy-timed>
+                        <tangy-checkbox name="checkbox2">Would you like to skip then next input?</tangy-checkbox>
+                        <tangy-input
+                                name="input2"
+                                skip-if="isChecked('checkbox2')"
+                                label="This input will disable when checkbox2 is checked."
+                        ></tangy-input>
+                    </tangy-form-item>
+                </tangy-form>
+
+                <script>
+                    window['my-form'].addEventListener('submit', function(event) {
+                        console.log('event called: submit')
+                    })
+                    document.querySelector('#my-form').addEventListener('submit', event => {
+                        // By default, the form response is locked and the user can browse it. Use event.preventDefault()
+                        // to do something else.
+                        event.preventDefault()
+                        // 3 ways to inspect the user's response to the form. Ordered by level of detail.
+                        console.log(event.target.response)
+                        console.log(event.target.inputs)
+                        console.log(event.target.values)
+                    })
+                    document.querySelector('#my-form').addEventListener('TANGY_MEDIA_UPDATE', event => {
+                        // Comment out event.preventDefault() to test saving to file system.
+                        // Enable event.preventDefault() to test saving to db.
+                        // event.preventDefault()
+                        // 3 ways to inspect the user's response to the form. Ordered by level of detail.
+                        console.log("Caught TANGY_MEDIA_UPDATE event at: " + event.target.name)
+                    }, true)
+                </script>
+            </template>
+        </demo-snippet>
+    </div>
+</body>
+
+</html>
