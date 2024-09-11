@@ -20,13 +20,19 @@ const params = {
   groupConfigurationDoc: process.argv[3]
 }
 
-function getData(dbName, formId, skip, batchSize, year, month) {
+function getData(dbName, formId, skip, batchSize, year, month, toYear=undefined, toMonth=undefined) {
   console.log("Getting data in batch.js. dbName: " + dbName + " formId: " + formId)
   const limit = batchSize
   return new Promise((resolve, reject) => {
     try {
-      const key = (year && month) ? `${formId}_${year}_${month}` : formId
-      const target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
+      if (year && month && toYear && toMonth) {
+        var startkey = `${formId}_${year}_${month}`
+        var endkey = `${formId}_${toYear}_${toMonth}\ufff0`
+        var target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?startkey=["${startkey}"]&endkey=["${endkey}"]&include_docs=true&skip=${skip}&limit=${limit}`
+      } else {
+        const key = (year && month) ? `${formId}_${year}_${month}` : formId
+        var target = `${dbDefaults.prefix}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
+      }
       axios.get(target)
         .then(response => {
           resolve(response.data.rows.map(row => row.doc))
