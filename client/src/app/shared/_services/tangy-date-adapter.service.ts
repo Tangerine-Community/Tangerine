@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NativeDateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { Platform, PlatformModule } from '@angular/cdk/platform';
+import { Platform } from '@angular/cdk/platform';
 import { LanguagesService } from './languages.service';
 
 @Injectable({
@@ -11,7 +11,8 @@ export class TangyDateAdapterService extends NativeDateAdapter {
   constructor(
     private languagesService: LanguagesService
   ) {
-    super('en-US', new Platform);
+    const platform = new Platform({});
+    super('en-US', platform);
 
     this.languagesService.getCurrentLanguageLocale().then(locale => {
       this.setLocale(locale);
