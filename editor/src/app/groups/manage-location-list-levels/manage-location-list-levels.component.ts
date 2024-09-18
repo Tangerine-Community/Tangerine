@@ -73,7 +73,7 @@ export class ManageLocationListLevelsComponent implements OnInit {
 
         this.loadLocationLevels();
       } catch (error) {
-        this.errorHandler.handleError('Error Saving Location Lits File to disk');
+        this.errorHandler.handleError('Error Saving Location List File');
       }
     }
   }

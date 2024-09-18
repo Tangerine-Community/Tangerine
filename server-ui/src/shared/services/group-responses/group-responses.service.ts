@@ -1,8 +1,8 @@
 import { DbService } from './../db/db.service';
 import { Injectable } from '@nestjs/common';
 import { Group } from '../../classes/group';
-// import { updateGroupSearchIndex } from '../../../scripts/update-group-search-index.js'
-// import { updateGroupArchivedIndex } from '../../../scripts/update-group-archived-index.js'
+import { updateGroupSearchIndex } from '../../../scripts/update-group-search-index.js'
+import { updateGroupArchivedIndex } from '../../../scripts/update-group-archived-index.js'
 const log = require('tangy-log').log
 
 interface PouchDbFindOptions {
@@ -47,60 +47,59 @@ export class GroupResponsesService {
    * @param skip
    */
   async search(groupId, phrase:string, index:string, limit = 50, skip = 0) {
-    // if (typeof index === 'undefined') {
-    //   index = 'search'
-    // }
-    // if (index ==='archived') {
-    //   await updateGroupArchivedIndex(groupId)
-    // } else {
-    //   await updateGroupSearchIndex(groupId)
-    // }
-    // const groupDb = this.getGroupsDb(groupId)
-    // const result  = await groupDb.query(
-    //   index,
-    //   phrase
-    //     ? {
-    //       startkey: `${phrase}`.toLocaleLowerCase(),
-    //       endkey: `${phrase}\uffff`.toLocaleLowerCase(),
-    //       include_docs: true,
-    //       limit,
-    //       skip
-    //     }
-    //     : {
-    //       include_docs: true,
-    //       limit,
-    //       skip
-    //     }
-    // )
-    // const searchResults = result.rows.map(row => {
-    //   const variables = row.doc.items.reduce((variables, item) => {
-    //     return {
-    //       ...variables,
-    //       ...item.inputs.reduce((variables, input) => {
-    //         return {
-    //           ...variables,
-    //           [input.name] : input.value
-    //         }
-    //       }, {})
-    //     }
-    //   }, {})
-    //   return {
-    //     _id: row.doc._id,
-    //     matchesOn: row.value,
-    //     formId: row.doc.form.id,
-    //     formType: row.doc.type,
-    //     lastModified: row.doc.lastModified,
-    //     doc: row.doc,
-    //     variables
-    //   }
-    // })
-    // // Deduplicate the search results since the same case may match on multiple variables.
-    // return searchResults.reduce((uniqueResults, result) => {
-    //   return uniqueResults.find(x => x._id === result._id)
-    //     ? uniqueResults
-    //     : [ ...uniqueResults, result ]
-    // }, [])
-    console.log("TODO: setup REST API for groupResponsesService.search")
+    if (typeof index === 'undefined') {
+      index = 'search'
+    }
+    if (index ==='archived') {
+      await updateGroupArchivedIndex(groupId)
+    } else {
+      await updateGroupSearchIndex(groupId)
+    }
+    const groupDb = this.getGroupsDb(groupId)
+    const result  = await groupDb.query(
+      index,
+      phrase
+        ? { 
+          startkey: `${phrase}`.toLocaleLowerCase(),
+          endkey: `${phrase}\uffff`.toLocaleLowerCase(),
+          include_docs: true,
+          limit,
+          skip
+        }
+        : {
+          include_docs: true,
+          limit,
+          skip
+        } 
+    )
+    const searchResults = result.rows.map(row => {
+      const variables = row.doc.items.reduce((variables, item) => {
+        return {
+          ...variables,
+          ...item.inputs.reduce((variables, input) => {
+            return {
+              ...variables,
+              [input.name] : input.value
+            }
+          }, {})
+        }
+      }, {})
+      return {
+        _id: row.doc._id,
+        matchesOn: row.value,
+        formId: row.doc.form.id,
+        formType: row.doc.type,
+        lastModified: row.doc.lastModified,
+        doc: row.doc,
+        variables
+      }
+    })
+    // Deduplicate the search results since the same case may match on multiple variables.
+    return searchResults.reduce((uniqueResults, result) => {
+      return uniqueResults.find(x => x._id === result._id)
+        ? uniqueResults
+        : [ ...uniqueResults, result ]
+    }, [])
   }
   
   async create(groupId, responseData:any):Promise<Group> {
@@ -130,11 +129,13 @@ export class GroupResponsesService {
   }
 
   async update(groupId, response) {
+    const tangerineModifiedOn = Date.now()
     try {
       const groupDb = this.getGroupsDb(groupId)
       const originalResponse = await groupDb.get(response._id)
       await groupDb.put({
         ...response,
+        tangerineModifiedOn,
         _rev: originalResponse._rev
       })
       const freshResponse = <Group>await groupDb.get(response._id)
@@ -142,7 +143,7 @@ export class GroupResponsesService {
     } catch (e) {
       try {
         const groupDb = this.getGroupsDb(groupId)
-        await groupDb.put(response)
+        await groupDb.put({...response, tangerineModifiedOn})
         const freshResponse = <Group>await groupDb.get(response._id)
         return freshResponse
       } catch (e) {

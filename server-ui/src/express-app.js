@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 const express = require('express')
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const path = require('path')
 const fs = require('fs-extra')
 const compression = require('compression')
@@ -46,9 +46,9 @@ if (process.env.T_PROTOCOL == 'https') {
 }
 
 app.use(cookieParser())
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json({ limit: '1gb' }))
-// app.use(bodyParser.text({ limit: '1gb' }))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '1gb' }))
+app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
 // Middleware to protect routes.
 var isAuthenticated = require('./middleware/is-authenticated.js')
@@ -138,6 +138,14 @@ const queueNewGroupMiddleware = function (req, res, next) {
   newGroupQueue.push(req.body.groupName)
   next()
 }
+
+// Location List API
+app.use('/app/:groupId/location-lists/read', require('./routes/group-location-lists-read.js'));
+
+app.post('/app/:groupId/location-list/create', require('./routes/group-location-list-create.js'));
+//app.use('/app/:groupId/location-list/read', isAuthenticated, require('./routes/group-location-list-read.js'));
+app.post('/app/:groupId/location-list/update', require('./routes/group-location-list-update.js'));
+app.post('/app/:groupId/location-list/delete', require('./routes/group-location-list-delete.js'));
 
 // app.post('/editor/release-apk/:group', isAuthenticated, releaseAPK)
 
