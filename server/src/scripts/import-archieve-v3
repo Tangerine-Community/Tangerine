@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+if (!process.argv[2]) {
+  console.log('Place archives from clients into the ./data/archives folder on the host machine then run...')
+  console.log('       ./bin.js <groupName>')
+  console.log('Example: ./bin.js myGroup')
+  process.exit()
+}
+
+const util = require('util')
+const readdir = util.promisify(require('fs').readdir)
+const readFile = util.promisify(require('fs').readFile)
+const pako = require('pako')
+const axios = require('axios')
+const url = `http://localhost/api/${process.argv[2]}/upload`
+const ARCHIVES_PATH = '/archives'
+
+async function go() {
+  const archivesList = await readdir(ARCHIVES_PATH)
+  for (const archivePath of archivesList) {
+    const archiveContents = await readFile(`${ARCHIVES_PATH}/${archivePath}`, 'utf-8')
+    const lines = archiveContents.split('\n')
+
+    let docsArray = [];
+	let dbName = ''
+    lines.forEach(line => {
+        if (line.startsWith('{"version":')) {
+          try {
+            const parsedLine = JSON.parse(line);
+            if (parsedLine.db_info) {
+              dbName = parsedLine.db_info.db_name;
+            }
+          } catch (e) {
+            console.log(`Failed to parse line db_name ${archivePath}:`, e);
+          }
+        }
+		
+      if (line.startsWith('{"docs":')) {
+        try {
+          const parsedLine = JSON.parse(line);
+          if (parsedLine.docs) {
+            docsArray = docsArray.concat(parsedLine.docs);
+          }
+        } catch (e) {
+          console.log(`Failed to parse line in ${archivePath}:`, e);
+        }
+      }
+    });
+
+    if (docsArray.length === 0) {
+      console.log(`No docs array found in ${archivePath}`);
+      continue;
+    }
+
+    const userProfileDoc = docsArray.find(item => item.form && item.form.id === 'user-profile')
+    if (!userProfileDoc) {
+      console.log(`No user-profile document found in ${archivePath}`);
+      continue;
+    }
+    console.log(`userProfileDoc: ${userProfileDoc}`)
+
+	console.log(`docsArray ${docsArray.length}`);
+    const docs = docsArray
+      .map(item => {
+        if (item.collection !== 'TangyFormResponse') return;
+        if (item.form && item.form.id !== 'user-profile') {
+          item.items[0].inputs.push({
+            name: 'userProfileId',
+            value: userProfileDoc._id
+          });
+          item.items[0].inputs.push({
+            name: 'tabletUserName',
+            value: dbName
+          });
+        }
+        return item;
+      })
+      .filter(doc => doc !== undefined)
+
+	 console.log(`docs ${docs.length}`);
+    for (const doc of docs) {
+      let body = pako.deflate(JSON.stringify({ "new_edits": false, doc }), { to: 'string' })
+      await axios({
+        method: 'post',
+        url,
+        data: `${body}`,
+        headers: {
+          'content-type': 'text/plain',
+          'Authorization': `${process.env.T_UPLOAD_TOKEN}`
+        }
+      })
+    }
+  }
+}
+
+try {
+  go()
+} catch (e) {
+  console.log(e)
+}
