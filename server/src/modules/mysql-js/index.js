@@ -675,7 +675,7 @@ function populateDataFromDocument(doc, data) {
   return cleanData
 }
 
-async function convert_participant(knex, doc, groupId, tableName) {
+async function convert_participant(doc, tableName) {
   if (!tableName) {
     tableName = 'participant'
   }
@@ -714,7 +714,7 @@ async function convert_participant(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function convert_case(knex, doc, groupId, tableName) {
+async function convert_case(doc) {
   // console.log("convert_case doc: " + JSON.stringify(doc))
   const caseDefID = doc.caseDefinitionId
   const caseId = doc._id
@@ -748,7 +748,7 @@ async function convert_case(knex, doc, groupId, tableName) {
   return data
 }
 
-async function convert_case_event(knex, doc, groupId, tableName) {
+async function convert_case_event(doc) {
   const data = {}
   doc.CaseEventID = doc._id
   doc.dbRevision = doc._rev
@@ -759,7 +759,7 @@ async function convert_case_event(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function convert_event_form(knex, doc, groupId, tableName) {
+async function convert_event_form(doc) {
   let data = doc.data
   if (!data) {
     data = {}
@@ -773,7 +773,7 @@ async function convert_event_form(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function convert_response(knex, doc, groupId, tableName) {
+async function convert_response(doc) {
   let data = doc.data
   if (!data) {
     data = {}
@@ -847,7 +847,7 @@ async function convert_response(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function convert_issue(knex, doc, groupId, tableName) {
+async function convert_issue(doc) {
   let data = doc.data
   if (!data) {
     data = {}
@@ -913,8 +913,7 @@ async function saveToMysql(knex, sourceDb, doc, tablenameSuffix, tableName, docT
   let data;
   let result = {id: doc._id, tableName, docType, caseId: doc.caseId}
   const tables = []
-  const groupId = doc.groupId || sourceDb.name
-  // console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
+  const groupId = sourceDb.name
   if (!groupId) {
     log.error("Unable to save a doc without groupId: " + JSON.stringify(doc))
   } else {
@@ -930,25 +929,25 @@ async function saveToMysql(knex, sourceDb, doc, tablenameSuffix, tableName, docT
     }
     switch (doc.type.toLowerCase()) {
       case 'case':
-        data = await convert_case(knex, doc, groupId, tableName)
+        data = await convert_case(doc)
         break;
       case 'participant':
-        data = await convert_participant(knex, doc, groupId, tableName)
+        data = await convert_participant(doc, tableName)
         break;
       case 'case-event':
-        data = await convert_case_event(knex, doc, groupId, tableName)
+        data = await convert_case_event(doc)
         break;
       case 'event-form':
-        data = await convert_event_form(knex, doc, groupId, tableName)
+        data = await convert_event_form(doc)
         break;
       case 'issue':
-        data = await convert_issue(knex, doc, groupId, tableName)
+        data = await convert_issue(doc)
         break;
       case 'response':
       case 'attendance':
       case 'behavior':
       case 'scores':
-        data = await convert_response(knex, doc, groupId, tableName)
+        data = await convert_response(doc)
         // Check if table exists and create if needed:
         tableName = data['formID_sanitized'] + tablenameSuffix
         result.tableName = tableName
