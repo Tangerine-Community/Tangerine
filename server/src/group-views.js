@@ -59,10 +59,10 @@ module.exports.unpaid = function(doc) {
   }
 }
 
-module.exports.responsesByUserProfileShortCode = function(doc) {
-  if (doc.collection === "TangyFormResponse") {
+module.exports.responsesByUserProfileShortCode = {
+  map: function (doc) {
     if (doc.form && doc.form.id === 'user-profile') {
-      return emit(doc._id.substr(doc._id.length-6, doc._id.length), true)
+      return emit(doc._id.substr(doc._id.length-6, doc._id.length), 1)
     }
     var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
     var userProfileInput = null
@@ -72,8 +72,15 @@ module.exports.responsesByUserProfileShortCode = function(doc) {
       }
     })
     if (userProfileInput) {
-      emit(userProfileInput.value.substr(userProfileInput.value.length-6, userProfileInput.value.length), true)
+      emit(userProfileInput.value.substr(userProfileInput.value.length-6, userProfileInput.value.length), 1)
     }
+  },
+  reduce: '_count'
+}
+
+module.exports.userProfileByUserProfileShortCode = function (doc) {
+  if (doc.collection === "TangyFormResponse" && doc.form && doc.form.id === 'user-profile') {
+      return emit(doc._id.substr(doc._id.length - 6, doc._id.length), true);
   }
 }
 

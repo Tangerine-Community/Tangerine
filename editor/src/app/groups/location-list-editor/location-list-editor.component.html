@@ -58,10 +58,7 @@
       {{breadcrumbs[breadcrumbs.length-1]['label']}}</span>
     <span class="tangy-spacer"></span>
     <span class="tangy-foreground-primary">{{'Actions'|translate}}</span>
-
   </mat-list-item>
-</mat-list>
-<mat-list role="list" *ngIf="locationChildren.length>0">
   <mat-list-item role="listitem" *ngFor="let child of locationChildren">
     <span class="faux-anchor tangy-foreground-secondary" (click)="onChildClick(child.id)">{{child.label}} - id
       {{child.id}}</span>

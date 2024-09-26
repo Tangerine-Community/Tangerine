@@ -99,7 +99,7 @@ module.exports = {
             for (let i = 0; i < doc.participants.length; i++) {
               const participant = doc.participants[i]
               let participant_id = participant.id
-              let key_len = 32
+              let key_len = 36
               if (process.env.T_MYSQL_MULTI_PARTICIPANT_SCHEMA) {
                 participant_id = doc._id + '-' + participant.id
                 key_len = 80
@@ -120,7 +120,7 @@ module.exports = {
               createFunction = function (t) {
                 t.engine('InnoDB')
                 t.string(primaryKey, key_len).notNullable().primary();
-                t.string('CaseID', key_len).index('participant_CaseID_IDX');
+                t.string('CaseID', 36).index('participant_CaseID_IDX');
                 t.double('inactive');
               }
               const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
@@ -206,14 +206,31 @@ module.exports = {
             }
             const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
-          } else {
+          } else if (doc.type === 'response') {
             const flatDoc = await prepareFlatData(doc, sanitized);
             tableName = null;
             docType = 'response';
             primaryKey = 'ID'
             createFunction = function (t) {
               t.engine('InnoDB')
-              t.string(primaryKey, 36).notNullable().primary();
+              t.string(primaryKey, 200).notNullable().primary();
+              t.string('caseId', 36) // .index('response_caseId_IDX');
+              t.string('participantID', 36) //.index('case_instances_ParticipantID_IDX');
+              t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
+              t.tinyint('complete');
+              t.string('archived', 36); // TODO: "sqlMessage":"Incorrect integer value: '' for column 'archived' at row 1
+            }
+            const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
+            log.info('Processed: ' + JSON.stringify(result))
+          } else {
+            const flatDoc = await prepareFlatData(doc, sanitized);
+            tableName = flatDoc.type;
+            console.log("tableName: " + tableName)
+            docType = 'response';
+            primaryKey = 'ID'
+            createFunction = function (t) {
+              t.engine('InnoDB')
+              t.string(primaryKey, 200).notNullable().primary();
               t.string('caseId', 36) // .index('response_caseId_IDX');
               t.string('participantID', 36) //.index('case_instances_ParticipantID_IDX');
               t.string('caseEventId', 36) // .index('eventform_caseEventId_IDX');
@@ -223,6 +240,7 @@ module.exports = {
             const result = await saveToMysql(knex, sourceDb,flatDoc, tablenameSuffix, tableName, docType, primaryKey, createFunction)
             log.info('Processed: ' + JSON.stringify(result))
           }
+
           await knex.destroy()
         }
       }
@@ -310,6 +328,7 @@ const getItemValue = (doc, variableName) => {
 const generateFlatResponse = async function (formResponse, sanitized) {
   const groupId = formResponse.groupId;
 
+  // Anything added to this list need to be added to the valuesToRemove list in each of the convert_response function.
   let flatFormResponse = {
     _id: formResponse._id,
     formTitle: formResponse.form.title,
@@ -319,7 +338,10 @@ const generateFlatResponse = async function (formResponse, sanitized) {
     deviceId: formResponse.deviceId||'',
     groupId: groupId||'',
     complete: formResponse.complete,
-    archived: formResponse.archived||''
+    archived: formResponse?.archived||'',
+    tangerineModifiedOn: formResponse?.tangerineModifiedOn||'',
+    tangerineModifiedByUserId: formResponse?.tangerineModifiedByUserId||'',
+    verified: formResponse?.verified||''
   };
 
   if (!formResponse.formId) {
@@ -327,6 +349,51 @@ const generateFlatResponse = async function (formResponse, sanitized) {
       formResponse.form.id = 'blank'
     }
     flatFormResponse['formId'] = formResponse.form.id
+  }
+
+  if (formResponse.type === 'attendance' || formResponse.type === 'behavior' || formResponse.type === 'scores' ||
+      formResponse.form.id === 'student-registration' ||
+      formResponse.form.id === 'class-registration') {
+
+    function hackFunctionToRemoveUserProfileId (formResponse) {
+      // This is a very special hack function to remove userProfileId
+      // It needs to be replaced with a proper solution that resolves duplicate variables.
+      if (formResponse.userProfileId) {
+        for (let item of formResponse.items) {
+          for (let input of item.inputs) {
+            if (input.name === 'userProfileId') {
+              delete formResponse.userProfileId;
+            }
+          }
+        }
+      }
+      return formResponse;
+    }
+
+    formResponse = hackFunctionToRemoveUserProfileId(formResponse);
+
+    if (formResponse.type === 'attendance') {
+      flatFormResponse['attendanceList'] = formResponse.attendanceList
+    } else if (formResponse.type === 'behavior') {
+      const studentBehaviorList = formResponse.studentBehaviorList.map(record => {
+        const student = {}
+        Object.keys(record).forEach(key => {
+          if (key === 'behavior') {
+            student[key + '.formResponseId'] = record[key]['formResponseId']
+            student[key + '.internal'] = record[key]['internal']
+            student[key + '.internalPercentage'] = record[key]['internalPercentage']
+            // console.log("special processing for behavior: " + JSON.stringify(student) )
+          } else {
+            // console.log("key: " + key + " record[key]: " + record[key])
+            student[key] = record[key]
+          }
+        })
+        return student
+      })
+      flatFormResponse['studentBehaviorList'] = studentBehaviorList
+    } else if (formResponse.type === 'scores') {
+      flatFormResponse['scoreList'] = formResponse.scoreList
+    }
   }
 
   for (let item of formResponse.items) {
@@ -339,7 +406,6 @@ const generateFlatResponse = async function (formResponse, sanitized) {
       }
       if (!sanitize) {
         // Simplify the keys by removing formID.itemId
-        let firstIdSegment = ""
         if (input.tagName === 'TANGY-LOCATION') {
           // Populate the id, label and metadata columns for TANGY-LOCATION levels in the current location list.
           // The location list may be change over time. When values are changed, we attempt to adjust 
@@ -351,7 +417,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
           const locationList = await tangyModules.getLocationListsByLocationSrc(groupId, locationSrc)
           locationKeys = []
           for (let group of input.value) {
-            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}`, group.value)
             locationKeys.push(group.value)
   
             if (!locationList) {
@@ -359,7 +425,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
               // use the label value saved in the form response if it is not found in the current location list.
               // If no label appears in the form response, then we put 'orphanced' for the label. 
               const valueLabel = group.label ? group.label : 'orphaned'
-              tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, valueLabel)
+              tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}_label`, valueLabel)
             } else {
               try {
                 const location = getLocationByKeys(locationKeys, locationList)
@@ -367,29 +433,91 @@ const generateFlatResponse = async function (formResponse, sanitized) {
                   if (['descendantsCount', 'children', 'parent', 'id'].includes(keyName)) {
                     continue
                   }
-                  tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])                
+                  tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}_${keyName}`, location[keyName])                
                 }
               } catch (e) {
                 const valueLabel = group.label ? group.label : 'orphaned'
-                tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}.${group.level}_label`, valueLabel)
+                tangyModules.setVariable(flatFormResponse, input, `${input.name}.${group.level}_label`, valueLabel)
               }
             }
           }
         } else if (input.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(input.value)) {
           let selectedOption = input.value.find(option => !!option.value) 
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, selectedOption ? selectedOption.name : '')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, selectedOption ? selectedOption.name : '')
         } else if (input.tagName === 'TANGY-PHOTO-CAPTURE') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
         } else if (input.tagName === 'TANGY-VIDEO-CAPTURE') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
         } else if (input.tagName === 'TANGY-BOX' || (input.tagName === 'TANGY-TEMPLATE' && input.value === undefined) || input.name === '') {
           // Do nothing :).
+        } else if (input.tagName === 'TANGY-TIMED') {
+          let hitLastAttempted = false
+          for (let toggleInput of input.value) {
+            let derivedValue = ''
+            if (hitLastAttempted === true) {
+              // Not attempted.
+              derivedValue = '.'
+            } else if (toggleInput.value === 'on' || toggleInput.pressed === true) {
+              // If toggle is 'on' (manually pressed) or pressed is true (row marked), the item is incorrect.
+              derivedValue = '0'
+            } else {
+              // Correct.
+              derivedValue = '1'
+            }
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${toggleInput.name}`, derivedValue)
+            if (toggleInput.highlighted === true) {
+              hitLastAttempted = true
+            }
+          }
+          ;
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.duration`, input.duration)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.time_remaining`, input.timeRemaining)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.grid_auto_stopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.auto_stop`, input.autoStop)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.item_at_time`, input.gridVarItemAtTime ? input.gridVarItemAtTime : '')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.time_interm_captured`, input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : '')
+          // Calculate Items Per Minute.
+          let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+          let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+          let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.attempted`, numberOfItemsAttempted)
+          let timeSpent = input.duration - input.timeRemaining
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
+        } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
+          let hitLastAttempted = false
+          for (let toggleInput of input.value) {
+            let derivedValue = ''
+            if (hitLastAttempted === true) {
+              // Not attempted.
+              derivedValue = '.'
+            } else if (toggleInput.value === 'on') {
+              // Incorrect.
+              derivedValue = '0'
+            } else {
+              // Correct.
+              derivedValue = '1'
+            }
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${toggleInput.name}`, derivedValue)
+            if (toggleInput.highlighted === true) {
+              hitLastAttempted = true
+            }
+          }
+          ;
+          let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+          let totalNumberOfItems = input.value.length
+          let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+          let numberOfItemsCorrect = totalNumberOfItems - numberOfItemsIncorrect
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.correct`, numberOfItemsCorrect)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.attempted`, numberOfItemsAttempted)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.grid_auto_stopped`, input.gridAutoStopped)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}.auto_stop`, input.autoStop)
         } else if (input.tagName === 'TANGY-SIGNATURE') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value ? 'true' : 'false')
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value ? 'true' : 'false')
         } else if (input && typeof input.value === 'string') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value)
         } else if (input && typeof input.value === 'number') {
-          tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}`, input.value)
+          tangyModules.setVariable(flatFormResponse, input, `${input.name}`, input.value)
         } else if (input && Array.isArray(input.value)) {
           let i = 0
           for (let group of input.value) {
@@ -398,7 +526,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
             if (!group.name) {
               keyName = i
             }
-            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}_${keyName}`, group.value)
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${keyName}`, group.value)
           }
         } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
           let elementKeys = Object.keys(input.value);
@@ -409,7 +537,7 @@ const generateFlatResponse = async function (formResponse, sanitized) {
             if (!key) {
               keyName = i
             }
-            tangyModules.setVariable(flatFormResponse, input, `${firstIdSegment}${input.name}_${keyName}`, input.value[key])
+            tangyModules.setVariable(flatFormResponse, input, `${input.name}_${keyName}`, input.value[key])
           }
         }
       } // sanitize
@@ -547,7 +675,7 @@ function populateDataFromDocument(doc, data) {
   return cleanData
 }
 
-async function convert_participant(knex, doc, groupId, tableName) {
+async function convert_participant(doc, tableName) {
   if (!tableName) {
     tableName = 'participant'
   }
@@ -586,7 +714,7 @@ async function convert_participant(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function convert_case(knex, doc, groupId, tableName) {
+async function convert_case(doc) {
   // console.log("convert_case doc: " + JSON.stringify(doc))
   const caseDefID = doc.caseDefinitionId
   const caseId = doc._id
@@ -620,7 +748,7 @@ async function convert_case(knex, doc, groupId, tableName) {
   return data
 }
 
-async function convert_case_event(knex, doc, groupId, tableName) {
+async function convert_case_event(doc) {
   const data = {}
   doc.CaseEventID = doc._id
   doc.dbRevision = doc._rev
@@ -631,7 +759,7 @@ async function convert_case_event(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function convert_event_form(knex, doc, groupId, tableName) {
+async function convert_event_form(doc) {
   let data = doc.data
   if (!data) {
     data = {}
@@ -645,7 +773,7 @@ async function convert_event_form(knex, doc, groupId, tableName) {
   return cleanData
 }
 
-async function convert_response(knex, doc, groupId, tableName) {
+async function convert_response(doc) {
   let data = doc.data
   if (!data) {
     data = {}
@@ -713,13 +841,13 @@ async function convert_response(knex, doc, groupId, tableName) {
 
 
   // # Delete the following keys;
-  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime']
+  const valuesToRemove = ['_id', '_rev','buildChannel','buildId','caseEventId','deviceId','eventFormId','eventId','groupId','participantId','startDatetime', 'startUnixtime', 'tangerineModifiedOn', 'tangerineModifiedByUserId']
   valuesToRemove.forEach(e => delete doc[e]);
   const cleanData = populateDataFromDocument(doc, data);
   return cleanData
 }
 
-async function convert_issue(knex, doc, groupId, tableName) {
+async function convert_issue(doc) {
   let data = doc.data
   if (!data) {
     data = {}
@@ -785,8 +913,7 @@ async function saveToMysql(knex, sourceDb, doc, tablenameSuffix, tableName, docT
   let data;
   let result = {id: doc._id, tableName, docType, caseId: doc.caseId}
   const tables = []
-  const groupId = doc.groupId || sourceDb.name
-  // console.log("doc.type.toLowerCase(): " + doc.type.toLowerCase() + " for tableName: " + tableName + " groupId: " + groupId)
+  const groupId = sourceDb.name
   if (!groupId) {
     log.error("Unable to save a doc without groupId: " + JSON.stringify(doc))
   } else {
@@ -802,22 +929,25 @@ async function saveToMysql(knex, sourceDb, doc, tablenameSuffix, tableName, docT
     }
     switch (doc.type.toLowerCase()) {
       case 'case':
-        data = await convert_case(knex, doc, groupId, tableName)
+        data = await convert_case(doc)
         break;
       case 'participant':
-        data = await convert_participant(knex, doc, groupId, tableName)
+        data = await convert_participant(doc, tableName)
         break;
       case 'case-event':
-        data = await convert_case_event(knex, doc, groupId, tableName)
+        data = await convert_case_event(doc)
         break;
       case 'event-form':
-        data = await convert_event_form(knex, doc, groupId, tableName)
+        data = await convert_event_form(doc)
         break;
       case 'issue':
-        data = await convert_issue(knex, doc, groupId, tableName)
+        data = await convert_issue(doc)
         break;
       case 'response':
-        data = await convert_response(knex, doc, groupId, tableName)
+      case 'attendance':
+      case 'behavior':
+      case 'scores':
+        data = await convert_response(doc)
         // Check if table exists and create if needed:
         tableName = data['formID_sanitized'] + tablenameSuffix
         result.tableName = tableName

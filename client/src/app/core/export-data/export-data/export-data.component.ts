@@ -319,11 +319,12 @@ export class ExportDataComponent implements OnInit {
           const stream = new window['Memorystream']
           let data = '';
           stream.on('data', function (chunk) {
-            data += chunk.toString();
+            data += chunk.toString() +',';// Add comma after each item - will be useful in creating a valid JSON object
           });
           await db.dump(stream)
           console.log('Successfully exported : ' + dbName);
           this.statusMessage += `<p>${_TRANSLATE('Successfully exported database ')} ${dbName}</p>`
+          data = `[${data.replace(/,([^,]*)$/, '$1')}]`//Make a valid JSON string - Wrap the items in [] and remove trailing comma
           const file = new Blob([data], {type: 'application/json'});
           this.downloadData(file, fileName, 'application/json');
           this.hideExportButton = false

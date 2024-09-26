@@ -318,6 +318,7 @@ export class GroupsService {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
+
   /**
    * replace spaces, punctuations, tabs , underscores with dashes (-) and removes any trailing dashes at the end of the string
    *

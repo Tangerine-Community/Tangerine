@@ -128,6 +128,7 @@ export class ImportLocationListComponent implements OnInit {
       this.errorHandler.handleError('Could not Import File.');
     }
   }
+
   onSelectLocationLevelsMapping(locationLevel, value) {
     this.mappings[locationLevel] = value;
   }
@@ -276,7 +277,6 @@ export class ImportLocationListComponent implements OnInit {
   async saveLocationListToDisk() {
     try {
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.generatedLocationList, this.locationListFileName);
-      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
       window.location.reload()
     } catch (error) {
       this.errorHandler.handleError('Error Saving Location List File to disk');
