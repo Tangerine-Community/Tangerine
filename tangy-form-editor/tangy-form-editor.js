@@ -178,7 +178,6 @@ class TangyFormEditor extends PolymerElement {
         ${state.form.fullscreen ? ` fullscreen` : ''}
         ${state.form.openInFullscreen ? ` open-in-fullscreen` : ''}
         ${state.form.fullscreenInline ? ` fullscreen-inline` : ''}
-        ${state.form.ocr ? ` ocr` : ''}
         fullscreen-nav-align="${state.form.fullscreenNavAlign === 'bottom' ? `bottom` : 'top'}"
         ${state.form.recordItemFirstOpenTimes ? ` record-item-first-open-times` : ''}
         on-open="
@@ -261,7 +260,6 @@ class TangyFormEditor extends PolymerElement {
          {
            title: template.content.querySelector('tangy-form').getAttribute('title'),
            fullscreen: template.content.querySelector('tangy-form').hasAttribute('fullscreen'),
-           ocr: template.content.querySelector('tangy-form').hasAttribute('ocr'),
            openInFullscreen: template.content.querySelector('tangy-form').hasAttribute('open-in-fullscreen'),
            fullscreenInline: template.content.querySelector('tangy-form').hasAttribute('fullscreen-inline'),
            fullscreenNavAlign: !template.content.querySelector('tangy-form').hasAttribute('fullscreen-nav-align') || template.content.querySelector('tangy-form').getAttribute('fullscreen-nav-align') === 'top'
@@ -392,9 +390,6 @@ class TangyFormEditor extends PolymerElement {
           <paper-checkbox style="margin:15px;" id="record-item-first-open-times-checkbox" ${
             state.form.recordItemFirstOpenTimes ? 'checked' : ''
           }>${t('Enable recording "first opened time" on all sections')}</paper-checkbox><br>
-          <paper-checkbox style="margin:15px;" id="use-ocr-checkbox" ${
-          state.form.ocr ? 'checked' : ''
-          }>${t('Enable OCR scanning for this form')}</paper-checkbox><br>
           <paper-checkbox style="margin:15px;" id="open-in-fullscreen-checkbox" ${
             state.form.openInFullscreen ? 'checked' : ''
           }>${t('Open in fullscreen mode')}</paper-checkbox><br>
@@ -630,7 +625,6 @@ class TangyFormEditor extends PolymerElement {
       fullscreenInline: this.$.container.querySelector('#fullscreen-inline-checkbox').hasAttribute('checked'),
       fullscreenNavAlign: this.$.container.querySelector('#fullscreen-nav-align-select').value,
       recordItemFirstOpenTimes: this.$.container.querySelector('#record-item-first-open-times-checkbox').hasAttribute('checked'),
-      ocr: this.$.container.querySelector('#use-ocr-checkbox').hasAttribute('checked'),
       onOpen: this.shadowRoot.querySelector('#on-open-editor juicy-ace-editor').value.replace(/"/g, '&#34;'),
       onChange: this.shadowRoot.querySelector('#on-change-editor juicy-ace-editor').value.replace(/"/g, '&#34;'),
       onSubmit: this.shadowRoot.querySelector('#on-submit-editor juicy-ace-editor').value.replace(/"/g, '&#34;'),

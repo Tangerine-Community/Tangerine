@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v7.18.0
+
+- Add editor widgets for Tangy Prompt Box and updates to Tangy Radio Blocks
+
 ## v7.17.1 to v7.17.6
 
 - Fix multiple location list selection to tangy-location-widget

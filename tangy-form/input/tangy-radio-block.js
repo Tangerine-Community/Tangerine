@@ -90,6 +90,22 @@ export class TangyRadioBlock extends TangyInputBase {
         type: Boolean,
         value: false,
         reflectToAttribute: true
+      },
+      image: {
+        type: String,
+        value: ''
+      },
+      sound: {
+        type: String,
+        value: ''
+      },
+      promptFor: {
+        type: String,
+        value: ''
+      },
+      playOnOpen: {
+        type: String,
+        value: ''
       }
     }
   }
@@ -112,10 +128,8 @@ export class TangyRadioBlock extends TangyInputBase {
         .toggle {
           position: absolute;
           clip: rect(0,0,0,0);
-          pointer-events: none;
         }
         .toggle:active + label, .toggle:checked + label {
-          /* Old selected orange color: #ff620c */
           border-color: var(--button-selected-border-color, green);
         }
         .btn-lg {
@@ -124,7 +138,6 @@ export class TangyRadioBlock extends TangyInputBase {
           display: flex;
           align-items: center;
           justify-content: var(--justify-content, center);
-          font-size: 2rem !important;
           margin: 0 0.25rem;
         }
         .btn {
@@ -133,15 +146,12 @@ export class TangyRadioBlock extends TangyInputBase {
           vertical-align: middle;
           user-select: none;
           padding: 0.375rem 0.75rem;
-          font-family: 'Andika', sans-serif;
           font-size: 1.3rem;
           line-height: 1.5;
           border-radius: 0.5rem;
-          color: #2a3f55;
-          border: 7px solid #ffbf09;
+          border: 4px solid #2c3e50;
           text-decoration: none;
-          box-shadow: 0px 1px 6px 3px #ffaa004d;
-          background-color: #ffbf09;
+          background-color: #ffff;
           transition-duration: 0.4s;
           position: relative;
           box-sizing: border-box;
@@ -159,15 +169,19 @@ export class TangyRadioBlock extends TangyInputBase {
         name="answer"
       >
       </input>
-      <label for="a1" class="btn btn-lg">
-        ${this.label ? this.label : this.innerHTML}
-      </label>
+        <label for="a1" class="btn btn-lg">
+          ${this.label ? this.label : this.innerHTML}
+          ${this.hasAttribute('image') && this.getAttribute('image') != '' ? `
+          <img id="blockImage" src="${this.image}" style="margin-left: auto; max-width: 50px; max-height: 50px;">
+        ` : ''}
+        </label>
       ${this.hasAttribute('hint-text') ? `
         <label class="hint-text">
           ${this.getAttribute('hint-text')}
         </label>
       ` : ''}
     `
+    if (this.hideButton) this.shadowRoot.querySelector('label').style.display = 'none';
     this.shadowRoot.querySelector('input').addEventListener('change', (e) => {
       e.stopPropagation()
       let incomplete = (!e.target.checked)
@@ -184,6 +198,13 @@ export class TangyRadioBlock extends TangyInputBase {
         }
       }))
     })
+    
+    if (this.shadowRoot.querySelector('img') != null) {
+      this.shadowRoot.querySelector('img').addEventListener('click', (e) => {
+          this.dispatchEvent(new CustomEvent('input-sound-triggered', { detail: {sound: this.sound, id: this.name, stopAndClearQueue: true} }))
+      })
+    }
+
   }
 
   onSkippedChange(newValue, oldValue) {
