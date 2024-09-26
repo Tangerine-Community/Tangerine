@@ -37,6 +37,8 @@ class TangyRadioBlocksWidget extends TangyBaseWidget {
           value: option.getAttribute("value"),
           label: option.innerHTML,
           correct: option.hasAttribute("correct"),
+          image: option.getAttribute("image"),
+          sound: option.getAttribute("sound")
         };
       }),
     };
@@ -56,7 +58,7 @@ class TangyRadioBlocksWidget extends TangyBaseWidget {
         ${config.options
           .map(
             (option) => `
-          <option value="${option.value}" ${option.correct ? "correct" : ""} >${
+          <option value="${option.value}" ${option.correct ? "correct" : ""} image="${option.image}" sound="${option.sound}">${
               option.label
             }</option>
         `
@@ -117,11 +119,11 @@ class TangyRadioBlocksWidget extends TangyBaseWidget {
               <div>
                 ${this.renderEditCoreAttributes(config)}
                 ${this.renderEditQuestionAttributes(config)}
-                <label for="orientation" style="font-weight: bold; font-size: 1.2em;">Orientation: </label>
-                <select name="orientation">
+                <label for="orientation" style="font-weight: bold; font-size: 1.2em;">Orientation:</label>
+                <tangy-select name="orientation">
                   <option value="columns" ${config.orientation === "columns" ? "selected" : ""}>Columns</option>
                   <option value="rows" ${config.orientation === "rows" ? "selected" : ""}>Rows</option>
-                </select>
+                </tangy-select>
                 <h2>Options</h2>
                 <p>Click the "Correct" property for options that are the correct answer. This property is used with the Section Detail's Threshold property.</p>
                 <tangy-list name="options">
@@ -129,6 +131,8 @@ class TangyRadioBlocksWidget extends TangyBaseWidget {
                     <tangy-input name="value" allowed-pattern="[a-zA-Z0-9\-_]" hint-text="Enter the variable value of the radio button" inner-label="Value" type="text"></tangy-input>
                     <tangy-input name="label" hint-text="Enter the display label of the radio button" inner-label="Label" type="text"></tangy-input>
                     <tangy-checkbox name="correct" hint-text="Select if this is the correct answer."  label="Correct" ></tangy-checkbox>
+                    <tangy-input name="image" hint-text="Enter the image URL" inner-label="Image" type="text"></tangy-input>
+                    <tangy-input name="sound" hint-text="Enter the sound URL" inner-label="Sound" type="text"></tangy-input>
                   </template>
                   ${
                     config.options.length > 0
@@ -152,6 +156,8 @@ class TangyRadioBlocksWidget extends TangyBaseWidget {
                           <tangy-checkbox name="correct" hint-text="Select if this is the correct answer."  label="Correct"  value="${
                             option.correct ? "on" : ""
                           }"></tangy-checkbox>
+                          <tangy-input name="image" hint-text="Enter the image URL" inner-label="Image" type="text" value="${option.image ? option.image : ""}"></tangy-input>
+                          <tangy-input name="sound" hint-text="Enter the sound URL" inner-label="Sound" type="text" value="${option.sound ? option.sound : ""}"></tangy-input>
                         </tangy-list-item>
                       `
                         )
@@ -186,7 +192,7 @@ class TangyRadioBlocksWidget extends TangyBaseWidget {
       ...this.onSubmitValidationAttributes(config, formEl),
       ...this.onSubmitAdvancedAttributes(config, formEl),
       ...this.onSubmitUnimplementedAttributes(config, formEl),
-      orientation: formEl.querySelector("select[name=orientation]").value,
+      orientation: formEl.querySelector("tangy-select[name=orientation]").value,
       options: formEl.values.options.map((item) =>
         item.reduce((acc, input) => {
           return { ...acc, [input.name]: input.value };

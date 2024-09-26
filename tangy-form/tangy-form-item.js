@@ -1,9 +1,10 @@
-import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
-import {t} from './util/t.js'
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { t } from './util/t.js'
 import './util/html-element-props.js'
 import '@polymer/paper-card/paper-card.js'
 import './style/tangy-common-styles.js'
-import {TangyFormItemHelpers} from './tangy-form-item-callback-helpers.js'
+import { TangyFormItemHelpers } from './tangy-form-item-callback-helpers.js'
+import { TangyPromptUtils } from './util/tangy-prompt-utils.js'
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 
 // import { createWorker } from 'tesseract.js';
@@ -32,6 +33,8 @@ export class TangyFormItem extends PolymerElement {
   constructor() {
     super()
     this._injected = {}
+
+    this.sectionPromptQueue = new TangyPromptUtils();
   }
 
   static get is() { return 'tangy-form-item'; }
@@ -55,6 +58,12 @@ export class TangyFormItem extends PolymerElement {
     }
     this.hadDiscrepancies = []
     this.hadWarnings = []
+  }
+
+  disconnectedCallback() {    
+    this.sectionPromptQueue.stopAndClearQueue();
+
+    super.disconnectedCallback();
   }
 
   static get template() {
@@ -272,32 +281,11 @@ export class TangyFormItem extends PolymerElement {
         paper-card .card-content {
           padding: var(--tangy-form-item--paper-card-content--padding, 15px);
         }
-        #reset {
-          height: auto;
-          color: black;
-          text-transform: uppercase;
-          font-size: unset;
-          font-family: var(--paper-font-common-base_-_font-family);
-          -webkit-font-smoothing: var(--paper-font-common-base_-_-webkit-font-smoothing);
-        }
+
       </style>
       <paper-card id="card" class="shrunk">
         <div class="card-content">
           <label class="heading"></label>
-          <template is="dom-if" if="{{ocr}}">
-            <tangy-scan-image label="Scan the test." inputs="{{inputs}}" ></tangy-scan-image>
-            <paper-button id="reset" on-click="resetAnswers"><iron-icon icon="icons:refresh"></iron-icon> <t-t>reset</t-t> </paper-button>
-<!--            <template is="dom-if" if="{{answeredQuestions.length > 0}}">-->
-<!--            <div id="answerDisplay">-->
-<!--              <p>-->
-<!--                Answered Questions:-->
-<!--              <ul>-->
-<!--                <template is="dom-repeat" items="[[answeredQuestions]]"><li>{{item.name}} : {{item.value}}</li></template>-->
-<!--              </ul>-->
-<!--              </p>-->
-<!--            </div>-->
-<!--            </template>-->
-          </template>
           <slot></slot>
         </div>
         <div class="card-actions">
@@ -513,98 +501,12 @@ export class TangyFormItem extends PolymerElement {
         type: Number,
         value: undefined,
         reflectToAttribute: false
-      },
-      ocr: {
-        type: Boolean,
-        value: false,
-        notify: true
-      },
-      answeredQuestions: {
-        type: Array,
-        value: []
       }
     };
   }
 
   inject(name, value) {
     this._injected[name] = value
-  }
-
-  ready() {
-    super.ready();
-    this.addEventListener('TANGY_SCAN_IMAGE_VALUE', event => {
-      // Comment out event.preventDefault() to test saving to file system.
-      // Enable event.preventDefault() to test saving to db.
-      // event.preventDefault()
-      this.answeredQuestions = []
-      const lines = event.detail.value
-      // this.inputs is poopulated usually for submit() but tangy-scan-image needs inputs property to be populated.
-      let items = this.parentElement.getMeta().items
-      let inputs = []
-      items.forEach(item => {
-        if (item.id === this.id) {
-          inputs = item.inputs
-        }
-      })
-      // this
-      //     .querySelectorAll('[name]')
-      //     .forEach(input => inputs.push(input.getModProps && window.useShrinker ? input.getModProps() : input.getProps()))
-      //
-      // this.parentElement.getMeta().inputs.forEach(input => inputs.push(input))
-      // this.inputs = inputs
-      let currentAnsweredLine = 0
-      inputs.forEach(input => {
-        const label = input.label
-        const name = input.name
-        lines.forEach((line, indexLine) => {
-          if (label.includes(line)) {
-            console.log("Question label: " + label + " includes scanned line: " + line)
-            // let regex = RegExp(line);
-            // const match = regex.exec(label);
-            // if (match) {
-            //   console.log("match found at index: " + match.index);
-            currentAnsweredLine = indexLine
-            const options = input.value
-            options.forEach((option, indexOption) => {
-              const optionLabel = option.label
-              const optionValue = option.value
-              // lines.slice(indexLine + 1).every((optionLine, indexSliceLine) => {
-              lines.every((optionLine, indexSliceLine) => {
-                const optionLabelPart = optionLabel.split("-")[0].trim()
-                const optionLinePart = optionLine.split("-")[0].trim()
-                // if (optionLabelPart.includes(optionLinePart)) {
-                  let regex = RegExp(optionLinePart);
-                  const match = regex.exec(optionLabelPart);
-                  if (match) {
-                    console.log("optionLabel: " + optionLabelPart + " includes " + optionLinePart + " match found at " + match.index)
-                    if (match.index === 0) {
-                      console.log("Match successful! Setting: " + name + " to " + optionValue)
-                      // input.value = 'on'
-                      // Pass in the radiobutton by referencing it by variable name in the
-                      // inputs object, then the value you would like to set it to.
-                      const inputEl = this.querySelector('[name=' + name + ']')
-                      this.setValueOfRadioButtons(inputEl, optionValue)
-                      // answeredQuestions.push(input)
-                      this.push('answeredQuestions', {name: name, value: optionLabel});
-                      return false
-                    }
-                  }
-                // }
-                return true
-              })
-            })
-
-            // }
-            // if (line.trim().length === label.trim().length) {
-            //   console.log("Tangy-form-item TANGY_SCAN_IMAGE_VALUE setting: " + name)
-            //   input.value = 'on'
-            //   answeredQuestions.push(input)
-            // }
-          }
-        })
-      })
-      console.log(`Tangy-form-item TANGY_SCAN_IMAGE_VALUE answeredQuestions: ${JSON.stringify(this.answeredQuestions, null, 2)}`)
-    }, true)
   }
 
   // Apply state in the store to the DOM.
@@ -628,10 +530,6 @@ export class TangyFormItem extends PolymerElement {
         let inputEl = this.querySelector(`[name="${inputState.name}"]`)
         if (inputEl) inputEl.setProps(inputState)
       })
-    if (this.parentElement.ocr) {
-      this.ocr = true
-    }
-
   }
 
   fireHookInput(hook, event, input) {
@@ -839,6 +737,34 @@ export class TangyFormItem extends PolymerElement {
       tangyConsentEl.addEventListener('TANGY_INPUT_CONSENT_NO', this.clickedNoConsent.bind(this))
     }
 
+    this.querySelectorAll('tangy-prompt-box').forEach((tangyPrompt) => {
+      // add event listeners for clicks
+      if (tangyPrompt.shadowRoot) {
+        tangyPrompt.shadowRoot.querySelectorAll('tangy-radio-block').forEach((block) => {
+          const inputOptionName = `${tangyPrompt.name}-${block.name}`
+          block.addEventListener('input-sound-triggered', this.onInputSoundTriggered.bind(this, inputOptionName));
+
+          if (block.hasAttribute('play-on-open') && block.getAttribute('play-on-open') == "on") {
+            let inputOptionName = `${tangyPrompt.name}-${block.name}`
+            let playOnOpenEvent = new CustomEvent('input-sound-triggered', { detail: { sound: block.getAttribute('sound'), id: inputOptionName } } )
+            block.dispatchEvent(playOnOpenEvent)
+          }
+        })
+      }
+    })
+
+    this.querySelectorAll('tangy-radio-blocks').forEach((tangyRadioBlocks) => {   
+      const inputName = tangyRadioBlocks.getAttribute('name')   
+      if (tangyRadioBlocks.shadowRoot) {
+        tangyRadioBlocks.shadowRoot.querySelectorAll('tangy-radio-block').forEach((block) => {
+          if (block.hasAttribute('sound') && block.getAttribute('sound') != '') {
+            const inputOptionName = `${inputName}-${block.name}`
+            block.addEventListener('input-sound-triggered', this.onInputSoundTriggered.bind(this, inputOptionName));
+          }
+        })
+      }
+    })
+
     this.reflect()
     if (this.open === true) {
       this.fireHook('on-open')
@@ -1008,6 +934,7 @@ export class TangyFormItem extends PolymerElement {
   }
 
   next() {
+    this.sectionPromptQueue.stopAndClearQueue();
     if (this.validate()) {
       this.submit()
       this.dispatchEvent(new CustomEvent('ITEM_NEXT'))
@@ -1015,6 +942,7 @@ export class TangyFormItem extends PolymerElement {
   }
 
   back() {
+    this.sectionPromptQueue.stopAndClearQueue();
     this.submit()
     this.dispatchEvent(new CustomEvent('ITEM_BACK'))
   }
@@ -1065,27 +993,36 @@ export class TangyFormItem extends PolymerElement {
       }, [])
   }
 
-  setValueOfRadioButtons(input, value) {
-    input.value = input.value.map(button => {
-      console.log("value: " + value + " button value: " + button.value)
-      const inputValue = {
-        ...button,
-        value: button.name === value ? 'on' : ''
-      }
-      return inputValue;
-    })
-  }
+  onInputSoundTriggered(eventName, event) {
+    const input = event.target;
 
-  resetAnswers() {
-    this.querySelectorAll('[name]').forEach(input => {
-      input.value = input.value.map(button => {
-        return {
-          ...button,
-          value: ''
-        };
-      })
-    })
-    this.answeredQuestions = []
+    // Prefer the event name passed by the caller
+    eventName = eventName || input.name;
+
+    if (event.detail.stopAndClearQueue) {
+      this.sectionPromptQueue.stopAndClearQueue();
+    }
+
+    if (event.detail.sound) {
+      this.sectionPromptQueue.queue(input, event.detail.sound, eventName);
+    }
+
+    if (input.hasAttribute("prompt-for") && input.getAttribute("prompt-for") != '') {
+      let inputName = input.getAttribute("prompt-for")
+      let inputTangyPrompt = this.querySelector(`[name="${inputName}"]`)
+      if (inputTangyPrompt) {
+        inputTangyPrompt.shadowRoot.querySelectorAll('tangy-radio-block').forEach((option) => {
+          if (option.hasAttribute('sound') && option.getAttribute('sound') != '') {
+            let inputOptionName = `${inputName}-${option.name}`
+            this.sectionPromptQueue.queue(option, option.getAttribute('sound'), inputOptionName)
+          }
+        })
+      }
+    }
+
+    if (this.sectionPromptQueue.prompts.length > 0) {
+      this.sectionPromptQueue.play(this.sectionPromptQueue.prompts.length);
+    }
   }
 
 }

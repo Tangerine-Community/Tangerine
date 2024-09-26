@@ -434,11 +434,6 @@ export class TangyForm extends PolymerElement {
         type: Number,
         value: undefined,
         reflectToAttribute: true
-      },
-      ocr: {
-        type: Boolean,
-        value: false,
-        reflectToAttribute: true
       }
     }
   }
@@ -683,9 +678,6 @@ export class TangyForm extends PolymerElement {
     items.forEach((item) => {
       let index = state.items.findIndex((itemState) => item.id == itemState.id)
       if (index !== -1) item.setProps(state.items[index])
-      if (this.ocr) {
-        item.ocr = true
-      }
     })
 
     // Find item to scroll to.
@@ -818,8 +810,8 @@ export class TangyForm extends PolymerElement {
 
   }
 
-  unlock() {
-    const meta = this.getMeta()
+   unlock(options ={}) {
+    const meta = {...this.getMeta(), ...options}
     this.store.dispatch({
       type: 'UNLOCK',
       meta

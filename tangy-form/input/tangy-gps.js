@@ -88,44 +88,60 @@ class TangyGps extends TangyInputBase {
       }
     </style>
     <div class="flex-container m-y-25">
-      <div id="qnum-number"></div>
-      <div id="qnum-content">   
-        <label id="label"></label>
-        <div class="coordinates">
-          <div id="lat-long">
-            <span class="label">[[t.latitude]]:</span> [[currentLatitude]] <br>
-            <span class="label">[[t.longitude]]:</span> [[currentLongitude]] <br>
-          </div>
-
-          <template is="dom-if" if="[[currentLatitude]]">
-            <div id="accuracy-distance">
-              <span class="label">[[t.accuracy]]:</span> [[currentAccuracy]] meters<br>
-            </div>
-            <div id="accuracy-level">
-              <span class="label">[[t.accuracyLevel]]:</span> [[accuracyLevel]]
-            </div>
-          </template> 
-
-          <template is="dom-if" if="{{hasDelta}}">
-            <br> 
-            <span class="label">[[t.disanceFromReference]]:</span> [[currentDelta]] meters
-          </template>
+  <div id="qnum-number"></div>
+  <div id="qnum-content">
+    <label id="label"></label>
+    <label class="hint-text"></label>
+    <div class="coordinates">
+      <template is="dom-if" if="[[!disabled]]">
+        <div id="lat-long">
+          <span class="label">[[t.latitude]]:</span> [[currentLatitude]] <br>
+          <span class="label">[[t.longitude]]:</span> [[currentLongitude]] <br>
         </div>
 
-        <div>
-          <template is="dom-if" if="[[!currentLatitude]]">
-              [[t.searching]]...
-          </template>
-          <div class="geofence-message-container"> 
-            <div class="geofence-message"> [[geofenceMessage]]</div>
+        <template is="dom-if" if="[[currentLatitude]]">
+          <div id="accuracy-distance">
+            <span class="label">[[t.accuracy]]:</span> [[currentAccuracy]] meters<br>
           </div>
-        </div>
-        <label class="hint-text"></label>
-        <div id="error-text"></div>
-        <div id="warn-text"></div>
-        <div id="discrepancy-text"></div>
+          <div id="accuracy-level">
+            <span class="label">[[t.accuracyLevel]]:</span> [[accuracyLevel]]
+          </div>
+        </template>
+
+        <template is="dom-if" if="{{hasDelta}}">
+          <br>
+          <span class="label">[[t.disanceFromReference]]:</span> [[currentDelta]] meters
+        </template>
+        </template>
+    </div>
+
+    <div>
+      <template is="dom-if" if="[[!currentLatitude]]">
+          [[t.searching]]...
+      </template>
+      <div class="geofence-message-container">
+        <div class="geofence-message"> [[geofenceMessage]]</div>
       </div>
     </div>
+    <div id="error-text"></div>
+    <div id="warn-text"></div>
+    <div id="discrepancy-text"></div>
+    <div>
+    <template is="dom-if" if="{{isDisabledAndHasValue(disabled, value.latitude)}}">
+      <div id="lat-long">
+          <span class="label">[[t.latitude]]:</span> [[value.latitude]] <br>
+          <span class="label">[[t.longitude]]:</span> [[value.longitude]] <br>
+        </div>
+
+        <template is="dom-if" if="[[value.accuracy]]">
+          <div id="accuracy-distance">
+            <span class="label">[[t.accuracy]]:</span> [[value.accuracy]] meters<br>
+          </div>
+        </template>
+    </div>
+  </div>
+</div>
+</div>
   `;
   }
 
@@ -420,6 +436,9 @@ class TangyGps extends TangyInputBase {
   
   _deg2rad(deg) {
     return deg * (Math.PI/180)
+  }
+  isDisabledAndHasValue(disabled, value){
+    return disabled && value
   }
 }
 

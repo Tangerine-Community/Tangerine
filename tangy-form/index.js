@@ -20,4 +20,6 @@ import './input/tangy-partial-date.js';
 import './input/tangy-toggle.js';
 import './input/tangy-gate.js';
 import './input/tangy-ethio-date.js';
-import './input/tangy-scan-image.js';
+// import './input/tangy-scan-image.js';
+import './input/tangy-radio-blocks.js';
+import './input/tangy-prompt-box.js';

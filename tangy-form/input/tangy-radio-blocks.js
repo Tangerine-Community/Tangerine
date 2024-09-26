@@ -14,7 +14,7 @@ import './tangy-radio-block.js'
  * @polymer
  * @demo demo/index.html
  */
-class TangyRadioBlocks extends TangyInputBase {
+export class TangyRadioBlocks extends TangyInputBase {
 
   static get is() { return 'tangy-radio-blocks'; }
 
@@ -32,18 +32,12 @@ class TangyRadioBlocks extends TangyInputBase {
       <style include="tangy-common-styles"></style>
 
       <style>
-        #label {
-          margin: 0;
-          text-transform: none;
-          font-size: 1.4rem;
-          text-align: center;
-          padding-bottom: 1rem;
-        }
         #container {
-          height: var(--container-height, 10vh);
+          height: var(--container-height, 50vh);
           background-color: var(--container-background-color, #fff);
           border-radius: 1rem;
-          padding: .5rem 1.2rem;
+          padding: 4rem 1.2rem;
+          margin-top: 1rem;
           margin-bottom: 1rem;
         }
         #blockContainer.columns {
@@ -59,6 +53,7 @@ class TangyRadioBlocks extends TangyInputBase {
           padding: 0px;
         }
         #blockContainer {
+          height: 100%;
           display: flex;
           justify-content: space-around;
           font-size: 4rem;
@@ -68,37 +63,6 @@ class TangyRadioBlocks extends TangyInputBase {
           align-items: center;
           position: relative;
         }
-      /*
-        table {
-          table-layout: fixed;
-        }
-        span {
-          font-size: .75em;
-          display: block;
-        }
-        :host([columns]) tangy-radio-block {
-          padding: 0px;
-          /*margin: 15px 0px 0px;*/
-          margin: 10px 0 15px;
-        }
-        :host([hide-buttons]) tangy-radio-block {
-          border: 7px solid transparent;
-        }
-        :host([hide-buttons]) tangy-radio-block[value="on"] {
-          border: 7px solid var(--button-selected-border-color, green);
-        }
-        :host([no-margin]) tangy-radio-block {
-          padding: 0px;
-          margin: 0px 0px !important;
-          border: 0px;
-        }
-        :host([columns="0"]) tangy-radio-block {
-          display: block;
-        }
-        :host(:not([columns="0"])) tangy-radio-block {
-          display: inline-block;
-        }
-        */
       
         #hint-text {
           color: gray;
@@ -110,17 +74,12 @@ class TangyRadioBlocks extends TangyInputBase {
       <div class="flex-container">
         <div id="qnum-number"></div>
         <div id="qnum-content">
+          <label id="label" for="group"></label>
           <label class="hint-text"></label>
-          <div id="container">
-            <label id="label" for="group"></label>
-            <div id="blockContainer">
-            </div>
-          </div>
-
+          <div id="blockContainer"></div>
           <label id="error-text"></label>
           <div id="warn-text"></div>
           <div id="discrepancy-text"></div>
-
         </div>
       </div>
     `;
@@ -287,9 +246,21 @@ class TangyRadioBlocks extends TangyInputBase {
       if (option.hasAttribute('hint-text')) {
         button.setAttribute('hint-text', option.getAttribute('hint-text'))
       }
-      button.hideButton = this.hideButtons ? true : false
+      if (option.hasAttribute('image')) {
+        button.setAttribute('image', option.getAttribute('image'))
+      }
+      if (option.hasAttribute('sound')) {
+        button.setAttribute('sound', option.getAttribute('sound'))
+      }
+      if (option.hasAttribute('play-on-open')) {
+        button.setAttribute('play-on-open', option.getAttribute('play-on-open'))
+      }
+      if (option.hasAttribute('prompt-for')) {
+        button.setAttribute('prompt-for', option.getAttribute('prompt-for'))
+      }
+      button.hideButton = (this.hideButtons || option.hasAttribute('hidden')) ? true : false
       button.name = option.value
-      button.innerHTML = option.innerHTML
+      button.innerHTML = option.innerHTML      
       if (this.columns > 0) {
         let td = document.createElement('td')
         td.style.width = `${Math.floor(100*(1/this.columns))}%`
