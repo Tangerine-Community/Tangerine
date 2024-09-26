@@ -48,7 +48,7 @@ import 'tangy-form/input/tangy-signature.js';
 import 'tangy-form/input/tangy-toggle.js';
 import 'tangy-form/input/tangy-radio-blocks.js';
 import 'tangy-form/input/tangy-video-capture.js';
-import 'tangy-form/input/tangy-scan-image.js';
+// import 'tangy-form/input/tangy-scan-image.js';
 
 
 import { Loc } from 'tangy-form/util/loc.js';

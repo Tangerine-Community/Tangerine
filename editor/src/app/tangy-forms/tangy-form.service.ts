@@ -6,7 +6,6 @@ import {TangyFormsInfoService} from "./tangy-forms-info-service";
 import {FormInfo} from "./classes/form-info.class";
 import axios from 'axios'
 import * as jsonpatch from "fast-json-patch";
-import {FilesService} from "../groups/services/files.service";
 
 @Injectable()
 export class TangyFormService {
@@ -17,8 +16,7 @@ export class TangyFormService {
   formsMarkup: Array<any> = []
   constructor(
     private httpClient:HttpClient,
-    private tangyFormsInfoService: TangyFormsInfoService,
-    private filesService: FilesService
+    private tangyFormsInfoService: TangyFormsInfoService
   ) {
     this.databaseName = 'tangy-forms'
   }
@@ -67,8 +65,7 @@ export class TangyFormService {
   async getFormMarkup(formId, formVersionId:string = '', groupId:string) {
     let formMarkup:any
     let src: string = await this.tangyFormsInfoService.getFormSrc(formId, formVersionId, groupId)
-    // formMarkup = await this.httpClient.get(src, {responseType: 'text'}).toPromise()
-    formMarkup = await this.filesService.get(groupId, src)
+    formMarkup = await this.httpClient.get(src, {responseType: 'text'}).toPromise()
     return formMarkup
   }
 

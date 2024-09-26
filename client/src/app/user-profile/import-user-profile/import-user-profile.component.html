@@ -1,7 +1,7 @@
 <p>
-  <paper-input [disabled]="state === STATE_SYNCING" name="user-short-code" label="enter import code here" #userShortCode></paper-input>
-  <paper-button [disabled]="state === STATE_SYNCING" (click)="onSubmit()">submit</paper-button>
+  <paper-input [disabled]="state === STATE_SYNCING" name="user-short-code" label="{{'Enter the provided import code'|translate}}" #userShortCode></paper-input>
+  <paper-button [disabled]="state === STATE_SYNCING" (click)="onSubmit()">{{'submit'|translate}}</paper-button>
 </p>
 <p *ngIf="state === STATE_SYNCING">
-  Syncing...
+  {{'Syncing'|translate}}...
 </p>

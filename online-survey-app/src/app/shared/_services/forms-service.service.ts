@@ -35,7 +35,7 @@ export class FormsServiceService {
     }
   }
 
-  async uploadFormResponse(formResponse, formId): Promise<boolean>{
+  async uploadFormResponse(formResponse): Promise<boolean>{
     try {
       const {formUploadURL, groupId, uploadKey} = await this.appConfigService.getAppConfig();
 

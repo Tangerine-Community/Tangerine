@@ -135,18 +135,15 @@ mat-sidenav-container {
 .text-black {
   color: var(--tertiary-color);
 }
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
 mat-list-item {
   line-height: 3;
   display: inline-flex;
 }
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
 mat-list-item:hover:not(.active-menu-item) {
   cursor: pointer;
   background: #EEE;
 
 }
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
 mat-list-item a {
   text-decoration: none;
   margin-left: 1rem;
@@ -174,8 +171,6 @@ mat-sidenav:not(.mat-drawer-opened) {
   overflow: hidden;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version. */
 mat-list-item {
   width: 100%;
 }
-

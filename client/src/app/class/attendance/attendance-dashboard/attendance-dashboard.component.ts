@@ -171,7 +171,7 @@ export class AttendanceDashboardComponent implements OnInit {
       }
 
       let messageList = [];
-      const message = _TRANSLATE('Report for ') + student.student_name + ': '
+      const message = _TRANSLATE('Report for') + ' ' + student.student_name + ': '
       messageList.push(message)
 
       if (student.presentPercentage) {

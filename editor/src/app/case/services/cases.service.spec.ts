@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CasesService } from './cases.service';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CaseEventInfo } from './case-event-info.class';
-import {UserService} from "../../core/auth/_services/user.service";
+import { CASE_EVENT_STATUS_IN_PROGRESS } from '../classes/case-event.class';
 
 class MockPouchDB {
   allDocs(options) {
@@ -173,11 +174,11 @@ class MockCasesService {
       ]
     }
     return [
-      <CaseEventInfo><unknown>{
+      <CaseEventInfo>{
         id: 'e1',
         caseId: 'response1',
         caseEventDefinitionId: 'c1',
-        status: 'in-progress',
+        status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
         scheduledDay: REFERENCE_TIME,
@@ -191,7 +192,7 @@ class MockCasesService {
           type: 'case',
           label: 'Pregnant Woman',
           collection: 'TangyFormResponse',
-          events: <any>[
+          events:<any> [
             {
               'id': '0ff22322-7734-4cc1-957d-dd25416a9413',
               'caseId': 'ff621529-d26b-42cc-a9a1-254179e75622',
