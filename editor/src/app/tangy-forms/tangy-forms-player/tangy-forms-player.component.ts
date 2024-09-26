@@ -25,7 +25,8 @@ export class TangyFormsPlayerComponent {
   // 2. Use this if you want to attach the form response yourself.
   @Input('response') response:TangyFormResponseModel
   // 3. Use this is you want a new form response.
-  @Input('formId') formId:string
+  @Input('formId') formId:string 
+  @Input('unlockFormResponses') unlockFormResponses:boolean
 
   @Input('templateId') templateId:string
   @Input('location') location:any
@@ -195,6 +196,7 @@ export class TangyFormsPlayerComponent {
         this.$afterResubmit.next(true)
       })
     }
+    this.unlockFormResponses? this.formEl.unlock({disableComponents:['TANGY-GPS']}): null
     this.$rendered.next(true)
     this.rendered = true
   }

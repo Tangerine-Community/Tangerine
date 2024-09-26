@@ -22,8 +22,8 @@
             <ng-container matColumnDef="operations">
               <th mat-header-cell *matHeaderCellDef> Actions </th>
               <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="primary" (click)="editFeedback(element.groupName, element.formId, element.formItem, element.percentile)">
-                  <mat-icon aria-label="Edit" (click)="editFeedback(element.groupName, element.formId, element.formItem, element.percentile)">edit</mat-icon>
+                <button mat-icon-button color="primary">
+                  <mat-icon aria-label="Edit"(click)="editFeedback(element.groupName, element.formId, element.formItem, element.percentile)">edit</mat-icon>
                 </button>
                 <button mat-icon-button color="warn" (click)="deleteFeedback(element.groupName, element.formId, element.formItem, element.percentile)">
                   <mat-icon aria-label="Delete">delete_forever</mat-icon>
@@ -88,6 +88,9 @@
             </mat-form-field>
             <mat-form-field>
               <textarea matInput placeholder="Feedback message" [(ngModel)]="message">{{message}}</textarea>
+            </mat-form-field>
+            <mat-form-field>
+              <textarea matInput placeholder="Custom JS Code" [(ngModel)]="customJSCode">{{customJSCode}}</textarea>
             </mat-form-field>
           <div style="display: flex; justify-content: flex-end">
             <div mat-dialog-actions>

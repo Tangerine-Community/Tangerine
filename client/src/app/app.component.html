@@ -19,8 +19,8 @@
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="home"></a>
   </span>
   <span class="tangy-spacer"></span>
-  <app-active-tasks></app-active-tasks>
   <app-class-nav-bar *ngIf="isLoggedIn && showClassNavBar"></app-class-nav-bar>
+
   <paper-icon-button icon="more-vert" [matMenuTriggerFor]="appMenu" class="hamburger-menu"></paper-icon-button>
   <mat-menu #appMenu="matMenu">
     <button *ngIf="isLoggedIn" mat-menu-item routerLink="/">
@@ -78,6 +78,7 @@
   </mat-menu>
 
 </mat-toolbar>
+
 <div class="tangerine-app-content mat-typography " [ngClass]="{'has-topbar': !kioskModeEnabled}">
   <router-outlet *ngIf="ready"></router-outlet>
 </div>

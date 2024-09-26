@@ -1,6 +1,6 @@
 <app-case-breadcrumb [caseId]="caseService.case._id" (caseActionEvent)="processCaseAction($event)"></app-case-breadcrumb>
 
-<div  class="subject-header">
+<div class="subject-header">
   <h1>
     <span [innerHTML]="templateTitle|unsanitizeHtml"></span>
   </h1>
@@ -47,7 +47,7 @@
           </form>
         </div>
     </div>
-    </div>
+  </div>
 </div>
 
 <div *appHasAPermission="let i;group:groupId; permission:'can_access_issues'">

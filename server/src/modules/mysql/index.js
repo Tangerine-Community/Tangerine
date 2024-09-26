@@ -246,7 +246,6 @@ const getItemValue = (doc, variableName) => {
 /** This function processes form response, making the data structure flatter.
  *
  * @param {object} formData - form response from database
- * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs
  * @param {boolean} sanitized - flag if data must filter data based on the identifier flag.
  *
  * @returns {object} processed results for csv

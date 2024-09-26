@@ -1,4 +1,4 @@
-import {Component, AfterContentInit, ChangeDetectorRef, OnDestroy, ViewChild, Input} from '@angular/core';
+import {Component, AfterContentInit, ChangeDetectorRef, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
@@ -9,7 +9,6 @@ import {GroupIssuesService} from "../../../groups/services/group-issues.service"
 import axios from "axios";
 import {TangyFormService} from "../../../tangy-forms/tangy-form.service";
 import {TangyFormsPlayerComponent} from "../../../tangy-forms/tangy-forms-player/tangy-forms-player.component";
-import {TangyFormResponseModel} from "tangy-form/tangy-form-response-model";
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { AuthenticationService } from 'src/app/core/auth/_services/authentication.service';
 import {ProcessMonitorService} from "../../../shared/_services/process-monitor.service";
@@ -219,7 +218,7 @@ export class CaseComponent implements AfterContentInit {
   async onSubmit() {
     const process = this.processMonitorService.start('savingEvent', _TRANSLATE('Saving event...'))
     if (this.selectedNewEventType !== '') {
-      const caseEvent = await this.caseService.createEvent(this.selectedNewEventType)
+      const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
       await this.caseService.onCaseEventCreate(caseEvent)
       await this.caseService.save()
       this.calculateTemplateData()

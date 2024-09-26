@@ -345,10 +345,6 @@ export class TangyFormsPlayerComponent implements OnInit {
       // Since what is in the database is complete, and it's still complete, and it doesn't have 
       // a summary where they might add some input, don't save! They are probably reviewing data.
     } else {
-      if (!stateDoc) {
-        let r = await this.tangyFormService.saveResponse(state)
-        stateDoc = await this.tangyFormService.getResponse(state._id)
-      }
       // only reset incomplete-response-id when the form is complete. If the form is abandoned midway, do not reset incomplete-response-id.
       if (stateDoc && stateDoc['complete'] && state.complete) {
         await this.variableService.set('incomplete-response-id', null);

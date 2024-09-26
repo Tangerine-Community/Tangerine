@@ -1,12 +1,15 @@
 import { VariableService } from './_services/variable.service';
 import { LockBoxService } from './_services/lock-box.service';
-import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { AppConfigService } from './_services/app-config.service';
 import { UserService } from './_services/user.service';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TangySnackbarService } from './_services/tangy-snackbar.service';
+import { CommonModule } from '@angular/common';
 
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatNativeDateModule, DateAdapter } from '@angular/material/core';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 export function HttpClientLoaderFactory(httpClient: HttpClient) {
@@ -29,6 +32,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ProcessMonitorDialogComponent } from './_components/process-monitor-dialog/process-monitor-dialog.component';
 import { ProcessMonitorService } from './_services/process-monitor.service';
 import { MatButtonModule } from '@angular/material/button';
+import { TangyDateAdapterService } from './_services/tangy-date-adapter.service';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -37,8 +41,10 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserAnimationsModule,
     HttpClientModule,
     MatTooltipModule,
+    MatSnackBarModule,
     MatDialogModule,
     MatButtonModule,
+    MatNativeDateModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -50,6 +56,7 @@ import { MatButtonModule } from '@angular/material/button';
   providers: [
     AppConfigService,
     UserService,
+    TangySnackbarService,
     LockBoxService,
     VariableService,
     {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
@@ -57,7 +64,8 @@ import { MatButtonModule } from '@angular/material/button';
     SearchService,
     FormTypesService,
     ProcessMonitorService,
-    CreateProfileGuardService
+    CreateProfileGuardService,
+    { provide: DateAdapter, useClass: TangyDateAdapterService },
   ],
   declarations: [
     UnsanitizeHtmlPipe,
