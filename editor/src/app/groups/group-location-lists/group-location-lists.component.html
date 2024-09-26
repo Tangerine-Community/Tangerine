@@ -1,8 +1,8 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <div id="container">
-  <div>
-    <p>{{'Location Lists allow you to define sets of locations that appear as drop down lists. Each location list can be used as inputs in forms or to assign locations to devices.'|translate}}</p>
-  </div>
+  {{'Location Lists allow you to define sets of locations that appear as drop down lists. Each location list can be used as inputs in forms or to assign locations to devices.'|translate}}
+</div>
+<div id="container">
   <app-dynamic-table 
     *ngIf="locationListTableData.length > 0"
     [data]="locationListTableData"

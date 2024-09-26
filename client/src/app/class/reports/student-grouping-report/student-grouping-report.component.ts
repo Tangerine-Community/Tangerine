@@ -154,7 +154,7 @@ export class StudentGroupingReportComponent implements OnInit {
     }
   }
 
-  async getFeedbackForPercentile(percentile, curriculumId, itemId, name) {
+  async getFeedbackForPercentile(percentile, curriculumId, itemId, name, studentId) {
     // console.log("Get feedback for " + JSON.stringify(element))
     const feedback: Feedback = await this.dashboardService.getFeedback(percentile, curriculumId, itemId);
     if (feedback) {
@@ -163,7 +163,7 @@ export class StudentGroupingReportComponent implements OnInit {
     }
     // this.checkFeedbackMessagePosition = true;
     const dialogRef = this.dialog.open(FeedbackDialog, {
-      data: {classGroupReport: this.classGroupReport, name: name},
+      data: {classGroupReport: this.classGroupReport, name: name, studentId},
       width: '95vw',
       maxWidth: '95vw',
     });
@@ -209,19 +209,24 @@ export class StudentGroupingReportComponent implements OnInit {
 export interface DialogData {
   classGroupReport: ClassGroupingReport;
   name: string;
+  studentId
 }
 
 @Component({
   selector: 'feedback-dialog',
   templateUrl: 'feedback-dialog.html',
 })
-export class FeedbackDialog {
+export class FeedbackDialog implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<FeedbackDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
   ) {
   }
-
+  async ngOnInit(){
+    if(this.data.classGroupReport?.feedback?.customJSCode){
+      eval(this.data.classGroupReport?.feedback?.customJSCode)
+    }
+  }
   tNumber(fragment) {
     return tNumber(fragment)
   }

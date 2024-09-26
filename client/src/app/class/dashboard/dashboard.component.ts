@@ -317,34 +317,7 @@ export class DashboardComponent implements OnInit {
         this.studentsResponses[studentId] = studentReponses;
       }
     }
-    const allStudentResults = [];
-    // for (const student of this.students) {
-    this.students.forEach((student) => {
-      const studentResults = {};
-      const student_name = this.getValue('student_name', student.doc)
-      const classId = this.getValue('classId', student.doc)
-      studentResults['id'] = student.id;
-      studentResults['name'] = student_name
-      studentResults['classId'] = classId
-      // studentResults["forms"] = [];
-      studentResults['forms'] = {};
-      // for (const form of this.curriculumForms) {
-      this.curriculumFormsList.forEach((form) => {
-        const formResult = {};
-        formResult['formId'] = form.id;
-        formResult['curriculum'] = this.curriculum.name;
-        formResult['title'] = form.title;
-        formResult['src'] = form.src;
-        if (this.studentsResponses[student.id]) {
-          formResult['response'] = this.studentsResponses[student.id][form.id];
-        }
-        // studentResults["forms"].push(formResult)
-        studentResults['forms'][form.id] = formResult;
-      });
-      allStudentResults.push(studentResults);
-    });
-    this.allStudentResults = allStudentResults;
-    // await this.populateFeedback(curriculumId);
+    this.allStudentResults = await this.dashboardService.getAllStudentResults(this.students, this.studentsResponses, this.curriculumFormsList, this.curriculum);
   }
 
   // Triggered by dropdown selection in UI.
