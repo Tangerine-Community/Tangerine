@@ -108,7 +108,8 @@ import 'tangy-form-editor/tangy-form-editor.js'
 import './app/couchdb-conflict-manager/src/couchdb-conflict-manager.js'
 // @TODO Remove this when this element has been added to tangy-form-editor.
 // import 'tangy-form/input/tangy-ethio-date.js';
-import '@vaadin/vaadin-upload/vaadin-upload.js'
+// @TODO This breaks form authoring because dom-module is loaded twice as a custom element
+// import '@vaadin/vaadin-upload/vaadin-upload.js'
 
 // import '@polymer/paper-radio-button/paper-radio-button.js';
 // import '@polymer/paper-radio-group/paper-radio-group.js';

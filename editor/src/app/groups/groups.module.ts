@@ -73,6 +73,7 @@ import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-rel
 import { GroupReleasePwaTestComponent } from './group-release-pwa-test/group-release-pwa-test.component';
 import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-release-pwa-live.component';
 import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
+import { GroupUploadsEditComponent } from './group-uploads-edit/group-uploads-edit.component';
 import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 import { GroupCasesComponent } from './group-cases/group-cases.component';
 import { CaseSettingsComponent } from './case-settings/case-settings.component';
@@ -192,6 +193,7 @@ import {RequestCache, RequestCacheWithMap} from "../request-cache.service";
     GroupReleasePwaTestComponent,
     GroupReleasePwaLiveComponent,
     GroupUploadsViewComponent,
+    GroupUploadsEditComponent,
     GroupDeviceUserComponent,
     GroupCasesComponent,
     GroupIssuesComponent,
