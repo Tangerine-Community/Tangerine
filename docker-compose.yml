@@ -38,6 +38,7 @@ services:
         dockerfile: ./docker-build-files/Dockerfile-server
       ports:
         - "82:80"
+        # - "9229:9229" # for debugging
       restart: unless-stopped
       env_file: config.env
       environment:
