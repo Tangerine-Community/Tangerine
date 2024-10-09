@@ -100,7 +100,8 @@ async function generateCsvDataSet(groupId = '', formIds = [], outputPath = '', y
       const formTitle = formInfo
         ? formInfo.title.replace(/ /g, '_')
         : formId
-      const groupFormname = sanitize(groupLabel + '-' + formTitle, options)
+      // The Javascript file system does not allow for filenames longer than 100 characters.
+      const groupFormname = sanitize(groupLabel + '-' + formTitle, options).slice(0, 100)
       const fileName = `${groupFormname}${excludePii ? '-sanitized' : ''}-${Date.now()}.csv`.replace(/'/g, "_")
       const csvOutputPath = `/csv/${fileName.replace(/['",]/g, "_")}`
       const csvStatePath = `${csvOutputPath.replace('.csv', '')}.state.json`
