@@ -25,10 +25,15 @@ async function go() {
     .map(item => {
       if (item.collection !== 'TangyFormResponse') return
       if (item.form && item.form.id !== 'user-profile') {
-        item.items[0].inputs.push({
-          name: 'userProfileId',
-          value: userProfileDoc._id
-        })
+        item.items[0].inputs.push(
+          {
+            name: 'userProfileId',
+            value: userProfileDoc._id
+          },
+          {
+            name: 'tabletUserName', value: archive[0].databaseName
+          }
+        )
       }
       return item 
     })
