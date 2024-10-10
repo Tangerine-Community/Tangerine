@@ -41,12 +41,14 @@ module.exports.responsesByUserProfileId = function(doc) {
       return emit(doc._id, true)
     }
     var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
-    var userProfileInput = null
-    inputs.forEach(function(input) {
-      if (input.name === 'userProfileId') {
-        userProfileInput = input
-      }
-    })
+    var userProfileInput = doc.userProfileId ? doc.userProfileId : null
+    if (!userProfileInput) {
+      inputs.forEach(function(input) {
+        if (input.name === 'userProfileId') {
+          userProfileInput = input
+        }
+      })
+    }
     if (userProfileInput) {
       emit(userProfileInput.value, true)
     }
