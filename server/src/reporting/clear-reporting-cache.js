@@ -32,7 +32,9 @@ async function clearReportingCache() {
       ? JSON.parse(process.env.T_ONLY_PROCESS_THESE_GROUPS.replace(/\'/g, `"`))
       : []
   }
-  groupNames = groupNames.filter(groupName => onlyProcessTheseGroups.includes(groupName));
+  if (onlyProcessTheseGroups.length > 0) {
+    groupNames = groupNames.filter(groupName => onlyProcessTheseGroups.includes(groupName))
+  }
 
   // run the module clearReportingCache hooks
   await tangyModules.hook('clearReportingCache', { groupNames })
