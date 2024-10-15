@@ -55,10 +55,15 @@ export class SyncingService {
       const doc_ids = await this.getUploadQueue(username, skipByFormId);
       if (doc_ids && doc_ids.length > 0) {
         for (const doc_id of doc_ids) {
-          const doc = await DB.get(doc_id);
-          // Insert the userProfileId as an input.
-          doc.push({ name: 'userProfileId', value: userProfile._id });
-          doc.push({ name: 'tabletUserName', value: username });
+          let doc = await DB.get(doc_id);
+
+          // Add user profile id and tablet user name to the top of the doc
+          // They used to be added as an input, but that breaks editing on the server
+          doc['userProfileId'] = userProfile._id;
+          doc['tabletUserName'] = username;
+
+          doc.tangerineModifiedByUserId = userProfile._id;
+
           // Redact any fields marked as private.
           doc['items'].forEach(item => {
             item['inputs'].forEach(input => {
