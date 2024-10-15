@@ -23,23 +23,16 @@ Array.prototype.diff = function (a) {
 
 async function go() {
   const groupNames = await groupsList()
-  // let prodDbs = {}
-  // let reportingDbs = {}
   for (let groupName of groupNames) {
-    let reportingDbSize;
-    let prodDbSize;
-    let diffs;
-    let duration;
     console.log(`Processing ${groupName}`)
-    // if (groupName !== 'tusome') {
     const prodDb = DB(`${groupName}`)
-    let docs = [];
     try {
-      const allDocs = await prodDb.get(`_all_docs`)
-      // console.log("check out these docs: " + JSON.stringify(allDocs))
-      for (let doc of allDocs.rows) {
-        let docId = doc.id;
-        docs.push(docId)
+      const allDocs = await prodDb.get(`_all_docs`, { include_docs: true })
+      for (let row of allDocs.rows) {
+        let docId = row.id;
+        let doc = row.doc;
+
+        if (!doc) continue;
 
         if (doc.collection == "TangyFormResponse") {
           let response = await prodDb.get(docId)
@@ -62,8 +55,6 @@ async function go() {
     } catch (err) {
       console.log("error: " + err)
     }
-
-    console.log(groupName + " prod: " + prodDbSize + " reporting: " + reportingDbSize)
   }
 }
 
