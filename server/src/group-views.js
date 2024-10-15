@@ -40,17 +40,21 @@ module.exports.responsesByUserProfileId = function(doc) {
     if (doc.form && doc.form.id === 'user-profile') {
       return emit(doc._id, true)
     }
-    var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
-    var userProfileInput = doc.userProfileId ? doc.userProfileId : null
-    if (!userProfileInput) {
+    if (doc.userProfileId) {
+      // In v3.31.2, userProfileId moved to the top of the doc
+      emit(doc.userProfileId, true)
+    } else {
+      // pre v3.31.2, userProfileId was stored in the first item of the form
+      var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
+      var userProfileInput = null
       inputs.forEach(function(input) {
         if (input.name === 'userProfileId') {
           userProfileInput = input
         }
       })
-    }
-    if (userProfileInput) {
-      emit(userProfileInput.value, true)
+      if (userProfileInput) {
+        emit(userProfileInput.value, true)
+      }
     }
   }
 }
@@ -66,15 +70,22 @@ module.exports.responsesByUserProfileShortCode = {
     if (doc.form && doc.form.id === 'user-profile') {
       return emit(doc._id.substr(doc._id.length-6, doc._id.length), 1)
     }
-    var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
-    var userProfileInput = null
-    inputs.forEach(function(input) {
-      if (input.name === 'userProfileId') {
-        userProfileInput = input
+    if (doc.userProfileId) {
+      // In v3.31.2, userProfileId moved to the top of the doc
+      var shortCode = doc.userProfileId.substr(doc.userProfileId.length-6, doc.userProfileId.length)
+      emit(shortCode, 1)
+    } else {
+      // pre v3.31.2, userProfileId was stored in the first item of the form
+      var inputs = doc.items.reduce(function(acc, item) { return acc.concat(item.inputs)}, [])
+      var userProfileInput = null
+      inputs.forEach(function(input) {
+        if (input.name === 'userProfileId') {
+          userProfileInput = input
+        }
+      })
+      if (userProfileInput) {
+        emit(userProfileInput.value.substr(userProfileInput.value.length-6, userProfileInput.value.length), 1)
       }
-    })
-    if (userProfileInput) {
-      emit(userProfileInput.value.substr(userProfileInput.value.length-6, userProfileInput.value.length), 1)
     }
   },
   reduce: '_count'
