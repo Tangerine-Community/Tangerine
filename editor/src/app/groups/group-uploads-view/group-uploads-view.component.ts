@@ -51,7 +51,7 @@ export class GroupUploadsViewComponent implements OnInit {
     // If you pass the responseId, but the form player already has a response, responseId will be ignored
     this.formResponse = await this.tangyFormService.getResponse(this.responseId)
     this.formPlayer.response = this.formResponse
-    this.formPlayer.render()
+    await this.formPlayer.render()
   }
 
   async archive(){
