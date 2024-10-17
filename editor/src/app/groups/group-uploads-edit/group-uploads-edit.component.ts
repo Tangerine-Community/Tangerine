@@ -74,7 +74,7 @@ export class GroupUploadsEditComponent implements OnInit {
     this.formPlayer.$saveComplete.subscribe(async () => {
       this.router.navigate([`../`], { relativeTo: this.route })
     })
-    this.formPlayer.render();
+    await this.formPlayer.render(true, {disableComponents:['TANGY-GPS']})
   }
 
   async getSP1DocumentVariables() {
