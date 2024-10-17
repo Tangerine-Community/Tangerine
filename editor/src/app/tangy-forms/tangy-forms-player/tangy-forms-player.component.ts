@@ -25,7 +25,7 @@ export class TangyFormsPlayerComponent {
   // 2. Use this if you want to attach the form response yourself.
   @Input('response') response:TangyFormResponseModel
   // 3. Use this is you want a new form response.
-  @Input('formId') formId:string 
+  @Input('formId') formId:string
   @Input('unlockFormResponses') unlockFormResponses:boolean
 
   @Input('templateId') templateId:string
@@ -42,6 +42,7 @@ export class TangyFormsPlayerComponent {
   $afterSubmit = new Subject()
   $resubmit = new Subject()
   $afterResubmit = new Subject()
+  $saveComplete = new Subject()
   rendered = false
   groupId: string
 
@@ -194,7 +195,9 @@ export class TangyFormsPlayerComponent {
         this.$afterResubmit.next(true)
       })
     }
-    this.unlockFormResponses? this.formEl.unlock({disableComponents:['TANGY-GPS']}): null
+    if (this.unlockFormResponses) {
+      this.formEl.unlock({disableComponents:['TANGY-GPS']})
+    }
     this.$rendered.next(true)
     this.rendered = true
   }
@@ -221,10 +224,14 @@ export class TangyFormsPlayerComponent {
     this.throttledSaveFiring = false
   }
 
-  async saveResponse(state) {
+  /*
+   * Sometimes we want to force save to happen even if the form is complete and the response is complete.
+   * This is useful when we want to save a form response that has already been locked after an edit by tangy-form FORM_RESPONSE_COMPLETE
+   */
+  async saveResponse(state, forceSave=false) {
     let stateDoc = await this.tangyFormService.getResponse(state._id)
-    const archiveStateChange = state.archived === stateDoc['archived']
-    if (stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary && archiveStateChange) {
+    const archivedIsTheSame = state.archived === stateDoc['archived']
+    if (!forceSave && stateDoc && stateDoc['complete'] && state.complete && stateDoc['form'] && !stateDoc['form'].hasSummary && archivedIsTheSame) {
       // Since what is in the database is complete, and it's still complete, and it doesn't have 
       // a summary where they might add some input, don't save! They are probably reviewing data.
     } else {
@@ -234,9 +241,11 @@ export class TangyFormsPlayerComponent {
         location: this.location || state.location,
         ...this.metadata
       }   
-      await this.tangyFormService.saveResponse(stateDoc)
+      state = await this.tangyFormService.saveResponse(stateDoc)
     }
     this.response = state
+
+    this.$saveComplete.next(true)
   }
 
   print() {
