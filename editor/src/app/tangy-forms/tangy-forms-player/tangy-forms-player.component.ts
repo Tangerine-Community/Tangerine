@@ -26,7 +26,6 @@ export class TangyFormsPlayerComponent {
   @Input('response') response:TangyFormResponseModel
   // 3. Use this is you want a new form response.
   @Input('formId') formId:string
-  @Input('unlockFormResponses') unlockFormResponses:boolean
 
   @Input('templateId') templateId:string
   @Input('location') location:any
@@ -89,11 +88,7 @@ export class TangyFormsPlayerComponent {
     }
   }
 
-  unlock() {
-    this.formEl.unlock()
-  }
-
-  async render() {
+  async render(unlock=false, disabledComponents={}) {
     // Get form ingredients.
     const formResponse = this.response
       ? new TangyFormResponseModel(this.response)
@@ -195,8 +190,8 @@ export class TangyFormsPlayerComponent {
         this.$afterResubmit.next(true)
       })
     }
-    if (this.unlockFormResponses) {
-      this.formEl.unlock({disableComponents:['TANGY-GPS']})
+    if (unlock) {
+      this.formEl.unlock(disabledComponents)
     }
     this.$rendered.next(true)
     this.rendered = true
