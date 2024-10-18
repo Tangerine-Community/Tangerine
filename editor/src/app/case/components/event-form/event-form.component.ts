@@ -78,7 +78,7 @@ export class EventFormComponent implements OnInit, OnDestroy {
         eventFormId: this.eventForm.id,
         participantId: this.eventForm.participantId
       }
-      this.formPlayer.render()
+      await this.formPlayer.render()
 
       this.caseService.onChangeLocation$.subscribe(location => {
         this.formPlayer.location = this.caseService.case.location

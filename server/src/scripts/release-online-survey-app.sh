@@ -32,7 +32,7 @@ mkdir -p $GROUP_DIRECTORY
 RELEASE_DIRECTORY="$GROUP_DIRECTORY/$FORM_ID"
 rm -r $RELEASE_DIRECTORY
 
-FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client/"
+FORM_CLIENT_DIRECTORY="/tangerine/groups/$GROUP_ID/client"
 FORM_DIRECTORY="$FORM_CLIENT_DIRECTORY/$FORM_ID"
 LOCATION_LIST_PATH="$FORM_CLIENT_DIRECTORY/location-list.json"
 LOCATION_LISTS_DIRECTORY="$FORM_CLIENT_DIRECTORY/locations"
@@ -42,11 +42,12 @@ MEDIA_DIRECTORY="$FORM_CLIENT_DIRECTORY/media"
 cp -r /tangerine/online-survey-app/dist/online-survey-app/ $RELEASE_DIRECTORY
 
 # Ensure the release directories exists
+mkdir -p $RELEASE_DIRECTORY/assets/form
 mkdir -p $RELEASE_DIRECTORY/assets/locations
 mkdir -p $RELEASE_DIRECTORY/assets/media
 
 # Copy the form, location list, and media to the release directory
-cp -r $FORM_DIRECTORY $RELEASE_DIRECTORY/assets/form
+cp $FORM_DIRECTORY/*.html $RELEASE_DIRECTORY/assets/form/
 cp $LOCATION_LIST_PATH $RELEASE_DIRECTORY/assets/
 cp -r $LOCATION_LISTS_DIRECTORY $RELEASE_DIRECTORY/assets/
 cp -r $MEDIA_DIRECTORY $RELEASE_DIRECTORY/assets/

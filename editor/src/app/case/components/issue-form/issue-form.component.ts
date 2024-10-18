@@ -79,13 +79,11 @@ export class IssueFormComponent implements OnInit {
         this.caseService.setContext(this.issue.eventId, this.issue.eventFormId)
         this.formPlayer.response = baseEvent.data.response
       }
-      this.formPlayer.render()
 
       // After render of the player, it will have created a new form response if one was not assigned.
       // Make sure to save that new form response ID into the EventForm.
-      this.formPlayer.$rendered.subscribe(async () => {
-        if (!params.eventId) this.formPlayer.unlock()
-      })
+      const unlockFormResponse = !params.eventId
+      await this.formPlayer.render(unlockFormResponse)
       this.formPlayer.$afterResubmit.subscribe(async () => {
         const issueSaveProcess = this.pm.start('issue-save', 'Saving proposal...')
         setTimeout(async () => {

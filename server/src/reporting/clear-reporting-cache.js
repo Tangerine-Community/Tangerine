@@ -32,15 +32,29 @@ async function clearReportingCache() {
       ? JSON.parse(process.env.T_ONLY_PROCESS_THESE_GROUPS.replace(/\'/g, `"`))
       : []
   }
-  groupNames = groupNames.filter(groupName => onlyProcessTheseGroups.includes(groupName));
+  if (onlyProcessTheseGroups.length > 0) {
+    groupNames = groupNames.filter(groupName => onlyProcessTheseGroups.includes(groupName))
+  }
 
+  // run the module clearReportingCache hooks
   await tangyModules.hook('clearReportingCache', { groupNames })
+
   // update worker state
+  debugger;
   console.log('Resetting reporting worker state...')
   const contents = await readFile(REPORTING_WORKER_STATE, 'utf-8')
   const state = JSON.parse(contents)
   const newState = Object.assign({}, state, {
-    databases: state.databases.map(({name, sequence}) => { return {name, sequence: 0}})
+    databases: state.databases.map(
+      ({name, sequence}) => 
+        {
+          if (groupNames.length == 0 || groupNames.includes(name)) {
+            return {name, sequence: 0}
+          } else {
+            return {name, sequence}
+          }
+        }
+    )
   })
   await writeFile(REPORTING_WORKER_STATE, JSON.stringify(newState), 'utf-8')
   await unlink(REPORTING_WORKER_PAUSE)
