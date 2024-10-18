@@ -70,8 +70,6 @@ export class GroupUploadsEditComponent implements OnInit {
       // at this point the form has been locked by tangy-form
       // form player will ignore the save unless we force it to save
       await this.formPlayer.saveResponse(response, true)
-    })
-    this.formPlayer.$saveComplete.subscribe(async () => {
       this.router.navigate([`../`], { relativeTo: this.route })
     })
     await this.formPlayer.render(true, {disableComponents:['TANGY-GPS']})

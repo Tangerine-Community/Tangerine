@@ -41,7 +41,6 @@ export class TangyFormsPlayerComponent {
   $afterSubmit = new Subject()
   $resubmit = new Subject()
   $afterResubmit = new Subject()
-  $saveComplete = new Subject()
   rendered = false
   groupId: string
 
@@ -239,8 +238,6 @@ export class TangyFormsPlayerComponent {
       state = await this.tangyFormService.saveResponse(stateDoc)
     }
     this.response = state
-
-    this.$saveComplete.next(true)
   }
 
   print() {
