@@ -60,19 +60,27 @@ export class GroupUploadsEditComponent implements OnInit {
     }
 
     this.formPlayer.formResponseId = this.responseId
+    this.formPlayer.$afterSubmit.subscribe(async () => {
+      // This will fire if the response was never completed
+      await this.saveResponse()
+      this.router.navigate([`../`], { relativeTo: this.route })
+    })
     this.formPlayer.$afterResubmit.subscribe(async () => {
-      let response = this.formPlayer.formEl.store.getState()
-      
-      if (this.appConfig.syncProtocol === '1') {
-        this.restoreSP1DocumentVariables(response)
-      }
-      
-      // at this point the form has been locked by tangy-form
-      // form player will ignore the save unless we force it to save
-      await this.formPlayer.saveResponse(response, true)
+      // This will fire if the response was completed
+      await this.saveResponse()
       this.router.navigate([`../`], { relativeTo: this.route })
     })
     await this.formPlayer.render(true, {disableComponents:['TANGY-GPS']})
+  }
+
+  async saveResponse() {
+    let response = this.formPlayer.formEl.store.getState()
+    if (this.appConfig.syncProtocol === '1') {
+      this.restoreSP1DocumentVariables(response)
+    }
+
+    await this.formPlayer.saveResponse(response)
+    this.router.navigate([`../`], { relativeTo: this.route })
   }
 
   async getSP1DocumentVariables() {

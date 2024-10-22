@@ -19,6 +19,7 @@ export class GroupUploadsViewComponent implements OnInit {
   responseId
   groupId
   formResponse
+  editingAllowed = true
  
   constructor(
     private route:ActivatedRoute,
@@ -51,6 +52,13 @@ export class GroupUploadsViewComponent implements OnInit {
     // If you pass the responseId, but the form player already has a response, responseId will be ignored
     this.formResponse = await this.tangyFormService.getResponse(this.responseId)
     this.formPlayer.response = this.formResponse
+
+    const disabledFormIds = ['attendance','behavior','scoring'];
+    if(this.formResponse.archived || this.formResponse.verified ||
+        disabledFormIds.includes(this.formResponse.form.id)) {
+      this.editingAllowed = false
+    }
+
     await this.formPlayer.render()
   }
 
