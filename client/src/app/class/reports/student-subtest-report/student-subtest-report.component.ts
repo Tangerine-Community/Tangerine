@@ -217,7 +217,8 @@ export class StudentSubtestReportComponent implements OnInit, AfterViewChecked {
           rawScore: result.score,
           totalGridAnswers: result.maxValueAnswer,
           percentage: percentage,
-          totalCorrect: totalCorrect
+          totalCorrect: totalCorrect,
+          customScore: result.customScore
         };
         resultObject[category] = scores;
         const currentTotal = this.totals[category];

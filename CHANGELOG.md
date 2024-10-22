@@ -1,5 +1,38 @@
 # What's new
 
+## v3.31.1
+
+__General Updates__
+
+- Allow mysql outputs of TANGY-TIMED and TANGY-UNTIMED-GRID data
+
+__Administration__
+
+- The `reporting-cache-clear` script will honor the environmnt variable `T_ONLY_PROCESS_THESE_GROUPS` to limit the groups processed
+  * Set `T_ONLY_PROCESS_THESE_GROUPS` to a comma-separated list of group names to limit the groups cleared and then processed by the script
+
+__Fixes__
+- Fixes for editing of Form Responses in the server web UI
+  * Edits of Attendence, Behavior, and Scoring are currently prohibited in the server web UI
+  * Verified and Archived Form Responses must be Unverified and Unarchived before editing is available
+- Teacher Dashboard Scoring: Fix issues with custom scoring
+- Fix output of Case Participants to mysql
+- Fix online survey release
+
+__Libs and Dependencies__
+- Bump version of `tangy-form` to v4.54.4
+  * Fix check for 'readOnly' input metadata
+  * Fix undefined access of input without tagName
+  * Fix missing function parens
+
+__Server upgrade instructions__
+
+See the [Server Upgrade Insturctions](https://docs.tangerinecentral.org/system-administrator/upgrade-instructions).
+
+*Special Instructions for this release:* N/A
+
+
+
 ## v3.31.0
 
 __New Features__
