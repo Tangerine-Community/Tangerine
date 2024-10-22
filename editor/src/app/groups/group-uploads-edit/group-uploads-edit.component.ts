@@ -79,8 +79,7 @@ export class GroupUploadsEditComponent implements OnInit {
       this.restoreSP1DocumentVariables(response)
     }
 
-    await this.formPlayer.saveResponse(response)
-    this.router.navigate([`../`], { relativeTo: this.route })
+    await this.formPlayer.saveResponse(response, true)
   }
 
   async getSP1DocumentVariables() {
