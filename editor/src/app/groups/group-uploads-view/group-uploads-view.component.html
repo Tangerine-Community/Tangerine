@@ -1,9 +1,9 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
-<div class="sticky">
+<div class="sticky" *ngIf="formResponse">
     <button *ngIf="!formResponse.verified" mat-raised-button color="accent" (click)="verify()">{{'Verify'|translate}}</button>
     <button *ngIf="formResponse.verified" mat-raised-button color="accent" (click)="unverify()">{{'Unverify'|translate}}</button>
     
-    <a routerLink="edit" mat-raised-button color="accent">{{'Edit'|translate}}</a>
+    <a *ngIf="editingAllowed" routerLink="edit" mat-raised-button color="accent">{{'Edit'|translate}}</a>
     
     <button *ngIf="formResponse.archived" mat-raised-button color="accent" (click)="unarchive()">{{'Unarchive'|translate}}</button>
     <button *ngIf="!formResponse.archived" mat-raised-button color="accent" (click)="archive()">{{'Archive'|translate}}</button>

@@ -19,6 +19,7 @@ export class GroupUploadsViewComponent implements OnInit {
   responseId
   groupId
   formResponse
+  editingAllowed = true
  
   constructor(
     private route:ActivatedRoute,
@@ -28,7 +29,7 @@ export class GroupUploadsViewComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.route.params.subscribe(async params => {
+    this.route.params.subscribe(params => {
       this.responseId = params.responseId
       this.groupId = params.groupId
       this.breadcrumbs = [
@@ -41,14 +42,24 @@ export class GroupUploadsViewComponent implements OnInit {
           url: `uploads/${params.responseId}`
         }
       ]
-      this.formPlayer.formResponseId = params.responseId
-      this.formResponse = await this.tangyFormService.getResponse(params.responseId)
-      this.formPlayer.render()
-      this.formPlayer.$submit.subscribe(async () => {
-        this.formPlayer.saveResponse(this.formPlayer.formEl.store.getState())
-        this.router.navigate([`../`], { relativeTo: this.route })
-      })
+
+      this.ready();
     })
+  }
+
+  async ready() {
+    // Load the form response instead of passing the responseId to the form player.
+    // If you pass the responseId, but the form player already has a response, responseId will be ignored
+    this.formResponse = await this.tangyFormService.getResponse(this.responseId)
+    this.formPlayer.response = this.formResponse
+
+    const disabledFormIds = ['attendance','behavior','scoring'];
+    if(this.formResponse.archived || this.formResponse.verified ||
+        disabledFormIds.includes(this.formResponse.form.id)) {
+      this.editingAllowed = false
+    }
+
+    await this.formPlayer.render()
   }
 
   async archive(){

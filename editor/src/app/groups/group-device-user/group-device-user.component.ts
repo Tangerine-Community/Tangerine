@@ -14,7 +14,9 @@ export class GroupDeviceUserComponent implements OnInit {
   title = _TRANSLATE('Device User')
   breadcrumbs:Array<Breadcrumb> = []
   @ViewChild('formPlayer', {static: true}) formPlayer: TangyFormsPlayerComponent
- 
+  
+  responseId:string
+
   constructor(
     private route:ActivatedRoute,
     private router:Router
@@ -22,6 +24,7 @@ export class GroupDeviceUserComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
+      this.responseId = params.responseId || ''
       this.breadcrumbs = [
         <Breadcrumb>{
           label: _TRANSLATE('Device Users'),
@@ -32,13 +35,17 @@ export class GroupDeviceUserComponent implements OnInit {
           url: `device-users/${params.responseId}` 
         }
       ]
-      this.formPlayer.formResponseId = params.responseId || ''
-      this.formPlayer.formId = 'user-profile'
-      this.formPlayer.preventSubmit = true
-      this.formPlayer.render()
-      this.formPlayer.$submit.subscribe(async () => {
-        this.router.navigate([`../`], { relativeTo: this.route })
-      })
+      this.ready();
+    })
+  }
+
+  async ready() {
+    this.formPlayer.formResponseId = this.responseId
+    this.formPlayer.formId = 'user-profile'
+    this.formPlayer.preventSubmit = true
+    await this.formPlayer.render()
+    this.formPlayer.$submit.subscribe(async () => {
+      this.router.navigate([`../`], { relativeTo: this.route })
     })
   }
 
