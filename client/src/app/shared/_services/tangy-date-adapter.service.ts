@@ -11,7 +11,7 @@ export class TangyDateAdapterService extends NativeDateAdapter {
   constructor(
     private languagesService: LanguagesService
   ) {
-    super('en-US', new Platform);
+    super('en-US', new Platform({}));
 
     this.languagesService.getCurrentLanguageLocale().then(locale => {
       this.setLocale(locale);
