@@ -260,6 +260,7 @@ const  generateFlatResponse = async function (formResponse, sanitized, groupId) 
     flatFormResponse['timestamp'] = formResponse.timestamp
     flatFormResponse['classId'] = formResponse.classId
     flatFormResponse['grade'] = formResponse.grade
+    flatFormResponse['period'] = formResponse.period
     flatFormResponse['schoolName'] = formResponse.schoolName
     flatFormResponse['schoolYear'] = formResponse.schoolYear
     flatFormResponse['reportDate'] = formResponse.reportDate
