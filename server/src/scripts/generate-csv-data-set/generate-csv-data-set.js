@@ -43,7 +43,8 @@ function generateCsv(dbName, formId, outputPath, year = '*', month = '*', csvTem
     }
     cmd = `${cmd} ${csvTemplate ? `"${csvTemplate.headers.join(',')}"` : ''}`
     log.debug("generate-csv: " + cmd)
-    exec(cmd).then(status => {
+    const maxBuffer = 1024 * 1024 * 100;
+    exec(cmd, { maxBuffer }).then(status => {
       resolve(status)
     }).catch(error => {
       log.error("Error when exec-ing generate-csv: " + error)

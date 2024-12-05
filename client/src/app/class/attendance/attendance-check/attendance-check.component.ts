@@ -26,6 +26,7 @@ export class AttendanceCheckComponent implements OnInit {
     timestamp: number,
     classId: string,
     grade: string,
+    period: string,
     schoolName: string
     schoolYear: string,
     reportDate:string,
@@ -36,6 +37,9 @@ export class AttendanceCheckComponent implements OnInit {
     complete: boolean,
     type: string
   }
+  periods: string[]
+  periodsLength: number = 0
+  selectedPeriod: string = ''
   selectedClass: any
   behaviorForms: Promise<FormMetadata[]>;
   curriculum:any
@@ -73,6 +77,8 @@ export class AttendanceCheckComponent implements OnInit {
     const currentClass = this.dashboardService.getSelectedClass(enabledClasses, classIndex)
     this.selectedClass = currentClass;
     this.ignoreCurriculumsForTracking = this.dashboardService.getValue('ignoreCurriculumsForTracking', currentClass)
+    this.periods = this.dashboardService.getOptions('period', currentClass);
+    this.periodsLength = this.periods.length
     
     const currArray = await this.dashboardService.populateCurrentCurriculums(currentClass);
     const curriculumId = await this.variableService.get('class-curriculumId');
@@ -129,15 +135,25 @@ export class AttendanceCheckComponent implements OnInit {
         this.router.navigate(['/attendance-dashboard/']);
         return null
       }
-      this.attendanceRegister = this.dashboardService.buildAttendanceReport(id, timestamp, currentClassId, grade, schoolName, schoolYear, reportDate, type, this.attendanceList);
+      const period = this.selectedPeriod;
+      this.attendanceRegister = this.dashboardService.buildAttendanceReport(id, timestamp, currentClassId, grade, schoolName, schoolYear, reportDate, type, this.attendanceList, period);
     } else {
       currentAttendanceReport.attendanceList = this.attendanceList
       this.attendanceRegister = currentAttendanceReport
+      this.selectedPeriod = currentAttendanceReport.period
     }
     if (students.length > 0) {
       await this.saveStudentAttendance()
     }
-    
+  }
+
+  async onPeriodChange($event) {
+    const period = $event.value
+    if (this.attendanceRegister) {
+      this.attendanceRegister.period = period
+      this.selectedPeriod = period
+      await this.saveStudentAttendance()
+    }
   }
 
   async toggleAttendance(currentStatus, student) {

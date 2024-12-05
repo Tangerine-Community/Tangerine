@@ -1,5 +1,17 @@
 <mat-card>
-  <div class="selectedClassLabel">{{'Attendance'|translate}}<br/>{{getClassTitle(selectedClass)}} <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}</div>
+  <div class="selectedClassLabel">{{'Attendance'|translate}}<br/>{{getClassTitle(selectedClass)}}
+    <ng-container *ngIf="!ignoreCurriculumsForTracking">: {{curriculum?.label}} </ng-container>: {{reportLocaltime}}
+  </div>
+  <div id="period-dropdown" class="selectedClassLabel">
+    <ng-container *ngIf="periodsLength > 0">
+      <mat-form-field>
+        <mat-label>{{'Period'|translate}}</mat-label>
+        <mat-select [(value)]="selectedPeriod" (selectionChange)="onPeriodChange($event)">
+          <mat-option *ngFor="let period of periods" [value]="period">{{period}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+  </div>
   <div class="tableHintLabel">
     <mat-label>{{'Tap on the green checkmark to mark a student as absent'|translate}}</mat-label>
   </div>

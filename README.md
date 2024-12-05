@@ -144,14 +144,15 @@ We use a tool called `tangerine-preview` to do local content development. Note t
 ### Develop for Editor and Server 
 Docker and git is required for local development. For Mac, download and install [Docker for Desktop](https://www.docker.com/products/docker-desktop). For Windows you will also use Docker for Desktop, but we suggest using the instructions [here](https://docs.docker.com/docker-for-windows/wsl/) which will also point you towards documentation for installing WSL2 on Windows.
 
+1. Run the following commands to clone and set up Tangerine for development:
 ```bash
 git clone git@github.com:tangerine-community/tangerine
 cd tangerine
 cp config.defaults.sh config.sh
-./develop.sh
 ```
-
-Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
+2. Edit config.sh making the necessary changes to the variables. 
+3. Then run `./develop.sh` to start up Tangerine. The initial start up process my take more than 20 minutes.
+4. Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
 __Optional__: If you want to test deploying APKs and PWAs, you'll need to make your sandbox accessible using an https URL. A reverse proxy will forward https requests to your dev instance running on port 80.
 We currently recommend creating your own reverse proxy - see the [Reverse Proxy for Developers](./docs/developer/reverse-proxy-for-developers.md) doc for more information on using local-ssl-proxy. 
