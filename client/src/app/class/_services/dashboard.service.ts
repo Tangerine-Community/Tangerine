@@ -242,7 +242,7 @@ export class DashboardService {
 
     if (item) {
       itemCount = item.inputs.length;
-      customScore = !isNaN(item.customScore)? item.customScore: null
+      customScore = item.customScore? item.customScore: null
       const metadata = item.metadata;
       if (metadata) {
         lastModified = metadata['lastModified'];
@@ -388,8 +388,8 @@ export class DashboardService {
               maxValueAnswer = maxValueAnswer + max;
             }
             score = totalCorrect;
-            scorePercentageCorrect = !isNaN(customScore) ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
-            if (!isNaN(customScore)) {
+            scorePercentageCorrect = customScore ? customScore : this.classUtils.round(totalCorrect / maxValueAnswer * 100, 2);
+            if (customScore) {
               maxValueAnswer = 100
             }
           }
@@ -430,7 +430,7 @@ export class DashboardService {
         totalIncorrect: totalIncorrect,
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
-        scorePercentageCorrect: !isNaN(customScore) ? customScore : scorePercentageCorrect,
+        scorePercentageCorrect: customScore ? customScore : scorePercentageCorrect,
         duration: duration,
         customScore: customScore
       };
@@ -503,15 +503,15 @@ export class DashboardService {
             studentResults.score = score;
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          const max = !isNaN(studentResponse.customScore)? 100: studentResponse.max;
+          const max = studentResponse.customScore? 100: studentResponse.max;
           if (max) {
             studentResults.max = max;
             classGroupReportMax = max;
           }
-          const totalCorrect = !isNaN(studentResponse.customScore) ? studentResponse.customScore : studentResponse.totalCorrect;
-          const scorePercentageCorrect = !isNaN(studentResponse.customScore) ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
+          const totalCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.totalCorrect;
+          const scorePercentageCorrect = studentResponse.customScore ? studentResponse.customScore : studentResponse.scorePercentageCorrect;
           studentResults.scorePercentageCorrect = scorePercentageCorrect;
-          const maxValueAnswer = !isNaN(studentResponse.customScore) ? 100: studentResponse.maxValueAnswer;
+          const maxValueAnswer = studentResponse.customScore ? 100: studentResponse.maxValueAnswer;
           studentResults.maxValueAnswer = maxValueAnswer;
           studentResults.customScore = studentResponse.customScore
           duration = studentResponse.duration;
@@ -690,9 +690,7 @@ export class DashboardService {
   }
 
   /**
-  * Special parsing for enabled curriculums.
-  * By default returns the curriculum name.
-   * Set provideCurriculumObject if you want a special curriculum Object, which is useful for menu labels.
+  * Parse a variable value from a response.
   * */
   public getValue = (variableName, response) => {
     if (response) {
@@ -705,6 +703,27 @@ export class DashboardService {
         return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '');
     }
   };
+
+  /**
+   * Parse the variable options.
+   */
+  public getOptions = (variableName, response) => {
+    let options = [];
+    if (response) {
+      const variablesByName = response.items.reduce((variablesByName, item) => {
+        for (const input of item.inputs) {
+          variablesByName[input.name] = input.value;
+        }
+        return variablesByName;
+      }, {});
+      if (Array.isArray(variablesByName[variableName])) {
+        options = variablesByName[variableName].map((option) => option.name, '');
+      } else if (variablesByName[variableName]) {
+        options.push(variablesByName[variableName]);
+      }
+    }
+    return options;
+  }
 
   /**
   * Special parsing for enabled curriculums.
@@ -1500,12 +1519,13 @@ export class DashboardService {
     return currentClass;
   }
   
-  buildAttendanceReport(id: string, timestamp: number, currentClassId, grade, schoolName, schoolYear, reportDate: string, type: string, attendanceList) {
+  buildAttendanceReport(id: string, timestamp: number, currentClassId, grade, schoolName, schoolYear, reportDate: string, type: string, attendanceList, period='') {
     return {
       _id: id,
       timestamp: timestamp,
       classId: currentClassId,
       grade: grade,
+      period: period,
       schoolName: schoolName,
       schoolYear: schoolYear,
       reportDate: reportDate,

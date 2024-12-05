@@ -78,7 +78,9 @@ async function go(state) {
     //  Run batches.
     while (state.complete === false) {
       log.debug(`Run batch at skip of ${state.skip} at statePath: ${state.statePath}`)
-      const response = await exec(`./batch.js '${state.statePath}'`)
+      const maxBuffer = 1024 * 1024 * 100; // 100MB
+      const response = await exec(`./batch.js '${state.statePath}'`, { maxBuffer });
+		
       if (response.stderr) console.error(response.stderr)
       if (process.env.NODE_ENV === 'development') console.log(response)
       state = JSON.parse(await readFile(state.statePath))
