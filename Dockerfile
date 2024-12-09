@@ -68,7 +68,7 @@ RUN cd /tangerine/online-survey-app && \
     ./node_modules/.bin/ng build --base-href "./"
 
 # build client.
-add client /tangerine/client
+ADD client /tangerine/client
 RUN cd /tangerine/client && \
     ./node_modules/.bin/ng build --base-href "./"
 
