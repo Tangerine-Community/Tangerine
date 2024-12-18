@@ -79,8 +79,8 @@ fi
 
 if echo "$T_USE_MYSQL_CONTAINER" | grep "true"; then
     ./mysql-start-container.sh
-    echo "Waiting 60 seconds for mysql container to start..."
-        sleep 60
+    echo "Waiting 20 seconds for mysql container to start..."
+        sleep 20
         ./mysql-setup.sh
 fi
 
