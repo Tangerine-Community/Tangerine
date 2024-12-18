@@ -1,11 +1,17 @@
-const fs = require('fs');
-
 var express = require('express');
 var router = express.Router();
+const basicAuth = require('express-basic-auth');
 const dataGenerator = require('./data-generator.js')
 
+// Basic Authentication Middleware
+const authMiddleware = basicAuth({
+  users: { [process.env.T_MYSQL_API_AUTH_USER]: process.env.T_MYSQL_API_AUTH_PASSWORD },
+  challenge: true,
+  unauthorizedResponse: (req) => 'Unauthorized'
+});
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', authMiddleware, function(req, res, next) {
   res.send(`
     <h2>API Index:</h2>
     <div>
@@ -16,11 +22,11 @@ router.get('/', function(req, res, next) {
   `);
 });
 
-router.get('/get-table', async function(req, res) {
+router.get('/get-table', authMiddleware, async function(req, res) {
   try {
     if (req.query.groupId && req.query.formId) {
-      const groupId = req.query.groupId;
-      const formId = req.query.formId;
+      const groupId = req.query.groupId.replace(/-/g, '');
+      const formId = req.query.formId.replace(/-/g, '_');
       const results = await dataGenerator.getTableData(groupId, formId);
       res.json(results);
     } else {
@@ -36,7 +42,7 @@ router.get('/get-table', async function(req, res) {
   res.download(csvFile);
 });
 
-router.get('/get-view', async function(req, res) {
+router.get('/get-view', authMiddleware, async function(req, res) {
   try {
     if (req.query.groupId && req.query.viewId) {
       const groupId = req.query.groupId;

@@ -79,6 +79,7 @@
     "csv-writer": "^1.6.0",
     "exceljs": "^1.2.1",
     "express": "^4.16.2",
+    "express-basic-auth": "^1.2.1",
     "express-http-proxy": "^1.1.0",
     "express-session": "1.15.6",
     "fs-extra": "^4.0.3",
