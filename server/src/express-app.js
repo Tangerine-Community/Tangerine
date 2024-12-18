@@ -54,6 +54,7 @@ const {archiveToDiskConfig, passwordPolicyConfig} = require('./config-utils.js')
 const { generateCSV, generateCSVDataSet, generateCSVDataSetsRoute, listCSVDataSets, getDatasetDetail } = require('./routes/group-csv.js');
 const allowIfUser1 = require('./middleware/allow-if-user1.js');
 const hasUploadToken = require("./middleware/has-upload-token");
+const tangerineMySQLApi = require('./mysql-api/index.js');
 
 if (process.env.T_AUTO_COMMIT === 'true') {
   setInterval(commitFilesToVersionControl,parseInt(process.env.T_AUTO_COMMIT_FREQUENCY))
@@ -436,6 +437,8 @@ app.post('/permissions/addRoleToGroup/:groupId',
 app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
 app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
+
+app.use('/mysql-api', tangerineMySQLApi);
 
 // app.use('/api/generateDbDump/:groupId/:deviceId/:syncUsername/:syncPassword', async function(req, res, next){
 //   const groupId = req.params.groupId;
