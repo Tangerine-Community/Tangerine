@@ -543,7 +543,9 @@ const generateFlatResponse = async function (formResponse, sanitized) {
       } // sanitize
     }
   }
-  return flatFormResponse;
+
+  let data = await tangyModules.hook("mysqljs_flatFormResponse", {groupId, flatFormResponse, formResponse});
+  return data.flatFormResponse;
 };
 
 /**
