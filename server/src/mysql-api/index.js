@@ -3,9 +3,17 @@ var router = express.Router();
 const basicAuth = require('express-basic-auth');
 const dataGenerator = require('./data-generator.js')
 
+try {
+  var authUser = process.env.T_MYSQL_API_AUTH_USER;
+  var authPassword = process.env.T_MYSQL_API_AUTH_PASSWORD;
+} catch (err) {
+  console.log('Missing T_MYSQL_API_AUTH_USER or T_MYSQL_API_AUTH_PASSWORD environment variables');
+  return;
+}
+
 // Basic Authentication Middleware
 const authMiddleware = basicAuth({
-  users: { [process.env.T_MYSQL_API_AUTH_USER]: process.env.T_MYSQL_API_AUTH_PASSWORD },
+  users: { [authUser]: authPassword },
   challenge: true,
   unauthorizedResponse: (req) => 'Unauthorized'
 });
