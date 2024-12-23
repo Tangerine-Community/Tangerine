@@ -1,25 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const basicAuth = require('express-basic-auth');
 const dataGenerator = require('./data-generator.js')
 
-try {
-  var authUser = process.env.T_MYSQL_API_AUTH_USER;
-  var authPassword = process.env.T_MYSQL_API_AUTH_PASSWORD;
-} catch (err) {
-  console.log('Missing T_MYSQL_API_AUTH_USER or T_MYSQL_API_AUTH_PASSWORD environment variables');
-  return;
-}
-
-// Basic Authentication Middleware
-const authMiddleware = basicAuth({
-  users: { [authUser]: authPassword },
-  challenge: true,
-  unauthorizedResponse: (req) => 'Unauthorized'
-});
-
 /* GET home page. */
-router.get('/', authMiddleware, function(req, res, next) {
+router.get('/', function(req, res, next) {
   res.send(`
     <h2>API Index:</h2>
     <div>
@@ -30,7 +14,7 @@ router.get('/', authMiddleware, function(req, res, next) {
   `);
 });
 
-router.get('/get-table', authMiddleware, async function(req, res) {
+router.get('/get-table', async function(req, res) {
   try {
     if (req.query.groupId && req.query.formId) {
       const groupId = req.query.groupId.replace(/-/g, '');
@@ -50,7 +34,7 @@ router.get('/get-table', authMiddleware, async function(req, res) {
   res.download(csvFile);
 });
 
-router.get('/get-view', authMiddleware, async function(req, res) {
+router.get('/get-view', async function(req, res) {
   try {
     if (req.query.groupId && req.query.viewId) {
       const groupId = req.query.groupId;

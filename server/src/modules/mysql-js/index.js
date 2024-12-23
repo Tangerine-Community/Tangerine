@@ -225,7 +225,6 @@ module.exports = {
           } else {
             const flatDoc = await prepareFlatData(doc, sanitized);
             tableName = flatDoc.type;
-            console.log("tableName: " + tableName)
             docType = 'response';
             primaryKey = 'ID'
             createFunction = function (t) {

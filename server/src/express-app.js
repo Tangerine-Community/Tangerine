@@ -438,7 +438,7 @@ app.get('/rolesByGroupId/:groupId/role/:role', isAuthenticated, findRoleByName);
 app.get('/rolesByGroupId/:groupId/roles', isAuthenticated, getAllRoles);
 app.post('/permissions/updateRoleInGroup/:groupId', isAuthenticated, permitOnGroupIfAll(['can_manage_group_roles']), updateRoleInGroup);
 
-app.use('/mysql-api', tangerineMySQLApi);
+app.use('/mysql-api', isAuthenticated, tangerineMySQLApi);
 
 // app.use('/api/generateDbDump/:groupId/:deviceId/:syncUsername/:syncPassword', async function(req, res, next){
 //   const groupId = req.params.groupId;
