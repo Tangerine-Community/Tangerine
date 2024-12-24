@@ -27,17 +27,12 @@ router.get('/get-table', async function(req, res) {
   } catch (err) {
     res.status(500).json({ error: err.toString() });
   }
-
-  const groupId = req.query.groupId
-  const formId = req.query.formId
-  csvFile = await dataGenerator.getTableData(groupId, formId)
-  res.download(csvFile);
 });
 
 router.get('/get-view', async function(req, res) {
   try {
     if (req.query.groupId && req.query.viewId) {
-      const groupId = req.query.groupId;
+      const groupId = req.query.groupId.replace(/-/g, '');
       const viewId = req.query.viewId;
       const results = await dataGenerator.getTableData(groupId, viewId);
       res.json(results);
