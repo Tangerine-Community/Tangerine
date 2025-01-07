@@ -1,7 +1,7 @@
 <div id="filter" *ngIf="!hideFilterBy">
   <tangy-select name="form" label="Filter by form" (change)="filterByForm($event)">
     <option value="*">*</option>
-    <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
+    <option *ngFor="let form of forms" value="{{form.id}}">{{form.title+'---'+form.id}}</option>
   </tangy-select>
 </div>
 <div>
