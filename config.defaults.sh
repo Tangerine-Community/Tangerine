@@ -30,9 +30,6 @@ T_MYSQL_PASSWORD="password"
 T_MYSQL_PHPMYADMIN="FALSE"
 # Enter "true" if using a mysql container instead of an external database service such as AWS RDS. This will launch a mysql container.
 T_USE_MYSQL_CONTAINER=""
-# The username and password for the mysql-api.
-T_MYSQL_API_AUTH_USER="admin"
-T_MYSQL_API_AUTH_PASSWORD="password"
 
 #
 # Optional
