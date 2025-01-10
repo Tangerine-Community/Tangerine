@@ -53,7 +53,19 @@ export class ResponsesComponent implements OnInit {
 
   async ngOnInit() {
     this.forms = (await this.tangerineFormsService.getFormsInfo(this.groupId))
-      .filter(formInfo => !this.excludeForms.includes(formInfo.id) )
+      .filter(formInfo => !this.excludeForms.includes(formInfo.id) ).map(formInfo => {
+        if(!formInfo.title){
+          formInfo.title = formInfo.id
+          return formInfo
+        }
+        if(!formInfo.title.includes('t-lang')) return formInfo;
+        if(formInfo.title.includes('t-lang')) {
+          const titleDomString = new DOMParser().parseFromString(formInfo.title, 'text/html')
+          const formTitleEnglish = titleDomString.querySelector('t-lang[en]')
+          formInfo.title = formTitleEnglish ? formTitleEnglish.textContent : titleDomString.querySelector('t-lang').textContent
+          return formInfo
+        }
+      })
     await this.getResponses()
     this.ready = true;
     this.onSearch$
