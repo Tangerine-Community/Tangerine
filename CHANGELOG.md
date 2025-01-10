@@ -11,11 +11,11 @@ See the [Custom Dashboard Example](docs/editor/custom-dashboard.md) for instruct
 
 - Scoring: Add scoring percent and denominator values
 When Tangerine form scoring is turned on, each section will now output the score, percent, and denominator values. The values will be output in csv and mysql data as:
-  - `sectionName_score`
-  - `sectionName_percent`
-  - `sectionName_denominator`
+- `<section_name>_score_denominator`
+- `<section_name>_score_percent`
 
-For existing projects who want this functionality, there are scripts availabel to add the values to already uploaded data.
+Projects who want this functionality to run on existing uploads can use a Tangerine Wedge script: 
+[Add Scoring Percent and Denominator](https://github.com/ICTatRTI/couchdb-subscribe-and-action-example/tree/unicef-bangla-section-score-count-and-percent)
 
 - Add server scripts: New server administration scripts
 
@@ -24,7 +24,8 @@ __Fixes__
 - Run 'npm install' during APK and PWA builds to ensure installation of dependencies and build for custom code
 
 __Libs and Dependencies__
-- NA
+- Bump tangy-form to v4.45.4 to add scoring percent and denominator values
+- Bump tangy-form-editor to v7.18.1
 
 __Server upgrade instructions__
 
