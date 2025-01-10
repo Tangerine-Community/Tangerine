@@ -1,9 +1,0 @@
-form {
-  margin: 20px;
-}
-
-:host() {
-
-  display: block;
-  padding-right: 45px;
-}

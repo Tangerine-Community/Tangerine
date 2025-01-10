@@ -10,12 +10,9 @@ import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from '../../shared/shared.module';
 import { AuthRoutingModule } from './auth-routing.module';
-import { LoginComponent } from './_components/login/login.component';
 import { SurveyLoginComponent } from './_components/survey-login/survey-login.component';
-import { UserRegistrationComponent } from './_components/user-registration/user-registration.component';
 import { LoginGuard } from './_guards/login-guard.service';
 import { AuthenticationService } from './_services/authentication.service';
-import { UserService } from './_services/user.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
@@ -38,7 +35,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
         MatCheckboxModule
 
     ],
-  declarations: [UserRegistrationComponent, LoginComponent, SurveyLoginComponent],
-  providers: [AuthenticationService, LoginGuard, UserService]
+  declarations: [SurveyLoginComponent],
+  providers: [AuthenticationService, LoginGuard]
 })
 export class AuthModule { }
