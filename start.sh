@@ -249,8 +249,6 @@ RUN_OPTIONS="
   --env \"T_MYSQL_USER=$T_MYSQL_USER\" \
   --env \"T_MYSQL_PASSWORD=$T_MYSQL_PASSWORD\" \
   --env \"T_MYSQL_MULTI_PARTICIPANT_SCHEMA=$T_MYSQL_MULTI_PARTICIPANT_SCHEMA\" \
-  --env \"T_MYSQL_API_AUTH_USER=$T_MYSQL_API_AUTH_USER\" \
-  --env \"T_MYSQL_API_AUTH_PASSWORD=$T_MYSQL_API_AUTH_PASSWORD\" \
   --volume $(pwd)/data/mysql/state:/mysql-module-state:delegated \
   --volume $(pwd)/server/src/modules/mysql-js/conf.d:/etc/mysql/conf.d:delegated \
   $RUN_OPTIONS

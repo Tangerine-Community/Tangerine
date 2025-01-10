@@ -1,4 +1,3 @@
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const mysqlKnex = require('./mysql-knex.js')
 
 async function initializeConnection(groupId) {
